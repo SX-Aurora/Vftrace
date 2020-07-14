@@ -1,0 +1,311 @@
+.TH VFTRACE "1" "MONTH YEAR" "Vftrace VERSION" "VFTRACE"
+.SH NAME
+vftrace \- Profiling library
+.SH SYNOPSIS
+.IP "\fBcompile with vftrace:\fR"
+.IX Item "compile with vftrace:"
+<compiler> <options> -finstrument-functions -I${VFTRACE_ROOT}/include/ -c <sourcefile> 
+.IP "\fBlink with vftrace:\fR"
+.IX Item "link with vftrace:"
+<linker> <options> -o <executable> <objects> -L${VFTRACE_ROOT}/lib -lvftrace -lm
+
+.SH DESCRIPTION
+.\" Add any additional description here
+.PP
+Vftrace is a profiling library for C and Fortran programs. 
+Utilizing function hooks, vftrace collects information about the callstack
+timeline as well as timings and performance informations of all called functions.
+It supports logging of MPI-communication via special wrapping routines.
+The profiling behaviour can be controlled by a set of environment variables
+and library functions to be incorporated into the profiled programs source code.
+.PP
+.SH "PROFILING CONTROL"
+.IX Header "PROFILING CONTROL"
+.SS ENVIRONMENT VARIABLES
+.IX Subsection "ENVIRONMENT VARIABLES"
+Here is a collection of all environment variables to controll Vftrace
+profiling and sampling.
+.\"
+.IP "\fBVFTR_ACCURATE_PROFILE\fR"
+.IX Item "VFTR_ACCURATE_PROFILE"
+\fBEnable\fR(1,"YES","Yes","yes","ON","On","on")
+.br
+\fBDisable\fR(0,"NO","No","no","OFF","Off","off")
+.br
+If this environment variable is set, hardware counters are read in at each function entry
+and exit, instead only at each sample time.
+.br
+\fBDefault: "no"
+.\"
+.IP "\fBVFTR_BUFSIZE\fR"
+.IX Item "VFTR_BUFSIZE"
+Buffer size for the buffered stream output of the profiling data files (.vfd) in MiB.
+.br
+\fBDefault: 8\fR
+.\"
+.IP "\fBVFTR_DETAIL_UNTIL_CUM_CYCLES\fR"
+.IX Item "VFTR_DETAIL_UNTIL_CUM_CYCLES"
+In regular intervals, the function table is sorted according to each function's exclusive time. When doing so, the total number of cycles spent is summed up (cumulative cycles). Each function up to the value of VFTR_DETAIL_UNTIL_CUM_CYCLES gets the detail attribute, i.e. it is sampled at sampling time. VFTR_DETAIL_UNTIL_CUM_CYCLES is a decimal value between 0.0 and 100.0, giving the percentage of cumulative cycles.  
+.br
+\fBDefault: 90.0\fR
+.\"
+.IP "\fBVFTR_EXCLUDE\fR"
+.IX Item "VFTR_EXCLUDE"
+A regular expression defining functions to exclude from profiling. This regular expression can also be a single function name. Examples:
+.br
+\fBVFTR_EXCLUDE=foo_bar\fR
+.br
+\fBVFTR_EXCLUDE=foo*\fR
+.br
+All other functions are included.
+\fBWarning:\fR This option cannot be used with \fBVFTR_INCLUDE_ONLY\fR. If both environment variables are set, only \fBVFTR_INCLUDE_ONLY\fR is used.
+.\"
+.IP "\fBVFTR_INCLUDE_ONLY\fR"
+.IX Item "VFTR_INCLUDE_ONLY"
+A regular expression defining functions which should be profiled, while all others are excluded. The regular expression can also be a single function name. Examples:
+.br
+\fBVFTR_INCLUDE_ONLY=foo_bar\fR
+.br
+\fBVFTR_INCLUDE_ONLY=foo*\fR
+.br
+\fBWarning:\fR This option cannot be used with \fBVFTR_EXCLUDE\fR. If both environment variables are set, only \fBVFTR_INCLUDE_ONLY\fR is used.
+.\"
+.IP "\fBVFTR_LOGFILE_ALL_RANKS\fR"
+.IX Item VFTR_LOGFILE_ALL_RANKS
+\fBEnable\fR(1,"YES","Yes","yes","ON","On","on")
+.br
+\fBDisable\fR(0,"NO","No","no","OFF","Off","off")
+.br
+If activated every rank writes its own logfile,
+containing rank exclusive performance information.
+.br
+\fBDefault: "off"\fR
+.\"
+.IP "\fBVFTR_LOGFILE_BASENAME\fR"
+.IX Item "VFTR_LOGFILE_BASENAME"
+The Basename of the ASCII log files (.log) and profiling data files (.vfd).
+The full name of a profiling data file is <basename>_<mpirank>.vfd
+and for a logfile <basename>_<mpirank>.log.
+.br
+\fBDefault: The executable name\fR
+.\"
+.IP "\fBVFTR_MPI_LOG\fR"
+.IX Item "VFTR_MPI_LOG"
+\fBEnable\fR(1,"YES","Yes","yes","ON","On","on")
+.br
+\fBDisable\fR(0,"NO","No","no","OFF","Off","off")
+.br
+Switches on the logging of MPI communication.
+.br
+\fBDefault: "off"
+.\"
+.IP "\fBVFTR_OFF\fR"
+.IX Item "VFTR_OFF"
+\fBDisable\fR(1,"YES","Yes","yes")
+.br
+\fBEnable\fR(0,"NO","No","no")
+.br
+Switches off Vftrace profiling. The program execution is as without Vftrace, although
+it might have been linked against libvftrace. 
+.br 
+\fBDefault: "no"\fR
+.\"
+.IP "\fBVFTR_OUT_DIRECTORY\fR"
+.IX Item "VFTR_OUT_DIRECTORY"
+Sets the output directory for the profiling data files (.vfd) and logfiles (.log).
+.br
+\fBDefault: Current working directory "./"\fR
+.\"
+.IP "\fBVFTR_PRECISE\fR"
+.IX Item "VFTR_PRECISE"
+\fBEnable\fR(1,"YES","Yes","yes","ON","On","on")
+.br
+\fBDisable\fR(0,"NO","No","no","OFF","Off","off")
+.br
+Enables precise sampling off all functions.
+This ignores the minimum time given by \fBVFTR_SAMPLETIME\fR and registers
+every function exit and entry.
+Note that this potentially leads to a significant increase in profiling overhead and
+output file size.
+.br
+\fBDefault: "off"
+.\"
+.IP "\fBVFTR_PROF_TRUNCATE\fR"
+.IX Item "VFTR_PROF_TRUNCATE"
+\fBEnable\fR(1,"YES","Yes","yes","ON","On","on")
+.br
+\fBDisable\fR(0,"NO","No","no","OFF","Off","off")
+.br
+This environment variable determines whether the profile is truncated.
+If enabled, only the most significant routines (by runtime) will be listed in the log-file.
+.br
+\fBDefault: "on"
+.\"
+.IP "\fBVFTR_REGIONS_PRECISE\fR"
+.IX Item "VFTR_REGIONS_PRECISE\fR"
+\fBEnable\fR(1,"YES","Yes","yes","ON","On","on")
+.br
+\fBDisable\fR(0,"NO","No","no","OFF","Off","off")
+.br
+Switches on precise sampling of user defined regions (see \fBvftrace_region_begin\fR).
+.br
+\fBDefault: "on"
+.\"
+.IP "\fBVFTR_RUNTIME_PROFILE_FUNCS\fR"
+.IX Item "VFTR_RUNTIME_PROFILE_FUNCS"
+A regular expression of function names which should be watched during program execution. For each function in the list, a profile and stack list will be printed upon each function entry and exit.
+.\"
+.IP "\fBVFTR_SAMPLETIME\fR"
+.IX Item "VFTR_SAMPLETIME"
+Sets the time (in seconds) between two callstack samples written into .vfd files.
+This is regardless of how many functions are actually entered or exited in this interval.
+The setting is ignored if \fBVFTR_PRECISE\fR is enabled.
+.br
+\fBDefault: "0.005"
+.\"
+.IP "\fBVFTR_SAMPLING\fR"
+.IX Item "VFTR_SAMPLING"
+\fBEnable\fR(1,"YES","Yes","yes","ON","On","on")
+.br
+\fBDisable\fR(0,"NO","No","no","OFF","Off","off")
+.br
+Enables the creation of .vfd runtime profiles. 
+.br
+\fBDefault: "off"\fR
+.\"
+.IP "\fBVFTR_SCENARIO_FILE\fR"
+.IX Item "VFTR_SCENARIO_FILE"
+Path to the scenario file in JSON format that defines the hardware counters and event observables.
+.\"
+.IP "\fBVFTR_SIGNALS_OFF\fR"
+.IX Item "VFTR_SIGNALS_OFF"
+\fBDisable\fR(1,"YES","Yes","yes")
+.br
+\fBEnable\fR(0,"NO","No","no")
+.br
+(Inactive) This setting tells Vftrace if signal calls, such as SIGSEGV or SIGTERM, should be intercepted by Vftrace. In this case, Vftrace will try to wrap up any leftover tasks, such as the creation of vfd files.
+.br
+\fBDefault: "yes"
+.\"
+.IP "\fBVFTR_STOPTIME\fR"
+.IX Item "VFTR_STOPTIME"
+The Maximum runtime of the application in seconds. If exceeded, the profiled application is automatically aborted. This can prevent unintended large overhead or output files.
+.br
+\fBDefault: 604800 (1 week)
+.\"
+.IP "\fBVFTR_PRINT_STACKS_FOR\fR"
+.IX Item "VFTR_PRINT_STACKS_FOR"
+This environment variable specifies MPI ranks for which stack information should be printed,
+additionally to rank 0. It is a comma-separated list of rank indices or tuples <group_base>:<group_size>.
+The latter case signifies that stack information should be printed for all ranks in the interval
+[group_base,group_base + group_size). For example, VFTR_PRINT_STACKS_FOR=1,4:10 switches on the
+inclusion of rank 1 and all ranks between 4 and 13 in the stack information.
+.\"
+.IP "\fBVFTR_PRINT_STACKS_FOR\fR"
+.IX Item "VFTR_PRINT_STACKS_FOR"
+This environment variable specifies MPI ranks for which stack information should be printed,
+additionally to rank 0. It is a comma-separated list of rank indices or tuples <group_base>:<group_size>.
+The latter case signifies that stack information should be printed for all ranks in the interval
+[group_base,group_base + group_size). For example, VFTR_PRINT_STACKS_FOR=1,4:10 switches on the
+inclusion of rank 1 and all ranks between 4 and 13 in the stack information.
+.\"
+.SS LIBRARY FUNCTIONS
+.IX Subsection "LIBRARY FUNCTIONS"
+Vftrace provides library functions which can be included in a C or Fortran application
+which allow for a more detailed profiling of it. This requires the inclusion of
+\fbvftrace.h\fR (C) or the \fbvftrace\fR module (Fortran).
+.br
+\fBWarning:\fR If an MPI-parallel code is profiled with vftrace the
+functions and routines must only be called after \fBMPI_Init\fR 
+and before \fBMPI_Finalize\fR!
+.\"
+.IP "\fBMPI_Pcontrol(level)\fR"
+.IX Item "MPI_Pcontrol"
+Required by the MPI-Standard (Section 14.2.4).
+Lets you control the level of the MPI-Profiling.
+.br
+level == 0 Profiling is disabled.
+.br
+level == 1 Profiling is enabled at a normal default level of detail.
+.br
+level == 2 Profile buffers are flushed, which may be a no-op.
+Changing the level between the start and the corresponding Wait/Test of a
+non-blocking communication can lead to undefined behavior.
+Users are encouraged to use the \fBvftr_pause\fR and \fBvftr_resume\fR routines instead.
+Default level is 1.
+.IP "\fBvftrace_region_begin, vftrace_region_end\fR"
+.IX Item "vftrace_region_begin_end"
+Define the start and end of a region in the code, which should be monitored
+independently from from a function entry.
+The functions take as an argument a unique string identifier.
+The defined region appears in the logfile and vfd files under the this name.
+.\"Working example codes can be found in the test suite.
+.br
+\fBExample in C:\fR
+   void testfunction() {
+      ...
+      vftrace_region_begin("NameOfTheRegion");
+      // code to be profiled independently
+      ...
+      // from the rest of the function
+      vftrace_region_end("NameOfTheRegion");
+      ...
+   }
+.br
+\fBExample in Fortran:\fR
+   SUBROUTINE testroutine()
+      ...
+      CALL vftrace_region_begin("NameOfTheRegion")
+      ! code to be profiled independently
+      ...
+      ! from the rest of the routine
+      CALL vftrace_region_end("NameOfTheRegion")
+      ...
+   END SUBROUTINE
+.\"
+.IP "\fBvftrace_get_stack\fR"
+.IX "vftrace_get_stack"
+Returns a (char*) in C and a (character(len=*), pointer) in Fortran that contains the 
+current callstack.
+.br
+\fBExample in C:\fR
+   printf("%s\n", vftrace_get_stack());
+.br
+\fBExample in Fortran:\fR
+   write(*,*) vftrace_get_stack()
+.\"
+.IP "\fBvftrace_pause, vftrace_resume\fR"
+.IX Item "vftrace_pause_resume"
+Pauses the monitoring and profiling until \fBvftrace_resume\fR is called.
+It has no effect if the monitoring is already paused
+by an earlier call to vftrace_pause.
+Pausing enables to focus on specific parts of the code and to reduce the size of logfiles and vfd files,
+as well as runtime.
+Note that \fBvftrace_pause\fR and \fBvftrace_resume\fR do not need to appear in the same
+function, routine, or even compile unit.
+They take effect as soon as they are encountered during program execution.
+.br
+\fBExample in C:\fR
+   int main() {
+      // This code is profiled
+      ...
+      vftrace_pause();
+      // This code is not profiled
+      ...
+      vftrace_resume();
+      // This code is profiled again 
+      ...
+   }
+.br
+\fBExample in Fortran:\fR
+   PROGRAM testprogram
+      ! This code is profiled
+      ...
+      CALL vftrace_pause()
+      ! This code is not profiled
+      ...
+      CALL vftrace_resume()
+      ! This code is code profiled again
+      ...
+   END PROGRAM testprogram
+.\"

@@ -1,0 +1,57 @@
+{
+  "scenario_name": "Stalls",
+  "CPU Type": "Skylake",
+  "counters": [
+    {
+      "papi_name": "RESOURCE_STALLS:ANY",
+      "symbol": "f1"
+    },
+    {
+      "papi_name": "UNHALTED_CORE_CYCLES",
+      "symbol": "f2"
+    },
+    {
+      "papi_name": "INST_RETIRED:ANY_P",
+      "symbol": "f3"
+    }
+  ],
+  "observables": [
+    {
+      "name": "Stall ratio",
+      "formula": "f1 * 100 / f2",
+      "protected": "f2",
+      "default": "0",
+      "format": [{
+		"unit": "%",
+		"spec": "4.1",
+		"group": "Stalls",
+		"column1": "Stall",
+		"column2": "%Cyc"}]
+    },
+    {
+      "name": "CPU clock frequency",
+      "formula": "f2 * 1.e-9 / runtime",
+      "protected": "runtime",
+      "default": "0",
+      "format": [{
+		"unit": "GHz",
+		"spec": "4.2",
+		"group": "Stalls",
+		"column1": "Freq",
+		"column2": "GHz"}]
+    },
+    {
+      "name": "Clocks per instruction",
+      "formula": "cycles / f3",
+      "protected": "f3",
+      "default": "0",
+      "format": [{
+		"unit": "",
+		"spec": "4.1",
+		"group": "Stalls",
+		"column1": "Cost",
+		"column2": "CPI"}]
+    }
+  ]
+}
+

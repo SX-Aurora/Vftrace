@@ -1,0 +1,47 @@
+{
+  "scenario_name": "DCACHE",
+  "CPU Type": "Skylake",
+  "counters": [
+    {
+      "papi_name": "PERF_COUNT_HW_CACHE_L1D:ACCESS",
+      "symbol": "f1"
+    },
+    {
+      "papi_name": "PERF_COUNT_HW_CACHE_L1D:MISS",
+      "symbol": "f2"
+    },
+    {
+      "papi_name": "L2_RQSTS:ALL_DEMAND_DATA_RD",
+      "symbol": "f3"
+    },
+    {
+      "papi_name": "L2_RQSTS:DEMAND_DATA_RD_HIT",
+      "symbol": "f4"
+    }
+  ],
+  "observables": [
+    {
+      "name": "L1D cache hit ratio",
+      "formula": "f1 * 100 / (f1 + f2)",
+      "default": "0",
+      "format": [{
+		"unit": "%",
+		"spec": "4.1",
+		"group": "D-cache",
+		"column1": "L1D",
+		"column2": "%Hit"}]
+    },
+    {
+      "name": "L2D cache hit ratio",
+      "formula": "f4 * 100. / f3",
+      "default": "0",
+      "format": [{
+		"unit": "%",
+		"spec": "4.1",
+		"group": "D-cache",
+		"column1": "L2D",
+		"column2": "%Hit"}]
+    }
+  ]
+}
+

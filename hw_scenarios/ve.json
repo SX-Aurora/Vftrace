@@ -1,0 +1,117 @@
+{
+  "scenario_name": "VE",
+  "counters": [
+    {
+      "papi_name": "EX",
+      "symbol": "ex"
+    },
+    {
+      "papi_name": "VX",
+      "symbol": "vx"
+    },
+    {
+      "papi_name": "FPEC",
+      "symbol": "fpec"
+    },
+    {
+      "papi_name": "VE",
+      "symbol": "ve"
+    },
+    {
+      "papi_name": "VECC",
+      "symbol": "vecc"
+    },
+    {
+      "papi_name": "L1MCC",
+      "symbol": "l1mcc"
+    },
+    {
+      "papi_name": "VE2",
+      "symbol": "ve2"
+    },
+    {
+      "papi_name": "VAREC",
+      "symbol": "varec"
+    },
+    {
+      "papi_name": "VLDEC",
+      "symbol": "vldec"
+    },
+    {
+      "papi_name": "PCCC",
+      "symbol": "pccc"
+    },
+    {
+      "papi_name": "VLEC",
+      "symbol": "vlec"
+    },
+    {
+      "papi_name": "VLCME2",
+      "symbol": "vlcme2"
+    },
+    {
+      "papi_name": "FMAEC",
+      "symbol": "fmaec"
+    },
+    {
+      "papi_name": "PTCC",
+      "symbol": "ptcc"
+    },
+    {
+      "papi_name": "TTCC",
+      "symbol": "ttcc"
+    }
+  ],
+  "observables": [
+    {
+      "name": "Vector performance",
+      "formula": "fpec * 1e-6",
+      "divide_by_runtime": "yes",
+      "default": "0",
+      "format": [{
+		"unit": "MFLOPS sustained",
+		"spec": "*.0",
+		"group": "",
+		"column1": "",
+		"column2": "MFLOPS"}]
+    },
+    {
+      "name": "Vector length",
+      "formula": "ve2 / vx + 0.5",
+      "divide_by_runtime": "no",
+      "protected": "vx",
+      "default": "0",
+      "format": [{
+		"unit": "",
+		"spec": "3.0",
+		"group": "",
+		"column1": "",
+		"column2": "VL"}]
+    },
+    {
+      "name": "Relative vector time",
+      "formula": "vecc * cycletime * 99.99",
+      "divide_by_runtime": "yes",
+      "default": "0",
+      "format": [{
+		"unit": "%",
+		"spec": "4.2",
+		"group": "",
+		"column1": "",
+		"column2": "%Vec"}]
+    },
+    {
+      "name": "Relative bank conflict time",
+      "formula": "pccc * cycletime * 99.99",
+      "divide_by_runtime": "yes",
+      "default": "0",
+      "format": [{
+		"unit": "%",
+		"spec": "4.2",
+		"group": "",
+		"column1": "",
+		"column2": "%Prt"}]
+    }
+  ]
+}
+

@@ -1,0 +1,71 @@
+{
+  "counters": [
+    {
+      "papi_name": "SIMD_FP_256:PACKED_SINGLE",
+      "symbol": "f1"
+    },
+    {
+      "papi_name": "SIMD_FP_256:PACKED_DOUBLE",
+      "symbol": "f2"
+    },
+    {
+      "papi_name": "FP_COMP_OPS_EXE:SSE_PACKED_SINGLE",
+      "symbol": "f3"
+    },
+    {
+      "papi_name": "FP_COMP_OPS_EXE:SSE_FP_PACKED_DOUBLE",
+      "symbol": "f4"
+    }
+  ],
+  "observables": [
+    {
+      "name": "AVX Vector single",
+      "formula": "f1 * 8 * 1e-6 / runtime",
+      "protected": "runtime",
+      "default": "0",
+      "format": [{
+		"unit": "MFLOPS sustained",
+		"spec": "*.0",
+		"group": "MFLOPS_______",
+		"column1": "AVX",
+		"column2": "Single"}]
+    },
+    {
+      "name": "AVX Vector double",
+      "formula": "f2 * 4 * 1e-6 / runtime",
+      "protected": "runtime",
+      "default": "0",
+      "format": [{
+		"unit": "MFLOPS sustained",
+		"spec": "*.0",
+		"group": "MFLOPS_______",
+		"column1": "AVX",
+		"column2": "Double"}]
+    },
+    {
+      "name": "SSE Vector single",
+      "formula": "f3 * 4 * 1e-6 / runtime",
+      "protected": "runtime",
+      "default": "0",
+      "format": [{
+		"unit": "MFLOPS sustained",
+		"spec": "*.0",
+		"group": "MFLOPS_______",
+		"column1": "SSEvector",
+		"column2": "Single"}]
+    },
+    {
+      "name": "SSE Vector double",
+      "formula": "f4 * 1e-6 * 2 / runtime",
+      "protected": "runtime",
+      "default": "0",
+      "format": [{
+		"unit": "MFLOPS sustained",
+		"spec": "*.0",
+		"group": "MFLOPS_______",
+		"column1": "SSEvector",
+		"column2": "Double"}]
+    }
+  ]
+}
+

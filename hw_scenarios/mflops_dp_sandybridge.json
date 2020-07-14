@@ -1,0 +1,71 @@
+{
+  "counters": [
+    {
+      "papi_name": "SIMD_FP_256:PACKED_DOUBLE",
+      "symbol": "f1"
+    },
+    {
+      "papi_name": "FP_COMP_OPS_EXE:SSE_FP_PACKED_DOUBLE",
+      "symbol": "f2"
+    },
+    {
+      "papi_name": "FP_COMP_OPS_EXE:SSE_SCALAR_DOUBLE",
+      "symbol": "f3"
+    },
+    {
+      "papi_name": "INST_RETIRED:ANY_P",
+      "symbol": "f4"
+    }
+  ],
+  "observables": [
+    {
+      "name": "AVX Vector double",
+      "formula": "f1 * 4 * 1e-6 / runtime",
+      "protected": "runtime",
+      "default": "0",
+      "format": [{
+		"unit": "MFLOPS sustained",
+		"spec": "*.0",
+		"group": "MFLOPS_DP______",
+		"column1": "AVX",
+		"column2": "Vector"}]
+    },
+    {
+      "name": "SSE Vector double",
+      "formula": "f2 * 2 * 1e-6 / runtime",
+      "protected": "runtime",
+      "default": "0",
+      "format": [{
+		"unit": "MFLOPS sustained",
+		"spec": "*.0",
+		"group": "MFLOPS_DP______",
+		"column1": "SSE",
+		"column2": "Vector"}]
+    },
+    {
+      "name": "SSE Scalar double",
+      "formula": "f3 * 1e-6 / runtime",
+      "protected": "runtime",
+      "default": "0",
+      "format": [{
+		"unit": "MFLOPS sustained",
+		"spec": "*.0",
+		"group": "MFLOPS_DP______",
+		"column1": "SSE",
+		"column2": "Scalar"}]
+    },
+    {
+      "name": "Clocks per instruction",
+      "formula": "cycles / f4",
+      "protected": "f4",
+      "default": "0",
+      "format": [{
+		"unit": "",
+		"spec": "*.0",
+		"group": "MFLOPS_DP______",
+		"column1": "Cost",
+		"column2": "CPI"}]
+    }
+  ]
+}
+

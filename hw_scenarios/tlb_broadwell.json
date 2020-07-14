@@ -1,0 +1,60 @@
+{
+  "scenario_name": "TLB + L3",
+  "CPU Type": "Skylake",
+  "counters": [
+    {
+      "papi_name": "PERF_COUNT_HW_CACHE_DTLB:ACCESS",
+      "symbol": "f1"
+    },
+    {
+      "papi_name": "PERF_COUNT_HW_CACHE_DTLB:MISS",
+      "symbol": "f2"
+    },
+    {
+      "papi_name": "LONGEST_LAT_CACHE:REFERENCES",
+      "symbol": "f3"
+    },
+    {
+      "papi_name": "LONGEST_LAT_CACHE:MISSES",
+      "symbol": "f4"
+    }
+  ],
+  "observables": [
+    {
+      "name": "TLB hit ratio",
+      "formula": "f1 * 100 / (f1 + f2)",
+      "default": "0",
+      "format": [{
+		"unit": "%",
+		"spec": "4.1",
+		"group": "Memory",
+		"column1": "TLB",
+		"column2": "%Hit"}]
+    },
+    {
+      "name": "Memory throughput",
+      "formula": "f4 * 64 * 1.e-9 / runtime",
+      "protected": "runtime",
+      "default": "0",
+      "format": [{
+		"unit": "GB/s sustained",
+		"spec": "4.3",
+		"group": "Memory",
+		"column1": "Mem",
+		"column2": "GB/s"}]
+    },
+    {
+      "name": "L3 cache hit ratio",
+      "formula": "(f3 - f4) * 100 / f3",
+      "protected": "f3",
+      "default": "0",
+      "format": [{
+		"unit": "%",
+		"spec": "4.1",
+		"group": "Memory",
+		"column1": "L3",
+		"column2": "%Hit"}]
+    }
+  ]
+}
+
