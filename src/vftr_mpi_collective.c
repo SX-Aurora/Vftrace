@@ -22,7 +22,7 @@
 #include "vftr_timer.h"
 #include "vftr_sync_messages.h"
 #include "vftr_mpi_environment.h"
-#include "vftr_mpi_buf_addr_const.c"
+#include "vftr_mpi_buf_addr_const.h"
 
 int vftr_MPI_Allgather(const void *sendbuf, int sendcount,
                        MPI_Datatype sendtype, void *recvbuf, int recvcount,

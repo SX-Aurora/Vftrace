@@ -16,7 +16,7 @@
 
 #ifdef _MPI
 
-SUBROUTINE MPI_Init(ierror)
+SUBROUTINE MPI_Init_f08(ierror)
    USE vftr_mpi_environment_c2F08, &
       ONLY : vftr_after_mpi_init
    USE mpi_f08, ONLY : PMPI_Init
@@ -33,9 +33,9 @@ SUBROUTINE MPI_Init(ierror)
 
    CALL vftr_after_mpi_init()
 
-END SUBROUTINE MPI_INIT
+END SUBROUTINE MPI_INIT_f08
 
-SUBROUTINE MPI_Finalize(ierror)
+SUBROUTINE MPI_Finalize_f08(ierror)
    USE vftr_mpi_environment_c2F08, &
       ONLY : vftr_finalize
    USE mpi_f08, ONLY : PMPI_Finalize
@@ -50,9 +50,9 @@ SUBROUTINE MPI_Finalize(ierror)
 
    CALL PMPI_Finalize(ierror)
 
-END SUBROUTINE MPI_Finalize
+END SUBROUTINE MPI_Finalize_f08
 
-SUBROUTINE MPI_Pcontrol(level)
+SUBROUTINE MPI_Pcontrol_f08(level)
    USE vftr_mpi_environment_c2F08, &
       ONLY : vftr_MPI_Pcontrol_F08
    
@@ -62,6 +62,6 @@ SUBROUTINE MPI_Pcontrol(level)
 
    CALL vftr_MPI_Pcontrol_F08(level)
 
-END SUBROUTINE MPI_Pcontrol
+END SUBROUTINE MPI_Pcontrol_f08
 
 #endif
