@@ -109,7 +109,7 @@ The graphical visualization tool for Vtrace profiles, Vfview, is located at http
 
 ## Authors
 
-Vftrace was originally conveived by Jan Boerhout.
+Vftrace was originally conceived by Jan Boerhout.
 The main authors are:
   - Felix Uhl (felix.uhl@emea.nec.com)
   - Christian Weiss (christian.weiss@emea.nec.com)
