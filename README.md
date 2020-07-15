@@ -105,7 +105,7 @@ Here, we register two PAPI events, for cache hits and misses, and assign a varia
 
 ## Graphical User Interface
 
-The graphical visualization tool for Vtrace profiles, Vfview, is located at https://github.com/NECD-BM/vfview.
+The graphical visualization tool for Vtrace profiles, Vfview, is located at https://github.com/SX-Aurora/Vfview.
 
 ## Authors
 
