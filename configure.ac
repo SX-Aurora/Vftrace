@@ -67,6 +67,18 @@ if test "$enable_vmap_offset_check" = yes; then
   fi 
   AC_MSG_RESULT([$use_vmap_offset])
 fi
+
+if test "$enable_mpi_profiling" = yes; then
+  AC_MSG_CHECKING([if Intel MPI is used])
+  check_if_intel_mpi='mpirun --version | grep Intel'
+  if AC_TRY_EVAL(check_if_intel_mpi); then
+    uses_intel_mpi=yes
+  else
+    uses_intel_mpi=no
+  fi
+  AC_MSG_RESULT([$uses_intel_mpi])
+fi 
+AM_CONDITIONAL([USES_INTEL_MPI], [test "$uses_intel_mpi" = "yes"])
 	
    
 

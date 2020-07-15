@@ -19,7 +19,10 @@
 SUBROUTINE MPI_INIT(IERROR)
    USE vftr_mpi_environment_c2F, &
       ONLY : vftr_after_mpi_init
-   USE mpi, ONLY : PMPI_INIT
+   ! Intel MPI locates the PMPI symbols in a different module (pmpi_f08) than
+   ! prescribed by the MPI standard (3.1). Configure checks which MPI is used
+   ! and sets the value of PMPI_MODULE accordingly.
+   USE PMPI_MODULE, ONLY : PMPI_INIT
 
    IMPLICIT NONE
 
@@ -34,7 +37,7 @@ END SUBROUTINE MPI_INIT
 SUBROUTINE MPI_FINALIZE(IERROR)
    USE vftr_mpi_environment_c2F, &
       ONLY : vftr_finalize
-   USE mpi, ONLY : PMPI_FINALIZE
+   USE PMPI_MODULE, ONLY : PMPI_FINALIZE
 
    IMPLICIT NONE
 
