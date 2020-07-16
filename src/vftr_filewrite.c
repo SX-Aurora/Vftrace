@@ -402,6 +402,7 @@ void set_formats (function_t **funcTable, double runtime,
 	format->func_name = MIN_FUNC_NCHAR;
 	format->caller_name = MIN_CALLER_NCHAR;
 	format->incl_time = MIN_INCTIME_NCHAR;
+        format->excl_time = MIN_EXCLTIME_NCHAR;
 	// 
 	for (int i = 0; i < n_indices; i++) {
 		int i_func = indices[i];
