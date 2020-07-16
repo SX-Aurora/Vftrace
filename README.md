@@ -22,7 +22,7 @@ We recommend to compile your application with the same compiler you used to comp
   - Intel
   - NEC
 
-For hardware counter support on x86 systems, PAPI is required: https://icl.utk.edu/papi/
+For hardware counter support on x86 systems, PAPI (at least version 5) is required: https://icl.utk.edu/papi/
 
 ## Basic Principle
 
