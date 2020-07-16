@@ -103,6 +103,8 @@ PAPI has a list of native hardware events, which depends on the actual CPU you a
 ```
 Here, we register two PAPI events, for cache hits and misses, and assign a variable to each of them. With these variables, we define the observable "L1D cache hit ratio". In the text output, its value will appear next to the run times for each function stack.
 
+The environment variable `VFTR_SCENARIO_FILE` is used to read in the scenario file. 
+
 ## Graphical User Interface
 
 The graphical visualization tool for Vtrace profiles, Vfview, is located at https://github.com/SX-Aurora/Vfview.
