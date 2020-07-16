@@ -43,7 +43,7 @@ evtcounter_t  *first_counter = NULL;
 int vftr_n_hw_obs;
 bool vftr_events_enabled;
 long long *vftr_prog_cycles;
-int err_no_hwc_support = 0;
+bool err_no_hwc_support = false;
 int  *eventSet;
 
 long long vftr_echwc[MAX_HWC_EVENTS];
@@ -97,7 +97,7 @@ void vftr_init_papi_counters () {
         fprintf(vftr_log, "vftr_init_counters error: "
                           "PAPI_library_init returned %d, "
                           "no h/w event counter support\n", diag);
-        err_no_hwc_support = 1;
+        err_no_hwc_support = true;
         return;
     }
     eventSet = (int *) malloc (vftr_omp_threads * sizeof(int));
@@ -144,7 +144,7 @@ int eventset_is_filled () {
 void vftr_start_hwcounters () {
     evtcounter_t *evc;
 
-    if (err_no_hwc_support || hwc_events_num == 0) return;
+    if (err_no_hwc_support) return;
 
 #ifdef _OPENMP
 #pragma omp parallel
@@ -152,10 +152,11 @@ void vftr_start_hwcounters () {
 {
     char errmsg[256];
     evtcounter_t *e;
-    diag, me = OMP_GET_THREAD_NUM;
+    int diag, omp_thread = OMP_GET_THREAD_NUM;
+    int i;
 
-    for (int i = 0, e = first_counter; e; i++, e = e->next) {
-           if ((diag = PAPI_add_event(eventSet[me], e->id)) != PAPI_OK) {
+    for (i = 0, e = first_counter; e; i++, e = e->next) {
+           if ((diag = PAPI_add_event(eventSet[omp_thread], e->id)) != PAPI_OK) {
 	       PAPI_perror( errmsg );
 	       fprintf(vftr_log, "vftr_start_hwcounters - "
                                  "PAPI_add_event error: %s when adding %s\n",
@@ -163,7 +164,7 @@ void vftr_start_hwcounters () {
            }
     }
     if (eventset_is_filled()) {
-    	if ((diag = PAPI_start(eventSet[me])) != PAPI_OK) {
+    	if ((diag = PAPI_start(eventSet[omp_thread])) != PAPI_OK) {
     	    PAPI_perror( errmsg );
     	    fprintf(stdout, "vftr_start_hwcounters - PAPI_start error: %s\n", errmsg);
     	}
@@ -193,10 +194,10 @@ int vftr_init_hwc (char *scenario_file) {
     }
 
 #if defined(HAS_PAPI)
-    vftr_init_hwcounters();
+    vftr_start_hwcounters();
     hwinfo  = PAPI_get_hardware_info();
     if (hwinfo == NULL) {
-        err_no_hwc_support = 1;
+        err_no_hwc_support = true;
         return -2;
     }
     int vftr_cpumodel   = hwinfo->model;
@@ -287,7 +288,6 @@ int vftr_stop_hwc () {
     if (( diag = PAPI_stop(eventSet[me], ec)) != PAPI_OK)
     fprintf(vftr_log, "vftr_stop_hwc error: PAPI_stop returned %d\n", diag);
 }
-}
 #endif
     return diag;
 }
@@ -302,7 +302,7 @@ evtcounter_t  *vftr_get_counters( void ) {
 
 int vftr_find_event_number (char *s) {
 #if defined(HAS_PAPI)
-    int stat;
+    int i, stat;
     if ((stat = PAPI_event_name_to_code(strdup(s), &i)) == PAPI_OK) {
        return i;
     }
