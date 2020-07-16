@@ -90,6 +90,7 @@ libvftrace_la_SOURCES = $(SRCPATH)/demangle.cpp \
 		       $(SRCPATH)/vftr_fileutils.c \
 		       $(SRCPATH)/vftr_hashing.c \
 		       $(SRCPATH)/vftr_sorting.c \
+		       $(SRCPATH)/vftr_monitoring_thread.c \
 		       $(SRCPATH)/vftr_stacks.c \
 		       $(SRCPATH)/vftr_user_stack.c \
 		       $(SRCPATH)/vftr_functions.c \

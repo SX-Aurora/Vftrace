@@ -41,6 +41,7 @@
 #include "vftr_hooks.h"
 #include "vftr_loadbalance.h"
 #include "vftr_timer.h"
+#include "vftr_monitoring_thread.h"
 
 bool vftr_timer_end;
 
@@ -333,6 +334,9 @@ void vftr_initialize() {
         }
     }
 
+    // Create monitoring thread
+    vftr_create_monitor_thread(vftr_interval);
+
     /* Define signal handlers */
     if (!vftr_environment->signals_off->value) {
 	vftr_define_signal_handlers ();
@@ -378,7 +382,6 @@ void vftr_calc_tree_format (function_t *func) {
 void vftr_finalize() {
     int            i, me, ntop = 0;
     function_t     **funcTable;
-
     if (vftr_off())  return;
 
     // get the total runtime
@@ -387,6 +390,9 @@ void vftr_finalize() {
     long long time0 = timer - vftr_inittime;
 
     vftr_timer_end = true;
+
+    // join monitoring thread into main thread
+    vftr_join_monitor_thread();
 
     // Mark end of non-parallel interval
     if (vftr_env_do_sampling()) {
