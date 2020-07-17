@@ -150,10 +150,10 @@ function_t *vftr_new_function(void *arg, const char *function_name,
 
    if (vftr_n_hw_obs > 0) {
    	for (int i = 0; i < vftr_omp_threads; i++) {
-   	   func->prof_current[i].event_count = (long long*) malloc(vftr_n_hw_obs);
-   	   func->prof_previous[i].event_count = (long long*) malloc(vftr_n_hw_obs);
-   	   memset (func->prof_current[i].event_count, 0, vftr_n_hw_obs);
-   	   memset (func->prof_previous[i].event_count, 0, vftr_n_hw_obs);
+   	   func->prof_current[i].event_count = (long long*) malloc(vftr_n_hw_obs * sizeof(long long));
+   	   func->prof_previous[i].event_count = (long long*) malloc(vftr_n_hw_obs * sizeof(long long));
+   	   memset (func->prof_current[i].event_count, 0, vftr_n_hw_obs * sizeof(long long));
+   	   memset (func->prof_previous[i].event_count, 0, vftr_n_hw_obs * sizeof(long long));
    	}
    }
 
