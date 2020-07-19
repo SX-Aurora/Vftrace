@@ -286,10 +286,10 @@ void vftr_initialize() {
 
     if (vftr_n_hw_obs  > 0) {
     	for (int i = 0; i < vftr_omp_threads; i++) {
-    	    vftr_prof_data[i].events[0] = (long long *) malloc (vftr_n_hw_obs);
-    	    vftr_prof_data[i].events[1] = (long long *) malloc (vftr_n_hw_obs);
-    	    memset (vftr_prof_data[i].events[0], 0, n);
-    	    memset (vftr_prof_data[i].events[1], 0, n);
+    	    vftr_prof_data[i].events[0] = (long long *) malloc (vftr_n_hw_obs * sizeof(long long));
+    	    vftr_prof_data[i].events[1] = (long long *) malloc (vftr_n_hw_obs * sizeof(long long));
+    	    memset (vftr_prof_data[i].events[0], 0, vftr_n_hw_obs * sizeof(long long));
+    	    memset (vftr_prof_data[i].events[1], 0, vftr_n_hw_obs * sizeof(long long));
     	}
     }
 
