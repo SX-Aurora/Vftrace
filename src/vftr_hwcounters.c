@@ -38,7 +38,8 @@
 
 int vftr_find_event_number (char *);
 
-evtcounter_t  *first_counter = NULL;
+evtcounter_t *first_counter = NULL;
+evtcounter_t *next_counter = NULL;
 
 int vftr_n_hw_obs;
 bool vftr_events_enabled;
@@ -61,13 +62,14 @@ void vftr_new_counter (char *name, int id, int rank) {
     evc->namelen = strlen( name );
     evc->count   = (long long *) malloc( vftr_omp_threads * sizeof( long long ) );
     evc->next    = NULL;
-    evc->scen    = 0;
     evc->decipl  = 1;
     evc->id      = id;
     evc->rank    = rank;
 
     if (!first_counter) {
-	first_counter = evc;
+	first_counter = next_counter = evc;
+    } else {
+	next_counter = next_counter->next = evc;
     }
 
     memset (evc->count, 0, vftr_omp_threads * sizeof(long long));
@@ -209,11 +211,6 @@ int vftr_init_hwc (char *scenario_file) {
 #elif defined(HAS_PAPI)
     scenario_expr_add_papi_counters ();
 #endif
-
-    /* Mark first ones as part of a scenario */
-    for (evc = first_counter; evc; evc = evc->next) {
-	evc->scen = 1;
-    }
 
 #if defined(HAS_PAPI)
     vftr_start_hwcounters();

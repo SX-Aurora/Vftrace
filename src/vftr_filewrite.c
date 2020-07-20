@@ -303,7 +303,7 @@ void print_stack_time (FILE *fp, int calls, char *fmttime, char *fmttimeInc, flo
 void set_evc_decipl (int n_indices, int n_scenarios, evtcounter_t *evc1, evtcounter_t *evc) {
     int e;
     for (int i = 0; i < n_indices; i++) {
-        for (e = n_scenarios, evc = evc1; evc; e++, evc = evc->next) {
+        for (e = 0, evc = evc1; evc; e++, evc = evc->next) {
             compute_column_width (scenario_expr_counter_values[e], &evc->decipl);
         }
     }
@@ -395,9 +395,12 @@ void set_formats (function_t **funcTable, double runtime,
 	for (format->fid = 0, ev = vftr_gStackscount; ev; ev /= 10, format->fid++);
 	for (format->rank = 0, ev = vftr_mpisize; ev; ev /= 10, format->rank++);
 	for (format->thread = 0, ev = vftr_omp_threads; ev; ev /= 10, format->thread++);
-	if (format->fid < 4) format->fid = 2;
-	if (format->rank < 2) format->rank = 2;
-	if (format->thread < 2) format->thread = 2;
+	//if (format->fid < 4) format->fid = 2;
+	//if (format->rank < 2) format->rank = 2;
+	//if (format->thread < 2) format->thread = 2;
+	format->fid = 2;
+	format->rank = 2;
+	format->thread = 2;
 	format->n_calls = MIN_CALLS_NCHAR;
 	format->func_name = MIN_FUNC_NCHAR;
 	format->caller_name = MIN_CALLER_NCHAR;
@@ -469,9 +472,7 @@ void vftr_print_profile (FILE *pout, int *ntop, long long time0) {
     }
 
     evc1 = evc0 = vftr_get_counters();
-    int n_scenarios = 0;
     /* Find first event counter after scenario counters */
-    for (;  evc1 && evc1->scen; n_scenarios++, evc1 = evc1->next);
 
     if (!vftr_stackscount) return;
 
@@ -577,7 +578,7 @@ void vftr_print_profile (FILE *pout, int *ntop, long long time0) {
     set_formats (funcTable, application_runtime, n_indices, indices, formats);
     formats->caller_name++; /* One more place to contain the asterisk marking missing event counts */
     if (vftr_events_enabled) {
-    	set_evc_decipl (n_indices, n_scenarios, evc1, evc);
+    	set_evc_decipl (n_indices, vftr_n_hw_obs, evc1, evc);
     }
 
     /* Offset of first full event counter name header */
@@ -597,7 +598,7 @@ void vftr_print_profile (FILE *pout, int *ntop, long long time0) {
     
     tableWidth = offset;
     if (vftr_events_enabled) {
-    	int j = n_scenarios;
+    	int j = 0;
     	for (evc = evc1; evc; evc = evc->next ) {
     	    if (ectot[j++]) tableWidth += evc->decipl + 1;
     	}
@@ -653,7 +654,7 @@ void vftr_print_profile (FILE *pout, int *ntop, long long time0) {
     }
 
     if (vftr_events_enabled) {
-    	int j = n_scenarios;
+    	int j = 0;
     	for (evc = evc1; evc; evc = evc->next) {
     	    if (ectot[j++]) {
     	        output_header (evc->name, evc->decipl, pout);
@@ -709,8 +710,8 @@ void vftr_print_profile (FILE *pout, int *ntop, long long time0) {
 	    	//Formats should be set at this point
 	    	scenario_expr_print_all_columns (pout);
 
-        	int j = n_scenarios;
-        	for (k = n_scenarios, evc = evc1; k < vftr_n_hw_obs; k++, evc = evc->next) {
+        	int j = 0;
+        	for (k = 0, evc = evc1; k < vftr_n_hw_obs; k++, evc = evc->next) {
         	    if (ectot[j++]) {
 				fprintf (pout, evc->fmt, scenario_expr_counter_values[k]);
 		    }

@@ -24,7 +24,7 @@
 #define SCENARIO_NAME_LEN 32
 
 typedef struct EventCounter {
-    int                 rank, id, scen, namelen, decipl;
+    int                 rank, id, namelen, decipl;
     long long           *count;
     char                *name, fmt[10];
     struct EventCounter *next;
