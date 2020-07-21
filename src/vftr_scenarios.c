@@ -45,7 +45,7 @@ void vftr_write_scenario_header_to_vfd (FILE *fp) {
 
 /**********************************************************************/
 
-void vftr_write_observables_to_vfd (long long cycles, FILE *fp) {
+void vftr_write_observables_to_vfd (unsigned long long cycles, FILE *fp) {
 #if defined(HAS_VEPERF) || defined(HAS_PAPI)
 	scenario_expr_evaluate_all (0., cycles);
 	for (int i = 0; i < scenario_expr_n_formulas; i++) {
@@ -310,9 +310,10 @@ int variable_index (char *varname) {
 
 /**********************************************************************/
 
-void scenario_expr_evaluate (int i_scenario, double runtime, double cycles) {
+//void scenario_expr_evaluate (int i_scenario, double runtime, double cycles) {
+void scenario_expr_evaluate (int i_scenario, double runtime, unsigned long long cycles) {
 	scenario_expr_runtime = runtime;
-	scenario_expr_cycles = cycles;
+	scenario_expr_cycles = (double)cycles;
 	scenario_expr_cycletime = cycles / runtime;
 	int i_protected = scenario_expr_formulas[i_scenario].protected_values ?
 		variable_index (scenario_expr_formulas[i_scenario].protected_values) : -1;
@@ -334,11 +335,15 @@ void scenario_expr_evaluate (int i_scenario, double runtime, double cycles) {
 			scenario_expr_formulas[i_scenario].value /= runtime;
 		}
 	}
+	if (i_scenario == 2) {
+		printf ("value: %lf\n", scenario_expr_formulas[i_scenario].value);
+	}
 }
 
 /**********************************************************************/
 
-void scenario_expr_evaluate_all (double runtime, double cycles) {
+//void scenario_expr_evaluate_all (double runtime, double cycles) {
+void scenario_expr_evaluate_all (double runtime, unsigned long long cycles) {
 	for (int i = 0; i < scenario_expr_n_formulas; i++) {
 		scenario_expr_evaluate (i, runtime, cycles);
 	}

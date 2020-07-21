@@ -44,8 +44,8 @@ int vftr_compare (const void *a1, const void *a2) {
     function_t *f2 = *(function_t **)a2;
     if(!f2) return -1; /* Order important to work around SX qsort problem */
     if(!f1) return  1;
-    long long t1 = f1->prof_current[0].timeExcl -f1->prof_previous[0].timeExcl;
-    long long t2 = f2->prof_current[0].timeExcl -f2->prof_previous[0].timeExcl;
+    long long t1 = f1->prof_current[0].timeExcl - f1->prof_previous[0].timeExcl;
+    long long t2 = f2->prof_current[0].timeExcl - f2->prof_previous[0].timeExcl;
     long long diff = t2 - t1;
     if( diff > 0 ) return  1;
     if( diff < 0 ) return -1;
@@ -72,7 +72,8 @@ void vftr_save_old_state (int me) {
 
 void vftr_function_entry (const char *s, void *addr, int line, bool isPrecise) {
     int e, me, read_counters;
-    long long timer, time0, delta;
+    //unsigned long long timer, time0, delta;
+    unsigned long long timer, cycles0, delta;
     double wtime;
     static int vftr_init = 1;
     bool time_to_sample = false;

@@ -146,7 +146,7 @@ void vftr_finalize_vfd_file (long long finalize_time, int signal_number) {
 
 /**********************************************************************/
 
-void vftr_write_to_vfd(long long runtime, long long cycles, int stack_id, unsigned int sid, int me) {
+void vftr_write_to_vfd(long long runtime, unsigned long long cycles, int stack_id, unsigned int sid, int me) {
     fwrite (&sid, sizeof(unsigned int), 1, vftr_vfd_file[me]);
     fwrite (&stack_id, sizeof(int), 1, vftr_vfd_file[me]);
     fwrite (&runtime, sizeof(long long), 1, vftr_vfd_file[me]);
@@ -187,7 +187,7 @@ void vftr_store_message_info(vftr_direction dir, int count, int type_idx,
 void vftr_write_profile () {
     int            i, j, tid, zero = 0;
     double         rtime;
-    long long      totalCycles, calls, cycles, *ec;
+    unsigned long long      totalCycles, calls, cycles, *ec;
     evtcounter_t    *evc;
     FILE           *fp = vftr_vfd_file[0];
 
@@ -435,7 +435,8 @@ void set_formats (function_t **funcTable, double runtime,
         	compute_column_width (t_incl * 10000., &(format->incl_time));
 
 		if (vftr_events_enabled) {
-		    int cycles = prof_current->cycles - prof_previous->cycles;
+		    //int cycles = prof_current->cycles - prof_previous->cycles;
+		    unsigned long long cycles = prof_current->cycles - prof_previous->cycles;
 		    scenario_expr_evaluate_all (t_excl, cycles);
 		    scenario_expr_set_formats ();
 	        }
@@ -450,7 +451,7 @@ void vftr_print_profile (FILE *pout, int *ntop, long long time0) {
     float          pscale, ctime;
     double         rtime, tohead, pohead, tend, tend2;
     double         clockFreq;
-    long long      totalCycles, calls, cycles;
+    unsigned long long      totalCycles, calls, cycles;
     evtcounter_t    *evc0, *evc1, *evc;
     
     int            n, k, fid;

@@ -64,6 +64,8 @@ long long vftr_inittime;
 // What is this for?
 long long vftr_inittime1;
 
+long long vftr_initcycles;
+
 // A time interval indicating when the function table should be sorted.
 // This is done also to dynamically assign the "detail" flag if the weight
 // of a function (in terms of cumulative cycles) grows. 

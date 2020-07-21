@@ -294,6 +294,7 @@ void vftr_initialize() {
     }
 
     vftr_inittime = vftr_get_runtime_usec ();
+    vftr_initcycles = vftr_get_cycles();
     // convert the sampletime and timelimit to microseconds
     vftr_interval  = (long long) (vftr_environment->sampletime->value * 1.0e6);
     assert (vftr_interval > 0ll);
@@ -344,6 +345,7 @@ void vftr_initialize() {
     
     fflush (stdout);
     vftr_inittime = vftr_get_runtime_usec (); /* Will be updated later if MPI used */
+    vftr_initcycles = vftr_get_cycles();
     
     // get the time to estimate vftrace overhead
     long long overhead_time_end = vftr_get_runtime_usec();

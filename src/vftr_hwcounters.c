@@ -306,3 +306,12 @@ int vftr_find_event_number (char *s) {
 #endif
     return -1;
 }
+
+unsigned long long vftr_get_cycles () {
+  unsigned long long hrTime;
+#if defined (__ve__)
+  void *vehva = (void *)0x000000001000;
+  asm volatile ("lhm.l %0,0(%1)" : "=r" (hrTime) : "r" (vehva));
+#endif
+  return hrTime;
+}

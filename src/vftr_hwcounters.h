@@ -49,4 +49,6 @@ void vftr_read_counters (long long *event, int omp_thread);
 void vftr_papi_counter (char *name);
 void vftr_sx_counter (char *name, int id);
 
+unsigned long long vftr_get_cycles ();
+
 #endif
