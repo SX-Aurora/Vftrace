@@ -730,9 +730,7 @@ void vftr_print_profile (FILE *pout, int *ntop, long long time0) {
             }
         }
 
-
-        bool multiTask = vftr_mpisize > 1;
-	fid = (pout != stdout && multiTask) ? funcTable[i_func]->gid : funcTable[i_func]->id;
+	fid = funcTable[i_func]->gid;
         fprintf (pout, fmtfid, fid);
         fprintf (pout, "\n");
 

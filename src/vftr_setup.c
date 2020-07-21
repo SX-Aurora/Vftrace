@@ -399,12 +399,6 @@ void vftr_finalize() {
 
     vftr_print_profile (vftr_log, &ntop, time0);
 
-    if (vftr_mpisize == 1 && vftr_omp_threads == 1) {
-        vftr_print_local_stacklist (vftr_func_table, vftr_log, ntop);
-        vftr_print_local_demangled (vftr_func_table, vftr_log, ntop);
-    }
-    // else: stacks listed by vftr_print_global_stacklist after load balance table
-
     funcTable = vftr_func_table;
 
     callsTime_t **loadbalance_info;
@@ -428,19 +422,20 @@ void vftr_finalize() {
                 if (group_size <= 0) break;
                 vftr_print_loadbalance (loadbalance_info, group_base, group_size, vftr_log,
                                         loadIDs, &nLoadIDs);
-                vftr_print_global_stacklist (NULL, vftr_log, loadIDs, nLoadIDs);
+                vftr_print_global_stacklist (vftr_log);
 	        // Check if there is anything behind the comma of the environment variable. If so, proceed.
                 vftr_mpi_groups = *p ? p + 1 : p;
             }
         } else {
             vftr_print_loadbalance (loadbalance_info, 0, vftr_mpisize, vftr_log, loadIDs, &nLoadIDs);
-            vftr_print_global_stacklist (NULL, vftr_log, loadIDs, nLoadIDs);
+            vftr_print_global_stacklist (vftr_log);
         }
         if (valid_loadbalance_table) free (*loadbalance_info);
     }
 
-    if (vftr_profile_wanted && valid_loadbalance_table) {
-        vftr_print_local_stacklist( vftr_func_table, vftr_log, ntop );
+    if (vftr_profile_wanted) {
+    //if (vftr_profile_wanted && valid_loadbalance_table) {
+        vftr_print_global_stacklist(vftr_log);
         vftr_print_local_demangled( vftr_func_table, vftr_log, ntop );
     }
 
