@@ -110,6 +110,7 @@ libvftrace_la_LDFLAGS =
 
 if PAPI_AVAIL
 libvftrace_la_CFLAGS += -DHAS_PAPI -I$(PAPI_HOME)/include
+libvftrace_la_LDFLAGS += -L$(PAPI_HOME)/lib -lpapi
 endif
 
 if VEPERF_AVAIL
