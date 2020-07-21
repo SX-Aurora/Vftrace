@@ -707,6 +707,7 @@ void vftr_print_profile (FILE *pout, int *ntop, long long time0) {
         	    fprintf (pout, ratio < 99.95 ? "%4.1f " : "100. ", ratio);
         	}
         
+		unsigned long long cycles = prof_current->cycles - prof_previous->cycles;
 	    	scenario_expr_evaluate_all (rtime, cycles);
 	    	//Formats should be set at this point
 	    	scenario_expr_print_all_columns (pout);

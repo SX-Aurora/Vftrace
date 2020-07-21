@@ -72,8 +72,7 @@ void vftr_save_old_state (int me) {
 
 void vftr_function_entry (const char *s, void *addr, int line, bool isPrecise) {
     int e, me, read_counters;
-    //unsigned long long timer, time0, delta;
-    unsigned long long timer, cycles0, delta;
+    unsigned long long timer, time0, delta;
     double wtime;
     static int vftr_init = 1;
     bool time_to_sample = false;
@@ -228,7 +227,8 @@ void vftr_function_entry (const char *s, void *addr, int line, bool isPrecise) {
     }
 
     /* Compensate overhead */
-    vftr_prof_data[me].cycles = vftr_get_runtime_usec () - vftr_inittime;
+    //vftr_prof_data[me].cycles = vftr_get_runtime_usec () - vftr_inittime;
+    vftr_prof_data[me].cycles = vftr_get_cycles();
     // get the time to estimate vftrace overhead
     long long overhead_time_end = vftr_get_runtime_usec();
     vftr_prof_data[me].timeExcl = overhead_time_end;
@@ -259,7 +259,8 @@ void vftr_function_exit(int line) {
     long long overhead_time_start = func_exit_time;
 
     timer = vftr_get_runtime_usec ();
-    time0 = timer - vftr_inittime;
+    //time0 = timer - vftr_inittime;
+    long long cycles0 = vftr_get_cycles() - vftr_initcycles;
     func  = vftr_fstack[me];
     if (func->exclude_this) return;
 
@@ -390,7 +391,8 @@ void vftr_function_exit(int line) {
     }
 
     /* Compensate overhead */
-    vftr_prof_data[me].cycles = vftr_get_runtime_usec () - vftr_inittime;
+    //vftr_prof_data[me].cycles = vftr_get_runtime_usec () - vftr_inittime;
+    vftr_prof_data[me].cycles = vftr_get_cycles();
     // get the time to estimate vftrace overhead
     long long overhead_time_end = vftr_get_runtime_usec();
     vftr_prof_data[me].timeExcl = overhead_time_end;
