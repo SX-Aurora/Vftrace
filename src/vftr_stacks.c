@@ -89,6 +89,7 @@ void vftr_write_stacks (FILE *fp, int level, function_t *func) {
    int levels = level + 1;
    int ret = func->ret ? func->ret->id : 0;
    fwrite(&func->id, sizeof(int), 1, fp);
+   //fwrite(&func->gid, sizeof(int), 1, fp);
    fwrite(&levels, sizeof(int), 1, fp);
    fwrite(&ret, sizeof(int), 1, fp);
    fwrite(&len, sizeof(int), 1, fp);
@@ -150,18 +151,23 @@ int vftr_normalize_stacks() {
        vftr_gStackinfo = (gstackinfo_t*) malloc(vftr_gStackscount*sizeof(gstackinfo_t));
        // init the global stack info
        for (int istack=0; istack<vftr_gStackscount; istack++) {
-          vftr_gStackinfo[istack].ret = -1;
+          vftr_gStackinfo[istack].ret = -2;
           vftr_gStackinfo[istack].name = NULL;
+          vftr_gStackinfo[istack].locID = -1;
        }
        // fill in global info process 0 knows
        for (int istack=0; istack<vftr_stackscount; istack++) {
           int globID = local2global_ID[istack];
-          if (vftr_func_table[istack]->ret == NULL) {
-             vftr_gStackinfo[globID].ret = 0;
-          } else {
-             vftr_gStackinfo[globID].ret = vftr_func_table[istack]->ret->gid;
-          }
           vftr_gStackinfo[globID].name = strdup(vftr_func_table[istack]->name);
+          if (strcmp(vftr_gStackinfo[globID].name, "init")) {
+             // not the init function
+             vftr_gStackinfo[globID].ret = vftr_func_table[istack]->ret->gid;
+             vftr_gStackinfo[globID].locID = istack;
+          } else {
+             vftr_gStackinfo[globID].ret = -1;
+             vftr_gStackinfo[globID].locID = 0;
+          }
+
        }
 #ifdef _MPI
        // if there are multiple processes the table might still be missing entries
@@ -169,7 +175,7 @@ int vftr_normalize_stacks() {
        // see which entries are missing
        int nmissing = 0;
        for (int istack=0; istack<vftr_gStackscount; istack++) {
-          if (vftr_gStackinfo[istack].ret == -1) {
+          if (vftr_gStackinfo[istack].ret == -2) {
              nmissing++;
           }
        }
@@ -180,14 +186,14 @@ int vftr_normalize_stacks() {
           // count how many are still missing
           int nmissing= 0;
           for (int istack=0; istack<vftr_gStackscount; istack++) {
-             if (vftr_gStackinfo[istack].ret == -1) {
+             if (vftr_gStackinfo[istack].ret == -2) {
                 nmissing++;
              }
           }
           // collect the missing ids
           int imissing = 0;
           for (int istack=0; istack<vftr_gStackscount; istack++) {
-             if (vftr_gStackinfo[istack].ret == -1) {
+             if (vftr_gStackinfo[istack].ret == -2) {
                 missingStacks[imissing] = istack;
                 imissing++;
              }
@@ -379,7 +385,6 @@ void vftr_print_local_stacklist (function_t **funcTable, FILE *pout, int ntop) {
         if (maxID < id) maxID = id;
     }
 
-    namep--; /* Chop trailing space */
     COMPUTE_COLWIDTH( maxID, fidp, 2, fmtFid, " %%%dd "  )
     tableWidth = 1 + fidp+1 + namep;
 
@@ -469,59 +474,58 @@ void vftr_print_local_demangled (function_t **funcTable, FILE *pout, int ntop) {
 
 /**********************************************************************/
 
-void vftr_print_global_stacklist (callsTime_t **gCallsTime, FILE *pout, int *loadIDs, int nLoadIDs) {
-    char *fmtFid;
-    int  i, j, k, fidp, namep, tableWidth, maxID;
+void vftr_print_global_stacklist (FILE *pout) {
 
-    /* Compute column and table widths */
+   // Compute column and table widths
+   // loop over all stacks to find the longest one
+   int maxstrlen = 0;
+   for (int istack=0; istack<vftr_gStackscount; istack++) {
+      int jstack = istack;
+      // follow the functions until they reach the bottom of the stack
+      int stackstrlength = 0;
+      while (vftr_gStackinfo[jstack].locID && vftr_gStackinfo[jstack].ret >= 0) {
+         stackstrlength += strlen(vftr_gStackinfo[jstack].name);
+         stackstrlength ++;
+         jstack = vftr_gStackinfo[jstack].ret;
+      } 
+      stackstrlength += strlen(vftr_gStackinfo[jstack].name);
+      if (stackstrlength > maxstrlen) maxstrlen = stackstrlength;
+   }
+   int maxID = vftr_gStackscount;
+   maxstrlen--; // Chop trailing space
+   char *fmtFid;
+   int fidp;
+   COMPUTE_COLWIDTH( maxID, fidp, 2, fmtFid, " %%%dd "  )
+   int tableWidth = 1 + fidp+1 + maxstrlen;
 
-    for( k=0,namep=0,maxID=0; k<nLoadIDs; k++ ) {
-        int width, id;
-        id = loadIDs[k];
-        for( j=id,width=0; j; j = vftr_gStackinfo[j].ret )
-	    width += strlen(vftr_gStackinfo[j].name)+1;
-        if( namep < width ) namep = width;
-        if( maxID < id    ) maxID = id;
-    }
-    namep--; /* Chop trailing space */
-    COMPUTE_COLWIDTH( maxID, fidp, 2, fmtFid, " %%%dd "  )
-    tableWidth = 1 + fidp+1 + namep;
+   /* Print headers */
 
-    /* Print headers */
+   fputs( "Call stacks\n", pout );
 
-    fputs( "Call stacks\n", pout );
+   OUTPUT_DASHES_NL( tableWidth, pout )
 
-    OUTPUT_DASHES_NL( tableWidth, pout )
+   fputs( " ", pout );
+   OUTPUT_HEADER( "ID", fidp, pout )
+   fputs( "Function call stack\n", pout );
 
-    fputs( " ", pout );
-    OUTPUT_HEADER( "ID", fidp, pout )
-    fputs( "Function call stack\n", pout );
+   fputs( " ", pout );
+   OUTPUT_DASHES_SP_2( fidp, maxstrlen, pout )
+   fputs( "\n", pout );
 
-    fputs( " ", pout );
-    OUTPUT_DASHES_SP_2( fidp, namep, pout )
-    fputs( "\n", pout );
+   /* Print table */
 
-    /* Print table */
+   for(int istack=0; istack<vftr_gStackscount; istack++) {
+      int jstack = istack;
+      fprintf( pout, fmtFid, istack);
+      while (vftr_gStackinfo[jstack].locID && vftr_gStackinfo[jstack].ret >= 0) {
+         fprintf(pout, "%s", vftr_gStackinfo[jstack].name);
+         fprintf(pout, "<");
+         jstack = vftr_gStackinfo[jstack].ret;
+      }
+      fprintf(pout, "%s", vftr_gStackinfo[jstack].name);
+      fprintf(pout, "\n");
+   }
 
-    for( k=0; k<nLoadIDs; k++ ) {
-        char *sep;
-        i = loadIDs[k];
-        fprintf( pout, fmtFid, i );
-        for( j=i,sep=""; j; j = vftr_gStackinfo[j].ret,sep="<" ) {
-	    fprintf( pout, "%s%s", sep, vftr_gStackinfo[j].name );
-        }
-        fprintf( pout, "\n" );
-        /* Find global ID in function table - FIXME: linear search */
-        for (j = 0; j < vftr_stackscount; j++)
-            if( vftr_func_table[j]->gid == i ) break;
-        if (j < vftr_stackscount) {
-            char *full = vftr_func_table[j]->full;
-            if( full ) {
-                fprintf( pout, fmtFid, i );
-                fprintf( pout, "[%s]\n", full );
-            }
-        }
-    }
-    OUTPUT_DASHES_NL( tableWidth, pout )
-    fputs( "\n", pout );
+   OUTPUT_DASHES_NL( tableWidth, pout )
+   fputs( "\n", pout );
 }

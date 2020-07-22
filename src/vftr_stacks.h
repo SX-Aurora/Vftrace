@@ -48,6 +48,8 @@ typedef struct StackInfo {
 typedef struct GStackInfo {
    // global id of the calling function
    int  ret;
+   // local id of the current function
+   int locID;
    // function name string of the current function
    char *name;
 } gstackinfo_t;
@@ -94,6 +96,6 @@ int vftr_normalize_stacks();
 void vftr_print_stack (int tid, double time, function_t *func, char *label, int timeToSample);
 void vftr_print_local_stacklist (function_t **funcTable, FILE *pout, int ntop);
 void vftr_print_local_demangled (function_t **funcTable, FILE *pout, int ntop);
-void vftr_print_global_stacklist (callsTime_t **gCallsTime, FILE *pout, int *list, int nlist);
+void vftr_print_global_stacklist (FILE *pout);
 
 #endif
