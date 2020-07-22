@@ -73,6 +73,7 @@ void vftr_save_old_state (int me) {
 void vftr_function_entry (const char *s, void *addr, int line, bool isPrecise) {
     int e, me, read_counters;
     unsigned long long timer, time0, delta;
+    unsigned long long cycles0;
     double wtime;
     static int vftr_init = 1;
     bool time_to_sample = false;
@@ -91,6 +92,7 @@ void vftr_function_entry (const char *s, void *addr, int line, bool isPrecise) {
     me = OMP_GET_THREAD_NUM;
     timer = vftr_get_runtime_usec ();
     time0 = timer - vftr_inittime;
+    cycles0 = vftr_get_cycles() - vftr_initcycles;
 
     // This is the hook for shared libraries opened during the
     // application's runtime. The preloaded library vftr_dlopen.so
@@ -202,11 +204,13 @@ void vftr_function_entry (const char *s, void *addr, int line, bool isPrecise) {
 
     if (func->ret && func->ret->prof_current) {
         fprof = &func->ret->prof_current[me];
-        delta = time0 - prof->cycles;
+        //delta = time0 - prof->cycles;
+        delta = cycles0 - prof->cycles;
         fprof->cycles += delta;
         fprof->timeExcl += func_entry_time - prof->timeExcl;
         vftr_prog_cycles[me] += delta;
-        func->prof_current[me].cycInc -= time0;
+        //func->prof_current[me].cycInc -= time0;
+        func->prof_current[me].cycInc -= cycles0;
         func->prof_current[me].timeIncl -= func_entry_time;
 	if (read_counters) {
             int ic = prof->ic;
@@ -240,6 +244,7 @@ void vftr_function_entry (const char *s, void *addr, int line, bool isPrecise) {
 void vftr_function_exit(int line) {
     int           e, me, read_counters, timeToSample;
     long long     time0, timer, delta;
+    unsigned long long cycles0;
     function_t    *func;
     double        wtime;
     profdata_t    *prof, *fprof;
@@ -260,6 +265,7 @@ void vftr_function_exit(int line) {
 
     timer = vftr_get_runtime_usec ();
     time0 = timer - vftr_inittime;
+    cycles0 = vftr_get_cycles() - vftr_initcycles;
     func  = vftr_fstack[me];
     if (func->exclude_this) return;
 
@@ -276,7 +282,8 @@ void vftr_function_exit(int line) {
 
     prof   = &vftr_prof_data[me];
     fprof  = &func->prof_current[me];
-    fprof->cycInc += time0;   /* Inclusive time */
+    //fprof->cycInc += time0;   /* Inclusive time */
+    fprof->cycInc += cycles0;   /* Inclusive time */
     fprof->timeIncl += func_exit_time;   /* Inclusive time */
     
     vftr_fstack[me] = func->ret;
@@ -310,15 +317,18 @@ void vftr_function_exit(int line) {
 
     /* Maintain profile info */
 
-    fprof->cycles += time0;
+    //fprof->cycles += time0;
+    fprof->cycles += cycles0;
     fprof->timeExcl += func_exit_time;
-    vftr_prog_cycles[me]  += time0;
+    //vftr_prog_cycles[me]  += time0;
+    vftr_prog_cycles[me]  += cycles0;
     if( func->ret ) {
         fprof->cycles -= prof->cycles;
         fprof->timeExcl -= prof->timeExcl;
         vftr_prog_cycles[me] -= prof->cycles;
     }
-    delta = time0 - prof->cycles;
+    //delta = time0 - prof->cycles;
+    delta = cycles0 - prof->cycles;
     if (read_counters) {
         int ic = prof->ic;
         vftr_read_counters (prof->events[ic], me);
