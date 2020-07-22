@@ -196,7 +196,7 @@ void vftr_write_profile () {
     if (!vftr_stackscount)return;
     funcTable = vftr_func_table;
 
-    ec = (long long *) malloc (vftr_n_hw_obs * sizeof(long long));
+    ec = (unsigned long long *) malloc (vftr_n_hw_obs * sizeof(long long));
     for (j = 0; j < vftr_n_hw_obs; j++) {
 	ec[j] = 0;
     }
@@ -524,7 +524,7 @@ void vftr_print_profile (FILE *pout, int *ntop, long long time0) {
     /* Print all raw counter totals */
     fprintf( pout, "\nRaw counter totals\n"
             "------------------------------------------------------------\n"
-            "%-37s : %20lld\n", 
+            "%-37s : %20llu\n", 
             "Time Stamp Counter", totalCycles  );
     if (vftr_events_enabled) {
     	scenario_expr_print_raw_counters (pout);
