@@ -78,7 +78,7 @@ void vftr_function_entry (const char *s, void *addr, int line, bool isPrecise) {
     static int vftr_init = 1;
     bool time_to_sample = false;
     function_t *caller, *func, *callee;
-    profdata_t *prof, *fprof;
+    profdata_t *prof_return;
 
     if (vftr_init) {
 	vftr_initialize ();
@@ -128,7 +128,7 @@ void vftr_function_entry (const char *s, void *addr, int line, bool isPrecise) {
 #pragma omp critical
 #endif
 {
-    prof   = &vftr_prof_data[me];
+    //prof   = &vftr_prof_data[me];
 
     //
     // Check if the function is in the table
@@ -203,30 +203,31 @@ void vftr_function_entry (const char *s, void *addr, int line, bool isPrecise) {
     // Maintain profile
 
     if (func->ret && func->ret->prof_current) {
-        fprof = &func->ret->prof_current[me];
+        //fprof = &func->ret->prof_current[me];
+        prof_return = &func->ret->prof_current[me];
         //delta = time0 - prof->cycles;
-        delta = cycles0 - prof->cycles;
-        fprof->cycles += delta;
-        fprof->timeExcl += func_entry_time - prof->timeExcl;
+        delta = cycles0 - vftr_prof_data[me].cycles;
+	prof_return->cycles += delta;
+        vftr_prof_data[me].timeExcl += func_entry_time - vftr_prof_data[me].timeExcl;
         vftr_prog_cycles[me] += delta;
         //func->prof_current[me].cycInc -= time0;
         func->prof_current[me].cycInc -= cycles0;
         func->prof_current[me].timeIncl -= func_entry_time;
 	if (read_counters) {
-            int ic = prof->ic;
-            vftr_read_counters (prof->events[ic], me);
-            if (fprof->event_count && func->ret->detail) {
+            int ic = vftr_prof_data[me].ic;
+            vftr_read_counters (vftr_prof_data[me].events[ic], me);
+            if (prof_return->event_count && func->ret->detail) {
                 for (e = 0; e < vftr_n_hw_obs; e++) {
-                    long long delta = prof->events[ic][e] - prof->events[1-ic][e];
+                    long long delta = vftr_prof_data[me].events[ic][e] - vftr_prof_data[me].events[1-ic][e];
 #ifdef __ve__
                     if (delta < 0) /* Handle counter overflow */
                         delta += e < 2 ? (long long) 0x000fffffffffffff
                                        : (long long) 0x00ffffffffffffff;
 #endif
-		    fprof->event_count[e] += delta;
+		    prof_return->event_count[e] += delta;
                 }
             }
-	    prof->ic = 1 - ic;
+	    vftr_prof_data[me].ic = 1 - ic;
 	}
     }
 
@@ -247,7 +248,7 @@ void vftr_function_exit(int line) {
     unsigned long long cycles0;
     function_t    *func;
     double        wtime;
-    profdata_t    *prof, *fprof;
+    profdata_t *prof_current;
 
     if (vftr_off() || vftr_paused) return;
 
@@ -266,6 +267,7 @@ void vftr_function_exit(int line) {
     timer = vftr_get_runtime_usec ();
     time0 = timer - vftr_inittime;
     cycles0 = vftr_get_cycles() - vftr_initcycles;
+        vftr_read_counters (vftr_prof_data[me].events[vftr_prof_data[me].ic], me);
     func  = vftr_fstack[me];
     if (func->exclude_this) return;
 
@@ -280,11 +282,10 @@ void vftr_function_exit(int line) {
         }
     }
 
-    prof   = &vftr_prof_data[me];
-    fprof  = &func->prof_current[me];
+    prof_current = &func->prof_current[me];
     //fprof->cycInc += time0;   /* Inclusive time */
-    fprof->cycInc += cycles0;   /* Inclusive time */
-    fprof->timeIncl += func_exit_time;   /* Inclusive time */
+    prof_current->cycInc += cycles0;   /* Inclusive time */
+    prof_current->timeIncl += func_exit_time;   /* Inclusive time */
     
     vftr_fstack[me] = func->ret;
 
@@ -301,7 +302,7 @@ void vftr_function_exit(int line) {
 #endif
 
     if (timeToSample && vftr_env_do_sampling ()) {
-        vftr_write_to_vfd(func_exit_time, fprof->cycles, func->id, SID_EXIT, me);
+        vftr_write_to_vfd(func_exit_time, prof_current->cycles, func->id, SID_EXIT, me);
 #ifdef _MPI
         int mpi_isinit;
         PMPI_Initialized(&mpi_isinit);
@@ -318,24 +319,24 @@ void vftr_function_exit(int line) {
     /* Maintain profile info */
 
     //fprof->cycles += time0;
-    fprof->cycles += cycles0;
-    fprof->timeExcl += func_exit_time;
+    prof_current->cycles += cycles0;
+    prof_current->timeExcl += func_exit_time;
     //vftr_prog_cycles[me]  += time0;
     vftr_prog_cycles[me]  += cycles0;
     if( func->ret ) {
-        fprof->cycles -= prof->cycles;
-        fprof->timeExcl -= prof->timeExcl;
-        vftr_prog_cycles[me] -= prof->cycles;
+        prof_current->cycles -= vftr_prof_data[me].cycles;
+        prof_current->timeExcl -= vftr_prof_data[me].timeExcl;
+        vftr_prog_cycles[me] -= vftr_prof_data[me].cycles;
     }
     //delta = time0 - prof->cycles;
-    delta = cycles0 - prof->cycles;
+    //delta = cycles0 - prof->cycles;
     if (read_counters) {
-        int ic = prof->ic;
-        vftr_read_counters (prof->events[ic], me);
-        fprof->ecreads++; /* Only at exit */
-        if (fprof->event_count && func->detail) {
+        int ic = vftr_prof_data[me].ic;
+        vftr_read_counters (vftr_prof_data[me].events[ic], me);
+        prof_current->ecreads++; /* Only at exit */
+        if (prof_current->event_count && func->detail) {
             for (e = 0; e < vftr_n_hw_obs; e++) {
-                long long delta = prof->events[ic][e] - prof->events[1-ic][e];
+                long long delta = vftr_prof_data[me].events[ic][e] - vftr_prof_data[me].events[1-ic][e];
 #ifdef __ve__
 	        /* Handle counter overflow */
                 if (delta < 0) {
@@ -343,10 +344,10 @@ void vftr_function_exit(int line) {
                                        : (long long) 0x00ffffffffffffff;
  		}
 #endif
-		fprof->event_count[e] += delta;
+		prof_current->event_count[e] += delta;
             }
         }
-        prof->ic = 1 - ic;
+        vftr_prof_data[me].ic = 1 - ic;
     }
 
     wtime = (vftr_get_runtime_usec() - vftr_overhead_usec[me]) * 1.0e-6;
