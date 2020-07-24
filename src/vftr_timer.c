@@ -68,3 +68,15 @@ long long vftr_get_runtime_usec() {
    // return the amount of microseconds since the local reference time
    return 1000000l*delta_sec + delta_nsec/1000l;
 }
+
+// get the number of elapsed clock counts
+unsigned long long vftr_get_cycles () {
+  unsigned long long ret;
+#if defined (__ve__)
+// On SX Aurora, we obtain the number of elapsed cycles by reading the usrcc register
+// using the smir command. In earlier versions, lhm.l was used. However, this yields
+// VH clock counts, which is not the correct measure to compute e.g. the vector time.
+  asm volatile ("smir %0, %usrcc" : "=r"(ret));
+#endif
+  return ret;
+}

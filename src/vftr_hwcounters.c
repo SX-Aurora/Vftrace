@@ -306,11 +306,3 @@ int vftr_find_event_number (char *s) {
 #endif
     return -1;
 }
-
-unsigned long long vftr_get_cycles () {
-  unsigned long long ret;
-#if defined (__ve__)
-  asm volatile ("smir %0, %usrcc" : "=r"(ret));
-#endif
-  return ret;
-}
