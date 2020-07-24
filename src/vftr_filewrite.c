@@ -187,7 +187,7 @@ void vftr_store_message_info(vftr_direction dir, int count, int type_idx,
 void vftr_write_profile () {
     int            i, j, tid, zero = 0;
     double         rtime;
-    unsigned long long      totalCycles, calls, cycles, *ec;
+    unsigned long long      total_cycles, calls, cycles, *ec;
     evtcounter_t    *evc;
     FILE           *fp = vftr_vfd_file[0];
 
@@ -201,13 +201,13 @@ void vftr_write_profile () {
 	ec[j] = 0;
     }
 
-    totalCycles = 0;
+    total_cycles = 0;
  
     /* Sum all cycles and counts */
     for (i = 0; i < vftr_stackscount; i++ ) {
 	if (funcTable[i] && funcTable[i]->ret && funcTable[i]->prof_current[0].calls) {
             profdata_t *prof_current = &funcTable[i]->prof_current[0];
-	    totalCycles += prof_current->cycles;
+	    total_cycles += prof_current->cycles;
             if (!prof_current->event_count) continue;
             for (j = 0; j < vftr_n_hw_obs; j++) {
                 ec[j] += prof_current->event_count[j];
@@ -435,7 +435,6 @@ void set_formats (function_t **funcTable, double runtime,
         	compute_column_width (t_incl * 10000., &(format->incl_time));
 
 		if (vftr_events_enabled) {
-		    //int cycles = prof_current->cycles - prof_previous->cycles;
 		    unsigned long long cycles = prof_current->cycles - prof_previous->cycles;
 		    scenario_expr_evaluate_all (t_excl, cycles);
 		    scenario_expr_set_formats ();
@@ -451,7 +450,7 @@ void vftr_print_profile (FILE *pout, int *ntop, long long time0) {
     float          pscale, ctime;
     double         rtime, tohead, pohead, tend, tend2;
     double         clockFreq;
-    unsigned long long      totalCycles, calls, cycles;
+    unsigned long long      total_cycles, calls, cycles;
     evtcounter_t    *evc0, *evc1, *evc;
     
     int            n, k, fid;
@@ -484,7 +483,7 @@ void vftr_print_profile (FILE *pout, int *ntop, long long time0) {
 
     if (!vftr_profile_wanted)  return;
 
-    totalCycles = 0;
+    total_cycles = 0;
     ctime = 0;
  
     /* Sum all cycles and counts */
@@ -493,7 +492,7 @@ void vftr_print_profile (FILE *pout, int *ntop, long long time0) {
 	if (funcTable[i]->ret && funcTable[i]->prof_current[0].calls) {
             profdata_t *prof_current  = &funcTable[i]->prof_current[0];
             profdata_t *prof_previous = &funcTable[i]->prof_previous[0];
-	    totalCycles += prof_current->cycles - prof_previous->cycles;
+	    total_cycles += prof_current->cycles - prof_previous->cycles;
             if (!prof_current->event_count || !prof_previous->event_count) continue;
 	    for (int j = 0; j < scenario_expr_n_vars; j++) {
 		scenario_expr_counter_values[j] += (double)(prof_current->event_count[j] - prof_previous->event_count[j]);
@@ -517,7 +516,7 @@ void vftr_print_profile (FILE *pout, int *ntop, long long time0) {
 
     /* Print overall info */
     if (vftr_events_enabled) {
-	scenario_expr_evaluate_all (rtime, totalCycles);	
+	scenario_expr_evaluate_all (rtime, total_cycles);	
 	scenario_expr_print_summary (pout);
     }
 
@@ -525,7 +524,7 @@ void vftr_print_profile (FILE *pout, int *ntop, long long time0) {
     fprintf( pout, "\nRaw counter totals\n"
             "------------------------------------------------------------\n"
             "%-37s : %20llu\n", 
-            "Time Stamp Counter", totalCycles  );
+            "Time Stamp Counter", total_cycles  );
     if (vftr_events_enabled) {
     	scenario_expr_print_raw_counters (pout);
     }
