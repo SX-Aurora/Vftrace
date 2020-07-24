@@ -313,7 +313,6 @@ int variable_index (char *varname) {
 void scenario_expr_evaluate (int i_scenario, double runtime, unsigned long long cycles) {
 	scenario_expr_runtime = runtime;
 	scenario_expr_cycles = (double)cycles;
-	//scenario_expr_cycletime = cycles / runtime;
 	scenario_expr_cycletime = runtime / cycles;
 
 	int i_protected = scenario_expr_formulas[i_scenario].protected_values ?
@@ -335,9 +334,6 @@ void scenario_expr_evaluate (int i_scenario, double runtime, unsigned long long 
 		if (!scenario_expr_formulas[i_scenario].integrated && runtime > 0.) {
 			scenario_expr_formulas[i_scenario].value /= runtime;
 		}
-	}
-	if (i_scenario == 2) {
-		printf ("value: %lf\n", scenario_expr_formulas[i_scenario].value);
 	}
 }
 

@@ -192,8 +192,10 @@ vftr_print_loadbalance( callsTime_t **gCallsTime,
         k = strlen(vftr_gStackinfo[i].name);
         if(flen < k) flen = k;
         j = vftr_gStackinfo[i].ret;
-        k = strlen(vftr_gStackinfo[j].name); 
-        if(clen < k) clen = k;
+	if (j >= 0) {
+           k = strlen(vftr_gStackinfo[j].name); 
+           if(clen < k) clen = k;
+        }
 
         avgcalls = 0;
         avgtime  = 0.;
@@ -506,9 +508,9 @@ vftr_print_loadbalance( callsTime_t **gCallsTime,
         if( multiThread )
             fprintf( pout, pareffomp < 99.95 ? " %4.1f" : " 100.", pareffomp );
         
-        j = vftr_gStackinfo[i].ret;
 	fprintf( pout, fmtFuncname, vftr_gStackinfo[i].name );
-        fprintf( pout, fmtCaller,   vftr_gStackinfo[j].name );
+        j = vftr_gStackinfo[i].ret;
+        if (j >= 0) fprintf( pout, fmtCaller,   vftr_gStackinfo[j].name );
         fprintf( pout, fmtFid,      i );
         fprintf( pout, "\n" );
         maxTime += multiTask ? ctr->avgMPItime : ctr->avgOMPtime;        
