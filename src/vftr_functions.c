@@ -207,7 +207,6 @@ void vftr_reset_counts (int me, function_t *func) {
    memset (func->prof_previous[me].event_count, 0, m );
    func->prof_current[me].calls   = 0;
    func->prof_current[me].cycles  = 0;
-   func->prof_current[me].cycInc  = 0;
    func->prof_current[me].timeExcl = 0;
    func->prof_current[me].timeIncl = 0;
    func->prof_current[me].flops   = 0;

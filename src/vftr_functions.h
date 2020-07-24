@@ -16,8 +16,6 @@ typedef struct ProfileData {
    long long calls;
    // cycles spend in the function (excluding subfunctions)
    long long cycles;
-   // cycles spend in the function (including subfunctions)
-   long long cycInc;
    // time spend in the function (excluding subfunctions)
    long long timeExcl;
    // time speind in the function (including subfunctions)

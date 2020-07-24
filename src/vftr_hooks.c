@@ -210,8 +210,6 @@ void vftr_function_entry (const char *s, void *addr, int line, bool isPrecise) {
 	prof_return->cycles += delta;
         vftr_prof_data[me].timeExcl += func_entry_time - vftr_prof_data[me].timeExcl;
         vftr_prog_cycles[me] += delta;
-        //func->prof_current[me].cycInc -= time0;
-        func->prof_current[me].cycInc -= cycles0;
         func->prof_current[me].timeIncl -= func_entry_time;
 	if (read_counters) {
             int ic = vftr_prof_data[me].ic;
@@ -283,8 +281,6 @@ void vftr_function_exit(int line) {
     }
 
     prof_current = &func->prof_current[me];
-    //fprof->cycInc += time0;   /* Inclusive time */
-    prof_current->cycInc += cycles0;   /* Inclusive time */
     prof_current->timeIncl += func_exit_time;   /* Inclusive time */
     
     vftr_fstack[me] = func->ret;
