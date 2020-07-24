@@ -5,7 +5,8 @@ project('vftrace',
         # see 'meson configure' (in build directory) for all available options
         default_options : [
           'default_library=static',
-          'buildtype=release'
+          'buildtype=debug',
+          'fortran_std=none'
         ])
 
 # GCC10 introduced a paradigm-change by defaulting to -fno-common, https://wiki.gentoo.org/wiki/Gcc_10_porting_notes/fno_common.
@@ -20,6 +21,7 @@ endif
 
 # C / C++
 cc = meson.get_compiler('c')
+libmath_dep = cc.find_library('m', required : false) # Only needed for subproject dependency.
 if not cc.has_argument('-finstrument-functions')
   error('C compiler has no support for "-finstrument-functions"')
 endif
@@ -29,8 +31,8 @@ if not cpp.has_argument('-finstrument-functions')
 endif
 
 dldep = cc.find_library('dl')
-mpi = dependency('mpi', language : 'fortran', required : get_option('mpi-profiling'))
-if mpi.found ()
+mpi_dep = dependency('mpi', language : 'fortran', required : get_option('mpi-profiling'))
+if mpi_dep.found ()
   add_project_arguments('-D_MPI', language: ['c', 'cpp', 'fortran'])
   if fortran.get_id() == 'intel'
     add_project_arguments('-DPMPI_MODULE=pmpi_f08', language : 'fortran')
@@ -49,9 +51,17 @@ if get_option('veperf').enabled()
 endif
 
 # Add VMAP offset check using config_test.sh
+if get_option('vmap-offset').enabled()
+  message('Use VMAP offset')
+  add_project_arguments('-D__VMAP_OFFSET', language : 'c')
+endif
 
 # Workaround: Install vftrace.mod
 meson.add_install_script('install_vftrace_mod.sh', get_option('prefix'), get_option('includedir'))
 
 subdir('src')
 subdir('share_src/man/man1')
+
+libvftrace_dep = declare_dependency(include_directories : inc_dep,
+                                    dependencies : libmath_dep,
+                                    link_with : [libvftrace, libvftr_dlopen])
