@@ -55,7 +55,6 @@ void vector_engine_compute_counters (long long *regs, double current_runtime,
 				double *mflops, double *vlen, double *pvec, double *pbank);
 
 void vftr_write_scenario_header_to_vfd (FILE *fp);
-//void vftr_write_observables_to_vfd (long long cycles, FILE *fp);
 void vftr_write_observables_to_vfd (unsigned long long cycles, FILE *fp);
 
 #define TE_MAX 50
@@ -94,9 +93,7 @@ double scenario_expr_cycles;
 double scenario_expr_cycletime;
 
 int vftr_read_scenario_file (char *filename);
-//void scenario_expr_evaluate (int i_scenario, double runtime, double cycles);
 void scenario_expr_evaluate (int i_scenario, double runtime, unsigned long long cycles);
-//void scenario_expr_evaluate_all (double runtime, double cycles);
 void scenario_expr_evaluate_all (double runtime, unsigned long long cycles);
 void scenario_expr_print_summary (FILE *fp);
 void scenario_expr_print_raw_counters (FILE *fp);

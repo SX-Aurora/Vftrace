@@ -128,8 +128,6 @@ void vftr_function_entry (const char *s, void *addr, int line, bool isPrecise) {
 #pragma omp critical
 #endif
 {
-    //prof   = &vftr_prof_data[me];
-
     //
     // Check if the function is in the table
     //
@@ -203,9 +201,7 @@ void vftr_function_entry (const char *s, void *addr, int line, bool isPrecise) {
     // Maintain profile
 
     if (func->ret && func->ret->prof_current) {
-        //fprof = &func->ret->prof_current[me];
         prof_return = &func->ret->prof_current[me];
-        //delta = time0 - prof->cycles;
         delta = cycles0 - vftr_prof_data[me].cycles;
 	prof_return->cycles += delta;
         vftr_prof_data[me].timeExcl += func_entry_time - vftr_prof_data[me].timeExcl;
@@ -230,9 +226,9 @@ void vftr_function_entry (const char *s, void *addr, int line, bool isPrecise) {
     }
 
     /* Compensate overhead */
-    //vftr_prof_data[me].cycles = vftr_get_runtime_usec () - vftr_inittime;
+    // The stuff we did here added up cycles. Therefore, we have to reset
+    // the global cycle count and time value.
     vftr_prof_data[me].cycles = vftr_get_cycles() - vftr_initcycles;
-    // get the time to estimate vftrace overhead
     long long overhead_time_end = vftr_get_runtime_usec();
     vftr_prof_data[me].timeExcl = overhead_time_end;
     vftr_overhead_usec[me] += overhead_time_end - overhead_time_start;
@@ -242,7 +238,7 @@ void vftr_function_entry (const char *s, void *addr, int line, bool isPrecise) {
 
 void vftr_function_exit(int line) {
     int           e, me, read_counters, timeToSample;
-    long long     time0, timer, delta;
+    long long     time0, timer;
     unsigned long long cycles0;
     function_t    *func;
     double        wtime;
@@ -265,7 +261,6 @@ void vftr_function_exit(int line) {
     timer = vftr_get_runtime_usec ();
     time0 = timer - vftr_inittime;
     cycles0 = vftr_get_cycles() - vftr_initcycles;
-        vftr_read_counters (vftr_prof_data[me].events[vftr_prof_data[me].ic], me);
     func  = vftr_fstack[me];
     if (func->exclude_this) return;
 
@@ -314,18 +309,15 @@ void vftr_function_exit(int line) {
 
     /* Maintain profile info */
 
-    //fprof->cycles += time0;
     prof_current->cycles += cycles0;
     prof_current->timeExcl += func_exit_time;
-    //vftr_prog_cycles[me]  += time0;
-    vftr_prog_cycles[me]  += cycles0;
-    if( func->ret ) {
+    vftr_prog_cycles[me] += cycles0;
+    if (func->ret) {
         prof_current->cycles -= vftr_prof_data[me].cycles;
         prof_current->timeExcl -= vftr_prof_data[me].timeExcl;
         vftr_prog_cycles[me] -= vftr_prof_data[me].cycles;
     }
-    //delta = time0 - prof->cycles;
-    //delta = cycles0 - prof->cycles;
+
     if (read_counters) {
         int ic = vftr_prof_data[me].ic;
         vftr_read_counters (vftr_prof_data[me].events[ic], me);
@@ -356,7 +348,7 @@ void vftr_function_exit(int line) {
         vftr_print_local_stacklist( vftr_func_table, stdout, ntop );
     }
 
-    if( me == 0 && time0 >= vftr_timelimit ) {
+    if (me == 0 && time0 >= vftr_timelimit) {
         fprintf( vftr_log, "vftr_timelimit exceeded - terminating execution\n" );
 	kill( getpid(), SIGTERM );
     }
@@ -397,9 +389,9 @@ void vftr_function_exit(int line) {
     }
 
     /* Compensate overhead */
-    //vftr_prof_data[me].cycles = vftr_get_runtime_usec () - vftr_inittime;
+    // The stuff we did here added up cycles. Therefore, we have to reset
+    // the global cycle count and time value.
     vftr_prof_data[me].cycles = vftr_get_cycles() - vftr_initcycles;
-    // get the time to estimate vftrace overhead
     long long overhead_time_end = vftr_get_runtime_usec();
     vftr_prof_data[me].timeExcl = overhead_time_end;
     vftr_overhead_usec[me] += overhead_time_end - overhead_time_start;

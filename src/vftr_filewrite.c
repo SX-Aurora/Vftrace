@@ -395,9 +395,6 @@ void set_formats (function_t **funcTable, double runtime,
 	for (format->fid = 0, ev = vftr_gStackscount; ev; ev /= 10, format->fid++);
 	for (format->rank = 0, ev = vftr_mpisize; ev; ev /= 10, format->rank++);
 	for (format->thread = 0, ev = vftr_omp_threads; ev; ev /= 10, format->thread++);
-	//if (format->fid < 4) format->fid = 2;
-	//if (format->rank < 2) format->rank = 2;
-	//if (format->thread < 2) format->thread = 2;
 	format->fid = 2;
 	format->rank = 2;
 	format->thread = 2;

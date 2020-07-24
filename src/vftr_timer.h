@@ -52,6 +52,8 @@ void vftr_set_local_ref_time();
 // get the current time in micro seconds since
 // the reference time point
 long long vftr_get_runtime_usec();
+// get the elapsed number of VE cycles
+unsigned long long vftr_get_cycles();
 
 // Vftrace measures its own overhead in microseconds. 
 // The array is allocated to the number of OpenMP threads

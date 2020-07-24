@@ -310,7 +310,6 @@ int variable_index (char *varname) {
 
 /**********************************************************************/
 
-//void scenario_expr_evaluate (int i_scenario, double runtime, double cycles) {
 void scenario_expr_evaluate (int i_scenario, double runtime, unsigned long long cycles) {
 	scenario_expr_runtime = runtime;
 	scenario_expr_cycles = (double)cycles;
@@ -344,7 +343,6 @@ void scenario_expr_evaluate (int i_scenario, double runtime, unsigned long long 
 
 /**********************************************************************/
 
-//void scenario_expr_evaluate_all (double runtime, double cycles) {
 void scenario_expr_evaluate_all (double runtime, unsigned long long cycles) {
 	for (int i = 0; i < scenario_expr_n_formulas; i++) {
 		scenario_expr_evaluate (i, runtime, cycles);
