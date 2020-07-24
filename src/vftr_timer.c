@@ -77,6 +77,10 @@ unsigned long long vftr_get_cycles () {
 // using the smir command. In earlier versions, lhm.l was used. However, this yields
 // VH clock counts, which is not the correct measure to compute e.g. the vector time.
   asm volatile ("smir %0, %usrcc" : "=r"(ret));
+#elif defined (__x86_64__)
+    unsigned int a, d;
+    asm volatile("rdtsc" : "=a" (a), "=d" (d));
+    ret = ((unsigned long long)a) | (((unsigned long long)d) << 32);
 #endif
   return ret;
 }
