@@ -204,7 +204,7 @@ void vftr_function_entry (const char *s, void *addr, int line, bool isPrecise) {
         prof_return = &func->ret->prof_current[me];
         delta = cycles0 - vftr_prof_data[me].cycles;
 	prof_return->cycles += delta;
-        vftr_prof_data[me].timeExcl += func_entry_time - vftr_prof_data[me].timeExcl;
+        prof_return->timeExcl += func_entry_time - vftr_prof_data[me].timeExcl;
         vftr_prog_cycles[me] += delta;
         func->prof_current[me].timeIncl -= func_entry_time;
 	if (read_counters) {
