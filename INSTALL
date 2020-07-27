@@ -1,6 +1,6 @@
 Vftrace can be installed using autotools.
 
-autoreconf
+autoreconf -i
 ./configure CC=<your_C_compiler> CXX=<your_C++_compiler> FC=<your_Fortran_compiler> --prefix=<install_path>
 make
 make install
