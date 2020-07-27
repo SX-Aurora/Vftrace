@@ -1,6 +1,8 @@
 SRCPATH = src
 
-ACLOCAL_AMFLAGS="-Im4"
+ACLOCAL_AMFLAGS="-I m4"
+
+SUBDIRS = test
 
 lib_LTLIBRARIES = libvftrace.la libvftr_dlopen.la
 noinst_LTLIBRARIES = libvftr_mpi.la \
