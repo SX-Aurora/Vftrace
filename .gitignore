@@ -81,19 +81,9 @@ lt~obsolete.m4
 Makefile
 COPYING
 
-# Vftrace build directories - still ignored in pc and sx* subdirectories
-build/pc/impi*
-build/sx*/impi*
-build/pc/*ompi*
-build/sx*/*ompi*
-build/pc/*nmpi*
-build/sx*/*nmpi*
-build/pc/*none*
-build/sx*/*none*
-build/pc/*stub*
-build/sx*/*stub*
-build/*/bin
-build/*/utils
+# Testsuite auxiliary files
+test-driver
+*.trs
 
 # Files and directories created by the build system or vftrace itself
 .libs
