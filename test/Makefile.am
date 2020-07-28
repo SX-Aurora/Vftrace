@@ -22,7 +22,9 @@ ref_output: $(top_srcdir)/test/ref_output
 	mkdir -p ref_output
 	for f in $</*.out; do cp $$f $@; done
 
+XFAIL_TESTS = ./run/this_fails.sh
  
 TESTS = ./run/this_passes.sh \
-	./run/this_fails.sh \
 	./run/vftr_symbols_test_1.sh
+
+TESTS += $(XFAIL_TESTS)

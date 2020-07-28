@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 
+#include "vftr_setup.h"
 #include "vftr_symbols.h"
 
 int this_fails () {
@@ -30,11 +31,11 @@ int main (int argc, char **argv) {
 	char *outfilename = strcat (basename, ".out");
 	FILE *fp_out = fopen (outfilename, "w");
 
-	FILE *fp_in;
+	FILE *fp_in = NULL;
+	vftr_initialize ();
 	if (argc > 2) {
 		fp_in = fopen (argv[2], "r");
 	}
-	//FILE *fp_in = fopen ("test.x", "r");
 	if (!strcmp (argv[1], "this_fails")) {
 		retval = this_fails();
 	} else if (!strcmp (argv[1], "this_passes")) {
@@ -47,4 +48,6 @@ int main (int argc, char **argv) {
 	fclose (fp_out);
 	if (fp_in) fclose (fp_in);
 	printf ("FOO\n");
+	vftr_finalize ();
+	return retval;
 }
