@@ -56,7 +56,7 @@ int vftr_cmpsym(const void *a, const void *b);
 
 void vftr_print_symbol_table (FILE *f);
 
-void vftr_get_library_symtab_linux(char *target, off_t base, int pass);
+void vftr_get_library_symtab (char *target, FILE *fp, off_t base, int pass);
 
 typedef struct library_list {
     off_t base;
@@ -75,5 +75,7 @@ int vftr_create_symbol_table (int rank, char *target);
 symtab_t **vftr_find_nearest(symtab_t **table, void *addr, int count);
 
 char *vftr_find_symbol (void *addr, int line, char **full);
+
+int vftr_symbols_test_1 (FILE *fp_in, FILE *fp_out);
 
 #endif

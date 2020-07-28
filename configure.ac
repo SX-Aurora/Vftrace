@@ -87,5 +87,6 @@ AM_CONDITIONAL([USES_INTEL_MPI], [test "$uses_intel_mpi" = "yes"])
 # Enable libtool
 LT_INIT(dlopen)
 AC_CONFIG_FILES([Makefile])
+AC_CONFIG_FILES([src/Makefile])
 AC_CONFIG_FILES([test/Makefile])
 AC_OUTPUT
