@@ -2,7 +2,7 @@ project('vftrace',
         ['c', 'cpp', 'fortran'],
         license : 'GPL2+',
         version : '0.0',
-        meson_version : '>=0.55.0'
+        meson_version : '>=0.55.0',
         # see 'meson configure' (in build directory) for all available options
         default_options : [
           'default_library=static',
