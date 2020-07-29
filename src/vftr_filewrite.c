@@ -53,6 +53,11 @@ FILE **vftr_vfd_file;
 unsigned int vftr_admin_offset;
 unsigned int vftr_samples_offset;
 
+char *vftr_bool_to_string (bool value) {
+	char *s = value ? "true" : "false";
+	return s;
+}
+
 void vftr_init_vfd_file (char *basename, int task_digits, int thread_digits) {
 	char *trace_file_name_format = malloc (1024 * sizeof(char));
  	/* "dir/ident_%0<taskDigits>d_%0<threadDigits>d.vfd" */

@@ -42,6 +42,8 @@ int main (int argc, char **argv) {
 		retval = this_passes();
 	} else if (!strcmp (argv[1], "vftr_symbols_test_1")) {
 		retval = vftr_symbols_test_1 (fp_in, fp_out);
+	} else if (!strcmp (argv[1], "vftr_environment_test_1")) {
+		retval = vftr_environment_test_1 (fp_out);
 	} else {
 		printf ("No matching test found\n");
 	}

@@ -23,6 +23,7 @@
 
 #include "vftr_hwcounters.h"
 #include "vftr_environment.h"
+#include "vftr_filewrite.h"
 
 vftr_envs_t *vftr_environment;
 
@@ -246,4 +247,37 @@ void vftr_switch_off () {
 
 bool vftr_env_do_sampling () {
 	return vftr_environment->do_sampling->value;
+}
+
+// We leave out the regular expression in this printing function
+
+void vftr_print_environment (FILE *fp) {
+	fprintf (fp, "VFTR_OFF: %s\n", vftr_bool_to_string (vftr_environment->vftrace_off));
+	// When Vftrace is switched off, all other environment variables are not initialized
+  if (vftr_environment->vftrace_off) {
+	printf ("RETURN\n");
+    return;
+  }
+	fprintf (fp, "VFTR_SAMPLING: %s\n", vftr_bool_to_string (vftr_environment->do_sampling));
+	fprintf (fp, "VFTR_REGIONS_PRECISE: %s\n", vftr_bool_to_string (vftr_environment->regions_precise));	
+	fprintf (fp, "VFTR_OUT_DIRECTORY: %s\n", vftr_environment->output_directory);
+	fprintf (fp, "VFTR_LOGFILE_BASENAME: %s\n", vftr_environment->logfile_basename);
+	fprintf (fp, "VFTR_LOGFILE_ALL_RANKS: %s\n", vftr_bool_to_string (vftr_environment->logfile_all_ranks));
+	fprintf (fp, "VFTR_SAMPLETIME: %2.4f\n", vftr_environment->sampletime);
+	fprintf (fp, "VFTR_STOPTIME: %lld\n", vftr_environment->stoptime);
+        fprintf (fp, "VFTR_ACCURATE_PROFILE: %s\n", vftr_bool_to_string (vftr_environment->accurate_profile));
+        fprintf (fp, "VFTR_PROF_TRUNCATE: %s\n", vftr_bool_to_string (vftr_environment->prof_truncate));
+	fprintf (fp, "VFTR_MPI_LOG: %s\n", vftr_bool_to_string (vftr_environment->mpi_log));
+	fprintf (fp, "VFTR_SIGNALS_OFF: %s\n", vftr_bool_to_string (vftr_environment->signals_off));
+	fprintf (fp, "VFTR_BUFSIZE: %d\n", vftr_environment->bufsize);
+        fprintf (fp, "VFTR_ACCURATE_PROFILE: %s\n", vftr_bool_to_string (vftr_environment->accurate_profile));
+	fprintf (fp, "VFTR_DETAIL_UNTIL_COM_CYCLES: %2.1f\n", vftr_environment->detail_until_cum_cycles);
+	fprintf (fp, "VFTR_SCENARIO_FILE: %s\n", vftr_environment->scenario_file);
+	fprintf (fp, "VFTR_LICENSCE_VERBOSE: %s\n", vftr_bool_to_string (vftr_environment->license_verbose));
+	fprintf (fp, "VFTR_PRINT_STACKS_FOR: %s\n", vftr_environment->print_stacks_for);
+	fprintf (fp, "VFTR_PRINT_LOADINFO_FOR: %s\n", vftr_environment->print_loadinfo_for);
+}
+
+int vftr_environment_test_1 (FILE *fp) {
+	vftr_print_environment (fp);
 }

@@ -19,6 +19,7 @@
 #ifndef VFTR_ENVIRONMENT_H
 #define VFTR_ENVIRONMENT_H
 
+#include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
 #include "vftr_regex.h"
@@ -93,5 +94,6 @@ bool vftr_off();
 void vftr_switch_off();
 bool vftr_env_do_sampling();
 
+int vftr_environment_test_1 (FILE *fp);
 
 #endif

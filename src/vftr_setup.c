@@ -258,8 +258,8 @@ void vftr_initialize() {
     
     /* Allocate time arrays for each thread */
     n = vftr_omp_threads * sizeof(long long);
-    vftr_nextsampletime = (long long *) malloc( n );
-    vftr_prevsampletime = (long long *) malloc( n );
+    vftr_nextsampletime = (long long *) malloc (n) ;
+    vftr_prevsampletime = (long long *) malloc (n) ;
     assert (vftr_nextsampletime);
     assert (vftr_prevsampletime);
     for (int i = 0; i < vftr_omp_threads; i++) {

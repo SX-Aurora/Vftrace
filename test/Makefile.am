@@ -12,7 +12,7 @@ test_vftrace_LDFLAGS = -L/usr/uhome/aurora/ess/esscw/Vftrace/build_anone/src/.li
 
 run: $(top_srcdir)/test/run
 	mkdir -p run
-	for f in $</*.sh; do cp $$f $@; done
+	for f in $</*.sh; do cp $$f $@; chmod u+x $@/`basename $$f`; done
 
 ref_input: $(top_srcdir)/test/ref_input
 	mkdir -p ref_input
@@ -25,7 +25,8 @@ ref_output: $(top_srcdir)/test/ref_output
 XFAIL_TESTS = ./run/this_fails.sh
  
 TESTS = ./run/this_passes.sh \
-	./run/vftr_symbols_test_1.sh
+	./run/vftr_symbols_test_1.sh \
+	./run/vftr_environment_test_1.sh
 
 TESTS += $(XFAIL_TESTS)
 
