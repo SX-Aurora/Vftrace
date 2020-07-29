@@ -131,3 +131,6 @@ libvftr_dlopen_la_SOURCES = vftr_dlopen.c
 nodist_include_HEADERS = vftrace.mod
 vftrace.mod: vftrace_mod.F90
 
+clean-local:
+	rm -f *.mod
+

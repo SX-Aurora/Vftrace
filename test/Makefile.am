@@ -28,3 +28,8 @@ TESTS = ./run/this_passes.sh \
 	./run/vftr_symbols_test_1.sh
 
 TESTS += $(XFAIL_TESTS)
+
+clean-local:
+	rm -rf ref_output
+	rm -rf ref_input
+	rm -rf run
