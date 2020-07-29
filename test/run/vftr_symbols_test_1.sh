@@ -1,7 +1,10 @@
 #!/bin/bash
 set -x
-REF_OUT_DIR=ref_output
-REF_IN_DIR=ref_input
+ref_out_dir=ref_output
+ref_in_dir=ref_input
+testname=vftr_symbols_test_1
+outfile=$testname.out
 
-./test_vftrace vftr_symbols_test_1 $REF_IN_DIR/vftr_symbols_test_1.x
-diff $REF_OUT_DIR/vftr_symbols_test_1.out vftr_symbols_test_1.out
+rm -f $outfile
+./test_vftrace $testname $ref_in_dir/$testname.x
+diff $ref_out_dir/$outfile $outfile
