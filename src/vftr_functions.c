@@ -41,6 +41,17 @@ char *vftr_precice_functions[] = {
    "MPI_Send", "MPI_Sendrecv", "MPI_Sendrecv_replace", "MPI_Ssend",
    "MPI_Test", "MPI_Testall", "MPI_Testany", "MPI_Testsome",
    "MPI_Wait", "MPI_Waitall", "MPI_Waitany", "MPI_Waitsome",
+
+   "MPI_Allgather_f08", "MPI_Allgatherv_f08", "MPI_Allreduce_f08", "MPI_Alltoall_f08",
+   "MPI_Alltoallv_f08", "MPI_Alltoallw_f08", "MPI_Barrier_f08", "MPI_Bcast_f08",
+   "MPI_Bsend_f08", "MPI_Bsend_init_f08", "MPI_Gather_f08", "MPI_Gatherv_f08",
+   "MPI_Get_f08", "MPI_Ibsend_f08", "MPI_Irecv_f08", "MPI_Irsend_f08",
+   "MPI_Isend_f08", "MPI_Issend_f08", "MPI_Put_f08", "MPI_Recv_f08", "MPI_Reduce_f08",
+   "MPI_Reduce_scatter_f08", "MPI_Rsend_f08", "MPI_Scatter_f08", "MPI_Scatterv_f08",
+   "MPI_Send_f08", "MPI_Sendrecv_f08", "MPI_Sendrecv_replace_f08", "MPI_Ssend_f08",
+   "MPI_Test_f08", "MPI_Testall_f08", "MPI_Testany_f08", "MPI_Testsome_f08",
+   "MPI_Wait", "MPI_Waitall", "MPI_Waitany", "MPI_Waitsome",
+
    "vftrace_pause", "vftrace_resume",
    "vftrace_get_stack",
    NULL // Null pointer to terminate the list
