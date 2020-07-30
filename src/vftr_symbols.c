@@ -404,7 +404,6 @@ int vftr_symbols_test_1 (FILE *fp_in, FILE *fp_out) {
 	vftr_nsymbols = 0;
 	rewind (fp_in);
 	vftr_get_library_symtab ("", fp_in, 0L, 1);	
-	//printf ("Print symbol table\n");
 	vftr_print_symbol_table (fp_out);
 	free (vftr_symtab);
 	return 0;

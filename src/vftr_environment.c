@@ -249,6 +249,32 @@ bool vftr_env_do_sampling () {
 	return vftr_environment->do_sampling->value;
 }
 
+void vftr_free_environment () {
+	free (vftr_environment->vftrace_off);
+	free (vftr_environment->do_sampling);
+	free (vftr_environment->regions_precise);
+	free (vftr_environment->output_directory);
+	free (vftr_environment->logfile_basename);
+	free (vftr_environment->logfile_all_ranks);
+	free (vftr_environment->sampletime);
+	free (vftr_environment->stoptime);
+	free (vftr_environment->accurate_profile);
+	free (vftr_environment->prof_truncate);
+	free (vftr_environment->mpi_log);
+	free (vftr_environment->signals_off);
+	free (vftr_environment->bufsize);
+	free (vftr_environment->runtime_profile_funcs);
+	free (vftr_environment->include_only_regex);
+	free (vftr_environment->exclude_functions_regex);
+	free (vftr_environment->detail_until_cum_cycles);
+	free (vftr_environment->scenario_file);
+	free (vftr_environment->preciseregex);
+	free (vftr_environment->license_verbose);
+	free (vftr_environment->print_stacks_for);
+	free (vftr_environment->print_loadinfo_for);
+	free (vftr_environment);
+}
+
 // We leave out the regular expression in this printing function
 
 void vftr_print_environment (FILE *fp) {

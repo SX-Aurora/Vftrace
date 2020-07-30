@@ -90,6 +90,7 @@ extern vftr_envs_t *vftr_environment;
 
 void vftr_read_environment();
 void vftr_assert_environment();
+void vftr_free_environment();
 bool vftr_off();
 void vftr_switch_off();
 bool vftr_env_do_sampling();
