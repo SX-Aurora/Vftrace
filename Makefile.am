@@ -9,6 +9,8 @@ noinst_LTLIBRARIES = libvftr_mpi.la \
 
 include_HEADERS = $(SRCPATH)/vftrace.h
 
+bin_PROGRAMS = tracedump
+
 MANDIR = share_src/man
 man_MANS = $(MANDIR)/man1/vftrace.1
 
@@ -137,6 +139,9 @@ libvftr_dlopen_la_SOURCES = $(SRCPATH)/vftr_dlopen.c
 
 nodist_include_HEADERS = vftrace.mod
 vftrace.mod: $(SRCPATH)/vftrace_mod.F90
+
+tracedump_SOURCES = $(SRCPATH)/tracedump.c \
+		    $(SRCPATH)/vftr_mpi_utils.c
 
 clean-local:
 	rm -f *.mod
