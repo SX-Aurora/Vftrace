@@ -50,7 +50,7 @@ char *vftr_precice_functions[] = {
    "MPI_Reduce_scatter_f08", "MPI_Rsend_f08", "MPI_Scatter_f08", "MPI_Scatterv_f08",
    "MPI_Send_f08", "MPI_Sendrecv_f08", "MPI_Sendrecv_replace_f08", "MPI_Ssend_f08",
    "MPI_Test_f08", "MPI_Testall_f08", "MPI_Testany_f08", "MPI_Testsome_f08",
-   "MPI_Wait", "MPI_Waitall", "MPI_Waitany", "MPI_Waitsome",
+   "MPI_Wait_f08", "MPI_Waitall_f08", "MPI_Waitany_f08", "MPI_Waitsome_f08",
 
    "vftrace_pause", "vftrace_resume",
    "vftrace_get_stack",
