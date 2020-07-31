@@ -395,6 +395,8 @@ void vftr_function_exit(int line) {
     long long overhead_time_end = vftr_get_runtime_usec();
     vftr_prof_data[me].timeExcl = overhead_time_end;
     vftr_overhead_usec[me] += overhead_time_end - overhead_time_start;
+
+    if (vftr_fstack[me]->levels == 1) vftr_finalize();
 }
 
 // These are the actual Cygnus function hooks. 
