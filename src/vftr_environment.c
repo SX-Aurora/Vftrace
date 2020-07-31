@@ -41,6 +41,12 @@ env_var_int_t *vftr_read_env_int (char *env_name, int val_default) {
     return var;
 }
 
+void print_env_int (FILE *fp, char *env_name, env_var_int_t *var) {
+	char *s = strdup(env_name);
+	if (!var->set) strcat (s, strdup ("(default)"));
+	fprintf (fp, "%s: %d\n", s, var->value);	
+}
+
 env_var_long_t *vftr_read_env_long (char *env_name, long val_default) {
     char *s;
     env_var_long_t *var;
@@ -53,6 +59,12 @@ env_var_long_t *vftr_read_env_long (char *env_name, long val_default) {
         var->set = false;
     }
     return var;
+}
+
+void print_env_long (FILE *fp, char *env_name, env_var_long_t *var) {
+	char *s = strdup(env_name);
+	if (!var->set) strcat (s, strdup ("(default)"));
+	fprintf (fp, "%s: %ld\n", s, var->value);
 }
 
 env_var_long_long_t *vftr_read_env_long_long (char *env_name, long long val_default) {
@@ -69,24 +81,29 @@ env_var_long_long_t *vftr_read_env_long_long (char *env_name, long long val_defa
     return var;
 }
 
+void print_env_long_long (FILE *fp, char *env_name, env_var_long_long_t *var) {
+	char *s = strdup(env_name);
+	if (!var->set) strcat (s, strdup ("(default)"));
+	fprintf (fp, "%s: %lld\n", s, var->value);
+}
+
 env_var_bool_t *vftr_read_env_bool (char *env_name, bool val_default) {
     env_var_bool_t *var;
     var = (env_var_bool_t*)malloc (sizeof (env_var_bool_t));
     char *s;
     if (s = getenv (env_name)) {
         // convert string to only lowercase to ease comparison
-        char *tmps = s;
-        while (*tmps) {
-           *tmps = tolower(*tmps);
-           tmps++;
-        }
-        if (!strcmp(s, "1") ||
-            !strcmp(s, "yes") ||
-            !strcmp(s, "on")) {
+        char *s_lower = strdup(s);
+	for (int i = 0; i < strlen(s_lower); i++) {
+		s_lower[i] = tolower (s_lower[i]);
+	}
+        if (!strcmp(s_lower, "1") ||
+            !strcmp(s_lower, "yes") ||
+            !strcmp(s_lower, "on")) {
            var->value = true;
-        } else if (!strcmp(s, "0") ||
-                   !strcmp(s, "no") ||
-                   !strcmp(s, "off")) {
+        } else if (!strcmp(s_lower, "0") ||
+                   !strcmp(s_lower, "no") ||
+                   !strcmp(s_lower, "off")) {
            var->value = false;
         } else {
            var->value = false;
@@ -99,12 +116,18 @@ env_var_bool_t *vftr_read_env_bool (char *env_name, bool val_default) {
     return var;
 }
 
+void print_env_bool (FILE *fp, char *env_name, env_var_bool_t *var) {
+	char *s = strdup(env_name);
+	if (!var->set) strcat (s, strdup ("(default)"));
+	fprintf (fp, "%s: %s\n", s, vftr_bool_to_string (var->value));
+}
+
 env_var_double_t *vftr_read_env_double (char *env_name, double val_default) {
     char *s;
     env_var_double_t *var;
     var = (env_var_double_t*)malloc (sizeof (env_var_double_t));
     if (s = getenv (env_name)) {
-	var->value = atoi(s);
+	sscanf (s, "%lf", &var->value);
  	var->set = true;
     } else {
 	var->value = val_default;
@@ -112,6 +135,13 @@ env_var_double_t *vftr_read_env_double (char *env_name, double val_default) {
     }
     return var;
 }
+
+void print_env_double (FILE *fp, char *env_name, env_var_double_t *var) {
+	char *s = strdup(env_name);
+	if (!var->set) strcat (s, strdup ("(default)"));
+	fprintf (fp, "%s: %4.2f\n", s, var->value);
+}
+	
 
 env_var_string_t *vftr_read_env_string (char *env_name, char *val_default) {
     char *s;
@@ -125,6 +155,12 @@ env_var_string_t *vftr_read_env_string (char *env_name, char *val_default) {
         var->set = false;
     }
     return var;
+}
+
+void print_env_string (FILE *fp, char *env_name, env_var_string_t *var) {
+	char *s = strdup(env_name);
+	if (!var->set) strcat (s, strdup ("(default)"));
+	fprintf (fp, "%s: %s\n", s, var->value);
 }
 
 env_var_regex_t *vftr_read_env_regex (char *env_name, regex_t *val_default) {
@@ -291,34 +327,44 @@ void vftr_free_environment () {
 // We leave out the regular expression in this printing function
 
 void vftr_print_environment (FILE *fp) {
-	fprintf (fp, "VFTR_OFF: %s\n", vftr_bool_to_string (vftr_environment->vftrace_off));
-	// When Vftrace is switched off, all other environment variables are not initialized
-  if (vftr_environment->vftrace_off) {
-	fprintf (fp, "->Vftrace is switched off\n");
-    return;
-  }
-	fprintf (fp, "VFTR_SAMPLING: %s\n", vftr_bool_to_string (vftr_environment->do_sampling));
-	fprintf (fp, "VFTR_REGIONS_PRECISE: %s\n", vftr_bool_to_string (vftr_environment->regions_precise));	
-	fprintf (fp, "VFTR_OUT_DIRECTORY: %s\n", vftr_environment->output_directory);
-	fprintf (fp, "VFTR_LOGFILE_BASENAME: %s\n", vftr_environment->logfile_basename);
-	fprintf (fp, "VFTR_LOGFILE_ALL_RANKS: %s\n", vftr_bool_to_string (vftr_environment->logfile_all_ranks));
-	fprintf (fp, "VFTR_SAMPLETIME: %2.4f\n", vftr_environment->sampletime);
-	fprintf (fp, "VFTR_STOPTIME: %lld\n", vftr_environment->stoptime);
-        fprintf (fp, "VFTR_ACCURATE_PROFILE: %s\n", vftr_bool_to_string (vftr_environment->accurate_profile));
-        fprintf (fp, "VFTR_PROF_TRUNCATE: %s\n", vftr_bool_to_string (vftr_environment->prof_truncate));
-	fprintf (fp, "VFTR_MPI_LOG: %s\n", vftr_bool_to_string (vftr_environment->mpi_log));
-	fprintf (fp, "VFTR_SIGNALS_OFF: %s\n", vftr_bool_to_string (vftr_environment->signals_off));
-	fprintf (fp, "VFTR_BUFSIZE: %d\n", vftr_environment->bufsize);
-        fprintf (fp, "VFTR_ACCURATE_PROFILE: %s\n", vftr_bool_to_string (vftr_environment->accurate_profile));
-	fprintf (fp, "VFTR_DETAIL_UNTIL_COM_CYCLES: %2.1f\n", vftr_environment->detail_until_cum_cycles);
-	fprintf (fp, "VFTR_SCENARIO_FILE: %s\n", vftr_environment->scenario_file);
-	fprintf (fp, "VFTR_LICENSCE_VERBOSE: %s\n", vftr_bool_to_string (vftr_environment->license_verbose));
-	fprintf (fp, "VFTR_PRINT_STACKS_FOR: %s\n", vftr_environment->print_stacks_for);
-	fprintf (fp, "VFTR_PRINT_LOADINFO_FOR: %s\n", vftr_environment->print_loadinfo_for);
+	print_env_bool (fp, "VFTR_OFF", vftr_environment->vftrace_off);
+	print_env_bool (fp, "VFTR_SAMPLING", vftr_environment->do_sampling);
+	print_env_bool (fp, "VFTR_REGIONS_PRECISE", vftr_environment->regions_precise);
+	print_env_string (fp, "VFTR_OUT_DIRECTORY", vftr_environment->output_directory);
+	print_env_string (fp, "VFTR_LOGFILE_BASENAME", vftr_environment->logfile_basename);
+	print_env_bool (fp, "VFTR_LOGFILE_ALL_RANKS", vftr_environment->logfile_all_ranks);
+	print_env_double (fp, "VFTR_SAMPLETIME", vftr_environment->sampletime);
+	print_env_long_long (fp, "VFTR_STOPTIME", vftr_environment->stoptime);
+	print_env_bool (fp, "VFTR_ACCURATE_PROFILE", vftr_environment->accurate_profile);
+	print_env_bool (fp, "VFTR_PROF_TRUNCATE", vftr_environment->prof_truncate);
+	print_env_bool (fp, "VFTR_MPI_LOG", vftr_environment->mpi_log);
+	print_env_bool (fp, "VFTR_SIGNALS_OFF", vftr_environment->signals_off);
+	print_env_int (fp, "VFTR_BUFSIZE", vftr_environment->bufsize);
+	print_env_bool (fp, "VFTR_ACCURATE_PROFILE", vftr_environment->accurate_profile);
+	print_env_double (fp, "VFTR_DETAIL_UNTIL_CUM_CYCLES" , vftr_environment->detail_until_cum_cycles);
+	print_env_string (fp, "VFTR_SCENARIO_FILE", vftr_environment->scenario_file);
+	print_env_bool (fp, "VFTR_LICENSE_VERBOSE", vftr_environment->license_verbose);
+	print_env_string (fp, "VFTR_PRINT_STACKS_FOR", vftr_environment->print_stacks_for);
+	print_env_string (fp, "VFTR_PRINT_LOADINFO_FOR", vftr_environment->print_loadinfo_for);
 }
 
 int vftr_environment_test_1 (FILE *fp) {
+	putenv ("VFTR_OFF=yes");
 	vftr_read_environment ();
 	vftr_print_environment (fp);
 	vftr_free_environment ();
+		
+	fprintf (fp, "***************************\n");
+	putenv ("VFTR_OFF=no");
+	putenv ("VFTR_SAMPLING=YES");
+	putenv ("VFTR_REGIONS_PRECISE=0");
+	putenv ("VFTR_MPI_LOG=on");
+	putenv ("VFTR_OUT_DIRECTORY=\"foo/bar\"");
+	putenv ("VFTR_BUFSIZE=1234");
+	putenv ("VFTR_SAMPLETIME=12.34");
+	
+	vftr_read_environment ();
+	vftr_print_environment (fp);
+	vftr_free_environment ();
+
 }

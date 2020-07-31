@@ -7,7 +7,6 @@ outfile=$testname.out
 
 rm -f $outfile
 
-# export VFTR_OFF=yes
-
 ./test_vftrace $testname
+diff $ref_out_dir/$outfile $outfile
 
