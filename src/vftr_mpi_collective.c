@@ -328,8 +328,22 @@ int vftr_MPI_Alltoallw(const void *sendbuf, const int *sendcounts,
       int isintercom;
       PMPI_Comm_test_inter(comm, &isintercom);
       if (isintercom) {
-         // TODO: handle intercom
-         ;
+         // Every process of group A sends sendcounts[i] sendtypes[i] to
+         // and receives recvcounts[i] recvtypes[i] from
+         // the i-th process in group B and vice versa.
+         int size;
+         for (int i=0; i<size; i++) {
+            // translate the i-th rank in the remote group to the global rank
+            int global_peer_rank = vftr_remote2global_rank(comm, i);
+            // Store message info with MPI_COMM_WORLD as communicator
+            // to prevent additional (and thus faulty rank translation)
+            vftr_store_sync_message_info(send, sendcounts[i], sendtypes[i],
+                                         global_peer_rank, -1, MPI_COMM_WORLD,
+                                         tstart, tend);
+            vftr_store_sync_message_info(recv, recvcounts[i], recvtypes[i],
+                                         global_peer_rank, -1, MPI_COMM_WORLD,
+                                         tstart, tend);
+         }
       } else {
          int size;
          PMPI_Comm_size(comm, &size);
