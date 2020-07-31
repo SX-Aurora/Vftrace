@@ -29,6 +29,6 @@ extern int *vftr_in_parallel;
 extern unsigned int *vftr_samplecount;
 
 void vftr_initialize ();
-void vftr_finalize (void) __attribute__ ((destructor));
+void vftr_finalize () ;
 
 #endif

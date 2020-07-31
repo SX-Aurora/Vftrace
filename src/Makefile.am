@@ -5,6 +5,8 @@ noinst_LTLIBRARIES = libvftr_mpi.la \
 
 include_HEADERS = vftrace.h
 
+bin_PROGRAMS = tracedump
+
 libvftrace_la_LIBADD = libvftr_mpi.la \
                        libvftr_mpiwrap.la \
 		       libvftr_pause.la
@@ -127,6 +129,9 @@ libvftrace_la_FCFLAGS += -DPMPI_MODULE=mpi
 endif
 
 libvftr_dlopen_la_SOURCES = vftr_dlopen.c
+
+tracedump_SOURCES = tracedump.c \
+		    vftr_mpi_utils.c
 
 nodist_include_HEADERS = vftrace.mod
 vftrace.mod: vftrace_mod.F90
