@@ -12,13 +12,6 @@ int this_passes () {
 	return 0;
 }
 
-//int vftr_symbols_test_1 (FILE *fp) {
-//	printf ("Get symtab\n");
-//	//vftr_get_library_symtab ("", fp, 0L, 0);	
-//	return 0;
-//}
-//
-
 int main (int argc, char **argv) {
 	
 	if (argc < 2) {
@@ -27,12 +20,11 @@ int main (int argc, char **argv) {
 	}
     	int retval;
 
-        char *basename = strdup (argv[1]);
-	char *outfilename = strcat (basename, ".out");
+        char *outfilename = strdup (argv[1]);
+	strcat (outfilename, strdup(".out"));
 	FILE *fp_out = fopen (outfilename, "w");
 
 	FILE *fp_in = NULL;
-	vftr_initialize ();
 	if (argc > 2) {
 		fp_in = fopen (argv[2], "r");
 	}
@@ -49,7 +41,5 @@ int main (int argc, char **argv) {
 	}
 	fclose (fp_out);
 	if (fp_in) fclose (fp_in);
-	printf ("FOO\n");
-	vftr_finalize ();
 	return retval;
 }

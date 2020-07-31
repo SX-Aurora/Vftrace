@@ -294,7 +294,7 @@ void vftr_print_environment (FILE *fp) {
 	fprintf (fp, "VFTR_OFF: %s\n", vftr_bool_to_string (vftr_environment->vftrace_off));
 	// When Vftrace is switched off, all other environment variables are not initialized
   if (vftr_environment->vftrace_off) {
-	printf ("RETURN\n");
+	fprintf (fp, "->Vftrace is switched off\n");
     return;
   }
 	fprintf (fp, "VFTR_SAMPLING: %s\n", vftr_bool_to_string (vftr_environment->do_sampling));
@@ -318,5 +318,7 @@ void vftr_print_environment (FILE *fp) {
 }
 
 int vftr_environment_test_1 (FILE *fp) {
+	vftr_read_environment ();
 	vftr_print_environment (fp);
+	vftr_free_environment ();
 }
