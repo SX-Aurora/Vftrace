@@ -446,10 +446,12 @@ void vftr_finalize() {
 	fprintf(vftr_log, "error stopping H/W counters, ignored\n");
     }
     
-    bool is_empty = (ftello (vftr_log) == (off_t)0);
-    if (is_empty) unlink (vftr_logfile_name);
+    if (vftr_log) {
+    	bool is_empty = (ftello (vftr_log) == (off_t)0);
+    	if (is_empty) unlink (vftr_logfile_name);
 
-    fclose (vftr_log);
+    	fclose (vftr_log);
+    }
     vftr_switch_off();
 }
 

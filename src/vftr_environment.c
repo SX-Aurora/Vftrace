@@ -25,7 +25,7 @@
 #include "vftr_environment.h"
 #include "vftr_filewrite.h"
 
-vftr_envs_t *vftr_environment;
+vftr_envs_t *vftr_environment = NULL;
 
 env_var_int_t *vftr_read_env_int (char *env_name, int val_default) {
     char *s;
@@ -237,16 +237,29 @@ void vftr_assert_environment () {
 
 }
 
+// We check if Vftrace has been switched off, either by an environment variable
+// or by a call to vftr_switch off. We need to check if the evironment is initialized
+// beforehand, otherwise this yields a segfault in vftr_finalize, which is always called.
 bool vftr_off () {
-	return vftr_environment->vftrace_off->value;
+	if (vftr_environment) {
+		return vftr_environment->vftrace_off->value;
+	} else {
+		return true;
+	}
 }
 
 void vftr_switch_off () {
-	vftr_environment->vftrace_off->value = true;
+	if (vftr_environment) {
+		vftr_environment->vftrace_off->value = true;
+	}
 }
 
 bool vftr_env_do_sampling () {
-	return vftr_environment->do_sampling->value;
+	if (vftr_environment) {
+		return vftr_environment->do_sampling->value;
+	} else {
+		return false;
+	}
 }
 
 void vftr_free_environment () {

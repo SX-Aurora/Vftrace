@@ -36,7 +36,7 @@
 #include "vftr_mpi_utils.h"
 
 // File pointer of the log file
-FILE *vftr_log;
+FILE *vftr_log = NULL;
 
 // Individual vftrace-internal file id
 char vftr_fileid[VFTR_FILEIDSIZE];
