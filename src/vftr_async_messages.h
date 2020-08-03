@@ -23,9 +23,10 @@
 #include "vftr_mpi_utils.h"
 
 // add an open communication request to the list of all open requests
-void vftr_register_request(vftr_direction dir, int count, MPI_Datatype type, 
-                           int peer_rank, int tag, MPI_Comm comm,
-                           MPI_Request request, long long tstart);
+void vftr_register_request(vftr_direction dir, int nmsg, int *count,
+                           MPI_Datatype *type, int *peer_rank, int tag,
+                           MPI_Comm comm, MPI_Request request,
+                           long long tstart);
 
 // test the entire list of open request for completed communication
 void vftr_clear_completed_request();

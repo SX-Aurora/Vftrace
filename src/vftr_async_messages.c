@@ -30,12 +30,13 @@ typedef struct vftr_request_list_type {
    struct vftr_request_list_type *prev, *next;
    MPI_Request request;
    MPI_Comm comm;
+   int nmsg;
    int dir;
-   int count;
-   MPI_Datatype type;
-   int type_idx;
-   int type_size;
-   int rank;
+   int *count;
+   MPI_Datatype *type;
+   int *type_idx;
+   int *type_size;
+   int *rank;
    int tag;
    long long tstart;
 } vftr_request_list_t;
@@ -43,9 +44,10 @@ typedef struct vftr_request_list_type {
 vftr_request_list_t *vftr_open_request_list = NULL;
 
 // store message info for asynchronous mpi-communication
-void vftr_register_request(vftr_direction dir, int count, MPI_Datatype type, 
-                           int peer_rank, int tag, MPI_Comm comm,
-                           MPI_Request request, long long tstart) {
+void vftr_register_request(vftr_direction dir, int nmsg, int *count,
+                           MPI_Datatype *type, int *peer_rank, int tag,
+                           MPI_Comm comm, MPI_Request request,
+                           long long tstart) {
 
    // only continue if sampling and mpi_loggin is enabled
    bool mpi_log = vftr_environment->mpi_log->value;
@@ -53,43 +55,63 @@ void vftr_register_request(vftr_direction dir, int count, MPI_Datatype type,
 
    // immediately return if peer is MPI_PROC_NULL as this is a dummy rank
    // with no effect on communication at all
-   if (peer_rank == MPI_PROC_NULL) {return;}
+   if (peer_rank[0] == MPI_PROC_NULL) {return;}
 
-   // if the communicator is 
-   int type_idx = vftr_get_mpitype_idx(type);
-   int type_size;
-   if (type != MPI_DATATYPE_NULL) {
-      PMPI_Type_size(type, &type_size);
-   } else {
-      type_size = 0;
-   }
-   
    // create new request list entry
    vftr_request_list_t *new_open_request = (vftr_request_list_t*) 
       malloc(sizeof(vftr_request_list_t));
    new_open_request->request   = request;
    new_open_request->comm      = comm;
+   new_open_request->nmsg      = nmsg;
    new_open_request->dir       = dir;
-   new_open_request->count     = count;
-   new_open_request->type      = type;
-   new_open_request->type_idx  = type_idx;
-   new_open_request->type_size = type_size;
+   new_open_request->count     = (int*) malloc(sizeof(int)*nmsg);
+   for (int i=0; i<nmsg; i++) {
+      new_open_request->count[i] = count[i];
+   }
+   new_open_request->type      = (MPI_Datatype*) malloc(sizeof(MPI_Datatype)*nmsg);
+   for (int i=0; i<nmsg; i++) {
+      new_open_request->type[i] = type[i];
+   }
+   new_open_request->type_idx  = (int*) malloc(sizeof(int)*nmsg);
+   new_open_request->type_size = (int*) malloc(sizeof(int)*nmsg);
+   for (int i=0; i<nmsg; i++) {
+      // Determine type index in vftrace type list
+      // and its size in bytes
+      int type_idx = vftr_get_mpitype_idx(type[i]);
+      int type_size;
+      if (type[i] != MPI_DATATYPE_NULL) {
+         PMPI_Type_size(type[i], &type_size);
+      } else {
+         type_size = 0;
+      }
+      new_open_request->type_idx[i]  = type_idx;
+      new_open_request->type_size[i] = type_size;
+   }
+
    // rank and tag are stored 
    // If they are wildcards (like MPI_ANY_SOURCE, MPI_ANY_TAG) they will be overwritten
    // as soon as the communication is complieted with the real values
    // extracted from the completed communication status 
+   // This can only happen for point2point communication
    new_open_request->tag = tag;
-   if (peer_rank != MPI_ANY_SOURCE) {
+   new_open_request->rank = (int*) malloc(sizeof(int)*nmsg);
+   if (peer_rank[0] != MPI_ANY_SOURCE) {
       // check if the communicator is an intercommunicator
       int isintercom;
       PMPI_Comm_test_inter(comm, &isintercom);
       if (isintercom) {
-         new_open_request->rank = vftr_remote2global_rank(comm, peer_rank);
+         for (int i=0; i<nmsg; i++) {
+            new_open_request->rank[i] = vftr_remote2global_rank(comm, peer_rank[i]);
+         }
       } else {
-         new_open_request->rank = vftr_local2global_rank(comm, peer_rank);
+         for (int i=0; i<nmsg; i++) {
+            new_open_request->rank[i] = vftr_local2global_rank(comm, peer_rank[i]);
+         }
       }
    } else {
-      new_open_request->rank = MPI_ANY_SOURCE;
+      for (int i=0; i<nmsg; i++) {
+         new_open_request->rank[i] = MPI_ANY_SOURCE;
+      }
    }
    new_open_request->tstart    = tstart;
 
@@ -106,9 +128,6 @@ void vftr_register_request(vftr_direction dir, int count, MPI_Datatype type,
       vftr_open_request_list->prev = new_open_request;
       vftr_open_request_list = new_open_request;
    }
-
-   // increase list for vftr_request_list
-   return;
 }
                            
 // test the entire list of open request for completed communication
@@ -140,41 +159,55 @@ void vftr_clear_completed_request() {
          //            yields to small bandwidth.
          long long tend = vftr_get_runtime_usec ();
 
+         // get the number of messages handled in this one open request
+         int nmsg = current_request->nmsg;
          // extract rank and tag from the completed communication status
          // (if necessary) this is to avoid errors with wildcard usage
+         // This should only apply for point2point communication
          if (current_request->tag == MPI_ANY_TAG) {
             current_request->tag = tmpStatus.MPI_TAG;
          }
-         if (current_request->rank == MPI_ANY_SOURCE) {
-            current_request->rank = tmpStatus.MPI_SOURCE;
+         // This should only apply for point2point communication
+         if (current_request->rank[0] == MPI_ANY_SOURCE) {
+            current_request->rank[0] = tmpStatus.MPI_SOURCE;
             // check if the communicator is an intercommunicator
             int isintercom;
             PMPI_Comm_test_inter(current_request->comm, &isintercom);
             if (isintercom) {
-               current_request->rank = 
-                  vftr_remote2global_rank(current_request->comm, current_request->rank);
+               for (int i=0; i<nmsg; i++) {
+                  current_request->rank[i] = 
+                     vftr_remote2global_rank(current_request->comm,
+                                             current_request->rank[i]);
+               }
             } else {
-               current_request->rank = 
-                  vftr_local2global_rank(current_request->comm, current_request->rank);
+               for (int i=0; i<nmsg; i++) {
+                  current_request->rank[i] = 
+                     vftr_local2global_rank(current_request->comm,
+                                            current_request->rank[i]);
+               }
             }
          }
          // Get the actual amount of transferred data if it is a receive operation
          if (current_request->dir == recv) {
             int tmpcount;
-            PMPI_Get_count(&tmpStatus, current_request->type, &tmpcount);
-            if (tmpcount != MPI_UNDEFINED) {
-               current_request->count = tmpcount;
+            for (int i=0; i<nmsg; i++) {
+               PMPI_Get_count(&tmpStatus, current_request->type[i], &tmpcount);
+               if (tmpcount != MPI_UNDEFINED) {
+                  current_request->count[i] = tmpcount;
+               }
             }
          }
          // store the completed communication info to the outfile
-         vftr_store_message_info(current_request->dir,
-                                 current_request->count,
-                                 current_request->type_idx,
-                                 current_request->type_size,
-                                 current_request->rank,
-                                 current_request->tag,
-                                 current_request->tstart,
-                                 tend);
+         for (int i=0; i<nmsg; i++) {
+            vftr_store_message_info(current_request->dir,
+                                    current_request->count[i],
+                                    current_request->type_idx[i],
+                                    current_request->type_size[i],
+                                    current_request->rank[i],
+                                    current_request->tag,
+                                    current_request->tstart,
+                                    tend);
+         }
          // remove the request from the open request list
          // create a temporary pointer to the current element to be used for deallocation
          vftr_request_list_t *tmp_current_request = current_request;
@@ -208,8 +241,6 @@ void vftr_clear_completed_request() {
          current_request = current_request->next;
       }
    } // end of while loop
-   
-   return;
 }
 
 #endif
