@@ -16,9 +16,11 @@
    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-#include <stdlib.h>
 
 #ifdef _MPI
+#include <stdlib.h>
+#include <mpi.h>
+
 #include "vftr_mpi_utils.h"
 #include "vftr_environment.h"
 #include "vftr_filewrite.h"
@@ -188,13 +190,12 @@ void vftr_clear_completed_request() {
             }
          }
          // Get the actual amount of transferred data if it is a receive operation
-         if (current_request->dir == recv) {
+         // only if it was a point2point communication
+         if (current_request->dir == recv && nmsg == 1) {
             int tmpcount;
-            for (int i=0; i<nmsg; i++) {
-               PMPI_Get_count(&tmpStatus, current_request->type[i], &tmpcount);
-               if (tmpcount != MPI_UNDEFINED) {
-                  current_request->count[i] = tmpcount;
-               }
+            PMPI_Get_count(&tmpStatus, current_request->type[0], &tmpcount);
+            if (tmpcount != MPI_UNDEFINED) {
+               current_request->count[0] = tmpcount;
             }
          }
          // store the completed communication info to the outfile
