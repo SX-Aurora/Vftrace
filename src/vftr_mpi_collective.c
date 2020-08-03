@@ -16,11 +16,13 @@
    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
+#include <stdlib.h>
 #ifdef _MPI
 #include <mpi.h>
 
 #include "vftr_timer.h"
 #include "vftr_sync_messages.h"
+#include "vftr_async_messages.h"
 #include "vftr_mpi_environment.h"
 #include "vftr_mpi_buf_addr_const.h"
 
@@ -247,6 +249,107 @@ int vftr_MPI_Alltoall(const void *sendbuf, int sendcount,
             vftr_store_sync_message_info(recv, recvcount, recvtype, i, 0,
                                          comm, tstart, tend);
          }
+      }
+      return retVal;
+   }
+}
+
+int vftr_MPI_Ialltoall(const void *sendbuf, int sendcount,
+                       MPI_Datatype sendtype, void *recvbuf, int recvcount,
+                       MPI_Datatype recvtype, MPI_Comm comm,
+                       MPI_Request *request) {
+
+   // disable profiling based on the Pcontrol level
+   if (vftrace_Pcontrol_level == 0) {
+      return PMPI_Ialltoall(sendbuf, sendcount, sendtype, recvbuf,
+                           recvcount, recvtype, comm, request);
+   } else {
+      long long tstart = vftr_get_runtime_usec();
+      int retVal = PMPI_Ialltoall(sendbuf, sendcount, sendtype, recvbuf,
+                                 recvcount, recvtype, comm, request);
+  
+      // determine if inter or intra communicator
+      int isintercom;
+      PMPI_Comm_test_inter(comm, &isintercom);
+      if (isintercom) {
+         // Every process of group A sends sendcount sendtypes 
+         // to and receives recvcount recvtypes from 
+         // every process in group Band vice versa.
+         int size;
+         PMPI_Comm_remote_size(comm, &size);
+         // allocate memory for the temporary arrays
+         // to register communication request
+         int *counts = (int*) malloc(sizeof(int)*size);
+         MPI_Datatype *types = (MPI_Datatype*) malloc(sizeof(MPI_Datatype)*size);
+         int *peer_ranks = (int*) malloc(sizeof(int)*size);
+         // messages to be send
+         for (int i=0; i<size; i++) {
+            counts[i] = sendcount;
+            types[i] = sendtype;
+            // translate the i-th rank in the remote group to the global rank
+            peer_ranks[i] = vftr_remote2global_rank(comm, i);
+         }
+         // Register request with MPI_COMM_WORLD as communicator
+         // to prevent additional (and thus faulty rank translation)
+         vftr_register_request(send, size, counts, types, peer_ranks, -1,
+                               MPI_COMM_WORLD, *request, tstart);
+         // messages to be received
+         for (int i=0; i<size; i++) {
+            counts[i] = recvcount;
+            types[i] = recvtype;
+            // translate the i-th rank in the remote group to the global rank
+            peer_ranks[i] = vftr_remote2global_rank(comm, i);
+         }
+         // Register request with MPI_COMM_WORLD as communicator
+         // to prevent additional (and thus faulty rank translation)
+         vftr_register_request(recv, size, counts, types, peer_ranks, -1,
+                               MPI_COMM_WORLD, *request, tstart);
+         // cleanup temporary arrays
+         free(counts);
+         counts = NULL;
+         free(types);
+         types = NULL;
+         free(peer_ranks);
+         peer_ranks = NULL;
+      } else {
+         int size;
+         PMPI_Comm_size(comm, &size);
+         // if sendbuf is special address MPI_IN_PLACE
+         // sendcount and sendtype are ignored.
+         // Use recvcount and recvtype for statistics
+         if (vftr_is_C_MPI_IN_PLACE(sendbuf)) {
+            sendcount = recvcount;
+            sendtype = recvtype;
+         }
+         // allocate memory for the temporary arrays
+         // to register communication request
+         int *counts = (int*) malloc(sizeof(int)*size);
+         MPI_Datatype *types = (MPI_Datatype*) malloc(sizeof(MPI_Datatype)*size);
+         int *peer_ranks = (int*) malloc(sizeof(int)*size);
+         // messages to be send
+         for (int i=0; i<size; i++) {
+            counts[i] = sendcount;
+            types[i] = sendtype;
+            peer_ranks[i] = i;
+         }
+         vftr_register_request(send, size, counts, types, peer_ranks, -1,
+                               comm, *request, tstart);
+         // messages to be received
+         for (int i=0; i<size; i++) {
+            counts[i] = recvcount;
+            types[i] = recvtype;
+            peer_ranks[i] = i;
+         }
+         vftr_register_request(recv, size, counts, types, peer_ranks, -1,
+                               comm, *request, tstart);
+         // cleanup temporary arrays
+         free(counts);
+         counts = NULL;
+         free(types);
+         types = NULL;
+         free(peer_ranks);
+         peer_ranks = NULL;
+
       }
       return retVal;
    }
