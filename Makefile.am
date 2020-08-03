@@ -56,12 +56,15 @@ libvftr_mpiwrap_la_SOURCES = $(SRCPATH)/vftr_mpi_environment_cwrap.c \
 			     $(SRCPATH)/vftr_mpi_point2point_cwrap.c \
 			     $(SRCPATH)/vftr_mpi_point2point_c2F.F90 \
 			     $(SRCPATH)/vftr_mpi_point2point_Fwrap.F90 \
+			     $(SRCPATH)/vftr_mpi_point2point_F08wrap.F90 \
 			     $(SRCPATH)/vftr_mpi_collective_cwrap.c \
 			     $(SRCPATH)/vftr_mpi_collective_c2F.F90 \
 			     $(SRCPATH)/vftr_mpi_collective_Fwrap.F90 \
+			     $(SRCPATH)/vftr_mpi_collective_F08wrap.F90 \
 			     $(SRCPATH)/vftr_mpi_onesided_cwrap.c \
 			     $(SRCPATH)/vftr_mpi_onesided_c2F.F90 \
 			     $(SRCPATH)/vftr_mpi_onesided_Fwrap.F90 \
+			     $(SRCPATH)/vftr_mpi_onesided_F08wrap.F90 \
 			     $(SRCPATH)/vftr_mpi_testwait_cwrap.c \
                              $(SRCPATH)/vftr_mpi_testwait_c2F.F90 \
 			     $(SRCPATH)/vftr_mpi_testwait_Fwrap.F90
