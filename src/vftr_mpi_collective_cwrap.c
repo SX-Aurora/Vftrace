@@ -48,6 +48,14 @@ int MPI_Alltoall(const void *sendbuf, int sendcount,
                             recvcount, recvtype, comm);
 }
 
+int MPI_Ialltoall(const void *sendbuf, int sendcount,
+                  MPI_Datatype sendtype, void *recvbuf, int recvcount,
+                  MPI_Datatype recvtype, MPI_Comm comm,
+                  MPI_Request *request) {
+   return vftr_MPI_Ialltoall(sendbuf, sendcount, sendtype, recvbuf,
+                            recvcount, recvtype, comm, request);
+}
+
 int MPI_Alltoallv(const void *sendbuf, const int *sendcounts,
                   const int *sdispls, MPI_Datatype sendtype, void *recvbuf,
                   const int *recvcounts, const int *rdispls,
