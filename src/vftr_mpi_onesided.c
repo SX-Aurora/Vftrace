@@ -89,8 +89,8 @@ int vftr_MPI_Rget(void *origin_addr, int origin_count,
                                  global_group,
                                  &global_rank);
 
-      vftr_register_request(recv, 1, &origin_count, &origin_datatype,
-                            &global_rank, -1, MPI_COMM_WORLD, *request, tstart);
+      vftr_register_onesided_request(recv, origin_count, origin_datatype,
+                                     global_rank, -1, MPI_COMM_WORLD, *request, tstart);
 
       return retVal;
    }
@@ -164,8 +164,8 @@ int vftr_MPI_Rput(const void *origin_addr, int origin_count,
                                  global_group,
                                  &global_rank);
 
-      vftr_register_request(send, 1, &origin_count, &origin_datatype,
-                            &global_rank, -1, MPI_COMM_WORLD, *request, tstart);
+      vftr_register_onesided_request(send, origin_count, origin_datatype,
+                                     global_rank, -1, MPI_COMM_WORLD, *request, tstart);
       return retVal;
    }
 }

@@ -291,8 +291,8 @@ int vftr_MPI_Ialltoall(const void *sendbuf, int sendcount,
          }
          // Register request with MPI_COMM_WORLD as communicator
          // to prevent additional (and thus faulty rank translation)
-         vftr_register_request(send, size, counts, types, peer_ranks, -1,
-                               MPI_COMM_WORLD, *request, tstart);
+         vftr_register_collective_request(send, size, counts, types, peer_ranks,
+                                          MPI_COMM_WORLD, *request, tstart);
          // messages to be received
          for (int i=0; i<size; i++) {
             counts[i] = recvcount;
@@ -302,8 +302,8 @@ int vftr_MPI_Ialltoall(const void *sendbuf, int sendcount,
          }
          // Register request with MPI_COMM_WORLD as communicator
          // to prevent additional (and thus faulty rank translation)
-         vftr_register_request(recv, size, counts, types, peer_ranks, -1,
-                               MPI_COMM_WORLD, *request, tstart);
+         vftr_register_collective_request(recv, size, counts, types, peer_ranks,
+                                          MPI_COMM_WORLD, *request, tstart);
          // cleanup temporary arrays
          free(counts);
          counts = NULL;
@@ -332,16 +332,16 @@ int vftr_MPI_Ialltoall(const void *sendbuf, int sendcount,
             types[i] = sendtype;
             peer_ranks[i] = i;
          }
-         vftr_register_request(send, size, counts, types, peer_ranks, -1,
-                               comm, *request, tstart);
+         vftr_register_collective_request(send, size, counts, types, peer_ranks,
+                                          comm, *request, tstart);
          // messages to be received
          for (int i=0; i<size; i++) {
             counts[i] = recvcount;
             types[i] = recvtype;
             peer_ranks[i] = i;
          }
-         vftr_register_request(recv, size, counts, types, peer_ranks, -1,
-                               comm, *request, tstart);
+         vftr_register_collective_request(recv, size, counts, types, peer_ranks,
+                                          comm, *request, tstart);
          // cleanup temporary arrays
          free(counts);
          counts = NULL;
