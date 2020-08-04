@@ -102,8 +102,8 @@ env_var_bool_t *vftr_read_env_bool (char *env_name, bool val_default) {
             !strcmp(s_lower, "on")) {
            var->value = true;
         } else if (!strcmp(s_lower, "0") ||
-            !strcmp(s_lower, "no") ||
-            !strcmp(s_lower, "off")) {
+                   !strcmp(s_lower, "no") ||
+                   !strcmp(s_lower, "off")) {
            var->value = false;
         } else {
            var->value = false;
