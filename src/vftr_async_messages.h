@@ -22,13 +22,60 @@
 #ifdef _MPI
 #include "vftr_mpi_utils.h"
 
+typedef enum {vftr_comm_P2P,
+              vftr_comm_collective,
+              vftr_comm_onesided
+} vftr_comm_t;
+
+// store open requests as doubly linked list
+typedef struct vftr_request_list_type {
+   struct vftr_request_list_type *prev, *next;
+   MPI_Request request;
+   MPI_Comm comm;
+   vftr_comm_t communication_type;
+   int nmsg;
+   int dir;
+   int *count;
+   MPI_Datatype *type;
+   int *type_idx;
+   int *type_size;
+   int *rank;
+   int tag;
+   long long tstart;
+} vftr_request_list_t;
+
+void vftr_register_P2P_request(vftr_direction dir, int count,
+                               MPI_Datatype type, int peer_rank, int tag,
+                               MPI_Comm comm, MPI_Request request,
+                               long long tstart);
+
+void vftr_register_onesided_request(vftr_direction dir, int count,
+                                    MPI_Datatype type, int peer_rank,
+                                    MPI_Comm comm, MPI_Request request,
+                                    long long tstart);
+
+void vftr_register_collective_request(vftr_direction dir, int nmsg, int *count,
+                                      MPI_Datatype *type, int *peer_rank,
+                                      MPI_Comm comm, MPI_Request request,
+                                      long long tstart);
+
 // add an open communication request to the list of all open requests
-void vftr_register_request(vftr_direction dir, int count, MPI_Datatype type, 
-                           int peer_rank, int tag, MPI_Comm comm,
+void vftr_register_request(vftr_direction dir, vftr_comm_t communication_type,
+                           int nmsg, int *count, MPI_Datatype *type,
+                           int *peer_rank, int tag, MPI_Comm comm,
                            MPI_Request request, long long tstart);
 
 // test the entire list of open request for completed communication
 void vftr_clear_completed_request();
+
+void vftr_clear_completed_P2P_request(vftr_request_list_t *vftr_request,
+                                      MPI_Status Status, long long tend);
+
+void vftr_clear_completed_onesided_request(vftr_request_list_t *vftr_request,
+                                           long long tend);
+
+void vftr_clear_completed_collective_request(vftr_request_list_t *vftr_request,
+                                             long long tend);
 
 #endif
 #endif

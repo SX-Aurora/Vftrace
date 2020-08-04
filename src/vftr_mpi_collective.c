@@ -16,11 +16,13 @@
    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
+#include <stdlib.h>
 #ifdef _MPI
 #include <mpi.h>
 
 #include "vftr_timer.h"
 #include "vftr_sync_messages.h"
+#include "vftr_async_messages.h"
 #include "vftr_mpi_environment.h"
 #include "vftr_mpi_buf_addr_const.h"
 
@@ -42,8 +44,23 @@ int vftr_MPI_Allgather(const void *sendbuf, int sendcount,
       int isintercom;
       PMPI_Comm_test_inter(comm, &isintercom);
       if (isintercom) {
-         // TODO: handle intercom
-         ;
+         // Every process of group A sends sendcount data to and
+         // receives recvcount data from every process in group B and
+         // vice versa
+         int size;
+         PMPI_Comm_remote_size(comm, &size);
+         for (int i=0; i<size; i++) {
+            // translate the i-th rank in the remote group to the global rank
+            int global_peer_rank = vftr_remote2global_rank(comm, i);
+            // Store message info with MPI_COMM_WORLD as communicator
+            // to prevent additional (and thus faulty rank translation)
+            vftr_store_sync_message_info(send, sendcount, sendtype, 
+                                         global_peer_rank, -1, MPI_COMM_WORLD,
+                                         tstart, tend);
+            vftr_store_sync_message_info(recv, recvcount, recvtype,
+                                         global_peer_rank, -1, MPI_COMM_WORLD,
+                                         tstart, tend);
+         }
       } else {
          int size;
          PMPI_Comm_size(comm, &size);
@@ -85,8 +102,22 @@ int vftr_MPI_Allgatherv(const void *sendbuf, int sendcount,
       int isintercom;
       PMPI_Comm_test_inter(comm, &isintercom);
       if (isintercom) {
-         // TODO: handle intercom
-         ;
+         // Every process of group A sends sendcount data to and
+         // receives recvcounts[i] data from the i-th process in group B
+         int size;
+         PMPI_Comm_remote_size(comm, &size);
+         for (int i=0; i<size; i++) {
+            // translate the i-th rank in the remote group to the global rank
+            int global_peer_rank = vftr_remote2global_rank(comm, i);
+            // Store message info with MPI_COMM_WORLD as communicator
+            // to prevent additional (and thus faulty rank translation)
+            vftr_store_sync_message_info(send, sendcount, sendtype,
+                                         global_peer_rank, -1, MPI_COMM_WORLD,
+                                         tstart, tend);
+            vftr_store_sync_message_info(recv, recvcounts[i], recvtype,
+                                         global_peer_rank, -1, MPI_COMM_WORLD,
+                                         tstart, tend);
+         }
       } else {
          int size;
          PMPI_Comm_size(comm, &size);
@@ -126,8 +157,32 @@ int vftr_MPI_Allreduce(const void *sendbuf, void *recvbuf, int count,
       int isintercom;
       PMPI_Comm_test_inter(comm, &isintercom);
       if (isintercom) {
-         // TODO: handle intercom
-         ;
+         // Every process of group A performs the reduction within the group A
+         // and stores the result on everyp process of group B and vice versa
+         int size;
+         PMPI_Comm_remote_size(comm, &size);
+         for (int i=0; i<size; i++) {
+            // translate the i-th rank in the remote group to the global rank
+            int global_peer_rank = vftr_remote2global_rank(comm, i);
+            // Store message info with MPI_COMM_WORLD as communicator
+            // to prevent additional (and thus faulty rank translation)
+            vftr_store_sync_message_info(send, count, datatype,
+                                         global_peer_rank, -1, MPI_COMM_WORLD,
+                                         tstart, tend);
+            // The receive is not strictly true as every process receives only one 
+            // data package, but due to the nature of a remote reduce
+            // it is not possible to destinguish from whom.
+            // There are three possibilities how to deal with this
+            // 1. Don't register the receive at all
+            // 2. Register the receive with count data from every remote process
+            // 3. Register the receive with count/(remote size) data
+            //    from every remote process
+            // We selected number 2, because option 3 might not result
+            // in an integer abmount of received data.
+            vftr_store_sync_message_info(recv, count, datatype,
+                                         global_peer_rank, -1, MPI_COMM_WORLD,
+                                         tstart, tend);
+         }
       } else {
          int size;
          PMPI_Comm_size(comm, &size);
@@ -161,8 +216,23 @@ int vftr_MPI_Alltoall(const void *sendbuf, int sendcount,
       int isintercom;
       PMPI_Comm_test_inter(comm, &isintercom);
       if (isintercom) {
-         // TODO: handle intercom
-         ;
+         // Every process of group A sends sendcount sendtypes 
+         // to and receives recvcount recvtypes from 
+         // every process in group Band vice versa.
+         int size;
+         PMPI_Comm_remote_size(comm, &size);
+         for (int i=0; i<size; i++) {
+            // translate the i-th rank in the remote group to the global rank
+            int global_peer_rank = vftr_remote2global_rank(comm, i);
+            // Store message info with MPI_COMM_WORLD as communicator
+            // to prevent additional (and thus faulty rank translation)
+            vftr_store_sync_message_info(send, sendcount, sendtype,
+                                         global_peer_rank, -1, MPI_COMM_WORLD,
+                                         tstart, tend);
+            vftr_store_sync_message_info(recv, recvcount, recvtype,
+                                         global_peer_rank, -1, MPI_COMM_WORLD,
+                                         tstart, tend);
+         }
       } else {
          int size;
          PMPI_Comm_size(comm, &size);
@@ -179,6 +249,107 @@ int vftr_MPI_Alltoall(const void *sendbuf, int sendcount,
             vftr_store_sync_message_info(recv, recvcount, recvtype, i, 0,
                                          comm, tstart, tend);
          }
+      }
+      return retVal;
+   }
+}
+
+int vftr_MPI_Ialltoall(const void *sendbuf, int sendcount,
+                       MPI_Datatype sendtype, void *recvbuf, int recvcount,
+                       MPI_Datatype recvtype, MPI_Comm comm,
+                       MPI_Request *request) {
+
+   // disable profiling based on the Pcontrol level
+   if (vftrace_Pcontrol_level == 0) {
+      return PMPI_Ialltoall(sendbuf, sendcount, sendtype, recvbuf,
+                           recvcount, recvtype, comm, request);
+   } else {
+      long long tstart = vftr_get_runtime_usec();
+      int retVal = PMPI_Ialltoall(sendbuf, sendcount, sendtype, recvbuf,
+                                 recvcount, recvtype, comm, request);
+  
+      // determine if inter or intra communicator
+      int isintercom;
+      PMPI_Comm_test_inter(comm, &isintercom);
+      if (isintercom) {
+         // Every process of group A sends sendcount sendtypes 
+         // to and receives recvcount recvtypes from 
+         // every process in group Band vice versa.
+         int size;
+         PMPI_Comm_remote_size(comm, &size);
+         // allocate memory for the temporary arrays
+         // to register communication request
+         int *counts = (int*) malloc(sizeof(int)*size);
+         MPI_Datatype *types = (MPI_Datatype*) malloc(sizeof(MPI_Datatype)*size);
+         int *peer_ranks = (int*) malloc(sizeof(int)*size);
+         // messages to be send
+         for (int i=0; i<size; i++) {
+            counts[i] = sendcount;
+            types[i] = sendtype;
+            // translate the i-th rank in the remote group to the global rank
+            peer_ranks[i] = vftr_remote2global_rank(comm, i);
+         }
+         // Register request with MPI_COMM_WORLD as communicator
+         // to prevent additional (and thus faulty rank translation)
+         vftr_register_collective_request(send, size, counts, types, peer_ranks,
+                                          MPI_COMM_WORLD, *request, tstart);
+         // messages to be received
+         for (int i=0; i<size; i++) {
+            counts[i] = recvcount;
+            types[i] = recvtype;
+            // translate the i-th rank in the remote group to the global rank
+            peer_ranks[i] = vftr_remote2global_rank(comm, i);
+         }
+         // Register request with MPI_COMM_WORLD as communicator
+         // to prevent additional (and thus faulty rank translation)
+         vftr_register_collective_request(recv, size, counts, types, peer_ranks,
+                                          MPI_COMM_WORLD, *request, tstart);
+         // cleanup temporary arrays
+         free(counts);
+         counts = NULL;
+         free(types);
+         types = NULL;
+         free(peer_ranks);
+         peer_ranks = NULL;
+      } else {
+         int size;
+         PMPI_Comm_size(comm, &size);
+         // if sendbuf is special address MPI_IN_PLACE
+         // sendcount and sendtype are ignored.
+         // Use recvcount and recvtype for statistics
+         if (vftr_is_C_MPI_IN_PLACE(sendbuf)) {
+            sendcount = recvcount;
+            sendtype = recvtype;
+         }
+         // allocate memory for the temporary arrays
+         // to register communication request
+         int *counts = (int*) malloc(sizeof(int)*size);
+         MPI_Datatype *types = (MPI_Datatype*) malloc(sizeof(MPI_Datatype)*size);
+         int *peer_ranks = (int*) malloc(sizeof(int)*size);
+         // messages to be send
+         for (int i=0; i<size; i++) {
+            counts[i] = sendcount;
+            types[i] = sendtype;
+            peer_ranks[i] = i;
+         }
+         vftr_register_collective_request(send, size, counts, types, peer_ranks,
+                                          comm, *request, tstart);
+         // messages to be received
+         for (int i=0; i<size; i++) {
+            counts[i] = recvcount;
+            types[i] = recvtype;
+            peer_ranks[i] = i;
+         }
+         vftr_register_collective_request(recv, size, counts, types, peer_ranks,
+                                          comm, *request, tstart);
+         // cleanup temporary arrays
+         free(counts);
+         counts = NULL;
+         free(types);
+         types = NULL;
+         free(peer_ranks);
+         peer_ranks = NULL;
+
       }
       return retVal;
    }
@@ -203,8 +374,22 @@ int vftr_MPI_Alltoallv(const void *sendbuf, const int *sendcounts,
       int isintercom;
       PMPI_Comm_test_inter(comm, &isintercom);
       if (isintercom) {
-         // TODO: handle intercom
-         ;
+         // Every process of group A sends sendcounts[i] sendtypes to
+         // and receives recvcounts[i] recvtypes from
+         // the i-th process in group B and vice versa.
+         int size;
+         for (int i=0; i<size; i++) {
+            // translate the i-th rank in the remote group to the global rank
+            int global_peer_rank = vftr_remote2global_rank(comm, i);
+            // Store message info with MPI_COMM_WORLD as communicator
+            // to prevent additional (and thus faulty rank translation)
+            vftr_store_sync_message_info(send, sendcounts[i], sendtype,
+                                         global_peer_rank, -1, MPI_COMM_WORLD,
+                                         tstart, tend);
+            vftr_store_sync_message_info(recv, recvcounts[i], recvtype,
+                                         global_peer_rank, -1, MPI_COMM_WORLD,
+                                         tstart, tend);
+         }
       } else {
          int size;
          PMPI_Comm_size(comm, &size);
@@ -246,8 +431,22 @@ int vftr_MPI_Alltoallw(const void *sendbuf, const int *sendcounts,
       int isintercom;
       PMPI_Comm_test_inter(comm, &isintercom);
       if (isintercom) {
-         // TODO: handle intercom
-         ;
+         // Every process of group A sends sendcounts[i] sendtypes[i] to
+         // and receives recvcounts[i] recvtypes[i] from
+         // the i-th process in group B and vice versa.
+         int size;
+         for (int i=0; i<size; i++) {
+            // translate the i-th rank in the remote group to the global rank
+            int global_peer_rank = vftr_remote2global_rank(comm, i);
+            // Store message info with MPI_COMM_WORLD as communicator
+            // to prevent additional (and thus faulty rank translation)
+            vftr_store_sync_message_info(send, sendcounts[i], sendtypes[i],
+                                         global_peer_rank, -1, MPI_COMM_WORLD,
+                                         tstart, tend);
+            vftr_store_sync_message_info(recv, recvcounts[i], recvtypes[i],
+                                         global_peer_rank, -1, MPI_COMM_WORLD,
+                                         tstart, tend);
+         }
       } else {
          int size;
          PMPI_Comm_size(comm, &size);
@@ -310,7 +509,7 @@ int vftr_MPI_Bcast(void *buffer, int count, MPI_Datatype datatype,
             // All other processes must be located in group B
             // root is the rank-id in group A Therefore no problems with 
             // rank translation should arise
-            vftr_store_sync_message_info(send, count, datatype,
+            vftr_store_sync_message_info(recv, count, datatype,
                                          root, -1, comm, tstart, tend);
          }
       } else {
@@ -322,12 +521,106 @@ int vftr_MPI_Bcast(void *buffer, int count, MPI_Datatype datatype,
             int size;
             PMPI_Comm_size(comm, &size);
             for (int i=0; i<size; i++) {
-               vftr_store_sync_message_info(recv, count, datatype, i, -1,
+               vftr_store_sync_message_info(send, count, datatype, i, -1,
                                             comm, tstart, tend);
             }
          } else {
-            vftr_store_sync_message_info(send, count, datatype, root, -1,
+            vftr_store_sync_message_info(recv, count, datatype, root, -1,
                                          comm, tstart, tend);
+         }
+      }
+
+      return retVal;
+   }
+}
+
+int vftr_MPI_Ibcast(void *buffer, int count, MPI_Datatype datatype,
+                   int root, MPI_Comm comm, MPI_Request *request) {
+
+   // disable profiling based on the Pcontrol level
+   if (vftrace_Pcontrol_level == 0) {
+      return PMPI_Ibcast(buffer, count, datatype, root, comm, request);
+   } else {
+      long long tstart = vftr_get_runtime_usec();
+      int retVal = PMPI_Ibcast(buffer, count, datatype, root, comm, request);
+      long long tend = vftr_get_runtime_usec();
+
+      // determine if inter or intra communicator
+      int isintercom;
+      PMPI_Comm_test_inter(comm, &isintercom);
+      if (isintercom) {
+         // in intercommunicators the behaviour is more complicated
+         // There are two groups A and B
+         // In group A the root process is located.
+         if (root == MPI_ROOT) {
+            // The root process get the special process wildcard MPI_ROOT
+            // get the size of group B
+            int size;
+            PMPI_Comm_remote_size(comm, &size);
+            int *counts = (int*) malloc(sizeof(int)*size);
+            MPI_Datatype *types = (MPI_Datatype*) malloc(sizeof(MPI_Datatype)*size);
+            int *peer_ranks= (int*) malloc(sizeof(int)*size);
+            // messages to be send
+            for (int i=0; i<size; i++) {
+               counts[i] = count;
+               types[i] = datatype;
+               // translate the i-th rank in the remote group to the global rank
+               peer_ranks[i] = vftr_remote2global_rank(comm, i);
+            }
+            // Register request with MPI_COMM_WORLD as communicator
+            // to prevent additional (and thus faulty rank translation)
+            vftr_register_collective_request(send, size, counts, types, peer_ranks,
+                                             MPI_COMM_WORLD, *request, tstart);
+            // cleanup temporary arrays
+            free(counts);
+            counts = NULL;
+            free(types);
+            types = NULL;
+            free(peer_ranks);
+            peer_ranks = NULL;
+         } else if (root == MPI_PROC_NULL) {
+            // All other processes from group A pass wildcard MPI_PROC NULL
+            // They do not participate in intercommunicator gather
+            ;
+         } else {
+            // All other processes must be located in group B
+            // root is the rank-id in group A Therefore no problems with 
+            // rank translation should arise
+            vftr_register_collective_request(recv, 1, &count, &datatype, &root,
+                                             comm, *request, tstart);
+         }
+      } else {
+         // in intracommunicators the expected behaviour is to
+         // gather from root to all other processes in the communicator
+         int rank;
+         PMPI_Comm_rank(comm, &rank);
+         if (rank == root) {
+            int size;
+            PMPI_Comm_size(comm, &size);
+            // allocate memory for the temporary arrays
+            // to register communication request
+            int *counts = (int*) malloc(sizeof(int)*size);
+            MPI_Datatype *types = (MPI_Datatype*) malloc(sizeof(MPI_Datatype)*size);
+            int *peer_ranks = (int*) malloc(sizeof(int)*size);
+            // messages to be send
+            for (int i=0; i<size; i++) {
+               counts[i] = count;
+               types[i] = datatype;
+               // translate the i-th rank in the remote group to the global rank
+               peer_ranks[i] = i;
+            }
+            vftr_register_collective_request(send, size, counts, types, peer_ranks,
+                                             comm, *request, tstart);
+            // cleanup temporary arrays
+            free(counts);
+            counts = NULL;
+            free(types);
+            types = NULL;
+            free(peer_ranks);
+            peer_ranks = NULL;
+         } else {
+            vftr_register_collective_request(recv, 1, &count, &datatype, &root,
+                                             comm, *request, tstart);
          }
       }
 

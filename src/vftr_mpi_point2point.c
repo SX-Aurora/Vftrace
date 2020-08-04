@@ -69,7 +69,7 @@ int vftr_MPI_Bsend_init(const void *buf, int count,
       long long tstart = vftr_get_runtime_usec();
       int retVal = PMPI_Bsend_init(buf, count, datatype, dest, tag, comm, request);
    
-      vftr_register_request(send, count, datatype, dest, tag, comm, *request, tstart);
+      vftr_register_P2P_request(send, count, datatype, dest, tag, comm, *request, tstart);
    
       return retVal;
    }
@@ -86,7 +86,7 @@ int vftr_MPI_Isend(const void *buf, int count, MPI_Datatype datatype,
       long long tstart = vftr_get_runtime_usec();
       int retVal = PMPI_Isend(buf, count, datatype, dest, tag, comm, request);
 
-      vftr_register_request(send, count, datatype, dest, tag, comm, *request, tstart);
+      vftr_register_P2P_request(send, count, datatype, dest, tag, comm, *request, tstart);
 
       return retVal;
    }
@@ -102,7 +102,7 @@ int vftr_MPI_Ibsend(const void *buf, int count, MPI_Datatype datatype,
       long long tstart = vftr_get_runtime_usec();
       int retVal = PMPI_Ibsend(buf, count, datatype, dest, tag, comm, request);
 
-      vftr_register_request(send, count, datatype, dest, tag, comm, *request, tstart);
+      vftr_register_P2P_request(send, count, datatype, dest, tag, comm, *request, tstart);
 
       return retVal;
    }
@@ -135,7 +135,7 @@ int vftr_MPI_Issend(const void *buf, int count, MPI_Datatype datatype,
       long long tstart = vftr_get_runtime_usec();
       int retVal = PMPI_Issend(buf, count, datatype, dest, tag, comm, request);
  
-      vftr_register_request(send, count, datatype, dest, tag, comm, *request, tstart);
+      vftr_register_P2P_request(send, count, datatype, dest, tag, comm, *request, tstart);
  
       return retVal;
    }
@@ -168,7 +168,7 @@ int vftr_MPI_Irsend(const void *buf, int count, MPI_Datatype datatype,
       long long tstart = vftr_get_runtime_usec();
       int retVal = PMPI_Irsend(buf, count, datatype, dest, tag, comm, request);
   
-      vftr_register_request(send, count, datatype, dest, tag, comm, *request, tstart);
+      vftr_register_P2P_request(send, count, datatype, dest, tag, comm, *request, tstart);
   
       return retVal;
    }
@@ -211,7 +211,7 @@ int vftr_MPI_Irecv(void *buf, int count, MPI_Datatype datatype,
       long long tstart = vftr_get_runtime_usec();
       int retVal = PMPI_Irecv(buf, count, datatype, source, tag, comm, request);
 
-      vftr_register_request(recv, count, datatype, source, tag, comm, *request, tstart);
+      vftr_register_P2P_request(recv, count, datatype, source, tag, comm, *request, tstart);
 
       return retVal;
    }
