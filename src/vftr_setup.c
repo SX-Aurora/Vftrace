@@ -199,7 +199,7 @@ void vftr_initialize() {
     }
 #endif
 
-    if (!vftr_mpirank) {
+    if (vftr_mpirank == 0) {
        if (vftr_environment->license_verbose->value) {
 	  vftr_print_disclaimer_full (vftr_log);
        } else {
