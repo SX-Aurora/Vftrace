@@ -15,13 +15,13 @@
    with this program; if not, write to the Free Software Foundation, Inc.,
    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-#ifndef VFTR_MPI_ENVIRONMENT_H
-#define VFTR_MPI_ENVIRONMENT_H
 
-// PControl level as required by the MPI-Standard for profiling interfaces
-extern int vftrace_Pcontrol_level;
+#ifdef _MPI
 
-// vftrace internal routine to control the profiling level
-int vftr_MPI_Pcontrol(const int level);
+#include "vftr_pcontrol.h"
+
+void vftr_MPI_Pcontrol_F08(const int level) {
+   vftr_MPI_Pcontrol(level);
+}
 
 #endif
