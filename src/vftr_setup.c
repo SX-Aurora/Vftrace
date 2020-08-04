@@ -50,8 +50,8 @@ int vftr_mpisize;
 int *vftr_in_parallel;
 unsigned int *vftr_samplecount;
 
-void vftr_print_disclaimer_full () {
-    fprintf( vftr_log, 
+void vftr_print_disclaimer_full (FILE *fp) {
+    fprintf (fp, 
         "\nThis program is free software; you can redistribute it and/or modify\n"
         "it under the terms of the GNU General Public License as published by\n"
         "the Free Software Foundation; either version 2 of the License , or\n"
@@ -69,14 +69,14 @@ void vftr_print_disclaimer_full () {
 
 /**********************************************************************/
 
-void vftr_print_disclaimer () {
+void vftr_print_disclaimer (FILE *fp) {
     int v_major = MAJOR_VERSION;
     int v_minor = MINOR_VERSION;
     int rev = REVISION;
-    fprintf (vftr_log, "Vftrace version %d.%d.%d\n", v_major, v_minor, rev);
-    fprintf (vftr_log, "Runtime profile for application: %s\n", "");
-    fprintf (vftr_log, "Date: "); 
-    fprintf( vftr_log, 
+    fprintf (fp, "Vftrace version %d.%d.%d\n", v_major, v_minor, rev);
+    fprintf (fp, "Runtime profile for application: %s\n", "");
+    fprintf (fp, "Date: "); 
+    fprintf (fp, 
         "This is free software with ABSOLUTELY NO WARRANTY.\n"
         "For details: use vftrace with environment variable VFTR_LICENSE\n"
         "set to 1, or run \"vfview -w\", or consult the COPYRIGHT file.\n" );
@@ -201,9 +201,9 @@ void vftr_initialize() {
 
     if (!vftr_mpirank) {
        if (vftr_environment->license_verbose->value) {
-	  vftr_print_disclaimer_full ();
+	  vftr_print_disclaimer_full (vftr_log);
        } else {
-	  vftr_print_disclaimer ();
+	  vftr_print_disclaimer (vftr_log);
        }
     }
 
@@ -458,3 +458,11 @@ int vftr_setup_test_1 (FILE *fp) {
 }
 
 /**********************************************************************/
+
+int vftr_setup_test_2 (FILE *fp) {
+	fprintf (fp, "Check disclaimers\n");
+	vftr_print_disclaimer_full (fp);
+	fprintf (fp, "****************************************\n");
+	vftr_print_disclaimer (fp);
+}
+
