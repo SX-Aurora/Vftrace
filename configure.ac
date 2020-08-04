@@ -92,5 +92,6 @@ AC_CONFIG_FILES([src/vftr_mpi/Makefile])
 AC_CONFIG_FILES([src/vftr_mpi/c-wrapper/Makefile])
 AC_CONFIG_FILES([src/vftr_mpi/f-wrapper/Makefile])
 AC_CONFIG_FILES([src/vftr_mpi/f08-wrapper/Makefile])
+AC_CONFIG_FILES([tools/Makefile])
 AC_CONFIG_FILES([test/Makefile])
 AC_OUTPUT
