@@ -94,16 +94,16 @@ env_var_bool_t *vftr_read_env_bool (char *env_name, bool val_default) {
     if (s = getenv (env_name)) {
         // convert string to only lowercase to ease comparison
         char *s_lower = strdup(s);
-	for (int i = 0; i < strlen(s_lower); i++) {
-		s_lower[i] = tolower (s_lower[i]);
-	}
+        for (int i = 0; i < strlen(s_lower); i++) {
+            s_lower[i] = tolower (s_lower[i]);
+        }
         if (!strcmp(s_lower, "1") ||
             !strcmp(s_lower, "yes") ||
             !strcmp(s_lower, "on")) {
            var->value = true;
         } else if (!strcmp(s_lower, "0") ||
-                   !strcmp(s_lower, "no") ||
-                   !strcmp(s_lower, "off")) {
+            !strcmp(s_lower, "no") ||
+            !strcmp(s_lower, "off")) {
            var->value = false;
         } else {
            var->value = false;
