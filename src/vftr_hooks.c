@@ -395,6 +395,20 @@ void vftr_function_exit(int line) {
     long long overhead_time_end = vftr_get_runtime_usec();
     vftr_prof_data[me].timeExcl = overhead_time_end;
     vftr_overhead_usec[me] += overhead_time_end - overhead_time_start;
+
+    /* Terminate Vftrace if we are exiting the main routine */
+    // When exiting main, there is no return value.
+    // This approach is in contrast to previous implementations, where
+    // vftr_finalize was a destructor. It has been agreed upon that
+    // we do not want to have invisible side effects, wherefore this
+    // method is much more transparent. Also, unit tests do not have 
+    // to cope with possibly non-associated symbols when calling vftr_finalize
+    // and are also purer that way. 
+    // A downside is that everything between the exit from the main function
+    // and the actual program termination as experienced by the user is not
+    // measured. Therefore, there is a theoretical, but miniscule, discrepancy
+    // the user time and the time measured by Vftrace.
+    if (!vftr_fstack[me]->ret) vftr_finalize();
 }
 
 // These are the actual Cygnus function hooks. 
