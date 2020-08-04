@@ -351,6 +351,7 @@ void vftr_print_environment (FILE *fp) {
 int vftr_environment_test_1 (FILE *fp) {
 	putenv ("VFTR_OFF=yes");
 	vftr_read_environment ();
+	vftr_assert_environment ();
 	vftr_print_environment (fp);
 	vftr_free_environment ();
 		
@@ -364,6 +365,7 @@ int vftr_environment_test_1 (FILE *fp) {
 	putenv ("VFTR_SAMPLETIME=12.34");
 	
 	vftr_read_environment ();
+	vftr_assert_environment ();
 	vftr_print_environment (fp);
 	vftr_free_environment ();
 
