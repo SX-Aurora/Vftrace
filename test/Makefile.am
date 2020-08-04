@@ -26,7 +26,8 @@ XFAIL_TESTS = ./run/this_fails.sh
  
 TESTS = ./run/this_passes.sh \
 	./run/vftr_symbols_test_1.sh \
-	./run/vftr_environment_test_1.sh
+	./run/vftr_environment_test_1.sh \
+	./run/vftr_setup_test_1.sh
 
 TESTS += $(XFAIL_TESTS)
 

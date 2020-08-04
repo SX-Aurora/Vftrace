@@ -95,6 +95,44 @@ void vftr_init_omp_locks () {
 
 /**********************************************************************/
 
+void vftr_get_mpi_info (int *rank, int *size) {
+#ifdef _MPI
+// At this point, MPI_Init has not been called yet, so we cannot
+// use MPI_Comm_size or MPI_Comm_rank. Instead, we have to rely
+// on these environment variables set by various MPI implementations.
+    if (getenv ("PMI_RANK")) {
+        *rank = atoi (getenv("PMI_RANK"));
+        *size = atoi (getenv("PMI_SIZE"));
+    } else if (getenv ("OMPI_COMM_WORLD_RANK")) {
+        *rank = atoi (getenv(" OMPI_COMM_WORLD_RANK"));
+	*size = atoi (getenv(" OMPI_COMM_WORLD_SIZE"));
+    } else if (getenv ("PMI_ID")) {
+        *rank = atoi (getenv("PMI_ID"));
+	*size = atoi (getenv("MPIRUN_NPROCS"));
+    } else if (getenv ("MPIRUN_RANK")) {
+        *rank = atoi (getenv ("MPIRUN_RANK"));
+	*size = atoi (getenv ("MPIRUN_NPROCS"));
+    } else if (getenv ("MPIRANK")) {
+        *rank = atoi (getenv ("MPIRANK"));
+        /* MPISIZE not set by MPI/SX, will be set after mpi_init call */
+	*size = atoi (getenv ("MPISIZE"));
+    } else if (getenv ("SLURM_PROCID")) {
+	*rank = atoi (getenv ("SLURM_PROCID"));
+	if (s = getenv ("SLURM_NPROCS")) *size = atoi (s);
+    } else {
+	// Cannot find out how many MPI ranks there are, assume only one.
+	*rank = 0;
+	*size = 1;
+    }
+#else
+    // No MPI, only one rank exists.
+    *rank = 0;
+    *size = 1;
+#endif
+}
+
+/**********************************************************************/
+
 // Assuming vftr_initialize will be called outside parallel region
 void vftr_initialize() {
     char *s;
@@ -162,37 +200,7 @@ void vftr_initialize() {
 	}	
     }
 
-#ifdef _MPI
-    if (getenv ("PMI_RANK")) {
-        vftr_mpirank  = atoi( getenv( "PMI_RANK" ) );
-        vftr_mpisize  = atoi( getenv( "PMI_SIZE" ) );
-    } else if( getenv( "OMPI_COMM_WORLD_RANK" ) ) {
-        vftr_mpirank  = atoi( getenv( "OMPI_COMM_WORLD_RANK" ) );
-	vftr_mpisize  = atoi( getenv( "OMPI_COMM_WORLD_SIZE" ) );
-    } else if( getenv( "PMI_ID" ) ) {
-        vftr_mpirank  = atoi( getenv( "PMI_ID" ) );
-	vftr_mpisize  = atoi( getenv( "MPIRUN_NPROCS" ) );
-    } else if( getenv( "MPIRUN_RANK" ) ) {
-        vftr_mpirank  = atoi( getenv( "MPIRUN_RANK" ) );
-	vftr_mpisize  = atoi( getenv( "MPIRUN_NPROCS" ) );
-    } else if( getenv( "MPIRANK" ) ) {
-        vftr_mpirank  = atoi( getenv( "MPIRANK" ) );
-        /* MPISIZE not set by MPI/SX, will be set after mpi_init call */
-	vftr_mpisize  = atoi( getenv( "MPISIZE" ) );
-    } else if( getenv( "SLURM_PROCID"   ) ) {
-	vftr_mpirank  = atoi( getenv( "SLURM_PROCID" ) );
-	if( s = getenv( "SLURM_NPROCS" ) ) vftr_mpisize  = atoi( s );
-    } else {
-	// Cannot find out how many MPI ranks there are, assume only one.
-	vftr_mpirank = 0;
-	vftr_mpisize = 1;
-    }
-#else
-    // No MPI, only one rank exists.
-    vftr_mpirank = 0;
-    vftr_mpisize = 1;
-#endif
-
+    vftr_get_mpi_info (&vftr_mpirank, &vftr_mpisize);
 
     // Count the number of digits in the number of MPI tasks and OpenMP threads
     // in order to have the correct format in the log file name.
@@ -464,6 +472,16 @@ void vftr_finalize_() {
 #ifdef _MPI
 	PMPI_Barrier (MPI_COMM_WORLD);
 #endif
+}
+
+/**********************************************************************/
+
+int vftr_setup_test_1 (FILE *fp) {
+	fprintf (fp, "Check MPI rank and size received from environment variables\n");		
+	int mpi_rank, mpi_size;
+	vftr_get_mpi_info (&mpi_rank, &mpi_size);
+	fprintf (fp, "Rank: %d\n", mpi_rank);
+	fprintf (fp, "Size: %d\n", mpi_size);
 }
 
 /**********************************************************************/
