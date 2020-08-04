@@ -22,7 +22,7 @@
 #include "vftr_timer.h"
 #include "vftr_sync_messages.h"
 #include "vftr_async_messages.h"
-#include "vftr_mpi_environment.h"
+#include "vftr_pcontrol.h"
 
 int vftr_MPI_Get(void *origin_addr, int origin_count,
                  MPI_Datatype origin_datatype, int target_rank,
