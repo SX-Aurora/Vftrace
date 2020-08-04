@@ -118,6 +118,7 @@ void vftr_get_mpi_info (int *rank, int *size) {
 	*size = atoi (getenv ("MPISIZE"));
     } else if (getenv ("SLURM_PROCID")) {
 	*rank = atoi (getenv ("SLURM_PROCID"));
+	char *s;
 	if (s = getenv ("SLURM_NPROCS")) *size = atoi (s);
     } else {
 	// Cannot find out how many MPI ranks there are, assume only one.
@@ -130,15 +131,13 @@ void vftr_get_mpi_info (int *rank, int *size) {
     *size = 1;
 #endif
 }
-
+	
 /**********************************************************************/
 
 // Assuming vftr_initialize will be called outside parallel region
 void vftr_initialize() {
     char *s;
-    char *logfile_nameformat;
     int j, n, me;
-    int task_digits, thread_digits;
 
     me = OMP_GET_THREAD_NUM;
 
@@ -156,7 +155,6 @@ void vftr_initialize() {
 	
     lib_opened = 0;
 
-    char *vftr_program_path;
     vftr_timelimit = LONG_MAX;
 
     // No buffering for messages going directly to stdout
@@ -164,8 +162,6 @@ void vftr_initialize() {
 
     sprintf (vftr_fileid, "VFTRACE %07d", 
 	(100 * MAJOR_VERSION + MINOR_VERSION) * 100 + REVISION);
-
-    logfile_nameformat = malloc(1024*sizeof(char));
 
     vftr_omp_threads = OMP_GET_MAX_THREADS;
     vftr_samplecount = (unsigned int *) malloc (vftr_omp_threads * sizeof(unsigned int));
@@ -187,34 +183,10 @@ void vftr_initialize() {
    vftr_init_omp_locks ();
 #endif
 
-    vftr_program_path = get_application_name ();
-    char *basename;
-    if (vftr_environment->logfile_basename->set) {
-	basename = vftr_environment->logfile_basename->value;
-    } else {
-	char *s;	
-	if (s = rindex (vftr_program_path, '/')) {
-		basename = strdup (s + 1);
-	} else {
-		basename = strdup (vftr_program_path);
-	}	
-    }
-
     vftr_get_mpi_info (&vftr_mpirank, &vftr_mpisize);
 
-    // Count the number of digits in the number of MPI tasks and OpenMP threads
-    // in order to have the correct format in the log file name.
-    task_digits = count_digits (vftr_mpisize);
-    thread_digits = count_digits (vftr_omp_threads);
-
-    // Build filename format in a form that the filenames will
-    // be sorted in the correct way
-    //
-    sprintf (logfile_nameformat, "%s/%s_%%0%dd.log",
-             vftr_environment->output_directory->value,
-             basename, task_digits);
-    sprintf (vftr_logfile_name, logfile_nameformat, vftr_mpirank);
-    vftr_log = fopen( vftr_logfile_name, "w+");
+    char *vftr_logfile_name = vftr_create_logfile_name (vftr_mpirank, vftr_mpisize, "log");
+    vftr_log = fopen (vftr_logfile_name, "w+");
     assert (vftr_log);
     
     // Do not buffer when writing into the log file
@@ -261,7 +233,7 @@ void vftr_initialize() {
     vftr_initialize_stacks();
 
     /* Allocate file pointers for each thread */
-    vftr_vfd_file = (FILE **) malloc( vftr_omp_threads * sizeof(FILE *) );
+    vftr_vfd_file = (FILE **) malloc (vftr_omp_threads * sizeof(FILE *));
     assert (vftr_vfd_file);
     
     /* Allocate time arrays for each thread */
@@ -313,7 +285,8 @@ void vftr_initialize() {
 
     /* Create VFD files */
     if (vftr_env_do_sampling ()) {
-	vftr_init_vfd_file (basename, task_digits, thread_digits);
+        int thread_digits = count_digits (vftr_omp_threads);
+	vftr_init_vfd_file ();
     }
     
     vftr_profile_wanted = (vftr_environment->logfile_all_ranks->value) ||

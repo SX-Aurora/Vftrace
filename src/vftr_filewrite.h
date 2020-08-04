@@ -48,5 +48,8 @@ void vftr_store_message_info(vftr_direction dir, int count, int type_idx,
                              long long tstart, long long tend);
 
 void vftr_print_profile (FILE *pout, int *ntop, long long t0);
+char *vftr_create_logfile_name (int mpi_rank, int mpi_size, char *suffix);
+
+int vftr_filewrite_test_1 (FILE *fp);
 
 #endif

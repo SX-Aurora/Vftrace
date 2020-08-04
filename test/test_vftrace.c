@@ -2,6 +2,7 @@
 #include <string.h>
 
 #include "vftr_setup.h"
+#include "vftr_filewrite.h"
 #include "vftr_symbols.h"
 
 int this_fails () {
