@@ -28,6 +28,7 @@
 #include "vftr_omp.h"
 #include "vftr_environment.h"
 #include "vftr_hooks.h"
+#include "vftr_fileutils.h"
 #include "vftr_filewrite.h"
 #include "vftr_functions.h"
 #include "vftr_stacks.h"
@@ -45,7 +46,7 @@ char vftr_fileid[VFTR_FILEIDSIZE];
 long long *vftr_nextsampletime;
 
 // The basename of Vftrace log files
-char vftr_logfile_name[1024];
+char *vftr_logfile_name;
 
 FILE **vftr_vfd_file;
 
@@ -58,60 +59,102 @@ char *vftr_bool_to_string (bool value) {
 	return s;
 }
 
-void vftr_init_vfd_file (char *basename, int task_digits, int thread_digits) {
-	char *trace_file_name_format = malloc (1024 * sizeof(char));
- 	/* "dir/ident_%0<taskDigits>d_%0<threadDigits>d.vfd" */
-        sprintf (trace_file_name_format, "%s/%s_%%0%dd_%%0%dd.vfd", 
-             vftr_environment->output_directory->value,
-	     basename, task_digits, thread_digits);
+/**********************************************************************/
 
-	for (int omp_thread  = 0; omp_thread < vftr_omp_threads; omp_thread++) {
-	    size_t size = vftr_environment->bufsize->value * 1024 * 1024;
-	    char filename[1024];
-	    sprintf (filename, trace_file_name_format, vftr_mpirank, omp_thread);
-	    FILE *fp = fopen (filename, "w+");
-	    assert (fp);
-	    char *buf = (char *) malloc( size );
-	    assert (buf);
-	    int status = setvbuf (fp, buf, _IOFBF, size);
-	    assert (!status);
-	
-	    /* Some of these numbers will be updated later in vftr_finalize */
-	
-	    int vfd_version = VFD_VERSION;
-    	    time_t current_date;
-	    time (&current_date);
-	    char *datestring = ctime (&current_date);
-
-	    fwrite (&vfd_version, sizeof(int), 1, fp);
-	    fwrite (vftr_fileid, VFTR_FILEIDSIZE, 1, fp );   
-	    fwrite (datestring, 24, 1, fp );    
-	    fwrite (&vftr_interval, sizeof(long long), 1, fp );
-	    fwrite (&vftr_omp_threads, sizeof(int), 1, fp ); 
-	    fwrite (&omp_thread, sizeof(int), 1, fp ); 
-	
-	    if (omp_thread == 0) vftr_admin_offset = (unsigned int) ftell (fp);
-	
-            // Reserve space for the following observables. Their explicit values are determined later.
-    	    unsigned int zeroint[] = {0, 0, 0, 0, 0, 0, 0};
-    	    double zerodouble[] = {0., 0.};
-    	    long long zerolong[] = {0};
-	    // vftr_mpi_size and vftr_mpi_rank
-	    fwrite (zeroint, sizeof(unsigned int), 2, fp);
-	    // vftr_cycletime
-	    fwrite (zerodouble, sizeof(double), 1, fp);
-	    // vftr_inittime
-	    fwrite (zerolong, sizeof(long long), 1, fp);
-  	    // vftr runtime
-	    fwrite (zerodouble, sizeof(double), 1, fp);
-            // Five integers: sample_count, stacks_count, stacks_offset, sample_offset and ???
-	    fwrite (zeroint, sizeof(unsigned int), 5, fp);
-	    // Store global information about hardware scenarios
-	    vftr_write_scenario_header_to_vfd (fp);	
-
-	    if (omp_thread == 0) vftr_samples_offset = (unsigned int) ftell (fp);
-	    vftr_vfd_file[omp_thread] = fp;
+// Creates the outputfile name of the form <basename>_<mpi_rank>.out.
+// <basename> is either the application name or a value defined by 
+// the user in the environment variable LOGFILE_BASENAME.
+// Suffix is ".log" for ASCII log files and ".vfd" for viewer files.
+char *vftr_create_logfile_name (int mpi_rank, int mpi_size, char *suffix) {
+	bool read_from_env = false;
+	char *basename; 
+	// User-defined output file
+	if (vftr_environment) {
+		read_from_env = vftr_environment->logfile_basename->set;
 	}
+	if (read_from_env) {
+		basename = vftr_environment->logfile_basename->value;
+	} else {
+		// program_path is either <abs_path>/app_name or ./app_name
+		char *program_path = get_application_name ();
+		char *s;
+		// rindex returns a pointer to the last occurence of '/'
+		if (s = rindex (program_path, '/')) {
+			// The basename is everything after the last '/'
+			basename = strdup (s + 1);
+		} else {
+			basename = strdup (program_path);
+		}
+	}
+	// The user can also define a different output directory
+	char *out_directory;
+	if (vftr_environment) {
+		read_from_env = vftr_environment->output_directory->set;
+	}
+	if (read_from_env) {
+		out_directory = vftr_environment->output_directory->value;
+	} else {
+		out_directory = strdup (".");
+	}
+	// Finally create the output file name
+	int task_digits = count_digits (mpi_size);
+	char *logfile_nameformat = (char*)malloc (1024 * sizeof(char));
+	sprintf (logfile_nameformat, "%s/%s_%%0%dd.%s",
+		 out_directory, basename, task_digits, suffix);
+	char *logfile_name = (char*)malloc (1024 * sizeof(char));
+	sprintf (logfile_name, logfile_nameformat, mpi_rank);
+	free (logfile_nameformat);
+	return logfile_name;
+}
+
+/**********************************************************************/
+
+void vftr_init_vfd_file () {
+	char *filename = vftr_create_logfile_name (vftr_mpirank, vftr_mpisize, "vfd");
+	FILE *fp = fopen (filename, "w+");
+	assert (fp);
+	size_t size = vftr_environment->bufsize->value * 1024 * 1024;
+	char *buf = (char *) malloc (size);
+	assert (buf);
+	int status = setvbuf (fp, buf, _IOFBF, size);
+	assert (!status);
+	
+	/* Some of these numbers will be updated later in vftr_finalize */
+	
+	int vfd_version = VFD_VERSION;
+    	time_t current_date;
+	time (&current_date);
+	char *datestring = ctime (&current_date);
+
+	fwrite (&vfd_version, sizeof(int), 1, fp);
+	fwrite (vftr_fileid, VFTR_FILEIDSIZE, 1, fp );   
+	fwrite (datestring, 24, 1, fp );    
+	fwrite (&vftr_interval, sizeof(long long), 1, fp );
+	fwrite (&vftr_omp_threads, sizeof(int), 1, fp ); 
+	int omp_thread = 0;
+	fwrite (&omp_thread, sizeof(int), 1, fp ); 
+	
+	if (omp_thread == 0) vftr_admin_offset = (unsigned int) ftell (fp);
+	
+        // Reserve space for the following observables. Their explicit values are determined later.
+    	unsigned int zeroint[] = {0, 0, 0, 0, 0, 0, 0};
+    	double zerodouble[] = {0., 0.};
+    	long long zerolong[] = {0};
+	// vftr_mpi_size and vftr_mpi_rank
+	fwrite (zeroint, sizeof(unsigned int), 2, fp);
+	// vftr_cycletime
+	fwrite (zerodouble, sizeof(double), 1, fp);
+	// vftr_inittime
+	fwrite (zerolong, sizeof(long long), 1, fp);
+  	// vftr runtime
+	fwrite (zerodouble, sizeof(double), 1, fp);
+        // Five integers: sample_count, stacks_count, stacks_offset, sample_offset and ???
+	fwrite (zeroint, sizeof(unsigned int), 5, fp);
+	// Store global information about hardware scenarios
+	vftr_write_scenario_header_to_vfd (fp);	
+
+	if (omp_thread == 0) vftr_samples_offset = (unsigned int) ftell (fp);
+	vftr_vfd_file[omp_thread] = fp;
 }
 
 /**********************************************************************/
@@ -742,3 +785,23 @@ void vftr_print_profile (FILE *pout, int *ntop, long long time0) {
     output_dashes_nextline (tableWidth, pout);   
     fprintf( pout, "\n" );
 }
+
+/**********************************************************************/
+
+int vftr_filewrite_test_1 (FILE *fp) {
+	fprintf (fp, "Check the creation of log and vfd file name\n");
+	int mpi_rank, mpi_size;
+	mpi_rank = 0;
+	mpi_size = 1;
+	fprintf (fp, "logfile_name(%d, %d): %s\n", mpi_rank, mpi_size,
+		 vftr_create_logfile_name(mpi_rank, mpi_size, "log"));
+	mpi_rank = 11;
+	mpi_size = 111;
+	fprintf (fp, "logfile_name(%d, %d): %s\n", mpi_rank, mpi_size,
+		 vftr_create_logfile_name(mpi_rank, mpi_size, "log"));
+	fprintf (fp, "logfile_name(%d, %d): %s\n", mpi_rank, mpi_size,
+		 vftr_create_logfile_name(mpi_rank, mpi_size, "vfd"));
+
+}
+
+/**********************************************************************/

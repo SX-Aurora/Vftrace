@@ -18,6 +18,7 @@
 #ifndef VFTR_SETUP_H
 #define VFTR_SETUP_H
 
+#include <stdio.h>
 #include <stdbool.h>
 
 extern bool vftr_timer_end;
@@ -30,5 +31,7 @@ extern unsigned int *vftr_samplecount;
 
 void vftr_initialize ();
 void vftr_finalize () ;
+
+int vftr_setup_test_1 (FILE *fp);
 
 #endif

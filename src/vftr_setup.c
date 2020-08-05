@@ -50,8 +50,8 @@ int vftr_mpisize;
 int *vftr_in_parallel;
 unsigned int *vftr_samplecount;
 
-void vftr_print_disclaimer_full () {
-    fprintf( vftr_log, 
+void vftr_print_disclaimer_full (FILE *fp) {
+    fprintf (fp, 
         "\nThis program is free software; you can redistribute it and/or modify\n"
         "it under the terms of the GNU General Public License as published by\n"
         "the Free Software Foundation; either version 2 of the License , or\n"
@@ -69,14 +69,14 @@ void vftr_print_disclaimer_full () {
 
 /**********************************************************************/
 
-void vftr_print_disclaimer () {
+void vftr_print_disclaimer (FILE *fp) {
     int v_major = MAJOR_VERSION;
     int v_minor = MINOR_VERSION;
     int rev = REVISION;
-    fprintf (vftr_log, "Vftrace version %d.%d.%d\n", v_major, v_minor, rev);
-    fprintf (vftr_log, "Runtime profile for application: %s\n", "");
-    fprintf (vftr_log, "Date: "); 
-    fprintf( vftr_log, 
+    fprintf (fp, "Vftrace version %d.%d.%d\n", v_major, v_minor, rev);
+    fprintf (fp, "Runtime profile for application: %s\n", "");
+    fprintf (fp, "Date: "); 
+    fprintf (fp, 
         "This is free software with ABSOLUTELY NO WARRANTY.\n"
         "For details: use vftrace with environment variable VFTR_LICENSE\n"
         "set to 1, or run \"vfview -w\", or consult the COPYRIGHT file.\n" );
@@ -95,12 +95,49 @@ void vftr_init_omp_locks () {
 
 /**********************************************************************/
 
+void vftr_get_mpi_info (int *rank, int *size) {
+#ifdef _MPI
+// At this point, MPI_Init has not been called yet, so we cannot
+// use MPI_Comm_size or MPI_Comm_rank. Instead, we have to rely
+// on these environment variables set by various MPI implementations.
+    if (getenv ("PMI_RANK")) {
+        *rank = atoi (getenv("PMI_RANK"));
+        *size = atoi (getenv("PMI_SIZE"));
+    } else if (getenv ("OMPI_COMM_WORLD_RANK")) {
+        *rank = atoi (getenv(" OMPI_COMM_WORLD_RANK"));
+	*size = atoi (getenv(" OMPI_COMM_WORLD_SIZE"));
+    } else if (getenv ("PMI_ID")) {
+        *rank = atoi (getenv("PMI_ID"));
+	*size = atoi (getenv("MPIRUN_NPROCS"));
+    } else if (getenv ("MPIRUN_RANK")) {
+        *rank = atoi (getenv ("MPIRUN_RANK"));
+	*size = atoi (getenv ("MPIRUN_NPROCS"));
+    } else if (getenv ("MPIRANK")) {
+        *rank = atoi (getenv ("MPIRANK"));
+        /* MPISIZE not set by MPI/SX, will be set after mpi_init call */
+	*size = atoi (getenv ("MPISIZE"));
+    } else if (getenv ("SLURM_PROCID")) {
+	*rank = atoi (getenv ("SLURM_PROCID"));
+	char *s;
+	if (s = getenv ("SLURM_NPROCS")) *size = atoi (s);
+    } else {
+	// Cannot find out how many MPI ranks there are, assume only one.
+	*rank = 0;
+	*size = 1;
+    }
+#else
+    // No MPI, only one rank exists.
+    *rank = 0;
+    *size = 1;
+#endif
+}
+	
+/**********************************************************************/
+
 // Assuming vftr_initialize will be called outside parallel region
 void vftr_initialize() {
     char *s;
-    char *logfile_nameformat;
     int j, n, me;
-    int task_digits, thread_digits;
 
     me = OMP_GET_THREAD_NUM;
 
@@ -118,7 +155,6 @@ void vftr_initialize() {
 	
     lib_opened = 0;
 
-    char *vftr_program_path;
     vftr_timelimit = LONG_MAX;
 
     // No buffering for messages going directly to stdout
@@ -126,8 +162,6 @@ void vftr_initialize() {
 
     sprintf (vftr_fileid, "VFTRACE %07d", 
 	(100 * MAJOR_VERSION + MINOR_VERSION) * 100 + REVISION);
-
-    logfile_nameformat = malloc(1024*sizeof(char));
 
     vftr_omp_threads = OMP_GET_MAX_THREADS;
     vftr_samplecount = (unsigned int *) malloc (vftr_omp_threads * sizeof(unsigned int));
@@ -149,64 +183,10 @@ void vftr_initialize() {
    vftr_init_omp_locks ();
 #endif
 
-    vftr_program_path = get_application_name ();
-    char *basename;
-    if (vftr_environment->logfile_basename->set) {
-	basename = vftr_environment->logfile_basename->value;
-    } else {
-	char *s;	
-	if (s = rindex (vftr_program_path, '/')) {
-		basename = strdup (s + 1);
-	} else {
-		basename = strdup (vftr_program_path);
-	}	
-    }
+    vftr_get_mpi_info (&vftr_mpirank, &vftr_mpisize);
 
-#ifdef _MPI
-    if (getenv ("PMI_RANK")) {
-        vftr_mpirank  = atoi( getenv( "PMI_RANK" ) );
-        vftr_mpisize  = atoi( getenv( "PMI_SIZE" ) );
-    } else if( getenv( "OMPI_COMM_WORLD_RANK" ) ) {
-        vftr_mpirank  = atoi( getenv( "OMPI_COMM_WORLD_RANK" ) );
-	vftr_mpisize  = atoi( getenv( "OMPI_COMM_WORLD_SIZE" ) );
-    } else if( getenv( "PMI_ID" ) ) {
-        vftr_mpirank  = atoi( getenv( "PMI_ID" ) );
-	vftr_mpisize  = atoi( getenv( "MPIRUN_NPROCS" ) );
-    } else if( getenv( "MPIRUN_RANK" ) ) {
-        vftr_mpirank  = atoi( getenv( "MPIRUN_RANK" ) );
-	vftr_mpisize  = atoi( getenv( "MPIRUN_NPROCS" ) );
-    } else if( getenv( "MPIRANK" ) ) {
-        vftr_mpirank  = atoi( getenv( "MPIRANK" ) );
-        /* MPISIZE not set by MPI/SX, will be set after mpi_init call */
-	vftr_mpisize  = atoi( getenv( "MPISIZE" ) );
-    } else if( getenv( "SLURM_PROCID"   ) ) {
-	vftr_mpirank  = atoi( getenv( "SLURM_PROCID" ) );
-	if( s = getenv( "SLURM_NPROCS" ) ) vftr_mpisize  = atoi( s );
-    } else {
-	// Cannot find out how many MPI ranks there are, assume only one.
-	vftr_mpirank = 0;
-	vftr_mpisize = 1;
-    }
-#else
-    // No MPI, only one rank exists.
-    vftr_mpirank = 0;
-    vftr_mpisize = 1;
-#endif
-
-
-    // Count the number of digits in the number of MPI tasks and OpenMP threads
-    // in order to have the correct format in the log file name.
-    task_digits = count_digits (vftr_mpisize);
-    thread_digits = count_digits (vftr_omp_threads);
-
-    // Build filename format in a form that the filenames will
-    // be sorted in the correct way
-    //
-    sprintf (logfile_nameformat, "%s/%s_%%0%dd.log",
-             vftr_environment->output_directory->value,
-             basename, task_digits);
-    sprintf (vftr_logfile_name, logfile_nameformat, vftr_mpirank);
-    vftr_log = fopen( vftr_logfile_name, "w+");
+    vftr_logfile_name = vftr_create_logfile_name (vftr_mpirank, vftr_mpisize, "log");
+    vftr_log = fopen (vftr_logfile_name, "w+");
     assert (vftr_log);
     
     // Do not buffer when writing into the log file
@@ -219,11 +199,11 @@ void vftr_initialize() {
     }
 #endif
 
-    if (!vftr_mpirank) {
+    if (vftr_mpirank == 0) {
        if (vftr_environment->license_verbose->value) {
-	  vftr_print_disclaimer_full ();
+	  vftr_print_disclaimer_full (vftr_log);
        } else {
-	  vftr_print_disclaimer ();
+	  vftr_print_disclaimer (vftr_log);
        }
     }
 
@@ -253,7 +233,7 @@ void vftr_initialize() {
     vftr_initialize_stacks();
 
     /* Allocate file pointers for each thread */
-    vftr_vfd_file = (FILE **) malloc( vftr_omp_threads * sizeof(FILE *) );
+    vftr_vfd_file = (FILE **) malloc (vftr_omp_threads * sizeof(FILE *));
     assert (vftr_vfd_file);
     
     /* Allocate time arrays for each thread */
@@ -305,7 +285,8 @@ void vftr_initialize() {
 
     /* Create VFD files */
     if (vftr_env_do_sampling ()) {
-	vftr_init_vfd_file (basename, task_digits, thread_digits);
+        int thread_digits = count_digits (vftr_omp_threads);
+	vftr_init_vfd_file ();
     }
     
     vftr_profile_wanted = (vftr_environment->logfile_all_ranks->value) ||
@@ -467,3 +448,21 @@ void vftr_finalize_() {
 }
 
 /**********************************************************************/
+
+int vftr_setup_test_1 (FILE *fp) {
+	fprintf (fp, "Check MPI rank and size received from environment variables\n");		
+	int mpi_rank, mpi_size;
+	vftr_get_mpi_info (&mpi_rank, &mpi_size);
+	fprintf (fp, "Rank: %d\n", mpi_rank);
+	fprintf (fp, "Size: %d\n", mpi_size);
+}
+
+/**********************************************************************/
+
+int vftr_setup_test_2 (FILE *fp) {
+	fprintf (fp, "Check disclaimers\n");
+	vftr_print_disclaimer_full (fp);
+	fprintf (fp, "****************************************\n");
+	vftr_print_disclaimer (fp);
+}
+
