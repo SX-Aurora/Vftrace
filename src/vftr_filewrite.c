@@ -25,7 +25,6 @@
 
 #include "vftr_scenarios.h"
 #include "vftr_hwcounters.h"
-#include "vftr_omp.h"
 #include "vftr_environment.h"
 #include "vftr_hooks.h"
 #include "vftr_fileutils.h"

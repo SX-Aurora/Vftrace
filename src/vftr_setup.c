@@ -29,7 +29,6 @@
 #include "vftr_scenarios.h"
 #include "vftr_hwcounters.h"
 #include "vftr_version.h"
-#include "vftr_omp.h"
 #include "vftr_environment.h"
 #include "vftr_setup.h"
 #include "vftr_dlopen.h"

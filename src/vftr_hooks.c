@@ -24,7 +24,6 @@
 
 #include "vftr_symbols.h"
 #include "vftr_hwcounters.h"
-#include "vftr_omp.h"
 #include "vftr_setup.h"
 #include "vftr_environment.h"
 #include "vftr_hooks.h"

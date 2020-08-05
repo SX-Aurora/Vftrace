@@ -30,7 +30,6 @@
 #include "vftr_filewrite.h"
 #endif
 
-#include "vftr_omp.h"
 #include "vftr_environment.h"
 #include "vftr_hwcounters.h"
 #include "vftr_scenarios.h"
@@ -104,22 +103,11 @@ void vftr_init_papi_counters () {
         return;
     }
     papi_event_set = PAPI_NULL;
-#ifdef _OPENMP
-    if ((diag = PAPI_thread_init(
-                 (unsigned long (*)(void))omp_get_thread_num)) != PAPI_OK) {
-        fprintf(vftr_log, "vftr_init_hwcounters - "
-                          "PAPI_thread_init error code: %d\n", diag);
-        return;
-    }
-#pragma omp parallel
-#endif
-    {
-        char errmsg[256];
-        if ((diag = PAPI_create_eventset(papi_event_set)) != PAPI_OK) {
-    		PAPI_perror (errmsg);
-            	fprintf(vftr_log, "vftr_init_hwcounters - "
-                              "PAPI_create_eventset error: %s\n", errmsg);
-        }
+    char errmsg[256];
+    if ((diag = PAPI_create_eventset(papi_event_set)) != PAPI_OK) {
+       PAPI_perror (errmsg);
+       fprintf(vftr_log, "vftr_init_hwcounters - "
+               "PAPI_create_eventset error: %s\n", errmsg);
     }
 }
 #endif
@@ -140,10 +128,6 @@ void vftr_start_hwcounters () {
 
     if (err_no_hwc_support) return;
 
-#ifdef _OPENMP
-#pragma omp parallel
-#endif
-{
     char errmsg[256];
     evtcounter_t *e;
     int diag;
@@ -162,7 +146,6 @@ void vftr_start_hwcounters () {
     	    fprintf(stdout, "vftr_start_hwcounters - PAPI_start error: %s\n", errmsg);
     	}
     }
-}
 }
 #endif
 

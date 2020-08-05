@@ -19,7 +19,6 @@
 #include <stdbool.h>
 #include <stdio.h>
 
-#include "vftr_omp.h"
 #include "vftr_functions.h"
 #include "vftr_stacks.h"
 #include "vftr_environment.h"

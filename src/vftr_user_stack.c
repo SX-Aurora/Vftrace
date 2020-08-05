@@ -19,7 +19,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "vftr_omp.h"
 #include "vftr_stacks.h"
 
 int vftrace_get_stack_string_length() {

@@ -31,7 +31,6 @@
 
 #include "vftr_hwcounters.h"
 #include "vftr_signals.h"
-#include "vftr_omp.h"
 #include "vftr_setup.h"
 #include "vftr_stacks.h"
 #include "vftr_filewrite.h"
