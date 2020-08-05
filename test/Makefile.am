@@ -4,7 +4,7 @@ bin_PROGRAMS = test_vftrace
 BUILT_SOURCES = ref_input ref_output run
 
 test_vftrace_SOURCES = ${srcdir}/test_vftrace.c
-test_vftrace_CFLAGS = -I${srcdir}/../src/
+test_vftrace_CFLAGS = -I${srcdir}/../src/ -I${srcdir}/../src/vftr_mpi
 test_vftrace_LDFLAGS = -L${top_builddir}/src/.libs -lvftrace -lm
 
 run: $(top_srcdir)/test/run
