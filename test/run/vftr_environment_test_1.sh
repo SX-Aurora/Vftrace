@@ -7,8 +7,6 @@ outfile=$testname.out
 
 rm -f $outfile
 
-export VFTR_SAMPLING=1
-
 # The user might have set some VFTR_ environment variables.
 # We save them in an array and unset them all.
 # After the test, we reset them to their original value.
