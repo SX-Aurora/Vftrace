@@ -19,7 +19,7 @@ extern long long vftr_nextsampletime;
 // The basename of Vftrace log files
 extern char *vftr_logfile_name;
 
-extern FILE **vftr_vfd_file;
+extern FILE *vftr_vfd_file;
 
 // TODO: Explain
 extern unsigned int vftr_admin_offset;

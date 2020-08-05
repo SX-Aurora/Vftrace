@@ -48,7 +48,7 @@ long long vftr_nextsampletime;
 // The basename of Vftrace log files
 char *vftr_logfile_name;
 
-FILE **vftr_vfd_file;
+FILE *vftr_vfd_file;
 
 // TODO: Explain
 unsigned int vftr_admin_offset;
@@ -154,7 +154,7 @@ void vftr_init_vfd_file () {
 	vftr_write_scenario_header_to_vfd (fp);	
 
 	if (omp_thread == 0) vftr_samples_offset = (unsigned int) ftell (fp);
-	vftr_vfd_file[omp_thread] = fp;
+	vftr_vfd_file = fp;
 }
 
 /**********************************************************************/
@@ -164,8 +164,8 @@ void vftr_finalize_vfd_file (long long finalize_time, int signal_number) {
 
         if (vftr_env_do_sampling () && signal_number != SIGUSR1) {
 
-            unsigned int stackstable_offset = (unsigned int) ftell (vftr_vfd_file[omp_thread]);
-            vftr_write_stacks (vftr_vfd_file[omp_thread], 0, vftr_froots[0]);
+            unsigned int stackstable_offset = (unsigned int) ftell (vftr_vfd_file);
+            vftr_write_stacks (vftr_vfd_file, 0, vftr_froots[0]);
 
 	    // It is unused ?
             unsigned int profile_offset = 0;
@@ -174,18 +174,18 @@ void vftr_finalize_vfd_file (long long finalize_time, int signal_number) {
             double zerodouble[] = { 0., 0. };
 
             // Update trace info in header and close
-            fseek (vftr_vfd_file[omp_thread], vftr_admin_offset, SEEK_SET);
-            fwrite(&vftr_mpisize, sizeof(int), 1, vftr_vfd_file[omp_thread]); 
-            fwrite(&vftr_mpirank, sizeof(int),1, vftr_vfd_file[omp_thread]); 
-            fwrite(&zerodouble, sizeof(double),	1, vftr_vfd_file[omp_thread]); 
-	    fwrite(&vftr_inittime, sizeof(long long), 1, vftr_vfd_file[omp_thread]);
-            fwrite(&runtime, sizeof(double), 1, vftr_vfd_file[omp_thread]);
-            fwrite(&vftr_samplecount, sizeof(unsigned int), 1, vftr_vfd_file[omp_thread]);
-            fwrite(&vftr_stackscount, sizeof(unsigned int), 1, vftr_vfd_file[omp_thread]);
-            fwrite(&stackstable_offset, sizeof(unsigned int), 1, vftr_vfd_file[omp_thread]);
-            fwrite(&vftr_samples_offset, sizeof(unsigned int), 1, vftr_vfd_file[omp_thread]);
-	    fwrite(&profile_offset, sizeof(unsigned int), 1, vftr_vfd_file[omp_thread]);
-            fclose (vftr_vfd_file[omp_thread]);
+            fseek (vftr_vfd_file, vftr_admin_offset, SEEK_SET);
+            fwrite(&vftr_mpisize, sizeof(int), 1, vftr_vfd_file); 
+            fwrite(&vftr_mpirank, sizeof(int),1, vftr_vfd_file); 
+            fwrite(&zerodouble, sizeof(double),	1, vftr_vfd_file); 
+	    fwrite(&vftr_inittime, sizeof(long long), 1, vftr_vfd_file);
+            fwrite(&runtime, sizeof(double), 1, vftr_vfd_file);
+            fwrite(&vftr_samplecount, sizeof(unsigned int), 1, vftr_vfd_file);
+            fwrite(&vftr_stackscount, sizeof(unsigned int), 1, vftr_vfd_file);
+            fwrite(&stackstable_offset, sizeof(unsigned int), 1, vftr_vfd_file);
+            fwrite(&vftr_samples_offset, sizeof(unsigned int), 1, vftr_vfd_file);
+	    fwrite(&profile_offset, sizeof(unsigned int), 1, vftr_vfd_file);
+            fclose (vftr_vfd_file);
 
         }
     }
@@ -195,11 +195,11 @@ void vftr_finalize_vfd_file (long long finalize_time, int signal_number) {
 /**********************************************************************/
 
 void vftr_write_to_vfd(long long runtime, unsigned long long cycles, int stack_id, unsigned int sid, int me) {
-    fwrite (&sid, sizeof(unsigned int), 1, vftr_vfd_file[me]);
-    fwrite (&stack_id, sizeof(int), 1, vftr_vfd_file[me]);
-    fwrite (&runtime, sizeof(long long), 1, vftr_vfd_file[me]);
+    fwrite (&sid, sizeof(unsigned int), 1, vftr_vfd_file);
+    fwrite (&stack_id, sizeof(int), 1, vftr_vfd_file);
+    fwrite (&runtime, sizeof(long long), 1, vftr_vfd_file);
 
-    vftr_write_observables_to_vfd (cycles, vftr_vfd_file[me]);
+    vftr_write_observables_to_vfd (cycles, vftr_vfd_file);
 
     vftr_nextsampletime = runtime + vftr_interval;
     vftr_prevsampletime = runtime;
@@ -216,15 +216,15 @@ void vftr_store_message_info(vftr_direction dir, int count, int type_idx,
    
    int omp_thread = 0;
    int sid = SID_MESSAGE;
-   fwrite(&sid, sizeof(int), 1, vftr_vfd_file[omp_thread]);
-   fwrite(&dir, sizeof(int), 1, vftr_vfd_file[omp_thread]);
-   fwrite(&rank, sizeof(int), 1, vftr_vfd_file[omp_thread]);
-   fwrite(&type_idx, sizeof(int), 1, vftr_vfd_file[omp_thread]);
-   fwrite(&count, sizeof(int), 1, vftr_vfd_file[omp_thread]);
-   fwrite(&type_size, sizeof(int), 1, vftr_vfd_file[omp_thread]);
-   fwrite(&tag, sizeof(int), 1, vftr_vfd_file[omp_thread]);
-   fwrite(&tstart, sizeof(long long), 1, vftr_vfd_file[omp_thread]);
-   fwrite(&tend, sizeof(long long), 1, vftr_vfd_file[omp_thread]);
+   fwrite(&sid, sizeof(int), 1, vftr_vfd_file);
+   fwrite(&dir, sizeof(int), 1, vftr_vfd_file);
+   fwrite(&rank, sizeof(int), 1, vftr_vfd_file);
+   fwrite(&type_idx, sizeof(int), 1, vftr_vfd_file);
+   fwrite(&count, sizeof(int), 1, vftr_vfd_file);
+   fwrite(&type_size, sizeof(int), 1, vftr_vfd_file);
+   fwrite(&tag, sizeof(int), 1, vftr_vfd_file);
+   fwrite(&tstart, sizeof(long long), 1, vftr_vfd_file);
+   fwrite(&tend, sizeof(long long), 1, vftr_vfd_file);
 
    vftr_samplecount++;
 }
@@ -237,7 +237,7 @@ void vftr_write_profile () {
     double         rtime;
     unsigned long long      total_cycles, calls, cycles, *ec;
     evtcounter_t    *evc;
-    FILE           *fp = vftr_vfd_file[0];
+    FILE           *fp = vftr_vfd_file;
 
     function_t   **funcTable;
 

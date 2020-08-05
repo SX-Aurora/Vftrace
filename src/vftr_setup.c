@@ -219,10 +219,6 @@ void vftr_initialize() {
     // initialize the stack variables and tables
     vftr_initialize_stacks();
 
-    /* Allocate file pointers for each thread */
-    vftr_vfd_file = (FILE **) malloc (vftr_omp_threads * sizeof(FILE *));
-    assert (vftr_vfd_file);
-    
     /* Allocate time arrays for each thread */
     n = vftr_omp_threads * sizeof(long long);
     vftr_nextsampletime = 0ll;
