@@ -279,7 +279,7 @@ void parse_fmap_line (char *line, pathList_t **library, pathList_t **head) {
         (*library)->next = NULL;
 #ifdef __VMAP_OFFSET
 	(*library)->offset = strtoul(offset, NULL, 16);
-        vftr_get_library_symtab ((*library)->path, (*library)->base - (*library)->offset, 0 ); /* First pass, counting only */
+        vftr_get_library_symtab ((*library)->path, NULL, (*library)->base - (*library)->offset, 0 ); /* First pass, counting only */
 #else
         vftr_get_library_symtab ((*library)->path, NULL, 0L, 0 ); /* First pass, counting only */
 	(*library)->offset = 0L;
@@ -326,7 +326,7 @@ int vftr_create_symbol_table (int rank, char *target) {
 
     for (library = head; library; library = next) {
 #ifdef __VMAP_OFFSET
-        vftr_get_library_symtab (library->path, library->base - library->offset, 1);
+        vftr_get_library_symtab (library->path, NULL, library->base - library->offset, 1);
 #else
         /* FIXME Need to understand why base has to be set this way, if at all correct */
         off_t base = strstr(library->path, ".so") ? library->base : 0L;

@@ -1,14 +1,11 @@
-TESTDIR=/usr/uhome/aurora/ess/esscw/Vftrace/test
-RUNDIR=/usr/uhome/aurora/ess/esscw/Vftrace/build_anone/test
-
-VPATH=$(RUNDIR)
+VPATH=${builddir}
 bin_PROGRAMS = test_vftrace
 
 BUILT_SOURCES = ref_input ref_output run
 
-test_vftrace_SOURCES = $(top_srcdir)/test/test_vftrace.c
-test_vftrace_CFLAGS = -static -I/usr/uhome/aurora/ess/esscw/Vftrace/src
-test_vftrace_LDFLAGS = -L/usr/uhome/aurora/ess/esscw/Vftrace/build_anone/src/.libs -lvftrace
+test_vftrace_SOURCES = ${srcdir}/test_vftrace.c
+test_vftrace_CFLAGS = -I${srcdir}/../src/
+test_vftrace_LDFLAGS = -L${top_builddir}/src/.libs -lvftrace -lm
 
 run: $(top_srcdir)/test/run
 	mkdir -p run
