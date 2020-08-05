@@ -24,7 +24,7 @@ MODULE vftr_mpi_reduce_c2f
 
    PRIVATE
 
-   PUBLIC :: vftr_MPI_Reduce_F, &
+   PUBLIC :: vftr_MPI_Reduce_F
 
    INTERFACE 
 

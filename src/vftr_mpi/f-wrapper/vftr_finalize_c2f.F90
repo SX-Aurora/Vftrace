@@ -24,7 +24,7 @@ MODULE vftr_finalize_c2f
 
    PRIVATE
 
-   PUBLIC :: vftr_finalize
+   PUBLIC :: vftr_finalize_F
 
    INTERFACE
 
@@ -39,4 +39,4 @@ MODULE vftr_finalize_c2f
 
 CONTAINS
 
-END MODULE vftr_mpi_finalize_c2F
+END MODULE vftr_finalize_c2f

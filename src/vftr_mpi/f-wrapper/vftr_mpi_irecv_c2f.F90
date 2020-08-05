@@ -28,7 +28,7 @@ MODULE vftr_mpi_irecv_c2f
 
    INTERFACE 
 
-      SUBROUTINE vftr_MPI_Irecv_F(BUF, COUNT, F_DATATYPE, SOURCE, TAG, F_COMM, F_STATUS, F_REQUEST, F_ERROR) &
+      SUBROUTINE vftr_MPI_Irecv_F(BUF, COUNT, F_DATATYPE, SOURCE, TAG, F_COMM, F_REQUEST, F_ERROR) &
          BIND(C, name="vftr_MPI_Irecv_F")
          USE mpi, ONLY : MPI_STATUS_SIZE
          IMPLICIT NONE
