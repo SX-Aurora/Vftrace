@@ -221,7 +221,7 @@ int vftr_init_hwc (char *scenario_file) {
 /**********************************************************************/
 
 #if defined(HAS_VEPERF)
-void vftr_read_counters_veperf (long long *event, int omp_thread) {
+void vftr_read_counters_veperf (long long *event) {
     int i, j, diag;
     evtcounter_t *evc;
     if (event == NULL) return;
@@ -235,8 +235,8 @@ void vftr_read_counters_veperf (long long *event, int omp_thread) {
 	scenario_expr_counter_values[i] = vftr_echwc[i];
     }
     for (i = j  = 0, evc = first_counter; evc; i++, evc = evc->next) {
-        evc->count[omp_thread] = vftr_echwc[j++];
-        event[i] = evc->count[omp_thread];
+        evc->count[0] = vftr_echwc[j++];
+        event[i] = evc->count[0];
     }
 
 }
@@ -245,22 +245,22 @@ void vftr_read_counters_veperf (long long *event, int omp_thread) {
 /**********************************************************************/
 
 #if defined(HAS_PAPI)
-void vftr_read_counters_papi (long long *event, int omp_thread) {
+void vftr_read_counters_papi (long long *event) {
     int i, j, diag;
     evtcounter_t *evc;
     if (event == NULL) return;
     if (hwc_event_num > 0) {
         if (eventSet[omp_thread] != PAPI_NULL) {
-            if ((diag = PAPI_read(eventSet[omp_thread], vftr_echwc)) != PAPI_OK) {
-                fprintf(vftr_log, "[%d] error: PAPI_read returned %d\n", omp_thread, diag);
+            if ((diag = PAPI_read(eventSet[0], vftr_echwc)) != PAPI_OK) {
+                fprintf(vftr_log, "error: PAPI_read returned %d\n", diag);
     	}
         }
         for (j = 0,evc = first_counter; evc; evc = evc->next) {
-            evc->count[omp_thread] = vftr_echwc[j++];
+            evc->count[0] = vftr_echwc[j++];
         }
     }
     for (i = 0,evc = first_counter; evc; i++, evc = evc->next) {
-        event[i] = evc->count[omp_thread];
+        event[i] = evc->count[0];
     }
 }
 #endif
@@ -268,7 +268,7 @@ void vftr_read_counters_papi (long long *event, int omp_thread) {
 /**********************************************************************/
 
 // We need a dummy symbol if neither PAPI nor VEPERF is used
-void vftr_read_counters_dummy (long long *event, int omp_thread) {
+void vftr_read_counters_dummy (long long *event) {
 }
 
 /**********************************************************************/

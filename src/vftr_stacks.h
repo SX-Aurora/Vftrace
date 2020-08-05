@@ -83,7 +83,7 @@ extern function_t *vftr_froots;
 // Profile data
 extern struct Performance *vftr_prof;
 // Profile data sample
-extern profdata_t *vftr_prof_data;
+extern profdata_t vftr_prof_data;
 
 // initialize stacks only called from vftr_initialize
 void vftr_initialize_stacks();

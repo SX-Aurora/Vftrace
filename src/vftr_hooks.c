@@ -202,17 +202,17 @@ void vftr_function_entry (const char *s, void *addr, int line, bool isPrecise) {
 
     if (func->ret) {
         prof_return = &func->ret->prof_current;
-        delta = cycles0 - vftr_prof_data[me].cycles;
+        delta = cycles0 - vftr_prof_data.cycles;
 	prof_return->cycles += delta;
-        prof_return->timeExcl += func_entry_time - vftr_prof_data[me].timeExcl;
+        prof_return->timeExcl += func_entry_time - vftr_prof_data.timeExcl;
         vftr_prog_cycles += delta;
         func->prof_current.timeIncl -= func_entry_time;
 	if (read_counters) {
-            int ic = vftr_prof_data[me].ic;
-            vftr_read_counters (vftr_prof_data[me].events[ic], me);
+            int ic = vftr_prof_data.ic;
+            vftr_read_counters (vftr_prof_data.events[ic]);
             if (prof_return->event_count && func->ret->detail) {
                 for (e = 0; e < vftr_n_hw_obs; e++) {
-                    long long delta = vftr_prof_data[me].events[ic][e] - vftr_prof_data[me].events[1-ic][e];
+                    long long delta = vftr_prof_data.events[ic][e] - vftr_prof_data.events[1-ic][e];
 #ifdef __ve__
                     if (delta < 0) /* Handle counter overflow */
                         delta += e < 2 ? (long long) 0x000fffffffffffff
@@ -221,16 +221,16 @@ void vftr_function_entry (const char *s, void *addr, int line, bool isPrecise) {
 		    prof_return->event_count[e] += delta;
                 }
             }
-	    vftr_prof_data[me].ic = 1 - ic;
+	    vftr_prof_data.ic = 1 - ic;
 	}
     }
 
     /* Compensate overhead */
     // The stuff we did here added up cycles. Therefore, we have to reset
     // the global cycle count and time value.
-    vftr_prof_data[me].cycles = vftr_get_cycles() - vftr_initcycles;
+    vftr_prof_data.cycles = vftr_get_cycles() - vftr_initcycles;
     long long overhead_time_end = vftr_get_runtime_usec();
-    vftr_prof_data[me].timeExcl = overhead_time_end;
+    vftr_prof_data.timeExcl = overhead_time_end;
     vftr_overhead_usec += overhead_time_end - overhead_time_start;
 }
 
@@ -313,18 +313,18 @@ void vftr_function_exit(int line) {
     prof_current->timeExcl += func_exit_time;
     vftr_prog_cycles += cycles0;
     if (func->ret) {
-        prof_current->cycles -= vftr_prof_data[me].cycles;
-        prof_current->timeExcl -= vftr_prof_data[me].timeExcl;
-        vftr_prog_cycles -= vftr_prof_data[me].cycles;
+        prof_current->cycles -= vftr_prof_data.cycles;
+        prof_current->timeExcl -= vftr_prof_data.timeExcl;
+        vftr_prog_cycles -= vftr_prof_data.cycles;
     }
 
     if (read_counters) {
-        int ic = vftr_prof_data[me].ic;
-        vftr_read_counters (vftr_prof_data[me].events[ic], me);
+        int ic = vftr_prof_data.ic;
+        vftr_read_counters (vftr_prof_data.events[ic]);
         prof_current->ecreads++; /* Only at exit */
         if (prof_current->event_count && func->detail) {
             for (e = 0; e < vftr_n_hw_obs; e++) {
-                long long delta = vftr_prof_data[me].events[ic][e] - vftr_prof_data[me].events[1-ic][e];
+                long long delta = vftr_prof_data.events[ic][e] - vftr_prof_data.events[1-ic][e];
 #ifdef __ve__
 	        /* Handle counter overflow */
                 if (delta < 0) {
@@ -335,7 +335,7 @@ void vftr_function_exit(int line) {
 		prof_current->event_count[e] += delta;
             }
         }
-        vftr_prof_data[me].ic = 1 - ic;
+        vftr_prof_data.ic = 1 - ic;
     }
 
     wtime = (vftr_get_runtime_usec() - vftr_overhead_usec) * 1.0e-6;
@@ -391,9 +391,9 @@ void vftr_function_exit(int line) {
     /* Compensate overhead */
     // The stuff we did here added up cycles. Therefore, we have to reset
     // the global cycle count and time value.
-    vftr_prof_data[me].cycles = vftr_get_cycles() - vftr_initcycles;
+    vftr_prof_data.cycles = vftr_get_cycles() - vftr_initcycles;
     long long overhead_time_end = vftr_get_runtime_usec();
-    vftr_prof_data[me].timeExcl = overhead_time_end;
+    vftr_prof_data.timeExcl = overhead_time_end;
     vftr_overhead_usec += overhead_time_end - overhead_time_start;
 
     /* Terminate Vftrace if we are exiting the main routine */

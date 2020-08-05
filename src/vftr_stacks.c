@@ -55,7 +55,7 @@ function_t *vftr_fstack = NULL;
 // Function call stack roots
 function_t *vftr_froots = NULL;
 // Profile data sample
-profdata_t *vftr_prof_data = NULL;
+profdata_t vftr_prof_data;
 
 // initialize stacks only called from vftr_initialize
 void vftr_initialize_stacks() {
