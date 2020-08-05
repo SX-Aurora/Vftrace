@@ -37,8 +37,8 @@ typedef struct CallsTimeRange {
 } callsTimeRange_t;
 
 // global sample timer
-long long *vftr_prevsampletime;
-long long *vftr_nextsampletime;
+long long vftr_prevsampletime;
+long long vftr_nextsampletime;
 
 //sample time in ms
 extern long long vftr_interval;
@@ -59,7 +59,7 @@ unsigned long long vftr_get_cycles();
 // The array is allocated to the number of OpenMP threads
 // It is incremented at each function entry and exit, as
 // well as after initialization.
-long long *vftr_overhead_usec;
+long long vftr_overhead_usec;
 
 // The timestamp of initialization, set after call to MPI_Init().
 long long vftr_inittime;

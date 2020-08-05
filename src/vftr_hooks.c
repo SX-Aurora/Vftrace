@@ -159,7 +159,7 @@ void vftr_function_entry (const char *s, void *addr, int line, bool isPrecise) {
     if (line > 0) assert (func->line_beg == line);
 
     if (func->profile_this) {
-        wtime = (vftr_get_runtime_usec() - vftr_overhead_usec[me]) * 1.0e-6;
+        wtime = (vftr_get_runtime_usec() - vftr_overhead_usec) * 1.0e-6;
         vftr_print_stack (me, wtime, func, "profile before call to", 0);
         vftr_profile_wanted = true;
         int ntop;
@@ -171,7 +171,7 @@ void vftr_function_entry (const char *s, void *addr, int line, bool isPrecise) {
     vftr_fstack = func; /* Here's where we are now */
 
     // Is it time for the next sample?
-    time_to_sample = (func_entry_time > vftr_nextsampletime[me]) || func->precise;  
+    time_to_sample = (func_entry_time > vftr_nextsampletime) || func->precise;  
 
     read_counters = (func->ret->detail || func->detail) &&
 		    vftr_events_enabled && 
@@ -182,7 +182,7 @@ void vftr_function_entry (const char *s, void *addr, int line, bool isPrecise) {
 #endif
 
     if (time_to_sample && vftr_env_do_sampling ()) {
-        vftr_write_to_vfd (func_entry_time, vftr_prog_cycles[me], func->id, SID_ENTRY, me);
+        vftr_write_to_vfd (func_entry_time, vftr_prog_cycles, func->id, SID_ENTRY, me);
 #ifdef _MPI
         int mpi_isinit;
         PMPI_Initialized(&mpi_isinit);
@@ -205,7 +205,7 @@ void vftr_function_entry (const char *s, void *addr, int line, bool isPrecise) {
         delta = cycles0 - vftr_prof_data[me].cycles;
 	prof_return->cycles += delta;
         prof_return->timeExcl += func_entry_time - vftr_prof_data[me].timeExcl;
-        vftr_prog_cycles[me] += delta;
+        vftr_prog_cycles += delta;
         func->prof_current.timeIncl -= func_entry_time;
 	if (read_counters) {
             int ic = vftr_prof_data[me].ic;
@@ -231,7 +231,7 @@ void vftr_function_entry (const char *s, void *addr, int line, bool isPrecise) {
     vftr_prof_data[me].cycles = vftr_get_cycles() - vftr_initcycles;
     long long overhead_time_end = vftr_get_runtime_usec();
     vftr_prof_data[me].timeExcl = overhead_time_end;
-    vftr_overhead_usec[me] += overhead_time_end - overhead_time_start;
+    vftr_overhead_usec += overhead_time_end - overhead_time_start;
 }
 
 /**********************************************************************/
@@ -282,7 +282,7 @@ void vftr_function_exit(int line) {
 
     /* Is it time for the next sample? */
 
-    timeToSample = (func_exit_time > vftr_nextsampletime[me]) || func->precise || 
+    timeToSample = (func_exit_time > vftr_nextsampletime) || func->precise || 
                    (func->ret && !func->ret->id) /* Return from main program: end of execution */;
 
     read_counters = (func->ret->detail || func->detail) &&
@@ -311,11 +311,11 @@ void vftr_function_exit(int line) {
 
     prof_current->cycles += cycles0;
     prof_current->timeExcl += func_exit_time;
-    vftr_prog_cycles[me] += cycles0;
+    vftr_prog_cycles += cycles0;
     if (func->ret) {
         prof_current->cycles -= vftr_prof_data[me].cycles;
         prof_current->timeExcl -= vftr_prof_data[me].timeExcl;
-        vftr_prog_cycles[me] -= vftr_prof_data[me].cycles;
+        vftr_prog_cycles -= vftr_prof_data[me].cycles;
     }
 
     if (read_counters) {
@@ -338,7 +338,7 @@ void vftr_function_exit(int line) {
         vftr_prof_data[me].ic = 1 - ic;
     }
 
-    wtime = (vftr_get_runtime_usec() - vftr_overhead_usec[me]) * 1.0e-6;
+    wtime = (vftr_get_runtime_usec() - vftr_overhead_usec) * 1.0e-6;
 
     if (func->profile_this)  {
         vftr_print_stack (me, wtime, func, "profile at exit from", timeToSample);
@@ -354,7 +354,7 @@ void vftr_function_exit(int line) {
     }
 #if defined(_SX) || defined(__ve__OFF)
 #ifdef _OPENMP
-    if( omp_in_parallel() ) vftr_in_parallel[me]--;
+    if( omp_in_parallel() ) vftr_in_parallel--;
 #endif
 #endif
 
@@ -363,7 +363,7 @@ void vftr_function_exit(int line) {
     if (me == 0 && wtime >= vftr_sorttime)  {
         int i, top;
         double tsum = 0.;
-        double scale = 100. / (double)vftr_prog_cycles[me];
+        double scale = 100. / (double)vftr_prog_cycles;
 
         /* TO DO for OpenMP: set lock guarding vftr_new_function() usage */
 
@@ -394,7 +394,7 @@ void vftr_function_exit(int line) {
     vftr_prof_data[me].cycles = vftr_get_cycles() - vftr_initcycles;
     long long overhead_time_end = vftr_get_runtime_usec();
     vftr_prof_data[me].timeExcl = overhead_time_end;
-    vftr_overhead_usec[me] += overhead_time_end - overhead_time_start;
+    vftr_overhead_usec += overhead_time_end - overhead_time_start;
 
     /* Terminate Vftrace if we are exiting the main routine */
     // When exiting main, there is no return value.

@@ -34,7 +34,7 @@
 extern int vftr_omp_threads;
 
 // Maximum time in a call tree, searched for in vftr_finalize
-extern long long *vftr_maxtime;
+extern long long vftr_maxtime;
 
 // Stack information on local and global scale
 // TODO: fuse the stack info types

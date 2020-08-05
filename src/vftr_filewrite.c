@@ -43,7 +43,7 @@ FILE *vftr_log = NULL;
 char vftr_fileid[VFTR_FILEIDSIZE];
 
 // Next sample time for each thread (one for each OpenMP thread)
-long long *vftr_nextsampletime;
+long long vftr_nextsampletime;
 
 // The basename of Vftrace log files
 char *vftr_logfile_name;
@@ -180,7 +180,7 @@ void vftr_finalize_vfd_file (long long finalize_time, int signal_number) {
             fwrite(&zerodouble, sizeof(double),	1, vftr_vfd_file[omp_thread]); 
 	    fwrite(&vftr_inittime, sizeof(long long), 1, vftr_vfd_file[omp_thread]);
             fwrite(&runtime, sizeof(double), 1, vftr_vfd_file[omp_thread]);
-            fwrite(&vftr_samplecount[omp_thread], sizeof(unsigned int), 1, vftr_vfd_file[omp_thread]);
+            fwrite(&vftr_samplecount, sizeof(unsigned int), 1, vftr_vfd_file[omp_thread]);
             fwrite(&vftr_stackscount, sizeof(unsigned int), 1, vftr_vfd_file[omp_thread]);
             fwrite(&stackstable_offset, sizeof(unsigned int), 1, vftr_vfd_file[omp_thread]);
             fwrite(&vftr_samples_offset, sizeof(unsigned int), 1, vftr_vfd_file[omp_thread]);
@@ -201,9 +201,9 @@ void vftr_write_to_vfd(long long runtime, unsigned long long cycles, int stack_i
 
     vftr_write_observables_to_vfd (cycles, vftr_vfd_file[me]);
 
-    vftr_nextsampletime[me] = runtime + vftr_interval;
-    vftr_prevsampletime [me] = runtime;
-    vftr_samplecount[me]++;
+    vftr_nextsampletime = runtime + vftr_interval;
+    vftr_prevsampletime = runtime;
+    vftr_samplecount++;
 }
 
 /**********************************************************************/
@@ -226,7 +226,7 @@ void vftr_store_message_info(vftr_direction dir, int count, int type_idx,
    fwrite(&tstart, sizeof(long long), 1, vftr_vfd_file[omp_thread]);
    fwrite(&tend, sizeof(long long), 1, vftr_vfd_file[omp_thread]);
 
-   vftr_samplecount[omp_thread]++;
+   vftr_samplecount++;
 }
 #endif
 
@@ -547,7 +547,7 @@ void vftr_print_profile (FILE *pout, int *ntop, long long time0) {
     // identify the thread id
     int thread_id = OMP_GET_THREAD_NUM;
     double total_runtime = vftr_get_runtime_usec() * 1.0e-6;
-    double overhead_time = vftr_overhead_usec[thread_id] * 1.0e-6;
+    double overhead_time = vftr_overhead_usec * 1.0e-6;
     double application_runtime = total_runtime - overhead_time;
     rtime = application_runtime;
 

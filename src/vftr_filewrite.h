@@ -14,7 +14,7 @@ extern FILE *vftr_log;
 extern char vftr_fileid[VFTR_FILEIDSIZE];
 
 // Next sample time for each thread (one for each OpenMP thread)
-extern long long *vftr_nextsampletime;
+extern long long vftr_nextsampletime;
 
 // The basename of Vftrace log files
 extern char *vftr_logfile_name;

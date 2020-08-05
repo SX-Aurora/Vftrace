@@ -43,7 +43,7 @@ evtcounter_t *next_counter = NULL;
 
 int vftr_n_hw_obs;
 bool vftr_events_enabled;
-long long *vftr_prog_cycles;
+long long vftr_prog_cycles;
 bool err_no_hwc_support = false;
 int  *eventSet;
 

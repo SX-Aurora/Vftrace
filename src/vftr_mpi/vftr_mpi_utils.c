@@ -137,10 +137,10 @@ void vftr_after_mpi_init() {
        int me = OMP_GET_THREAD_NUM;
        /* Reset time and overwrite samples logged before MPI_Init */
 
-       vftr_prevsampletime   [me] = 0;
-       vftr_nextsampletime  [me] = 0;
-       vftr_samplecount[me] = 0;
-       vftr_prog_cycles[me] = 0;
+       vftr_prevsampletime = 0;
+       vftr_nextsampletime = 0ll;
+       vftr_samplecount = 0;
+       vftr_prog_cycles = 0ll;
 
        vftr_reset_counts ( me, vftr_froots[me] );
 

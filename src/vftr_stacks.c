@@ -35,7 +35,7 @@
 int vftr_omp_threads;
 
 // Maximum time in a call tree, searched for in vftr_finalize
-long long *vftr_maxtime;
+long long vftr_maxtime;
 
 // number of locally unique stacks
 int   vftr_stackscount = 0;
@@ -69,11 +69,11 @@ void vftr_initialize_stacks() {
    function_t *func = vftr_new_function (NULL, strdup (s), NULL, "init", 0, true);
    func->next = func; /* Close circular linked list to itself */
    vftr_fstack = func;
+   vftr_samplecount = 0;
+   vftr_in_parallel = 0;
+   vftr_maxtime = 0;
    for (int i = 0; i < vftr_omp_threads; i++) {
-       vftr_samplecount[i] = 0;
-       vftr_in_parallel[i] = 0;
        vftr_froots[i] = func;
-       vftr_maxtime[i] = 0;
    }
 }
 

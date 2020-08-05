@@ -23,7 +23,7 @@
 
 extern bool vftr_events_enabled;
 extern int vftr_n_hw_obs;
-extern long long *vftr_prog_cycles;
+extern long long vftr_prog_cycles;
 
 #if defined( __ve__ )
 #define MAX_HWC_EVENTS               16
