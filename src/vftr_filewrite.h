@@ -42,7 +42,7 @@ char *vftr_bool_to_string (bool value);
 
 void vftr_init_vfd_file ();
 void vftr_finalize_vfd_file (long long finalize_time, int signal_number);
-void vftr_write_to_vfd (long long runtime, unsigned long long cycles, int stack_id, unsigned int sid, int me);
+void vftr_write_to_vfd (long long runtime, unsigned long long cycles, int stack_id, unsigned int sid);
 void vftr_store_message_info(vftr_direction dir, int count, int type_idx,
                              int type_size, int rank, int tag,
                              long long tstart, long long tend);

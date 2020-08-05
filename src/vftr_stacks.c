@@ -335,13 +335,9 @@ int vftr_normalize_stacks() {
 
 /**********************************************************************/
 
-void vftr_print_stack (int me, double time0, function_t *func, char *label, int timeToSample) {
+void vftr_print_stack (double time0, function_t *func, char *label, int timeToSample) {
     function_t   *f;
     char         *mark;
-
-#ifdef _OPENMP
-    omp_set_lock( &vftr_lock );
-#endif
 
     if( func->new ) {
         func->new = 0;
@@ -350,15 +346,11 @@ void vftr_print_stack (int me, double time0, function_t *func, char *label, int 
         mark = "";
     }
 
-    fprintf( vftr_log, "[%d] %s%12.6lf %4d %s %s", 
-             me, timeToSample ? "+" : " ", time0, func->id, label, mark );
+    fprintf (vftr_log, "%s%12.6lf %4d %s %s", 
+             timeToSample ? "+" : " ", time0, func->id, label, mark );
 
-    for( f=func; f; f=f->ret) fprintf( vftr_log, "%s<", f->name );
-    fprintf( vftr_log, "\n" );
-
-#ifdef _OPENMP
-    omp_unset_lock( &vftr_lock );
-#endif
+    for (f = func; f; f = f->ret) fprintf (vftr_log, "%s<", f->name);
+    fprintf (vftr_log, "\n");
 }
 
 /**********************************************************************/

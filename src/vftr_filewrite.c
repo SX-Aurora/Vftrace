@@ -194,7 +194,7 @@ void vftr_finalize_vfd_file (long long finalize_time, int signal_number) {
 
 /**********************************************************************/
 
-void vftr_write_to_vfd(long long runtime, unsigned long long cycles, int stack_id, unsigned int sid, int me) {
+void vftr_write_to_vfd(long long runtime, unsigned long long cycles, int stack_id, unsigned int sid) {
     fwrite (&sid, sizeof(unsigned int), 1, vftr_vfd_file);
     fwrite (&stack_id, sizeof(int), 1, vftr_vfd_file);
     fwrite (&runtime, sizeof(long long), 1, vftr_vfd_file);
@@ -544,8 +544,6 @@ void vftr_print_profile (FILE *pout, int *ntop, long long time0) {
 	    }
 	}
     }
-    // identify the thread id
-    int thread_id = OMP_GET_THREAD_NUM;
     double total_runtime = vftr_get_runtime_usec() * 1.0e-6;
     double overhead_time = vftr_overhead_usec * 1.0e-6;
     double application_runtime = total_runtime - overhead_time;

@@ -54,7 +54,7 @@ int vftr_compare (const void *a1, const void *a2) {
 
 /**********************************************************************/
 
-void vftr_save_old_state (int me) {
+void vftr_save_old_state () {
     int i,j;
 
     for (j = 0; j < vftr_stackscount; j++) {
@@ -71,7 +71,7 @@ void vftr_save_old_state (int me) {
 /**********************************************************************/
 
 void vftr_function_entry (const char *s, void *addr, int line, bool isPrecise) {
-    int e, me, read_counters;
+    int e, read_counters;
     unsigned long long timer, time0, delta;
     unsigned long long cycles0;
     double wtime;
@@ -89,7 +89,6 @@ void vftr_function_entry (const char *s, void *addr, int line, bool isPrecise) {
     long long func_entry_time = vftr_get_runtime_usec();
     // log function entry and exit time to estimate the overhead time
     long long overhead_time_start = func_entry_time;
-    me = OMP_GET_THREAD_NUM;
     timer = vftr_get_runtime_usec ();
     time0 = timer - vftr_inittime;
     cycles0 = vftr_get_cycles() - vftr_initcycles;
@@ -160,12 +159,12 @@ void vftr_function_entry (const char *s, void *addr, int line, bool isPrecise) {
 
     if (func->profile_this) {
         wtime = (vftr_get_runtime_usec() - vftr_overhead_usec) * 1.0e-6;
-        vftr_print_stack (me, wtime, func, "profile before call to", 0);
+        vftr_print_stack (wtime, func, "profile before call to", 0);
         vftr_profile_wanted = true;
         int ntop;
         vftr_print_profile (vftr_log, &ntop, time0);
         vftr_print_local_stacklist (vftr_func_table, vftr_log, ntop);
-	vftr_save_old_state (me);
+	vftr_save_old_state ();
     }
 
     vftr_fstack = func; /* Here's where we are now */
@@ -176,13 +175,9 @@ void vftr_function_entry (const char *s, void *addr, int line, bool isPrecise) {
     read_counters = (func->ret->detail || func->detail) &&
 		    vftr_events_enabled && 
                     (time_to_sample || vftr_environment->accurate_profile->value);
-#ifdef __ve__
-    // Do not read performance counters for OpenMP threads > 0
-    if (me) read_counters = 0;
-#endif
 
     if (time_to_sample && vftr_env_do_sampling ()) {
-        vftr_write_to_vfd (func_entry_time, vftr_prog_cycles, func->id, SID_ENTRY, me);
+        vftr_write_to_vfd (func_entry_time, vftr_prog_cycles, func->id, SID_ENTRY);
 #ifdef _MPI
         int mpi_isinit;
         PMPI_Initialized(&mpi_isinit);
@@ -237,7 +232,7 @@ void vftr_function_entry (const char *s, void *addr, int line, bool isPrecise) {
 /**********************************************************************/
 
 void vftr_function_exit(int line) {
-    int           e, me, read_counters, timeToSample;
+    int           e, read_counters, timeToSample;
     long long     time0, timer;
     unsigned long long cycles0;
     function_t    *func;
@@ -246,7 +241,6 @@ void vftr_function_exit(int line) {
 
     if (vftr_off() || vftr_paused) return;
 
-    me = OMP_GET_THREAD_NUM;
     /* See at the beginning of vftr_function_entry: If
      * we are dealing with a recursive function call, exit.
      */
@@ -288,12 +282,8 @@ void vftr_function_exit(int line) {
     read_counters = (func->ret->detail || func->detail) &&
 	  	    vftr_events_enabled && 
                     (timeToSample || vftr_environment->accurate_profile->value);
-#ifdef __ve__
-    if (me) read_counters = 0;
-#endif
-
     if (timeToSample && vftr_env_do_sampling ()) {
-        vftr_write_to_vfd(func_exit_time, prof_current->cycles, func->id, SID_EXIT, me);
+        vftr_write_to_vfd(func_exit_time, prof_current->cycles, func->id, SID_EXIT);
 #ifdef _MPI
         int mpi_isinit;
         PMPI_Initialized(&mpi_isinit);
@@ -341,26 +331,21 @@ void vftr_function_exit(int line) {
     wtime = (vftr_get_runtime_usec() - vftr_overhead_usec) * 1.0e-6;
 
     if (func->profile_this)  {
-        vftr_print_stack (me, wtime, func, "profile at exit from", timeToSample);
+        vftr_print_stack (wtime, func, "profile at exit from", timeToSample);
         vftr_profile_wanted = true;
         int ntop;
         vftr_print_profile (stdout, &ntop, time0);
         vftr_print_local_stacklist( vftr_func_table, stdout, ntop );
     }
 
-    if (me == 0 && time0 >= vftr_timelimit) {
-        fprintf( vftr_log, "vftr_timelimit exceeded - terminating execution\n" );
-	kill( getpid(), SIGTERM );
+    if (time0 >= vftr_timelimit) {
+        fprintf (vftr_log, "vftr_timelimit exceeded - terminating execution\n");
+	kill (getpid(), SIGTERM);
     }
-#if defined(_SX) || defined(__ve__OFF)
-#ifdef _OPENMP
-    if( omp_in_parallel() ) vftr_in_parallel--;
-#endif
-#endif
 
     /* Sort profile if it is time */
     
-    if (me == 0 && wtime >= vftr_sorttime)  {
+    if (wtime >= vftr_sorttime)  {
         int i, top;
         double tsum = 0.;
         double scale = 100. / (double)vftr_prog_cycles;

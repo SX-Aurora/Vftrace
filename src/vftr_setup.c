@@ -329,7 +329,7 @@ void vftr_calc_tree_format (function_t *func) {
 /**********************************************************************/
 
 void vftr_finalize() {
-    int            i, me, ntop = 0;
+    int            i, ntop = 0;
     function_t     **funcTable;
 
     if (vftr_off())  return;
@@ -343,8 +343,7 @@ void vftr_finalize() {
 
     // Mark end of non-parallel interval
     if (vftr_env_do_sampling()) {
-        for (me = 1; me < vftr_omp_threads; me++)
-            vftr_write_to_vfd (finalize_time, vftr_prog_cycles, 0, SID_EXIT, me);
+        vftr_write_to_vfd (finalize_time, vftr_prog_cycles, 0, SID_EXIT);
     }
     
     bool valid_loadbalance_table = !vftr_normalize_stacks();

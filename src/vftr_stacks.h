@@ -94,7 +94,7 @@ void vftr_write_stacks (FILE *fp, int level, function_t *func);
 // Synchronise stack-IDs between processes
 int vftr_normalize_stacks();
 
-void vftr_print_stack (int tid, double time, function_t *func, char *label, int timeToSample);
+void vftr_print_stack (double time, function_t *func, char *label, int timeToSample);
 void vftr_print_local_stacklist (function_t **funcTable, FILE *pout, int ntop);
 void vftr_print_local_demangled (function_t **funcTable, FILE *pout, int ntop);
 void vftr_print_global_stacklist (FILE *pout);
