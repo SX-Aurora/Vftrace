@@ -16,13 +16,20 @@
    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-#ifndef VFTR_BARRIER_F_H
-#define VFTR_BARRIER_F_H
+#include <stdlib.h>
 
 #ifdef _MPI
 #include <mpi.h>
 
-void vftr_MPI_Barrier_F(MPI_Fint *f_comm, MPI_Fint *f_error);
+#include "vftr_mpi_barrier.h"
+  
+void vftr_MPI_Barrier_F(MPI_Fint *f_comm, MPI_Fint *f_error) {
 
-#endif
+   MPI_Comm c_comm = PMPI_Comm_f2c(*f_comm);
+
+   int c_error = vftr_MPI_Barrier(c_comm);
+
+   *f_error = (MPI_Fint) c_error;
+}
+
 #endif
