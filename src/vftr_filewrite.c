@@ -104,7 +104,7 @@ char *vftr_create_logfile_name (int mpi_rank, int mpi_size, char *suffix) {
 	char *logfile_name = (char*)malloc (1024 * sizeof(char));
 	sprintf (logfile_name, logfile_nameformat, mpi_rank);
 	free (logfile_nameformat);
-	return strdup(logfile_name);
+	return logfile_name;
 }
 
 /**********************************************************************/
