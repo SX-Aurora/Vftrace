@@ -7,6 +7,10 @@ test_vftrace_SOURCES = ${srcdir}/test_vftrace.c
 test_vftrace_CFLAGS = -I${srcdir}/../src/ -I${srcdir}/../src/vftr_mpi
 test_vftrace_LDFLAGS = -L${top_builddir}/src/.libs -lvftrace -lm
 
+if USES_NEC_MPI
+  test_vftrace_LDFLAGS += -mpiprof
+endif
+
 run: $(top_srcdir)/test/run
 	mkdir -p run
 	for f in $</*.sh; do cp $$f $@; chmod u+x $@/`basename $$f`; done
