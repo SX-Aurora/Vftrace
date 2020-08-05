@@ -46,7 +46,7 @@ char vftr_fileid[VFTR_FILEIDSIZE];
 long long *vftr_nextsampletime;
 
 // The basename of Vftrace log files
-char vftr_logfile_name[1024];
+char *vftr_logfile_name;
 
 FILE **vftr_vfd_file;
 
@@ -98,11 +98,10 @@ char *vftr_create_logfile_name (int mpi_rank, int mpi_size, char *suffix) {
 	}
 	// Finally create the output file name
 	int task_digits = count_digits (mpi_size);
-	//char logfile_nameformat[1024];
-	char *logfile_nameformat = malloc (1024 * sizeof(char));
+	char *logfile_nameformat = (char*)malloc (1024 * sizeof(char));
 	sprintf (logfile_nameformat, "%s/%s_%%0%dd.%s",
 		 out_directory, basename, task_digits, suffix);
-	char logfile_name[1024];
+	char *logfile_name = (char*)malloc (1024 * sizeof(char));
 	sprintf (logfile_name, logfile_nameformat, mpi_rank);
 	free (logfile_nameformat);
 	return strdup(logfile_name);

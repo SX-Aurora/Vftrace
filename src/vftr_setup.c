@@ -185,7 +185,7 @@ void vftr_initialize() {
 
     vftr_get_mpi_info (&vftr_mpirank, &vftr_mpisize);
 
-    char *vftr_logfile_name = vftr_create_logfile_name (vftr_mpirank, vftr_mpisize, "log");
+    vftr_logfile_name = vftr_create_logfile_name (vftr_mpirank, vftr_mpisize, "log");
     vftr_log = fopen (vftr_logfile_name, "w+");
     assert (vftr_log);
     

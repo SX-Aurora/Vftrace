@@ -17,7 +17,7 @@ extern char vftr_fileid[VFTR_FILEIDSIZE];
 extern long long *vftr_nextsampletime;
 
 // The basename of Vftrace log files
-extern char vftr_logfile_name[1024];
+extern char *vftr_logfile_name;
 
 extern FILE **vftr_vfd_file;
 
