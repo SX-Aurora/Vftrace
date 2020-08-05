@@ -28,12 +28,9 @@ typedef struct CallsTime {
 
 typedef struct CallsTimeRange {
     int       stackIndex;
-    long long minMPIcalls,maxMPIcalls,avgMPIcalls,
-              minOMPcalls,maxOMPcalls,avgOMPcalls;
-    float     minMPItime, maxMPItime, avgMPItime,
-              minOMPtime, maxOMPtime, avgOMPtime;
-    int       minMPIindxc,maxMPIindxc,minOMPindxc,maxOMPindxc,
-              minMPIindxt,maxMPIindxt,minOMPindxt,maxOMPindxt;
+    long long minMPIcalls, maxMPIcalls, avgMPIcalls;
+    float     minMPItime, maxMPItime, avgMPItime;
+    int       minMPIindxc, maxMPIindxc, minMPIindxt, maxMPIindxt;
 } callsTimeRange_t;
 
 // global sample timer
