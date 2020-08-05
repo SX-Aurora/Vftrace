@@ -53,7 +53,7 @@ unsigned int  vftr_func_table_size = 5000;
 // Function call stack
 function_t *vftr_fstack = NULL;
 // Function call stack roots
-function_t **vftr_froots = NULL;
+function_t *vftr_froots = NULL;
 // Profile data sample
 profdata_t *vftr_prof_data = NULL;
 
@@ -62,7 +62,7 @@ void vftr_initialize_stacks() {
    // Allocate stack tables for each thread
    //vftr_fstack = (function_t**) malloc(vftr_omp_threads * sizeof(function_t*));
    vftr_fstack = (function_t*) malloc(sizeof(function_t));
-   vftr_froots = (function_t**) malloc(vftr_omp_threads * sizeof(function_t*));
+   vftr_froots = (function_t*) malloc(sizeof(function_t));
 
    // Initialize stack tables 
    char *s = "init";
@@ -72,9 +72,7 @@ void vftr_initialize_stacks() {
    vftr_samplecount = 0;
    vftr_in_parallel = 0;
    vftr_maxtime = 0;
-   for (int i = 0; i < vftr_omp_threads; i++) {
-       vftr_froots[i] = func;
-   }
+   vftr_froots = func;
 }
 
 // Write the stacks out

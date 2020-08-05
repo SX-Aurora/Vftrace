@@ -79,7 +79,7 @@ extern unsigned int  vftr_func_table_size;
 //extern function_t **vftr_fstack;
 extern function_t *vftr_fstack;
 // Function call stack roots
-extern function_t **vftr_froots;
+extern function_t *vftr_froots;
 // Profile data
 extern struct Performance *vftr_prof;
 // Profile data sample

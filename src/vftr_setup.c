@@ -355,7 +355,7 @@ void vftr_finalize() {
     }
     
     bool valid_loadbalance_table = !vftr_normalize_stacks();
-    vftr_calc_tree_format (vftr_froots[0]);
+    vftr_calc_tree_format (vftr_froots);
 
     vftr_print_profile (vftr_log, &ntop, time0);
 

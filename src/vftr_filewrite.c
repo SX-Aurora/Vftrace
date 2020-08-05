@@ -165,7 +165,7 @@ void vftr_finalize_vfd_file (long long finalize_time, int signal_number) {
         if (vftr_env_do_sampling () && signal_number != SIGUSR1) {
 
             unsigned int stackstable_offset = (unsigned int) ftell (vftr_vfd_file);
-            vftr_write_stacks (vftr_vfd_file, 0, vftr_froots[0]);
+            vftr_write_stacks (vftr_vfd_file, 0, vftr_froots);
 
 	    // It is unused ?
             unsigned int profile_offset = 0;

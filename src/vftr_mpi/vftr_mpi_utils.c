@@ -142,7 +142,7 @@ void vftr_after_mpi_init() {
        vftr_samplecount = 0;
        vftr_prog_cycles = 0ll;
 
-       vftr_reset_counts ( me, vftr_froots[me] );
+       vftr_reset_counts (me, vftr_froots);
 
        fseek (vftr_vfd_file, vftr_samples_offset, SEEK_SET);
     }
