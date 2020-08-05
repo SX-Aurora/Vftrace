@@ -23,7 +23,6 @@
 #include "vftr_stacks.h"
 
 int vftrace_get_stack_string_length() {
-   int me = OMP_GET_THREAD_NUM;
    function_t *func = vftr_fstack;
 
    int stackstrlength = strlen(func->name);
@@ -41,7 +40,6 @@ int vftrace_get_stack_string_length() {
 }
 
 char *vftrace_get_stack() {
-   int me = OMP_GET_THREAD_NUM;
    function_t *func = vftr_fstack;
 
    // determine the length of the stack string

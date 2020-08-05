@@ -30,9 +30,6 @@
 #include "vftr_timer.h"
 #include "vftr_functions.h"
 
-// number of omp threads
-extern int vftr_omp_threads;
-
 // Maximum time in a call tree, searched for in vftr_finalize
 extern long long vftr_maxtime;
 

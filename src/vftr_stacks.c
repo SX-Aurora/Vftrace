@@ -31,9 +31,6 @@
 
 #include "vftr_output_macros.h"
 
-// number of omp threads
-int vftr_omp_threads;
-
 // Maximum time in a call tree, searched for in vftr_finalize
 long long vftr_maxtime;
 
@@ -60,7 +57,6 @@ profdata_t vftr_prof_data;
 // initialize stacks only called from vftr_initialize
 void vftr_initialize_stacks() {
    // Allocate stack tables for each thread
-   //vftr_fstack = (function_t**) malloc(vftr_omp_threads * sizeof(function_t*));
    vftr_fstack = (function_t*) malloc(sizeof(function_t));
    vftr_froots = (function_t*) malloc(sizeof(function_t));
 
@@ -70,7 +66,6 @@ void vftr_initialize_stacks() {
    func->next = func; /* Close circular linked list to itself */
    vftr_fstack = func;
    vftr_samplecount = 0;
-   vftr_in_parallel = 0;
    vftr_maxtime = 0;
    vftr_froots = func;
 }

@@ -28,7 +28,6 @@ extern unsigned int vftr_samples_offset;
 typedef struct format_t {
 	int fid;
 	int rank;
-	int thread;
 	int n_calls;
 	int func_name;
 	int caller_name;

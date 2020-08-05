@@ -46,8 +46,6 @@ bool vftr_timer_end;
 
 int vftr_mpirank;
 int vftr_mpisize;
-// Indicates if Vftrace is in an OMP parallel region
-int vftr_in_parallel;
 unsigned int vftr_samplecount;
 
 void vftr_print_disclaimer_full (FILE *fp) {
@@ -137,9 +135,7 @@ void vftr_get_mpi_info (int *rank, int *size) {
 // Assuming vftr_initialize will be called outside parallel region
 void vftr_initialize() {
     char *s;
-    int j, n, me;
-
-    me = OMP_GET_THREAD_NUM;
+    int j, n;
 
     // set the timer reference point for this process
     vftr_set_local_ref_time();
@@ -163,8 +159,6 @@ void vftr_initialize() {
     sprintf (vftr_fileid, "VFTRACE %07d", 
 	(100 * MAJOR_VERSION + MINOR_VERSION) * 100 + REVISION);
 
-    vftr_omp_threads = OMP_GET_MAX_THREADS;
-
     vftr_overhead_usec = 0ll;
   
     vftr_prog_cycles = 0ll;
@@ -181,13 +175,6 @@ void vftr_initialize() {
     
     // Do not buffer when writing into the log file
     setvbuf (vftr_log, NULL, _IOLBF, (size_t)0);
-
-#ifndef _OPENMP
-    if (vftr_omp_threads > 1 && !vftr_mpirank) {
-        fprintf( vftr_log, 
-	  "WARNING: vftrace library used does not support OpenMP\n" );
-    }
-#endif
 
     if (vftr_mpirank == 0) {
        if (vftr_environment->license_verbose->value) {
@@ -214,8 +201,6 @@ void vftr_initialize() {
     // initialize the stack variables and tables
     vftr_initialize_stacks();
 
-    /* Allocate time arrays for each thread */
-    n = vftr_omp_threads * sizeof(long long);
     vftr_nextsampletime = 0ll;
     vftr_prevsampletime = 0;
 
@@ -255,7 +240,6 @@ void vftr_initialize() {
 
     /* Create VFD files */
     if (vftr_env_do_sampling ()) {
-        int thread_digits = count_digits (vftr_omp_threads);
 	vftr_init_vfd_file ();
     }
     
@@ -312,11 +296,9 @@ void vftr_calc_tree_format (function_t *func) {
 
     if (func == NULL) return;
 
-    for (me = 0; me < vftr_omp_threads; me++) {
-        fcalls = func->prof_current.calls;
-        ftime  = func->prof_current.cycles;
-        if (vftr_maxtime < ftime) vftr_maxtime = ftime;
-    }
+    fcalls = func->prof_current.calls;
+    ftime  = func->prof_current.cycles;
+    if (vftr_maxtime < ftime) vftr_maxtime = ftime;
 
     n = func->levels;
 
@@ -358,7 +340,7 @@ void vftr_finalize() {
 	loadbalance_info = vftr_get_loadbalance_info( funcTable );
     }
 
-    bool is_parallel = vftr_mpisize > 1 || vftr_omp_threads > 1;
+    bool is_parallel = vftr_mpisize > 1;
     if (is_parallel && vftr_mpirank == 0 && valid_loadbalance_table) {
         int *loadIDs = (int *) malloc (vftr_gStackscount * sizeof(int));
         int nLoadIDs;

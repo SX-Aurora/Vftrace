@@ -78,24 +78,22 @@ callsTime_t **vftr_get_loadbalance_info (function_t **funcTable)
 
     /* Build array of all stack calls and times */
 
-    nCallsTime = vftr_gStackscount * vftr_omp_threads;
+    nCallsTime = vftr_gStackscount;
     nCallsTimeBytes = nCallsTime * sizeof(callsTime_t);
     callsTime = (callsTime_t *) malloc( nCallsTimeBytes );
     memset( callsTime, 0, nCallsTimeBytes );
 
     for (i = 0; i < vftr_stackscount; i++) {
         if( funcTable[i] == NULL ) continue;
-        for( tid=0; tid<vftr_omp_threads; tid++ ) {
-            profdata_t *prof_current  = &funcTable[i]->prof_current;
-            profdata_t *prof_previous = &funcTable[i]->prof_previous;
-            int calls = prof_current->calls - prof_previous->calls;
-            unsigned long long cycles = prof_current->cycles - prof_previous->cycles;
-            unsigned long long timeExcl = prof_current->timeExcl - prof_previous->timeExcl;
-	    rtime  = calls ? timeExcl * 1.0e-6 : 0;
-            fid = funcTable[i]->gid;
-            callsTime[fid*vftr_omp_threads+tid].calls = calls;
-            callsTime[fid*vftr_omp_threads+tid].time  = rtime;
-        }
+        profdata_t *prof_current  = &funcTable[i]->prof_current;
+        profdata_t *prof_previous = &funcTable[i]->prof_previous;
+        int calls = prof_current->calls - prof_previous->calls;
+        unsigned long long cycles = prof_current->cycles - prof_previous->cycles;
+        unsigned long long timeExcl = prof_current->timeExcl - prof_previous->timeExcl;
+	rtime  = calls ? timeExcl * 1.0e-6 : 0;
+        fid = funcTable[i]->gid;
+        callsTime[fid].calls = calls;
+        callsTime[fid].time  = rtime;
     }
     if( multiTask ) {
 
@@ -140,13 +138,13 @@ vftr_print_loadbalance( callsTime_t **gCallsTime,
                    *callsTimeRange, **cTRarray, cTRmax;
     int            multiTask   = ( vftr_mpisize  > 1 ),
                    i, j, k, rank, tid, fidp, nctr,
-                   flen, clen, rankp, threadp, jpar,
+                   flen, clen, rankp, jpar,
                    minMPIcallsp,maxMPIcallsp,avgMPIcallsp,
                    minMPItimep, maxMPItimep, avgMPItimep,
                    minMPIindxcp,maxMPIindxcp,
                    minMPIindxtp,maxMPIindxtp;
     char           fmtFuncname[10], fmtCaller[10];
-    char           *fmtFid,         *fmtRank,        *fmtThread,      
+    char           *fmtFid,         *fmtRank,      
                    *fmtMinMPIcalls, *fmtMaxMPIcalls, *fmtAvgMPIcalls, 
                    *fmtMinMPIindxc, *fmtMaxMPIindxc, 
                    *fmtMinMPItime,  *fmtMaxMPItime,  *fmtAvgMPItime, 
@@ -205,14 +203,10 @@ vftr_print_loadbalance( callsTime_t **gCallsTime,
             avgtime  = 0.;
             for( rank=groupBase; rank<groupBase+groupSize; rank++ ) {
                 callsTime_t *callsTime = gCallsTime[rank];
-                j = i*vftr_omp_threads;
-                calls = callsTime[j].calls;
-                time  = callsTime[j].time;
-                for( tid=1; tid<vftr_omp_threads; tid++ ) {
-                    j = i*vftr_omp_threads+tid;
-                    if( calls < callsTime[j].calls ) calls = callsTime[j].calls;
-                    if( time  < callsTime[j].time  ) time  = callsTime[j].time;
-                }
+                calls = callsTime[i].calls;
+                time  = callsTime[i].time;
+                if( calls < callsTime[i].calls ) calls = callsTime[i].calls;
+                if( time  < callsTime[i].time  ) time  = callsTime[i].time;
                 if( mincalls > calls ) { mincalls = calls; minindxc = rank; }
                 if( maxcalls < calls ) { maxcalls = calls; maxindxc = rank; }
                 if( mintime  > time  ) { mintime  = time ; minindxt = rank; }
@@ -247,7 +241,6 @@ vftr_print_loadbalance( callsTime_t **gCallsTime,
     sprintf( fmtCaller,   " %%-%ds", clen );
     COMPUTE_COLWIDTH( vftr_stackscount        , fidp        , 2, fmtFid         , " %%%dd"  )
     COMPUTE_COLWIDTH( vftr_mpisize            , rankp       , 2, fmtRank        , " %%%dd"  )
-    COMPUTE_COLWIDTH( vftr_omp_threads            , threadp     , 2, fmtThread      , " %%%dd"  )
     if( multiTask ) {
       COMPUTE_COLWIDTH( cTRmax.minMPIcalls      , minMPIcallsp, 2, fmtMinMPIcalls , " %%%dld" )
       COMPUTE_COLWIDTH( cTRmax.maxMPIcalls      , maxMPIcallsp, 2, fmtMaxMPIcalls , " %%%dld" )

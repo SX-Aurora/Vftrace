@@ -110,6 +110,7 @@ char *vftr_create_logfile_name (int mpi_rank, int mpi_size, char *suffix) {
 /**********************************************************************/
 
 void vftr_init_vfd_file () {
+	const int one = 1;
 	char *filename = vftr_create_logfile_name (vftr_mpirank, vftr_mpisize, "vfd");
 	FILE *fp = fopen (filename, "w+");
 	assert (fp);
@@ -130,7 +131,7 @@ void vftr_init_vfd_file () {
 	fwrite (vftr_fileid, VFTR_FILEIDSIZE, 1, fp );   
 	fwrite (datestring, 24, 1, fp );    
 	fwrite (&vftr_interval, sizeof(long long), 1, fp );
-	fwrite (&vftr_omp_threads, sizeof(int), 1, fp ); 
+	fwrite (&one, sizeof(int), 1, fp ); 
 	int omp_thread = 0;
 	fwrite (&omp_thread, sizeof(int), 1, fp ); 
 	
@@ -160,36 +161,31 @@ void vftr_init_vfd_file () {
 /**********************************************************************/
 
 void vftr_finalize_vfd_file (long long finalize_time, int signal_number) {
-    for (int omp_thread = 0; omp_thread < vftr_omp_threads; omp_thread++) {
+    if (vftr_env_do_sampling () && signal_number != SIGUSR1) {
 
-        if (vftr_env_do_sampling () && signal_number != SIGUSR1) {
+        unsigned int stackstable_offset = (unsigned int) ftell (vftr_vfd_file);
+        vftr_write_stacks (vftr_vfd_file, 0, vftr_froots);
 
-            unsigned int stackstable_offset = (unsigned int) ftell (vftr_vfd_file);
-            vftr_write_stacks (vftr_vfd_file, 0, vftr_froots);
+        // It is unused ?
+        unsigned int profile_offset = 0;
 
-	    // It is unused ?
-            unsigned int profile_offset = 0;
+        double runtime = finalize_time * 1.0e-6;
+        double zerodouble[] = { 0., 0. };
 
-            double runtime = finalize_time * 1.0e-6;
-            double zerodouble[] = { 0., 0. };
-
-            // Update trace info in header and close
-            fseek (vftr_vfd_file, vftr_admin_offset, SEEK_SET);
-            fwrite(&vftr_mpisize, sizeof(int), 1, vftr_vfd_file); 
-            fwrite(&vftr_mpirank, sizeof(int),1, vftr_vfd_file); 
-            fwrite(&zerodouble, sizeof(double),	1, vftr_vfd_file); 
-	    fwrite(&vftr_inittime, sizeof(long long), 1, vftr_vfd_file);
-            fwrite(&runtime, sizeof(double), 1, vftr_vfd_file);
-            fwrite(&vftr_samplecount, sizeof(unsigned int), 1, vftr_vfd_file);
-            fwrite(&vftr_stackscount, sizeof(unsigned int), 1, vftr_vfd_file);
-            fwrite(&stackstable_offset, sizeof(unsigned int), 1, vftr_vfd_file);
-            fwrite(&vftr_samples_offset, sizeof(unsigned int), 1, vftr_vfd_file);
-	    fwrite(&profile_offset, sizeof(unsigned int), 1, vftr_vfd_file);
-            fclose (vftr_vfd_file);
-
-        }
+        // Update trace info in header and close
+        fseek (vftr_vfd_file, vftr_admin_offset, SEEK_SET);
+        fwrite(&vftr_mpisize, sizeof(int), 1, vftr_vfd_file); 
+        fwrite(&vftr_mpirank, sizeof(int),1, vftr_vfd_file); 
+        fwrite(&zerodouble, sizeof(double),	1, vftr_vfd_file); 
+        fwrite(&vftr_inittime, sizeof(long long), 1, vftr_vfd_file);
+        fwrite(&runtime, sizeof(double), 1, vftr_vfd_file);
+        fwrite(&vftr_samplecount, sizeof(unsigned int), 1, vftr_vfd_file);
+        fwrite(&vftr_stackscount, sizeof(unsigned int), 1, vftr_vfd_file);
+        fwrite(&stackstable_offset, sizeof(unsigned int), 1, vftr_vfd_file);
+        fwrite(&vftr_samples_offset, sizeof(unsigned int), 1, vftr_vfd_file);
+        fwrite(&profile_offset, sizeof(unsigned int), 1, vftr_vfd_file);
+        fclose (vftr_vfd_file);
     }
-
 }
 
 /**********************************************************************/
@@ -233,7 +229,7 @@ void vftr_store_message_info(vftr_direction dir, int count, int type_idx,
 /**********************************************************************/
 
 void vftr_write_profile () {
-    int            i, j, tid, zero = 0;
+    const int zero = 0;
     double         rtime;
     unsigned long long      total_cycles, calls, cycles, *ec;
     evtcounter_t    *evc;
@@ -245,19 +241,19 @@ void vftr_write_profile () {
     funcTable = vftr_func_table;
 
     ec = (unsigned long long *) malloc (vftr_n_hw_obs * sizeof(long long));
-    for (j = 0; j < vftr_n_hw_obs; j++) {
+    for (int j = 0; j < vftr_n_hw_obs; j++) {
 	ec[j] = 0;
     }
 
     total_cycles = 0;
  
     /* Sum all cycles and counts */
-    for (i = 0; i < vftr_stackscount; i++ ) {
+    for (int i = 0; i < vftr_stackscount; i++) {
 	if (funcTable[i] && funcTable[i]->ret && funcTable[i]->prof_current.calls) {
             profdata_t *prof_current = &funcTable[i]->prof_current;
 	    total_cycles += prof_current->cycles;
             if (!prof_current->event_count) continue;
-            for (j = 0; j < vftr_n_hw_obs; j++) {
+            for (int j = 0; j < vftr_n_hw_obs; j++) {
                 ec[j] += prof_current->event_count[j];
 	    }
 	}
@@ -276,21 +272,19 @@ void vftr_write_profile () {
     fwrite(  ec,                 sizeof(long long), vftr_n_hw_obs, 
                                                        fp );  /* Raw total event counts */
 
-    for( i=0; i<vftr_stackscount; i++ ) {
-        if( !funcTable[i] ) continue;
-        for( tid=0; tid<vftr_omp_threads; tid++ ) {
-            profdata_t *prof_current  = &funcTable[i]->prof_current;
-	    calls  = prof_current->calls ;
-	    cycles = prof_current->calls ? prof_current->cycles : 0;
-            fwrite (&calls, sizeof(long long), 1, fp);  /* Calls */
-            fwrite (&cycles, sizeof(long long), 1, fp);  /* Cycles */
-            if (prof_current->event_count) {
-                fwrite (&vftr_n_hw_obs, sizeof(int), 1, fp);  /* Nr of events */
-                fwrite (prof_current->event_count,
-			sizeof(long long), vftr_n_hw_obs, fp);  /* Event counts */
-            } else {
-                fwrite (&zero, sizeof(int), 1, fp );  /* No events: write 0 */
-            }
+    for (int i = 0; i < vftr_stackscount; i++) {
+        if (!funcTable[i]) continue;
+        profdata_t *prof_current  = &funcTable[i]->prof_current;
+	calls  = prof_current->calls ;
+	cycles = prof_current->calls ? prof_current->cycles : 0;
+        fwrite (&calls, sizeof(long long), 1, fp);  /* Calls */
+        fwrite (&cycles, sizeof(long long), 1, fp);  /* Cycles */
+        if (prof_current->event_count) {
+            fwrite (&vftr_n_hw_obs, sizeof(int), 1, fp);  /* Nr of events */
+            fwrite (prof_current->event_count,
+	    	sizeof(long long), vftr_n_hw_obs, fp);  /* Event counts */
+        } else {
+            fwrite (&zero, sizeof(int), 1, fp );  /* No events: write 0 */
         }
     }
 }
@@ -442,10 +436,8 @@ void set_formats (function_t **funcTable, double runtime,
 	int fidp;
 	for (format->fid = 0, ev = vftr_gStackscount; ev; ev /= 10, format->fid++);
 	for (format->rank = 0, ev = vftr_mpisize; ev; ev /= 10, format->rank++);
-	for (format->thread = 0, ev = vftr_omp_threads; ev; ev /= 10, format->thread++);
 	format->fid = 2;
 	format->rank = 2;
-	format->thread = 2;
 	format->n_calls = MIN_CALLS_NCHAR;
 	format->func_name = MIN_FUNC_NCHAR;
 	format->caller_name = MIN_CALLER_NCHAR;
@@ -602,13 +594,7 @@ void vftr_print_profile (FILE *pout, int *ntop, long long time0) {
 
     fprintf (pout, "Runtime profile");
     if (vftr_mpisize > 1) {
-        if (vftr_omp_threads>1) {
-		fprintf (pout, " for rank %d, thread 0", vftr_mpirank);
-        } else {
-                 fprintf( pout, " for rank %d",           vftr_mpirank );
-	}
-    } else {
-        if (vftr_omp_threads > 1) fprintf( pout, " for thread 0" );
+        fprintf (pout, " for rank %d", vftr_mpirank);
     }
     fprintf (pout, "\n");
     int n_indices = count_indices_to_evaluate (funcTable, application_runtime);

@@ -157,12 +157,10 @@ function_t *vftr_new_function(void *arg, const char *function_name,
    memset(&(func->prof_previous), 0, sizeof(profdata_t));
 
    if (vftr_n_hw_obs > 0) {
-   	//for (int i = 0; i < vftr_omp_threads; i++) {
-   	   func->prof_current.event_count = (long long*) malloc(vftr_n_hw_obs * sizeof(long long));
-   	   func->prof_previous.event_count = (long long*) malloc(vftr_n_hw_obs * sizeof(long long));
-   	   memset (func->prof_current.event_count, 0, vftr_n_hw_obs * sizeof(long long));
-   	   memset (func->prof_previous.event_count, 0, vftr_n_hw_obs * sizeof(long long));
-   	//}
+      func->prof_current.event_count = (long long*) malloc(vftr_n_hw_obs * sizeof(long long));
+      func->prof_previous.event_count = (long long*) malloc(vftr_n_hw_obs * sizeof(long long));
+      memset (func->prof_current.event_count, 0, vftr_n_hw_obs * sizeof(long long));
+      memset (func->prof_previous.event_count, 0, vftr_n_hw_obs * sizeof(long long));
    }
 
    // Determine if this function should be profiled
