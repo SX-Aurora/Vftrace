@@ -104,7 +104,7 @@ void vftr_function_entry (const char *s, void *addr, int line, bool isPrecise) {
     	vftr_create_symbol_table (vftr_mpirank, NULL);
     }
 
-    caller = vftr_fstack[me];
+    caller = vftr_fstack;
     // If the caller address equals the current address, we are
     // dealing with (simple) recursive function call. We filter
     // them out to avoid extensively large call stacks, e.g. 
@@ -168,7 +168,7 @@ void vftr_function_entry (const char *s, void *addr, int line, bool isPrecise) {
 	vftr_save_old_state (me);
     }
 
-    vftr_fstack[me] = func; /* Here's where we are now */
+    vftr_fstack = func; /* Here's where we are now */
 
     // Is it time for the next sample?
     time_to_sample = (func_entry_time > vftr_nextsampletime[me]) || func->precise;  
@@ -250,8 +250,8 @@ void vftr_function_exit(int line) {
     /* See at the beginning of vftr_function_entry: If
      * we are dealing with a recursive function call, exit.
      */
-    if (vftr_fstack[me]->recursion_depth) {
-        vftr_fstack[me]->recursion_depth--;
+    if (vftr_fstack->recursion_depth) {
+        vftr_fstack->recursion_depth--;
         return;
     }
     long long func_exit_time = vftr_get_runtime_usec();
@@ -261,7 +261,7 @@ void vftr_function_exit(int line) {
     timer = vftr_get_runtime_usec ();
     time0 = timer - vftr_inittime;
     cycles0 = vftr_get_cycles() - vftr_initcycles;
-    func  = vftr_fstack[me];
+    func  = vftr_fstack;
     if (func->exclude_this) return;
 
     if (line > 0) {
@@ -278,7 +278,7 @@ void vftr_function_exit(int line) {
     prof_current = &func->prof_current;
     prof_current->timeIncl += func_exit_time;   /* Inclusive time */
     
-    vftr_fstack[me] = func->ret;
+    vftr_fstack = func->ret;
 
     /* Is it time for the next sample? */
 
@@ -408,7 +408,7 @@ void vftr_function_exit(int line) {
     // and the actual program termination as experienced by the user is not
     // measured. Therefore, there is a theoretical, but miniscule, discrepancy
     // the user time and the time measured by Vftrace.
-    if (!vftr_fstack[me]->ret) vftr_finalize();
+    if (!vftr_fstack->ret) vftr_finalize();
 }
 
 // These are the actual Cygnus function hooks. 

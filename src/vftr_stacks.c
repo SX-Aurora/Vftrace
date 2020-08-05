@@ -51,7 +51,7 @@ function_t **vftr_func_table = NULL;
 unsigned int  vftr_func_table_size = 5000;
 
 // Function call stack
-function_t **vftr_fstack = NULL;
+function_t *vftr_fstack = NULL;
 // Function call stack roots
 function_t **vftr_froots = NULL;
 // Profile data sample
@@ -60,17 +60,18 @@ profdata_t *vftr_prof_data = NULL;
 // initialize stacks only called from vftr_initialize
 void vftr_initialize_stacks() {
    // Allocate stack tables for each thread
-   vftr_fstack = (function_t**) malloc(vftr_omp_threads * sizeof(function_t*));
+   //vftr_fstack = (function_t**) malloc(vftr_omp_threads * sizeof(function_t*));
+   vftr_fstack = (function_t*) malloc(sizeof(function_t));
    vftr_froots = (function_t**) malloc(vftr_omp_threads * sizeof(function_t*));
 
    // Initialize stack tables 
    char *s = "init";
    function_t *func = vftr_new_function (NULL, strdup (s), NULL, "init", 0, true);
    func->next = func; /* Close circular linked list to itself */
+   vftr_fstack = func;
    for (int i = 0; i < vftr_omp_threads; i++) {
        vftr_samplecount[i] = 0;
        vftr_in_parallel[i] = 0;
-       vftr_fstack[i] = func;
        vftr_froots[i] = func;
        vftr_maxtime[i] = 0;
    }
