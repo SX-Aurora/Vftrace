@@ -16,15 +16,15 @@
    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-#ifndef VFTR_TESTSOME_H
-#define VFTR_TESTSOME_H
+#ifndef VFTR_MPI_TESTALL_F_H
+#define VFTR_MPI_TESTALL_F_H
 
 #ifdef _MPI
 #include <mpi.h>
 
-int vftr_MPI_Testsome(int incount, MPI_Request array_of_requests[],
-                      int *outcount, int array_of_indices[],
-                      MPI_Status array_of_statuses[]);
+void vftr_MPI_Testall_F(MPI_Fint *f_count, MPI_Fint *f_array_of_requests,
+                        MPI_Fint *f_flag, MPI_Fint *f_array_of_statuses,
+                        MPI_Fint *f_error);
 
 #endif
 #endif

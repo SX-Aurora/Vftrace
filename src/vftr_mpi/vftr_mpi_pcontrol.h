@@ -15,16 +15,13 @@
    with this program; if not, write to the Free Software Foundation, Inc.,
    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+#ifndef VFTR_MPI_PCONTROL_H
+#define VFTR_MPI_PCONTROL_H
 
-#ifndef VFTR_WAITSOME_F_H
-#define VFTR_WAITSOME_F_H
+// PControl level as required by the MPI-Standard for profiling interfaces
+extern int vftrace_Pcontrol_level;
 
-#ifdef _MPI
-#include <mpi.h>
-  
-void vftr_MPI_Waitsome_F(MPI_Fint *f_incount, MPI_Fint *f_array_of_requests,
-                         MPI_Fint *f_outcount, MPI_Fint *f_array_of_indices,
-                         MPI_Fint *f_array_of_statuses, MPI_Fint *f_error);
+// vftrace internal routine to control the profiling level
+int vftr_MPI_Pcontrol(const int level);
 
-#endif
 #endif
