@@ -45,7 +45,7 @@ typedef struct Function {
    // local and global stack-ID
    int id, gid;
    bool profile_this, exclude_this;
-   int new, openmp, detail, levels,
+   int new, detail, levels,
        recursion_depth, line_beg, line_end;
    // Unique hash of the callstack 
    // needed vor stack comparison among processes
@@ -58,5 +58,5 @@ function_t *vftr_new_function(void *arg, const char *function_name,
                               bool isPrecise);
 
 // Reset all function internal counters
-void vftr_reset_counts (int me, function_t *func);
+void vftr_reset_counts (function_t *func);
 #endif

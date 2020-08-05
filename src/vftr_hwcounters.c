@@ -267,15 +267,10 @@ void vftr_read_counters_dummy (long long *event) {
 int vftr_stop_hwc () {
     int diag = 0;
 #if defined(HAS_PAPI)
-#ifdef _OPENMP_OFF
-#pragma omp parallel
-#endif
-{
     int diag;
     long long ec[MAX_HWC_EVENTS];
     if ((diag = PAPI_stop(papi_event_set, ec)) != PAPI_OK)
     fprintf(vftr_log, "vftr_stop_hwc error: PAPI_stop returned %d\n", diag);
-}
 #endif
     return diag;
 }

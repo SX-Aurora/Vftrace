@@ -82,17 +82,6 @@ void vftr_print_disclaimer (FILE *fp) {
 
 /**********************************************************************/
 
-#ifdef _OPENMP
-void vftr_init_omp_locks () {
-    omp_init_lock (&vftr_lock);
-    omp_init_lock (&vftr_lock_exp);
-    omp_init_lock (&vftr_lock_hook);
-    omp_init_lock (&vftr_lock_prof);
-}
-#endif
-
-/**********************************************************************/
-
 void vftr_get_mpi_info (int *rank, int *size) {
 #ifdef _MPI
 // At this point, MPI_Init has not been called yet, so we cannot
@@ -163,10 +152,6 @@ void vftr_initialize() {
   
     vftr_prog_cycles = 0ll;
 
-#ifdef _OPENMP
-   vftr_init_omp_locks ();
-#endif
-
     vftr_get_mpi_info (&vftr_mpirank, &vftr_mpisize);
 
     vftr_logfile_name = vftr_create_logfile_name (vftr_mpirank, vftr_mpisize, "log");
@@ -203,11 +188,6 @@ void vftr_initialize() {
 
     vftr_nextsampletime = 0ll;
     vftr_prevsampletime = 0;
-
-#ifdef _OPENMP
-    /* Regular expressions to detect OpenMP regions */
-    vftr_openmpregexp = vftr_compile_regexp( "\\$[0-9][0-9_]*$" );
-#endif
 
     /* Init event counters */
     vftr_n_hw_obs = 0;
@@ -274,10 +254,6 @@ void vftr_initialize() {
 	vftr_define_signal_handlers ();
     }
 
-#ifdef _OPENMP
-#pragma omp parallel
-#endif
-    
     fflush (stdout);
     vftr_inittime = vftr_get_runtime_usec (); /* Will be updated later if MPI used */
     vftr_initcycles = vftr_get_cycles();

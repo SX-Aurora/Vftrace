@@ -123,10 +123,6 @@ void vftr_function_entry (const char *s, void *addr, int line, bool isPrecise) {
         return;
     }
 
-#ifdef _OPENMP
-#pragma omp critical
-#endif
-{
     //
     // Check if the function is in the table
     //
@@ -152,7 +148,6 @@ void vftr_function_entry (const char *s, void *addr, int line, bool isPrecise) {
         }
     }
     caller->call = func; // Faster lookup next time around
-}
 
     if (func->exclude_this) return;
     if (line > 0) assert (func->line_beg == line);
@@ -350,8 +345,6 @@ void vftr_function_exit(int line) {
         double tsum = 0.;
         double scale = 100. / (double)vftr_prog_cycles;
 
-        /* TO DO for OpenMP: set lock guarding vftr_new_function() usage */
-
         qsort (vftr_func_table, (size_t)vftr_stackscount, sizeof( function_t *),
 	       vftr_compare);
 
@@ -367,8 +360,6 @@ void vftr_function_exit(int line) {
         /* Clear function detail flags for all others */
         for(; i<vftr_stackscount; i++) 
             vftr_func_table[i]->detail = 0;
-
-        /* TO DO for OpenMP: unset lock guarding vftr_new_function() usage */
 
         vftr_sorttime *= vftr_sorttime_growth;
     }

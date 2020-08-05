@@ -42,7 +42,7 @@ FILE *vftr_log = NULL;
 // Individual vftrace-internal file id
 char vftr_fileid[VFTR_FILEIDSIZE];
 
-// Next sample time for each thread (one for each OpenMP thread)
+// The next time step where a snapshot is written to the vfd file
 long long vftr_nextsampletime;
 
 // The basename of Vftrace log files

@@ -134,8 +134,7 @@ function_t *vftr_new_function(void *arg, const char *function_name,
    if (line > 0) func->line_beg = line;
 
    if (arg) { // Skip if address not defined (when info is "init")
-      func->openmp = vftr_pattern_match(vftr_openmpregexp, func->name);
-      func->precise = isPrecise || func->openmp ||
+      func->precise = isPrecise ||
                       vftr_pattern_match(vftr_environment->preciseregex->value,
                                          func->name);
    }
@@ -202,7 +201,7 @@ function_t *vftr_new_function(void *arg, const char *function_name,
    return func;
 }
 
-void vftr_reset_counts (int me, function_t *func) {
+void vftr_reset_counts (function_t *func) {
    function_t *f;
    int i, n;
    int m = vftr_n_hw_obs * sizeof(long long);
@@ -220,7 +219,7 @@ void vftr_reset_counts (int me, function_t *func) {
 
    /* Recursive scan of callees */
    for (i = 0,f = func->first; i < n; i++, f = f->next) {
-       vftr_reset_counts (me, f);
+       vftr_reset_counts (f);
    }
 }
 

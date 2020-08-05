@@ -53,7 +53,6 @@ long long vftr_get_runtime_usec();
 unsigned long long vftr_get_cycles();
 
 // Vftrace measures its own overhead in microseconds. 
-// The array is allocated to the number of OpenMP threads
 // It is incremented at each function entry and exit, as
 // well as after initialization.
 long long vftr_overhead_usec;

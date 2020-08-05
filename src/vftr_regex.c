@@ -23,9 +23,6 @@
 
 #include "vftr_symbols.h"
 
-// OpenMP parallel regions
-regex_t *vftr_openmpregexp = NULL;
-
 regex_t *vftr_compile_regexp(char *pattern) {
     int err;
     regex_t *r;
