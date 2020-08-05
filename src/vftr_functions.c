@@ -153,19 +153,14 @@ function_t *vftr_new_function(void *arg, const char *function_name,
    }
 
    // preparing the function specific profiling data
-   int n = vftr_omp_threads * sizeof(profdata_t);
-   func->prof_current = (profdata_t *) malloc(n);
-   func->prof_previous = (profdata_t *) malloc(n);
-   memset(func->prof_current, 0, n);
-   memset(func->prof_previous, 0, n);
+   memset(&(func->prof_current), 0, sizeof(profdata_t));
+   memset(&(func->prof_previous), 0, sizeof(profdata_t));
 
    if (vftr_n_hw_obs > 0) {
-   	for (int i = 0; i < vftr_omp_threads; i++) {
-   	   func->prof_current[i].event_count = (long long*) malloc(vftr_n_hw_obs * sizeof(long long));
-   	   func->prof_previous[i].event_count = (long long*) malloc(vftr_n_hw_obs * sizeof(long long));
-   	   memset (func->prof_current[i].event_count, 0, vftr_n_hw_obs * sizeof(long long));
-   	   memset (func->prof_previous[i].event_count, 0, vftr_n_hw_obs * sizeof(long long));
-   	}
+   	func->prof_current.event_count = (long long*) malloc(vftr_n_hw_obs * sizeof(long long));
+   	func->prof_previous.event_count = (long long*) malloc(vftr_n_hw_obs * sizeof(long long));
+   	memset (func->prof_current.event_count, 0, vftr_n_hw_obs * sizeof(long long));
+   	memset (func->prof_previous.event_count, 0, vftr_n_hw_obs * sizeof(long long));
    }
 
    // Determine if this function should be profiled
@@ -214,13 +209,13 @@ void vftr_reset_counts (int me, function_t *func) {
 
    if( func == NULL ) return;
 
-   memset (func->prof_current[me].event_count,  0, m );
-   memset (func->prof_previous[me].event_count, 0, m );
-   func->prof_current[me].calls   = 0;
-   func->prof_current[me].cycles  = 0;
-   func->prof_current[me].timeExcl = 0;
-   func->prof_current[me].timeIncl = 0;
-   func->prof_current[me].flops   = 0;
+   memset (func->prof_current.event_count,  0, m );
+   memset (func->prof_previous.event_count, 0, m );
+   func->prof_current.calls   = 0;
+   func->prof_current.cycles  = 0;
+   func->prof_current.timeExcl = 0;
+   func->prof_current.timeIncl = 0;
+   func->prof_current.flops   = 0;
    n = func->levels;
 
    /* Recursive scan of callees */

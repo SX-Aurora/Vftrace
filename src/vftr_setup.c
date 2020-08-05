@@ -343,8 +343,8 @@ void vftr_calc_tree_format (function_t *func) {
     if (func == NULL) return;
 
     for (me = 0; me < vftr_omp_threads; me++) {
-        fcalls = func->prof_current[me].calls;
-        ftime  = func->prof_current[me].cycles;
+        fcalls = func->prof_current.calls;
+        ftime  = func->prof_current.cycles;
         if (vftr_maxtime[me]  < ftime) vftr_maxtime [me] = ftime;
     }
 

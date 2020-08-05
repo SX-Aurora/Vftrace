@@ -38,7 +38,7 @@ typedef struct Function {
    // string with the full callstack 
    char *full;
    // profiling data
-   profdata_t      *prof_current, *prof_previous;
+   profdata_t prof_current, prof_previous;
    pfrag_t         *frag;
    // is this function measured precicely?
    bool precise;

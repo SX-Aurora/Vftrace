@@ -88,8 +88,8 @@ callsTime_t **vftr_get_loadbalance_info (function_t **funcTable)
     for (i = 0; i < vftr_stackscount; i++) {
         if( funcTable[i] == NULL ) continue;
         for( tid=0; tid<vftr_omp_threads; tid++ ) {
-            profdata_t *prof_current  = &funcTable[i]->prof_current [tid];
-            profdata_t *prof_previous = &funcTable[i]->prof_previous[tid];
+            profdata_t *prof_current  = &funcTable[i]->prof_current;
+            profdata_t *prof_previous = &funcTable[i]->prof_previous;
             int calls = prof_current->calls - prof_previous->calls;
             unsigned long long cycles = prof_current->cycles - prof_previous->cycles;
             unsigned long long timeExcl = prof_current->timeExcl - prof_previous->timeExcl;

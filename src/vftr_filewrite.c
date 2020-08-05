@@ -253,8 +253,8 @@ void vftr_write_profile () {
  
     /* Sum all cycles and counts */
     for (i = 0; i < vftr_stackscount; i++ ) {
-	if (funcTable[i] && funcTable[i]->ret && funcTable[i]->prof_current[0].calls) {
-            profdata_t *prof_current = &funcTable[i]->prof_current[0];
+	if (funcTable[i] && funcTable[i]->ret && funcTable[i]->prof_current.calls) {
+            profdata_t *prof_current = &funcTable[i]->prof_current;
 	    total_cycles += prof_current->cycles;
             if (!prof_current->event_count) continue;
             for (j = 0; j < vftr_n_hw_obs; j++) {
@@ -279,7 +279,7 @@ void vftr_write_profile () {
     for( i=0; i<vftr_stackscount; i++ ) {
         if( !funcTable[i] ) continue;
         for( tid=0; tid<vftr_omp_threads; tid++ ) {
-            profdata_t *prof_current  = &funcTable[i]->prof_current [tid];
+            profdata_t *prof_current  = &funcTable[i]->prof_current;
 	    calls  = prof_current->calls ;
 	    cycles = prof_current->calls ? prof_current->cycles : 0;
             fwrite (&calls, sizeof(long long), 1, fp);  /* Calls */
@@ -378,8 +378,8 @@ void fill_indices_to_evaluate (function_t **funcTable, double runtime, int *indi
 	ctime = 0.;
 	for (int i = 0; i < vftr_stackscount; i++) {
 		if (funcTable[i] == NULL) continue;
-		profdata_t *prof_current = &funcTable[i]->prof_current[0];
-		profdata_t *prof_previous = &funcTable[i]->prof_previous[0];
+		profdata_t *prof_current = &funcTable[i]->prof_current;
+		profdata_t *prof_previous = &funcTable[i]->prof_previous;
 		/* If function has a caller and has been called */
 		if (!(funcTable[i]->ret && prof_current->calls)) continue;
 		indices[j++] = i;
@@ -398,8 +398,8 @@ int count_indices_to_evaluate (function_t **funcTable, double runtime) {
 	float t_excl, t_incl, t_part;
 	for (int i = 0; i < vftr_stackscount; i++) {
 		if (funcTable[i] == NULL) continue;
-		profdata_t *prof_current = &funcTable[i]->prof_current[0];
-		profdata_t *prof_previous = &funcTable[i]->prof_previous[0];
+		profdata_t *prof_current = &funcTable[i]->prof_current;
+		profdata_t *prof_previous = &funcTable[i]->prof_previous;
 		/* If function has a caller and has been called */
 		if (!(funcTable[i]->ret && prof_current->calls)) continue;
 		
@@ -454,8 +454,8 @@ void set_formats (function_t **funcTable, double runtime,
 	// 
 	for (int i = 0; i < n_indices; i++) {
 		int i_func = indices[i];
-		profdata_t *prof_current = &funcTable[i_func]->prof_current[0];
-		profdata_t *prof_previous = &funcTable[i_func]->prof_previous[0];
+		profdata_t *prof_current = &funcTable[i_func]->prof_current;
+		profdata_t *prof_previous = &funcTable[i_func]->prof_previous;
 
 		if (vftr_events_enabled) {
 			fill_scenario_counter_values (scenario_expr_counter_values,
@@ -534,9 +534,9 @@ void vftr_print_profile (FILE *pout, int *ntop, long long time0) {
     /* Sum all cycles and counts */
     for (int i = 0; i < vftr_stackscount; i++) {
 	if (funcTable[i] == NULL) continue;
-	if (funcTable[i]->ret && funcTable[i]->prof_current[0].calls) {
-            profdata_t *prof_current  = &funcTable[i]->prof_current[0];
-            profdata_t *prof_previous = &funcTable[i]->prof_previous[0];
+	if (funcTable[i]->ret && funcTable[i]->prof_current.calls) {
+            profdata_t *prof_current  = &funcTable[i]->prof_current;
+            profdata_t *prof_previous = &funcTable[i]->prof_previous;
 	    total_cycles += prof_current->cycles - prof_previous->cycles;
             if (!prof_current->event_count || !prof_previous->event_count) continue;
 	    for (int j = 0; j < scenario_expr_n_vars; j++) {
@@ -727,8 +727,8 @@ void vftr_print_profile (FILE *pout, int *ntop, long long time0) {
     ctime = 0.;
     for (int i = 0; i < n_indices; i++) {
 	int i_func = indices[i];
-        profdata_t *prof_current   = &funcTable[i_func]->prof_current [0];
-        profdata_t *prof_previous  = &funcTable[i_func]->prof_previous[0];
+        profdata_t *prof_current   = &funcTable[i_func]->prof_current;
+        profdata_t *prof_previous  = &funcTable[i_func]->prof_previous;
 
         calls  = prof_current->calls  - prof_previous->calls;
         fputc (' ', pout);

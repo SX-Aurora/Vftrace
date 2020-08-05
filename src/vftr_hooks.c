@@ -44,8 +44,8 @@ int vftr_compare (const void *a1, const void *a2) {
     function_t *f2 = *(function_t **)a2;
     if(!f2) return -1; /* Order important to work around SX qsort problem */
     if(!f1) return  1;
-    long long t1 = f1->prof_current[0].timeExcl - f1->prof_previous[0].timeExcl;
-    long long t2 = f2->prof_current[0].timeExcl - f2->prof_previous[0].timeExcl;
+    long long t1 = f1->prof_current.timeExcl - f1->prof_previous.timeExcl;
+    long long t2 = f2->prof_current.timeExcl - f2->prof_previous.timeExcl;
     long long diff = t2 - t1;
     if( diff > 0 ) return  1;
     if( diff < 0 ) return -1;
@@ -59,11 +59,11 @@ void vftr_save_old_state (int me) {
 
     for (j = 0; j < vftr_stackscount; j++) {
         function_t *func = vftr_func_table[j];
-        func->prof_previous[me].calls  = func->prof_current[me].calls;
-        func->prof_previous[me].cycles = func->prof_current[me].cycles;
-        func->prof_previous[me].timeExcl = func->prof_current[me].timeExcl;
+        func->prof_previous.calls  = func->prof_current.calls;
+        func->prof_previous.cycles = func->prof_current.cycles;
+        func->prof_previous.timeExcl = func->prof_current.timeExcl;
         for (i = 0; i < vftr_n_hw_obs; i++) {
-            func->prof_previous[me].event_count[i] = func->prof_current[me].event_count[i];
+            func->prof_previous.event_count[i] = func->prof_current.event_count[i];
 	}
     }
 }
@@ -119,7 +119,7 @@ void vftr_function_entry (const char *s, void *addr, int line, bool isPrecise) {
     // we are not dealing with a recursive function. 
     // 
     if (addr == caller->address) {
-        caller->prof_current[me].calls++;
+        caller->prof_current.calls++;
 	caller->recursion_depth++;
         return;
     }
@@ -196,17 +196,17 @@ void vftr_function_entry (const char *s, void *addr, int line, bool isPrecise) {
 #endif
     }
 
-    func->prof_current[me].calls++;
+    func->prof_current.calls++;
 
     // Maintain profile
 
-    if (func->ret && func->ret->prof_current) {
-        prof_return = &func->ret->prof_current[me];
+    if (func->ret) {
+        prof_return = &func->ret->prof_current;
         delta = cycles0 - vftr_prof_data[me].cycles;
 	prof_return->cycles += delta;
         prof_return->timeExcl += func_entry_time - vftr_prof_data[me].timeExcl;
         vftr_prog_cycles[me] += delta;
-        func->prof_current[me].timeIncl -= func_entry_time;
+        func->prof_current.timeIncl -= func_entry_time;
 	if (read_counters) {
             int ic = vftr_prof_data[me].ic;
             vftr_read_counters (vftr_prof_data[me].events[ic], me);
@@ -275,7 +275,7 @@ void vftr_function_exit(int line) {
         }
     }
 
-    prof_current = &func->prof_current[me];
+    prof_current = &func->prof_current;
     prof_current->timeIncl += func_exit_time;   /* Inclusive time */
     
     vftr_fstack[me] = func->ret;
@@ -373,7 +373,7 @@ void vftr_function_exit(int line) {
         /* Set function detail flags while sum(time) < max */
         for (i = 0; i < vftr_stackscount; i++) {
             function_t *f = vftr_func_table[i];
-            tsum += (double)f->prof_current[0].cycles;
+            tsum += (double)f->prof_current.cycles;
 	    double cutoff = vftr_environment->detail_until_cum_cycles->value;
             if ((tsum * scale) > cutoff) break;
             f->detail = 1;
