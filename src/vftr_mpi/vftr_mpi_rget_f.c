@@ -43,7 +43,7 @@ void vftr_MPI_Rget_F(void *origin_addr, MPI_Fint *origin_count,
                                &c_request);
 
    *f_error = (MPI_Fint) c_error;
-   *f_request = PMPI_Request_c2f(c_request)
+   *f_request = PMPI_Request_c2f(c_request);
 }
 
 #endif

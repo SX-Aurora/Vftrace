@@ -19,6 +19,8 @@
 #ifdef _MPI
 #include <mpi.h>
 
+#include <stdlib.h>
+
 #include "vftr_mpi_pcontrol.h"
 #include "vftr_async_messages.h"
   

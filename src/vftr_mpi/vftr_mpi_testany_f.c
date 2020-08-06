@@ -16,12 +16,12 @@
    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-#include <stdlib.h>
-
 #ifdef _MPI
 #include <mpi.h>
 
-#include "vftr_testany.h"
+#include <stdlib.h>
+
+#include "vftr_mpi_testany.h"
   
 void vftr_MPI_Testany_F(MPI_Fint *f_count, MPI_Fint *f_array_of_requests,
                         MPI_Fint *f_index, MPI_Fint *f_flag, MPI_Fint *f_status,

@@ -16,12 +16,12 @@
    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-#include <stdlib.h>
-
 #ifdef _MPI
 #include <mpi.h>
 
-#include "vftr_waitany.h"
+#include <stdlib.h>
+
+#include "vftr_mpi_waitany.h"
   
 void vftr_MPI_Waitany_F(MPI_Fint *f_count, MPI_Fint *f_array_of_requests,
                         MPI_Fint *f_index, MPI_Fint *f_status, MPI_Fint *f_error) {
