@@ -1,10 +1,27 @@
 noinst_LTLIBRARIES = libvftr_f08mpiwrap.la
 
-libvftr_f08mpiwrap_la_SOURCES = vftr_mpi_environment_c2F08.F90 \
-				vftr_mpi_environment_F08wrap.F90 \
-				vftr_mpi_point2point_F08wrap.F90 \
-				vftr_mpi_collective_F08wrap.F90 \
-				vftr_mpi_onesided_F08wrap.F90
+libvftr_f08mpiwrap_la_SOURCES = vftr_after_mpi_init_c2f08.F90 \
+				vftr_finalize_c2f08.F90 \
+				vftr_mpi_allgather_f08wrap.F90 \
+				vftr_mpi_allgatherv_f08wrap.F90 \
+				vftr_mpi_allreduce_f08wrap.F90 \
+				vftr_mpi_alltoall_f08wrap.F90 \
+				vftr_mpi_alltoallv_f08wrap.F90 \
+				vftr_mpi_alltoallw_f08wrap.F90 \
+				vftr_mpi_bcast_f08wrap.F90 \
+				vftr_mpi_finalize_f08wrap.F90 \
+				vftr_mpi_gather_f08wrap.F90 \
+				vftr_mpi_gatherv_f08wrap.F90 \
+				vftr_mpi_get_f08wrap.F90 \
+				vftr_mpi_init_f08wrap.F90 \
+				vftr_mpi_pcontrol_c2f08.F90 \
+				vftr_mpi_pcontrol_f08wrap.F90 \
+				vftr_mpi_put_f08wrap.F90 \
+				vftr_mpi_reduce_f08wrap.F90 \
+				vftr_mpi_scatter_f08wrap.F90 \
+				vftr_mpi_scatterv_f08wrap.F90 \
+				vftr_mpi_send_f08wrap.F90
+
 
 
 libvftr_f08mpiwrap_la_FCFLAGS = -finstrument-functions
