@@ -18,3 +18,6 @@ libvftr_f08mpiwrap_la_FCFLAGS += -DPMPI_MODULE=pmpi_f08
 else
 libvftr_f08mpiwrap_la_FCFLAGS += -DPMPI_MODULE=mpi
 endif
+
+clean-local:
+	rm -f *.mod
