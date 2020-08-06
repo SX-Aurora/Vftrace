@@ -22,7 +22,7 @@
 #include <stdlib.h>
 
 #include "vftr_mpi_buf_addr_const.h"
-#include "vftr_mpi_alltoall.h"
+#include "vftr_mpi_alltoallv.h"
 
 void vftr_MPI_Alltoallv_F(void *sendbuf, MPI_Fint *f_sendcounts, MPI_Fint *f_sdispls,
                           MPI_Fint *f_sendtype, void *recvbuf, MPI_Fint *f_recvcounts,
