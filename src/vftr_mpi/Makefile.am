@@ -88,3 +88,6 @@ if MPI_PROFILING
 libvftr_mpi_la_CFLAGS += -D_MPI
 libvftr_mpi_la_FCFLAGS += -D_MPI
 endif
+
+clean-local:
+	rm -f *.mod
