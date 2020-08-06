@@ -22,6 +22,7 @@
 #include <stdint.h>
 #include <string.h>
 
+#include "vftr_fileutils.h"
 #include "vftr_hwcounters.h"
 #include "vftr_scenarios.h"
 #include "jsmn.h"
@@ -30,6 +31,18 @@
 #ifdef HAS_VEPERF
 #include "veperf.h"
 #endif
+
+/**********************************************************************/
+
+void vftr_scenario_print_formula (FILE *fp, function_expr_t formula) {
+	fprintf (fp, "Formula name: %s\n", formula.name);
+	fprintf (fp, "   Expression: %s\n", formula.formula);
+	fprintf (fp, "   Protected values: %s\n", 
+		 formula.protected_values ? formula.protected_values : "None");
+	fprintf (fp, "   Default value: %lf\n", formula.default_value);
+	fprintf (fp, "   Current value: %lf\n", formula.value);
+	fprintf (fp, "   Integrated: %s\n", vftr_bool_to_string (formula.integrated));
+}
 
 /**********************************************************************/
 
@@ -114,7 +127,7 @@ int json_fetch (const char *js, jsmntok_t *tok, size_t count) {
 			read_formula = 0;
 		} else if (read_runtime) {
 			if (!strcmp (s, "yes")) {
-				scenario_expr_formulas[scenario_expr_n_formulas-1].integrated = 0;
+				scenario_expr_formulas[scenario_expr_n_formulas-1].integrated = false;
 			}
 			read_runtime = 0;	
 		} else if (read_protected) {
@@ -205,7 +218,7 @@ int json_fetch (const char *js, jsmntok_t *tok, size_t count) {
 
 /**********************************************************************/
 
-int vftr_read_scenario_file (char *filename) {
+int vftr_read_scenario_file (char *filename, FILE *fp_ext) {
 	int token_len;
 	jsmn_parser p;
 	jsmntok_t *token;
@@ -227,17 +240,24 @@ int vftr_read_scenario_file (char *filename) {
 
 	token = malloc (sizeof(*token) * token_count);
 
-	if (filename) {
+// When an external file pointer is given, e.g. for a unit test
+// we do not want to close the file in this routine and assume
+// that this is done somewhere else.
+	bool need_to_close_file = true;
+	if (fp_ext == NULL) {
 		if ((fp = fopen (filename, "r")) == NULL) {
 			printf ("Failed to open scenario file %s\n", filename);
 			return -1;
 		}
+	} else if (fp_ext) {
+		fp = fp_ext;	
+		need_to_close_file = false;
 	} else {
 		return -1;
 	}
 	
 	for (int i = 0; i < TE_MAX; i++) {
-		scenario_expr_formulas[i].integrated = 1;
+		scenario_expr_formulas[i].integrated = true;
 	}
 	
 	while ((token_len = fread (buf, 1, sizeof(buf), fp))) { 
@@ -259,7 +279,7 @@ int vftr_read_scenario_file (char *filename) {
 			json_fetch (js, token, token_count);	
 		}
 	}
-	fclose (fp);
+	if (need_to_close_file) fclose (fp);
 	
 	te_vars = (te_variable *) malloc ((scenario_expr_n_vars + 3) * sizeof (te_variable));
 	scenario_expr_counter_values = (double *) malloc (scenario_expr_n_vars * sizeof (double));
@@ -570,3 +590,23 @@ void scenario_expr_add_papi_counters () {
 		vftr_papi_counter (scenario_expr_counter_names[i]);
 	}
 }
+
+/**********************************************************************/
+
+int vftr_scenario_test_1 (FILE *fp_in, FILE *fp_out) {
+	vftr_read_scenario_file ("", fp_in);
+	fprintf (fp_out, "Registered variables: %d\n", scenario_expr_n_vars);
+	for (int i = 0; i < scenario_expr_n_vars; i++) {
+		fprintf (fp_out, "%d: name: %s\n", i, te_vars[i].name);		
+	}
+	fprintf (fp_out, "Check for the three additional entries: \n");
+	fprintf (fp_out, "%s\n", te_vars[scenario_expr_n_vars].name);
+	fprintf (fp_out, "%s\n", te_vars[scenario_expr_n_vars+1].name);
+	fprintf (fp_out, "%s\n", te_vars[scenario_expr_n_vars+2].name);
+	fprintf (fp_out, "Registered formulas: %d\n", scenario_expr_n_formulas);
+	for (int i = 0; i < scenario_expr_n_formulas; i++) {
+		vftr_scenario_print_formula (fp_out, scenario_expr_formulas[i]);
+	}
+}
+
+/**********************************************************************/

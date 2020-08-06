@@ -37,8 +37,6 @@ typedef struct format_t {
 
 enum sample_id {SID_ENTRY, SID_EXIT, SID_MESSAGE};
 
-char *vftr_bool_to_string (bool value);
-
 void vftr_init_vfd_file ();
 void vftr_finalize_vfd_file (long long finalize_time, int signal_number);
 void vftr_write_to_vfd (long long runtime, unsigned long long cycles, int stack_id, unsigned int sid);

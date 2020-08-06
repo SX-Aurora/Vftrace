@@ -30,7 +30,11 @@ TESTS = ./run/this_passes.sh \
 	./run/vftr_environment_test_1.sh \
 	./run/vftr_setup_test_1.sh \
 	./run/vftr_setup_test_2.sh \
-	./run/vftr_filewrite_test_1.sh
+	./run/vftr_filewrite_test_1.sh \
+	./run/vftr_scenario_test_1.sh
+
+if VEPERF_AVAIL
+endif
 
 TESTS += $(XFAIL_TESTS)
 

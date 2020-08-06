@@ -18,8 +18,11 @@
 #ifndef VFTR_FILEUTILS_H
 #define VFTR_FILEUTILS_H
 
+#include <stdbool.h>
+
 char *get_application_name ();
 
 int count_digits (int value);
+char *vftr_bool_to_string (bool value);
 
 #endif

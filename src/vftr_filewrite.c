@@ -53,11 +53,6 @@ FILE *vftr_vfd_file;
 unsigned int vftr_admin_offset;
 unsigned int vftr_samples_offset;
 
-char *vftr_bool_to_string (bool value) {
-	char *s = value ? "true" : "false";
-	return s;
-}
-
 /**********************************************************************/
 
 // Creates the outputfile name of the form <basename>_<mpi_rank>.out.
