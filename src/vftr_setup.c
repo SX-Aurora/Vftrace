@@ -90,8 +90,8 @@ void vftr_get_mpi_info (int *rank, int *size) {
         *rank = atoi (getenv("PMI_RANK"));
         *size = atoi (getenv("PMI_SIZE"));
     } else if (getenv ("OMPI_COMM_WORLD_RANK")) {
-        *rank = atoi (getenv(" OMPI_COMM_WORLD_RANK"));
-	*size = atoi (getenv(" OMPI_COMM_WORLD_SIZE"));
+        *rank = atoi (getenv("OMPI_COMM_WORLD_RANK"));
+	*size = atoi (getenv("OMPI_COMM_WORLD_SIZE"));
     } else if (getenv ("PMI_ID")) {
         *rank = atoi (getenv("PMI_ID"));
 	*size = atoi (getenv("MPIRUN_NPROCS"));
