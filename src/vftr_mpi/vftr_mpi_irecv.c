@@ -21,7 +21,7 @@
 
 #include "vftr_timer.h"
 #include "vftr_async_messages.h"
-#include "vftr_pcontrol.h"
+#include "vftr_mpi_pcontrol.h"
 
 int vftr_MPI_Irecv(void *buf, int count, MPI_Datatype datatype,
                    int source, int tag, MPI_Comm comm, MPI_Request *request) {

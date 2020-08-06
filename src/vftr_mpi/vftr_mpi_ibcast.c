@@ -21,7 +21,7 @@
 
 #include "vftr_timer.h"
 #include "vftr_async_messages.h"
-#include "vftr_pcontrol.h"
+#include "vftr_mpi_pcontrol.h"
 #include "vftr_mpi_buf_addr_const.h"
 
 int vftr_MPI_Ibcast(void *buffer, int count, MPI_Datatype datatype,

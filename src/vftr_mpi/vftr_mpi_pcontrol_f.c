@@ -18,7 +18,7 @@
 
 #ifdef _MPI
 
-#include "vftr_pcontrol.h"
+#include "vftr_mpi_pcontrol.h"
 
 void vftr_MPI_Pcontrol_F(const int level) {
    vftr_MPI_Pcontrol(level);

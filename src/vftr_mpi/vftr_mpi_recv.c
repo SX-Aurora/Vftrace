@@ -21,7 +21,7 @@
 
 #include "vftr_timer.h"
 #include "vftr_sync_messages.h"
-#include "vftr_pcontrol.h"
+#include "vftr_mpi_pcontrol.h"
 
 int vftr_MPI_Recv(void *buf, int count, MPI_Datatype datatype,
                   int source, int tag, MPI_Comm comm, MPI_Status *status) {

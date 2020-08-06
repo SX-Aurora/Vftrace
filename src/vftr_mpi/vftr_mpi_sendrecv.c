@@ -21,7 +21,7 @@
 
 #include "vftr_timer.h"
 #include "vftr_sync_messages.h"
-#include "vftr_pcontrol.h"
+#include "vftr_mpi_pcontrol.h"
 
 int vftr_MPI_Sendrecv(const void *sendbuf, int sendcount,
                       MPI_Datatype sendtype, int dest, int sendtag,

@@ -19,7 +19,7 @@
 #ifdef _MPI
 #include <mpi.h>
 
-#include "vftr_pcontrol.h"
+#include "vftr_mpi_pcontrol.h"
 #include "vftr_async_messages.h"
   
 int vftr_MPI_Test(MPI_Request *request, int *flag, MPI_Status *status) {

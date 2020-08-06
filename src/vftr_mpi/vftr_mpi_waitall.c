@@ -19,7 +19,7 @@
 #ifdef _MPI
 #include <mpi.h>
 
-#include "vftr_pcontrol.h"
+#include "vftr_mpi_pcontrol.h"
 #include "vftr_async_messages.h"
   
 int vftr_MPI_Waitall(int count, MPI_Request array_of_requests[],
