@@ -13,13 +13,13 @@ extern FILE *vftr_log;
 // Individual vftrace-internal file id
 extern char vftr_fileid[VFTR_FILEIDSIZE];
 
-// Next sample time for each thread (one for each OpenMP thread)
-extern long long *vftr_nextsampletime;
+// The next time step where a snapshot is written to the vfd file
+extern long long vftr_nextsampletime;
 
 // The basename of Vftrace log files
 extern char *vftr_logfile_name;
 
-extern FILE **vftr_vfd_file;
+extern FILE *vftr_vfd_file;
 
 // TODO: Explain
 extern unsigned int vftr_admin_offset;
@@ -28,7 +28,6 @@ extern unsigned int vftr_samples_offset;
 typedef struct format_t {
 	int fid;
 	int rank;
-	int thread;
 	int n_calls;
 	int func_name;
 	int caller_name;
@@ -42,7 +41,7 @@ char *vftr_bool_to_string (bool value);
 
 void vftr_init_vfd_file ();
 void vftr_finalize_vfd_file (long long finalize_time, int signal_number);
-void vftr_write_to_vfd (long long runtime, unsigned long long cycles, int stack_id, unsigned int sid, int me);
+void vftr_write_to_vfd (long long runtime, unsigned long long cycles, int stack_id, unsigned int sid);
 void vftr_store_message_info(vftr_direction dir, int count, int type_idx,
                              int type_size, int rank, int tag,
                              long long tstart, long long tend);

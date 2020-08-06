@@ -31,7 +31,6 @@
 
 #include "vftr_hwcounters.h"
 #include "vftr_signals.h"
-#include "vftr_omp.h"
 #include "vftr_setup.h"
 #include "vftr_stacks.h"
 #include "vftr_filewrite.h"
@@ -112,7 +111,6 @@ void vftr_sigaction (int sig) {
 ** problem with the HPCM library (no longer supported).
 */
 void vftr_sigalarm (int sig) {
-   int me = OMP_GET_THREAD_NUM;
    long long time0  = vftr_get_runtime_usec ();
    // get the time to estimate vftrace overhead
    long long overhead_time_start = vftr_get_runtime_usec();
@@ -127,7 +125,7 @@ void vftr_sigalarm (int sig) {
       usec = (int)(sampletime * 1000000.) % 1000000;
       sec  = (int)(sampletime * 1000000.) / 1000000;
    } else {
-      vftr_read_counters (NULL, me);
+      vftr_read_counters (NULL);
    }
 
    if (!vftr_timer_end) {
@@ -141,11 +139,11 @@ void vftr_sigalarm (int sig) {
 
    /* Compensate interrupt overhead in profile */
    long long ohead = vftr_get_runtime_usec () - time0;
-   vftr_prof_data[me].cycles += ohead;
+   vftr_prof_data.cycles += ohead;
 
    // get the time to estimate vftrace overhead
    long long overhead_time_end = vftr_get_runtime_usec();
    long long overhead = overhead_time_end - overhead_time_start;
-   vftr_prof_data[me].timeExcl += overhead;
-   vftr_overhead_usec[me] += overhead;
+   vftr_prof_data.timeExcl += overhead;
+   vftr_overhead_usec += overhead;
 }

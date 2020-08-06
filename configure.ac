@@ -77,10 +77,16 @@ if test "$enable_mpi_profiling" = yes; then
     uses_intel_mpi=no
   fi
   AC_MSG_RESULT([$uses_intel_mpi])
+  AC_MSG_CHECKING([if NEC MPI is used])
+  check_if_nec_mpi='mpirun --version | grep NEC'
+  if AC_TRY_EVAL(check_if_nec_mpi); then
+    uses_nec_mpi=yes
+  else
+    uses_nec_mpi=no
+  fi
 fi 
 AM_CONDITIONAL([USES_INTEL_MPI], [test "$uses_intel_mpi" = "yes"])
-	
-   
+AM_CONDITIONAL([USES_NEC_MPI], [test "$uses_nec_mpi" = "yes"])
 
 # WO_PROG_PAPI()
 # WO_PROG_COMPONENTS()

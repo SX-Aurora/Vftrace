@@ -19,12 +19,10 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "vftr_omp.h"
 #include "vftr_stacks.h"
 
 int vftrace_get_stack_string_length() {
-   int me = OMP_GET_THREAD_NUM;
-   function_t *func = vftr_fstack[me];
+   function_t *func = vftr_fstack;
 
    int stackstrlength = strlen(func->name);
    function_t *tmpfunc = func;
@@ -41,8 +39,7 @@ int vftrace_get_stack_string_length() {
 }
 
 char *vftrace_get_stack() {
-   int me = OMP_GET_THREAD_NUM;
-   function_t *func = vftr_fstack[me];
+   function_t *func = vftr_fstack;
 
    // determine the length of the stack string
    int stackstrlength = vftrace_get_stack_string_length();

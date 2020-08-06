@@ -19,8 +19,8 @@
 #include <time.h>
 
 // global sample timer
-long long *vftr_prevsampletime;
-long long *vftr_nextsampletime;
+long long vftr_prevsampletime;
+long long vftr_nextsampletime;
 
 //sample time in ms
 long long vftr_interval;

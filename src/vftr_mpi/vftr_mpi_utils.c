@@ -19,7 +19,6 @@
 #include <stdbool.h>
 #include <stdio.h>
 
-#include "vftr_omp.h"
 #include "vftr_functions.h"
 #include "vftr_stacks.h"
 #include "vftr_environment.h"
@@ -27,7 +26,7 @@
 #include "vftr_hwcounters.h"
 #include "vftr_filewrite.h"
 
-void vftr_reset_counts (int me, function_t *func);
+void vftr_reset_counts (function_t *func);
 
 // set of all C-MPI defined datatype including the derived type
 #define NVFTR_TYPES 38
@@ -130,22 +129,14 @@ struct vftr_mpi_type_t all_mpi_types[NVFTR_TYPES] = {
 void vftr_after_mpi_init() {
    if (vftr_off() || !vftr_env_do_sampling ()) return;
 
-#ifdef _OPENMP
-#pragma omp parallel default(shared)
-#endif
-   {
-       int me = OMP_GET_THREAD_NUM;
-       /* Reset time and overwrite samples logged before MPI_Init */
+   vftr_prevsampletime = 0;
+   vftr_nextsampletime = 0ll;
+   vftr_samplecount = 0;
+   vftr_prog_cycles = 0ll;
 
-       vftr_prevsampletime   [me] = 0;
-       vftr_nextsampletime  [me] = 0;
-       vftr_samplecount[me] = 0;
-       vftr_prog_cycles[me] = 0;
+   vftr_reset_counts (vftr_froots);
 
-       vftr_reset_counts ( me, vftr_froots[me] );
-
-       fseek( vftr_vfd_file[me], vftr_samples_offset, SEEK_SET );
-    }
+   fseek (vftr_vfd_file, vftr_samples_offset, SEEK_SET);
 }
 
 // Translates an MPI-Datatype into the vftr type index

@@ -52,8 +52,6 @@ int vftr_compare_omp_times (const void *a1, const void *a2) {
     callsTimeRange_t *f2 = *(callsTimeRange_t **)a2;
     if( !f2 ) return -1; /* Order important to work around SX qsort problem */
     if( !f1 ) return  1;
-    if( f2->maxOMPtime > f1->maxOMPtime ) return  1;
-    if( f2->maxOMPtime < f1->maxOMPtime ) return -1;
     else           return  0;
 }
 
@@ -80,24 +78,22 @@ callsTime_t **vftr_get_loadbalance_info (function_t **funcTable)
 
     /* Build array of all stack calls and times */
 
-    nCallsTime = vftr_gStackscount * vftr_omp_threads;
+    nCallsTime = vftr_gStackscount;
     nCallsTimeBytes = nCallsTime * sizeof(callsTime_t);
     callsTime = (callsTime_t *) malloc( nCallsTimeBytes );
     memset( callsTime, 0, nCallsTimeBytes );
 
     for (i = 0; i < vftr_stackscount; i++) {
         if( funcTable[i] == NULL ) continue;
-        for( tid=0; tid<vftr_omp_threads; tid++ ) {
-            profdata_t *prof_current  = &funcTable[i]->prof_current [tid];
-            profdata_t *prof_previous = &funcTable[i]->prof_previous[tid];
-            int calls = prof_current->calls - prof_previous->calls;
-            unsigned long long cycles = prof_current->cycles - prof_previous->cycles;
-            unsigned long long timeExcl = prof_current->timeExcl - prof_previous->timeExcl;
-	    rtime  = calls ? timeExcl * 1.0e-6 : 0;
-            fid = funcTable[i]->gid;
-            callsTime[fid*vftr_omp_threads+tid].calls = calls;
-            callsTime[fid*vftr_omp_threads+tid].time  = rtime;
-        }
+        profdata_t *prof_current  = &funcTable[i]->prof_current;
+        profdata_t *prof_previous = &funcTable[i]->prof_previous;
+        int calls = prof_current->calls - prof_previous->calls;
+        unsigned long long cycles = prof_current->cycles - prof_previous->cycles;
+        unsigned long long timeExcl = prof_current->timeExcl - prof_previous->timeExcl;
+	rtime  = calls ? timeExcl * 1.0e-6 : 0;
+        fid = funcTable[i]->gid;
+        callsTime[fid].calls = calls;
+        callsTime[fid].time  = rtime;
     }
     if( multiTask ) {
 
@@ -141,31 +137,24 @@ vftr_print_loadbalance( callsTime_t **gCallsTime,
     callsTimeRange_t
                    *callsTimeRange, **cTRarray, cTRmax;
     int            multiTask   = ( vftr_mpisize  > 1 ),
-                   multiThread = ( vftr_omp_threads  > 1 ),
                    i, j, k, rank, tid, fidp, nctr,
-                   flen, clen, rankp, threadp, jpar,
+                   flen, clen, rankp, jpar,
                    minMPIcallsp,maxMPIcallsp,avgMPIcallsp,
-                   minOMPcallsp,maxOMPcallsp,avgOMPcallsp,
                    minMPItimep, maxMPItimep, avgMPItimep,
-                   minOMPtimep, maxOMPtimep, avgOMPtimep,
-                   minMPIindxcp,maxMPIindxcp,minOMPindxcp,maxOMPindxcp,
-                   minMPIindxtp,maxMPIindxtp,minOMPindxtp,maxOMPindxtp;
+                   minMPIindxcp,maxMPIindxcp,
+                   minMPIindxtp,maxMPIindxtp;
     char           fmtFuncname[10], fmtCaller[10];
-    char           *fmtFid,         *fmtRank,        *fmtThread,      
+    char           *fmtFid,         *fmtRank,      
                    *fmtMinMPIcalls, *fmtMaxMPIcalls, *fmtAvgMPIcalls, 
                    *fmtMinMPIindxc, *fmtMaxMPIindxc, 
                    *fmtMinMPItime,  *fmtMaxMPItime,  *fmtAvgMPItime, 
-                   *fmtMinMPIindxt, *fmtMaxMPIindxt, 
-                   *fmtMinOMPcalls, *fmtMaxOMPcalls, *fmtAvgOMPcalls, 
-                   *fmtMinOMPindxc, *fmtMaxOMPindxc, 
-                   *fmtMinOMPtime,  *fmtMaxOMPtime,  *fmtAvgOMPtime, 
-                   *fmtMinOMPindxt, *fmtMaxOMPindxt;
+                   *fmtMinMPIindxt, *fmtMaxMPIindxt;
     double         maxTime, truncTime;
 
     *nLoadIDs = 0;
     if( groupBase > vftr_mpisize ) return; /*** Problem workaround: should not happen */
 
-    /* Get min/max calls, times and indices for both MPI and OMP */
+    /* Get min/max calls, times and indices for MPI */
     
     callsTimeRange  = (callsTimeRange_t *)  malloc( vftr_gStackscount *
                                                           sizeof(callsTimeRange_t  ));
@@ -214,14 +203,10 @@ vftr_print_loadbalance( callsTime_t **gCallsTime,
             avgtime  = 0.;
             for( rank=groupBase; rank<groupBase+groupSize; rank++ ) {
                 callsTime_t *callsTime = gCallsTime[rank];
-                j = i*vftr_omp_threads;
-                calls = callsTime[j].calls;
-                time  = callsTime[j].time;
-                for( tid=1; tid<vftr_omp_threads; tid++ ) {
-                    j = i*vftr_omp_threads+tid;
-                    if( calls < callsTime[j].calls ) calls = callsTime[j].calls;
-                    if( time  < callsTime[j].time  ) time  = callsTime[j].time;
-                }
+                calls = callsTime[i].calls;
+                time  = callsTime[i].time;
+                if( calls < callsTime[i].calls ) calls = callsTime[i].calls;
+                if( time  < callsTime[i].time  ) time  = callsTime[i].time;
                 if( mincalls > calls ) { mincalls = calls; minindxc = rank; }
                 if( maxcalls < calls ) { maxcalls = calls; maxindxc = rank; }
                 if( mintime  > time  ) { mintime  = time ; minindxt = rank; }
@@ -242,50 +227,6 @@ vftr_print_loadbalance( callsTime_t **gCallsTime,
             STORE(minMPIindxt,minindxt)
             STORE(maxMPIindxt,maxindxt)
         }
-
-        if( multiThread ) {
-            /* Compute calls and max rank times */
-            mincalls = LONG_MAX;
-            maxcalls = 0;
-            avgcalls = 0;
-            minindxc = vftr_omp_threads;
-            maxindxc = 0;
-            mintime  = FLT_MAX;
-            maxtime  = 0;
-            avgtime  = 0.;
-            minindxt = vftr_omp_threads;
-            maxindxt = 0;
-            for( tid=0; tid<vftr_omp_threads; tid++ ) {
-                rank=groupBase;
-                callsTime_t *callsTime = gCallsTime[rank];
-                j = i*vftr_omp_threads+tid;
-                calls = callsTime[j].calls;
-                time  = callsTime[j].time;
-                for( rank=groupBase+1; rank<groupBase+groupSize; rank++ ) {
-                    callsTime_t *callsTime = gCallsTime[rank];
-                    if( calls < callsTime[j].calls ) calls = callsTime[j].calls;
-                    if( time  < callsTime[j].time  ) time  = callsTime[j].time;
-                }
-                if( mincalls > calls ) { mincalls = calls; minindxc = tid; }
-                if( maxcalls < calls ) { maxcalls = calls; maxindxc = tid; }
-                if( mintime  > time  ) { mintime  = time ; minindxt = tid; }
-                if( maxtime  < time  ) { maxtime  = time ; maxindxt = tid; }
-                avgcalls += calls;
-                avgtime  += time;
-            }
-            avgcalls /= vftr_omp_threads;
-            avgtime  /= vftr_omp_threads;
-            STORE(minOMPcalls,mincalls)
-            STORE(maxOMPcalls,maxcalls)
-            STORE(avgOMPcalls,avgcalls)
-            STORE(minOMPtime ,mintime )
-            STORE(maxOMPtime ,maxtime )
-            STORE(avgOMPtime ,avgtime )
-            STORE(minOMPindxc,minindxc)
-            STORE(maxOMPindxc,maxindxc)
-            STORE(minOMPindxt,minindxt)
-            STORE(maxOMPindxt,maxindxt)
-        }
         nctr++;
     }
 #undef STORE
@@ -300,7 +241,6 @@ vftr_print_loadbalance( callsTime_t **gCallsTime,
     sprintf( fmtCaller,   " %%-%ds", clen );
     COMPUTE_COLWIDTH( vftr_stackscount        , fidp        , 2, fmtFid         , " %%%dd"  )
     COMPUTE_COLWIDTH( vftr_mpisize            , rankp       , 2, fmtRank        , " %%%dd"  )
-    COMPUTE_COLWIDTH( vftr_omp_threads            , threadp     , 2, fmtThread      , " %%%dd"  )
     if( multiTask ) {
       COMPUTE_COLWIDTH( cTRmax.minMPIcalls      , minMPIcallsp, 2, fmtMinMPIcalls , " %%%dld" )
       COMPUTE_COLWIDTH( cTRmax.maxMPIcalls      , maxMPIcallsp, 2, fmtMaxMPIcalls , " %%%dld" )
@@ -313,26 +253,12 @@ vftr_print_loadbalance( callsTime_t **gCallsTime,
       COMPUTE_COLWIDTH( cTRmax.minMPIindxt      , minMPIindxtp, 2, fmtMinMPIindxt , " %%%dd"  )
       COMPUTE_COLWIDTH( cTRmax.maxMPIindxt      , maxMPIindxtp, 2, fmtMaxMPIindxt , " %%%dd"  )
     }
-    if( multiThread ) {
-      COMPUTE_COLWIDTH( cTRmax.minOMPcalls      , minOMPcallsp, 2, fmtMinOMPcalls , " %%%dld" )
-      COMPUTE_COLWIDTH( cTRmax.maxOMPcalls      , maxOMPcallsp, 2, fmtMaxOMPcalls , " %%%dld" )
-      COMPUTE_COLWIDTH( cTRmax.avgOMPcalls      , avgOMPcallsp, 2, fmtAvgOMPcalls , " %%%dld" )
-      COMPUTE_COLWIDTH( cTRmax.minOMPindxc      , minOMPindxcp, 2, fmtMinOMPindxc , " %%%dd"  )
-      COMPUTE_COLWIDTH( cTRmax.maxOMPindxc      , maxOMPindxcp, 2, fmtMaxOMPindxc , " %%%dd"  )
-      COMPUTE_COLWIDTH( cTRmax.minOMPtime*10000., minOMPtimep , 5, fmtMinOMPtime  , " %%%d.3f")
-      COMPUTE_COLWIDTH( cTRmax.maxOMPtime*10000., maxOMPtimep , 5, fmtMaxOMPtime  , " %%%d.3f")
-      COMPUTE_COLWIDTH( cTRmax.avgOMPtime*10000., avgOMPtimep , 5, fmtAvgOMPtime  , " %%%d.3f")
-      COMPUTE_COLWIDTH( cTRmax.minOMPindxt      , minOMPindxtp, 2, fmtMinOMPindxt , " %%%dd"  )
-      COMPUTE_COLWIDTH( cTRmax.maxOMPindxt      , maxOMPindxtp, 2, fmtMaxOMPindxt , " %%%dd"  )
-    }
 
     fprintf( pout, "Parallel Performance Overview" );
 
     if( multiTask   )
         fprintf( pout, "; MPI ranks %d-%d",
                        groupBase, groupBase+groupSize-1 );
-    if( multiThread )
-        fprintf( pout, "; OpenMP threads 0-%d", vftr_omp_threads-1 );
 
     fprintf( pout, "\n\n ");
 
@@ -344,18 +270,8 @@ vftr_print_loadbalance( callsTime_t **gCallsTime,
                                          minMPItimep +1+minMPIindxtp+1+
                                          avgMPItimep,  pout )
     }
-    if( multiThread ) {
-        OUTPUT_HEADER( "Calls OpenMP",   maxOMPcallsp+1+maxOMPindxcp+1+
-                                         minOMPcallsp+1+minOMPindxcp+1+
-                                         avgOMPcallsp, pout )
-        OUTPUT_HEADER( "Time[s] OpenMP", maxOMPtimep +1+maxOMPindxtp+1+
-                                         minOMPtimep +1+minOMPindxtp+1+
-                                         avgOMPtimep,  pout )
-    }
-
     jpar = 0;
     if( multiTask   ) jpar +=  5;
-    if( multiThread ) jpar +=  5;
     if( jpar )
         OUTPUT_HEADER( "Load Balance", jpar-1, pout )
     fputs( "\n ", pout );
@@ -368,14 +284,6 @@ vftr_print_loadbalance( callsTime_t **gCallsTime,
                           minMPItimep+minMPIindxtp+\
                           avgMPItimep+4,  pout )
     }                     
-    if( multiThread ) {
-        OUTPUT_DASHES_SP( maxOMPcallsp+maxOMPindxcp+\
-                          minOMPcallsp+minOMPindxcp+\
-                          avgOMPcallsp+4, pout )
-        OUTPUT_DASHES_SP( maxOMPtimep+maxOMPindxtp+\
-                          minOMPtimep+minOMPindxtp+\
-                          avgOMPtimep+4,  pout )
-    }
 
     OUTPUT_DASHES_SP( jpar-1, pout )
     OUTPUT_DASHES_SP( flen+clen+fidp+2, pout )
@@ -396,25 +304,8 @@ vftr_print_loadbalance( callsTime_t **gCallsTime,
         OUTPUT_HEADER( "Average", avgMPItimep,  pout )
     }
 
-    if( multiThread ) {
-        /* Thread info */
-        OUTPUT_HEADER( "Maximum", maxOMPcallsp, pout )
-        OUTPUT_HEADER( "Thread",  maxOMPindxcp, pout )
-        OUTPUT_HEADER( "Minimum", minOMPcallsp, pout )
-        OUTPUT_HEADER( "Thread",  minOMPindxcp, pout )
-        OUTPUT_HEADER( "Average", avgOMPcallsp, pout )
-        OUTPUT_HEADER( "Maximum", maxOMPtimep,  pout )
-        OUTPUT_HEADER( "Thread",  maxOMPindxtp, pout )
-        OUTPUT_HEADER( "Minimum", minOMPtimep,  pout )
-        OUTPUT_HEADER( "Thread",  minOMPindxtp, pout )
-        OUTPUT_HEADER( "Average", avgOMPtimep,  pout )
-    }
-
     if( multiTask ) {
         OUTPUT_HEADER( "%MPI", 4, pout )
-    }
-    if( multiThread ) {
-        OUTPUT_HEADER( "%OMP", 4, pout )
     }
 
     OUTPUT_HEADER ( "Function", flen, pout )
@@ -433,17 +324,8 @@ vftr_print_loadbalance( callsTime_t **gCallsTime,
                             minMPItimep,  minMPIindxtp,\
                             avgMPItimep,                 pout )
     }                       
-    if( multiThread ) {
-        OUTPUT_DASHES_SP_5( maxOMPcallsp, maxOMPindxcp,\
-                            minOMPcallsp, minOMPindxcp,\
-                            avgOMPcallsp,                pout )
-        OUTPUT_DASHES_SP_5( maxOMPtimep,  maxOMPindxtp,\
-                            minOMPtimep,  minOMPindxtp,\
-                            avgOMPtimep,                 pout )
-    }
 
     if( vftr_mpisize>1 ) { OUTPUT_DASHES_SP( 4, pout ) }
-    if( vftr_omp_threads>1 ) { OUTPUT_DASHES_SP( 4, pout ) }
 
     OUTPUT_DASHES_SP_3_NL( flen, clen, fidp, pout )
 
@@ -454,8 +336,7 @@ vftr_print_loadbalance( callsTime_t **gCallsTime,
         callsTimeRange_t *ctr = cTRarray[k];
         if( multiTask ) {
             maxTime += ctr->avgMPItime;
-        } else
-            maxTime += ctr->avgOMPtime;
+	}
     }
     truncTime = 0.99 * maxTime;
 
@@ -487,33 +368,15 @@ vftr_print_loadbalance( callsTime_t **gCallsTime,
             fprintf( pout, fmtAvgMPItime , ctr->avgMPItime  );
         }
 
-        if( multiThread ) {
-            /* Print calls and time for all threads of current rank */
-            pareffomp = ctr->maxOMPtime > 0. ?
-                        100. * ctr->avgOMPtime / ctr->maxOMPtime : 0.;
-            fprintf( pout, fmtMaxOMPcalls, ctr->maxOMPcalls );
-            fprintf( pout, fmtMaxOMPindxc, ctr->maxOMPindxc );
-            fprintf( pout, fmtMinOMPcalls, ctr->minOMPcalls );
-            fprintf( pout, fmtMinOMPindxc, ctr->minOMPindxc );
-            fprintf( pout, fmtAvgOMPcalls, ctr->avgOMPcalls );
-            fprintf( pout, fmtMaxOMPtime , ctr->maxOMPtime  );
-            fprintf( pout, fmtMaxOMPindxt, ctr->maxOMPindxt );
-            fprintf( pout, fmtMinOMPtime , ctr->minOMPtime  );
-            fprintf( pout, fmtMinOMPindxt, ctr->minOMPindxt );
-            fprintf( pout, fmtAvgOMPtime , ctr->avgOMPtime  );
-        }
-
         if( multiTask   )
             fprintf( pout, pareffmpi < 99.95 ? " %4.1f" : " 100.", pareffmpi );
-        if( multiThread )
-            fprintf( pout, pareffomp < 99.95 ? " %4.1f" : " 100.", pareffomp );
         
 	fprintf( pout, fmtFuncname, vftr_gStackinfo[i].name );
         j = vftr_gStackinfo[i].ret;
         if (j >= 0) fprintf( pout, fmtCaller,   vftr_gStackinfo[j].name );
         fprintf( pout, fmtFid,      i );
         fprintf( pout, "\n" );
-        maxTime += multiTask ? ctr->avgMPItime : ctr->avgOMPtime;        
+        maxTime += ctr->avgMPItime;        
         if( maxTime >= truncTime ) break;
     }
     fprintf( pout, "\n" );

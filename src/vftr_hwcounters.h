@@ -23,7 +23,7 @@
 
 extern bool vftr_events_enabled;
 extern int vftr_n_hw_obs;
-extern long long *vftr_prog_cycles;
+extern long long vftr_prog_cycles;
 
 #if defined( __ve__ )
 #define MAX_HWC_EVENTS               16
@@ -45,7 +45,7 @@ extern long long vftr_echwc[MAX_HWC_EVENTS];
 int vftr_init_hwc (char *scenario_file);
 int vftr_stop_hwc ();
 
-void vftr_read_counters (long long *event, int omp_thread);
+void vftr_read_counters (long long *event);
 void vftr_papi_counter (char *name);
 void vftr_sx_counter (char *name, int id);
 

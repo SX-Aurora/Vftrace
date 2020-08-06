@@ -30,11 +30,8 @@
 #include "vftr_timer.h"
 #include "vftr_functions.h"
 
-// number of omp threads
-extern int vftr_omp_threads;
-
 // Maximum time in a call tree, searched for in vftr_finalize
-extern long long *vftr_maxtime;
+extern long long vftr_maxtime;
 
 // Stack information on local and global scale
 // TODO: fuse the stack info types
@@ -76,13 +73,14 @@ extern function_t **vftr_func_table;
 extern unsigned int  vftr_func_table_size;
 
 // Function call stack
-extern function_t **vftr_fstack;
+//extern function_t **vftr_fstack;
+extern function_t *vftr_fstack;
 // Function call stack roots
-extern function_t **vftr_froots;
+extern function_t *vftr_froots;
 // Profile data
 extern struct Performance *vftr_prof;
 // Profile data sample
-extern profdata_t *vftr_prof_data;
+extern profdata_t vftr_prof_data;
 
 // initialize stacks only called from vftr_initialize
 void vftr_initialize_stacks();
@@ -93,7 +91,7 @@ void vftr_write_stacks (FILE *fp, int level, function_t *func);
 // Synchronise stack-IDs between processes
 int vftr_normalize_stacks();
 
-void vftr_print_stack (int tid, double time, function_t *func, char *label, int timeToSample);
+void vftr_print_stack (double time, function_t *func, char *label, int timeToSample);
 void vftr_print_local_stacklist (function_t **funcTable, FILE *pout, int ntop);
 void vftr_print_local_demangled (function_t **funcTable, FILE *pout, int ntop);
 void vftr_print_global_stacklist (FILE *pout);

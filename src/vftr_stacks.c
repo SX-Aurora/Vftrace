@@ -31,11 +31,8 @@
 
 #include "vftr_output_macros.h"
 
-// number of omp threads
-int vftr_omp_threads;
-
 // Maximum time in a call tree, searched for in vftr_finalize
-long long *vftr_maxtime;
+long long vftr_maxtime;
 
 // number of locally unique stacks
 int   vftr_stackscount = 0;
@@ -51,29 +48,26 @@ function_t **vftr_func_table = NULL;
 unsigned int  vftr_func_table_size = 5000;
 
 // Function call stack
-function_t **vftr_fstack = NULL;
+function_t *vftr_fstack = NULL;
 // Function call stack roots
-function_t **vftr_froots = NULL;
+function_t *vftr_froots = NULL;
 // Profile data sample
-profdata_t *vftr_prof_data = NULL;
+profdata_t vftr_prof_data;
 
 // initialize stacks only called from vftr_initialize
 void vftr_initialize_stacks() {
    // Allocate stack tables for each thread
-   vftr_fstack = (function_t**) malloc(vftr_omp_threads * sizeof(function_t*));
-   vftr_froots = (function_t**) malloc(vftr_omp_threads * sizeof(function_t*));
+   vftr_fstack = (function_t*) malloc(sizeof(function_t));
+   vftr_froots = (function_t*) malloc(sizeof(function_t));
 
    // Initialize stack tables 
    char *s = "init";
    function_t *func = vftr_new_function (NULL, strdup (s), NULL, "init", 0, true);
    func->next = func; /* Close circular linked list to itself */
-   for (int i = 0; i < vftr_omp_threads; i++) {
-       vftr_samplecount[i] = 0;
-       vftr_in_parallel[i] = 0;
-       vftr_fstack[i] = func;
-       vftr_froots[i] = func;
-       vftr_maxtime[i] = 0;
-   }
+   vftr_fstack = func;
+   vftr_samplecount = 0;
+   vftr_maxtime = 0;
+   vftr_froots = func;
 }
 
 // Write the stacks out
@@ -336,13 +330,9 @@ int vftr_normalize_stacks() {
 
 /**********************************************************************/
 
-void vftr_print_stack (int me, double time0, function_t *func, char *label, int timeToSample) {
+void vftr_print_stack (double time0, function_t *func, char *label, int timeToSample) {
     function_t   *f;
     char         *mark;
-
-#ifdef _OPENMP
-    omp_set_lock( &vftr_lock );
-#endif
 
     if( func->new ) {
         func->new = 0;
@@ -351,15 +341,11 @@ void vftr_print_stack (int me, double time0, function_t *func, char *label, int 
         mark = "";
     }
 
-    fprintf( vftr_log, "[%d] %s%12.6lf %4d %s %s", 
-             me, timeToSample ? "+" : " ", time0, func->id, label, mark );
+    fprintf (vftr_log, "%s%12.6lf %4d %s %s", 
+             timeToSample ? "+" : " ", time0, func->id, label, mark );
 
-    for( f=func; f; f=f->ret) fprintf( vftr_log, "%s<", f->name );
-    fprintf( vftr_log, "\n" );
-
-#ifdef _OPENMP
-    omp_unset_lock( &vftr_lock );
-#endif
+    for (f = func; f; f = f->ret) fprintf (vftr_log, "%s<", f->name);
+    fprintf (vftr_log, "\n");
 }
 
 /**********************************************************************/

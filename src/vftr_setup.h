@@ -25,9 +25,7 @@ extern bool vftr_timer_end;
 
 extern int vftr_mpirank;
 extern int vftr_mpisize;
-// Indicates if Vftrace is in an OMP parallel region
-extern int *vftr_in_parallel;
-extern unsigned int *vftr_samplecount;
+extern unsigned int vftr_samplecount;
 
 void vftr_initialize ();
 void vftr_finalize () ;

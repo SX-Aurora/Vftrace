@@ -29,7 +29,6 @@
 #include "vftr_scenarios.h"
 #include "vftr_hwcounters.h"
 #include "vftr_version.h"
-#include "vftr_omp.h"
 #include "vftr_environment.h"
 #include "vftr_setup.h"
 #include "vftr_dlopen.h"
@@ -46,9 +45,7 @@ bool vftr_timer_end;
 
 int vftr_mpirank;
 int vftr_mpisize;
-// Indicates if Vftrace is in an OMP parallel region
-int *vftr_in_parallel;
-unsigned int *vftr_samplecount;
+unsigned int vftr_samplecount;
 
 void vftr_print_disclaimer_full (FILE *fp) {
     fprintf (fp, 
@@ -81,17 +78,6 @@ void vftr_print_disclaimer (FILE *fp) {
         "For details: use vftrace with environment variable VFTR_LICENSE\n"
         "set to 1, or run \"vfview -w\", or consult the COPYRIGHT file.\n" );
 }
-
-/**********************************************************************/
-
-#ifdef _OPENMP
-void vftr_init_omp_locks () {
-    omp_init_lock (&vftr_lock);
-    omp_init_lock (&vftr_lock_exp);
-    omp_init_lock (&vftr_lock_hook);
-    omp_init_lock (&vftr_lock_prof);
-}
-#endif
 
 /**********************************************************************/
 
@@ -137,9 +123,7 @@ void vftr_get_mpi_info (int *rank, int *size) {
 // Assuming vftr_initialize will be called outside parallel region
 void vftr_initialize() {
     char *s;
-    int j, n, me;
-
-    me = OMP_GET_THREAD_NUM;
+    int j, n;
 
     // set the timer reference point for this process
     vftr_set_local_ref_time();
@@ -163,25 +147,9 @@ void vftr_initialize() {
     sprintf (vftr_fileid, "VFTRACE %07d", 
 	(100 * MAJOR_VERSION + MINOR_VERSION) * 100 + REVISION);
 
-    vftr_omp_threads = OMP_GET_MAX_THREADS;
-    vftr_samplecount = (unsigned int *) malloc (vftr_omp_threads * sizeof(unsigned int));
-    vftr_prog_cycles = (long long *) malloc (vftr_omp_threads * sizeof(long long));
-    vftr_in_parallel = (int *) malloc (vftr_omp_threads * sizeof(unsigned int));
-    assert (vftr_samplecount);
-
-    vftr_overhead_usec = (long long *) malloc (vftr_omp_threads * sizeof(long long));
-    assert (vftr_overhead_usec);
-    for (int i = 0; i < vftr_omp_threads; i++) {
-	vftr_overhead_usec[i] = 0ll;
-    }
-    assert (vftr_prog_cycles);
-    assert (vftr_in_parallel);
-
-    memset (vftr_prog_cycles, 0, vftr_omp_threads * sizeof(long long));
-
-#ifdef _OPENMP
-   vftr_init_omp_locks ();
-#endif
+    vftr_overhead_usec = 0ll;
+  
+    vftr_prog_cycles = 0ll;
 
     vftr_get_mpi_info (&vftr_mpirank, &vftr_mpisize);
 
@@ -191,13 +159,6 @@ void vftr_initialize() {
     
     // Do not buffer when writing into the log file
     setvbuf (vftr_log, NULL, _IOLBF, (size_t)0);
-
-#ifndef _OPENMP
-    if (vftr_omp_threads > 1 && !vftr_mpirank) {
-        fprintf( vftr_log, 
-	  "WARNING: vftrace library used does not support OpenMP\n" );
-    }
-#endif
 
     if (vftr_mpirank == 0) {
        if (vftr_environment->license_verbose->value) {
@@ -219,38 +180,13 @@ void vftr_initialize() {
         vftr_events_enabled = false;
     }
 
-
-    /* Formating info for call tree */
-    vftr_maxtime = (long long *) malloc (vftr_omp_threads * sizeof(long long));
-
-    n = vftr_omp_threads * sizeof(profdata_t);
-    vftr_prof_data = (profdata_t *) malloc( n );
-    assert (vftr_prof_data);
-
-    memset (vftr_prof_data, 0, n);
+    memset (&vftr_prof_data, 0, sizeof(profdata_t));
 
     // initialize the stack variables and tables
     vftr_initialize_stacks();
 
-    /* Allocate file pointers for each thread */
-    vftr_vfd_file = (FILE **) malloc (vftr_omp_threads * sizeof(FILE *));
-    assert (vftr_vfd_file);
-    
-    /* Allocate time arrays for each thread */
-    n = vftr_omp_threads * sizeof(long long);
-    vftr_nextsampletime = (long long *) malloc (n) ;
-    vftr_prevsampletime = (long long *) malloc (n) ;
-    assert (vftr_nextsampletime);
-    assert (vftr_prevsampletime);
-    for (int i = 0; i < vftr_omp_threads; i++) {
-        vftr_nextsampletime[i] = 0;
-        vftr_prevsampletime [i] = 0;
-    }
-
-#ifdef _OPENMP
-    /* Regular expressions to detect OpenMP regions */
-    vftr_openmpregexp = vftr_compile_regexp( "\\$[0-9][0-9_]*$" );
-#endif
+    vftr_nextsampletime = 0ll;
+    vftr_prevsampletime = 0;
 
     /* Init event counters */
     vftr_n_hw_obs = 0;
@@ -265,12 +201,10 @@ void vftr_initialize() {
     }
 
     if (vftr_n_hw_obs  > 0) {
-    	for (int i = 0; i < vftr_omp_threads; i++) {
-    	    vftr_prof_data[i].events[0] = (long long *) malloc (vftr_n_hw_obs * sizeof(long long));
-    	    vftr_prof_data[i].events[1] = (long long *) malloc (vftr_n_hw_obs * sizeof(long long));
-    	    memset (vftr_prof_data[i].events[0], 0, vftr_n_hw_obs * sizeof(long long));
-    	    memset (vftr_prof_data[i].events[1], 0, vftr_n_hw_obs * sizeof(long long));
-    	}
+       vftr_prof_data.events[0] = (long long *) malloc (vftr_n_hw_obs * sizeof(long long));
+       vftr_prof_data.events[1] = (long long *) malloc (vftr_n_hw_obs * sizeof(long long));
+       memset (vftr_prof_data.events[0], 0, vftr_n_hw_obs * sizeof(long long));
+       memset (vftr_prof_data.events[1], 0, vftr_n_hw_obs * sizeof(long long));
     }
 
     vftr_inittime = vftr_get_runtime_usec ();
@@ -285,7 +219,6 @@ void vftr_initialize() {
 
     /* Create VFD files */
     if (vftr_env_do_sampling ()) {
-        int thread_digits = count_digits (vftr_omp_threads);
 	vftr_init_vfd_file ();
     }
     
@@ -320,17 +253,13 @@ void vftr_initialize() {
 	vftr_define_signal_handlers ();
     }
 
-#ifdef _OPENMP
-#pragma omp parallel
-#endif
-    
     fflush (stdout);
     vftr_inittime = vftr_get_runtime_usec (); /* Will be updated later if MPI used */
     vftr_initcycles = vftr_get_cycles();
     
     // get the time to estimate vftrace overhead
     long long overhead_time_end = vftr_get_runtime_usec();
-    vftr_overhead_usec[me] += overhead_time_end - overhead_time_start;
+    vftr_overhead_usec += overhead_time_end - overhead_time_start;
 }
 
 /**********************************************************************/
@@ -342,11 +271,9 @@ void vftr_calc_tree_format (function_t *func) {
 
     if (func == NULL) return;
 
-    for (me = 0; me < vftr_omp_threads; me++) {
-        fcalls = func->prof_current[me].calls;
-        ftime  = func->prof_current[me].cycles;
-        if (vftr_maxtime[me]  < ftime) vftr_maxtime [me] = ftime;
-    }
+    fcalls = func->prof_current.calls;
+    ftime  = func->prof_current.cycles;
+    if (vftr_maxtime < ftime) vftr_maxtime = ftime;
 
     n = func->levels;
 
@@ -359,7 +286,7 @@ void vftr_calc_tree_format (function_t *func) {
 /**********************************************************************/
 
 void vftr_finalize() {
-    int            i, me, ntop = 0;
+    int            i, ntop = 0;
     function_t     **funcTable;
 
     if (vftr_off())  return;
@@ -373,12 +300,11 @@ void vftr_finalize() {
 
     // Mark end of non-parallel interval
     if (vftr_env_do_sampling()) {
-        for (me = 1; me < vftr_omp_threads; me++)
-            vftr_write_to_vfd (finalize_time, vftr_prog_cycles[me], 0, SID_EXIT, me);
+        vftr_write_to_vfd (finalize_time, vftr_prog_cycles, 0, SID_EXIT);
     }
     
     bool valid_loadbalance_table = !vftr_normalize_stacks();
-    vftr_calc_tree_format (vftr_froots[0]);
+    vftr_calc_tree_format (vftr_froots);
 
     vftr_print_profile (vftr_log, &ntop, time0);
 
@@ -389,7 +315,7 @@ void vftr_finalize() {
 	loadbalance_info = vftr_get_loadbalance_info( funcTable );
     }
 
-    bool is_parallel = vftr_mpisize > 1 || vftr_omp_threads > 1;
+    bool is_parallel = vftr_mpisize > 1;
     if (is_parallel && vftr_mpirank == 0 && valid_loadbalance_table) {
         int *loadIDs = (int *) malloc (vftr_gStackscount * sizeof(int));
         int nLoadIDs;

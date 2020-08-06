@@ -134,8 +134,7 @@ function_t *vftr_new_function(void *arg, const char *function_name,
    if (line > 0) func->line_beg = line;
 
    if (arg) { // Skip if address not defined (when info is "init")
-      func->openmp = vftr_pattern_match(vftr_openmpregexp, func->name);
-      func->precise = isPrecise || func->openmp ||
+      func->precise = isPrecise ||
                       vftr_pattern_match(vftr_environment->preciseregex->value,
                                          func->name);
    }
@@ -153,19 +152,14 @@ function_t *vftr_new_function(void *arg, const char *function_name,
    }
 
    // preparing the function specific profiling data
-   int n = vftr_omp_threads * sizeof(profdata_t);
-   func->prof_current = (profdata_t *) malloc(n);
-   func->prof_previous = (profdata_t *) malloc(n);
-   memset(func->prof_current, 0, n);
-   memset(func->prof_previous, 0, n);
+   memset(&(func->prof_current), 0, sizeof(profdata_t));
+   memset(&(func->prof_previous), 0, sizeof(profdata_t));
 
    if (vftr_n_hw_obs > 0) {
-   	for (int i = 0; i < vftr_omp_threads; i++) {
-   	   func->prof_current[i].event_count = (long long*) malloc(vftr_n_hw_obs * sizeof(long long));
-   	   func->prof_previous[i].event_count = (long long*) malloc(vftr_n_hw_obs * sizeof(long long));
-   	   memset (func->prof_current[i].event_count, 0, vftr_n_hw_obs * sizeof(long long));
-   	   memset (func->prof_previous[i].event_count, 0, vftr_n_hw_obs * sizeof(long long));
-   	}
+      func->prof_current.event_count = (long long*) malloc(vftr_n_hw_obs * sizeof(long long));
+      func->prof_previous.event_count = (long long*) malloc(vftr_n_hw_obs * sizeof(long long));
+      memset (func->prof_current.event_count, 0, vftr_n_hw_obs * sizeof(long long));
+      memset (func->prof_previous.event_count, 0, vftr_n_hw_obs * sizeof(long long));
    }
 
    // Determine if this function should be profiled
@@ -207,25 +201,25 @@ function_t *vftr_new_function(void *arg, const char *function_name,
    return func;
 }
 
-void vftr_reset_counts (int me, function_t *func) {
+void vftr_reset_counts (function_t *func) {
    function_t *f;
    int i, n;
    int m = vftr_n_hw_obs * sizeof(long long);
 
    if( func == NULL ) return;
 
-   memset (func->prof_current[me].event_count,  0, m );
-   memset (func->prof_previous[me].event_count, 0, m );
-   func->prof_current[me].calls   = 0;
-   func->prof_current[me].cycles  = 0;
-   func->prof_current[me].timeExcl = 0;
-   func->prof_current[me].timeIncl = 0;
-   func->prof_current[me].flops   = 0;
+   memset (func->prof_current.event_count,  0, m );
+   memset (func->prof_previous.event_count, 0, m );
+   func->prof_current.calls   = 0;
+   func->prof_current.cycles  = 0;
+   func->prof_current.timeExcl = 0;
+   func->prof_current.timeIncl = 0;
+   func->prof_current.flops   = 0;
    n = func->levels;
 
    /* Recursive scan of callees */
    for (i = 0,f = func->first; i < n; i++, f = f->next) {
-       vftr_reset_counts (me, f);
+       vftr_reset_counts (f);
    }
 }
 

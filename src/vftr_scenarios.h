@@ -25,7 +25,7 @@
 
 typedef struct EventCounter {
     int                 rank, id, namelen, decipl;
-    long long           *count;
+    long long           count;
     char                *name, fmt[10];
     struct EventCounter *next;
 } evtcounter_t;

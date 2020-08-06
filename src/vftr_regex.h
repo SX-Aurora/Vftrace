@@ -22,9 +22,6 @@
 #include <stdbool.h>
 #include <regex.h>
 
-// OpenMP parallel regions
-extern regex_t *vftr_openmpregexp;
-
 regex_t *vftr_compile_regexp(char *s);
 
 bool vftr_pattern_match(regex_t *r, char *s);
