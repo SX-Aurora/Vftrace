@@ -1,4 +1,4 @@
-Vftrace can be installed using autotools.
+Vftrace can be installed using autotools or meson.
 
 autoreconf -i
 ./configure CC=<your_C_compiler> CXX=<your_C++_compiler> FC=<your_Fortran_compiler> --prefix=<install_path>
@@ -12,3 +12,15 @@ o --enable-veperf / --disable-veperf: Switch on/off Veperf support (SX Aurora on
 o --enable-mpi-profiling: Switch on MPI profiling. In this case, MPI function calls are overloaded. Internally, the PMPI functions are used, which have to be supported by your compile environment.
 o --enable-vmap-offset: On some systems, function instrumentation leads to offsets in the virtual memory maps, which has to be subtracted from the symbol addresses in order
 			to get proper name resolution. This option enables this feature.
+
+The build option with meson requires a recent meson installation, see https://mesonbuild.com/Getting-meson.html, and/or a recent Ninja installation, https://ninja-build.org/.
+Both tools can be downloaded as binaries and added to the project's directory.
+
+CC=<C Compiler> CXX=<C++ compiler> FC=<Fortran compiler> meson <build directory> --prefix=<install path>
+cd <build directory>
+ninja
+ninja install
+
+The meson build supports the same build options as autotools, however, the syntax is different:
+o -D<option name>=<enabled/disabled|string|true/false>
+For detailed view of the build options, see meson help configure and meson_options.txt.
