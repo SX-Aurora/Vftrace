@@ -120,7 +120,6 @@ void vftr_get_mpi_info (int *rank, int *size) {
 	
 /**********************************************************************/
 
-// Assuming vftr_initialize will be called outside parallel region
 void vftr_initialize() {
     char *s;
     int j, n;
@@ -157,7 +156,6 @@ void vftr_initialize() {
     vftr_logfile_name = vftr_create_logfile_name (vftr_mpirank, vftr_mpisize, "log");
     vftr_log = fopen (vftr_logfile_name, "w+");
     assert (vftr_log);
-    
     // Do not buffer when writing into the log file
     setvbuf (vftr_log, NULL, _IOLBF, (size_t)0);
 
