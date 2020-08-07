@@ -112,5 +112,6 @@ void scenario_expr_add_papi_counters ();
 void scenario_expr_add_veperf_counters ();
 
 int vftr_scenario_test_1 (FILE *fp_in, FILE *fp_out);
+int vftr_scenario_test_2 (FILE *fp_in, FILE *fp_out);
 
 #endif
