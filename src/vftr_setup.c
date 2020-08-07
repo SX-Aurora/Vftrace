@@ -151,6 +151,7 @@ void vftr_initialize() {
   
     vftr_prog_cycles = 0ll;
 
+    vftr_program_path = vftr_get_program_path ();
     vftr_get_mpi_info (&vftr_mpirank, &vftr_mpisize);
 
     vftr_logfile_name = vftr_create_logfile_name (vftr_mpirank, vftr_mpisize, "log");

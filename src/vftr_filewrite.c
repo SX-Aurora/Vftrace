@@ -44,6 +44,8 @@ char vftr_fileid[VFTR_FILEIDSIZE];
 // The next time step where a snapshot is written to the vfd file
 long long vftr_nextsampletime;
 
+char *vftr_program_path;
+
 // The basename of Vftrace log files
 char *vftr_logfile_name;
 
@@ -60,13 +62,9 @@ char *vftr_bool_to_string (bool value) {
 
 /**********************************************************************/
 
-// Creates the outputfile name of the form <basename>_<mpi_rank>.out.
-// <basename> is either the application name or a value defined by 
-// the user in the environment variable LOGFILE_BASENAME.
-// Suffix is ".log" for ASCII log files and ".vfd" for viewer files.
-char *vftr_create_logfile_name (int mpi_rank, int mpi_size, char *suffix) {
+char *vftr_get_program_path () {
 	bool read_from_env = false;
-	char *basename; 
+	char *basename;
 	// User-defined output file
 	if (vftr_environment) {
 		read_from_env = vftr_environment->logfile_basename->set;
@@ -85,6 +83,17 @@ char *vftr_create_logfile_name (int mpi_rank, int mpi_size, char *suffix) {
 			basename = strdup (program_path);
 		}
 	}
+	return basename;
+}
+
+/**********************************************************************/
+
+// Creates the outputfile name of the form <basename>_<mpi_rank>.out.
+// <basename> is either the application name or a value defined by 
+// the user in the environment variable LOGFILE_BASENAME.
+// Suffix is ".log" for ASCII log files and ".vfd" for viewer files.
+char *vftr_create_logfile_name (int mpi_rank, int mpi_size, char *suffix) {
+	bool read_from_env = false;
 	// The user can also define a different output directory
 	char *out_directory;
 	if (vftr_environment) {
@@ -99,7 +108,7 @@ char *vftr_create_logfile_name (int mpi_rank, int mpi_size, char *suffix) {
 	int task_digits = count_digits (mpi_size);
 	char *logfile_nameformat = (char*)malloc (1024 * sizeof(char));
 	sprintf (logfile_nameformat, "%s/%s_%%0%dd.%s",
-		 out_directory, basename, task_digits, suffix);
+		 out_directory, vftr_program_path, task_digits, suffix);
 	char *logfile_name = (char*)malloc (1024 * sizeof(char));
 	sprintf (logfile_name, logfile_nameformat, mpi_rank);
 	free (logfile_nameformat);
