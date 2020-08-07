@@ -44,6 +44,13 @@ char vftr_fileid[VFTR_FILEIDSIZE];
 // The next time step where a snapshot is written to the vfd file
 long long vftr_nextsampletime;
 
+// We only need this variable to create the .log and .vfd file names.
+// It is global because it must be created before MPI_Init is called.
+// This is because the program path is determined by opening the file
+// /proc/<pid>/cmdline, where a race condition can occur if multiple
+// ranks access it.
+char *vftr_program_path;
+
 // The basename of Vftrace log files
 char *vftr_logfile_name;
 
@@ -55,13 +62,9 @@ unsigned int vftr_samples_offset;
 
 /**********************************************************************/
 
-// Creates the outputfile name of the form <basename>_<mpi_rank>.out.
-// <basename> is either the application name or a value defined by 
-// the user in the environment variable LOGFILE_BASENAME.
-// Suffix is ".log" for ASCII log files and ".vfd" for viewer files.
-char *vftr_create_logfile_name (int mpi_rank, int mpi_size, char *suffix) {
+char *vftr_get_program_path () {
 	bool read_from_env = false;
-	char *basename; 
+	char *basename;
 	// User-defined output file
 	if (vftr_environment) {
 		read_from_env = vftr_environment->logfile_basename->set;
@@ -80,6 +83,18 @@ char *vftr_create_logfile_name (int mpi_rank, int mpi_size, char *suffix) {
 			basename = strdup (program_path);
 		}
 	}
+	return basename;
+}
+
+/**********************************************************************/
+
+// Creates the outputfile name of the form <vftr_program_path>_<mpi_rank>.out.
+// <vftr_program_path> is either the application name or a value defined by 
+// the user in the environment variable LOGFILE_BASENAME. It is a global variable
+// obtained beforehand by a call to vftr_get_program_path to avoid a race condition.
+// Suffix is ".log" for ASCII log files and ".vfd" for viewer files.
+char *vftr_create_logfile_name (int mpi_rank, int mpi_size, char *suffix) {
+	bool read_from_env = false;
 	// The user can also define a different output directory
 	char *out_directory;
 	if (vftr_environment) {
@@ -94,7 +109,7 @@ char *vftr_create_logfile_name (int mpi_rank, int mpi_size, char *suffix) {
 	int task_digits = count_digits (mpi_size);
 	char *logfile_nameformat = (char*)malloc (1024 * sizeof(char));
 	sprintf (logfile_nameformat, "%s/%s_%%0%dd.%s",
-		 out_directory, basename, task_digits, suffix);
+		 out_directory, vftr_program_path, task_digits, suffix);
 	char *logfile_name = (char*)malloc (1024 * sizeof(char));
 	sprintf (logfile_name, logfile_nameformat, mpi_rank);
 	free (logfile_nameformat);

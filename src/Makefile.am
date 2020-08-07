@@ -5,11 +5,14 @@ include_HEADERS = vftrace.h
 
 SUBDIRS = vftr_mpi
 
+
 libvftrace_la_LIBADD = libvftr_pause.la \
-		       vftr_mpi/libvftr_mpi.la \
-		       vftr_mpi/c-wrapper/libvftr_cmpiwrap.la \
-		       vftr_mpi/f-wrapper/libvftr_fmpiwrap.la \
-		       vftr_mpi/f08-wrapper/libvftr_f08mpiwrap.la
+		       vftr_mpi/libvftr_mpi.la
+if MPI_PROFILING
+libvftrace_la_LIBADD += vftr_mpi/c-wrapper/libvftr_cmpiwrap.la \
+		        vftr_mpi/f-wrapper/libvftr_fmpiwrap.la \
+		        vftr_mpi/f08-wrapper/libvftr_f08mpiwrap.la
+endif
 
 libvftr_pause_la_SOURCES = vftr_pause.c
 libvftr_pause_la_CFLAGS = -finstrument-functions
