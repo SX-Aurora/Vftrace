@@ -16,6 +16,8 @@ extern char vftr_fileid[VFTR_FILEIDSIZE];
 // The next time step where a snapshot is written to the vfd file
 extern long long vftr_nextsampletime;
 
+extern char *vftr_program_path;
+
 // The basename of Vftrace log files
 extern char *vftr_logfile_name;
 
@@ -45,6 +47,7 @@ void vftr_store_message_info(vftr_direction dir, int count, int type_idx,
                              long long tstart, long long tend);
 
 void vftr_print_profile (FILE *pout, int *ntop, long long t0);
+char *vftr_get_program_path ();
 char *vftr_create_logfile_name (int mpi_rank, int mpi_size, char *suffix);
 
 int vftr_filewrite_test_1 (FILE *fp);
