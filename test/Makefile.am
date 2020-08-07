@@ -1,6 +1,12 @@
 VPATH=${builddir}
 bin_PROGRAMS = test_vftrace
 
+SUBDIRS = .
+if MPI_PROFILING 
+SUBDIRS += c-mpi
+#SUBDIRS += c-mpi f-mpi f08-mpi
+endif
+
 BUILT_SOURCES = ref_input ref_output run
 
 test_vftrace_SOURCES = ${srcdir}/test_vftrace.c
