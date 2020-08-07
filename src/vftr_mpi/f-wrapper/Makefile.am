@@ -38,8 +38,6 @@ libvftr_fmpiwrap_la_SOURCES = vftr_after_mpi_init_c2f.F90 \
 			      vftr_mpi_recv_fwrap.F90 \
 			      vftr_mpi_reduce_c2f.F90 \
 			      vftr_mpi_reduce_fwrap.F90 \
-			      vftr_mpi_reduce_scatter_c2f.F90 \
-			      vftr_mpi_reduce_scatter_fwrap.F90 \
 			      vftr_mpi_scatter_c2f.F90 \
 			      vftr_mpi_scatter_fwrap.F90 \
 			      vftr_mpi_scatterv_c2f.F90 \
