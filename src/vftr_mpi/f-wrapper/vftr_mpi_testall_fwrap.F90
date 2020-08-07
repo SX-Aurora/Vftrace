@@ -17,7 +17,7 @@
 #ifdef _MPI
 
 SUBROUTINE MPI_Testall(COUNT, ARRAY_OREQUESTS, FLAG, ARRAY_OSTATUSES, ERROR)
-   USE vftr_mpi_testsome_c2f, &
+   USE vftr_mpi_testall_c2f, &
       ONLY : vftr_MPI_Testall_F
    USE mpi, ONLY: MPI_STATUS_SIZE
    IMPLICIT NONE

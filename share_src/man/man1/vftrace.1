@@ -118,11 +118,8 @@ Sets the output directory for the profiling data files (.vfd) and logfiles (.log
 .\"
 .IP "\fBVFTR_PRECISE\fR"
 .IX Item "VFTR_PRECISE"
-\fBEnable\fR(1,"YES","Yes","yes","ON","On","on")
 .br
-\fBDisable\fR(0,"NO","No","no","OFF","Off","off")
-.br
-Enables precise sampling off all functions.
+A regular expression specifying which functions should be sampled precisely.
 This ignores the minimum time given by \fBVFTR_SAMPLETIME\fR and registers
 every function exit and entry.
 Note that this potentially leads to a significant increase in profiling overhead and

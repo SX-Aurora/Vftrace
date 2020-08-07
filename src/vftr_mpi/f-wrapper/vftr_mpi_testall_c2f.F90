@@ -14,7 +14,7 @@
 ! with this program; if not, write to the Free Software Foundation, Inc.,
 ! 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-MODULE vftr_mpi_testsome_c2f
+MODULE vftr_mpi_testall_c2f
 #ifdef _MPI
 
    USE, INTRINSIC :: ISO_FORTRAN_ENV
@@ -47,4 +47,4 @@ MODULE vftr_mpi_testsome_c2f
 
 CONTAINS
 
-END MODULE vftr_mpi_testsome_c2f
+END MODULE vftr_mpi_testall_c2f
