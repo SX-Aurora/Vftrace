@@ -1,11 +1,13 @@
 #!/bin/bash
 set -x
-ref_out_dir=ref_output
-ref_in_dir=ref_input
+ref_out_dir=${srcdir}/ref_output
+ref_in_dir=${srcdir}/ref_input
 testname=vftr_environment_test_1
 outfile=$testname.out
 
-rm -f $outfile
+if [ -f $outfile ] ; then
+   rm -f $outfile
+fi
 
 # The user might have set some VFTR_ environment variables.
 # We save them in an array and unset them all.
