@@ -1,15 +1,16 @@
+AM_CFLAGS = -I$(top_srcdir)/src/ -I$(top_srcdir)/src/vftr_mpi
+
+AM_LDFLAGS = -L$(top_builddir)/src/.libs -lvftrace -lm
+if USES_NEC_MPI
+  AM_LDFLAGS += -mpiprof
+endif
+
 noinst_PROGRAMS = test_vftrace
 
 test_vftrace_SOURCES = $(srcdir)/test_vftrace.c
-test_vftrace_CFLAGS = -I$(top_srcdir)/src/ -I$(top_srcdir)/src/vftr_mpi
-test_vftrace_LDFLAGS = -L$(top_builddir)/src/.libs -lvftrace -lm
+test_vftrace_CFLAGS = $(AM_CFLAGS)
+test_vftrace_LDFLAGS = $(AM_LDFLAGS)
 
-if USES_NEC_MPI
-  test_vftrace_LDFLAGS += -mpiprof
-endif
-
-dist_noinst_DATA = $(srcdir)/ref_input/* \
-		   $(srcdir)/ref_output/*
 
 dist_noinst_SCRIPTS = this_passes.sh \
 		      this_fails.sh \

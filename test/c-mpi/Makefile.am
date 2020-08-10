@@ -1,10 +1,9 @@
 AM_CFLAGS = -O3 -finstrument-functions
 
-AM_LDFLAGS =
+AM_LDFLAGS = -L$(top_builddir)/src/.libs -lvftrace -lm
 if USES_NEC_MPI
   AM_LDFLAGS += -mpiprof
 endif
-AM_LDFLAGS += -L$(top_builddir)/src/.libs -lvftrace -lm
 
 noinst_PROGRAMS = init_finalize
 		
