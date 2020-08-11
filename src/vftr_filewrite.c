@@ -110,6 +110,8 @@ char *vftr_create_logfile_name (int mpi_rank, int mpi_size, char *suffix) {
 	} else {
 		out_directory = strdup (".");
 	}
+	
+	vftr_program_path = vftr_get_program_path ();	
 	// Finally create the output file name
 	int task_digits = count_digits (mpi_size);
 	char *logfile_nameformat = (char*)malloc (1024 * sizeof(char));
