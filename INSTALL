@@ -12,3 +12,7 @@ o --enable-veperf / --disable-veperf: Switch on/off Veperf support (SX Aurora on
 o --enable-mpi-profiling: Switch on MPI profiling. In this case, MPI function calls are overloaded. Internally, the PMPI functions are used, which have to be supported by your compile environment.
 o --enable-vmap-offset: On some systems, function instrumentation leads to offsets in the virtual memory maps, which has to be subtracted from the symbol addresses in order
 			to get proper name resolution. This option enables this feature.
+
+Further Advice:
+
+o Autotools does not resolve the dependencies of Fortran modules. For this reason, building with more than one thread (make -j) can lead to problems. We advice to always use one thread.
