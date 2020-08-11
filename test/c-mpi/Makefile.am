@@ -48,6 +48,22 @@ dist_noinst_SCRIPTS += send_recv-1.sh \
 		       isend_recv-1.sh \
 		       isend_recv-2.sh
 
+noinst_PROGRAMS += put \
+		   get
+
+put_SOURCES = $(srcdir)/put.c
+put_CFLAGS = $(AM_CFLAGS)
+put_LDFLAGS = $(AM_LDFLAGS)
+
+get_SOURCES = $(srcdir)/get.c
+get_CFLAGS = $(AM_CFLAGS)
+get_LDFLAGS = $(AM_LDFLAGS)
+
+dist_noinst_SCRIPTS += put-1.sh \
+		       put-2.sh \
+		       get-1.sh \
+		       get-2.sh
+
 TEST_EXTENSIONS = .sh
 SH_LOG_COMPILER = $(SHELL)
 
