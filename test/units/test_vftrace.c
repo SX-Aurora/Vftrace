@@ -48,6 +48,8 @@ int main (int argc, char **argv) {
 		retval = vftr_scenario_test_1 (fp_in, fp_out);
 	} else if (!strcmp (argv[1], "vftr_scenario_test_2")) {
 		retval = vftr_scenario_test_2 (fp_in, fp_out);
+	} else if (!strcmp (argv[1], "vftr_scenario_test_3")) {
+		retval = vftr_scenario_test_3 (fp_in, fp_out);
 	} else {
 		printf ("No matching test found\n");
 	}
