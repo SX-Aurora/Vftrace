@@ -23,6 +23,8 @@
 
 #include "vftr_symbols.h"
 
+/**********************************************************************/
+
 regex_t *vftr_compile_regexp(char *pattern) {
     int err;
     regex_t *r;
@@ -31,10 +33,12 @@ regex_t *vftr_compile_regexp(char *pattern) {
         char msg[256];
         size_t msglen;
         msglen = regerror(err, r, msg, 256);
-        fprintf(vftr_log, "ERROR in vftr_compile_regexp: input=%s msg=%s\n", pattern, msg);
+        fprintf(stderr, "Invalid Regular Expression (%s): %s\n", pattern, msg);
     }
     return err ? NULL : r;
 }
+
+/**********************************************************************/
 
 bool vftr_pattern_match(regex_t *r, char *s) {
     if (!r) {return 0;}

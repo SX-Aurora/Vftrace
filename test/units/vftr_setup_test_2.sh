@@ -1,8 +1,8 @@
 #!/bin/bash
 set -x
-ref_out_dir=ref_output
-ref_in_dir=ref_input
-testname=vftr_filewrite_test_1
+ref_out_dir=${srcdir}/ref_output
+ref_in_dir=${srcdir}/ref_input
+testname=vftr_setup_test_2
 outfile=$testname.out
 
 rm -f $outfile
