@@ -25,7 +25,7 @@ int main(int argc, char** argv) {
 
    // require cmd-line argument
    if (argc < 2) {
-      printf("./isend_recv <msgsize in kiB>\n");
+      printf("./isend_recv <msgsize in Byte>\n");
       return 1;
    }
    // allocating send/recv buffer

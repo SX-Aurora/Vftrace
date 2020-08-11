@@ -25,7 +25,7 @@ int main(int argc, char** argv) {
 
    // require cmd-line argument
    if (argc < 2) {
-      printf("./put <msgsize in kiB>\n");
+      printf("./put <msgsize in ints>\n");
       return 1;
    }
 
