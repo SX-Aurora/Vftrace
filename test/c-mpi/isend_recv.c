@@ -6,7 +6,7 @@
 
 int main(int argc, char** argv) {
 
-   MPI_Init(NULL, NULL);
+   MPI_Init(&argc, &argv);
 
    // Get number or processes
    int comm_size;
@@ -29,7 +29,7 @@ int main(int argc, char** argv) {
       return 1;
    }
    // allocating send/recv buffer
-   const int nbyte = atoi(argv[1]);
+   int nbyte = atoi(argv[1]);
    void* sbuffer = malloc(nbyte);
    void* rbuffer = malloc(nbyte);
    MPI_Request *myrequest = (MPI_Request*) malloc((comm_size-1)*sizeof(MPI_Request));

@@ -5,7 +5,7 @@
 #include <unistd.h>
 
 int main(int argc, char** argv) {
-   MPI_Init(NULL, NULL);
+   MPI_Init(&argc, &argv);
 
    // Get number or processes
    int comm_size;
@@ -29,7 +29,7 @@ int main(int argc, char** argv) {
    }
 
    // allocating send/recv buffer
-   const int nbyte = atoi(argv[1]);
+   int nbyte = atoi(argv[1]);
    void* srbuffer = malloc(nbyte);
 
    // Messaging cycle

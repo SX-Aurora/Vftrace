@@ -15,7 +15,7 @@ typedef struct teststruct_t {
 
 int main(int argc, char** argv) {
 
-   MPI_Init(NULL, NULL);
+   MPI_Init(&argc, &argv);
 
    // Get number or processes
    int comm_size;
