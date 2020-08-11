@@ -22,6 +22,7 @@
 #include <stdint.h>
 #include <string.h>
 
+#include "vftr_signals.h"
 #include "vftr_fileutils.h"
 #include "vftr_hwcounters.h"
 #include "vftr_scenarios.h"
@@ -310,7 +311,8 @@ int vftr_read_scenario_file (char *filename, FILE *fp_ext) {
 		expr[i] = te_compile (scenario_expr_formulas[i].formula, te_vars, scenario_expr_n_vars + 3, &err);
 		if (!expr[i]) {
 			printf ("ERROR COMPILING FORMULA:\n%s\n", scenario_expr_formulas[i].formula);
-			printf("%*s^\n", err - 1, "");
+			printf ("%*s^\n", err - 1, "");
+			vftr_abort();
 		}
 			
 	}
