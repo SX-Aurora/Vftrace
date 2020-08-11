@@ -85,8 +85,19 @@ if test "$enable_mpi_profiling" = yes; then
     uses_nec_mpi=no
   fi
 fi 
+
+AC_MSG_CHECKING([if Intel compiler is used])
+check_if_intel_compiler='$CC --version | grep Intel'
+if AC_TRY_EVAL(check_if_intel_compiler); then
+  uses_intel_compiler=yes
+else
+  uses_intel_compiler=no
+fi 
+AC_MSG_RESULT([$uses_intel_compiler])
+
 AM_CONDITIONAL([USES_INTEL_MPI], [test "$uses_intel_mpi" = "yes"])
 AM_CONDITIONAL([USES_NEC_MPI], [test "$uses_nec_mpi" = "yes"])
+AM_CONDITIONAL([USES_INTEL_COMPILER], [test "$uses_intel_compiler" = "yes"])
 
 # WO_PROG_PAPI()
 # WO_PROG_COMPONENTS()
