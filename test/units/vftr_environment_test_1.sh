@@ -5,9 +5,7 @@ ref_in_dir=${srcdir}/ref_input
 testname=vftr_environment_test_1
 outfile=$testname.out
 
-if [ -f $outfile ] ; then
-   rm -f $outfile
-fi
+rm -f $outfile
 
 # The user might have set some VFTR_ environment variables.
 # We save them in an array and unset them all.
