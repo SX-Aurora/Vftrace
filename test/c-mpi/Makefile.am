@@ -5,7 +5,9 @@ if USES_NEC_MPI
   AM_LDFLAGS += -mpiprof
 endif
 
-
+################
+# System Tests #
+################
 noinst_PROGRAMS = init_finalize \
 		  types \
 		  derived_types
@@ -31,7 +33,9 @@ dist_noinst_SCRIPTS = init_finalize-1.sh \
 		      derived_types-1.sh \
 		      derived_types-2.sh
 
-
+########################
+# point to point tests #
+########################
 noinst_PROGRAMS += send_recv \
 		   isend_recv
 
@@ -48,6 +52,13 @@ dist_noinst_SCRIPTS += send_recv-1.sh \
 		       isend_recv-1.sh \
 		       isend_recv-2.sh
 
+####################
+# Collective tests #
+####################
+
+###################
+# One sided tests #
+###################
 noinst_PROGRAMS += put \
 		   get
 
@@ -63,6 +74,43 @@ dist_noinst_SCRIPTS += put-1.sh \
 		       put-2.sh \
 		       get-1.sh \
 		       get-2.sh
+
+##############
+# Test tests #
+##############
+noinst_PROGRAMS += test \
+		   testany \
+		   testsome \
+		   testall
+
+test_SOURCES = $(srcdir)/test.c
+test_CFLAGS = $(AM_CFLAGS)
+test_LDFLAGS = $(AM_LDFLAGS)
+
+testany_SOURCES = $(srcdir)/testany.c
+testany_CFLAGS = $(AM_CFLAGS)
+testany_LDFLAGS = $(AM_LDFLAGS)
+
+testsome_SOURCES = $(srcdir)/testsome.c
+testsome_CFLAGS = $(AM_CFLAGS)
+testsome_LDFLAGS = $(AM_LDFLAGS)
+
+testall_SOURCES = $(srcdir)/testall.c
+testall_CFLAGS = $(AM_CFLAGS)
+testall_LDFLAGS = $(AM_LDFLAGS)
+
+dist_noinst_SCRIPTS += test-1.sh \
+		       test-2.sh \
+		       testany-1.sh \
+		       testany-2.sh \
+		       testsome-1.sh \
+		       testsome-2.sh \
+		       testall-1.sh \
+		       testall-2.sh
+
+##############
+# Wait tests #
+##############
 
 TEST_EXTENSIONS = .sh
 SH_LOG_COMPILER = $(SHELL)
