@@ -22,12 +22,14 @@ isend_recv_SOURCES = $(srcdir)/isend_recv.c
 isend_recv_CFLAGS  = $(AM_CFLAGS)
 isend_recv_LDFLAGS = $(AM_LDFLAGS)
 
-dist_noinst_SCRIPTS = init_finalize_1.sh \
-                      init_finalize_2.sh \
-                      init_finalize_3.sh \
-                      init_finalize_4.sh \
-                      send_recv.sh \
-		      isend_recv.sh
+dist_noinst_SCRIPTS = init_finalize-1.sh \
+                      init_finalize-2.sh \
+                      init_finalize-3.sh \
+                      init_finalize-4.sh \
+		      send_recv-1.sh \
+		      send_recv-2.sh \
+		      isend_recv-1.sh \
+		      isend_recv-2.sh
 
 TEST_EXTENSIONS = .sh
 SH_LOG_COMPILER = $(SHELL)
