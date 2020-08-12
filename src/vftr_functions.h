@@ -5,12 +5,6 @@
 #include <stdint.h>
 #include <stdbool.h>
 
-typedef struct ProfFragment {
-   long long cycles;
-   struct Function *func;
-   struct ProfFragment *next;
-} pfrag_t;
-
 typedef struct ProfileData {
    // amount of calls 
    long long calls;
@@ -22,8 +16,6 @@ typedef struct ProfileData {
    long long timeIncl;
    // 
    long long flops, *event_count, *events[2], ecreads;
-   //
-   pfrag_t *first,*last;
    //
    int pfcount, ic;
 } profdata_t;
@@ -39,7 +31,6 @@ typedef struct Function {
    char *full;
    // profiling data
    profdata_t prof_current, prof_previous;
-   pfrag_t         *frag;
    // is this function measured precicely?
    bool precise;
    // local and global stack-ID
