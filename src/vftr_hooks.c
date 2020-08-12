@@ -125,7 +125,7 @@ void vftr_function_entry (const char *s, void *addr, int line, bool isPrecise) {
     //
     // Check if the function is in the table
     //
-    callee = caller->call;
+    callee = caller->callee;
     
     if (callee == NULL) {
         // No calls at all yet: add new function
@@ -135,9 +135,9 @@ void vftr_function_entry (const char *s, void *addr, int line, bool isPrecise) {
         func = callee;
         if (func->address != addr) {
            for ( ;; ) {
-               func = func->next;
+               func = func->next_in_level;
                if (func == callee || func->address == addr) {
-           	break;
+           	  break;
                }
            }
            if (func == callee) {
@@ -146,7 +146,7 @@ void vftr_function_entry (const char *s, void *addr, int line, bool isPrecise) {
            }
         }
     }
-    caller->call = func; // Faster lookup next time around
+    caller->callee = func; // Faster lookup next time around
 
     if (func->exclude_this) return;
     if (line > 0) assert (func->line_beg == line);
@@ -166,7 +166,7 @@ void vftr_function_entry (const char *s, void *addr, int line, bool isPrecise) {
     // Is it time for the next sample?
     time_to_sample = (func_entry_time > vftr_nextsampletime) || func->precise;  
 
-    read_counters = (func->ret->detail || func->detail) &&
+    read_counters = (func->return_to->detail || func->detail) &&
 		    vftr_events_enabled && 
                     (time_to_sample || vftr_environment->accurate_profile->value);
 
@@ -189,8 +189,8 @@ void vftr_function_entry (const char *s, void *addr, int line, bool isPrecise) {
 
     // Maintain profile
 
-    if (func->ret) {
-        prof_return = &func->ret->prof_current;
+    if (func->return_to) {
+        prof_return = &func->return_to->prof_current;
         delta = cycles0 - vftr_prof_data.cycles;
 	prof_return->cycles += delta;
         prof_return->timeExcl += func_entry_time - vftr_prof_data.timeExcl;
@@ -199,7 +199,7 @@ void vftr_function_entry (const char *s, void *addr, int line, bool isPrecise) {
 	if (read_counters) {
             int ic = vftr_prof_data.ic;
             vftr_read_counters (vftr_prof_data.events[ic]);
-            if (prof_return->event_count && func->ret->detail) {
+            if (prof_return->event_count && func->return_to->detail) {
                 for (e = 0; e < vftr_n_hw_obs; e++) {
                     long long delta = vftr_prof_data.events[ic][e] - vftr_prof_data.events[1-ic][e];
 #ifdef __ve__
@@ -266,14 +266,14 @@ void vftr_function_exit(int line) {
     prof_current = &func->prof_current;
     prof_current->timeIncl += func_exit_time;   /* Inclusive time */
     
-    vftr_fstack = func->ret;
+    vftr_fstack = func->return_to;
 
     /* Is it time for the next sample? */
 
     timeToSample = (func_exit_time > vftr_nextsampletime) || func->precise || 
-                   (func->ret && !func->ret->id) /* Return from main program: end of execution */;
+                   (func->return_to && !func->return_to->id) /* Return from main program: end of execution */;
 
-    read_counters = (func->ret->detail || func->detail) &&
+    read_counters = (func->return_to->detail || func->detail) &&
 	  	    vftr_events_enabled && 
                     (timeToSample || vftr_environment->accurate_profile->value);
     if (timeToSample && vftr_env_do_sampling ()) {
@@ -296,7 +296,7 @@ void vftr_function_exit(int line) {
     prof_current->cycles += cycles0;
     prof_current->timeExcl += func_exit_time;
     vftr_prog_cycles += cycles0;
-    if (func->ret) {
+    if (func->return_to) {
         prof_current->cycles -= vftr_prof_data.cycles;
         prof_current->timeExcl -= vftr_prof_data.timeExcl;
         vftr_prog_cycles -= vftr_prof_data.cycles;
@@ -383,7 +383,7 @@ void vftr_function_exit(int line) {
     // and the actual program termination as experienced by the user is not
     // measured. Therefore, there is a theoretical, but miniscule, discrepancy
     // the user time and the time measured by Vftrace.
-    if (!vftr_fstack->ret) vftr_finalize();
+    if (!vftr_fstack->return_to) vftr_finalize();
 }
 
 // These are the actual Cygnus function hooks. 

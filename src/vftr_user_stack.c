@@ -28,8 +28,8 @@ int vftrace_get_stack_string_length() {
    function_t *tmpfunc = func;
    // go down the stack until the bottom is reached
    // record the length of the function names each
-   while (tmpfunc->ret) {
-      tmpfunc = tmpfunc->ret;
+   while (tmpfunc->return_to) {
+      tmpfunc = tmpfunc->return_to;
       // add one chars for function division by "<"
       stackstrlength += 1;
       stackstrlength += strlen(tmpfunc->name);
@@ -53,8 +53,8 @@ char *vftrace_get_stack() {
    strptr += strlen(tmpfunc->name);
    // go down the stack until the bottom is reached
    // copy the function names onto the string
-   while (tmpfunc->ret) {
-      tmpfunc = tmpfunc->ret;
+   while (tmpfunc->return_to) {
+      tmpfunc = tmpfunc->return_to;
       strcpy(strptr, "<");
       strptr += 1;
       strcpy(strptr, tmpfunc->name);

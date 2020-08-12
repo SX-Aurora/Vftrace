@@ -63,7 +63,7 @@ void vftr_initialize_stacks() {
    // Initialize stack tables 
    char *s = "init";
    function_t *func = vftr_new_function (NULL, strdup (s), NULL, "init", 0, true);
-   func->next = func; /* Close circular linked list to itself */
+   func->next_in_level = func; /* Close circular linked list to itself */
    vftr_fstack = func;
    vftr_samplecount = 0;
    vftr_maxtime = 0;
@@ -81,7 +81,7 @@ void vftr_write_stacks (FILE *fp, int level, function_t *func) {
    }
 
    int levels = level + 1;
-   int ret = func->ret ? func->ret->id : 0;
+   int ret = func->return_to ? func->return_to->id : 0;
    fwrite(&func->id, sizeof(int), 1, fp);
    //fwrite(&func->gid, sizeof(int), 1, fp);
    fwrite(&levels, sizeof(int), 1, fp);
@@ -90,8 +90,8 @@ void vftr_write_stacks (FILE *fp, int level, function_t *func) {
    fwrite(name, sizeof(char), len, fp);
 
    // Recursive print of callees
-   function_t *f = func->first;
-   for(int i=0; i<func->levels; i++,f=f->next) {
+   function_t *f = func->first_in_level;
+   for(int i=0; i<func->levels; i++,f=f->next_in_level) {
       vftr_write_stacks(fp, level+1, f);
    }
 }
@@ -155,7 +155,7 @@ int vftr_normalize_stacks() {
           vftr_gStackinfo[globID].name = strdup(vftr_func_table[istack]->name);
           if (strcmp(vftr_gStackinfo[globID].name, "init")) {
              // not the init function
-             vftr_gStackinfo[globID].ret = vftr_func_table[istack]->ret->gid;
+             vftr_gStackinfo[globID].ret = vftr_func_table[istack]->return_to->gid;
              vftr_gStackinfo[globID].locID = istack;
           } else {
              vftr_gStackinfo[globID].ret = -1;
@@ -281,7 +281,7 @@ int vftr_normalize_stacks() {
                    missingStackInfo[3*imatch+0] =
                       globID;
                    missingStackInfo[3*imatch+1] =
-                      vftr_func_table[locID]->ret->gid;
+                      vftr_func_table[locID]->return_to->gid;
                    // add one to length due to null terminator
                    missingStackInfo[3*imatch+2] =
                       strlen(vftr_func_table[locID]->name)+1;
@@ -344,7 +344,7 @@ void vftr_print_stack (double time0, function_t *func, char *label, int timeToSa
     fprintf (vftr_log, "%s%12.6lf %4d %s %s", 
              timeToSample ? "+" : " ", time0, func->id, label, mark );
 
-    for (f = func; f; f = f->ret) fprintf (vftr_log, "%s<", f->name);
+    for (f = func; f; f = f->return_to) fprintf (vftr_log, "%s<", f->name);
     fprintf (vftr_log, "\n");
 }
 
@@ -361,10 +361,10 @@ void vftr_print_local_stacklist (function_t **funcTable, FILE *pout, int ntop) {
 
     for (i = 0,namep = 0,maxID = 0; i < ntop; i++) {
         function_t *func = funcTable[i];
-        if (func == NULL || !func->ret) continue;
+        if (func == NULL || !func->return_to) continue;
         int width, id;
         id = useGid ? func->gid : func->id;
-        for (width = 0; func; func = func->ret) {
+        for (width = 0; func; func = func->return_to) {
             width += strlen (func->name) + 1;
 	}
         if (namep < width) namep = width;
@@ -394,10 +394,10 @@ void vftr_print_local_stacklist (function_t **funcTable, FILE *pout, int ntop) {
         char *sep; 
         int  id;
         function_t *func = funcTable[i];
-        if( func == NULL || !func->ret ) continue; /* If not defined or no caller */
+        if (func == NULL || !func->return_to) continue; /* If not defined or no caller */
 	id = useGid ? func->gid : func->id;
         fprintf( pout, fmtFid, id );
-        for( sep=""; func; func=func->ret,sep="<")
+        for( sep=""; func; func=func->return_to, sep="<")
             fprintf( pout, "%s%s", sep, func->name  );
         fprintf( pout, "\n" );
     }
@@ -419,7 +419,7 @@ void vftr_print_local_demangled (function_t **funcTable, FILE *pout, int ntop) {
     for( i=0,namep=0,maxID=0; i<ntop; i++ ) {
         function_t *func = funcTable[i];
         int        width, id;
-        if( func == NULL || !func->ret ||              /* If not defined or no caller */
+        if( func == NULL || !func->return_to ||              /* If not defined or no caller */
             func->full == NULL            ) continue;  /* or no full demangled name */
         id = useGid ? func->gid : func->id;
         width = strlen(func->full);
@@ -448,7 +448,7 @@ void vftr_print_local_demangled (function_t **funcTable, FILE *pout, int ntop) {
     for( i=0; i<ntop; i++ ) {
         int  id;
         function_t *func = funcTable[i];
-        if( func == NULL || !func->ret ||              /* If not defined or no caller */
+        if( func == NULL || !func->return_to ||              /* If not defined or no caller */
             func->full == NULL            ) continue;  /* or no full demangled name */
 	id = useGid ? func->gid : func->id;
         fprintf( pout, fmtFid, id );

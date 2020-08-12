@@ -277,7 +277,7 @@ void vftr_calc_tree_format (function_t *func) {
     n = func->levels;
 
     /* Recursive search of callees */
-    for (i = 0, f = func->first; i < n; i++,f = f->next) {
+    for (i = 0, f = func->first_in_level; i < n; i++,f = f->next_in_level) {
         vftr_calc_tree_format (f);
     }
 }

@@ -90,7 +90,7 @@ function_t *vftr_new_function(void *arg, const char *function_name,
    // global unique stack ID (unknown for now, so it gets an invalid value)
    func->gid = -1;
    // local unique stack ID of the calling function
-   func->ret = caller;
+   func->return_to = caller;
    // only for debugging
    func->new = 1;
    func->detail = 1;
@@ -102,8 +102,8 @@ function_t *vftr_new_function(void *arg, const char *function_name,
    function_t *tmpfunc = func;
    // go down the stack until the bottom is reached
    // record the length of the function names each
-   while (tmpfunc->ret) {
-      tmpfunc = tmpfunc->ret;
+   while (tmpfunc->return_to) {
+      tmpfunc = tmpfunc->return_to;
       // add one chars for function division by "<"
       stackstrlength += 1;
       stackstrlength += strlen(tmpfunc->name);
@@ -118,8 +118,8 @@ function_t *vftr_new_function(void *arg, const char *function_name,
    strptr += strlen(tmpfunc->name);
    // go down the stack until the bottom is reached
    // copy the function names onto the string
-   while (tmpfunc->ret) {
-      tmpfunc = tmpfunc->ret;
+   while (tmpfunc->return_to) {
+      tmpfunc = tmpfunc->return_to;
       strcpy(strptr, "<");
       strptr += 1;
       strcpy(strptr, tmpfunc->name);
@@ -175,13 +175,17 @@ function_t *vftr_new_function(void *arg, const char *function_name,
 
    // Is this function a branch or the root of the calltree?
    if (caller != NULL) {
-      if (caller->call) {
-         func->next   = caller->call->next;
+      if (caller->callee) {
+         func->next_in_level = caller->callee->next_in_level;
       } else {
-         caller->call = caller->first = func;
+         caller->callee = caller->first_in_level = func;
       }
-      caller->call->next = func;
+      caller->callee->next_in_level = func;
       caller->levels++;
+   // Just copy the root from the caller
+      func->root = caller->root;
+   } else {
+      func->root = func;
    }
 
    if (!vftr_func_table || (vftr_stackscount+1) > vftr_func_table_size) {
@@ -200,6 +204,8 @@ function_t *vftr_new_function(void *arg, const char *function_name,
 
    return func;
 }
+
+/**********************************************************************/
 
 void vftr_reset_counts (function_t *func) {
    function_t *f;

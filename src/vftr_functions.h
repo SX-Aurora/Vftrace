@@ -18,7 +18,7 @@ typedef struct ProfileData {
    long long cycles;
    // time spend in the function (excluding subfunctions)
    long long timeExcl;
-   // time speind in the function (including subfunctions)
+   // time spend in the function (including subfunctions)
    long long timeIncl;
    // 
    long long flops, *event_count, *events[2], ecreads;
@@ -30,7 +30,7 @@ typedef struct ProfileData {
 
 typedef struct Function {
    // pointers to other functions in the stack
-   struct Function *first, *next, *call, *ret, *root;
+   struct Function *first_in_level, *next_in_level, *callee, *return_to, *root;
    // the address of the function
    void *address;
    // name of the function
