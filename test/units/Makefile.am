@@ -21,7 +21,9 @@ dist_noinst_SCRIPTS = this_passes.sh \
 		      vftr_filewrite_test_1.sh \
 		      vftr_scenario_test_1.sh \
 		      vftr_scenario_test_2.sh \
-		      vftr_scenario_test_3.sh
+		      vftr_scenario_test_3.sh \
+	 	      vftr_functions_test_1.sh \
+	 	      vftr_functions_test_2.sh
 
 TEST_EXTENSIONS = .sh
 SH_LOG_COMPILER = $(SHELL)

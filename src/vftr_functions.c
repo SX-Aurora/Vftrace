@@ -28,6 +28,7 @@
 #include "vftr_regex.h"
 #include "vftr_environment.h"
 #include "vftr_functions.h"
+#include "vftr_fileutils.h"
 #include "vftr_hwcounters.h"
 
 
@@ -163,9 +164,11 @@ function_t *vftr_new_function(void *arg, const char *function_name,
    }
 
    // Determine if this function should be profiled
-   func->profile_this = vftr_pattern_match(vftr_environment->runtime_profile_funcs->value, func->name);
+   if (vftr_environment) {
+      func->profile_this = vftr_pattern_match(vftr_environment->runtime_profile_funcs->value, func->name);
+   }
 
-   if (!func->exclude_this) {
+   if (!func->exclude_this && vftr_environment) {
       if (vftr_environment->include_only_regex->set) {
          func->exclude_this = !vftr_pattern_match(vftr_environment->include_only_regex->value, func->name);
       } else if (vftr_environment->exclude_functions_regex->set) {
@@ -224,8 +227,93 @@ void vftr_reset_counts (function_t *func) {
    n = func->levels;
 
    /* Recursive scan of callees */
-   for (i = 0,f = func->first; i < n; i++, f = f->next) {
+   for (i = 0,f = func->first_in_level; i < n; i++, f = f->next_in_level) {
        vftr_reset_counts (f);
    }
 }
 
+/**********************************************************************/
+
+void vftr_write_function (FILE *fp, function_t *func) {
+	fprintf (fp, "Function: %s\n", func->name);
+	fprintf (fp, "\tAddress: ");
+	if (func->address) {
+		fprintf (fp, "0x%lx\n", func->address);
+	} else {
+		fprintf (fp, "-/-\n");
+	}
+	fprintf (fp, "\tCalled from: ");
+	if (func->return_to) {
+		fprintf (fp, "%s\n", func->return_to->name);	
+	} else {
+		fprintf (fp, "-/-\n");
+	}
+	fprintf (fp, "\tCurrently calling: ");
+	if (func->callee) {
+		fprintf (fp, "%s\n", func->callee->name);
+	} else {	
+		fprintf (fp, "-/-\n");
+	}
+	fprintf (fp, "\tFirst in next Level: ");
+	if (func->first_in_level) {
+		fprintf (fp, "%s\n", func->first_in_level->name);
+	} else {	
+		fprintf (fp, "-/-\n");
+	}
+	fprintf (fp, "\tNext in current Level: ");
+	if (func->next_in_level) {
+		fprintf (fp, "%s\n", func->next_in_level->name);
+	} else {	
+		fprintf (fp, "-/-\n");
+	}
+	fprintf (fp, "\tRoot: ");
+	if (func->root) {
+		fprintf (fp, "%s\n", func->root->name);
+	} else {	
+		fprintf (fp, "-/-\n");
+	}
+
+
+	fprintf (fp, "\tprecise: %s\n", vftr_bool_to_string (func->precise));
+	fprintf (fp, "\tID: %d\n", func->id);
+	fprintf (fp, "\tGroup ID: %d\n", func->gid);
+	fprintf (fp, "\tRecursion depth: %d\n", func->recursion_depth);
+	fprintf (fp, "\tStackHash: %u\n", func->stackHash);
+	fprintf (fp, "\tExclude: %d\n", func->exclude_this);
+}
+		
+/**********************************************************************/
+
+int vftr_functions_test_1 (FILE *fp_in, FILE *fp_out) {
+	long long addr = 0x12345;
+	function_t *func = vftr_new_function (addr, "test_1", NULL, 0, true);
+	vftr_write_function (fp_out, func);
+	return 0;
+}
+
+
+/**********************************************************************/
+
+int vftr_functions_test_2 (FILE *fp_in, FILE *fp_out) {
+	long long addr = 0x12345;
+	function_t *func1 = vftr_new_function (NULL, "init", NULL, 0, false);
+	function_t *func2 = vftr_new_function (addr++, "func2", func1, 0, false);
+	function_t *func3 = vftr_new_function (addr++, "func3", func1, 0, false);	
+	function_t *func4 = vftr_new_function (addr++, "func4", func3, 0, false);
+	function_t *func5 = vftr_new_function (addr++, "func5", func2, 0, false);
+	function_t *func6 = vftr_new_function (addr++, "func6", func2, 0, false);
+	function_t *func7 = vftr_new_function (addr++, "func4", func6, 0, false);
+	vftr_write_function (fp_out, func1);
+	vftr_write_function (fp_out, func2);
+	vftr_write_function (fp_out, func3);
+	vftr_write_function (fp_out, func4);
+	vftr_write_function (fp_out, func5);
+	vftr_write_function (fp_out, func6);
+	vftr_write_function (fp_out, func7);
+	fprintf (fp_out, "Test if callee pointer is changed properly\n");
+	func2->callee = func6;
+	vftr_write_function (fp_out, func2);
+	return 0;
+}
+
+/**********************************************************************/
