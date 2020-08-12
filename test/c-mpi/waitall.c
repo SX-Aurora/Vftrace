@@ -25,7 +25,7 @@ int main(int argc, char** argv) {
 
    // require cmd-line argument
    if (argc < 2) {
-      printf("./testall <msgsize in Byte>\n");
+      printf("./waitall <msgsize in Byte>\n");
       return 1;
    }
 

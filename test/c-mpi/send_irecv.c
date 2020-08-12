@@ -24,7 +24,7 @@ int main(int argc, char** argv) {
 
    // require cmd-line argument
    if (argc < 2) {
-      printf("./send_recv <msgsize in ints>\n");
+      printf("./send_irecv <msgsize in ints>\n");
       return 1;
    }
 
