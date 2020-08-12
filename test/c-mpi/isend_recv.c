@@ -25,16 +25,19 @@ int main(int argc, char** argv) {
 
    // require cmd-line argument
    if (argc < 2) {
-      printf("./isend_recv <msgsize in Byte>\n");
+      printf("./isend_recv <msgsize in ints>\n");
       return 1;
    }
    // allocating send/recv buffer
-   int nbyte = atoi(argv[1]);
-   void* sbuffer = malloc(nbyte);
-   void* rbuffer = malloc(nbyte);
+   int nints = atoi(argv[1]);
+   int* sbuffer = (int*) malloc(nints*sizeof(int));
+   for (int i=0; i<nints; i++) {sbuffer[i]=my_rank;}
+   int* rbuffer = (int*) malloc(nints*sizeof(int));
+   for (int i=0; i<nints; i++) {rbuffer[i]=-1;}
    MPI_Request *myrequest = (MPI_Request*) malloc((comm_size-1)*sizeof(MPI_Request));
 
    // Messaging cycle
+   bool valid_data = true;
    for (int sendrank=0; sendrank<comm_size; sendrank++) {
       MPI_Status mystat;
       int reqidx = 0;
@@ -43,7 +46,7 @@ int main(int argc, char** argv) {
          for (int recvrank=0; recvrank<comm_size; recvrank++) {
             if (my_rank != recvrank) {
                printf("Sending messages from rank %d\n", my_rank);
-               MPI_Isend(sbuffer, nbyte, MPI_BYTE, recvrank, 0, MPI_COMM_WORLD,
+               MPI_Isend(sbuffer, nints, MPI_INT, recvrank, 0, MPI_COMM_WORLD,
                          myrequest+reqidx);
                reqidx++;
             }
@@ -53,7 +56,15 @@ int main(int argc, char** argv) {
             MPI_Wait(myrequest+ireq, &mystat);
          }
       } else {
-         MPI_Recv(rbuffer, nbyte, MPI_BYTE, sendrank, 0, MPI_COMM_WORLD, &mystat);
+         MPI_Recv(rbuffer, nints, MPI_INT, sendrank, 0, MPI_COMM_WORLD, &mystat);
+         // validate data
+         for (int i=0; i<nints; i++) {
+            if (rbuffer[i] != sendrank) {
+               printf("Rank %d received faulty data from rank %d\n", my_rank, sendrank);
+               valid_data = false;
+               break;
+            }
+         }
       }
    }
    MPI_Barrier(MPI_COMM_WORLD);
@@ -66,5 +77,5 @@ int main(int argc, char** argv) {
 
    MPI_Finalize();
 
-   return 0;
+   return valid_data ? 0 : 1;
 }

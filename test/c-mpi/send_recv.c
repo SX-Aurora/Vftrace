@@ -24,35 +24,50 @@ int main(int argc, char** argv) {
 
    // require cmd-line argument
    if (argc < 2) {
-      printf("./send_recv <msgsize in Byte>\n");
+      printf("./send_recv <msgsize in ints>\n");
       return 1;
    }
 
    // allocating send/recv buffer
-   int nbyte = atoi(argv[1]);
-   void* srbuffer = malloc(nbyte);
+   int nints = atoi(argv[1]);
+   int* sbuffer = (int*) malloc(nints*sizeof(int));
+   for (int i=0; i<nints; i++) {sbuffer[i]=my_rank;}
+   int* rbuffer = (int*) malloc(nints*sizeof(int));
+   for (int i=0; i<nints; i++) {rbuffer[i]=-1;}
 
    // Messaging cycle
+   bool valid_data = true;
    for (int sendrank=0; sendrank<comm_size; sendrank++) {
       if (my_rank == sendrank) {
          // send to every other rank
          for (int recvrank=0; recvrank<comm_size; recvrank++) {
             if (my_rank != recvrank) {
                printf("Sending messages from rank %d\n", my_rank);
-               MPI_Send(srbuffer, nbyte, MPI_BYTE, recvrank, 0, MPI_COMM_WORLD);
+               MPI_Send(sbuffer, nints, MPI_INT, recvrank, 0, MPI_COMM_WORLD);
             }
          }
       } else {
          MPI_Status mystat;
          printf("Sending messages from rank %d\n", sendrank);
-         MPI_Recv(srbuffer, nbyte, MPI_BYTE, sendrank, 0, MPI_COMM_WORLD, &mystat);
+         MPI_Recv(rbuffer, nints, MPI_INT, sendrank, 0, MPI_COMM_WORLD, &mystat);
+         // validate data
+         for (int i=0; i<nints; i++) {
+            if (rbuffer[i] != sendrank) {
+               printf("Rank %d received faulty data from rank %d\n", my_rank, sendrank);
+               valid_data = false;
+               break;
+            }
+         }
       }
    }
 
-   free(srbuffer);
-   srbuffer=NULL;
+   free(sbuffer);
+   sbuffer=NULL;
+
+   free(rbuffer);
+   rbuffer=NULL;
 
    MPI_Finalize();
 
-   return 0;
+   return valid_data ? 0 : 1;
 }
