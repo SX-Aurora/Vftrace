@@ -62,7 +62,7 @@ void vftr_initialize_stacks() {
 
    // Initialize stack tables 
    char *s = "init";
-   function_t *func = vftr_new_function (NULL, strdup (s), NULL, "init", 0, true);
+   function_t *func = vftr_new_function (NULL, strdup (s), NULL, 0, true);
    func->next_in_level = func; /* Close circular linked list to itself */
    vftr_fstack = func;
    vftr_samplecount = 0;

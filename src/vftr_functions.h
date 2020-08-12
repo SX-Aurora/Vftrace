@@ -54,8 +54,7 @@ typedef struct Function {
 
 // add a new function to the stack tables
 function_t *vftr_new_function(void *arg, const char *function_name,
-                              function_t *caller, char *info, int line,
-                              bool isPrecise);
+                              function_t *caller, int line, bool is_precise);
 
 // Reset all function internal counters
 void vftr_reset_counts (function_t *func);

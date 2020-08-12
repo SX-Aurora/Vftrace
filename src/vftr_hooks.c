@@ -129,7 +129,7 @@ void vftr_function_entry (const char *s, void *addr, int line, bool isPrecise) {
     
     if (callee == NULL) {
         // No calls at all yet: add new function
-        func = vftr_new_function(addr, s, caller, "no calls yet", line, isPrecise);
+        func = vftr_new_function(addr, s, caller, line, isPrecise);
     } else {
 	// Search the function name in the function list
         func = callee;
@@ -142,7 +142,7 @@ void vftr_function_entry (const char *s, void *addr, int line, bool isPrecise) {
            }
            if (func == callee) {
                // No call from this callee yet: add new function
-               func = vftr_new_function(addr, s, caller, "not in list", line, isPrecise);
+               func = vftr_new_function(addr, s, caller, line, isPrecise);
            }
         }
     }

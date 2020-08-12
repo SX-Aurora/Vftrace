@@ -59,8 +59,7 @@ char *vftr_precice_functions[] = {
 
 // add a new function to the stack tables
 function_t *vftr_new_function(void *arg, const char *function_name,
-                              function_t *caller, char *info, int line,
-                              bool isPrecise) {
+                              function_t *caller, int line, bool is_precise) {
 
    // create and null new function
    function_t *func = (function_t *) malloc (sizeof(function_t));
@@ -133,10 +132,11 @@ function_t *vftr_new_function(void *arg, const char *function_name,
 
    if (line > 0) func->line_beg = line;
 
-   if (arg) { // Skip if address not defined (when info is "init")
-      func->precise = isPrecise ||
-                      vftr_pattern_match(vftr_environment->preciseregex->value,
-                                         func->name);
+   if (arg) { // Skip if address not defined (when function is "init")
+      if (vftr_environment) {
+         func->precise = is_precise || vftr_pattern_match (vftr_environment->preciseregex->value,
+                                                          func->name);
+      }
    }
 
    // Check if the new function is meant to be priceicely sampled
