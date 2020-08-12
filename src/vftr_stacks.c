@@ -334,8 +334,8 @@ void vftr_print_stack (double time0, function_t *func, char *label, int timeToSa
     function_t   *f;
     char         *mark;
 
-    if( func->new ) {
-        func->new = 0;
+    if (func->new) {
+        func->new = false;
         mark = "*";
     } else {
         mark = "";

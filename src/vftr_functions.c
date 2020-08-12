@@ -91,8 +91,8 @@ function_t *vftr_new_function(void *arg, const char *function_name,
    // local unique stack ID of the calling function
    func->return_to = caller;
    // only for debugging
-   func->new = 1;
-   func->detail = 1;
+   func->new = true;
+   func->detail = true;
    // if called recursively keep track of depth
    func->recursion_depth = 0;
 

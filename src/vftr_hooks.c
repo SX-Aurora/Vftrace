@@ -353,12 +353,12 @@ void vftr_function_exit(int line) {
             tsum += (double)f->prof_current.cycles;
 	    double cutoff = vftr_environment->detail_until_cum_cycles->value;
             if ((tsum * scale) > cutoff) break;
-            f->detail = 1;
+            f->detail = true;
         }
         top = i;
         /* Clear function detail flags for all others */
         for(; i<vftr_stackscount; i++) 
-            vftr_func_table[i]->detail = 0;
+            vftr_func_table[i]->detail = false;
 
         vftr_sorttime *= vftr_sorttime_growth;
     }
