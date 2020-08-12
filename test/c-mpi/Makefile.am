@@ -112,6 +112,15 @@ dist_noinst_SCRIPTS += test-1.sh \
 # Wait tests #
 ##############
 
+noinst_PROGRAMS += wait
+
+wait_SOURCES = $(srcdir)/wait.c
+wait_CFLAGS = $(AM_CFLAGS)
+wait_LDFLAGS = $(AM_LDFLAGS)
+
+dist_noinst_SCRIPTS += wait-1.sh \
+		       wait-2.sh
+
 TEST_EXTENSIONS = .sh
 SH_LOG_COMPILER = $(SHELL)
 
