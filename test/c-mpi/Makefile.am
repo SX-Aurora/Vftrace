@@ -113,7 +113,8 @@ dist_noinst_SCRIPTS += test-1.sh \
 ##############
 
 noinst_PROGRAMS += wait \
-		   waitany 
+		   waitany \
+		   waitsome
 
 wait_SOURCES = $(srcdir)/wait.c
 wait_CFLAGS = $(AM_CFLAGS)
@@ -123,10 +124,16 @@ waitany_SOURCES = $(srcdir)/waitany.c
 waitany_CFLAGS = $(AM_CFLAGS)
 waitany_LDFLAGS = $(AM_LDFLAGS)
 
+waitsome_SOURCES = $(srcdir)/waitsome.c
+waitsome_CFLAGS = $(AM_CFLAGS)
+waitsome_LDFLAGS = $(AM_LDFLAGS)
+
 dist_noinst_SCRIPTS += wait-1.sh \
 		       wait-2.sh \
 		       waitany-1.sh \
-		       waitany-2.sh 
+		       waitany-2.sh \
+		       waitsome-1.sh \
+		       waitsome-2.sh
 
 TEST_EXTENSIONS = .sh
 SH_LOG_COMPILER = $(SHELL)
