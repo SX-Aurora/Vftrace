@@ -30,12 +30,14 @@ int main(int argc, char** argv) {
    }
 
    // allocating send/recv buffer
-   int nbyte = atoi(argv[1]);
-   int* srbuffer = malloc(nbyte);
+   int nints = atoi(argv[1]);
+   int* srbuffer = (int*) malloc(nints*sizeof(int));
+   for (int i=0; i<nints; i++) {srbuffer[i]=my_rank;}
 
    // open memory to remote memory access
    MPI_Win window;
-   MPI_Win_create(srbuffer, nbyte, 1, MPI_INFO_NULL, MPI_COMM_WORLD, &window);
+   MPI_Win_create(srbuffer, nints*sizeof(int), sizeof(int),
+                  MPI_INFO_NULL, MPI_COMM_WORLD, &window);
 
    MPI_Win_fence(0, window);
 
@@ -44,16 +46,28 @@ int main(int argc, char** argv) {
       // send to every other rank
       for (int targetrank=1; targetrank<comm_size; targetrank++) {
          printf("Putting data remotely on rank %d\n", targetrank);
-         MPI_Put(srbuffer, nbyte, MPI_BYTE, targetrank, 0, nbyte, MPI_BYTE, window);
+         MPI_Put(srbuffer, nints, MPI_INT, targetrank, 0, nints, MPI_INT, window);
       }
    }
    MPI_Win_fence(0, window);
    MPI_Win_free(&window);
+
+   MPI_Barrier(MPI_COMM_WORLD);
+   //validate data
+   bool valid_data = true;
+   for (int i=0; i<nints; i++) {
+      if (srbuffer[i] != 0) {
+         printf("Rank %d received faulty data from rank 0\n", my_rank);
+         valid_data = false;
+         break;
+      }
+   }
+
 
    free(srbuffer);
    srbuffer=NULL;
 
    MPI_Finalize();
 
-   return 0;
+   return valid_data ? 0 : 1;
 }
