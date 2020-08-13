@@ -285,8 +285,8 @@ void vftr_write_function (FILE *fp, function_t *func) {
 /**********************************************************************/
 
 int vftr_functions_test_1 (FILE *fp_in, FILE *fp_out) {
-	long long addr = 0x12345;
-	function_t *func = vftr_new_function (addr, "test_1", NULL, 0, true);
+	unsigned long long addr[1];
+	function_t *func = vftr_new_function ((void*)addr, "test_1", NULL, 0, true);
 	vftr_write_function (fp_out, func);
 	return 0;
 }
@@ -295,15 +295,14 @@ int vftr_functions_test_1 (FILE *fp_in, FILE *fp_out) {
 /**********************************************************************/
 
 int vftr_functions_test_2 (FILE *fp_in, FILE *fp_out) {
-	long long addr = 0x12345;
+	unsigned long long addrs [6];
 	function_t *func1 = vftr_new_function (NULL, "init", NULL, 0, false);
-	function_t *func2 = vftr_new_function (addr++, "func2", func1, 0, false);
-	function_t *func3 = vftr_new_function (addr++, "func3", func1, 0, false);	
-	function_t *func4 = vftr_new_function (addr++, "func4", func3, 0, false);
-	function_t *func5 = vftr_new_function (addr++, "func5", func2, 0, false);
-	function_t *func6 = vftr_new_function (addr++, "func6", func2, 0, false);
-	function_t *func7 = vftr_new_function (addr++, "func4", func6, 0, false);
-	vftr_write_function (fp_out, func1);
+	function_t *func2 = vftr_new_function ((void*)addrs, "func2", func1, 0, false);
+	function_t *func3 = vftr_new_function ((void*)(addrs + 1), "func3", func1, 0, false);	
+	function_t *func4 = vftr_new_function ((void*)(addrs + 2), "func4", func3, 0, false);
+	function_t *func5 = vftr_new_function ((void*)(addrs + 3), "func5", func2, 0, false);
+	function_t *func6 = vftr_new_function ((void*)(addrs + 4), "func6", func2, 0, false);
+	function_t *func7 = vftr_new_function ((void*)(addrs + 5), "func4", func6, 0, false);
 	vftr_write_function (fp_out, func2);
 	vftr_write_function (fp_out, func3);
 	vftr_write_function (fp_out, func4);
