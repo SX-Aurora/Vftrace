@@ -1,7 +1,7 @@
 #!/bin/bash
 
 vftr_binary=put
-nprocs=2
+nprocs=4
 ntrials=1
 
 export VFTR_SAMPLING="Yes"
