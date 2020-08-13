@@ -38,6 +38,7 @@ dist_noinst_SCRIPTS = init_finalize-1.sh \
 ########################
 noinst_PROGRAMS += send_recv \
 		   sendrecv \
+		   sendrecv_replace \
 		   isend_recv \
 		   send_irecv
 
@@ -48,6 +49,10 @@ send_recv_LDFLAGS = $(AM_LDFLAGS)
 sendrecv_SOURCES = $(srcdir)/sendrecv.c
 sendrecv_CFLAGS  = $(AM_CFLAGS)
 sendrecv_LDFLAGS = $(AM_LDFLAGS)
+
+sendrecv_replace_SOURCES = $(srcdir)/sendrecv_replace.c
+sendrecv_replace_CFLAGS  = $(AM_CFLAGS)
+sendrecv_replace_LDFLAGS = $(AM_LDFLAGS)
 
 isend_recv_SOURCES = $(srcdir)/isend_recv.c
 isend_recv_CFLAGS  = $(AM_CFLAGS)
@@ -61,6 +66,8 @@ dist_noinst_SCRIPTS += send_recv-1.sh \
 		       send_recv-2.sh \
 		       sendrecv-1.sh \
 		       sendrecv-2.sh \
+		       sendrecv_replace-1.sh \
+		       sendrecv_replace-2.sh \
 		       isend_recv-1.sh \
 		       isend_recv-2.sh \
 		       send_irecv-1.sh \
