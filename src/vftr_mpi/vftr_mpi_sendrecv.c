@@ -44,15 +44,12 @@ int vftr_MPI_Sendrecv(const void *sendbuf, int sendcount,
   
       int rank;
       PMPI_Comm_rank(comm, &rank);
-      if (rank == source) {
-         vftr_store_sync_message_info(send, sendcount, sendtype, dest,
-                                      sendtag, comm, tstart, tend);
-      } else {
-         vftr_store_sync_message_info(recv, recvcount, recvtype,
-                                      tmpstatus.MPI_SOURCE, tmpstatus.MPI_TAG,
-                                      comm, tstart, tend);
-      }
-  
+      vftr_store_sync_message_info(send, sendcount, sendtype, dest,
+                                   sendtag, comm, tstart, tend);
+      vftr_store_sync_message_info(recv, recvcount, recvtype,
+                                   tmpstatus.MPI_SOURCE, tmpstatus.MPI_TAG,
+                                   comm, tstart, tend);
+ 
       // handle the special case of MPI_STATUS_IGNORE
       if (status != MPI_STATUS_IGNORE) {
          status->MPI_SOURCE = tmpstatus.MPI_SOURCE;
