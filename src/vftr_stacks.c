@@ -523,3 +523,26 @@ void vftr_print_global_stacklist (FILE *pout) {
    OUTPUT_DASHES_NL( tableWidth, pout )
    fputs( "\n", pout );
 }
+
+/**********************************************************************/
+
+int vftr_stacks_test_1 (FILE *fp_in, FILE *fp_out) {
+	unsigned long long addrs[6];
+	function_t *func1 = vftr_new_function (NULL, "init", NULL, 0, false);
+	function_t *func2 = vftr_new_function ((void*)addrs, "func2", func1, 0, false);
+	function_t *func3 = vftr_new_function ((void*)(addrs + 1), "func3", func1, 0, false);	
+	function_t *func4 = vftr_new_function ((void*)(addrs + 2), "func4", func3, 0, false);
+	function_t *func5 = vftr_new_function ((void*)(addrs + 3), "func5", func2, 0, false);
+	function_t *func6 = vftr_new_function ((void*)(addrs + 4), "func6", func2, 0, false);
+	function_t *func7 = vftr_new_function ((void*)(addrs + 5), "func4", func6, 0, false);
+	vftr_normalize_stacks();			
+	fprintf (fp_out, "%s: %d %d\n", func1->name, func1->id, func1->gid);
+	fprintf (fp_out, "%s: %d %d\n", func2->name, func2->id, func2->gid);
+	fprintf (fp_out, "%s: %d %d\n", func3->name, func3->id, func3->gid);
+	fprintf (fp_out, "%s: %d %d\n", func4->name, func4->id, func4->gid);
+	fprintf (fp_out, "%s: %d %d\n", func5->name, func5->id, func5->gid);
+	fprintf (fp_out, "%s: %d %d\n", func6->name, func6->id, func6->gid);
+	fprintf (fp_out, "%s: %d %d\n", func7->name, func7->id, func7->gid);
+}
+
+/**********************************************************************/
