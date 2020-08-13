@@ -9,7 +9,7 @@ export VFTR_PRECISE="MPI_*"
 
 mpirun -np ${nprocs} ./${vftr_binary} || exit 1
 
-for ivfd in $(seq 0 1 1);
+for ivfd in $(seq 0 1 $(bc <<< "${nprocs} - 1"));
 do
 
    ../../tools/tracedump ${vftr_binary}_${ivfd}.vfd
