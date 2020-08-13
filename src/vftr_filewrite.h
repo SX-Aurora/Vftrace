@@ -50,6 +50,7 @@ void vftr_print_profile (FILE *pout, int *ntop, long long t0);
 char *vftr_get_program_path ();
 char *vftr_create_logfile_name (int mpi_rank, int mpi_size, char *suffix);
 
-int vftr_filewrite_test_1 (FILE *fp);
+int vftr_filewrite_test_1 (FILE *fp_in, FILE *fp_out);
+int vftr_filewrite_test_2 (FILE *fp_in, FILE *fp_out);
 
 #endif

@@ -44,7 +44,9 @@ int main (int argc, char **argv) {
 	} else if (!strcmp (argv[1], "vftr_setup_test_2")) {
 		retval = vftr_setup_test_2 (fp_out);
 	} else if (!strcmp (argv[1], "vftr_filewrite_test_1")) {
-		retval = vftr_filewrite_test_1 (fp_out);
+		retval = vftr_filewrite_test_1 (fp_in, fp_out);
+	} else if (!strcmp (argv[1], "vftr_filewrite_test_2")) {
+		retval = vftr_filewrite_test_2 (fp_in, fp_out);
 	} else if (!strcmp (argv[1], "vftr_scenario_test_1")) {
 		retval = vftr_scenario_test_1 (fp_in, fp_out);
 	} else if (!strcmp (argv[1], "vftr_scenario_test_2")) {

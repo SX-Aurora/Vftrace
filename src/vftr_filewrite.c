@@ -390,7 +390,9 @@ void fill_indices_to_evaluate (function_t **funcTable, double runtime, int *indi
 		indices[j++] = i;
 		get_stack_times (prof_current, prof_previous, runtime, &t_excl, &t_incl, &t_part);
 		ctime += t_part;
-		if (vftr_environment->prof_truncate->value && ctime > max_ctime) break;
+		if (vftr_environment) {
+			if (vftr_environment->prof_truncate->value && ctime > max_ctime) break;
+		}
 	}
 }
 
@@ -412,7 +414,11 @@ int count_indices_to_evaluate (function_t **funcTable, double runtime) {
 
 		get_stack_times (prof_current, prof_previous, runtime, &t_excl, &t_incl, &t_part);
 		ctime += t_part;
-		if (vftr_environment->prof_truncate->value && ctime > max_ctime) break;
+		if (vftr_environment) {
+		   if (vftr_environment->prof_truncate->value && ctime > max_ctime) {
+		   	break;
+		   }
+		}
 	}
 	return n_indices;
 }
@@ -783,20 +789,43 @@ void vftr_print_profile (FILE *pout, int *ntop, long long time0) {
 
 /**********************************************************************/
 
-int vftr_filewrite_test_1 (FILE *fp) {
-	fprintf (fp, "Check the creation of log and vfd file name\n");
+int vftr_filewrite_test_1 (FILE *fp_in, FILE *fp_out) {
+	fprintf (fp_out, "Check the creation of log and vfd file name\n");
 	int mpi_rank, mpi_size;
 	mpi_rank = 0;
 	mpi_size = 1;
-	fprintf (fp, "logfile_name(%d, %d): %s\n", mpi_rank, mpi_size,
+	fprintf (fp_out, "logfile_name(%d, %d): %s\n", mpi_rank, mpi_size,
 		 vftr_create_logfile_name(mpi_rank, mpi_size, "log"));
 	mpi_rank = 11;
 	mpi_size = 111;
-	fprintf (fp, "logfile_name(%d, %d): %s\n", mpi_rank, mpi_size,
+	fprintf (fp_out, "logfile_name(%d, %d): %s\n", mpi_rank, mpi_size,
 		 vftr_create_logfile_name(mpi_rank, mpi_size, "log"));
-	fprintf (fp, "logfile_name(%d, %d): %s\n", mpi_rank, mpi_size,
+	fprintf (fp_out, "logfile_name(%d, %d): %s\n", mpi_rank, mpi_size,
 		 vftr_create_logfile_name(mpi_rank, mpi_size, "vfd"));
 
 }
 
 /**********************************************************************/
+
+int vftr_filewrite_test_2 (FILE *fp_in, FILE *fp_out) {
+	int n;
+	unsigned long long addrs [6];
+	function_t *func1 = vftr_new_function (NULL, "init", NULL, 0, false);
+	function_t *func2 = vftr_new_function ((void*)addrs, "func2", func1, 0, false);
+	function_t *func3 = vftr_new_function ((void*)(addrs + 1), "func3", func1, 0, false);	
+	function_t *func4 = vftr_new_function ((void*)(addrs + 2), "func4", func3, 0, false);
+	function_t *func5 = vftr_new_function ((void*)(addrs + 3), "func5", func2, 0, false);
+	function_t *func6 = vftr_new_function ((void*)(addrs + 4), "func6", func2, 0, false);
+	function_t *func7 = vftr_new_function ((void*)(addrs + 5), "func4", func6, 0, false);
+	for (int i = 0; i < vftr_stackscount; i++) {
+		vftr_func_table[i]->prof_current.calls = i + 1;
+	}
+
+	vftr_profile_wanted = true;
+	vftr_mpisize = 1;
+	vftr_print_profile (fp_out, &n, 0);		
+	return 0;
+}
+
+/**********************************************************************/
+
