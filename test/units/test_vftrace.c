@@ -5,6 +5,7 @@
 #include "vftr_filewrite.h"
 #include "vftr_functions.h"
 #include "vftr_scenarios.h"
+#include "vftr_stacks.h"
 #include "vftr_symbols.h"
 
 int this_fails () {

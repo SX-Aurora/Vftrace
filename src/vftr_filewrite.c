@@ -34,6 +34,7 @@
 #include "vftr_timer.h"
 #include "vftr_setup.h"
 #include "vftr_mpi_utils.h"
+#include "vftr_stacks.h"
 
 // File pointer of the log file
 FILE *vftr_log = NULL;
@@ -501,16 +502,14 @@ void set_formats (function_t **funcTable, double runtime,
 /**********************************************************************/
 
 void vftr_print_profile (FILE *pout, int *ntop, long long time0) {
-    float          pscale, ctime;
-    double         rtime, tohead, pohead, tend, tend2;
-    double         clockFreq;
-    unsigned long long      total_cycles, calls, cycles;
-    evtcounter_t    *evc0, *evc1, *evc;
+    float pscale, ctime;
+    double rtime, tohead, pohead, tend, tend2;
+    double clockFreq;
+    unsigned long long total_cycles, calls, cycles;
+    evtcounter_t *evc0, *evc1, *evc;
     
-    int            n, k, fid;
-    int            linesize = 64; /* L3 cache line size */
-
-    int            offset, tableWidth;
+    int n, k, fid;
+    int offset, tableWidth;
 
     char fmtcalls[10], fmttime[10], fmttimeInc[10], fmtfid[10];
 
@@ -553,7 +552,7 @@ void vftr_print_profile (FILE *pout, int *ntop, long long time0) {
 	    }
 	}
     }
-    double total_runtime = vftr_get_runtime_usec() * 1.0e-6;
+    double total_runtime = time0 > 0 ? (double)time0 * 1e-6 : vftr_get_runtime_usec() * 1.0e-6;
     double overhead_time = vftr_overhead_usec * 1.0e-6;
     double application_runtime = total_runtime - overhead_time;
     rtime = application_runtime;
@@ -817,13 +816,22 @@ int vftr_filewrite_test_2 (FILE *fp_in, FILE *fp_out) {
 	function_t *func5 = vftr_new_function ((void*)(addrs + 3), "func5", func2, 0, false);
 	function_t *func6 = vftr_new_function ((void*)(addrs + 4), "func6", func2, 0, false);
 	function_t *func7 = vftr_new_function ((void*)(addrs + 5), "func4", func6, 0, false);
+	vftr_normalize_stacks();
 	for (int i = 0; i < vftr_stackscount; i++) {
 		vftr_func_table[i]->prof_current.calls = i + 1;
+		vftr_func_table[i]->prof_current.timeExcl = (long long)(i+1) * 100000;
+		vftr_func_table[i]->prof_previous.timeExcl = (long long)(i+1) * 90000;
+		vftr_func_table[i]->prof_current.timeIncl =
+			2 * vftr_func_table[i]->prof_current.timeExcl;
+		vftr_func_table[i]->prof_previous.timeIncl =
+			2 * vftr_func_table[i]->prof_previous.timeExcl;
+		vftr_test_runtime += vftr_func_table[i]->prof_current.timeExcl
+				   - vftr_func_table[i]->prof_previous.timeExcl;
 	}
 
 	vftr_profile_wanted = true;
 	vftr_mpisize = 1;
-	vftr_print_profile (fp_out, &n, 0);		
+	vftr_print_profile (fp_out, &n, vftr_test_runtime);		
 	return 0;
 }
 
