@@ -12,7 +12,7 @@ for itrial in $(seq 1 1 ${ntrials});
 do
    # Generate a random message size
    nb=$(bc <<< "32*${RANDOM}")
-   mpirun -np ${nprocs} ./${vftr_binary} ${nb}
+   mpirun -np ${nprocs} ./${vftr_binary} ${nb} || exit 1
 
    # check each rank for the correct message communication
    # patterns in the vfd file
