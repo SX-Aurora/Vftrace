@@ -30,30 +30,55 @@ int main(int argc, char** argv) {
    }
 
    // allocating send/recv buffer
-   int nbyte = atoi(argv[1]);
-   int* srbuffer = malloc(nbyte);
+   int nints = atoi(argv[1]);
+   int* srbuffer;
+   if (my_rank == 0) {
+      srbuffer = (int*) malloc((comm_size-1)*nints*sizeof(int));
+      for (int i=0; i<(comm_size-1)*nints; i++) {srbuffer[i]=my_rank;}
+   } else {
+      srbuffer = (int*) malloc(nints*sizeof(int));
+      for (int i=0; i<nints; i++) {srbuffer[i]=my_rank;}
+   }
 
    // open memory to remote memory access
    MPI_Win window;
-   MPI_Win_create(srbuffer, nbyte, 1, MPI_INFO_NULL, MPI_COMM_WORLD, &window);
+   MPI_Win_create(srbuffer, nints*sizeof(int), sizeof(int),
+                  MPI_INFO_NULL, MPI_COMM_WORLD, &window);
 
    MPI_Win_fence(0, window);
 
    // Remote memory access
+   bool valid_data = true;
    if (my_rank == 0) {
       // recv from every other rank
       for (int sourcerank=1; sourcerank<comm_size; sourcerank++) {
          printf("Collecting data remotely from rank %d\n", sourcerank);
-         MPI_Get(srbuffer, nbyte, MPI_BYTE, sourcerank, 0, nbyte, MPI_BYTE, window);
+         int* rbuffptr = srbuffer+((sourcerank-1)*nints);
+         MPI_Get(rbuffptr, nints, MPI_INT, sourcerank, 0, nints,
+                 MPI_INT, window);
       }
    }
+
    MPI_Win_fence(0, window);
    MPI_Win_free(&window);
+
+   // validate data
+   if (my_rank == 0) {
+      for (int ipeer=1; ipeer<comm_size; ipeer++) {
+         for (int i=0; i<nints; i++) {
+            if (srbuffer[i+(ipeer-1)*nints] != ipeer) {
+               printf("Rank %d received faulty data from rank %d\n", my_rank, ipeer);
+               valid_data = false;
+               break;
+            }
+         }
+      }
+   }
 
    free(srbuffer);
    srbuffer=NULL;
 
    MPI_Finalize();
 
-   return 0;
+   return valid_data ? 0 : 1;
 }
