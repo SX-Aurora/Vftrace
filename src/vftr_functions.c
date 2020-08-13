@@ -312,6 +312,12 @@ int vftr_functions_test_2 (FILE *fp_in, FILE *fp_out) {
 	fprintf (fp_out, "Test if callee pointer is changed properly\n");
 	func2->callee = func6;
 	vftr_write_function (fp_out, func2);
+	fprintf (fp_out, "vftr_func_table_size: %d\n", vftr_func_table_size);
+	fprintf (fp_out, "vftr_stackscount: %d\n", vftr_stackscount);
+	fprintf (fp_out, "Check functions registered in function table: \n");
+	for (int i = 0; i < vftr_stackscount; i++) {
+		vftr_write_function(fp_out, vftr_func_table[i]);
+	}
 	return 0;
 }
 
