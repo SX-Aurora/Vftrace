@@ -153,7 +153,7 @@ void vftr_function_entry (const char *s, void *addr, int line, bool isPrecise) {
 
     if (func->profile_this) {
         wtime = (vftr_get_runtime_usec() - vftr_overhead_usec) * 1.0e-6;
-        vftr_print_stack (wtime, func, "profile before call to", 0);
+        vftr_write_stack_ascii (vftr_log, wtime, func, "profile before call to", 0);
         vftr_profile_wanted = true;
         int ntop;
         vftr_print_profile (vftr_log, &ntop, time0);
@@ -325,7 +325,7 @@ void vftr_function_exit(int line) {
     wtime = (vftr_get_runtime_usec() - vftr_overhead_usec) * 1.0e-6;
 
     if (func->profile_this)  {
-        vftr_print_stack (wtime, func, "profile at exit from", timeToSample);
+        vftr_write_stack_ascii (vftr_log, wtime, func, "profile at exit from", timeToSample);
         vftr_profile_wanted = true;
         int ntop;
         vftr_print_profile (stdout, &ntop, time0);

@@ -54,6 +54,8 @@ function_t *vftr_froots = NULL;
 // Profile data sample
 profdata_t vftr_prof_data;
 
+/**********************************************************************/
+
 // initialize stacks only called from vftr_initialize
 void vftr_initialize_stacks() {
    // Allocate stack tables for each thread
@@ -70,31 +72,7 @@ void vftr_initialize_stacks() {
    vftr_froots = func;
 }
 
-// Write the stacks out
-void vftr_write_stacks (FILE *fp, int level, function_t *func) {
-   int len = strlen(func->name);
-   char *name = (char*) malloc(len + 2);
-   strncpy(name, func->name, len);
-
-   if (func->precise) {
-      name[len++] = '*';
-   }
-
-   int levels = level + 1;
-   int ret = func->return_to ? func->return_to->id : 0;
-   fwrite(&func->id, sizeof(int), 1, fp);
-   //fwrite(&func->gid, sizeof(int), 1, fp);
-   fwrite(&levels, sizeof(int), 1, fp);
-   fwrite(&ret, sizeof(int), 1, fp);
-   fwrite(&len, sizeof(int), 1, fp);
-   fwrite(name, sizeof(char), len, fp);
-
-   // Recursive print of callees
-   function_t *f = func->first_in_level;
-   for(int i=0; i<func->levels; i++,f=f->next_in_level) {
-      vftr_write_stacks(fp, level+1, f);
-   }
-}
+/**********************************************************************/
 
 // synchronise the global stack IDs among different processes
 int vftr_normalize_stacks() {
@@ -330,9 +308,10 @@ int vftr_normalize_stacks() {
 
 /**********************************************************************/
 
-void vftr_print_stack (double time0, function_t *func, char *label, int timeToSample) {
-    function_t   *f;
-    char         *mark;
+void vftr_write_stack_ascii (FILE *fp, double time0,
+			     function_t *func, char *label, int timeToSample) {
+    function_t *f;
+    char *mark;
 
     if (func->new) {
         func->new = false;
@@ -341,11 +320,40 @@ void vftr_print_stack (double time0, function_t *func, char *label, int timeToSa
         mark = "";
     }
 
-    fprintf (vftr_log, "%s%12.6lf %4d %s %s", 
+    fprintf (fp, "%s%12.6lf %4d %s %s", 
              timeToSample ? "+" : " ", time0, func->id, label, mark );
 
-    for (f = func; f; f = f->return_to) fprintf (vftr_log, "%s<", f->name);
-    fprintf (vftr_log, "\n");
+    for (f = func; f; f = f->return_to) {
+	fprintf (fp, "%s<", f->name);
+    }
+    fprintf (fp, "\n");
+}
+
+/**********************************************************************/
+
+void vftr_write_stacks_vfd (FILE *fp, int level, function_t *func) {
+   int len = strlen(func->name);
+   char *name = (char*) malloc(len + 2);
+   strncpy(name, func->name, len);
+
+   if (func->precise) {
+      name[len++] = '*';
+   }
+
+   int levels = level + 1;
+   int ret = func->return_to ? func->return_to->id : 0;
+   fwrite(&func->id, sizeof(int), 1, fp);
+   //fwrite(&func->gid, sizeof(int), 1, fp);
+   fwrite(&levels, sizeof(int), 1, fp);
+   fwrite(&ret, sizeof(int), 1, fp);
+   fwrite(&len, sizeof(int), 1, fp);
+   fwrite(name, sizeof(char), len, fp);
+
+   // Recursive print of callees
+   function_t *f = func->first_in_level;
+   for (int i = 0; i < func->levels; i++,f = f->next_in_level) {
+      vftr_write_stacks_vfd (fp, level + 1, f);
+   }
 }
 
 /**********************************************************************/
