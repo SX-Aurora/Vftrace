@@ -1,3 +1,15 @@
+Function: init
+	Called from: -/-
+	Currently calling: func2
+	First in next Level: func2
+	Next in current Level: -/-
+	Root: init
+	precise: false
+	ID: 0
+	Group ID: -1
+	Recursion depth: 0
+	StackHash: 1836196153
+	Exclude: 0
 Function: func2
 	Called from: init
 	Currently calling: func5
