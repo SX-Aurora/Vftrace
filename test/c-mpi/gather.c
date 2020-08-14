@@ -20,13 +20,13 @@ int main(int argc, char** argv) {
       return 1;
    }
 
-   int sendrank = 0;
+   int rootrank = 0;
    // allocating send/recv buffer
    int nints = atoi(argv[1]);
    int *sbuffer = (int*) malloc(nints*sizeof(int));
    for (int i=0; i<nints; i++) {sbuffer[i]=my_rank;}
    int *rbuffer = NULL;
-   if (my_rank == sendrank) {
+   if (my_rank == rootrank) {
       rbuffer = (int*) malloc(comm_size*nints*sizeof(int));
       for (int i=0; i<comm_size*nints; i++) {
          rbuffer[i] = -1;
@@ -36,14 +36,14 @@ int main(int argc, char** argv) {
    // Messaging cycle
    MPI_Gather(sbuffer, nints, MPI_INT,
               rbuffer, nints, MPI_INT, 
-              sendrank, MPI_COMM_WORLD);
-   if (my_rank == sendrank) {
+              rootrank, MPI_COMM_WORLD);
+   if (my_rank == rootrank) {
       printf("Gathering messages from all ranks on rank %d\n", my_rank);
    }
 
    // validate data
    bool valid_data = true;
-   if (my_rank == sendrank) {
+   if (my_rank == rootrank) {
       for (int irank=0; irank<comm_size; irank++) {
          for (int i=0; i<nints; i++) {
             if (rbuffer[i+irank*nints] != irank) {
