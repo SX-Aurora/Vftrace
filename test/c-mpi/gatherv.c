@@ -64,6 +64,11 @@ int main(int argc, char** argv) {
       }
       free(rbuffer);
       rbuffer=NULL;
+
+      free(recvcounts);
+      recvcounts = NULL;
+      free(displs);
+      displs = NULL;
    }
 
    free(sbuffer);
