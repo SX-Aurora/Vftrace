@@ -21,7 +21,6 @@ int main(int argc, char** argv) {
       return 1;
    }
 
-
    // require cmd-line argument
    if (argc < 2) {
       printf("./bcast_intercom <msgsize in ints>\n");
@@ -30,7 +29,7 @@ int main(int argc, char** argv) {
 
    // allocating send/recv buffer
    int nints = atoi(argv[1]);
-   int* buffer = (int*) malloc(nints*sizeof(int));
+   int *buffer = (int*) malloc(nints*sizeof(int));
    for (int i=0; i<nints; i++) {buffer[i]=my_rank;}
 
    // create intercommunicator
