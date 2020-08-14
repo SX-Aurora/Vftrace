@@ -52,7 +52,7 @@ int vftr_MPI_Bcast(void *buffer, int count, MPI_Datatype datatype,
                int global_peer_rank = vftr_remote2global_rank(comm, i);
                // store message info with MPI_COMM_WORLD as communicator
                // to prevent additional (and thus faulty rank translation)
-               vftr_store_sync_message_info(recv, count, datatype,
+               vftr_store_sync_message_info(send, count, datatype,
                                             global_peer_rank, -1, MPI_COMM_WORLD,
                                             tstart, tend);
             }
