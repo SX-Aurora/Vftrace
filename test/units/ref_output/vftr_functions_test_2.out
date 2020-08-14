@@ -1,0 +1,184 @@
+Function: init
+	Called from: -/-
+	Currently calling: func2
+	First in next Level: func2
+	Next in current Level: -/-
+	Root: init
+	precise: false
+	ID: 0
+	Group ID: -1
+	Recursion depth: 0
+	StackHash: 1836196153
+	Exclude: 0
+Function: func2
+	Called from: init
+	Currently calling: func5
+	First in next Level: func5
+	Next in current Level: func3
+	Root: init
+	precise: false
+	ID: 1
+	Group ID: -1
+	Recursion depth: 0
+	StackHash: 4022895417
+	Exclude: 0
+Function: func3
+	Called from: init
+	Currently calling: func4
+	First in next Level: func4
+	Next in current Level: func2
+	Root: init
+	precise: false
+	ID: 2
+	Group ID: -1
+	Recursion depth: 0
+	StackHash: 1824019601
+	Exclude: 0
+Function: func4
+	Called from: func3
+	Currently calling: -/-
+	First in next Level: -/-
+	Next in current Level: func4
+	Root: init
+	precise: false
+	ID: 3
+	Group ID: -1
+	Recursion depth: 0
+	StackHash: 2823616966
+	Exclude: 0
+Function: func5
+	Called from: func2
+	Currently calling: -/-
+	First in next Level: -/-
+	Next in current Level: func6
+	Root: init
+	precise: false
+	ID: 4
+	Group ID: -1
+	Recursion depth: 0
+	StackHash: 4124732166
+	Exclude: 0
+Function: func6
+	Called from: func2
+	Currently calling: func4
+	First in next Level: func4
+	Next in current Level: func5
+	Root: init
+	precise: false
+	ID: 5
+	Group ID: -1
+	Recursion depth: 0
+	StackHash: 2681767446
+	Exclude: 0
+Function: func4
+	Called from: func6
+	Currently calling: -/-
+	First in next Level: -/-
+	Next in current Level: func4
+	Root: init
+	precise: false
+	ID: 6
+	Group ID: -1
+	Recursion depth: 0
+	StackHash: 1063827805
+	Exclude: 0
+Test if callee pointer is changed properly
+Function: func2
+	Called from: init
+	Currently calling: func6
+	First in next Level: func5
+	Next in current Level: func3
+	Root: init
+	precise: false
+	ID: 1
+	Group ID: -1
+	Recursion depth: 0
+	StackHash: 4022895417
+	Exclude: 0
+vftr_func_table_size: 10000
+vftr_stackscount: 7
+Check functions registered in function table: 
+Function: init
+	Called from: -/-
+	Currently calling: func2
+	First in next Level: func2
+	Next in current Level: -/-
+	Root: init
+	precise: false
+	ID: 0
+	Group ID: -1
+	Recursion depth: 0
+	StackHash: 1836196153
+	Exclude: 0
+Function: func2
+	Called from: init
+	Currently calling: func6
+	First in next Level: func5
+	Next in current Level: func3
+	Root: init
+	precise: false
+	ID: 1
+	Group ID: -1
+	Recursion depth: 0
+	StackHash: 4022895417
+	Exclude: 0
+Function: func3
+	Called from: init
+	Currently calling: func4
+	First in next Level: func4
+	Next in current Level: func2
+	Root: init
+	precise: false
+	ID: 2
+	Group ID: -1
+	Recursion depth: 0
+	StackHash: 1824019601
+	Exclude: 0
+Function: func4
+	Called from: func3
+	Currently calling: -/-
+	First in next Level: -/-
+	Next in current Level: func4
+	Root: init
+	precise: false
+	ID: 3
+	Group ID: -1
+	Recursion depth: 0
+	StackHash: 2823616966
+	Exclude: 0
+Function: func5
+	Called from: func2
+	Currently calling: -/-
+	First in next Level: -/-
+	Next in current Level: func6
+	Root: init
+	precise: false
+	ID: 4
+	Group ID: -1
+	Recursion depth: 0
+	StackHash: 4124732166
+	Exclude: 0
+Function: func6
+	Called from: func2
+	Currently calling: func4
+	First in next Level: func4
+	Next in current Level: func5
+	Root: init
+	precise: false
+	ID: 5
+	Group ID: -1
+	Recursion depth: 0
+	StackHash: 2681767446
+	Exclude: 0
+Function: func4
+	Called from: func6
+	Currently calling: -/-
+	First in next Level: -/-
+	Next in current Level: func4
+	Root: init
+	precise: false
+	ID: 6
+	Group ID: -1
+	Recursion depth: 0
+	StackHash: 1063827805
+	Exclude: 0

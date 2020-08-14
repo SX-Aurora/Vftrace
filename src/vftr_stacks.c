@@ -54,6 +54,8 @@ function_t *vftr_froots = NULL;
 // Profile data sample
 profdata_t vftr_prof_data;
 
+/**********************************************************************/
+
 // initialize stacks only called from vftr_initialize
 void vftr_initialize_stacks() {
    // Allocate stack tables for each thread
@@ -62,39 +64,15 @@ void vftr_initialize_stacks() {
 
    // Initialize stack tables 
    char *s = "init";
-   function_t *func = vftr_new_function (NULL, strdup (s), NULL, "init", 0, true);
-   func->next = func; /* Close circular linked list to itself */
+   function_t *func = vftr_new_function (NULL, strdup (s), NULL, 0, true);
+   func->next_in_level = func; /* Close circular linked list to itself */
    vftr_fstack = func;
    vftr_samplecount = 0;
    vftr_maxtime = 0;
    vftr_froots = func;
 }
 
-// Write the stacks out
-void vftr_write_stacks (FILE *fp, int level, function_t *func) {
-   int len = strlen(func->name);
-   char *name = (char*) malloc(len + 2);
-   strncpy(name, func->name, len);
-
-   if (func->precise) {
-      name[len++] = '*';
-   }
-
-   int levels = level + 1;
-   int ret = func->ret ? func->ret->id : 0;
-   fwrite(&func->id, sizeof(int), 1, fp);
-   //fwrite(&func->gid, sizeof(int), 1, fp);
-   fwrite(&levels, sizeof(int), 1, fp);
-   fwrite(&ret, sizeof(int), 1, fp);
-   fwrite(&len, sizeof(int), 1, fp);
-   fwrite(name, sizeof(char), len, fp);
-
-   // Recursive print of callees
-   function_t *f = func->first;
-   for(int i=0; i<func->levels; i++,f=f->next) {
-      vftr_write_stacks(fp, level+1, f);
-   }
-}
+/**********************************************************************/
 
 // synchronise the global stack IDs among different processes
 int vftr_normalize_stacks() {
@@ -155,7 +133,7 @@ int vftr_normalize_stacks() {
           vftr_gStackinfo[globID].name = strdup(vftr_func_table[istack]->name);
           if (strcmp(vftr_gStackinfo[globID].name, "init")) {
              // not the init function
-             vftr_gStackinfo[globID].ret = vftr_func_table[istack]->ret->gid;
+             vftr_gStackinfo[globID].ret = vftr_func_table[istack]->return_to->gid;
              vftr_gStackinfo[globID].locID = istack;
           } else {
              vftr_gStackinfo[globID].ret = -1;
@@ -281,7 +259,7 @@ int vftr_normalize_stacks() {
                    missingStackInfo[3*imatch+0] =
                       globID;
                    missingStackInfo[3*imatch+1] =
-                      vftr_func_table[locID]->ret->gid;
+                      vftr_func_table[locID]->return_to->gid;
                    // add one to length due to null terminator
                    missingStackInfo[3*imatch+2] =
                       strlen(vftr_func_table[locID]->name)+1;
@@ -330,22 +308,52 @@ int vftr_normalize_stacks() {
 
 /**********************************************************************/
 
-void vftr_print_stack (double time0, function_t *func, char *label, int timeToSample) {
-    function_t   *f;
-    char         *mark;
+void vftr_write_stack_ascii (FILE *fp, double time0,
+			     function_t *func, char *label, int timeToSample) {
+    function_t *f;
+    char *mark;
 
-    if( func->new ) {
-        func->new = 0;
+    if (func->new) {
+        func->new = false;
         mark = "*";
     } else {
         mark = "";
     }
 
-    fprintf (vftr_log, "%s%12.6lf %4d %s %s", 
+    fprintf (fp, "%s%12.6lf %4d %s %s", 
              timeToSample ? "+" : " ", time0, func->id, label, mark );
 
-    for (f = func; f; f = f->ret) fprintf (vftr_log, "%s<", f->name);
-    fprintf (vftr_log, "\n");
+    for (f = func; f; f = f->return_to) {
+	fprintf (fp, "%s<", f->name);
+    }
+    fprintf (fp, "\n");
+}
+
+/**********************************************************************/
+
+void vftr_write_stacks_vfd (FILE *fp, int level, function_t *func) {
+   int len = strlen(func->name);
+   char *name = (char*) malloc(len + 2);
+   strncpy(name, func->name, len);
+
+   if (func->precise) {
+      name[len++] = '*';
+   }
+
+   int levels = level + 1;
+   int ret = func->return_to ? func->return_to->id : 0;
+   fwrite(&func->id, sizeof(int), 1, fp);
+   //fwrite(&func->gid, sizeof(int), 1, fp);
+   fwrite(&levels, sizeof(int), 1, fp);
+   fwrite(&ret, sizeof(int), 1, fp);
+   fwrite(&len, sizeof(int), 1, fp);
+   fwrite(name, sizeof(char), len, fp);
+
+   // Recursive print of callees
+   function_t *f = func->first_in_level;
+   for (int i = 0; i < func->levels; i++,f = f->next_in_level) {
+      vftr_write_stacks_vfd (fp, level + 1, f);
+   }
 }
 
 /**********************************************************************/
@@ -361,10 +369,10 @@ void vftr_print_local_stacklist (function_t **funcTable, FILE *pout, int ntop) {
 
     for (i = 0,namep = 0,maxID = 0; i < ntop; i++) {
         function_t *func = funcTable[i];
-        if (func == NULL || !func->ret) continue;
+        if (func == NULL || !func->return_to) continue;
         int width, id;
         id = useGid ? func->gid : func->id;
-        for (width = 0; func; func = func->ret) {
+        for (width = 0; func; func = func->return_to) {
             width += strlen (func->name) + 1;
 	}
         if (namep < width) namep = width;
@@ -394,10 +402,10 @@ void vftr_print_local_stacklist (function_t **funcTable, FILE *pout, int ntop) {
         char *sep; 
         int  id;
         function_t *func = funcTable[i];
-        if( func == NULL || !func->ret ) continue; /* If not defined or no caller */
+        if (func == NULL || !func->return_to) continue; /* If not defined or no caller */
 	id = useGid ? func->gid : func->id;
         fprintf( pout, fmtFid, id );
-        for( sep=""; func; func=func->ret,sep="<")
+        for( sep=""; func; func=func->return_to, sep="<")
             fprintf( pout, "%s%s", sep, func->name  );
         fprintf( pout, "\n" );
     }
@@ -419,7 +427,7 @@ void vftr_print_local_demangled (function_t **funcTable, FILE *pout, int ntop) {
     for( i=0,namep=0,maxID=0; i<ntop; i++ ) {
         function_t *func = funcTable[i];
         int        width, id;
-        if( func == NULL || !func->ret ||              /* If not defined or no caller */
+        if( func == NULL || !func->return_to ||              /* If not defined or no caller */
             func->full == NULL            ) continue;  /* or no full demangled name */
         id = useGid ? func->gid : func->id;
         width = strlen(func->full);
@@ -448,7 +456,7 @@ void vftr_print_local_demangled (function_t **funcTable, FILE *pout, int ntop) {
     for( i=0; i<ntop; i++ ) {
         int  id;
         function_t *func = funcTable[i];
-        if( func == NULL || !func->ret ||              /* If not defined or no caller */
+        if( func == NULL || !func->return_to ||              /* If not defined or no caller */
             func->full == NULL            ) continue;  /* or no full demangled name */
 	id = useGid ? func->gid : func->id;
         fprintf( pout, fmtFid, id );
@@ -515,3 +523,26 @@ void vftr_print_global_stacklist (FILE *pout) {
    OUTPUT_DASHES_NL( tableWidth, pout )
    fputs( "\n", pout );
 }
+
+/**********************************************************************/
+
+int vftr_stacks_test_1 (FILE *fp_in, FILE *fp_out) {
+	unsigned long long addrs[6];
+	function_t *func1 = vftr_new_function (NULL, "init", NULL, 0, false);
+	function_t *func2 = vftr_new_function ((void*)addrs, "func2", func1, 0, false);
+	function_t *func3 = vftr_new_function ((void*)(addrs + 1), "func3", func1, 0, false);	
+	function_t *func4 = vftr_new_function ((void*)(addrs + 2), "func4", func3, 0, false);
+	function_t *func5 = vftr_new_function ((void*)(addrs + 3), "func5", func2, 0, false);
+	function_t *func6 = vftr_new_function ((void*)(addrs + 4), "func6", func2, 0, false);
+	function_t *func7 = vftr_new_function ((void*)(addrs + 5), "func4", func6, 0, false);
+	vftr_normalize_stacks();			
+	fprintf (fp_out, "%s: %d %d\n", func1->name, func1->id, func1->gid);
+	fprintf (fp_out, "%s: %d %d\n", func2->name, func2->id, func2->gid);
+	fprintf (fp_out, "%s: %d %d\n", func3->name, func3->id, func3->gid);
+	fprintf (fp_out, "%s: %d %d\n", func4->name, func4->id, func4->gid);
+	fprintf (fp_out, "%s: %d %d\n", func5->name, func5->id, func5->gid);
+	fprintf (fp_out, "%s: %d %d\n", func6->name, func6->id, func6->gid);
+	fprintf (fp_out, "%s: %d %d\n", func7->name, func7->id, func7->gid);
+}
+
+/**********************************************************************/

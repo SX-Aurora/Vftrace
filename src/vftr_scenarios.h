@@ -20,6 +20,7 @@
 #define SCENARIOS_H
 
 #include <stdio.h>
+#include <stdbool.h>
 
 #define SCENARIO_NAME_LEN 32
 
@@ -76,7 +77,7 @@ typedef struct {
 	char *protected_values;
 	double default_value;
 	double value;
-	int integrated;
+	bool integrated;
 } function_expr_t;
 	
 char *scenario_expr_counter_names[TE_MAX];
@@ -92,7 +93,7 @@ double scenario_expr_runtime;
 double scenario_expr_cycles;
 double scenario_expr_cycletime;
 
-int vftr_read_scenario_file (char *filename);
+int vftr_read_scenario_file (char *filename, FILE *fp_ext);
 void scenario_expr_evaluate (int i_scenario, double runtime, unsigned long long cycles);
 void scenario_expr_evaluate_all (double runtime, unsigned long long cycles);
 void scenario_expr_print_summary (FILE *fp);
@@ -109,5 +110,8 @@ void scenario_expr_print_group (FILE *fp);
 void scenario_expr_print_subgroup (FILE *fp);
 void scenario_expr_add_papi_counters ();
 void scenario_expr_add_veperf_counters ();
+
+int vftr_scenario_test_1 (FILE *fp_in, FILE *fp_out);
+int vftr_scenario_test_2 (FILE *fp_in, FILE *fp_out);
 
 #endif

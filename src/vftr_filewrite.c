@@ -34,6 +34,7 @@
 #include "vftr_timer.h"
 #include "vftr_setup.h"
 #include "vftr_mpi_utils.h"
+#include "vftr_stacks.h"
 
 // File pointer of the log file
 FILE *vftr_log = NULL;
@@ -59,11 +60,6 @@ FILE *vftr_vfd_file;
 // TODO: Explain
 unsigned int vftr_admin_offset;
 unsigned int vftr_samples_offset;
-
-char *vftr_bool_to_string (bool value) {
-	char *s = value ? "true" : "false";
-	return s;
-}
 
 /**********************************************************************/
 
@@ -180,7 +176,7 @@ void vftr_finalize_vfd_file (long long finalize_time, int signal_number) {
     if (vftr_env_do_sampling () && signal_number != SIGUSR1) {
 
         unsigned int stackstable_offset = (unsigned int) ftell (vftr_vfd_file);
-        vftr_write_stacks (vftr_vfd_file, 0, vftr_froots);
+        vftr_write_stacks_vfd (vftr_vfd_file, 0, vftr_froots);
 
         // It is unused ?
         unsigned int profile_offset = 0;
@@ -265,7 +261,7 @@ void vftr_write_profile () {
  
     /* Sum all cycles and counts */
     for (int i = 0; i < vftr_stackscount; i++) {
-	if (funcTable[i] && funcTable[i]->ret && funcTable[i]->prof_current.calls) {
+	if (funcTable[i] && funcTable[i]->return_to && funcTable[i]->prof_current.calls) {
             profdata_t *prof_current = &funcTable[i]->prof_current;
 	    total_cycles += prof_current->cycles;
             if (!prof_current->event_count) continue;
@@ -391,11 +387,13 @@ void fill_indices_to_evaluate (function_t **funcTable, double runtime, int *indi
 		profdata_t *prof_current = &funcTable[i]->prof_current;
 		profdata_t *prof_previous = &funcTable[i]->prof_previous;
 		/* If function has a caller and has been called */
-		if (!(funcTable[i]->ret && prof_current->calls)) continue;
+		if (!(funcTable[i]->return_to && prof_current->calls)) continue;
 		indices[j++] = i;
 		get_stack_times (prof_current, prof_previous, runtime, &t_excl, &t_incl, &t_part);
 		ctime += t_part;
-		if (vftr_environment->prof_truncate->value && ctime > max_ctime) break;
+		if (vftr_environment) {
+			if (vftr_environment->prof_truncate->value && ctime > max_ctime) break;
+		}
 	}
 }
 
@@ -411,13 +409,17 @@ int count_indices_to_evaluate (function_t **funcTable, double runtime) {
 		profdata_t *prof_current = &funcTable[i]->prof_current;
 		profdata_t *prof_previous = &funcTable[i]->prof_previous;
 		/* If function has a caller and has been called */
-		if (!(funcTable[i]->ret && prof_current->calls)) continue;
+		if (!(funcTable[i]->return_to && prof_current->calls)) continue;
 		
 		n_indices++;
 
 		get_stack_times (prof_current, prof_previous, runtime, &t_excl, &t_incl, &t_part);
 		ctime += t_part;
-		if (vftr_environment->prof_truncate->value && ctime > max_ctime) break;
+		if (vftr_environment) {
+		   if (vftr_environment->prof_truncate->value && ctime > max_ctime) {
+		   	break;
+		   }
+		}
 	}
 	return n_indices;
 }
@@ -473,7 +475,7 @@ void set_formats (function_t **funcTable, double runtime,
         	int k = strlen(funcTable[i_func]->name);
 		if (k > format->func_name) format->func_name = k;
 		function_t *func;
-        	if (func = funcTable[i_func]->ret) {
+        	if (func = funcTable[i_func]->return_to) {
         	    k = strlen(func->name);
 		    if (k > format->caller_name) format->caller_name = k;
         	}
@@ -500,16 +502,14 @@ void set_formats (function_t **funcTable, double runtime,
 /**********************************************************************/
 
 void vftr_print_profile (FILE *pout, int *ntop, long long time0) {
-    float          pscale, ctime;
-    double         rtime, tohead, pohead, tend, tend2;
-    double         clockFreq;
-    unsigned long long      total_cycles, calls, cycles;
-    evtcounter_t    *evc0, *evc1, *evc;
+    float pscale, ctime;
+    double rtime, tohead, pohead, tend, tend2;
+    double clockFreq;
+    unsigned long long total_cycles, calls, cycles;
+    evtcounter_t *evc0, *evc1, *evc;
     
-    int            n, k, fid;
-    int            linesize = 64; /* L3 cache line size */
-
-    int            offset, tableWidth;
+    int n, k, fid;
+    int offset, tableWidth;
 
     char fmtcalls[10], fmttime[10], fmttimeInc[10], fmtfid[10];
 
@@ -542,7 +542,7 @@ void vftr_print_profile (FILE *pout, int *ntop, long long time0) {
     /* Sum all cycles and counts */
     for (int i = 0; i < vftr_stackscount; i++) {
 	if (funcTable[i] == NULL) continue;
-	if (funcTable[i]->ret && funcTable[i]->prof_current.calls) {
+	if (funcTable[i]->return_to && funcTable[i]->prof_current.calls) {
             profdata_t *prof_current  = &funcTable[i]->prof_current;
             profdata_t *prof_previous = &funcTable[i]->prof_previous;
 	    total_cycles += prof_current->cycles - prof_previous->cycles;
@@ -552,7 +552,7 @@ void vftr_print_profile (FILE *pout, int *ntop, long long time0) {
 	    }
 	}
     }
-    double total_runtime = vftr_get_runtime_usec() * 1.0e-6;
+    double total_runtime = time0 > 0 ? (double)time0 * 1e-6 : vftr_get_runtime_usec() * 1.0e-6;
     double overhead_time = vftr_overhead_usec * 1.0e-6;
     double application_runtime = total_runtime - overhead_time;
     rtime = application_runtime;
@@ -769,9 +769,9 @@ void vftr_print_profile (FILE *pout, int *ntop, long long time0) {
             fputc (' ', pout);
         }
 
-	if (funcTable[i_func]->ret) {
-            fprintf (pout, "%s", funcTable[i_func]->ret->name);
-            for (int j = strlen(funcTable[i_func]->ret->name); j <= formats->caller_name; j++) {
+	if (funcTable[i_func]->return_to) {
+            fprintf (pout, "%s", funcTable[i_func]->return_to->name);
+            for (int j = strlen(funcTable[i_func]->return_to->name); j <= formats->caller_name; j++) {
                 fputc (' ', pout);
             }
         }
@@ -788,20 +788,53 @@ void vftr_print_profile (FILE *pout, int *ntop, long long time0) {
 
 /**********************************************************************/
 
-int vftr_filewrite_test_1 (FILE *fp) {
-	fprintf (fp, "Check the creation of log and vfd file name\n");
+int vftr_filewrite_test_1 (FILE *fp_in, FILE *fp_out) {
+	fprintf (fp_out, "Check the creation of log and vfd file name\n");
 	int mpi_rank, mpi_size;
 	mpi_rank = 0;
 	mpi_size = 1;
-	fprintf (fp, "logfile_name(%d, %d): %s\n", mpi_rank, mpi_size,
+	fprintf (fp_out, "logfile_name(%d, %d): %s\n", mpi_rank, mpi_size,
 		 vftr_create_logfile_name(mpi_rank, mpi_size, "log"));
 	mpi_rank = 11;
 	mpi_size = 111;
-	fprintf (fp, "logfile_name(%d, %d): %s\n", mpi_rank, mpi_size,
+	fprintf (fp_out, "logfile_name(%d, %d): %s\n", mpi_rank, mpi_size,
 		 vftr_create_logfile_name(mpi_rank, mpi_size, "log"));
-	fprintf (fp, "logfile_name(%d, %d): %s\n", mpi_rank, mpi_size,
+	fprintf (fp_out, "logfile_name(%d, %d): %s\n", mpi_rank, mpi_size,
 		 vftr_create_logfile_name(mpi_rank, mpi_size, "vfd"));
 
 }
 
 /**********************************************************************/
+
+int vftr_filewrite_test_2 (FILE *fp_in, FILE *fp_out) {
+	int n;
+	unsigned long long addrs [6];
+	unsigned long long vftr_test_runtime = 0;
+	function_t *func1 = vftr_new_function (NULL, "init", NULL, 0, false);
+	function_t *func2 = vftr_new_function ((void*)addrs, "func2", func1, 0, false);
+	function_t *func3 = vftr_new_function ((void*)(addrs + 1), "func3", func1, 0, false);	
+	function_t *func4 = vftr_new_function ((void*)(addrs + 2), "func4", func3, 0, false);
+	function_t *func5 = vftr_new_function ((void*)(addrs + 3), "func5", func2, 0, false);
+	function_t *func6 = vftr_new_function ((void*)(addrs + 4), "func6", func2, 0, false);
+	function_t *func7 = vftr_new_function ((void*)(addrs + 5), "func4", func6, 0, false);
+	vftr_normalize_stacks();
+	for (int i = 0; i < vftr_stackscount; i++) {
+		vftr_func_table[i]->prof_current.calls = i + 1;
+		vftr_func_table[i]->prof_current.timeExcl = (long long)(i+1) * 100000;
+		vftr_func_table[i]->prof_previous.timeExcl = (long long)(i+1) * 90000;
+		vftr_func_table[i]->prof_current.timeIncl =
+			2 * vftr_func_table[i]->prof_current.timeExcl;
+		vftr_func_table[i]->prof_previous.timeIncl =
+			2 * vftr_func_table[i]->prof_previous.timeExcl;
+		vftr_test_runtime += vftr_func_table[i]->prof_current.timeExcl
+				   - vftr_func_table[i]->prof_previous.timeExcl;
+	}
+
+	vftr_profile_wanted = true;
+	vftr_mpisize = 1;
+	vftr_print_profile (fp_out, &n, vftr_test_runtime);		
+	return 0;
+}
+
+/**********************************************************************/
+

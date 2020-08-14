@@ -1,0 +1,12 @@
+Check standard operations: 
+test_sum: 2.000000
+test_difference: 1.000000
+test_product: 0.750000
+test_division: 3.000000
+test_abs: 1.000000
+test_exp: 4.481689
+test_log: 0.176091
+test_sqrt: 1.224745
+test_1e3: 1500.000000
+Check that division by zero is protected: 
+test_division: 0.000000

@@ -1,0 +1,21 @@
+Registered variables: 3
+0: name: c1
+1: name: c2
+2: name: c3
+Check for the three additional entries: 
+runtime
+cycles
+cycletime
+Registered formulas: 2
+Formula name: Vector performance
+   Expression: c1 * 1e-6
+   Protected values: None
+   Default value: 1.234000
+   Current value: 0.000000
+   Integrated: false
+Formula name: Vector length
+   Expression: c1 / c2 + 0.5
+   Protected values: c2
+   Default value: 0.000000
+   Current value: 0.000000
+   Integrated: true

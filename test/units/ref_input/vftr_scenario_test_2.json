@@ -1,0 +1,57 @@
+{
+  "scenario_name": "vftr_scenario_test_1",
+  "counters": [
+    {
+      "papi_name": "C1",
+      "symbol": "c1"
+    },
+    {
+      "papi_name": "C2",
+      "symbol": "c2"
+    },
+    {
+      "papi_name": "C3",
+      "symbol": "c3"
+    }
+  ],
+  "observables": [
+    {
+      "name": "test_sum",
+      "formula": "c1 + c2",
+    },
+    {
+      "name": "test_difference",
+      "formula": "c1 - c2",
+    },
+    {
+      "name": "test_product",
+      "formula": "c1 * c2",
+    },
+    {
+      "name": "test_division",
+      "formula": "c1 / c2",
+      "protected": "c2",
+    },
+    {
+      "name": "test_abs",
+      "formula": "abs(c3)",
+    },
+    {
+      "name": "test_exp",
+      "formula": "exp(c1)",
+    },
+    {
+      "name": "test_log",
+      "formula": "log(c1)",
+    },
+    {
+      "name": "test_sqrt",
+      "formula": "sqrt(c1)",
+    },
+    {
+      "name": "test_1e3",
+      "formula": "c1 * 1e3",
+    }
+  ]
+}
+

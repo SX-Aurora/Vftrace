@@ -3,6 +3,9 @@
 
 #include "vftr_setup.h"
 #include "vftr_filewrite.h"
+#include "vftr_functions.h"
+#include "vftr_scenarios.h"
+#include "vftr_stacks.h"
 #include "vftr_symbols.h"
 
 int this_fails () {
@@ -42,7 +45,23 @@ int main (int argc, char **argv) {
 	} else if (!strcmp (argv[1], "vftr_setup_test_2")) {
 		retval = vftr_setup_test_2 (fp_out);
 	} else if (!strcmp (argv[1], "vftr_filewrite_test_1")) {
-		retval = vftr_filewrite_test_1 (fp_out);
+		retval = vftr_filewrite_test_1 (fp_in, fp_out);
+	} else if (!strcmp (argv[1], "vftr_filewrite_test_2")) {
+		retval = vftr_filewrite_test_2 (fp_in, fp_out);
+	} else if (!strcmp (argv[1], "vftr_scenario_test_1")) {
+		retval = vftr_scenario_test_1 (fp_in, fp_out);
+	} else if (!strcmp (argv[1], "vftr_scenario_test_2")) {
+		retval = vftr_scenario_test_2 (fp_in, fp_out);
+	} else if (!strcmp (argv[1], "vftr_scenario_test_3")) {
+		retval = vftr_scenario_test_3 (fp_in, fp_out);
+	} else if (!strcmp (argv[1], "vftr_functions_test_1")) {
+		retval = vftr_functions_test_1 (fp_in, fp_out);
+	} else if (!strcmp (argv[1], "vftr_functions_test_2")) {
+		retval = vftr_functions_test_2 (fp_in, fp_out);
+	} else if (!strcmp (argv[1], "vftr_functions_test_3")) {
+		retval = vftr_functions_test_3 (fp_in, fp_out);
+	} else if (!strcmp (argv[1], "vftr_stacks_test_1")) {
+		retval = vftr_stacks_test_1 (fp_in, fp_out);
 	} else {
 		printf ("No matching test found\n");
 	}
