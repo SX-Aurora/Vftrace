@@ -1,7 +1,7 @@
 #!/bin/bash
 
 vftr_binary=gatherv
-nprocs=6
+nprocs=4
 ntrials=1
 
 export VFTR_SAMPLING="Yes"
