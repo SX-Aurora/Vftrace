@@ -14,7 +14,6 @@ int main(int argc, char** argv) {
    int my_rank;
    MPI_Comm_rank(MPI_COMM_WORLD, &my_rank);
 
-
    // require cmd-line argument
    if (argc < 2) {
       printf("./bcast <msgsize in ints>\n");
