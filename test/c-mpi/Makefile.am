@@ -78,7 +78,8 @@ dist_noinst_SCRIPTS += send_recv-1.sh \
 ####################
 
 noinst_PROGRAMS += bcast \
-		   bcast_intercom
+		   bcast_intercom \
+		   gather
 
 bcast_SOURCES = $(srcdir)/bcast.c
 bcast_CFLAGS = $(AM_CFLAGS)
@@ -90,7 +91,10 @@ bcast_intercom_LDFLAGS = $(AM_LDFLAGS)
 
 dist_noinst_SCRIPTS += bcast-1.sh \
 		       bcast-2.sh \
-		       bcast_intercom-1.sh
+		       bcast_intercom-1.sh \
+		       bcast_intercom-2.sh \
+		       gather-1.sh \
+		       gather-2.sh 
 
 ###################
 # One sided tests #
