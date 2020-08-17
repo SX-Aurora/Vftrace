@@ -20,6 +20,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdbool.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
@@ -55,6 +56,8 @@ char *get_application_name () {
         return program_path;
 }
 
+/**********************************************************************/
+
 int count_digits (int value) {
   int count = 0;
   for (int c = value; c > 0; c /= 10) {
@@ -62,3 +65,12 @@ int count_digits (int value) {
   }
   return count;
 }
+
+/**********************************************************************/
+
+char *vftr_bool_to_string (bool value) {
+	char *s = value ? "true" : "false";
+	return s;
+}
+
+/**********************************************************************/

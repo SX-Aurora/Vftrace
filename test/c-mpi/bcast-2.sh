@@ -1,7 +1,7 @@
 #!/bin/bash
 
 vftr_binary=bcast
-nprocs=6
+nprocs=4
 ntrials=1
 
 export VFTR_SAMPLING="Yes"

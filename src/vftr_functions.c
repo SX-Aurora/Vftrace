@@ -28,6 +28,7 @@
 #include "vftr_regex.h"
 #include "vftr_environment.h"
 #include "vftr_functions.h"
+#include "vftr_fileutils.h"
 #include "vftr_hwcounters.h"
 
 
@@ -59,8 +60,7 @@ char *vftr_precice_functions[] = {
 
 // add a new function to the stack tables
 function_t *vftr_new_function(void *arg, const char *function_name,
-                              function_t *caller, char *info, int line,
-                              bool isPrecise) {
+                              function_t *caller, int line, bool is_precise) {
 
    // create and null new function
    function_t *func = (function_t *) malloc (sizeof(function_t));
@@ -90,10 +90,10 @@ function_t *vftr_new_function(void *arg, const char *function_name,
    // global unique stack ID (unknown for now, so it gets an invalid value)
    func->gid = -1;
    // local unique stack ID of the calling function
-   func->ret = caller;
+   func->return_to = caller;
    // only for debugging
-   func->new = 1;
-   func->detail = 1;
+   func->new = true;
+   func->detail = true;
    // if called recursively keep track of depth
    func->recursion_depth = 0;
 
@@ -102,8 +102,8 @@ function_t *vftr_new_function(void *arg, const char *function_name,
    function_t *tmpfunc = func;
    // go down the stack until the bottom is reached
    // record the length of the function names each
-   while (tmpfunc->ret) {
-      tmpfunc = tmpfunc->ret;
+   while (tmpfunc->return_to) {
+      tmpfunc = tmpfunc->return_to;
       // add one chars for function division by "<"
       stackstrlength += 1;
       stackstrlength += strlen(tmpfunc->name);
@@ -118,8 +118,8 @@ function_t *vftr_new_function(void *arg, const char *function_name,
    strptr += strlen(tmpfunc->name);
    // go down the stack until the bottom is reached
    // copy the function names onto the string
-   while (tmpfunc->ret) {
-      tmpfunc = tmpfunc->ret;
+   while (tmpfunc->return_to) {
+      tmpfunc = tmpfunc->return_to;
       strcpy(strptr, "<");
       strptr += 1;
       strcpy(strptr, tmpfunc->name);
@@ -133,10 +133,11 @@ function_t *vftr_new_function(void *arg, const char *function_name,
 
    if (line > 0) func->line_beg = line;
 
-   if (arg) { // Skip if address not defined (when info is "init")
-      func->precise = isPrecise ||
-                      vftr_pattern_match(vftr_environment->preciseregex->value,
-                                         func->name);
+   if (arg) { // Skip if address not defined (when function is "init")
+      if (vftr_environment) {
+         func->precise = is_precise || vftr_pattern_match (vftr_environment->preciseregex->value,
+                                                          func->name);
+      }
    }
 
    // Check if the new function is meant to be priceicely sampled
@@ -163,9 +164,11 @@ function_t *vftr_new_function(void *arg, const char *function_name,
    }
 
    // Determine if this function should be profiled
-   func->profile_this = vftr_pattern_match(vftr_environment->runtime_profile_funcs->value, func->name);
+   if (vftr_environment) {
+      func->profile_this = vftr_pattern_match(vftr_environment->runtime_profile_funcs->value, func->name);
+   }
 
-   if (!func->exclude_this) {
+   if (!func->exclude_this && vftr_environment) {
       if (vftr_environment->include_only_regex->set) {
          func->exclude_this = !vftr_pattern_match(vftr_environment->include_only_regex->value, func->name);
       } else if (vftr_environment->exclude_functions_regex->set) {
@@ -175,13 +178,17 @@ function_t *vftr_new_function(void *arg, const char *function_name,
 
    // Is this function a branch or the root of the calltree?
    if (caller != NULL) {
-      if (caller->call) {
-         func->next   = caller->call->next;
+      if (caller->callee) {
+         func->next_in_level = caller->callee->next_in_level;
       } else {
-         caller->call = caller->first = func;
+         caller->callee = caller->first_in_level = func;
       }
-      caller->call->next = func;
+      caller->callee->next_in_level = func;
       caller->levels++;
+   // Just copy the root from the caller
+      func->root = caller->root;
+   } else {
+      func->root = func;
    }
 
    if (!vftr_func_table || (vftr_stackscount+1) > vftr_func_table_size) {
@@ -201,6 +208,8 @@ function_t *vftr_new_function(void *arg, const char *function_name,
    return func;
 }
 
+/**********************************************************************/
+
 void vftr_reset_counts (function_t *func) {
    function_t *f;
    int i, n;
@@ -218,8 +227,116 @@ void vftr_reset_counts (function_t *func) {
    n = func->levels;
 
    /* Recursive scan of callees */
-   for (i = 0,f = func->first; i < n; i++, f = f->next) {
+   for (i = 0,f = func->first_in_level; i < n; i++, f = f->next_in_level) {
        vftr_reset_counts (f);
    }
 }
 
+/**********************************************************************/
+
+void vftr_write_function (FILE *fp, function_t *func) {
+	fprintf (fp, "Function: %s\n", func->name);
+	fprintf (fp, "\tAddress: ");
+	if (func->address) {
+		fprintf (fp, "0x%lx\n", func->address);
+	} else {
+		fprintf (fp, "-/-\n");
+	}
+	fprintf (fp, "\tCalled from: ");
+	if (func->return_to) {
+		fprintf (fp, "%s\n", func->return_to->name);	
+	} else {
+		fprintf (fp, "-/-\n");
+	}
+	fprintf (fp, "\tCurrently calling: ");
+	if (func->callee) {
+		fprintf (fp, "%s\n", func->callee->name);
+	} else {	
+		fprintf (fp, "-/-\n");
+	}
+	fprintf (fp, "\tFirst in next Level: ");
+	if (func->first_in_level) {
+		fprintf (fp, "%s\n", func->first_in_level->name);
+	} else {	
+		fprintf (fp, "-/-\n");
+	}
+	fprintf (fp, "\tNext in current Level: ");
+	if (func->next_in_level) {
+		fprintf (fp, "%s\n", func->next_in_level->name);
+	} else {	
+		fprintf (fp, "-/-\n");
+	}
+	fprintf (fp, "\tRoot: ");
+	if (func->root) {
+		fprintf (fp, "%s\n", func->root->name);
+	} else {	
+		fprintf (fp, "-/-\n");
+	}
+
+
+	fprintf (fp, "\tprecise: %s\n", vftr_bool_to_string (func->precise));
+	fprintf (fp, "\tID: %d\n", func->id);
+	fprintf (fp, "\tGroup ID: %d\n", func->gid);
+	fprintf (fp, "\tRecursion depth: %d\n", func->recursion_depth);
+	fprintf (fp, "\tStackHash: %u\n", func->stackHash);
+	fprintf (fp, "\tExclude: %d\n", func->exclude_this);
+}
+		
+/**********************************************************************/
+
+int vftr_functions_test_1 (FILE *fp_in, FILE *fp_out) {
+	unsigned long long addr[1];
+	function_t *func = vftr_new_function ((void*)addr, "test_1", NULL, 0, true);
+	vftr_write_function (fp_out, func);
+	return 0;
+}
+
+/**********************************************************************/
+
+int vftr_functions_test_2 (FILE *fp_in, FILE *fp_out) {
+	unsigned long long addrs [6];
+	function_t *func1 = vftr_new_function (NULL, "init", NULL, 0, false);
+	function_t *func2 = vftr_new_function ((void*)addrs, "func2", func1, 0, false);
+	function_t *func3 = vftr_new_function ((void*)(addrs + 1), "func3", func1, 0, false);	
+	function_t *func4 = vftr_new_function ((void*)(addrs + 2), "func4", func3, 0, false);
+	function_t *func5 = vftr_new_function ((void*)(addrs + 3), "func5", func2, 0, false);
+	function_t *func6 = vftr_new_function ((void*)(addrs + 4), "func6", func2, 0, false);
+	function_t *func7 = vftr_new_function ((void*)(addrs + 5), "func4", func6, 0, false);
+	vftr_write_function (fp_out, func1);
+	vftr_write_function (fp_out, func2);
+	vftr_write_function (fp_out, func3);
+	vftr_write_function (fp_out, func4);
+	vftr_write_function (fp_out, func5);
+	vftr_write_function (fp_out, func6);
+	vftr_write_function (fp_out, func7);
+	fprintf (fp_out, "Test if callee pointer is changed properly\n");
+	func2->callee = func6;
+	vftr_write_function (fp_out, func2);
+	fprintf (fp_out, "vftr_func_table_size: %d\n", vftr_func_table_size);
+	fprintf (fp_out, "vftr_stackscount: %d\n", vftr_stackscount);
+	fprintf (fp_out, "Check functions registered in function table: \n");
+	for (int i = 0; i < vftr_stackscount; i++) {
+		vftr_write_function(fp_out, vftr_func_table[i]);
+	}
+	return 0;
+}
+
+int vftr_functions_test_3 (FILE *fp_in, FILE *fp_out) {
+	unsigned long long addrs [6];
+	function_t *func1 = vftr_new_function (NULL, "init", NULL, 0, false);
+	function_t *func2 = vftr_new_function ((void*)addrs, "func2", func1, 0, false);
+	function_t *func3 = vftr_new_function ((void*)(addrs + 1), "func3", func1, 0, false);	
+	function_t *func4 = vftr_new_function ((void*)(addrs + 2), "func4", func3, 0, false);
+	function_t *func5 = vftr_new_function ((void*)(addrs + 3), "func5", func2, 0, false);
+	function_t *func6 = vftr_new_function ((void*)(addrs + 4), "func6", func2, 0, false);
+	function_t *func7 = vftr_new_function ((void*)(addrs + 5), "func4", func6, 0, false);
+	vftr_write_stack_ascii (fp_out, 0.0, func1, "", 0);
+	vftr_write_stack_ascii (fp_out, 0.0, func2, "", 0);
+	vftr_write_stack_ascii (fp_out, 0.0, func3, "", 0);
+	vftr_write_stack_ascii (fp_out, 0.0, func4, "", 0);
+	vftr_write_stack_ascii (fp_out, 0.0, func5, "", 0);
+	vftr_write_stack_ascii (fp_out, 0.0, func6, "", 0);
+	vftr_write_stack_ascii (fp_out, 0.0, func7, "", 0);
+}
+
+/**********************************************************************/

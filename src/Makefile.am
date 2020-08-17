@@ -72,6 +72,10 @@ else
 libvftrace_la_FCFLAGS += -DPMPI_MODULE=mpi
 endif
 
+if USES_INTEL_COMPILER
+libvftrace_la_LDFLAGS += -lifcore
+endif
+
 libvftr_dlopen_la_SOURCES = vftr_dlopen.c
 
 nodist_include_HEADERS = vftrace.mod

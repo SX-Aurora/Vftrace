@@ -3,6 +3,7 @@
 
 extern int vftr_signal_number;
 
+void vftr_abort ();
 void vftr_define_signal_handlers ();
 void vftr_sigaction (int sig);
 

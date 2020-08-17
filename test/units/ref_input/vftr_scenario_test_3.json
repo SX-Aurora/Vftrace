@@ -1,0 +1,20 @@
+{
+  "scenario_name": "vftr_scenario_test_1",
+  "counters": [
+    {
+      "papi_name": "C1",
+      "symbol": "c1"
+    },
+    {
+      "papi_name": "C2",
+      "symbol": "c2"
+    }
+  ],
+  "observables": [
+    {
+      "name": "Invalid Formula",
+      "formula": "c1 +* c2",
+    }
+  ]
+}
+

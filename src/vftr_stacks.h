@@ -85,13 +85,13 @@ extern profdata_t vftr_prof_data;
 // initialize stacks only called from vftr_initialize
 void vftr_initialize_stacks();
 
-// Write the stacks out
-void vftr_write_stacks (FILE *fp, int level, function_t *func);
 
 // Synchronise stack-IDs between processes
 int vftr_normalize_stacks();
 
-void vftr_print_stack (double time, function_t *func, char *label, int timeToSample);
+// Write the stacks out
+void vftr_write_stacks_vfd (FILE *fp, int level, function_t *func);
+void vftr_write_stack_ascii (FILE *fp, double time, function_t *func, char *label, int timeToSample);
 void vftr_print_local_stacklist (function_t **funcTable, FILE *pout, int ntop);
 void vftr_print_local_demangled (function_t **funcTable, FILE *pout, int ntop);
 void vftr_print_global_stacklist (FILE *pout);
