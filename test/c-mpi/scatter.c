@@ -40,7 +40,7 @@ int main(int argc, char** argv) {
                rbuffer, nints, MPI_INT, 
                rootrank, MPI_COMM_WORLD);
    if (my_rank == rootrank) {
-      printf("Gathering messages from all ranks on rank %d\n", my_rank);
+      printf("Scattering messages from rank %d\n", my_rank);
    }
 
    // validate data
