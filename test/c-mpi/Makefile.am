@@ -28,10 +28,8 @@ dist_noinst_SCRIPTS = init_finalize-1.sh \
                       init_finalize-2.sh \
                       init_finalize-3.sh \
                       init_finalize-4.sh \
-		      types-1.sh \
-		      types-2.sh \
-		      derived_types-1.sh \
-		      derived_types-2.sh
+		      types.sh \
+		      derived_types.sh
 
 ########################
 # point to point tests #
@@ -62,16 +60,11 @@ send_irecv_SOURCES = $(srcdir)/send_irecv.c
 send_irecv_CFLAGS  = $(AM_CFLAGS)
 send_irecv_LDFLAGS = $(AM_LDFLAGS)
 
-dist_noinst_SCRIPTS += send_recv-1.sh \
-		       send_recv-2.sh \
-		       sendrecv-1.sh \
-		       sendrecv-2.sh \
-		       sendrecv_replace-1.sh \
-		       sendrecv_replace-2.sh \
-		       isend_recv-1.sh \
-		       isend_recv-2.sh \
-		       send_irecv-1.sh \
-		       send_irecv-2.sh
+dist_noinst_SCRIPTS += send_recv.sh \
+		       sendrecv.sh \
+		       sendrecv_replace.sh \
+		       isend_recv.sh \
+		       send_irecv.sh
 
 ####################
 # Collective tests #
@@ -113,19 +106,13 @@ scatter_SOURCES = $(srcdir)/scatter.c
 scatter_CFLAGS = $(AM_CFLAGS)
 scatter_LDFLAGS = $(AM_LDFLAGS)
 
-dist_noinst_SCRIPTS += bcast-1.sh \
-		       bcast-2.sh \
-		       bcast_intercom-1.sh \
-		       bcast_intercom-2.sh \
-		       gather-1.sh \
-		       gather-2.sh \
-		       gather_intercom-1.sh \
-		       gather_intercom-2.sh \
-		       gatherv-1.sh \
-		       gatherv-2.sh \
-		       gatherv_intercom-1.sh \
-		       scatter-1.sh \
-		       scatter-2.sh
+dist_noinst_SCRIPTS += bcast.sh \
+		       bcast_intercom.sh \
+		       gather.sh \
+		       gather_intercom.sh \
+		       gatherv.sh \
+		       gatherv_intercom.sh \
+		       scatter.sh
 
 ###################
 # One sided tests #
@@ -141,10 +128,8 @@ get_SOURCES = $(srcdir)/get.c
 get_CFLAGS = $(AM_CFLAGS)
 get_LDFLAGS = $(AM_LDFLAGS)
 
-dist_noinst_SCRIPTS += put-1.sh \
-		       put-2.sh \
-		       get-1.sh \
-		       get-2.sh
+dist_noinst_SCRIPTS += put.sh \
+		       get.sh
 
 ##############
 # Test tests #
@@ -170,14 +155,10 @@ testall_SOURCES = $(srcdir)/testall.c
 testall_CFLAGS = $(AM_CFLAGS)
 testall_LDFLAGS = $(AM_LDFLAGS)
 
-dist_noinst_SCRIPTS += test-1.sh \
-		       test-2.sh \
-		       testany-1.sh \
-		       testany-2.sh \
-		       testsome-1.sh \
-		       testsome-2.sh \
-		       testall-1.sh \
-		       testall-2.sh
+dist_noinst_SCRIPTS += test.sh \
+		       testany.sh \
+		       testsome.sh \
+		       testall.sh
 
 ##############
 # Wait tests #
@@ -204,14 +185,10 @@ waitall_SOURCES = $(srcdir)/waitall.c
 waitall_CFLAGS = $(AM_CFLAGS)
 waitall_LDFLAGS = $(AM_LDFLAGS)
 
-dist_noinst_SCRIPTS += wait-1.sh \
-		       wait-2.sh \
-		       waitany-1.sh \
-		       waitany-2.sh \
-		       waitsome-1.sh \
-		       waitsome-2.sh \
-		       waitall-1.sh \
-		       waitall-2.sh
+dist_noinst_SCRIPTS += wait.sh \
+		       waitany.sh \
+		       waitsome.sh \
+		       waitall.sh
 
 TEST_EXTENSIONS = .sh
 SH_LOG_COMPILER = $(SHELL)
