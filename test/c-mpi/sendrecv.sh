@@ -25,7 +25,7 @@ do
       if [ "${sourcerank}" -lt "0" ] ; then
          sourcerank=$(bc <<< "${nprocs} - 1")
       fi
-      echo ${irank} ${destrank} ${sourcerank}
+
       # Validate sending
       # Get actually used message size
       count=$(../../tools/tracedump ${vftr_binary}_${irank}.vfd | \
