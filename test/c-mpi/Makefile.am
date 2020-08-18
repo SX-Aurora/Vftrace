@@ -77,7 +77,11 @@ noinst_PROGRAMS += bcast \
 		   gatherv \
 		   gatherv_intercom \
 		   scatter \
-		   scatter_intercom
+		   scatter_intercom \
+		   scatterv \
+		   scatterv_intercom \
+		   allgather \
+		   allgather_intercom
 
 bcast_SOURCES = $(srcdir)/bcast.c
 bcast_CFLAGS = $(AM_CFLAGS)
@@ -111,6 +115,22 @@ scatter_intercom_SOURCES = $(srcdir)/scatter_intercom.c
 scatter_intercom_CFLAGS = $(AM_CFLAGS)
 scatter_intercom_LDFLAGS = $(AM_LDFLAGS)
 
+scatterv_SOURCES = $(srcdir)/scatterv.c
+scatterv_CFLAGS = $(AM_CFLAGS)
+scatterv_LDFLAGS = $(AM_LDFLAGS)
+
+scatterv_intercom_SOURCES = $(srcdir)/scatterv_intercom.c
+scatterv_intercom_CFLAGS = $(AM_CFLAGS)
+scatterv_intercom_LDFLAGS = $(AM_LDFLAGS)
+
+allgather_SOURCES = $(srcdir)/allgather.c
+allgather_CFLAGS = $(AM_CFLAGS)
+allgather_LDFLAGS = $(AM_LDFLAGS)
+
+allgather_intercom_SOURCES = $(srcdir)/allgather_intercom.c
+allgather_intercom_CFLAGS = $(AM_CFLAGS)
+allgather_intercom_LDFLAGS = $(AM_LDFLAGS)
+
 dist_noinst_SCRIPTS += bcast.sh \
 		       bcast_intercom.sh \
 		       gather.sh \
@@ -118,7 +138,11 @@ dist_noinst_SCRIPTS += bcast.sh \
 		       gatherv.sh \
 		       gatherv_intercom.sh \
 		       scatter.sh \
-		       scatter_intercom.sh
+		       scatter_intercom.sh \
+		       scatterv.sh \
+		       scatterv_intercom.sh \
+		       allgather.sh \
+		       allgather_intercom.sh
 
 ###################
 # One sided tests #
