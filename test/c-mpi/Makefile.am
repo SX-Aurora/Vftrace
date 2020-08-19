@@ -87,7 +87,8 @@ noinst_PROGRAMS += bcast \
 		   alltoall \
 		   alltoall_intercom \
 		   alltoallv \
-		   alltoallv_intercom
+		   alltoallv_intercom \
+		   alltoallw
 
 bcast_SOURCES = $(srcdir)/bcast.c
 bcast_CFLAGS = $(AM_CFLAGS)
@@ -161,6 +162,10 @@ alltoallv_intercom_SOURCES = $(srcdir)/alltoallv_intercom.c
 alltoallv_intercom_CFLAGS = $(AM_CFLAGS)
 alltoallv_intercom_LDFLAGS = $(AM_LDFLAGS)
 
+alltoallw_SOURCES = $(srcdir)/alltoallw.c
+alltoallw_CFLAGS = $(AM_CFLAGS)
+alltoallw_LDFLAGS = $(AM_LDFLAGS)
+
 dist_noinst_SCRIPTS += bcast.sh \
 		       bcast_intercom.sh \
 		       gather.sh \
@@ -178,7 +183,8 @@ dist_noinst_SCRIPTS += bcast.sh \
 		       alltoall.sh \
 		       alltoall_intercom.sh \
 		       alltoallv.sh \
-		       alltoallv_intercom.sh
+		       alltoallv_intercom.sh \
+		       alltoallw.sh
 
 ###################
 # One sided tests #
