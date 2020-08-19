@@ -192,6 +192,18 @@ dist_noinst_SCRIPTS += bcast.sh \
 		       alltoallw.sh \
 		       alltoallw_intercom.sh
 
+#####################
+# Global reductions #
+#####################
+
+noinst_PROGRAMS += reduce
+
+reduce_SOURCES = $(srcdir)/reduce.c
+reduce_CFLAGS = $(AM_CFLAGS)
+reduce_LDFLAGS = $(AM_LDFLAGS)
+
+dist_noinst_SCRIPTS += reduce.sh
+
 ###################
 # One sided tests #
 ###################
