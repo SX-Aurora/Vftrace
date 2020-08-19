@@ -23,7 +23,7 @@ int main(int argc, char** argv) {
 
    // require cmd-line argument
    if (argc < 2) {
-      printf("./allgatherv_intercom <msgsize in ints>\n");
+      printf("./alltoallv_intercom <msgsize in ints>\n");
       return 1;
    }
 
@@ -49,7 +49,6 @@ int main(int argc, char** argv) {
    int sub_comm_remote_size;
    MPI_Comm_remote_size(int_comm, &sub_comm_remote_size);
    int minpeerrank = (1-color)*((comm_size+1)/2);
-   //int maxpeerrank = minpeerrank + (comm_size+color)/2 -1;
 
    // allocating send/recv buffer
    int nints = atoi(argv[1]) + my_rank;
@@ -80,9 +79,9 @@ int main(int argc, char** argv) {
    int *rbuffer = (int*) malloc(nrtot*sizeof(int));
    for (int i=0; i<nrtot; i++) {rbuffer[i] = -1;}
 
-   MPI_Allgatherv(sbuffer, nints, MPI_INT,
-                  rbuffer, rcounts, rdispls, MPI_INT,
-                  int_comm);
+   MPI_Alltoallv(sbuffer, scounts, sdispls, MPI_INT,
+                 rbuffer, rcounts, rdispls, MPI_INT,
+                 int_comm);
    printf("Communicating with all ranks\n");
 
    // validate data
