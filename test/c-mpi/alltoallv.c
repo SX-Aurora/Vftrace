@@ -47,54 +47,11 @@ int main(int argc, char** argv) {
    int *rbuffer = (int*) malloc(nrtot*sizeof(int));
    for (int i=0; i<nrtot; i++) {rbuffer[i] = -1;}
 
-for (int irank=0; irank<comm_size; irank++) {
-   if (my_rank == irank) {
-      printf("Rank %d: ", my_rank);
-      for (int i=0; i<nstot; i++) {
-         printf("%d ", sbuffer[i]);
-      }
-      printf("\n");
-      printf("   scounts: ");
-      for (int i=0; i<comm_size; i++) {
-         printf("%d ", scounts[i]);
-      }
-      printf("\n");
-      printf("   sdispls: ");
-      for (int i=0; i<comm_size; i++) {
-         printf("%d ", sdispls[i]);
-      }
-      printf("\n");
-      printf("   rcounts: ");
-      for (int i=0; i<comm_size; i++) {
-         printf("%d ", rcounts[i]);
-      }
-      printf("\n");
-      printf("   rdispls: ");
-      for (int i=0; i<comm_size; i++) {
-         printf("%d ", rdispls[i]);
-      }
-      printf("\n");
-
-   }
-   MPI_Barrier(MPI_COMM_WORLD);
-}
-
    // Messaging
    MPI_Alltoallv(sbuffer, scounts, sdispls, MPI_INT,
                  rbuffer, rcounts, rdispls, MPI_INT,
                  MPI_COMM_WORLD);
    printf("Communicating with all ranks\n");
-
-for (int irank=0; irank<comm_size; irank++) {
-   if (my_rank == irank) {
-      printf("Rank %d: ", my_rank);
-      for (int i=0; i<nrtot; i++) {
-         printf("%d ", rbuffer[i]);
-      }
-      printf("\n");
-   }
-   MPI_Barrier(MPI_COMM_WORLD);
-}
 
    // validate data
    bool valid_data = true;
