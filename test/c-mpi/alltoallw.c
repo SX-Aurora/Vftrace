@@ -16,7 +16,7 @@ int main(int argc, char** argv) {
 
    // require cmd-line argument
    if (argc < 2) {
-      printf("./alltoallv <msgsize in ints>\n");
+      printf("./alltoallw <msgsize in ints>\n");
       return 1;
    }
 
