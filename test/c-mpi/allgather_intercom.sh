@@ -20,7 +20,7 @@ do
    for irank in $(seq 0 1 $(bc <<< "${nprocs}-1"));
    do
 
-      #../../tools/tracedump ${vftr_binary}_${irank}.vfd
+      ../../tools/tracedump ${vftr_binary}_${irank}.vfd
 
       my_group=$(bc <<< "(2*${irank})/${nprocs}")
       # validate receive
