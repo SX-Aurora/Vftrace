@@ -198,7 +198,8 @@ dist_noinst_SCRIPTS += bcast.sh \
 
 noinst_PROGRAMS += reduce \
 		   reduce_intercom \
-		   allreduce
+		   allreduce \
+		   allreduce_intercom
 
 reduce_SOURCES = $(srcdir)/reduce.c
 reduce_CFLAGS = $(AM_CFLAGS)
@@ -212,9 +213,14 @@ allreduce_SOURCES = $(srcdir)/allreduce.c
 allreduce_CFLAGS = $(AM_CFLAGS)
 allreduce_LDFLAGS = $(AM_LDFLAGS)
 
+allreduce_intercom_SOURCES = $(srcdir)/allreduce_intercom.c
+allreduce_intercom_CFLAGS = $(AM_CFLAGS)
+allreduce_intercom_LDFLAGS = $(AM_LDFLAGS)
+
 dist_noinst_SCRIPTS += reduce.sh \
 		       reduce_intercom.sh \
-		       allreduce.sh
+		       allreduce.sh \
+		       allreduce_intercom.sh
 
 ###################
 # One sided tests #
