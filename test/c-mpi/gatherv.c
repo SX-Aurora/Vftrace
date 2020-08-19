@@ -40,6 +40,9 @@ int main(int argc, char** argv) {
          ntot += recvcounts[i];
       }
       rbuffer = (int*) malloc(ntot*sizeof(int));
+      for (int i=0; i<ntot; i++) {
+         rbuffer[i] = -1;
+      }
    }
 
    // Messaging
