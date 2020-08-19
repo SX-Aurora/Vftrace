@@ -47,6 +47,7 @@ int vftr_MPI_Alltoallv(const void *sendbuf, const int *sendcounts,
          // and receives recvcounts[i] recvtypes from
          // the i-th process in group B and vice versa.
          int size;
+         PMPI_Comm_remote_size(comm, &size);
          for (int i=0; i<size; i++) {
             // translate the i-th rank in the remote group to the global rank
             int global_peer_rank = vftr_remote2global_rank(comm, i);
