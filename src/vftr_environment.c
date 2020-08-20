@@ -368,5 +368,5 @@ int vftr_environment_test_1 (FILE *fp) {
 	vftr_assert_environment ();
 	vftr_print_environment (fp);
 	vftr_free_environment ();
-
+	return 0;
 }

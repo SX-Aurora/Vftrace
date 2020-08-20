@@ -380,6 +380,7 @@ int vftr_setup_test_1 (FILE *fp) {
 	vftr_get_mpi_info (&mpi_rank, &mpi_size);
 	fprintf (fp, "Rank: %d\n", mpi_rank);
 	fprintf (fp, "Size: %d\n", mpi_size);
+	return 0;
 }
 
 /**********************************************************************/
@@ -389,5 +390,6 @@ int vftr_setup_test_2 (FILE *fp) {
 	vftr_print_disclaimer_full (fp);
 	fprintf (fp, "****************************************\n");
 	vftr_print_disclaimer (fp);
+	return 0;
 }
 

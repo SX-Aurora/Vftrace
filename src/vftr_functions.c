@@ -337,6 +337,7 @@ int vftr_functions_test_3 (FILE *fp_in, FILE *fp_out) {
 	vftr_write_stack_ascii (fp_out, 0.0, func5, "", 0);
 	vftr_write_stack_ascii (fp_out, 0.0, func6, "", 0);
 	vftr_write_stack_ascii (fp_out, 0.0, func7, "", 0);
+	return 0;
 }
 
 /**********************************************************************/
