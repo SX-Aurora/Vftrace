@@ -42,13 +42,13 @@ int main(int argc, char** argv) {
          // send to every other rank
          for (int recvrank=0; recvrank<comm_size; recvrank++) {
             if (my_rank != recvrank) {
-               printf("Sending messages from rank %d\n", my_rank);
+               printf("Sending message from rank %d to rank %d\n", my_rank, recvrank);
                MPI_Send(sbuffer, nints, MPI_INT, recvrank, 0, MPI_COMM_WORLD);
             }
          }
       } else {
          MPI_Status mystat;
-         printf("Sending messages from rank %d\n", sendrank);
+         printf("Receiving message on rank %d from rank %d\n", my_rank, sendrank);
          MPI_Recv(rbuffer, nints, MPI_INT, sendrank, 0, MPI_COMM_WORLD, &mystat);
          // validate data
          for (int i=0; i<nints; i++) {
