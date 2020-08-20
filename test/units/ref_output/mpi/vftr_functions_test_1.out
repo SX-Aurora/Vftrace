@@ -1,0 +1,36 @@
+Function: MPI_Init
+	Called from: init
+	Currently calling: -/-
+	First in next Level: -/-
+	Next in current Level: MPI_Init
+	Root: init
+	precise: false
+	ID: 1
+	Group ID: 1
+	Recursion depth: 0
+	StackHash: 3806353462
+	Exclude: 0
+Function: init
+	Called from: -/-
+	Currently calling: MPI_Init
+	First in next Level: MPI_Init
+	Next in current Level: init
+	Root: init
+	precise: false
+	ID: 0
+	Group ID: 0
+	Recursion depth: 0
+	StackHash: 1836196153
+	Exclude: 0
+Function: test_1
+	Called from: -/-
+	Currently calling: -/-
+	First in next Level: -/-
+	Next in current Level: -/-
+	Root: test_1
+	precise: true
+	ID: 2
+	Group ID: -1
+	Recursion depth: 0
+	StackHash: 2448245485
+	Exclude: 0
