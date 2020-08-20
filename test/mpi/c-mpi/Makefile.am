@@ -8,7 +8,7 @@ endif
 ################
 # System Tests #
 ################
-noinst_PROGRAMS = init_finalize \
+check_PROGRAMS = init_finalize \
 		  ctypes \
 		  derived_ctypes
 		
@@ -34,7 +34,7 @@ dist_noinst_SCRIPTS = init_finalize-1.sh \
 ########################
 # point to point tests #
 ########################
-noinst_PROGRAMS += send_recv \
+check_PROGRAMS += send_recv \
 		   sendrecv \
 		   sendrecv_replace \
 		   isend_recv \
@@ -70,7 +70,7 @@ dist_noinst_SCRIPTS += send_recv.sh \
 # Collective tests #
 ####################
 
-noinst_PROGRAMS += bcast \
+check_PROGRAMS += bcast \
 		   bcast_intercom \
 		   gather \
 		   gather_intercom \
@@ -196,7 +196,7 @@ dist_noinst_SCRIPTS += bcast.sh \
 # Global reductions #
 #####################
 
-noinst_PROGRAMS += reduce \
+check_PROGRAMS += reduce \
 		   reduce_intercom \
 		   allreduce \
 		   allreduce_intercom
@@ -225,7 +225,7 @@ dist_noinst_SCRIPTS += reduce.sh \
 ###################
 # One sided tests #
 ###################
-noinst_PROGRAMS += put \
+check_PROGRAMS += put \
 		   get
 
 put_SOURCES = $(srcdir)/put.c
@@ -242,7 +242,7 @@ dist_noinst_SCRIPTS += put.sh \
 ##############
 # Test tests #
 ##############
-noinst_PROGRAMS += test \
+check_PROGRAMS += test \
 		   testany \
 		   testsome \
 		   testall
@@ -272,7 +272,7 @@ dist_noinst_SCRIPTS += test.sh \
 # Wait tests #
 ##############
 
-noinst_PROGRAMS += wait \
+check_PROGRAMS += wait \
 		   waitany \
 		   waitsome \
 		   waitall
