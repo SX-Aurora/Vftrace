@@ -1,3 +1,12 @@
+if MPI_PROFILING
+  AM_TESTS_ENVIRONMENT=. $(top_srcdir)/test/environment/set_necmpi.sh;
+#   AM_TESTS_ENVIRONMENT=export HAS_MPI="YES"; \
+#                        export MPI_EXEC="mpirun"; \
+# 		       export NP="-np";  
+else
+  AM_TESTS_ENVIRONMENT=. $(top_srcdir)/test/environment/set_nompi.sh;
+endif
+
 AM_CFLAGS = -I$(top_srcdir)/src/ -I$(top_srcdir)/src/vftr_mpi
 
 AM_LDFLAGS = -L$(top_builddir)/src/.libs -lvftrace -lm
