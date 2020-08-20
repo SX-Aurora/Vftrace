@@ -802,6 +802,7 @@ int vftr_filewrite_test_1 (FILE *fp_in, FILE *fp_out) {
 	fprintf (fp_out, "logfile_name(%d, %d): %s\n", mpi_rank, mpi_size,
 		 vftr_create_logfile_name(mpi_rank, mpi_size, "vfd"));
 
+	return 0;
 }
 
 /**********************************************************************/

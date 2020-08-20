@@ -10,6 +10,11 @@ endif
 AM_CFLAGS = -I$(top_srcdir)/src/ -I$(top_srcdir)/src/vftr_mpi
 
 AM_LDFLAGS = -L$(top_builddir)/src/.libs -lvftrace -lm
+
+if MPI_PROFILING
+  AM_CFLAGS += -D_MPI
+endif
+
 if USES_NEC_MPI
   AM_LDFLAGS += -mpiprof
 endif
