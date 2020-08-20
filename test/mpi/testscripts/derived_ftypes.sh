@@ -1,6 +1,6 @@
 #!/bin/bash
 
-vftr_binary=derived_types
+vftr_binary=derived_ftypes
 nprocs=2
 
 export VFTR_SAMPLING="Yes"

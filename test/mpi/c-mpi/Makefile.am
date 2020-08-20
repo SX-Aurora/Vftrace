@@ -9,27 +9,27 @@ endif
 # System Tests #
 ################
 noinst_PROGRAMS = init_finalize \
-		  types \
-		  derived_types
+		  ctypes \
+		  derived_ctypes
 		
 init_finalize_SOURCES = $(srcdir)/init_finalize.c
 init_finalize_CFLAGS  = $(AM_CFLAGS)
 init_finalize_LDFLAGS = $(AM_LDFLAGS)
 
-types_SOURCES = $(srcdir)/types.c
-types_CFLAGS  = $(AM_CFLAGS)
-types_LDFLAGS = $(AM_LDFLAGS)
+ctypes_SOURCES = $(srcdir)/ctypes.c
+ctypes_CFLAGS  = $(AM_CFLAGS)
+ctypes_LDFLAGS = $(AM_LDFLAGS)
 
-derived_types_SOURCES = $(srcdir)/derived_types.c
-derived_types_CFLAGS  = $(AM_CFLAGS)
-derived_types_LDFLAGS = $(AM_LDFLAGS)
+derived_ctypes_SOURCES = $(srcdir)/derived_ctypes.c
+derived_ctypes_CFLAGS  = $(AM_CFLAGS)
+derived_ctypes_LDFLAGS = $(AM_LDFLAGS)
 
 dist_noinst_SCRIPTS = init_finalize-1.sh \
                       init_finalize-2.sh \
                       init_finalize-3.sh \
                       init_finalize-4.sh \
-		      types.sh \
-		      derived_types.sh
+		      ctypes.sh \
+		      derived_ctypes.sh
 
 ########################
 # point to point tests #

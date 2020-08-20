@@ -1,6 +1,6 @@
 #!/bin/bash
 
-vftr_binary=types
+vftr_binary=ftypes
 nprocs=2
 
 export VFTR_SAMPLING="Yes"
@@ -15,15 +15,11 @@ do
    ../../../tools/tracedump ${vftr_binary}_${ivfd}.vfd
 
    itype=0
-   for mpitype in MPI_CHAR MPI_SHORT MPI_INT MPI_LONG MPI_LONG_LONG_INT \
-                  MPI_UNSIGNED_CHAR MPI_UNSIGNED_SHORT MPI_UNSIGNED \
-                  MPI_UNSIGNED_LONG MPI_UNSIGNED_LONG_LONG  \
-                  MPI_FLOAT MPI_DOUBLE MPI_LONG_DOUBLE  \
-                  MPI_WCHAR MPI_C_BOOL  \
-                  MPI_INT8_T MPI_INT16_T MPI_INT32_T MPI_INT64_T  \
-                  MPI_UINT8_T MPI_UINT16_T MPI_UINT32_T MPI_UINT64_T  \
-                  MPI_C_COMPLEX MPI_C_DOUBLE_COMPLEX MPI_C_LONG_DOUBLE_COMPLEX  \
-                  MPI_BYTE ;
+   for mpitype in MPI_INTEGER \
+                  MPI_REAL MPI_DOUBLE_PRECISION \
+                  MPI_COMPLEX \
+                  MPI_LOGICAL \
+                  MPI_CHARACTER 
    do
       ((itype+=1))
       tmptype=$(../../../tools/tracedump ${vftr_binary}_${ivfd}.vfd | \

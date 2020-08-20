@@ -152,13 +152,14 @@ AC_CONFIG_LINKS(test/units/this_passes.sh:test/units/this_passes.sh
                 test/units/vftr_functions_test_3.sh:test/units/vftr_functions_test_3.sh
                 test/units/vftr_stacks_test_1.sh:test/units/vftr_stacks_test_1.sh
                )
-               
+
+# C-MPI testscripts
 AC_CONFIG_LINKS(test/mpi/c-mpi/init_finalize-1.sh:test/mpi/testscripts/init_finalize-1.sh
                 test/mpi/c-mpi/init_finalize-2.sh:test/mpi/testscripts/init_finalize-2.sh
                 test/mpi/c-mpi/init_finalize-3.sh:test/mpi/testscripts/init_finalize-3.sh
                 test/mpi/c-mpi/init_finalize-4.sh:test/mpi/testscripts/init_finalize-4.sh
-                test/mpi/c-mpi/types.sh:test/mpi/testscripts/types.sh
-                test/mpi/c-mpi/derived_types.sh:test/mpi/testscripts/derived_types.sh
+                test/mpi/c-mpi/ctypes.sh:test/mpi/testscripts/ctypes.sh
+                test/mpi/c-mpi/derived_ctypes.sh:test/mpi/testscripts/derived_ctypes.sh
                 test/mpi/c-mpi/send_recv.sh:test/mpi/testscripts/send_recv.sh
                 test/mpi/c-mpi/sendrecv.sh:test/mpi/testscripts/sendrecv.sh
                 test/mpi/c-mpi/sendrecv_replace.sh:test/mpi/testscripts/sendrecv_replace.sh
@@ -200,12 +201,13 @@ AC_CONFIG_LINKS(test/mpi/c-mpi/init_finalize-1.sh:test/mpi/testscripts/init_fina
                 test/mpi/c-mpi/waitall.sh:test/mpi/testscripts/waitall.sh
                )
 
+# F-MPI testscripts
 AC_CONFIG_LINKS(test/mpi/f-mpi/init_finalize-1.sh:test/mpi/testscripts/init_finalize-1.sh
                 test/mpi/f-mpi/init_finalize-2.sh:test/mpi/testscripts/init_finalize-2.sh
                 test/mpi/f-mpi/init_finalize-3.sh:test/mpi/testscripts/init_finalize-3.sh
                 test/mpi/f-mpi/init_finalize-4.sh:test/mpi/testscripts/init_finalize-4.sh
-                test/mpi/f-mpi/types.sh:test/mpi/testscripts/types.sh
-                test/mpi/f-mpi/derived_types.sh:test/mpi/testscripts/derived_types.sh
+                test/mpi/f-mpi/ftypes.sh:test/mpi/testscripts/ftypes.sh
+                test/mpi/f-mpi/derived_ftypes.sh:test/mpi/testscripts/derived_ftypes.sh
                 test/mpi/f-mpi/send_recv.sh:test/mpi/testscripts/send_recv.sh
                 test/mpi/f-mpi/sendrecv.sh:test/mpi/testscripts/sendrecv.sh
                 test/mpi/f-mpi/sendrecv_replace.sh:test/mpi/testscripts/sendrecv_replace.sh
@@ -247,12 +249,13 @@ AC_CONFIG_LINKS(test/mpi/f-mpi/init_finalize-1.sh:test/mpi/testscripts/init_fina
                 test/mpi/f-mpi/waitall.sh:test/mpi/testscripts/waitall.sh
                )
                
+# F08-MPI testscripts
 #AC_CONFIG_LINKS(test/mpi/f08-mpi/init_finalize-1.sh:test/mpi/testscripts/init_finalize-1.sh
 #                test/mpi/f08-mpi/init_finalize-2.sh:test/mpi/testscripts/init_finalize-2.sh
 #                test/mpi/f08-mpi/init_finalize-3.sh:test/mpi/testscripts/init_finalize-3.sh
 #                test/mpi/f08-mpi/init_finalize-4.sh:test/mpi/testscripts/init_finalize-4.sh
-#                test/mpi/f08-mpi/types.sh:test/mpi/testscripts/types.sh
-#                test/mpi/f08-mpi/derived_types.sh:test/mpi/testscripts/derived_types.sh
+#                test/mpi/f08-mpi/ftypes.sh:test/mpi/testscripts/ftypes.sh
+#                test/mpi/f08-mpi/derived_ftypes.sh:test/mpi/testscripts/derived_ftypes.sh
 #                test/mpi/f08-mpi/send_recv.sh:test/mpi/testscripts/send_recv.sh
 #                test/mpi/f08-mpi/sendrecv.sh:test/mpi/testscripts/sendrecv.sh
 #                test/mpi/f08-mpi/sendrecv_replace.sh:test/mpi/testscripts/sendrecv_replace.sh
