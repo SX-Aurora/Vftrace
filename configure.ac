@@ -115,4 +115,41 @@ AC_CONFIG_FILES([test/units/Makefile])
 AC_CONFIG_FILES([test/c-mpi/Makefile])
 #AC_CONFIG_FILES([test/f-mpi/Makefile])
 #AC_CONFIG_FILES([test/f08-mpi/Makefile])
+
+# Test files and folders
+AC_CONFIG_LINKS(test/units/ref_input/vftr_scenario_test_1.json:test/units/ref_input/vftr_scenario_test_1.json
+                test/units/ref_input/vftr_scenario_test_2.json:test/units/ref_input/vftr_scenario_test_2.json
+                test/units/ref_input/vftr_scenario_test_3.json:test/units/ref_input/vftr_scenario_test_3.json
+                test/units/ref_input/vftr_symbols_test_1.x:test/units/ref_input/vftr_symbols_test_1.x
+               )
+AC_CONFIG_LINKS(test/units/ref_output/vftr_environment_test_1.out:test/units/ref_output/vftr_environment_test_1.out
+                test/units/ref_output/vftr_filewrite_test_1.out:test/units/ref_output/vftr_filewrite_test_1.out
+                test/units/ref_output/vftr_filewrite_test_2.out:test/units/ref_output/vftr_filewrite_test_2.out
+                test/units/ref_output/vftr_functions_test_1.out:test/units/ref_output/vftr_functions_test_1.out
+                test/units/ref_output/vftr_functions_test_2.out:test/units/ref_output/vftr_functions_test_2.out
+                test/units/ref_output/vftr_functions_test_3.out:test/units/ref_output/vftr_functions_test_3.out
+                test/units/ref_output/vftr_scenario_test_1.out:test/units/ref_output/vftr_scenario_test_1.out
+                test/units/ref_output/vftr_scenario_test_2.out:test/units/ref_output/vftr_scenario_test_2.out
+                test/units/ref_output/vftr_setup_test_1.out:test/units/ref_output/vftr_setup_test_1.out
+                test/units/ref_output/vftr_setup_test_2.out:test/units/ref_output/vftr_setup_test_2.out
+                test/units/ref_output/vftr_stacks_test_1.out:test/units/ref_output/vftr_stacks_test_1.out
+                test/units/ref_output/vftr_symbols_test_1.out:test/units/ref_output/vftr_symbols_test_1.out
+               )
+AC_CONFIG_LINKS(test/units/this_passes.sh:test/units/this_passes.sh
+                test/units/this_fails.sh:test/units/this_fails.sh
+                test/units/vftr_symbols_test_1.sh:test/units/vftr_symbols_test_1.sh
+                test/units/vftr_environment_test_1.sh:test/units/vftr_environment_test_1.sh
+                test/units/vftr_setup_test_1.sh:test/units/vftr_setup_test_1.sh
+                test/units/vftr_setup_test_2.sh:test/units/vftr_setup_test_2.sh
+                test/units/vftr_filewrite_test_1.sh:test/units/vftr_filewrite_test_1.sh
+                test/units/vftr_filewrite_test_2.sh:test/units/vftr_filewrite_test_2.sh
+                test/units/vftr_scenario_test_1.sh:test/units/vftr_scenario_test_1.sh
+                test/units/vftr_scenario_test_2.sh:test/units/vftr_scenario_test_2.sh
+                test/units/vftr_scenario_test_3.sh:test/units/vftr_scenario_test_3.sh
+                test/units/vftr_functions_test_1.sh:test/units/vftr_functions_test_1.sh
+                test/units/vftr_functions_test_2.sh:test/units/vftr_functions_test_2.sh
+                test/units/vftr_functions_test_3.sh:test/units/vftr_functions_test_3.sh
+                test/units/vftr_stacks_test_1.sh:test/units/vftr_stacks_test_1.sh
+               )
+               
 AC_OUTPUT

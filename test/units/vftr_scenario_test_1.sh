@@ -1,7 +1,7 @@
 #!/bin/bash
 set -x
-ref_out_dir=${srcdir}/ref_output
-ref_in_dir=${srcdir}/ref_input
+ref_out_dir=ref_output
+ref_in_dir=ref_input
 testname=vftr_scenario_test_1
 outfile=$testname.out
 
