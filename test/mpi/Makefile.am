@@ -1,1 +1,3 @@
-SUBDIRS = c-mpi
+SUBDIRS = 
+SUBDIRS += c-mpi
+SUBDIRS += f-mpi

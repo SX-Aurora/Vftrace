@@ -114,7 +114,7 @@ AC_CONFIG_FILES([test/Makefile])
 AC_CONFIG_FILES([test/units/Makefile])
 AC_CONFIG_FILES([test/mpi/Makefile])
 AC_CONFIG_FILES([test/mpi/c-mpi/Makefile])
-#AC_CONFIG_FILES([test/mpi/f-mpi/Makefile])
+AC_CONFIG_FILES([test/mpi/f-mpi/Makefile])
 #AC_CONFIG_FILES([test/mpi/f08-mpi/Makefile])
 
 # Test files and folders
@@ -199,5 +199,99 @@ AC_CONFIG_LINKS(test/mpi/c-mpi/init_finalize-1.sh:test/mpi/testscripts/init_fina
                 test/mpi/c-mpi/waitsome.sh:test/mpi/testscripts/waitsome.sh
                 test/mpi/c-mpi/waitall.sh:test/mpi/testscripts/waitall.sh
                )
+
+AC_CONFIG_LINKS(test/mpi/f-mpi/init_finalize-1.sh:test/mpi/testscripts/init_finalize-1.sh
+                test/mpi/f-mpi/init_finalize-2.sh:test/mpi/testscripts/init_finalize-2.sh
+                test/mpi/f-mpi/init_finalize-3.sh:test/mpi/testscripts/init_finalize-3.sh
+                test/mpi/f-mpi/init_finalize-4.sh:test/mpi/testscripts/init_finalize-4.sh
+                test/mpi/f-mpi/types.sh:test/mpi/testscripts/types.sh
+                test/mpi/f-mpi/derived_types.sh:test/mpi/testscripts/derived_types.sh
+                test/mpi/f-mpi/send_recv.sh:test/mpi/testscripts/send_recv.sh
+                test/mpi/f-mpi/sendrecv.sh:test/mpi/testscripts/sendrecv.sh
+                test/mpi/f-mpi/sendrecv_replace.sh:test/mpi/testscripts/sendrecv_replace.sh
+                test/mpi/f-mpi/isend_recv.sh:test/mpi/testscripts/isend_recv.sh
+                test/mpi/f-mpi/send_irecv.sh:test/mpi/testscripts/send_irecv.sh
+                test/mpi/f-mpi/bcast.sh:test/mpi/testscripts/bcast.sh
+                test/mpi/f-mpi/bcast_intercom.sh:test/mpi/testscripts/bcast_intercom.sh
+                test/mpi/f-mpi/gather.sh:test/mpi/testscripts/gather.sh
+                test/mpi/f-mpi/gather_intercom.sh:test/mpi/testscripts/gather_intercom.sh
+                test/mpi/f-mpi/gatherv.sh:test/mpi/testscripts/gatherv.sh
+                test/mpi/f-mpi/gatherv_intercom.sh:test/mpi/testscripts/gatherv_intercom.sh
+                test/mpi/f-mpi/scatter.sh:test/mpi/testscripts/scatter.sh
+                test/mpi/f-mpi/scatter_intercom.sh:test/mpi/testscripts/scatter_intercom.sh
+                test/mpi/f-mpi/scatterv.sh:test/mpi/testscripts/scatterv.sh
+                test/mpi/f-mpi/scatterv_intercom.sh:test/mpi/testscripts/scatterv_intercom.sh
+                test/mpi/f-mpi/allgather.sh:test/mpi/testscripts/allgather.sh
+                test/mpi/f-mpi/allgather_intercom.sh:test/mpi/testscripts/allgather_intercom.sh
+                test/mpi/f-mpi/allgatherv.sh:test/mpi/testscripts/allgatherv.sh
+                test/mpi/f-mpi/allgatherv_intercom.sh:test/mpi/testscripts/allgatherv_intercom.sh
+                test/mpi/f-mpi/alltoall.sh:test/mpi/testscripts/alltoall.sh
+                test/mpi/f-mpi/alltoall_intercom.sh:test/mpi/testscripts/alltoall_intercom.sh
+                test/mpi/f-mpi/alltoallv.sh:test/mpi/testscripts/alltoallv.sh
+                test/mpi/f-mpi/alltoallv_intercom.sh:test/mpi/testscripts/alltoallv_intercom.sh
+                test/mpi/f-mpi/alltoallw.sh:test/mpi/testscripts/alltoallw.sh
+                test/mpi/f-mpi/alltoallw_intercom.sh:test/mpi/testscripts/alltoallw_intercom.sh
+                test/mpi/f-mpi/reduce.sh:test/mpi/testscripts/reduce.sh
+                test/mpi/f-mpi/reduce_intercom.sh:test/mpi/testscripts/reduce_intercom.sh
+                test/mpi/f-mpi/allreduce.sh:test/mpi/testscripts/allreduce.sh
+                test/mpi/f-mpi/allreduce_intercom.sh:test/mpi/testscripts/allreduce_intercom.sh
+                test/mpi/f-mpi/put.sh:test/mpi/testscripts/put.sh
+                test/mpi/f-mpi/get.sh:test/mpi/testscripts/get.sh
+                test/mpi/f-mpi/test.sh:test/mpi/testscripts/test.sh
+                test/mpi/f-mpi/testany.sh:test/mpi/testscripts/testany.sh
+                test/mpi/f-mpi/testsome.sh:test/mpi/testscripts/testsome.sh
+                test/mpi/f-mpi/testall.sh:test/mpi/testscripts/testall.sh
+                test/mpi/f-mpi/wait.sh:test/mpi/testscripts/wait.sh
+                test/mpi/f-mpi/waitany.sh:test/mpi/testscripts/waitany.sh
+                test/mpi/f-mpi/waitsome.sh:test/mpi/testscripts/waitsome.sh
+                test/mpi/f-mpi/waitall.sh:test/mpi/testscripts/waitall.sh
+               )
+               
+#AC_CONFIG_LINKS(test/mpi/f08-mpi/init_finalize-1.sh:test/mpi/testscripts/init_finalize-1.sh
+#                test/mpi/f08-mpi/init_finalize-2.sh:test/mpi/testscripts/init_finalize-2.sh
+#                test/mpi/f08-mpi/init_finalize-3.sh:test/mpi/testscripts/init_finalize-3.sh
+#                test/mpi/f08-mpi/init_finalize-4.sh:test/mpi/testscripts/init_finalize-4.sh
+#                test/mpi/f08-mpi/types.sh:test/mpi/testscripts/types.sh
+#                test/mpi/f08-mpi/derived_types.sh:test/mpi/testscripts/derived_types.sh
+#                test/mpi/f08-mpi/send_recv.sh:test/mpi/testscripts/send_recv.sh
+#                test/mpi/f08-mpi/sendrecv.sh:test/mpi/testscripts/sendrecv.sh
+#                test/mpi/f08-mpi/sendrecv_replace.sh:test/mpi/testscripts/sendrecv_replace.sh
+#                test/mpi/f08-mpi/isend_recv.sh:test/mpi/testscripts/isend_recv.sh
+#                test/mpi/f08-mpi/send_irecv.sh:test/mpi/testscripts/send_irecv.sh
+#                test/mpi/f08-mpi/bcast.sh:test/mpi/testscripts/bcast.sh
+#                test/mpi/f08-mpi/bcast_intercom.sh:test/mpi/testscripts/bcast_intercom.sh
+#                test/mpi/f08-mpi/gather.sh:test/mpi/testscripts/gather.sh
+#                test/mpi/f08-mpi/gather_intercom.sh:test/mpi/testscripts/gather_intercom.sh
+#                test/mpi/f08-mpi/gatherv.sh:test/mpi/testscripts/gatherv.sh
+#                test/mpi/f08-mpi/gatherv_intercom.sh:test/mpi/testscripts/gatherv_intercom.sh
+#                test/mpi/f08-mpi/scatter.sh:test/mpi/testscripts/scatter.sh
+#                test/mpi/f08-mpi/scatter_intercom.sh:test/mpi/testscripts/scatter_intercom.sh
+#                test/mpi/f08-mpi/scatterv.sh:test/mpi/testscripts/scatterv.sh
+#                test/mpi/f08-mpi/scatterv_intercom.sh:test/mpi/testscripts/scatterv_intercom.sh
+#                test/mpi/f08-mpi/allgather.sh:test/mpi/testscripts/allgather.sh
+#                test/mpi/f08-mpi/allgather_intercom.sh:test/mpi/testscripts/allgather_intercom.sh
+#                test/mpi/f08-mpi/allgatherv.sh:test/mpi/testscripts/allgatherv.sh
+#                test/mpi/f08-mpi/allgatherv_intercom.sh:test/mpi/testscripts/allgatherv_intercom.sh
+#                test/mpi/f08-mpi/alltoall.sh:test/mpi/testscripts/alltoall.sh
+#                test/mpi/f08-mpi/alltoall_intercom.sh:test/mpi/testscripts/alltoall_intercom.sh
+#                test/mpi/f08-mpi/alltoallv.sh:test/mpi/testscripts/alltoallv.sh
+#                test/mpi/f08-mpi/alltoallv_intercom.sh:test/mpi/testscripts/alltoallv_intercom.sh
+#                test/mpi/f08-mpi/alltoallw.sh:test/mpi/testscripts/alltoallw.sh
+#                test/mpi/f08-mpi/alltoallw_intercom.sh:test/mpi/testscripts/alltoallw_intercom.sh
+#                test/mpi/f08-mpi/reduce.sh:test/mpi/testscripts/reduce.sh
+#                test/mpi/f08-mpi/reduce_intercom.sh:test/mpi/testscripts/reduce_intercom.sh
+#                test/mpi/f08-mpi/allreduce.sh:test/mpi/testscripts/allreduce.sh
+#                test/mpi/f08-mpi/allreduce_intercom.sh:test/mpi/testscripts/allreduce_intercom.sh
+#                test/mpi/f08-mpi/put.sh:test/mpi/testscripts/put.sh
+#                test/mpi/f08-mpi/get.sh:test/mpi/testscripts/get.sh
+#                test/mpi/f08-mpi/test.sh:test/mpi/testscripts/test.sh
+#                test/mpi/f08-mpi/testany.sh:test/mpi/testscripts/testany.sh
+#                test/mpi/f08-mpi/testsome.sh:test/mpi/testscripts/testsome.sh
+#                test/mpi/f08-mpi/testall.sh:test/mpi/testscripts/testall.sh
+#                test/mpi/f08-mpi/wait.sh:test/mpi/testscripts/wait.sh
+#                test/mpi/f08-mpi/waitany.sh:test/mpi/testscripts/waitany.sh
+#                test/mpi/f08-mpi/waitsome.sh:test/mpi/testscripts/waitsome.sh
+#                test/mpi/f08-mpi/waitall.sh:test/mpi/testscripts/waitall.sh
+#               )
                
 AC_OUTPUT
