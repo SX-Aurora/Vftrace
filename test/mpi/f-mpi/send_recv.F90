@@ -70,7 +70,6 @@ PROGRAM send_recv
          IF (ANY(rbuffer /= sendrank)) THEN
             WRITE(UNIT=OUTPUT_UNIT, FMT="(A,I4,A,I4)") "Rank ", my_rank, " received faulty data from rank", sendrank
             valid_data = .FALSE.
-            STOP 1
          END IF
       END IF
    END DO
@@ -79,4 +78,6 @@ PROGRAM send_recv
    DEALLOCATE(rbuffer)
 
    CALL MPI_Finalize(ierr)
+
+   IF (.NOT.valid_data) STOP 1
 END PROGRAM send_recv
