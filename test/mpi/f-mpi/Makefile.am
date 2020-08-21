@@ -222,23 +222,23 @@ dist_noinst_SCRIPTS += send_recv.sh \
 #		       allreduce.sh \
 #		       allreduce_intercom.sh
 #
-####################
-## One sided tests #
-####################
-#check_PROGRAMS += put \
-#		   get
-#
-#put_SOURCES = $(srcdir)/put.F90
-#put_FCFLAGS = $(AM_FCFLAGS)
-#put_LDFLAGS = $(AM_LDFLAGS)
-#
-#get_SOURCES = $(srcdir)/get.F90
-#get_FCFLAGS = $(AM_FCFLAGS)
-#get_LDFLAGS = $(AM_LDFLAGS)
-#
-#dist_noinst_SCRIPTS += put.sh \
-#		       get.sh
-#
+###################
+# One sided tests #
+###################
+check_PROGRAMS += put \
+		   get
+
+put_SOURCES = $(srcdir)/put.F90
+put_FCFLAGS = $(AM_FCFLAGS)
+put_LDFLAGS = $(AM_LDFLAGS)
+
+get_SOURCES = $(srcdir)/get.F90
+get_FCFLAGS = $(AM_FCFLAGS)
+get_LDFLAGS = $(AM_LDFLAGS)
+
+dist_noinst_SCRIPTS += put.sh \
+		       get.sh
+
 ###############
 ## Test tests #
 ###############
