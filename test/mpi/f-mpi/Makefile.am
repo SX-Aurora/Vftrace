@@ -192,19 +192,19 @@ dist_noinst_SCRIPTS += send_recv.sh \
 #		       alltoallw.sh \
 #		       alltoallw_intercom.sh
 #
-######################
-## Global reductions #
-######################
-#
-#check_PROGRAMS += reduce \
+#####################
+# Global reductions #
+#####################
+
+check_PROGRAMS += reduce 
 #		   reduce_intercom \
 #		   allreduce \
 #		   allreduce_intercom
-#
-#reduce_SOURCES = $(srcdir)/reduce.F90
-#reduce_FCFLAGS = $(AM_FCFLAGS)
-#reduce_LDFLAGS = $(AM_LDFLAGS)
-#
+
+reduce_SOURCES = $(srcdir)/reduce.F90
+reduce_FCFLAGS = $(AM_FCFLAGS)
+reduce_LDFLAGS = $(AM_LDFLAGS)
+
 #reduce_intercom_SOURCES = $(srcdir)/reduce_intercom.F90
 #reduce_intercom_FCFLAGS = $(AM_FCFLAGS)
 #reduce_intercom_LDFLAGS = $(AM_LDFLAGS)
@@ -216,8 +216,8 @@ dist_noinst_SCRIPTS += send_recv.sh \
 #allreduce_intercom_SOURCES = $(srcdir)/allreduce_intercom.F90
 #allreduce_intercom_FCFLAGS = $(AM_FCFLAGS)
 #allreduce_intercom_LDFLAGS = $(AM_LDFLAGS)
-#
-#dist_noinst_SCRIPTS += reduce.sh \
+
+dist_noinst_SCRIPTS += reduce.sh 
 #		       reduce_intercom.sh \
 #		       allreduce.sh \
 #		       allreduce_intercom.sh
