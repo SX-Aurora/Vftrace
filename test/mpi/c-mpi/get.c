@@ -51,10 +51,10 @@ int main(int argc, char** argv) {
    bool valid_data = true;
    if (my_rank == 0) {
       // recv from every other rank
-      for (int sourcerank=1; sourcerank<comm_size; sourcerank++) {
-         printf("Collecting data remotely from rank %d\n", sourcerank);
-         int* rbuffptr = srbuffer+((sourcerank-1)*nints);
-         MPI_Get(rbuffptr, nints, MPI_INT, sourcerank, 0, nints,
+      for (int targetrank=1; targetrank<comm_size; targetrank++) {
+         printf("Collecting data remotely from rank %d\n", targetrank);
+         int* rbuffptr = srbuffer+((targetrank-1)*nints);
+         MPI_Get(rbuffptr, nints, MPI_INT, targetrank, 0, nints,
                  MPI_INT, window);
       }
    }
