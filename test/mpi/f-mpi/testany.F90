@@ -23,7 +23,7 @@ PROGRAM testany
    INTEGER :: ierr
 
    CALL MPI_Init(ierr)
- 
+
    ! Get the number of processes
    CALL MPI_Comm_size(MPI_COMM_WORLD, comm_size, ierr);
    ! Get rank of processes
