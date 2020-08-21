@@ -68,6 +68,7 @@ PROGRAM reduce_intercom
                              MPI_COMM_WORLD, &
                              remote_leader, 1, &
                              int_comm, ierr)
+   CALL MPI_Comm_remote_size(int_comm, sub_comm_remote_size, ierr)
 
    ! Allocating send/recv buffer
    CALL GET_COMMAND_ARGUMENT(1,cmdargstr)
