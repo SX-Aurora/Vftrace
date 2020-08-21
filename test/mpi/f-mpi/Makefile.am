@@ -268,35 +268,35 @@ dist_noinst_SCRIPTS += test.sh \
 		       testsome.sh \
 		       testall.sh
 
-###############
-## Wait tests #
-###############
-#
-#check_PROGRAMS += wait \
-#		   waitany \
-#		   waitsome \
-#		   waitall
-#
-#wait_SOURCES = $(srcdir)/wait.F90
-#wait_FCFLAGS = $(AM_FCFLAGS)
-#wait_LDFLAGS = $(AM_LDFLAGS)
-#
-#waitany_SOURCES = $(srcdir)/waitany.F90
-#waitany_FCFLAGS = $(AM_FCFLAGS)
-#waitany_LDFLAGS = $(AM_LDFLAGS)
-#
-#waitsome_SOURCES = $(srcdir)/waitsome.F90
-#waitsome_FCFLAGS = $(AM_FCFLAGS)
-#waitsome_LDFLAGS = $(AM_LDFLAGS)
-#
-#waitall_SOURCES = $(srcdir)/waitall.F90
-#waitall_FCFLAGS = $(AM_FCFLAGS)
-#waitall_LDFLAGS = $(AM_LDFLAGS)
-#
-#dist_noinst_SCRIPTS += wait.sh \
-#		       waitany.sh \
-#		       waitsome.sh \
-#		       waitall.sh
+##############
+# Wait tests #
+##############
+
+check_PROGRAMS += wait \
+		   waitany \
+		   waitsome \
+		   waitall
+
+wait_SOURCES = $(srcdir)/wait.F90
+wait_FCFLAGS = $(AM_FCFLAGS)
+wait_LDFLAGS = $(AM_LDFLAGS)
+
+waitany_SOURCES = $(srcdir)/waitany.F90
+waitany_FCFLAGS = $(AM_FCFLAGS)
+waitany_LDFLAGS = $(AM_LDFLAGS)
+
+waitsome_SOURCES = $(srcdir)/waitsome.F90
+waitsome_FCFLAGS = $(AM_FCFLAGS)
+waitsome_LDFLAGS = $(AM_LDFLAGS)
+
+waitall_SOURCES = $(srcdir)/waitall.F90
+waitall_FCFLAGS = $(AM_FCFLAGS)
+waitall_LDFLAGS = $(AM_LDFLAGS)
+
+dist_noinst_SCRIPTS += wait.sh \
+		       waitany.sh \
+		       waitsome.sh \
+		       waitall.sh
 
 TEST_EXTENSIONS = .sh
 SH_LOG_COMPILER = $(SHELL)
