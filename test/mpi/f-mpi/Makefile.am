@@ -72,8 +72,8 @@ dist_noinst_SCRIPTS += send_recv.sh \
 #
 check_PROGRAMS += bcast \
 		   bcast_intercom \
-		   gather 
-#		   gather_intercom \
+		   gather \
+		   gather_intercom 
 #		   gatherv \
 #		   gatherv_intercom \
 #		   scatter \
@@ -103,10 +103,10 @@ gather_SOURCES = $(srcdir)/gather.F90
 gather_FCFLAGS = $(AM_FCFLAGS)
 gather_LDFLAGS = $(AM_LDFLAGS)
 
-#gather_intercom_SOURCES = $(srcdir)/gather_intercom.F90
-#gather_intercom_FCFLAGS = $(AM_FCFLAGS)
-#gather_intercom_LDFLAGS = $(AM_LDFLAGS)
-#
+gather_intercom_SOURCES = $(srcdir)/gather_intercom.F90
+gather_intercom_FCFLAGS = $(AM_FCFLAGS)
+gather_intercom_LDFLAGS = $(AM_LDFLAGS)
+
 #gatherv_SOURCES = $(srcdir)/gatherv.F90
 #gatherv_FCFLAGS = $(AM_FCFLAGS)
 #gatherv_LDFLAGS = $(AM_LDFLAGS)
@@ -173,8 +173,8 @@ gather_LDFLAGS = $(AM_LDFLAGS)
 
 dist_noinst_SCRIPTS += bcast.sh \
 		       bcast_intercom.sh \
-		       gather.sh 
-#		       gather_intercom.sh \
+		       gather.sh \
+		       gather_intercom.sh 
 #		       gatherv.sh \
 #		       gatherv_intercom.sh \
 #		       scatter.sh \
