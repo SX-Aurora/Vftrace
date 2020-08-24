@@ -33,6 +33,7 @@ void vftr_MPI_Gatherv_F(void *sendbuf, MPI_Fint *sendcount, MPI_Fint *f_sendtype
 
    // determine if root process
    int isroot;
+   int size;
    int isintercom;
    PMPI_Comm_test_inter(c_comm, &isintercom);
    if (isintercom) {
@@ -43,12 +44,14 @@ void vftr_MPI_Gatherv_F(void *sendbuf, MPI_Fint *sendcount, MPI_Fint *f_sendtype
       isroot = myrank == (int) (*root);
    }
 
-   int size;
-   PMPI_Comm_size(c_comm, &size);
-   MPI_Datatype c_sendtype = PMPI_Type_f2c(*f_sendtype);
    int *c_recvcounts = NULL ;
    int *c_displs = NULL ;
    if (isroot) {
+      if (isintercom) {
+         PMPI_Comm_remote_size(c_comm, &size);
+      } else {
+         PMPI_Comm_size(c_comm, &size);
+      }
       c_recvcounts = (int*) malloc(size*sizeof(int));
       for (int i=0; i<size; i++) {
          c_recvcounts[i] = (int) f_recvcounts[i];
@@ -58,6 +61,7 @@ void vftr_MPI_Gatherv_F(void *sendbuf, MPI_Fint *sendcount, MPI_Fint *f_sendtype
          c_displs[i] = (int) f_displs[i];
       }
    }
+   MPI_Datatype c_sendtype = PMPI_Type_f2c(*f_sendtype);
    MPI_Datatype c_recvtype = PMPI_Type_f2c(*f_recvtype);
 
    sendbuf = (void*) vftr_is_F_MPI_IN_PLACE(sendbuf) ? MPI_IN_PLACE : sendbuf;
