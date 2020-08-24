@@ -31,15 +31,36 @@ void vftr_MPI_Scatterv_F(void *sendbuf, MPI_Fint *f_sendcounts, MPI_Fint *f_disp
 
 
    MPI_Comm c_comm = PMPI_Comm_f2c(*f_comm);
+
+   // determine if root process
+   int isroot;
    int size;
-   PMPI_Comm_size(c_comm, &size);
-   int *c_sendcounts = (int*) malloc(size*sizeof(int));
-   for (int i=0; i<size; i++) {
-      c_sendcounts[i] = (int) f_sendcounts[i];
+   int isintercom;
+   PMPI_Comm_test_inter(c_comm, &isintercom);
+   if (isintercom) {
+      isroot = MPI_ROOT == (int) (*root);
+   } else {
+      int myrank;
+      PMPI_Comm_rank(c_comm, &myrank);
+      isroot = myrank == (int) (*root);
    }
-   int *c_displs = (int*) malloc(size*sizeof(int));
-   for (int i=0; i<size; i++) {
-      c_displs[i] = (int) f_displs[i];
+
+   int *c_sendcounts = NULL;
+   int *c_displs = NULL;
+   if (isroot) {
+      if (isintercom) {
+         PMPI_Comm_remote_size(c_comm, &size);
+      } else {
+         PMPI_Comm_size(c_comm, &size);
+      }
+      c_sendcounts = (int*) malloc(size*sizeof(int));
+      for (int i=0; i<size; i++) {
+         c_sendcounts[i] = (int) f_sendcounts[i];
+      }
+      c_displs = (int*) malloc(size*sizeof(int));
+      for (int i=0; i<size; i++) {
+         c_displs[i] = (int) f_displs[i];
+      }
    }
    MPI_Datatype c_sendtype = PMPI_Type_f2c(*f_sendtype);
    MPI_Datatype c_recvtype = PMPI_Type_f2c(*f_recvtype);
@@ -58,8 +79,10 @@ void vftr_MPI_Scatterv_F(void *sendbuf, MPI_Fint *f_sendcounts, MPI_Fint *f_disp
                                    (int)(*root),
                                    c_comm);
 
-   free(c_sendcounts);
-   free(c_displs);
+   if (isroot) {
+      free(c_sendcounts);
+      free(c_displs);
+   }
 
    *f_error = (MPI_Fint) (c_error);
 }
