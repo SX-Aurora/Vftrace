@@ -19,14 +19,14 @@ if USES_NEC_MPI
   AM_LDFLAGS += -mpiprof
 endif
 
-noinst_PROGRAMS = test_vftrace
+check_PROGRAMS = test_vftrace
 
 test_vftrace_SOURCES = $(srcdir)/test_vftrace.c
 test_vftrace_CFLAGS = $(AM_CFLAGS)
 test_vftrace_LDFLAGS = $(AM_LDFLAGS)
 
 
-dist_noinst_SCRIPTS = this_passes.sh \
+dist_check_SCRIPTS = this_passes.sh \
 		      this_fails.sh \
 		      vftr_symbols_test_1.sh \
 		      vftr_environment_test_1.sh \
@@ -45,6 +45,6 @@ dist_noinst_SCRIPTS = this_passes.sh \
 TEST_EXTENSIONS = .sh
 SH_LOG_COMPILER = $(SHELL)
 
-TESTS = $(dist_noinst_SCRIPTS)
+TESTS = $(dist_check_SCRIPTS)
 XFAIL_TESTS = this_fails.sh \
 	      vftr_scenario_test_3.sh
