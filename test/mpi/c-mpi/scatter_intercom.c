@@ -92,23 +92,19 @@ int main(int argc, char** argv) {
    // validate data
    bool valid_data = true;
    if (color == 0) {
-      for (int irank=0; irank<sub_comm_size; irank++) {
-         for (int i=0; i<nints; i++){
-            if (rbuffer[i] != -1) {
-               printf("Rank %d received data from rank %d\n", my_rank, rootrank);
-               valid_data = false;
-               break;
-            }
+      for (int i=0; i<nints; i++){
+         if (rbuffer[i] != -1) {
+            printf("Rank %d has no longer valid data\n", my_rank);
+            valid_data = false;
+            break;
          }
       }
    } else {
-      for (int irank=0; irank<sub_comm_size; irank++) {
-         for (int i=0; i<nints; i++){
-            if (rbuffer[i] != my_rank) {
-               printf("Rank %d received faulty data from rank %d\n", my_rank, rootrank);
-               valid_data = false;
-               break;
-            }
+      for (int i=0; i<nints; i++){
+         if (rbuffer[i] != my_rank) {
+            printf("Rank %d received faulty data from rank %d\n", my_rank, rootrank);
+            valid_data = false;
+            break;
          }
       }
    }
