@@ -128,7 +128,6 @@ AC_CONFIG_LINKS(test/units/ref_output/vftr_environment_test_1.out:test/units/ref
                 test/units/ref_output/vftr_scenario_test_2.out:test/units/ref_output/vftr_scenario_test_2.out
                 test/units/ref_output/vftr_setup_test_1.out:test/units/ref_output/vftr_setup_test_1.out
                 test/units/ref_output/vftr_setup_test_2.out:test/units/ref_output/vftr_setup_test_2.out
-                test/units/ref_output/vftr_stacks_test_1.out:test/units/ref_output/vftr_stacks_test_1.out
                 test/units/ref_output/vftr_symbols_test_1.out:test/units/ref_output/vftr_symbols_test_1.out
                )
 
@@ -137,7 +136,8 @@ AM_COND_IF([MPI_PROFILING],[units_refdir=mpi], [units_refdir=serial])
 AC_CONFIG_LINKS(test/units/ref_output/vftr_functions_test_1.out:test/units/ref_output/$units_refdir/vftr_functions_test_1.out
                 test/units/ref_output/vftr_functions_test_2.out:test/units/ref_output/$units_refdir/vftr_functions_test_2.out
                 test/units/ref_output/vftr_functions_test_3.out:test/units/ref_output/$units_refdir/vftr_functions_test_3.out
-                test/units/ref_output/vftr_filewrite_test_2.out:test/units/ref_output/$units_refdir/vftr_filewrite_test_2.out)
+                test/units/ref_output/vftr_filewrite_test_2.out:test/units/ref_output/$units_refdir/vftr_filewrite_test_2.out
+                test/units/ref_output/vftr_stacks_test_1.out:test/units/ref_output/$units_refdir/vftr_stacks_test_1.out)
 
 AC_CONFIG_LINKS(test/units/this_passes.sh:test/units/this_passes.sh
                 test/units/this_fails.sh:test/units/this_fails.sh
