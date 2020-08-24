@@ -821,6 +821,8 @@ int vftr_filewrite_test_2 (FILE *fp_in, FILE *fp_out) {
 	vftr_normalize_stacks();
 	for (int i = 0; i < vftr_stackscount; i++) {
 		vftr_func_table[i]->prof_current.calls = i + 1;
+		vftr_func_table[i]->prof_current.cycles = 0;
+		vftr_func_table[i]->prof_previous.cycles = 0;
 		vftr_func_table[i]->prof_current.timeExcl = (long long)(i+1) * 100000;
 		vftr_func_table[i]->prof_previous.timeExcl = (long long)(i+1) * 90000;
 		vftr_func_table[i]->prof_current.timeIncl =
@@ -833,6 +835,7 @@ int vftr_filewrite_test_2 (FILE *fp_in, FILE *fp_out) {
 
 	vftr_profile_wanted = true;
 	vftr_mpisize = 1;
+	vftr_overhead_usec = 0;
 	vftr_print_profile (fp_out, &n, vftr_test_runtime);		
 	return 0;
 }

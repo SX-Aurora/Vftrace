@@ -14,8 +14,13 @@ else
 fi
 
 last_success=$?
+
+# In case of an MPI build, MPI_Init is included
+# in the function list, and measures actual system
+# times, not dummies. These system times are not
+# reproducable, and we cut them out.
 if [ $last_success == 0 ]; then
-  diff $ref_out_dir/$outfile $outfile
+  grep --invert-match MPI_Init $outfile | diff $ref_out_dir/$outfile -
 else
-  exit  $last_success
+  exit $last_success
 fi
