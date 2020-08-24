@@ -205,6 +205,7 @@ void vftr_read_environment () {
 }
 
 void vftr_assert_environment () {
+	if (!vftr_environment) return;
 	assert (vftr_environment->bufsize->value > 0);
 	if (vftr_environment->include_only_regex->set && vftr_environment->exclude_functions_regex->set) {
 		vftr_environment->exclude_functions_regex->set = false;
@@ -299,6 +300,7 @@ bool vftr_env_do_sampling () {
 }
 
 void vftr_free_environment () {
+	if (!vftr_environment) return;
 	free (vftr_environment->vftrace_off);
 	free (vftr_environment->do_sampling);
 	free (vftr_environment->regions_precise);
@@ -322,11 +324,13 @@ void vftr_free_environment () {
 	free (vftr_environment->print_stacks_for);
 	free (vftr_environment->print_loadinfo_for);
 	free (vftr_environment);
+	vftr_environment = NULL;
 }
 
 // We leave out the regular expression in this printing function
 
 void vftr_print_environment (FILE *fp) {
+	if (!vftr_environment) return;
 	print_env_bool (fp, "VFTR_OFF", vftr_environment->vftrace_off);
 	print_env_bool (fp, "VFTR_SAMPLING", vftr_environment->do_sampling);
 	print_env_bool (fp, "VFTR_REGIONS_PRECISE", vftr_environment->regions_precise);
