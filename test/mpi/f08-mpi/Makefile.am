@@ -24,10 +24,10 @@ init_finalize_LDFLAGS = $(AM_LDFLAGS)
 #derived_ftypes_FCFLAGS  = $(AM_FCFLAGS)
 #derived_ftypes_LDFLAGS = $(AM_LDFLAGS)
 
-dist_noinst_SCRIPTS = init_finalize-1.sh 
-#                      init_finalize-2.sh 
-#                      init_finalize-3.sh 
-#                      init_finalize-4.sh 
+dist_noinst_SCRIPTS = init_finalize-1.sh \
+                      init_finalize-2.sh \
+                      init_finalize-3.sh \
+                      init_finalize-4.sh 
 #		      ftypes.sh 
 #		      derived_ftypes.sh
 #

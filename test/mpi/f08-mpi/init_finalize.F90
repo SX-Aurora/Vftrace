@@ -1,5 +1,5 @@
 PROGRAM init_finalize
-   USE mpi
+   USE mpi_f08
    IMPLICIT NONE
    INTEGER :: ierr
 
