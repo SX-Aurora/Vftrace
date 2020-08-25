@@ -32,13 +32,9 @@ SUBROUTINE MPI_ALLGATHERV(SENDBUF, SENDCOUNT, SENDTYPE, &
    INTEGER ::  COMM
    INTEGER ::  ERROR
 
-   CALL PMPI_Allgatherv(SENDBUF, SENDCOUNT, SENDTYPE, &
+   CALL vftr_MPI_Allgatherv_F(SENDBUF, SENDCOUNT, SENDTYPE, &
                               RECVBUF, RECVCOUNTS, DISPLS, &
                               RECVTYPE, COMM, ERROR)
-!TODO: properly call this
-!   CALL vftr_MPI_Allgatherv_F(SENDBUF, SENDCOUNT, SENDTYPE, &
-!                              RECVBUF, RECVCOUNTS, DISPLS, &
-!                              RECVTYPE, COMM, ERROR)
 
 END SUBROUTINE MPI_ALLGATHERV
 
