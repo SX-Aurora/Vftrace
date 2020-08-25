@@ -86,6 +86,7 @@ check_PROGRAMS += bcast \
 		   allgatherv_intercom \
 		   alltoall \
 		   alltoall_intercom \
+		   ialltoall \
 		   alltoallv \
 		   alltoallv_intercom \
 		   alltoallw \
@@ -154,6 +155,10 @@ alltoall_LDFLAGS = $(AM_LDFLAGS)
 alltoall_intercom_SOURCES = $(srcdir)/alltoall_intercom.c
 alltoall_intercom_CFLAGS = $(AM_CFLAGS)
 alltoall_intercom_LDFLAGS = $(AM_LDFLAGS)
+
+ialltoall_SOURCES = $(srcdir)/ialltoall.c
+ialltoall_CFLAGS = $(AM_CFLAGS)
+ialltoall_LDFLAGS = $(AM_LDFLAGS)
 
 alltoallv_SOURCES = $(srcdir)/alltoallv.c
 alltoallv_CFLAGS = $(AM_CFLAGS)

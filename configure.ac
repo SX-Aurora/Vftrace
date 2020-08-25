@@ -186,6 +186,7 @@ AM_COND_IF([MPI_PROFILING],
                             test/mpi/c-mpi/allgatherv_intercom.sh:test/mpi/testscripts/allgatherv_intercom.sh
                             test/mpi/c-mpi/alltoall.sh:test/mpi/testscripts/alltoall.sh
                             test/mpi/c-mpi/alltoall_intercom.sh:test/mpi/testscripts/alltoall_intercom.sh
+                            test/mpi/c-mpi/ialltoall.sh:test/mpi/testscripts/ialltoall.sh
                             test/mpi/c-mpi/alltoallv.sh:test/mpi/testscripts/alltoallv.sh
                             test/mpi/c-mpi/alltoallv_intercom.sh:test/mpi/testscripts/alltoallv_intercom.sh
                             test/mpi/c-mpi/alltoallw.sh:test/mpi/testscripts/alltoallw.sh
