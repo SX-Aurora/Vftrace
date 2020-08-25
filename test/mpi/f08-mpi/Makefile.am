@@ -65,12 +65,12 @@ dist_noinst_SCRIPTS = init_finalize-1.sh \
 #		       sendrecv_replace.sh \
 #		       isend_recv.sh \
 #		       send_irecv.sh
+
+#####################
+## Collective tests #
+#####################
 #
-######################
-### Collective tests #
-######################
-##
-#check_PROGRAMS += bcast \
+check_PROGRAMS += bcast 
 #		   bcast_intercom \
 #		   gather \
 #		   gather_intercom \
@@ -90,11 +90,11 @@ dist_noinst_SCRIPTS = init_finalize-1.sh \
 #		   alltoallv_intercom \
 #		   alltoallw \
 #		   alltoallw_intercom
-#
-#bcast_SOURCES = $(srcdir)/bcast.F90
-#bcast_FCFLAGS = $(AM_FCFLAGS)
-#bcast_LDFLAGS = $(AM_LDFLAGS)
-#
+
+bcast_SOURCES = $(srcdir)/bcast.F90
+bcast_FCFLAGS = $(AM_FCFLAGS)
+bcast_LDFLAGS = $(AM_LDFLAGS)
+
 #bcast_intercom_SOURCES = $(srcdir)/bcast_intercom.F90
 #bcast_intercom_FCFLAGS = $(AM_FCFLAGS)
 #bcast_intercom_LDFLAGS = $(AM_LDFLAGS)
@@ -170,8 +170,8 @@ dist_noinst_SCRIPTS = init_finalize-1.sh \
 #alltoallw_intercom_SOURCES = $(srcdir)/alltoallw_intercom.F90
 #alltoallw_intercom_FCFLAGS = $(AM_FCFLAGS)
 #alltoallw_intercom_LDFLAGS = $(AM_LDFLAGS)
-#
-#dist_noinst_SCRIPTS += bcast.sh \
+
+dist_noinst_SCRIPTS += bcast.sh 
 #		       bcast_intercom.sh \
 #		       gather.sh \
 #		       gather_intercom.sh \
