@@ -192,6 +192,7 @@ dist_noinst_SCRIPTS += bcast.sh \
 		       allgatherv_intercom.sh \
 		       alltoall.sh \
 		       alltoall_intercom.sh \
+		       ialltoall.sh \
 		       alltoallv.sh \
 		       alltoallv_intercom.sh \
 		       alltoallw.sh \
