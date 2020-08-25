@@ -24,6 +24,7 @@
 #include "vftr_hwcounters.h"
 #include "vftr_environment.h"
 #include "vftr_filewrite.h"
+#include "vftr_fileutils.h"
 
 vftr_envs_t *vftr_environment = NULL;
 
