@@ -49,7 +49,6 @@ int main(int argc, char** argv) {
    int sub_comm_remote_size;
    MPI_Comm_remote_size(int_comm, &sub_comm_remote_size);
    int minpeerrank = (1-color)*((comm_size+1)/2);
-   //int maxpeerrank = minpeerrank + (comm_size+color)/2 -1;
 
    // allocating send/recv buffer
    int nints = atoi(argv[1]) + my_rank;
@@ -77,7 +76,7 @@ int main(int argc, char** argv) {
    MPI_Allgatherv(sbuffer, nints, MPI_INT,
                   rbuffer, recvcounts, displs, MPI_INT,
                   int_comm);
-   printf("Gathering message from remote group\n");
+   printf("Gathering message from remote group on rank %d\n", my_rank);
 
    // validate data
    bool valid_data = true;
@@ -93,6 +92,12 @@ int main(int argc, char** argv) {
    }
    free(rbuffer);
    rbuffer=NULL;
+
+   free(recvcounts);
+   recvcounts=NULL;
+
+   free(displs);
+   displs=NULL;
 
    MPI_Comm_free(&int_comm);
    MPI_Comm_free(&sub_comm);
