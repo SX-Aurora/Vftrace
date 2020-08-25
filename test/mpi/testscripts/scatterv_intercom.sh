@@ -82,12 +82,14 @@ do
          count=$(../../../tools/tracedump ${vftr_binary}_${irank}.vfd | \
                  awk '$2=="recv" && $3!="end"{getline;print;}' | \
                  sed 's/=/ /g' | \
+                 sort -nk 9 | \
                  awk '{print $2}' | \
                  head -n 1)
          # get peer process
          peer=$(../../../tools/tracedump ${vftr_binary}_${irank}.vfd | \
                 awk '$2=="recv" && $3!="end"{getline;print;}' | \
                 sed 's/=/ /g' | \
+                sort -nk 9 | \
                 awk '{print $9}' | \
                 head -n 1)
          # Check if actually used message size is consistent
