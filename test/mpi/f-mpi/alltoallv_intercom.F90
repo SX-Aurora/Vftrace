@@ -119,7 +119,7 @@ PROGRAM alltoallv_intercom
       jrank = minpeerrank + irank
       DO i = 1, rcounts(irank+1) 
          IF (rbuffer(i+rdispls(irank+1)) /= jrank) THEN
-            WRITE(UNIT=OUTPUT_UNIT, FMT="(A,I4,A)") &
+            WRITE(UNIT=OUTPUT_UNIT, FMT="(A,I4,A,I4)") &
                "Rank ", my_rank, " received faulty data from rank", jrank
             valid_data = .FALSE.
             EXIT
