@@ -39,9 +39,16 @@ SUBROUTINE MPI_Alltoallw_f08(sendbuf, sendcounts, sdispls, sendtypes, &
    INTEGER, DIMENSION(:), ALLOCATABLE :: tmpsendtypes
    INTEGER, DIMENSION(:), ALLOCATABLE :: tmprecvtypes
    INTEGER :: comm_size, i
+   LOGICAL :: isintercom
 
-   CALL PMPI_Comm_size(comm, comm_size, tmperror)
-   ALLOCATE(tmprecvtypes(comm_size))
+   CALL PMPI_Comm_test_inter(comm, isintercom, tmperror)
+   IF (isintercom) THEN
+      CALL PMPI_Comm_remote_size(comm, comm_size, tmperror)
+   ELSE
+      CALL PMPI_Comm_size(comm, comm_size, tmperror)
+   END IF
+
+   ALLOCATE(tmpsendtypes(comm_size))
    ALLOCATE(tmprecvtypes(comm_size))
    DO i = 1, comm_size
       tmpsendtypes(i) = sendtypes(i)%MPI_VAL
