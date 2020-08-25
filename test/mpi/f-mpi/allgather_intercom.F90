@@ -23,7 +23,6 @@ PROGRAM allgather_intercom
    INTEGER :: local_leader, remote_leader
    INTEGER :: sub_comm_remote_size
 
-   INTEGER :: root
    INTEGER :: irank, jrank
 
    LOGICAL :: valid_data
@@ -76,21 +75,6 @@ PROGRAM allgather_intercom
    sbuffer(:) = my_rank
    ALLOCATE(rbuffer(nints,sub_comm_remote_size))
    rbuffer(:,:) = -1
-
-   ! prepare the intercomm root assignment
-   IF (color == 0) THEN
-      ! sub communicator of receiving group
-      IF (my_sub_rank == 0) THEN
-         ! Receiving rank in receiving subgroup
-         root = MPI_ROOT
-      ELSE
-         ! Ideling processes
-         root = MPI_PROC_NULL
-      END IF
-   ELSE
-      ! Sub communicator or sending group
-      root = 0 ! receiving rank in remote group
-   END IF
 
    CALL MPI_AllGather(sbuffer, nints, MPI_INTEGER, &
                       rbuffer, nints, MPI_INTEGER, &
