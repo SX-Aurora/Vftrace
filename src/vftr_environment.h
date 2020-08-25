@@ -24,6 +24,8 @@
 #include <stdbool.h>
 #include "vftr_regex.h"
 
+#define VFTR_ENV_VAR_MAX_LENGTH 50
+
 typedef struct env_var_int {
 	int value;
 	bool set;	
