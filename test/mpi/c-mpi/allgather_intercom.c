@@ -63,7 +63,7 @@ int main(int argc, char** argv) {
    MPI_Allgather(sbuffer, nints, MPI_INT,
                  rbuffer, nints, MPI_INT,
                  int_comm);
-   printf("Gathering message on from remote group\n");
+   printf("Gathering message on rank %d from remote group\n", my_rank);
 
    // validate data
    bool valid_data = true;
