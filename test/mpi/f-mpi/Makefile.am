@@ -87,8 +87,8 @@ check_PROGRAMS += bcast \
 		   alltoall \
 		   alltoall_intercom \
 		   alltoallv \
-		   alltoallv_intercom 
-#		   alltoallw \
+		   alltoallv_intercom \
+		   alltoallw 
 #		   alltoallw_intercom
 
 bcast_SOURCES = $(srcdir)/bcast.F90
@@ -163,10 +163,10 @@ alltoallv_intercom_SOURCES = $(srcdir)/alltoallv_intercom.F90
 alltoallv_intercom_FCFLAGS = $(AM_FCFLAGS)
 alltoallv_intercom_LDFLAGS = $(AM_LDFLAGS)
 
-#alltoallw_SOURCES = $(srcdir)/alltoallw.F90
-#alltoallw_FCFLAGS = $(AM_FCFLAGS)
-#alltoallw_LDFLAGS = $(AM_LDFLAGS)
-#
+alltoallw_SOURCES = $(srcdir)/alltoallw.F90
+alltoallw_FCFLAGS = $(AM_FCFLAGS)
+alltoallw_LDFLAGS = $(AM_LDFLAGS)
+
 #alltoallw_intercom_SOURCES = $(srcdir)/alltoallw_intercom.F90
 #alltoallw_intercom_FCFLAGS = $(AM_FCFLAGS)
 #alltoallw_intercom_LDFLAGS = $(AM_LDFLAGS)
@@ -188,8 +188,8 @@ dist_noinst_SCRIPTS += bcast.sh \
 		       alltoall.sh \
 		       alltoall_intercom.sh \
 		       alltoallv.sh \
-		       alltoallv_intercom.sh 
-#		       alltoallw.sh \
+		       alltoallv_intercom.sh \
+		       alltoallw.sh 
 #		       alltoallw_intercom.sh
 #
 #####################
