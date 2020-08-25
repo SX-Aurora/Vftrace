@@ -42,9 +42,15 @@ env_var_int_t *vftr_read_env_int (char *env_name, int val_default) {
 }
 
 void print_env_int (FILE *fp, char *env_name, env_var_int_t *var) {
-	char *s = strdup(env_name);
-	if (!var->set) strcat (s, strdup ("(default)"));
-	fprintf (fp, "%s: %d\n", s, var->value);	
+	//char *s = strdup(env_name);
+	char display_name[51];
+	//if (!var->set) strcat (s, strdup ("(default)"));
+	if (var->set) {
+		snprintf (display_name, 50, "%s", env_name);
+	} else {
+		snprintf (display_name, 50, "%s(default)", env_name);
+	}
+	fprintf (fp, "%s: %d\n", display_name, var->value);	
 }
 
 env_var_long_t *vftr_read_env_long (char *env_name, long val_default) {
@@ -82,9 +88,13 @@ env_var_long_long_t *vftr_read_env_long_long (char *env_name, long long val_defa
 }
 
 void print_env_long_long (FILE *fp, char *env_name, env_var_long_long_t *var) {
-	char *s = strdup(env_name);
-	if (!var->set) strcat (s, strdup ("(default)"));
-	fprintf (fp, "%s: %lld\n", s, var->value);
+	char display_name[51];
+	if (var->set) {
+		snprintf (display_name, 50, "%s", env_name);
+	} else {
+		snprintf (display_name, 50, "%s(default)", env_name);
+	}
+	fprintf (fp, "%s: %lld\n", display_name, var->value);
 }
 
 env_var_bool_t *vftr_read_env_bool (char *env_name, bool val_default) {
@@ -117,9 +127,19 @@ env_var_bool_t *vftr_read_env_bool (char *env_name, bool val_default) {
 }
 
 void print_env_bool (FILE *fp, char *env_name, env_var_bool_t *var) {
-	char *s = strdup(env_name);
-	if (!var->set) strcat (s, strdup ("(default)"));
-	fprintf (fp, "%s: %s\n", s, vftr_bool_to_string (var->value));
+	char display_name[51];
+	//if (!var->set) strcat (s, strdup ("(default)"));
+	if (var->set) {
+		snprintf (display_name, 50, "%s", env_name);
+	} else {
+		snprintf (display_name, 50, "%s(default)", env_name);
+	}
+	//printf ("display name: %s\n", display_name);
+	//printf ("var->value: %d\n", var->value);
+	//char *huhu = strdup(vftr_bool_to_string (var->value));
+	const char *huhu = var->value ? "true" : "false";
+	//fprintf (fp, "%s: %s\n", display_name, vftr_bool_to_string (var->value));
+	fprintf (fp, "%s: %s\n", display_name, huhu);
 }
 
 env_var_double_t *vftr_read_env_double (char *env_name, double val_default) {
@@ -137,9 +157,14 @@ env_var_double_t *vftr_read_env_double (char *env_name, double val_default) {
 }
 
 void print_env_double (FILE *fp, char *env_name, env_var_double_t *var) {
-	char *s = strdup(env_name);
-	if (!var->set) strcat (s, strdup ("(default)"));
-	fprintf (fp, "%s: %4.2f\n", s, var->value);
+	//char *s = strdup(env_name);
+	char display_name[51];
+	if (var->set) {
+		snprintf (display_name, 50, "%s", env_name);
+	} else {
+		snprintf (display_name, 50, "%s(default)", env_name);
+	}
+	fprintf (fp, "%s: %4.2f\n", display_name, var->value);
 }
 	
 
@@ -158,9 +183,15 @@ env_var_string_t *vftr_read_env_string (char *env_name, char *val_default) {
 }
 
 void print_env_string (FILE *fp, char *env_name, env_var_string_t *var) {
-	char *s = strdup(env_name);
-	if (!var->set) strcat (s, strdup ("(default)"));
-	fprintf (fp, "%s: %s\n", s, var->value);
+	//char *s = strdup(env_name);
+	char display_name[51];
+	//if (!var->set) strcat (s, strdup ("(default)"));
+	if (var->set) {
+		snprintf (display_name, 50, "%s", env_name);
+	} else {
+		snprintf (display_name, 50, "%s(default)", env_name);
+	}
+	fprintf (fp, "%s: %s\n", display_name, var->value);
 }
 
 env_var_regex_t *vftr_read_env_regex (char *env_name, regex_t *val_default) {

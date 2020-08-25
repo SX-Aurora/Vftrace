@@ -69,8 +69,7 @@ int count_digits (int value) {
 /**********************************************************************/
 
 char *vftr_bool_to_string (bool value) {
-	char *s = value ? "true" : "false";
-	return s;
+	return value ? "true" : "false";
 }
 
 /**********************************************************************/

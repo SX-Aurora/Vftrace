@@ -162,8 +162,10 @@ main( int argc, char **argv )
         int len = stackInfo.len < RECORD_LENGTH ? stackInfo.len : RECORD_LENGTH - 1;
 	fread( record, sizeof(char), len, fp );
 	record[len] = 0;
-        if(!show_precise)printf( "      %d,%d,%d,%s\n",
-           stackInfo.id, stackInfo.levels, stackInfo.caller, record );
+        if(!show_precise) {
+          printf ("      %d,%d,%d,%s\n",
+                   stackInfo.id, stackInfo.levels, stackInfo.caller, record);
+	}
         stacks[stackInfo.id].name   = strdup( record );
 	stacks[stackInfo.id].caller = stackInfo.caller;
 
