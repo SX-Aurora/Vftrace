@@ -30,8 +30,16 @@ void vftr_MPI_Alltoallv_F(void *sendbuf, MPI_Fint *f_sendcounts, MPI_Fint *f_sdi
                           MPI_Fint *f_comm, MPI_Fint *f_error) {
 
    MPI_Comm c_comm = PMPI_Comm_f2c(*f_comm);
+
    int size;
-   PMPI_Comm_size(c_comm, &size);
+   int isintercom;
+   PMPI_Comm_test_inter(c_comm, &isintercom);
+   if (isintercom) {
+      PMPI_Comm_remote_size(c_comm, &size);
+   } else {
+      PMPI_Comm_size(c_comm, &size);
+   }
+
    int *c_sendcounts = (int*) malloc(size*sizeof(int));
    for (int i=0; i<size; i++) {
       c_sendcounts[i] = (int) f_sendcounts[i];
