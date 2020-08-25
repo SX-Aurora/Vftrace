@@ -19,7 +19,7 @@ do
                   MPI_REAL MPI_DOUBLE_PRECISION \
                   MPI_COMPLEX \
                   MPI_LOGICAL \
-                  MPI_CHARACTER 
+                  MPI_CHARACTER
    do
       ((itype+=1))
       tmptype=$(../../../tools/tracedump ${vftr_binary}_${ivfd}.vfd | \
@@ -30,7 +30,10 @@ do
 
       if [ ! "${mpitype}" = "${tmptype}" ] ; then
          echo "Expected MPI_TYPE ${mpitype} but ${tmptype} was used."
-         exit 1;
+         # Currently NEC-MPI does not destinguish between MPI_CHAR and MPI_CHARACTER
+         if [ ! "${mpitype}" = "MPI_CHARACTER" && ! "${tmptype}" = "MPI_CHAR" ] ; then
+            exit 1;
+         fi
       fi
    
    done
