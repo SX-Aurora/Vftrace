@@ -80,8 +80,8 @@ check_PROGRAMS += bcast \
 		   scatter_intercom \
 		   scatterv \
 		   scatterv_intercom \
-		   allgather 
-#		   allgather_intercom \
+		   allgather \
+		   allgather_intercom 
 #		   allgatherv \
 #		   allgatherv_intercom \
 #		   alltoall \
@@ -135,10 +135,10 @@ allgather_SOURCES = $(srcdir)/allgather.F90
 allgather_FCFLAGS = $(AM_FCFLAGS)
 allgather_LDFLAGS = $(AM_LDFLAGS)
 
-#allgather_intercom_SOURCES = $(srcdir)/allgather_intercom.F90
-#allgather_intercom_FCFLAGS = $(AM_FCFLAGS)
-#allgather_intercom_LDFLAGS = $(AM_LDFLAGS)
-#
+allgather_intercom_SOURCES = $(srcdir)/allgather_intercom.F90
+allgather_intercom_FCFLAGS = $(AM_FCFLAGS)
+allgather_intercom_LDFLAGS = $(AM_LDFLAGS)
+
 #allgatherv_SOURCES = $(srcdir)/allgatherv.F90
 #allgatherv_FCFLAGS = $(AM_FCFLAGS)
 #allgatherv_LDFLAGS = $(AM_LDFLAGS)
@@ -181,8 +181,8 @@ dist_noinst_SCRIPTS += bcast.sh \
 		       scatter_intercom.sh \
 		       scatterv.sh \
 		       scatterv_intercom.sh \
-		       allgather.sh 
-#		       allgather_intercom.sh \
+		       allgather.sh \
+		       allgather_intercom.sh 
 #		       allgatherv.sh \
 #		       allgatherv_intercom.sh \
 #		       alltoall.sh \
