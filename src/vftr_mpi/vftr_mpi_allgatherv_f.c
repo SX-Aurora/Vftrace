@@ -29,9 +29,15 @@ void vftr_MPI_Allgatherv_F(void *sendbuf, MPI_Fint *sendcount, MPI_Fint *f_sendt
                            MPI_Fint *f_recvtype, MPI_Fint *f_comm, MPI_Fint *f_error) {
 
    MPI_Comm c_comm = PMPI_Comm_f2c(*f_comm);
+
    int size;
-   PMPI_Comm_size(c_comm, &size);
-   MPI_Datatype c_sendtype = PMPI_Type_f2c(*f_sendtype);
+   int isintercom;
+   PMPI_Comm_test_inter(c_comm, &isintercom);
+   if (isintercom) {
+      PMPI_Comm_remote_size(c_comm, &size);
+   } else {
+      PMPI_Comm_size(c_comm, &size);
+   }
    int *c_recvcounts = (int*) malloc(size*sizeof(int));
    for (int i=0; i<size; i++) {
       c_recvcounts[i] = (int) f_recvcounts[i];
@@ -40,6 +46,8 @@ void vftr_MPI_Allgatherv_F(void *sendbuf, MPI_Fint *sendcount, MPI_Fint *f_sendt
    for (int i=0; i<size; i++) {
       c_displs[i] = (int) f_displs[i];
    }
+
+   MPI_Datatype c_sendtype = PMPI_Type_f2c(*f_sendtype);
    MPI_Datatype c_recvtype = PMPI_Type_f2c(*f_recvtype);
 
    sendbuf = (void*) vftr_is_F_MPI_IN_PLACE(sendbuf) ? MPI_IN_PLACE : sendbuf;
