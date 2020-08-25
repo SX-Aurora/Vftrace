@@ -66,8 +66,8 @@ PROGRAM gather
    ! validate data
    valid_data = .TRUE.
    IF (my_rank == rootrank) THEN
-      DO irank = 1, comm_size
-         IF (ANY(rbuffer(:,irank) /= irank - 1)) THEN
+      DO irank = 0, comm_size - 1
+         IF (ANY(rbuffer(:,irank+1) /= irank)) THEN
             WRITE(UNIT=OUTPUT_UNIT, FMT="(A,I4,A)") &
                "Rank ", my_rank, " received faulty data from rank ", irank
             valid_data = .FALSE.

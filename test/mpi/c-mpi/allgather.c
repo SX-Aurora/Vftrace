@@ -34,7 +34,7 @@ int main(int argc, char** argv) {
    MPI_Allgather(sbuffer, nints, MPI_INT,
                  rbuffer, nints, MPI_INT, 
                  MPI_COMM_WORLD);
-   printf("Gathering messages from all ranks on all other ranks\n");
+   printf("Gathering messages from all ranks on rank %d\n", my_rank);
 
    // validate data
    bool valid_data = true;
