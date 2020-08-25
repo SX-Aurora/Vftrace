@@ -78,9 +78,9 @@ PROGRAM gatherv
    ! validate data
    valid_data = .TRUE.
    IF (my_rank == rootrank) THEN
-      DO irank = 1, comm_size
-         DO i = 1, recvcounts(irank)
-            IF (rbuffer(i+displs(irank)) /= irank - 1) THEN
+      DO irank = 0, comm_size - 1
+         DO i = 1, recvcounts(irank+1)
+            IF (rbuffer(i+displs(irank+1)) /= irank) THEN
                WRITE(UNIT=OUTPUT_UNIT, FMT="(A,I4,A)") &
                   "Rank ", my_rank, " received faulty data from rank ", irank
                valid_data = .FALSE.
