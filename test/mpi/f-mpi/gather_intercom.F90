@@ -48,7 +48,7 @@ PROGRAM gather_intercom
 
    ! require cmd-line argument
    IF (COMMAND_ARGUMENT_COUNT() < 1) THEN
-      WRITE(UNIT=OUTPUT_UNIT, FMT="(A)") "./gather <msgsize in integers>"
+      WRITE(UNIT=OUTPUT_UNIT, FMT="(A)") "./gather_intercom <msgsize in integers>"
       STOP 1
    END IF
 
