@@ -43,13 +43,11 @@ env_var_int_t *vftr_read_env_int (char *env_name, int val_default) {
 }
 
 void print_env_int (FILE *fp, char *env_name, env_var_int_t *var) {
-	//char *s = strdup(env_name);
-	char display_name[51];
-	//if (!var->set) strcat (s, strdup ("(default)"));
+	char display_name[VFTR_ENV_VAR_MAX_LENGTH + 1];
 	if (var->set) {
-		snprintf (display_name, 50, "%s", env_name);
+		snprintf (display_name, VFTR_ENV_VAR_MAX_LENGTH, "%s", env_name);
 	} else {
-		snprintf (display_name, 50, "%s(default)", env_name);
+		snprintf (display_name, VFTR_ENV_VAR_MAX_LENGTH, "%s(default)", env_name);
 	}
 	fprintf (fp, "%s: %d\n", display_name, var->value);	
 }
@@ -89,11 +87,11 @@ env_var_long_long_t *vftr_read_env_long_long (char *env_name, long long val_defa
 }
 
 void print_env_long_long (FILE *fp, char *env_name, env_var_long_long_t *var) {
-	char display_name[51];
+	char display_name[VFTR_ENV_VAR_MAX_LENGTH + 1];
 	if (var->set) {
-		snprintf (display_name, 50, "%s", env_name);
+		snprintf (display_name, VFTR_ENV_VAR_MAX_LENGTH, "%s", env_name);
 	} else {
-		snprintf (display_name, 50, "%s(default)", env_name);
+		snprintf (display_name, VFTR_ENV_VAR_MAX_LENGTH, "%s(default)", env_name);
 	}
 	fprintf (fp, "%s: %lld\n", display_name, var->value);
 }
@@ -128,19 +126,13 @@ env_var_bool_t *vftr_read_env_bool (char *env_name, bool val_default) {
 }
 
 void print_env_bool (FILE *fp, char *env_name, env_var_bool_t *var) {
-	char display_name[51];
-	//if (!var->set) strcat (s, strdup ("(default)"));
+	char display_name[VFTR_ENV_VAR_MAX_LENGTH + 1];
 	if (var->set) {
-		snprintf (display_name, 50, "%s", env_name);
+		snprintf (display_name, VFTR_ENV_VAR_MAX_LENGTH, "%s", env_name);
 	} else {
-		snprintf (display_name, 50, "%s(default)", env_name);
+		snprintf (display_name, VFTR_ENV_VAR_MAX_LENGTH, "%s(default)", env_name);
 	}
-	//printf ("display name: %s\n", display_name);
-	//printf ("var->value: %d\n", var->value);
-	//char *huhu = strdup(vftr_bool_to_string (var->value));
-	const char *huhu = var->value ? "true" : "false";
-	//fprintf (fp, "%s: %s\n", display_name, vftr_bool_to_string (var->value));
-	fprintf (fp, "%s: %s\n", display_name, huhu);
+	fprintf (fp, "%s: %s\n", display_name, vftr_bool_to_string (var->value));
 }
 
 env_var_double_t *vftr_read_env_double (char *env_name, double val_default) {
@@ -158,12 +150,11 @@ env_var_double_t *vftr_read_env_double (char *env_name, double val_default) {
 }
 
 void print_env_double (FILE *fp, char *env_name, env_var_double_t *var) {
-	//char *s = strdup(env_name);
-	char display_name[51];
+	char display_name[VFTR_ENV_VAR_MAX_LENGTH + 1];
 	if (var->set) {
-		snprintf (display_name, 50, "%s", env_name);
+		snprintf (display_name, VFTR_ENV_VAR_MAX_LENGTH, "%s", env_name);
 	} else {
-		snprintf (display_name, 50, "%s(default)", env_name);
+		snprintf (display_name, VFTR_ENV_VAR_MAX_LENGTH, "%s(default)", env_name);
 	}
 	fprintf (fp, "%s: %4.2f\n", display_name, var->value);
 }
@@ -184,13 +175,11 @@ env_var_string_t *vftr_read_env_string (char *env_name, char *val_default) {
 }
 
 void print_env_string (FILE *fp, char *env_name, env_var_string_t *var) {
-	//char *s = strdup(env_name);
-	char display_name[51];
-	//if (!var->set) strcat (s, strdup ("(default)"));
+	char display_name[VFTR_ENV_VAR_MAX_LENGTH];
 	if (var->set) {
-		snprintf (display_name, 50, "%s", env_name);
+		snprintf (display_name, VFTR_ENV_VAR_MAX_LENGTH, "%s", env_name);
 	} else {
-		snprintf (display_name, 50, "%s(default)", env_name);
+		snprintf (display_name, VFTR_ENV_VAR_MAX_LENGTH, "%s(default)", env_name);
 	}
 	fprintf (fp, "%s: %s\n", display_name, var->value);
 }
