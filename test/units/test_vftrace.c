@@ -16,17 +16,22 @@ int this_passes () {
 	return 0;
 }
 
+#define OUTFILE_NAME_BUF 50
+
 int main (int argc, char **argv) {
+
+#ifdef _MPI
+	MPI_Init (NULL, NULL);
+#endif
 	
 	if (argc < 2) {
 		printf ("Usage: test_vftrace <test_name> [<input_file>]\n");
 		return -1;
 	}
     	int retval;
-
-        char *outfilename = strdup (argv[1]);
-	strcat (outfilename, strdup(".out"));
-	FILE *fp_out = fopen (outfilename, "w");
+	char outfilename[OUTFILE_NAME_BUF];
+	snprintf (outfilename, OUTFILE_NAME_BUF, "%s.out", argv[1]);
+	FILE *fp_out = fopen (outfilename, "w+");
 
 	FILE *fp_in = NULL;
 	if (argc > 2) {
@@ -66,6 +71,10 @@ int main (int argc, char **argv) {
 		printf ("No matching test found\n");
 	}
 	fclose (fp_out);
+	fp_out = NULL;
 	if (fp_in) fclose (fp_in);
+#ifdef _MPI
+        MPI_Finalize ();
+#endif
 	return retval;
 }

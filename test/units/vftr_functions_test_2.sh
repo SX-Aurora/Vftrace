@@ -7,8 +7,19 @@ outfile=$testname.out
 
 rm -f $outfile
 
-./test_vftrace $testname
+if [ "x$HAS_MPI" == "xYES" ]; then
+   $MPI_EXEC $NP 1 ./test_vftrace $testname
+else
+   ./test_vftrace $testname
+fi
+
+last_success=$?
 # We need to filter out the Address lines because they are
 # not reproducible. 
 # diff file1 <(expression) does not work when called with make check
-grep --invert-match Address $outfile  | diff $ref_out_dir/$outfile -
+if [ $last_success == 0 ]; then
+  grep --invert-match Address $outfile  | diff $ref_out_dir/$outfile -
+else
+  exit  $last_success
+fi
+

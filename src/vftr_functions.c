@@ -286,36 +286,51 @@ void vftr_write_function (FILE *fp, function_t *func) {
 
 int vftr_functions_test_1 (FILE *fp_in, FILE *fp_out) {
 	unsigned long long addr[1];
-	function_t *func = vftr_new_function ((void*)addr, "test_1", NULL, 0, true);
-	vftr_write_function (fp_out, func);
+	fprintf (fp_out, "Initial vftr_stackscount: %d\n", vftr_stackscount);
+	int i0 = vftr_stackscount;
+	if (i0 > 0) fprintf (fp_out, "Check additional MPI entries:\n");
+   	for (int i = 0; i < i0; i++) {
+		vftr_write_function (fp_out, vftr_func_table[i]);
+	}
+	function_t *func1 = vftr_new_function (NULL, "init_vftr", NULL, 0, false);
+	function_t *func2 = vftr_new_function ((void*)addr, "test_1", func1, 0, true);
+	fprintf (fp_out, "Check test entries:\n");
+	for (int i = i0; i < vftr_stackscount; i++) {
+		vftr_write_function (fp_out, vftr_func_table[i]);
+	}
 	return 0;
 }
 
 /**********************************************************************/
 
 int vftr_functions_test_2 (FILE *fp_in, FILE *fp_out) {
+	fprintf (fp_out, "Initial vftr_stackscount: %d\n", vftr_stackscount);
+
+	int i0 = vftr_stackscount;
+	if (i0 > 0) fprintf (fp_out, "Check additional MPI entries:\n");
+   	for (int i = 0; i < i0; i++) {
+		vftr_write_function (fp_out, vftr_func_table[i]);
+	}
+
 	unsigned long long addrs [6];
-	function_t *func1 = vftr_new_function (NULL, "init", NULL, 0, false);
+	function_t *func1 = vftr_new_function (NULL, "init_vftr", NULL, 0, false);
 	function_t *func2 = vftr_new_function ((void*)addrs, "func2", func1, 0, false);
 	function_t *func3 = vftr_new_function ((void*)(addrs + 1), "func3", func1, 0, false);	
 	function_t *func4 = vftr_new_function ((void*)(addrs + 2), "func4", func3, 0, false);
 	function_t *func5 = vftr_new_function ((void*)(addrs + 3), "func5", func2, 0, false);
 	function_t *func6 = vftr_new_function ((void*)(addrs + 4), "func6", func2, 0, false);
 	function_t *func7 = vftr_new_function ((void*)(addrs + 5), "func4", func6, 0, false);
-	vftr_write_function (fp_out, func1);
-	vftr_write_function (fp_out, func2);
-	vftr_write_function (fp_out, func3);
-	vftr_write_function (fp_out, func4);
-	vftr_write_function (fp_out, func5);
-	vftr_write_function (fp_out, func6);
-	vftr_write_function (fp_out, func7);
+	fprintf (fp_out, "Check test entries:\n");
+	for (int i = i0; i < vftr_stackscount; i++) {
+		vftr_write_function(fp_out, vftr_func_table[i]);
+	}
 	fprintf (fp_out, "Test if callee pointer is changed properly\n");
 	func2->callee = func6;
 	vftr_write_function (fp_out, func2);
 	fprintf (fp_out, "vftr_func_table_size: %d\n", vftr_func_table_size);
 	fprintf (fp_out, "vftr_stackscount: %d\n", vftr_stackscount);
 	fprintf (fp_out, "Check functions registered in function table: \n");
-	for (int i = 0; i < vftr_stackscount; i++) {
+	for (int i = i0; i < vftr_stackscount; i++) {
 		vftr_write_function(fp_out, vftr_func_table[i]);
 	}
 	return 0;
@@ -337,6 +352,7 @@ int vftr_functions_test_3 (FILE *fp_in, FILE *fp_out) {
 	vftr_write_stack_ascii (fp_out, 0.0, func5, "", 0);
 	vftr_write_stack_ascii (fp_out, 0.0, func6, "", 0);
 	vftr_write_stack_ascii (fp_out, 0.0, func7, "", 0);
+	return 0;
 }
 
 /**********************************************************************/

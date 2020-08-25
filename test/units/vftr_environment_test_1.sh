@@ -14,10 +14,24 @@ vftr_variables=(`env | grep VFTR_`)
 for v in ${vftr_variables[@]}; do
   unset `echo $v | cut -f1 -d "="`
 done
-./test_vftrace $testname
-diff $ref_out_dir/$outfile $outfile
+
+if [ "x$HAS_MPI" == "xYES" ]; then
+  $MPI_EXEC $NP 1 ./test_vftrace $testname
+else
+  ./test_vftrace $testname
+fi
+
+last_success=$?
+echo "last_success: $last_success"
 
 # Reset all environment variables here
 for v in ${vftr_variables[@]}; do
   export $v;
 done
+
+if [ $last_success == 0 ]; then
+  diff $ref_out_dir/$outfile $outfile
+else
+  exit $last_success
+fi
+

@@ -609,6 +609,7 @@ int vftr_scenario_test_1 (FILE *fp_in, FILE *fp_out) {
 	for (int i = 0; i < scenario_expr_n_formulas; i++) {
 		vftr_scenario_print_formula (fp_out, scenario_expr_formulas[i]);
 	}
+	return 0;
 }
 
 /**********************************************************************/
@@ -644,6 +645,7 @@ int vftr_scenario_test_2 (FILE *fp_in, FILE *fp_out) {
 	scenario_expr_counter_values[1] = 0.0;
 	scenario_expr_evaluate (3, 0.0, 0ll);
 	fprintf (fp_out, "%s: %lf\n", scenario_expr_formulas[3].name, scenario_expr_formulas[3].value);
+	return 0;
 // Check that division by zero is protected
 }
 
@@ -654,6 +656,7 @@ int vftr_scenario_test_2 (FILE *fp_in, FILE *fp_out) {
 
 int vftr_scenario_test_3 (FILE *fp_in, FILE *fp_out) {
 	vftr_read_scenario_file ("", fp_in);
+	return 0;
 }
 
 /**********************************************************************/
