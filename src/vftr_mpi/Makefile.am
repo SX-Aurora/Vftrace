@@ -38,6 +38,7 @@ libvftr_mpi_la_SOURCES += vftr_sync_messages.c \
                           vftr_mpi_ialltoall.c \
                           vftr_mpi_ibcast.c \
 			  vftr_mpi_igather.c \
+			  vftr_mpi_igatherv.c \
                           vftr_mpi_irecv.c \
                           vftr_mpi_irecv_f.c \
                           vftr_mpi_isend.c \

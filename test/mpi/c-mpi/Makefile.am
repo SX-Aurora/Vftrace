@@ -80,6 +80,8 @@ check_PROGRAMS += bcast \
 		  igather_intercom \
 		  gatherv \
 		  gatherv_intercom \
+		  igatherv \
+		  igatherv_intercom \
 		  scatter \
 		  scatter_intercom \
 		  scatterv \
@@ -136,6 +138,14 @@ gatherv_LDFLAGS = $(AM_LDFLAGS)
 gatherv_intercom_SOURCES = $(srcdir)/gatherv_intercom.c
 gatherv_intercom_CFLAGS = $(AM_CFLAGS)
 gatherv_intercom_LDFLAGS = $(AM_LDFLAGS)
+
+igatherv_SOURCES = $(srcdir)/igatherv.c
+igatherv_CFLAGS = $(AM_CFLAGS)
+igatherv_LDFLAGS = $(AM_LDFLAGS)
+
+igatherv_intercom_SOURCES = $(srcdir)/igatherv_intercom.c
+igatherv_intercom_CFLAGS = $(AM_CFLAGS)
+igatherv_intercom_LDFLAGS = $(AM_LDFLAGS)
 
 scatter_SOURCES = $(srcdir)/scatter.c
 scatter_CFLAGS = $(AM_CFLAGS)
@@ -211,6 +221,8 @@ dist_noinst_SCRIPTS += bcast.sh \
 		       igather_intercom.sh \
 		       gatherv.sh \
 		       gatherv_intercom.sh \
+		       igatherv.sh \
+		       igatherv_intercom.sh \
 		       scatter.sh \
 		       scatter_intercom.sh \
 		       scatterv.sh \
