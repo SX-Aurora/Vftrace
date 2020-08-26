@@ -48,27 +48,28 @@ int vftr_MPI_Ibcast(void *buffer, int count, MPI_Datatype datatype,
             // get the size of group B
             int size;
             PMPI_Comm_remote_size(comm, &size);
-            int *counts = (int*) malloc(sizeof(int)*size);
-            MPI_Datatype *types = (MPI_Datatype*) malloc(sizeof(MPI_Datatype)*size);
-            int *peer_ranks= (int*) malloc(sizeof(int)*size);
+            int *tmpcount = (int*) malloc(sizeof(int)*size);
+            MPI_Datatype *tmpdatatype = (MPI_Datatype*) malloc(sizeof(MPI_Datatype)*size);
+            int *tmppeer_ranks= (int*) malloc(sizeof(int)*size);
             // messages to be send
             for (int i=0; i<size; i++) {
-               counts[i] = count;
-               types[i] = datatype;
+               tmpcount[i] = count;
+               tmpdatatype[i] = datatype;
                // translate the i-th rank in the remote group to the global rank
-               peer_ranks[i] = vftr_remote2global_rank(comm, i);
+               tmppeer_ranks[i] = vftr_remote2global_rank(comm, i);
             }
             // Register request with MPI_COMM_WORLD as communicator
             // to prevent additional (and thus faulty rank translation)
-            vftr_register_collective_request(send, size, counts, types, peer_ranks,
-                                             MPI_COMM_WORLD, *request, tstart);
+            vftr_register_collective_request(send, size, tmpcount, tmpdatatype,
+                                             tmppeer_ranks, MPI_COMM_WORLD,
+                                             *request, tstart);
             // cleanup temporary arrays
-            free(counts);
-            counts = NULL;
-            free(types);
-            types = NULL;
-            free(peer_ranks);
-            peer_ranks = NULL;
+            free(tmpcount);
+            tmpcount = NULL;
+            free(tmpdatatype);
+            tmpdatatype = NULL;
+            free(tmppeer_ranks);
+            tmppeer_ranks = NULL;
          } else if (root == MPI_PROC_NULL) {
             // All other processes from group A pass wildcard MPI_PROC NULL
             // They do not participate in intercommunicator gather
@@ -90,25 +91,24 @@ int vftr_MPI_Ibcast(void *buffer, int count, MPI_Datatype datatype,
             PMPI_Comm_size(comm, &size);
             // allocate memory for the temporary arrays
             // to register communication request
-            int *counts = (int*) malloc(sizeof(int)*size);
-            MPI_Datatype *types = (MPI_Datatype*) malloc(sizeof(MPI_Datatype)*size);
-            int *peer_ranks = (int*) malloc(sizeof(int)*size);
+            int *tmpcount = (int*) malloc(sizeof(int)*size);
+            MPI_Datatype *tmpdatatype = (MPI_Datatype*) malloc(sizeof(MPI_Datatype)*size);
+            int *tmppeer_ranks = (int*) malloc(sizeof(int)*size);
             // messages to be send
             for (int i=0; i<size; i++) {
-               counts[i] = count;
-               types[i] = datatype;
-               // translate the i-th rank in the remote group to the global rank
-               peer_ranks[i] = i;
+               tmpcount[i] = count;
+               tmpdatatype[i] = datatype;
+               tmppeer_ranks[i] = i;
             }
-            vftr_register_collective_request(send, size, counts, types, peer_ranks,
-                                             comm, *request, tstart);
+            vftr_register_collective_request(send, size, tmpcount, tmpdatatype,
+                                             tmppeer_ranks, comm, *request, tstart);
             // cleanup temporary arrays
-            free(counts);
-            counts = NULL;
-            free(types);
-            types = NULL;
-            free(peer_ranks);
-            peer_ranks = NULL;
+            free(tmpcount);
+            tmpcount = NULL;
+            free(tmpdatatype);
+            tmpdatatype = NULL;
+            free(tmppeer_ranks);
+            tmppeer_ranks = NULL;
          } else {
             vftr_register_collective_request(recv, 1, &count, &datatype, &root,
                                              comm, *request, tstart);
