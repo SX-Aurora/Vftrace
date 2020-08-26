@@ -196,6 +196,8 @@ AM_COND_IF([MPI_PROFILING],
                             test/mpi/c-mpi/iallgather_intercom.sh:test/mpi/testscripts/iallgather_intercom.sh
                             test/mpi/c-mpi/allgatherv.sh:test/mpi/testscripts/allgatherv.sh
                             test/mpi/c-mpi/allgatherv_intercom.sh:test/mpi/testscripts/allgatherv_intercom.sh
+                            test/mpi/c-mpi/iallgatherv.sh:test/mpi/testscripts/iallgatherv.sh
+                            test/mpi/c-mpi/iallgatherv_intercom.sh:test/mpi/testscripts/iallgatherv_intercom.sh
                             test/mpi/c-mpi/alltoall.sh:test/mpi/testscripts/alltoall.sh
                             test/mpi/c-mpi/alltoall_intercom.sh:test/mpi/testscripts/alltoall_intercom.sh
                             test/mpi/c-mpi/ialltoall.sh:test/mpi/testscripts/ialltoall.sh
@@ -260,6 +262,8 @@ AM_COND_IF([MPI_PROFILING],
                             test/mpi/f-mpi/iallgather_intercom.sh:test/mpi/testscripts/iallgather_intercom.sh
                             test/mpi/f-mpi/allgatherv.sh:test/mpi/testscripts/allgatherv.sh
                             test/mpi/f-mpi/allgatherv_intercom.sh:test/mpi/testscripts/allgatherv_intercom.sh
+                            test/mpi/f-mpi/iallgatherv.sh:test/mpi/testscripts/iallgatherv.sh
+                            test/mpi/f-mpi/iallgatherv_intercom.sh:test/mpi/testscripts/iallgatherv_intercom.sh
                             test/mpi/f-mpi/alltoall.sh:test/mpi/testscripts/alltoall.sh
                             test/mpi/f-mpi/alltoall_intercom.sh:test/mpi/testscripts/alltoall_intercom.sh
                             test/mpi/f-mpi/ialltoall.sh:test/mpi/testscripts/ialltoall.sh
@@ -324,6 +328,8 @@ AM_COND_IF([MPI_PROFILING],
                             test/mpi/f08-mpi/iallgather_intercom.sh:test/mpi/testscripts/iallgather_intercom.sh
                             test/mpi/f08-mpi/allgatherv.sh:test/mpi/testscripts/allgatherv.sh
                             test/mpi/f08-mpi/allgatherv_intercom.sh:test/mpi/testscripts/allgatherv_intercom.sh
+                            test/mpi/f08-mpi/iallgatherv.sh:test/mpi/testscripts/iallgatherv.sh
+                            test/mpi/f08-mpi/iallgatherv_intercom.sh:test/mpi/testscripts/iallgatherv_intercom.sh
                             test/mpi/f08-mpi/alltoall.sh:test/mpi/testscripts/alltoall.sh
                             test/mpi/f08-mpi/alltoall_intercom.sh:test/mpi/testscripts/alltoall_intercom.sh
                             test/mpi/f08-mpi/ialltoall.sh:test/mpi/testscripts/ialltoall.sh

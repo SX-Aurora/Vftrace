@@ -96,6 +96,8 @@ check_PROGRAMS += bcast \
 		  iallgather_intercom \
 		  allgatherv \
 		  allgatherv_intercom \
+		  iallgatherv \
+		  iallgatherv_intercom \
 		  alltoall \
 		  alltoall_intercom \
 		  ialltoall \
@@ -209,6 +211,14 @@ allgatherv_intercom_SOURCES = $(srcdir)/allgatherv_intercom.c
 allgatherv_intercom_CFLAGS = $(AM_CFLAGS)
 allgatherv_intercom_LDFLAGS = $(AM_LDFLAGS)
 
+iallgatherv_SOURCES = $(srcdir)/iallgatherv.c
+iallgatherv_CFLAGS = $(AM_CFLAGS)
+iallgatherv_LDFLAGS = $(AM_LDFLAGS)
+
+iallgatherv_intercom_SOURCES = $(srcdir)/iallgatherv_intercom.c
+iallgatherv_intercom_CFLAGS = $(AM_CFLAGS)
+iallgatherv_intercom_LDFLAGS = $(AM_LDFLAGS)
+
 alltoall_SOURCES = $(srcdir)/alltoall.c
 alltoall_CFLAGS = $(AM_CFLAGS)
 alltoall_LDFLAGS = $(AM_LDFLAGS)
@@ -267,6 +277,8 @@ dist_noinst_SCRIPTS += bcast.sh \
 		       iallgather_intercom.sh \
 		       allgatherv.sh \
 		       allgatherv_intercom.sh \
+		       iallgatherv.sh \
+		       iallgatherv_intercom.sh \
 		       alltoall.sh \
 		       alltoall_intercom.sh \
 		       ialltoall.sh \

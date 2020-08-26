@@ -18,6 +18,7 @@ libvftr_mpi_la_SOURCES += vftr_sync_messages.c \
                           vftr_mpi_iallgather.c \
                           vftr_mpi_allgatherv.c \
                           vftr_mpi_allgatherv_f.c \
+                          vftr_mpi_iallgatherv.c \
                           vftr_mpi_allreduce.c \
                           vftr_mpi_allreduce_f.c \
                           vftr_mpi_alltoall.c \
