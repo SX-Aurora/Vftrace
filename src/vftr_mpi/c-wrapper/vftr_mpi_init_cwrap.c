@@ -17,15 +17,17 @@
 */
 #ifdef _MPI
 #include <mpi.h>
+#include <stdio.h>
 
-#include "vftr_mpi_utils.h"
-#include "vftr_setup.h"
+//#include "vftr_mpi_utils.h"
+//#include "vftr_setup.h"
 
 int MPI_Init(int *argc, char ***argv) {
 
+	printf ("HUHU\n");
    int returnValue = PMPI_Init(argc, argv);
 
-   vftr_after_mpi_init();
+   //vftr_after_mpi_init();
 
    return returnValue;
 }

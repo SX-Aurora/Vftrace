@@ -85,7 +85,7 @@ char *vftr_get_program_path () {
 		  	basename = strdup (program_path);
 		  }
 		} else {
-			basename = strdup (program_path);
+		  basename = strdup ("unknown");
 		}
 	}
 	return basename;
