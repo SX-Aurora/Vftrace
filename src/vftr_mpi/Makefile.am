@@ -15,6 +15,7 @@ libvftr_mpi_la_SOURCES += vftr_sync_messages.c \
                           vftr_mpi_buf_addr_const_F.F90 \
                           vftr_mpi_allgather.c \
                           vftr_mpi_allgather_f.c \
+                          vftr_mpi_iallgather.c \
                           vftr_mpi_allgatherv.c \
                           vftr_mpi_allgatherv_f.c \
                           vftr_mpi_allreduce.c \
