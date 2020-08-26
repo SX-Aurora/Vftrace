@@ -9,8 +9,8 @@ endif
 # System Tests #
 ################
 check_PROGRAMS = init_finalize \
-		  ctypes \
-		  derived_ctypes
+		 ctypes \
+		 derived_ctypes
 		
 init_finalize_SOURCES = $(srcdir)/init_finalize.c
 init_finalize_CFLAGS  = $(AM_CFLAGS)
@@ -35,10 +35,10 @@ dist_noinst_SCRIPTS = init_finalize-1.sh \
 # point to point tests #
 ########################
 check_PROGRAMS += send_recv \
-		   sendrecv \
-		   sendrecv_replace \
-		   isend_recv \
-		   send_irecv
+		  sendrecv \
+		  sendrecv_replace \
+		  isend_recv \
+		  send_irecv
 
 send_recv_SOURCES = $(srcdir)/send_recv.c
 send_recv_CFLAGS  = $(AM_CFLAGS)
@@ -71,26 +71,26 @@ dist_noinst_SCRIPTS += send_recv.sh \
 ####################
 
 check_PROGRAMS += bcast \
-		   bcast_intercom \
-		   gather \
-		   gather_intercom \
-		   gatherv \
-		   gatherv_intercom \
-		   scatter \
-		   scatter_intercom \
-		   scatterv \
-		   scatterv_intercom \
-		   allgather \
-		   allgather_intercom \
-		   allgatherv \
-		   allgatherv_intercom \
-		   alltoall \
-		   alltoall_intercom \
-		   ialltoall \
-		   alltoallv \
-		   alltoallv_intercom \
-		   alltoallw \
-		   alltoallw_intercom
+		  bcast_intercom \
+		  gather \
+		  gather_intercom \
+		  gatherv \
+		  gatherv_intercom \
+		  scatter \
+		  scatter_intercom \
+		  scatterv \
+		  scatterv_intercom \
+		  allgather \
+		  allgather_intercom \
+		  allgatherv \
+		  allgatherv_intercom \
+		  alltoall \
+		  alltoall_intercom \
+		  ialltoall \
+		  alltoallv \
+		  alltoallv_intercom \
+		  alltoallw \
+		  alltoallw_intercom
 
 bcast_SOURCES = $(srcdir)/bcast.c
 bcast_CFLAGS = $(AM_CFLAGS)
@@ -203,9 +203,9 @@ dist_noinst_SCRIPTS += bcast.sh \
 #####################
 
 check_PROGRAMS += reduce \
-		   reduce_intercom \
-		   allreduce \
-		   allreduce_intercom
+		  reduce_intercom \
+		  allreduce \
+		  allreduce_intercom
 
 reduce_SOURCES = $(srcdir)/reduce.c
 reduce_CFLAGS = $(AM_CFLAGS)
@@ -232,7 +232,7 @@ dist_noinst_SCRIPTS += reduce.sh \
 # One sided tests #
 ###################
 check_PROGRAMS += put \
-		   get
+		  get
 
 put_SOURCES = $(srcdir)/put.c
 put_CFLAGS = $(AM_CFLAGS)
@@ -249,9 +249,9 @@ dist_noinst_SCRIPTS += put.sh \
 # Test tests #
 ##############
 check_PROGRAMS += test \
-		   testany \
-		   testsome \
-		   testall
+		  testany \
+		  testsome \
+		  testall
 
 test_SOURCES = $(srcdir)/test.c
 test_CFLAGS = $(AM_CFLAGS)
@@ -279,9 +279,9 @@ dist_noinst_SCRIPTS += test.sh \
 ##############
 
 check_PROGRAMS += wait \
-		   waitany \
-		   waitsome \
-		   waitall
+		  waitany \
+		  waitsome \
+		  waitall
 
 wait_SOURCES = $(srcdir)/wait.c
 wait_CFLAGS = $(AM_CFLAGS)
