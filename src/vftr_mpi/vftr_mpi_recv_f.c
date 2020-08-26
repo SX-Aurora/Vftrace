@@ -38,7 +38,7 @@ void vftr_MPI_Recv_F(void *buf, MPI_Fint *count, MPI_Fint *f_datatype,
                               &c_status);
 
    if (f_status != MPI_F_STATUS_IGNORE) {
-      MPI_Status_c2f(&c_status, f_status);
+      PMPI_Status_c2f(&c_status, f_status);
    }
 
    *f_error = (MPI_Fint) (c_error);

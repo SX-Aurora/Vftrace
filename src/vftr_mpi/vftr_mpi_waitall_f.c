@@ -47,7 +47,7 @@ void vftr_MPI_Waitall_F(MPI_Fint *f_count, MPI_Fint *f_array_of_requests,
    free(c_array_of_requests);
    if (f_array_of_statuses != MPI_F_STATUSES_IGNORE) {
       for (int ireq=0; ireq<c_count; ireq++) {
-         MPI_Status_c2f(c_array_of_statuses+ireq, f_array_of_statuses+ireq);
+         PMPI_Status_c2f(c_array_of_statuses+ireq, f_array_of_statuses+ireq);
       }
       free(c_array_of_statuses);
    }

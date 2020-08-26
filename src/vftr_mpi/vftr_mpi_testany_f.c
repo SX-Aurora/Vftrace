@@ -49,7 +49,7 @@ void vftr_MPI_Testany_F(MPI_Fint *f_count, MPI_Fint *f_array_of_requests,
    *f_index = (MPI_Fint) (c_index+1);
    *f_flag = (MPI_Fint) c_flag;
    if (f_status != MPI_F_STATUS_IGNORE) {
-      MPI_Status_c2f(&c_status, f_status);
+      PMPI_Status_c2f(&c_status, f_status);
    }
    *f_error = (MPI_Fint) c_error;
 }

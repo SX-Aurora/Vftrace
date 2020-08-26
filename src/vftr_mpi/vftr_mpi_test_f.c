@@ -38,7 +38,7 @@ void vftr_MPI_Test_F(MPI_Fint *f_request, MPI_Fint *f_flag,
    *f_request = PMPI_Request_c2f(c_request);
    *f_flag = (MPI_Fint) c_flag;
    if (f_status != MPI_F_STATUS_IGNORE) {
-      MPI_Status_c2f(&c_status, f_status);
+      PMPI_Status_c2f(&c_status, f_status);
    }
    *f_error = (MPI_Fint) c_error;
 }
