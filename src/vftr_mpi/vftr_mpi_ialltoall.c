@@ -44,43 +44,43 @@ int vftr_MPI_Ialltoall(const void *sendbuf, int sendcount,
       int isintercom;
       PMPI_Comm_test_inter(comm, &isintercom);
       if (isintercom) {
-         // Every process of group A sends sendcount sendtypes 
-         // to and receives recvcount recvtypes from 
+         // Every process of group A sends sendcount sendtmptype 
+         // to and receives recvcount recvtmptype from 
          // every process in group Band vice versa.
          int size;
          PMPI_Comm_remote_size(comm, &size);
          // allocate memory for the temporary arrays
          // to register communication request
-         int *counts = (int*) malloc(sizeof(int)*size);
-         MPI_Datatype *types = (MPI_Datatype*) malloc(sizeof(MPI_Datatype)*size);
+         int *tmpcount = (int*) malloc(sizeof(int)*size);
+         MPI_Datatype *tmptype = (MPI_Datatype*) malloc(sizeof(MPI_Datatype)*size);
          int *peer_ranks = (int*) malloc(sizeof(int)*size);
          // messages to be send
          for (int i=0; i<size; i++) {
-            counts[i] = sendcount;
-            types[i] = sendtype;
+            tmpcount[i] = sendcount;
+            tmptype[i] = sendtype;
             // translate the i-th rank in the remote group to the global rank
             peer_ranks[i] = vftr_remote2global_rank(comm, i);
          }
          // Register request with MPI_COMM_WORLD as communicator
          // to prevent additional (and thus faulty rank translation)
-         vftr_register_collective_request(send, size, counts, types, peer_ranks,
+         vftr_register_collective_request(send, size, tmpcount, tmptype, peer_ranks,
                                           MPI_COMM_WORLD, *request, tstart);
          // messages to be received
          for (int i=0; i<size; i++) {
-            counts[i] = recvcount;
-            types[i] = recvtype;
+            tmpcount[i] = recvcount;
+            tmptype[i] = recvtype;
             // translate the i-th rank in the remote group to the global rank
             peer_ranks[i] = vftr_remote2global_rank(comm, i);
          }
          // Register request with MPI_COMM_WORLD as communicator
          // to prevent additional (and thus faulty rank translation)
-         vftr_register_collective_request(recv, size, counts, types, peer_ranks,
+         vftr_register_collective_request(recv, size, tmpcount, tmptype, peer_ranks,
                                           MPI_COMM_WORLD, *request, tstart);
          // cleanup temporary arrays
-         free(counts);
-         counts = NULL;
-         free(types);
-         types = NULL;
+         free(tmpcount);
+         tmpcount = NULL;
+         free(tmptype);
+         tmptype = NULL;
          free(peer_ranks);
          peer_ranks = NULL;
       } else {
@@ -95,30 +95,30 @@ int vftr_MPI_Ialltoall(const void *sendbuf, int sendcount,
          }
          // allocate memory for the temporary arrays
          // to register communication request
-         int *counts = (int*) malloc(sizeof(int)*size);
-         MPI_Datatype *types = (MPI_Datatype*) malloc(sizeof(MPI_Datatype)*size);
+         int *tmpcount = (int*) malloc(sizeof(int)*size);
+         MPI_Datatype *tmptype = (MPI_Datatype*) malloc(sizeof(MPI_Datatype)*size);
          int *peer_ranks = (int*) malloc(sizeof(int)*size);
          // messages to be send
          for (int i=0; i<size; i++) {
-            counts[i] = sendcount;
-            types[i] = sendtype;
+            tmpcount[i] = sendcount;
+            tmptype[i] = sendtype;
             peer_ranks[i] = i;
          }
-         vftr_register_collective_request(send, size, counts, types, peer_ranks,
+         vftr_register_collective_request(send, size, tmpcount, tmptype, peer_ranks,
                                           comm, *request, tstart);
          // messages to be received
          for (int i=0; i<size; i++) {
-            counts[i] = recvcount;
-            types[i] = recvtype;
+            tmpcount[i] = recvcount;
+            tmptype[i] = recvtype;
             peer_ranks[i] = i;
          }
-         vftr_register_collective_request(recv, size, counts, types, peer_ranks,
+         vftr_register_collective_request(recv, size, tmpcount, tmptype, peer_ranks,
                                           comm, *request, tstart);
          // cleanup temporary arrays
-         free(counts);
-         counts = NULL;
-         free(types);
-         types = NULL;
+         free(tmpcount);
+         tmpcount = NULL;
+         free(tmptype);
+         tmptype = NULL;
          free(peer_ranks);
          peer_ranks = NULL;
 
