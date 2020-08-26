@@ -58,6 +58,7 @@ libvftr_mpi_la_SOURCES += vftr_sync_messages.c \
                           vftr_mpi_rput_f.c \
                           vftr_mpi_scatter.c \
                           vftr_mpi_scatter_f.c \
+                          vftr_mpi_iscatter.c \
                           vftr_mpi_scatterv.c \
                           vftr_mpi_scatterv_f.c \
                           vftr_mpi_send.c \

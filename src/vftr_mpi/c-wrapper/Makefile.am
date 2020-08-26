@@ -24,6 +24,7 @@ libvftr_cmpiwrap_la_SOURCES = vftr_mpi_allgather_cwrap.c \
 			      vftr_mpi_recv_cwrap.c \
 			      vftr_mpi_reduce_cwrap.c \
 			      vftr_mpi_scatter_cwrap.c \
+			      vftr_mpi_iscatter_cwrap.c \
 			      vftr_mpi_scatterv_cwrap.c \
 			      vftr_mpi_send_cwrap.c \
 			      vftr_mpi_sendrecv_cwrap.c \
