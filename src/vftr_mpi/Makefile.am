@@ -28,6 +28,7 @@ libvftr_mpi_la_SOURCES += vftr_sync_messages.c \
                           vftr_mpi_ialltoallv.c \
                           vftr_mpi_alltoallw.c \
                           vftr_mpi_alltoallw_f.c \
+                          vftr_mpi_ialltoallw.c \
                           vftr_mpi_barrier.c \
                           vftr_mpi_barrier_f.c \
                           vftr_mpi_bcast.c \

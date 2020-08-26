@@ -10,6 +10,7 @@ libvftr_cmpiwrap_la_SOURCES = vftr_mpi_allgather_cwrap.c \
 			      vftr_mpi_alltoallv_cwrap.c \
 			      vftr_mpi_ialltoallv_cwrap.c \
 			      vftr_mpi_alltoallw_cwrap.c \
+			      vftr_mpi_ialltoallw_cwrap.c \
 			      vftr_mpi_barrier_cwrap.c \
 			      vftr_mpi_bcast_cwrap.c \
 			      vftr_mpi_ibcast_cwrap.c \

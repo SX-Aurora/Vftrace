@@ -107,7 +107,9 @@ check_PROGRAMS += bcast \
 		  ialltoallv \
 		  ialltoallv_intercom \
 		  alltoallw \
-		  alltoallw_intercom
+		  alltoallw_intercom \
+		  ialltoallw \
+		  ialltoallw_intercom
 
 bcast_SOURCES = $(srcdir)/bcast.c
 bcast_CFLAGS = $(AM_CFLAGS)
@@ -261,6 +263,14 @@ alltoallw_intercom_SOURCES = $(srcdir)/alltoallw_intercom.c
 alltoallw_intercom_CFLAGS = $(AM_CFLAGS)
 alltoallw_intercom_LDFLAGS = $(AM_LDFLAGS)
 
+ialltoallw_SOURCES = $(srcdir)/ialltoallw.c
+ialltoallw_CFLAGS = $(AM_CFLAGS)
+ialltoallw_LDFLAGS = $(AM_LDFLAGS)
+
+ialltoallw_intercom_SOURCES = $(srcdir)/ialltoallw_intercom.c
+ialltoallw_intercom_CFLAGS = $(AM_CFLAGS)
+ialltoallw_intercom_LDFLAGS = $(AM_LDFLAGS)
+
 dist_noinst_SCRIPTS += bcast.sh \
 		       bcast_intercom.sh \
 		       ibcast.sh \
@@ -298,7 +308,9 @@ dist_noinst_SCRIPTS += bcast.sh \
 		       ialltoallv.sh \
 		       ialltoallv_intercom.sh \
 		       alltoallw.sh \
-		       alltoallw_intercom.sh
+		       alltoallw_intercom.sh \
+		       ialltoallw.sh \
+		       ialltoallw_intercom.sh
 
 #####################
 # Global reductions #
