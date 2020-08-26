@@ -11,6 +11,7 @@ libvftr_cmpiwrap_la_SOURCES = vftr_mpi_allgather_cwrap.c \
 			      vftr_mpi_ibcast_cwrap.c \
 			      vftr_mpi_finalize_cwrap.c \
 			      vftr_mpi_gather_cwrap.c \
+			      vftr_mpi_igather_cwrap.c \
 			      vftr_mpi_gatherv_cwrap.c \
 			      vftr_mpi_get_cwrap.c \
 			      vftr_mpi_ialltoall_cwrap.c \
