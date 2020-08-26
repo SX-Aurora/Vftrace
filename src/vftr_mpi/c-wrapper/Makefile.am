@@ -6,7 +6,9 @@ libvftr_cmpiwrap_la_SOURCES = vftr_mpi_allgather_cwrap.c \
 			      vftr_mpi_iallgatherv_cwrap.c \
 			      vftr_mpi_allreduce_cwrap.c \
 			      vftr_mpi_alltoall_cwrap.c \
+			      vftr_mpi_ialltoall_cwrap.c \
 			      vftr_mpi_alltoallv_cwrap.c \
+			      vftr_mpi_ialltoallv_cwrap.c \
 			      vftr_mpi_alltoallw_cwrap.c \
 			      vftr_mpi_barrier_cwrap.c \
 			      vftr_mpi_bcast_cwrap.c \
@@ -17,7 +19,6 @@ libvftr_cmpiwrap_la_SOURCES = vftr_mpi_allgather_cwrap.c \
 			      vftr_mpi_gatherv_cwrap.c \
 			      vftr_mpi_igatherv_cwrap.c \
 			      vftr_mpi_get_cwrap.c \
-			      vftr_mpi_ialltoall_cwrap.c \
 			      vftr_mpi_init_cwrap.c \
 			      vftr_mpi_irecv_cwrap.c \
 			      vftr_mpi_isend_cwrap.c \
