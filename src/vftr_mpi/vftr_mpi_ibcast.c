@@ -35,7 +35,6 @@ int vftr_MPI_Ibcast(void *buffer, int count, MPI_Datatype datatype,
    } else {
       long long tstart = vftr_get_runtime_usec();
       int retVal = PMPI_Ibcast(buffer, count, datatype, root, comm, request);
-      long long tend = vftr_get_runtime_usec();
 
       // determine if inter or intra communicator
       int isintercom;
