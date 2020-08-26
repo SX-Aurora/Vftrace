@@ -76,10 +76,14 @@ char *vftr_get_program_path () {
 		// program_path is either <abs_path>/app_name or ./app_name
 		char *program_path = get_application_name ();
 		char *s;
-		// rindex returns a pointer to the last occurence of '/'
-		if (s = rindex (program_path, '/')) {
-			// The basename is everything after the last '/'
-			basename = strdup (s + 1);
+		if (program_path) {
+		  // rindex returns a pointer to the last occurence of '/'
+		  if (s = rindex (program_path, '/')) {
+		  	// The basename is everything after the last '/'
+		  	basename = strdup (s + 1);
+		  } else {
+		  	basename = strdup (program_path);
+		  }
 		} else {
 			basename = strdup (program_path);
 		}
