@@ -136,7 +136,7 @@ main( int argc, char **argv )
     fread (&(vfdhdr.n_perf_types), sizeof(int), 1, fp);
     printf ("n_perf_types: %d\n", vfdhdr.n_perf_types);
     char name[SCENARIO_NAME_LEN];
-    double *perf_values;
+    double *perf_values = NULL;
     if (vfdhdr.n_perf_types > 0) {
 	perf_values = (double*)malloc (vfdhdr.n_perf_types * sizeof(double));
         for (i = 0; i < vfdhdr.n_perf_types; i++) {
@@ -295,7 +295,7 @@ main( int argc, char **argv )
         }
     }
 
-    free (perf_values);
+    if (perf_values) free (perf_values);
     free (stacks);
     free (functions);
 
