@@ -10,6 +10,7 @@ AM_INIT_AUTOMAKE([-Wall -Werror foreign no-dependencies subdir-objects])
 AC_PROG_CC
 AC_PROG_CXX
 AC_PROG_FC
+AC_FC_SRCEXT(F90)
 AM_PROG_AR
 #AC_PROG_RANLIB
 # Enable per-target flags for C
@@ -98,6 +99,42 @@ AC_MSG_RESULT([$uses_intel_compiler])
 AM_CONDITIONAL([USES_INTEL_MPI], [test "$uses_intel_mpi" = "yes"])
 AM_CONDITIONAL([USES_NEC_MPI], [test "$uses_nec_mpi" = "yes"])
 AM_CONDITIONAL([USES_INTEL_COMPILER], [test "$uses_intel_compiler" = "yes"])
+
+# Check if Fortran-MPI supports TS29113
+# Fortran 90:
+AC_LANG(Fortran)
+AM_COND_IF(
+   [MPI_PROFILING],
+   [AC_MSG_CHECKING([if MPI-F90 supports TS29113])
+    AC_RUN_IFELSE(
+      [AC_LANG_SOURCE([[
+PROGRAM test
+   USE mpi
+   IF (MPI_SUBARRAYS_SUPPORTED) STOP 1
+   STOP 0
+END PROGRAM test]])],
+      [uses_mpi_f90_ts29113=no],
+      [uses_mpi_f90_ts29113=yes])]
+)
+AM_CONDITIONAL([SUPPORTS_MPIF90_TS], [test "$supports_mpi_f90_ts29113" = "yes"])
+
+# Fortran 2008:
+AM_COND_IF(
+   [MPI_PROFILING],
+   [AC_MSG_CHECKING([if MPI-F08 supports TS29113])
+    AC_RUN_IFELSE(
+      [AC_LANG_SOURCE([[
+PROGRAM test
+   USE mpi_f08
+   IF (MPI_SUBARRAYS_SUPPORTED) STOP 1
+   STOP 0
+END PROGRAM test]])],
+      [uses_mpi_f08_ts29113=no],
+      [uses_mpi_f08_ts29113=yes])]
+)
+AM_CONDITIONAL([SUPPORTS_MPIF08_TS], [test "$supports_mpi_f08_ts29113" = "yes"])
+
+
 
 # WO_PROG_PAPI()
 # WO_PROG_COMPONENTS()
