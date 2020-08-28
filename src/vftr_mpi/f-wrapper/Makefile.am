@@ -69,7 +69,8 @@ libvftr_fmpiwrap_la_SOURCES += vftr_mpi_barrier_c2f.F90 \
 			       vftr_mpi_ialltoall_c2f.F90 \
 			       vftr_mpi_alltoallv_c2f.F90 \
 			       vftr_mpi_ialltoallv_c2f.F90 \
-			       vftr_mpi_alltoallw_c2f.F90
+			       vftr_mpi_alltoallw_c2f.F90 \
+			       vftr_mpi_ialltoallw_c2f.F90
 libvftr_fmpiwrap_la_SOURCES += vftr_mpi_barrier_fwrap.F90 \
 			       vftr_mpi_bcast_fwrap.F90 \
 			       vftr_mpi_ibcast_fwrap.F90 \
@@ -89,7 +90,8 @@ libvftr_fmpiwrap_la_SOURCES += vftr_mpi_barrier_fwrap.F90 \
 			       vftr_mpi_ialltoall_fwrap.F90 \
 			       vftr_mpi_alltoallv_fwrap.F90 \
 			       vftr_mpi_ialltoallv_fwrap.F90 \
-			       vftr_mpi_alltoallw_fwrap.F90
+			       vftr_mpi_alltoallw_fwrap.F90 \
+			       vftr_mpi_ialltoallw_fwrap.F90
 
 ####################
 # global reduction #
