@@ -62,6 +62,7 @@ libvftr_fmpiwrap_la_SOURCES += vftr_mpi_barrier_c2f.F90 \
 			       vftr_mpi_scatterv_c2f.F90 \
 			       vftr_mpi_iscatterv_c2f.F90 \
 			       vftr_mpi_allgather_c2f.F90 \
+			       vftr_mpi_iallgather_c2f.F90 \
 			       vftr_mpi_allgatherv_c2f.F90 \
 			       vftr_mpi_alltoall_c2f.F90 \
 			       vftr_mpi_alltoallv_c2f.F90 \
@@ -78,6 +79,7 @@ libvftr_fmpiwrap_la_SOURCES += vftr_mpi_barrier_fwrap.F90 \
 			       vftr_mpi_scatterv_fwrap.F90 \
 			       vftr_mpi_iscatterv_fwrap.F90 \
 			       vftr_mpi_allgather_fwrap.F90 \
+			       vftr_mpi_iallgather_fwrap.F90 \
 			       vftr_mpi_allgatherv_fwrap.F90 \
 			       vftr_mpi_alltoall_fwrap.F90 \
 			       vftr_mpi_alltoallv_fwrap.F90 \
