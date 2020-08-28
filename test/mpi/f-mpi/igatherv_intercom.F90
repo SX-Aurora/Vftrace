@@ -1,4 +1,4 @@
-PROGRAM gatherv_intercom
+PROGRAM igatherv_intercom
 
    USE, INTRINSIC :: ISO_FORTRAN_ENV
    USE mpi
@@ -54,7 +54,7 @@ PROGRAM gatherv_intercom
 
    ! require cmd-line argument
    IF (COMMAND_ARGUMENT_COUNT() < 1) THEN
-      WRITE(UNIT=OUTPUT_UNIT, FMT="(A)") "./gatherv_intercom <msgsize in integers>"
+      WRITE(UNIT=OUTPUT_UNIT, FMT="(A)") "./igatherv_intercom <msgsize in integers>"
       STOP 1
    END IF
 
@@ -147,4 +147,4 @@ PROGRAM gatherv_intercom
    CALL MPI_Finalize(ierr)
 
    IF (.NOT.valid_data) STOP 1
-END PROGRAM gatherv_intercom
+END PROGRAM igatherv_intercom

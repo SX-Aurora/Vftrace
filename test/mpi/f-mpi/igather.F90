@@ -1,4 +1,4 @@
-PROGRAM gather
+PROGRAM igather
 
    USE, INTRINSIC :: ISO_FORTRAN_ENV
    USE mpi
@@ -42,7 +42,7 @@ PROGRAM gather
 
    ! require cmd-line argument
    IF (COMMAND_ARGUMENT_COUNT() < 1) THEN
-      WRITE(UNIT=OUTPUT_UNIT, FMT="(A)") "./gather <msgsize in integers>"
+      WRITE(UNIT=OUTPUT_UNIT, FMT="(A)") "./igather <msgsize in integers>"
       STOP 1
    END IF
 
@@ -86,4 +86,4 @@ PROGRAM gather
    CALL MPI_Finalize(ierr)
 
    IF (.NOT.valid_data) STOP 1
-END PROGRAM gather
+END PROGRAM igather

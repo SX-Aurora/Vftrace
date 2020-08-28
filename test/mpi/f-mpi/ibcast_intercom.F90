@@ -1,4 +1,4 @@
-PROGRAM bcast_intercom
+PROGRAM ibcast_intercom
 
    USE, INTRINSIC :: ISO_FORTRAN_ENV
    USE mpi
@@ -49,7 +49,7 @@ PROGRAM bcast_intercom
 
    ! require cmd-line argument
    IF (COMMAND_ARGUMENT_COUNT() < 1) THEN
-      WRITE(UNIT=OUTPUT_UNIT, FMT="(A)") "./bcast_intercom <msgsize in integers>"
+      WRITE(UNIT=OUTPUT_UNIT, FMT="(A)") "./ibcast_intercom <msgsize in integers>"
       STOP 1
    END IF
 
@@ -132,4 +132,4 @@ PROGRAM bcast_intercom
    CALL MPI_Finalize(ierr)
 
    IF (.NOT.valid_data) STOP 1
-END PROGRAM bcast_intercom
+END PROGRAM ibcast_intercom
