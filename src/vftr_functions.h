@@ -50,6 +50,8 @@ function_t *vftr_new_function(void *arg, const char *function_name,
 // Reset all function internal counters
 void vftr_reset_counts (function_t *func);
 
+void vftr_write_all_function_names (FILE *fp);
+
 int vftr_functions_test_1 (FILE *fp_in, FILE *fp_out);
 int vftr_functions_test_2 (FILE *fp_in, FILE *fp_out);
 int vftr_functions_test_3 (FILE *fp_in, FILE *fp_out);

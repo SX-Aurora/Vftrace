@@ -40,6 +40,7 @@
 #include "vftr_hooks.h"
 #include "vftr_loadbalance.h"
 #include "vftr_timer.h"
+#include "vftr_functions.h"
 
 bool vftr_timer_end;
 
@@ -336,6 +337,12 @@ void vftr_finalize() {
             vftr_print_global_stacklist (vftr_log);
         }
         if (valid_loadbalance_table) free (*loadbalance_info);
+    }
+
+    //printf ("Check for allreduce: %d\n", vftr_mpirank);
+    //vftr_write_function_indices (stdout, "MPI_Allreduce");
+    if (vftr_mpirank == 0) {
+	vftr_write_all_function_names (stdout);
     }
 
     if (vftr_profile_wanted) {

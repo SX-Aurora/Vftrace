@@ -140,8 +140,8 @@ function_t *vftr_new_function(void *arg, const char *function_name,
       }
    }
 
-   // Check if the new function is meant to be priceicely sampled
-   // linear search is fine as every function is only called once
+   // Check if the new function is meant to be pricisely sampled.
+   // Linear search is fine as every function is only called once.
    char **precise_names = vftr_precise_functions;
    // move through the list until the terminating NULL pointer is reached
    while (*precise_names != NULL) {
@@ -234,10 +234,16 @@ void vftr_reset_counts (function_t *func) {
 
 /**********************************************************************/
 
-void vftr_find_function (char *func_name, int **indices, int *n_indices) {
+void vftr_find_function (char *func_name, int **indices, int *n_indices, bool to_lower_case) {
 	*n_indices = 0;
 	for (int i = 0; i < vftr_stackscount; i++) {
-		if (!strcmp (vftr_func_table[i]->name, func_name)) {
+		s_compare = strdup(vftr_func_table[i]->name);
+		if (to_lower_case) {
+			for (int i = 0; i < strlen(s_compare); i++) {
+				s_compare[i] = tolower(s_compare[i]);
+			}
+		}
+		if (!strcmp (s_compare, func_name)) {
 			(*n_indices)++;
 		}
 	}
@@ -245,7 +251,13 @@ void vftr_find_function (char *func_name, int **indices, int *n_indices) {
 		*indices = (int*)malloc(*n_indices * sizeof(int));
 		int idx = 0;
 		for (int i = 0; i < vftr_stackscount; i++) {
-			if (!strcmp (vftr_func_table[i]->name, func_name)) {
+			s_compare = strdup(vftr_func_table[i]->name);
+			if (to_lower_case) {
+				for (int i = 0; i < strlen(s_compare); i++) {
+					s_compare[i] = tolower(s_compare[i]);
+				}
+			}	
+			if (!strcmp (s_compare, func_name)) {
 				(*indices)[idx++] = i;
 			}
 		}
@@ -254,10 +266,10 @@ void vftr_find_function (char *func_name, int **indices, int *n_indices) {
 
 /**********************************************************************/
 
-void vftr_write_function_indices (FILE *fp, char *func_name) {
+void vftr_write_function_indices (FILE *fp, char *func_name, bool to_lower_case) {
 	int n_indices;
 	int *indices = NULL;
-	vftr_find_function (func_name, &indices, &n_indices);
+	vftr_find_function (func_name, &indices, &n_indices, to_lower_case);
 	if (!indices) {
 		fprintf (fp, "ERROR: No indices found for function %s\n", func_name);
 	} else {
@@ -266,9 +278,18 @@ void vftr_write_function_indices (FILE *fp, char *func_name) {
 			fprintf (fp, "%d ", indices[i]);
 		}
 		fprintf (fp, "\n");	
+		free (indices);
 	}
-	free (indices);
 }
+
+/**********************************************************************/
+
+void vftr_write_all_function_names (FILE *fp) {
+	for (int i = 0; i < vftr_stackscount; i++) {
+		fprintf (fp, "%d: %s\n", i, vftr_func_table[i]->name);
+	}
+}
+	
 /**********************************************************************/
 
 void vftr_write_function (FILE *fp, function_t *func) {
@@ -402,10 +423,26 @@ int vftr_functions_test_4 (FILE *fp_in, FILE *fp_out) {
 	function_t *func2 = vftr_new_function ((void*)addrs, "func2", func1, 0, false);
 	function_t *func3 = vftr_new_function ((void*)(addrs + 1), "func3", func1, 0, false);	
 	function_t *func4 = vftr_new_function ((void*)(addrs + 2), "func4", func3, 0, false);
-	function_t *func5 = vftr_new_function ((void*)(addrs + 2), "func2", func4, 0, false);
-	vftr_write_function_indices (fp_out, "init");
-	vftr_write_function_indices (fp_out, "func2");
-	vftr_write_function_indices (fp_out, "func3");
-	vftr_write_function_indices (fp_out, "func4");
+	function_t *func5 = vftr_new_function ((void*)(addrs + 3), "func2", func4, 0, false);
+	vftr_write_function_indices (fp_out, "init", false);
+	vftr_write_function_indices (fp_out, "func2", false);
+	vftr_write_function_indices (fp_out, "func3", false);
+	vftr_write_function_indices (fp_out, "func4", false);
+	return 0;
+}
+
+/**********************************************************************/
+
+int vftr_functions_test_5 (FILE *fp_in, FILE *fp_out) {
+	unsigned long long addrs [6];
+	function_t *func1 = vftr_new_function (NULL, "INIT", NULL, 0, false);
+	function_t *func2 = vftr_new_function ((void*)addrs, "fUnC2", func1, 0, false);
+	function_t *func3 = vftr_new_function ((void*)(addrs + 1), "FUnc3", func1, 0, false);	
+	function_t *func4 = vftr_new_function ((void*)(addrs + 2), "func4", func3, 0, false);
+	function_t *func5 = vftr_new_function ((void*)(addrs + 3), "fUNC2", func4, 0, false);
+	vftr_write_function_indices (fp_out, "init", true);
+	vftr_write_function_indices (fp_out, "func2", true);
+	vftr_write_function_indices (fp_out, "func3", true);
+	vftr_write_function_indices (fp_out, "func4", true);
 	return 0;
 }
