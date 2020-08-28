@@ -206,7 +206,6 @@ void vftr_initialize() {
        memset (vftr_prof_data.events[1], 0, vftr_n_hw_obs * sizeof(long long));
     }
 
-    vftr_inittime = vftr_get_runtime_usec ();
     vftr_initcycles = vftr_get_cycles();
     // convert the sampletime and timelimit to microseconds
     vftr_interval  = (long long) (vftr_environment->sampletime->value * 1.0e6);
@@ -293,7 +292,6 @@ void vftr_finalize() {
     // get the total runtime
     long long finalize_time = vftr_get_runtime_usec();
     long long timer = vftr_get_runtime_usec ();
-    long long time0 = timer - vftr_inittime;
 
     vftr_timer_end = true;
 
@@ -305,7 +303,7 @@ void vftr_finalize() {
     bool valid_loadbalance_table = !vftr_normalize_stacks();
     vftr_calc_tree_format (vftr_froots);
 
-    vftr_print_profile (vftr_log, &ntop, time0);
+    vftr_print_profile (vftr_log, &ntop, timer);
 
     funcTable = vftr_func_table;
 
