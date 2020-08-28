@@ -9,8 +9,8 @@ endif
 # System Tests #
 ################
 check_PROGRAMS = init_finalize \
-		  ctypes \
-		  derived_ctypes
+		 ctypes \
+		 derived_ctypes
 		
 init_finalize_SOURCES = $(srcdir)/init_finalize.c
 init_finalize_CFLAGS  = $(AM_CFLAGS)
@@ -35,10 +35,10 @@ dist_noinst_SCRIPTS = init_finalize-1.sh \
 # point to point tests #
 ########################
 check_PROGRAMS += send_recv \
-		   sendrecv \
-		   sendrecv_replace \
-		   isend_recv \
-		   send_irecv
+		  sendrecv \
+		  sendrecv_replace \
+		  isend_recv \
+		  send_irecv
 
 send_recv_SOURCES = $(srcdir)/send_recv.c
 send_recv_CFLAGS  = $(AM_CFLAGS)
@@ -71,26 +71,45 @@ dist_noinst_SCRIPTS += send_recv.sh \
 ####################
 
 check_PROGRAMS += bcast \
-		   bcast_intercom \
-		   gather \
-		   gather_intercom \
-		   gatherv \
-		   gatherv_intercom \
-		   scatter \
-		   scatter_intercom \
-		   scatterv \
-		   scatterv_intercom \
-		   allgather \
-		   allgather_intercom \
-		   allgatherv \
-		   allgatherv_intercom \
-		   alltoall \
-		   alltoall_intercom \
-		   ialltoall \
-		   alltoallv \
-		   alltoallv_intercom \
-		   alltoallw \
-		   alltoallw_intercom
+		  bcast_intercom \
+		  ibcast \
+		  ibcast_intercom \
+		  gather \
+		  gather_intercom \
+		  igather \
+		  igather_intercom \
+		  gatherv \
+		  gatherv_intercom \
+		  igatherv \
+		  igatherv_intercom \
+		  scatter \
+		  scatter_intercom \
+		  iscatter \
+		  iscatter_intercom \
+		  scatterv \
+		  scatterv_intercom \
+		  iscatterv \
+		  iscatterv_intercom \
+		  allgather \
+		  allgather_intercom \
+		  iallgather \
+		  iallgather_intercom \
+		  allgatherv \
+		  allgatherv_intercom \
+		  iallgatherv \
+		  iallgatherv_intercom \
+		  alltoall \
+		  alltoall_intercom \
+		  ialltoall \
+		  ialltoall_intercom \
+		  alltoallv \
+		  alltoallv_intercom \
+		  ialltoallv \
+		  ialltoallv_intercom \
+		  alltoallw \
+		  alltoallw_intercom \
+		  ialltoallw \
+		  ialltoallw_intercom
 
 bcast_SOURCES = $(srcdir)/bcast.c
 bcast_CFLAGS = $(AM_CFLAGS)
@@ -100,6 +119,14 @@ bcast_intercom_SOURCES = $(srcdir)/bcast_intercom.c
 bcast_intercom_CFLAGS = $(AM_CFLAGS)
 bcast_intercom_LDFLAGS = $(AM_LDFLAGS)
 
+ibcast_SOURCES = $(srcdir)/ibcast.c
+ibcast_CFLAGS = $(AM_CFLAGS)
+ibcast_LDFLAGS = $(AM_LDFLAGS)
+
+ibcast_intercom_SOURCES = $(srcdir)/ibcast_intercom.c
+ibcast_intercom_CFLAGS = $(AM_CFLAGS)
+ibcast_intercom_LDFLAGS = $(AM_LDFLAGS)
+
 gather_SOURCES = $(srcdir)/gather.c
 gather_CFLAGS = $(AM_CFLAGS)
 gather_LDFLAGS = $(AM_LDFLAGS)
@@ -107,6 +134,14 @@ gather_LDFLAGS = $(AM_LDFLAGS)
 gather_intercom_SOURCES = $(srcdir)/gather_intercom.c
 gather_intercom_CFLAGS = $(AM_CFLAGS)
 gather_intercom_LDFLAGS = $(AM_LDFLAGS)
+
+igather_SOURCES = $(srcdir)/igather.c
+igather_CFLAGS = $(AM_CFLAGS)
+igather_LDFLAGS = $(AM_LDFLAGS)
+
+igather_intercom_SOURCES = $(srcdir)/igather_intercom.c
+igather_intercom_CFLAGS = $(AM_CFLAGS)
+igather_intercom_LDFLAGS = $(AM_LDFLAGS)
 
 gatherv_SOURCES = $(srcdir)/gatherv.c
 gatherv_CFLAGS = $(AM_CFLAGS)
@@ -116,6 +151,14 @@ gatherv_intercom_SOURCES = $(srcdir)/gatherv_intercom.c
 gatherv_intercom_CFLAGS = $(AM_CFLAGS)
 gatherv_intercom_LDFLAGS = $(AM_LDFLAGS)
 
+igatherv_SOURCES = $(srcdir)/igatherv.c
+igatherv_CFLAGS = $(AM_CFLAGS)
+igatherv_LDFLAGS = $(AM_LDFLAGS)
+
+igatherv_intercom_SOURCES = $(srcdir)/igatherv_intercom.c
+igatherv_intercom_CFLAGS = $(AM_CFLAGS)
+igatherv_intercom_LDFLAGS = $(AM_LDFLAGS)
+
 scatter_SOURCES = $(srcdir)/scatter.c
 scatter_CFLAGS = $(AM_CFLAGS)
 scatter_LDFLAGS = $(AM_LDFLAGS)
@@ -123,6 +166,14 @@ scatter_LDFLAGS = $(AM_LDFLAGS)
 scatter_intercom_SOURCES = $(srcdir)/scatter_intercom.c
 scatter_intercom_CFLAGS = $(AM_CFLAGS)
 scatter_intercom_LDFLAGS = $(AM_LDFLAGS)
+
+iscatter_SOURCES = $(srcdir)/iscatter.c
+iscatter_CFLAGS = $(AM_CFLAGS)
+iscatter_LDFLAGS = $(AM_LDFLAGS)
+
+iscatter_intercom_SOURCES = $(srcdir)/iscatter_intercom.c
+iscatter_intercom_CFLAGS = $(AM_CFLAGS)
+iscatter_intercom_LDFLAGS = $(AM_LDFLAGS)
 
 scatterv_SOURCES = $(srcdir)/scatterv.c
 scatterv_CFLAGS = $(AM_CFLAGS)
@@ -132,6 +183,14 @@ scatterv_intercom_SOURCES = $(srcdir)/scatterv_intercom.c
 scatterv_intercom_CFLAGS = $(AM_CFLAGS)
 scatterv_intercom_LDFLAGS = $(AM_LDFLAGS)
 
+iscatterv_SOURCES = $(srcdir)/iscatterv.c
+iscatterv_CFLAGS = $(AM_CFLAGS)
+iscatterv_LDFLAGS = $(AM_LDFLAGS)
+
+iscatterv_intercom_SOURCES = $(srcdir)/iscatterv_intercom.c
+iscatterv_intercom_CFLAGS = $(AM_CFLAGS)
+iscatterv_intercom_LDFLAGS = $(AM_LDFLAGS)
+
 allgather_SOURCES = $(srcdir)/allgather.c
 allgather_CFLAGS = $(AM_CFLAGS)
 allgather_LDFLAGS = $(AM_LDFLAGS)
@@ -140,6 +199,14 @@ allgather_intercom_SOURCES = $(srcdir)/allgather_intercom.c
 allgather_intercom_CFLAGS = $(AM_CFLAGS)
 allgather_intercom_LDFLAGS = $(AM_LDFLAGS)
 
+iallgather_SOURCES = $(srcdir)/iallgather.c
+iallgather_CFLAGS = $(AM_CFLAGS)
+iallgather_LDFLAGS = $(AM_LDFLAGS)
+
+iallgather_intercom_SOURCES = $(srcdir)/iallgather_intercom.c
+iallgather_intercom_CFLAGS = $(AM_CFLAGS)
+iallgather_intercom_LDFLAGS = $(AM_LDFLAGS)
+
 allgatherv_SOURCES = $(srcdir)/allgatherv.c
 allgatherv_CFLAGS = $(AM_CFLAGS)
 allgatherv_LDFLAGS = $(AM_LDFLAGS)
@@ -147,6 +214,14 @@ allgatherv_LDFLAGS = $(AM_LDFLAGS)
 allgatherv_intercom_SOURCES = $(srcdir)/allgatherv_intercom.c
 allgatherv_intercom_CFLAGS = $(AM_CFLAGS)
 allgatherv_intercom_LDFLAGS = $(AM_LDFLAGS)
+
+iallgatherv_SOURCES = $(srcdir)/iallgatherv.c
+iallgatherv_CFLAGS = $(AM_CFLAGS)
+iallgatherv_LDFLAGS = $(AM_LDFLAGS)
+
+iallgatherv_intercom_SOURCES = $(srcdir)/iallgatherv_intercom.c
+iallgatherv_intercom_CFLAGS = $(AM_CFLAGS)
+iallgatherv_intercom_LDFLAGS = $(AM_LDFLAGS)
 
 alltoall_SOURCES = $(srcdir)/alltoall.c
 alltoall_CFLAGS = $(AM_CFLAGS)
@@ -160,6 +235,10 @@ ialltoall_SOURCES = $(srcdir)/ialltoall.c
 ialltoall_CFLAGS = $(AM_CFLAGS)
 ialltoall_LDFLAGS = $(AM_LDFLAGS)
 
+ialltoall_intercom_SOURCES = $(srcdir)/ialltoall_intercom.c
+ialltoall_intercom_CFLAGS = $(AM_CFLAGS)
+ialltoall_intercom_LDFLAGS = $(AM_LDFLAGS)
+
 alltoallv_SOURCES = $(srcdir)/alltoallv.c
 alltoallv_CFLAGS = $(AM_CFLAGS)
 alltoallv_LDFLAGS = $(AM_LDFLAGS)
@@ -167,6 +246,14 @@ alltoallv_LDFLAGS = $(AM_LDFLAGS)
 alltoallv_intercom_SOURCES = $(srcdir)/alltoallv_intercom.c
 alltoallv_intercom_CFLAGS = $(AM_CFLAGS)
 alltoallv_intercom_LDFLAGS = $(AM_LDFLAGS)
+
+ialltoallv_SOURCES = $(srcdir)/ialltoallv.c
+ialltoallv_CFLAGS = $(AM_CFLAGS)
+ialltoallv_LDFLAGS = $(AM_LDFLAGS)
+
+ialltoallv_intercom_SOURCES = $(srcdir)/ialltoallv_intercom.c
+ialltoallv_intercom_CFLAGS = $(AM_CFLAGS)
+ialltoallv_intercom_LDFLAGS = $(AM_LDFLAGS)
 
 alltoallw_SOURCES = $(srcdir)/alltoallw.c
 alltoallw_CFLAGS = $(AM_CFLAGS)
@@ -176,36 +263,63 @@ alltoallw_intercom_SOURCES = $(srcdir)/alltoallw_intercom.c
 alltoallw_intercom_CFLAGS = $(AM_CFLAGS)
 alltoallw_intercom_LDFLAGS = $(AM_LDFLAGS)
 
+ialltoallw_SOURCES = $(srcdir)/ialltoallw.c
+ialltoallw_CFLAGS = $(AM_CFLAGS)
+ialltoallw_LDFLAGS = $(AM_LDFLAGS)
+
+ialltoallw_intercom_SOURCES = $(srcdir)/ialltoallw_intercom.c
+ialltoallw_intercom_CFLAGS = $(AM_CFLAGS)
+ialltoallw_intercom_LDFLAGS = $(AM_LDFLAGS)
+
 dist_noinst_SCRIPTS += bcast.sh \
 		       bcast_intercom.sh \
+		       ibcast.sh \
+		       ibcast_intercom.sh \
 		       gather.sh \
 		       gather_intercom.sh \
+		       igather.sh \
+		       igather_intercom.sh \
 		       gatherv.sh \
 		       gatherv_intercom.sh \
+		       igatherv.sh \
+		       igatherv_intercom.sh \
 		       scatter.sh \
 		       scatter_intercom.sh \
+		       iscatter.sh \
+		       iscatter_intercom.sh \
 		       scatterv.sh \
 		       scatterv_intercom.sh \
+		       iscatterv.sh \
+		       iscatterv_intercom.sh \
 		       allgather.sh \
 		       allgather_intercom.sh \
+		       iallgather.sh \
+		       iallgather_intercom.sh \
 		       allgatherv.sh \
 		       allgatherv_intercom.sh \
+		       iallgatherv.sh \
+		       iallgatherv_intercom.sh \
 		       alltoall.sh \
 		       alltoall_intercom.sh \
 		       ialltoall.sh \
+		       ialltoall_intercom.sh \
 		       alltoallv.sh \
 		       alltoallv_intercom.sh \
+		       ialltoallv.sh \
+		       ialltoallv_intercom.sh \
 		       alltoallw.sh \
-		       alltoallw_intercom.sh
+		       alltoallw_intercom.sh \
+		       ialltoallw.sh \
+		       ialltoallw_intercom.sh
 
 #####################
 # Global reductions #
 #####################
 
 check_PROGRAMS += reduce \
-		   reduce_intercom \
-		   allreduce \
-		   allreduce_intercom
+		  reduce_intercom \
+		  allreduce \
+		  allreduce_intercom
 
 reduce_SOURCES = $(srcdir)/reduce.c
 reduce_CFLAGS = $(AM_CFLAGS)
@@ -232,7 +346,7 @@ dist_noinst_SCRIPTS += reduce.sh \
 # One sided tests #
 ###################
 check_PROGRAMS += put \
-		   get
+		  get
 
 put_SOURCES = $(srcdir)/put.c
 put_CFLAGS = $(AM_CFLAGS)
@@ -249,9 +363,9 @@ dist_noinst_SCRIPTS += put.sh \
 # Test tests #
 ##############
 check_PROGRAMS += test \
-		   testany \
-		   testsome \
-		   testall
+		  testany \
+		  testsome \
+		  testall
 
 test_SOURCES = $(srcdir)/test.c
 test_CFLAGS = $(AM_CFLAGS)
@@ -279,9 +393,9 @@ dist_noinst_SCRIPTS += test.sh \
 ##############
 
 check_PROGRAMS += wait \
-		   waitany \
-		   waitsome \
-		   waitall
+		  waitany \
+		  waitsome \
+		  waitall
 
 wait_SOURCES = $(srcdir)/wait.c
 wait_CFLAGS = $(AM_CFLAGS)

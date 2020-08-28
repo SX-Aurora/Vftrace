@@ -28,7 +28,10 @@ dist_noinst_SCRIPTS = init_finalize-1.sh \
                       init_finalize-2.sh \
                       init_finalize-3.sh \
                       init_finalize-4.sh 
-#		      ftypes.sh 
+
+if SUPPORTS_MPIF08_TS
+else
+#dist_noinst_SCRIPTS = ftypes.sh \
 #		      derived_ftypes.sh
 #
 #########################
@@ -297,6 +300,7 @@ dist_noinst_SCRIPTS += put.sh \
 #		       waitany.sh \
 #		       waitsome.sh \
 #		       waitall.sh
+endif
 
 TEST_EXTENSIONS = .sh
 SH_LOG_COMPILER = $(SHELL)

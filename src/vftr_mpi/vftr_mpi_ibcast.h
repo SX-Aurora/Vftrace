@@ -23,7 +23,7 @@
 #include <mpi.h>
 
 int vftr_MPI_Ibcast(void *buffer, int count, MPI_Datatype datatype,
-                   int root, MPI_Comm comm, MPI_Request *request);
+                    int root, MPI_Comm comm, MPI_Request *request);
 
 #endif
 #endif

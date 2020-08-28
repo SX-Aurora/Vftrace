@@ -49,7 +49,7 @@ int vftr_MPI_Gatherv(const void *sendbuf, int sendcount, MPI_Datatype sendtype,
             // The root process get the special process wildcard MPI_ROOT
             // get the size of group B
             int size;
-            MPI_Comm_remote_size(comm, &size);
+            PMPI_Comm_remote_size(comm, &size);
             for (int i=0; i<size; i++) {
                // translate the i-th rank in group B to the global rank
                int global_peer_rank = vftr_remote2global_rank(comm, i);
