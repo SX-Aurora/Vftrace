@@ -72,6 +72,8 @@ dist_noinst_SCRIPTS += send_recv.sh \
 #
 check_PROGRAMS += bcast \
 		  bcast_intercom \
+		  ibcast \
+		  ibcast_intercom \
 		  gather \
 		  gather_intercom \
 		  gatherv \
@@ -98,6 +100,14 @@ bcast_LDFLAGS = $(AM_LDFLAGS)
 bcast_intercom_SOURCES = $(srcdir)/bcast_intercom.F90
 bcast_intercom_FCFLAGS = $(AM_FCFLAGS)
 bcast_intercom_LDFLAGS = $(AM_LDFLAGS)
+
+ibcast_SOURCES = $(srcdir)/ibcast.F90
+ibcast_FCFLAGS = $(AM_FCFLAGS)
+ibcast_LDFLAGS = $(AM_LDFLAGS)
+
+ibcast_intercom_SOURCES = $(srcdir)/ibcast_intercom.F90
+ibcast_intercom_FCFLAGS = $(AM_FCFLAGS)
+ibcast_intercom_LDFLAGS = $(AM_LDFLAGS)
 
 gather_SOURCES = $(srcdir)/gather.F90
 gather_FCFLAGS = $(AM_FCFLAGS)
@@ -173,6 +183,8 @@ alltoallw_intercom_LDFLAGS = $(AM_LDFLAGS)
 
 dist_noinst_SCRIPTS += bcast.sh \
 		       bcast_intercom.sh \
+		       ibcast.sh \
+		       ibcast_intercom.sh \
 		       gather.sh \
 		       gather_intercom.sh \
 		       gatherv.sh \
