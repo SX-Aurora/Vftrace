@@ -275,7 +275,7 @@ void vftr_write_function (FILE *fp, function_t *func) {
 	fprintf (fp, "Function: %s\n", func->name);
 	fprintf (fp, "\tAddress: ");
 	if (func->address) {
-		fprintf (fp, "0x%lx\n", func->address);
+		fprintf (fp, "0x%p\n", func->address);
 	} else {
 		fprintf (fp, "-/-\n");
 	}
@@ -315,7 +315,7 @@ void vftr_write_function (FILE *fp, function_t *func) {
 	fprintf (fp, "\tID: %d\n", func->id);
 	fprintf (fp, "\tGroup ID: %d\n", func->gid);
 	fprintf (fp, "\tRecursion depth: %d\n", func->recursion_depth);
-	fprintf (fp, "\tStackHash: %u\n", func->stackHash);
+	fprintf (fp, "\tStackHash: %lu\n", func->stackHash);
 	fprintf (fp, "\tExclude: %d\n", func->exclude_this);
 }
 		
