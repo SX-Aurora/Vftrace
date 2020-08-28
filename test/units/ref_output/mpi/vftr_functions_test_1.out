@@ -10,7 +10,7 @@ Function: MPI_Init
 	ID: 1
 	Group ID: 1
 	Recursion depth: 0
-	StackHash: 3806353462
+	StackHash: 4140840512898750518
 	Exclude: 0
 Function: init
 	Called from: -/-
@@ -22,7 +22,7 @@ Function: init
 	ID: 0
 	Group ID: 0
 	Recursion depth: 0
-	StackHash: 1836196153
+	StackHash: 1310819102837842233
 	Exclude: 0
 Check test entries:
 Function: init_vftr
@@ -35,7 +35,7 @@ Function: init_vftr
 	ID: 2
 	Group ID: -1
 	Recursion depth: 0
-	StackHash: 3296917333
+	StackHash: 15403095947709970261
 	Exclude: 0
 Function: test_1
 	Called from: init_vftr
@@ -47,5 +47,5 @@ Function: test_1
 	ID: 3
 	Group ID: -1
 	Recursion depth: 0
-	StackHash: 3621820697
+	StackHash: 12005762785240717593
 	Exclude: 0

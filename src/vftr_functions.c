@@ -275,7 +275,7 @@ void vftr_write_function (FILE *fp, function_t *func) {
 	fprintf (fp, "Function: %s\n", func->name);
 	fprintf (fp, "\tAddress: ");
 	if (func->address) {
-		fprintf (fp, "0x%p\n", func->address);
+		fprintf (fp, "%p\n", func->address);
 	} else {
 		fprintf (fp, "-/-\n");
 	}
