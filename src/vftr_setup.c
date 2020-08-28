@@ -252,7 +252,6 @@ void vftr_initialize() {
     }
 
     fflush (stdout);
-    vftr_inittime = vftr_get_runtime_usec (); /* Will be updated later if MPI used */
     vftr_initcycles = vftr_get_cycles();
     
     // get the time to estimate vftrace overhead

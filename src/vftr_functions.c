@@ -234,6 +234,43 @@ void vftr_reset_counts (function_t *func) {
 
 /**********************************************************************/
 
+void vftr_find_function (char *func_name, int **indices, int *n_indices) {
+	*n_indices = 0;
+	for (int i = 0; i < vftr_stackscount; i++) {
+		if (!strcmp (vftr_func_table[i]->name, func_name)) {
+			(*n_indices)++;
+		}
+	}
+	if (*n_indices > 0) {
+		*indices = (int*)malloc(*n_indices * sizeof(int));
+		int idx = 0;
+		for (int i = 0; i < vftr_stackscount; i++) {
+			if (!strcmp (vftr_func_table[i]->name, func_name)) {
+				(*indices)[idx++] = i;
+			}
+		}
+	}	
+}
+
+/**********************************************************************/
+
+void vftr_write_function_indices (FILE *fp, char *func_name) {
+	int n_indices;
+	int *indices = NULL;
+	vftr_find_function (func_name, &indices, &n_indices);
+	if (!indices) {
+		fprintf (fp, "ERROR: No indices found for function %s\n", func_name);
+	} else {
+		fprintf (fp, "%s found at indices: ", func_name);
+		for (int i = 0; i < n_indices; i++) {
+			fprintf (fp, "%d ", indices[i]);
+		}
+		fprintf (fp, "\n");	
+	}
+	free (indices);
+}
+/**********************************************************************/
+
 void vftr_write_function (FILE *fp, function_t *func) {
 	fprintf (fp, "Function: %s\n", func->name);
 	fprintf (fp, "\tAddress: ");
@@ -336,6 +373,8 @@ int vftr_functions_test_2 (FILE *fp_in, FILE *fp_out) {
 	return 0;
 }
 
+/**********************************************************************/
+
 int vftr_functions_test_3 (FILE *fp_in, FILE *fp_out) {
 	unsigned long long addrs [6];
 	function_t *func1 = vftr_new_function (NULL, "init", NULL, 0, false);
@@ -356,3 +395,17 @@ int vftr_functions_test_3 (FILE *fp_in, FILE *fp_out) {
 }
 
 /**********************************************************************/
+
+int vftr_functions_test_4 (FILE *fp_in, FILE *fp_out) {
+	unsigned long long addrs [6];
+	function_t *func1 = vftr_new_function (NULL, "init", NULL, 0, false);
+	function_t *func2 = vftr_new_function ((void*)addrs, "func2", func1, 0, false);
+	function_t *func3 = vftr_new_function ((void*)(addrs + 1), "func3", func1, 0, false);	
+	function_t *func4 = vftr_new_function ((void*)(addrs + 2), "func4", func3, 0, false);
+	function_t *func5 = vftr_new_function ((void*)(addrs + 2), "func2", func4, 0, false);
+	vftr_write_function_indices (fp_out, "init");
+	vftr_write_function_indices (fp_out, "func2");
+	vftr_write_function_indices (fp_out, "func3");
+	vftr_write_function_indices (fp_out, "func4");
+	return 0;
+}

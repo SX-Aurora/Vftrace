@@ -137,6 +137,7 @@ AM_COND_IF([MPI_PROFILING],[units_refdir=mpi], [units_refdir=serial])
 AC_CONFIG_LINKS(test/units/ref_output/vftr_functions_test_1.out:test/units/ref_output/$units_refdir/vftr_functions_test_1.out
                 test/units/ref_output/vftr_functions_test_2.out:test/units/ref_output/$units_refdir/vftr_functions_test_2.out
                 test/units/ref_output/vftr_functions_test_3.out:test/units/ref_output/$units_refdir/vftr_functions_test_3.out
+                test/units/ref_output/vftr_functions_test_4.out:test/units/ref_output/$units_refdir/vftr_functions_test_4.out
                 test/units/ref_output/vftr_filewrite_test_2.out:test/units/ref_output/$units_refdir/vftr_filewrite_test_2.out
                 test/units/ref_output/vftr_stacks_test_1.out:test/units/ref_output/$units_refdir/vftr_stacks_test_1.out)
 
@@ -154,6 +155,7 @@ AC_CONFIG_LINKS(test/units/this_passes.sh:test/units/this_passes.sh
                 test/units/vftr_functions_test_1.sh:test/units/vftr_functions_test_1.sh
                 test/units/vftr_functions_test_2.sh:test/units/vftr_functions_test_2.sh
                 test/units/vftr_functions_test_3.sh:test/units/vftr_functions_test_3.sh
+                test/units/vftr_functions_test_4.sh:test/units/vftr_functions_test_4.sh
                 test/units/vftr_stacks_test_1.sh:test/units/vftr_stacks_test_1.sh
                )
 

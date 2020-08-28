@@ -52,4 +52,6 @@ void vftr_reset_counts (function_t *func);
 
 int vftr_functions_test_1 (FILE *fp_in, FILE *fp_out);
 int vftr_functions_test_2 (FILE *fp_in, FILE *fp_out);
+int vftr_functions_test_3 (FILE *fp_in, FILE *fp_out);
+int vftr_functions_test_4 (FILE *fp_in, FILE *fp_out);
 #endif
