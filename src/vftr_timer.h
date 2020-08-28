@@ -57,11 +57,6 @@ unsigned long long vftr_get_cycles();
 // well as after initialization.
 long long vftr_overhead_usec;
 
-// The timestamp of initialization, set after call to MPI_Init().
-long long vftr_inittime;
-// What is this for?
-long long vftr_inittime1;
-
 long long vftr_initcycles;
 
 // A time interval indicating when the function table should be sorted.

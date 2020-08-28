@@ -34,7 +34,7 @@ char *get_application_name () {
 	char proccmd[40];
 	char cmdline[MAX_CMDLINE];	
 
-    	sprintf (proccmd, "/proc/%d/cmdline", getpid());
+    	snprintf (proccmd, 39, "/proc/%d/cmdline", getpid());
         int last = 0;
         int fd = open (proccmd, O_RDONLY);
         char *p;
@@ -51,7 +51,7 @@ char *get_application_name () {
             program_path = strdup(p);
     	    close (fd);
         } else {
-            strcpy (program_path, "vftrace");
+            program_path = NULL;
         }
         return program_path;
 }

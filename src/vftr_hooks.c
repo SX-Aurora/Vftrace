@@ -71,7 +71,7 @@ void vftr_save_old_state () {
 
 void vftr_function_entry (const char *s, void *addr, int line, bool isPrecise) {
     int e, read_counters;
-    unsigned long long timer, time0, delta;
+    unsigned long long timer, delta;
     unsigned long long cycles0;
     double wtime;
     static int vftr_init = 1;
@@ -89,7 +89,6 @@ void vftr_function_entry (const char *s, void *addr, int line, bool isPrecise) {
     // log function entry and exit time to estimate the overhead time
     long long overhead_time_start = func_entry_time;
     timer = vftr_get_runtime_usec ();
-    time0 = timer - vftr_inittime;
     cycles0 = vftr_get_cycles() - vftr_initcycles;
 
     // This is the hook for shared libraries opened during the
@@ -156,7 +155,7 @@ void vftr_function_entry (const char *s, void *addr, int line, bool isPrecise) {
         vftr_write_stack_ascii (vftr_log, wtime, func, "profile before call to", 0);
         vftr_profile_wanted = true;
         int ntop;
-        vftr_print_profile (vftr_log, &ntop, time0);
+        vftr_print_profile (vftr_log, &ntop, timer);
         vftr_print_local_stacklist (vftr_func_table, vftr_log, ntop);
 	vftr_save_old_state ();
     }
@@ -227,7 +226,7 @@ void vftr_function_entry (const char *s, void *addr, int line, bool isPrecise) {
 
 void vftr_function_exit(int line) {
     int           e, read_counters, timeToSample;
-    long long     time0, timer;
+    long long     timer;
     unsigned long long cycles0;
     function_t    *func;
     double        wtime;
@@ -247,7 +246,6 @@ void vftr_function_exit(int line) {
     long long overhead_time_start = func_exit_time;
 
     timer = vftr_get_runtime_usec ();
-    time0 = timer - vftr_inittime;
     cycles0 = vftr_get_cycles() - vftr_initcycles;
     func  = vftr_fstack;
     if (func->exclude_this) return;
@@ -328,11 +326,11 @@ void vftr_function_exit(int line) {
         vftr_write_stack_ascii (vftr_log, wtime, func, "profile at exit from", timeToSample);
         vftr_profile_wanted = true;
         int ntop;
-        vftr_print_profile (stdout, &ntop, time0);
+        vftr_print_profile (stdout, &ntop, timer);
         vftr_print_local_stacklist( vftr_func_table, stdout, ntop );
     }
 
-    if (time0 >= vftr_timelimit) {
+    if (timer >= vftr_timelimit) {
         fprintf (vftr_log, "vftr_timelimit exceeded - terminating execution\n");
 	kill (getpid(), SIGTERM);
     }

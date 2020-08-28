@@ -76,12 +76,16 @@ char *vftr_get_program_path () {
 		// program_path is either <abs_path>/app_name or ./app_name
 		char *program_path = get_application_name ();
 		char *s;
-		// rindex returns a pointer to the last occurence of '/'
-		if (s = rindex (program_path, '/')) {
-			// The basename is everything after the last '/'
-			basename = strdup (s + 1);
+		if (program_path) {
+		  // rindex returns a pointer to the last occurence of '/'
+		  if (s = rindex (program_path, '/')) {
+		  	// The basename is everything after the last '/'
+		  	basename = strdup (s + 1);
+		  } else {
+		  	basename = strdup (program_path);
+		  }
 		} else {
-			basename = strdup (program_path);
+		  basename = strdup ("unknown");
 		}
 	}
 	return basename;
@@ -183,19 +187,23 @@ void vftr_finalize_vfd_file (long long finalize_time, int signal_number) {
 
         double runtime = finalize_time * 1.0e-6;
         double zerodouble[] = { 0., 0. };
+    	long long zerolong[] = {0};
 
         // Update trace info in header and close
         fseek (vftr_vfd_file, vftr_admin_offset, SEEK_SET);
-        fwrite(&vftr_mpisize, sizeof(int), 1, vftr_vfd_file); 
-        fwrite(&vftr_mpirank, sizeof(int),1, vftr_vfd_file); 
-        fwrite(&zerodouble, sizeof(double),	1, vftr_vfd_file); 
-        fwrite(&vftr_inittime, sizeof(long long), 1, vftr_vfd_file);
-        fwrite(&runtime, sizeof(double), 1, vftr_vfd_file);
-        fwrite(&vftr_samplecount, sizeof(unsigned int), 1, vftr_vfd_file);
-        fwrite(&vftr_stackscount, sizeof(unsigned int), 1, vftr_vfd_file);
-        fwrite(&stackstable_offset, sizeof(unsigned int), 1, vftr_vfd_file);
-        fwrite(&vftr_samples_offset, sizeof(unsigned int), 1, vftr_vfd_file);
-        fwrite(&profile_offset, sizeof(unsigned int), 1, vftr_vfd_file);
+        fwrite (&vftr_mpisize, sizeof(int), 1, vftr_vfd_file); 
+        fwrite (&vftr_mpirank, sizeof(int),1, vftr_vfd_file); 
+        fwrite (zerodouble, sizeof(double),	1, vftr_vfd_file); 
+	// vftr_inittime has to be removed from the vfd file format, as
+	// it is always zero! But we have to check it against the viewer.
+        // fwrite(&vftr_inittime, sizeof(long long), 1, vftr_vfd_file);
+	fwrite (zerolong, sizeof(long long), 1, vftr_vfd_file);
+        fwrite (&runtime, sizeof(double), 1, vftr_vfd_file);
+        fwrite (&vftr_samplecount, sizeof(unsigned int), 1, vftr_vfd_file);
+        fwrite (&vftr_stackscount, sizeof(unsigned int), 1, vftr_vfd_file);
+        fwrite (&stackstable_offset, sizeof(unsigned int), 1, vftr_vfd_file);
+        fwrite (&vftr_samples_offset, sizeof(unsigned int), 1, vftr_vfd_file);
+        fwrite (&profile_offset, sizeof(unsigned int), 1, vftr_vfd_file);
         fclose (vftr_vfd_file);
     }
 }
