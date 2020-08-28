@@ -9,19 +9,19 @@ endif
 # System Tests #
 ################
 check_PROGRAMS = init_finalize \
-		  ftypes \
-		  derived_ftypes
+		 ftypes \
+		 derived_ftypes
 		
 init_finalize_SOURCES = $(srcdir)/init_finalize.F90
-init_finalize_FCFLAGS  = $(AM_FCFLAGS)
+init_finalize_FCFLAGS = $(AM_FCFLAGS)
 init_finalize_LDFLAGS = $(AM_LDFLAGS)
 
 ftypes_SOURCES = $(srcdir)/ftypes.F90
-ftypes_FCFLAGS  = $(AM_FCFLAGS)
+ftypes_FCFLAGS = $(AM_FCFLAGS)
 ftypes_LDFLAGS = $(AM_LDFLAGS)
 
 derived_ftypes_SOURCES = $(srcdir)/derived_ftypes.F90
-derived_ftypes_FCFLAGS  = $(AM_FCFLAGS)
+derived_ftypes_FCFLAGS = $(AM_FCFLAGS)
 derived_ftypes_LDFLAGS = $(AM_LDFLAGS)
 
 dist_noinst_SCRIPTS = init_finalize-1.sh \
@@ -35,29 +35,29 @@ dist_noinst_SCRIPTS = init_finalize-1.sh \
 # point to point tests #
 ########################
 check_PROGRAMS += send_recv \
-		   sendrecv \
-		   sendrecv_replace \
-		   isend_recv \
-		   send_irecv
+		  sendrecv \
+		  sendrecv_replace \
+		  isend_recv \
+		  send_irecv
 
 send_recv_SOURCES = $(srcdir)/send_recv.F90
-send_recv_FCFLAGS  = $(AM_FCFLAGS)
+send_recv_FCFLAGS = $(AM_FCFLAGS)
 send_recv_LDFLAGS = $(AM_LDFLAGS)
 
 sendrecv_SOURCES = $(srcdir)/sendrecv.F90
-sendrecv_FCFLAGS  = $(AM_FCFLAGS)
+sendrecv_FCFLAGS = $(AM_FCFLAGS)
 sendrecv_LDFLAGS = $(AM_LDFLAGS)
 
 sendrecv_replace_SOURCES = $(srcdir)/sendrecv_replace.F90
-sendrecv_replace_FCFLAGS  = $(AM_FCFLAGS)
+sendrecv_replace_FCFLAGS = $(AM_FCFLAGS)
 sendrecv_replace_LDFLAGS = $(AM_LDFLAGS)
 
 isend_recv_SOURCES = $(srcdir)/isend_recv.F90
-isend_recv_FCFLAGS  = $(AM_FCFLAGS)
+isend_recv_FCFLAGS = $(AM_FCFLAGS)
 isend_recv_LDFLAGS = $(AM_LDFLAGS)
 
 send_irecv_SOURCES = $(srcdir)/send_irecv.F90
-send_irecv_FCFLAGS  = $(AM_FCFLAGS)
+send_irecv_FCFLAGS = $(AM_FCFLAGS)
 send_irecv_LDFLAGS = $(AM_LDFLAGS)
 
 dist_noinst_SCRIPTS += send_recv.sh \
@@ -71,25 +71,25 @@ dist_noinst_SCRIPTS += send_recv.sh \
 #####################
 #
 check_PROGRAMS += bcast \
-		   bcast_intercom \
-		   gather \
-		   gather_intercom \
-		   gatherv \
-		   gatherv_intercom \
-		   scatter \
-		   scatter_intercom \
-		   scatterv \
-		   scatterv_intercom \
-		   allgather \
-		   allgather_intercom \
-		   allgatherv \
-		   allgatherv_intercom \
-		   alltoall \
-		   alltoall_intercom \
-		   alltoallv \
-		   alltoallv_intercom \
-		   alltoallw \
-		   alltoallw_intercom
+		  bcast_intercom \
+		  gather \
+		  gather_intercom \
+		  gatherv \
+		  gatherv_intercom \
+		  scatter \
+		  scatter_intercom \
+		  scatterv \
+		  scatterv_intercom \
+		  allgather \
+		  allgather_intercom \
+		  allgatherv \
+		  allgatherv_intercom \
+		  alltoall \
+		  alltoall_intercom \
+		  alltoallv \
+		  alltoallv_intercom \
+		  alltoallw \
+		  alltoallw_intercom
 
 bcast_SOURCES = $(srcdir)/bcast.F90
 bcast_FCFLAGS = $(AM_FCFLAGS)
@@ -226,7 +226,7 @@ dist_noinst_SCRIPTS += reduce.sh \
 # One sided tests #
 ###################
 check_PROGRAMS += put \
-		   get
+		  get
 
 put_SOURCES = $(srcdir)/put.F90
 put_FCFLAGS = $(AM_FCFLAGS)
@@ -243,9 +243,9 @@ dist_noinst_SCRIPTS += put.sh \
 # Test tests #
 ##############
 check_PROGRAMS += test \
-		   testany \
-		   testsome \
-		   testall
+		  testany \
+		  testsome \
+		  testall
 
 test_SOURCES = $(srcdir)/test.F90
 test_FCFLAGS = $(AM_FCFLAGS)
@@ -273,9 +273,9 @@ dist_noinst_SCRIPTS += test.sh \
 ##############
 
 check_PROGRAMS += wait \
-		   waitany \
-		   waitsome \
-		   waitall
+		  waitany \
+		  waitsome \
+		  waitall
 
 wait_SOURCES = $(srcdir)/wait.F90
 wait_FCFLAGS = $(AM_FCFLAGS)
