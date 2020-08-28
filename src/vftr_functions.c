@@ -32,7 +32,7 @@
 #include "vftr_hwcounters.h"
 
 
-char *vftr_precice_functions[] = {
+char *vftr_precise_functions[] = {
    "MPI_Allgather", "MPI_Allgatherv", "MPI_Allreduce", "MPI_Alltoall",
    "MPI_Alltoallv", "MPI_Alltoallw", "MPI_Barrier", "MPI_Bcast",
    "MPI_Bsend", "MPI_Bsend_init", "MPI_Gather", "MPI_Gatherv",
@@ -142,14 +142,14 @@ function_t *vftr_new_function(void *arg, const char *function_name,
 
    // Check if the new function is meant to be priceicely sampled
    // linear search is fine as every function is only called once
-   char **precice_names = vftr_precice_functions;
+   char **precise_names = vftr_precise_functions;
    // move through the list until the terminating NULL pointer is reached
-   while (*precice_names != NULL) {
-      if (!strcmp(func->name, *precice_names)) {
+   while (*precise_names != NULL) {
+      if (!strcmp(func->name, *precise_names)) {
          func->precise = true;
          break;
       }
-      precice_names++;
+      precise_names++;
    }
 
    // preparing the function specific profiling data

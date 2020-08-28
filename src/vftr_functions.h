@@ -31,7 +31,7 @@ typedef struct Function {
    char *full;
    // profiling data
    profdata_t prof_current, prof_previous;
-   // is this function measured precicely?
+   // is this function measured precisely?
    bool precise;
    // local and global stack-ID
    int id, gid;
