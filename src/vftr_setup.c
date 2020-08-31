@@ -304,6 +304,24 @@ void vftr_finalize() {
     vftr_calc_tree_format (vftr_froots);
 
     vftr_print_profile (vftr_log, &ntop, timer);
+    double t_avg, imbalance;
+    long long t_min, t_max;
+    char *mpi_functions[] = {"mpi_barrier", "mpi_bcast", "mpi_reduce",
+			     "mpi_allreduce", "mpi_gather", "mpi_gatherv",
+			     "mpi_allgather", "mpi_allgatherv",
+			     "mpi_scatter", "mpi_scatterv",
+			     "mpi_alltoall", "mpi_alltoallv", "mpi_alltoallw"};
+    int n_mpi_functions = 13;
+    int n_calls;
+
+    for (int i = 0; i < n_mpi_functions; i++) {
+       evaluate_mpi_function (mpi_functions[i], &n_calls, &t_min, &t_max, &t_avg, &imbalance);
+       if (vftr_mpirank == 0 && n_calls > 0) {
+           printf ("func: %s, n_calls: %d, t_avg: %lf, t_min: %lf s, t_max: %lf s, imbalance: %lf %%\n",
+	        mpi_functions[i], n_calls, t_avg * 1e-6,
+           	(double)(t_min) * 1e-6, (double)(t_max) * 1e-6, imbalance);	
+       }
+    }
 
     funcTable = vftr_func_table;
 

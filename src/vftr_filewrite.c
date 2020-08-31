@@ -22,6 +22,8 @@
 #include <time.h>
 #include <assert.h>
 #include <signal.h>
+#include <math.h>
+#include <limits.h>
 
 #include "vftr_scenarios.h"
 #include "vftr_hwcounters.h"
@@ -507,6 +509,60 @@ void set_formats (function_t **funcTable, double runtime,
     	if (format->incl_time < 5) format->incl_time = 5;
 }
 
+/**********************************************************************/
+void evaluate_mpi_function (char *func_name, int *n_calls, long long *t_min, long long *t_max, double *t_avg, double *imbalance) {
+    int n_indices, *indices;	
+    vftr_find_function (func_name, &indices, &n_indices, true);
+    long long mpi_time = 0;
+    *n_calls = 0;
+    for (int i = 0; i < n_indices; i++) {
+	mpi_time += vftr_func_table[indices[i]]->prof_current.timeIncl;
+	*n_calls = *n_calls + vftr_func_table[indices[i]]->prof_current.calls;
+    }
+    long long all_times [vftr_mpisize];
+    //int all_calls [vftr_mpisize];
+    PMPI_Gather (&mpi_time, 1, MPI_LONG_LONG_INT, all_times,
+		 1, MPI_LONG_LONG_INT, 0, MPI_COMM_WORLD);
+    //PMPI_Gather (&n_calls, 1, MPI_INT, all_calls,
+    //		 1, MPI_INT, 0, MPI_COMM_WORLD);
+
+    //*n_calls_avg = 0;
+    *t_max = 0;
+    *t_min = LLONG_MAX;
+    *t_avg = 0.0;
+    *imbalance = 0.0;
+    if (*n_calls == 0) return;
+    if (vftr_mpirank == 0) {
+        long long sum_times = 0;
+        int n_count = 0;
+        for (int i = 0; i < vftr_mpisize; i++) {
+        	if (all_times[i] > 0) {
+        		sum_times += all_times[i];
+        		//sum_calls += all_calls[i];
+        		n_count++;
+        	}
+        }
+        if (n_count > 0) {
+    	   *t_avg = (double)sum_times / vftr_mpisize;
+           double max_diff = 0;
+           for (int i = 0; i < vftr_mpisize; i++) {	
+           	if (all_times[i] > 0) {
+           		if (all_times[i] < *t_min) *t_min = all_times[i];
+           		if (all_times[i] > *t_max) *t_max = all_times[i];
+           		double d = (double)(all_times[i]) - *t_avg;
+           		double df = fabs(d);
+           		if (df > max_diff) {
+           			max_diff = df;
+           		}
+           		
+           	}
+           }
+           
+           *imbalance = max_diff / (*t_avg) * 100;
+           //printf ("Imbalance: %lf%%\n", max_diff / mu * 100);
+        }
+    }
+}
 /**********************************************************************/
 
 void vftr_print_profile (FILE *pout, int *ntop, long long time0) {

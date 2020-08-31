@@ -236,6 +236,7 @@ void vftr_reset_counts (function_t *func) {
 
 void vftr_find_function (char *func_name, int **indices, int *n_indices, bool to_lower_case) {
 	*n_indices = 0;
+	char *s_compare;
 	for (int i = 0; i < vftr_stackscount; i++) {
 		s_compare = strdup(vftr_func_table[i]->name);
 		if (to_lower_case) {
