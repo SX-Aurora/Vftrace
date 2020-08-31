@@ -149,6 +149,7 @@ AC_CONFIG_FILES([src/vftr_mpi/f08-wrapper/Makefile])
 AC_CONFIG_FILES([tools/Makefile])
 AC_CONFIG_FILES([test/Makefile])
 AC_CONFIG_FILES([test/units/Makefile])
+AC_CONFIG_FILES([test/user_fkt/Makefile])
 AC_CONFIG_FILES([test/mpi/Makefile])
 AC_CONFIG_FILES([test/mpi/c-mpi/Makefile])
 AC_CONFIG_FILES([test/mpi/f-mpi/Makefile])
@@ -194,6 +195,10 @@ AC_CONFIG_LINKS(test/units/this_passes.sh:test/units/this_passes.sh
                 test/units/vftr_functions_test_3.sh:test/units/vftr_functions_test_3.sh
                 test/units/vftr_functions_test_4.sh:test/units/vftr_functions_test_4.sh
                 test/units/vftr_stacks_test_1.sh:test/units/vftr_stacks_test_1.sh
+               )
+
+AC_CONFIG_LINKS(test/user_fkt/cregions1.sh:test/user_fkt/cregions1.sh
+                test/user_fkt/cregions2.sh:test/user_fkt/cregions2.sh
                )
 
 # C-MPI testscripts
@@ -251,6 +256,8 @@ AM_COND_IF([MPI_PROFILING],
                             test/mpi/c-mpi/ialltoallw_intercom.sh:test/mpi/testscripts/ialltoallw_intercom.sh
                             test/mpi/c-mpi/reduce.sh:test/mpi/testscripts/reduce.sh
                             test/mpi/c-mpi/reduce_intercom.sh:test/mpi/testscripts/reduce_intercom.sh
+                            test/mpi/c-mpi/ireduce.sh:test/mpi/testscripts/ireduce.sh
+                            test/mpi/c-mpi/ireduce_intercom.sh:test/mpi/testscripts/ireduce_intercom.sh
                             test/mpi/c-mpi/allreduce.sh:test/mpi/testscripts/allreduce.sh
                             test/mpi/c-mpi/allreduce_intercom.sh:test/mpi/testscripts/allreduce_intercom.sh
                             test/mpi/c-mpi/put.sh:test/mpi/testscripts/put.sh
@@ -321,6 +328,8 @@ AM_COND_IF([MPI_PROFILING],
                             test/mpi/f-mpi/ialltoallw_intercom.sh:test/mpi/testscripts/ialltoallw_intercom.sh
                             test/mpi/f-mpi/reduce.sh:test/mpi/testscripts/reduce.sh
                             test/mpi/f-mpi/reduce_intercom.sh:test/mpi/testscripts/reduce_intercom.sh
+                            test/mpi/f-mpi/ireduce.sh:test/mpi/testscripts/ireduce.sh
+                            test/mpi/f-mpi/ireduce_intercom.sh:test/mpi/testscripts/ireduce_intercom.sh
                             test/mpi/f-mpi/allreduce.sh:test/mpi/testscripts/allreduce.sh
                             test/mpi/f-mpi/allreduce_intercom.sh:test/mpi/testscripts/allreduce_intercom.sh
                             test/mpi/f-mpi/put.sh:test/mpi/testscripts/put.sh
@@ -391,6 +400,8 @@ AM_COND_IF([MPI_PROFILING],
                             test/mpi/f08-mpi/ialltoallw_intercom.sh:test/mpi/testscripts/ialltoallw_intercom.sh
                             test/mpi/f08-mpi/reduce.sh:test/mpi/testscripts/reduce.sh
                             test/mpi/f08-mpi/reduce_intercom.sh:test/mpi/testscripts/reduce_intercom.sh
+                            test/mpi/f08-mpi/ireduce.sh:test/mpi/testscripts/ireduce.sh
+                            test/mpi/f08-mpi/ireduce_intercom.sh:test/mpi/testscripts/ireduce_intercom.sh
                             test/mpi/f08-mpi/allreduce.sh:test/mpi/testscripts/allreduce.sh
                             test/mpi/f08-mpi/allreduce_intercom.sh:test/mpi/testscripts/allreduce_intercom.sh
                             test/mpi/f08-mpi/put.sh:test/mpi/testscripts/put.sh

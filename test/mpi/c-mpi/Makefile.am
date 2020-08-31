@@ -318,6 +318,8 @@ dist_noinst_SCRIPTS += bcast.sh \
 
 check_PROGRAMS += reduce \
 		  reduce_intercom \
+		  ireduce \
+		  ireduce_intercom \
 		  allreduce \
 		  allreduce_intercom
 
@@ -329,6 +331,14 @@ reduce_intercom_SOURCES = $(srcdir)/reduce_intercom.c
 reduce_intercom_CFLAGS = $(AM_CFLAGS)
 reduce_intercom_LDFLAGS = $(AM_LDFLAGS)
 
+ireduce_SOURCES = $(srcdir)/ireduce.c
+ireduce_CFLAGS = $(AM_CFLAGS)
+ireduce_LDFLAGS = $(AM_LDFLAGS)
+
+ireduce_intercom_SOURCES = $(srcdir)/ireduce_intercom.c
+ireduce_intercom_CFLAGS = $(AM_CFLAGS)
+ireduce_intercom_LDFLAGS = $(AM_LDFLAGS)
+
 allreduce_SOURCES = $(srcdir)/allreduce.c
 allreduce_CFLAGS = $(AM_CFLAGS)
 allreduce_LDFLAGS = $(AM_LDFLAGS)
@@ -339,6 +349,8 @@ allreduce_intercom_LDFLAGS = $(AM_LDFLAGS)
 
 dist_noinst_SCRIPTS += reduce.sh \
 		       reduce_intercom.sh \
+		       ireduce.sh \
+		       ireduce_intercom.sh \
 		       allreduce.sh \
 		       allreduce_intercom.sh
 
