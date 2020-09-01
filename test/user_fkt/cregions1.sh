@@ -1,7 +1,5 @@
 #!/bin/bash
 
-set -x
-
 vftr_binary=cregions1
 nprocs=1
 
