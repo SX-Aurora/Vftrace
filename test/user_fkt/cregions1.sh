@@ -14,8 +14,8 @@ cat ${vftr_binary}_0.log
 inprof=$(cat ${vftr_binary}_0.log | \
          grep "user-region-1" | \
          wc -l)
-if [ "$ncalls" -ne "2" ] ; then
-   echo "User region not found in log file the expected amount"
+if [ "${inprof}" -ne "2" ] ; then
+   echo "User region \"user-region-1\" not found in log file the expected amount"
    exit 1;
 fi
 
@@ -25,8 +25,8 @@ fi
 ncalls=$(../../tools/tracedump ${vftr_binary}_0.vfd | \
          grep "call user-region-1" | \
          wc -l)
-if [ "$ncalls" -ne "1" ] ; then
-   echo "Call to user region not found in vfd file"
+if [ "${ncalls}" -ne "1" ] ; then
+   echo "Call to user region \"user-region-1\" not found in vfd file"
    exit 1;
 fi
 
@@ -34,8 +34,8 @@ nexits=$(../../tools/tracedump ${vftr_binary}_0.vfd | \
          grep "exit user-region-1" | \
          wc -l)
 
-if [ "$ncalls" -ne "1" ] ; then
-   echo "Exit from user region not found in vfd file"
+if [ "${nexits}" -ne "1" ] ; then
+   echo "Exit from user region \"user-region-1\" not found in vfd file"
    exit 1;
 fi
 
