@@ -1,4 +1,4 @@
-PROGRAM fregions1
+PROGRAM fregions2
 #ifdef _MPI
    USE mpi
 #endif
@@ -22,4 +22,4 @@ PROGRAM fregions1
 #ifdef _MPI
    CALL MPI_Finalize(ierr)
 #endif
-END PROGRAM fregions1
+END PROGRAM fregions2
