@@ -72,11 +72,21 @@ dist_noinst_SCRIPTS += fregions1.sh \
 #############
 # get stack #
 #############
+check_PROGRAMS += cget_stack
 
+cget_stack_SOURCES = $(srcdir)/cget_stack.c
+cget_stack_CFLAGS  = $(AM_CFLAGS)
+cget_stack_LDFLAGS = $(AM_LDFLAGS)
+
+dist_noinst_SCRIPTS += cget_stack.sh
+
+################
+# pause/resume #
+################
 check_PROGRAMS += cpause_resume
 
 cpause_resume_SOURCES = $(srcdir)/cpause_resume.c
-cpause_resume_FCFLAGS = $(AM_FCFLAGS)
+cpause_resume_CFLAGS  = $(AM_CFLAGS)
 cpause_resume_LDFLAGS = $(AM_LDFLAGS)
 
 dist_noinst_SCRIPTS += cpause_resume.sh
