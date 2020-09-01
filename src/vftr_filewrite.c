@@ -614,10 +614,12 @@ void vftr_print_mpi_statistics (FILE *pout) {
     
     int n_calls;
 
+    double total_mpi_time = 0;
     for (int i = 0; i < n_mpi_functions; i++) {
        evaluate_mpi_function (mpi_functions[i]->func_name, &n_calls, &t_min, &t_max, &t_avg, &imbalance);
        mpi_functions[i]->n_calls = n_calls;
        mpi_functions[i]->t_avg = t_avg;
+       total_mpi_time += t_avg * 1e-6;
        mpi_functions[i]->t_min = t_min;
        mpi_functions[i]->t_max = t_max;
        mpi_functions[i]->imbalance = imbalance;
@@ -626,21 +628,15 @@ void vftr_print_mpi_statistics (FILE *pout) {
     qsort ((void*)mpi_functions, (size_t)n_mpi_functions,
 	    sizeof (mpi_function_entry_t *), vftr_compare_mpi_functions);
 
-    fprintf (pout, "function     | n_calls | avg. time [s] | min. time [s] | max. time [s] | imb. |\n");
+    fprintf (pout, "Total time spent in MPI: %lf s\n", total_mpi_time);
+    fprintf (pout, "function     | %%MPI | n_calls | avg. time [s] | min. time [s] | max. time [s] | imb. |\n");
     fprintf (pout, "---------------------------------------------------------------------------\n");
     for (int i = 0; i < n_mpi_functions; i++) {
 	   
        if (vftr_mpirank == 0 && mpi_functions[i]->n_calls > 0) {
 	
-        //   fprintf (pout, "func: %s, n_calls: %d, t_avg: %lf, t_min: %lf s, t_max: %lf s, imbalance: %lf %%\n",
-	//        mpi_functions[i]->func_name,
-	//        mpi_functions[i]->n_calls,
-	//	mpi_functions[i]->t_avg * 1e-6,
-        //   	(double)(mpi_functions[i]->t_min) * 1e-6,
-	//	(double)(mpi_functions[i]->t_max) * 1e-6,
-	//	mpi_functions[i]->imbalance);	
-	  fprintf (pout, "%14s|%10d|%16.3f|%16.3f|%16.3f|%4.2f| \n",
 		mpi_functions[i]->func_name,
+		(mpi_functions[i]->t_avg *1e-6) / total_mpi_time * 100,
 		mpi_functions[i]->n_calls,
 		mpi_functions[i]->t_avg * 1e-6,
 		(double)(mpi_functions[i]->t_min) * 1e-6,
