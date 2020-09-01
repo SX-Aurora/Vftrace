@@ -149,7 +149,7 @@ AC_CONFIG_FILES([src/vftr_mpi/f08-wrapper/Makefile])
 AC_CONFIG_FILES([tools/Makefile])
 AC_CONFIG_FILES([test/Makefile])
 AC_CONFIG_FILES([test/units/Makefile])
-AC_CONFIG_FILES([test/user_fkt/Makefile])
+AC_CONFIG_FILES([test/user_functions/Makefile])
 AC_CONFIG_FILES([test/mpi/Makefile])
 AC_CONFIG_FILES([test/mpi/c-mpi/Makefile])
 AC_CONFIG_FILES([test/mpi/f-mpi/Makefile])
@@ -198,20 +198,20 @@ AC_CONFIG_LINKS(test/units/this_passes.sh:test/units/this_passes.sh
                )
 
 # User funktion tests
-AC_CONFIG_LINKS(test/user_fkt/cregions1.sh:test/user_fkt/cregions1.sh
-                test/user_fkt/cregions2.sh:test/user_fkt/cregions2.sh
-                test/user_fkt/cregions3.sh:test/user_fkt/cregions3.sh
-                test/user_fkt/cregions4.sh:test/user_fkt/cregions4.sh
-                test/user_fkt/fregions1.sh:test/user_fkt/fregions1.sh
-                test/user_fkt/fregions2.sh:test/user_fkt/fregions2.sh
-                test/user_fkt/fregions3.sh:test/user_fkt/fregions3.sh
-                test/user_fkt/fregions4.sh:test/user_fkt/fregions4.sh
+AC_CONFIG_LINKS(test/user_functions/cregions1.sh:test/user_functions/cregions1.sh
+                test/user_functions/cregions2.sh:test/user_functions/cregions2.sh
+                test/user_functions/cregions3.sh:test/user_functions/cregions3.sh
+                test/user_functions/cregions4.sh:test/user_functions/cregions4.sh
+                test/user_functions/fregions1.sh:test/user_functions/fregions1.sh
+                test/user_functions/fregions2.sh:test/user_functions/fregions2.sh
+                test/user_functions/fregions3.sh:test/user_functions/fregions3.sh
+                test/user_functions/fregions4.sh:test/user_functions/fregions4.sh
                )
-AC_CONFIG_LINKS(test/user_fkt/cget_stack.sh:test/user_fkt/cget_stack.sh
-                test/user_fkt/fget_stack.sh:test/user_fkt/fget_stack.sh
+AC_CONFIG_LINKS(test/user_functions/cget_stack.sh:test/user_functions/cget_stack.sh
+                test/user_functions/fget_stack.sh:test/user_functions/fget_stack.sh
                )
-AC_CONFIG_LINKS(test/user_fkt/cpause_resume.sh:test/user_fkt/cpause_resume.sh
-                test/user_fkt/fpause_resume.sh:test/user_fkt/fpause_resume.sh
+AC_CONFIG_LINKS(test/user_functions/cpause_resume.sh:test/user_functions/cpause_resume.sh
+                test/user_functions/fpause_resume.sh:test/user_functions/fpause_resume.sh
                )
 
 # C-MPI testscripts
