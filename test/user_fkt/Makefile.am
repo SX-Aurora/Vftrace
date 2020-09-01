@@ -14,9 +14,9 @@ if USES_NEC_MPI
 endif
 
 
-################
-# System Tests #
-################
+###########
+# regions #
+###########
 check_PROGRAMS = cregions1 \
 		 cregions2 \
 		 cregions3 \
@@ -49,25 +49,37 @@ check_PROGRAMS += fregions1 \
 		  fregions4
 
 fregions1_SOURCES = $(srcdir)/fregions1.F90
-fregions1_CFLAGS  = $(AM_CFLAGS)
+fregions1_FCFLAGS = $(AM_FCFLAGS)
 fregions1_LDFLAGS = $(AM_LDFLAGS)
 
 fregions2_SOURCES = $(srcdir)/fregions2.F90
-fregions2_CFLAGS  = $(AM_CFLAGS)
+fregions2_FCFLAGS = $(AM_FCFLAGS)
 fregions2_LDFLAGS = $(AM_LDFLAGS)
 
 fregions3_SOURCES = $(srcdir)/fregions3.F90
-fregions3_CFLAGS  = $(AM_CFLAGS)
+fregions3_FCFLAGS = $(AM_FCFLAGS)
 fregions3_LDFLAGS = $(AM_LDFLAGS)
 
 fregions4_SOURCES = $(srcdir)/fregions4.F90
-fregions4_CFLAGS  = $(AM_CFLAGS)
+fregions4_FCFLAGS = $(AM_FCFLAGS)
 fregions4_LDFLAGS = $(AM_LDFLAGS)
 
 dist_noinst_SCRIPTS += fregions1.sh \
 		       fregions2.sh \
 		       fregions3.sh \
 		       fregions4.sh
+
+#############
+# get stack #
+#############
+
+check_PROGRAMS += cpause_resume
+
+cpause_resume_SOURCES = $(srcdir)/cpause_resume.c
+cpause_resume_FCFLAGS = $(AM_FCFLAGS)
+cpause_resume_LDFLAGS = $(AM_LDFLAGS)
+
+dist_noinst_SCRIPTS += cpause_resume.sh
 
 TEST_EXTENSIONS = .sh
 SH_LOG_COMPILER = $(SHELL)
