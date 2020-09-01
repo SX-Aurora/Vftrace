@@ -208,6 +208,7 @@ AC_CONFIG_LINKS(test/user_fkt/cregions1.sh:test/user_fkt/cregions1.sh
                 test/user_fkt/fregions4.sh:test/user_fkt/fregions4.sh
                )
 AC_CONFIG_LINKS(test/user_fkt/cpause_resume.sh:test/user_fkt/cpause_resume.sh
+                test/user_fkt/fpause_resume.sh:test/user_fkt/fpause_resume.sh
                )
 
 # C-MPI testscripts

@@ -81,6 +81,14 @@ cpause_resume_LDFLAGS = $(AM_LDFLAGS)
 
 dist_noinst_SCRIPTS += cpause_resume.sh
 
+check_PROGRAMS += fpause_resume
+
+fpause_resume_SOURCES = $(srcdir)/fpause_resume.F90
+fpause_resume_FCFLAGS = $(AM_FCFLAGS)
+fpause_resume_LDFLAGS = $(AM_LDFLAGS)
+
+dist_noinst_SCRIPTS += fpause_resume.sh
+
 TEST_EXTENSIONS = .sh
 SH_LOG_COMPILER = $(SHELL)
 
