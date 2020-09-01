@@ -202,6 +202,7 @@ AC_CONFIG_LINKS(test/user_fkt/cregions1.sh:test/user_fkt/cregions1.sh
                 test/user_fkt/cregions2.sh:test/user_fkt/cregions2.sh
                 test/user_fkt/fregions1.sh:test/user_fkt/fregions1.sh
                 test/user_fkt/fregions2.sh:test/user_fkt/fregions2.sh
+                test/user_fkt/fregions3.sh:test/user_fkt/fregions3.sh
                )
 
 # C-MPI testscripts

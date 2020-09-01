@@ -32,7 +32,8 @@ dist_noinst_SCRIPTS = cregions1.sh \
 		      cregions2.sh
 
 check_PROGRAMS += fregions1 \
-		  fregions2
+		  fregions2 \
+		  fregions3
 
 fregions1_SOURCES = $(srcdir)/fregions1.F90
 fregions1_CFLAGS  = $(AM_CFLAGS)
@@ -42,8 +43,13 @@ fregions2_SOURCES = $(srcdir)/fregions2.F90
 fregions2_CFLAGS  = $(AM_CFLAGS)
 fregions2_LDFLAGS = $(AM_LDFLAGS)
 
+fregions3_SOURCES = $(srcdir)/fregions3.F90
+fregions3_CFLAGS  = $(AM_CFLAGS)
+fregions3_LDFLAGS = $(AM_LDFLAGS)
+
 dist_noinst_SCRIPTS += fregions1.sh \
-		       fregions2.sh
+		       fregions2.sh \
+		       fregions3.sh
 
 TEST_EXTENSIONS = .sh
 SH_LOG_COMPILER = $(SHELL)
