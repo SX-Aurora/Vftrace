@@ -1,0 +1,106 @@
+#!/bin/bash
+
+vftr_binary=cpause_resume
+nprocs=1
+
+export VFTR_SAMPLING="Yes"
+export VFTR_PROF_TRUNCATE="no"
+export VFTR_PRECISE="fkt*"
+
+if [ "x$HAS_MPI" == "xYES" ]; then
+   ${MPI_EXEC} ${NP} ${nprocs} ./${vftr_binary} ${maxnreg} || exit 1
+else
+   ./${vftr_binary} ${maxnreg} || exit 1
+fi
+
+cat ${vftr_binary}_0.log
+
+# check for existance of fkt1
+inprof=$(cat ${vftr_binary}_0.log | \
+         grep " fkt1" | \
+         wc -l)
+if [ "${inprof}" -ne "2" ] ; then
+   echo "Function \"fkt1\" not found in log file the expected amount"
+   exit 1;
+fi
+# check for existance of fkt2
+inprof=$(cat ${vftr_binary}_0.log | \
+         grep " fkt2" | \
+         wc -l)
+if [ "${inprof}" -gt "0" ] ; then
+   echo "Function \"fkt2\" should not appear in log file"
+   exit 1;
+fi
+# check for existance of fkt3
+inprof=$(cat ${vftr_binary}_0.log | \
+         grep " fkt3" | \
+         wc -l)
+if [ "${inprof}" -ne "2" ] ; then
+   echo "Function \"fkt3\" not found in log file the expected amount"
+   exit 1;
+fi
+# check for existance of vftrace_pause
+inprof=$(cat ${vftr_binary}_0.log | \
+         grep " vftrace_pause" | \
+         wc -l)
+if [ "${inprof}" -ne "2" ] ; then
+   echo "Function \"vftrace_pause\" not found in log file the expected amount"
+   exit 1;
+fi
+
+
+../../tools/tracedump ${vftr_binary}_0.vfd
+
+# check for existance of fkt1
+ncalls=$(../../tools/tracedump ${vftr_binary}_0.vfd | \
+         grep "call fkt1" | \
+         wc -l)
+if [ "${ncalls}" -ne "1" ] ; then
+   echo "Call to function \"fkt1\" not found in vfd file"
+   exit 1;
+fi
+nexits=$(../../tools/tracedump ${vftr_binary}_0.vfd | \
+         grep "exit fkt1" | \
+         wc -l)
+if [ "${nexits}" -ne "1" ] ; then
+   echo "Exit from function \"fkt1\" not found in vfd file"
+   exit 1;
+fi
+# check for existance of fkt2
+ncalls=$(../../tools/tracedump ${vftr_binary}_0.vfd | \
+         grep "call fkt2" | \
+         wc -l)
+if [ "${ncalls}" -gt "0" ] ; then
+   echo "Call to function \"fkt2\" should not appear in vfd file"
+   exit 1;
+fi
+nexits=$(../../tools/tracedump ${vftr_binary}_0.vfd | \
+         grep "exit fkt2" | \
+         wc -l)
+if [ "${nexits}" -gt "0" ] ; then
+   echo "Exit from function \"fkt2\" should not appear in vfd file"
+   exit 1;
+fi
+# check for existance of fkt3
+ncalls=$(../../tools/tracedump ${vftr_binary}_0.vfd | \
+         grep "call fkt3" | \
+         wc -l)
+if [ "${ncalls}" -ne "1" ] ; then
+   echo "Call to function \"fkt3\" not found in vfd file"
+   exit 1;
+fi
+nexits=$(../../tools/tracedump ${vftr_binary}_0.vfd | \
+         grep "exit fkt3" | \
+         wc -l)
+if [ "${nexits}" -ne "1" ] ; then
+   echo "Exit from function \"fkt3\" not found in vfd file"
+   exit 1;
+fi
+# check for existance of vftrace_pause
+ncalls=$(../../tools/tracedump ${vftr_binary}_0.vfd | \
+         grep "call vftrace_pause" | \
+         wc -l)
+if [ "${ncalls}" -ne "1" ] ; then
+   echo "Call to function \"vftrace_pause\" not found in vfd file"
+   exit 1;
+fi
