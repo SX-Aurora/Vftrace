@@ -226,6 +226,7 @@ level == 0 Profiling is disabled.
 level == 1 Profiling is enabled at a normal default level of detail.
 .br
 level == 2 Profile buffers are flushed, which may be a no-op.
+.br
 Changing the level between the start and the corresponding Wait/Test of a
 non-blocking communication can lead to undefined behavior.
 Users are encouraged to use the \fBvftr_pause\fR and \fBvftr_resume\fR routines instead.
@@ -266,7 +267,7 @@ Returns a (char*) in C and a (character(len=*), pointer) in Fortran that contain
 current callstack.
 .br
 \fBExample in C:\fR
-   printf("%s\n", vftrace_get_stack());
+   printf("%s\\n", vftrace_get_stack());
 .br
 \fBExample in Fortran:\fR
    write(*,*) vftrace_get_stack()
