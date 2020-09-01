@@ -18,7 +18,8 @@ endif
 # System Tests #
 ################
 check_PROGRAMS = cregions1 \
-		 cregions2
+		 cregions2 \
+		 cregions3
 		
 cregions1_SOURCES = $(srcdir)/cregions1.c
 cregions1_CFLAGS  = $(AM_CFLAGS)
@@ -28,8 +29,13 @@ cregions2_SOURCES = $(srcdir)/cregions2.c
 cregions2_CFLAGS  = $(AM_CFLAGS)
 cregions2_LDFLAGS = $(AM_LDFLAGS)
 
+cregions3_SOURCES = $(srcdir)/cregions3.c
+cregions3_CFLAGS  = $(AM_CFLAGS)
+cregions3_LDFLAGS = $(AM_LDFLAGS)
+
 dist_noinst_SCRIPTS = cregions1.sh \
-		      cregions2.sh
+		      cregions2.sh \
+		      cregions3.sh
 
 check_PROGRAMS += fregions1 \
 		  fregions2 \

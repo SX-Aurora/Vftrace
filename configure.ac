@@ -200,6 +200,7 @@ AC_CONFIG_LINKS(test/units/this_passes.sh:test/units/this_passes.sh
 # User funktion tests
 AC_CONFIG_LINKS(test/user_fkt/cregions1.sh:test/user_fkt/cregions1.sh
                 test/user_fkt/cregions2.sh:test/user_fkt/cregions2.sh
+                test/user_fkt/cregions3.sh:test/user_fkt/cregions3.sh
                 test/user_fkt/fregions1.sh:test/user_fkt/fregions1.sh
                 test/user_fkt/fregions2.sh:test/user_fkt/fregions2.sh
                 test/user_fkt/fregions3.sh:test/user_fkt/fregions3.sh
