@@ -6,15 +6,6 @@
 
 #include <vftrace.h>
 
-int ndigits(int number) {
-   int n = 1;
-   while (number >= 10) {
-      number /= 10;
-      n++;
-   }
-   return n;
-}
-
 int main(int argc, char** argv) {
 
 #ifdef _MPI
@@ -31,7 +22,7 @@ int main(int argc, char** argv) {
 
    for (int ireg=1; ireg<=nreg; ireg++) {
       char reg_name[32];
-      sprintf(reg_name, "user-region-%*d", ndigits(ireg), ireg);
+      sprintf(reg_name, "user-region-%1d", ireg);
       printf("%s\n", reg_name);
       vftrace_region_begin(reg_name);
       vftrace_region_end(reg_name);
