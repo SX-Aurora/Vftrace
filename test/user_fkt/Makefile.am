@@ -72,6 +72,14 @@ dist_noinst_SCRIPTS += fregions1.sh \
 #############
 # get stack #
 #############
+check_PROGRAMS += fget_stack
+
+fget_stack_SOURCES = $(srcdir)/fget_stack.F90
+fget_stack_FCFLAGS = $(AM_FCFLAGS)
+fget_stack_LDFLAGS = $(AM_LDFLAGS)
+
+dist_noinst_SCRIPTS += fget_stack.sh
+
 check_PROGRAMS += cget_stack
 
 cget_stack_SOURCES = $(srcdir)/cget_stack.c
