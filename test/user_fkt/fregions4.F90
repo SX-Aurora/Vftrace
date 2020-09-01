@@ -25,7 +25,7 @@ PROGRAM fregions4
 
    ! require cmd-line argument
    IF (COMMAND_ARGUMENT_COUNT() < 1) THEN
-      WRITE(UNIT=OUTPUT_UNIT, FMT="(A)") "./fregions3 <nregions>"
+      WRITE(UNIT=OUTPUT_UNIT, FMT="(A)") "./fregions4 <nregions>"
       STOP 1
    END IF
 
