@@ -5,6 +5,8 @@ set -x
 vftr_binary=fregions1
 nprocs=1
 
+export VFTR_PROF_TRUNCATE="no"
+
 if [ "x$HAS_MPI" == "xYES" ]; then
    ${MPI_EXEC} ${NP} ${nprocs} ./${vftr_binary} || exit 1
 else
