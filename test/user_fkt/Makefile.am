@@ -19,7 +19,8 @@ endif
 ################
 check_PROGRAMS = cregions1 \
 		 cregions2 \
-		 cregions3
+		 cregions3 \
+		 cregions4
 		
 cregions1_SOURCES = $(srcdir)/cregions1.c
 cregions1_CFLAGS  = $(AM_CFLAGS)
@@ -33,9 +34,14 @@ cregions3_SOURCES = $(srcdir)/cregions3.c
 cregions3_CFLAGS  = $(AM_CFLAGS)
 cregions3_LDFLAGS = $(AM_LDFLAGS)
 
+cregions4_SOURCES = $(srcdir)/cregions4.c
+cregions4_CFLAGS  = $(AM_CFLAGS)
+cregions4_LDFLAGS = $(AM_LDFLAGS)
+
 dist_noinst_SCRIPTS = cregions1.sh \
 		      cregions2.sh \
-		      cregions3.sh
+		      cregions3.sh \
+		      cregions4.sh
 
 check_PROGRAMS += fregions1 \
 		  fregions2 \
