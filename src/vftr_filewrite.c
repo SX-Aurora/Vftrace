@@ -510,6 +510,8 @@ void set_formats (function_t **funcTable, double runtime,
 }
 
 /**********************************************************************/
+
+#ifdef _MPI
 double compute_mpi_imbalance (long long *all_times, double t_avg) {
 	double max_diff = 0;
 	for (int i = 0; i < vftr_mpisize; i++) {
@@ -561,6 +563,8 @@ void evaluate_mpi_function (char *func_name, int *n_calls, long long *t_min, lon
         }
     }
 }
+
+/**********************************************************************/
 
 typedef struct mpi_function_entry {
     char *func_name;
@@ -645,6 +649,7 @@ void vftr_print_mpi_statistics (FILE *pout) {
        }
     }
 }
+#endif
 
 /**********************************************************************/
 
