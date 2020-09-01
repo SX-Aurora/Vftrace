@@ -639,6 +639,7 @@ void vftr_print_mpi_statistics (FILE *pout) {
 	   
        if (vftr_mpirank == 0 && mpi_functions[i]->n_calls > 0) {
 	
+       	  fprintf (pout, "%14s|%2.2f|%10d|%16.3f|%16.3f|%16.3f|%4.2f| \n",
 		mpi_functions[i]->func_name,
 		(mpi_functions[i]->t_avg *1e-6) / total_mpi_time * 100,
 		mpi_functions[i]->n_calls,
