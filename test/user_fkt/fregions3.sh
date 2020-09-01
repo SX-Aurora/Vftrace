@@ -4,6 +4,7 @@ vftr_binary=fregions3
 nprocs=1
 maxnreg=$(bc <<< "${RANDOM}%5+5")
 
+export VFTR_SAMPLING="Yes"
 export VFTR_PROF_TRUNCATE="no"
 
 if [ "x$HAS_MPI" == "xYES" ]; then

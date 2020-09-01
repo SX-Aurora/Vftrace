@@ -3,6 +3,7 @@
 vftr_binary=cregions1
 nprocs=1
 
+export VFTR_SAMPLING="Yes"
 export VFTR_PROF_TRUNCATE="no"
 
 if [ "x$HAS_MPI" == "xYES" ]; then
