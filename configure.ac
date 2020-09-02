@@ -274,6 +274,7 @@ AM_COND_IF([MPI_PROFILING],
                             test/mpi/c-mpi/allreduce.sh:test/mpi/testscripts/allreduce.sh
                             test/mpi/c-mpi/allreduce_intercom.sh:test/mpi/testscripts/allreduce_intercom.sh
                             test/mpi/c-mpi/scan.sh:test/mpi/testscripts/scan.sh
+                            test/mpi/c-mpi/iscan.sh:test/mpi/testscripts/iscan.sh
                             test/mpi/c-mpi/exscan.sh:test/mpi/testscripts/exscan.sh
                             test/mpi/c-mpi/put.sh:test/mpi/testscripts/put.sh
                             test/mpi/c-mpi/get.sh:test/mpi/testscripts/get.sh
@@ -348,6 +349,7 @@ AM_COND_IF([MPI_PROFILING],
                             test/mpi/f-mpi/allreduce.sh:test/mpi/testscripts/allreduce.sh
                             test/mpi/f-mpi/allreduce_intercom.sh:test/mpi/testscripts/allreduce_intercom.sh
                             test/mpi/f-mpi/scan.sh:test/mpi/testscripts/scan.sh
+                            test/mpi/f-mpi/iscan.sh:test/mpi/testscripts/iscan.sh
                             test/mpi/f-mpi/exscan.sh:test/mpi/testscripts/exscan.sh
                             test/mpi/f-mpi/put.sh:test/mpi/testscripts/put.sh
                             test/mpi/f-mpi/get.sh:test/mpi/testscripts/get.sh
@@ -422,6 +424,7 @@ AM_COND_IF([MPI_PROFILING],
                             test/mpi/f08-mpi/allreduce.sh:test/mpi/testscripts/allreduce.sh
                             test/mpi/f08-mpi/allreduce_intercom.sh:test/mpi/testscripts/allreduce_intercom.sh
                             test/mpi/f08-mpi/scan.sh:test/mpi/testscripts/scan.sh
+                            test/mpi/f08-mpi/iscan.sh:test/mpi/testscripts/iscan.sh
                             test/mpi/f08-mpi/exscan.sh:test/mpi/testscripts/exscan.sh
                             test/mpi/f08-mpi/put.sh:test/mpi/testscripts/put.sh
                             test/mpi/f08-mpi/get.sh:test/mpi/testscripts/get.sh

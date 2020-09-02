@@ -323,6 +323,7 @@ check_PROGRAMS += reduce \
 		  allreduce \
 		  allreduce_intercom \
 		  scan \
+		  iscan \
 		  exscan
 
 reduce_SOURCES = $(srcdir)/reduce.c
@@ -353,6 +354,10 @@ scan_SOURCES = $(srcdir)/scan.c
 scan_CFLAGS = $(AM_CFLAGS)
 scan_LDFLAGS = $(AM_LDFLAGS)
 
+iscan_SOURCES = $(srcdir)/iscan.c
+iscan_CFLAGS = $(AM_CFLAGS)
+iscan_LDFLAGS = $(AM_LDFLAGS)
+
 exscan_SOURCES = $(srcdir)/exscan.c
 exscan_CFLAGS = $(AM_CFLAGS)
 exscan_LDFLAGS = $(AM_LDFLAGS)
@@ -364,6 +369,7 @@ dist_noinst_SCRIPTS += reduce.sh \
 		       allreduce.sh \
 		       allreduce_intercom.sh \
 		       scan.sh \
+		       iscan.sh \
 		       exscan.sh
 
 ###################
