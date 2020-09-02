@@ -322,7 +322,8 @@ check_PROGRAMS += reduce \
 		  ireduce_intercom \
 		  allreduce \
 		  allreduce_intercom \
-		  scan
+		  scan \
+		  exscan
 
 reduce_SOURCES = $(srcdir)/reduce.c
 reduce_CFLAGS = $(AM_CFLAGS)
@@ -352,13 +353,18 @@ scan_SOURCES = $(srcdir)/scan.c
 scan_CFLAGS = $(AM_CFLAGS)
 scan_LDFLAGS = $(AM_LDFLAGS)
 
+exscan_SOURCES = $(srcdir)/exscan.c
+exscan_CFLAGS = $(AM_CFLAGS)
+exscan_LDFLAGS = $(AM_LDFLAGS)
+
 dist_noinst_SCRIPTS += reduce.sh \
 		       reduce_intercom.sh \
 		       ireduce.sh \
 		       ireduce_intercom.sh \
 		       allreduce.sh \
 		       allreduce_intercom.sh \
-		       scan.sh
+		       scan.sh \
+		       exscan.sh
 
 ###################
 # One sided tests #
