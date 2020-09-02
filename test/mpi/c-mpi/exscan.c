@@ -16,7 +16,7 @@ int main(int argc, char** argv) {
 
    // require cmd-line argument
    if (argc < 2) {
-      printf("./reduce <msgsize in ints>\n");
+      printf("./exscan <msgsize in ints>\n");
       return 1;
    }
 
@@ -31,7 +31,7 @@ int main(int argc, char** argv) {
       rbuffer[i] = -1;
    }
 
-   // Messaging cycle
+   // Messaging
    MPI_Exscan(sbuffer, rbuffer, nints, MPI_INT, 
               MPI_SUM, MPI_COMM_WORLD);
    printf("Scanning messages from all ranks on rank %d\n", my_rank);
