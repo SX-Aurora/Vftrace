@@ -31,32 +31,10 @@ int main(int argc, char** argv) {
       rbuffer[i] = -1;
    }
 
-for (int irank=0; irank<comm_size; irank++) {
-   if (my_rank == irank) {
-      printf("Rank %d: ", my_rank);
-      for (int i=0; i<nints; i++) {
-         printf("%d ", sbuffer[i]);
-      }
-      printf("\n");
-   }
-   MPI_Barrier(MPI_COMM_WORLD);
-}
-
    // Messaging cycle
    MPI_Scan(sbuffer, rbuffer, nints, MPI_INT, 
             MPI_SUM, MPI_COMM_WORLD);
    printf("Scanning messages from all ranks on rank %d\n", my_rank);
-
-for (int irank=0; irank<comm_size; irank++) {
-   if (my_rank == irank) {
-      printf("Rank %d: ", my_rank);
-      for (int i=0; i<nints; i++) {
-         printf("%d ", rbuffer[i]);
-      }
-      printf("\n");
-   }
-   MPI_Barrier(MPI_COMM_WORLD);
-}
 
    // validate data
    bool valid_data = true;
