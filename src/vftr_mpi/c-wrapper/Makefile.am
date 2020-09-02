@@ -59,7 +59,8 @@ libvftr_cmpiwrap_la_SOURCES += vftr_mpi_barrier_cwrap.c \
 ####################
 libvftr_cmpiwrap_la_SOURCES += vftr_mpi_allreduce_cwrap.c \
 			       vftr_mpi_reduce_cwrap.c \
-			       vftr_mpi_ireduce_cwrap.c
+			       vftr_mpi_ireduce_cwrap.c \
+			       vftr_mpi_scan_cwrap.c
 
 #############
 # one sided #
