@@ -81,7 +81,7 @@ int vftr_MPI_Scan(const void *sendbuf, void *recvbuf, int count,
          if (rank == 0) {
             // rank 0 only sends to 1
             vftr_store_sync_message_info(send, count, datatype,
-                                         1, -1, comm, tstart, tend);
+                                         rank+1, -1, comm, tstart, tend);
          } else if (rank == size - 1) {
             // the last rank will only receive from the rank before it
             vftr_store_sync_message_info(recv, count, datatype,
