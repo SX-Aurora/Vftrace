@@ -113,7 +113,9 @@ libvftr_mpi_la_SOURCES += vftr_mpi_allreduce.c \
 libvftr_mpi_la_SOURCES += vftr_mpi_allreduce_f.c \
 			  vftr_mpi_reduce_f.c \
 			  vftr_mpi_scan_f.c \
-			  vftr_mpi_iscan_f.c
+			  vftr_mpi_iscan_f.c \
+			  vftr_mpi_exscan_f.c \
+			  vftr_mpi_iexscan_f.c
 
 #############
 # one sided #

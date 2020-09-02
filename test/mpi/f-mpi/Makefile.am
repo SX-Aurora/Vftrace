@@ -1,6 +1,6 @@
-AM_FCFLAGS = -O3 -finstrument-functions
+AM_FCFLAGS = -O3 -finstrument-functions -fbacktrace
 
-AM_LDFLAGS = -L$(top_builddir)/src/.libs -lvftrace -lm
+AM_LDFLAGS = -L$(top_builddir)/src/.libs -lvftrace -lm -fbacktrace
 if USES_NEC_MPI
   AM_LDFLAGS += -mpiprof
 endif
@@ -321,7 +321,9 @@ check_PROGRAMS += reduce \
 		   allreduce \
 		   allreduce_intercom \
 		   scan \
-		   iscan
+		   iscan \
+		   exscan \
+		   iexscan
 
 reduce_SOURCES = $(srcdir)/reduce.F90
 reduce_FCFLAGS = $(AM_FCFLAGS)
@@ -347,12 +349,22 @@ iscan_SOURCES = $(srcdir)/iscan.F90
 iscan_FCFLAGS = $(AM_FCFLAGS)
 iscan_LDFLAGS = $(AM_LDFLAGS)
 
+exscan_SOURCES = $(srcdir)/exscan.F90
+exscan_FCFLAGS = $(AM_FCFLAGS)
+exscan_LDFLAGS = $(AM_LDFLAGS)
+
+iexscan_SOURCES = $(srcdir)/iexscan.F90
+iexscan_FCFLAGS = $(AM_FCFLAGS)
+iexscan_LDFLAGS = $(AM_LDFLAGS)
+
 dist_noinst_SCRIPTS += reduce.sh \
 		       reduce_intercom.sh \
 		       allreduce.sh \
 		       allreduce_intercom.sh \
 		       scan.sh \
-		       iscan.sh
+		       iscan.sh \
+		       exscan.sh \
+		       iexscan.sh
 
 ###################
 # One sided tests #
