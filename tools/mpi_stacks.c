@@ -26,7 +26,6 @@
 #include "vftr_scenarios.h"
 #include "vftr_filewrite.h"
 #include "vftr_mpi_utils.h"
-#include "vftr_hashing.h"
 
 #define RECORD_LENGTH 10240
 
@@ -44,7 +43,6 @@ typedef struct stack_leaf {
 	struct stack_leaf *next_in_level;
 	struct stack_leaf *callee;	
 	struct stack_leaf *origin;
-	bool final;
 	double entry_time;
 	double time_spent;
 } stack_leaf_t;	
@@ -84,6 +82,96 @@ char *strip_trailing_asterisk (char *s) {
 	return strdup(s);
 }
 
+typedef struct StackEntry {
+    char  *name;
+    int    caller;
+    double entry_time;
+    int    fun;
+} stack_entry_t;
+
+void fill_into_stack_tree (stack_leaf_t **this_leaf, stack_entry_t *stacks,
+			   int stackID_0, int sidw, double stime) {
+  	int stackID = stackID_0;
+	int stack_ids[100];
+	int n_stack_ids = 0;
+	for ( ;; stackID = stacks[stackID].caller) {
+		stack_ids[n_stack_ids++] = stackID;
+		if (stackID == 0) break;
+	}
+	stackID = stack_ids[n_stack_ids - 1];
+	if (*this_leaf) {
+		*this_leaf = (*this_leaf)->origin;
+	} else {
+		*this_leaf = (stack_leaf_t*) malloc (sizeof(stack_leaf_t));
+		(*this_leaf)->function_name = strdup(stacks[stackID].name);
+		(*this_leaf)->module_name = "";
+		(*this_leaf)->next_in_level = NULL;
+		(*this_leaf)->callee = NULL;
+		(*this_leaf)->origin = (stack_leaf_t*) malloc (sizeof(stack_leaf_t));
+		(*this_leaf)->origin = *this_leaf;
+		(*this_leaf)->entry_time = 0.0;
+		(*this_leaf)->time_spent = 0.0;
+	}
+	for (int level = n_stack_ids - 2; level >= 0; level--) {
+		stackID = stack_ids[level];
+		if ((*this_leaf)->callee) {
+			*this_leaf = (*this_leaf)->callee;
+			while (strcmp ((*this_leaf)->function_name, stacks[stackID].name)) {
+				if ((*this_leaf)->next_in_level) {
+					*this_leaf = (*this_leaf)->next_in_level;
+				} else {
+					(*this_leaf)->next_in_level = 
+						(stack_leaf_t*) malloc (sizeof(stack_leaf_t));
+					(*this_leaf)->next_in_level->function_name = strdup(stacks[stackID].name);
+					(*this_leaf)->next_in_level->module_name = "";
+					(*this_leaf)->next_in_level->next_in_level = NULL;	
+					(*this_leaf)->next_in_level->callee = NULL;
+					(*this_leaf)->next_in_level->origin = (stack_leaf_t*)malloc (sizeof(stack_leaf_t));
+					(*this_leaf)->next_in_level->origin = (*this_leaf)->origin;
+					if (level == 0) {
+						if (sidw == SID_ENTRY) {
+							(*this_leaf)->next_in_level->entry_time = stime;
+						} else {
+							(*this_leaf)->next_in_level->time_spent += (stime - (*this_leaf)->next_in_level->entry_time);
+						}
+					} else {
+						(*this_leaf)->next_in_level->entry_time = 0.0;
+						(*this_leaf)->next_in_level->time_spent = 0.0;
+					}
+					*this_leaf = (*this_leaf)->next_in_level;
+					break;
+				}
+			}
+			if (level == 0) {
+				if (sidw == SID_ENTRY) {
+					(*this_leaf)->entry_time = stime;
+				} else {
+					(*this_leaf)->time_spent += (stime - (*this_leaf)->entry_time);
+				}
+			}	
+		} else {
+			(*this_leaf)->callee = (stack_leaf_t*) malloc (sizeof(stack_leaf_t));
+			(*this_leaf)->callee->function_name = strdup(stacks[stackID].name);	
+			(*this_leaf)->callee->module_name = "";
+			(*this_leaf)->callee->next_in_level = NULL;
+			(*this_leaf)->callee->callee = NULL;
+			(*this_leaf)->callee->origin = (stack_leaf_t*)malloc (sizeof(stack_leaf_t));
+			(*this_leaf)->callee->origin = (*this_leaf)->origin;
+			if (level == 0) {
+				if (sidw == SID_ENTRY) {
+					(*this_leaf)->callee->entry_time = stime;	
+				} else {
+					(*this_leaf)->callee->time_spent += (stime - (*this_leaf)->callee->entry_time);
+				}
+			} else {
+				(*this_leaf)->callee->entry_time = 0.0;
+				(*this_leaf)->callee->time_spent = 0.0;
+			}
+			*this_leaf = (*this_leaf)->callee;
+		}
+	}	
+}
+
 int main (int argc, char **argv) {
     FILE      *fp;
     long long  time0;
@@ -96,12 +184,7 @@ int main (int argc, char **argv) {
     function_entry_t *functions = NULL;
     vfdhdr_t vfdhdr;
 
-    struct StackEntry {
-        char  *name;
-	int    caller;
-        double entry_time;
-        int    fun;
-    } *stacks;
+    stack_entry_t *stacks;
 
     struct StackInfo {
         int id, levels, caller, len;
@@ -140,22 +223,20 @@ int main (int argc, char **argv) {
 		filename, VFD_VERSION);  
 	return -1;
     }
-
     read_fileheader (&vfdhdr, fp);
 
-    printf( "hdrsize=%ld offset=%ld\n",
+    printf ("header size=%ld offset=%ld\n",
 	     sizeof(struct FileHeader), ftell(fp));
     print_fileheader (vfdhdr);
 
     fread (&(vfdhdr.n_perf_types), sizeof(int), 1, fp);
-    printf ("n_perf_types: %d\n", vfdhdr.n_perf_types);
-    char name[SCENARIO_NAME_LEN];
     double *perf_values = NULL;
     if (vfdhdr.n_perf_types > 0) {
+    	char scenario_name[SCENARIO_NAME_LEN];
 	perf_values = (double*)malloc (vfdhdr.n_perf_types * sizeof(double));
         for (i = 0; i < vfdhdr.n_perf_types; i++) {
-            	fread (name, SCENARIO_NAME_LEN, 1, fp);
-            	printf ("Performance counter name: %s\n", name);
+            	fread (scenario_name, SCENARIO_NAME_LEN, 1, fp);
+            	printf ("Performance counter name: %s\n", scenario_name);
             	int perf_integrated;
             	fread (&perf_integrated, sizeof(int), 1, fp);
             	printf ("Integrated counter: ");
@@ -164,17 +245,16 @@ int main (int argc, char **argv) {
         }
     }
     
-    printf( "Unique stacks:   %d\n",                 vfdhdr.stackscount  );
-    if( !show_precise )printf( "Stacks list:\n" );
-    stacks = (struct StackEntry *) malloc( vfdhdr.stackscount * 
-                                              sizeof(struct StackEntry) );    
+    printf ("Unique stacks:   %d\n",                 vfdhdr.stackscount);
+    if (!show_precise) printf ("Stacks list:\n");
+    stacks = (struct StackEntry *) malloc (vfdhdr.stackscount * sizeof(struct StackEntry));
     if (ftell(fp) > max_fp) max_fp = ftell(fp);
-    fseek( fp, vfdhdr.stacksoffset, SEEK_SET );
+    fseek (fp, vfdhdr.stacksoffset, SEEK_SET);
     
-    for( i=0; i<vfdhdr.stackscount; i++ ) {
-	fread( &stackInfo, sizeof(int), 4, fp );
+    for (i = 0; i < vfdhdr.stackscount; i++) {
+	fread (&stackInfo, sizeof(int), 4, fp);
         int len = stackInfo.len < RECORD_LENGTH ? stackInfo.len : RECORD_LENGTH - 1;
-	fread( record, sizeof(char), len, fp );
+	fread (record, sizeof(char), len, fp);
 	record[len] = 0;
         if(!show_precise) {
           printf ("      %d,%d,%d,%s\n",
@@ -218,7 +298,6 @@ int main (int argc, char **argv) {
     if( !show_precise )printf( "\nStack and message samples:\n\n" );
   
     unsigned long long hashes [vfdhdr.samplecount];
-    int n_hashes = 0;
     stack_leaf_t *stack_tree = NULL;
     stack_leaf_t *this_leaf = stack_tree;
 
@@ -245,16 +324,6 @@ int main (int argc, char **argv) {
             double dtstart = tstart * 1.0e-6;
             double dtstop = tstop * 1.0e-6;
             double rate = count*type_size/(dtstop-dtstart)/(1024.0*1024.0);
-            //printf("%16.6f %s\n", dtstart, dir ? "recv" : "send");
-            //printf("%16s count=%d type=%s(%iBytes) rate= %8.4lf MiB/s peer=%d tag=%d\n",
-            //       "",
-	    //       count,
-            //       vftr_get_mpitype_string_from_idx(type_idx), 
-            //       type_size,
-            //       rate, 
-            //       rank,
-            //       tag);
-            //printf("%16.6f %s end\n", dtstop, dir ? "recv" : "send");
         } else if (sidw == SID_ENTRY || sidw == SID_EXIT) {
             int stackID;
             fread (&stackID, sizeof(int), 1, fp);
@@ -265,149 +334,8 @@ int main (int argc, char **argv) {
 		fread (&perf_values[p], sizeof(double), 1, fp);
 	    }
 
-	    //printf ("fun: %s\n", stacks[stackID].name);
-	    //printf ("search_func: %s\n", search_func);
-	    int stack_ids[100];
-	    int n_stack_ids = 0;
 	    if (!strcmp (stacks[stackID].name, search_func)) {
-		//printf ("FOUND!\n");
-		int stackID0 = stackID;
-		int stackstrlength = strlen(stacks[stackID].name);
-		for ( ;; stackID = stacks[stackID].caller) {
-			stackstrlength += 1;
-			stackstrlength += strlen(stacks[stackID].name);	
-			//printf ("%s%s", stacks[stackID].name, stackID ? "<" : "");
-			stack_ids[n_stack_ids++] = stackID;
-			if (stackID == 0) break;
-		}
-		char *stackstr = (char*)malloc ((1+stackstrlength)*sizeof(char));
-		char *stackstr2 = (char*)malloc ((1+stackstrlength)*sizeof(char));
-		char *strptr = stackstr;
-		//stackID = stackID0;
-		//strcpy (strptr, stacks[stackID].name);
-		//strptr += strlen (stacks[stackID].name);
-		//for ( ;; stackID = stacks[stackID].caller) {
-		//	printf ("name: %s\n", stacks[stackID].name);
-		//	strcpy (strptr, "<");
-		//	strptr += 1;
-		//	strcpy (strptr, stacks[stackID].name);
-		//	strptr += strlen (stacks[stackID].name);
-		//	if (stackID == 0) break;
-		//}	
-		stackID = stack_ids[n_stack_ids - 1];
-		strcpy (strptr, stacks[stackID].name);
-		strptr += strlen (stacks[stackID].name);
-		if (this_leaf) {
-			this_leaf = this_leaf->origin;		
-		} else {
-			this_leaf = (stack_leaf_t*) malloc (sizeof(stack_leaf_t));
-			this_leaf->function_name = strdup(stacks[stackID].name);
-			this_leaf->module_name = "";
-			//this_leaf->next_in_level = (stack_leaf_t*)malloc (sizeof(stack_leaf_t));
-			//this_leaf->next_in_level = this_leaf;
-			this_leaf->next_in_level = NULL;
-			this_leaf->callee = NULL;
-			this_leaf->origin = (stack_leaf_t*) malloc (sizeof(stack_leaf_t));
-			this_leaf->origin = this_leaf;
-			this_leaf->final = false;
-			this_leaf->entry_time = 0.0;
-			this_leaf->time_spent = 0.0;
-		}
-		for (int j = n_stack_ids - 2; j >= 0; j--) {
-			stackID = stack_ids[j];
-			//printf ("j: %d, stackID: %d\n", j, stackID);
-			if (this_leaf->callee) {
-				//printf ("Go to callee from: %s\n", this_leaf->function_name);
-				this_leaf = this_leaf->callee;
-				//printf ("Enter next level: %s\n", stacks[stackID].name);
-				while (strcmp (this_leaf->function_name, stacks[stackID].name)) {
-					if (this_leaf->next_in_level) {
-						//printf ("Go to next from: %s\n",
-						//	this_leaf->function_name);
-						this_leaf = this_leaf->next_in_level;
-					} else {
-						//printf ("Add next %s from %s\n",
-						//	stacks[stackID].name,
-						//	this_leaf->function_name);
-						this_leaf->next_in_level = 
-							(stack_leaf_t*) malloc (sizeof(stack_leaf_t));
-						this_leaf->next_in_level->function_name = strdup(stacks[stackID].name);
-						this_leaf->next_in_level->module_name = "";
-						this_leaf->next_in_level->next_in_level = NULL;	
-						this_leaf->next_in_level->callee = NULL;
-						this_leaf->next_in_level->origin = (stack_leaf_t*)malloc (sizeof(stack_leaf_t));
-						this_leaf->next_in_level->origin = this_leaf->origin;
-						this_leaf->next_in_level->final = j == 0;
-						if (j == 0) {
-							if (sidw == SID_ENTRY) {
-								this_leaf->next_in_level->entry_time = stime;
-							} else {
-								this_leaf->next_in_level->time_spent += (stime - this_leaf->next_in_level->entry_time);
-							}
-						} else {
-							this_leaf->next_in_level->entry_time = 0.0;
-							this_leaf->next_in_level->time_spent = 0.0;
-						}
-						//if (this_leaf->final) {
-						//	printf ("FINAL: %s\n", this_leaf->function_name);
-						//}
-						this_leaf = this_leaf->next_in_level;
-						break;
-					}
-				}
-				if (j == 0) {
-					if (sidw == SID_ENTRY) {
-						this_leaf->entry_time = stime;
-					} else {
-						this_leaf->time_spent += (stime - this_leaf->entry_time);
-					}
-				}	
-			} else {
-				this_leaf->callee = (stack_leaf_t*) malloc (sizeof(stack_leaf_t));
-				//printf ("Add new callee %s from %s\n",
-				//	stacks[stackID].name, this_leaf->function_name);
-				this_leaf->callee->function_name = strdup(stacks[stackID].name);	
-				this_leaf->callee->module_name = "";
-				//this_leaf->callee->next_in_level = (stack_leaf_t*)malloc (sizeof(stack_leaf_t));
-				//this_leaf->callee->next_in_level = this_leaf->callee;
-				this_leaf->callee->next_in_level = NULL;
-				this_leaf->callee->callee = NULL;
-				this_leaf->callee->origin = (stack_leaf_t*)malloc (sizeof(stack_leaf_t));
-				this_leaf->callee->origin = this_leaf->origin;
-				if (j == 0) {
-					if (sidw == SID_ENTRY) {
-						this_leaf->callee->entry_time = stime;	
-					} else {
-						this_leaf->callee->time_spent += (stime - this_leaf->callee->entry_time);
-					}
-				} else {
-					this_leaf->callee->entry_time = 0.0;
-					this_leaf->callee->time_spent = 0.0;
-				}
-				this_leaf->callee->final = j == 0;
-				//if (this_leaf->final) {
-				//	printf ("FINAL: %s\n", this_leaf->function_name);
-				//}
-				this_leaf = this_leaf->callee;
-
-			}
-				
-				
-			strcpy (strptr, ">");
-			strptr += 1;
-			strcpy (strptr, stacks[stackID].name);
-			strptr += strlen (stacks[stackID].name);
-		}	
-		unsigned long long stackHash = vftr_jenkins_murmur_64_hash (stackstrlength, (uint8_t*)stackstr);
-		int j;
-		for (j = 0; j < n_hashes; j++) {
-			if (stackHash == hashes[j]) break;
-		}
-		if (j == n_hashes) {
-			hashes[j] = stackHash;
-			n_hashes++;
-			printf ("stackstr: %s\n", stackstr);
-		}
+		fill_into_stack_tree(&this_leaf, stacks, stackID, sidw, stime);
 	    }
             if( stacks[stackID].fun != -1 ) {
                 if (sidw == SID_ENTRY) {
@@ -417,45 +345,13 @@ int main (int argc, char **argv) {
                 }
             }
 
-            //if(!show_precise) {
-            //   printf("%16.6f %s ", stime, sidw == SID_ENTRY ? "call" : "exit");
-            //   for( ;; stackID = stacks[stackID].caller ) {
-            //      printf( "%s%s", stacks[stackID].name, stackID ? "<" : "" );
-            //      if(stackID == 0) break;
-            //    }
-	    //    printf("\n");
-            //}
 	} else {
             printf("ERROR: Invalid sample type: %d\n", sidw);
             return 1;
         }
     }
-    //printf ("Does stack tree exist? %d\n", stack_tree != NULL);
-    //if (stack_tree) {
-    //	printf ("Does the origin exist? %d\n", stack_tree->origin != NULL);
-    //}
 
-    //printf ("Does this_leaf exist? %d\n", this_leaf != NULL);
-    //if (this_leaf) {
-    //	printf ("Does the origin exist? %d\n", this_leaf->origin != NULL);
-    //}
-
-    //printf ("Check tree setup\n");
-    //this_leaf = this_leaf->origin;
-    //printf ("%s\n", this_leaf->function_name);
-    //stack_leaf_t *test_ptr = (stack_leaf_t*)malloc (sizeof(stack_leaf_t));
-    //memcpy (test_ptr, this_leaf, sizeof (stack_leaf_t));
-    //printf ("Check duplicate: %s\n", test_ptr->function_name);	
-    //this_leaf = this_leaf->callee;
-    //printf ("%s\n", this_leaf->function_name);
-    //this_leaf = this_leaf->callee;
-    //printf ("%s\n", this_leaf->function_name);
-    //this_leaf = this_leaf->next_in_level;
-    //printf ("%s\n", this_leaf->function_name);
-    
-
-     
-    printf ("Going to print the stack tree\n");
+    printf ("Check if leaf\n");
     if (!this_leaf) {
 	printf ("No leaf!\n");
     } else {
