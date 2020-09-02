@@ -98,10 +98,12 @@ libvftr_fmpiwrap_la_SOURCES += vftr_mpi_barrier_fwrap.F90 \
 ####################
 libvftr_fmpiwrap_la_SOURCES += vftr_mpi_allreduce_c2f.F90 \
 			       vftr_mpi_reduce_c2f.F90 \
-			       vftr_mpi_scan_c2f.F90
+			       vftr_mpi_scan_c2f.F90 \
+			       vftr_mpi_iscan_c2f.F90
 libvftr_fmpiwrap_la_SOURCES += vftr_mpi_allreduce_fwrap.F90 \
 			       vftr_mpi_reduce_fwrap.F90 \
-			       vftr_mpi_scan_fwrap.F90
+			       vftr_mpi_scan_fwrap.F90 \
+			       vftr_mpi_iscan_fwrap.F90
 
 #############
 # one sided #

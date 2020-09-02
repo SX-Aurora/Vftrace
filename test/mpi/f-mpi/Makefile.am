@@ -320,7 +320,8 @@ check_PROGRAMS += reduce \
 		   reduce_intercom \
 		   allreduce \
 		   allreduce_intercom \
-		   scan
+		   scan \
+		   iscan
 
 reduce_SOURCES = $(srcdir)/reduce.F90
 reduce_FCFLAGS = $(AM_FCFLAGS)
@@ -342,11 +343,16 @@ scan_SOURCES = $(srcdir)/scan.F90
 scan_FCFLAGS = $(AM_FCFLAGS)
 scan_LDFLAGS = $(AM_LDFLAGS)
 
+iscan_SOURCES = $(srcdir)/iscan.F90
+iscan_FCFLAGS = $(AM_FCFLAGS)
+iscan_LDFLAGS = $(AM_LDFLAGS)
+
 dist_noinst_SCRIPTS += reduce.sh \
 		       reduce_intercom.sh \
 		       allreduce.sh \
 		       allreduce_intercom.sh \
-		       scan.sh
+		       scan.sh \
+		       iscan.sh
 
 ###################
 # One sided tests #
