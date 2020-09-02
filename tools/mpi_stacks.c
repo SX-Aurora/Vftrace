@@ -174,7 +174,7 @@ void fill_into_stack_tree (stack_leaf_t **this_leaf, stack_entry_t *stacks,
 
 void read_stacks (FILE *fp, stack_entry_t **stacks, function_entry_t **functions, 
 		  unsigned int stacks_count,
-                  unsigned int stacks_offset, int *nb_functions, long *max_fp) {
+                  unsigned int stacks_offset, int *n_precise_functions, long *max_fp) {
 
     struct StackInfo {
         int id, levels, caller, len;
@@ -195,26 +195,26 @@ void read_stacks (FILE *fp, stack_entry_t **stacks, function_entry_t **functions
 
         (*stacks)[stackInfo.id].fun = -1;
         if (record[strlen(record) - 1] == '*') {
-            for (int j = 0; j < *nb_functions; j++) {
+            for (int j = 0; j < *n_precise_functions; j++) {
                 if (!strcmp (record, (*functions[j]).name)) {
                     (*stacks)[stackInfo.id].fun = j;
                     break;
                 }
             }
             if ((*stacks)[stackInfo.id].fun == -1 ) {
-                (*nb_functions)++;
-                if  (*nb_functions == 1) {
-                    *functions = (struct FunctionEntry *) malloc (*nb_functions * sizeof(struct FunctionEntry) );
+                (*n_precise_functions)++;
+                if  (*n_precise_functions == 1) {
+                    *functions = (struct FunctionEntry *) malloc (*n_precise_functions * sizeof(struct FunctionEntry) );
                 } else {
-                    *functions = (struct FunctionEntry *) realloc (*functions, *nb_functions * sizeof(struct FunctionEntry) );
+                    *functions = (struct FunctionEntry *) realloc (*functions, *n_precise_functions * sizeof(struct FunctionEntry) );
                 }
 
-                (*functions)[*nb_functions - 1].name = strip_trailing_asterisk (record);
-                (*functions)[*nb_functions - 1].elapse_time = 0.0;
+                (*functions)[*n_precise_functions - 1].name = strip_trailing_asterisk (record);
+                (*functions)[*n_precise_functions - 1].elapse_time = 0.0;
             }
         }
 
-        for (int j = 0; j < *nb_functions; j++) {
+        for (int j = 0; j < *n_precise_functions; j++) {
             if (!strcmp ((*stacks)[stackInfo.id].name, (*functions)[j].name)) {
                 (*stacks)[stackInfo.id].fun = j;
                 break;
@@ -229,7 +229,7 @@ int main (int argc, char **argv) {
     long long  time0;
     char *s;
     char      *typename[34];
-    int        i, j, samples, nextID, levels, caller, nb_functions, show_precise; 
+    int        i, j, samples, nextID, levels, caller, n_precise_functions, show_precise; 
     long file_size, max_fp;
     double     dtime = 0.;
     char *filename, *search_func;
@@ -243,7 +243,7 @@ int main (int argc, char **argv) {
 
     int this_vfd_version;
 
-    nb_functions   = 0;
+    n_precise_functions   = 0;
     
     if (argc < 3) {
 	    printf ("Usage: tracedump <vfd-file> <search_func>\n");
@@ -296,14 +296,13 @@ int main (int argc, char **argv) {
     if (!show_precise) printf ("Stacks list:\n");
     read_stacks (fp, &stacks, &functions,
 		 vfdhdr.stackscount, vfdhdr.stacksoffset, 
-                 &nb_functions, &max_fp);
+                 &n_precise_functions, &max_fp);
     
     if (ftell(fp) > max_fp) max_fp = ftell(fp);
     fseek( fp, vfdhdr.sampleoffset, SEEK_SET );
 
     if( !show_precise )printf( "\nStack and message samples:\n\n" );
   
-    unsigned long long hashes [vfdhdr.samplecount];
     stack_leaf_t *stack_tree = NULL;
     stack_leaf_t *this_leaf = stack_tree;
 
@@ -311,7 +310,6 @@ int main (int argc, char **argv) {
         int        sidw;
 	long       pos;
 
-	hashes[i] = 0;
         fread (&sidw, sizeof(int), 1, fp);
 
         if (sidw == SID_MESSAGE) {
@@ -381,20 +379,21 @@ int main (int argc, char **argv) {
     }
     (void) fclose( fp );
 
-    if(nb_functions != 0) {
+    if(n_precise_functions != 0) {
         int l = 0;
         char fmt[16];
+	printf ("HUHU\n");
 
-        qsort(functions, nb_functions, sizeof(function_entry_t), cmpstring);
+        qsort(functions, n_precise_functions, sizeof(function_entry_t), cmpstring);
 
-        for( i = 0; i < nb_functions; i++ ) {
-            if( strlen(functions[i].name) > l )
+        for (i = 0; i < n_precise_functions; i++) {
+            if (strlen(functions[i].name) > l)
                 l = strlen(functions[i].name);
         }
         sprintf( fmt, "%%%ds %%12.6f\n", l + 2 );
         fprintf( stdout, "\nElapse time for \"precise\" functions (including sub routine):\n\n" );
-        for( i = 0; i < nb_functions; i++ ) {
-            fprintf( stdout, fmt, functions[i].name, functions[i].elapse_time );
+        for (i = 0; i < n_precise_functions; i++) {
+            fprintf (stdout, fmt, functions[i].name, functions[i].elapse_time);
         }
     }
 
