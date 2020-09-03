@@ -350,7 +350,7 @@ void vftr_finalize() {
 
     if (vftr_profile_wanted) {
     //if (vftr_profile_wanted && valid_loadbalance_table) {
-        vftr_print_global_stacklist(vftr_log);
+        //vftr_print_global_stacklist(vftr_log);
         vftr_print_local_demangled( vftr_func_table, vftr_log, ntop );
     }
 
