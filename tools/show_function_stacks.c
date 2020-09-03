@@ -84,7 +84,7 @@ typedef struct StackEntry {
 } stack_entry_t;
 
 void fill_into_stack_tree (stack_leaf_t **this_leaf, stack_entry_t *stacks,
-			   int stackID_0, int sidw, double stime) {
+			   int stackID_0, int sample_id, double stime) {
   	int stackID = stackID_0;
 	int stack_ids[100];
 	int n_stack_ids = 0;
@@ -123,7 +123,7 @@ void fill_into_stack_tree (stack_leaf_t **this_leaf, stack_entry_t *stacks,
 					(*this_leaf)->next_in_level->origin = (stack_leaf_t*)malloc (sizeof(stack_leaf_t));
 					(*this_leaf)->next_in_level->origin = (*this_leaf)->origin;
 					if (level == 0) {
-						if (sidw == SID_ENTRY) {
+						if (sample_id == SID_ENTRY) {
 							(*this_leaf)->next_in_level->entry_time = stime;
 						} else {
 							(*this_leaf)->next_in_level->time_spent += (stime - (*this_leaf)->next_in_level->entry_time);
@@ -137,7 +137,7 @@ void fill_into_stack_tree (stack_leaf_t **this_leaf, stack_entry_t *stacks,
 				}
 			}
 			if (level == 0) {
-				if (sidw == SID_ENTRY) {
+				if (sample_id == SID_ENTRY) {
 					(*this_leaf)->entry_time = stime;
 				} else {
 					(*this_leaf)->time_spent += (stime - (*this_leaf)->entry_time);
@@ -152,7 +152,7 @@ void fill_into_stack_tree (stack_leaf_t **this_leaf, stack_entry_t *stacks,
 			(*this_leaf)->callee->origin = (stack_leaf_t*)malloc (sizeof(stack_leaf_t));
 			(*this_leaf)->callee->origin = (*this_leaf)->origin;
 			if (level == 0) {
-				if (sidw == SID_ENTRY) {
+				if (sample_id == SID_ENTRY) {
 					(*this_leaf)->callee->entry_time = stime;	
 				} else {
 					(*this_leaf)->callee->time_spent += (stime - (*this_leaf)->callee->entry_time);
@@ -256,7 +256,7 @@ int main (int argc, char **argv) {
 	     sizeof(struct FileHeader), ftell(fp));
 
     // We need the number of hardware scenarios, because when scanning the samples
-    // and a message is encountered (sidw == SID_MESSAGE), we need to scan over these
+    // and a message is encountered (sample_id == SID_MESSAGE), we need to scan over these
     // values in order to be synchronized. Also, we allocate the corresponding (dummy-)buffer
     fread (&(vfdhdr.n_perf_types), sizeof(int), 1, fp);
     
@@ -271,13 +271,13 @@ int main (int argc, char **argv) {
     bool has_been_warned = false;
 
     for (int i = 0; i < vfdhdr.samplecount; i++ ) {
-        int        sidw;
+        int sample_id;
 
-        fread (&sidw, sizeof(int), 1, fp);
+        fread (&sample_id, sizeof(int), 1, fp);
 
-        if (sidw == SID_MESSAGE) {
+        if (sample_id == SID_MESSAGE) {
 	    fseek (fp, ftell(fp) + 6 * sizeof(int) + 2 * sizeof(long long), SEEK_SET);
-        } else if (sidw == SID_ENTRY || sidw == SID_EXIT) {
+        } else if (sample_id == SID_ENTRY || sample_id == SID_EXIT) {
             int stackID;
             fread (&stackID, sizeof(int), 1, fp);
             long long ltime = 0;
@@ -293,10 +293,10 @@ int main (int argc, char **argv) {
 				stacks[stackID].name);
 			has_been_warned = true;
 		}
-		fill_into_stack_tree(&stack_tree, stacks, stackID, sidw, stime);
+		fill_into_stack_tree(&stack_tree, stacks, stackID, sample_id, stime);
 	    }
 	} else {
-            printf("ERROR: Invalid sample type: %d\n", sidw);
+            printf("ERROR: Invalid sample type: %d\n", sample_id);
             return 1;
         }
     }
