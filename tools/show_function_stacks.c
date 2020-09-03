@@ -27,6 +27,8 @@
 #include "vftr_filewrite.h"
 #include "vftr_mpi_utils.h"
 
+#include "vftr_vfd_utils.h"
+
 #define RECORD_LENGTH 10240
 
 
@@ -47,19 +49,6 @@ typedef struct stack_leaf {
 	double time_spent;
 } stack_leaf_t;	
 
-typedef struct FileHeader {
-    char         fileid[VFTR_FILEIDSIZE], date[24];
-    long long    interval;
-    int          threads, thread, tasks, task; 
-    union { double d; unsigned long long l; } cycletime, runtime;
-    long long inittime;
-    unsigned int samplecount, sampleoffset;
-    unsigned int stackscount, stacksoffset;
-    unsigned int reserved;
-    int n_perf_types;
-} vfdhdr_t;
-
-void read_fileheader (vfdhdr_t *vfdhdr, FILE *fp);
 void print_stacktree (stack_leaf_t *leaf, int n_spaces, double *total_mpi_time);
 
 bool is_precise (char *s) {
@@ -227,7 +216,7 @@ int main (int argc, char **argv) {
     int n_precise_functions; 
     char *filename, *search_func;
 
-    vfdhdr_t vfdhdr;
+    vfd_header_t vfd_header;
     function_entry_t *functions = NULL;
     stack_entry_t *stacks = NULL;
 
@@ -250,7 +239,7 @@ int main (int argc, char **argv) {
     int dummy;
     fread (&dummy, 1, sizeof(int), fp);
     // From the header, we actually only need the stack and sample offset
-    read_fileheader (&vfdhdr, fp);
+    read_fileheader (&vfd_header, fp);
 
     printf ("header size = %ld offset = %ld\n",
 	     sizeof(struct FileHeader), ftell(fp));
@@ -258,19 +247,19 @@ int main (int argc, char **argv) {
     // We need the number of hardware scenarios, because when scanning the samples
     // and a message is encountered (sample_id == SID_MESSAGE), we need to scan over these
     // values in order to be synchronized. Also, we allocate the corresponding (dummy-)buffer
-    fread (&(vfdhdr.n_perf_types), sizeof(int), 1, fp);
+    fread (&(vfd_header.n_perf_types), sizeof(int), 1, fp);
     
-    printf ("Unique stacks:   %d\n",                 vfdhdr.stackscount);
+    printf ("Unique stacks:   %d\n", vfd_header.stackscount);
     read_stacks (fp, &stacks, &functions,
-		 vfdhdr.stackscount, vfdhdr.stacksoffset, 
+		 vfd_header.stackscount, vfd_header.stacksoffset, 
                  &n_precise_functions, NULL);
     
-    fseek (fp, vfdhdr.sampleoffset, SEEK_SET);
+    fseek (fp, vfd_header.sampleoffset, SEEK_SET);
 
     stack_leaf_t *stack_tree = NULL;
     bool has_been_warned = false;
 
-    for (int i = 0; i < vfdhdr.samplecount; i++ ) {
+    for (int i = 0; i < vfd_header.samplecount; i++ ) {
         int sample_id;
 
         fread (&sample_id, sizeof(int), 1, fp);
@@ -283,7 +272,7 @@ int main (int argc, char **argv) {
             long long ltime = 0;
             fread (&ltime, sizeof (long long), 1, fp);
             double stime = ltime * 1.0e-6;
-	    fseek (fp, ftell(fp) + vfdhdr.n_perf_types * sizeof(double), SEEK_SET);
+	    fseek (fp, ftell(fp) + vfd_header.n_perf_types * sizeof(double), SEEK_SET);
 
 	    if (!strcmp (stacks[stackID].name, search_func)) {
 		if ((!stacks[stackID].precise) && (!has_been_warned)) {
@@ -311,24 +300,6 @@ int main (int argc, char **argv) {
     free (functions);
 
     return 0;
-}
-
-void read_fileheader (vfdhdr_t *vfdhdr, FILE *fp) {
-    fread( &vfdhdr->fileid,	 1, VFTR_FILEIDSIZE, 	  fp );
-    fread( &vfdhdr->date,	 1, 24, 	          fp );
-    fread( &vfdhdr->interval,	 1, sizeof(long long),    fp );
-    fread( &vfdhdr->threads,	 1, sizeof(int),          fp );
-    fread( &vfdhdr->thread,	 1, sizeof(int),          fp );
-    fread( &vfdhdr->tasks,	 1, sizeof(int),          fp );
-    fread( &vfdhdr->task,	 1, sizeof(int),          fp );
-    fread( &vfdhdr->cycletime.l,  1, sizeof(long long),    fp );
-    fread( &vfdhdr->inittime,    1, sizeof(long long),    fp );
-    fread( &vfdhdr->runtime.l,	 1, sizeof(long long),    fp );
-    fread( &vfdhdr->samplecount,  1, sizeof(unsigned int), fp );
-    fread( &vfdhdr->stackscount,  1, sizeof(unsigned int), fp );
-    fread( &vfdhdr->stacksoffset, 1, sizeof(unsigned int), fp );
-    fread( &vfdhdr->sampleoffset, 1, sizeof(unsigned int), fp );
-    fread( &vfdhdr->reserved,     1, sizeof(unsigned int), fp );
 }
 
 void print_stacktree (stack_leaf_t *leaf, int n_spaces, double *total_mpi_time) {
