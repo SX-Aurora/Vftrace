@@ -67,6 +67,8 @@ int main (int argc, char **argv) {
 		retval = vftr_functions_test_3 (fp_in, fp_out);
 	} else if (!strcmp (argv[1], "vftr_functions_test_4")) {
 		retval = vftr_functions_test_4 (fp_in, fp_out);
+	} else if (!strcmp (argv[1], "vftr_functions_test_5")) {
+		retval = vftr_functions_test_5 (fp_in, fp_out);
 	} else if (!strcmp (argv[1], "vftr_stacks_test_1")) {
 		retval = vftr_stacks_test_1 (fp_in, fp_out);
 	} else {

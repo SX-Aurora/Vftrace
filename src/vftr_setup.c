@@ -40,6 +40,7 @@
 #include "vftr_hooks.h"
 #include "vftr_loadbalance.h"
 #include "vftr_timer.h"
+#include "vftr_functions.h"
 
 bool vftr_timer_end;
 
@@ -303,7 +304,10 @@ void vftr_finalize() {
     vftr_calc_tree_format (vftr_froots);
 
     vftr_print_profile (vftr_log, &ntop, timer);
-
+#ifdef _MPI
+    vftr_print_mpi_statistics (vftr_log);
+#endif
+ 
     funcTable = vftr_func_table;
 
     callsTime_t **loadbalance_info;
