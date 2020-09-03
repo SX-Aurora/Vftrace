@@ -77,11 +77,12 @@ bool is_precise (char *s) {
 }
 
 char *strip_trailing_asterisk (char *s) {
-	int n = strlen(s);
-	if (s[n-1] == '*') {
-		s[n-1] = '\0';
+	char *sdup = strdup(s);
+	int n = strlen(sdup);
+	if (sdup[n-1] == '*') {
+		sdup[n-1] = '\0';
 	}
-	return strdup(s);
+	return sdup;
 }
 
 typedef struct StackEntry {
@@ -192,19 +193,20 @@ void read_stacks (FILE *fp, stack_entry_t **stacks, function_entry_t **functions
 	fread (&stackInfo, sizeof(int), 4, fp);
         int len = stackInfo.len < RECORD_LENGTH ? stackInfo.len : RECORD_LENGTH - 1;
 	fread (record, sizeof(char), len, fp);
-	record[len] = 0;
+	record[len] = '\0';
         (*stacks)[stackInfo.id].name = strip_trailing_asterisk(record);
 	(*stacks)[stackInfo.id].caller = stackInfo.caller;
 	(*stacks)[stackInfo.id].precise = is_precise(record);
 
         (*stacks)[stackInfo.id].fun = -1;
-        if (record[strlen(record) - 1] == '*') {
+        if ((*stacks)[stackInfo.id].precise) {
             for (int j = 0; j < *n_precise_functions; j++) {
-                if (!strcmp (record, (*functions[j]).name)) {
+                if (!strcmp (record, (*functions)[j].name)) {
                     (*stacks)[stackInfo.id].fun = j;
                     break;
                 }
             }
+	    
             if ((*stacks)[stackInfo.id].fun == -1 ) {
                 (*n_precise_functions)++;
                 if  (*n_precise_functions == 1) {
@@ -379,23 +381,6 @@ int main (int argc, char **argv) {
 	    printf ("SUCCESS: All bytes have been read\n");
     }
     (void) fclose( fp );
-
-    if(n_precise_functions != 0) {
-        int l = 0;
-        char fmt[16];
-
-        qsort(functions, n_precise_functions, sizeof(function_entry_t), cmpstring);
-
-        for (i = 0; i < n_precise_functions; i++) {
-            if (strlen(functions[i].name) > l)
-                l = strlen(functions[i].name);
-        }
-        sprintf( fmt, "%%%ds %%12.6f\n", l + 2 );
-        fprintf( stdout, "\nElapse time for \"precise\" functions (including sub routine):\n\n" );
-        for (i = 0; i < n_precise_functions; i++) {
-            fprintf (stdout, fmt, functions[i].name, functions[i].elapse_time);
-        }
-    }
 
     if (perf_values) free (perf_values);
     free (stacks);
