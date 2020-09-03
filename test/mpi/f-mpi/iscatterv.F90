@@ -71,6 +71,10 @@ PROGRAM iscatter
             sbuffer(i+displs(irank+1)) = irank
          END DO
       END DO
+   ELSE
+      ALLOCATE(sendcounts(0))
+      ALLOCATE(displs(0))
+      ALLOCATE(sbuffer(0))
    END IF
 
    ! Messageing
@@ -92,8 +96,11 @@ PROGRAM iscatter
       valid_data = .FALSE.
    END IF
 
+   DEALLOCATE(sendcounts)
+   DEALLOCATE(displs)
+
    DEALLOCATE(rbuffer)
-   IF (my_rank == rootrank) DEALLOCATE(sbuffer)
+   DEALLOCATE(sbuffer)
 
    CALL MPI_Finalize(ierr)
 
