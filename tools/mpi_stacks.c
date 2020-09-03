@@ -307,7 +307,6 @@ int main (int argc, char **argv) {
     if( !show_precise )printf( "\nStack and message samples:\n\n" );
   
     stack_leaf_t *stack_tree = NULL;
-    stack_leaf_t *this_leaf = stack_tree;
     bool has_been_warned = false;
 
     for(i = 0; i < vfdhdr.samplecount; i++ ) {
@@ -350,7 +349,7 @@ int main (int argc, char **argv) {
 				stacks[stackID].name);
 			has_been_warned = true;
 		}
-		fill_into_stack_tree(&this_leaf, stacks, stackID, sidw, stime);
+		fill_into_stack_tree(&stack_tree, stacks, stackID, sidw, stime);
 	    }
             if( stacks[stackID].fun != -1 ) {
                 if (sidw == SID_ENTRY) {
@@ -367,7 +366,7 @@ int main (int argc, char **argv) {
     }
 
     double total_mpi_time = 0.0;
-    print_stacktree (this_leaf->origin, 0, &total_mpi_time);
+    print_stacktree (stack_tree->origin, 0, &total_mpi_time);
     printf ("Total MPI time: %lf\n", total_mpi_time);
 
     if (!show_precise) printf ("\n");
@@ -425,26 +424,18 @@ void read_fileheader (vfdhdr_t *vfdhdr, FILE *fp) {
 
 void print_stacktree (stack_leaf_t *leaf, int n_spaces, double *total_mpi_time) {
 	if (!leaf) return;
-	stack_leaf_t *new_leaf = (stack_leaf_t*)malloc (sizeof(stack_leaf_t));
-	memcpy (new_leaf, leaf, sizeof(stack_leaf_t));
-	//printf ("%s", leaf->function_name);
-	//printf ("%s(%d)", new_leaf->function_name, n_spaces);
-	printf ("%s", new_leaf->function_name);
-	if (new_leaf->callee) {
+	printf ("%s", leaf->function_name);
+	if (leaf->callee) {
 		printf (">");
-		//print_stacktree (leaf->callee, NULL);
-		int new_n_spaces = n_spaces + strlen(new_leaf->function_name) + 1;
-		print_stacktree (new_leaf->callee, new_n_spaces, total_mpi_time);
+		int new_n_spaces = n_spaces + strlen(leaf->function_name) + 1;
+		print_stacktree (leaf->callee, new_n_spaces, total_mpi_time);
 	} else {
-		printf (": MPI time %4.3f s\n", new_leaf->time_spent);	
-		*total_mpi_time = *total_mpi_time + new_leaf->time_spent;
+		printf (": MPI time %4.3f s\n", leaf->time_spent);	
+		*total_mpi_time = *total_mpi_time + leaf->time_spent;
 	}
-	if (new_leaf->next_in_level) {
+	if (leaf->next_in_level) {
 		for (int i = 0; i < n_spaces; i++) printf (" ");
 		printf (">");
-		//print_stacktree (leaf->next_in_level, NULL);
-		//int new_n_spaces = n_spaces + strlen(new_leaf->function_name) + 1;
-		print_stacktree (new_leaf->next_in_level, n_spaces, total_mpi_time);
+		print_stacktree (leaf->next_in_level, n_spaces, total_mpi_time);
 	}
-	free (new_leaf);
 }
