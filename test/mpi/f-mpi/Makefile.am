@@ -319,6 +319,7 @@ dist_noinst_SCRIPTS += bcast.sh \
 check_PROGRAMS += reduce \
 		  reduce_intercom \
 		  ireduce \
+		  ireduce_intercom \
 		  allreduce \
 		  allreduce_intercom \
 		  scan \
@@ -337,6 +338,10 @@ reduce_intercom_LDFLAGS = $(AM_LDFLAGS)
 ireduce_SOURCES = $(srcdir)/ireduce.F90
 ireduce_FCFLAGS = $(AM_FCFLAGS)
 ireduce_LDFLAGS = $(AM_LDFLAGS)
+
+ireduce_intercom_SOURCES = $(srcdir)/ireduce_intercom.F90
+ireduce_intercom_FCFLAGS = $(AM_FCFLAGS)
+ireduce_intercom_LDFLAGS = $(AM_LDFLAGS)
 
 allreduce_SOURCES = $(srcdir)/allreduce.F90
 allreduce_FCFLAGS = $(AM_FCFLAGS)
@@ -365,6 +370,7 @@ iexscan_LDFLAGS = $(AM_LDFLAGS)
 dist_noinst_SCRIPTS += reduce.sh \
 		       reduce_intercom.sh \
 		       ireduce.sh \
+		       ireduce_intercom.sh \
 		       allreduce.sh \
 		       allreduce_intercom.sh \
 		       scan.sh \
