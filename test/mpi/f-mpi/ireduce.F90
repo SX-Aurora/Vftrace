@@ -55,6 +55,8 @@ PROGRAM ireduce
    IF (my_rank == rootrank) THEN
       ALLOCATE(rbuffer(nints))
       rbuffer(:) = -1
+   ELSE
+      ALLOCATE(rbuffer(0))
    END IF
 
    ! Message cycle
@@ -78,9 +80,9 @@ PROGRAM ireduce
             "Rank ", my_rank, " received faulty data"
          valid_data = .FALSE.
       END IF
-      DEALLOCATE(rbuffer)
    END IF
 
+   DEALLOCATE(rbuffer)
    DEALLOCATE(sbuffer)
 
    CALL MPI_Finalize(ierr)
