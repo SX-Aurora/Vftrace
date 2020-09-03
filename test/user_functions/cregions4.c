@@ -1,5 +1,4 @@
 #include <stdio.h>
-#include <stdlib.h>
 #ifdef _MPI
 #include <mpi.h>
 #endif
@@ -8,7 +7,7 @@
 
 int main(int argc, char** argv) {
 #ifdef _MPI
-   MPI_Init(NULL, NULL);
+   MPI_Init(&argc, &argv);
 #endif
 
    // require cmd-line argument
