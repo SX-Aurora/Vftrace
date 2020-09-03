@@ -1,3 +1,10 @@
+if MPI_PROFILING
+   AM_TESTS_ENVIRONMENT=. $(top_srcdir)/test/environment/set_necmpi.sh;
+else
+   AM_TESTS_ENVIRONMENT=. $(top_srcdir)/test/environment/set_nompi.sh;
+endif
+
+
 AM_CFLAGS = -O3 -finstrument-functions 
 AM_CFLAGS += -I$(top_srcdir)/src/
 AM_FCFLAGS = -O3 -finstrument-functions 
