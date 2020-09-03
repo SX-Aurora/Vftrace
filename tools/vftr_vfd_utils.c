@@ -39,4 +39,79 @@ void read_fileheader (vfd_header_t *vfd_header, FILE *fp) {
     fread (&vfd_header->reserved, 1, sizeof(unsigned int), fp);
 }
 
+/**********************************************************************/
 
+bool is_precise (char *s) {
+ 	return s[strlen(s)-1] == '*';
+}
+
+/**********************************************************************/
+
+char *strip_trailing_asterisk (char *s) {
+	char *sdup = strdup(s);
+	int n = strlen(sdup);
+	if (sdup[n-1] == '*') {
+		sdup[n-1] = '\0';
+	}
+	return sdup;
+}
+
+/**********************************************************************/
+
+void read_stacks (FILE *fp, stack_entry_t **stacks, function_entry_t **functions, 
+		  unsigned int stacks_count, unsigned int stacks_offset,
+                  int *n_precise_functions, long *max_fp) {
+
+    struct StackInfo {
+        int id, levels, caller, len;
+    } stackInfo;
+
+    char record[RECORD_LENGTH];
+
+    *stacks = (stack_entry_t *) malloc (stacks_count * sizeof(stack_entry_t));
+    if (max_fp && ftell(fp) > *max_fp) {
+       *max_fp = ftell(fp);
+    }
+    fseek (fp, stacks_offset, SEEK_SET);
+    
+    for (int i = 0; i < stacks_count; i++) {
+	fread (&stackInfo, sizeof(int), 4, fp);
+        int len = stackInfo.len < RECORD_LENGTH ? stackInfo.len : RECORD_LENGTH - 1;
+	fread (record, sizeof(char), len, fp);
+	record[len] = '\0';
+        (*stacks)[stackInfo.id].name = strip_trailing_asterisk(record);
+	(*stacks)[stackInfo.id].caller = stackInfo.caller;
+	(*stacks)[stackInfo.id].precise = is_precise(record);
+
+        (*stacks)[stackInfo.id].fun = -1;
+        if ((*stacks)[stackInfo.id].precise) {
+            for (int j = 0; j < *n_precise_functions; j++) {
+                if (!strcmp (record, (*functions)[j].name)) {
+                    (*stacks)[stackInfo.id].fun = j;
+                    break;
+                }
+            }
+	    
+            if ((*stacks)[stackInfo.id].fun == -1 ) {
+                (*n_precise_functions)++;
+                if  (*n_precise_functions == 1) {
+                    *functions = (struct FunctionEntry *) malloc (*n_precise_functions * sizeof(struct FunctionEntry) );
+                } else {
+                    *functions = (struct FunctionEntry *) realloc (*functions, *n_precise_functions * sizeof(struct FunctionEntry) );
+                }
+
+                (*functions)[*n_precise_functions - 1].name = strip_trailing_asterisk (record);
+                (*functions)[*n_precise_functions - 1].elapse_time = 0.0;
+            }
+        }
+
+        for (int j = 0; j < *n_precise_functions; j++) {
+            if (!strcmp ((*stacks)[stackInfo.id].name, (*functions)[j].name)) {
+                (*stacks)[stackInfo.id].fun = j;
+                break;
+            }
+        }
+    }
+}
+
+/**********************************************************************/

@@ -29,16 +29,6 @@
 
 #include "vftr_vfd_utils.h"
 
-#define RECORD_LENGTH 10240
-
-
-/* FIXME make common header file */
-
-typedef struct FunctionEntry {
-    char  *name;
-    double elapse_time;
-} function_entry_t;
-
 typedef struct stack_leaf {
 	char *function_name;
 	char *module_name;
@@ -49,28 +39,27 @@ typedef struct stack_leaf {
 	double time_spent;
 } stack_leaf_t;	
 
-void print_stacktree (stack_leaf_t *leaf, int n_spaces, double *total_mpi_time);
+/**********************************************************************/
 
-bool is_precise (char *s) {
- 	return s[strlen(s)-1] == '*';
-}
-
-char *strip_trailing_asterisk (char *s) {
-	char *sdup = strdup(s);
-	int n = strlen(sdup);
-	if (sdup[n-1] == '*') {
-		sdup[n-1] = '\0';
+void print_stacktree (stack_leaf_t *leaf, int n_spaces, double *total_mpi_time) {
+	if (!leaf) return;
+	printf ("%s", leaf->function_name);
+	if (leaf->callee) {
+		printf (">");
+		int new_n_spaces = n_spaces + strlen(leaf->function_name) + 1;
+		print_stacktree (leaf->callee, new_n_spaces, total_mpi_time);
+	} else {
+		printf (": MPI time %4.3f s\n", leaf->time_spent);	
+		*total_mpi_time = *total_mpi_time + leaf->time_spent;
 	}
-	return sdup;
+	if (leaf->next_in_level) {
+		for (int i = 0; i < n_spaces; i++) printf (" ");
+		printf (">");
+		print_stacktree (leaf->next_in_level, n_spaces, total_mpi_time);
+	}
 }
 
-typedef struct StackEntry {
-    char *name;
-    int caller;
-    double entry_time;
-    int fun;
-    bool precise;
-} stack_entry_t;
+/**********************************************************************/
 
 void fill_into_stack_tree (stack_leaf_t **this_leaf, stack_entry_t *stacks,
 			   int stackID_0, int sample_id, double stime) {
@@ -155,61 +144,7 @@ void fill_into_stack_tree (stack_leaf_t **this_leaf, stack_entry_t *stacks,
 	}	
 }
 
-void read_stacks (FILE *fp, stack_entry_t **stacks, function_entry_t **functions, 
-		  unsigned int stacks_count,
-                  unsigned int stacks_offset, int *n_precise_functions, long *max_fp) {
-
-    struct StackInfo {
-        int id, levels, caller, len;
-    } stackInfo;
-    char record[RECORD_LENGTH];
-
-    *stacks = (stack_entry_t *) malloc (stacks_count * sizeof(stack_entry_t));
-    if (max_fp && ftell(fp) > *max_fp) {
-       *max_fp = ftell(fp);
-    }
-    fseek (fp, stacks_offset, SEEK_SET);
-    
-    for (int i = 0; i < stacks_count; i++) {
-	fread (&stackInfo, sizeof(int), 4, fp);
-        int len = stackInfo.len < RECORD_LENGTH ? stackInfo.len : RECORD_LENGTH - 1;
-	fread (record, sizeof(char), len, fp);
-	record[len] = '\0';
-        (*stacks)[stackInfo.id].name = strip_trailing_asterisk(record);
-	(*stacks)[stackInfo.id].caller = stackInfo.caller;
-	(*stacks)[stackInfo.id].precise = is_precise(record);
-
-        (*stacks)[stackInfo.id].fun = -1;
-        if ((*stacks)[stackInfo.id].precise) {
-            for (int j = 0; j < *n_precise_functions; j++) {
-                if (!strcmp (record, (*functions)[j].name)) {
-                    (*stacks)[stackInfo.id].fun = j;
-                    break;
-                }
-            }
-	    
-            if ((*stacks)[stackInfo.id].fun == -1 ) {
-                (*n_precise_functions)++;
-                if  (*n_precise_functions == 1) {
-                    *functions = (struct FunctionEntry *) malloc (*n_precise_functions * sizeof(struct FunctionEntry) );
-                } else {
-                    *functions = (struct FunctionEntry *) realloc (*functions, *n_precise_functions * sizeof(struct FunctionEntry) );
-                }
-
-                (*functions)[*n_precise_functions - 1].name = strip_trailing_asterisk (record);
-                (*functions)[*n_precise_functions - 1].elapse_time = 0.0;
-            }
-        }
-
-        for (int j = 0; j < *n_precise_functions; j++) {
-            if (!strcmp ((*stacks)[stackInfo.id].name, (*functions)[j].name)) {
-                (*stacks)[stackInfo.id].fun = j;
-                break;
-            }
-        }
-    }
-}
-
+/**********************************************************************/
 
 int main (int argc, char **argv) {
     FILE *fp;
@@ -302,20 +237,6 @@ int main (int argc, char **argv) {
     return 0;
 }
 
-void print_stacktree (stack_leaf_t *leaf, int n_spaces, double *total_mpi_time) {
-	if (!leaf) return;
-	printf ("%s", leaf->function_name);
-	if (leaf->callee) {
-		printf (">");
-		int new_n_spaces = n_spaces + strlen(leaf->function_name) + 1;
-		print_stacktree (leaf->callee, new_n_spaces, total_mpi_time);
-	} else {
-		printf (": MPI time %4.3f s\n", leaf->time_spent);	
-		*total_mpi_time = *total_mpi_time + leaf->time_spent;
-	}
-	if (leaf->next_in_level) {
-		for (int i = 0; i < n_spaces; i++) printf (" ");
-		printf (">");
-		print_stacktree (leaf->next_in_level, n_spaces, total_mpi_time);
-	}
-}
+/**********************************************************************/
+
+
