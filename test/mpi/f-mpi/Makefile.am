@@ -1,6 +1,6 @@
-AM_FCFLAGS = -O3 -finstrument-functions -fbacktrace -fcheck=all
+AM_FCFLAGS = -O3 -finstrument-functions
 
-AM_LDFLAGS = -L$(top_builddir)/src/.libs -lvftrace -lm -fbacktrace
+AM_LDFLAGS = -L$(top_builddir)/src/.libs -lvftrace -lm
 if USES_NEC_MPI
   AM_LDFLAGS += -mpiprof
 endif
