@@ -73,6 +73,9 @@ void read_fileheader (vfdhdr_t *vfdhdr, FILE *fp);
 void print_fileheader (vfdhdr_t vfdhdr);
 void print_stacktree (stack_leaf_t *leaf, int n_spaces, double *total_mpi_time);
 
+bool is_precise (char *s) {
+ 	return s[strlen(s)-1] == '*';
+}
 
 char *strip_trailing_asterisk (char *s) {
 	int n = strlen(s);
@@ -83,10 +86,11 @@ char *strip_trailing_asterisk (char *s) {
 }
 
 typedef struct StackEntry {
-    char  *name;
-    int    caller;
+    char *name;
+    int caller;
     double entry_time;
-    int    fun;
+    int fun;
+    bool precise;
 } stack_entry_t;
 
 void fill_into_stack_tree (stack_leaf_t **this_leaf, stack_entry_t *stacks,
@@ -192,6 +196,7 @@ void read_stacks (FILE *fp, stack_entry_t **stacks, function_entry_t **functions
 	record[len] = 0;
         (*stacks)[stackInfo.id].name = strip_trailing_asterisk(record);
 	(*stacks)[stackInfo.id].caller = stackInfo.caller;
+	(*stacks)[stackInfo.id].precise = is_precise(record);
 
         (*stacks)[stackInfo.id].fun = -1;
         if (record[strlen(record) - 1] == '*') {
@@ -305,6 +310,7 @@ int main (int argc, char **argv) {
   
     stack_leaf_t *stack_tree = NULL;
     stack_leaf_t *this_leaf = stack_tree;
+    bool has_been_warned = false;
 
     for(i = 0; i < vfdhdr.samplecount; i++ ) {
         int        sidw;
@@ -339,6 +345,13 @@ int main (int argc, char **argv) {
 	    }
 
 	    if (!strcmp (stacks[stackID].name, search_func)) {
+		if ((!stacks[stackID].precise) && (!has_been_warned)) {
+			printf ("Attention: The function %s is not precise. \n"
+				"The data printed here is unreliable. "
+				"Please sample again using VFTR_PRECISE.\n",
+				stacks[stackID].name);
+			has_been_warned = true;
+		}
 		fill_into_stack_tree(&this_leaf, stacks, stackID, sidw, stime);
 	    }
             if( stacks[stackID].fun != -1 ) {
@@ -355,15 +368,6 @@ int main (int argc, char **argv) {
         }
     }
 
-    printf ("Check if leaf\n");
-    if (!this_leaf) {
-	printf ("No leaf!\n");
-    } else {
-    if (!this_leaf->origin) {
-		printf ("Has no origin!\n");
-    } else {
-		printf ("Origin name: %s\n", this_leaf->origin->function_name);
-    }}
     double total_mpi_time = 0.0;
     print_stacktree (this_leaf->origin, 0, &total_mpi_time);
     printf ("Total MPI time: %lf\n", total_mpi_time);
