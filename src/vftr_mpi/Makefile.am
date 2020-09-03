@@ -104,6 +104,7 @@ libvftr_mpi_la_SOURCES += vftr_mpi_barrier_f.c \
 # global reduction #
 ####################
 libvftr_mpi_la_SOURCES += vftr_mpi_allreduce.c \
+			  vftr_mpi_iallreduce.c \
 			  vftr_mpi_reduce.c \
 			  vftr_mpi_ireduce.c \
 			  vftr_mpi_scan.c \

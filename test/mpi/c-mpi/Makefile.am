@@ -322,6 +322,8 @@ check_PROGRAMS += reduce \
 		  ireduce_intercom \
 		  allreduce \
 		  allreduce_intercom \
+		  iallreduce \
+		  iallreduce_intercom \
 		  scan \
 		  iscan \
 		  exscan \
@@ -350,6 +352,14 @@ allreduce_LDFLAGS = $(AM_LDFLAGS)
 allreduce_intercom_SOURCES = $(srcdir)/allreduce_intercom.c
 allreduce_intercom_CFLAGS = $(AM_CFLAGS)
 allreduce_intercom_LDFLAGS = $(AM_LDFLAGS)
+
+iallreduce_SOURCES = $(srcdir)/iallreduce.c
+iallreduce_CFLAGS = $(AM_CFLAGS)
+iallreduce_LDFLAGS = $(AM_LDFLAGS)
+
+iallreduce_intercom_SOURCES = $(srcdir)/iallreduce_intercom.c
+iallreduce_intercom_CFLAGS = $(AM_CFLAGS)
+iallreduce_intercom_LDFLAGS = $(AM_LDFLAGS)
 
 scan_SOURCES = $(srcdir)/scan.c
 scan_CFLAGS = $(AM_CFLAGS)
