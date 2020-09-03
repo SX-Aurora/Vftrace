@@ -57,6 +57,8 @@ PROGRAM scatter
       DO irank = 0, comm_size - 1
          sbuffer(:,irank+1) = irank
       END DO
+   ELSE
+      ALLOCATE(sbuffer(0,0))
    END IF
 
    ! Messageing
@@ -80,7 +82,7 @@ PROGRAM scatter
    END IF
 
    DEALLOCATE(rbuffer)
-   IF (my_rank == rootrank) DEALLOCATE(sbuffer)
+   DEALLOCATE(sbuffer)
 
    CALL MPI_Finalize(ierr)
 
