@@ -77,6 +77,8 @@ PROGRAM gather_intercom
    IF (my_rank == 0) THEN
       ALLOCATE(rbuffer(nints,sub_comm_remote_size))
       rbuffer(:,:) = -1
+   ELSE
+      ALLOCATE(rbuffer(0,0))
    END IF
 
    ! prepare the intercomm root assignment
@@ -115,12 +117,12 @@ PROGRAM gather_intercom
             valid_data = .FALSE.
          END IF
       END DO
-      DEALLOCATE(rbuffer)
    END IF
 
    CALL MPI_Comm_free(int_comm, ierr)
    CALL MPI_Comm_free(sub_comm, ierr)
 
+   DEALLOCATE(rbuffer)
    DEALLOCATE(sbuffer)
 
    CALL MPI_Finalize(ierr)
