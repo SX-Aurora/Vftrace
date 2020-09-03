@@ -342,15 +342,9 @@ void vftr_finalize() {
         if (valid_loadbalance_table) free (*loadbalance_info);
     }
 
-    //printf ("Check for allreduce: %d\n", vftr_mpirank);
-    //vftr_write_function_indices (stdout, "MPI_Allreduce");
-    if (vftr_mpirank == 0) {
-	vftr_write_all_function_names (stdout);
-    }
-
     if (vftr_profile_wanted) {
     //if (vftr_profile_wanted && valid_loadbalance_table) {
-        //vftr_print_global_stacklist(vftr_log);
+        vftr_print_global_stacklist(vftr_log);
         vftr_print_local_demangled( vftr_func_table, vftr_log, ntop );
     }
 

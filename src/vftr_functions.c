@@ -285,14 +285,6 @@ void vftr_write_function_indices (FILE *fp, char *func_name, bool to_lower_case)
 
 /**********************************************************************/
 
-void vftr_write_all_function_names (FILE *fp) {
-	for (int i = 0; i < vftr_stackscount; i++) {
-		fprintf (fp, "%d: %s\n", i, vftr_func_table[i]->name);
-	}
-}
-	
-/**********************************************************************/
-
 void vftr_write_function (FILE *fp, function_t *func) {
 	fprintf (fp, "Function: %s\n", func->name);
 	fprintf (fp, "\tAddress: ");
