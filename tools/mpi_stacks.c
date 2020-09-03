@@ -70,7 +70,6 @@ typedef struct FileHeader {
 } vfdhdr_t;
 
 void read_fileheader (vfdhdr_t *vfdhdr, FILE *fp);
-void print_fileheader (vfdhdr_t vfdhdr);
 void print_stacktree (stack_leaf_t *leaf, int n_spaces, double *total_mpi_time);
 
 bool is_precise (char *s) {
@@ -279,7 +278,6 @@ int main (int argc, char **argv) {
 
     printf ("header size=%ld offset=%ld\n",
 	     sizeof(struct FileHeader), ftell(fp));
-    print_fileheader (vfdhdr);
 
     fread (&(vfdhdr.n_perf_types), sizeof(int), 1, fp);
     double *perf_values = NULL;
@@ -424,29 +422,6 @@ void read_fileheader (vfdhdr_t *vfdhdr, FILE *fp) {
     fread( &vfdhdr->stacksoffset, 1, sizeof(unsigned int), fp );
     fread( &vfdhdr->sampleoffset, 1, sizeof(unsigned int), fp );
     fread( &vfdhdr->reserved,     1, sizeof(unsigned int), fp );
-}
-
-void print_fileheader (vfdhdr_t vfdhdr) {
-    int i;
-    // We require a seperate datestring which is one element larger than
-    // the field in the vfd file to add a terminating null character. This
-    // is not necessary for the version string since it is written using sprintf
-    // in the main code.
-    char       datestring[25], record[RECORD_LENGTH], *s;
-    datestring[24] = 0;
-    strncpy( datestring, vfdhdr.date,   24 );
-
-    printf( "Version ID:      %s\n",		     vfdhdr.fileid    );
-    printf( "Date:            %s\n",		     datestring );
-    printf( "MPI tasks:       rank=%d count=%d\n",   vfdhdr.task,   vfdhdr.tasks   ); 
-    printf( "OpenMP threads:  thread=%d count=%d\n", vfdhdr.thread, vfdhdr.threads );
-    printf( "Sample interval: %12.6le seconds\n",    vfdhdr.interval*1.0e-6);
-    printf( "Init time: %lld\n", vfdhdr.inittime);
-    printf( "Job runtime:     %.3lf seconds\n",     vfdhdr.runtime.d    );
-    printf( "Samples:         %d\n",                 vfdhdr.samplecount  );
-    printf( "Unique stacks:   %d\n",                 vfdhdr.stackscount  );
-    printf( "Stacks offset:   %d\n",                 vfdhdr.stacksoffset );
-    printf( "Sample offset:   %d\n",                 vfdhdr.sampleoffset );
 }
 
 void print_stacktree (stack_leaf_t *leaf, int n_spaces, double *total_mpi_time) {

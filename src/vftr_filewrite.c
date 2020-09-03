@@ -639,6 +639,7 @@ void vftr_print_mpi_statistics (FILE *pout) {
 	    sizeof (mpi_function_entry_t *), vftr_compare_mpi_functions);
 
     fprintf (pout, "Total time spent in MPI: %lf s\n", total_mpi_time);
+    fprintf (pout, "Imbalance computed as: max (T - T_avg)\n");
     fprintf (pout, "function     | %%MPI | n_calls | avg. time [s] | min. time [s] | max. time [s] | imb. | This rank [s] |\n");
     fprintf (pout, "---------------------------------------------------------------------------\n");
     for (int i = 0; i < n_mpi_functions; i++) {
