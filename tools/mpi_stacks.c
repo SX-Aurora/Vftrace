@@ -79,7 +79,7 @@ bool is_precise (char *s) {
 char *strip_trailing_asterisk (char *s) {
 	int n = strlen(s);
 	if (s[n-1] == '*') {
-		s[n-1] = 0;
+		s[n-1] = '\0';
 	}
 	return strdup(s);
 }
@@ -247,7 +247,7 @@ int main (int argc, char **argv) {
 
     int this_vfd_version;
 
-    n_precise_functions   = 0;
+    n_precise_functions = 0;
     
     if (argc < 3) {
 	    printf ("Usage: tracedump <vfd-file> <search_func>\n");
@@ -384,7 +384,6 @@ int main (int argc, char **argv) {
     if(n_precise_functions != 0) {
         int l = 0;
         char fmt[16];
-	printf ("HUHU\n");
 
         qsort(functions, n_precise_functions, sizeof(function_entry_t), cmpstring);
 
