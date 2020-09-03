@@ -300,6 +300,118 @@ int vftr_normalize_stacks() {
 #endif
     }
 
+#ifdef _MPI
+    // If the logfile is supposed to be available for all ranks,
+    // the global stack info needs to be communicated to all ranks
+    if (vftr_environment->logfile_all_ranks->value) {
+       // The amount of unique stacks is know due to the hash synchronisation earlier
+       // allocate memory on all but 0th rank
+       if (vftr_mpirank != 0) {
+          vftr_gStackinfo = (gstackinfo_t*) malloc(vftr_gStackscount*sizeof(gstackinfo_t));
+       }
+
+       // temporary arrays to hold information to be distributed
+       int *tmpStackInfos = (int*) malloc(vftr_gStackscount*sizeof(int));
+
+       // distribute the return values of the individual stacks
+       if (vftr_mpirank == 0) {
+          // rank 0 prepares the data
+          for (int i=0; i<vftr_gStackscount; i++) {
+             tmpStackInfos[i] = vftr_gStackinfo[i].ret;
+          }
+          PMPI_Bcast(tmpStackInfos,
+                     vftr_gStackscount,
+                     MPI_INT,
+                     0,
+                     MPI_COMM_WORLD);
+       } else {
+          // all other ranks receive and write the data in the local copy of the global stackinfo
+          PMPI_Bcast(tmpStackInfos,
+                     vftr_gStackscount,
+                     MPI_INT,
+                     0,
+                     MPI_COMM_WORLD);
+          for (int i=0; i<vftr_gStackscount; i++) {
+             vftr_gStackinfo[i].ret = tmpStackInfos[i];
+          }
+       }
+
+       // distribute the names
+       // first the length of names
+       if (vftr_mpirank == 0) {
+          // rank 0 prepares the data
+          for (int i=0; i<vftr_gStackscount; i++) {
+             tmpStackInfos[i] = strlen(vftr_gStackinfo[i].name)+1;
+          }
+          PMPI_Bcast(tmpStackInfos,
+                     vftr_gStackscount,
+                     MPI_INT,
+                     0,
+                     MPI_COMM_WORLD);
+       } else {
+          // all other ranks receive the length of the names
+          PMPI_Bcast(tmpStackInfos,
+                     vftr_gStackscount,
+                     MPI_INT,
+                     0,
+                     MPI_COMM_WORLD);
+       }
+       // compute the total length of the strings
+       int totalstrlenght = 0;
+       for (int i=0; i<vftr_gStackscount; i++) {
+          totalstrlenght += tmpStackInfos[i];
+       }
+       // Allocate buffer to hold total string
+       char *concatNames = (char*) malloc(totalstrlenght*sizeof(char));
+       if (vftr_mpirank == 0){
+          // rank 0 concats names into one string
+          char *tmpstrptr = concatNames;
+          for (int istack=0; istack<vftr_gStackscount; istack++) {
+             strcpy(tmpstrptr, vftr_gStackinfo[istack].name);
+             tmpstrptr += tmpStackInfos[istack]-1;
+             // add null terminator
+             *tmpstrptr = '\0';
+             tmpstrptr++;
+          }
+
+          // Distribute total string
+          PMPI_Bcast(concatNames,
+                     totalstrlenght,
+                     MPI_CHAR,
+                     0,
+                     MPI_COMM_WORLD);
+       } else {
+
+          // all other ranks receive the total string
+          PMPI_Bcast(concatNames,
+                     totalstrlenght,
+                     MPI_CHAR,
+                     0,
+                     MPI_COMM_WORLD);
+
+          // take apart concatenated string and write it into the gStackinfo
+          char *tmpstrptr = concatNames;
+          for (int istack=0; istack<vftr_gStackscount; istack++) {
+             vftr_gStackinfo[istack].name = strdup(tmpstrptr);
+             // next string
+             tmpstrptr += tmpStackInfos[istack];
+          }
+       }
+       // free remaining buffers
+       free(tmpStackInfos);
+       tmpStackInfos = NULL;
+       free(concatNames);
+       concatNames = NULL;
+
+       // All but rank 0 need to assign their local stack-IDs to the global info
+       if (vftr_mpirank != 0 ) {
+          for (int istack=0; istack<vftr_gStackscount; istack++) {
+             vftr_gStackinfo[istack].locID = global2local_ID[istack];
+          }
+       }
+    }
+#endif
+
     free(local2global_ID);
     free(global2local_ID);
 
