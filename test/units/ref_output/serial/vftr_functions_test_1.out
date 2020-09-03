@@ -10,7 +10,7 @@ Function: init_vftr
 	ID: 0
 	Group ID: -1
 	Recursion depth: 0
-	StackHash: 3296917333
+	StackHash: 15403095947709970261
 	Exclude: 0
 Function: test_1
 	Called from: init_vftr
@@ -22,5 +22,5 @@ Function: test_1
 	ID: 1
 	Group ID: -1
 	Recursion depth: 0
-	StackHash: 3621820697
+	StackHash: 12005762785240717593
 	Exclude: 0
