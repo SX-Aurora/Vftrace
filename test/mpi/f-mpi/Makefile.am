@@ -1,4 +1,4 @@
-AM_FCFLAGS = -O3 -finstrument-functions -fbacktrace
+AM_FCFLAGS = -O3 -finstrument-functions -fbacktrace -fcheck=all
 
 AM_LDFLAGS = -L$(top_builddir)/src/.libs -lvftrace -lm -fbacktrace
 if USES_NEC_MPI
@@ -322,6 +322,8 @@ check_PROGRAMS += reduce \
 		  ireduce_intercom \
 		  allreduce \
 		  allreduce_intercom \
+		  iallreduce \
+		  iallreduce_intercom \
 		  scan \
 		  iscan \
 		  exscan \
@@ -351,6 +353,14 @@ allreduce_intercom_SOURCES = $(srcdir)/allreduce_intercom.F90
 allreduce_intercom_FCFLAGS = $(AM_FCFLAGS)
 allreduce_intercom_LDFLAGS = $(AM_LDFLAGS)
 
+iallreduce_SOURCES = $(srcdir)/iallreduce.F90
+iallreduce_FCFLAGS = $(AM_FCFLAGS)
+iallreduce_LDFLAGS = $(AM_LDFLAGS)
+
+iallreduce_intercom_SOURCES = $(srcdir)/iallreduce_intercom.F90
+iallreduce_intercom_FCFLAGS = $(AM_FCFLAGS)
+iallreduce_intercom_LDFLAGS = $(AM_LDFLAGS)
+
 scan_SOURCES = $(srcdir)/scan.F90
 scan_FCFLAGS = $(AM_FCFLAGS)
 scan_LDFLAGS = $(AM_LDFLAGS)
@@ -373,6 +383,8 @@ dist_noinst_SCRIPTS += reduce.sh \
 		       ireduce_intercom.sh \
 		       allreduce.sh \
 		       allreduce_intercom.sh \
+		       iallreduce.sh \
+		       iallreduce_intercom.sh \
 		       scan.sh \
 		       iscan.sh \
 		       exscan.sh \
