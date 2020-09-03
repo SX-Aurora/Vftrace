@@ -46,16 +46,6 @@ typedef struct stack_leaf {
 	double entry_time;
 	double time_spent;
 } stack_leaf_t;	
-	
-
-static int
-cmpstring( const void *p1, const void *p2 )
-{
-    function_entry_t *e1 = ( function_entry_t * ) p1;
-    function_entry_t *e2 = ( function_entry_t * ) p2;
-
-    return strcmp( e1->name, e2->name );
-}
 
 typedef struct FileHeader {
     char         fileid[VFTR_FILEIDSIZE], date[24];
@@ -186,7 +176,9 @@ void read_stacks (FILE *fp, stack_entry_t **stacks, function_entry_t **functions
     char record[RECORD_LENGTH];
 
     *stacks = (stack_entry_t *) malloc (stacks_count * sizeof(stack_entry_t));
-    if (ftell(fp) > *max_fp) *max_fp = ftell(fp);
+    if (max_fp && ftell(fp) > *max_fp) {
+       *max_fp = ftell(fp);
+    }
     fseek (fp, stacks_offset, SEEK_SET);
     
     for (int i = 0; i < stacks_count; i++) {
@@ -231,23 +223,13 @@ void read_stacks (FILE *fp, stack_entry_t **stacks, function_entry_t **functions
 
 
 int main (int argc, char **argv) {
-    FILE      *fp;
-    long long  time0;
-    char *s;
-    char      *typename[34];
-    int        i, j, samples, nextID, levels, caller, n_precise_functions, show_precise; 
-    long file_size, max_fp;
-    double     dtime = 0.;
+    FILE *fp;
+    int n_precise_functions; 
     char *filename, *search_func;
+
     vfdhdr_t vfdhdr;
     function_entry_t *functions = NULL;
-
-    stack_entry_t *stacks;
-
-    union { unsigned int       ui[2];
-            unsigned long long ull;   } sid;
-
-    int this_vfd_version;
+    stack_entry_t *stacks = NULL;
 
     n_precise_functions = 0;
     
@@ -258,90 +240,50 @@ int main (int argc, char **argv) {
 
     filename = argv[1];
     search_func = argv[2];
-    show_precise = 0;
 
-    fp = fopen( filename, "r" );
-    assert( fp );
-    fseek (fp, 0L, SEEK_END);
-    file_size = ftell(fp);
-    max_fp = 0;
-    rewind(fp);
+    fp = fopen (filename, "r");
+    assert (fp);
 
-    printf ("Reading: %s; Size: %ld bytes\n", filename, file_size);
+    printf ("Reading: %s Analyzing: %s\n", filename, search_func);
 
-    fread (&this_vfd_version, 1, sizeof(int), fp);
-    printf ("VFD version: %d\n", this_vfd_version);
-    if (this_vfd_version != VFD_VERSION) {
-	printf ("The file %s does not have the most recent VFD version (%d)!\n",
-		filename, VFD_VERSION);  
-	return -1;
-    }
+    // We are not interested in the VFD version here
+    int dummy;
+    fread (&dummy, 1, sizeof(int), fp);
+    // From the header, we actually only need the stack and sample offset
     read_fileheader (&vfdhdr, fp);
 
-    printf ("header size=%ld offset=%ld\n",
+    printf ("header size = %ld offset = %ld\n",
 	     sizeof(struct FileHeader), ftell(fp));
 
+    // We need the number of hardware scenarios, because when scanning the samples
+    // and a message is encountered (sidw == SID_MESSAGE), we need to scan over these
+    // values in order to be synchronized. Also, we allocate the corresponding (dummy-)buffer
     fread (&(vfdhdr.n_perf_types), sizeof(int), 1, fp);
-    double *perf_values = NULL;
-    if (vfdhdr.n_perf_types > 0) {
-    	char scenario_name[SCENARIO_NAME_LEN];
-	perf_values = (double*)malloc (vfdhdr.n_perf_types * sizeof(double));
-        for (i = 0; i < vfdhdr.n_perf_types; i++) {
-            	fread (scenario_name, SCENARIO_NAME_LEN, 1, fp);
-            	printf ("Performance counter name: %s\n", scenario_name);
-            	int perf_integrated;
-            	fread (&perf_integrated, sizeof(int), 1, fp);
-            	printf ("Integrated counter: ");
-            	perf_integrated == 0 ? printf ("NO\n") : printf ("YES\n");
-	        perf_values[i] = 0.0;
-        }
-    }
     
     printf ("Unique stacks:   %d\n",                 vfdhdr.stackscount);
-    if (!show_precise) printf ("Stacks list:\n");
     read_stacks (fp, &stacks, &functions,
 		 vfdhdr.stackscount, vfdhdr.stacksoffset, 
-                 &n_precise_functions, &max_fp);
+                 &n_precise_functions, NULL);
     
-    if (ftell(fp) > max_fp) max_fp = ftell(fp);
-    fseek( fp, vfdhdr.sampleoffset, SEEK_SET );
+    fseek (fp, vfdhdr.sampleoffset, SEEK_SET);
 
-    if( !show_precise )printf( "\nStack and message samples:\n\n" );
-  
     stack_leaf_t *stack_tree = NULL;
     bool has_been_warned = false;
 
-    for(i = 0; i < vfdhdr.samplecount; i++ ) {
+    for (int i = 0; i < vfdhdr.samplecount; i++ ) {
         int        sidw;
-	long       pos;
 
         fread (&sidw, sizeof(int), 1, fp);
 
         if (sidw == SID_MESSAGE) {
-            int dir, type_idx, rank; 
-            int type_size;
-            long long tstart, tstop;
-	    unsigned int count, tag;
-	    fread (&dir, sizeof(int), 1, fp);
-            fread (&rank, sizeof(int), 1, fp);
-            fread (&type_idx, sizeof(int), 1, fp);
-            fread (&count, sizeof(int), 1, fp);
-            fread (&type_size, sizeof(int), 1, fp);
-	    fread (&tag, sizeof(int), 1, fp);
-            fread (&tstart, sizeof(long long), 1, fp);
-	    fread (&tstop, sizeof(long long), 1, fp);
-            double dtstart = tstart * 1.0e-6;
-            double dtstop = tstop * 1.0e-6;
-            double rate = count*type_size/(dtstop-dtstart)/(1024.0*1024.0);
+	    fseek (fp, ftell(fp) + 6 * sizeof(int) + 2 * sizeof(long long), SEEK_SET);
         } else if (sidw == SID_ENTRY || sidw == SID_EXIT) {
             int stackID;
             fread (&stackID, sizeof(int), 1, fp);
             long long ltime = 0;
             fread (&ltime, sizeof (long long), 1, fp);
             double stime = ltime * 1.0e-6;
-	    for (int p = 0; p < vfdhdr.n_perf_types; p++) {
-		fread (&perf_values[p], sizeof(double), 1, fp);
-	    }
+	    fseek (fp, ftell(fp) + vfdhdr.n_perf_types * sizeof(double), SEEK_SET);
 
 	    if (!strcmp (stacks[stackID].name, search_func)) {
 		if ((!stacks[stackID].precise) && (!has_been_warned)) {
@@ -353,14 +295,6 @@ int main (int argc, char **argv) {
 		}
 		fill_into_stack_tree(&stack_tree, stacks, stackID, sidw, stime);
 	    }
-            if( stacks[stackID].fun != -1 ) {
-                if (sidw == SID_ENTRY) {
-			stacks[stackID].entry_time = stime;
-                } else {
-			functions[stacks[stackID].fun].elapse_time += (stime - stacks[stackID].entry_time);
-                }
-            }
-
 	} else {
             printf("ERROR: Invalid sample type: %d\n", sidw);
             return 1;
@@ -371,18 +305,8 @@ int main (int argc, char **argv) {
     print_stacktree (stack_tree->origin, 0, &total_mpi_time);
     printf ("Total MPI time: %lf\n", total_mpi_time);
 
-    if (!show_precise) printf ("\n");
+    fclose (fp);
 
-    if (file_size != max_fp) {
-	    printf ("WARNING: Not all data have been read!\n");
-	    printf ("Currently at %ld, but the file has %ld bytes.\n",
-		    max_fp, file_size);
-    } else {
-	    printf ("SUCCESS: All bytes have been read\n");
-    }
-    (void) fclose( fp );
-
-    if (perf_values) free (perf_values);
     free (stacks);
     free (functions);
 
