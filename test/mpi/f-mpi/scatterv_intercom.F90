@@ -90,13 +90,13 @@ PROGRAM scatterv_intercom
          ALLOCATE(sendcounts(sub_comm_remote_size))
          ALLOCATE(displs(sub_comm_remote_size))
          ntot = 0
-         DO irank = 0, comm_size - 1
+         DO irank = 0, sub_comm_remote_size - 1
             sendcounts(irank+1) = nints + sub_comm_size + irank
             displs(irank+1) = ntot
             ntot = ntot + sendcounts(irank+1)
          END DO
          ALLOCATE(sbuffer(ntot))
-         DO irank = 0, sub_comm_remote_size
+         DO irank = 0, sub_comm_remote_size - 1
             jrank = sub_comm_size + irank
             DO i = 1, sendcounts(irank+1)
                sbuffer(i+displs(irank+1)) = jrank
@@ -105,10 +105,16 @@ PROGRAM scatterv_intercom
       ELSE
          ! Ideling processes
          root = MPI_PROC_NULL
+         ALLOCATE(sendcounts(0))
+         ALLOCATE(displs(0))
+         ALLOCATE(sbuffer(0))
       END IF
    ELSE
       ! Sub communicator or sending group
       root = 0 ! receiving rank in remote group
+      ALLOCATE(sendcounts(0))
+      ALLOCATE(displs(0))
+      ALLOCATE(sbuffer(0))
    END IF
 
    CALL MPI_Scatterv(sbuffer, sendcounts, displs, MPI_INTEGER, &
@@ -141,13 +147,11 @@ PROGRAM scatterv_intercom
    CALL MPI_Comm_free(int_comm, ierr)
    CALL MPI_Comm_free(sub_comm, ierr)
 
-   DEALLOCATE(rbuffer)
+   DEALLOCATE(sendcounts)
+   DEALLOCATE(displs)
 
-   IF (my_rank == rootrank) THEN
-      DEALLOCATE(sbuffer)
-      DEALLOCATE(sendcounts)
-      DEALLOCATE(displs)
-   END IF
+   DEALLOCATE(rbuffer)
+   DEALLOCATE(sbuffer)
 
    CALL MPI_Finalize(ierr)
 
