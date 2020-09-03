@@ -250,7 +250,7 @@ int main (int argc, char **argv) {
     n_precise_functions = 0;
     
     if (argc < 3) {
-	    printf ("Usage: tracedump <vfd-file> <search_func>\n");
+	    printf ("Usage: show_function_stacks <vfd-file> <search_func>\n");
 	    return -1;
     }
 
