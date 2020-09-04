@@ -383,6 +383,8 @@ dist_noinst_SCRIPTS += reduce.sh \
 		       ireduce_intercom.sh \
 		       allreduce.sh \
 		       allreduce_intercom.sh \
+		       iallreduce.sh \
+		       iallreduce_intercom.sh \
 		       scan.sh \
 		       iscan.sh \
 		       exscan.sh \
