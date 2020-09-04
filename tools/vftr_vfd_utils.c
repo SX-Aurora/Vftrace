@@ -204,3 +204,22 @@ void skip_mpi_message_sample (FILE *fp) {
 }
 
 /**********************************************************************/
+
+void read_stack_sample (FILE *fp, int *stack_id, long long *sample_time) {
+	fread (stack_id, sizeof(int), 1, fp);
+	fread (sample_time, sizeof(long long), 1, fp);
+}
+
+/**********************************************************************/
+
+void skip_stack_sample (FILE *fp) {
+#define N_STACK_SAMPLE_INT 1
+#define N_STACK_SAMPLE_LONG 1
+	struct {int dummy_i[N_STACK_SAMPLE_INT];
+		long long dummy_l[N_STACK_SAMPLE_LONG];
+	       }dummy;
+	fread (&dummy, N_STACK_SAMPLE_INT * sizeof(int) + N_STACK_SAMPLE_LONG * sizeof(long long),
+	       1, fp);	
+}
+
+/**********************************************************************/

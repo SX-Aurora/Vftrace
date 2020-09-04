@@ -42,4 +42,7 @@ void skip_mpi_message_sample (FILE *fp);
 
 void read_hw_observables (FILE *fp, int n_hw_obs, double **hw_values);
 void skip_hw_observables (FILE *fp, int n_hw_obs);
+
+void read_stack_sample (FILE *fp, int *stack_id, long long *sample_time);
+void skip_stack_sample (FILE *fp);
 #endif

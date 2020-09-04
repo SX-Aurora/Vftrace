@@ -203,22 +203,21 @@ int main (int argc, char **argv) {
         if (sample_id == SID_MESSAGE) {
 	    skip_mpi_message_sample (fp);
         } else if (sample_id == SID_ENTRY || sample_id == SID_EXIT) {
-            int stackID;
-            fread (&stackID, sizeof(int), 1, fp);
-            long long ltime = 0;
-            fread (&ltime, sizeof (long long), 1, fp);
-            double stime = ltime * 1.0e-6;
+            int stack_id;
+	    long long sample_time;
+	    read_stack_sample (fp, &stack_id, &sample_time);
+	    double sample_time_s = (double)sample_time * 1e-6;
     	    skip_hw_observables (fp, vfd_header.n_perf_types);
 
-	    if (!strcmp (stacks[stackID].name, search_func)) {
-		if ((!stacks[stackID].precise) && (!has_been_warned)) {
+	    if (!strcmp (stacks[stack_id].name, search_func)) {
+		if ((!stacks[stack_id].precise) && (!has_been_warned)) {
 			printf ("Attention: The function %s is not precise. \n"
 				"The data printed here is unreliable. "
 				"Please sample again using VFTR_PRECISE.\n",
-				stacks[stackID].name);
+				stacks[stack_id].name);
 			has_been_warned = true;
 		}
-		fill_into_stack_tree(&stack_tree, stacks, stackID, sample_id, stime);
+		fill_into_stack_tree(&stack_tree, stacks, stack_id, sample_id, sample_time_s);
 	    }
 	} else {
             printf("ERROR: Invalid sample type: %d\n", sample_id);
