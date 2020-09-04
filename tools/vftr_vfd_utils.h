@@ -40,9 +40,10 @@ void read_mpi_message_sample (FILE *fp, int *direction, int *rank, int *type_ind
 			      double *dt_start, double *dt_stop, double *rate);
 void skip_mpi_message_sample (FILE *fp);
 
-void read_hw_observables (FILE *fp, int n_hw_obs, double **hw_values);
+void init_hw_observables (FILE *fp, int n_hw_obs, double **hw_values);
 void skip_hw_observables (FILE *fp, int n_hw_obs);
 
-void read_stack_sample (FILE *fp, int *stack_id, long long *sample_time);
+void read_stack_sample (FILE *fp, int n_hw_obs, int *stack_id,
+			long long *sample_time, double **hw_values);
 void skip_stack_sample (FILE *fp);
 #endif

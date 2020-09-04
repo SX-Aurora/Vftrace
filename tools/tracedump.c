@@ -102,7 +102,7 @@ int main (int argc, char **argv) {
     printf ("n_perf_types: %d\n", vfd_header.n_perf_types);
     double *perf_values = NULL;
     if (vfd_header.n_perf_types > 0) {
-	read_hw_observables (fp, vfd_header.n_perf_types, &perf_values);
+	init_hw_observables (fp, vfd_header.n_perf_types, &perf_values);
     }
     
     printf( "Unique stacks:   %d\n",                 vfd_header.stackscount  );
@@ -142,28 +142,24 @@ int main (int argc, char **argv) {
                    type_size, rate, rank, tag);
             printf("%16.6f %s end\n", dt_stop, direction ? "recv" : "send");
         } else if (sidw == SID_ENTRY || sidw == SID_EXIT) {
-            int stackID;
-            fread (&stackID, sizeof(int), 1, fp);
-            long long ltime = 0;
-            fread (&ltime, sizeof (long long), 1, fp);
-            double stime = ltime * 1.0e-6;
-	    for (int p = 0; p < vfd_header.n_perf_types; p++) {
-		fread (&perf_values[p], sizeof(double), 1, fp);
-	    }
+	    int stack_id;
+	    long long sample_time;
+	    read_stack_sample (fp, vfd_header.n_perf_types, &stack_id, &sample_time, &perf_values);
+            double sample_time_s = (double)sample_time * 1.0e-6;
 
-            if (stacks[stackID].fun != -1) {
+            if (stacks[stack_id].fun != -1) {
                 if (sidw == SID_ENTRY) {
-			stacks[stackID].entry_time = stime;
+			stacks[stack_id].entry_time = sample_time_s;
                 } else {
-			functions[stacks[stackID].fun].elapse_time += (stime - stacks[stackID].entry_time);
+			functions[stacks[stack_id].fun].elapse_time += (sample_time_s - stacks[stack_id].entry_time);
                 }
             }
 
             if(!show_precise) {
-               printf("%16.6f %s ", stime, sidw == SID_ENTRY ? "call" : "exit");
-               for( ;; stackID = stacks[stackID].caller ) {
-                  printf( "%s%s", stacks[stackID].name, stackID ? "<" : "" );
-                  if(stackID == 0) break;
+               printf("%16.6f %s ", sample_time_s, sidw == SID_ENTRY ? "call" : "exit");
+               for( ;; stack_id = stacks[stack_id].caller ) {
+                  printf( "%s%s", stacks[stack_id].name, stack_id ? "<" : "" );
+                  if(stack_id == 0) break;
                 }
 	        printf("\n");
             }

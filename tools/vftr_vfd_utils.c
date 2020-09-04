@@ -146,7 +146,7 @@ void print_fileheader (vfd_header_t vfd_header) {
 
 /**********************************************************************/
 
-void read_hw_observables (FILE *fp, int n_hw_obs, double **hw_values) {
+void init_hw_observables (FILE *fp, int n_hw_obs, double **hw_values) {
     	char name[SCENARIO_NAME_LEN];
 	*hw_values = (double*)malloc (n_hw_obs * sizeof(double));
         for (int i = 0; i < n_hw_obs; i++) {
@@ -205,9 +205,13 @@ void skip_mpi_message_sample (FILE *fp) {
 
 /**********************************************************************/
 
-void read_stack_sample (FILE *fp, int *stack_id, long long *sample_time) {
+void read_stack_sample (FILE *fp, int n_hw_obs, int *stack_id,
+			long long *sample_time, double **hw_values) {
 	fread (stack_id, sizeof(int), 1, fp);
 	fread (sample_time, sizeof(long long), 1, fp);
+	for (int i = 0; i < n_hw_obs; i++) {
+		fread (hw_values[i], sizeof(double), 1, fp);
+	}
 }
 
 /**********************************************************************/

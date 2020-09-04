@@ -205,7 +205,7 @@ int main (int argc, char **argv) {
         } else if (sample_id == SID_ENTRY || sample_id == SID_EXIT) {
             int stack_id;
 	    long long sample_time;
-	    read_stack_sample (fp, &stack_id, &sample_time);
+	    read_stack_sample (fp, vfd_header.n_perf_types, &stack_id, &sample_time, NULL);
 	    double sample_time_s = (double)sample_time * 1e-6;
     	    skip_hw_observables (fp, vfd_header.n_perf_types);
 
