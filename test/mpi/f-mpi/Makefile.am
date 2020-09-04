@@ -394,18 +394,30 @@ dist_noinst_SCRIPTS += reduce.sh \
 # One sided tests #
 ###################
 check_PROGRAMS += put \
-		  get
+		  rput \
+		  get \
+		  rget
 
 put_SOURCES = $(srcdir)/put.F90
 put_FCFLAGS = $(AM_FCFLAGS)
 put_LDFLAGS = $(AM_LDFLAGS)
 
+rput_SOURCES = $(srcdir)/rput.F90
+rput_FCFLAGS = $(AM_FCFLAGS)
+rput_LDFLAGS = $(AM_LDFLAGS)
+
 get_SOURCES = $(srcdir)/get.F90
 get_FCFLAGS = $(AM_FCFLAGS)
 get_LDFLAGS = $(AM_LDFLAGS)
 
+rget_SOURCES = $(srcdir)/rget.F90
+rget_FCFLAGS = $(AM_FCFLAGS)
+rget_LDFLAGS = $(AM_LDFLAGS)
+
 dist_noinst_SCRIPTS += put.sh \
-		       get.sh
+		       rput.sh \
+		       get.sh \
+		       rget.sh
 
 ##############
 # Test tests #
