@@ -162,6 +162,18 @@ void read_hw_observables (FILE *fp, int n_hw_obs, double **hw_values) {
 
 /**********************************************************************/
 
+void skip_hw_observables (FILE *fp, int n_hw_obs) {
+#define N_HW_SAMPLE_INT 1
+	struct {char dummy_name[SCENARIO_NAME_LEN];
+		int dummy_i[N_HW_SAMPLE_INT];
+	       }dummy;
+	for (int i = 0; i < n_hw_obs; i++) {
+		fread (&dummy, SCENARIO_NAME_LEN + N_HW_SAMPLE_INT * sizeof(int), 1, fp);
+	}
+}
+
+/**********************************************************************/
+
 void read_mpi_message_sample (FILE *fp, int *direction, int *rank, int *type_index,
 			      int *type_size, int *count, int *tag,
 			      double *dt_start, double *dt_stop, double *rate) {
@@ -178,3 +190,17 @@ void read_mpi_message_sample (FILE *fp, int *direction, int *rank, int *type_ind
 	*dt_stop = t_stop * 1.0e-6;
 	*rate = (*count) * (*type_size) / (*dt_stop - *dt_start) / (1024.0 * 1024.0);
 }
+
+/**********************************************************************/
+
+void skip_mpi_message_sample (FILE *fp) {
+#define N_MPI_SAMPLE_INT 6
+#define N_MPI_SAMPLE_LONG 2
+	struct {int dummy_i[N_MPI_SAMPLE_INT];
+		long long dummy_l[N_MPI_SAMPLE_LONG];
+	       }dummy;
+	fread (&dummy, N_MPI_SAMPLE_INT * sizeof(int) + N_MPI_SAMPLE_LONG * sizeof(long long),
+	       1, fp);
+}
+
+/**********************************************************************/

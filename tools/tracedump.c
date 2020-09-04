@@ -151,7 +151,7 @@ int main (int argc, char **argv) {
 		fread (&perf_values[p], sizeof(double), 1, fp);
 	    }
 
-            if( stacks[stackID].fun != -1 ) {
+            if (stacks[stackID].fun != -1) {
                 if (sidw == SID_ENTRY) {
 			stacks[stackID].entry_time = stime;
                 } else {

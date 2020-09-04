@@ -201,14 +201,14 @@ int main (int argc, char **argv) {
         fread (&sample_id, sizeof(int), 1, fp);
 
         if (sample_id == SID_MESSAGE) {
-	    fseek (fp, ftell(fp) + 6 * sizeof(int) + 2 * sizeof(long long), SEEK_SET);
+	    skip_mpi_message_sample (fp);
         } else if (sample_id == SID_ENTRY || sample_id == SID_EXIT) {
             int stackID;
             fread (&stackID, sizeof(int), 1, fp);
             long long ltime = 0;
             fread (&ltime, sizeof (long long), 1, fp);
             double stime = ltime * 1.0e-6;
-	    fseek (fp, ftell(fp) + vfd_header.n_perf_types * sizeof(double), SEEK_SET);
+    	    skip_hw_observables (fp, vfd_header.n_perf_types);
 
 	    if (!strcmp (stacks[stackID].name, search_func)) {
 		if ((!stacks[stackID].precise) && (!has_been_warned)) {
