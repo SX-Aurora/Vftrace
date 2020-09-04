@@ -19,6 +19,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "vftr_scenarios.h"
 #include "vftr_filewrite.h"
 #include "vftr_vfd_utils.h"
 
@@ -145,4 +146,16 @@ void print_fileheader (vfd_header_t vfd_header) {
 
 /**********************************************************************/
 
-
+void read_hw_observables (FILE *fp, int n_hw_obs, double **hw_values) {
+    	char name[SCENARIO_NAME_LEN];
+	*hw_values = (double*)malloc (n_hw_obs * sizeof(double));
+        for (int i = 0; i < n_hw_obs; i++) {
+            	fread (name, SCENARIO_NAME_LEN, 1, fp);
+            	printf ("Hardware observable name: %s\n", name);
+            	int is_integrated;
+            	fread (&is_integrated, sizeof(int), 1, fp);
+            	printf ("Integrated counter: ");
+            	is_integrated == 0 ? printf ("NO\n") : printf ("YES\n");
+	        (*hw_values)[i] = 0.0;
+        }
+}

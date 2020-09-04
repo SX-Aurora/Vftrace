@@ -22,7 +22,6 @@
 #include <assert.h>
 #include <time.h>
 #include <byteswap.h>
-#include "vftr_scenarios.h"
 #include "vftr_filewrite.h"
 #include "vftr_mpi_utils.h"
 
@@ -95,25 +94,15 @@ int main (int argc, char **argv) {
 
     read_fileheader (&vfd_header, fp);
 
-    printf( "hdrsize=%ld offset=%ld\n",
+    printf ("header size = %ld offset = %ld\n",
 	     sizeof(struct FileHeader), ftell(fp));
     print_fileheader (vfd_header);
 
     fread (&(vfd_header.n_perf_types), sizeof(int), 1, fp);
     printf ("n_perf_types: %d\n", vfd_header.n_perf_types);
-    char name[SCENARIO_NAME_LEN];
     double *perf_values = NULL;
     if (vfd_header.n_perf_types > 0) {
-	perf_values = (double*)malloc (vfd_header.n_perf_types * sizeof(double));
-        for (i = 0; i < vfd_header.n_perf_types; i++) {
-            	fread (name, SCENARIO_NAME_LEN, 1, fp);
-            	printf ("Performance counter name: %s\n", name);
-            	int perf_integrated;
-            	fread (&perf_integrated, sizeof(int), 1, fp);
-            	printf ("Integrated counter: ");
-            	perf_integrated == 0 ? printf ("NO\n") : printf ("YES\n");
-	        perf_values[i] = 0.0;
-        }
+	read_hw_observables (fp, vfd_header.n_perf_types, &perf_values);
     }
     
     printf( "Unique stacks:   %d\n",                 vfd_header.stackscount  );
