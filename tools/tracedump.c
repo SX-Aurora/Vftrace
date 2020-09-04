@@ -42,7 +42,7 @@ int main (int argc, char **argv) {
     FILE      *fp;
     char       record[RECORD_LENGTH], *s;
     char      *typename[34];
-    int        i, j, samples, nextID, levels, caller, nb_functions, show_precise; 
+    int        i, j, samples, nextID, levels, caller, n_precise_functions; 
     long file_size, max_fp;
     double     dtime = 0.;
     char *filename;
@@ -57,26 +57,18 @@ int main (int argc, char **argv) {
     
     int this_vfd_version;
 
-    nb_functions   = 0;
+    n_precise_functions   = 0;
     
     if (argc < 2) {
 	    printf ("Usage: tracedump <vfd-file>\n");
 	    return -1;
-    } else if (argc > 2 && !strcmp (argv[1], "-p")) {
-	    	printf ("Attention: More than one input file. Only the first is processed\n");
-    } else if (argc > 3 && strcmp (argv[1], "-p")) {
+    } else if (argc > 2) {
 	    	printf ("Attention: More than one input file. Only the first is processed\n");
     }
 
-    if( !strcmp( argv[1], "-p" ) ) {
-        show_precise = 1;
-	filename = argv[2];
-    } else {
-        show_precise = 0;
-	filename = argv[1];
-    }
-    fp = fopen( filename, "r" );
-    assert( fp );
+    filename = argv[1];
+    fp = fopen (filename, "r");
+    assert (fp);
     fseek (fp, 0L, SEEK_END);
     file_size = ftell(fp);
     max_fp = 0;
@@ -106,22 +98,20 @@ int main (int argc, char **argv) {
     }
     
     printf( "Unique stacks:   %d\n",                 vfd_header.stackscount  );
-    if (!show_precise) printf ("Stacks list:\n");
+    printf ("Stacks list:\n");
     read_stacks (fp, &stacks, &functions,
                  vfd_header.stackscount, vfd_header.stacksoffset,
-		 &nb_functions, &max_fp, false);
-    if (!show_precise) {
-	for (int i = 0; i < vfd_header.stackscount; i++) {
-		if (stacks[i].name) printf ("      %d,%d,%d,%s\n",
-			i, stacks[i].levels, stacks[i].caller, stacks[i].name);
-	}
+		 &n_precise_functions, &max_fp, false);
+    for (int i = 0; i < vfd_header.stackscount; i++) {
+	if (stacks[i].name) printf ("      %d,%d,%d,%s\n",
+		i, stacks[i].levels, stacks[i].caller, stacks[i].name);
     }
 			
     
     if (ftell(fp) > max_fp) max_fp = ftell(fp);
-    fseek( fp, vfd_header.sampleoffset, SEEK_SET );
+    fseek (fp, vfd_header.sampleoffset, SEEK_SET);
 
-    if (!show_precise)printf( "\nStack and message samples:\n\n" );
+    printf ("\nStack and message samples:\n\n");
 
     for(i = 0; i < vfd_header.samplecount; i++ ) {
         int        sidw;
@@ -155,21 +145,18 @@ int main (int argc, char **argv) {
                 }
             }
 
-            if(!show_precise) {
-               printf("%16.6f %s ", sample_time_s, sidw == SID_ENTRY ? "call" : "exit");
-               for( ;; stack_id = stacks[stack_id].caller ) {
-                  printf( "%s%s", stacks[stack_id].name, stack_id ? "<" : "" );
-                  if(stack_id == 0) break;
-                }
-	        printf("\n");
-            }
+            printf("%16.6f %s ", sample_time_s, sidw == SID_ENTRY ? "call" : "exit");
+            for( ;; stack_id = stacks[stack_id].caller ) {
+               printf( "%s%s", stacks[stack_id].name, stack_id ? "<" : "" );
+               if(stack_id == 0) break;
+             }
+	     printf("\n");
 	} else {
             printf("ERROR: Invalid sample type: %d\n", sidw);
             return 1;
         }
     }
-
-    if (!show_precise) printf ("\n");
+    printf ("\n");
 
     if (file_size != max_fp) {
 	    printf ("WARNING: Not all data have been read!\n");
@@ -178,21 +165,21 @@ int main (int argc, char **argv) {
     } else {
 	    printf ("SUCCESS: All bytes have been read\n");
     }
-    (void) fclose( fp );
+    fclose( fp );
 
-    if(nb_functions != 0) {
+    if(n_precise_functions != 0) {
         int l = 0;
         char fmt[16];
 
-        qsort(functions, nb_functions, sizeof(function_entry_t), cmpstring);
+        qsort(functions, n_precise_functions, sizeof(function_entry_t), cmpstring);
 
-        for( i = 0; i < nb_functions; i++ ) {
+        for( i = 0; i < n_precise_functions; i++ ) {
             if( strlen(functions[i].name) > l )
                 l = strlen(functions[i].name);
         }
         sprintf( fmt, "%%%ds %%12.6f\n", l + 2 );
         fprintf( stdout, "\nElapse time for \"precise\" functions (including sub routine):\n\n" );
-        for( i = 0; i < nb_functions; i++ ) {
+        for( i = 0; i < n_precise_functions; i++ ) {
             fprintf( stdout, fmt, functions[i].name, functions[i].elapse_time );
         }
     }
