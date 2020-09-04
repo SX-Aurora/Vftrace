@@ -427,7 +427,9 @@ raccumulate_LDFLAGS = $(AM_LDFLAGS)
 dist_noinst_SCRIPTS += put.sh \
 		       rput.sh \
 		       get.sh \
-		       rget.sh
+		       rget.sh \
+		       accumulate.sh \
+		       raccumulate.sh
 
 ##############
 # Test tests #
