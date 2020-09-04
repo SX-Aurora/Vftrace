@@ -23,6 +23,7 @@ typedef struct FunctionEntry {
 typedef struct StackEntry {
     char *name;
     int caller;
+    int levels;
     double entry_time;
     int fun;
     bool precise;
@@ -31,7 +32,8 @@ typedef struct StackEntry {
 void read_fileheader (vfd_header_t *vfd_header, FILE *fp);
 void read_stacks (FILE *fp, stack_entry_t **satcks, function_entry_t **functions,
 		  unsigned int stacks_count, unsigned int stacks_offset,
-		  int *n_precise_function, long *max_fp);
+		  int *n_precise_function, long *max_fp,
+		  bool remove_asterisks);
 
 
 #endif

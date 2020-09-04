@@ -41,7 +41,6 @@ cmpstring( const void *p1, const void *p2 )
 
 int main (int argc, char **argv) {
     FILE      *fp;
-    long long  time0;
     char       record[RECORD_LENGTH], *s;
     char      *typename[34];
     int        i, j, samples, nextID, levels, caller, nb_functions, show_precise; 
@@ -51,21 +50,12 @@ int main (int argc, char **argv) {
     function_entry_t *functions = NULL;
     vfd_header_t vfd_header;
 
-    struct StackEntry {
-        char  *name;
-	int    caller;
-        double entry_time;
-        int    fun;
-    } *stacks;
+    stack_entry_t *stacks = NULL;
 
     struct StackInfo {
         int id, levels, caller, len;
     } stackInfo;
     
-
-    union { unsigned int       ui[2];
-            unsigned long long ull;   } sid;
-
     int this_vfd_version;
 
     nb_functions   = 0;
@@ -127,52 +117,17 @@ int main (int argc, char **argv) {
     }
     
     printf( "Unique stacks:   %d\n",                 vfd_header.stackscount  );
-    if( !show_precise )printf( "Stacks list:\n" );
-    stacks = (struct StackEntry *) malloc( vfd_header.stackscount * 
-                                              sizeof(struct StackEntry) );    
-    if (ftell(fp) > max_fp) max_fp = ftell(fp);
-    fseek( fp, vfd_header.stacksoffset, SEEK_SET );
-    
-    for( i=0; i<vfd_header.stackscount; i++ ) {
-	fread( &stackInfo, sizeof(int), 4, fp );
-        int len = stackInfo.len < RECORD_LENGTH ? stackInfo.len : RECORD_LENGTH - 1;
-	fread( record, sizeof(char), len, fp );
-	record[len] = 0;
-        if(!show_precise) {
-          printf ("      %d,%d,%d,%s\n",
-                   stackInfo.id, stackInfo.levels, stackInfo.caller, record);
+    if (!show_precise) printf ("Stacks list:\n");
+    read_stacks (fp, &stacks, &functions,
+                 vfd_header.stackscount, vfd_header.stacksoffset,
+		 &nb_functions, &max_fp, false);
+    if (!show_precise) {
+	for (int i = 0; i < vfd_header.stackscount; i++) {
+		if (stacks[i].name) printf ("      %d,%d,%d,%s\n",
+			i, stacks[i].levels, stacks[i].caller, stacks[i].name);
 	}
-        stacks[stackInfo.id].name   = strdup( record );
-	stacks[stackInfo.id].caller = stackInfo.caller;
-
-        stacks[stackInfo.id].fun = -1;
-        if( record[strlen(record) - 1] == '*' ) {
-            for( j = 0; j < nb_functions; j++ ) {
-                if( !strcmp( record, functions[j].name ) ) {
-                    stacks[stackInfo.id].fun = j;
-                    break;
-                }
-            }
-            if( stacks[stackInfo.id].fun == -1 ) {
-                nb_functions++;
-                if ( nb_functions == 1 ) {
-                    functions = (struct FunctionEntry *) malloc( nb_functions * sizeof(struct FunctionEntry) );
-                } else {
-                    functions = (struct FunctionEntry *) realloc( functions, nb_functions * sizeof(struct FunctionEntry) );
-                }
-
-                functions[nb_functions - 1].name = strdup( record );
-                functions[nb_functions - 1].elapse_time = 0.0;
-            }
-        }
-
-        for( j = 0; j < nb_functions; j++ ) {
-            if( !strcmp( stacks[stackInfo.id].name, functions[j].name ) ) {
-                stacks[stackInfo.id].fun = j;
-                break;
-            }
-        }
     }
+			
     
     if (ftell(fp) > max_fp) max_fp = ftell(fp);
     fseek( fp, vfd_header.sampleoffset, SEEK_SET );

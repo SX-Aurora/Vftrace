@@ -183,11 +183,12 @@ int main (int argc, char **argv) {
     // and a message is encountered (sample_id == SID_MESSAGE), we need to scan over these
     // values in order to be synchronized. Also, we allocate the corresponding (dummy-)buffer
     fread (&(vfd_header.n_perf_types), sizeof(int), 1, fp);
+    // TODO: SEEK!
     
     printf ("Unique stacks:   %d\n", vfd_header.stackscount);
     read_stacks (fp, &stacks, &functions,
 		 vfd_header.stackscount, vfd_header.stacksoffset, 
-                 &n_precise_functions, NULL);
+                 &n_precise_functions, NULL, true);
     
     fseek (fp, vfd_header.sampleoffset, SEEK_SET);
 

@@ -17,6 +17,7 @@
 */
 
 #include <stdlib.h>
+#include <string.h>
 
 #include "vftr_filewrite.h"
 #include "vftr_vfd_utils.h"
@@ -60,11 +61,9 @@ char *strip_trailing_asterisk (char *s) {
 
 void read_stacks (FILE *fp, stack_entry_t **stacks, function_entry_t **functions, 
 		  unsigned int stacks_count, unsigned int stacks_offset,
-                  int *n_precise_functions, long *max_fp) {
+                  int *n_precise_functions, long *max_fp,
+		  bool remove_asterisks) {
 
-    struct StackInfo {
-        int id, levels, caller, len;
-    } stackInfo;
 
     char record[RECORD_LENGTH];
 
@@ -75,24 +74,29 @@ void read_stacks (FILE *fp, stack_entry_t **stacks, function_entry_t **functions
     fseek (fp, stacks_offset, SEEK_SET);
     
     for (int i = 0; i < stacks_count; i++) {
-	fread (&stackInfo, sizeof(int), 4, fp);
-        int len = stackInfo.len < RECORD_LENGTH ? stackInfo.len : RECORD_LENGTH - 1;
+	int id, levels, caller, len;
+        fread (&id, sizeof(int), 1, fp);
+	fread (&levels, sizeof(int), 1, fp);
+	fread (&caller, sizeof(int), 1, fp);
+	fread (&len, sizeof(int), 1, fp);
+        len = len < RECORD_LENGTH ? len : RECORD_LENGTH - 1;
 	fread (record, sizeof(char), len, fp);
 	record[len] = '\0';
-        (*stacks)[stackInfo.id].name = strip_trailing_asterisk(record);
-	(*stacks)[stackInfo.id].caller = stackInfo.caller;
-	(*stacks)[stackInfo.id].precise = is_precise(record);
+        (*stacks)[id].name = remove_asterisks ? strip_trailing_asterisk(record) : strdup(record);
+	(*stacks)[id].levels = levels;
+	(*stacks)[id].caller = caller;
+	(*stacks)[id].precise = is_precise(record);
 
-        (*stacks)[stackInfo.id].fun = -1;
-        if ((*stacks)[stackInfo.id].precise) {
+        (*stacks)[id].fun = -1;
+        if ((*stacks)[id].precise) {
             for (int j = 0; j < *n_precise_functions; j++) {
                 if (!strcmp (record, (*functions)[j].name)) {
-                    (*stacks)[stackInfo.id].fun = j;
+                    (*stacks)[id].fun = j;
                     break;
                 }
             }
 	    
-            if ((*stacks)[stackInfo.id].fun == -1 ) {
+            if ((*stacks)[id].fun == -1 ) {
                 (*n_precise_functions)++;
                 if  (*n_precise_functions == 1) {
                     *functions = (struct FunctionEntry *) malloc (*n_precise_functions * sizeof(struct FunctionEntry) );
@@ -100,14 +104,14 @@ void read_stacks (FILE *fp, stack_entry_t **stacks, function_entry_t **functions
                     *functions = (struct FunctionEntry *) realloc (*functions, *n_precise_functions * sizeof(struct FunctionEntry) );
                 }
 
-                (*functions)[*n_precise_functions - 1].name = strip_trailing_asterisk (record);
+                (*functions)[*n_precise_functions - 1].name = remove_asterisks ? strip_trailing_asterisk (record) : strdup(record);
                 (*functions)[*n_precise_functions - 1].elapse_time = 0.0;
             }
         }
 
         for (int j = 0; j < *n_precise_functions; j++) {
-            if (!strcmp ((*stacks)[stackInfo.id].name, (*functions)[j].name)) {
-                (*stacks)[stackInfo.id].fun = j;
+            if (!strcmp ((*stacks)[id].name, (*functions)[j].name)) {
+                (*stacks)[id].fun = j;
                 break;
             }
         }
