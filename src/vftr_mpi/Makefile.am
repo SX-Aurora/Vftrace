@@ -126,7 +126,9 @@ libvftr_mpi_la_SOURCES += vftr_mpi_allreduce_f.c \
 libvftr_mpi_la_SOURCES += vftr_mpi_put.c \
 			  vftr_mpi_rput.c \
 			  vftr_mpi_get.c \
-			  vftr_mpi_rget.c
+			  vftr_mpi_rget.c \
+			  vftr_mpi_accumulate.c \
+			  vftr_mpi_raccumulate.c
 libvftr_mpi_la_SOURCES += vftr_mpi_put_f.c \
 			  vftr_mpi_rput_f.c \
 			  vftr_mpi_get_f.c \
