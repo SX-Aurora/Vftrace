@@ -159,3 +159,22 @@ void read_hw_observables (FILE *fp, int n_hw_obs, double **hw_values) {
 	        (*hw_values)[i] = 0.0;
         }
 }
+
+/**********************************************************************/
+
+void read_mpi_message_sample (FILE *fp, int *direction, int *rank, int *type_index,
+			      int *type_size, int *count, int *tag,
+			      double *dt_start, double *dt_stop, double *rate) {
+	long long t_start, t_stop;
+	fread (direction, sizeof(int), 1, fp);
+	fread (rank, sizeof(int), 1, fp);
+	fread (type_index, sizeof(int), 1, fp);
+	fread (count, sizeof(int), 1, fp);
+	fread (type_size, sizeof(int), 1, fp);
+	fread (tag, sizeof(int), 1, fp);
+	fread (&t_start, sizeof(long long), 1, fp);
+	fread (&t_stop, sizeof(long long), 1, fp);
+	*dt_start = t_start * 1.0e-6;
+	*dt_stop = t_stop * 1.0e-6;
+	*rate = (*count) * (*type_size) / (*dt_stop - *dt_start) / (1024.0 * 1024.0);
+}

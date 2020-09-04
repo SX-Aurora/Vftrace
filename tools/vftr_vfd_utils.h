@@ -35,5 +35,9 @@ void read_stacks (FILE *fp, stack_entry_t **satcks, function_entry_t **functions
 		  int *n_precise_function, long *max_fp,
 		  bool remove_asterisks);
 
+void read_mpi_message_sample (FILE *fp, int *direction, int *rank, int *type_index,
+			      int *type_size, int *count, int *tag,
+			      double *dt_start, double *dt_stop, double *rate);
 
+void read_hw_observables (FILE *fp, int n_hw_obs, double **hw_values);
 #endif

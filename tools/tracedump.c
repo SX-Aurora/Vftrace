@@ -121,7 +121,7 @@ int main (int argc, char **argv) {
     if (ftell(fp) > max_fp) max_fp = ftell(fp);
     fseek( fp, vfd_header.sampleoffset, SEEK_SET );
 
-    if( !show_precise )printf( "\nStack and message samples:\n\n" );
+    if (!show_precise)printf( "\nStack and message samples:\n\n" );
 
     for(i = 0; i < vfd_header.samplecount; i++ ) {
         int        sidw;
@@ -130,31 +130,17 @@ int main (int argc, char **argv) {
         fread (&sidw, sizeof(int), 1, fp);
 
         if (sidw == SID_MESSAGE) {
-            int dir, type_idx, rank; 
-            int type_size;
-            long long tstart, tstop;
-	    unsigned int count, tag;
-	    fread (&dir, sizeof(int), 1, fp);
-            fread (&rank, sizeof(int), 1, fp);
-            fread (&type_idx, sizeof(int), 1, fp);
-            fread (&count, sizeof(int), 1, fp);
-            fread (&type_size, sizeof(int), 1, fp);
-	    fread (&tag, sizeof(int), 1, fp);
-            fread (&tstart, sizeof(long long), 1, fp);
-	    fread (&tstop, sizeof(long long), 1, fp);
-            double dtstart = tstart * 1.0e-6;
-            double dtstop = tstop * 1.0e-6;
-            double rate = count*type_size/(dtstop-dtstart)/(1024.0*1024.0);
-            printf("%16.6f %s\n", dtstart, dir ? "recv" : "send");
+	    int direction, rank, tag, count;
+	    int type_size, type_index;
+	    double dt_start, dt_stop, rate;
+	    read_mpi_message_sample (fp, &direction, &rank, &type_index, &type_size,
+				     &count, &tag, &dt_start, &dt_stop, &rate);
+					
+            printf("%16.6f %s\n", dt_start, direction ? "recv" : "send");
             printf("%16s count=%d type=%s(%iBytes) rate= %8.4lf MiB/s peer=%d tag=%d\n",
-                   "",
-		   count,
-                   vftr_get_mpitype_string_from_idx(type_idx), 
-                   type_size,
-                   rate, 
-                   rank,
-                   tag);
-            printf("%16.6f %s end\n", dtstop, dir ? "recv" : "send");
+                   "", count, vftr_get_mpitype_string_from_idx(type_index), 
+                   type_size, rate, rank, tag);
+            printf("%16.6f %s end\n", dt_stop, direction ? "recv" : "send");
         } else if (sidw == SID_ENTRY || sidw == SID_EXIT) {
             int stackID;
             fread (&stackID, sizeof(int), 1, fp);
