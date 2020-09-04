@@ -393,7 +393,8 @@ dist_noinst_SCRIPTS += reduce.sh \
 ###################
 check_PROGRAMS += put \
 		  rput \
-		  get
+		  get \
+		  rget
 
 put_SOURCES = $(srcdir)/put.c
 put_CFLAGS = $(AM_CFLAGS)
@@ -407,9 +408,14 @@ get_SOURCES = $(srcdir)/get.c
 get_CFLAGS = $(AM_CFLAGS)
 get_LDFLAGS = $(AM_LDFLAGS)
 
+rget_SOURCES = $(srcdir)/rget.c
+rget_CFLAGS = $(AM_CFLAGS)
+rget_LDFLAGS = $(AM_LDFLAGS)
+
 dist_noinst_SCRIPTS += put.sh \
 		       rput.sh \
-		       get.sh
+		       get.sh \
+		       rget.sh
 
 ##############
 # Test tests #

@@ -284,6 +284,7 @@ AM_COND_IF([MPI_PROFILING],
                             test/mpi/c-mpi/put.sh:test/mpi/testscripts/put.sh
                             test/mpi/c-mpi/rput.sh:test/mpi/testscripts/rput.sh
                             test/mpi/c-mpi/get.sh:test/mpi/testscripts/get.sh
+                            test/mpi/c-mpi/rget.sh:test/mpi/testscripts/rget.sh
                             test/mpi/c-mpi/test.sh:test/mpi/testscripts/test.sh
                             test/mpi/c-mpi/testany.sh:test/mpi/testscripts/testany.sh
                             test/mpi/c-mpi/testsome.sh:test/mpi/testscripts/testsome.sh
@@ -363,6 +364,7 @@ AM_COND_IF([MPI_PROFILING],
                             test/mpi/f-mpi/put.sh:test/mpi/testscripts/put.sh
                             test/mpi/f-mpi/rput.sh:test/mpi/testscripts/rput.sh
                             test/mpi/f-mpi/get.sh:test/mpi/testscripts/get.sh
+                            test/mpi/f-mpi/rget.sh:test/mpi/testscripts/rget.sh
                             test/mpi/f-mpi/test.sh:test/mpi/testscripts/test.sh
                             test/mpi/f-mpi/testany.sh:test/mpi/testscripts/testany.sh
                             test/mpi/f-mpi/testsome.sh:test/mpi/testscripts/testsome.sh
@@ -442,6 +444,7 @@ AM_COND_IF([MPI_PROFILING],
                             test/mpi/f08-mpi/put.sh:test/mpi/testscripts/put.sh
                             test/mpi/f08-mpi/rput.sh:test/mpi/testscripts/rput.sh
                             test/mpi/f08-mpi/get.sh:test/mpi/testscripts/get.sh
+                            test/mpi/f08-mpi/rget.sh:test/mpi/testscripts/rget.sh
                             test/mpi/f08-mpi/test.sh:test/mpi/testscripts/test.sh
                             test/mpi/f08-mpi/testany.sh:test/mpi/testscripts/testany.sh
                             test/mpi/f08-mpi/testsome.sh:test/mpi/testscripts/testsome.sh
