@@ -124,6 +124,7 @@ libvftr_mpi_la_SOURCES += vftr_mpi_allreduce_f.c \
 # one sided #
 #############
 libvftr_mpi_la_SOURCES += vftr_mpi_put.c \
+			  vftr_mpi_rput.c \
 			  vftr_mpi_get.c
 libvftr_mpi_la_SOURCES += vftr_mpi_put_f.c \
 			  vftr_mpi_get_f.c

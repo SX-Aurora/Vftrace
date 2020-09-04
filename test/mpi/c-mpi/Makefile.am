@@ -392,17 +392,23 @@ dist_noinst_SCRIPTS += reduce.sh \
 # One sided tests #
 ###################
 check_PROGRAMS += put \
+		  rput \
 		  get
 
 put_SOURCES = $(srcdir)/put.c
 put_CFLAGS = $(AM_CFLAGS)
 put_LDFLAGS = $(AM_LDFLAGS)
 
+rput_SOURCES = $(srcdir)/rput.c
+rput_CFLAGS = $(AM_CFLAGS)
+rput_LDFLAGS = $(AM_LDFLAGS)
+
 get_SOURCES = $(srcdir)/get.c
 get_CFLAGS = $(AM_CFLAGS)
 get_LDFLAGS = $(AM_LDFLAGS)
 
 dist_noinst_SCRIPTS += put.sh \
+		       rput.sh \
 		       get.sh
 
 ##############
