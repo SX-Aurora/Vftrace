@@ -43,13 +43,12 @@ int main(int argc, char** argv) {
 
    // Remote memory access
    if (my_rank == 0) {
+      for (int i=0; i<nints; i++) {srbuffer[i]=comm_size;}
       // send to every other rank
       for (int targetrank=1; targetrank<comm_size; targetrank++) {
          printf("Accumulating data remotely on rank %d\n", targetrank);
-         for (int i=0; i<nints; i++) {srbuffer[i]=targetrank;}
          MPI_Accumulate(srbuffer, nints, MPI_INT, targetrank, 0, nints, MPI_INT, MPI_SUM, window);
       }
-      for (int i=0; i<nints; i++) {srbuffer[i]=my_rank;}
    }
    MPI_Win_fence(0, window);
    MPI_Win_free(&window);
@@ -59,7 +58,7 @@ int main(int argc, char** argv) {
    //validate data
    bool valid_data = true;
    for (int i=0; i<nints; i++) {
-      if (srbuffer[i] != 2*my_rank) {
+      if (srbuffer[i] != comm_size+my_rank) {
          printf("Rank %d received faulty data from rank 0\n", my_rank);
          valid_data = false;
          break;
