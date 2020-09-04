@@ -128,7 +128,9 @@ libvftr_mpi_la_SOURCES += vftr_mpi_put.c \
 			  vftr_mpi_get.c \
 			  vftr_mpi_rget.c
 libvftr_mpi_la_SOURCES += vftr_mpi_put_f.c \
-			  vftr_mpi_get_f.c
+			  vftr_mpi_rput_f.c \
+			  vftr_mpi_get_f.c \
+			  vftr_mpi_rget_f.c
 
 ############
 # pcontrol #
