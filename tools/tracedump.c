@@ -40,7 +40,7 @@ int main (int argc, char **argv) {
     FILE *fp;
     long file_size, max_fp;
     char *filename;
-    function_entry_t *functions = NULL;
+    function_entry_t *precise_functions = NULL;
     vfd_header_t vfd_header;
     stack_entry_t *stacks = NULL;
 
@@ -86,7 +86,7 @@ int main (int argc, char **argv) {
     printf( "Unique stacks:   %d\n",                 vfd_header.stackscount  );
     printf ("Stacks list:\n");
     int n_precise_functions = 0;
-    read_stacks (fp, &stacks, &functions,
+    read_stacks (fp, &stacks, &precise_functions,
                  vfd_header.stackscount, vfd_header.stacksoffset,
 		 &n_precise_functions, &max_fp);
     for (int i = 0; i < vfd_header.stackscount; i++) {
@@ -127,7 +127,7 @@ int main (int argc, char **argv) {
                 if (sample_id == SID_ENTRY) {
 			stacks[stack_id].entry_time = sample_time_s;
                 } else {
-			functions[stacks[stack_id].fun].elapse_time += (sample_time_s - stacks[stack_id].entry_time);
+			precise_functions[stacks[stack_id].fun].elapse_time += (sample_time_s - stacks[stack_id].entry_time);
                 }
             }
 
@@ -157,22 +157,22 @@ int main (int argc, char **argv) {
         int l = 0;
         char fmt[16];
 
-        qsort (functions, n_precise_functions, sizeof(function_entry_t), sort_by_function_name);
+        qsort (precise_functions, n_precise_functions, sizeof(function_entry_t), sort_by_function_name);
 
         for ( int i = 0; i < n_precise_functions; i++) {
-            if (strlen(functions[i].name) > l)
-                l = strlen(functions[i].name);
+            if (strlen(precise_functions[i].name) > l)
+                l = strlen(precise_functions[i].name);
         }
         sprintf (fmt, "%%%ds %%12.6f\n", l + 2);
         fprintf (stdout, "\nElapse time for \"precise\" functions (including sub routine):\n\n");
         for (int i = 0; i < n_precise_functions; i++) {
-            fprintf (stdout, fmt, functions[i].name, functions[i].elapse_time);
+            fprintf (stdout, fmt, precise_functions[i].name, precise_functions[i].elapse_time);
         }
     }
 
     if (hw_values) free (hw_values);
     free (stacks);
-    free (functions);
+    free (precise_functions);
 
     return 0;
 }

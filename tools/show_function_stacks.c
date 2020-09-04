@@ -152,7 +152,7 @@ int main (int argc, char **argv) {
     char *filename, *search_func;
 
     vfd_header_t vfd_header;
-    function_entry_t *functions = NULL;
+    function_entry_t *precise_functions = NULL;
     stack_entry_t *stacks = NULL;
 
     n_precise_functions = 0;
@@ -186,7 +186,10 @@ int main (int argc, char **argv) {
     skip_hw_observables (fp, vfd_header.n_hw_obs);
     printf ("Unique stacks:   %d\n", vfd_header.stackscount);
     
-    read_stacks (fp, &stacks, &functions,
+    // Although not needed elsewhere here, we need the "precise_functions" array
+    // because it is used inside of read_stacks to compute indices. Other routines
+    // such as tracedump need it, so we keep it as an external field.
+    read_stacks (fp, &stacks, &precise_functions,
 		 vfd_header.stackscount, vfd_header.stacksoffset, 
                  &n_precise_functions, NULL);
 
@@ -196,13 +199,6 @@ int main (int argc, char **argv) {
 	}
     }
 
-    for (int i = 0; i < n_precise_functions; i++) {
-	if (is_precise(functions[i].name)) {
-		functions[i].name = strip_trailing_asterisk(functions[i].name);
-	}
-    }
-
-    
     fseek (fp, vfd_header.sampleoffset, SEEK_SET);
 
     stack_leaf_t *stack_tree = NULL;
@@ -220,8 +216,6 @@ int main (int argc, char **argv) {
 	    long long sample_time;
 	    read_stack_sample (fp, vfd_header.n_hw_obs, &stack_id, &sample_time, NULL);
 	    double sample_time_s = (double)sample_time * 1e-6;
-	    // Not what we actually want
-    	    //skip_hw_observables (fp, vfd_header.n_hw_obs);
 
 	    if (!strcmp (stacks[stack_id].name, search_func)) {
 		if ((!stacks[stack_id].precise) && (!has_been_warned)) {
@@ -246,7 +240,7 @@ int main (int argc, char **argv) {
     fclose (fp);
 
     free (stacks);
-    free (functions);
+    free (precise_functions);
 
     return 0;
 }
