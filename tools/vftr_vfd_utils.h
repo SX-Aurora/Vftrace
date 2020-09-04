@@ -29,11 +29,13 @@ typedef struct StackEntry {
     bool precise;
 } stack_entry_t;
 
+bool is_precise (char *s);
+char *strip_trailing_asterisk (char *s);
+
 void read_fileheader (vfd_header_t *vfd_header, FILE *fp);
 void read_stacks (FILE *fp, stack_entry_t **satcks, function_entry_t **functions,
 		  unsigned int stacks_count, unsigned int stacks_offset,
-		  int *n_precise_function, long *max_fp,
-		  bool remove_asterisks);
+		  int *n_precise_function, long *max_fp);
 
 void read_mpi_message_sample (FILE *fp, int *direction, int *rank, int *type_index,
 			      int *type_size, int *count, int *tag,

@@ -88,7 +88,7 @@ int main (int argc, char **argv) {
     int n_precise_functions = 0;
     read_stacks (fp, &stacks, &functions,
                  vfd_header.stackscount, vfd_header.stacksoffset,
-		 &n_precise_functions, &max_fp, false);
+		 &n_precise_functions, &max_fp);
     for (int i = 0; i < vfd_header.stackscount; i++) {
 	if (stacks[i].name) printf ("      %d,%d,%d,%s\n",
 		i, stacks[i].levels, stacks[i].caller, stacks[i].name);

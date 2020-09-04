@@ -182,13 +182,26 @@ int main (int argc, char **argv) {
     // We need the number of hardware scenarios, because when scanning the samples
     // and a message is encountered (sample_id == SID_MESSAGE), we need to scan over these
     // values in order to be synchronized. Also, we allocate the corresponding (dummy-)buffer
-    fread (&(vfd_header.n_perf_types), sizeof(int), 1, fp);
-    // TODO: SEEK!
-    
+    fread (&(vfd_header.n_hw_obs), sizeof(int), 1, fp);
+    skip_hw_observables (fp, vfd_header.n_hw_obs);
     printf ("Unique stacks:   %d\n", vfd_header.stackscount);
+    
     read_stacks (fp, &stacks, &functions,
 		 vfd_header.stackscount, vfd_header.stacksoffset, 
-                 &n_precise_functions, NULL, true);
+                 &n_precise_functions, NULL);
+
+    for (int i = 0; i < vfd_header.stackscount; i++) {
+	if (stacks[i].precise) {
+		stacks[i].name = strip_trailing_asterisk(stacks[i].name);
+	}
+    }
+
+    for (int i = 0; i < n_precise_functions; i++) {
+	if (is_precise(functions[i].name)) {
+		functions[i].name = strip_trailing_asterisk(functions[i].name);
+	}
+    }
+
     
     fseek (fp, vfd_header.sampleoffset, SEEK_SET);
 
@@ -205,9 +218,10 @@ int main (int argc, char **argv) {
         } else if (sample_id == SID_ENTRY || sample_id == SID_EXIT) {
             int stack_id;
 	    long long sample_time;
-	    read_stack_sample (fp, vfd_header.n_perf_types, &stack_id, &sample_time, NULL);
+	    read_stack_sample (fp, vfd_header.n_hw_obs, &stack_id, &sample_time, NULL);
 	    double sample_time_s = (double)sample_time * 1e-6;
-    	    skip_hw_observables (fp, vfd_header.n_perf_types);
+	    // Not what we actually want
+    	    //skip_hw_observables (fp, vfd_header.n_hw_obs);
 
 	    if (!strcmp (stacks[stack_id].name, search_func)) {
 		if ((!stacks[stack_id].precise) && (!has_been_warned)) {

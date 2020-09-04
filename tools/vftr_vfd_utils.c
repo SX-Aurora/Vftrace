@@ -62,8 +62,7 @@ char *strip_trailing_asterisk (char *s) {
 
 void read_stacks (FILE *fp, stack_entry_t **stacks, function_entry_t **functions, 
 		  unsigned int stacks_count, unsigned int stacks_offset,
-                  int *n_precise_functions, long *max_fp,
-		  bool remove_asterisks) {
+                  int *n_precise_functions, long *max_fp) {
 
 
     char record[RECORD_LENGTH];
@@ -83,7 +82,7 @@ void read_stacks (FILE *fp, stack_entry_t **stacks, function_entry_t **functions
         len = len < RECORD_LENGTH ? len : RECORD_LENGTH - 1;
 	fread (record, sizeof(char), len, fp);
 	record[len] = '\0';
-        (*stacks)[id].name = remove_asterisks ? strip_trailing_asterisk(record) : strdup(record);
+        (*stacks)[id].name = strdup(record);
 	(*stacks)[id].levels = levels;
 	(*stacks)[id].caller = caller;
 	(*stacks)[id].precise = is_precise(record);
@@ -105,7 +104,7 @@ void read_stacks (FILE *fp, stack_entry_t **stacks, function_entry_t **functions
                     *functions = (struct FunctionEntry *) realloc (*functions, *n_precise_functions * sizeof(struct FunctionEntry) );
                 }
 
-                (*functions)[*n_precise_functions - 1].name = remove_asterisks ? strip_trailing_asterisk (record) : strdup(record);
+                (*functions)[*n_precise_functions - 1].name = strdup(record);
                 (*functions)[*n_precise_functions - 1].elapse_time = 0.0;
             }
         }
