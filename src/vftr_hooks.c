@@ -115,10 +115,7 @@ void vftr_function_entry (const char *s, void *addr, int line, bool isPrecise) {
     // This way, in vftr_function_exit, when it is zero we know that
     // we are not dealing with a recursive function. 
     // 
-    // need to check for same address and name.
-    // if a dynamically created region is called recuresively
-    // it might have the same address, but the name can differ
-    if (addr == caller->address && !strcmp(s,caller->name)) {
+    if (addr == caller->address) {
         caller->prof_current.calls++;
 	caller->recursion_depth++;
         return;
@@ -133,14 +130,12 @@ void vftr_function_entry (const char *s, void *addr, int line, bool isPrecise) {
         // No calls at all yet: add new function
         func = vftr_new_function(addr, s, caller, line, isPrecise);
     } else {
-	// Search the function name in the function list
+	// Search the function address in the function list
         func = callee;
-        // need to check for different address AND different name
-        // dynamically created regions can have the same address, but different names
-        if (func->address != addr || strcmp(s,func->name)) {
+        if (func->address != addr) {
            for ( ;; ) {
                func = func->next_in_level;
-               if (func == callee || (func->address == addr && !strcmp(s,func->name))) {
+               if (func == callee || func->address == addr) {
            	  break;
                }
            }
