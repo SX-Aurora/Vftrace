@@ -1,6 +1,6 @@
 bin_PROGRAMS = tracedump show_function_stacks
 
-tracedump_SOURCES = tracedump.c 
+tracedump_SOURCES = tracedump.c vftr_vfd_utils.c
 show_function_stacks_SOURCES = show_function_stacks.c vftr_vfd_utils.c
 
 tracedump_CFLAGS = -I${srcdir}/../src/

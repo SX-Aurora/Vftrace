@@ -28,8 +28,6 @@ typedef struct StackEntry {
     bool precise;
 } stack_entry_t;
 
-
-
 void read_fileheader (vfd_header_t *vfd_header, FILE *fp);
 void read_stacks (FILE *fp, stack_entry_t **satcks, function_entry_t **functions,
 		  unsigned int stacks_count, unsigned int stacks_offset,

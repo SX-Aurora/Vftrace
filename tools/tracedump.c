@@ -26,15 +26,9 @@
 #include "vftr_filewrite.h"
 #include "vftr_mpi_utils.h"
 
+#include "vftr_vfd_utils.h"
+
 #define RECORD_LENGTH 10240
-
-
-/* FIXME make common header file */
-
-typedef struct FunctionEntry {
-    char  *name;
-    double elapse_time;
-} function_entry_t;
 
 static int
 cmpstring( const void *p1, const void *p2 )
@@ -45,25 +39,7 @@ cmpstring( const void *p1, const void *p2 )
     return strcmp( e1->name, e2->name );
 }
 
-typedef struct FileHeader {
-    char         fileid[VFTR_FILEIDSIZE], date[24];
-    long long    interval;
-    int          threads, thread, tasks, task; 
-    union { double d; unsigned long long l; } cycletime, runtime;
-    long long inittime;
-    unsigned int samplecount, sampleoffset;
-    unsigned int stackscount, stacksoffset;
-    unsigned int reserved;
-    int n_perf_types;
-} vfdhdr_t;
-
-void read_fileheader (vfdhdr_t *vfdhdr, FILE *fp);
-void print_fileheader (vfdhdr_t vfdhdr);
-
-
-int
-main( int argc, char **argv )
-{
+int main (int argc, char **argv) {
     FILE      *fp;
     long long  time0;
     char       record[RECORD_LENGTH], *s;
@@ -73,7 +49,7 @@ main( int argc, char **argv )
     double     dtime = 0.;
     char *filename;
     function_entry_t *functions = NULL;
-    vfdhdr_t vfdhdr;
+    vfd_header_t vfd_header;
 
     struct StackEntry {
         char  *name;
@@ -127,19 +103,19 @@ main( int argc, char **argv )
 	return -1;
     }
 
-    read_fileheader (&vfdhdr, fp);
+    read_fileheader (&vfd_header, fp);
 
     printf( "hdrsize=%ld offset=%ld\n",
 	     sizeof(struct FileHeader), ftell(fp));
-    print_fileheader (vfdhdr);
+    print_fileheader (vfd_header);
 
-    fread (&(vfdhdr.n_perf_types), sizeof(int), 1, fp);
-    printf ("n_perf_types: %d\n", vfdhdr.n_perf_types);
+    fread (&(vfd_header.n_perf_types), sizeof(int), 1, fp);
+    printf ("n_perf_types: %d\n", vfd_header.n_perf_types);
     char name[SCENARIO_NAME_LEN];
     double *perf_values = NULL;
-    if (vfdhdr.n_perf_types > 0) {
-	perf_values = (double*)malloc (vfdhdr.n_perf_types * sizeof(double));
-        for (i = 0; i < vfdhdr.n_perf_types; i++) {
+    if (vfd_header.n_perf_types > 0) {
+	perf_values = (double*)malloc (vfd_header.n_perf_types * sizeof(double));
+        for (i = 0; i < vfd_header.n_perf_types; i++) {
             	fread (name, SCENARIO_NAME_LEN, 1, fp);
             	printf ("Performance counter name: %s\n", name);
             	int perf_integrated;
@@ -150,14 +126,14 @@ main( int argc, char **argv )
         }
     }
     
-    printf( "Unique stacks:   %d\n",                 vfdhdr.stackscount  );
+    printf( "Unique stacks:   %d\n",                 vfd_header.stackscount  );
     if( !show_precise )printf( "Stacks list:\n" );
-    stacks = (struct StackEntry *) malloc( vfdhdr.stackscount * 
+    stacks = (struct StackEntry *) malloc( vfd_header.stackscount * 
                                               sizeof(struct StackEntry) );    
     if (ftell(fp) > max_fp) max_fp = ftell(fp);
-    fseek( fp, vfdhdr.stacksoffset, SEEK_SET );
+    fseek( fp, vfd_header.stacksoffset, SEEK_SET );
     
-    for( i=0; i<vfdhdr.stackscount; i++ ) {
+    for( i=0; i<vfd_header.stackscount; i++ ) {
 	fread( &stackInfo, sizeof(int), 4, fp );
         int len = stackInfo.len < RECORD_LENGTH ? stackInfo.len : RECORD_LENGTH - 1;
 	fread( record, sizeof(char), len, fp );
@@ -199,11 +175,11 @@ main( int argc, char **argv )
     }
     
     if (ftell(fp) > max_fp) max_fp = ftell(fp);
-    fseek( fp, vfdhdr.sampleoffset, SEEK_SET );
+    fseek( fp, vfd_header.sampleoffset, SEEK_SET );
 
     if( !show_precise )printf( "\nStack and message samples:\n\n" );
 
-    for(i = 0; i < vfdhdr.samplecount; i++ ) {
+    for(i = 0; i < vfd_header.samplecount; i++ ) {
         int        sidw;
 	long       pos;
 
@@ -241,7 +217,7 @@ main( int argc, char **argv )
             long long ltime = 0;
             fread (&ltime, sizeof (long long), 1, fp);
             double stime = ltime * 1.0e-6;
-	    for (int p = 0; p < vfdhdr.n_perf_types; p++) {
+	    for (int p = 0; p < vfd_header.n_perf_types; p++) {
 		fread (&perf_values[p], sizeof(double), 1, fp);
 	    }
 
@@ -300,45 +276,4 @@ main( int argc, char **argv )
     free (functions);
 
     return 0;
-}
-
-void read_fileheader (vfdhdr_t *vfdhdr, FILE *fp) {
-    fread( &vfdhdr->fileid,	 1, VFTR_FILEIDSIZE, 	  fp );
-    fread( &vfdhdr->date,	 1, 24, 	          fp );
-    fread( &vfdhdr->interval,	 1, sizeof(long long),    fp );
-    fread( &vfdhdr->threads,	 1, sizeof(int),          fp );
-    fread( &vfdhdr->thread,	 1, sizeof(int),          fp );
-    fread( &vfdhdr->tasks,	 1, sizeof(int),          fp );
-    fread( &vfdhdr->task,	 1, sizeof(int),          fp );
-    fread( &vfdhdr->cycletime.l,  1, sizeof(long long),    fp );
-    fread( &vfdhdr->inittime,    1, sizeof(long long),    fp );
-    fread( &vfdhdr->runtime.l,	 1, sizeof(long long),    fp );
-    fread( &vfdhdr->samplecount,  1, sizeof(unsigned int), fp );
-    fread( &vfdhdr->stackscount,  1, sizeof(unsigned int), fp );
-    fread( &vfdhdr->stacksoffset, 1, sizeof(unsigned int), fp );
-    fread( &vfdhdr->sampleoffset, 1, sizeof(unsigned int), fp );
-    fread( &vfdhdr->reserved,     1, sizeof(unsigned int), fp );
-}
-
-void print_fileheader (vfdhdr_t vfdhdr) {
-    int i;
-    // We require a seperate datestring which is one element larger than
-    // the field in the vfd file to add a terminating null character. This
-    // is not necessary for the version string since it is written using sprintf
-    // in the main code.
-    char       datestring[25], record[RECORD_LENGTH], *s;
-    datestring[24] = 0;
-    strncpy( datestring, vfdhdr.date,   24 );
-
-    printf( "Version ID:      %s\n",		     vfdhdr.fileid    );
-    printf( "Date:            %s\n",		     datestring );
-    printf( "MPI tasks:       rank=%d count=%d\n",   vfdhdr.task,   vfdhdr.tasks   ); 
-    printf( "OpenMP threads:  thread=%d count=%d\n", vfdhdr.thread, vfdhdr.threads );
-    printf( "Sample interval: %12.6le seconds\n",    vfdhdr.interval*1.0e-6);
-    printf( "Init time: %lld\n", vfdhdr.inittime);
-    printf( "Job runtime:     %.3lf seconds\n",     vfdhdr.runtime.d    );
-    printf( "Samples:         %d\n",                 vfdhdr.samplecount  );
-    printf( "Unique stacks:   %d\n",                 vfdhdr.stackscount  );
-    printf( "Stacks offset:   %d\n",                 vfdhdr.stacksoffset );
-    printf( "Sample offset:   %d\n",                 vfdhdr.sampleoffset );
 }
