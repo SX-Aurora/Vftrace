@@ -60,7 +60,7 @@ char *strip_trailing_asterisk (char *s) {
 
 /**********************************************************************/
 
-void read_stacks (FILE *fp, stack_entry_t **stacks, function_entry_t **functions, 
+void read_stacks (FILE *fp, stack_entry_t **stacks, function_entry_t **precise_functions, 
 		  unsigned int stacks_count, unsigned int stacks_offset,
                   int *n_precise_functions, long *max_fp) {
 
@@ -90,7 +90,7 @@ void read_stacks (FILE *fp, stack_entry_t **stacks, function_entry_t **functions
         (*stacks)[id].fun = -1;
         if ((*stacks)[id].precise) {
             for (int j = 0; j < *n_precise_functions; j++) {
-                if (!strcmp (record, (*functions)[j].name)) {
+                if (!strcmp (record, (*precise_functions)[j].name)) {
                     (*stacks)[id].fun = j;
                     break;
                 }
@@ -99,18 +99,18 @@ void read_stacks (FILE *fp, stack_entry_t **stacks, function_entry_t **functions
             if ((*stacks)[id].fun == -1 ) {
                 (*n_precise_functions)++;
                 if  (*n_precise_functions == 1) {
-                    *functions = (struct FunctionEntry *) malloc (*n_precise_functions * sizeof(struct FunctionEntry) );
+                    *precise_functions = (struct FunctionEntry *) malloc (*n_precise_functions * sizeof(struct FunctionEntry) );
                 } else {
-                    *functions = (struct FunctionEntry *) realloc (*functions, *n_precise_functions * sizeof(struct FunctionEntry) );
+                    *precise_functions = (struct FunctionEntry *) realloc (*precise_functions, *n_precise_functions * sizeof(struct FunctionEntry) );
                 }
 
-                (*functions)[*n_precise_functions - 1].name = strdup(record);
-                (*functions)[*n_precise_functions - 1].elapse_time = 0.0;
+                (*precise_functions)[*n_precise_functions - 1].name = strdup(record);
+                (*precise_functions)[*n_precise_functions - 1].elapse_time = 0.0;
             }
         }
 
         for (int j = 0; j < *n_precise_functions; j++) {
-            if (!strcmp ((*stacks)[id].name, (*functions)[j].name)) {
+            if (!strcmp ((*stacks)[id].name, (*precise_functions)[j].name)) {
                 (*stacks)[id].fun = j;
                 break;
             }
@@ -145,6 +145,8 @@ void print_fileheader (vfd_header_t vfd_header) {
 
 /**********************************************************************/
 
+// Reads the observable names and checks if it is integrated.
+// Also, allocates the array which stores the hardware counter values.
 void init_hw_observables (FILE *fp, int n_hw_obs, double **hw_values) {
     	char name[SCENARIO_NAME_LEN];
 	*hw_values = (double*)malloc (n_hw_obs * sizeof(double));
@@ -161,6 +163,7 @@ void init_hw_observables (FILE *fp, int n_hw_obs, double **hw_values) {
 
 /**********************************************************************/
 
+// Skip the hardware header.
 void skip_hw_observables (FILE *fp, int n_hw_obs) {
 #define N_HW_SAMPLE_INT 1
 	struct {char dummy_name[SCENARIO_NAME_LEN];
@@ -181,17 +184,22 @@ void read_mpi_message_sample (FILE *fp, int *direction, int *rank, int *type_ind
 	fread (rank, sizeof(int), 1, fp);
 	fread (type_index, sizeof(int), 1, fp);
 	fread (count, sizeof(int), 1, fp);
+// The message size is given in bytes
 	fread (type_size, sizeof(int), 1, fp);
 	fread (tag, sizeof(int), 1, fp);
 	fread (&t_start, sizeof(long long), 1, fp);
 	fread (&t_stop, sizeof(long long), 1, fp);
+// Convert microseconds to seconds
 	*dt_start = t_start * 1.0e-6;
 	*dt_stop = t_stop * 1.0e-6;
+// Normalize to Megabytes.
 	*rate = (*count) * (*type_size) / (*dt_stop - *dt_start) / (1024.0 * 1024.0);
 }
 
 /**********************************************************************/
 
+// Skip the given number of integers and long longs. 
+// If the MPI VFD entry format changes one day, just adapt these parameters.
 void skip_mpi_message_sample (FILE *fp) {
 #define N_MPI_SAMPLE_INT 6
 #define N_MPI_SAMPLE_LONG 2
@@ -204,6 +212,8 @@ void skip_mpi_message_sample (FILE *fp) {
 
 /**********************************************************************/
 
+// Read the stack ID, which indicates from which path the function has been called.
+// Read the time spent in this part of the program.
 void read_stack_sample (FILE *fp, int n_hw_obs, int *stack_id,
 			long long *sample_time, double **hw_values) {
 	fread (stack_id, sizeof(int), 1, fp);
@@ -215,6 +225,8 @@ void read_stack_sample (FILE *fp, int n_hw_obs, int *stack_id,
 
 /**********************************************************************/
 
+// Skip the given number of integers and long longs.
+// If the sample VFD entry format changes one day, just adapt these parameters.
 void skip_stack_sample (FILE *fp) {
 #define N_STACK_SAMPLE_INT 1
 #define N_STACK_SAMPLE_LONG 1
