@@ -33,7 +33,6 @@
 #include "vftr_pause.h"
 #include "vftr_timer.h"
 #include "vftr_stacks.h"
-#include "vftr_dlopen.h"
 #include "vftr_async_messages.h"
 
 bool vftr_profile_wanted = false;
