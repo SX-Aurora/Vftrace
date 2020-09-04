@@ -12,7 +12,7 @@ typedef struct FileHeader {
     unsigned int samplecount, sampleoffset;
     unsigned int stackscount, stacksoffset;
     unsigned int reserved;
-    int n_perf_types;
+    int n_hw_obs;
 } vfd_header_t;
 
 typedef struct FunctionEntry {

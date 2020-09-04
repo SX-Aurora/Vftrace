@@ -29,36 +29,21 @@
 
 #define RECORD_LENGTH 10240
 
-static int
-cmpstring( const void *p1, const void *p2 )
-{
-    function_entry_t *e1 = ( function_entry_t * ) p1;
-    function_entry_t *e2 = ( function_entry_t * ) p2;
+static int sort_by_function_name (const void *p1, const void *p2) {
+    function_entry_t *e1 = (function_entry_t *) p1;
+    function_entry_t *e2 = (function_entry_t *) p2;
 
-    return strcmp( e1->name, e2->name );
+    return strcmp (e1->name, e2->name);
 }
 
 int main (int argc, char **argv) {
-    FILE      *fp;
-    char       record[RECORD_LENGTH], *s;
-    char      *typename[34];
-    int        i, j, samples, nextID, levels, caller, n_precise_functions; 
+    FILE *fp;
     long file_size, max_fp;
-    double     dtime = 0.;
     char *filename;
     function_entry_t *functions = NULL;
     vfd_header_t vfd_header;
-
     stack_entry_t *stacks = NULL;
 
-    struct StackInfo {
-        int id, levels, caller, len;
-    } stackInfo;
-    
-    int this_vfd_version;
-
-    n_precise_functions   = 0;
-    
     if (argc < 2) {
 	    printf ("Usage: tracedump <vfd-file>\n");
 	    return -1;
@@ -76,6 +61,7 @@ int main (int argc, char **argv) {
 
     printf ("Reading: %s; Size: %ld bytes\n", filename, file_size);
 
+    int this_vfd_version;
     fread (&this_vfd_version, 1, sizeof(int), fp);
     printf ("VFD version: %d\n", this_vfd_version);
     if (this_vfd_version != VFD_VERSION) {
@@ -90,15 +76,16 @@ int main (int argc, char **argv) {
 	     sizeof(struct FileHeader), ftell(fp));
     print_fileheader (vfd_header);
 
-    fread (&(vfd_header.n_perf_types), sizeof(int), 1, fp);
-    printf ("n_perf_types: %d\n", vfd_header.n_perf_types);
-    double *perf_values = NULL;
-    if (vfd_header.n_perf_types > 0) {
-	init_hw_observables (fp, vfd_header.n_perf_types, &perf_values);
+    fread (&(vfd_header.n_hw_obs), sizeof(int), 1, fp);
+    printf ("n_hw_obs: %d\n", vfd_header.n_hw_obs);
+    double *hw_values = NULL;
+    if (vfd_header.n_hw_obs > 0) {
+	init_hw_observables (fp, vfd_header.n_hw_obs, &hw_values);
     }
     
     printf( "Unique stacks:   %d\n",                 vfd_header.stackscount  );
     printf ("Stacks list:\n");
+    int n_precise_functions = 0;
     read_stacks (fp, &stacks, &functions,
                  vfd_header.stackscount, vfd_header.stacksoffset,
 		 &n_precise_functions, &max_fp, false);
@@ -113,13 +100,12 @@ int main (int argc, char **argv) {
 
     printf ("\nStack and message samples:\n\n");
 
-    for(i = 0; i < vfd_header.samplecount; i++ ) {
-        int        sidw;
-	long       pos;
+    for (int i = 0; i < vfd_header.samplecount; i++ ) {
+	int sample_id;
 
-        fread (&sidw, sizeof(int), 1, fp);
+        fread (&sample_id, sizeof(int), 1, fp);
 
-        if (sidw == SID_MESSAGE) {
+        if (sample_id == SID_MESSAGE) {
 	    int direction, rank, tag, count;
 	    int type_size, type_index;
 	    double dt_start, dt_stop, rate;
@@ -131,28 +117,28 @@ int main (int argc, char **argv) {
                    "", count, vftr_get_mpitype_string_from_idx(type_index), 
                    type_size, rate, rank, tag);
             printf("%16.6f %s end\n", dt_stop, direction ? "recv" : "send");
-        } else if (sidw == SID_ENTRY || sidw == SID_EXIT) {
+        } else if (sample_id == SID_ENTRY || sample_id == SID_EXIT) {
 	    int stack_id;
 	    long long sample_time;
-	    read_stack_sample (fp, vfd_header.n_perf_types, &stack_id, &sample_time, &perf_values);
+	    read_stack_sample (fp, vfd_header.n_hw_obs, &stack_id, &sample_time, &hw_values);
             double sample_time_s = (double)sample_time * 1.0e-6;
 
             if (stacks[stack_id].fun != -1) {
-                if (sidw == SID_ENTRY) {
+                if (sample_id == SID_ENTRY) {
 			stacks[stack_id].entry_time = sample_time_s;
                 } else {
 			functions[stacks[stack_id].fun].elapse_time += (sample_time_s - stacks[stack_id].entry_time);
                 }
             }
 
-            printf("%16.6f %s ", sample_time_s, sidw == SID_ENTRY ? "call" : "exit");
+            printf("%16.6f %s ", sample_time_s, sample_id == SID_ENTRY ? "call" : "exit");
             for( ;; stack_id = stacks[stack_id].caller ) {
                printf( "%s%s", stacks[stack_id].name, stack_id ? "<" : "" );
                if(stack_id == 0) break;
              }
 	     printf("\n");
 	} else {
-            printf("ERROR: Invalid sample type: %d\n", sidw);
+            printf("ERROR: Invalid sample type: %d\n", sample_id);
             return 1;
         }
     }
@@ -165,26 +151,26 @@ int main (int argc, char **argv) {
     } else {
 	    printf ("SUCCESS: All bytes have been read\n");
     }
-    fclose( fp );
+    fclose (fp);
 
-    if(n_precise_functions != 0) {
+    if (n_precise_functions != 0) {
         int l = 0;
         char fmt[16];
 
-        qsort(functions, n_precise_functions, sizeof(function_entry_t), cmpstring);
+        qsort (functions, n_precise_functions, sizeof(function_entry_t), sort_by_function_name);
 
-        for( i = 0; i < n_precise_functions; i++ ) {
-            if( strlen(functions[i].name) > l )
+        for ( int i = 0; i < n_precise_functions; i++) {
+            if (strlen(functions[i].name) > l)
                 l = strlen(functions[i].name);
         }
-        sprintf( fmt, "%%%ds %%12.6f\n", l + 2 );
-        fprintf( stdout, "\nElapse time for \"precise\" functions (including sub routine):\n\n" );
-        for( i = 0; i < n_precise_functions; i++ ) {
-            fprintf( stdout, fmt, functions[i].name, functions[i].elapse_time );
+        sprintf (fmt, "%%%ds %%12.6f\n", l + 2);
+        fprintf (stdout, "\nElapse time for \"precise\" functions (including sub routine):\n\n");
+        for (int i = 0; i < n_precise_functions; i++) {
+            fprintf (stdout, fmt, functions[i].name, functions[i].elapse_time);
         }
     }
 
-    if (perf_values) free (perf_values);
+    if (hw_values) free (hw_values);
     free (stacks);
     free (functions);
 
