@@ -235,6 +235,7 @@ AM_COND_IF([MPI_PROFILING],
                             test/mpi/c-mpi/ibcast_intercom.sh:test/mpi/testscripts/ibcast_intercom.sh
                             test/mpi/c-mpi/gather.sh:test/mpi/testscripts/gather.sh
                             test/mpi/c-mpi/gather_intercom.sh:test/mpi/testscripts/gather_intercom.sh
+                            test/mpi/c-mpi/gather_inplace.sh:test/mpi/testscripts/gather_inplace.sh
                             test/mpi/c-mpi/igather.sh:test/mpi/testscripts/igather.sh
                             test/mpi/c-mpi/igather_intercom.sh:test/mpi/testscripts/igather_intercom.sh
                             test/mpi/c-mpi/gatherv.sh:test/mpi/testscripts/gatherv.sh
@@ -317,6 +318,7 @@ AM_COND_IF([MPI_PROFILING],
                             test/mpi/f-mpi/ibcast_intercom.sh:test/mpi/testscripts/ibcast_intercom.sh
                             test/mpi/f-mpi/gather.sh:test/mpi/testscripts/gather.sh
                             test/mpi/f-mpi/gather_intercom.sh:test/mpi/testscripts/gather_intercom.sh
+                            test/mpi/f-mpi/gather_inplace.sh:test/mpi/testscripts/gather_inplace.sh
                             test/mpi/f-mpi/igather.sh:test/mpi/testscripts/igather.sh
                             test/mpi/f-mpi/igather_intercom.sh:test/mpi/testscripts/igather_intercom.sh
                             test/mpi/f-mpi/gatherv.sh:test/mpi/testscripts/gatherv.sh
@@ -399,6 +401,7 @@ AM_COND_IF([MPI_PROFILING],
                             test/mpi/f08-mpi/ibcast_intercom.sh:test/mpi/testscripts/ibcast_intercom.sh
                             test/mpi/f08-mpi/gather.sh:test/mpi/testscripts/gather.sh
                             test/mpi/f08-mpi/gather_intercom.sh:test/mpi/testscripts/gather_intercom.sh
+                            test/mpi/f08-mpi/gather_inplace.sh:test/mpi/testscripts/gather_inplace.sh
                             test/mpi/f08-mpi/igather.sh:test/mpi/testscripts/igather.sh
                             test/mpi/f08-mpi/igather_intercom.sh:test/mpi/testscripts/igather_intercom.sh
                             test/mpi/f08-mpi/gatherv.sh:test/mpi/testscripts/gatherv.sh
