@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 #ifdef _MPI
 #include <mpi.h>
 #endif

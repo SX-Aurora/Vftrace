@@ -317,9 +317,17 @@ dist_noinst_SCRIPTS += bcast.sh \
 #####################
 
 check_PROGRAMS += reduce \
-		   reduce_intercom \
-		   allreduce \
-		   allreduce_intercom
+		  reduce_intercom \
+		  ireduce \
+		  ireduce_intercom \
+		  allreduce \
+		  allreduce_intercom \
+		  iallreduce \
+		  iallreduce_intercom \
+		  scan \
+		  iscan \
+		  exscan \
+		  iexscan
 
 reduce_SOURCES = $(srcdir)/reduce.F90
 reduce_FCFLAGS = $(AM_FCFLAGS)
@@ -329,6 +337,14 @@ reduce_intercom_SOURCES = $(srcdir)/reduce_intercom.F90
 reduce_intercom_FCFLAGS = $(AM_FCFLAGS)
 reduce_intercom_LDFLAGS = $(AM_LDFLAGS)
 
+ireduce_SOURCES = $(srcdir)/ireduce.F90
+ireduce_FCFLAGS = $(AM_FCFLAGS)
+ireduce_LDFLAGS = $(AM_LDFLAGS)
+
+ireduce_intercom_SOURCES = $(srcdir)/ireduce_intercom.F90
+ireduce_intercom_FCFLAGS = $(AM_FCFLAGS)
+ireduce_intercom_LDFLAGS = $(AM_LDFLAGS)
+
 allreduce_SOURCES = $(srcdir)/allreduce.F90
 allreduce_FCFLAGS = $(AM_FCFLAGS)
 allreduce_LDFLAGS = $(AM_LDFLAGS)
@@ -337,10 +353,42 @@ allreduce_intercom_SOURCES = $(srcdir)/allreduce_intercom.F90
 allreduce_intercom_FCFLAGS = $(AM_FCFLAGS)
 allreduce_intercom_LDFLAGS = $(AM_LDFLAGS)
 
+iallreduce_SOURCES = $(srcdir)/iallreduce.F90
+iallreduce_FCFLAGS = $(AM_FCFLAGS)
+iallreduce_LDFLAGS = $(AM_LDFLAGS)
+
+iallreduce_intercom_SOURCES = $(srcdir)/iallreduce_intercom.F90
+iallreduce_intercom_FCFLAGS = $(AM_FCFLAGS)
+iallreduce_intercom_LDFLAGS = $(AM_LDFLAGS)
+
+scan_SOURCES = $(srcdir)/scan.F90
+scan_FCFLAGS = $(AM_FCFLAGS)
+scan_LDFLAGS = $(AM_LDFLAGS)
+
+iscan_SOURCES = $(srcdir)/iscan.F90
+iscan_FCFLAGS = $(AM_FCFLAGS)
+iscan_LDFLAGS = $(AM_LDFLAGS)
+
+exscan_SOURCES = $(srcdir)/exscan.F90
+exscan_FCFLAGS = $(AM_FCFLAGS)
+exscan_LDFLAGS = $(AM_LDFLAGS)
+
+iexscan_SOURCES = $(srcdir)/iexscan.F90
+iexscan_FCFLAGS = $(AM_FCFLAGS)
+iexscan_LDFLAGS = $(AM_LDFLAGS)
+
 dist_noinst_SCRIPTS += reduce.sh \
 		       reduce_intercom.sh \
+		       ireduce.sh \
+		       ireduce_intercom.sh \
 		       allreduce.sh \
-		       allreduce_intercom.sh
+		       allreduce_intercom.sh \
+		       iallreduce.sh \
+		       iallreduce_intercom.sh \
+		       scan.sh \
+		       iscan.sh \
+		       exscan.sh \
+		       iexscan.sh
 
 ###################
 # One sided tests #

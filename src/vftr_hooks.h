@@ -26,4 +26,6 @@ int vftr_compare (const void *a1, const void *a2);
 void vftr_function_entry (const char *s, void *addr, int line, bool isPrecise);
 void vftr_function_exit (int line);
 
+void vftr_save_old_state ();
+
 #endif

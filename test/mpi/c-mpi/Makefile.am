@@ -318,8 +318,16 @@ dist_noinst_SCRIPTS += bcast.sh \
 
 check_PROGRAMS += reduce \
 		  reduce_intercom \
+		  ireduce \
+		  ireduce_intercom \
 		  allreduce \
-		  allreduce_intercom
+		  allreduce_intercom \
+		  iallreduce \
+		  iallreduce_intercom \
+		  scan \
+		  iscan \
+		  exscan \
+		  iexscan
 
 reduce_SOURCES = $(srcdir)/reduce.c
 reduce_CFLAGS = $(AM_CFLAGS)
@@ -329,6 +337,14 @@ reduce_intercom_SOURCES = $(srcdir)/reduce_intercom.c
 reduce_intercom_CFLAGS = $(AM_CFLAGS)
 reduce_intercom_LDFLAGS = $(AM_LDFLAGS)
 
+ireduce_SOURCES = $(srcdir)/ireduce.c
+ireduce_CFLAGS = $(AM_CFLAGS)
+ireduce_LDFLAGS = $(AM_LDFLAGS)
+
+ireduce_intercom_SOURCES = $(srcdir)/ireduce_intercom.c
+ireduce_intercom_CFLAGS = $(AM_CFLAGS)
+ireduce_intercom_LDFLAGS = $(AM_LDFLAGS)
+
 allreduce_SOURCES = $(srcdir)/allreduce.c
 allreduce_CFLAGS = $(AM_CFLAGS)
 allreduce_LDFLAGS = $(AM_LDFLAGS)
@@ -337,10 +353,40 @@ allreduce_intercom_SOURCES = $(srcdir)/allreduce_intercom.c
 allreduce_intercom_CFLAGS = $(AM_CFLAGS)
 allreduce_intercom_LDFLAGS = $(AM_LDFLAGS)
 
+iallreduce_SOURCES = $(srcdir)/iallreduce.c
+iallreduce_CFLAGS = $(AM_CFLAGS)
+iallreduce_LDFLAGS = $(AM_LDFLAGS)
+
+iallreduce_intercom_SOURCES = $(srcdir)/iallreduce_intercom.c
+iallreduce_intercom_CFLAGS = $(AM_CFLAGS)
+iallreduce_intercom_LDFLAGS = $(AM_LDFLAGS)
+
+scan_SOURCES = $(srcdir)/scan.c
+scan_CFLAGS = $(AM_CFLAGS)
+scan_LDFLAGS = $(AM_LDFLAGS)
+
+iscan_SOURCES = $(srcdir)/iscan.c
+iscan_CFLAGS = $(AM_CFLAGS)
+iscan_LDFLAGS = $(AM_LDFLAGS)
+
+exscan_SOURCES = $(srcdir)/exscan.c
+exscan_CFLAGS = $(AM_CFLAGS)
+exscan_LDFLAGS = $(AM_LDFLAGS)
+
+iexscan_SOURCES = $(srcdir)/iexscan.c
+iexscan_CFLAGS = $(AM_CFLAGS)
+iexscan_LDFLAGS = $(AM_LDFLAGS)
+
 dist_noinst_SCRIPTS += reduce.sh \
 		       reduce_intercom.sh \
+		       ireduce.sh \
+		       ireduce_intercom.sh \
 		       allreduce.sh \
-		       allreduce_intercom.sh
+		       allreduce_intercom.sh \
+		       scan.sh \
+		       iscan.sh \
+		       exscan.sh \
+		       iexscan.sh
 
 ###################
 # One sided tests #

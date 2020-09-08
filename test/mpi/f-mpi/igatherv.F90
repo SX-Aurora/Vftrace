@@ -66,6 +66,10 @@ PROGRAM igatherv
       END DO
       ALLOCATE(rbuffer(ntot))
       rbuffer(:) = -1
+   ELSE
+      ALLOCATE(recvcounts(0))
+      ALLOCATE(displs(0))
+      ALLOCATE(rbuffer(0))
    END IF
 
    ! Message
@@ -92,12 +96,12 @@ PROGRAM igatherv
             END IF
          END DO
       END DO
-      DEALLOCATE(rbuffer)
-
-      DEALLOCATE(recvcounts)
-      DEALLOCATE(displs)
    END IF
 
+   DEALLOCATE(recvcounts)
+   DEALLOCATE(displs)
+
+   DEALLOCATE(rbuffer)
    DEALLOCATE(sbuffer)
 
    CALL MPI_Finalize(ierr)

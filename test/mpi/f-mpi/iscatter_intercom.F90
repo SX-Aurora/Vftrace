@@ -85,6 +85,8 @@ PROGRAM scatter_intercom
          jrank = sub_comm_size + irank
          sbuffer(:,irank+1) = jrank
       END DO
+   ELSE
+      ALLOCATE(sbuffer(0,0))
    END IF
 
    ! prepare the intercomm root assignment
@@ -134,8 +136,7 @@ PROGRAM scatter_intercom
    CALL MPI_Comm_free(sub_comm, ierr)
 
    DEALLOCATE(rbuffer)
-
-   IF (my_rank == rootrank) DEALLOCATE(sbuffer)
+   DEALLOCATE(sbuffer)
 
    CALL MPI_Finalize(ierr)
 

@@ -33,7 +33,6 @@
 #include "vftr_pause.h"
 #include "vftr_timer.h"
 #include "vftr_stacks.h"
-#include "vftr_dlopen.h"
 #include "vftr_async_messages.h"
 
 bool vftr_profile_wanted = false;
@@ -130,7 +129,7 @@ void vftr_function_entry (const char *s, void *addr, int line, bool isPrecise) {
         // No calls at all yet: add new function
         func = vftr_new_function(addr, s, caller, line, isPrecise);
     } else {
-	// Search the function name in the function list
+	// Search the function address in the function list
         func = callee;
         if (func->address != addr) {
            for ( ;; ) {

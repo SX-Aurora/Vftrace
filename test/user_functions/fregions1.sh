@@ -7,6 +7,7 @@ nprocs=1
 
 export VFTR_SAMPLING="Yes"
 export VFTR_PROF_TRUNCATE="no"
+export VFTR_REGIONS_PRECISE="yes"
 
 if [ "x$HAS_MPI" == "xYES" ]; then
    ${MPI_EXEC} ${NP} ${nprocs} ./${vftr_binary} || exit 1

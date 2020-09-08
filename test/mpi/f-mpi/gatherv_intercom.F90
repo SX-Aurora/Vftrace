@@ -98,10 +98,16 @@ PROGRAM gatherv_intercom
       ELSE
          ! Ideling processes
          root = MPI_PROC_NULL
+         ALLOCATE(recvcounts(0))
+         ALLOCATE(displs(0))
+         ALLOCATE(rbuffer(0))
       END IF
    ELSE
       ! Sub communicator or sending group
       root = 0 ! receiving rank in remote group
+      ALLOCATE(recvcounts(0))
+      ALLOCATE(displs(0))
+      ALLOCATE(rbuffer(0))
    END IF
 
    CALL MPI_Gatherv(sbuffer, nints, MPI_INTEGER, &
@@ -128,15 +134,15 @@ PROGRAM gatherv_intercom
             END IF
          END DO
       END DO
-      DEALLOCATE(rbuffer)
-
-      DEALLOCATE(recvcounts)
-      DEALLOCATE(displs)
    END IF
 
    CALL MPI_Comm_free(int_comm, ierr)
    CALL MPI_Comm_free(sub_comm, ierr)
 
+   DEALLOCATE(recvcounts)
+   DEALLOCATE(displs)
+
+   DEALLOCATE(rbuffer)
    DEALLOCATE(sbuffer)
 
    CALL MPI_Finalize(ierr)
