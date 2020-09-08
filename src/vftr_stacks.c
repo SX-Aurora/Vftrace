@@ -656,7 +656,59 @@ int vftr_stacks_test_1 (FILE *fp_in, FILE *fp_out) {
 	fprintf (fp_out, "%s: %d %d\n", func5->name, func5->id, func5->gid);
 	fprintf (fp_out, "%s: %d %d\n", func6->name, func6->id, func6->gid);
 	fprintf (fp_out, "%s: %d %d\n", func7->name, func7->id, func7->gid);
+	fprintf (fp_out, "Global stacklist: \n");
+	vftr_print_global_stacklist (fp_out);
 	return 0;
 }
 
 /**********************************************************************/
+
+int vftr_stacks_test_2 (FILE *fp_in, FILE *fp_out) {
+	unsigned long long addrs[6];
+	function_t *func0 = vftr_new_function (NULL, "init", NULL, 0, false);	
+	if (vftr_mpirank == 0) {
+		function_t *func1 = vftr_new_function ((void*)addrs, "func1", func0, 0, false);
+		function_t *func2 = vftr_new_function ((void*)(addrs + 1), "func2", func1, 0, false);
+		function_t *func3 = vftr_new_function ((void*)(addrs + 2), "func3", func2, 0, false);
+		function_t *func4 = vftr_new_function ((void*)(addrs + 3), "func4", func3, 0, false);
+	} else if (vftr_mpirank == 1) {
+		function_t *func1 = vftr_new_function ((void*)addrs, "func1", func0, 0, false);
+		function_t *func2 = vftr_new_function ((void*)(addrs + 2), "func3", func1, 0, false);
+		function_t *func3 = vftr_new_function ((void*)(addrs + 1), "func2", func2, 0, false);
+		function_t *func4 = vftr_new_function ((void*)(addrs + 3), "func4", func3, 0, false);
+	} else if (vftr_mpirank == 2) {	
+		function_t *func1 = vftr_new_function ((void*)addrs, "func1", func0, 0, false);
+		function_t *func2 = vftr_new_function ((void*)(addrs + 1), "func2", func1, 0, false);
+		function_t *func3 = vftr_new_function ((void*)(addrs + 1), "func2", func2, 0, false);
+		function_t *func4 = vftr_new_function ((void*)(addrs + 1), "func2", func3, 0, false);
+	} else if (vftr_mpirank == 3) {
+		function_t *func1 = vftr_new_function ((void*)addrs, "func1", func0, 0, false);
+		function_t *func2 = vftr_new_function ((void*)(addrs + 3), "func4", func1, 0, false);
+	} else {
+		fprintf (fp_out, "Error: Invalid MPI rank (%d)!\n", vftr_mpirank);
+		return -1;
+	}
+
+	vftr_normalize_stacks();
+
+	// Needs to be set for printing the local stacklist
+	vftr_profile_wanted = true;
+	for (int i = 0; i < 4; i++) {
+		if (vftr_mpirank == i) {
+			fprintf (fp_out, "Local stacklist for rank %d: \n", i);
+			int ntop = vftr_mpirank == 3 ? 5 : 7;
+			vftr_print_local_stacklist (vftr_func_table, fp_out, ntop);
+		}
+		MPI_Barrier (MPI_COMM_WORLD);
+	}
+
+
+	if (vftr_mpirank == 0) {
+		fprintf (fp_out, "Global stacklist: \n");
+		vftr_print_global_stacklist (fp_out);
+	}
+	return 0;
+}
+
+/**********************************************************************/
+
