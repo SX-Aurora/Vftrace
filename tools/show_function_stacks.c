@@ -232,6 +232,8 @@ int main (int argc, char **argv) {
 
     bool *all_stack_ids[n_vfds];
     int n_stack_ids[n_vfds];
+    
+    stack_leaf_t *stack_tree = NULL;
 
     for (int i_vfd = 0; i_vfd < n_vfds; i_vfd++) {
 
@@ -303,9 +305,9 @@ int main (int argc, char **argv) {
 					stacks[stack_id].name);
 				has_been_warned = true;
 			}
+			fill_into_stack_tree (&stack_tree, stacks, stack_id,
+					      sample_id, 0.0, i_vfd, n_vfds);	
 
-			all_stack_ids[i_vfd][stack_id] = true;
-			n_stack_ids[i_vfd]++;
 		    }
 		} else {
 	            printf("ERROR: Invalid sample type: %d\n", sample_id);
@@ -313,98 +315,11 @@ int main (int argc, char **argv) {
 	        }
 	    }
 	
-	    int n_local_stacks = 0;
-	    for (int i = 0; i < vfd_header.stackscount; i++) {
-		if (all_stack_ids[i_vfd][i]) {
-			n_local_stacks++;	
-		}
-	    }
-	    if (n_local_stacks == 0) {
-		vfd_has_no_stacks[i_vfd] = true;
-		continue;
-	    }
-	    n_tot_stacks += n_local_stacks;
-	    if (n_tot_stacks > hashlist_size) {
-		hashlist_size += HASH_INCREMENT;
-		hashes = realloc (hashes, hashlist_size);
-	    }
-
-	    for (int i = 0; i < vfd_header.stackscount; i++) {
-		if (all_stack_ids[i_vfd][i]) {
-			hashes[i_hash++] = generate_stack_hash (stacks, i);
-		}
-	    }
 	   
 	    fclose (fp);
 	    free (stacks);
 	    free (precise_functions);
     }
-    
-    int n_hashes = i_hash;
-    vftr_radixsort_uint64 (n_hashes, hashes);
-    int j = 0;
-    for (int i = 0; i < n_hashes; i++) {
-	if (hashes[i] != hashes[j]) {
-		j++;
-		hashes[j] = hashes[i];
-	}
-    }
-    n_hashes = j + 1;
-    
-    
-    bool hash_has_been_used [n_hashes];
-    for (int i = 0; i < n_hashes; i++) {
-	hash_has_been_used [i] = false;
-    }
-	    
-    stack_leaf_t *stack_tree = NULL;
-
-    for (int i_vfd = 0; i_vfd < n_vfds; i_vfd++) {
-	filename = argv[i_vfd + 1];
-	fp = fopen (filename, "r");
-	assert (fp);	
-	int dummy;
-	fread (&dummy, 1, sizeof(int), fp);
-	read_fileheader (&vfd_header, fp);
-	fread (&(vfd_header.n_hw_obs), sizeof(int), 1, fp);
-	skip_hw_observables (fp, vfd_header.n_hw_obs);	
-	n_precise_functions = 0;
-	read_stacks (fp, &stacks, &precise_functions,
-			 vfd_header.stackscount, vfd_header.stacksoffset, 
-	                 &n_precise_functions, NULL);
-	for (int i = 0; i < vfd_header.stackscount; i++) {
-		if (stacks[i].precise) {
-			stacks[i].name = strip_trailing_asterisk(stacks[i].name);
-		}
-	}
-
-	fseek (fp, vfd_header.sampleoffset, SEEK_SET);
-	for (int i = 0; i < vfd_header.samplecount; i++) {
-		int sample_id;
-		fread (&sample_id, sizeof(int), 1, fp);
-		if (sample_id == SID_MESSAGE) {
-			skip_mpi_message_sample (fp);
-		} else if (sample_id == SID_ENTRY || sample_id == SID_EXIT) {
-			int stack_id;
-			long long sample_time;
-			read_stack_sample (fp, vfd_header.n_hw_obs, &stack_id, &sample_time, NULL);
-		        
-			if (all_stack_ids[i_vfd][stack_id]) {
-				//int i_hash = get_hash(generate_stack_hash (stacks, stack_id), hashes, n_hashes);
-				//if (i_hash < 0) {}
-				//if (i_hash >= 0 &&!hash_has_been_used[i_hash]) {
-					fill_into_stack_tree (&stack_tree, stacks, stack_id,
-							      sample_id, 0.0, i_vfd, n_vfds);	
-//					hash_has_been_used [i_hash] = true;
-				//}	
-			}
-		}
-	}
-	fclose (fp);
-	free(stacks);
-	free(precise_functions);
-    }   
-    
 
     double total_mpi_time = 0.0;
     print_stacktree (stack_tree->origin, 0, &total_mpi_time);
