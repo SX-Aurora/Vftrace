@@ -3,6 +3,8 @@
 
 #define RECORD_LENGTH 10240
 
+#include <stdint.h>
+
 typedef struct FileHeader {
     char fileid[VFTR_FILEIDSIZE], date[24];
     long long interval;
@@ -32,8 +34,10 @@ typedef struct StackEntry {
 bool is_precise (char *s);
 char *strip_trailing_asterisk (char *s);
 
+uint64_t generate_stack_hash (stack_entry_t *stacks, int id0);
+
 void read_fileheader (vfd_header_t *vfd_header, FILE *fp);
-void read_stacks (FILE *fp, stack_entry_t **satcks, function_entry_t **functions,
+void read_stacks (FILE *fp, stack_entry_t **stacks, function_entry_t **functions,
 		  unsigned int stacks_count, unsigned int stacks_offset,
 		  int *n_precise_function, long *max_fp);
 

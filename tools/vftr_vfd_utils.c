@@ -22,6 +22,7 @@
 #include "vftr_scenarios.h"
 #include "vftr_filewrite.h"
 #include "vftr_vfd_utils.h"
+#include "vftr_hashing.h"
 
 void read_fileheader (vfd_header_t *vfd_header, FILE *fp) {
     fread (&vfd_header->fileid, 1, VFTR_FILEIDSIZE, fp);
@@ -116,6 +117,31 @@ void read_stacks (FILE *fp, stack_entry_t **stacks, function_entry_t **precise_f
             }
         }
     }
+}
+
+/**********************************************************************/
+
+uint64_t generate_stack_hash (stack_entry_t *stacks, int id0) {
+	//printf ("Generate hash: %d\n", id0);
+	int stackstrlength = strlen(stacks[id0].name);	
+	int stack_id = id0;
+  	while (stack_id = stacks[stack_id].caller) {
+		stackstrlength += strlen(stacks[stack_id].name);
+	}
+	char *stackstr = (char*)malloc((1+stackstrlength)*sizeof(char));
+	char *strptr = stackstr;
+	strcpy (strptr, stacks[id0].name);
+	strptr += strlen(stacks[id0].name);
+	stack_id = id0;
+	while (stack_id = stacks[stack_id].caller) {
+		strcpy (strptr, stacks[stack_id].name);
+		strptr += strlen(stacks[stack_id].name);
+	}
+	//printf ("stackstr: %s\n", stackstr);
+	return vftr_jenkins_murmur_64_hash (stackstrlength, (uint8_t*)stackstr);
+		//while (stack_id = stacks[stack_id].caller) {
+		//	stack_ids[stack_id]++;
+		//}	
 }
 
 /**********************************************************************/
