@@ -71,6 +71,42 @@ void evaluate_mpi_time (double *all_times,
 
 /**********************************************************************/
 
+// Auxiliary functions for colored output of MPI imbalance values
+
+void set_red () {
+	printf ("\033[0;31m");
+}
+
+void set_orange () {
+	printf ("\033[0;33m");
+}
+
+void set_green () {
+	printf ("\033[0;32m");	
+}
+
+void reset_colors () {
+	printf ("\033[0m");	
+}
+
+/**********************************************************************/
+
+void print_mpi_times (double t_avg, double t_min, double t_max, double imbalance) {
+	// MPI imbalances are highlighted in color 
+	printf (": MPI %4.3f %4.3f %4.3f ", t_avg, t_min, t_max);
+	if (imbalance < 10) {
+		set_green ();
+	} else if (imbalance > 5 && imbalance < 50) {
+		set_orange ();
+	} else {
+		set_red();
+	}
+	printf ("%4.2f %%\n", imbalance);
+	reset_colors();
+}
+
+/**********************************************************************/
+
 void print_stacktree (stack_leaf_t *leaf, int n_spaces, double *total_mpi_time) {
 	if (!leaf) return;
 	printf ("%s", leaf->function_name);
@@ -82,7 +118,7 @@ void print_stacktree (stack_leaf_t *leaf, int n_spaces, double *total_mpi_time) 
 		double t_avg, t_min, t_max, imbalance;
 		evaluate_mpi_time (leaf->time_spent,
 				   &t_avg, &t_min, &t_max, &imbalance);
-		printf (": MPI %4.3f %4.3f %4.3f %4.2f %%\n", t_avg, t_min, t_max, imbalance);
+		print_mpi_times (t_avg, t_min, t_max, imbalance);
 		*total_mpi_time = *total_mpi_time + leaf->time_spent[0];
 	}
 	if (leaf->next_in_level) {
@@ -264,6 +300,8 @@ int main (int argc, char **argv) {
     int n_stack_ids[n_vfds];
     
     stack_leaf_t *stack_tree = NULL;
+
+    printf ("Processing %d vfd files\n", n_vfds);
 
     for (int i_vfd = 0; i_vfd < n_vfds; i_vfd++) {
 
