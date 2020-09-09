@@ -23,6 +23,7 @@
 #include <assert.h>
 #include <time.h>
 #include <byteswap.h>
+#include <limits.h>
 #include "vftr_scenarios.h"
 #include "vftr_filewrite.h"
 #include "vftr_mpi_utils.h"
@@ -42,6 +43,32 @@ typedef struct stack_leaf {
 
 /**********************************************************************/
 
+void evaluate_mpi_time (double *all_times, int n_vfd, 
+			double *t_avg, double *t_min, double *t_max, double *imbalance) {
+	*t_avg = 0.0;
+	*t_min = LONG_MAX;
+	*t_max = 0.0; 
+	int n = 0;
+	for (int i = 0; i < n_vfd; i++) {
+		if (all_times[i] > 0) {
+			n++;
+			*t_avg = ((n - 1) * (*t_avg) + all_times[i]) / n;
+
+			if (all_times[i] > *t_max) {
+				*t_max = all_times[i];
+			}
+			if (all_times[i] < *t_min) {
+				*t_min = all_times[i];
+			}
+		}
+	}
+	double d1 = *t_avg - *t_min;
+	double d2 = *t_max - *t_avg;
+	*imbalance = d1 > d2 ? d1 / *t_avg * 100 : d2 / *t_avg * 100;
+}
+
+/**********************************************************************/
+
 void print_stacktree (stack_leaf_t *leaf, int n_spaces, double *total_mpi_time) {
 	if (!leaf) return;
 	printf ("%s", leaf->function_name);
@@ -50,7 +77,10 @@ void print_stacktree (stack_leaf_t *leaf, int n_spaces, double *total_mpi_time) 
 		int new_n_spaces = n_spaces + strlen(leaf->function_name) + 1;
 		print_stacktree (leaf->callee, new_n_spaces, total_mpi_time);
 	} else {
-		printf (": MPI time %4.3f s\n", leaf->time_spent[0]);	
+		double t_avg, t_min, t_max, imbalance;
+		evaluate_mpi_time (leaf->time_spent, 64,
+				   &t_avg, &t_min, &t_max, &imbalance);
+		printf (": MPI %4.3f %4.3f %4.3f %4.2f %%\n", t_avg, t_min, t_max, imbalance);
 		*total_mpi_time = *total_mpi_time + leaf->time_spent[0];
 	}
 	if (leaf->next_in_level) {
@@ -283,7 +313,6 @@ int main (int argc, char **argv) {
 		all_stack_ids[i_vfd][i] = false;
 	    }
 	
-	    printf ("samplecount 1: %d\n", vfd_header.samplecount);
 	    for (int i = 0; i < vfd_header.samplecount; i++ ) {
 	        int sample_id;
 	
@@ -306,7 +335,7 @@ int main (int argc, char **argv) {
 				has_been_warned = true;
 			}
 			fill_into_stack_tree (&stack_tree, stacks, stack_id,
-					      sample_id, 0.0, i_vfd, n_vfds);	
+					      sample_id, sample_time_s, i_vfd, n_vfds);	
 
 		    }
 		} else {
