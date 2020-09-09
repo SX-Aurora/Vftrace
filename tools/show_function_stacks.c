@@ -36,8 +36,8 @@ typedef struct stack_leaf {
 	struct stack_leaf *next_in_level;
 	struct stack_leaf *callee;	
 	struct stack_leaf *origin;
-	double entry_time;
-	double time_spent;
+	double *entry_time;
+	double *time_spent;
 } stack_leaf_t;	
 
 /**********************************************************************/
@@ -50,8 +50,8 @@ void print_stacktree (stack_leaf_t *leaf, int n_spaces, double *total_mpi_time) 
 		int new_n_spaces = n_spaces + strlen(leaf->function_name) + 1;
 		print_stacktree (leaf->callee, new_n_spaces, total_mpi_time);
 	} else {
-		printf (": MPI time %4.3f s\n", leaf->time_spent);	
-		*total_mpi_time = *total_mpi_time + leaf->time_spent;
+		printf (": MPI time %4.3f s\n", leaf->time_spent[0]);	
+		*total_mpi_time = *total_mpi_time + leaf->time_spent[0];
 	}
 	if (leaf->next_in_level) {
 		for (int i = 0; i < n_spaces; i++) printf (" ");
@@ -92,7 +92,7 @@ int get_hash (uint64_t this_hash, uint64_t *hashes, int n_hashes) {
 /**********************************************************************/
 
 void fill_into_stack_tree (stack_leaf_t **this_leaf, stack_entry_t *stacks,
-			   int stackID_0, int sample_id, double stime) {
+			   int stackID_0, int sample_id, double stime, int i_vfd, int n_vfds) {
   	int stackID = stackID_0;
 	int stack_ids[100];
 	int n_stack_ids = 0;
@@ -111,8 +111,16 @@ void fill_into_stack_tree (stack_leaf_t **this_leaf, stack_entry_t *stacks,
 		(*this_leaf)->callee = NULL;
 		(*this_leaf)->origin = (stack_leaf_t*) malloc (sizeof(stack_leaf_t));
 		(*this_leaf)->origin = *this_leaf;
-		(*this_leaf)->entry_time = 0.0;
-		(*this_leaf)->time_spent = 0.0;
+		printf ("First leaf!\n");
+		(*this_leaf)->entry_time = (double*)malloc (n_vfds * sizeof(double));
+		(*this_leaf)->time_spent = (double*)malloc (n_vfds * sizeof(double));
+		for (int i = 0; i < n_vfds; i++) {
+			(*this_leaf)->entry_time[i] = 0.0;
+			(*this_leaf)->time_spent[i] = 0.0;
+		}
+		printf ("First leaf done\n");
+		//(*this_leaf)->entry_time = 0.0;
+		//(*this_leaf)->time_spent = 0.0;
 	}
 	for (int level = n_stack_ids - 2; level >= 0; level--) {
 		stackID = stack_ids[level];
@@ -130,15 +138,22 @@ void fill_into_stack_tree (stack_leaf_t **this_leaf, stack_entry_t *stacks,
 					(*this_leaf)->next_in_level->callee = NULL;
 					(*this_leaf)->next_in_level->origin = (stack_leaf_t*)malloc (sizeof(stack_leaf_t));
 					(*this_leaf)->next_in_level->origin = (*this_leaf)->origin;
+					(*this_leaf)->next_in_level->entry_time = (double*)malloc (n_vfds * sizeof(double));
+					(*this_leaf)->next_in_level->time_spent = (double*)malloc (n_vfds * sizeof(double));						
+					for (int i = 0; i < n_vfds; i++) {
+							(*this_leaf)->next_in_level->entry_time[i_vfd] = 0.0;
+							(*this_leaf)->next_in_level->time_spent[i_vfd] = 0.0;
+					}
+
 					if (level == 0) {
 						if (sample_id == SID_ENTRY) {
-							(*this_leaf)->next_in_level->entry_time = stime;
+							(*this_leaf)->next_in_level->entry_time[i_vfd] = stime;
 						} else {
-							(*this_leaf)->next_in_level->time_spent += (stime - (*this_leaf)->next_in_level->entry_time);
+							(*this_leaf)->next_in_level->time_spent[i_vfd] += (stime - (*this_leaf)->next_in_level->entry_time[i_vfd]);
 						}
 					} else {
-						(*this_leaf)->next_in_level->entry_time = 0.0;
-						(*this_leaf)->next_in_level->time_spent = 0.0;
+						//(*this_leaf)->next_in_level->entry_time = 0.0;
+						//(*this_leaf)->next_in_level->time_spent = 0.0;
 					}
 					*this_leaf = (*this_leaf)->next_in_level;
 					break;
@@ -146,9 +161,9 @@ void fill_into_stack_tree (stack_leaf_t **this_leaf, stack_entry_t *stacks,
 			}
 			if (level == 0) {
 				if (sample_id == SID_ENTRY) {
-					(*this_leaf)->entry_time = stime;
+					(*this_leaf)->entry_time[i_vfd] = stime;
 				} else {
-					(*this_leaf)->time_spent += (stime - (*this_leaf)->entry_time);
+					(*this_leaf)->time_spent[i_vfd] += (stime - (*this_leaf)->entry_time[i_vfd]);
 				}
 			}	
 		} else {
@@ -159,15 +174,23 @@ void fill_into_stack_tree (stack_leaf_t **this_leaf, stack_entry_t *stacks,
 			(*this_leaf)->callee->callee = NULL;
 			(*this_leaf)->callee->origin = (stack_leaf_t*)malloc (sizeof(stack_leaf_t));
 			(*this_leaf)->callee->origin = (*this_leaf)->origin;
+				
+			(*this_leaf)->callee->entry_time = (double*)malloc (n_vfds * sizeof(double));	
+			(*this_leaf)->callee->time_spent = (double*)malloc (n_vfds * sizeof(double));	
+			for (int i = 0; i < n_vfds; i++) {
+					(*this_leaf)->callee->entry_time[i_vfd] = 0.0;
+					(*this_leaf)->callee->time_spent[i_vfd] = 0.0;
+			}
+
 			if (level == 0) {
 				if (sample_id == SID_ENTRY) {
-					(*this_leaf)->callee->entry_time = stime;	
+					(*this_leaf)->callee->entry_time[i_vfd] = stime;	
 				} else {
-					(*this_leaf)->callee->time_spent += (stime - (*this_leaf)->callee->entry_time);
+					(*this_leaf)->callee->time_spent[i_vfd] += (stime - (*this_leaf)->callee->entry_time[i_vfd]);
 				}
 			} else {
-				(*this_leaf)->callee->entry_time = 0.0;
-				(*this_leaf)->callee->time_spent = 0.0;
+				//(*this_leaf)->callee->entry_time = 0.0;
+				//(*this_leaf)->callee->time_spent = 0.0;
 			}
 			*this_leaf = (*this_leaf)->callee;
 		}
@@ -207,7 +230,7 @@ int main (int argc, char **argv) {
 	vfd_has_no_stacks[i] = false;
     }
 
-    int *all_stack_ids[n_vfds];
+    bool *all_stack_ids[n_vfds];
     int n_stack_ids[n_vfds];
 
     for (int i_vfd = 0; i_vfd < n_vfds; i_vfd++) {
@@ -241,7 +264,6 @@ int main (int argc, char **argv) {
 	    read_stacks (fp, &stacks, &precise_functions,
 			 vfd_header.stackscount, vfd_header.stacksoffset, 
 	                 &n_precise_functions, NULL);
-	    //printf ("Stacks read\n");
 	
 	    for (int i = 0; i < vfd_header.stackscount; i++) {
 		if (stacks[i].precise) {
@@ -251,15 +273,12 @@ int main (int argc, char **argv) {
 	
 	    fseek (fp, vfd_header.sampleoffset, SEEK_SET);
 	
-	    //stack_leaf_t *stack_tree = NULL;
 	    bool has_been_warned = false;
 	
-	    int stack_ids[vfd_header.stackscount];
-	    all_stack_ids[i_vfd] = malloc (vfd_header.stackscount);
+	    all_stack_ids[i_vfd] = (bool*)malloc (vfd_header.stackscount * sizeof(bool));
 	    n_stack_ids[i_vfd] = 0;
 	    for (int i = 0; i < vfd_header.stackscount; i++) {
-		stack_ids[i] = 0;
-		all_stack_ids[i_vfd][i] = 0;
+		all_stack_ids[i_vfd][i] = false;
 	    }
 	
 	    printf ("samplecount 1: %d\n", vfd_header.samplecount);
@@ -277,20 +296,15 @@ int main (int argc, char **argv) {
 		    double sample_time_s = (double)sample_time * 1e-6;
 	
 		    if (!strcmp (stacks[stack_id].name, search_func)) {
-			//if ((!stacks[stack_id].precise) && (!has_been_warned)) {
-			//	printf ("Attention: The function %s is not precise. \n"
-			//		"The data printed here is unreliable. "
-			//		"Please sample again using VFTR_PRECISE.\n",
-			//		stacks[stack_id].name);
-			//	has_been_warned = true;
-			//}
-			//fill_into_stack_tree(&stack_tree, stacks, stack_id, sample_id, sample_time_s);
-			//stack_ids[stack_id]++;
-			//while (stack_id = stacks[stack_id].caller) {
-			//	stack_ids[stack_id]++;
-			//}	
-			stack_ids[stack_id] = 1;
-			all_stack_ids[i_vfd][stack_id] = 1;
+			if ((!stacks[stack_id].precise) && (!has_been_warned)) {
+				printf ("Attention: The function %s is not precise. \n"
+					"The data printed here is unreliable. "
+					"Please sample again using VFTR_PRECISE.\n",
+					stacks[stack_id].name);
+				has_been_warned = true;
+			}
+
+			all_stack_ids[i_vfd][stack_id] = true;
 			n_stack_ids[i_vfd]++;
 		    }
 		} else {
@@ -299,14 +313,9 @@ int main (int argc, char **argv) {
 	        }
 	    }
 	
-	    //printf ("Non-zero stack ids: \n");
 	    int n_local_stacks = 0;
 	    for (int i = 0; i < vfd_header.stackscount; i++) {
-		//if (stack_ids[i] > 0) {
 		if (all_stack_ids[i_vfd][i]) {
-			//printf ("%d: %d (%s)\n", i, stack_ids[i], stacks[i].name);
-			//printf ("%d: %s\n", i, stacks[i].name);
-			//printf ("%d: %llu\n", i, generate_stack_hash (stacks, i));
 			n_local_stacks++;	
 		}
 	    }
@@ -314,7 +323,6 @@ int main (int argc, char **argv) {
 		vfd_has_no_stacks[i_vfd] = true;
 		continue;
 	    }
-	    printf ("vfd number: %d, n_local_stacks: %d\n", i_vfd, n_local_stacks);
 	    n_tot_stacks += n_local_stacks;
 	    if (n_tot_stacks > hashlist_size) {
 		hashlist_size += HASH_INCREMENT;
@@ -322,32 +330,17 @@ int main (int argc, char **argv) {
 	    }
 
 	    for (int i = 0; i < vfd_header.stackscount; i++) {
-		//if (stack_ids[i] > 0) {
-		if (all_stack_ids[i_vfd][i] > 0) {
-			if (i == 36) {
-				printf ("generate hash 1: %d\n", i);
-				printf ("%llu\n", generate_stack_hash(stacks, i));
-			}
+		if (all_stack_ids[i_vfd][i]) {
 			hashes[i_hash++] = generate_stack_hash (stacks, i);
 		}
 	    }
 	   
-	
-	    //double total_mpi_time = 0.0;
-	    //print_stacktree (stack_tree->origin, 0, &total_mpi_time);
-	    //printf ("Total MPI time: %lf\n", total_mpi_time);
-	    //int n_stacks = 0;
-	    //count_stacks (stack_tree->origin, &n_stacks);
-	    //printf ("Nr. of stacks: %d\n", n_stacks);
-	
 	    fclose (fp);
-	
 	    free (stacks);
 	    free (precise_functions);
     }
     
     int n_hashes = i_hash;
-    printf ("n_hashes before: %d\n", n_hashes);
     vftr_radixsort_uint64 (n_hashes, hashes);
     int j = 0;
     for (int i = 0; i < n_hashes; i++) {
@@ -357,10 +350,6 @@ int main (int argc, char **argv) {
 	}
     }
     n_hashes = j + 1;
-    printf ("n_hashes after: %d\n", n_hashes);
-    //for (int i = 0; i < n_hashes; i++) {
-    //    printf ("%d: %llu\n", i, hashes[i]);
-    //} 
     
     
     bool hash_has_been_used [n_hashes];
@@ -370,13 +359,9 @@ int main (int argc, char **argv) {
 	    
     stack_leaf_t *stack_tree = NULL;
 
-	printf ("**************************************************\n");
-	printf ("**************************************************\n");
-
     for (int i_vfd = 0; i_vfd < n_vfds; i_vfd++) {
 	filename = argv[i_vfd + 1];
 	fp = fopen (filename, "r");
-	printf ("Opened again: %s\n", filename);
 	assert (fp);	
 	int dummy;
 	fread (&dummy, 1, sizeof(int), fp);
@@ -392,65 +377,37 @@ int main (int argc, char **argv) {
 			stacks[i].name = strip_trailing_asterisk(stacks[i].name);
 		}
 	}
-	//printf ("All hashes: \n");
-	//for (int j = 0; j < n_hashes; j++) {
-	//	printf ("%d: %llu\n", j, hashes[j]);	
-	//}
 
-	printf ("samplecount 2: %d\n", vfd_header.samplecount);
 	fseek (fp, vfd_header.sampleoffset, SEEK_SET);
 	for (int i = 0; i < vfd_header.samplecount; i++) {
 		int sample_id;
 		fread (&sample_id, sizeof(int), 1, fp);
-		//printf ("sample_id: %d\n", sample_id);
 		if (sample_id == SID_MESSAGE) {
 			skip_mpi_message_sample (fp);
 		} else if (sample_id == SID_ENTRY || sample_id == SID_EXIT) {
 			int stack_id;
 			long long sample_time;
-		//	printf ("Read sample\n");
 			read_stack_sample (fp, vfd_header.n_hw_obs, &stack_id, &sample_time, NULL);
-		    //	printf ("stack_id: %d\n", stack_id);
 		        
 			if (all_stack_ids[i_vfd][stack_id]) {
-				//printf (" Compare hashes\n");
-				//printf ("generate_stack_hash: %d\n", all_stack_ids[i_vfd][i]);
-				//uint64_t foo = generate_stack_hash(stacks, all_stack_ids[i_vfd][i]);
-				//printf ("HUHU\n");
-				//printf ("n_hashes: %d\n", n_hashes);
-				//if (stack_id == 36) {
-				//	printf ("generate hash 2: %d\n", stack_id);
-				//	printf ("%llu\n", generate_stack_hash (stacks, stack_id));
-				//	printf ("All hashes: \n");
-				//	for (int j = 0; j < n_hashes; j++) {
-				//		printf ("%llu\n", hashes[j]);	
-				//	}
-				//}
-				int i_hash = get_hash(generate_stack_hash (stacks, stack_id), hashes, n_hashes);
-				//if (stack_id == 36) {
-				//	printf ("i_hash: %d\n", i_hash);
-				//}
-				if (i_hash < 0) {}
-				//printf ("i_hash: %d\n", i_hash);
-				if (i_hash >= 0 &&!hash_has_been_used[i_hash]) {
-					printf ("fill into stack tree: %d %d\n", i_hash, stack_id);
+				//int i_hash = get_hash(generate_stack_hash (stacks, stack_id), hashes, n_hashes);
+				//if (i_hash < 0) {}
+				//if (i_hash >= 0 &&!hash_has_been_used[i_hash]) {
 					fill_into_stack_tree (&stack_tree, stacks, stack_id,
-							      sample_id, 0.0);	
-					hash_has_been_used [i_hash] = true;
-				}	
+							      sample_id, 0.0, i_vfd, n_vfds);	
+//					hash_has_been_used [i_hash] = true;
+				//}	
 			}
 		}
 	}
 	fclose (fp);
 	free(stacks);
 	free(precise_functions);
-	//for (int i = 0; i < n_stack_ids[i_vfd]; i++) {
-	//	
-	//	int i_stack = all_stack_ids[i_vfd][	
     }   
     
-     
 
+    double total_mpi_time = 0.0;
+    print_stacktree (stack_tree->origin, 0, &total_mpi_time);
     free(hashes);
 
     return 0;
