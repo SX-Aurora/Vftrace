@@ -41,15 +41,17 @@ typedef struct stack_leaf {
 	double *time_spent;
 } stack_leaf_t;	
 
+static int n_vfds; // Number of vfd files which are read in
+
 /**********************************************************************/
 
-void evaluate_mpi_time (double *all_times, int n_vfd, 
+void evaluate_mpi_time (double *all_times, 
 			double *t_avg, double *t_min, double *t_max, double *imbalance) {
 	*t_avg = 0.0;
 	*t_min = LONG_MAX;
 	*t_max = 0.0; 
 	int n = 0;
-	for (int i = 0; i < n_vfd; i++) {
+	for (int i = 0; i < n_vfds; i++) {
 		if (all_times[i] > 0) {
 			n++;
 			*t_avg = ((n - 1) * (*t_avg) + all_times[i]) / n;
@@ -78,7 +80,7 @@ void print_stacktree (stack_leaf_t *leaf, int n_spaces, double *total_mpi_time) 
 		print_stacktree (leaf->callee, new_n_spaces, total_mpi_time);
 	} else {
 		double t_avg, t_min, t_max, imbalance;
-		evaluate_mpi_time (leaf->time_spent, 64,
+		evaluate_mpi_time (leaf->time_spent,
 				   &t_avg, &t_min, &t_max, &imbalance);
 		printf (": MPI %4.3f %4.3f %4.3f %4.2f %%\n", t_avg, t_min, t_max, imbalance);
 		*total_mpi_time = *total_mpi_time + leaf->time_spent[0];
@@ -122,7 +124,7 @@ int get_hash (uint64_t this_hash, uint64_t *hashes, int n_hashes) {
 /**********************************************************************/
 
 void fill_into_stack_tree (stack_leaf_t **this_leaf, stack_entry_t *stacks,
-			   int stackID_0, int sample_id, double stime, int i_vfd, int n_vfds) {
+			   int stackID_0, int sample_id, double stime, int i_vfd) {
   	int stackID = stackID_0;
 	int stack_ids[100];
 	int n_stack_ids = 0;
@@ -141,14 +143,12 @@ void fill_into_stack_tree (stack_leaf_t **this_leaf, stack_entry_t *stacks,
 		(*this_leaf)->callee = NULL;
 		(*this_leaf)->origin = (stack_leaf_t*) malloc (sizeof(stack_leaf_t));
 		(*this_leaf)->origin = *this_leaf;
-		printf ("First leaf!\n");
 		(*this_leaf)->entry_time = (double*)malloc (n_vfds * sizeof(double));
 		(*this_leaf)->time_spent = (double*)malloc (n_vfds * sizeof(double));
 		for (int i = 0; i < n_vfds; i++) {
 			(*this_leaf)->entry_time[i] = 0.0;
 			(*this_leaf)->time_spent[i] = 0.0;
 		}
-		printf ("First leaf done\n");
 		//(*this_leaf)->entry_time = 0.0;
 		//(*this_leaf)->time_spent = 0.0;
 	}
@@ -251,7 +251,7 @@ int main (int argc, char **argv) {
 
     //filename = argv[1];
     //search_func = argv[2];
-    int n_vfds = argc - 2;
+    n_vfds = argc - 2;
     search_func = argv[n_vfds + 1];
     int n_tot_stacks = 0;
     int i_hash = 0;
@@ -335,7 +335,7 @@ int main (int argc, char **argv) {
 				has_been_warned = true;
 			}
 			fill_into_stack_tree (&stack_tree, stacks, stack_id,
-					      sample_id, sample_time_s, i_vfd, n_vfds);	
+					      sample_id, sample_time_s, i_vfd);	
 
 		    }
 		} else {
