@@ -46,7 +46,8 @@ static int n_vfds; // Number of vfd files which are read in
 /**********************************************************************/
 
 void evaluate_mpi_time (double *all_times, 
-			double *t_avg, double *t_min, double *t_max, double *imbalance) {
+			double *t_avg, double *t_min, double *t_max,
+			int *rank_min, int *rank_max, double *imbalance) {
 	*t_avg = 0.0;
 	*t_min = LONG_MAX;
 	*t_max = 0.0; 
@@ -58,9 +59,11 @@ void evaluate_mpi_time (double *all_times,
 
 			if (all_times[i] > *t_max) {
 				*t_max = all_times[i];
+				*rank_max = i;
 			}
 			if (all_times[i] < *t_min) {
 				*t_min = all_times[i];
+				*rank_min = i;
 			}
 		}
 	}
@@ -91,9 +94,11 @@ void reset_colors () {
 
 /**********************************************************************/
 
-void print_mpi_times (double t_avg, double t_min, double t_max, double imbalance) {
+void print_mpi_times (double t_avg, double t_min, double t_max,
+		      int rank_min, int rank_max, double imbalance) {
 	// MPI imbalances are highlighted in color 
-	printf (": MPI %4.3f %4.3f %4.3f ", t_avg, t_min, t_max);
+	printf (": MPI %4.3f %4.3f(%d) %4.3f(%d) ",
+		t_avg, t_min, rank_min, t_max, rank_max);
 	if (imbalance < 10) {
 		set_green ();
 	} else if (imbalance > 5 && imbalance < 50) {
@@ -116,9 +121,11 @@ void print_stacktree (stack_leaf_t *leaf, int n_spaces, double *total_mpi_time) 
 		print_stacktree (leaf->callee, new_n_spaces, total_mpi_time);
 	} else {
 		double t_avg, t_min, t_max, imbalance;
+		int rank_min, rank_max;
 		evaluate_mpi_time (leaf->time_spent,
-				   &t_avg, &t_min, &t_max, &imbalance);
-		print_mpi_times (t_avg, t_min, t_max, imbalance);
+				   &t_avg, &t_min, &t_max,
+				   &rank_min, &rank_max, &imbalance);
+		print_mpi_times (t_avg, t_min, t_max, rank_min, rank_max, imbalance);
 		*total_mpi_time = *total_mpi_time + leaf->time_spent[0];
 	}
 	if (leaf->next_in_level) {
