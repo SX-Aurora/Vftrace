@@ -33,6 +33,7 @@ bool is_precise (char *s);
 char *strip_trailing_asterisk (char *s);
 
 void read_fileheader (vfd_header_t *vfd_header, FILE *fp);
+void print_fileheader (FILE *fp, vfd_header_t vfd_header);
 void read_stacks (FILE *fp, stack_entry_t **stacks, function_entry_t **functions,
 		  unsigned int stacks_count, unsigned int stacks_offset,
 		  int *n_precise_function, long *max_fp);

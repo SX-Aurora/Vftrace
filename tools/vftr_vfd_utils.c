@@ -120,7 +120,7 @@ void read_stacks (FILE *fp, stack_entry_t **stacks, function_entry_t **precise_f
 
 /**********************************************************************/
 
-void print_fileheader (vfd_header_t vfd_header) {
+void print_fileheader (FILE *fp, vfd_header_t vfd_header) {
     int i;
     // We require a seperate datestring which is one element larger than
     // the field in the vfd file to add a terminating null character. This
@@ -130,17 +130,17 @@ void print_fileheader (vfd_header_t vfd_header) {
     datestring[24] = 0;
     strncpy (datestring, vfd_header.date, 24);
 
-    printf ("Version ID: %s\n", vfd_header.fileid    );
-    printf ("Date:       %s\n", datestring );
-    printf ("MPI tasks:  rank=%d count=%d\n", vfd_header.task, vfd_header.tasks); 
-    printf ("OpenMP threads:  thread=%d count=%d\n", vfd_header.thread, vfd_header.threads);
-    printf ("Sample interval: %12.6le seconds\n", vfd_header.interval*1.0e-6);
-    printf ("Init time:     %lld\n", vfd_header.inittime);
-    printf ("Job runtime:   %.3lf seconds\n", vfd_header.runtime.d);
-    printf ("Samples:       %d\n", vfd_header.samplecount );
-    printf ("Unique stacks: %d\n", vfd_header.stackscount);
-    printf ("Stacks offset: %d\n", vfd_header.stacksoffset);
-    printf ("Sample offset: %d\n", vfd_header.sampleoffset);
+    fprintf (fp, "Version ID: %s\n", vfd_header.fileid    );
+    fprintf (fp, "Date:       %s\n", datestring );
+    fprintf (fp, "MPI tasks:  rank=%d count=%d\n", vfd_header.task, vfd_header.tasks); 
+    fprintf (fp, "OpenMP threads:  thread=%d count=%d\n", vfd_header.thread, vfd_header.threads);
+    fprintf (fp, "Sample interval: %12.6le seconds\n", vfd_header.interval*1.0e-6);
+    fprintf (fp, "Init time:     %lld\n", vfd_header.inittime);
+    fprintf (fp, "Job runtime:   %.3lf seconds\n", vfd_header.runtime.d);
+    fprintf (fp, "Samples:       %d\n", vfd_header.samplecount );
+    fprintf (fp, "Unique stacks: %d\n", vfd_header.stackscount);
+    fprintf (fp, "Stacks offset: %d\n", vfd_header.stacksoffset);
+    fprintf (fp, "Sample offset: %d\n", vfd_header.sampleoffset);
 }
 
 /**********************************************************************/
