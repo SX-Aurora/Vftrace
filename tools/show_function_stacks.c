@@ -27,7 +27,6 @@
 #include "vftr_scenarios.h"
 #include "vftr_filewrite.h"
 #include "vftr_mpi_utils.h"
-#include "vftr_sorting.h"
 
 #include "vftr_vfd_utils.h"
 
@@ -151,22 +150,7 @@ int count_stacks (stack_leaf_t *leaf, int *n_stacks) {
 
 /**********************************************************************/
 
-int get_hash (uint64_t this_hash, uint64_t *hashes, int n_hashes) {
-	int i_hash = -1;
-	//printf ("this hash: %llu\n", this_hash);
-	for (int i = 0; i < n_hashes; i++) {
-		//printf ("Compare: %llu\n", hashes[i]);
-		if (hashes[i] == this_hash) {
-			i_hash = i;
-			break;
-		}	
-	}
-	return i_hash;
-}
-
-/**********************************************************************/
-
-enum new_leaf_type {ORIGIN, NEXT, CALLEE}; 
+enum new_leaf_type {ORIGIN, NEXT, CALLEE};
 
 void create_new_leaf (stack_leaf_t **new_leaf, char *name, enum new_leaf_type leaf_type) {
 	if (leaf_type == ORIGIN) {
@@ -240,8 +224,6 @@ void fill_into_stack_tree (stack_leaf_t **this_leaf, stack_entry_t *stacks,
 				if ((*this_leaf)->next_in_level) {
 					*this_leaf = (*this_leaf)->next_in_level;
 				} else {
-					//(*this_leaf)->next_in_level = 
-					//	(stack_leaf_t*) malloc (sizeof(stack_leaf_t));
 					create_new_leaf (this_leaf, stacks[stackID].name, NEXT);
 					if (level == 0) {
 						if (sample_id == SID_ENTRY) {
@@ -249,9 +231,6 @@ void fill_into_stack_tree (stack_leaf_t **this_leaf, stack_entry_t *stacks,
 						} else {
 							(*this_leaf)->next_in_level->time_spent[i_vfd] += (stime - (*this_leaf)->next_in_level->entry_time[i_vfd]);
 						}
-					} else {
-						//(*this_leaf)->next_in_level->entry_time = 0.0;
-						//(*this_leaf)->next_in_level->time_spent = 0.0;
 					}
 					*this_leaf = (*this_leaf)->next_in_level;
 					break;
@@ -272,9 +251,6 @@ void fill_into_stack_tree (stack_leaf_t **this_leaf, stack_entry_t *stacks,
 				} else {
 					(*this_leaf)->callee->time_spent[i_vfd] += (stime - (*this_leaf)->callee->entry_time[i_vfd]);
 				}
-			} else {
-				//(*this_leaf)->callee->entry_time = 0.0;
-				//(*this_leaf)->callee->time_spent = 0.0;
 			}
 			*this_leaf = (*this_leaf)->callee;
 		}
@@ -292,31 +268,14 @@ int main (int argc, char **argv) {
     function_entry_t *precise_functions = NULL;
     stack_entry_t *stacks = NULL;
 	
-#define N_HASH_START 5000
-#define HASH_INCREMENT 500
-    int hashlist_size = N_HASH_START;
-    uint64_t *hashes = (uint64_t*)malloc(hashlist_size * sizeof(uint64_t));;
-
-    
     if (argc < 3) {
 	    printf ("Usage: show_function_stacks <vfd-file> <search_func>\n");
 	    return -1;
     }
 
-    //filename = argv[1];
-    //search_func = argv[2];
     n_vfds = argc - 2;
     search_func = argv[n_vfds + 1];
-    int n_tot_stacks = 0;
-    int i_hash = 0;
-    bool vfd_has_no_stacks[n_vfds];
-    for (int i = 0; i < n_vfds; i++) {
-	vfd_has_no_stacks[i] = false;
-    }
 
-    bool *all_stack_ids[n_vfds];
-    int n_stack_ids[n_vfds];
-    
     stack_leaf_t *stack_tree = NULL;
 
     printf ("Processing %d vfd files\n", n_vfds);
@@ -327,23 +286,17 @@ int main (int argc, char **argv) {
 	    fp = fopen (filename, "r");
 	    assert (fp);
 	
-	    //printf ("Reading: %s Analyzing: %s\n", filename, search_func);
-	
 	    // We are not interested in the VFD version here
 	    int dummy;
 	    fread (&dummy, 1, sizeof(int), fp);
 	    // From the header, we actually only need the stack and sample offset
 	    read_fileheader (&vfd_header, fp);
 	
-	    //printf ("header size = %ld offset = %ld\n",
-//		     sizeof(struct FileHeader), ftell(fp));
-	
 	    // We need the number of hardware scenarios, because when scanning the samples
 	    // and a message is encountered (sample_id == SID_MESSAGE), we need to scan over these
 	    // values in order to be synchronized. Also, we allocate the corresponding (dummy-)buffer
 	    fread (&(vfd_header.n_hw_obs), sizeof(int), 1, fp);
 	    skip_hw_observables (fp, vfd_header.n_hw_obs);
-	    //printf ("Unique stacks:   %d\n", vfd_header.stackscount);
 	    
 	    // Although not needed elsewhere here, we need the "precise_functions" array
 	    // because it is used inside of read_stacks to compute indices. Other routines
@@ -362,12 +315,6 @@ int main (int argc, char **argv) {
 	    fseek (fp, vfd_header.sampleoffset, SEEK_SET);
 	
 	    bool has_been_warned = false;
-	
-	    all_stack_ids[i_vfd] = (bool*)malloc (vfd_header.stackscount * sizeof(bool));
-	    n_stack_ids[i_vfd] = 0;
-	    for (int i = 0; i < vfd_header.stackscount; i++) {
-		all_stack_ids[i_vfd][i] = false;
-	    }
 	
 	    for (int i = 0; i < vfd_header.samplecount; i++ ) {
 	        int sample_id;
@@ -408,7 +355,6 @@ int main (int argc, char **argv) {
 
     double total_mpi_time = 0.0;
     print_stacktree (stack_tree->origin, 0, &total_mpi_time);
-    free(hashes);
 
     return 0;
 }
