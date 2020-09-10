@@ -664,6 +664,7 @@ int vftr_stacks_test_1 (FILE *fp_in, FILE *fp_out) {
 /**********************************************************************/
 
 int vftr_stacks_test_2 (FILE *fp_in, FILE *fp_out) {
+#ifdef _MPI
 	unsigned long long addrs[6];
 	function_t *func0 = vftr_new_function (NULL, "init", NULL, 0, false);	
 	if (vftr_mpirank == 0) {
@@ -707,6 +708,7 @@ int vftr_stacks_test_2 (FILE *fp_in, FILE *fp_out) {
 		fprintf (fp_out, "Global stacklist: \n");
 		vftr_print_global_stacklist (fp_out);
 	}
+#endif
 	return 0;
 }
 

@@ -42,8 +42,11 @@ dist_check_SCRIPTS = this_passes.sh \
 	 	      vftr_functions_test_3.sh \
 	 	      vftr_functions_test_4.sh \
 	 	      vftr_functions_test_5.sh \
-		      vftr_stacks_test_1.sh \
-		      vftr_stacks_test_2.sh
+		      vftr_stacks_test_1.sh
+
+if MPI_PROFILING
+dist_check_SCRIPTS += vftr_stacks_test_2.sh
+endif
 
 TEST_EXTENSIONS = .sh
 SH_LOG_COMPILER = $(SHELL)
