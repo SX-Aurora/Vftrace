@@ -259,6 +259,17 @@ void fill_into_stack_tree (stack_leaf_t **this_leaf, stack_entry_t *stacks,
 
 /**********************************************************************/
 
+void show_progress (int i_vfd) {
+	static int next_display = 0;
+	if (next_display == 0) next_display = n_vfds / 4;
+	if (i_vfd > next_display) {
+		printf ("%d / %d\n", i_vfd, n_vfds);
+		next_display += (n_vfds / 4);
+	}
+}
+	
+/**********************************************************************/
+
 int main (int argc, char **argv) {
     FILE *fp;
     int n_precise_functions; 
@@ -282,6 +293,7 @@ int main (int argc, char **argv) {
 
     for (int i_vfd = 0; i_vfd < n_vfds; i_vfd++) {
 
+	    show_progress (i_vfd);
 	    filename = argv[i_vfd+1];
 	    fp = fopen (filename, "r");
 	    assert (fp);
