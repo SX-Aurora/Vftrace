@@ -166,6 +166,57 @@ int get_hash (uint64_t this_hash, uint64_t *hashes, int n_hashes) {
 
 /**********************************************************************/
 
+enum new_leaf_type {ORIGIN, NEXT, CALLEE}; 
+
+void create_new_leaf (stack_leaf_t **new_leaf, char *name, enum new_leaf_type leaf_type) {
+	if (leaf_type == ORIGIN) {
+		*new_leaf = (stack_leaf_t*) malloc (sizeof(stack_leaf_t));
+		(*new_leaf)->function_name = strdup(name);
+		(*new_leaf)->module_name = "";
+		(*new_leaf)->next_in_level = NULL;
+		(*new_leaf)->callee = NULL;
+		(*new_leaf)->origin = (stack_leaf_t*) malloc (sizeof(stack_leaf_t));
+		(*new_leaf)->origin = *new_leaf;
+		(*new_leaf)->entry_time = (double*)malloc (n_vfds * sizeof(double));
+		(*new_leaf)->time_spent = (double*)malloc (n_vfds * sizeof(double));
+		for (int i = 0; i < n_vfds; i++) {
+			(*new_leaf)->entry_time[i] = 0.0;
+			(*new_leaf)->time_spent[i] = 0.0;
+		}
+	} else if (leaf_type == NEXT) {
+		(*new_leaf)->next_in_level = (stack_leaf_t*)malloc (sizeof(stack_leaf_t));
+		(*new_leaf)->next_in_level->function_name = strdup(name);
+		(*new_leaf)->next_in_level->module_name = "";
+		(*new_leaf)->next_in_level->next_in_level = NULL;	
+		(*new_leaf)->next_in_level->callee = NULL;
+		(*new_leaf)->next_in_level->origin = (stack_leaf_t*)malloc (sizeof(stack_leaf_t));
+		(*new_leaf)->next_in_level->origin = (*new_leaf)->origin;
+		(*new_leaf)->next_in_level->entry_time = (double*)malloc (n_vfds * sizeof(double));
+		(*new_leaf)->next_in_level->time_spent = (double*)malloc (n_vfds * sizeof(double));						
+		for (int i = 0; i < n_vfds; i++) {
+				(*new_leaf)->next_in_level->entry_time[i] = 0.0;
+				(*new_leaf)->next_in_level->time_spent[i] = 0.0;
+		}
+	} else if (leaf_type == CALLEE) {
+			(*new_leaf)->callee = (stack_leaf_t*) malloc (sizeof(stack_leaf_t));
+			(*new_leaf)->callee->function_name = strdup(name);	
+			(*new_leaf)->callee->module_name = "";
+			(*new_leaf)->callee->next_in_level = NULL;
+			(*new_leaf)->callee->callee = NULL;
+			(*new_leaf)->callee->origin = (stack_leaf_t*)malloc (sizeof(stack_leaf_t));
+			(*new_leaf)->callee->origin = (*new_leaf)->origin;
+				
+			(*new_leaf)->callee->entry_time = (double*)malloc (n_vfds * sizeof(double));	
+			(*new_leaf)->callee->time_spent = (double*)malloc (n_vfds * sizeof(double));	
+			for (int i = 0; i < n_vfds; i++) {
+					(*new_leaf)->callee->entry_time[i] = 0.0;
+					(*new_leaf)->callee->time_spent[i] = 0.0;
+			}
+	}
+}
+
+/**********************************************************************/
+
 void fill_into_stack_tree (stack_leaf_t **this_leaf, stack_entry_t *stacks,
 			   int stackID_0, int sample_id, double stime, int i_vfd) {
   	int stackID = stackID_0;
@@ -179,21 +230,7 @@ void fill_into_stack_tree (stack_leaf_t **this_leaf, stack_entry_t *stacks,
 	if (*this_leaf) {
 		*this_leaf = (*this_leaf)->origin;
 	} else {
-		*this_leaf = (stack_leaf_t*) malloc (sizeof(stack_leaf_t));
-		(*this_leaf)->function_name = strdup(stacks[stackID].name);
-		(*this_leaf)->module_name = "";
-		(*this_leaf)->next_in_level = NULL;
-		(*this_leaf)->callee = NULL;
-		(*this_leaf)->origin = (stack_leaf_t*) malloc (sizeof(stack_leaf_t));
-		(*this_leaf)->origin = *this_leaf;
-		(*this_leaf)->entry_time = (double*)malloc (n_vfds * sizeof(double));
-		(*this_leaf)->time_spent = (double*)malloc (n_vfds * sizeof(double));
-		for (int i = 0; i < n_vfds; i++) {
-			(*this_leaf)->entry_time[i] = 0.0;
-			(*this_leaf)->time_spent[i] = 0.0;
-		}
-		//(*this_leaf)->entry_time = 0.0;
-		//(*this_leaf)->time_spent = 0.0;
+		create_new_leaf (this_leaf, stacks[stackID].name, ORIGIN);
 	}
 	for (int level = n_stack_ids - 2; level >= 0; level--) {
 		stackID = stack_ids[level];
@@ -203,21 +240,9 @@ void fill_into_stack_tree (stack_leaf_t **this_leaf, stack_entry_t *stacks,
 				if ((*this_leaf)->next_in_level) {
 					*this_leaf = (*this_leaf)->next_in_level;
 				} else {
-					(*this_leaf)->next_in_level = 
-						(stack_leaf_t*) malloc (sizeof(stack_leaf_t));
-					(*this_leaf)->next_in_level->function_name = strdup(stacks[stackID].name);
-					(*this_leaf)->next_in_level->module_name = "";
-					(*this_leaf)->next_in_level->next_in_level = NULL;	
-					(*this_leaf)->next_in_level->callee = NULL;
-					(*this_leaf)->next_in_level->origin = (stack_leaf_t*)malloc (sizeof(stack_leaf_t));
-					(*this_leaf)->next_in_level->origin = (*this_leaf)->origin;
-					(*this_leaf)->next_in_level->entry_time = (double*)malloc (n_vfds * sizeof(double));
-					(*this_leaf)->next_in_level->time_spent = (double*)malloc (n_vfds * sizeof(double));						
-					for (int i = 0; i < n_vfds; i++) {
-							(*this_leaf)->next_in_level->entry_time[i_vfd] = 0.0;
-							(*this_leaf)->next_in_level->time_spent[i_vfd] = 0.0;
-					}
-
+					//(*this_leaf)->next_in_level = 
+					//	(stack_leaf_t*) malloc (sizeof(stack_leaf_t));
+					create_new_leaf (this_leaf, stacks[stackID].name, NEXT);
 					if (level == 0) {
 						if (sample_id == SID_ENTRY) {
 							(*this_leaf)->next_in_level->entry_time[i_vfd] = stime;
@@ -240,21 +265,7 @@ void fill_into_stack_tree (stack_leaf_t **this_leaf, stack_entry_t *stacks,
 				}
 			}	
 		} else {
-			(*this_leaf)->callee = (stack_leaf_t*) malloc (sizeof(stack_leaf_t));
-			(*this_leaf)->callee->function_name = strdup(stacks[stackID].name);	
-			(*this_leaf)->callee->module_name = "";
-			(*this_leaf)->callee->next_in_level = NULL;
-			(*this_leaf)->callee->callee = NULL;
-			(*this_leaf)->callee->origin = (stack_leaf_t*)malloc (sizeof(stack_leaf_t));
-			(*this_leaf)->callee->origin = (*this_leaf)->origin;
-				
-			(*this_leaf)->callee->entry_time = (double*)malloc (n_vfds * sizeof(double));	
-			(*this_leaf)->callee->time_spent = (double*)malloc (n_vfds * sizeof(double));	
-			for (int i = 0; i < n_vfds; i++) {
-					(*this_leaf)->callee->entry_time[i_vfd] = 0.0;
-					(*this_leaf)->callee->time_spent[i_vfd] = 0.0;
-			}
-
+			create_new_leaf (this_leaf, stacks[stackID].name, CALLEE);
 			if (level == 0) {
 				if (sample_id == SID_ENTRY) {
 					(*this_leaf)->callee->entry_time[i_vfd] = stime;	
