@@ -9,8 +9,8 @@ typedef struct FileHeader {
     int threads, thread, tasks, task; 
     union { double d; unsigned long long l; } cycletime, runtime;
     long long inittime;
-    unsigned int samplecount, sampleoffset;
-    unsigned int stackscount, stacksoffset;
+    unsigned int samplecount, stackscount;
+    long sampleoffset, stacksoffset;
     unsigned int reserved;
     int n_hw_obs;
 } vfd_header_t;
@@ -35,7 +35,7 @@ char *strip_trailing_asterisk (char *s);
 void read_fileheader (vfd_header_t *vfd_header, FILE *fp);
 void print_fileheader (FILE *fp, vfd_header_t vfd_header);
 void read_stacks (FILE *fp, stack_entry_t **stacks, function_entry_t **functions,
-		  unsigned int stacks_count, unsigned int stacks_offset,
+		  unsigned int stacks_count, long stacks_offset,
 		  int *n_precise_function, long *max_fp);
 
 void read_mpi_message_sample (FILE *fp, int *direction, int *rank, int *type_index,

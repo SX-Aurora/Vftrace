@@ -36,8 +36,8 @@ void read_fileheader (vfd_header_t *vfd_header, FILE *fp) {
     fread (&vfd_header->runtime.l, 1, sizeof(long long), fp);
     fread (&vfd_header->samplecount, 1, sizeof(unsigned int), fp);
     fread (&vfd_header->stackscount, 1, sizeof(unsigned int), fp);
-    fread (&vfd_header->stacksoffset, 1, sizeof(unsigned int), fp);
-    fread (&vfd_header->sampleoffset, 1, sizeof(unsigned int), fp);
+    fread (&vfd_header->stacksoffset, 1, sizeof(long), fp);
+    fread (&vfd_header->sampleoffset, 1, sizeof(long), fp);
     fread (&vfd_header->reserved, 1, sizeof(unsigned int), fp);
 }
 
@@ -61,7 +61,7 @@ char *strip_trailing_asterisk (char *s) {
 /**********************************************************************/
 
 void read_stacks (FILE *fp, stack_entry_t **stacks, function_entry_t **precise_functions, 
-		  unsigned int stacks_count, unsigned int stacks_offset,
+		  unsigned int stacks_count, long stacks_offset,
                   int *n_precise_functions, long *max_fp) {
 
 

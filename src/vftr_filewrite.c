@@ -60,8 +60,8 @@ char *vftr_logfile_name;
 FILE *vftr_vfd_file;
 
 // TODO: Explain
-unsigned int vftr_admin_offset;
-unsigned int vftr_samples_offset;
+long vftr_admin_offset;
+long vftr_samples_offset;
 
 /**********************************************************************/
 
@@ -153,7 +153,7 @@ void vftr_init_vfd_file () {
 	int omp_thread = 0;
 	fwrite (&omp_thread, sizeof(int), 1, fp ); 
 	
-	if (omp_thread == 0) vftr_admin_offset = (unsigned int) ftell (fp);
+	if (omp_thread == 0) vftr_admin_offset = ftell (fp);
 	
         // Reserve space for the following observables. Their explicit values are determined later.
     	unsigned int zeroint[] = {0, 0, 0, 0, 0, 0, 0};
@@ -172,7 +172,7 @@ void vftr_init_vfd_file () {
 	// Store global information about hardware scenarios
 	vftr_write_scenario_header_to_vfd (fp);	
 
-	if (omp_thread == 0) vftr_samples_offset = (unsigned int) ftell (fp);
+	if (omp_thread == 0) vftr_samples_offset = ftell (fp);
 	vftr_vfd_file = fp;
 }
 
@@ -181,11 +181,11 @@ void vftr_init_vfd_file () {
 void vftr_finalize_vfd_file (long long finalize_time, int signal_number) {
     if (vftr_env_do_sampling () && signal_number != SIGUSR1) {
 
-        unsigned int stackstable_offset = (unsigned int) ftell (vftr_vfd_file);
+        long stackstable_offset = ftell (vftr_vfd_file);
         vftr_write_stacks_vfd (vftr_vfd_file, 0, vftr_froots);
 
         // It is unused ?
-        unsigned int profile_offset = 0;
+        long profile_offset = 0;
 
         double runtime = finalize_time * 1.0e-6;
         double zerodouble[] = { 0., 0. };
@@ -203,9 +203,9 @@ void vftr_finalize_vfd_file (long long finalize_time, int signal_number) {
         fwrite (&runtime, sizeof(double), 1, vftr_vfd_file);
         fwrite (&vftr_samplecount, sizeof(unsigned int), 1, vftr_vfd_file);
         fwrite (&vftr_stackscount, sizeof(unsigned int), 1, vftr_vfd_file);
-        fwrite (&stackstable_offset, sizeof(unsigned int), 1, vftr_vfd_file);
-        fwrite (&vftr_samples_offset, sizeof(unsigned int), 1, vftr_vfd_file);
-        fwrite (&profile_offset, sizeof(unsigned int), 1, vftr_vfd_file);
+        fwrite (&stackstable_offset, sizeof(long), 1, vftr_vfd_file);
+        fwrite (&vftr_samples_offset, sizeof(long), 1, vftr_vfd_file);
+        fwrite (&profile_offset, sizeof(long), 1, vftr_vfd_file);
         fclose (vftr_vfd_file);
     }
 }

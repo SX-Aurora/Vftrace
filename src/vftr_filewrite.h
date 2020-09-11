@@ -24,8 +24,8 @@ extern char *vftr_logfile_name;
 extern FILE *vftr_vfd_file;
 
 // TODO: Explain
-extern unsigned int vftr_admin_offset;
-extern unsigned int vftr_samples_offset;
+extern long vftr_admin_offset;
+extern long vftr_samples_offset;
 
 typedef struct format_t {
 	int fid;
