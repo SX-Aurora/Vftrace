@@ -589,7 +589,7 @@ void vftr_print_global_stacklist (FILE *pout) {
       int jstack = istack;
       // follow the functions until they reach the bottom of the stack
       int stackstrlength = 0;
-      while (vftr_gStackinfo[jstack].locID && vftr_gStackinfo[jstack].ret >= 0) {
+      while (vftr_gStackinfo[jstack].locID >= 0 && vftr_gStackinfo[jstack].ret >= 0) {
          stackstrlength += strlen(vftr_gStackinfo[jstack].name);
          stackstrlength ++;
          jstack = vftr_gStackinfo[jstack].ret;
@@ -623,7 +623,7 @@ void vftr_print_global_stacklist (FILE *pout) {
    for(int istack=0; istack<vftr_gStackscount; istack++) {
       int jstack = istack;
       fprintf( pout, fmtFid, istack);
-      while (vftr_gStackinfo[jstack].locID && vftr_gStackinfo[jstack].ret >= 0) {
+      while (vftr_gStackinfo[jstack].locID >= 0 && vftr_gStackinfo[jstack].ret >= 0) {
          fprintf(pout, "%s", vftr_gStackinfo[jstack].name);
          fprintf(pout, "<");
          jstack = vftr_gStackinfo[jstack].ret;
