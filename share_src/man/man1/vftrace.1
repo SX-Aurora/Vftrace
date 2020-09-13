@@ -113,21 +113,6 @@ Thus, giving a wrong expression of the communication imbalances in an execution 
 .br
 \fBDefault: "off"
 .\"
-.IP "\fBVFTR_MPI_SHOW_LOG_TIME\fR"
-.IX Item "VFTR_MPI_SHOW_LOG_TIME\fR"
-\fBEnable\fR(1,"YES","Yes","yes","ON","On","on")
-.br 
-\fBDisable\fR(0,"NO","No","no","OFF","Off","off")
-.br
-Switches on estimation of vftrace internal mpi logging time for all MPI communications.
-Every process measures the time it takes to write the communication information to the vfd-file,
-or the time to register a communication request in case of non-blocking communication,
-and create a seperate  function call "MPI_<mpi-function-name>_log" (e.g. MPI_Allreduce_log).
-This can increase the overhead slightly. The overhead introduced by the mpi-logging will be recorded
-and accumulated for the log-file regardless of this option.
-.br
-\fBDefault: "off"
-.\"
 .IP "\fBVFTR_OFF\fR"
 .IX Item "VFTR_OFF"
 \fBDisable\fR(1,"YES","Yes","yes")
