@@ -20,6 +20,8 @@
 #include <mpi.h>
 
 #include "vftr_timer.h"
+#include "vftr_regions.h"
+#include "vftr_environment.h"
 #include "vftr_sync_messages.h"
 #include "vftr_mpi_pcontrol.h"
 #include "vftr_mpi_buf_addr_const.h"
@@ -33,6 +35,13 @@ int vftr_MPI_Scatter(const void *sendbuf, int sendcount, MPI_Datatype sendtype,
       return PMPI_Scatter(sendbuf, sendcount, sendtype, recvbuf, recvcount,
                           recvtype, root, comm);
    } else {
+      // Estimate synchronization time
+      if (vftr_environment->mpi_show_sync_time->value) {
+         vftr_internal_region_begin("MPI_Scatter_sync");
+         PMPI_Barrier(comm);
+         vftr_internal_region_end("MPI_Scatter_sync");
+      }   
+
       long long tstart = vftr_get_runtime_usec();
       int retVal = PMPI_Scatter(sendbuf, sendcount, sendtype, recvbuf, recvcount,
                                 recvtype, root, comm);
