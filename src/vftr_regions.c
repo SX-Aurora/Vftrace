@@ -34,29 +34,49 @@
 #include "vftr_stacks.h"
 #include "vftr_async_messages.h"
 
-void vftr_userregion_entry (const char *s, void *addr, bool isPrecise);
-void vftr_userregion_exit();
+void vftr_region_entry (const char *s, void *addr, bool isPrecise);
+void vftr_region_exit();
 
+// Getting the region address is defined here as a macro,
+// so it can be used by different region functions
+#ifdef __ve__
+#define VFTR_GET_REGION_ADDRESS(ADDR) asm volatile ("or %0,0,%%lr" : "=r" (ADDR))
+#else
+#define VFTR_GET_REGION_ADDRESS(ADDR) asm volatile ("mov 8(%%rbp), %0" : "=r" (ADDR))
+#endif
+
+//These regions are for users to be used only.
 void vftrace_region_begin(const char *s) {
     void *addr;
     if (vftr_off() || vftr_paused) return;
-#ifdef __ve__
-    asm volatile ("or %0,0,%%lr" : "=r" (addr));
-#else
-    asm volatile ("mov 8(%%rbp), %0" : "=r" (addr));
-#endif
+    VFTR_GET_REGION_ADDRESS(addr);
     bool precise = vftr_environment->regions_precise->value;
-    vftr_userregion_entry(s, addr, precise);
+    vftr_region_entry(s, addr, precise);
 }
 
 void vftrace_region_end(const char *s) {
     if(vftr_off() || vftr_paused) return;
-    vftr_userregion_exit();
+    vftr_region_exit();
 }
+
+// These regions are fore vftrace internal usage only.
+// They are always precise.
+void vftr_internal_region_begin(const char *s) {
+   void *addr;
+   if (vftr_off() || vftr_paused) return;
+   VFTR_GET_REGION_ADDRESS(addr);
+   vftr_region_entry(s, addr, true);
+}
+
+void vftr_internal_region_end(const char *s) {
+   vftr_region_exit();
+}
+
+#undef VFTR_GET_REGION_ADDRESS
 
 /**********************************************************************/
 
-void vftr_userregion_entry (const char *s, void *addr, bool isPrecise){
+void vftr_region_entry (const char *s, void *addr, bool isPrecise){
     int e, read_counters;
     unsigned long long timer, delta;
     unsigned long long cycles0;
@@ -211,7 +231,7 @@ void vftr_userregion_entry (const char *s, void *addr, bool isPrecise){
 
 /**********************************************************************/
 
-void vftr_userregion_exit(){
+void vftr_region_exit(){
     int           e, read_counters, timeToSample;
     long long     timer;
     unsigned long long cycles0;
