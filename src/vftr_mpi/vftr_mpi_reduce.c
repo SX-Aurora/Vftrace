@@ -35,9 +35,9 @@ int vftr_MPI_Reduce(const void *sendbuf, void *recvbuf, int count,
    } else {
       // Estimate synchronization time
       if (vftr_environment->mpi_show_sync_time->value) {
-         vftr_internal_region_begin("MPI_Reduce_sync");
+         vftr_internal_region_begin("mpi_reduce_sync");
          PMPI_Barrier(comm);
-         vftr_internal_region_end("MPI_Reduce_sync");
+         vftr_internal_region_end("mpi_reduce_sync");
       }
 
       long long tstart = vftr_get_runtime_usec();

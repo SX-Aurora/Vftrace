@@ -37,9 +37,9 @@ int vftr_MPI_Allgather(const void *sendbuf, int sendcount,
    } else {
       // Estimate synchronization time
       if (vftr_environment->mpi_show_sync_time->value) {
-         vftr_internal_region_begin("MPI_Allgather_sync");
+         vftr_internal_region_begin("mpi_allgather_sync");
          PMPI_Barrier(comm);
-         vftr_internal_region_end("MPI_Allather_sync");
+         vftr_internal_region_end("mpi_allgather_sync");
       }   
       
       long long tstart = vftr_get_runtime_usec();
