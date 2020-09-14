@@ -564,6 +564,7 @@ void evaluate_mpi_function (char *func_name, int *n_calls,
     *n_calls = 0;
     for (int i = 0; i < n_indices; i++) {
 	*this_mpi_time += vftr_func_table[indices[i]]->prof_current.timeIncl;
+	if (n_indices_sync > 0) *this_sync_time += vftr_func_table[indices_sync[i]]->prof_current.timeIncl;
 	*n_calls = *n_calls + vftr_func_table[indices[i]]->prof_current.calls;
     }
     long long all_times [vftr_mpisize], all_times_sync [vftr_mpisize];
