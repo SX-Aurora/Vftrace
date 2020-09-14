@@ -235,7 +235,7 @@ void vftr_reset_counts (function_t *func) {
 
 /**********************************************************************/
 
-void vftr_find_function (char *func_name, int **indices, int *n_indices, bool to_lower_case) {
+void vftr_find_function (char *func_name, int **indices, int *n_indices, bool to_lower_case, bool verbose) {
 	*n_indices = 0;
 	char *s_compare;
 	for (int i = 0; i < vftr_stackscount; i++) {
@@ -271,7 +271,7 @@ void vftr_find_function (char *func_name, int **indices, int *n_indices, bool to
 void vftr_write_function_indices (FILE *fp, char *func_name, bool to_lower_case) {
 	int n_indices;
 	int *indices = NULL;
-	vftr_find_function (func_name, &indices, &n_indices, to_lower_case);
+	vftr_find_function (func_name, &indices, &n_indices, to_lower_case, false);
 	if (!indices) {
 		fprintf (fp, "ERROR: No indices found for function %s\n", func_name);
 	} else {
