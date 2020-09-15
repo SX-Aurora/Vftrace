@@ -20,6 +20,8 @@
 #include <mpi.h>
 
 #include "vftr_timer.h"
+#include "vftr_regions.h"
+#include "vftr_environment.h"
 #include "vftr_sync_messages.h"
 #include "vftr_mpi_pcontrol.h"
 #include "vftr_mpi_buf_addr_const.h"
@@ -31,6 +33,13 @@ int vftr_MPI_Bcast(void *buffer, int count, MPI_Datatype datatype,
    if (vftrace_Pcontrol_level == 0) {
       return PMPI_Bcast(buffer, count, datatype, root, comm);
    } else {
+      // Estimate synchronization time
+      if (vftr_environment->mpi_show_sync_time->value) {
+         vftr_internal_region_begin("MPI_Bcast_sync");
+         PMPI_Barrier(comm);
+         vftr_internal_region_end("MPI_Bcast_sync");
+      }
+
       long long tstart = vftr_get_runtime_usec();
       int retVal = PMPI_Bcast(buffer, count, datatype, root, comm);
       long long tend = vftr_get_runtime_usec();
