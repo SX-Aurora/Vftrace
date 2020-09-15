@@ -271,7 +271,7 @@ void vftr_find_function (char *func_name, int **indices, int *n_indices, bool to
 void vftr_write_function_indices (FILE *fp, char *func_name, bool to_lower_case) {
 	int n_indices;
 	int *indices = NULL;
-	vftr_find_function (func_name, &indices, &n_indices, to_lower_case, false);
+	vftr_find_function (func_name, &indices, &n_indices, to_lower_case);
 	if (!indices) {
 		fprintf (fp, "ERROR: No indices found for function %s\n", func_name);
 	} else {
