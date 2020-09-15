@@ -232,7 +232,6 @@ void vftr_store_message_info(vftr_direction dir, int count, int type_idx,
                              int type_size, int rank, int tag,
                              long long tstart, long long tend) {
    
-   int omp_thread = 0;
    int sid = SID_MESSAGE;
    fwrite(&sid, sizeof(int), 1, vftr_vfd_file);
    fwrite(&dir, sizeof(int), 1, vftr_vfd_file);
@@ -461,7 +460,6 @@ void fill_scenario_counter_values (double *val, int n_vars, profdata_t *prof_cur
 void set_formats (function_t **funcTable, double runtime,
 		   int n_indices, int *indices, format_t *format) {
 	long long ev;
-	int fidp;
 	for (format->fid = 0, ev = vftr_gStackscount; ev; ev /= 10, format->fid++);
 	for (format->rank = 0, ev = vftr_mpisize; ev; ev /= 10, format->rank++);
 	format->fid = 2;
@@ -724,9 +722,8 @@ void vftr_print_mpi_statistics (FILE *pout) {
 
 void vftr_print_profile (FILE *pout, int *ntop, long long time0) {
     float pscale, ctime;
-    double rtime, tohead, pohead, tend, tend2;
-    double clockFreq;
-    unsigned long long total_cycles, calls, cycles;
+    double rtime;
+    unsigned long long total_cycles, calls;
     evtcounter_t *evc0, *evc1, *evc;
     
     int n, k, fid;

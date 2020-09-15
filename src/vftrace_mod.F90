@@ -101,7 +101,6 @@ contains
       character(len=*), intent(in) :: name
       integer :: name_len
       character(kind=c_char,len=:), allocatable :: c_name
-      integer :: i
       name_len = len(adjustl(trim(name)))
       ! null terminator space 
       name_len = name_len + 1
@@ -118,7 +117,6 @@ contains
       character(len=*), intent(in) :: name
       integer :: name_len
       character(kind=c_char,len=:), allocatable :: c_name
-      integer :: i
       name_len = len(adjustl(trim(name)))
       ! null terminator space 
       name_len = name_len + 1
