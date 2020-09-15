@@ -105,11 +105,12 @@ Switches on the logging of MPI communication.
 .br
 \fBDisable\fR(0,"NO","No","no","OFF","Off","off")
 .br
-Switches on estimation of synchronization time for blocking collective MPI communication.
+Switches on the estimation of synchronization times for blocking collective MPI communication.
+These are: Allgather, Allgatherv, Allreduce, Alltoall, Alltoallv, Alltoallw, Exscan, Gather, Gatherv, Reduce, Scan, Scatter, Scatterv.
 Every process measures the time it takes until all other processes arrive at the call.
-The syncrhonization time will be measured as a seperate function call "MPI_<mpi-function-name>_sync" (e.g. MPI_Allreduce_sync).
+The synchronization time will be measured as a seperate function call "MPI_<mpi-function-name>_sync" (e.g. MPI_Allreduce_sync).
 Note that this might prevent processes from starting communication with already arrived processes.
-Thus, giving a wrong expression of the communication imbalances in an execution without this option or non traced executions.
+Therefore, communication imbalances can be computed inexcact.
 .br
 \fBDefault: "off"
 .\"

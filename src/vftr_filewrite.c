@@ -527,39 +527,67 @@ double compute_mpi_imbalance (long long *all_times, double t_avg) {
 
 void evaluate_mpi_function (char *func_name, int *n_calls,
 			    long long *t_min, long long *t_max, double *t_avg,
-			    double *imbalance, long long *this_mpi_time) {
-    int n_indices, *indices;	
+			    double *imbalance, long long *this_mpi_time,
+			    long long *this_sync_time, long long *t_sync_min,
+			    long long *t_sync_max, double *t_sync_avg) {
+    char func_name_sync[strlen(func_name)+5];
+    int n_indices, *indices = NULL;	
+    int n_indices_sync, *indices_sync = NULL;
     vftr_find_function (func_name, &indices, &n_indices, true);
+    strcpy (func_name_sync, func_name);
+    strcat (func_name_sync, "_sync");
+    vftr_find_function (func_name_sync, &indices_sync, &n_indices_sync, true);
+    if (n_indices_sync > 0 && n_indices != n_indices_sync) {
+	printf ("Error: Number of synchronize regions does not match total number of regions: %d %d\n",
+		n_indices, n_indices_sync);
+    }
+
     *this_mpi_time = 0;
+    *this_sync_time = 0;
     *n_calls = 0;
     for (int i = 0; i < n_indices; i++) {
 	*this_mpi_time += vftr_func_table[indices[i]]->prof_current.timeIncl;
+	if (n_indices_sync > 0) *this_sync_time += vftr_func_table[indices_sync[i]]->prof_current.timeIncl;
 	*n_calls = *n_calls + vftr_func_table[indices[i]]->prof_current.calls;
     }
-    long long all_times [vftr_mpisize];
+    long long all_times [vftr_mpisize], all_times_sync [vftr_mpisize];
     PMPI_Allgather (this_mpi_time, 1, MPI_LONG_LONG_INT, all_times,
 		 1, MPI_LONG_LONG_INT, MPI_COMM_WORLD);
+    PMPI_Allgather (this_sync_time, 1, MPI_LONG_LONG_INT, all_times_sync,
+		 1, MPI_LONG_LONG_INT, MPI_COMM_WORLD);
     *t_max = 0;
+    *t_sync_max = 0;
     *t_min = LLONG_MAX;
+    *t_sync_min = LLONG_MAX;
     *t_avg = 0.0;
+    *t_sync_avg = 0.0;
     *imbalance = 0.0;
-    if (*n_calls == 0) return;
     long long sum_times = 0;
+    long long sum_times_sync = 0;
     int n_count = 0;
+    if (*n_calls == 0) return;
     for (int i = 0; i < vftr_mpisize; i++) {
     	if (all_times[i] > 0) {
     		sum_times += all_times[i];
+		if (n_indices_sync > 0) sum_times_sync += all_times_sync[i];
     		n_count++;
     	}
     }
     if (n_count > 0) {
-       *t_avg = (double)sum_times / vftr_mpisize;
+       *t_avg = (double)sum_times / n_count;
+       if (n_indices_sync > 0) *t_sync_avg = (double)sum_times_sync / n_count;
        *imbalance = compute_mpi_imbalance (all_times, *t_avg);
        for (int i = 0; i < vftr_mpisize; i++) {	
-       	if (all_times[i] > 0) {
-       		if (all_times[i] < *t_min) *t_min = all_times[i];
-       		if (all_times[i] > *t_max) *t_max = all_times[i];
-       	}
+       	  if (all_times[i] > 0) {
+       		if (all_times[i] < *t_min) {
+			*t_min = all_times[i];
+			if (n_indices_sync > 0) *t_sync_min = all_times_sync[i];
+		}
+       		if (all_times[i] > *t_max) {
+			*t_max = all_times[i];
+			if (n_indices_sync > 0) *t_sync_max = all_times_sync[i];
+		}
+       	  }
        }
     }
 }
@@ -572,8 +600,12 @@ typedef struct mpi_function_entry {
     double t_avg;
     long long t_min;
     long long t_max;
+    double t_sync_avg;
+    long long t_sync_min;
+    long long t_sync_max;
     double imbalance;
     long long this_mpi_time;
+    long long this_sync_time;
 } mpi_function_entry_t;
 
 
@@ -595,8 +627,6 @@ int vftr_compare_mpi_functions (const void *a1, const void *a2) {
 /**********************************************************************/
 
 void vftr_print_mpi_statistics (FILE *pout) {
-    double t_avg, imbalance;
-    long long t_min, t_max;
 
     char *mpi_function_names[] = {"mpi_barrier", "mpi_bcast", "mpi_reduce",
 			     "mpi_allreduce", "mpi_gather", "mpi_gatherv",
@@ -612,29 +642,41 @@ void vftr_print_mpi_statistics (FILE *pout) {
 	mpi_functions[i]->func_name = strdup(mpi_function_names[i]);
 	mpi_functions[i]->n_calls = 0;
 	mpi_functions[i]->t_avg = 0.0;
-	mpi_functions[i]->t_min = 0.0;
-	mpi_functions[i]->t_max = 0.0;
+	mpi_functions[i]->t_min = 0;
+	mpi_functions[i]->t_max = 0;
+ 	mpi_functions[i]->t_sync_avg = 0.0;
+ 	mpi_functions[i]->t_sync_min = 0;
+ 	mpi_functions[i]->t_sync_max = 0;
 	mpi_functions[i]->imbalance = 0.0;
 	mpi_functions[i]->this_mpi_time = 0;
+	mpi_functions[i]->this_sync_time = 0;
     }
     
     int n_calls;
 
-    long long this_mpi_time;
+    double t_avg, t_sync_avg, imbalance;
+    long long t_min, t_max, t_sync_min, t_sync_max;
+    long long this_mpi_time, this_sync_time;
     double total_mpi_time = 0;
     for (int i = 0; i < n_mpi_functions; i++) {
-       evaluate_mpi_function (mpi_functions[i]->func_name, &n_calls,
+       evaluate_mpi_function (mpi_function_names[i], &n_calls,
 			      &t_min, &t_max, &t_avg,
-			      &imbalance, &this_mpi_time);
+			      &imbalance, &this_mpi_time,
+			      &this_sync_time, &t_sync_min, &t_sync_max,
+			      &t_sync_avg);
        mpi_functions[i]->n_calls = n_calls;
        mpi_functions[i]->t_avg = t_avg;
        total_mpi_time += t_avg * 1e-6;
        mpi_functions[i]->t_min = t_min;
        mpi_functions[i]->t_max = t_max;
+       mpi_functions[i]->t_sync_avg = t_sync_avg;
+       mpi_functions[i]->t_sync_min = t_sync_min;
+       mpi_functions[i]->t_sync_max = t_sync_max;
        mpi_functions[i]->imbalance = imbalance;
        mpi_functions[i]->this_mpi_time = this_mpi_time;
+       mpi_functions[i]->this_sync_time = this_sync_time;
     }
-    
+
     qsort ((void*)mpi_functions, (size_t)n_mpi_functions,
 	    sizeof (mpi_function_entry_t *), vftr_compare_mpi_functions);
 
@@ -646,6 +688,21 @@ void vftr_print_mpi_statistics (FILE *pout) {
 	   
        if (mpi_functions[i]->n_calls > 0) {
 	
+	if (mpi_functions[i]->t_sync_avg > 0) {
+       	  fprintf (pout, "%14s|%2.2f|%10d|%16.3f(%2.2f%%)|%16.3f(%2.2f%%)|%16.3f(%2.2f%%)|%4.2f|%16.3f(%2.2f%%)|\n",
+		mpi_functions[i]->func_name,
+		(mpi_functions[i]->t_avg *1e-6) / total_mpi_time * 100,
+		mpi_functions[i]->n_calls,
+		mpi_functions[i]->t_avg * 1e-6,
+		(double)mpi_functions[i]->t_sync_avg / (double)mpi_functions[i]->t_avg * 100,	
+		(double)(mpi_functions[i]->t_min) * 1e-6,
+		(double)(mpi_functions[i]->t_sync_min) / (double)mpi_functions[i]->t_min * 100,
+		(double)(mpi_functions[i]->t_max) * 1e-6,
+		(double)(mpi_functions[i]->t_sync_max) / (double)mpi_functions[i]->t_max * 100,	
+		mpi_functions[i]->imbalance,
+		(double)(mpi_functions[i]->this_mpi_time) * 1e-6,
+		(double)(mpi_functions[i]->this_sync_time) / (double)mpi_functions[i]->this_sync_time * 100);
+	} else {
        	  fprintf (pout, "%14s|%2.2f|%10d|%16.3f|%16.3f|%16.3f|%4.2f|%16.3f|\n",
 		mpi_functions[i]->func_name,
 		(mpi_functions[i]->t_avg *1e-6) / total_mpi_time * 100,
@@ -657,6 +714,9 @@ void vftr_print_mpi_statistics (FILE *pout) {
 		(double)(mpi_functions[i]->this_mpi_time) * 1e-6);
        }
     }
+  }
+
+  free (mpi_functions);
 }
 #endif
 
@@ -925,7 +985,7 @@ void vftr_print_profile (FILE *pout, int *ntop, long long time0) {
         	}
 	}
 
-	fprintf (pout, "%s", funcTable[i_func]->name);
+	fprintf (pout, "%s(%d)", funcTable[i_func]->name, i_func);
         for (int j = strlen(funcTable[i_func]->name); j <= formats->func_name; j++) {
             fputc (' ', pout);
         }

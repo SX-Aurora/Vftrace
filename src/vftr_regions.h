@@ -24,7 +24,7 @@
 void vftr_region_entry (const char *s, void *addr, bool isPrecise);
 void vftr_region_exit();
 
-// These regions are fore vftrace internal usage only.
+// These regions are for vftrace internal usage only.
 // They are always precise.
 void vftr_internal_region_begin(const char *s);
 void vftr_internal_region_end(const char *s);
