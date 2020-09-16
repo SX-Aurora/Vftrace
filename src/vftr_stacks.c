@@ -638,6 +638,96 @@ void vftr_print_global_stacklist (FILE *pout) {
 
 /**********************************************************************/
 
+int vftr_stack_length (int stack_id0) {
+	int n = 0;
+	int stack_id = stack_id0;
+	for (; stack_id > 0; stack_id = vftr_gStackinfo[stack_id].ret) {
+		n++;
+	}
+	return n;
+}
+
+/**********************************************************************/
+
+enum new_leaf_type {ORIGIN, NEXT, CALLEE};
+
+void create_new_leaf (stack_leaf_t **new_leaf, int stack_id, enum new_leaf_type leaf_type) {
+	if (leaf_type == ORIGIN) {
+		printf ("Create origin!\n");
+		*new_leaf = (stack_leaf_t*) malloc (sizeof(stack_leaf_t));
+		(*new_leaf)->stack_id = stack_id;
+		(*new_leaf)->next_in_level = NULL;
+		(*new_leaf)->callee = NULL;
+		(*new_leaf)->origin = (stack_leaf_t*) malloc (sizeof(stack_leaf_t));
+		(*new_leaf)->origin = *new_leaf;
+	} else if (leaf_type == NEXT) {
+		(*new_leaf)->next_in_level = (stack_leaf_t*)malloc (sizeof(stack_leaf_t));
+		(*new_leaf)->next_in_level->stack_id = stack_id;
+		(*new_leaf)->next_in_level->next_in_level = NULL;	
+		(*new_leaf)->next_in_level->callee = NULL;
+		(*new_leaf)->next_in_level->origin = (stack_leaf_t*)malloc (sizeof(stack_leaf_t));
+		(*new_leaf)->next_in_level->origin = (*new_leaf)->origin;
+	} else if (leaf_type == CALLEE) {
+			(*new_leaf)->callee = (stack_leaf_t*) malloc (sizeof(stack_leaf_t));
+			(*new_leaf)->callee->stack_id = stack_id;	
+			(*new_leaf)->callee->next_in_level = NULL;
+			(*new_leaf)->callee->callee = NULL;
+			(*new_leaf)->callee->origin = (stack_leaf_t*)malloc (sizeof(stack_leaf_t));
+			(*new_leaf)->callee->origin = (*new_leaf)->origin;
+	}
+}
+
+/**********************************************************************/
+
+void fill_into_stack_tree (stack_leaf_t **this_leaf, int n_stack_ids, int *stack_ids) {
+	int stack_id = stack_ids[n_stack_ids - 1];
+	if (*this_leaf) {
+		*this_leaf = (*this_leaf)->origin;
+	} else {
+		create_new_leaf (this_leaf, stack_id, ORIGIN);
+	}
+	for (int level = n_stack_ids - 2; level >= 0; level--) {
+		stack_id = stack_ids[level];
+		if ((*this_leaf)->callee) {
+			*this_leaf = (*this_leaf)->callee;
+			while ((*this_leaf)->stack_id != stack_id) { 
+				if ((*this_leaf)->next_in_level) {
+					*this_leaf = (*this_leaf)->next_in_level;
+				} else {
+					create_new_leaf (this_leaf, stack_id, NEXT);
+					*this_leaf = (*this_leaf)->next_in_level;
+					break;
+				}
+			}
+		} else {
+			create_new_leaf (this_leaf, stack_id, CALLEE);
+			*this_leaf = (*this_leaf)->callee;
+		}
+	}	
+}
+
+/**********************************************************************/
+
+void print_stacktree (stack_leaf_t *leaf, int n_spaces) {
+	if (!leaf) return;
+	printf ("%s", vftr_gStackinfo[leaf->stack_id].name);
+	if (leaf->callee) {
+		printf (">");
+		int new_n_spaces = n_spaces + strlen(vftr_gStackinfo[leaf->stack_id].name) + 1;
+		print_stacktree (leaf->callee, new_n_spaces);
+	} else {
+		printf ("\n");
+	}
+	if (leaf->next_in_level) {
+		for (int i = 0; i < n_spaces; i++) printf (" ");
+		printf (">");
+		print_stacktree (leaf->next_in_level, n_spaces);
+	}
+}
+
+/**********************************************************************/
+
+
 int vftr_stacks_test_1 (FILE *fp_in, FILE *fp_out) {
 	unsigned long long addrs[6];
 	fprintf (fp_out, "Initial vftr_stackscount: %d\n", vftr_stackscount);

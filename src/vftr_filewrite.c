@@ -32,7 +32,6 @@
 #include "vftr_fileutils.h"
 #include "vftr_filewrite.h"
 #include "vftr_functions.h"
-#include "vftr_stacks.h"
 #include "vftr_timer.h"
 #include "vftr_setup.h"
 #include "vftr_mpi_utils.h"
@@ -654,6 +653,27 @@ void vftr_print_mpi_statistics (FILE *pout) {
 
     qsort ((void*)mpi_functions, (size_t)n_mpi_functions,
 	    sizeof (mpi_function_entry_t *), vftr_compare_mpi_functions);
+
+	if (vftr_mpirank == 0) {
+		stack_leaf_t *stack_tree = NULL;
+
+		for (int i = 0; i < n_mpi_functions; i++) {
+			if (i != 1) continue;
+			for (int s = 0; s < mpi_functions[i]->n_indices; s++) {
+				int n_stack_ids = vftr_stack_length (mpi_functions[i]->indices[s]);
+				int *stack_ids = (int *) malloc (n_stack_ids * sizeof(int));
+				int stack_id = mpi_functions[i]->indices[s];
+				for (int j = 0; j < n_stack_ids; j++) {
+					stack_ids[j] = stack_id;
+					stack_id = vftr_gStackinfo[stack_id].ret;
+				}
+				fill_into_stack_tree (&stack_tree, n_stack_ids, stack_ids);
+				free(stack_ids);
+				
+			}
+	}
+	print_stacktree (stack_tree->origin, 0);
+    }
 
     fprintf (pout, "Total time spent in MPI: %lf s\n", total_mpi_time);
     fprintf (pout, "Imbalance computed as: max (T - T_avg)\n");

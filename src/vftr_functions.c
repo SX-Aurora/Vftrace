@@ -260,7 +260,7 @@ void vftr_find_function (char *func_name, int **indices, int *n_indices, bool to
 				}
 			}	
 			if (!strcmp (s_compare, func_name)) {
-				(*indices)[idx++] = i;
+				(*indices)[idx++] = vftr_func_table[i]->gid;
 			}
 		}
 	}	
