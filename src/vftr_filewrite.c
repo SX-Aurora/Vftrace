@@ -549,7 +549,7 @@ void evaluate_mpi_function (char *func_name, mpi_function_entry_t **mpi_func) {
     vftr_find_function (func_name, &indices, &n_indices, true);
     (*mpi_func)->n_indices = n_indices;
     (*mpi_func)->indices = (int*)malloc (n_indices * sizeof(int));
-    memcpy ((*mpi_func)->indices, indices, n_indices);
+    memcpy ((*mpi_func)->indices, indices, n_indices * sizeof(int));
 
     strcpy (func_name_sync, func_name);
     strcat (func_name_sync, "_sync");
