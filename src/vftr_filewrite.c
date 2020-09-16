@@ -646,23 +646,10 @@ void vftr_print_mpi_statistics (FILE *pout) {
     
     int n_calls;
 
-    double t_avg, t_sync_avg, imbalance;
-    long long t_min, t_max, t_sync_min, t_sync_max;
-    long long this_mpi_time, this_sync_time;
     double total_mpi_time = 0;
     for (int i = 0; i < n_mpi_functions; i++) {
        evaluate_mpi_function (mpi_function_names[i], &(mpi_functions[i]));
-       mpi_functions[i]->n_calls = n_calls;
-       mpi_functions[i]->t_avg = t_avg;
-       total_mpi_time += t_avg * 1e-6;
-       mpi_functions[i]->t_min = t_min;
-       mpi_functions[i]->t_max = t_max;
-       mpi_functions[i]->t_sync_avg = t_sync_avg;
-       mpi_functions[i]->t_sync_min = t_sync_min;
-       mpi_functions[i]->t_sync_max = t_sync_max;
-       mpi_functions[i]->imbalance = imbalance;
-       mpi_functions[i]->this_mpi_time = this_mpi_time;
-       mpi_functions[i]->this_sync_time = this_sync_time;
+       total_mpi_time += mpi_functions[i]->t_avg * 1e-6;
     }
 
     qsort ((void*)mpi_functions, (size_t)n_mpi_functions,
