@@ -712,7 +712,8 @@ void print_stacktree (FILE *fp, stack_leaf_t *leaf, int n_spaces) {
 	fprintf (fp, "%s", vftr_gStackinfo[leaf->stack_id].name);
 	if (leaf->callee) {
 		fprintf (fp, ">");
-		int new_n_spaces = n_spaces + strlen(vftr_gStackinfo[leaf->stack_id].name) + 1;
+		int new_n_spaces = n_spaces + strlen(vftr_gStackinfo[leaf->stack_id].name);
+		if (n_spaces > 0) new_n_spaces++;
 		print_stacktree (fp, leaf->callee, new_n_spaces);
 	} else {
 		fprintf (fp, "\n");
