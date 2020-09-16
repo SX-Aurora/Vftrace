@@ -96,8 +96,6 @@ void vftr_print_local_stacklist (function_t **funcTable, FILE *pout, int ntop);
 void vftr_print_local_demangled (function_t **funcTable, FILE *pout, int ntop);
 void vftr_print_global_stacklist (FILE *pout);
 
-/**********************************************************************/
-
 typedef struct stack_leaf {
 	int stack_id;
 	struct stack_leaf *next_in_level;
@@ -105,9 +103,9 @@ typedef struct stack_leaf {
 	struct stack_leaf *origin;
 } stack_leaf_t;	
 
-
 int vftr_stack_length (int stack_id0);
 void fill_into_stack_tree (stack_leaf_t **this_leaf, int n_stack_ids, int *stacks_ids);
-void print_stacktree (stack_leaf_t *leaf, int n_spaces);
+void print_stacktree (FILE *fp, stack_leaf_t *leaf, int n_spaces);
+void print_function_stack (FILE *fp, char *func_name, int n_final_stack_ids, int *final_stack_ids);
 
 #endif

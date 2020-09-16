@@ -653,7 +653,6 @@ enum new_leaf_type {ORIGIN, NEXT, CALLEE};
 
 void create_new_leaf (stack_leaf_t **new_leaf, int stack_id, enum new_leaf_type leaf_type) {
 	if (leaf_type == ORIGIN) {
-		printf ("Create origin!\n");
 		*new_leaf = (stack_leaf_t*) malloc (sizeof(stack_leaf_t));
 		(*new_leaf)->stack_id = stack_id;
 		(*new_leaf)->next_in_level = NULL;
@@ -708,25 +707,45 @@ void fill_into_stack_tree (stack_leaf_t **this_leaf, int n_stack_ids, int *stack
 
 /**********************************************************************/
 
-void print_stacktree (stack_leaf_t *leaf, int n_spaces) {
+void print_stacktree (FILE *fp, stack_leaf_t *leaf, int n_spaces) {
 	if (!leaf) return;
-	printf ("%s", vftr_gStackinfo[leaf->stack_id].name);
+	fprintf (fp, "%s", vftr_gStackinfo[leaf->stack_id].name);
 	if (leaf->callee) {
-		printf (">");
+		fprintf (fp, ">");
 		int new_n_spaces = n_spaces + strlen(vftr_gStackinfo[leaf->stack_id].name) + 1;
-		print_stacktree (leaf->callee, new_n_spaces);
+		print_stacktree (fp, leaf->callee, new_n_spaces);
 	} else {
-		printf ("\n");
+		fprintf (fp, "\n");
 	}
 	if (leaf->next_in_level) {
-		for (int i = 0; i < n_spaces; i++) printf (" ");
-		printf (">");
-		print_stacktree (leaf->next_in_level, n_spaces);
+		for (int i = 0; i < n_spaces; i++) fprintf (fp, " ");
+		fprintf (fp, ">");
+		print_stacktree (fp, leaf->next_in_level, n_spaces);
 	}
 }
 
 /**********************************************************************/
 
+void print_function_stack (FILE *fp, char *func_name, int n_final_stack_ids, int *final_stack_ids) {
+	stack_leaf_t *stack_tree = NULL;
+	fprintf (fp, "Function stacks leading to %s:\n\n", func_name);
+	for (int fsid = 0; fsid < n_final_stack_ids; fsid++) {
+		int n_functions_in_stack = vftr_stack_length (final_stack_ids[fsid]);
+		int *stack_ids = (int*)malloc (n_functions_in_stack * sizeof(int));
+		int stack_id = final_stack_ids[fsid];
+		for (int i = 0; i < n_functions_in_stack; i++) {
+			stack_ids[i] = stack_id;
+			stack_id = vftr_gStackinfo[stack_id].ret;
+		}
+		fill_into_stack_tree (&stack_tree, n_functions_in_stack, stack_ids);
+		free (stack_ids);
+	}
+	print_stacktree (fp, stack_tree->origin, 0);
+	free (stack_tree);
+	fprintf (fp, "\n\n");
+}
+
+/**********************************************************************/
 
 int vftr_stacks_test_1 (FILE *fp_in, FILE *fp_out) {
 	unsigned long long addrs[6];
