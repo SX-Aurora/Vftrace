@@ -729,7 +729,14 @@ void print_stacktree (FILE *fp, stack_leaf_t *leaf, int n_spaces) {
 
 void print_function_stack (FILE *fp, char *func_name, int n_final_stack_ids, int *final_stack_ids) {
 	stack_leaf_t *stack_tree = NULL;
-	fprintf (fp, "Function stacks leading to %s:\n\n", func_name);
+	fprintf (fp, "Function stacks leading to %s: ", func_name);
+	if (n_final_stack_ids == 0) {
+		fprintf (fp, "NONE\n\n");
+		return;
+	} else {
+		fprintf (fp, "\n\n");
+	}
+	fprintf (fp, "\n\n");
 	for (int fsid = 0; fsid < n_final_stack_ids; fsid++) {
 		int n_functions_in_stack = vftr_stack_length (final_stack_ids[fsid]);
 		int *stack_ids = (int*)malloc (n_functions_in_stack * sizeof(int));
