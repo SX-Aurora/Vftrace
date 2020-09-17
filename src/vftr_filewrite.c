@@ -700,8 +700,9 @@ void vftr_print_function_statistics (FILE *pout, bool display_sync_time,
   if (vftr_mpirank == 0) {
   	for (int i = 0; i < n_display_functions; i++) {
   		print_function_stack (pout, display_functions[i]->func_name, 
-  				      display_functions[i]->n_indices,
-  				      display_functions[i]->stack_indices);
+				      display_functions[i]->n_indices,
+  				      display_functions[i]->stack_indices,
+				      display_functions[i]->func_indices);
 	}
   }
 
@@ -716,7 +717,7 @@ void display_selected_stacks (FILE *pout, char *display_function_names[], int n_
 	for (int i = 0; i < n_display_functions; i++) {
 		vftr_find_function (display_function_names[i], NULL, &stack_indices, &n_indices, true);
 
-		print_function_stack (pout, display_function_names[i], n_indices, &stack_indices);
+		print_function_stack (pout, display_function_names[i], n_indices, stack_indices, NULL);
 		free (stack_indices);
 	}
 	

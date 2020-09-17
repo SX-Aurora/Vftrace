@@ -98,14 +98,15 @@ void vftr_print_global_stacklist (FILE *pout);
 
 typedef struct stack_leaf {
 	int stack_id;
+	int func_id;
 	struct stack_leaf *next_in_level;
 	struct stack_leaf *callee;	
 	struct stack_leaf *origin;
 } stack_leaf_t;	
 
 int vftr_stack_length (int stack_id0);
-void fill_into_stack_tree (stack_leaf_t **this_leaf, int n_stack_ids, int *stacks_ids);
-void print_stacktree (FILE *fp, stack_leaf_t *leaf, int n_spaces);
-void print_function_stack (FILE *fp, char *func_name, int n_final_stack_ids, int *final_stack_ids);
+void fill_into_stack_tree (stack_leaf_t **this_leaf, int n_stack_ids, int *stacks_ids, int func_id);
+void print_stacktree (FILE *fp, stack_leaf_t *leaf, int n_spaces, long long *total_time);
+void print_function_stack (FILE *fp, char *func_name, int n_final_stack_ids, int *final_stack_ids, int *final_func_ids);
 
 #endif
