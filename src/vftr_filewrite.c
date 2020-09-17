@@ -535,7 +535,8 @@ typedef struct display_function {
     long long this_mpi_time;
     long long this_sync_time;
     int n_indices;
-    int *indices;
+    int *stack_indices;
+    int *func_indices;
 } display_function_t;
 
 
@@ -544,17 +545,19 @@ typedef struct display_function {
 void evaluate_display_function (char *func_name, display_function_t **display_func,
 				bool display_sync_time) {
     char func_name_sync[strlen(func_name)+5];
-    int n_indices, *indices = NULL;	
-    int n_indices_sync, *indices_sync = NULL;
-    vftr_find_function (func_name, &indices, &n_indices, true);
+    int n_indices, *stack_indices = NULL, *func_indices = NULL;	
+    int n_indices_sync, *func_indices_sync = NULL, *stack_indices_sync = NULL;;
+    vftr_find_function (func_name, &func_indices, &stack_indices, &n_indices, true);
     (*display_func)->n_indices = n_indices;
-    (*display_func)->indices = (int*)malloc (n_indices * sizeof(int));
-    memcpy ((*display_func)->indices, indices, n_indices * sizeof(int));
+    (*display_func)->stack_indices = (int*)malloc (n_indices * sizeof(int));
+    memcpy ((*display_func)->stack_indices, stack_indices, n_indices * sizeof(int));
+    (*display_func)->func_indices = (int*)malloc (n_indices * sizeof(int));
+    memcpy ((*display_func)->func_indices, func_indices, n_indices * sizeof(int));
 
     if (display_sync_time) {
     	strcpy (func_name_sync, func_name);
     	strcat (func_name_sync, "_sync");
-    	vftr_find_function (func_name_sync, &indices_sync, &n_indices_sync, true);
+    	vftr_find_function (func_name_sync, &func_indices_sync, &stack_indices_sync, &n_indices_sync, true);
     	if (n_indices_sync > 0 && n_indices != n_indices_sync) {
     	    printf ("Error: Number of synchronize regions does not match total number of regions: %d %d\n",
     	    	n_indices, n_indices_sync);
@@ -567,9 +570,9 @@ void evaluate_display_function (char *func_name, display_function_t **display_fu
     (*display_func)->this_sync_time = 0;
     (*display_func)->n_calls = 0;
     for (int i = 0; i < n_indices; i++) {
-	(*display_func)->this_mpi_time += vftr_func_table[indices[i]]->prof_current.timeIncl;
-	if (n_indices_sync > 0) (*display_func)->this_sync_time += vftr_func_table[indices_sync[i]]->prof_current.timeIncl;
-	(*display_func)->n_calls += vftr_func_table[indices[i]]->prof_current.calls;
+	(*display_func)->this_mpi_time += vftr_func_table[func_indices[i]]->prof_current.timeIncl;
+	if (n_indices_sync > 0) (*display_func)->this_sync_time += vftr_func_table[func_indices_sync[i]]->prof_current.timeIncl;
+	(*display_func)->n_calls += vftr_func_table[func_indices[i]]->prof_current.calls;
     }
     long long all_times [vftr_mpisize], all_times_sync [vftr_mpisize];
     PMPI_Allgather (&(*display_func)->this_mpi_time, 1, MPI_LONG_LONG_INT, all_times,
@@ -694,13 +697,13 @@ void vftr_print_function_statistics (FILE *pout, bool display_sync_time,
     }
   }
 
-  if (vftr_mpirank == 0) {
-  	for (int i = 0; i < n_display_functions; i++) {
-  		print_function_stack (pout, display_functions[i]->func_name, 
-  				      display_functions[i]->n_indices,
-  				      display_functions[i]->indices);
-	}
-  }
+//  if (vftr_mpirank == 0) {
+//  	for (int i = 0; i < n_display_functions; i++) {
+//  		print_function_stack (pout, display_functions[i]->func_name, 
+//  				      display_functions[i]->n_indices,
+//  				      display_functions[i]->stack_indices);
+//	}
+//  }
 
   free (display_functions);
 }
