@@ -97,6 +97,7 @@ if test "$enable_mpi_profiling" = yes; then
   else
     uses_nec_mpi=no
   fi
+  AC_MSG_RESULT([$uses_nec_mpi])
 fi 
 
 AC_MSG_CHECKING([if Intel compiler is used])
