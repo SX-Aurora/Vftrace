@@ -68,7 +68,7 @@ callsTime_t **vftr_get_loadbalance_info (function_t **funcTable)
     callsTime_t    *callsTime, **loadbalInfo;
     int            multiTask = ( vftr_mpisize  > 1 ),
                    nCallsTime, nCallsTimeBytes,
-                   i, tid, fid;
+                   i, fid;
 #ifdef _MPI
     callsTime_t    *globCallsTime;
     int            totalSize, offset;
@@ -88,7 +88,6 @@ callsTime_t **vftr_get_loadbalance_info (function_t **funcTable)
         profdata_t *prof_current  = &funcTable[i]->prof_current;
         profdata_t *prof_previous = &funcTable[i]->prof_previous;
         int calls = prof_current->calls - prof_previous->calls;
-        unsigned long long cycles = prof_current->cycles - prof_previous->cycles;
         unsigned long long timeExcl = prof_current->timeExcl - prof_previous->timeExcl;
 	rtime  = calls ? timeExcl * 1.0e-6 : 0;
         fid = funcTable[i]->gid;
@@ -137,7 +136,7 @@ vftr_print_loadbalance( callsTime_t **gCallsTime,
     callsTimeRange_t
                    *callsTimeRange, **cTRarray, cTRmax;
     int            multiTask   = ( vftr_mpisize  > 1 ),
-                   i, j, k, rank, tid, fidp, nctr,
+                   i, j, k, rank, fidp, nctr,
                    flen, clen, rankp, jpar,
                    minMPIcallsp,maxMPIcallsp,avgMPIcallsp,
                    minMPItimep, maxMPItimep, avgMPItimep,
@@ -344,7 +343,7 @@ vftr_print_loadbalance( callsTime_t **gCallsTime,
     
     maxTime = 0.;
     for( k=0; k<nctr; k++ ) {
-        float pareffmpi, pareffomp;
+        float pareffmpi;
         callsTimeRange_t *ctr = cTRarray[k];
         i = ctr->stackIndex;
         loadIDs[k] = i;
