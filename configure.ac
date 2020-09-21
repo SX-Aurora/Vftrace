@@ -126,10 +126,11 @@ PROGRAM test
    IF (MPI_SUBARRAYS_SUPPORTED) STOP 1
    STOP 0
 END PROGRAM test]])],
-      [uses_mpi_f90_ts29113=no],
-      [uses_mpi_f90_ts29113=yes])]
+      [supports_mpi_f90_ts29113=no],
+      [supports_mpi_f90_ts29113=yes])]
 )
 AM_CONDITIONAL([SUPPORTS_MPIF90_TS], [test "$supports_mpi_f90_ts29113" = "yes"])
+AC_MSG_RESULT([$supports_mpi_f90_ts29113])
 
 # Fortran 2008:
 AM_COND_IF(
@@ -142,12 +143,11 @@ PROGRAM test
    IF (MPI_SUBARRAYS_SUPPORTED) STOP 1
    STOP 0
 END PROGRAM test]])],
-      [uses_mpi_f08_ts29113=no],
-      [uses_mpi_f08_ts29113=yes])]
+      [supports_mpi_f08_ts29113=no],
+      [supports_mpi_f08_ts29113=yes])]
 )
+AC_MSG_RESULT([$supports_mpi_f08_ts29113])
 AM_CONDITIONAL([SUPPORTS_MPIF08_TS], [test "$supports_mpi_f08_ts29113" = "yes"])
-
-
 
 # WO_PROG_PAPI()
 # WO_PROG_COMPONENTS()
