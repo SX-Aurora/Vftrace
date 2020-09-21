@@ -221,6 +221,7 @@ void vftr_read_environment () {
     vftr_environment->detail_until_cum_cycles = vftr_read_env_double ("VFTR_DETAIL_UNTIL_CUM_CYCLES", 90.0);
     vftr_environment->scenario_file = vftr_read_env_string ("VFTR_SCENARIO_FILE", NULL);
     vftr_environment->preciseregex = vftr_read_env_regex ("VFTR_PRECISE", NULL);
+    vftr_environment->print_stack_profile = vftr_read_env_regex ("VFTR_PRINT_STACK_PROFILE", NULL);
     vftr_environment->license_verbose = vftr_read_env_bool ("VFTR_LICENSE_VERBOSE", false);
     vftr_environment->print_stacks_for = vftr_read_env_string ("VFTR_PRINT_STACKS_FOR", NULL);
     vftr_environment->print_loadinfo_for = vftr_read_env_string ("VFTR_PRINT_LOADINFO_FOR", NULL);

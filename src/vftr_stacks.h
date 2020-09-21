@@ -49,6 +49,7 @@ typedef struct GStackInfo {
    int locID;
    // function name string of the current function
    char *name;
+   bool print_profile;
 } gstackinfo_t;
 
 // Profiling structs

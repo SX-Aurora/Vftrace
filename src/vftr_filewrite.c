@@ -697,7 +697,7 @@ void vftr_print_function_statistics (FILE *pout, bool display_sync_time,
     }
   }
 
-  if (vftr_mpirank == 0) {
+  if (vftr_mpirank == 0 && vftr_environment->print_stack_profile->set) {
   	for (int i = 0; i < n_display_functions; i++) {
   		print_function_stack (pout, display_functions[i]->func_name, 
 				      display_functions[i]->n_indices,

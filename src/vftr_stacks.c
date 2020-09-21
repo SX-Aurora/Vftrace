@@ -126,11 +126,18 @@ int vftr_normalize_stacks() {
           vftr_gStackinfo[istack].ret = -2;
           vftr_gStackinfo[istack].name = NULL;
           vftr_gStackinfo[istack].locID = -1;
+	  vftr_gStackinfo[istack].print_profile = false;
        }
        // fill in global info process 0 knows
        for (int istack=0; istack<vftr_stackscount; istack++) {
           int globID = local2global_ID[istack];
           vftr_gStackinfo[globID].name = strdup(vftr_func_table[istack]->name);
+	  if (vftr_environment->print_stack_profile->set) {
+		if (vftr_pattern_match (vftr_environment->print_stack_profile->value, 
+				        vftr_func_table[istack]->name)) { 
+			vftr_gStackinfo[globID].print_profile = true;
+	        } // else if match stack id
+   	  }
           if (strcmp(vftr_gStackinfo[globID].name, "init")) {
              // not the init function
              vftr_gStackinfo[globID].ret = vftr_func_table[istack]->return_to->gid;
