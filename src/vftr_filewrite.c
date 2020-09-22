@@ -167,7 +167,10 @@ void vftr_init_vfd_file () {
   	// vftr runtime
 	fwrite (zerodouble, sizeof(double), 1, fp);
         // Five integers: sample_count, stacks_count, stacks_offset, sample_offset and ???
-	fwrite (zeroint, sizeof(unsigned int), 5, fp);
+	fwrite (zeroint, sizeof(unsigned int), 2, fp);
+	fwrite (zerolong, sizeof(long), 1, fp);
+	fwrite (zerolong, sizeof(long), 1, fp);
+	fwrite (zerolong, sizeof(long), 1, fp);
 	// Store global information about hardware scenarios
 	vftr_write_scenario_header_to_vfd (fp);	
 
