@@ -110,4 +110,8 @@ void fill_into_stack_tree (stack_leaf_t **this_leaf, int n_stack_ids, int *stack
 void print_stacktree (FILE *fp, stack_leaf_t *leaf, int n_spaces, long long *total_time);
 void print_function_stack (FILE *fp, char *func_name, int n_final_stack_ids, int *final_stack_ids, int *final_func_ids);
 
+// test functions
+int vftr_stacks_test_1(FILE *fp_in, FILE *fp_out);
+int vftr_stacks_test_2(FILE *fp_in, FILE *fp_out);
+
 #endif
