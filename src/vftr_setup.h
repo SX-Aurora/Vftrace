@@ -30,6 +30,8 @@ extern unsigned int vftr_samplecount;
 void vftr_initialize ();
 void vftr_finalize () ;
 
+// test functions
 int vftr_setup_test_1 (FILE *fp);
+int vftr_setup_test_2 (FILE *fp);
 
 #endif
