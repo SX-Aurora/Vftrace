@@ -84,6 +84,7 @@ typedef struct vftr_envs {
 	env_var_double_t *detail_until_cum_cycles;
 	env_var_string_t *scenario_file;
 	env_var_regex_t *preciseregex;
+	env_var_regex_t *print_stack_profile;
 	env_var_bool_t *license_verbose;
         env_var_string_t *print_stacks_for;
         env_var_string_t *print_loadinfo_for;
