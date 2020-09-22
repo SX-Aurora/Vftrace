@@ -9,6 +9,7 @@ VFTR_STOPTIME(default): 604800
 VFTR_ACCURATE_PROFILE(default): false
 VFTR_PROF_TRUNCATE(default): true
 VFTR_MPI_LOG(default): false
+VFTR_MPI_SHOW_SYNC_TIME(default): false
 VFTR_SIGNALS_OFF(default): true
 VFTR_BUFSIZE(default): 8
 VFTR_ACCURATE_PROFILE(default): false
@@ -29,6 +30,7 @@ VFTR_STOPTIME(default): 604800
 VFTR_ACCURATE_PROFILE(default): false
 VFTR_PROF_TRUNCATE(default): true
 VFTR_MPI_LOG: true
+VFTR_MPI_SHOW_SYNC_TIME(default): false
 VFTR_SIGNALS_OFF(default): true
 VFTR_BUFSIZE: 1234
 VFTR_ACCURATE_PROFILE(default): false
