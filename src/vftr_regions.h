@@ -15,23 +15,18 @@
    with this program; if not, write to the Free Software Foundation, Inc.,
    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-#ifndef VFTR_SETUP_H
-#define VFTR_SETUP_H
 
-#include <stdio.h>
+#ifndef VFTR_REGIONS_H
+#define VFTR_REGIONS_H
+
 #include <stdbool.h>
 
-extern bool vftr_timer_end;
+void vftr_region_entry (const char *s, void *addr, bool isPrecise);
+void vftr_region_exit();
 
-extern int vftr_mpirank;
-extern int vftr_mpisize;
-extern unsigned int vftr_samplecount;
-
-void vftr_initialize ();
-void vftr_finalize () ;
-
-// test functions
-int vftr_setup_test_1 (FILE *fp);
-int vftr_setup_test_2 (FILE *fp);
+// These regions are for vftrace internal usage only.
+// They are always precise.
+void vftr_internal_region_begin(const char *s);
+void vftr_internal_region_end(const char *s);
 
 #endif

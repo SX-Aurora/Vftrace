@@ -122,9 +122,6 @@ void vftr_get_mpi_info (int *rank, int *size) {
 /**********************************************************************/
 
 void vftr_initialize() {
-    char *s;
-    int j, n;
-
     // set the timer reference point for this process
     vftr_set_local_ref_time();
     
@@ -263,8 +260,6 @@ void vftr_initialize() {
 /**********************************************************************/
 
 void vftr_calc_tree_format (function_t *func) {
-    function_t *f;
-    int         me, i, n;
     long long   fcalls, ftime;
 
     if (func == NULL) return;
@@ -273,9 +268,11 @@ void vftr_calc_tree_format (function_t *func) {
     ftime  = func->prof_current.cycles;
     if (vftr_maxtime < ftime) vftr_maxtime = ftime;
 
-    n = func->levels;
+    int n = func->levels;
 
     /* Recursive search of callees */
+    int i;
+    function_t *f;
     for (i = 0, f = func->first_in_level; i < n; i++,f = f->next_in_level) {
         vftr_calc_tree_format (f);
     }
@@ -284,8 +281,8 @@ void vftr_calc_tree_format (function_t *func) {
 /**********************************************************************/
 
 void vftr_finalize() {
-    int            i, ntop = 0;
-    function_t     **funcTable;
+    int ntop = 0;
+    function_t **funcTable;
 
     if (vftr_off())  return;
 

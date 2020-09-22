@@ -39,6 +39,7 @@ int vftr_MPI_Waitall(int count, MPI_Request array_of_requests[],
          req_completed[ireq] = false;
       }
       int retVal;
+      int tmpflag;
       bool all_completed = false;
       while (!all_completed) {
          all_completed = true;
@@ -48,9 +49,10 @@ int vftr_MPI_Waitall(int count, MPI_Request array_of_requests[],
                // check if the communication associated with the request
                // is completed
                PMPI_Request_get_status(array_of_requests[ireq],
-                                       req_completed+ireq,
+                                       &tmpflag,
                                        MPI_STATUS_IGNORE);
                // if not completed 
+               req_completed[ireq] = tmpflag;
                if (!(req_completed[ireq])) {
                   all_completed = false;
                }

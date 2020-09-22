@@ -235,7 +235,8 @@ void vftr_reset_counts (function_t *func) {
 
 /**********************************************************************/
 
-void vftr_find_function (char *func_name, int **indices, int *n_indices, bool to_lower_case) {
+void vftr_find_function (char *func_name, int **func_indices, int **stack_indices,
+			 int *n_indices, bool to_lower_case) {
 	*n_indices = 0;
 	char *s_compare;
 	for (int i = 0; i < vftr_stackscount; i++) {
@@ -250,7 +251,8 @@ void vftr_find_function (char *func_name, int **indices, int *n_indices, bool to
 		}
 	}
 	if (*n_indices > 0) {
-		*indices = (int*)malloc(*n_indices * sizeof(int));
+		*stack_indices = (int*)malloc(*n_indices * sizeof(int));
+		*func_indices = (int*)malloc(*n_indices * sizeof(int));
 		int idx = 0;
 		for (int i = 0; i < vftr_stackscount; i++) {
 			s_compare = strdup(vftr_func_table[i]->name);
@@ -260,7 +262,8 @@ void vftr_find_function (char *func_name, int **indices, int *n_indices, bool to
 				}
 			}	
 			if (!strcmp (s_compare, func_name)) {
-				(*indices)[idx++] = i;
+				(*func_indices)[idx] = i;
+				(*stack_indices)[idx++] = vftr_func_table[i]->gid;
 			}
 		}
 	}	
@@ -270,17 +273,17 @@ void vftr_find_function (char *func_name, int **indices, int *n_indices, bool to
 
 void vftr_write_function_indices (FILE *fp, char *func_name, bool to_lower_case) {
 	int n_indices;
-	int *indices = NULL;
-	vftr_find_function (func_name, &indices, &n_indices, to_lower_case);
-	if (!indices) {
+	int *func_indices = NULL;
+	vftr_find_function (func_name, &func_indices, NULL, &n_indices, to_lower_case);
+	if (!func_indices) {
 		fprintf (fp, "ERROR: No indices found for function %s\n", func_name);
 	} else {
 		fprintf (fp, "%s found at indices: ", func_name);
 		for (int i = 0; i < n_indices; i++) {
-			fprintf (fp, "%d ", indices[i]);
+			fprintf (fp, "%d ", func_indices[i]);
 		}
 		fprintf (fp, "\n");	
-		free (indices);
+		free (func_indices);
 	}
 }
 

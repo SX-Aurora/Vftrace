@@ -43,7 +43,8 @@ typedef struct Function {
    uint64_t stackHash;
 } function_t;
 
-void vftr_find_function (char *func_name, int **indices, int *n_indices, bool to_lower_case);
+void vftr_find_function (char *func_name, int **func_indices, int **stack_indices,
+		         int *n_indices, bool to_lower_case);
 
 // add a new function to the stack tables
 function_t *vftr_new_function(void *arg, const char *function_name,
@@ -52,8 +53,10 @@ function_t *vftr_new_function(void *arg, const char *function_name,
 // Reset all function internal counters
 void vftr_reset_counts (function_t *func);
 
+// test functions
 int vftr_functions_test_1 (FILE *fp_in, FILE *fp_out);
 int vftr_functions_test_2 (FILE *fp_in, FILE *fp_out);
 int vftr_functions_test_3 (FILE *fp_in, FILE *fp_out);
 int vftr_functions_test_4 (FILE *fp_in, FILE *fp_out);
+int vftr_functions_test_5 (FILE *fp_in, FILE *fp_out);
 #endif

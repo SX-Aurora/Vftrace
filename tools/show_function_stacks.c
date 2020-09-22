@@ -23,19 +23,12 @@
 #include <assert.h>
 #include <time.h>
 #include <byteswap.h>
+#include <limits.h>
 #include "vftr_scenarios.h"
 #include "vftr_filewrite.h"
 #include "vftr_mpi_utils.h"
 
-#define RECORD_LENGTH 10240
-
-
-/* FIXME make common header file */
-
-typedef struct FunctionEntry {
-    char  *name;
-    double elapse_time;
-} function_entry_t;
+#include "vftr_vfd_utils.h"
 
 typedef struct stack_leaf {
 	char *function_name;
@@ -43,58 +36,173 @@ typedef struct stack_leaf {
 	struct stack_leaf *next_in_level;
 	struct stack_leaf *callee;	
 	struct stack_leaf *origin;
-	double entry_time;
-	double time_spent;
+	double *entry_time;
+	double *time_spent;
 } stack_leaf_t;	
-	
 
-static int
-cmpstring( const void *p1, const void *p2 )
-{
-    function_entry_t *e1 = ( function_entry_t * ) p1;
-    function_entry_t *e2 = ( function_entry_t * ) p2;
+static int n_vfds; // Number of vfd files which are read in
 
-    return strcmp( e1->name, e2->name );
-}
+/**********************************************************************/
 
-typedef struct FileHeader {
-    char         fileid[VFTR_FILEIDSIZE], date[24];
-    long long    interval;
-    int          threads, thread, tasks, task; 
-    union { double d; unsigned long long l; } cycletime, runtime;
-    long long inittime;
-    unsigned int samplecount, sampleoffset;
-    unsigned int stackscount, stacksoffset;
-    unsigned int reserved;
-    int n_perf_types;
-} vfdhdr_t;
+void evaluate_mpi_time (double *all_times, 
+			double *t_avg, double *t_min, double *t_max,
+			int *rank_min, int *rank_max, double *imbalance) {
+	*t_avg = 0.0;
+	*t_min = LONG_MAX;
+	*t_max = 0.0; 
+	int n = 0;
+	for (int i = 0; i < n_vfds; i++) {
+		if (all_times[i] > 0) {
+			n++;
+			*t_avg = ((n - 1) * (*t_avg) + all_times[i]) / n;
 
-void read_fileheader (vfdhdr_t *vfdhdr, FILE *fp);
-void print_stacktree (stack_leaf_t *leaf, int n_spaces, double *total_mpi_time);
-
-bool is_precise (char *s) {
- 	return s[strlen(s)-1] == '*';
-}
-
-char *strip_trailing_asterisk (char *s) {
-	char *sdup = strdup(s);
-	int n = strlen(sdup);
-	if (sdup[n-1] == '*') {
-		sdup[n-1] = '\0';
+			if (all_times[i] > *t_max) {
+				*t_max = all_times[i];
+				*rank_max = i;
+			}
+			if (all_times[i] < *t_min) {
+				*t_min = all_times[i];
+				*rank_min = i;
+			}
+		}
 	}
-	return sdup;
+	double d1 = *t_avg - *t_min;
+	double d2 = *t_max - *t_avg;
+	*imbalance = d1 > d2 ? d1 / *t_avg * 100 : d2 / *t_avg * 100;
 }
 
-typedef struct StackEntry {
-    char *name;
-    int caller;
-    double entry_time;
-    int fun;
-    bool precise;
-} stack_entry_t;
+/**********************************************************************/
+
+// Auxiliary functions for colored output of MPI imbalance values
+
+void set_red () {
+	printf ("\033[0;31m");
+}
+
+void set_orange () {
+	printf ("\033[0;33m");
+}
+
+void set_green () {
+	printf ("\033[0;32m");	
+}
+
+void reset_colors () {
+	printf ("\033[0m");	
+}
+
+/**********************************************************************/
+
+void print_mpi_times (double t_avg, double t_min, double t_max,
+		      int rank_min, int rank_max, double imbalance) {
+	// MPI imbalances are highlighted in color 
+	printf (": MPI %4.3f %4.3f(%d) %4.3f(%d) ",
+		t_avg, t_min, rank_min, t_max, rank_max);
+	if (imbalance < 10) {
+		set_green ();
+	} else if (imbalance > 5 && imbalance < 50) {
+		set_orange ();
+	} else {
+		set_red();
+	}
+	printf ("%4.2f %%\n", imbalance);
+	reset_colors();
+}
+
+/**********************************************************************/
+
+void print_stacktree (stack_leaf_t *leaf, int n_spaces, double *total_mpi_time) {
+	if (!leaf) return;
+	printf ("%s", leaf->function_name);
+	if (leaf->callee) {
+		printf (">");
+		int new_n_spaces = n_spaces + strlen(leaf->function_name) + 1;
+		print_stacktree (leaf->callee, new_n_spaces, total_mpi_time);
+	} else {
+		double t_avg, t_min, t_max, imbalance;
+		int rank_min, rank_max;
+		evaluate_mpi_time (leaf->time_spent,
+				   &t_avg, &t_min, &t_max,
+				   &rank_min, &rank_max, &imbalance);
+		print_mpi_times (t_avg, t_min, t_max, rank_min, rank_max, imbalance);
+		*total_mpi_time = *total_mpi_time + leaf->time_spent[0];
+	}
+	if (leaf->next_in_level) {
+		for (int i = 0; i < n_spaces; i++) printf (" ");
+		printf (">");
+		print_stacktree (leaf->next_in_level, n_spaces, total_mpi_time);
+	}
+}
+
+/**********************************************************************/
+
+int count_stacks (stack_leaf_t *leaf, int *n_stacks) {
+	if (!leaf) return;
+	if (leaf->callee) {
+		count_stacks (leaf->callee, n_stacks);
+	} else {
+		(*n_stacks)++;
+	}
+	if (leaf->next_in_level) {
+		count_stacks (leaf->next_in_level, n_stacks);
+	}
+}
+
+/**********************************************************************/
+
+enum new_leaf_type {ORIGIN, NEXT, CALLEE};
+
+void create_new_leaf (stack_leaf_t **new_leaf, char *name, enum new_leaf_type leaf_type) {
+	if (leaf_type == ORIGIN) {
+		*new_leaf = (stack_leaf_t*) malloc (sizeof(stack_leaf_t));
+		(*new_leaf)->function_name = strdup(name);
+		(*new_leaf)->module_name = "";
+		(*new_leaf)->next_in_level = NULL;
+		(*new_leaf)->callee = NULL;
+		(*new_leaf)->origin = (stack_leaf_t*) malloc (sizeof(stack_leaf_t));
+		(*new_leaf)->origin = *new_leaf;
+		(*new_leaf)->entry_time = (double*)malloc (n_vfds * sizeof(double));
+		(*new_leaf)->time_spent = (double*)malloc (n_vfds * sizeof(double));
+		for (int i = 0; i < n_vfds; i++) {
+			(*new_leaf)->entry_time[i] = 0.0;
+			(*new_leaf)->time_spent[i] = 0.0;
+		}
+	} else if (leaf_type == NEXT) {
+		(*new_leaf)->next_in_level = (stack_leaf_t*)malloc (sizeof(stack_leaf_t));
+		(*new_leaf)->next_in_level->function_name = strdup(name);
+		(*new_leaf)->next_in_level->module_name = "";
+		(*new_leaf)->next_in_level->next_in_level = NULL;	
+		(*new_leaf)->next_in_level->callee = NULL;
+		(*new_leaf)->next_in_level->origin = (stack_leaf_t*)malloc (sizeof(stack_leaf_t));
+		(*new_leaf)->next_in_level->origin = (*new_leaf)->origin;
+		(*new_leaf)->next_in_level->entry_time = (double*)malloc (n_vfds * sizeof(double));
+		(*new_leaf)->next_in_level->time_spent = (double*)malloc (n_vfds * sizeof(double));						
+		for (int i = 0; i < n_vfds; i++) {
+				(*new_leaf)->next_in_level->entry_time[i] = 0.0;
+				(*new_leaf)->next_in_level->time_spent[i] = 0.0;
+		}
+	} else if (leaf_type == CALLEE) {
+			(*new_leaf)->callee = (stack_leaf_t*) malloc (sizeof(stack_leaf_t));
+			(*new_leaf)->callee->function_name = strdup(name);	
+			(*new_leaf)->callee->module_name = "";
+			(*new_leaf)->callee->next_in_level = NULL;
+			(*new_leaf)->callee->callee = NULL;
+			(*new_leaf)->callee->origin = (stack_leaf_t*)malloc (sizeof(stack_leaf_t));
+			(*new_leaf)->callee->origin = (*new_leaf)->origin;
+				
+			(*new_leaf)->callee->entry_time = (double*)malloc (n_vfds * sizeof(double));	
+			(*new_leaf)->callee->time_spent = (double*)malloc (n_vfds * sizeof(double));	
+			for (int i = 0; i < n_vfds; i++) {
+					(*new_leaf)->callee->entry_time[i] = 0.0;
+					(*new_leaf)->callee->time_spent[i] = 0.0;
+			}
+	}
+}
+
+/**********************************************************************/
 
 void fill_into_stack_tree (stack_leaf_t **this_leaf, stack_entry_t *stacks,
-			   int stackID_0, int sidw, double stime) {
+			   int stackID_0, int sample_id, double stime, int i_vfd) {
   	int stackID = stackID_0;
 	int stack_ids[100];
 	int n_stack_ids = 0;
@@ -106,15 +214,7 @@ void fill_into_stack_tree (stack_leaf_t **this_leaf, stack_entry_t *stacks,
 	if (*this_leaf) {
 		*this_leaf = (*this_leaf)->origin;
 	} else {
-		*this_leaf = (stack_leaf_t*) malloc (sizeof(stack_leaf_t));
-		(*this_leaf)->function_name = strdup(stacks[stackID].name);
-		(*this_leaf)->module_name = "";
-		(*this_leaf)->next_in_level = NULL;
-		(*this_leaf)->callee = NULL;
-		(*this_leaf)->origin = (stack_leaf_t*) malloc (sizeof(stack_leaf_t));
-		(*this_leaf)->origin = *this_leaf;
-		(*this_leaf)->entry_time = 0.0;
-		(*this_leaf)->time_spent = 0.0;
+		create_new_leaf (this_leaf, stacks[stackID].name, ORIGIN);
 	}
 	for (int level = n_stack_ids - 2; level >= 0; level--) {
 		stackID = stack_ids[level];
@@ -124,303 +224,153 @@ void fill_into_stack_tree (stack_leaf_t **this_leaf, stack_entry_t *stacks,
 				if ((*this_leaf)->next_in_level) {
 					*this_leaf = (*this_leaf)->next_in_level;
 				} else {
-					(*this_leaf)->next_in_level = 
-						(stack_leaf_t*) malloc (sizeof(stack_leaf_t));
-					(*this_leaf)->next_in_level->function_name = strdup(stacks[stackID].name);
-					(*this_leaf)->next_in_level->module_name = "";
-					(*this_leaf)->next_in_level->next_in_level = NULL;	
-					(*this_leaf)->next_in_level->callee = NULL;
-					(*this_leaf)->next_in_level->origin = (stack_leaf_t*)malloc (sizeof(stack_leaf_t));
-					(*this_leaf)->next_in_level->origin = (*this_leaf)->origin;
+					create_new_leaf (this_leaf, stacks[stackID].name, NEXT);
 					if (level == 0) {
-						if (sidw == SID_ENTRY) {
-							(*this_leaf)->next_in_level->entry_time = stime;
+						if (sample_id == SID_ENTRY) {
+							(*this_leaf)->next_in_level->entry_time[i_vfd] = stime;
 						} else {
-							(*this_leaf)->next_in_level->time_spent += (stime - (*this_leaf)->next_in_level->entry_time);
+							(*this_leaf)->next_in_level->time_spent[i_vfd] += (stime - (*this_leaf)->next_in_level->entry_time[i_vfd]);
 						}
-					} else {
-						(*this_leaf)->next_in_level->entry_time = 0.0;
-						(*this_leaf)->next_in_level->time_spent = 0.0;
 					}
 					*this_leaf = (*this_leaf)->next_in_level;
 					break;
 				}
 			}
 			if (level == 0) {
-				if (sidw == SID_ENTRY) {
-					(*this_leaf)->entry_time = stime;
+				if (sample_id == SID_ENTRY) {
+					(*this_leaf)->entry_time[i_vfd] = stime;
 				} else {
-					(*this_leaf)->time_spent += (stime - (*this_leaf)->entry_time);
+					(*this_leaf)->time_spent[i_vfd] += (stime - (*this_leaf)->entry_time[i_vfd]);
 				}
 			}	
 		} else {
-			(*this_leaf)->callee = (stack_leaf_t*) malloc (sizeof(stack_leaf_t));
-			(*this_leaf)->callee->function_name = strdup(stacks[stackID].name);	
-			(*this_leaf)->callee->module_name = "";
-			(*this_leaf)->callee->next_in_level = NULL;
-			(*this_leaf)->callee->callee = NULL;
-			(*this_leaf)->callee->origin = (stack_leaf_t*)malloc (sizeof(stack_leaf_t));
-			(*this_leaf)->callee->origin = (*this_leaf)->origin;
+			create_new_leaf (this_leaf, stacks[stackID].name, CALLEE);
 			if (level == 0) {
-				if (sidw == SID_ENTRY) {
-					(*this_leaf)->callee->entry_time = stime;	
+				if (sample_id == SID_ENTRY) {
+					(*this_leaf)->callee->entry_time[i_vfd] = stime;	
 				} else {
-					(*this_leaf)->callee->time_spent += (stime - (*this_leaf)->callee->entry_time);
+					(*this_leaf)->callee->time_spent[i_vfd] += (stime - (*this_leaf)->callee->entry_time[i_vfd]);
 				}
-			} else {
-				(*this_leaf)->callee->entry_time = 0.0;
-				(*this_leaf)->callee->time_spent = 0.0;
 			}
 			*this_leaf = (*this_leaf)->callee;
 		}
 	}	
 }
 
-void read_stacks (FILE *fp, stack_entry_t **stacks, function_entry_t **functions, 
-		  unsigned int stacks_count,
-                  unsigned int stacks_offset, int *n_precise_functions, long *max_fp) {
+/**********************************************************************/
 
-    struct StackInfo {
-        int id, levels, caller, len;
-    } stackInfo;
-    char record[RECORD_LENGTH];
-
-    *stacks = (stack_entry_t *) malloc (stacks_count * sizeof(stack_entry_t));
-    if (ftell(fp) > *max_fp) *max_fp = ftell(fp);
-    fseek (fp, stacks_offset, SEEK_SET);
-    
-    for (int i = 0; i < stacks_count; i++) {
-	fread (&stackInfo, sizeof(int), 4, fp);
-        int len = stackInfo.len < RECORD_LENGTH ? stackInfo.len : RECORD_LENGTH - 1;
-	fread (record, sizeof(char), len, fp);
-	record[len] = '\0';
-        (*stacks)[stackInfo.id].name = strip_trailing_asterisk(record);
-	(*stacks)[stackInfo.id].caller = stackInfo.caller;
-	(*stacks)[stackInfo.id].precise = is_precise(record);
-
-        (*stacks)[stackInfo.id].fun = -1;
-        if ((*stacks)[stackInfo.id].precise) {
-            for (int j = 0; j < *n_precise_functions; j++) {
-                if (!strcmp (record, (*functions)[j].name)) {
-                    (*stacks)[stackInfo.id].fun = j;
-                    break;
-                }
-            }
-	    
-            if ((*stacks)[stackInfo.id].fun == -1 ) {
-                (*n_precise_functions)++;
-                if  (*n_precise_functions == 1) {
-                    *functions = (struct FunctionEntry *) malloc (*n_precise_functions * sizeof(struct FunctionEntry) );
-                } else {
-                    *functions = (struct FunctionEntry *) realloc (*functions, *n_precise_functions * sizeof(struct FunctionEntry) );
-                }
-
-                (*functions)[*n_precise_functions - 1].name = strip_trailing_asterisk (record);
-                (*functions)[*n_precise_functions - 1].elapse_time = 0.0;
-            }
-        }
-
-        for (int j = 0; j < *n_precise_functions; j++) {
-            if (!strcmp ((*stacks)[stackInfo.id].name, (*functions)[j].name)) {
-                (*stacks)[stackInfo.id].fun = j;
-                break;
-            }
-        }
-    }
+void show_progress (int i_vfd) {
+	static int next_display = 0;
+	if (next_display == 0) next_display = n_vfds / 4;
+	if (i_vfd > next_display) {
+		printf ("%d / %d\n", i_vfd, n_vfds);
+		next_display += (n_vfds / 4);
+	}
 }
-
+	
+/**********************************************************************/
 
 int main (int argc, char **argv) {
-    FILE      *fp;
-    long long  time0;
-    char *s;
-    char      *typename[34];
-    int        i, j, samples, nextID, levels, caller, n_precise_functions, show_precise; 
-    long file_size, max_fp;
-    double     dtime = 0.;
+    FILE *fp;
+    int n_precise_functions; 
     char *filename, *search_func;
-    vfdhdr_t vfdhdr;
-    function_entry_t *functions = NULL;
 
-    stack_entry_t *stacks;
-
-    union { unsigned int       ui[2];
-            unsigned long long ull;   } sid;
-
-    int this_vfd_version;
-
-    n_precise_functions = 0;
-    
+    vfd_header_t vfd_header;
+    function_entry_t *precise_functions = NULL;
+    stack_entry_t *stacks = NULL;
+	
     if (argc < 3) {
 	    printf ("Usage: show_function_stacks <vfd-file> <search_func>\n");
 	    return -1;
     }
 
-    filename = argv[1];
-    search_func = argv[2];
-    show_precise = 0;
+    n_vfds = argc - 2;
+    search_func = argv[n_vfds + 1];
 
-    fp = fopen( filename, "r" );
-    assert( fp );
-    fseek (fp, 0L, SEEK_END);
-    file_size = ftell(fp);
-    max_fp = 0;
-    rewind(fp);
-
-    printf ("Reading: %s; Size: %ld bytes\n", filename, file_size);
-
-    fread (&this_vfd_version, 1, sizeof(int), fp);
-    printf ("VFD version: %d\n", this_vfd_version);
-    if (this_vfd_version != VFD_VERSION) {
-	printf ("The file %s does not have the most recent VFD version (%d)!\n",
-		filename, VFD_VERSION);  
-	return -1;
-    }
-    read_fileheader (&vfdhdr, fp);
-
-    printf ("header size=%ld offset=%ld\n",
-	     sizeof(struct FileHeader), ftell(fp));
-
-    fread (&(vfdhdr.n_perf_types), sizeof(int), 1, fp);
-    double *perf_values = NULL;
-    if (vfdhdr.n_perf_types > 0) {
-    	char scenario_name[SCENARIO_NAME_LEN];
-	perf_values = (double*)malloc (vfdhdr.n_perf_types * sizeof(double));
-        for (i = 0; i < vfdhdr.n_perf_types; i++) {
-            	fread (scenario_name, SCENARIO_NAME_LEN, 1, fp);
-            	printf ("Performance counter name: %s\n", scenario_name);
-            	int perf_integrated;
-            	fread (&perf_integrated, sizeof(int), 1, fp);
-            	printf ("Integrated counter: ");
-            	perf_integrated == 0 ? printf ("NO\n") : printf ("YES\n");
-	        perf_values[i] = 0.0;
-        }
-    }
-    
-    printf ("Unique stacks:   %d\n",                 vfdhdr.stackscount);
-    if (!show_precise) printf ("Stacks list:\n");
-    read_stacks (fp, &stacks, &functions,
-		 vfdhdr.stackscount, vfdhdr.stacksoffset, 
-                 &n_precise_functions, &max_fp);
-    
-    if (ftell(fp) > max_fp) max_fp = ftell(fp);
-    fseek( fp, vfdhdr.sampleoffset, SEEK_SET );
-
-    if( !show_precise )printf( "\nStack and message samples:\n\n" );
-  
     stack_leaf_t *stack_tree = NULL;
-    bool has_been_warned = false;
 
-    for(i = 0; i < vfdhdr.samplecount; i++ ) {
-        int        sidw;
-	long       pos;
+    printf ("Processing %d vfd files\n", n_vfds);
 
-        fread (&sidw, sizeof(int), 1, fp);
+    for (int i_vfd = 0; i_vfd < n_vfds; i_vfd++) {
 
-        if (sidw == SID_MESSAGE) {
-            int dir, type_idx, rank; 
-            int type_size;
-            long long tstart, tstop;
-	    unsigned int count, tag;
-	    fread (&dir, sizeof(int), 1, fp);
-            fread (&rank, sizeof(int), 1, fp);
-            fread (&type_idx, sizeof(int), 1, fp);
-            fread (&count, sizeof(int), 1, fp);
-            fread (&type_size, sizeof(int), 1, fp);
-	    fread (&tag, sizeof(int), 1, fp);
-            fread (&tstart, sizeof(long long), 1, fp);
-	    fread (&tstop, sizeof(long long), 1, fp);
-            double dtstart = tstart * 1.0e-6;
-            double dtstop = tstop * 1.0e-6;
-            double rate = count*type_size/(dtstop-dtstart)/(1024.0*1024.0);
-        } else if (sidw == SID_ENTRY || sidw == SID_EXIT) {
-            int stackID;
-            fread (&stackID, sizeof(int), 1, fp);
-            long long ltime = 0;
-            fread (&ltime, sizeof (long long), 1, fp);
-            double stime = ltime * 1.0e-6;
-	    for (int p = 0; p < vfdhdr.n_perf_types; p++) {
-		fread (&perf_values[p], sizeof(double), 1, fp);
-	    }
-
-	    if (!strcmp (stacks[stackID].name, search_func)) {
-		if ((!stacks[stackID].precise) && (!has_been_warned)) {
-			printf ("Attention: The function %s is not precise. \n"
-				"The data printed here is unreliable. "
-				"Please sample again using VFTR_PRECISE.\n",
-				stacks[stackID].name);
-			has_been_warned = true;
+	    show_progress (i_vfd);
+	    filename = argv[i_vfd+1];
+	    fp = fopen (filename, "r");
+	    assert (fp);
+	
+	    // We are not interested in the VFD version here
+	    int dummy;
+	    fread (&dummy, 1, sizeof(int), fp);
+	    // From the header, we actually only need the stack and sample offset
+	    read_fileheader (&vfd_header, fp);
+	
+	    // We need the number of hardware scenarios, because when scanning the samples
+	    // and a message is encountered (sample_id == SID_MESSAGE), we need to scan over these
+	    // values in order to be synchronized. Also, we allocate the corresponding (dummy-)buffer
+	    fread (&(vfd_header.n_hw_obs), sizeof(int), 1, fp);
+	    skip_hw_observables (fp, vfd_header.n_hw_obs);
+	    
+	    // Although not needed elsewhere here, we need the "precise_functions" array
+	    // because it is used inside of read_stacks to compute indices. Other routines
+	    // such as tracedump need it, so we keep it as an external field.
+	    n_precise_functions = 0;
+	    read_stacks (fp, &stacks, &precise_functions,
+			 vfd_header.stackscount, vfd_header.stacksoffset, 
+	                 &n_precise_functions, NULL);
+	
+	    for (int i = 0; i < vfd_header.stackscount; i++) {
+		if (stacks[i].precise) {
+			stacks[i].name = strip_trailing_asterisk(stacks[i].name);
 		}
-		fill_into_stack_tree(&stack_tree, stacks, stackID, sidw, stime);
 	    }
-            if( stacks[stackID].fun != -1 ) {
-                if (sidw == SID_ENTRY) {
-			stacks[stackID].entry_time = stime;
-                } else {
-			functions[stacks[stackID].fun].elapse_time += (stime - stacks[stackID].entry_time);
-                }
-            }
+	
+	    fseek (fp, vfd_header.sampleoffset, SEEK_SET);
+	
+	    bool has_been_warned = false;
+	
+	    for (int i = 0; i < vfd_header.samplecount; i++ ) {
+	        int sample_id;
+	
+	        fread (&sample_id, sizeof(int), 1, fp);
+	
+	        if (sample_id == SID_MESSAGE) {
+		    skip_mpi_message_sample (fp);
+	        } else if (sample_id == SID_ENTRY || sample_id == SID_EXIT) {
+	            int stack_id;
+		    long long sample_time;
+		    read_stack_sample (fp, vfd_header.n_hw_obs, &stack_id, &sample_time, NULL);
+		    double sample_time_s = (double)sample_time * 1e-6;
+	
+		    if (!strcmp (stacks[stack_id].name, search_func)) {
+			if ((!stacks[stack_id].precise) && (!has_been_warned)) {
+				printf ("Attention: The function %s is not precise. \n"
+					"The data printed here is unreliable. "
+					"Please sample again using VFTR_PRECISE.\n",
+					stacks[stack_id].name);
+				has_been_warned = true;
+			}
+			fill_into_stack_tree (&stack_tree, stacks, stack_id,
+					      sample_id, sample_time_s, i_vfd);	
 
-	} else {
-            printf("ERROR: Invalid sample type: %d\n", sidw);
-            return 1;
-        }
+		    }
+		} else {
+	            printf("ERROR: Invalid sample type: %d\n", sample_id);
+	            return 1;
+	        }
+	    }
+	
+	   
+	    fclose (fp);
+	    free (stacks);
+	    free (precise_functions);
     }
 
     double total_mpi_time = 0.0;
     print_stacktree (stack_tree->origin, 0, &total_mpi_time);
-    printf ("Total MPI time: %lf\n", total_mpi_time);
-
-    if (!show_precise) printf ("\n");
-
-    if (file_size != max_fp) {
-	    printf ("WARNING: Not all data have been read!\n");
-	    printf ("Currently at %ld, but the file has %ld bytes.\n",
-		    max_fp, file_size);
-    } else {
-	    printf ("SUCCESS: All bytes have been read\n");
-    }
-    (void) fclose( fp );
-
-    if (perf_values) free (perf_values);
-    free (stacks);
-    free (functions);
 
     return 0;
 }
 
-void read_fileheader (vfdhdr_t *vfdhdr, FILE *fp) {
-    fread( &vfdhdr->fileid,	 1, VFTR_FILEIDSIZE, 	  fp );
-    fread( &vfdhdr->date,	 1, 24, 	          fp );
-    fread( &vfdhdr->interval,	 1, sizeof(long long),    fp );
-    fread( &vfdhdr->threads,	 1, sizeof(int),          fp );
-    fread( &vfdhdr->thread,	 1, sizeof(int),          fp );
-    fread( &vfdhdr->tasks,	 1, sizeof(int),          fp );
-    fread( &vfdhdr->task,	 1, sizeof(int),          fp );
-    fread( &vfdhdr->cycletime.l,  1, sizeof(long long),    fp );
-    fread( &vfdhdr->inittime,    1, sizeof(long long),    fp );
-    fread( &vfdhdr->runtime.l,	 1, sizeof(long long),    fp );
-    fread( &vfdhdr->samplecount,  1, sizeof(unsigned int), fp );
-    fread( &vfdhdr->stackscount,  1, sizeof(unsigned int), fp );
-    fread( &vfdhdr->stacksoffset, 1, sizeof(unsigned int), fp );
-    fread( &vfdhdr->sampleoffset, 1, sizeof(unsigned int), fp );
-    fread( &vfdhdr->reserved,     1, sizeof(unsigned int), fp );
-}
+/**********************************************************************/
 
-void print_stacktree (stack_leaf_t *leaf, int n_spaces, double *total_mpi_time) {
-	if (!leaf) return;
-	printf ("%s", leaf->function_name);
-	if (leaf->callee) {
-		printf (">");
-		int new_n_spaces = n_spaces + strlen(leaf->function_name) + 1;
-		print_stacktree (leaf->callee, new_n_spaces, total_mpi_time);
-	} else {
-		printf (": MPI time %4.3f s\n", leaf->time_spent);	
-		*total_mpi_time = *total_mpi_time + leaf->time_spent;
-	}
-	if (leaf->next_in_level) {
-		for (int i = 0; i < n_spaces; i++) printf (" ");
-		printf (">");
-		print_stacktree (leaf->next_in_level, n_spaces, total_mpi_time);
-	}
-}
+
