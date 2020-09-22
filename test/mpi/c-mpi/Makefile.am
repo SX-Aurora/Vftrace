@@ -79,6 +79,7 @@ check_PROGRAMS += bcast \
 		  gather_inplace \
 		  igather \
 		  igather_intercom \
+		  igather_inplace \
 		  gatherv \
 		  gatherv_intercom \
 		  gatherv_inplace \
@@ -148,6 +149,10 @@ igather_LDFLAGS = $(AM_LDFLAGS)
 igather_intercom_SOURCES = $(srcdir)/igather_intercom.c
 igather_intercom_CFLAGS = $(AM_CFLAGS)
 igather_intercom_LDFLAGS = $(AM_LDFLAGS)
+
+igather_inplace_SOURCES = $(srcdir)/igather_inplace.c
+igather_inplace_CFLAGS = $(AM_CFLAGS)
+igather_inplace_LDFLAGS = $(AM_LDFLAGS)
 
 gatherv_SOURCES = $(srcdir)/gatherv.c
 gatherv_CFLAGS = $(AM_CFLAGS)
@@ -290,6 +295,7 @@ dist_noinst_SCRIPTS += bcast.sh \
 		       gather_inplace.sh \
 		       igather.sh \
 		       igather_intercom.sh \
+		       igather_inplace.sh \
 		       gatherv.sh \
 		       gatherv_intercom.sh \
 		       gatherv_inplace.sh \
