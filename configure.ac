@@ -19,6 +19,18 @@ AM_PROG_AR
 AM_PROG_CC_C_O
 # WO_PROG_COMPILERS()
 ################################
+# Check if C-compiler supports c99 standard
+AX_CHECK_COMPILE_FLAG([-std=gnu11],
+   [AX_APPEND_FLAG([-std=gnu11])],
+   [AX_CHECK_COMPILE_FLAG([-std=c11],
+      [AX_APPEND_FLAG([-std=c11])],
+      [AX_CHECK_COMPILE_FLAG([-std=c99],
+         [AX_APPEND_FLAG([-std=c99])],
+         [AC_MSG_ERROR([C compiler does not support at least C99!])])
+      ])
+   ])
+
+################################
 AC_ARG_ENABLE([papi],
   [AS_HELP_STRING([--enable-papi], [enable PAPI [[no]]])],
   [], [enable_papi="no"])
@@ -85,6 +97,7 @@ if test "$enable_mpi_profiling" = yes; then
   else
     uses_nec_mpi=no
   fi
+  AC_MSG_RESULT([$uses_nec_mpi])
 fi 
 
 AC_MSG_CHECKING([if Intel compiler is used])
@@ -113,10 +126,11 @@ PROGRAM test
    IF (MPI_SUBARRAYS_SUPPORTED) STOP 1
    STOP 0
 END PROGRAM test]])],
-      [uses_mpi_f90_ts29113=no],
-      [uses_mpi_f90_ts29113=yes])]
+      [supports_mpi_f90_ts29113=no],
+      [supports_mpi_f90_ts29113=yes])]
 )
 AM_CONDITIONAL([SUPPORTS_MPIF90_TS], [test "$supports_mpi_f90_ts29113" = "yes"])
+AC_MSG_RESULT([$supports_mpi_f90_ts29113])
 
 # Fortran 2008:
 AM_COND_IF(
@@ -129,12 +143,11 @@ PROGRAM test
    IF (MPI_SUBARRAYS_SUPPORTED) STOP 1
    STOP 0
 END PROGRAM test]])],
-      [uses_mpi_f08_ts29113=no],
-      [uses_mpi_f08_ts29113=yes])]
+      [supports_mpi_f08_ts29113=no],
+      [supports_mpi_f08_ts29113=yes])]
 )
+AC_MSG_RESULT([$supports_mpi_f08_ts29113])
 AM_CONDITIONAL([SUPPORTS_MPIF08_TS], [test "$supports_mpi_f08_ts29113" = "yes"])
-
-
 
 # WO_PROG_PAPI()
 # WO_PROG_COMPONENTS()
