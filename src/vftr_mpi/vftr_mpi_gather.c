@@ -94,7 +94,11 @@ int vftr_MPI_Gather(const void *sendbuf, int sendcount,
                sendcount = recvcount;
                sendtype = recvtype;
                // For the in-place option no self communication is executed
-               for (int i=1; i<size; i++) {
+               for (int i=0; i<rank; i++) {
+                  vftr_store_sync_message_info(recv, recvcount, recvtype,
+                                               i, -1, comm, tstart, tend);
+               }
+               for (int i=rank+1; i<size; i++) {
                   vftr_store_sync_message_info(recv, recvcount, recvtype,
                                                i, -1, comm, tstart, tend);
                }
