@@ -93,12 +93,23 @@ int vftr_MPI_Gatherv(const void *sendbuf, int sendcount, MPI_Datatype sendtype,
             if (vftr_is_C_MPI_IN_PLACE(sendbuf)) {
                sendcount = recvcounts[rank];
                sendtype = recvtype;
-            }
-            vftr_store_sync_message_info(send, sendcount, sendtype,
-                                         root, -1, comm, tstart, tend);
-            for (int i=0; i<size; i++) {
-               vftr_store_sync_message_info(recv, recvcounts[i], recvtype,
-                                            i, -1, comm, tstart, tend);
+               // For the in-place option no self communication is executed
+               for (int i=0; i<rank; i++) {
+                  vftr_store_sync_message_info(recv, recvcounts[i], recvtype,
+                                               i, -1, comm, tstart, tend);
+               }
+               for (int i=rank+1; i<size; i++) {
+                  vftr_store_sync_message_info(recv, recvcounts[i], recvtype,
+                                               i, -1, comm, tstart, tend);
+               }
+
+            } else {
+               vftr_store_sync_message_info(send, sendcount, sendtype,
+                                            root, -1, comm, tstart, tend);
+               for (int i=0; i<size; i++) {
+                  vftr_store_sync_message_info(recv, recvcounts[i], recvtype,
+                                               i, -1, comm, tstart, tend);
+               }
             }
          } else {
             vftr_store_sync_message_info(send, sendcount, sendtype, root,

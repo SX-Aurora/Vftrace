@@ -256,6 +256,7 @@ AM_COND_IF([MPI_PROFILING],
                             test/mpi/c-mpi/igather_intercom.sh:test/mpi/testscripts/igather_intercom.sh
                             test/mpi/c-mpi/gatherv.sh:test/mpi/testscripts/gatherv.sh
                             test/mpi/c-mpi/gatherv_intercom.sh:test/mpi/testscripts/gatherv_intercom.sh
+                            test/mpi/c-mpi/gatherv_inplace.sh:test/mpi/testscripts/gatherv_inplace.sh
                             test/mpi/c-mpi/igatherv.sh:test/mpi/testscripts/igatherv.sh
                             test/mpi/c-mpi/igatherv_intercom.sh:test/mpi/testscripts/igatherv_intercom.sh
                             test/mpi/c-mpi/scatter.sh:test/mpi/testscripts/scatter.sh
@@ -339,6 +340,7 @@ AM_COND_IF([MPI_PROFILING],
                             test/mpi/f-mpi/igather_intercom.sh:test/mpi/testscripts/igather_intercom.sh
                             test/mpi/f-mpi/gatherv.sh:test/mpi/testscripts/gatherv.sh
                             test/mpi/f-mpi/gatherv_intercom.sh:test/mpi/testscripts/gatherv_intercom.sh
+                            test/mpi/f-mpi/gatherv_inplace.sh:test/mpi/testscripts/gatherv_inplace.sh
                             test/mpi/f-mpi/igatherv.sh:test/mpi/testscripts/igatherv.sh
                             test/mpi/f-mpi/igatherv_intercom.sh:test/mpi/testscripts/igatherv_intercom.sh
                             test/mpi/f-mpi/scatter.sh:test/mpi/testscripts/scatter.sh
@@ -422,6 +424,7 @@ AM_COND_IF([MPI_PROFILING],
                             test/mpi/f08-mpi/igather_intercom.sh:test/mpi/testscripts/igather_intercom.sh
                             test/mpi/f08-mpi/gatherv.sh:test/mpi/testscripts/gatherv.sh
                             test/mpi/f08-mpi/gatherv_intercom.sh:test/mpi/testscripts/gatherv_intercom.sh
+                            test/mpi/f08-mpi/gatherv_inplace.sh:test/mpi/testscripts/gatherv_inplace.sh
                             test/mpi/f08-mpi/igatherv.sh:test/mpi/testscripts/igatherv.sh
                             test/mpi/f08-mpi/igatherv_intercom.sh:test/mpi/testscripts/igatherv_intercom.sh
                             test/mpi/f08-mpi/scatter.sh:test/mpi/testscripts/scatter.sh
