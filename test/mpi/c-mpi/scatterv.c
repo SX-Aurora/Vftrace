@@ -16,7 +16,7 @@ int main(int argc, char** argv) {
 
    // require cmd-line argument
    if (argc < 2) {
-      printf("./bcast <msgsize in ints>\n");
+      printf("./scatterv <msgsize in ints>\n");
       return 1;
    }
 
