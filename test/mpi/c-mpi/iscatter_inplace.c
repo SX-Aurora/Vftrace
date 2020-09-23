@@ -24,6 +24,8 @@ int main(int argc, char** argv) {
    // allocating send/recv buffer
    int nints = atoi(argv[1]);
    int *rbuffer = NULL;
+   int recvcount;
+   MPI_Datatype recvtype;
    int *sbuffer = NULL;
    if (my_rank == rootrank) {
       sbuffer = (int*) malloc(comm_size*nints*sizeof(int));
@@ -33,15 +35,19 @@ int main(int argc, char** argv) {
          }
       }
       rbuffer = MPI_IN_PLACE;
+      recvcount = 0;
+      recvtype = MPI_DATATYPE_NULL;
    } else {
       rbuffer = (int*) malloc(nints*sizeof(int));
       for (int i=0; i<nints; i++) {rbuffer[i]=-1;}
+      recvcount = nints;
+      recvtype = MPI_INT;
    }
 
    // Messaging
    MPI_Request myrequest;
    MPI_Iscatter(sbuffer, nints, MPI_INT,
-                rbuffer, nints, MPI_INT, 
+                rbuffer, recvcount, recvtype,
                 rootrank, MPI_COMM_WORLD, &myrequest);
    if (my_rank == rootrank) {
       printf("Scattering messages from rank %d\n", my_rank);
