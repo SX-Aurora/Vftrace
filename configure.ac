@@ -266,6 +266,7 @@ AM_COND_IF([MPI_PROFILING],
                             test/mpi/c-mpi/scatter_inplace.sh:test/mpi/testscripts/scatter_inplace.sh
                             test/mpi/c-mpi/iscatter.sh:test/mpi/testscripts/iscatter.sh
                             test/mpi/c-mpi/iscatter_intercom.sh:test/mpi/testscripts/iscatter_intercom.sh
+                            test/mpi/c-mpi/iscatter_inplace.sh:test/mpi/testscripts/iscatter_inplace.sh
                             test/mpi/c-mpi/scatterv.sh:test/mpi/testscripts/scatterv.sh
                             test/mpi/c-mpi/scatterv_intercom.sh:test/mpi/testscripts/scatterv_intercom.sh
                             test/mpi/c-mpi/iscatterv.sh:test/mpi/testscripts/iscatterv.sh
@@ -353,6 +354,7 @@ AM_COND_IF([MPI_PROFILING],
                             test/mpi/f-mpi/scatter_inplace.sh:test/mpi/testscripts/scatter_inplace.sh
                             test/mpi/f-mpi/iscatter.sh:test/mpi/testscripts/iscatter.sh
                             test/mpi/f-mpi/iscatter_intercom.sh:test/mpi/testscripts/iscatter_intercom.sh
+                            test/mpi/f-mpi/iscatter_inplace.sh:test/mpi/testscripts/iscatter_inplace.sh
                             test/mpi/f-mpi/scatterv.sh:test/mpi/testscripts/scatterv.sh
                             test/mpi/f-mpi/scatterv_intercom.sh:test/mpi/testscripts/scatterv_intercom.sh
                             test/mpi/f-mpi/iscatterv.sh:test/mpi/testscripts/iscatterv.sh
@@ -440,6 +442,7 @@ AM_COND_IF([MPI_PROFILING],
                             test/mpi/f08-mpi/scatter_inplace.sh:test/mpi/testscripts/scatter_inplace.sh
                             test/mpi/f08-mpi/iscatter.sh:test/mpi/testscripts/iscatter.sh
                             test/mpi/f08-mpi/iscatter_intercom.sh:test/mpi/testscripts/iscatter_intercom.sh
+                            test/mpi/f08-mpi/iscatter_inplace.sh:test/mpi/testscripts/iscatter_inplace.sh
                             test/mpi/f08-mpi/scatterv.sh:test/mpi/testscripts/scatterv.sh
                             test/mpi/f08-mpi/scatterv_intercom.sh:test/mpi/testscripts/scatterv_intercom.sh
                             test/mpi/f08-mpi/iscatterv.sh:test/mpi/testscripts/iscatterv.sh
