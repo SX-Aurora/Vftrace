@@ -50,7 +50,7 @@ int main(int argc, char** argv) {
       for (int i=0; i<nints; i++) {rbuffer[i]=-1;}
    }
 
-   // Messaging cycle
+   // Messaging
    MPI_Scatterv(sbuffer, sendcounts, displs, MPI_INT,
                 rbuffer, nints, MPI_INT, 
                 rootrank, MPI_COMM_WORLD);
