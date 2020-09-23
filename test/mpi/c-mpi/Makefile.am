@@ -121,6 +121,7 @@ check_PROGRAMS += bcast \
 		  alltoallv_inplace \
 		  ialltoallv \
 		  ialltoallv_intercom \
+		  ialltoallv_inplace \
 		  alltoallw \
 		  alltoallw_intercom \
 		  ialltoallw \
@@ -330,6 +331,10 @@ ialltoallv_intercom_SOURCES = $(srcdir)/ialltoallv_intercom.c
 ialltoallv_intercom_CFLAGS = $(AM_CFLAGS)
 ialltoallv_intercom_LDFLAGS = $(AM_LDFLAGS)
 
+ialltoallv_inplace_SOURCES = $(srcdir)/ialltoallv_inplace.c
+ialltoallv_inplace_CFLAGS = $(AM_CFLAGS)
+ialltoallv_inplace_LDFLAGS = $(AM_LDFLAGS)
+
 alltoallw_SOURCES = $(srcdir)/alltoallw.c
 alltoallw_CFLAGS = $(AM_CFLAGS)
 alltoallw_LDFLAGS = $(AM_LDFLAGS)
@@ -397,6 +402,7 @@ dist_noinst_SCRIPTS += bcast.sh \
 		       alltoallv_inplace.sh \
 		       ialltoallv.sh \
 		       ialltoallv_intercom.sh \
+		       ialltoallv_inplace.sh \
 		       alltoallw.sh \
 		       alltoallw_intercom.sh \
 		       ialltoallw.sh \
