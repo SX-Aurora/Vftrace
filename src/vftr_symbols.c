@@ -67,7 +67,6 @@ void vftr_print_symbol_table (FILE *fp) {
 */
 
 void vftr_get_library_symtab (char *target, FILE *fp_ext, off_t base, int pass) {
-    void           *addr;
     char           *headerStringTable = NULL;
     char           *symbolStringTable = NULL;
     char           *padding = NULL;
@@ -80,7 +79,6 @@ void vftr_get_library_symtab (char *target, FILE *fp_ext, off_t base, int pass) 
     Elf64_Ehdr      ehdr;                /* ELF header */
     Elf64_Shdr     *shdr = NULL;         /* ELF section header */
     Elf64_Sym      *symbolTable = NULL;  /* ELF symbol table */
-    symtab_t       *found;
     
     if (fp_ext == NULL) {
       if ((exe = fopen( target, "r" )) == NULL) {
@@ -301,7 +299,6 @@ void parse_fmap_line (char *line, pathList_t **library, pathList_t **head) {
 */
 int vftr_create_symbol_table (int rank, char *target) {
     char line[LINESIZE];
-    int symCount = 0, pass;
     pathList_t *head, *library, *next;
 
     FILE *fmap = get_fmap (target);

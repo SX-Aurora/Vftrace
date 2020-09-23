@@ -7,6 +7,7 @@
 #include "vftr_scenarios.h"
 #include "vftr_stacks.h"
 #include "vftr_symbols.h"
+#include "vftr_environment.h"
 
 int this_fails () {
 	return 1;

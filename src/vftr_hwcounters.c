@@ -152,9 +152,6 @@ void vftr_start_hwcounters () {
 /**********************************************************************/
 
 int vftr_init_hwc (char *scenario_file) {
-    int i;
-    char *c, *s;
-    evtcounter_t *evc;
 #if defined(HAS_PAPI)
     const PAPI_hw_info_t        *hwinfo;
 #endif

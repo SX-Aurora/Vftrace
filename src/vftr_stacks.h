@@ -49,6 +49,7 @@ typedef struct GStackInfo {
    int locID;
    // function name string of the current function
    char *name;
+   bool print_profile;
 } gstackinfo_t;
 
 // Profiling structs
@@ -95,5 +96,22 @@ void vftr_write_stack_ascii (FILE *fp, double time, function_t *func, char *labe
 void vftr_print_local_stacklist (function_t **funcTable, FILE *pout, int ntop);
 void vftr_print_local_demangled (function_t **funcTable, FILE *pout, int ntop);
 void vftr_print_global_stacklist (FILE *pout);
+
+typedef struct stack_leaf {
+	int stack_id;
+	int func_id;
+	struct stack_leaf *next_in_level;
+	struct stack_leaf *callee;	
+	struct stack_leaf *origin;
+} stack_leaf_t;	
+
+int vftr_stack_length (int stack_id0);
+void fill_into_stack_tree (stack_leaf_t **this_leaf, int n_stack_ids, int *stacks_ids, int func_id);
+void print_stacktree (FILE *fp, stack_leaf_t *leaf, int n_spaces, long long *total_time);
+void print_function_stack (FILE *fp, char *func_name, int n_final_stack_ids, int *final_stack_ids, int *final_func_ids);
+
+// test functions
+int vftr_stacks_test_1(FILE *fp_in, FILE *fp_out);
+int vftr_stacks_test_2(FILE *fp_in, FILE *fp_out);
 
 #endif
