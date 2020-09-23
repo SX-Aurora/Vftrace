@@ -88,12 +88,12 @@ int vftr_MPI_Iallgatherv(const void *sendbuf, int sendcount,
       } else {
          int size;
          PMPI_Comm_size(comm, &size);
-         int rank;
-         PMPI_Comm_rank(comm, &rank);
          // if sendbuf is special address MPI_IN_PLACE
          // sendcount and sendtype are ignored.
          // Use recvcount and recvtype for statistics
          if (vftr_is_C_MPI_IN_PLACE(sendbuf)) {
+            int rank;
+            PMPI_Comm_rank(comm, &rank);
             // For the in-place option no self communication is executed
 
             // allocate memory for the temporary arrays
