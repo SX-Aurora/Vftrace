@@ -16,7 +16,7 @@ int main(int argc, char** argv) {
 
    // require cmd-line argument
    if (argc < 2) {
-      printf("./alltoall <msgsize in ints>\n");
+      printf("./ialltoall_inplace <msgsize in ints>\n");
       return 1;
    }
 
@@ -30,7 +30,7 @@ int main(int argc, char** argv) {
 
    // Messaging cycle
    MPI_Request myrequest;
-   MPI_Ialltoall(sbuffer, nints, MPI_INT,
+   MPI_Ialltoall(sbuffer, 0, MPI_DATATYPE_NULL,
                  rbuffer, nints, MPI_INT, 
                  MPI_COMM_WORLD, &myrequest);
    printf("Communicating with all ranks\n");
