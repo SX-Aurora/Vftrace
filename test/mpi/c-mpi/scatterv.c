@@ -47,7 +47,7 @@ int main(int argc, char** argv) {
       }
    }
 
-   // Messaging cycle
+   // Messaging
    MPI_Scatterv(sbuffer, sendcounts, displs, MPI_INT,
                 rbuffer, nints, MPI_INT, 
                 rootrank, MPI_COMM_WORLD);
