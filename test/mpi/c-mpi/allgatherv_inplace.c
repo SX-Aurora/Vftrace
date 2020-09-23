@@ -42,7 +42,7 @@ int main(int argc, char** argv) {
    MPI_Datatype sendtype = MPI_DATATYPE_NULL;
 
    // Messaging cycle
-   MPI_Allgatherv(sbuffer, sendtype, sendtype,
+   MPI_Allgatherv(sbuffer, sendcount, sendtype,
                   rbuffer, recvcounts, displs, MPI_INT,
                   MPI_COMM_WORLD);
    printf("Gathering messages from all ranks on all other ranks\n");
