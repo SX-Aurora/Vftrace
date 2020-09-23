@@ -75,6 +75,8 @@ int vftr_MPI_Allgather(const void *sendbuf, int sendcount,
          // sendcount and sendtype are ignored.
          // Use recvcount and recvtype for statistics
          if (vftr_is_C_MPI_IN_PLACE(sendbuf)) {
+            sendtype = recvtype;
+            sendcount = recvcount;
             // For the in-place option no self communication is executed
             int rank;
             PMPI_Comm_rank(comm, &rank);

@@ -27,9 +27,12 @@ int main(int argc, char** argv) {
    for (int i=0; i<comm_size*nints; i++) {
       rbuffer[i] = my_rank;
    }
+   // Use invalid values for sendcount and sendtype, as they should be ignored
+   int sendcount = 0;
+   MPI_Datatype sendtype = MPI_DATATYPE_NULL;
 
    // Messaging cycle
-   MPI_Allgather(sbuffer, nints, MPI_INT,
+   MPI_Allgather(sbuffer, sendcount, sendtype,
                  rbuffer, nints, MPI_INT, 
                  MPI_COMM_WORLD);
    printf("Gathering messages from all ranks on rank %d\n", my_rank);
