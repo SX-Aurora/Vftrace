@@ -90,38 +90,70 @@ int vftr_MPI_Ialltoall(const void *sendbuf, int sendcount,
          // sendcount and sendtype are ignored.
          // Use recvcount and recvtype for statistics
          if (vftr_is_C_MPI_IN_PLACE(sendbuf)) {
-            sendcount = recvcount;
-            sendtype = recvtype;
-         }
-         // allocate memory for the temporary arrays
-         // to register communication request
-         int *tmpcount = (int*) malloc(sizeof(int)*size);
-         MPI_Datatype *tmptype = (MPI_Datatype*) malloc(sizeof(MPI_Datatype)*size);
-         int *peer_ranks = (int*) malloc(sizeof(int)*size);
-         // messages to be send
-         for (int i=0; i<size; i++) {
-            tmpcount[i] = sendcount;
-            tmptype[i] = sendtype;
-            peer_ranks[i] = i;
-         }
-         vftr_register_collective_request(send, size, tmpcount, tmptype, peer_ranks,
-                                          comm, *request, tstart);
-         // messages to be received
-         for (int i=0; i<size; i++) {
-            tmpcount[i] = recvcount;
-            tmptype[i] = recvtype;
-            peer_ranks[i] = i;
-         }
-         vftr_register_collective_request(recv, size, tmpcount, tmptype, peer_ranks,
-                                          comm, *request, tstart);
-         // cleanup temporary arrays
-         free(tmpcount);
-         tmpcount = NULL;
-         free(tmptype);
-         tmptype = NULL;
-         free(peer_ranks);
-         peer_ranks = NULL;
+            // For the in-place option no self communication is executed
 
+            int rank;
+            PMPI_Comm_rank(comm, &rank);
+            // allocate memory for the temporary arrays
+            // to register communication request
+            int *tmpcount = (int*) malloc(sizeof(int)*(size-1));
+            MPI_Datatype *tmptype = (MPI_Datatype*) malloc(sizeof(MPI_Datatype)*(size-1));
+            int *peer_ranks = (int*) malloc(sizeof(int)*(size-1));
+            // messages to be send
+            int idx = 0;
+            for (int i=0; i<rank; i++) {
+               tmpcount[idx] = recvcount;
+               tmptype[idx] = sendtype;
+               peer_ranks[idx] = i;
+               idx++;
+            }
+            for (int i=rank+1; i<size; i++) {
+               tmpcount[idx] = recvcount;
+               tmptype[idx] = sendtype;
+               peer_ranks[idx] = i;
+               idx++;
+            }
+            vftr_register_collective_request(send, size-1, tmpcount, tmptype, peer_ranks,
+                                             comm, *request, tstart);
+            vftr_register_collective_request(recv, size-1, tmpcount, tmptype, peer_ranks,
+                                             comm, *request, tstart);
+            // cleanup temporary arrays
+            free(tmpcount);
+            tmpcount = NULL;
+            free(tmptype);
+            tmptype = NULL;
+            free(peer_ranks);
+            peer_ranks = NULL;
+         } else {
+            // allocate memory for the temporary arrays
+            // to register communication request
+            int *tmpcount = (int*) malloc(sizeof(int)*size);
+            MPI_Datatype *tmptype = (MPI_Datatype*) malloc(sizeof(MPI_Datatype)*size);
+            int *peer_ranks = (int*) malloc(sizeof(int)*size);
+            // messages to be send
+            for (int i=0; i<size; i++) {
+               tmpcount[i] = sendcount;
+               tmptype[i] = sendtype;
+               peer_ranks[i] = i;
+            }
+            vftr_register_collective_request(send, size, tmpcount, tmptype, peer_ranks,
+                                             comm, *request, tstart);
+            // messages to be received
+            for (int i=0; i<size; i++) {
+               tmpcount[i] = recvcount;
+               tmptype[i] = recvtype;
+               peer_ranks[i] = i;
+            }
+            vftr_register_collective_request(recv, size, tmpcount, tmptype, peer_ranks,
+                                             comm, *request, tstart);
+            // cleanup temporary arrays
+            free(tmpcount);
+            tmpcount = NULL;
+            free(tmptype);
+            tmptype = NULL;
+            free(peer_ranks);
+            peer_ranks = NULL;
+         }
       }
       return retVal;
    }
