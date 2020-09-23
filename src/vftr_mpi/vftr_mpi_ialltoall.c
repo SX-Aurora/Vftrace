@@ -103,13 +103,13 @@ int vftr_MPI_Ialltoall(const void *sendbuf, int sendcount,
             int idx = 0;
             for (int i=0; i<rank; i++) {
                tmpcount[idx] = recvcount;
-               tmptype[idx] = sendtype;
+               tmptype[idx] = recvtype;
                peer_ranks[idx] = i;
                idx++;
             }
             for (int i=rank+1; i<size; i++) {
                tmpcount[idx] = recvcount;
-               tmptype[idx] = sendtype;
+               tmptype[idx] = recvtype;
                peer_ranks[idx] = i;
                idx++;
             }
