@@ -24,6 +24,8 @@ int main(int argc, char** argv) {
    // allocating send/recv buffer
    int nints = atoi(argv[1])+my_rank;
    int *sbuffer = NULL;
+   int sendcount;
+   MPI_Datatype sendtype;
    int *rbuffer = NULL;
    int *recvcounts = NULL;
    int *displs = NULL;
@@ -41,9 +43,13 @@ int main(int argc, char** argv) {
          rbuffer[i] = my_rank;
       }
       sbuffer = MPI_IN_PLACE;
+      sendcount = 0;
+      sendtype = MPI_DATATYPE_NULL;
    } else {
       sbuffer = (int*) malloc(nints*sizeof(int));
       for (int i=0; i<nints; i++) {sbuffer[i]=my_rank;}
+      sendcount = nints;
+      sendtype = MPI_INT;
    }
 
    // Messaging
