@@ -25,20 +25,26 @@ int main(int argc, char** argv) {
    int nints = atoi(argv[1]);
    int *sbuffer = NULL;
    int *rbuffer = NULL;
+   int sendcount;
+   MPI_Datatype sendtype;
    if (my_rank == rootrank) {
       rbuffer = (int*) malloc(comm_size*nints*sizeof(int));
       for (int i=0; i<comm_size*nints; i++) {
          rbuffer[i] = my_rank;
       }
       sbuffer = MPI_IN_PLACE;
+      sendcount = 0;
+      sendtype = MPI_DATATYPE_NULL;
    } else {
       sbuffer = (int*) malloc(nints*sizeof(int));
       for (int i=0; i<nints; i++) {sbuffer[i]=my_rank;}
+      sendcount = nints;
+      sendtype = MPI_INT;
    }
 
    // Messaging
    MPI_Request myrequest;
-   MPI_Igather(sbuffer, nints, MPI_INT,
+   MPI_Igather(sbuffer, sendcount, sendtype,
                rbuffer, nints, MPI_INT, 
                rootrank, MPI_COMM_WORLD, &myrequest);
    if (my_rank == rootrank) {
