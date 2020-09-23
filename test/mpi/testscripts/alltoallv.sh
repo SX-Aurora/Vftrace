@@ -31,14 +31,14 @@ do
                  sed 's/=/ /g' | \
                  sort -nk 9 | \
                  awk '{print $2}' | \
-                 head -n 1)
+                 head -n ${ipeer} | tail -n 1)
          # get peer process
          peer=$(../../../tools/tracedump ${vftr_binary}_${irank}.vfd | \
                 awk '$2=="send" && $3!="end"{getline;print;}' | \
                 sed 's/=/ /g' | \
                 sort -nk 9 | \
                 awk '{print $9}' | \
-                head -n 1)
+                head -n ${ipeer} | tail -n 1)
          # Check if actually used message size is consistent
          # with expected message size
          if [[ "${count}" -ne "${tmpnb}" ]] ; then
@@ -48,7 +48,7 @@ do
          fi
          # Check if actually used peer process is consistent
          # with expected peer process
-         if [[ "${peer}" -ne "0" ]] ; then
+         if [[ "${peer}" -ne "${jrank}" ]] ; then
             echo "Message send from rank ${irank} to ${peer}!"
             echo "Was expecting sending to rank ${jrank}!"
             exit 1;
