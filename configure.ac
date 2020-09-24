@@ -318,6 +318,7 @@ AM_COND_IF([MPI_PROFILING],
                             test/mpi/c-mpi/scan.sh:test/mpi/testscripts/scan.sh
                             test/mpi/c-mpi/scan_inplace.sh:test/mpi/testscripts/scan_inplace.sh
                             test/mpi/c-mpi/iscan.sh:test/mpi/testscripts/iscan.sh
+                            test/mpi/c-mpi/iscan_inplace.sh:test/mpi/testscripts/iscan_inplace.sh
                             test/mpi/c-mpi/exscan.sh:test/mpi/testscripts/exscan.sh
                             test/mpi/c-mpi/iexscan.sh:test/mpi/testscripts/iexscan.sh
                             test/mpi/c-mpi/put.sh:test/mpi/testscripts/put.sh
@@ -423,6 +424,7 @@ AM_COND_IF([MPI_PROFILING],
                             test/mpi/f-mpi/scan.sh:test/mpi/testscripts/scan.sh
                             test/mpi/f-mpi/scan_inplace.sh:test/mpi/testscripts/scan_inplace.sh
                             test/mpi/f-mpi/iscan.sh:test/mpi/testscripts/iscan.sh
+                            test/mpi/f-mpi/iscan_inplace.sh:test/mpi/testscripts/iscan_inplace.sh
                             test/mpi/f-mpi/exscan.sh:test/mpi/testscripts/exscan.sh
                             test/mpi/f-mpi/iexscan.sh:test/mpi/testscripts/iexscan.sh
                             test/mpi/f-mpi/put.sh:test/mpi/testscripts/put.sh
@@ -528,6 +530,7 @@ AM_COND_IF([MPI_PROFILING],
                             test/mpi/f08-mpi/scan.sh:test/mpi/testscripts/scan.sh
                             test/mpi/f08-mpi/scan_inplace.sh:test/mpi/testscripts/scan_inplace.sh
                             test/mpi/f08-mpi/iscan.sh:test/mpi/testscripts/iscan.sh
+                            test/mpi/f08-mpi/iscan_inplace.sh:test/mpi/testscripts/iscan_inplace.sh
                             test/mpi/f08-mpi/exscan.sh:test/mpi/testscripts/exscan.sh
                             test/mpi/f08-mpi/iexscan.sh:test/mpi/testscripts/iexscan.sh
                             test/mpi/f08-mpi/put.sh:test/mpi/testscripts/put.sh

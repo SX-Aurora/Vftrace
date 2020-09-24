@@ -439,6 +439,7 @@ check_PROGRAMS += reduce \
 		  scan \
 		  scan_inplace \
 		  iscan \
+		  iscan_inplace \
 		  exscan \
 		  iexscan
 
@@ -502,6 +503,10 @@ iscan_SOURCES = $(srcdir)/iscan.c
 iscan_CFLAGS = $(AM_CFLAGS)
 iscan_LDFLAGS = $(AM_LDFLAGS)
 
+iscan_inplace_SOURCES = $(srcdir)/iscan_inplace.c
+iscan_inplace_CFLAGS = $(AM_CFLAGS)
+iscan_inplace_LDFLAGS = $(AM_LDFLAGS)
+
 exscan_SOURCES = $(srcdir)/exscan.c
 exscan_CFLAGS = $(AM_CFLAGS)
 exscan_LDFLAGS = $(AM_LDFLAGS)
@@ -524,6 +529,7 @@ dist_noinst_SCRIPTS += reduce.sh \
 		       iallreduce_inplace.sh \
 		       scan_inplace.sh \
 		       iscan.sh \
+		       iscan_inplace.sh \
 		       exscan.sh \
 		       iexscan.sh
 

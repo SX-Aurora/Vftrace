@@ -1,6 +1,6 @@
 #!/bin/bash
 
-vftr_binary=iscan
+vftr_binary=iscan_inplace
 nprocs=4
 ntrials=1
 
