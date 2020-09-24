@@ -97,7 +97,6 @@ int vftr_MPI_Ialltoallv(const void *sendbuf, const int *sendcounts,
             PMPI_Comm_rank(comm, &rank);
             // For the in-place option no self communication is executed
 
-
             // allocate memory for the temporary arrays
             // to register communication request
             int *tmpcount = (int*) malloc(sizeof(int)*(size-1));
