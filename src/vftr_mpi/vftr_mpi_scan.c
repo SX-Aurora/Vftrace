@@ -44,6 +44,7 @@ int vftr_MPI_Scan(const void *sendbuf, void *recvbuf, int count,
       int retVal = PMPI_Scan(sendbuf, recvbuf, count, datatype, op, comm);
       long long tend = vftr_get_runtime_usec();
 
+      long lont t2start = tend;
       // Only intra-communicators, as the standard specifically states
       // that the scan operation is invalid for intercommunicators
       //
@@ -100,6 +101,9 @@ int vftr_MPI_Scan(const void *sendbuf, void *recvbuf, int count,
                                          rank+1, -1, comm, tstart, tend);
          }
       }
+      long long t2end = vftr_get_runtime_usec();
+
+      vftr_mpi_overhead_usec += t2end - t2start;
 
       return retVal;
    }
