@@ -48,6 +48,7 @@ int vftr_MPI_Alltoallw(const void *sendbuf, const int *sendcounts,
                                   recvbuf, recvcounts, rdispls, recvtypes, comm);
       long long tend = vftr_get_runtime_usec();
 
+      long long t2start = tend;
       // determine if inter or intra communicator
       int isintercom;
       PMPI_Comm_test_inter(comm, &isintercom);
@@ -102,6 +103,9 @@ int vftr_MPI_Alltoallw(const void *sendbuf, const int *sendcounts,
             }
          }
       }
+      long long t2end = vftr_get_runtime_usec();
+
+      vftr_mpi_overhead_usec += t2end - t2start;
 
       return retVal;
    }
