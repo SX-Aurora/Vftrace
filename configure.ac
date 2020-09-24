@@ -302,6 +302,7 @@ AM_COND_IF([MPI_PROFILING],
                             test/mpi/c-mpi/alltoallw_inplace.sh:test/mpi/testscripts/alltoallw_inplace.sh
                             test/mpi/c-mpi/ialltoallw.sh:test/mpi/testscripts/ialltoallw.sh
                             test/mpi/c-mpi/ialltoallw_intercom.sh:test/mpi/testscripts/ialltoallw_intercom.sh
+                            test/mpi/c-mpi/ialltoallw_inplace.sh:test/mpi/testscripts/ialltoallw_inplace.sh
                             test/mpi/c-mpi/reduce.sh:test/mpi/testscripts/reduce.sh
                             test/mpi/c-mpi/reduce_intercom.sh:test/mpi/testscripts/reduce_intercom.sh
                             test/mpi/c-mpi/ireduce.sh:test/mpi/testscripts/ireduce.sh
@@ -401,6 +402,7 @@ AM_COND_IF([MPI_PROFILING],
                             test/mpi/f-mpi/alltoallw_inplace.sh:test/mpi/testscripts/alltoallw_inplace.sh
                             test/mpi/f-mpi/ialltoallw.sh:test/mpi/testscripts/ialltoallw.sh
                             test/mpi/f-mpi/ialltoallw_intercom.sh:test/mpi/testscripts/ialltoallw_intercom.sh
+                            test/mpi/f-mpi/ialltoallw_inplace.sh:test/mpi/testscripts/ialltoallw_inplace.sh
                             test/mpi/f-mpi/reduce.sh:test/mpi/testscripts/reduce.sh
                             test/mpi/f-mpi/reduce_intercom.sh:test/mpi/testscripts/reduce_intercom.sh
                             test/mpi/f-mpi/ireduce.sh:test/mpi/testscripts/ireduce.sh
@@ -500,6 +502,7 @@ AM_COND_IF([MPI_PROFILING],
                             test/mpi/f08-mpi/alltoallw_inplace.sh:test/mpi/testscripts/alltoallw_inplace.sh
                             test/mpi/f08-mpi/ialltoallw.sh:test/mpi/testscripts/ialltoallw.sh
                             test/mpi/f08-mpi/ialltoallw_intercom.sh:test/mpi/testscripts/ialltoallw_intercom.sh
+                            test/mpi/f08-mpi/ialltoallw_inplace.sh:test/mpi/testscripts/ialltoallw_inplace.sh
                             test/mpi/f08-mpi/reduce.sh:test/mpi/testscripts/reduce.sh
                             test/mpi/f08-mpi/reduce_intercom.sh:test/mpi/testscripts/reduce_intercom.sh
                             test/mpi/f08-mpi/ireduce.sh:test/mpi/testscripts/ireduce.sh
