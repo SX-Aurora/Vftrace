@@ -47,7 +47,7 @@ int vftr_MPI_Allgather(const void *sendbuf, int sendcount,
                                   recvcount, recvtype, comm);
       long long tend = vftr_get_runtime_usec();
 
-      long long tstart = vftr_get_runtime_usec();
+      long long t2start = vftr_get_runtime_usec();
       // determine if inter or intra communicator
       int isintercom;
       PMPI_Comm_test_inter(comm, &isintercom);
