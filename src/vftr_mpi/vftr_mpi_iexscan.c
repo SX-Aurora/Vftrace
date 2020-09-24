@@ -37,6 +37,9 @@ int vftr_MPI_Iexscan(const void *sendbuf, void *recvbuf, int count,
 
       // Only intra-communicators, as the standard specifically states
       // that the scan operation is invalid for intercommunicators
+      //
+      // The communication pattern is the same if
+      // MPI_IN_PLACE is used for the sendbuffer
       int size;
       PMPI_Comm_size(comm, &size);
       int rank;

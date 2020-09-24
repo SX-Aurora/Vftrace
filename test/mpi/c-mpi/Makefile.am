@@ -442,7 +442,8 @@ check_PROGRAMS += reduce \
 		  iscan_inplace \
 		  exscan \
 		  exscan_inplace \
-		  iexscan
+		  iexscan \
+		  iexscan_inplace
 
 reduce_SOURCES = $(srcdir)/reduce.c
 reduce_CFLAGS = $(AM_CFLAGS)
@@ -520,6 +521,10 @@ iexscan_SOURCES = $(srcdir)/iexscan.c
 iexscan_CFLAGS = $(AM_CFLAGS)
 iexscan_LDFLAGS = $(AM_LDFLAGS)
 
+iexscan_inplace_SOURCES = $(srcdir)/iexscan_inplace.c
+iexscan_inplace_CFLAGS = $(AM_CFLAGS)
+iexscan_inplace_LDFLAGS = $(AM_LDFLAGS)
+
 dist_noinst_SCRIPTS += reduce.sh \
 		       reduce_intercom.sh \
 		       reduce_inplace.sh \
@@ -537,7 +542,8 @@ dist_noinst_SCRIPTS += reduce.sh \
 		       iscan_inplace.sh \
 		       exscan.sh \
 		       exscan_inplace.sh \
-		       iexscan.sh
+		       iexscan.sh \
+		       iexscan_inplace.sh
 
 ###################
 # One sided tests #
