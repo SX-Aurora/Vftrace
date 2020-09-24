@@ -44,6 +44,7 @@ int vftr_MPI_Reduce(const void *sendbuf, void *recvbuf, int count,
       int retVal = PMPI_Reduce(sendbuf, recvbuf, count, datatype, op, root, comm);
       long long tend = vftr_get_runtime_usec();
 
+      long long t2start = tend;
       // determine if inter or intra communicator
       int isintercom;
       PMPI_Comm_test_inter(comm, &isintercom);
@@ -109,6 +110,9 @@ int vftr_MPI_Reduce(const void *sendbuf, void *recvbuf, int count,
                                          root, -1, comm, tstart, tend);
          }
       }
+      long long t2end = vftr_get_runtime_usec();
+
+      vftr_mpi_overhead_usec += t2end - t2start;
 
       return retVal;
    }
