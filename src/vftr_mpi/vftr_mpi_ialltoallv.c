@@ -93,40 +93,42 @@ int vftr_MPI_Ialltoallv(const void *sendbuf, const int *sendcounts,
          // sendcount and sendtype are ignored.
          // Use recvcount and recvtype for statistics
          if (vftr_is_C_MPI_IN_PLACE(sendbuf)) {
-            int rank;
-            PMPI_Comm_rank(comm, &rank);
-            // For the in-place option no self communication is executed
+            if (size > 1) {
+               int rank;
+               PMPI_Comm_rank(comm, &rank);
+               // For the in-place option no self communication is executed
 
-            // allocate memory for the temporary arrays
-            // to register communication request
-            int *tmpcount = (int*) malloc(sizeof(int)*(size-1));
-            MPI_Datatype *tmptype = (MPI_Datatype*) malloc(sizeof(MPI_Datatype)*(size-1));
-            int *peer_ranks = (int*) malloc(sizeof(int)*(size-1));
-            // messages to be send
-            int idx = 0;
-            for (int i=0; i<rank; i++) {
-               tmpcount[idx] = recvcounts[i];
-               tmptype[idx] = recvtype;
-               peer_ranks[idx] = i;
-               idx++;
+               // allocate memory for the temporary arrays
+               // to register communication request
+               int *tmpcount = (int*) malloc(sizeof(int)*(size-1));
+               MPI_Datatype *tmptype = (MPI_Datatype*) malloc(sizeof(MPI_Datatype)*(size-1));
+               int *peer_ranks = (int*) malloc(sizeof(int)*(size-1));
+               // messages to be send
+               int idx = 0;
+               for (int i=0; i<rank; i++) {
+                  tmpcount[idx] = recvcounts[i];
+                  tmptype[idx] = recvtype;
+                  peer_ranks[idx] = i;
+                  idx++;
+               }
+               for (int i=rank+1; i<size; i++) {
+                  tmpcount[idx] = recvcounts[i];
+                  tmptype[idx] = recvtype;
+                  peer_ranks[idx] = i;
+                  idx++;
+               }
+               vftr_register_collective_request(send, size-1, tmpcount, tmptype, peer_ranks,
+                                                comm, *request, tstart);
+               vftr_register_collective_request(recv, size-1, tmpcount, tmptype, peer_ranks,
+                                                comm, *request, tstart);
+               // cleanup temporary arrays
+               free(tmpcount);
+               tmpcount = NULL;
+               free(tmptype);
+               tmptype = NULL;
+               free(peer_ranks);
+               peer_ranks = NULL;
             }
-            for (int i=rank+1; i<size; i++) {
-               tmpcount[idx] = recvcounts[i];
-               tmptype[idx] = recvtype;
-               peer_ranks[idx] = i;
-               idx++;
-            }
-            vftr_register_collective_request(send, size-1, tmpcount, tmptype, peer_ranks,
-                                             comm, *request, tstart);
-            vftr_register_collective_request(recv, size-1, tmpcount, tmptype, peer_ranks,
-                                             comm, *request, tstart);
-            // cleanup temporary arrays
-            free(tmpcount);
-            tmpcount = NULL;
-            free(tmptype);
-            tmptype = NULL;
-            free(peer_ranks);
-            peer_ranks = NULL;
          } else {
             // allocate memory for the temporary arrays
             // to register communication request
