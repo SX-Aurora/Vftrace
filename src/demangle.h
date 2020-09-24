@@ -17,8 +17,8 @@
 */
 
 #ifndef DEMANGLE_H
+#define DEMANGLE_H
 
 int demangle (char *mangled_name, char **demangled_name, char **demangled_full);
 
-#define DEMANGLE_H
 #endif
