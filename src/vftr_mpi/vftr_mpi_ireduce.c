@@ -88,8 +88,6 @@ int vftr_MPI_Ireduce(const void *sendbuf, void *recvbuf, int count,
             int size;
             PMPI_Comm_size(comm, &size);
             // if sendbuf is special address MPI_IN_PLACE
-            // sendcount and sendtype are ignored.
-            // Use recvcount and recvtype for statistics
             if (vftr_is_C_MPI_IN_PLACE(sendbuf)) {
                // For the in-place option no self communication is executed
 
