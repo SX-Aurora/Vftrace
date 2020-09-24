@@ -84,13 +84,28 @@ int vftr_MPI_Reduce(const void *sendbuf, void *recvbuf, int count,
          if (rank == root) {
             int size;
             PMPI_Comm_size(comm, &size);
-            for (int i=0; i<size; i++) {
-               vftr_store_sync_message_info(recv, count, datatype,
-                                            i, -1, comm, tstart, tend);
+            // if sendbuf is special address MPI_IN_PLACE
+            // sendcount and sendtype are ignored.
+            // Use recvcount and recvtype for statistics
+            if (vftr_is_C_MPI_IN_PLACE(sendbuf)) {
+               // For the in-place option no self communication is executed
+               for (int i=0; i<rank; i++) {
+                  vftr_store_sync_message_info(recv, count, datatype,
+                                               i, -1, comm, tstart, tend);
+               }
+               for (int i=rank+1; i<size; i++) {
+                  vftr_store_sync_message_info(recv, count, datatype,
+                                               i, -1, comm, tstart, tend);
+               }
+            } else {
+               // self communication of root process
+               vftr_store_sync_message_info(send, count, datatype,
+                                            rank, -1, comm, tstart, tend);
+               for (int i=0; i<size; i++) {
+                  vftr_store_sync_message_info(recv, count, datatype,
+                                               i, -1, comm, tstart, tend);
+               }
             }
-            // self communication
-            vftr_store_sync_message_info(send, count, datatype,
-                                         rank, -1, comm, tstart, tend);
          } else {
             vftr_store_sync_message_info(send, count, datatype,
                                          root, -1, comm, tstart, tend);
