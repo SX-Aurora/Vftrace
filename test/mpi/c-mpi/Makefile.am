@@ -429,6 +429,7 @@ check_PROGRAMS += reduce \
 		  reduce_inplace \
 		  ireduce \
 		  ireduce_intercom \
+		  ireduce_inplace \
 		  allreduce \
 		  allreduce_intercom \
 		  iallreduce \
@@ -457,6 +458,10 @@ ireduce_LDFLAGS = $(AM_LDFLAGS)
 ireduce_intercom_SOURCES = $(srcdir)/ireduce_intercom.c
 ireduce_intercom_CFLAGS = $(AM_CFLAGS)
 ireduce_intercom_LDFLAGS = $(AM_LDFLAGS)
+
+ireduce_inplace_SOURCES = $(srcdir)/ireduce_inplace.c
+ireduce_inplace_CFLAGS = $(AM_CFLAGS)
+ireduce_inplace_LDFLAGS = $(AM_LDFLAGS)
 
 allreduce_SOURCES = $(srcdir)/allreduce.c
 allreduce_CFLAGS = $(AM_CFLAGS)
@@ -495,6 +500,7 @@ dist_noinst_SCRIPTS += reduce.sh \
 		       reduce_inplace.sh \
 		       ireduce.sh \
 		       ireduce_intercom.sh \
+		       ireduce_inplace.sh \
 		       allreduce.sh \
 		       allreduce_intercom.sh \
 		       iallreduce.sh \
