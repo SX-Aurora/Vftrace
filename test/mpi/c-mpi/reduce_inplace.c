@@ -37,7 +37,7 @@ int main(int argc, char** argv) {
    }
 
    // Messaging cycle
-   MPI_Reduce(sbuffer, rbuffer, nints, MPI_INT, 
+   MPI_Reduce(sbuffer, rbuffer, nints, MPI_INT,
               MPI_SUM, rootrank, MPI_COMM_WORLD);
    if (my_rank == rootrank) {
       printf("Reducing messages from all ranks on rank %d\n", my_rank);
