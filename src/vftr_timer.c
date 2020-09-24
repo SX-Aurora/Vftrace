@@ -30,7 +30,13 @@ long long vftr_timelimit;
 // Vftrace measures its own overhead in microseconds.
 // It is incremented at each function entry and exit, as
 // well as after initialization.
-long long vftr_overhead_usec;
+long long vftr_overhead_usec = 0ll;
+
+#ifdef _MPI
+// vftrace measures the overhead of recording
+// the MPI communication pattern
+long long vftr_mpi_overhead_usec = 0ll;
+#endif
 
 long long vftr_initcycles;
 

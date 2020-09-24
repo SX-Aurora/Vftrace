@@ -57,6 +57,12 @@ unsigned long long vftr_get_cycles();
 // well as after initialization.
 extern long long vftr_overhead_usec;
 
+#ifdef _MPI
+// vftrace measures the overhead of recording
+// the MPI communication pattern
+extern long long vftr_mpi_overhead_usec;
+#endif
+
 extern long long vftr_initcycles;
 
 // A time interval indicating when the function table should be sorted.

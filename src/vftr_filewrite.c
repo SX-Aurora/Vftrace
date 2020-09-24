@@ -792,17 +792,28 @@ void vftr_print_profile (FILE *pout, int *ntop, long long time0) {
 	}
     }
     double total_runtime = time0 > 0 ? (double)time0 * 1e-6 : vftr_get_runtime_usec() * 1.0e-6;
-    double overhead_time = vftr_overhead_usec * 1.0e-6;
-    double application_runtime = total_runtime - overhead_time;
+    double sampling_overhead_time = vftr_overhead_usec * 1.0e-6;
+    double total_overhead_time = sampling_overhead_time;
+#ifdef _MPI
+    double mpi_overhead_time = vftr_mpi_overhead_usec * 1.0e-6;
+    total_overhead_time = sampling_overhead_time + mpi_overhead_time;
+#endif
+    double application_runtime = total_runtime - total_overhead_time;
     rtime = application_runtime;
 
     /* Print profile info */
 
-    fprintf(pout, "MPI size          %d\n", vftr_mpisize);
-    fprintf(pout, "Total runtime:    %8.2f seconds\n", total_runtime);
-    fprintf(pout, "Application time: %8.2f seconds\n", application_runtime);
-    fprintf(pout, "Overhead:         %8.2f seconds (%.2f%%)\n", overhead_time,
-            100.0*overhead_time/total_runtime);
+    fprintf(pout, "MPI size              %d\n", vftr_mpisize);
+    fprintf(pout, "Total runtime:        %8.2f seconds\n", total_runtime);
+    fprintf(pout, "Application time:     %8.2f seconds\n", application_runtime);
+    fprintf(pout, "Overhead:             %8.2f seconds (%.2f%%)\n",
+            total_overhead_time, 100.0*total_overhead_time/total_runtime);
+#ifdef _MPI
+    fprintf(pout, "   Sampling overhead: %8.2f seconds (%.2f%%)\n",
+            sampling_overhead_time, 100.0*sampling_overhead_time/total_runtime);
+    fprintf(pout, "   MPI overhead:      %8.2f seconds (%.2f%%)\n",
+            mpi_overhead_time, 100.0*mpi_overhead_time/total_runtime);
+#endif
 
     /* Print overall info */
     if (vftr_events_enabled) {
@@ -1075,6 +1086,9 @@ int vftr_filewrite_test_2 (FILE *fp_in, FILE *fp_out) {
 	vftr_profile_wanted = true;
 	vftr_mpisize = 1;
 	vftr_overhead_usec = 0;
+#ifdef _MPI
+        vftr_mpi_overhead_usec = 0;
+#endif
 	vftr_print_profile (fp_out, &n, vftr_test_runtime);		
 	return 0;
 }
