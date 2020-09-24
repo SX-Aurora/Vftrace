@@ -40,6 +40,7 @@ int vftr_MPI_Raccumulate(const void *origin_addr, int origin_count,
                                     target_rank, target_disp, target_count,
                                     target_datatype, op, win, request);
 
+      long long t2start = vftr_get_runtime_usec();
       // Need to figure out the partner rank in a known communicator to store info
       MPI_Group local_group;
       PMPI_Win_get_group(win, &local_group);
@@ -56,6 +57,10 @@ int vftr_MPI_Raccumulate(const void *origin_addr, int origin_count,
 
       vftr_register_onesided_request(send, origin_count, origin_datatype,
                                      global_rank, MPI_COMM_WORLD, *request, tstart);
+      long long t2end = vftr_get_runtime_usec();
+
+      vftr_mpi_overhead_usec += t2end - t2start;
+
       return retVal;
    }
 }
