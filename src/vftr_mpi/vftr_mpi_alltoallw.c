@@ -78,12 +78,28 @@ int vftr_MPI_Alltoallw(const void *sendbuf, const int *sendcounts,
          if (vftr_is_C_MPI_IN_PLACE(sendbuf)) {
             sendcounts = recvcounts;
             sendtypes = recvtypes;
-         }
-         for (int i=0; i<size; i++) {
-            vftr_store_sync_message_info(send, sendcounts[i], sendtypes[i],
-                                         i, 0, comm, tstart, tend);
-            vftr_store_sync_message_info(recv, recvcounts[i], recvtypes[i],
-                                         i, 0, comm, tstart, tend);
+            // For the in-place option no self communication is executed
+            int rank;
+            PMPI_Comm_rank(comm, &rank);
+            for (int i=0; i<rank; i++) {
+               vftr_store_sync_message_info(send, sendcounts[i], sendtypes[i],
+                                            i, 0, comm, tstart, tend);
+               vftr_store_sync_message_info(recv, recvcounts[i], recvtypes[i],
+                                            i, 0, comm, tstart, tend);
+            }
+            for (int i=rank+1; i<size; i++) {
+               vftr_store_sync_message_info(send, sendcounts[i], sendtypes[i],
+                                            i, 0, comm, tstart, tend);
+               vftr_store_sync_message_info(recv, recvcounts[i], recvtypes[i],
+                                            i, 0, comm, tstart, tend);
+            }
+         } else {
+            for (int i=0; i<size; i++) {
+               vftr_store_sync_message_info(send, sendcounts[i], sendtypes[i],
+                                            i, 0, comm, tstart, tend);
+               vftr_store_sync_message_info(recv, recvcounts[i], recvtypes[i],
+                                            i, 0, comm, tstart, tend);
+            }
          }
       }
 
