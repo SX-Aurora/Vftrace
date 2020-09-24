@@ -97,51 +97,85 @@ int vftr_MPI_Iallreduce(const void *sendbuf, void *recvbuf, int count,
          int size;
          PMPI_Comm_size(comm, &size);
          // if sendbuf is special address MPI_IN_PLACE
-         // count and datatype are ignored.
-         // Use count and datatype for statistics
          if (vftr_is_C_MPI_IN_PLACE(sendbuf)) {
-            count = count;
-            datatype = datatype;
-         }
-         // allocate memory for the temporary arrays
-         // to register communication request
-         int *tmpcount = (int*) malloc(sizeof(int)*size);
-         MPI_Datatype *tmptype = (MPI_Datatype*) malloc(sizeof(MPI_Datatype)*size);
-         int *peer_ranks = (int*) malloc(sizeof(int)*size);
-         // messages to be send
-         for (int i=0; i<size; i++) {
-            tmpcount[i] = count;
-            tmptype[i] = datatype;
-            peer_ranks[i] = i;
-         }
-         vftr_register_collective_request(send, size, tmpcount, tmptype, peer_ranks,
-                                          comm, *request, tstart);
-         // messages to be received
-         for (int i=0; i<size; i++) {
-            tmpcount[i] = count;
-            tmptype[i] = datatype;
-            peer_ranks[i] = i;
-         }
-         // The receive is not strictly true as every process receives only one 
-         // data package, but due to the nature of a remote reduce
-         // it is not possible to destinguish from whom.
-         // There are three possibilities how to deal with this
-         // 1. Don't register the receive at all
-         // 2. Register the receive with count data from every remote process
-         // 3. Register the receive with count/(remote size) data
-         //    from every remote process
-         // We selected number 2, because option 3 might not result
-         // in an integer abmount of received data.
-         vftr_register_collective_request(recv, size, tmpcount, tmptype, peer_ranks,
-                                          comm, *request, tstart);
-         // cleanup temporary arrays
-         free(tmpcount);
-         tmpcount = NULL;
-         free(tmptype);
-         tmptype = NULL;
-         free(peer_ranks);
-         peer_ranks = NULL;
+            // For the in-place option no self communication is executed
+            int rank;
+            PMPI_Comm_rank(comm, &rank);
 
+            // allocate memory for the temporary arrays
+            // to register communication request
+            int *tmpcount = (int*) malloc(sizeof(int)*(size-1));
+            MPI_Datatype *tmptype = (MPI_Datatype*) malloc(sizeof(MPI_Datatype)*(size-1));
+            int *peer_ranks = (int*) malloc(sizeof(int)*(size-1));
+            // messages to be send
+            int idx = 0;
+            for (int i=0; i<rank; i++) {
+               tmpcount[idx] = count;
+               tmptype[idx] = datatype;
+               peer_ranks[idx] = i;
+               idx++;
+            }
+            for (int i=rank+1; i<size; i++) {
+               tmpcount[idx] = count;
+               tmptype[idx] = datatype;
+               peer_ranks[idx] = i;
+               idx++;
+            }
+            vftr_register_collective_request(send, size-1, tmpcount, tmptype, peer_ranks,
+                                             comm, *request, tstart);
+            // The receive is not strictly true as every process receives only one 
+            // data package, but due to the nature of a remote reduce
+            // it is not possible to destinguish from whom.
+            // There are three possibilities how to deal with this
+            // 1. Don't register the receive at all
+            // 2. Register the receive with count data from every remote process
+            // 3. Register the receive with count/(remote size) data
+            //    from every remote process
+            // We selected number 2, because option 3 might not result
+            // in an integer abmount of received data.
+            vftr_register_collective_request(recv, size-1, tmpcount, tmptype, peer_ranks,
+                                             comm, *request, tstart);
+            // cleanup temporary arrays
+            free(tmpcount);
+            tmpcount = NULL;
+            free(tmptype);
+            tmptype = NULL;
+            free(peer_ranks);
+            peer_ranks = NULL;
+         } else {
+            // allocate memory for the temporary arrays
+            // to register communication request
+            int *tmpcount = (int*) malloc(sizeof(int)*size);
+            MPI_Datatype *tmptype = (MPI_Datatype*) malloc(sizeof(MPI_Datatype)*size);
+            int *peer_ranks = (int*) malloc(sizeof(int)*size);
+            // messages to be send
+            for (int i=0; i<size; i++) {
+               tmpcount[i] = count;
+               tmptype[i] = datatype;
+               peer_ranks[i] = i;
+            }
+            vftr_register_collective_request(send, size, tmpcount, tmptype, peer_ranks,
+                                             comm, *request, tstart);
+            // The receive is not strictly true as every process receives only one 
+            // data package, but due to the nature of a remote reduce
+            // it is not possible to destinguish from whom.
+            // There are three possibilities how to deal with this
+            // 1. Don't register the receive at all
+            // 2. Register the receive with count data from every remote process
+            // 3. Register the receive with count/(remote size) data
+            //    from every remote process
+            // We selected number 2, because option 3 might not result
+            // in an integer abmount of received data.
+            vftr_register_collective_request(recv, size, tmpcount, tmptype, peer_ranks,
+                                             comm, *request, tstart);
+            // cleanup temporary arrays
+            free(tmpcount);
+            tmpcount = NULL;
+            free(tmptype);
+            tmptype = NULL;
+            free(peer_ranks);
+            peer_ranks = NULL;
+         }
       }
   
       return retVal;

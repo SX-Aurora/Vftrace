@@ -314,6 +314,7 @@ AM_COND_IF([MPI_PROFILING],
                             test/mpi/c-mpi/allreduce_inplace.sh:test/mpi/testscripts/allreduce_inplace.sh
                             test/mpi/c-mpi/iallreduce.sh:test/mpi/testscripts/iallreduce.sh
                             test/mpi/c-mpi/iallreduce_intercom.sh:test/mpi/testscripts/iallreduce_intercom.sh
+                            test/mpi/c-mpi/iallreduce_inplace.sh:test/mpi/testscripts/iallreduce_inplace.sh
                             test/mpi/c-mpi/scan.sh:test/mpi/testscripts/scan.sh
                             test/mpi/c-mpi/iscan.sh:test/mpi/testscripts/iscan.sh
                             test/mpi/c-mpi/exscan.sh:test/mpi/testscripts/exscan.sh
@@ -417,6 +418,7 @@ AM_COND_IF([MPI_PROFILING],
                             test/mpi/f-mpi/allreduce_inplace.sh:test/mpi/testscripts/allreduce_inplace.sh
                             test/mpi/f-mpi/iallreduce.sh:test/mpi/testscripts/iallreduce.sh
                             test/mpi/f-mpi/iallreduce_intercom.sh:test/mpi/testscripts/iallreduce_intercom.sh
+                            test/mpi/f-mpi/iallreduce_inplace.sh:test/mpi/testscripts/iallreduce_inplace.sh
                             test/mpi/f-mpi/scan.sh:test/mpi/testscripts/scan.sh
                             test/mpi/f-mpi/iscan.sh:test/mpi/testscripts/iscan.sh
                             test/mpi/f-mpi/exscan.sh:test/mpi/testscripts/exscan.sh
@@ -520,6 +522,7 @@ AM_COND_IF([MPI_PROFILING],
                             test/mpi/f08-mpi/allreduce_inplace.sh:test/mpi/testscripts/allreduce_inplace.sh
                             test/mpi/f08-mpi/iallreduce.sh:test/mpi/testscripts/iallreduce.sh
                             test/mpi/f08-mpi/iallreduce_intercom.sh:test/mpi/testscripts/iallreduce_intercom.sh
+                            test/mpi/f08-mpi/iallreduce_inplace.sh:test/mpi/testscripts/iallreduce_inplace.sh
                             test/mpi/f08-mpi/scan.sh:test/mpi/testscripts/scan.sh
                             test/mpi/f08-mpi/iscan.sh:test/mpi/testscripts/iscan.sh
                             test/mpi/f08-mpi/exscan.sh:test/mpi/testscripts/exscan.sh
