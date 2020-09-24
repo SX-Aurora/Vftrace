@@ -38,6 +38,7 @@ int vftr_MPI_Sendrecv_replace(void *buf, int count, MPI_Datatype datatype,
                                          source, recvtag, comm, &tmpstatus);
       long long tend = vftr_get_runtime_usec();
 
+      long long t2start = tend;
       int rank;
       PMPI_Comm_rank(comm, &rank);
       vftr_store_sync_message_info(send, count, datatype, dest,
@@ -52,6 +53,9 @@ int vftr_MPI_Sendrecv_replace(void *buf, int count, MPI_Datatype datatype,
          status->MPI_TAG = tmpstatus.MPI_TAG;
          status->MPI_ERROR = tmpstatus.MPI_ERROR;
       }
+      long long t2end = vftr_get_runtime_usec();
+
+      vftr_mpi_overhead_usec += t2end - t2start;
 
       return retVal;
    }
