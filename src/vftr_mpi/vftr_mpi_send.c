@@ -34,7 +34,11 @@ int vftr_MPI_Send(const void *buf, int count, MPI_Datatype datatype,
       int retVal = PMPI_Send(buf, count, datatype, dest, tag, comm);
       long long tend = vftr_get_runtime_usec();
 
+      long long t2start = tend;
       vftr_store_sync_message_info(send, count, datatype, dest, tag, comm, tstart, tend);
+      long long t2end = vftr_get_runtime_usec();
+
+      vftr_mpi_overhead_usec += t2end - t2start;
 
       return retVal;
    }
