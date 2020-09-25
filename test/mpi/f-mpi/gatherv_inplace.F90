@@ -1,4 +1,4 @@
-PROGRAM gatherv
+PROGRAM gatherv_inplace
 
    USE, INTRINSIC :: ISO_FORTRAN_ENV
    USE mpi
@@ -110,4 +110,4 @@ PROGRAM gatherv
    CALL MPI_Finalize(ierr)
 
    IF (.NOT.valid_data) STOP 1
-END PROGRAM gatherv
+END PROGRAM gatherv_inplace
