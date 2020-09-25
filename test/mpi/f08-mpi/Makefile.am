@@ -80,6 +80,7 @@ check_PROGRAMS += bcast \
 		   gather_inplace \
 		   gatherv \
 		   gatherv_intercom \
+		   gatherv_inplace \
 		   scatter \
 		   scatter_intercom \
 		   scatterv \
@@ -122,6 +123,10 @@ gatherv_LDFLAGS = $(AM_LDFLAGS)
 gatherv_intercom_SOURCES = $(srcdir)/gatherv_intercom.F90
 gatherv_intercom_FCFLAGS = $(AM_FCFLAGS)
 gatherv_intercom_LDFLAGS = $(AM_LDFLAGS)
+
+gatherv_inplace_SOURCES = $(srcdir)/gatherv_inplace.F90
+gatherv_inplace_FCFLAGS = $(AM_FCFLAGS)
+gatherv_inplace_LDFLAGS = $(AM_LDFLAGS)
 
 scatter_SOURCES = $(srcdir)/scatter.F90
 scatter_FCFLAGS = $(AM_FCFLAGS)
@@ -186,6 +191,7 @@ dist_noinst_SCRIPTS += bcast.sh \
 		       gather_inplace.sh \
 		       gatherv.sh \
 		       gatherv_intercom.sh \
+		       gatherv_inplace.sh \
 		       scatter.sh \
 		       scatter_intercom.sh \
 		       scatterv.sh \
