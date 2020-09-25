@@ -1,4 +1,4 @@
-PROGRAM scatter
+PROGRAM scatterv
 
    USE, INTRINSIC :: ISO_FORTRAN_ENV
    USE mpi
@@ -43,7 +43,7 @@ PROGRAM scatter
 
    ! require cmd-line argument
    IF (COMMAND_ARGUMENT_COUNT() < 1) THEN
-      WRITE(UNIT=OUTPUT_UNIT, FMT="(A)") "./scatter <msgsize in integers>"
+      WRITE(UNIT=OUTPUT_UNIT, FMT="(A)") "./scatterv <msgsize in integers>"
       STOP 1
    END IF
 
@@ -101,4 +101,4 @@ PROGRAM scatter
    CALL MPI_Finalize(ierr)
 
    IF (.NOT.valid_data) STOP 1
-END PROGRAM scatter
+END PROGRAM scatterv
