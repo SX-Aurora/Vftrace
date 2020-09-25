@@ -257,7 +257,8 @@ check_PROGRAMS += reduce \
 		  reduce_intercom \
 		  reduce_inplace \
 		  allreduce \
-		  allreduce_intercom
+		  allreduce_intercom \
+		  allreduce_inplace
 
 reduce_SOURCES = $(srcdir)/reduce.F90
 reduce_FCFLAGS = $(AM_FCFLAGS)
@@ -279,11 +280,16 @@ allreduce_intercom_SOURCES = $(srcdir)/allreduce_intercom.F90
 allreduce_intercom_FCFLAGS = $(AM_FCFLAGS)
 allreduce_intercom_LDFLAGS = $(AM_LDFLAGS)
 
+allreduce_inplace_SOURCES = $(srcdir)/allreduce_inplace.F90
+allreduce_inplace_FCFLAGS = $(AM_FCFLAGS)
+allreduce_inplace_LDFLAGS = $(AM_LDFLAGS)
+
 dist_noinst_SCRIPTS += reduce.sh \
 		       reduce_intercom.sh \
 		       reduce_inplace.sh \
 		       allreduce.sh \
-		       allreduce_intercom.sh
+		       allreduce_intercom.sh \
+		       allreduce_inplace.sh
 
 ###################
 # One sided tests #
