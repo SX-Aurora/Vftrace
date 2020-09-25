@@ -91,6 +91,7 @@ check_PROGRAMS += bcast \
 		  scatter_inplace \
 		  iscatter \
 		  iscatter_intercom \
+		  iscatter_inplace \
 		  scatterv \
 		  scatterv_intercom \
 		  iscatterv \
@@ -199,6 +200,10 @@ iscatter_LDFLAGS = $(AM_LDFLAGS)
 iscatter_intercom_SOURCES = $(srcdir)/iscatter_intercom.F90
 iscatter_intercom_FCFLAGS = $(AM_FCFLAGS)
 iscatter_intercom_LDFLAGS = $(AM_LDFLAGS)
+
+iscatter_inplace_SOURCES = $(srcdir)/iscatter_inplace.F90
+iscatter_inplace_FCFLAGS = $(AM_FCFLAGS)
+iscatter_inplace_LDFLAGS = $(AM_LDFLAGS)
 
 scatterv_SOURCES = $(srcdir)/scatterv.F90
 scatterv_FCFLAGS = $(AM_FCFLAGS)
@@ -317,6 +322,7 @@ dist_noinst_SCRIPTS += bcast.sh \
 		       scatter_inplace.sh \
 		       iscatter.sh \
 		       iscatter_intercom.sh \
+		       iscatter_inplace.sh \
 		       scatterv.sh \
 		       scatterv_intercom.sh \
 		       iscatterv.sh \
