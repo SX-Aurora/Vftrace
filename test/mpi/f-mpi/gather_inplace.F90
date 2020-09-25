@@ -66,7 +66,6 @@ PROGRAM gather
                       rootrank, MPI_COMM_WORLD, ierr)
    END IF
 
-
    IF (my_rank == rootrank) THEN
       WRITE(UNIT=OUTPUT_UNIT, FMT="(A,I4)") &
          "Gathering messages from all ranks on rank ", my_rank
