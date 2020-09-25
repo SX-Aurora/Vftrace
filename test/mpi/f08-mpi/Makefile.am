@@ -74,34 +74,34 @@ else
 #####################
 #
 check_PROGRAMS += bcast \
-		   bcast_intercom \
-		   gather \
-		   gather_intercom \
-		   gather_inplace \
-		   gatherv \
-		   gatherv_intercom \
-		   gatherv_inplace \
-		   scatter \
-		   scatter_intercom \
-		   scatter_inplace \
-		   scatterv \
-		   scatterv_intercom \
-		   scatterv_inplace \
-		   allgather \
-		   allgather_intercom \
-		   allgather_inplace \
-		   allgatherv \
-		   allgatherv_intercom \
-		   allgatherv_inplace \
-		   alltoall \
-		   alltoall_intercom \
-		   alltoall_inplace \
-		   alltoallv \
-		   alltoallv_intercom \
-		   alltoallv_inplace \
-		   alltoallw \
-		   alltoallw_intercom \
-		   alltoallw_inplace
+		  bcast_intercom \
+		  gather \
+		  gather_intercom \
+		  gather_inplace \
+		  gatherv \
+		  gatherv_intercom \
+		  gatherv_inplace \
+		  scatter \
+		  scatter_intercom \
+		  scatter_inplace \
+		  scatterv \
+		  scatterv_intercom \
+		  scatterv_inplace \
+		  allgather \
+		  allgather_intercom \
+		  allgather_inplace \
+		  allgatherv \
+		  allgatherv_intercom \
+		  allgatherv_inplace \
+		  alltoall \
+		  alltoall_intercom \
+		  alltoall_inplace \
+		  alltoallv \
+		  alltoallv_intercom \
+		  alltoallv_inplace \
+		  alltoallw \
+		  alltoallw_intercom \
+		  alltoallw_inplace
 
 bcast_SOURCES = $(srcdir)/bcast.F90
 bcast_FCFLAGS = $(AM_FCFLAGS)
@@ -254,9 +254,10 @@ dist_noinst_SCRIPTS += bcast.sh \
 #####################
 
 check_PROGRAMS += reduce \
-		   reduce_intercom \
-		   allreduce \
-		   allreduce_intercom
+		  reduce_intercom \
+		  reduce_inplace \
+		  allreduce \
+		  allreduce_intercom
 
 reduce_SOURCES = $(srcdir)/reduce.F90
 reduce_FCFLAGS = $(AM_FCFLAGS)
@@ -265,6 +266,10 @@ reduce_LDFLAGS = $(AM_LDFLAGS)
 reduce_intercom_SOURCES = $(srcdir)/reduce_intercom.F90
 reduce_intercom_FCFLAGS = $(AM_FCFLAGS)
 reduce_intercom_LDFLAGS = $(AM_LDFLAGS)
+
+reduce_inplace_SOURCES = $(srcdir)/reduce_inplace.F90
+reduce_inplace_FCFLAGS = $(AM_FCFLAGS)
+reduce_inplace_LDFLAGS = $(AM_LDFLAGS)
 
 allreduce_SOURCES = $(srcdir)/allreduce.F90
 allreduce_FCFLAGS = $(AM_FCFLAGS)
@@ -276,6 +281,7 @@ allreduce_intercom_LDFLAGS = $(AM_LDFLAGS)
 
 dist_noinst_SCRIPTS += reduce.sh \
 		       reduce_intercom.sh \
+		       reduce_inplace.sh \
 		       allreduce.sh \
 		       allreduce_intercom.sh
 
@@ -283,7 +289,7 @@ dist_noinst_SCRIPTS += reduce.sh \
 # One sided tests #
 ###################
 check_PROGRAMS += put \
-		   get
+		  get
 
 put_SOURCES = $(srcdir)/put.F90
 put_FCFLAGS = $(AM_FCFLAGS)
