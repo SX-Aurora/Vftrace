@@ -11,7 +11,6 @@ PROGRAM alltoall_inplace
    INTEGER :: my_rank
 
    INTEGER :: nints = 0
-   INTEGER, DIMENSION(:,:), ALLOCATABLE :: sbuffer
    INTEGER, DIMENSION(:,:), ALLOCATABLE :: rbuffer
 
    INTEGER :: irank

@@ -12,7 +12,6 @@ PROGRAM iallgatherv_inplace
 
    INTEGER :: nints = 0
    INTEGER :: ntot
-   INTEGER, DIMENSION(:), ALLOCATABLE :: sbuffer
    INTEGER, DIMENSION(:), ALLOCATABLE :: rbuffer
    INTEGER, DIMENSION(:), ALLOCATABLE :: recvcounts
    INTEGER, DIMENSION(:), ALLOCATABLE :: displs

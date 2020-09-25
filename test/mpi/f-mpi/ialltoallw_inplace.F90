@@ -14,7 +14,6 @@ PROGRAM ialltoallw_inplace
    INTEGER :: nints = 0
    INTEGER :: nrtot
    INTEGER :: dummyint
-   INTEGER, DIMENSION(:), ALLOCATABLE :: sbuffer
    INTEGER, DIMENSION(:), ALLOCATABLE :: scounts
    INTEGER, DIMENSION(:), ALLOCATABLE :: sdispls
    INTEGER, DIMENSION(:), ALLOCATABLE :: stypes
