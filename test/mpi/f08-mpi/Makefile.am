@@ -319,7 +319,8 @@ dist_noinst_SCRIPTS += reduce.sh \
 # One sided tests #
 ###################
 check_PROGRAMS += put \
-		  get
+		  get \
+		  accumulate
 
 put_SOURCES = $(srcdir)/put.F90
 put_FCFLAGS = $(AM_FCFLAGS)
@@ -329,8 +330,13 @@ get_SOURCES = $(srcdir)/get.F90
 get_FCFLAGS = $(AM_FCFLAGS)
 get_LDFLAGS = $(AM_LDFLAGS)
 
+accumulate_SOURCES = $(srcdir)/accumulate.F90
+accumulate_FCFLAGS = $(AM_FCFLAGS)
+accumulate_LDFLAGS = $(AM_LDFLAGS)
+
 dist_noinst_SCRIPTS += put.sh \
-		       get.sh
+		       get.sh \
+		       accumulate.sh
 
 ###############
 ## Test tests #
