@@ -40,7 +40,7 @@ PROGRAM reduce_inplace
 
    ! require cmd-line argument
    IF (COMMAND_ARGUMENT_COUNT() < 1) THEN
-      WRITE(UNIT=OUTPUT_UNIT, FMT="(A)") "./reduce <msgsize in integers>"
+      WRITE(UNIT=OUTPUT_UNIT, FMT="(A)") "./reduce_inplace <msgsize in integers>"
       STOP 1
    END IF
 
