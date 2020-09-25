@@ -1,4 +1,4 @@
-PROGRAM igather
+PROGRAM igather_inplace
 
    USE, INTRINSIC :: ISO_FORTRAN_ENV
    USE mpi
@@ -96,4 +96,4 @@ PROGRAM igather
    CALL MPI_Finalize(ierr)
 
    IF (.NOT.valid_data) STOP 1
-END PROGRAM igather
+END PROGRAM igather_inplace
