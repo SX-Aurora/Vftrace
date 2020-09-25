@@ -115,6 +115,7 @@ check_PROGRAMS += bcast \
 		  alltoall_inplace \
 		  ialltoall \
 		  ialltoall_intercom \
+		  ialltoall_inplace \
 		  alltoallv \
 		  alltoallv_intercom \
 		  ialltoallv \
@@ -303,6 +304,10 @@ ialltoall_LDFLAGS = $(AM_LDFLAGS)
 ialltoall_intercom_SOURCES = $(srcdir)/ialltoall_intercom.F90
 ialltoall_intercom_FCFLAGS = $(AM_FCFLAGS)
 ialltoall_intercom_LDFLAGS = $(AM_LDFLAGS)
+
+ialltoall_inplace_SOURCES = $(srcdir)/ialltoall_inplace.F90
+ialltoall_inplace_FCFLAGS = $(AM_FCFLAGS)
+ialltoall_inplace_LDFLAGS = $(AM_LDFLAGS)
 
 alltoallv_SOURCES = $(srcdir)/alltoallv.F90
 alltoallv_FCFLAGS = $(AM_FCFLAGS)
