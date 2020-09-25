@@ -100,6 +100,7 @@ check_PROGRAMS += bcast \
 		  iscatterv_inplace \
 		  allgather \
 		  allgather_intercom \
+		  allgather_inplace \
 		  iallgather \
 		  iallgather_intercom \
 		  allgatherv \
@@ -239,6 +240,10 @@ allgather_intercom_SOURCES = $(srcdir)/allgather_intercom.F90
 allgather_intercom_FCFLAGS = $(AM_FCFLAGS)
 allgather_intercom_LDFLAGS = $(AM_LDFLAGS)
 
+allgather_inplace_SOURCES = $(srcdir)/allgather_inplace.F90
+allgather_inplace_FCFLAGS = $(AM_FCFLAGS)
+allgather_inplace_LDFLAGS = $(AM_LDFLAGS)
+
 iallgather_SOURCES = $(srcdir)/iallgather.F90
 iallgather_FCFLAGS = $(AM_FCFLAGS)
 iallgather_LDFLAGS = $(AM_LDFLAGS)
@@ -341,6 +346,7 @@ dist_noinst_SCRIPTS += bcast.sh \
 		       iscatterv_inplace.sh \
 		       allgather.sh \
 		       allgather_intercom.sh \
+		       allgather_inplace.sh \
 		       iallgather.sh \
 		       iallgather_intercom.sh \
 		       allgatherv.sh \
