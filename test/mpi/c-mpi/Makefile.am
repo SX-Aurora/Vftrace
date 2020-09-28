@@ -446,7 +446,10 @@ check_PROGRAMS += reduce \
 		  iexscan_inplace \
 		  reduce_scatter_block \
 		  reduce_scatter_block_intercom \
-		  reduce_scatter_block_inplace
+		  reduce_scatter_block_inplace \
+		  ireduce_scatter_block \
+		  ireduce_scatter_block_intercom \
+		  ireduce_scatter_block_inplace
 
 reduce_SOURCES = $(srcdir)/reduce.c
 reduce_CFLAGS = $(AM_CFLAGS)
@@ -540,6 +543,18 @@ reduce_scatter_block_inplace_SOURCES = $(srcdir)/reduce_scatter_block_inplace.c
 reduce_scatter_block_inplace_CFLAGS = $(AM_CFLAGS)
 reduce_scatter_block_inplace_LDFLAGS = $(AM_LDFLAGS)
 
+ireduce_scatter_block_SOURCES = $(srcdir)/ireduce_scatter_block.c
+ireduce_scatter_block_CFLAGS = $(AM_CFLAGS)
+ireduce_scatter_block_LDFLAGS = $(AM_LDFLAGS)
+
+ireduce_scatter_block_intercom_SOURCES = $(srcdir)/ireduce_scatter_block_intercom.c
+ireduce_scatter_block_intercom_CFLAGS = $(AM_CFLAGS)
+ireduce_scatter_block_intercom_LDFLAGS = $(AM_LDFLAGS)
+
+ireduce_scatter_block_inplace_SOURCES = $(srcdir)/ireduce_scatter_block_inplace.c
+ireduce_scatter_block_inplace_CFLAGS = $(AM_CFLAGS)
+ireduce_scatter_block_inplace_LDFLAGS = $(AM_LDFLAGS)
+
 dist_noinst_SCRIPTS += reduce.sh \
 		       reduce_intercom.sh \
 		       reduce_inplace.sh \
@@ -561,7 +576,10 @@ dist_noinst_SCRIPTS += reduce.sh \
 		       iexscan_inplace.sh \
 		       reduce_scatter_block.sh \
 		       reduce_scatter_block_intercom.sh \
-		       reduce_scatter_block_inplace.sh
+		       reduce_scatter_block_inplace.sh \
+		       ireduce_scatter_block.sh \
+		       ireduce_scatter_block_intercom.sh \
+		       ireduce_scatter_block_inplace.sh
 
 ###################
 # One sided tests #

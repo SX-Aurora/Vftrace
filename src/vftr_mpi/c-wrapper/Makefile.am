@@ -65,7 +65,8 @@ libvftr_cmpiwrap_la_SOURCES += vftr_mpi_allreduce_cwrap.c \
 			       vftr_mpi_iscan_cwrap.c \
 			       vftr_mpi_exscan_cwrap.c \
 			       vftr_mpi_iexscan_cwrap.c \
-			       vftr_mpi_reduce_scatter_block_cwrap.c
+			       vftr_mpi_reduce_scatter_block_cwrap.c \
+			       vftr_mpi_ireduce_scatter_block_cwrap.c
 
 #############
 # one sided #
