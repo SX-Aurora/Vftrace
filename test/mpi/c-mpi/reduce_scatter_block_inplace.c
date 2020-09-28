@@ -16,7 +16,7 @@ int main(int argc, char** argv) {
 
    // require cmd-line argument
    if (argc < 2) {
-      printf("./allgather <msgsize in ints>\n");
+      printf("./reduce_scatter_block_inplace <msgsize in ints>\n");
       return 1;
    }
 

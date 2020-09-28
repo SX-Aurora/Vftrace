@@ -23,7 +23,7 @@ int main(int argc, char** argv) {
 
    // require cmd-line argument
    if (argc < 2) {
-      printf("./allgather_intercom <msgsize in ints>\n");
+      printf("./reduce_scatter_block_intercom <msgsize in ints>\n");
       return 1;
    }
 
