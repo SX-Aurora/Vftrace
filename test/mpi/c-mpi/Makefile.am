@@ -443,7 +443,10 @@ check_PROGRAMS += reduce \
 		  exscan \
 		  exscan_inplace \
 		  iexscan \
-		  iexscan_inplace
+		  iexscan_inplace \
+		  reduce_scatter_block \
+		  reduce_scatter_block_intercom \
+		  reduce_scatter_block_inplace
 
 reduce_SOURCES = $(srcdir)/reduce.c
 reduce_CFLAGS = $(AM_CFLAGS)
@@ -525,6 +528,18 @@ iexscan_inplace_SOURCES = $(srcdir)/iexscan_inplace.c
 iexscan_inplace_CFLAGS = $(AM_CFLAGS)
 iexscan_inplace_LDFLAGS = $(AM_LDFLAGS)
 
+reduce_scatter_block_SOURCES = $(srcdir)/reduce_scatter_block.c
+reduce_scatter_block_CFLAGS = $(AM_CFLAGS)
+reduce_scatter_block_LDFLAGS = $(AM_LDFLAGS)
+
+reduce_scatter_block_intercom_SOURCES = $(srcdir)/reduce_scatter_block_intercom.c
+reduce_scatter_block_intercom_CFLAGS = $(AM_CFLAGS)
+reduce_scatter_block_intercom_LDFLAGS = $(AM_LDFLAGS)
+
+reduce_scatter_block_inplace_SOURCES = $(srcdir)/reduce_scatter_block_inplace.c
+reduce_scatter_block_inplace_CFLAGS = $(AM_CFLAGS)
+reduce_scatter_block_inplace_LDFLAGS = $(AM_LDFLAGS)
+
 dist_noinst_SCRIPTS += reduce.sh \
 		       reduce_intercom.sh \
 		       reduce_inplace.sh \
@@ -543,7 +558,10 @@ dist_noinst_SCRIPTS += reduce.sh \
 		       exscan.sh \
 		       exscan_inplace.sh \
 		       iexscan.sh \
-		       iexscan_inplace.sh
+		       iexscan_inplace.sh \
+		       reduce_scatter_block.sh \
+		       reduce_scatter_block_intercom.sh \
+		       reduce_scatter_block_inplace.sh
 
 ###################
 # One sided tests #

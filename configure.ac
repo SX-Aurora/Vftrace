@@ -323,6 +323,9 @@ AM_COND_IF([MPI_PROFILING],
                             test/mpi/c-mpi/exscan_inplace.sh:test/mpi/testscripts/exscan_inplace.sh
                             test/mpi/c-mpi/iexscan.sh:test/mpi/testscripts/iexscan.sh
                             test/mpi/c-mpi/iexscan_inplace.sh:test/mpi/testscripts/iexscan_inplace.sh
+                            test/mpi/c-mpi/reduce_scatter_block.sh:test/mpi/testscripts/reduce_scatter_block.sh
+                            test/mpi/c-mpi/reduce_scatter_block_intercom.sh:test/mpi/testscripts/reduce_scatter_block_intercom.sh
+                            test/mpi/c-mpi/reduce_scatter_block_inplace.sh:test/mpi/testscripts/reduce_scatter_block_inplace.sh
                             test/mpi/c-mpi/put.sh:test/mpi/testscripts/put.sh
                             test/mpi/c-mpi/rput.sh:test/mpi/testscripts/rput.sh
                             test/mpi/c-mpi/get.sh:test/mpi/testscripts/get.sh
@@ -431,6 +434,9 @@ AM_COND_IF([MPI_PROFILING],
                             test/mpi/f-mpi/exscan_inplace.sh:test/mpi/testscripts/exscan_inplace.sh
                             test/mpi/f-mpi/iexscan.sh:test/mpi/testscripts/iexscan.sh
                             test/mpi/f-mpi/iexscan_inplace.sh:test/mpi/testscripts/iexscan_inplace.sh
+                            test/mpi/f-mpi/reduce_scatter_block.sh:test/mpi/testscripts/reduce_scatter_block.sh
+                            test/mpi/f-mpi/reduce_scatter_block_intercom.sh:test/mpi/testscripts/reduce_scatter_block_intercom.sh
+                            test/mpi/f-mpi/reduce_scatter_block_inplace.sh:test/mpi/testscripts/reduce_scatter_block_inplace.sh
                             test/mpi/f-mpi/put.sh:test/mpi/testscripts/put.sh
                             test/mpi/f-mpi/rput.sh:test/mpi/testscripts/rput.sh
                             test/mpi/f-mpi/get.sh:test/mpi/testscripts/get.sh
@@ -539,6 +545,9 @@ AM_COND_IF([MPI_PROFILING],
                             test/mpi/f08-mpi/exscan_inplace.sh:test/mpi/testscripts/exscan_inplace.sh
                             test/mpi/f08-mpi/iexscan.sh:test/mpi/testscripts/iexscan.sh
                             test/mpi/f08-mpi/iexscan_inplace.sh:test/mpi/testscripts/iexscan_inplace.sh
+                            test/mpi/f08-mpi/reduce_scatter_block.sh:test/mpi/testscripts/reduce_scatter_block.sh
+                            test/mpi/f08-mpi/reduce_scatter_block_intercom.sh:test/mpi/testscripts/reduce_scatter_block_intercom.sh
+                            test/mpi/f08-mpi/reduce_scatter_block_inplace.sh:test/mpi/testscripts/reduce_scatter_block_inplace.sh
                             test/mpi/f08-mpi/put.sh:test/mpi/testscripts/put.sh
                             test/mpi/f08-mpi/rput.sh:test/mpi/testscripts/rput.sh
                             test/mpi/f08-mpi/get.sh:test/mpi/testscripts/get.sh
