@@ -315,6 +315,12 @@ AM_COND_IF([MPI_PROFILING],
                             test/mpi/c-mpi/iallreduce.sh:test/mpi/testscripts/iallreduce.sh
                             test/mpi/c-mpi/iallreduce_intercom.sh:test/mpi/testscripts/iallreduce_intercom.sh
                             test/mpi/c-mpi/iallreduce_inplace.sh:test/mpi/testscripts/iallreduce_inplace.sh
+                            test/mpi/c-mpi/reduce_scatter_block.sh:test/mpi/testscripts/reduce_scatter_block.sh
+                            test/mpi/c-mpi/reduce_scatter_block_intercom.sh:test/mpi/testscripts/reduce_scatter_block_intercom.sh
+                            test/mpi/c-mpi/reduce_scatter_block_inplace.sh:test/mpi/testscripts/reduce_scatter_block_inplace.sh
+                            test/mpi/c-mpi/ireduce_scatter_block.sh:test/mpi/testscripts/ireduce_scatter_block.sh
+                            test/mpi/c-mpi/ireduce_scatter_block_intercom.sh:test/mpi/testscripts/ireduce_scatter_block_intercom.sh
+                            test/mpi/c-mpi/ireduce_scatter_block_inplace.sh:test/mpi/testscripts/ireduce_scatter_block_inplace.sh
                             test/mpi/c-mpi/scan.sh:test/mpi/testscripts/scan.sh
                             test/mpi/c-mpi/scan_inplace.sh:test/mpi/testscripts/scan_inplace.sh
                             test/mpi/c-mpi/iscan.sh:test/mpi/testscripts/iscan.sh
@@ -323,12 +329,6 @@ AM_COND_IF([MPI_PROFILING],
                             test/mpi/c-mpi/exscan_inplace.sh:test/mpi/testscripts/exscan_inplace.sh
                             test/mpi/c-mpi/iexscan.sh:test/mpi/testscripts/iexscan.sh
                             test/mpi/c-mpi/iexscan_inplace.sh:test/mpi/testscripts/iexscan_inplace.sh
-                            test/mpi/c-mpi/reduce_scatter_block.sh:test/mpi/testscripts/reduce_scatter_block.sh
-                            test/mpi/c-mpi/reduce_scatter_block_intercom.sh:test/mpi/testscripts/reduce_scatter_block_intercom.sh
-                            test/mpi/c-mpi/reduce_scatter_block_inplace.sh:test/mpi/testscripts/reduce_scatter_block_inplace.sh
-                            test/mpi/c-mpi/ireduce_scatter_block.sh:test/mpi/testscripts/ireduce_scatter_block.sh
-                            test/mpi/c-mpi/ireduce_scatter_block_intercom.sh:test/mpi/testscripts/ireduce_scatter_block_intercom.sh
-                            test/mpi/c-mpi/ireduce_scatter_block_inplace.sh:test/mpi/testscripts/ireduce_scatter_block_inplace.sh
                             test/mpi/c-mpi/put.sh:test/mpi/testscripts/put.sh
                             test/mpi/c-mpi/rput.sh:test/mpi/testscripts/rput.sh
                             test/mpi/c-mpi/get.sh:test/mpi/testscripts/get.sh
@@ -429,6 +429,12 @@ AM_COND_IF([MPI_PROFILING],
                             test/mpi/f-mpi/iallreduce.sh:test/mpi/testscripts/iallreduce.sh
                             test/mpi/f-mpi/iallreduce_intercom.sh:test/mpi/testscripts/iallreduce_intercom.sh
                             test/mpi/f-mpi/iallreduce_inplace.sh:test/mpi/testscripts/iallreduce_inplace.sh
+                            test/mpi/f-mpi/reduce_scatter_block.sh:test/mpi/testscripts/reduce_scatter_block.sh
+                            test/mpi/f-mpi/reduce_scatter_block_intercom.sh:test/mpi/testscripts/reduce_scatter_block_intercom.sh
+                            test/mpi/f-mpi/reduce_scatter_block_inplace.sh:test/mpi/testscripts/reduce_scatter_block_inplace.sh
+                            test/mpi/f-mpi/ireduce_scatter_block.sh:test/mpi/testscripts/ireduce_scatter_block.sh
+                            test/mpi/f-mpi/ireduce_scatter_block_intercom.sh:test/mpi/testscripts/ireduce_scatter_block_intercom.sh
+                            test/mpi/f-mpi/ireduce_scatter_block_inplace.sh:test/mpi/testscripts/ireduce_scatter_block_inplace.sh
                             test/mpi/f-mpi/scan.sh:test/mpi/testscripts/scan.sh
                             test/mpi/f-mpi/scan_inplace.sh:test/mpi/testscripts/scan_inplace.sh
                             test/mpi/f-mpi/iscan.sh:test/mpi/testscripts/iscan.sh
@@ -437,12 +443,6 @@ AM_COND_IF([MPI_PROFILING],
                             test/mpi/f-mpi/exscan_inplace.sh:test/mpi/testscripts/exscan_inplace.sh
                             test/mpi/f-mpi/iexscan.sh:test/mpi/testscripts/iexscan.sh
                             test/mpi/f-mpi/iexscan_inplace.sh:test/mpi/testscripts/iexscan_inplace.sh
-                            test/mpi/f-mpi/reduce_scatter_block.sh:test/mpi/testscripts/reduce_scatter_block.sh
-                            test/mpi/f-mpi/reduce_scatter_block_intercom.sh:test/mpi/testscripts/reduce_scatter_block_intercom.sh
-                            test/mpi/f-mpi/reduce_scatter_block_inplace.sh:test/mpi/testscripts/reduce_scatter_block_inplace.sh
-                            test/mpi/f-mpi/ireduce_scatter_block.sh:test/mpi/testscripts/ireduce_scatter_block.sh
-                            test/mpi/f-mpi/ireduce_scatter_block_intercom.sh:test/mpi/testscripts/ireduce_scatter_block_intercom.sh
-                            test/mpi/f-mpi/ireduce_scatter_block_inplace.sh:test/mpi/testscripts/ireduce_scatter_block_inplace.sh
                             test/mpi/f-mpi/put.sh:test/mpi/testscripts/put.sh
                             test/mpi/f-mpi/rput.sh:test/mpi/testscripts/rput.sh
                             test/mpi/f-mpi/get.sh:test/mpi/testscripts/get.sh
@@ -543,6 +543,12 @@ AM_COND_IF([MPI_PROFILING],
                             test/mpi/f08-mpi/iallreduce.sh:test/mpi/testscripts/iallreduce.sh
                             test/mpi/f08-mpi/iallreduce_intercom.sh:test/mpi/testscripts/iallreduce_intercom.sh
                             test/mpi/f08-mpi/iallreduce_inplace.sh:test/mpi/testscripts/iallreduce_inplace.sh
+                            test/mpi/f08-mpi/reduce_scatter_block.sh:test/mpi/testscripts/reduce_scatter_block.sh
+                            test/mpi/f08-mpi/reduce_scatter_block_intercom.sh:test/mpi/testscripts/reduce_scatter_block_intercom.sh
+                            test/mpi/f08-mpi/reduce_scatter_block_inplace.sh:test/mpi/testscripts/reduce_scatter_block_inplace.sh
+                            test/mpi/f08-mpi/ireduce_scatter_block.sh:test/mpi/testscripts/ireduce_scatter_block.sh
+                            test/mpi/f08-mpi/ireduce_scatter_block_intercom.sh:test/mpi/testscripts/ireduce_scatter_block_intercom.sh
+                            test/mpi/f08-mpi/ireduce_scatter_block_inplace.sh:test/mpi/testscripts/ireduce_scatter_block_inplace.sh
                             test/mpi/f08-mpi/scan.sh:test/mpi/testscripts/scan.sh
                             test/mpi/f08-mpi/scan_inplace.sh:test/mpi/testscripts/scan_inplace.sh
                             test/mpi/f08-mpi/iscan.sh:test/mpi/testscripts/iscan.sh
@@ -551,12 +557,6 @@ AM_COND_IF([MPI_PROFILING],
                             test/mpi/f08-mpi/exscan_inplace.sh:test/mpi/testscripts/exscan_inplace.sh
                             test/mpi/f08-mpi/iexscan.sh:test/mpi/testscripts/iexscan.sh
                             test/mpi/f08-mpi/iexscan_inplace.sh:test/mpi/testscripts/iexscan_inplace.sh
-                            test/mpi/f08-mpi/reduce_scatter_block.sh:test/mpi/testscripts/reduce_scatter_block.sh
-                            test/mpi/f08-mpi/reduce_scatter_block_intercom.sh:test/mpi/testscripts/reduce_scatter_block_intercom.sh
-                            test/mpi/f08-mpi/reduce_scatter_block_inplace.sh:test/mpi/testscripts/reduce_scatter_block_inplace.sh
-                            test/mpi/f08-mpi/ireduce_scatter_block.sh:test/mpi/testscripts/ireduce_scatter_block.sh
-                            test/mpi/f08-mpi/ireduce_scatter_block_intercom.sh:test/mpi/testscripts/ireduce_scatter_block_intercom.sh
-                            test/mpi/f08-mpi/ireduce_scatter_block_inplace.sh:test/mpi/testscripts/ireduce_scatter_block_inplace.sh
                             test/mpi/f08-mpi/put.sh:test/mpi/testscripts/put.sh
                             test/mpi/f08-mpi/rput.sh:test/mpi/testscripts/rput.sh
                             test/mpi/f08-mpi/get.sh:test/mpi/testscripts/get.sh
