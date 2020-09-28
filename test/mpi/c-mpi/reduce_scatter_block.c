@@ -51,6 +51,9 @@ int main(int argc, char** argv) {
    free(rbuffer);
    rbuffer=NULL;
 
+   free(sbuffer);
+   sbuffer=NULL;
+
    MPI_Finalize();
 
    return valid_data ? 0 : 1;
