@@ -89,39 +89,41 @@ int vftr_MPI_Reduce_scatter_block(const void *sendbuf, void *recvbuf, int recvco
          PMPI_Comm_size(comm, &size);
          // if sendbuf is special address MPI_IN_PLACE
          if (vftr_is_C_MPI_IN_PLACE(sendbuf)) {
-            // For the in-place option no self communication is executed
-            int rank;
-            PMPI_Comm_rank(comm, &rank);
-
-            for (int i=0; i<rank; i++) {
-               // The sends and receives are not strictly true
-               // as the number of peer processes with wich each
-               // process communicates strongly depends on the unerlying reduction algorithm
-               // There are multiple possibilities how to deal with this
-               // 1. Reduce the data to one rank, and scatter it from there
-               // 2. Every process functions as the root process of individual reduce operations
-               //
-               // To record the communication pattern of 1 a root process would need to be selected.
-               // Therefore We selected number 2.
-               vftr_store_sync_message_info(send, recvcount, datatype, i, -1,
-                                            comm, tstart, tend);
-               vftr_store_sync_message_info(recv, recvcount, datatype, i, -1,
-                                            comm, tstart, tend);
-            }
-            for (int i=rank+1; i<size; i++) {
-               // The sends and receives are not strictly true
-               // as the number of peer processes with wich each
-               // process communicates strongly depends on the unerlying reduction algorithm
-               // There are multiple possibilities how to deal with this
-               // 1. Reduce the data to one rank, and scatter it from there
-               // 2. Every process functions as the root process of individual reduce operations
-               //
-               // To record the communication pattern of 1 a root process would need to be selected.
-               // Therefore We selected number 2.
-               vftr_store_sync_message_info(send, recvcount, datatype, i, -1,
-                                            comm, tstart, tend);
-               vftr_store_sync_message_info(recv, recvcount, datatype, i, -1,
-                                            comm, tstart, tend);
+            if (size > 1) {
+               // For the in-place option no self communication is executed
+               int rank;
+               PMPI_Comm_rank(comm, &rank);
+   
+               for (int i=0; i<rank; i++) {
+                  // The sends and receives are not strictly true
+                  // as the number of peer processes with wich each
+                  // process communicates strongly depends on the unerlying reduction algorithm
+                  // There are multiple possibilities how to deal with this
+                  // 1. Reduce the data to one rank, and scatter it from there
+                  // 2. Every process functions as the root process of individual reduce operations
+                  //
+                  // To record the communication pattern of 1 a root process would need to be selected.
+                  // Therefore We selected number 2.
+                  vftr_store_sync_message_info(send, recvcount, datatype, i, -1,
+                                               comm, tstart, tend);
+                  vftr_store_sync_message_info(recv, recvcount, datatype, i, -1,
+                                               comm, tstart, tend);
+               }
+               for (int i=rank+1; i<size; i++) {
+                  // The sends and receives are not strictly true
+                  // as the number of peer processes with wich each
+                  // process communicates strongly depends on the unerlying reduction algorithm
+                  // There are multiple possibilities how to deal with this
+                  // 1. Reduce the data to one rank, and scatter it from there
+                  // 2. Every process functions as the root process of individual reduce operations
+                  //
+                  // To record the communication pattern of 1 a root process would need to be selected.
+                  // Therefore We selected number 2.
+                  vftr_store_sync_message_info(send, recvcount, datatype, i, -1,
+                                               comm, tstart, tend);
+                  vftr_store_sync_message_info(recv, recvcount, datatype, i, -1,
+                                               comm, tstart, tend);
+               }
             }
          } else {
             for (int i=0; i<size; i++) {
