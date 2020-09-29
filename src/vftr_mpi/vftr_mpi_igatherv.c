@@ -97,34 +97,63 @@ int vftr_MPI_Igatherv(const void *sendbuf, int sendcount, MPI_Datatype sendtype,
             // sendcount and sendtype are ignored.
             // Use recvcount and recvtype for statistics
             if (vftr_is_C_MPI_IN_PLACE(sendbuf)) {
-               sendcount = recvcounts[rank];
-               sendtype = recvtype;
+               if (size > 1) {
+                  // For the in-place option no self communication is executed
+                  // allocate memory for the temporary arrays
+                  // to register communication request
+                  int *tmprecvcounts = (int*) malloc(sizeof(int)*(size-1));
+                  MPI_Datatype *tmprecvtype = (MPI_Datatype*) malloc(sizeof(MPI_Datatype)*(size-1));
+                  int *tmppeer_ranks= (int*) malloc(sizeof(int)*(size-1));
+                  // messeges to be received
+                  int idx = 0;
+                  for (int i=0; i<rank; i++) {
+                     tmprecvcounts[idx] = recvcounts[i];
+                     tmprecvtype[idx] = recvtype;
+                     tmppeer_ranks[idx] = i;
+                     idx++;
+                  }
+                  for (int i=rank+1; i<size; i++) {
+                     tmprecvcounts[idx] = recvcounts[i];
+                     tmprecvtype[idx] = recvtype;
+                     tmppeer_ranks[idx] = i;
+                     idx++;
+                  }
+                  vftr_register_collective_request(recv, size-1, tmprecvcounts, tmprecvtype,
+                                                   tmppeer_ranks, comm, *request, tstart);
+                  // cleanup temporary arrays
+                  free(tmprecvcounts);
+                  tmprecvcounts = NULL;
+                  free(tmprecvtype);
+                  tmprecvtype = NULL;
+                  free(tmppeer_ranks);
+                  tmppeer_ranks = NULL;
+               }
+            } else {
+               // self communication of root process
+               vftr_register_collective_request(send, 1, &sendcount, &sendtype, &root,
+                                                comm, *request, tstart);
+   
+               // allocate memory for the temporary arrays
+               // to register communication request
+               int *tmprecvcounts = (int*) malloc(sizeof(int)*size);
+               MPI_Datatype *tmprecvtype = (MPI_Datatype*) malloc(sizeof(MPI_Datatype)*size);
+               int *tmppeer_ranks= (int*) malloc(sizeof(int)*size);
+               // messeges to be received
+               for (int i=0; i<size; i++) {
+                  tmprecvcounts[i] = recvcounts[i];
+                  tmprecvtype[i] = recvtype;
+                  tmppeer_ranks[i] = i;
+               }
+               vftr_register_collective_request(recv, size, tmprecvcounts, tmprecvtype,
+                                                tmppeer_ranks, comm, *request, tstart);
+               // cleanup temporary arrays
+               free(tmprecvcounts);
+               tmprecvcounts = NULL;
+               free(tmprecvtype);
+               tmprecvtype = NULL;
+               free(tmppeer_ranks);
+               tmppeer_ranks = NULL;
             }
-
-            // self communication of root process
-            vftr_register_collective_request(send, 1, &sendcount, &sendtype, &root,
-                                             comm, *request, tstart);
-
-            // allocate memory for the temporary arrays
-            // to register communication request
-            int *tmprecvcounts = (int*) malloc(sizeof(int)*size);
-            MPI_Datatype *tmprecvtype = (MPI_Datatype*) malloc(sizeof(MPI_Datatype)*size);
-            int *tmppeer_ranks= (int*) malloc(sizeof(int)*size);
-            // messeges to be received
-            for (int i=0; i<size; i++) {
-               tmprecvcounts[i] = recvcounts[i];
-               tmprecvtype[i] = recvtype;
-               tmppeer_ranks[i] = i;
-            }
-            vftr_register_collective_request(recv, size, tmprecvcounts, tmprecvtype,
-                                             tmppeer_ranks, comm, *request, tstart);
-            // cleanup temporary arrays
-            free(tmprecvcounts);
-            tmprecvcounts = NULL;
-            free(tmprecvtype);
-            tmprecvtype = NULL;
-            free(tmppeer_ranks);
-            tmppeer_ranks = NULL;
          } else {
             vftr_register_collective_request(send, 1, &sendcount, &sendtype, &root,
                                              comm, *request, tstart);

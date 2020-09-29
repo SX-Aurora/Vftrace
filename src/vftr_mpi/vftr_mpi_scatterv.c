@@ -91,17 +91,25 @@ int vftr_MPI_Scatterv(const void *sendbuf, const int *sendcounts,
             // if recvbuf is special address MPI_IN_PLACE
             // recvcount and recvtype are ignored.
             // Use sendcount and sendtype for statistics
-            if (vftr_is_C_MPI_IN_PLACE(sendbuf)) {
-               recvcount = sendcounts[rank];
-               recvtype = sendtype;
+            if (vftr_is_C_MPI_IN_PLACE(recvbuf)) {
+               // For the in-place option no self communication is executed
+               for (int i=0; i<rank; i++) {
+                  vftr_store_sync_message_info(send, sendcounts[i], sendtype,
+                                               i, -1, comm, tstart, tend);
+               }
+               for (int i=rank+1; i<size; i++) {
+                  vftr_store_sync_message_info(send, sendcounts[i], sendtype,
+                                               i, -1, comm, tstart, tend);
+               }
+            } else {
+               for (int i=0; i<size; i++) {
+                  vftr_store_sync_message_info(send, sendcounts[i], sendtype,
+                                               i, -1, comm, tstart, tend);
+               }
+               // self communication
+               vftr_store_sync_message_info(recv, recvcount, recvtype,
+                                            rank, -1, comm, tstart, tend);
             }
-            for (int i=0; i<size; i++) {
-               vftr_store_sync_message_info(send, sendcounts[i], sendtype,
-                                            i, -1, comm, tstart, tend);
-            }
-            // self communication
-            vftr_store_sync_message_info(recv, recvcount, recvtype,
-                                         rank, -1, comm, tstart, tend);
          } else {
             vftr_store_sync_message_info(recv, recvcount, recvtype,
                                          root, -1, comm, tstart, tend);

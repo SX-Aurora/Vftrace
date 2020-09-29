@@ -138,9 +138,9 @@ void print_fileheader (FILE *fp, vfd_header_t vfd_header) {
     fprintf (fp, "Init time:     %lld\n", vfd_header.inittime);
     fprintf (fp, "Job runtime:   %.3lf seconds\n", vfd_header.runtime.d);
     fprintf (fp, "Samples:       %d\n", vfd_header.samplecount );
-    fprintf (fp, "Unique stacks: %d\n", vfd_header.stackscount);
-    fprintf (fp, "Stacks offset: %d\n", vfd_header.stacksoffset);
-    fprintf (fp, "Sample offset: %d\n", vfd_header.sampleoffset);
+    fprintf (fp, "Unique stacks: %u\n", vfd_header.stackscount);
+    fprintf (fp, "Stacks offset: %ld\n", vfd_header.stacksoffset);
+    fprintf (fp, "Sample offset: %ld\n", vfd_header.sampleoffset);
 }
 
 /**********************************************************************/

@@ -37,17 +37,13 @@ int vftr_MPI_Iscan(const void *sendbuf, void *recvbuf, int count,
 
       // Only intra-communicators, as the standard specifically states
       // that the scan operation is invalid for intercommunicators
+      //
+      // The communication pattern is the same if
+      // MPI_IN_PLACE is used for the sendbuffer
       int size;
       PMPI_Comm_size(comm, &size);
       int rank;
       PMPI_Comm_rank(comm, &rank);
-      // For rank 0 additional self communication occours
-      if (rank == 0) {
-         vftr_register_collective_request(send, 1, &count, &datatype,
-                                          &rank, comm, *request, tstart);
-         vftr_register_collective_request(recv, 1, &count, &datatype,
-                                          &rank, comm, *request, tstart);
-      } 
       if (size > 1) {
          // the precise communication pattern for a scan operation
          // strongly depends on the MPI-implementation

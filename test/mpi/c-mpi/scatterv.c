@@ -16,7 +16,7 @@ int main(int argc, char** argv) {
 
    // require cmd-line argument
    if (argc < 2) {
-      printf("./bcast <msgsize in ints>\n");
+      printf("./scatterv <msgsize in ints>\n");
       return 1;
    }
 
@@ -47,7 +47,7 @@ int main(int argc, char** argv) {
       }
    }
 
-   // Messaging cycle
+   // Messaging
    MPI_Scatterv(sbuffer, sendcounts, displs, MPI_INT,
                 rbuffer, nints, MPI_INT, 
                 rootrank, MPI_COMM_WORLD);

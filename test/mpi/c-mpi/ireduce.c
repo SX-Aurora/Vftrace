@@ -16,7 +16,7 @@ int main(int argc, char** argv) {
 
    // require cmd-line argument
    if (argc < 2) {
-      printf("./reduce <msgsize in ints>\n");
+      printf("./ireduce <msgsize in ints>\n");
       return 1;
    }
 

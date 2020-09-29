@@ -251,54 +251,84 @@ AM_COND_IF([MPI_PROFILING],
                             test/mpi/c-mpi/ibcast_intercom.sh:test/mpi/testscripts/ibcast_intercom.sh
                             test/mpi/c-mpi/gather.sh:test/mpi/testscripts/gather.sh
                             test/mpi/c-mpi/gather_intercom.sh:test/mpi/testscripts/gather_intercom.sh
+                            test/mpi/c-mpi/gather_inplace.sh:test/mpi/testscripts/gather_inplace.sh
                             test/mpi/c-mpi/igather.sh:test/mpi/testscripts/igather.sh
                             test/mpi/c-mpi/igather_intercom.sh:test/mpi/testscripts/igather_intercom.sh
+                            test/mpi/c-mpi/igather_inplace.sh:test/mpi/testscripts/igather_inplace.sh
                             test/mpi/c-mpi/gatherv.sh:test/mpi/testscripts/gatherv.sh
                             test/mpi/c-mpi/gatherv_intercom.sh:test/mpi/testscripts/gatherv_intercom.sh
+                            test/mpi/c-mpi/gatherv_inplace.sh:test/mpi/testscripts/gatherv_inplace.sh
                             test/mpi/c-mpi/igatherv.sh:test/mpi/testscripts/igatherv.sh
                             test/mpi/c-mpi/igatherv_intercom.sh:test/mpi/testscripts/igatherv_intercom.sh
+                            test/mpi/c-mpi/igatherv_inplace.sh:test/mpi/testscripts/igatherv_inplace.sh
                             test/mpi/c-mpi/scatter.sh:test/mpi/testscripts/scatter.sh
                             test/mpi/c-mpi/scatter_intercom.sh:test/mpi/testscripts/scatter_intercom.sh
+                            test/mpi/c-mpi/scatter_inplace.sh:test/mpi/testscripts/scatter_inplace.sh
                             test/mpi/c-mpi/iscatter.sh:test/mpi/testscripts/iscatter.sh
                             test/mpi/c-mpi/iscatter_intercom.sh:test/mpi/testscripts/iscatter_intercom.sh
+                            test/mpi/c-mpi/iscatter_inplace.sh:test/mpi/testscripts/iscatter_inplace.sh
                             test/mpi/c-mpi/scatterv.sh:test/mpi/testscripts/scatterv.sh
                             test/mpi/c-mpi/scatterv_intercom.sh:test/mpi/testscripts/scatterv_intercom.sh
+                            test/mpi/c-mpi/scatterv_inplace.sh:test/mpi/testscripts/scatterv_inplace.sh
                             test/mpi/c-mpi/iscatterv.sh:test/mpi/testscripts/iscatterv.sh
                             test/mpi/c-mpi/iscatterv_intercom.sh:test/mpi/testscripts/iscatterv_intercom.sh
+                            test/mpi/c-mpi/iscatterv_inplace.sh:test/mpi/testscripts/iscatterv_inplace.sh
                             test/mpi/c-mpi/allgather.sh:test/mpi/testscripts/allgather.sh
                             test/mpi/c-mpi/allgather_intercom.sh:test/mpi/testscripts/allgather_intercom.sh
+                            test/mpi/c-mpi/allgather_inplace.sh:test/mpi/testscripts/allgather_inplace.sh
                             test/mpi/c-mpi/iallgather.sh:test/mpi/testscripts/iallgather.sh
                             test/mpi/c-mpi/iallgather_intercom.sh:test/mpi/testscripts/iallgather_intercom.sh
+                            test/mpi/c-mpi/iallgather_inplace.sh:test/mpi/testscripts/iallgather_inplace.sh
                             test/mpi/c-mpi/allgatherv.sh:test/mpi/testscripts/allgatherv.sh
                             test/mpi/c-mpi/allgatherv_intercom.sh:test/mpi/testscripts/allgatherv_intercom.sh
+                            test/mpi/c-mpi/allgatherv_inplace.sh:test/mpi/testscripts/allgatherv_inplace.sh
                             test/mpi/c-mpi/iallgatherv.sh:test/mpi/testscripts/iallgatherv.sh
                             test/mpi/c-mpi/iallgatherv_intercom.sh:test/mpi/testscripts/iallgatherv_intercom.sh
+                            test/mpi/c-mpi/iallgatherv_inplace.sh:test/mpi/testscripts/iallgatherv_inplace.sh
                             test/mpi/c-mpi/alltoall.sh:test/mpi/testscripts/alltoall.sh
                             test/mpi/c-mpi/alltoall_intercom.sh:test/mpi/testscripts/alltoall_intercom.sh
+                            test/mpi/c-mpi/alltoall_inplace.sh:test/mpi/testscripts/alltoall_inplace.sh
                             test/mpi/c-mpi/ialltoall.sh:test/mpi/testscripts/ialltoall.sh
                             test/mpi/c-mpi/ialltoall_intercom.sh:test/mpi/testscripts/ialltoall_intercom.sh
+                            test/mpi/c-mpi/ialltoall_inplace.sh:test/mpi/testscripts/ialltoall_inplace.sh
                             test/mpi/c-mpi/alltoallv.sh:test/mpi/testscripts/alltoallv.sh
                             test/mpi/c-mpi/alltoallv_intercom.sh:test/mpi/testscripts/alltoallv_intercom.sh
+                            test/mpi/c-mpi/alltoallv_inplace.sh:test/mpi/testscripts/alltoallv_inplace.sh
                             test/mpi/c-mpi/ialltoallv.sh:test/mpi/testscripts/ialltoallv.sh
                             test/mpi/c-mpi/ialltoallv_intercom.sh:test/mpi/testscripts/ialltoallv_intercom.sh
+                            test/mpi/c-mpi/ialltoallv_inplace.sh:test/mpi/testscripts/ialltoallv_inplace.sh
                             test/mpi/c-mpi/alltoallw.sh:test/mpi/testscripts/alltoallw.sh
                             test/mpi/c-mpi/alltoallw_intercom.sh:test/mpi/testscripts/alltoallw_intercom.sh
+                            test/mpi/c-mpi/alltoallw_inplace.sh:test/mpi/testscripts/alltoallw_inplace.sh
                             test/mpi/c-mpi/ialltoallw.sh:test/mpi/testscripts/ialltoallw.sh
                             test/mpi/c-mpi/ialltoallw_intercom.sh:test/mpi/testscripts/ialltoallw_intercom.sh
+                            test/mpi/c-mpi/ialltoallw_inplace.sh:test/mpi/testscripts/ialltoallw_inplace.sh
                             test/mpi/c-mpi/reduce.sh:test/mpi/testscripts/reduce.sh
                             test/mpi/c-mpi/reduce_intercom.sh:test/mpi/testscripts/reduce_intercom.sh
+                            test/mpi/c-mpi/reduce_inplace.sh:test/mpi/testscripts/reduce_inplace.sh
                             test/mpi/c-mpi/ireduce.sh:test/mpi/testscripts/ireduce.sh
                             test/mpi/c-mpi/ireduce_intercom.sh:test/mpi/testscripts/ireduce_intercom.sh
+                            test/mpi/c-mpi/ireduce_inplace.sh:test/mpi/testscripts/ireduce_inplace.sh
                             test/mpi/c-mpi/allreduce.sh:test/mpi/testscripts/allreduce.sh
                             test/mpi/c-mpi/allreduce_intercom.sh:test/mpi/testscripts/allreduce_intercom.sh
+                            test/mpi/c-mpi/allreduce_inplace.sh:test/mpi/testscripts/allreduce_inplace.sh
                             test/mpi/c-mpi/iallreduce.sh:test/mpi/testscripts/iallreduce.sh
                             test/mpi/c-mpi/iallreduce_intercom.sh:test/mpi/testscripts/iallreduce_intercom.sh
+                            test/mpi/c-mpi/iallreduce_inplace.sh:test/mpi/testscripts/iallreduce_inplace.sh
                             test/mpi/c-mpi/scan.sh:test/mpi/testscripts/scan.sh
+                            test/mpi/c-mpi/scan_inplace.sh:test/mpi/testscripts/scan_inplace.sh
                             test/mpi/c-mpi/iscan.sh:test/mpi/testscripts/iscan.sh
+                            test/mpi/c-mpi/iscan_inplace.sh:test/mpi/testscripts/iscan_inplace.sh
                             test/mpi/c-mpi/exscan.sh:test/mpi/testscripts/exscan.sh
+                            test/mpi/c-mpi/exscan_inplace.sh:test/mpi/testscripts/exscan_inplace.sh
                             test/mpi/c-mpi/iexscan.sh:test/mpi/testscripts/iexscan.sh
+                            test/mpi/c-mpi/iexscan_inplace.sh:test/mpi/testscripts/iexscan_inplace.sh
                             test/mpi/c-mpi/put.sh:test/mpi/testscripts/put.sh
+                            test/mpi/c-mpi/rput.sh:test/mpi/testscripts/rput.sh
                             test/mpi/c-mpi/get.sh:test/mpi/testscripts/get.sh
+                            test/mpi/c-mpi/rget.sh:test/mpi/testscripts/rget.sh
+                            test/mpi/c-mpi/accumulate.sh:test/mpi/testscripts/accumulate.sh
+                            test/mpi/c-mpi/raccumulate.sh:test/mpi/testscripts/raccumulate.sh
                             test/mpi/c-mpi/test.sh:test/mpi/testscripts/test.sh
                             test/mpi/c-mpi/testany.sh:test/mpi/testscripts/testany.sh
                             test/mpi/c-mpi/testsome.sh:test/mpi/testscripts/testsome.sh
@@ -329,54 +359,84 @@ AM_COND_IF([MPI_PROFILING],
                             test/mpi/f-mpi/ibcast_intercom.sh:test/mpi/testscripts/ibcast_intercom.sh
                             test/mpi/f-mpi/gather.sh:test/mpi/testscripts/gather.sh
                             test/mpi/f-mpi/gather_intercom.sh:test/mpi/testscripts/gather_intercom.sh
+                            test/mpi/f-mpi/gather_inplace.sh:test/mpi/testscripts/gather_inplace.sh
                             test/mpi/f-mpi/igather.sh:test/mpi/testscripts/igather.sh
                             test/mpi/f-mpi/igather_intercom.sh:test/mpi/testscripts/igather_intercom.sh
+                            test/mpi/f-mpi/igather_inplace.sh:test/mpi/testscripts/igather_inplace.sh
                             test/mpi/f-mpi/gatherv.sh:test/mpi/testscripts/gatherv.sh
                             test/mpi/f-mpi/gatherv_intercom.sh:test/mpi/testscripts/gatherv_intercom.sh
+                            test/mpi/f-mpi/gatherv_inplace.sh:test/mpi/testscripts/gatherv_inplace.sh
                             test/mpi/f-mpi/igatherv.sh:test/mpi/testscripts/igatherv.sh
                             test/mpi/f-mpi/igatherv_intercom.sh:test/mpi/testscripts/igatherv_intercom.sh
+                            test/mpi/f-mpi/igatherv_inplace.sh:test/mpi/testscripts/igatherv_inplace.sh
                             test/mpi/f-mpi/scatter.sh:test/mpi/testscripts/scatter.sh
                             test/mpi/f-mpi/scatter_intercom.sh:test/mpi/testscripts/scatter_intercom.sh
+                            test/mpi/f-mpi/scatter_inplace.sh:test/mpi/testscripts/scatter_inplace.sh
                             test/mpi/f-mpi/iscatter.sh:test/mpi/testscripts/iscatter.sh
                             test/mpi/f-mpi/iscatter_intercom.sh:test/mpi/testscripts/iscatter_intercom.sh
+                            test/mpi/f-mpi/iscatter_inplace.sh:test/mpi/testscripts/iscatter_inplace.sh
                             test/mpi/f-mpi/scatterv.sh:test/mpi/testscripts/scatterv.sh
                             test/mpi/f-mpi/scatterv_intercom.sh:test/mpi/testscripts/scatterv_intercom.sh
+                            test/mpi/f-mpi/scatterv_inplace.sh:test/mpi/testscripts/scatterv_inplace.sh
                             test/mpi/f-mpi/iscatterv.sh:test/mpi/testscripts/iscatterv.sh
                             test/mpi/f-mpi/iscatterv_intercom.sh:test/mpi/testscripts/iscatterv_intercom.sh
+                            test/mpi/f-mpi/iscatterv_inplace.sh:test/mpi/testscripts/iscatterv_inplace.sh
                             test/mpi/f-mpi/allgather.sh:test/mpi/testscripts/allgather.sh
                             test/mpi/f-mpi/allgather_intercom.sh:test/mpi/testscripts/allgather_intercom.sh
+                            test/mpi/f-mpi/allgather_inplace.sh:test/mpi/testscripts/allgather_inplace.sh
                             test/mpi/f-mpi/iallgather.sh:test/mpi/testscripts/iallgather.sh
                             test/mpi/f-mpi/iallgather_intercom.sh:test/mpi/testscripts/iallgather_intercom.sh
+                            test/mpi/f-mpi/iallgather_inplace.sh:test/mpi/testscripts/iallgather_inplace.sh
                             test/mpi/f-mpi/allgatherv.sh:test/mpi/testscripts/allgatherv.sh
                             test/mpi/f-mpi/allgatherv_intercom.sh:test/mpi/testscripts/allgatherv_intercom.sh
+                            test/mpi/f-mpi/allgatherv_inplace.sh:test/mpi/testscripts/allgatherv_inplace.sh
                             test/mpi/f-mpi/iallgatherv.sh:test/mpi/testscripts/iallgatherv.sh
                             test/mpi/f-mpi/iallgatherv_intercom.sh:test/mpi/testscripts/iallgatherv_intercom.sh
+                            test/mpi/f-mpi/iallgatherv_inplace.sh:test/mpi/testscripts/iallgatherv_inplace.sh
                             test/mpi/f-mpi/alltoall.sh:test/mpi/testscripts/alltoall.sh
                             test/mpi/f-mpi/alltoall_intercom.sh:test/mpi/testscripts/alltoall_intercom.sh
+                            test/mpi/f-mpi/alltoall_inplace.sh:test/mpi/testscripts/alltoall_inplace.sh
                             test/mpi/f-mpi/ialltoall.sh:test/mpi/testscripts/ialltoall.sh
                             test/mpi/f-mpi/ialltoall_intercom.sh:test/mpi/testscripts/ialltoall_intercom.sh
+                            test/mpi/f-mpi/ialltoall_inplace.sh:test/mpi/testscripts/ialltoall_inplace.sh
                             test/mpi/f-mpi/alltoallv.sh:test/mpi/testscripts/alltoallv.sh
                             test/mpi/f-mpi/alltoallv_intercom.sh:test/mpi/testscripts/alltoallv_intercom.sh
+                            test/mpi/f-mpi/alltoallv_inplace.sh:test/mpi/testscripts/alltoallv_inplace.sh
                             test/mpi/f-mpi/ialltoallv.sh:test/mpi/testscripts/ialltoallv.sh
                             test/mpi/f-mpi/ialltoallv_intercom.sh:test/mpi/testscripts/ialltoallv_intercom.sh
+                            test/mpi/f-mpi/ialltoallv_inplace.sh:test/mpi/testscripts/ialltoallv_inplace.sh
                             test/mpi/f-mpi/alltoallw.sh:test/mpi/testscripts/alltoallw.sh
                             test/mpi/f-mpi/alltoallw_intercom.sh:test/mpi/testscripts/alltoallw_intercom.sh
+                            test/mpi/f-mpi/alltoallw_inplace.sh:test/mpi/testscripts/alltoallw_inplace.sh
                             test/mpi/f-mpi/ialltoallw.sh:test/mpi/testscripts/ialltoallw.sh
                             test/mpi/f-mpi/ialltoallw_intercom.sh:test/mpi/testscripts/ialltoallw_intercom.sh
+                            test/mpi/f-mpi/ialltoallw_inplace.sh:test/mpi/testscripts/ialltoallw_inplace.sh
                             test/mpi/f-mpi/reduce.sh:test/mpi/testscripts/reduce.sh
                             test/mpi/f-mpi/reduce_intercom.sh:test/mpi/testscripts/reduce_intercom.sh
+                            test/mpi/f-mpi/reduce_inplace.sh:test/mpi/testscripts/reduce_inplace.sh
                             test/mpi/f-mpi/ireduce.sh:test/mpi/testscripts/ireduce.sh
                             test/mpi/f-mpi/ireduce_intercom.sh:test/mpi/testscripts/ireduce_intercom.sh
+                            test/mpi/f-mpi/ireduce_inplace.sh:test/mpi/testscripts/ireduce_inplace.sh
                             test/mpi/f-mpi/allreduce.sh:test/mpi/testscripts/allreduce.sh
                             test/mpi/f-mpi/allreduce_intercom.sh:test/mpi/testscripts/allreduce_intercom.sh
+                            test/mpi/f-mpi/allreduce_inplace.sh:test/mpi/testscripts/allreduce_inplace.sh
                             test/mpi/f-mpi/iallreduce.sh:test/mpi/testscripts/iallreduce.sh
                             test/mpi/f-mpi/iallreduce_intercom.sh:test/mpi/testscripts/iallreduce_intercom.sh
+                            test/mpi/f-mpi/iallreduce_inplace.sh:test/mpi/testscripts/iallreduce_inplace.sh
                             test/mpi/f-mpi/scan.sh:test/mpi/testscripts/scan.sh
+                            test/mpi/f-mpi/scan_inplace.sh:test/mpi/testscripts/scan_inplace.sh
                             test/mpi/f-mpi/iscan.sh:test/mpi/testscripts/iscan.sh
+                            test/mpi/f-mpi/iscan_inplace.sh:test/mpi/testscripts/iscan_inplace.sh
                             test/mpi/f-mpi/exscan.sh:test/mpi/testscripts/exscan.sh
+                            test/mpi/f-mpi/exscan_inplace.sh:test/mpi/testscripts/exscan_inplace.sh
                             test/mpi/f-mpi/iexscan.sh:test/mpi/testscripts/iexscan.sh
+                            test/mpi/f-mpi/iexscan_inplace.sh:test/mpi/testscripts/iexscan_inplace.sh
                             test/mpi/f-mpi/put.sh:test/mpi/testscripts/put.sh
+                            test/mpi/f-mpi/rput.sh:test/mpi/testscripts/rput.sh
                             test/mpi/f-mpi/get.sh:test/mpi/testscripts/get.sh
+                            test/mpi/f-mpi/rget.sh:test/mpi/testscripts/rget.sh
+                            test/mpi/f-mpi/accumulate.sh:test/mpi/testscripts/accumulate.sh
+                            test/mpi/f-mpi/raccumulate.sh:test/mpi/testscripts/raccumulate.sh
                             test/mpi/f-mpi/test.sh:test/mpi/testscripts/test.sh
                             test/mpi/f-mpi/testany.sh:test/mpi/testscripts/testany.sh
                             test/mpi/f-mpi/testsome.sh:test/mpi/testscripts/testsome.sh
@@ -407,54 +467,84 @@ AM_COND_IF([MPI_PROFILING],
                             test/mpi/f08-mpi/ibcast_intercom.sh:test/mpi/testscripts/ibcast_intercom.sh
                             test/mpi/f08-mpi/gather.sh:test/mpi/testscripts/gather.sh
                             test/mpi/f08-mpi/gather_intercom.sh:test/mpi/testscripts/gather_intercom.sh
+                            test/mpi/f08-mpi/gather_inplace.sh:test/mpi/testscripts/gather_inplace.sh
                             test/mpi/f08-mpi/igather.sh:test/mpi/testscripts/igather.sh
                             test/mpi/f08-mpi/igather_intercom.sh:test/mpi/testscripts/igather_intercom.sh
+                            test/mpi/f08-mpi/igather_inplace.sh:test/mpi/testscripts/igather_inplace.sh
                             test/mpi/f08-mpi/gatherv.sh:test/mpi/testscripts/gatherv.sh
                             test/mpi/f08-mpi/gatherv_intercom.sh:test/mpi/testscripts/gatherv_intercom.sh
+                            test/mpi/f08-mpi/gatherv_inplace.sh:test/mpi/testscripts/gatherv_inplace.sh
                             test/mpi/f08-mpi/igatherv.sh:test/mpi/testscripts/igatherv.sh
                             test/mpi/f08-mpi/igatherv_intercom.sh:test/mpi/testscripts/igatherv_intercom.sh
+                            test/mpi/f08-mpi/igatherv_inplace.sh:test/mpi/testscripts/igatherv_inplace.sh
                             test/mpi/f08-mpi/scatter.sh:test/mpi/testscripts/scatter.sh
                             test/mpi/f08-mpi/scatter_intercom.sh:test/mpi/testscripts/scatter_intercom.sh
+                            test/mpi/f08-mpi/scatter_inplace.sh:test/mpi/testscripts/scatter_inplace.sh
                             test/mpi/f08-mpi/iscatter.sh:test/mpi/testscripts/iscatter.sh
                             test/mpi/f08-mpi/iscatter_intercom.sh:test/mpi/testscripts/iscatter_intercom.sh
+                            test/mpi/f08-mpi/iscatter_inplace.sh:test/mpi/testscripts/iscatter_inplace.sh
                             test/mpi/f08-mpi/scatterv.sh:test/mpi/testscripts/scatterv.sh
                             test/mpi/f08-mpi/scatterv_intercom.sh:test/mpi/testscripts/scatterv_intercom.sh
+                            test/mpi/f08-mpi/scatterv_inplace.sh:test/mpi/testscripts/scatterv_inplace.sh
                             test/mpi/f08-mpi/iscatterv.sh:test/mpi/testscripts/iscatterv.sh
                             test/mpi/f08-mpi/iscatterv_intercom.sh:test/mpi/testscripts/iscatterv_intercom.sh
+                            test/mpi/f08-mpi/iscatterv_inplace.sh:test/mpi/testscripts/iscatterv_inplace.sh
                             test/mpi/f08-mpi/allgather.sh:test/mpi/testscripts/allgather.sh
                             test/mpi/f08-mpi/allgather_intercom.sh:test/mpi/testscripts/allgather_intercom.sh
+                            test/mpi/f08-mpi/allgather_inplace.sh:test/mpi/testscripts/allgather_inplace.sh
                             test/mpi/f08-mpi/iallgather.sh:test/mpi/testscripts/iallgather.sh
                             test/mpi/f08-mpi/iallgather_intercom.sh:test/mpi/testscripts/iallgather_intercom.sh
+                            test/mpi/f08-mpi/iallgather_inplace.sh:test/mpi/testscripts/iallgather_inplace.sh
                             test/mpi/f08-mpi/allgatherv.sh:test/mpi/testscripts/allgatherv.sh
                             test/mpi/f08-mpi/allgatherv_intercom.sh:test/mpi/testscripts/allgatherv_intercom.sh
+                            test/mpi/f08-mpi/allgatherv_inplace.sh:test/mpi/testscripts/allgatherv_inplace.sh
                             test/mpi/f08-mpi/iallgatherv.sh:test/mpi/testscripts/iallgatherv.sh
                             test/mpi/f08-mpi/iallgatherv_intercom.sh:test/mpi/testscripts/iallgatherv_intercom.sh
+                            test/mpi/f08-mpi/iallgatherv_inplace.sh:test/mpi/testscripts/iallgatherv_inplace.sh
                             test/mpi/f08-mpi/alltoall.sh:test/mpi/testscripts/alltoall.sh
                             test/mpi/f08-mpi/alltoall_intercom.sh:test/mpi/testscripts/alltoall_intercom.sh
+                            test/mpi/f08-mpi/alltoall_inplace.sh:test/mpi/testscripts/alltoall_inplace.sh
                             test/mpi/f08-mpi/ialltoall.sh:test/mpi/testscripts/ialltoall.sh
                             test/mpi/f08-mpi/ialltoall_intercom.sh:test/mpi/testscripts/ialltoall_intercom.sh
+                            test/mpi/f08-mpi/ialltoall_inplace.sh:test/mpi/testscripts/ialltoall_inplace.sh
                             test/mpi/f08-mpi/alltoallv.sh:test/mpi/testscripts/alltoallv.sh
                             test/mpi/f08-mpi/alltoallv_intercom.sh:test/mpi/testscripts/alltoallv_intercom.sh
+                            test/mpi/f08-mpi/alltoallv_inplace.sh:test/mpi/testscripts/alltoallv_inplace.sh
                             test/mpi/f08-mpi/ialltoallv.sh:test/mpi/testscripts/ialltoallv.sh
                             test/mpi/f08-mpi/ialltoallv_intercom.sh:test/mpi/testscripts/ialltoallv_intercom.sh
+                            test/mpi/f08-mpi/ialltoallv_inplace.sh:test/mpi/testscripts/ialltoallv_inplace.sh
                             test/mpi/f08-mpi/alltoallw.sh:test/mpi/testscripts/alltoallw.sh
                             test/mpi/f08-mpi/alltoallw_intercom.sh:test/mpi/testscripts/alltoallw_intercom.sh
+                            test/mpi/f08-mpi/alltoallw_inplace.sh:test/mpi/testscripts/alltoallw_inplace.sh
                             test/mpi/f08-mpi/ialltoallw.sh:test/mpi/testscripts/ialltoallw.sh
                             test/mpi/f08-mpi/ialltoallw_intercom.sh:test/mpi/testscripts/ialltoallw_intercom.sh
+                            test/mpi/f08-mpi/ialltoallw_inplace.sh:test/mpi/testscripts/ialltoallw_inplace.sh
                             test/mpi/f08-mpi/reduce.sh:test/mpi/testscripts/reduce.sh
                             test/mpi/f08-mpi/reduce_intercom.sh:test/mpi/testscripts/reduce_intercom.sh
+                            test/mpi/f08-mpi/reduce_inplace.sh:test/mpi/testscripts/reduce_inplace.sh
                             test/mpi/f08-mpi/ireduce.sh:test/mpi/testscripts/ireduce.sh
                             test/mpi/f08-mpi/ireduce_intercom.sh:test/mpi/testscripts/ireduce_intercom.sh
+                            test/mpi/f08-mpi/ireduce_inplace.sh:test/mpi/testscripts/ireduce_inplace.sh
                             test/mpi/f08-mpi/allreduce.sh:test/mpi/testscripts/allreduce.sh
                             test/mpi/f08-mpi/allreduce_intercom.sh:test/mpi/testscripts/allreduce_intercom.sh
+                            test/mpi/f08-mpi/allreduce_inplace.sh:test/mpi/testscripts/allreduce_inplace.sh
                             test/mpi/f08-mpi/iallreduce.sh:test/mpi/testscripts/iallreduce.sh
                             test/mpi/f08-mpi/iallreduce_intercom.sh:test/mpi/testscripts/iallreduce_intercom.sh
+                            test/mpi/f08-mpi/iallreduce_inplace.sh:test/mpi/testscripts/iallreduce_inplace.sh
                             test/mpi/f08-mpi/scan.sh:test/mpi/testscripts/scan.sh
+                            test/mpi/f08-mpi/scan_inplace.sh:test/mpi/testscripts/scan_inplace.sh
                             test/mpi/f08-mpi/iscan.sh:test/mpi/testscripts/iscan.sh
+                            test/mpi/f08-mpi/iscan_inplace.sh:test/mpi/testscripts/iscan_inplace.sh
                             test/mpi/f08-mpi/exscan.sh:test/mpi/testscripts/exscan.sh
+                            test/mpi/f08-mpi/exscan_inplace.sh:test/mpi/testscripts/exscan_inplace.sh
                             test/mpi/f08-mpi/iexscan.sh:test/mpi/testscripts/iexscan.sh
+                            test/mpi/f08-mpi/iexscan_inplace.sh:test/mpi/testscripts/iexscan_inplace.sh
                             test/mpi/f08-mpi/put.sh:test/mpi/testscripts/put.sh
+                            test/mpi/f08-mpi/rput.sh:test/mpi/testscripts/rput.sh
                             test/mpi/f08-mpi/get.sh:test/mpi/testscripts/get.sh
+                            test/mpi/f08-mpi/rget.sh:test/mpi/testscripts/rget.sh
+                            test/mpi/f08-mpi/accumulate.sh:test/mpi/testscripts/accumulate.sh
+                            test/mpi/f08-mpi/raccumulate.sh:test/mpi/testscripts/raccumulate.sh
                             test/mpi/f08-mpi/test.sh:test/mpi/testscripts/test.sh
                             test/mpi/f08-mpi/testany.sh:test/mpi/testscripts/testany.sh
                             test/mpi/f08-mpi/testsome.sh:test/mpi/testscripts/testsome.sh

@@ -85,30 +85,65 @@ int vftr_MPI_Ireduce(const void *sendbuf, void *recvbuf, int count,
          int rank;
          PMPI_Comm_rank(comm, &rank);
          if (rank == root) {
-            // self communication
-            vftr_register_collective_request(send, 1, &count, &datatype, &root,
-                                             comm, *request, tstart);
             int size;
             PMPI_Comm_size(comm, &size);
-            int *tmpcount = (int*) malloc(sizeof(int)*size);
-            MPI_Datatype *tmptype = (MPI_Datatype*) malloc(sizeof(MPI_Datatype)*size);
-            int *peer_ranks = (int*) malloc(sizeof(int)*size);
-            for (int i=0; i<size; i++) {
-               tmpcount[i] = count;
-               tmptype[i] = datatype;
-               // translate the i-th rank in group B to the global rank
-               peer_ranks[i] = i;
+            // if sendbuf is special address MPI_IN_PLACE
+            if (vftr_is_C_MPI_IN_PLACE(sendbuf)) {
+               if (size > 1) {
+                  // For the in-place option no self communication is executed
+
+                  // allocate memory for the temporary arrays
+                  // to register communication request
+                  int *tmpcount = (int*) malloc(sizeof(int)*(size-1));
+                  MPI_Datatype *tmptype = (MPI_Datatype*) malloc(sizeof(MPI_Datatype)*(size-1));
+                  int *peer_ranks = (int*) malloc(sizeof(int)*(size-1));
+                  // messages to be received
+                  int idx = 0;
+                  for (int i=0; i<rank; i++) {
+                     tmpcount[idx] = count;
+                     tmptype[idx] = datatype;
+                     peer_ranks[idx] = i;
+                     idx++;
+                  }
+                  for (int i=rank+1; i<size; i++) {
+                     tmpcount[idx] = count;
+                     tmptype[idx] = datatype;
+                     peer_ranks[idx] = i;
+                     idx++;
+                  }
+                  vftr_register_collective_request(recv, size-1, tmpcount, tmptype, peer_ranks,
+                                                   comm, *request, tstart);
+                  free(tmpcount);
+                  tmpcount = NULL;
+                  free(tmptype);
+                  tmptype = NULL;
+                  free(peer_ranks);
+                  peer_ranks = NULL;
+               }
+            } else {
+               // self communication
+               vftr_register_collective_request(send, 1, &count, &datatype, &root,
+                                                comm, *request, tstart);
+               // allocate memory for the temporary arrays
+               // to register communication request
+               int *tmpcount = (int*) malloc(sizeof(int)*size);
+               MPI_Datatype *tmptype = (MPI_Datatype*) malloc(sizeof(MPI_Datatype)*size);
+               int *peer_ranks = (int*) malloc(sizeof(int)*size);
+               // messages to be received
+               for (int i=0; i<size; i++) {
+                  tmpcount[i] = count;
+                  tmptype[i] = datatype;
+                  peer_ranks[i] = i;
+               }
+               vftr_register_collective_request(recv, size, tmpcount, tmptype, peer_ranks,
+                                                comm, *request, tstart);
+               free(tmpcount);
+               tmpcount = NULL;
+               free(tmptype);
+               tmptype = NULL;
+               free(peer_ranks);
+               peer_ranks = NULL;
             }
-            // Register request with MPI_COMM_WORLD as communicator
-            // to prevent additional (and thus faulty rank translation)
-            vftr_register_collective_request(recv, size, tmpcount, tmptype, peer_ranks,
-                                             comm, *request, tstart);
-            free(tmpcount);
-            tmpcount = NULL;
-            free(tmptype);
-            tmptype = NULL;
-            free(peer_ranks);
-            peer_ranks = NULL;
          } else {
             vftr_register_collective_request(send, 1, &count, &datatype, &root,
                                              comm, *request, tstart);

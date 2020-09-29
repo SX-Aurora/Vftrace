@@ -70,7 +70,11 @@ libvftr_cmpiwrap_la_SOURCES += vftr_mpi_allreduce_cwrap.c \
 # one sided #
 #############
 libvftr_cmpiwrap_la_SOURCES += vftr_mpi_put_cwrap.c \
-			       vftr_mpi_get_cwrap.c
+			       vftr_mpi_rput_cwrap.c \
+			       vftr_mpi_get_cwrap.c \
+			       vftr_mpi_rget_cwrap.c \
+			       vftr_mpi_accumulate_cwrap.c \
+			       vftr_mpi_raccumulate_cwrap.c
 
 ############
 # pcontrol #
