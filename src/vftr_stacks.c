@@ -739,6 +739,27 @@ void print_stacktree (FILE *fp, stack_leaf_t *leaf, int n_spaces, long long *tot
 
 /**********************************************************************/
 
+void print_stacktree_to_html (FILE *fp, stack_leaf_t *leaf, int n_spaces, long long *total_time) {
+	fprintf (fp, "HTML: \n");
+	if (!leaf) return;
+	fprintf (fp, "<ul>\n");
+	fprintf (fp, "<li>\n");
+	fprintf (fp, "<a hfref=\"#\">%s</a>\n", vftr_gStackinfo[leaf->stack_id].name);
+	if (leaf->callee) {
+		print_stacktree_to_html (fp, leaf->callee, 0, 0);
+	} else {
+	}
+	if (leaf->next_in_level) {
+		fprintf (fp, "<li>\n");
+		print_stacktree_to_html (fp, leaf->next_in_level, 0, 0);
+		fprintf (fp, "</li>\n");
+	}
+	fprintf (fp, "</li>\n");
+	fprintf (fp, "</ul>\n");
+}
+
+/**********************************************************************/
+
 void print_function_stack (FILE *fp, char *func_name, int n_final_stack_ids,
 			   int *final_stack_ids, int *final_func_ids) {
 	stack_leaf_t *stack_tree = NULL;
@@ -764,6 +785,7 @@ void print_function_stack (FILE *fp, char *func_name, int n_final_stack_ids,
 	}
 	long long total_time = 0;
 	print_stacktree (fp, stack_tree->origin, 0, &total_time);
+	print_stacktree_to_html (fp, stack_tree->origin, 0, 0);
 	free (stack_tree);
 	fprintf (fp, "Total(%s): %lf sec. \n\n", func_name, (double)total_time * 1e-6);
 }
