@@ -1,4 +1,4 @@
-PROGRAM scatterv
+PROGRAM iscatterv_inplace
 
    USE, INTRINSIC :: ISO_FORTRAN_ENV
    USE mpi
@@ -23,6 +23,9 @@ PROGRAM scatterv
 
    LOGICAL :: valid_data
 
+   INTEGER :: myrequest
+   INTEGER :: mystatus(MPI_STATUS_SIZE)
+
    INTEGER :: ierr
 
    CALL MPI_Init(ierr)
@@ -43,7 +46,7 @@ PROGRAM scatterv
 
    ! require cmd-line argument
    IF (COMMAND_ARGUMENT_COUNT() < 1) THEN
-      WRITE(UNIT=OUTPUT_UNIT, FMT="(A)") "./scatterv <msgsize in integers>"
+      WRITE(UNIT=OUTPUT_UNIT, FMT="(A)") "./iscatterv_inplace <msgsize in integers>"
       STOP 1
    END IF
 
@@ -51,8 +54,6 @@ PROGRAM scatterv
    CALL GET_COMMAND_ARGUMENT(1,cmdargstr)
    READ(UNIT=cmdargstr, FMT=*) nints
    nints = nints + my_rank
-   ALLOCATE(rbuffer(nints))
-   rbuffer(:) = -1
    IF (my_rank == rootrank) THEN
       ALLOCATE(sendcounts(comm_size))
       ALLOCATE(displs(comm_size))
@@ -72,12 +73,21 @@ PROGRAM scatterv
       ALLOCATE(sendcounts(0))
       ALLOCATE(displs(0))
       ALLOCATE(sbuffer(0))
+      ALLOCATE(rbuffer(nints))
+      rbuffer(:) = -1
    END IF
 
    ! Messageing
-   CALL MPI_Scatterv(sbuffer, sendcounts, displs, MPI_INTEGER, &
-                     rbuffer, nints, MPI_INTEGER, &
-                     rootrank, MPI_COMM_WORLD, ierr)
+   IF (my_rank == rootrank) THEN
+      CALL MPI_Iscatterv(sbuffer, sendcounts, displs, MPI_INTEGER, &
+                         MPI_IN_PLACE, 0, MPI_DATATYPE_NULL, &
+                         rootrank, MPI_COMM_WORLD, myrequest, ierr)
+   ELSE
+      CALL MPI_Iscatterv(sbuffer, sendcounts, displs, MPI_DATATYPE_NULL, &
+                         rbuffer, nints, MPI_INTEGER, &
+                         rootrank, MPI_COMM_WORLD, myrequest, ierr)
+   END IF
+   CALL MPI_Wait(myrequest, mystatus, ierr)
 
    IF (my_rank == rootrank) THEN
       WRITE(UNIT=OUTPUT_UNIT, FMT="(A,I4)") &
@@ -86,19 +96,29 @@ PROGRAM scatterv
 
    ! validate data
    valid_data = .TRUE.
-   IF (ANY(rbuffer(:) /= my_rank)) THEN
-      WRITE(UNIT=OUTPUT_UNIT, FMT="(A,I4,A,I4)") &
-         "Rank ", my_rank, " received faulty data from rank ", rootrank
-      valid_data = .FALSE.
+   IF (my_rank == rootrank) THEN
+      IF (ANY(sbuffer(1+displs(my_rank+1):sendcounts(my_rank+1)+displs(my_rank+1)) /= my_rank)) THEN
+         WRITE(UNIT=OUTPUT_UNIT, FMT="(A,I4,A,I4)") &
+            "Rank ", my_rank, " received faulty data from rank ", rootrank
+            valid_data = .FALSE.
+      END IF
+   ELSE
+      IF (ANY(rbuffer(:) /= my_rank)) THEN
+         WRITE(UNIT=OUTPUT_UNIT, FMT="(A,I4,A,I4)") &
+            "Rank ", my_rank, " received faulty data from rank ", rootrank
+         valid_data = .FALSE.
+      END IF
    END IF
 
-   DEALLOCATE(sendcounts)
-   DEALLOCATE(displs)
-
-   DEALLOCATE(rbuffer)
-   DEALLOCATE(sbuffer)
+   IF (my_rank == rootrank) THEN
+      DEALLOCATE(sbuffer)
+      DEALLOCATE(sendcounts)
+      DEALLOCATE(displs)
+   ELSE
+      DEALLOCATE(rbuffer)
+   END IF
 
    CALL MPI_Finalize(ierr)
 
    IF (.NOT.valid_data) STOP 1
-END PROGRAM scatterv
+END PROGRAM iscatterv_inplace

@@ -76,40 +76,58 @@ check_PROGRAMS += bcast \
 		  ibcast_intercom \
 		  gather \
 		  gather_intercom \
+		  gather_inplace \
 		  igather \
 		  igather_intercom \
+		  igather_inplace \
 		  gatherv \
 		  gatherv_intercom \
+		  gatherv_inplace \
 		  igatherv \
 		  igatherv_intercom \
+		  igatherv_inplace \
 		  scatter \
 		  scatter_intercom \
+		  scatter_inplace \
 		  iscatter \
 		  iscatter_intercom \
+		  iscatter_inplace \
 		  scatterv \
 		  scatterv_intercom \
+		  scatterv_inplace \
 		  iscatterv \
 		  iscatterv_intercom \
+		  iscatterv_inplace \
 		  allgather \
 		  allgather_intercom \
+		  allgather_inplace \
 		  iallgather \
 		  iallgather_intercom \
+		  iallgather_inplace \
 		  allgatherv \
 		  allgatherv_intercom \
+		  allgatherv_inplace \
 		  iallgatherv \
 		  iallgatherv_intercom \
+		  iallgatherv_inplace \
 		  alltoall \
 		  alltoall_intercom \
+		  alltoall_inplace \
 		  ialltoall \
 		  ialltoall_intercom \
+		  ialltoall_inplace \
 		  alltoallv \
 		  alltoallv_intercom \
+		  alltoallv_inplace \
 		  ialltoallv \
 		  ialltoallv_intercom \
+		  ialltoallv_inplace \
 		  alltoallw \
 		  alltoallw_intercom \
+		  alltoallw_inplace \
 		  ialltoallw \
-		  ialltoallw_intercom
+		  ialltoallw_intercom \
+		  ialltoallw_inplace
 
 bcast_SOURCES = $(srcdir)/bcast.F90
 bcast_FCFLAGS = $(AM_FCFLAGS)
@@ -135,6 +153,10 @@ gather_intercom_SOURCES = $(srcdir)/gather_intercom.F90
 gather_intercom_FCFLAGS = $(AM_FCFLAGS)
 gather_intercom_LDFLAGS = $(AM_LDFLAGS)
 
+gather_inplace_SOURCES = $(srcdir)/gather_inplace.F90
+gather_inplace_FCFLAGS = $(AM_FCFLAGS)
+gather_inplace_LDFLAGS = $(AM_LDFLAGS)
+
 igather_SOURCES = $(srcdir)/igather.F90
 igather_FCFLAGS = $(AM_FCFLAGS)
 igather_LDFLAGS = $(AM_LDFLAGS)
@@ -142,6 +164,10 @@ igather_LDFLAGS = $(AM_LDFLAGS)
 igather_intercom_SOURCES = $(srcdir)/igather_intercom.F90
 igather_intercom_FCFLAGS = $(AM_FCFLAGS)
 igather_intercom_LDFLAGS = $(AM_LDFLAGS)
+
+igather_inplace_SOURCES = $(srcdir)/igather_inplace.F90
+igather_inplace_FCFLAGS = $(AM_FCFLAGS)
+igather_inplace_LDFLAGS = $(AM_LDFLAGS)
 
 gatherv_SOURCES = $(srcdir)/gatherv.F90
 gatherv_FCFLAGS = $(AM_FCFLAGS)
@@ -151,6 +177,10 @@ gatherv_intercom_SOURCES = $(srcdir)/gatherv_intercom.F90
 gatherv_intercom_FCFLAGS = $(AM_FCFLAGS)
 gatherv_intercom_LDFLAGS = $(AM_LDFLAGS)
 
+gatherv_inplace_SOURCES = $(srcdir)/gatherv_inplace.F90
+gatherv_inplace_FCFLAGS = $(AM_FCFLAGS)
+gatherv_inplace_LDFLAGS = $(AM_LDFLAGS)
+
 igatherv_SOURCES = $(srcdir)/igatherv.F90
 igatherv_FCFLAGS = $(AM_FCFLAGS)
 igatherv_LDFLAGS = $(AM_LDFLAGS)
@@ -158,6 +188,10 @@ igatherv_LDFLAGS = $(AM_LDFLAGS)
 igatherv_intercom_SOURCES = $(srcdir)/igatherv_intercom.F90
 igatherv_intercom_FCFLAGS = $(AM_FCFLAGS)
 igatherv_intercom_LDFLAGS = $(AM_LDFLAGS)
+
+igatherv_inplace_SOURCES = $(srcdir)/igatherv_inplace.F90
+igatherv_inplace_FCFLAGS = $(AM_FCFLAGS)
+igatherv_inplace_LDFLAGS = $(AM_LDFLAGS)
 
 scatter_SOURCES = $(srcdir)/scatter.F90
 scatter_FCFLAGS = $(AM_FCFLAGS)
@@ -167,6 +201,10 @@ scatter_intercom_SOURCES = $(srcdir)/scatter_intercom.F90
 scatter_intercom_FCFLAGS = $(AM_FCFLAGS)
 scatter_intercom_LDFLAGS = $(AM_LDFLAGS)
 
+scatter_inplace_SOURCES = $(srcdir)/scatter_inplace.F90
+scatter_inplace_FCFLAGS = $(AM_FCFLAGS)
+scatter_inplace_LDFLAGS = $(AM_LDFLAGS)
+
 iscatter_SOURCES = $(srcdir)/iscatter.F90
 iscatter_FCFLAGS = $(AM_FCFLAGS)
 iscatter_LDFLAGS = $(AM_LDFLAGS)
@@ -174,6 +212,10 @@ iscatter_LDFLAGS = $(AM_LDFLAGS)
 iscatter_intercom_SOURCES = $(srcdir)/iscatter_intercom.F90
 iscatter_intercom_FCFLAGS = $(AM_FCFLAGS)
 iscatter_intercom_LDFLAGS = $(AM_LDFLAGS)
+
+iscatter_inplace_SOURCES = $(srcdir)/iscatter_inplace.F90
+iscatter_inplace_FCFLAGS = $(AM_FCFLAGS)
+iscatter_inplace_LDFLAGS = $(AM_LDFLAGS)
 
 scatterv_SOURCES = $(srcdir)/scatterv.F90
 scatterv_FCFLAGS = $(AM_FCFLAGS)
@@ -183,6 +225,10 @@ scatterv_intercom_SOURCES = $(srcdir)/scatterv_intercom.F90
 scatterv_intercom_FCFLAGS = $(AM_FCFLAGS)
 scatterv_intercom_LDFLAGS = $(AM_LDFLAGS)
 
+scatterv_inplace_SOURCES = $(srcdir)/scatterv_inplace.F90
+scatterv_inplace_FCFLAGS = $(AM_FCFLAGS)
+scatterv_inplace_LDFLAGS = $(AM_LDFLAGS)
+
 iscatterv_SOURCES = $(srcdir)/iscatterv.F90
 iscatterv_FCFLAGS = $(AM_FCFLAGS)
 iscatterv_LDFLAGS = $(AM_LDFLAGS)
@@ -190,6 +236,10 @@ iscatterv_LDFLAGS = $(AM_LDFLAGS)
 iscatterv_intercom_SOURCES = $(srcdir)/iscatterv_intercom.F90
 iscatterv_intercom_FCFLAGS = $(AM_FCFLAGS)
 iscatterv_intercom_LDFLAGS = $(AM_LDFLAGS)
+
+iscatterv_inplace_SOURCES = $(srcdir)/iscatterv_inplace.F90
+iscatterv_inplace_FCFLAGS = $(AM_FCFLAGS)
+iscatterv_inplace_LDFLAGS = $(AM_LDFLAGS)
 
 allgather_SOURCES = $(srcdir)/allgather.F90
 allgather_FCFLAGS = $(AM_FCFLAGS)
@@ -199,6 +249,10 @@ allgather_intercom_SOURCES = $(srcdir)/allgather_intercom.F90
 allgather_intercom_FCFLAGS = $(AM_FCFLAGS)
 allgather_intercom_LDFLAGS = $(AM_LDFLAGS)
 
+allgather_inplace_SOURCES = $(srcdir)/allgather_inplace.F90
+allgather_inplace_FCFLAGS = $(AM_FCFLAGS)
+allgather_inplace_LDFLAGS = $(AM_LDFLAGS)
+
 iallgather_SOURCES = $(srcdir)/iallgather.F90
 iallgather_FCFLAGS = $(AM_FCFLAGS)
 iallgather_LDFLAGS = $(AM_LDFLAGS)
@@ -206,6 +260,10 @@ iallgather_LDFLAGS = $(AM_LDFLAGS)
 iallgather_intercom_SOURCES = $(srcdir)/iallgather_intercom.F90
 iallgather_intercom_FCFLAGS = $(AM_FCFLAGS)
 iallgather_intercom_LDFLAGS = $(AM_LDFLAGS)
+
+iallgather_inplace_SOURCES = $(srcdir)/iallgather_inplace.F90
+iallgather_inplace_FCFLAGS = $(AM_FCFLAGS)
+iallgather_inplace_LDFLAGS = $(AM_LDFLAGS)
 
 allgatherv_SOURCES = $(srcdir)/allgatherv.F90
 allgatherv_FCFLAGS = $(AM_FCFLAGS)
@@ -215,6 +273,10 @@ allgatherv_intercom_SOURCES = $(srcdir)/allgatherv_intercom.F90
 allgatherv_intercom_FCFLAGS = $(AM_FCFLAGS)
 allgatherv_intercom_LDFLAGS = $(AM_LDFLAGS)
 
+allgatherv_inplace_SOURCES = $(srcdir)/allgatherv_inplace.F90
+allgatherv_inplace_FCFLAGS = $(AM_FCFLAGS)
+allgatherv_inplace_LDFLAGS = $(AM_LDFLAGS)
+
 iallgatherv_SOURCES = $(srcdir)/iallgatherv.F90
 iallgatherv_FCFLAGS = $(AM_FCFLAGS)
 iallgatherv_LDFLAGS = $(AM_LDFLAGS)
@@ -222,6 +284,10 @@ iallgatherv_LDFLAGS = $(AM_LDFLAGS)
 iallgatherv_intercom_SOURCES = $(srcdir)/iallgatherv_intercom.F90
 iallgatherv_intercom_FCFLAGS = $(AM_FCFLAGS)
 iallgatherv_intercom_LDFLAGS = $(AM_LDFLAGS)
+
+iallgatherv_inplace_SOURCES = $(srcdir)/iallgatherv_inplace.F90
+iallgatherv_inplace_FCFLAGS = $(AM_FCFLAGS)
+iallgatherv_inplace_LDFLAGS = $(AM_LDFLAGS)
 
 alltoall_SOURCES = $(srcdir)/alltoall.F90
 alltoall_FCFLAGS = $(AM_FCFLAGS)
@@ -231,6 +297,10 @@ alltoall_intercom_SOURCES = $(srcdir)/alltoall_intercom.F90
 alltoall_intercom_FCFLAGS = $(AM_FCFLAGS)
 alltoall_intercom_LDFLAGS = $(AM_LDFLAGS)
 
+alltoall_inplace_SOURCES = $(srcdir)/alltoall_inplace.F90
+alltoall_inplace_FCFLAGS = $(AM_FCFLAGS)
+alltoall_inplace_LDFLAGS = $(AM_LDFLAGS)
+
 ialltoall_SOURCES = $(srcdir)/ialltoall.F90
 ialltoall_FCFLAGS = $(AM_FCFLAGS)
 ialltoall_LDFLAGS = $(AM_LDFLAGS)
@@ -238,6 +308,10 @@ ialltoall_LDFLAGS = $(AM_LDFLAGS)
 ialltoall_intercom_SOURCES = $(srcdir)/ialltoall_intercom.F90
 ialltoall_intercom_FCFLAGS = $(AM_FCFLAGS)
 ialltoall_intercom_LDFLAGS = $(AM_LDFLAGS)
+
+ialltoall_inplace_SOURCES = $(srcdir)/ialltoall_inplace.F90
+ialltoall_inplace_FCFLAGS = $(AM_FCFLAGS)
+ialltoall_inplace_LDFLAGS = $(AM_LDFLAGS)
 
 alltoallv_SOURCES = $(srcdir)/alltoallv.F90
 alltoallv_FCFLAGS = $(AM_FCFLAGS)
@@ -247,6 +321,10 @@ alltoallv_intercom_SOURCES = $(srcdir)/alltoallv_intercom.F90
 alltoallv_intercom_FCFLAGS = $(AM_FCFLAGS)
 alltoallv_intercom_LDFLAGS = $(AM_LDFLAGS)
 
+alltoallv_inplace_SOURCES = $(srcdir)/alltoallv_inplace.F90
+alltoallv_inplace_FCFLAGS = $(AM_FCFLAGS)
+alltoallv_inplace_LDFLAGS = $(AM_LDFLAGS)
+
 ialltoallv_SOURCES = $(srcdir)/ialltoallv.F90
 ialltoallv_FCFLAGS = $(AM_FCFLAGS)
 ialltoallv_LDFLAGS = $(AM_LDFLAGS)
@@ -254,6 +332,10 @@ ialltoallv_LDFLAGS = $(AM_LDFLAGS)
 ialltoallv_intercom_SOURCES = $(srcdir)/ialltoallv_intercom.F90
 ialltoallv_intercom_FCFLAGS = $(AM_FCFLAGS)
 ialltoallv_intercom_LDFLAGS = $(AM_LDFLAGS)
+
+ialltoallv_inplace_SOURCES = $(srcdir)/ialltoallv_inplace.F90
+ialltoallv_inplace_FCFLAGS = $(AM_FCFLAGS)
+ialltoallv_inplace_LDFLAGS = $(AM_LDFLAGS)
 
 alltoallw_SOURCES = $(srcdir)/alltoallw.F90
 alltoallw_FCFLAGS = $(AM_FCFLAGS)
@@ -263,6 +345,10 @@ alltoallw_intercom_SOURCES = $(srcdir)/alltoallw_intercom.F90
 alltoallw_intercom_FCFLAGS = $(AM_FCFLAGS)
 alltoallw_intercom_LDFLAGS = $(AM_LDFLAGS)
 
+alltoallw_inplace_SOURCES = $(srcdir)/alltoallw_inplace.F90
+alltoallw_inplace_FCFLAGS = $(AM_FCFLAGS)
+alltoallw_inplace_LDFLAGS = $(AM_LDFLAGS)
+
 ialltoallw_SOURCES = $(srcdir)/ialltoallw.F90
 ialltoallw_FCFLAGS = $(AM_FCFLAGS)
 ialltoallw_LDFLAGS = $(AM_LDFLAGS)
@@ -271,46 +357,68 @@ ialltoallw_intercom_SOURCES = $(srcdir)/ialltoallw_intercom.F90
 ialltoallw_intercom_FCFLAGS = $(AM_FCFLAGS)
 ialltoallw_intercom_LDFLAGS = $(AM_LDFLAGS)
 
+ialltoallw_inplace_SOURCES = $(srcdir)/ialltoallw_inplace.F90
+ialltoallw_inplace_FCFLAGS = $(AM_FCFLAGS)
+ialltoallw_inplace_LDFLAGS = $(AM_LDFLAGS)
+
 dist_noinst_SCRIPTS += bcast.sh \
 		       bcast_intercom.sh \
 		       ibcast.sh \
 		       ibcast_intercom.sh \
 		       gather.sh \
 		       gather_intercom.sh \
+		       gather_inplace.sh \
 		       igather.sh \
 		       igather_intercom.sh \
+		       igather_inplace.sh \
 		       gatherv.sh \
 		       gatherv_intercom.sh \
+		       gatherv_inplace.sh \
 		       igatherv.sh \
 		       igatherv_intercom.sh \
+		       igatherv_inplace.sh \
 		       scatter.sh \
 		       scatter_intercom.sh \
+		       scatter_inplace.sh \
 		       iscatter.sh \
 		       iscatter_intercom.sh \
+		       iscatter_inplace.sh \
 		       scatterv.sh \
 		       scatterv_intercom.sh \
+		       scatterv_inplace.sh \
 		       iscatterv.sh \
 		       iscatterv_intercom.sh \
+		       iscatterv_inplace.sh \
 		       allgather.sh \
 		       allgather_intercom.sh \
+		       allgather_inplace.sh \
 		       iallgather.sh \
 		       iallgather_intercom.sh \
+		       iallgather_inplace.sh \
 		       allgatherv.sh \
 		       allgatherv_intercom.sh \
+		       allgatherv_inplace.sh \
 		       iallgatherv.sh \
 		       iallgatherv_intercom.sh \
+		       iallgatherv_inplace.sh \
 		       alltoall.sh \
 		       alltoall_intercom.sh \
+		       alltoall_inplace.sh \
 		       ialltoall.sh \
 		       ialltoall_intercom.sh \
 		       alltoallv.sh \
 		       alltoallv_intercom.sh \
+		       alltoallv_inplace.sh \
 		       ialltoallv.sh \
 		       ialltoallv_intercom.sh \
+		       ialltoallv_inplace.sh \
 		       alltoallw.sh \
 		       alltoallw_intercom.sh \
+		       alltoallw_inplace.sh \
 		       ialltoallw.sh \
-		       ialltoallw_intercom.sh
+		       ialltoallw_intercom.sh \
+		       ialltoallw_inplace.sh
+
 
 #####################
 # Global reductions #
@@ -318,16 +426,24 @@ dist_noinst_SCRIPTS += bcast.sh \
 
 check_PROGRAMS += reduce \
 		  reduce_intercom \
+		  reduce_inplace \
 		  ireduce \
 		  ireduce_intercom \
+		  ireduce_inplace \
 		  allreduce \
 		  allreduce_intercom \
+		  allreduce_inplace \
 		  iallreduce \
 		  iallreduce_intercom \
+		  iallreduce_inplace \
 		  scan \
+		  scan_inplace \
 		  iscan \
+		  iscan_inplace \
 		  exscan \
-		  iexscan
+		  exscan_inplace \
+		  iexscan \
+		  iexscan_inplace
 
 reduce_SOURCES = $(srcdir)/reduce.F90
 reduce_FCFLAGS = $(AM_FCFLAGS)
@@ -337,6 +453,10 @@ reduce_intercom_SOURCES = $(srcdir)/reduce_intercom.F90
 reduce_intercom_FCFLAGS = $(AM_FCFLAGS)
 reduce_intercom_LDFLAGS = $(AM_LDFLAGS)
 
+reduce_inplace_SOURCES = $(srcdir)/reduce_inplace.F90
+reduce_inplace_FCFLAGS = $(AM_FCFLAGS)
+reduce_inplace_LDFLAGS = $(AM_LDFLAGS)
+
 ireduce_SOURCES = $(srcdir)/ireduce.F90
 ireduce_FCFLAGS = $(AM_FCFLAGS)
 ireduce_LDFLAGS = $(AM_LDFLAGS)
@@ -344,6 +464,10 @@ ireduce_LDFLAGS = $(AM_LDFLAGS)
 ireduce_intercom_SOURCES = $(srcdir)/ireduce_intercom.F90
 ireduce_intercom_FCFLAGS = $(AM_FCFLAGS)
 ireduce_intercom_LDFLAGS = $(AM_LDFLAGS)
+
+ireduce_inplace_SOURCES = $(srcdir)/ireduce_inplace.F90
+ireduce_inplace_FCFLAGS = $(AM_FCFLAGS)
+ireduce_inplace_LDFLAGS = $(AM_LDFLAGS)
 
 allreduce_SOURCES = $(srcdir)/allreduce.F90
 allreduce_FCFLAGS = $(AM_FCFLAGS)
@@ -353,6 +477,10 @@ allreduce_intercom_SOURCES = $(srcdir)/allreduce_intercom.F90
 allreduce_intercom_FCFLAGS = $(AM_FCFLAGS)
 allreduce_intercom_LDFLAGS = $(AM_LDFLAGS)
 
+allreduce_inplace_SOURCES = $(srcdir)/allreduce_inplace.F90
+allreduce_inplace_FCFLAGS = $(AM_FCFLAGS)
+allreduce_inplace_LDFLAGS = $(AM_LDFLAGS)
+
 iallreduce_SOURCES = $(srcdir)/iallreduce.F90
 iallreduce_FCFLAGS = $(AM_FCFLAGS)
 iallreduce_LDFLAGS = $(AM_LDFLAGS)
@@ -361,34 +489,62 @@ iallreduce_intercom_SOURCES = $(srcdir)/iallreduce_intercom.F90
 iallreduce_intercom_FCFLAGS = $(AM_FCFLAGS)
 iallreduce_intercom_LDFLAGS = $(AM_LDFLAGS)
 
+iallreduce_inplace_SOURCES = $(srcdir)/iallreduce_inplace.F90
+iallreduce_inplace_FCFLAGS = $(AM_FCFLAGS)
+iallreduce_inplace_LDFLAGS = $(AM_LDFLAGS)
+
 scan_SOURCES = $(srcdir)/scan.F90
 scan_FCFLAGS = $(AM_FCFLAGS)
 scan_LDFLAGS = $(AM_LDFLAGS)
+
+scan_inplace_SOURCES = $(srcdir)/scan_inplace.F90
+scan_inplace_FCFLAGS = $(AM_FCFLAGS)
+scan_inplace_LDFLAGS = $(AM_LDFLAGS)
 
 iscan_SOURCES = $(srcdir)/iscan.F90
 iscan_FCFLAGS = $(AM_FCFLAGS)
 iscan_LDFLAGS = $(AM_LDFLAGS)
 
+iscan_inplace_SOURCES = $(srcdir)/iscan_inplace.F90
+iscan_inplace_FCFLAGS = $(AM_FCFLAGS)
+iscan_inplace_LDFLAGS = $(AM_LDFLAGS)
+
 exscan_SOURCES = $(srcdir)/exscan.F90
 exscan_FCFLAGS = $(AM_FCFLAGS)
 exscan_LDFLAGS = $(AM_LDFLAGS)
+
+exscan_inplace_SOURCES = $(srcdir)/exscan_inplace.F90
+exscan_inplace_FCFLAGS = $(AM_FCFLAGS)
+exscan_inplace_LDFLAGS = $(AM_LDFLAGS)
 
 iexscan_SOURCES = $(srcdir)/iexscan.F90
 iexscan_FCFLAGS = $(AM_FCFLAGS)
 iexscan_LDFLAGS = $(AM_LDFLAGS)
 
+iexscan_inplace_SOURCES = $(srcdir)/iexscan_inplace.F90
+iexscan_inplace_FCFLAGS = $(AM_FCFLAGS)
+iexscan_inplace_LDFLAGS = $(AM_LDFLAGS)
+
 dist_noinst_SCRIPTS += reduce.sh \
 		       reduce_intercom.sh \
+		       reduce_inplace.sh \
 		       ireduce.sh \
 		       ireduce_intercom.sh \
+		       ireduce_inplace.sh \
 		       allreduce.sh \
 		       allreduce_intercom.sh \
+		       allreduce_inplace.sh \
 		       iallreduce.sh \
 		       iallreduce_intercom.sh \
+		       iallreduce_inplace.sh \
 		       scan.sh \
+		       scan_inplace.sh \
 		       iscan.sh \
+		       iscan_inplace.sh \
 		       exscan.sh \
-		       iexscan.sh
+		       exscan_inplace.sh \
+		       iexscan.sh \
+		       iexscan_inplace.sh
 
 ###################
 # One sided tests #
