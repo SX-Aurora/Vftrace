@@ -72,18 +72,11 @@ uint32_t vftr_jenkins_32_hash(size_t length, const uint8_t* key) {
 //    by a randomly selected constant.
 // Published on wikipedia under the creative commons licence 
 //    (https://creativecommons.org/licenses/by-sa/3.0/)
-//static inline uint32_t vftr_murmur_32_scramble(uint32_t k) {
 uint32_t vftr_murmur_32_scramble(uint32_t k) {
     k *= 0xcc9e2d51; 
     k = (k << 15) | (k >> 17);
     k *= 0x1b873593;
     return k;
-}
-
-void vftr_murmur_32_scramble_2 (uint32_t *k) {
-	*k = *k * 0xcc9e2d51;
-   	*k = (*k << 15) | (*k >> 17);
-	*k = *k * 0x1b873593;
 }
 
 uint32_t vftr_murmur3_32_hash(size_t length, const uint8_t* key) {
@@ -95,8 +88,6 @@ uint32_t vftr_murmur3_32_hash(size_t length, const uint8_t* key) {
       memcpy(&k, key, sizeof(uint32_t));
       key += sizeof(uint32_t);
       h ^= vftr_murmur_32_scramble(k);
-      ///vftr_murmur_32_scramble_2(&k);
-      ///h ^= k;
       h = (h << 13) | (h >> 19);
       h = h * 5 + 0xe6546b64;
    }
@@ -106,8 +97,6 @@ uint32_t vftr_murmur3_32_hash(size_t length, const uint8_t* key) {
       k <<= 8;
       k |= key[i - 1];
    }
-   ///vftr_murmur_32_scramble_2(&k);
-   ///h ^= k;
    h ^= vftr_murmur_32_scramble(k);
    h ^= length;
    h ^= h >> 16;
