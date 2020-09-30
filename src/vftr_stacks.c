@@ -28,6 +28,7 @@
 #include "vftr_timer.h"
 #include "vftr_setup.h"
 #include "vftr_hooks.h"
+#include "vftr_filewrite.h"
 
 #include "vftr_output_macros.h"
 
@@ -718,29 +719,39 @@ void fill_into_stack_tree (stack_leaf_t **this_leaf, int n_stack_ids,
 
 /**********************************************************************/
 
-void print_stacktree (FILE *fp, stack_leaf_t *leaf, int n_spaces, long long *total_time) {
+void print_stacktree (FILE *fp, stack_leaf_t *leaf, int n_spaces, long long *total_time, double *imbalances) {
 	if (!leaf) return;
 	fprintf (fp, "%s", vftr_gStackinfo[leaf->stack_id].name);
 	if (leaf->callee) {
 		fprintf (fp, ">");
 		int new_n_spaces = n_spaces + strlen(vftr_gStackinfo[leaf->stack_id].name);
 		if (n_spaces > 0) new_n_spaces++;
-		print_stacktree (fp, leaf->callee, new_n_spaces, total_time);
+		print_stacktree (fp, leaf->callee, new_n_spaces, total_time, imbalances);
 	} else {
 		*total_time += vftr_func_table[leaf->func_id]->prof_current.timeIncl;
-		fprintf (fp, ": %lf\n", (double)vftr_func_table[leaf->func_id]->prof_current.timeIncl * 1e-6);
+		fprintf (fp, ": %lf %d %lf\n", (double)vftr_func_table[leaf->func_id]->prof_current.timeIncl * 1e-6, vftr_func_table[leaf->func_id]->prof_current.calls, imbalances[leaf->func_id]);
 	}
 	if (leaf->next_in_level) {
 		for (int i = 0; i < n_spaces; i++) fprintf (fp, " ");
 		fprintf (fp, ">");
-		print_stacktree (fp, leaf->next_in_level, n_spaces, total_time);
+		print_stacktree (fp, leaf->next_in_level, n_spaces, total_time, imbalances);
 	}
 }
 
 /**********************************************************************/
 
-void print_function_stack (FILE *fp, char *func_name, int n_final_stack_ids,
+void print_function_stack (FILE *fp, int rank, char *func_name, int n_final_stack_ids,
 			   int *final_stack_ids, int *final_func_ids) {
+	long long all_times [vftr_mpisize];
+	double imbalances [vftr_func_table_size];
+	for (int fsid = 0; fsid < n_final_stack_ids; fsid++) {
+		long long t = vftr_func_table[final_func_ids[fsid]]->prof_current.timeIncl;
+		PMPI_Allgather (&t, 1, MPI_LONG_LONG_INT,
+				all_times, 1, MPI_LONG_LONG_INT, MPI_COMM_WORLD);
+
+		imbalances[final_func_ids[fsid]] = compute_mpi_imbalance (all_times, -1.0);
+	}
+	if (vftr_mpirank > 0) return;
 	stack_leaf_t *stack_tree = NULL;
 	fprintf (fp, "Function stacks leading to %s: ", func_name);
 	if (n_final_stack_ids == 0) {
@@ -759,11 +770,12 @@ void print_function_stack (FILE *fp, char *func_name, int n_final_stack_ids,
 			stack_ids[i] = stack_id;
 			stack_id = vftr_gStackinfo[stack_id].ret;
 		}
+		//printf ("name: %s, n_ids: %d, imba: %lf\n", func_name, n_functions_in_stack, imbalances[fsid]);
 		fill_into_stack_tree (&stack_tree, n_functions_in_stack, stack_ids, function_id);
 		free (stack_ids);
 	}
 	long long total_time = 0;
-	print_stacktree (fp, stack_tree->origin, 0, &total_time);
+	print_stacktree (fp, stack_tree->origin, 0, &total_time, imbalances);
 	free (stack_tree);
 	fprintf (fp, "Total(%s): %lf sec. \n\n", func_name, (double)total_time * 1e-6);
 }

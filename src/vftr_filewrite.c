@@ -514,6 +514,22 @@ void set_formats (function_t **funcTable, double runtime,
 #ifdef _MPI
 double compute_mpi_imbalance (long long *all_times, double t_avg) {
 	double max_diff = 0;
+	// If no average time is given (e.g. when it is not of interest), compute it here
+	if (t_avg < 0.0) {
+		long long sum_times = 0ll;
+		int n = 0;
+		for (int i = 0; i < vftr_mpisize; i++) {
+			if (all_times[i] > 0) {
+				n++;
+				sum_times += all_times[i];
+			}
+		}
+		if (n > 0) {
+			t_avg = (double)sum_times / n;
+		} else {
+			return 0;
+		}
+	}
 	for (int i = 0; i < vftr_mpisize; i++) {
 		if (all_times[i] > 0) {
 			double d = fabs((double)(all_times[i]) - t_avg);
@@ -700,9 +716,9 @@ void vftr_print_function_statistics (FILE *pout, bool display_sync_time,
     }
   }
 
-  if (vftr_mpirank == 0 && vftr_environment->print_stack_profile->set) {
+  if (vftr_environment->print_stack_profile->set) {
   	for (int i = 0; i < n_display_functions; i++) {
-  		print_function_stack (pout, display_functions[i]->func_name, 
+  		print_function_stack (pout, vftr_mpirank, display_functions[i]->func_name, 
 				      display_functions[i]->n_indices,
   				      display_functions[i]->stack_indices,
 				      display_functions[i]->func_indices);
@@ -720,7 +736,7 @@ void display_selected_stacks (FILE *pout, char *display_function_names[], int n_
 	for (int i = 0; i < n_display_functions; i++) {
 		vftr_find_function (display_function_names[i], NULL, &stack_indices, &n_indices, true);
 
-		print_function_stack (pout, display_function_names[i], n_indices, stack_indices, NULL);
+		print_function_stack (pout, vftr_mpirank, display_function_names[i], n_indices, stack_indices, NULL);
 		free (stack_indices);
 	}
 	
