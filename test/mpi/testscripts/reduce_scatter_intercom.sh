@@ -1,7 +1,7 @@
 #!/bin/bash
 
 vftr_binary=reduce_scatter_intercom
-nprocs=5
+nprocs=4
 ntrials=1
 
 export VFTR_SAMPLING="Yes"
@@ -12,8 +12,7 @@ for itrial in $(seq 1 1 ${ntrials});
 do
    # Generate a random message size
    nb=$(bc <<< "32*${RANDOM}")
-   nb=2
-   mpirun --oversubscribe -np ${nprocs} ./${vftr_binary} ${nb} || exit 1
+   mpirun -np ${nprocs} ./${vftr_binary} ${nb} || exit 1
 
    # check each rank for the correct message communication
    # patterns in the vfd file
