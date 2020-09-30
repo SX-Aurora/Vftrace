@@ -442,6 +442,9 @@ check_PROGRAMS += reduce \
 		  ireduce_scatter_block \
 		  ireduce_scatter_block_intercom \
 		  ireduce_scatter_block_inplace \
+		  reduce_scatter \
+		  reduce_scatter_intercom \
+		  reduce_scatter_inplace \
 		  scan \
 		  scan_inplace \
 		  iscan \
@@ -523,6 +526,18 @@ ireduce_scatter_block_inplace_SOURCES = $(srcdir)/ireduce_scatter_block_inplace.
 ireduce_scatter_block_inplace_CFLAGS = $(AM_CFLAGS)
 ireduce_scatter_block_inplace_LDFLAGS = $(AM_LDFLAGS)
 
+reduce_scatter_SOURCES = $(srcdir)/reduce_scatter.c
+reduce_scatter_CFLAGS = $(AM_CFLAGS)
+reduce_scatter_LDFLAGS = $(AM_LDFLAGS)
+
+reduce_scatter_intercom_SOURCES = $(srcdir)/reduce_scatter_intercom.c
+reduce_scatter_intercom_CFLAGS = $(AM_CFLAGS)
+reduce_scatter_intercom_LDFLAGS = $(AM_LDFLAGS)
+
+reduce_scatter_inplace_SOURCES = $(srcdir)/reduce_scatter_inplace.c
+reduce_scatter_inplace_CFLAGS = $(AM_CFLAGS)
+reduce_scatter_inplace_LDFLAGS = $(AM_LDFLAGS)
+
 scan_SOURCES = $(srcdir)/scan.c
 scan_CFLAGS = $(AM_CFLAGS)
 scan_LDFLAGS = $(AM_LDFLAGS)
@@ -573,6 +588,9 @@ dist_noinst_SCRIPTS += reduce.sh \
 		       ireduce_scatter_block.sh \
 		       ireduce_scatter_block_intercom.sh \
 		       ireduce_scatter_block_inplace.sh \
+		       reduce_scatter.sh \
+		       reduce_scatter_intercom.sh \
+		       reduce_scatter_inplace.sh \
 		       scan_inplace.sh \
 		       iscan.sh \
 		       iscan_inplace.sh \
