@@ -55,7 +55,6 @@ int main(int argc, char** argv) {
    int count = sub_comm_size*sub_comm_remote_size*nints;
    int *recvcounts = (int*) malloc(sub_comm_size*sizeof(int));
    for (int irank=0; irank<sub_comm_size; irank++) {
-      //recvcounts[irank] = count / sub_comm_size;
       recvcounts[irank] = count / sub_comm_size - sub_comm_size / 2 + irank; 
       // if (sub_comm_size is even && my_sub_rank is larger or equal sub_comm_size/2) add 1
       recvcounts[irank] += (irank >= sub_comm_size/2) * ((sub_comm_size+1)%2);
