@@ -324,6 +324,9 @@ AM_COND_IF([MPI_PROFILING],
                             test/mpi/c-mpi/reduce_scatter.sh:test/mpi/testscripts/reduce_scatter.sh
                             test/mpi/c-mpi/reduce_scatter_intercom.sh:test/mpi/testscripts/reduce_scatter_intercom.sh
                             test/mpi/c-mpi/reduce_scatter_inplace.sh:test/mpi/testscripts/reduce_scatter_inplace.sh
+                            test/mpi/c-mpi/ireduce_scatter.sh:test/mpi/testscripts/ireduce_scatter.sh
+                            test/mpi/c-mpi/ireduce_scatter_intercom.sh:test/mpi/testscripts/ireduce_scatter_intercom.sh
+                            test/mpi/c-mpi/ireduce_scatter_inplace.sh:test/mpi/testscripts/ireduce_scatter_inplace.sh
                             test/mpi/c-mpi/scan.sh:test/mpi/testscripts/scan.sh
                             test/mpi/c-mpi/scan_inplace.sh:test/mpi/testscripts/scan_inplace.sh
                             test/mpi/c-mpi/iscan.sh:test/mpi/testscripts/iscan.sh
@@ -441,6 +444,9 @@ AM_COND_IF([MPI_PROFILING],
                             test/mpi/f-mpi/reduce_scatter.sh:test/mpi/testscripts/reduce_scatter.sh
                             test/mpi/f-mpi/reduce_scatter_intercom.sh:test/mpi/testscripts/reduce_scatter_intercom.sh
                             test/mpi/f-mpi/reduce_scatter_inplace.sh:test/mpi/testscripts/reduce_scatter_inplace.sh
+                            test/mpi/f-mpi/ireduce_scatter.sh:test/mpi/testscripts/ireduce_scatter.sh
+                            test/mpi/f-mpi/ireduce_scatter_intercom.sh:test/mpi/testscripts/ireduce_scatter_intercom.sh
+                            test/mpi/f-mpi/ireduce_scatter_inplace.sh:test/mpi/testscripts/ireduce_scatter_inplace.sh
                             test/mpi/f-mpi/scan.sh:test/mpi/testscripts/scan.sh
                             test/mpi/f-mpi/scan_inplace.sh:test/mpi/testscripts/scan_inplace.sh
                             test/mpi/f-mpi/iscan.sh:test/mpi/testscripts/iscan.sh
@@ -558,6 +564,9 @@ AM_COND_IF([MPI_PROFILING],
                             test/mpi/f08-mpi/reduce_scatter.sh:test/mpi/testscripts/reduce_scatter.sh
                             test/mpi/f08-mpi/reduce_scatter_intercom.sh:test/mpi/testscripts/reduce_scatter_intercom.sh
                             test/mpi/f08-mpi/reduce_scatter_inplace.sh:test/mpi/testscripts/reduce_scatter_inplace.sh
+                            test/mpi/f08-mpi/ireduce_scatter.sh:test/mpi/testscripts/ireduce_scatter.sh
+                            test/mpi/f08-mpi/ireduce_scatter_intercom.sh:test/mpi/testscripts/ireduce_scatter_intercom.sh
+                            test/mpi/f08-mpi/ireduce_scatter_inplace.sh:test/mpi/testscripts/ireduce_scatter_inplace.sh
                             test/mpi/f08-mpi/scan.sh:test/mpi/testscripts/scan.sh
                             test/mpi/f08-mpi/scan_inplace.sh:test/mpi/testscripts/scan_inplace.sh
                             test/mpi/f08-mpi/iscan.sh:test/mpi/testscripts/iscan.sh
