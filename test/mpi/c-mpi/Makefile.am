@@ -626,7 +626,8 @@ check_PROGRAMS += put \
 		  rget \
 		  accumulate \
 		  raccumulate \
-		  get_accumulate
+		  get_accumulate \
+		  rget_accumulate
 
 put_SOURCES = $(srcdir)/put.c
 put_CFLAGS = $(AM_CFLAGS)
@@ -656,12 +657,18 @@ get_accumulate_SOURCES = $(srcdir)/get_accumulate.c
 get_accumulate_CFLAGS = $(AM_CFLAGS)
 get_accumulate_LDFLAGS = $(AM_LDFLAGS)
 
+rget_accumulate_SOURCES = $(srcdir)/rget_accumulate.c
+rget_accumulate_CFLAGS = $(AM_CFLAGS)
+rget_accumulate_LDFLAGS = $(AM_LDFLAGS)
+
 dist_noinst_SCRIPTS += put.sh \
 		       rput.sh \
 		       get.sh \
 		       rget.sh \
 		       accumulate.sh \
-		       raccumulate.sh
+		       raccumulate.sh \
+		       get_accumulate.sh \
+		       rget_accumulate.sh
 
 ##############
 # Test tests #
