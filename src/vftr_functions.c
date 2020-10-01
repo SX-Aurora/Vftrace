@@ -340,7 +340,6 @@ void vftr_write_function (FILE *fp, function_t *func) {
 /**********************************************************************/
 
 void vftr_strip_all_module_names () {
-	printf ("Strip module names: %d\n", vftr_stackscount);
 	for (int i = 0; i < vftr_stackscount; i++) {
 		vftr_func_table[i]->name = vftr_strip_module_name (vftr_func_table[i]->name);
 	}
