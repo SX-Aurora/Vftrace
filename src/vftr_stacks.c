@@ -724,7 +724,13 @@ void fill_into_stack_tree (stack_leaf_t **this_leaf, int n_stack_ids,
 
 void print_stacktree (FILE *fp, stack_leaf_t *leaf, int n_spaces, long long *total_time, double *imbalances) {
 	if (!leaf) return;
-	fprintf (fp, "%s", vftr_gStackinfo[leaf->stack_id].name);
+	char *print_name;
+	if (vftr_environment->strip_module_names->value) {
+		print_name = vftr_strip_module_name (vftr_gStackinfo[leaf->stack_id].name);
+	} else {
+		print_name =  strdup (vftr_gStackinfo[leaf->stack_id].name);	
+	}
+	fprintf (fp, "%s", print_name);
 	if (leaf->callee) {
 		fprintf (fp, ">");
 		int new_n_spaces = n_spaces + strlen(vftr_gStackinfo[leaf->stack_id].name);

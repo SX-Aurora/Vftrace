@@ -225,6 +225,7 @@ void vftr_read_environment () {
     vftr_environment->license_verbose = vftr_read_env_bool ("VFTR_LICENSE_VERBOSE", false);
     vftr_environment->print_stacks_for = vftr_read_env_string ("VFTR_PRINT_STACKS_FOR", NULL);
     vftr_environment->print_loadinfo_for = vftr_read_env_string ("VFTR_PRINT_LOADINFO_FOR", NULL);
+    vftr_environment->strip_module_names = vftr_read_env_bool ("VFTR_STRIP_MODULE_NAMES", false);
 }
 
 void vftr_assert_environment () {
