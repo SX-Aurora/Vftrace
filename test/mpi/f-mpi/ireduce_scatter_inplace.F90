@@ -1,4 +1,4 @@
-PROGRAM reduce_scatter
+PROGRAM ireduce_scatter_inplace
 
    USE, INTRINSIC :: ISO_FORTRAN_ENV
    USE mpi
@@ -12,7 +12,6 @@ PROGRAM reduce_scatter
 
    INTEGER :: nints = 0
    INTEGER :: ntots = 0
-   INTEGER, DIMENSION(:), ALLOCATABLE :: sbuffer
    INTEGER, DIMENSION(:), ALLOCATABLE :: rbuffer
    INTEGER, DIMENSION(:), ALLOCATABLE :: recvcounts
 
@@ -21,6 +20,9 @@ PROGRAM reduce_scatter
    INTEGER :: refresult
 
    LOGICAL :: valid_data
+
+   INTEGER :: myrequest
+   INTEGER :: mystatus(MPI_STATUS_SIZE)
 
    INTEGER :: irank, i, idx
 
@@ -44,7 +46,7 @@ PROGRAM reduce_scatter
 
    ! require cmd-line argument
    IF (COMMAND_ARGUMENT_COUNT() < 1) THEN
-      WRITE(UNIT=OUTPUT_UNIT, FMT="(A)") "./reduce_scatter <msgsize in integers>"
+      WRITE(UNIT=OUTPUT_UNIT, FMT="(A)") "./ireduce_scatter_inplace <msgsize in integers>"
       STOP 1
    END IF
 
@@ -57,36 +59,35 @@ PROGRAM reduce_scatter
       recvcounts(irank+1) = nints + irank
    END DO
 
-   ALLOCATE(sbuffer(ntots))
+   ALLOCATE(rbuffer(ntots))
    idx = 1
    DO irank = 0, comm_size-1
       DO i = 0, recvcounts(irank+1)-1
-         sbuffer(idx) = irank
+         rbuffer(idx) = irank
          idx = idx + 1
       END DO
    END DO
-   ALLOCATE(rbuffer(recvcounts(my_rank+1)))
-   rbuffer(:) = -1
 
    ! Message cycle
-   CALL MPI_Reduce_scatter(sbuffer, rbuffer, recvcounts, MPI_INTEGER, &
-                           MPI_SUM, MPI_COMM_WORLD, ierr)
+   CALL MPI_Ireduce_scatter(MPI_IN_PLACE, rbuffer, recvcounts, MPI_INTEGER, &
+                           MPI_SUM, MPI_COMM_WORLD, myrequest, ierr)
 
    WRITE(UNIT=OUTPUT_UNIT, FMT="(A,I4)") &
       "Reducing and scattering messages from all ranks to all ranks on rank", my_rank
 
+   CALL MPI_Wait(myrequest, mystatus, ierr)
+
    ! validate data
    valid_data = .TRUE.
-   IF (ANY(rbuffer /= comm_size*my_rank)) THEN
+   IF (ANY(rbuffer(1:recvcounts(my_rank+1)) /= comm_size*my_rank)) THEN
       WRITE(UNIT=OUTPUT_UNIT, FMT="(A,I4,A)") &
          "Rank ", my_rank, " received faulty data"
       valid_data = .FALSE.
    END IF
 
    DEALLOCATE(rbuffer)
-   DEALLOCATE(sbuffer)
 
    CALL MPI_Finalize(ierr)
 
    IF (.NOT.valid_data) STOP 1
-END PROGRAM reduce_scatter
+END PROGRAM ireduce_scatter_inplace

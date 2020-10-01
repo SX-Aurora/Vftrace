@@ -1,4 +1,4 @@
-PROGRAM reduce_scatter
+PROGRAM ireduce_scatter
 
    USE, INTRINSIC :: ISO_FORTRAN_ENV
    USE mpi
@@ -22,6 +22,9 @@ PROGRAM reduce_scatter
 
    LOGICAL :: valid_data
 
+   INTEGER :: myrequest
+   INTEGER :: mystatus(MPI_STATUS_SIZE)
+
    INTEGER :: irank, i, idx
 
    INTEGER :: ierr
@@ -44,7 +47,7 @@ PROGRAM reduce_scatter
 
    ! require cmd-line argument
    IF (COMMAND_ARGUMENT_COUNT() < 1) THEN
-      WRITE(UNIT=OUTPUT_UNIT, FMT="(A)") "./reduce_scatter <msgsize in integers>"
+      WRITE(UNIT=OUTPUT_UNIT, FMT="(A)") "./ireduce_scatter <msgsize in integers>"
       STOP 1
    END IF
 
@@ -68,12 +71,15 @@ PROGRAM reduce_scatter
    ALLOCATE(rbuffer(recvcounts(my_rank+1)))
    rbuffer(:) = -1
 
-   ! Message cycle
-   CALL MPI_Reduce_scatter(sbuffer, rbuffer, recvcounts, MPI_INTEGER, &
-                           MPI_SUM, MPI_COMM_WORLD, ierr)
+   ! Message
+
+   CALL MPI_Ireduce_scatter(sbuffer, rbuffer, recvcounts, MPI_INTEGER, &
+                            MPI_SUM, MPI_COMM_WORLD, myrequest, ierr)
 
    WRITE(UNIT=OUTPUT_UNIT, FMT="(A,I4)") &
       "Reducing and scattering messages from all ranks to all ranks on rank", my_rank
+
+   CALL MPI_Wait(myrequest, mystatus, ierr)
 
    ! validate data
    valid_data = .TRUE.
@@ -89,4 +95,4 @@ PROGRAM reduce_scatter
    CALL MPI_Finalize(ierr)
 
    IF (.NOT.valid_data) STOP 1
-END PROGRAM reduce_scatter
+END PROGRAM ireduce_scatter
