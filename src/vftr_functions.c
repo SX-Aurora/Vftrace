@@ -255,7 +255,6 @@ void vftr_find_function (char *func_name, int **func_indices, int **stack_indice
 		*func_indices = (int*)malloc(*n_indices * sizeof(int));
 		int idx = 0;
 		for (int i = 0; i < vftr_gStackscount; i++) {
-			//s_compare = strdup(vftr_func_table[i]->name);
 			s_compare = strdup(vftr_gStackinfo[i].name);
 			if (to_lower_case) {
 				for (int i = 0; i < strlen(s_compare); i++) {
@@ -338,6 +337,14 @@ void vftr_write_function (FILE *fp, function_t *func) {
 	fprintf (fp, "\tExclude: %d\n", func->exclude_this);
 }
 		
+/**********************************************************************/
+
+void vftr_strip_all_module_names () {
+	printf ("Strip module names: %d\n", vftr_stackscount);
+	for (int i = 0; i < vftr_stackscount; i++) {
+		vftr_func_table[i]->name = vftr_strip_module_name (vftr_func_table[i]->name);
+	}
+}
 /**********************************************************************/
 
 int vftr_functions_test_1 (FILE *fp_in, FILE *fp_out) {

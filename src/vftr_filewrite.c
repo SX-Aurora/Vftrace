@@ -1019,7 +1019,7 @@ void vftr_print_profile (FILE *pout, int *ntop, long long time0) {
         	}
 	}
 
-	fprintf (pout, "%s(%d)", funcTable[i_func]->name, i_func);
+	fprintf (pout, "%s", funcTable[i_func]->name);
         for (int j = strlen(funcTable[i_func]->name); j <= formats->func_name; j++) {
             fputc (' ', pout);
         }
