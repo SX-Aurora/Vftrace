@@ -628,7 +628,8 @@ check_PROGRAMS += put \
 		  raccumulate \
 		  get_accumulate \
 		  rget_accumulate \
-		  fetch_and_op
+		  fetch_and_op \
+		  compare_and_swap
 
 put_SOURCES = $(srcdir)/put.c
 put_CFLAGS = $(AM_CFLAGS)
@@ -665,6 +666,10 @@ rget_accumulate_LDFLAGS = $(AM_LDFLAGS)
 fetch_and_op_SOURCES = $(srcdir)/fetch_and_op.c
 fetch_and_op_CFLAGS = $(AM_CFLAGS)
 fetch_and_op_LDFLAGS = $(AM_LDFLAGS)
+
+compare_and_swap_SOURCES = $(srcdir)/compare_and_swap.c
+compare_and_swap_CFLAGS = $(AM_CFLAGS)
+compare_and_swap_LDFLAGS = $(AM_LDFLAGS)
 
 dist_noinst_SCRIPTS += put.sh \
 		       rput.sh \
