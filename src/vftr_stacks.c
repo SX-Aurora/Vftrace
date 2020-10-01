@@ -662,7 +662,7 @@ int vftr_stack_length (int stack_id0) {
 
 enum new_leaf_type {ORIGIN, NEXT, CALLEE};
 
-void create_new_leaf (stack_leaf_t **new_leaf, int stack_id, int func_id, enum new_leaf_type leaf_type) {
+void vftr_create_new_leaf (stack_leaf_t **new_leaf, int stack_id, int func_id, enum new_leaf_type leaf_type) {
 	if (leaf_type == ORIGIN) {
 		*new_leaf = (stack_leaf_t*) malloc (sizeof(stack_leaf_t));
 		(*new_leaf)->stack_id = stack_id;
@@ -692,13 +692,13 @@ void create_new_leaf (stack_leaf_t **new_leaf, int stack_id, int func_id, enum n
 
 /**********************************************************************/
 
-void fill_into_stack_tree (stack_leaf_t **this_leaf, int n_stack_ids,
+void vftr_fill_into_stack_tree (stack_leaf_t **this_leaf, int n_stack_ids,
 			   int *stack_ids, int func_id) {
 	int stack_id = stack_ids[n_stack_ids - 1];
 	if (*this_leaf) {
 		*this_leaf = (*this_leaf)->origin;
 	} else {
-		create_new_leaf (this_leaf, stack_id, func_id, ORIGIN);
+		vftr_create_new_leaf (this_leaf, stack_id, func_id, ORIGIN);
 	}
 	for (int level = n_stack_ids - 2; level >= 0; level--) {
 		stack_id = stack_ids[level];
@@ -708,13 +708,13 @@ void fill_into_stack_tree (stack_leaf_t **this_leaf, int n_stack_ids,
 				if ((*this_leaf)->next_in_level) {
 					*this_leaf = (*this_leaf)->next_in_level;
 				} else {
-					create_new_leaf (this_leaf, stack_id, func_id, NEXT);
+					vftr_create_new_leaf (this_leaf, stack_id, func_id, NEXT);
 					*this_leaf = (*this_leaf)->next_in_level;
 					break;
 				}
 			}
 		} else {
-			create_new_leaf (this_leaf, stack_id, func_id, CALLEE);
+			vftr_create_new_leaf (this_leaf, stack_id, func_id, CALLEE);
 			*this_leaf = (*this_leaf)->callee;
 		}
 	}	
@@ -722,14 +722,14 @@ void fill_into_stack_tree (stack_leaf_t **this_leaf, int n_stack_ids,
 
 /**********************************************************************/
 
-void print_stacktree (FILE *fp, stack_leaf_t *leaf, int n_spaces, long long *total_time, double *imbalances) {
+void vftr_print_stacktree (FILE *fp, stack_leaf_t *leaf, int n_spaces, long long *total_time, double *imbalances) {
 	if (!leaf) return;
 	fprintf (fp, vftr_gStackinfo[leaf->stack_id].name);
 	if (leaf->callee) {
 		fprintf (fp, ">");
 		int new_n_spaces = n_spaces + strlen(vftr_gStackinfo[leaf->stack_id].name);
 		if (n_spaces > 0) new_n_spaces++;
-		print_stacktree (fp, leaf->callee, new_n_spaces, total_time, imbalances);
+		vftr_print_stacktree (fp, leaf->callee, new_n_spaces, total_time, imbalances);
 	} else {
 		*total_time += vftr_func_table[leaf->func_id]->prof_current.timeIncl;
 		fprintf (fp, ": %lf %d %lf\n", (double)vftr_func_table[leaf->func_id]->prof_current.timeIncl * 1e-6, vftr_func_table[leaf->func_id]->prof_current.calls, imbalances[leaf->func_id]);
@@ -737,13 +737,13 @@ void print_stacktree (FILE *fp, stack_leaf_t *leaf, int n_spaces, long long *tot
 	if (leaf->next_in_level) {
 		for (int i = 0; i < n_spaces; i++) fprintf (fp, " ");
 		fprintf (fp, ">");
-		print_stacktree (fp, leaf->next_in_level, n_spaces, total_time, imbalances);
+		vftr_print_stacktree (fp, leaf->next_in_level, n_spaces, total_time, imbalances);
 	}
 }
 
 /**********************************************************************/
 
-void print_function_stack (FILE *fp, int rank, char *func_name, int n_final_stack_ids,
+void vftr_print_function_stack (FILE *fp, int rank, char *func_name, int n_final_stack_ids,
 			   int *final_stack_ids, int *final_func_ids) {
 	long long all_times [vftr_mpisize];
 	double imbalances [vftr_func_table_size];
@@ -774,11 +774,11 @@ void print_function_stack (FILE *fp, int rank, char *func_name, int n_final_stac
 			stack_id = vftr_gStackinfo[stack_id].ret;
 		}
 		//printf ("name: %s, n_ids: %d, imba: %lf\n", func_name, n_functions_in_stack, imbalances[fsid]);
-		fill_into_stack_tree (&stack_tree, n_functions_in_stack, stack_ids, function_id);
+		vftr_fill_into_stack_tree (&stack_tree, n_functions_in_stack, stack_ids, function_id);
 		free (stack_ids);
 	}
 	long long total_time = 0;
-	print_stacktree (fp, stack_tree->origin, 0, &total_time, imbalances);
+	vftr_print_stacktree (fp, stack_tree->origin, 0, &total_time, imbalances);
 	free (stack_tree);
 	fprintf (fp, "Total(%s): %lf sec. \n\n", func_name, (double)total_time * 1e-6);
 }
