@@ -678,7 +678,9 @@ dist_noinst_SCRIPTS += put.sh \
 		       accumulate.sh \
 		       raccumulate.sh \
 		       get_accumulate.sh \
-		       rget_accumulate.sh 
+		       rget_accumulate.sh \
+		       fetch_and_op.sh \
+		       compare_and_swap.sh
 
 ##############
 # Test tests #
