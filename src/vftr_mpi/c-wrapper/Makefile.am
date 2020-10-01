@@ -80,7 +80,8 @@ libvftr_cmpiwrap_la_SOURCES += vftr_mpi_put_cwrap.c \
 			       vftr_mpi_accumulate_cwrap.c \
 			       vftr_mpi_raccumulate_cwrap.c \
 			       vftr_mpi_get_accumulate_cwrap.c \
-			       vftr_mpi_rget_accumulate_cwrap.c
+			       vftr_mpi_rget_accumulate_cwrap.c \
+			       vftr_mpi_fetch_and_op_cwrap.c
 
 ############
 # pcontrol #

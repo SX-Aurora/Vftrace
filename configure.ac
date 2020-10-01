@@ -343,6 +343,7 @@ AM_COND_IF([MPI_PROFILING],
                             test/mpi/c-mpi/raccumulate.sh:test/mpi/testscripts/raccumulate.sh
                             test/mpi/c-mpi/get_accumulate.sh:test/mpi/testscripts/get_accumulate.sh
                             test/mpi/c-mpi/rget_accumulate.sh:test/mpi/testscripts/rget_accumulate.sh
+                            test/mpi/c-mpi/fetch_and_op.sh:test/mpi/testscripts/fetch_and_op.sh
                             test/mpi/c-mpi/test.sh:test/mpi/testscripts/test.sh
                             test/mpi/c-mpi/testany.sh:test/mpi/testscripts/testany.sh
                             test/mpi/c-mpi/testsome.sh:test/mpi/testscripts/testsome.sh
@@ -465,6 +466,7 @@ AM_COND_IF([MPI_PROFILING],
                             test/mpi/f-mpi/raccumulate.sh:test/mpi/testscripts/raccumulate.sh
                             test/mpi/f-mpi/get_accumulate.sh:test/mpi/testscripts/get_accumulate.sh
                             test/mpi/f-mpi/rget_accumulate.sh:test/mpi/testscripts/rget_accumulate.sh
+                            test/mpi/f-mpi/fetch_and_op.sh:test/mpi/testscripts/fetch_and_op.sh
                             test/mpi/f-mpi/test.sh:test/mpi/testscripts/test.sh
                             test/mpi/f-mpi/testany.sh:test/mpi/testscripts/testany.sh
                             test/mpi/f-mpi/testsome.sh:test/mpi/testscripts/testsome.sh
@@ -587,6 +589,7 @@ AM_COND_IF([MPI_PROFILING],
                             test/mpi/f08-mpi/raccumulate.sh:test/mpi/testscripts/raccumulate.sh
                             test/mpi/f08-mpi/get_accumulate.sh:test/mpi/testscripts/get_accumulate.sh
                             test/mpi/f08-mpi/rget_accumulate.sh:test/mpi/testscripts/rget_accumulate.sh
+                            test/mpi/f08-mpi/fetch_and_op.sh:test/mpi/testscripts/fetch_and_op.sh
                             test/mpi/f08-mpi/test.sh:test/mpi/testscripts/test.sh
                             test/mpi/f08-mpi/testany.sh:test/mpi/testscripts/testany.sh
                             test/mpi/f08-mpi/testsome.sh:test/mpi/testscripts/testsome.sh
