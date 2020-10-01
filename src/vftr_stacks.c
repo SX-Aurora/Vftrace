@@ -310,8 +310,11 @@ int vftr_normalize_stacks() {
 
 #ifdef _MPI
     // If the logfile is supposed to be available for all ranks,
-    // the global stack info needs to be communicated to all ranks
-    if (vftr_environment->logfile_all_ranks->value) {
+    // the global stack info needs to be communicated to all ranks.
+    // We also need to communicate if stack profiles with imbalances are to be printed,
+    // because identical function stacks can be located at different positions in the
+    // function table or not be present at all. 
+    if (vftr_environment->logfile_all_ranks->value || vftr_environment->print_stack_profile->value) {
        // The amount of unique stacks is know due to the hash synchronisation earlier
        // allocate memory on all but 0th rank
        if (vftr_mpirank != 0) {
