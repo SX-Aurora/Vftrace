@@ -41,6 +41,8 @@ libvftr_f08mpiwrap_la_SOURCES += vftr_mpi_bcast_f08wrap.F90 \
 ####################
 libvftr_f08mpiwrap_la_SOURCES += vftr_mpi_reduce_f08wrap.F90 \
 				 vftr_mpi_allreduce_f08wrap.F90 \
+				 vftr_mpi_reduce_scatter_block_f08wrap.F90 \
+				 vftr_mpi_reduce_scatter_f08wrap.F90 \
 				 vftr_mpi_scan_f08wrap.F90 \
 				 vftr_mpi_exscan_f08wrap.F90
 

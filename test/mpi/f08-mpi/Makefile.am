@@ -259,6 +259,12 @@ check_PROGRAMS += reduce \
 		  allreduce \
 		  allreduce_intercom \
 		  allreduce_inplace \
+		  reduce_scatter_block \
+		  reduce_scatter_block_intercom \
+		  reduce_scatter_block_inplace \
+		  reduce_scatter \
+		  reduce_scatter_intercom \
+		  reduce_scatter_inplace \
 		  scan \
 		  scan_inplace \
 		  exscan \
@@ -288,6 +294,30 @@ allreduce_inplace_SOURCES = $(srcdir)/allreduce_inplace.F90
 allreduce_inplace_FCFLAGS = $(AM_FCFLAGS)
 allreduce_inplace_LDFLAGS = $(AM_LDFLAGS)
 
+reduce_scatter_block_SOURCES = $(srcdir)/reduce_scatter_block.F90
+reduce_scatter_block_FCFLAGS = $(AM_FCFLAGS)
+reduce_scatter_block_LDFLAGS = $(AM_LDFLAGS)
+
+reduce_scatter_block_intercom_SOURCES = $(srcdir)/reduce_scatter_block_intercom.F90
+reduce_scatter_block_intercom_FCFLAGS = $(AM_FCFLAGS)
+reduce_scatter_block_intercom_LDFLAGS = $(AM_LDFLAGS)
+
+reduce_scatter_block_inplace_SOURCES = $(srcdir)/reduce_scatter_block_inplace.F90
+reduce_scatter_block_inplace_FCFLAGS = $(AM_FCFLAGS)
+reduce_scatter_block_inplace_LDFLAGS = $(AM_LDFLAGS)
+
+reduce_scatter_SOURCES = $(srcdir)/reduce_scatter.F90
+reduce_scatter_FCFLAGS = $(AM_FCFLAGS)
+reduce_scatter_LDFLAGS = $(AM_LDFLAGS)
+
+reduce_scatter_intercom_SOURCES = $(srcdir)/reduce_scatter_intercom.F90
+reduce_scatter_intercom_FCFLAGS = $(AM_FCFLAGS)
+reduce_scatter_intercom_LDFLAGS = $(AM_LDFLAGS)
+
+reduce_scatter_inplace_SOURCES = $(srcdir)/reduce_scatter_inplace.F90
+reduce_scatter_inplace_FCFLAGS = $(AM_FCFLAGS)
+reduce_scatter_inplace_LDFLAGS = $(AM_LDFLAGS)
+
 scan_SOURCES = $(srcdir)/scan.F90
 scan_FCFLAGS = $(AM_FCFLAGS)
 scan_LDFLAGS = $(AM_LDFLAGS)
@@ -310,6 +340,12 @@ dist_noinst_SCRIPTS += reduce.sh \
 		       allreduce.sh \
 		       allreduce_intercom.sh \
 		       allreduce_inplace.sh \
+		       reduce_scatter_block.sh \
+		       reduce_scatter_block_intercom.sh \
+		       reduce_scatter_block_inplace.sh \
+		       reduce_scatter.sh \
+		       reduce_scatter_intercom.sh \
+		       reduce_scatter_inplace.sh \
 		       scan.sh \
 		       scan_inplace.sh \
 		       exscan.sh \
