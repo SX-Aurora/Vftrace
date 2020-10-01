@@ -12,6 +12,7 @@ for itrial in $(seq 1 1 ${ntrials});
 do
    # Generate a random message size
    nb=$(bc <<< "32*${RANDOM}")
+   if [[ "${nb}" -lt "${nprocs}" ]] ; then nb=${nprocs} ; fi
    mpirun -np ${nprocs} ./${vftr_binary} ${nb} || exit 1
 
    ../../../tools/tracedump ${vftr_binary}_0.vfd
