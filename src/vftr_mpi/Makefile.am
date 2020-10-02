@@ -149,7 +149,8 @@ libvftr_mpi_la_SOURCES += vftr_mpi_put_f.c \
 			  vftr_mpi_accumulate_f.c \
 			  vftr_mpi_raccumulate_f.c \
 			  vftr_mpi_get_accumulate_f.c \
-			  vftr_mpi_rget_accumulate_f.c
+			  vftr_mpi_rget_accumulate_f.c \
+			  vftr_mpi_fetch_and_op_f.c
 
 ############
 # pcontrol #
