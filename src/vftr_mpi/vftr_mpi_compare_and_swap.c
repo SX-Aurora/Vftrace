@@ -37,6 +37,7 @@ int vftr_MPI_Compare_and_swap(const void *origin_addr, const void *compare_addr,
                                          datatype, target_rank, target_disp, win);
       long long tend = vftr_get_runtime_usec();
 
+      long long t2start = tend;
       // Need to figure out the partner rank in a known communicator to store info
       MPI_Group local_group;
       PMPI_Win_get_group(win, &local_group);
@@ -55,6 +56,10 @@ int vftr_MPI_Compare_and_swap(const void *origin_addr, const void *compare_addr,
                                    -1, MPI_COMM_WORLD, tstart, tend);
       vftr_store_sync_message_info(send, 1, datatype, global_rank,
                                    -1, MPI_COMM_WORLD, tstart, tend);
+      long long t2end = vftr_get_runtime_usec();
+
+      vftr_mpi_overhead_used += t2end - t2start;
+
       return retVal;
    }
 }
