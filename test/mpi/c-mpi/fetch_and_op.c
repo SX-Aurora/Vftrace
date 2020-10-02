@@ -105,7 +105,6 @@ int main(int argc, char** argv) {
       resultbuffer=NULL;
    } else {
       // contents of target buffer should be the sum of all ranks up to this one
-      int refresult = (my_rank*(my_rank+1))/2;
       for (int i=0; i<nints; i++) {
          int refresult;
          if (i==0) {
