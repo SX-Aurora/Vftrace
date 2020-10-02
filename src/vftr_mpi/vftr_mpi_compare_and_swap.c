@@ -58,7 +58,7 @@ int vftr_MPI_Compare_and_swap(const void *origin_addr, const void *compare_addr,
                                    -1, MPI_COMM_WORLD, tstart, tend);
       long long t2end = vftr_get_runtime_usec();
 
-      vftr_mpi_overhead_used += t2end - t2start;
+      vftr_mpi_overhead_usec += t2end - t2start;
 
       return retVal;
    }
