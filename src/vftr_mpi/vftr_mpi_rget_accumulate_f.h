@@ -16,17 +16,17 @@
    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-#ifndef VFTR_MPI_RGET_ACCUMULATE_F_H
-#define VFTR_MPI_RGET_ACCUMULATE_F_H
+#ifndef VFTR_MPI_GET_ACCUMULATE_F_H
+#define VFTR_MPI_GET_ACCUMULATE_F_H
 
 #ifdef _MPI
 #include <mpi.h>
 
-void vftr_MPI_Rget_accumulate_F(void *origin_addr, MPI_Fint *origin_count, MPI_Fint *f_origin_datatype,
-                                void *result_addr, MPI_Fint *result_count, MPI_Fint *f_result_datatype,
-                                MPI_Fint *target_rank, MPI_Aint *target_disp, MPI_Fint *target_count,
-                                MPI_Fint *f_target_datatype, MPI_Fint *f_op, MPI_Fint *f_win,
-                                MPI_Fint *f_request, MPI_Fint *f_error);
+void vftr_MPI_Get_accumulate_F(void *origin_addr, MPI_Fint *origin_count, MPI_Fint *f_origin_datatype,
+                               void *result_addr, MPI_Fint *result_count, MPI_Fint *f_result_datatype,
+                               MPI_Fint *target_rank, MPI_Aint *target_disp, MPI_Fint *target_count,
+                               MPI_Fint *f_target_datatype, MPI_Fint *f_op, MPI_Fint *f_win,
+                               MPI_Fint *f_error);
 
 #endif
 #endif
