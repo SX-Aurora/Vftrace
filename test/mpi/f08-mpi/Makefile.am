@@ -358,7 +358,8 @@ check_PROGRAMS += put \
 		  get \
 		  accumulate \
 		  get_accumulate \
-		  fetch_and_op
+		  fetch_and_op \
+		  compare_and_swap
 
 put_SOURCES = $(srcdir)/put.F90
 put_FCFLAGS = $(AM_FCFLAGS)
@@ -380,11 +381,16 @@ fetch_and_op_SOURCES = $(srcdir)/fetch_and_op.F90
 fetch_and_op_FCFLAGS = $(AM_FCFLAGS)
 fetch_and_op_LDFLAGS = $(AM_LDFLAGS)
 
+compare_and_swap_SOURCES = $(srcdir)/compare_and_swap.F90
+compare_and_swap_FCFLAGS = $(AM_FCFLAGS)
+compare_and_swap_LDFLAGS = $(AM_LDFLAGS)
+
 dist_noinst_SCRIPTS += put.sh \
 		       get.sh \
 		       accumulate.sh \
 		       get_accumulate.sh \
-		       fetch_and_op.sh
+		       fetch_and_op.sh \
+		       compare_and_swap.sh
 
 ###############
 ## Test tests #
