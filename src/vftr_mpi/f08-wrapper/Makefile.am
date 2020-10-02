@@ -52,7 +52,8 @@ libvftr_f08mpiwrap_la_SOURCES += vftr_mpi_reduce_f08wrap.F90 \
 libvftr_f08mpiwrap_la_SOURCES += vftr_mpi_put_f08wrap.F90 \
 				 vftr_mpi_get_f08wrap.F90 \
 				 vftr_mpi_accumulate_f08wrap.F90 \
-				 vftr_mpi_get_accumulate_f08wrap.F90
+				 vftr_mpi_get_accumulate_f08wrap.F90 \
+				 vftr_mpi_fetch_and_op_f08wrap.F90
 
 ############
 # pcontrol #
