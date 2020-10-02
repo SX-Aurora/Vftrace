@@ -132,7 +132,8 @@ libvftr_fmpiwrap_la_SOURCES += vftr_mpi_put_c2f.F90 \
 			       vftr_mpi_raccumulate_c2f.F90 \
 			       vftr_mpi_get_accumulate_c2f.F90 \
 			       vftr_mpi_rget_accumulate_c2f.F90 \
-			       vftr_mpi_fetch_and_op_c2f.F90
+			       vftr_mpi_fetch_and_op_c2f.F90 \
+			       vftr_mpi_compare_and_swap_c2f.F90
 libvftr_fmpiwrap_la_SOURCES += vftr_mpi_put_fwrap.F90 \
 			       vftr_mpi_rput_fwrap.F90 \
 			       vftr_mpi_get_fwrap.F90 \
@@ -141,7 +142,8 @@ libvftr_fmpiwrap_la_SOURCES += vftr_mpi_put_fwrap.F90 \
 			       vftr_mpi_raccumulate_fwrap.F90 \
 			       vftr_mpi_get_accumulate_fwrap.F90 \
 			       vftr_mpi_rget_accumulate_fwrap.F90 \
-			       vftr_mpi_fetch_and_op_fwrap.F90
+			       vftr_mpi_fetch_and_op_fwrap.F90 \
+			       vftr_mpi_compare_and_swap_fwrap.F90
 
 ############
 # pcontrol #
