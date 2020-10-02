@@ -36,8 +36,8 @@ int vftr_MPI_Ireduce_scatter(const void *sendbuf, void *recvbuf, const int *recv
    } else {
       long long tstart = vftr_get_runtime_usec();
       int retVal = PMPI_Ireduce_scatter(sendbuf, recvbuf, recvcounts, datatype, op, comm, request);
-      long long tend = vftr_get_runtime_usec();
   
+      long long t2start = vftr_get_runtime_usec();
       // determine if inter or intra communicator
       int isintercom;
       PMPI_Comm_test_inter(comm, &isintercom);
@@ -268,6 +268,9 @@ int vftr_MPI_Ireduce_scatter(const void *sendbuf, void *recvbuf, const int *recv
             }
          }
       }
+      long long t2end = vftr_get_runtime_usec();
+
+      vftr_mpi_overhead_usec += t2end - t2start;
   
       return retVal;
    }
