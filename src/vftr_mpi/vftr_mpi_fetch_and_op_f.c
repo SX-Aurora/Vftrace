@@ -21,7 +21,7 @@
 
 #include "vftr_mpi_fetch_and_op.h"
 
-void vftr_MPI_Fetch_and_op_F(cont void *origin_addr, void *result_addr, MPI_Fint *f_datatype,
+void vftr_MPI_Fetch_and_op_F(const void *origin_addr, void *result_addr, MPI_Fint *f_datatype,
                              MPI_Fint *target_rank, MPI_Aint *target_disp, MPI_Fint *f_op,
                              MPI_Fint *f_win, MPI_Fint *f_error) {
 
