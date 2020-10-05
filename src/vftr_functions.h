@@ -43,8 +43,9 @@ typedef struct Function {
    uint64_t stackHash;
 } function_t;
 
+enum function_search_type {FUNC_TABLE, STACK_INFO};
 void vftr_find_function (char *func_name, int **func_indices, int **stack_indices,
-		         int *n_indices, bool to_lower_case);
+		         int *n_indices, bool to_lower_case, enum function_search_type search_type);
 
 // add a new function to the stack tables
 function_t *vftr_new_function(void *arg, const char *function_name,
