@@ -28,7 +28,8 @@ libvftr_f08mpiwrap_la_SOURCES +=
 ###############
 # collectives #
 ###############
-libvftr_f08mpiwrap_la_SOURCES += vftr_mpi_bcast_f08wrap.F90 \
+libvftr_f08mpiwrap_la_SOURCES += vftr_mpi_barrier_f08wrap.F90 \
+				 vftr_mpi_bcast_f08wrap.F90 \
 				 vftr_mpi_gather_f08wrap.F90 \
 				 vftr_mpi_gatherv_f08wrap.F90 \
 				 vftr_mpi_scatter_f08wrap.F90 \

@@ -20,8 +20,6 @@
 #ifdef _MPI
 #include <mpi.h>
 
-#include <stdlib.h>
-
 int vftr_MPI_Barrier(MPI_Comm comm) {
    // there is no timing needed but we keep the wrapper here
    // for the instrumentation

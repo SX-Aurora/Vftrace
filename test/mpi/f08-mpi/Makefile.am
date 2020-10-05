@@ -73,7 +73,8 @@ else
 ## Collective tests #
 #####################
 #
-check_PROGRAMS += bcast \
+check_PROGRAMS += barrier \
+		  bcast \
 		  bcast_intercom \
 		  gather \
 		  gather_intercom \
@@ -102,6 +103,10 @@ check_PROGRAMS += bcast \
 		  alltoallw \
 		  alltoallw_intercom \
 		  alltoallw_inplace
+
+barrier_SOURCES = $(srcdir)/barrier.F90
+barrier_FCFLAGS = $(AM_FCFLAGS)
+barrier_LDFLAGS = $(AM_LDFLAGS)
 
 bcast_SOURCES = $(srcdir)/bcast.F90
 bcast_FCFLAGS = $(AM_FCFLAGS)
@@ -219,7 +224,8 @@ alltoallw_inplace_SOURCES = $(srcdir)/alltoallw_inplace.F90
 alltoallw_inplace_FCFLAGS = $(AM_FCFLAGS)
 alltoallw_inplace_LDFLAGS = $(AM_LDFLAGS)
 
-dist_noinst_SCRIPTS += bcast.sh \
+dist_noinst_SCRIPTS += barrier.sh \
+		       bcast.sh \
 		       bcast_intercom.sh \
 		       gather.sh \
 		       gather_intercom.sh \

@@ -106,7 +106,8 @@ dist_noinst_SCRIPTS += send_recv.sh \
 # Collective tests #
 ####################
 
-check_PROGRAMS += bcast \
+check_PROGRAMS += barrier \
+		  bcast \
 		  bcast_intercom \
 		  ibcast \
 		  ibcast_intercom \
@@ -164,6 +165,10 @@ check_PROGRAMS += bcast \
 		  ialltoallw \
 		  ialltoallw_inplace \
 		  ialltoallw_intercom
+
+barrier_SOURCES = $(srcdir)/barrier.c
+barrier_CFLAGS = $(AM_CFLAGS)
+barrier_LDFLAGS = $(AM_LDFLAGS)
 
 bcast_SOURCES = $(srcdir)/bcast.c
 bcast_CFLAGS = $(AM_CFLAGS)
@@ -397,7 +402,8 @@ ialltoallw_intercom_SOURCES = $(srcdir)/ialltoallw_intercom.c
 ialltoallw_intercom_CFLAGS = $(AM_CFLAGS)
 ialltoallw_intercom_LDFLAGS = $(AM_LDFLAGS)
 
-dist_noinst_SCRIPTS += bcast.sh \
+dist_noinst_SCRIPTS += barrier.sh \
+		       bcast.sh \
 		       bcast_intercom.sh \
 		       ibcast.sh \
 		       ibcast_intercom.sh \

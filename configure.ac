@@ -251,6 +251,7 @@ AM_COND_IF([MPI_PROFILING],
                             test/mpi/c-mpi/send_irecv.sh:test/mpi/testscripts/send_irecv.sh
                             test/mpi/c-mpi/sendrecv.sh:test/mpi/testscripts/sendrecv.sh
                             test/mpi/c-mpi/sendrecv_replace.sh:test/mpi/testscripts/sendrecv_replace.sh
+                            test/mpi/c-mpi/barrier.sh:test/mpi/testscripts/barrier.sh
                             test/mpi/c-mpi/bcast.sh:test/mpi/testscripts/bcast.sh
                             test/mpi/c-mpi/bcast_intercom.sh:test/mpi/testscripts/bcast_intercom.sh
                             test/mpi/c-mpi/ibcast.sh:test/mpi/testscripts/ibcast.sh
@@ -381,6 +382,7 @@ AM_COND_IF([MPI_PROFILING],
                             test/mpi/f-mpi/send_irecv.sh:test/mpi/testscripts/send_irecv.sh
                             test/mpi/f-mpi/sendrecv.sh:test/mpi/testscripts/sendrecv.sh
                             test/mpi/f-mpi/sendrecv_replace.sh:test/mpi/testscripts/sendrecv_replace.sh
+                            test/mpi/f-mpi/barrier.sh:test/mpi/testscripts/barrier.sh
                             test/mpi/f-mpi/bcast.sh:test/mpi/testscripts/bcast.sh
                             test/mpi/f-mpi/bcast_intercom.sh:test/mpi/testscripts/bcast_intercom.sh
                             test/mpi/f-mpi/ibcast.sh:test/mpi/testscripts/ibcast.sh
@@ -511,6 +513,7 @@ AM_COND_IF([MPI_PROFILING],
                             test/mpi/f08-mpi/send_irecv.sh:test/mpi/testscripts/send_irecv.sh
                             test/mpi/f08-mpi/sendrecv.sh:test/mpi/testscripts/sendrecv.sh
                             test/mpi/f08-mpi/sendrecv_replace.sh:test/mpi/testscripts/sendrecv_replace.sh
+                            test/mpi/f08-mpi/barrier.sh:test/mpi/testscripts/barrier.sh
                             test/mpi/f08-mpi/bcast.sh:test/mpi/testscripts/bcast.sh
                             test/mpi/f08-mpi/bcast_intercom.sh:test/mpi/testscripts/bcast_intercom.sh
                             test/mpi/f08-mpi/ibcast.sh:test/mpi/testscripts/ibcast.sh
