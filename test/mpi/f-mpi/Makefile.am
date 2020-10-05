@@ -35,14 +35,27 @@ dist_noinst_SCRIPTS = init_finalize-1.sh \
 # point to point tests #
 ########################
 check_PROGRAMS += send_recv \
-		  sendrecv \
-		  sendrecv_replace \
 		  isend_recv \
-		  send_irecv
+		  bsend_recv \
+		  send_irecv \
+		  sendrecv \
+		  sendrecv_replace 
 
 send_recv_SOURCES = $(srcdir)/send_recv.F90
 send_recv_FCFLAGS = $(AM_FCFLAGS)
 send_recv_LDFLAGS = $(AM_LDFLAGS)
+
+isend_recv_SOURCES = $(srcdir)/isend_recv.F90
+isend_recv_FCFLAGS = $(AM_FCFLAGS)
+isend_recv_LDFLAGS = $(AM_LDFLAGS)
+
+bsend_recv_SOURCES = $(srcdir)/bsend_recv.F90
+bsend_recv_FCFLAGS = $(AM_FCFLAGS)
+bsend_recv_LDFLAGS = $(AM_LDFLAGS)
+
+send_irecv_SOURCES = $(srcdir)/send_irecv.F90
+send_irecv_FCFLAGS = $(AM_FCFLAGS)
+send_irecv_LDFLAGS = $(AM_LDFLAGS)
 
 sendrecv_SOURCES = $(srcdir)/sendrecv.F90
 sendrecv_FCFLAGS = $(AM_FCFLAGS)
@@ -52,19 +65,12 @@ sendrecv_replace_SOURCES = $(srcdir)/sendrecv_replace.F90
 sendrecv_replace_FCFLAGS = $(AM_FCFLAGS)
 sendrecv_replace_LDFLAGS = $(AM_LDFLAGS)
 
-isend_recv_SOURCES = $(srcdir)/isend_recv.F90
-isend_recv_FCFLAGS = $(AM_FCFLAGS)
-isend_recv_LDFLAGS = $(AM_LDFLAGS)
-
-send_irecv_SOURCES = $(srcdir)/send_irecv.F90
-send_irecv_FCFLAGS = $(AM_FCFLAGS)
-send_irecv_LDFLAGS = $(AM_LDFLAGS)
-
 dist_noinst_SCRIPTS += send_recv.sh \
-		       sendrecv.sh \
-		       sendrecv_replace.sh \
 		       isend_recv.sh \
-		       send_irecv.sh
+		       bsend_recv.sh \
+		       send_irecv.sh \
+		       sendrecv.sh \
+		       sendrecv_replace.sh 
 
 #####################
 ## Collective tests #

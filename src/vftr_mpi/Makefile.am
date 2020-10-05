@@ -17,16 +17,18 @@ libvftr_mpi_la_SOURCES += vftr_sync_messages.c \
 ##################
 # point to point #
 ##################
-libvftr_mpi_la_SOURCES += vftr_mpi_irecv.c \
+libvftr_mpi_la_SOURCES += vftr_mpi_send.c \
 			  vftr_mpi_isend.c \
+			  vftr_mpi_bsend.c \
 			  vftr_mpi_recv.c \
-			  vftr_mpi_send.c \
+			  vftr_mpi_irecv.c \
 			  vftr_mpi_sendrecv.c \
 			  vftr_mpi_sendrecv_replace.c
-libvftr_mpi_la_SOURCES += vftr_mpi_irecv_f.c \
+libvftr_mpi_la_SOURCES += vftr_mpi_send_f.c \
 			  vftr_mpi_isend_f.c \
+			  vftr_mpi_bsend_f.c \
 			  vftr_mpi_recv_f.c \
-			  vftr_mpi_send_f.c \
+			  vftr_mpi_irecv_f.c \
 			  vftr_mpi_sendrecv_f.c \
 			  vftr_mpi_sendrecv_replace_f.c
 

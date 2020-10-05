@@ -241,10 +241,11 @@ AM_COND_IF([MPI_PROFILING],
                             test/mpi/c-mpi/ctypes.sh:test/mpi/testscripts/ctypes.sh
                             test/mpi/c-mpi/derived_ctypes.sh:test/mpi/testscripts/derived_ctypes.sh
                             test/mpi/c-mpi/send_recv.sh:test/mpi/testscripts/send_recv.sh
+                            test/mpi/c-mpi/isend_recv.sh:test/mpi/testscripts/isend_recv.sh
+                            test/mpi/c-mpi/bsend_recv.sh:test/mpi/testscripts/bsend_recv.sh
+                            test/mpi/c-mpi/send_irecv.sh:test/mpi/testscripts/send_irecv.sh
                             test/mpi/c-mpi/sendrecv.sh:test/mpi/testscripts/sendrecv.sh
                             test/mpi/c-mpi/sendrecv_replace.sh:test/mpi/testscripts/sendrecv_replace.sh
-                            test/mpi/c-mpi/isend_recv.sh:test/mpi/testscripts/isend_recv.sh
-                            test/mpi/c-mpi/send_irecv.sh:test/mpi/testscripts/send_irecv.sh
                             test/mpi/c-mpi/bcast.sh:test/mpi/testscripts/bcast.sh
                             test/mpi/c-mpi/bcast_intercom.sh:test/mpi/testscripts/bcast_intercom.sh
                             test/mpi/c-mpi/ibcast.sh:test/mpi/testscripts/ibcast.sh
@@ -365,10 +366,11 @@ AM_COND_IF([MPI_PROFILING],
                             test/mpi/f-mpi/ftypes.sh:test/mpi/testscripts/ftypes.sh
                             test/mpi/f-mpi/derived_ftypes.sh:test/mpi/testscripts/derived_ftypes.sh
                             test/mpi/f-mpi/send_recv.sh:test/mpi/testscripts/send_recv.sh
+                            test/mpi/f-mpi/isend_recv.sh:test/mpi/testscripts/isend_recv.sh
+                            test/mpi/f-mpi/bsend_recv.sh:test/mpi/testscripts/bsend_recv.sh
+                            test/mpi/f-mpi/send_irecv.sh:test/mpi/testscripts/send_irecv.sh
                             test/mpi/f-mpi/sendrecv.sh:test/mpi/testscripts/sendrecv.sh
                             test/mpi/f-mpi/sendrecv_replace.sh:test/mpi/testscripts/sendrecv_replace.sh
-                            test/mpi/f-mpi/isend_recv.sh:test/mpi/testscripts/isend_recv.sh
-                            test/mpi/f-mpi/send_irecv.sh:test/mpi/testscripts/send_irecv.sh
                             test/mpi/f-mpi/bcast.sh:test/mpi/testscripts/bcast.sh
                             test/mpi/f-mpi/bcast_intercom.sh:test/mpi/testscripts/bcast_intercom.sh
                             test/mpi/f-mpi/ibcast.sh:test/mpi/testscripts/ibcast.sh
@@ -489,10 +491,11 @@ AM_COND_IF([MPI_PROFILING],
                             test/mpi/f08-mpi/ftypes.sh:test/mpi/testscripts/ftypes.sh
                             test/mpi/f08-mpi/derived_ftypes.sh:test/mpi/testscripts/derived_ftypes.sh
                             test/mpi/f08-mpi/send_recv.sh:test/mpi/testscripts/send_recv.sh
+                            test/mpi/f08-mpi/isend_recv.sh:test/mpi/testscripts/isend_recv.sh
+                            test/mpi/f08-mpi/bsend_recv.sh:test/mpi/testscripts/bsend_recv.sh
+                            test/mpi/f08-mpi/send_irecv.sh:test/mpi/testscripts/send_irecv.sh
                             test/mpi/f08-mpi/sendrecv.sh:test/mpi/testscripts/sendrecv.sh
                             test/mpi/f08-mpi/sendrecv_replace.sh:test/mpi/testscripts/sendrecv_replace.sh
-                            test/mpi/f08-mpi/isend_recv.sh:test/mpi/testscripts/isend_recv.sh
-                            test/mpi/f08-mpi/send_irecv.sh:test/mpi/testscripts/send_irecv.sh
                             test/mpi/f08-mpi/bcast.sh:test/mpi/testscripts/bcast.sh
                             test/mpi/f08-mpi/bcast_intercom.sh:test/mpi/testscripts/bcast_intercom.sh
                             test/mpi/f08-mpi/ibcast.sh:test/mpi/testscripts/ibcast.sh

@@ -35,22 +35,15 @@ dist_noinst_SCRIPTS = init_finalize-1.sh \
 # point to point tests #
 ########################
 check_PROGRAMS += send_recv \
-		  sendrecv \
-		  sendrecv_replace \
 		  isend_recv \
-		  send_irecv
+		  send_irecv \
+		  bsend_recv \
+		  sendrecv \
+		  sendrecv_replace 
 
 send_recv_SOURCES = $(srcdir)/send_recv.c
 send_recv_CFLAGS  = $(AM_CFLAGS)
 send_recv_LDFLAGS = $(AM_LDFLAGS)
-
-sendrecv_SOURCES = $(srcdir)/sendrecv.c
-sendrecv_CFLAGS  = $(AM_CFLAGS)
-sendrecv_LDFLAGS = $(AM_LDFLAGS)
-
-sendrecv_replace_SOURCES = $(srcdir)/sendrecv_replace.c
-sendrecv_replace_CFLAGS  = $(AM_CFLAGS)
-sendrecv_replace_LDFLAGS = $(AM_LDFLAGS)
 
 isend_recv_SOURCES = $(srcdir)/isend_recv.c
 isend_recv_CFLAGS  = $(AM_CFLAGS)
@@ -60,11 +53,24 @@ send_irecv_SOURCES = $(srcdir)/send_irecv.c
 send_irecv_CFLAGS  = $(AM_CFLAGS)
 send_irecv_LDFLAGS = $(AM_LDFLAGS)
 
+bsend_recv_SOURCES = $(srcdir)/bsend_recv.c
+bsend_recv_CFLAGS  = $(AM_CFLAGS)
+bsend_recv_LDFLAGS = $(AM_LDFLAGS)
+
+sendrecv_SOURCES = $(srcdir)/sendrecv.c
+sendrecv_CFLAGS  = $(AM_CFLAGS)
+sendrecv_LDFLAGS = $(AM_LDFLAGS)
+
+sendrecv_replace_SOURCES = $(srcdir)/sendrecv_replace.c
+sendrecv_replace_CFLAGS  = $(AM_CFLAGS)
+sendrecv_replace_LDFLAGS = $(AM_LDFLAGS)
+
 dist_noinst_SCRIPTS += send_recv.sh \
-		       sendrecv.sh \
-		       sendrecv_replace.sh \
 		       isend_recv.sh \
-		       send_irecv.sh
+		       bsend_recv.sh \
+		       send_irecv.sh \
+		       sendrecv.sh \
+		       sendrecv_replace.sh
 
 ####################
 # Collective tests #
