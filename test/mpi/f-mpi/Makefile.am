@@ -37,6 +37,7 @@ dist_noinst_SCRIPTS = init_finalize-1.sh \
 check_PROGRAMS += send_recv \
 		  isend_recv \
 		  bsend_recv \
+		  ibsend_recv \
 		  send_irecv \
 		  sendrecv \
 		  sendrecv_replace 
@@ -53,6 +54,10 @@ bsend_recv_SOURCES = $(srcdir)/bsend_recv.F90
 bsend_recv_FCFLAGS = $(AM_FCFLAGS)
 bsend_recv_LDFLAGS = $(AM_LDFLAGS)
 
+ibsend_recv_SOURCES = $(srcdir)/ibsend_recv.F90
+ibsend_recv_FCFLAGS = $(AM_FCFLAGS)
+ibsend_recv_LDFLAGS = $(AM_LDFLAGS)
+
 send_irecv_SOURCES = $(srcdir)/send_irecv.F90
 send_irecv_FCFLAGS = $(AM_FCFLAGS)
 send_irecv_LDFLAGS = $(AM_LDFLAGS)
@@ -68,6 +73,7 @@ sendrecv_replace_LDFLAGS = $(AM_LDFLAGS)
 dist_noinst_SCRIPTS += send_recv.sh \
 		       isend_recv.sh \
 		       bsend_recv.sh \
+		       ibsend_recv.sh \
 		       send_irecv.sh \
 		       sendrecv.sh \
 		       sendrecv_replace.sh 

@@ -243,6 +243,7 @@ AM_COND_IF([MPI_PROFILING],
                             test/mpi/c-mpi/send_recv.sh:test/mpi/testscripts/send_recv.sh
                             test/mpi/c-mpi/isend_recv.sh:test/mpi/testscripts/isend_recv.sh
                             test/mpi/c-mpi/bsend_recv.sh:test/mpi/testscripts/bsend_recv.sh
+                            test/mpi/c-mpi/ibsend_recv.sh:test/mpi/testscripts/ibsend_recv.sh
                             test/mpi/c-mpi/send_irecv.sh:test/mpi/testscripts/send_irecv.sh
                             test/mpi/c-mpi/sendrecv.sh:test/mpi/testscripts/sendrecv.sh
                             test/mpi/c-mpi/sendrecv_replace.sh:test/mpi/testscripts/sendrecv_replace.sh
@@ -368,6 +369,7 @@ AM_COND_IF([MPI_PROFILING],
                             test/mpi/f-mpi/send_recv.sh:test/mpi/testscripts/send_recv.sh
                             test/mpi/f-mpi/isend_recv.sh:test/mpi/testscripts/isend_recv.sh
                             test/mpi/f-mpi/bsend_recv.sh:test/mpi/testscripts/bsend_recv.sh
+                            test/mpi/f-mpi/ibsend_recv.sh:test/mpi/testscripts/ibsend_recv.sh
                             test/mpi/f-mpi/send_irecv.sh:test/mpi/testscripts/send_irecv.sh
                             test/mpi/f-mpi/sendrecv.sh:test/mpi/testscripts/sendrecv.sh
                             test/mpi/f-mpi/sendrecv_replace.sh:test/mpi/testscripts/sendrecv_replace.sh
@@ -493,6 +495,7 @@ AM_COND_IF([MPI_PROFILING],
                             test/mpi/f08-mpi/send_recv.sh:test/mpi/testscripts/send_recv.sh
                             test/mpi/f08-mpi/isend_recv.sh:test/mpi/testscripts/isend_recv.sh
                             test/mpi/f08-mpi/bsend_recv.sh:test/mpi/testscripts/bsend_recv.sh
+                            test/mpi/f08-mpi/ibsend_recv.sh:test/mpi/testscripts/ibsend_recv.sh
                             test/mpi/f08-mpi/send_irecv.sh:test/mpi/testscripts/send_irecv.sh
                             test/mpi/f08-mpi/sendrecv.sh:test/mpi/testscripts/sendrecv.sh
                             test/mpi/f08-mpi/sendrecv_replace.sh:test/mpi/testscripts/sendrecv_replace.sh

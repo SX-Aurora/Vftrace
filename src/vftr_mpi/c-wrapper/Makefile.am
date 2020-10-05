@@ -9,6 +9,7 @@ libvftr_cmpiwrap_la_SOURCES = vftr_mpi_init_cwrap.c \
 libvftr_cmpiwrap_la_SOURCES += vftr_mpi_send_cwrap.c \
 			       vftr_mpi_isend_cwrap.c \
 			       vftr_mpi_bsend_cwrap.c \
+			       vftr_mpi_ibsend_cwrap.c \
 			       vftr_mpi_recv_cwrap.c \
 			       vftr_mpi_irecv_cwrap.c \
 			       vftr_mpi_sendrecv_cwrap.c \
