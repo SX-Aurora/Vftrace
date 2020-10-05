@@ -17,6 +17,7 @@ libvftr_fmpiwrap_la_SOURCES += vftr_mpi_send_c2f.F90 \
 			       vftr_mpi_ssend_c2f.F90 \
 			       vftr_mpi_issend_c2f.F90 \
 			       vftr_mpi_rsend_c2f.F90 \
+			       vftr_mpi_irsend_c2f.F90 \
 			       vftr_mpi_recv_c2f.F90 \
                                vftr_mpi_irecv_c2f.F90 \
 			       vftr_mpi_sendrecv_c2f.F90 \
@@ -28,6 +29,7 @@ libvftr_fmpiwrap_la_SOURCES += vftr_mpi_send_fwrap.F90 \
 			       vftr_mpi_ssend_fwrap.F90 \
 			       vftr_mpi_issend_fwrap.F90 \
 			       vftr_mpi_rsend_fwrap.F90 \
+			       vftr_mpi_irsend_fwrap.F90 \
 			       vftr_mpi_recv_fwrap.F90 \
 			       vftr_mpi_irecv_fwrap.F90 \
 			       vftr_mpi_sendrecv_fwrap.F90 \

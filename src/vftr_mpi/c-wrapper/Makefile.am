@@ -13,6 +13,7 @@ libvftr_cmpiwrap_la_SOURCES += vftr_mpi_send_cwrap.c \
 			       vftr_mpi_ssend_cwrap.c \
 			       vftr_mpi_issend_cwrap.c \
 			       vftr_mpi_rsend_cwrap.c \
+			       vftr_mpi_irsend_cwrap.c \
 			       vftr_mpi_recv_cwrap.c \
 			       vftr_mpi_irecv_cwrap.c \
 			       vftr_mpi_sendrecv_cwrap.c \
