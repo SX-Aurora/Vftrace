@@ -22,7 +22,8 @@ libvftr_fmpiwrap_la_SOURCES += vftr_mpi_send_c2f.F90 \
                                vftr_mpi_irecv_c2f.F90 \
 			       vftr_mpi_sendrecv_c2f.F90 \
 			       vftr_mpi_sendrecv_replace_c2f.F90 \
-			       vftr_mpi_probe_c2f.F90
+			       vftr_mpi_probe_c2f.F90 \
+			       vftr_mpi_iprobe_c2f.F90 
 libvftr_fmpiwrap_la_SOURCES += vftr_mpi_send_fwrap.F90 \
 			       vftr_mpi_isend_fwrap.F90 \
 			       vftr_mpi_bsend_fwrap.F90 \
@@ -35,7 +36,8 @@ libvftr_fmpiwrap_la_SOURCES += vftr_mpi_send_fwrap.F90 \
 			       vftr_mpi_irecv_fwrap.F90 \
 			       vftr_mpi_sendrecv_fwrap.F90 \
 			       vftr_mpi_sendrecv_replace_fwrap.F90 \
-			       vftr_mpi_probe_fwrap.F90
+			       vftr_mpi_probe_fwrap.F90 \
+			       vftr_mpi_iprobe_fwrap.F90
 
 #########
 # tests #

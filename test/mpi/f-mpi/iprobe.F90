@@ -1,4 +1,4 @@
-PROGRAM probe
+PROGRAM iprobe
 
    USE, INTRINSIC :: ISO_FORTRAN_ENV
    USE mpi
@@ -15,6 +15,8 @@ PROGRAM probe
    INTEGER, DIMENSION(:), ALLOCATABLE :: rbuffer
 
    INTEGER :: recvstatus(MPI_STATUS_SIZE)
+
+   LOGICAL :: flag
 
    LOGICAL :: valid_data
 
@@ -38,7 +40,7 @@ PROGRAM probe
 
    ! require cmd-line argument
    IF (COMMAND_ARGUMENT_COUNT() < 1) THEN
-      WRITE(UNIT=OUTPUT_UNIT, FMT="(A)") "./probe <msgsize in integers>"
+      WRITE(UNIT=OUTPUT_UNIT, FMT="(A)") "./iprobe <msgsize in integers>"
       STOP 1
    END IF
 
@@ -57,7 +59,7 @@ PROGRAM probe
       CALL MPI_Send(sbuffer, nints, MPI_INTEGER, 1, 0, MPI_COMM_WORLD, ierr)
    ELSE 
       WRITE(UNIT=OUTPUT_UNIT, FMT="(A,I4,A,I4)") "Receiving message on rank ", my_rank, " from rank", 0
-      CALL MPI_Probe(0, 0, MPI_COMM_WORLD, recvstatus, ierr)
+      CALL MPI_Iprobe(0, 0, MPI_COMM_WORLD, flag, recvstatus, ierr)
       CALL MPI_Recv(rbuffer, nints, MPI_INTEGER, 0, 0, MPI_COMM_WORLD, recvstatus, ierr)
       ! validate data
       IF (ANY(rbuffer /= 0)) THEN
@@ -72,4 +74,4 @@ PROGRAM probe
    CALL MPI_Finalize(ierr)
 
    IF (.NOT.valid_data) STOP 1
-END PROGRAM probe
+END PROGRAM iprobe

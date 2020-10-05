@@ -18,7 +18,8 @@ libvftr_cmpiwrap_la_SOURCES += vftr_mpi_send_cwrap.c \
 			       vftr_mpi_irecv_cwrap.c \
 			       vftr_mpi_sendrecv_cwrap.c \
 			       vftr_mpi_sendrecv_replace_cwrap.c \
-			       vftr_mpi_probe_cwrap.c
+			       vftr_mpi_probe_cwrap.c \
+			       vftr_mpi_iprobe_cwrap.c
 
 #########
 # tests #
