@@ -13,7 +13,7 @@ Call stacks
  -- --------------------- 
   0 func2<init
   1 init
-  2 MPI_Init
+  2 MPI_Init<init
   3 func4<func6<func2<init
   4 func3<init
   5 func6<func2<init
