@@ -44,7 +44,8 @@ check_PROGRAMS += send_recv \
 		  rsend_recv \
 		  irsend_recv \
 		  sendrecv \
-		  sendrecv_replace 
+		  sendrecv_replace \
+		  probe
 
 send_recv_SOURCES = $(srcdir)/send_recv.c
 send_recv_CFLAGS  = $(AM_CFLAGS)
@@ -90,6 +91,10 @@ sendrecv_replace_SOURCES = $(srcdir)/sendrecv_replace.c
 sendrecv_replace_CFLAGS  = $(AM_CFLAGS)
 sendrecv_replace_LDFLAGS = $(AM_LDFLAGS)
 
+probe_SOURCES = $(srcdir)/probe.c
+probe_CFLAGS  = $(AM_CFLAGS)
+probe_LDFLAGS = $(AM_LDFLAGS)
+
 dist_noinst_SCRIPTS += send_recv.sh \
 		       isend_recv.sh \
 		       bsend_recv.sh \
@@ -100,7 +105,8 @@ dist_noinst_SCRIPTS += send_recv.sh \
 		       irsend_recv.sh \
 		       send_irecv.sh \
 		       sendrecv.sh \
-		       sendrecv_replace.sh
+		       sendrecv_replace.sh \
+		       probe.sh
 
 ####################
 # Collective tests #
