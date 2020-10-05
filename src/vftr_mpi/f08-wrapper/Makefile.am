@@ -12,7 +12,8 @@ libvftr_f08mpiwrap_la_SOURCES += vftr_mpi_init_f08wrap.F90 \
 ##################
 libvftr_f08mpiwrap_la_SOURCES += vftr_mpi_send_f08wrap.F90 \
 				 vftr_mpi_bsend_f08wrap.F90 \
-				 vftr_mpi_ssend_f08wrap.F90
+				 vftr_mpi_ssend_f08wrap.F90 \
+				 vftr_mpi_rsend_f08wrap.F90
 
 #########
 # tests #
