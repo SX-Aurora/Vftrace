@@ -26,9 +26,9 @@
 
 // create new request to be stored
 vftr_request_t* vftr_new_request(vftr_direction dir, int nmsg, int *count,
-                                      MPI_Datatype *type, int *peer_rank, int tag,
-                                      MPI_Comm comm, MPI_Request request,
-                                      long long tstart) {
+                                 MPI_Datatype *type, int tag,
+                                 MPI_Comm comm, MPI_Request request,
+                                 long long tstart) {
 
    vftr_request_t *new_open_request = (vftr_request_t*) 
       malloc(sizeof(vftr_request_t));
