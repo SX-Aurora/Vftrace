@@ -22,8 +22,6 @@
 #include <string.h>
 
 #if defined(HAS_VEPERF)
-#include <stdint.h>
-#include <veperf.h>
 #include "vftr_filewrite.h"
 #elif defined(HAS_PAPI)
 #include "papi.h"
@@ -156,11 +154,6 @@ int vftr_init_hwc (char *scenario_file) {
     const PAPI_hw_info_t        *hwinfo;
 #endif
 
-#if defined(HAS_VEPERF)
-    int stat = __veperf_init();
-    if (stat) fprintf( vftr_log, "vftr_init_hwc: __veperf_init() failed (%d)\n", stat );
-#endif
-
     vftr_n_hw_obs = 0;
     if (vftr_read_scenario_file (scenario_file, NULL)) {
 	return -1;
@@ -196,7 +189,41 @@ void vftr_read_counters_veperf (long long *event) {
     int i, j, diag;
     evtcounter_t *evc;
     if (event == NULL) return;
-    veperf_get_pmcs ((int64_t *)vftr_echwc);
+    asm volatile (
+        "smir %0,  %%pmc0\n\t"
+        "smir %1,  %%pmc1\n\t"
+        "smir %2,  %%pmc2\n\t"
+        "smir %3,  %%pmc3\n\t"
+        "smir %4,  %%pmc4\n\t"
+        "smir %5,  %%pmc5\n\t"
+        "smir %6,  %%pmc6\n\t"
+        "smir %7,  %%pmc7\n\t"
+        "smir %8,  %%pmc8\n\t"
+        "smir %9,  %%pmc9\n\t"
+        "smir %10, %%pmc10\n\t"
+        "smir %11, %%pmc11\n\t"
+        "smir %12, %%pmc12\n\t"
+        "smir %13, %%pmc13\n\t"
+        "smir %14, %%pmc14\n\t"
+        "smir %15, %%pmc15\n\t"
+        :
+        "=r"(vftr_echwc[0]),
+        "=r"(vftr_echwc[1]),
+        "=r"(vftr_echwc[2]),
+        "=r"(vftr_echwc[3]),
+        "=r"(vftr_echwc[4]),
+        "=r"(vftr_echwc[5]),
+        "=r"(vftr_echwc[6]),
+        "=r"(vftr_echwc[7]),
+        "=r"(vftr_echwc[8]),
+        "=r"(vftr_echwc[9]),
+        "=r"(vftr_echwc[10]),
+        "=r"(vftr_echwc[11]),
+        "=r"(vftr_echwc[12]),
+        "=r"(vftr_echwc[13]),
+        "=r"(vftr_echwc[14]),
+        "=r"(vftr_echwc[15])
+    );
     memset (scenario_expr_counter_values, 0., sizeof(double) * scenario_expr_n_vars);
     /* Mask overflow bit and undefined bits */
     vftr_echwc[0] &= 0x000fffffffffffff; /* 52bit counter */

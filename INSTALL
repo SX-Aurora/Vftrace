@@ -8,7 +8,7 @@ make install
 Consult ./configure --help for information about available options. The most important ones are:
 
 o --enable-papi / --disable-papi: Switch on/off PAPI support (x86 only). If enabled, the PAPI installation directory has to be given with --with-papi=<dir>.
-o --enable-veperf / --disable-veperf: Switch on/off Veperf support (SX Aurora only). If enabled, the VEPERF installation directory has to be given with --with-veperf=<dir>
+o --enable-veperf / --disable-veperf: Switch on/off Veperf support (SX Aurora only).
 o --enable-mpi-profiling: Switch on MPI profiling. In this case, MPI function calls are overloaded. Internally, the PMPI functions are used, which have to be supported by your compile environment.
 o --enable-vmap-offset: On some systems, function instrumentation leads to offsets in the virtual memory maps, which has to be subtracted from the symbol addresses in order
 			to get proper name resolution. This option enables this feature.

@@ -54,17 +54,11 @@ AC_ARG_ENABLE([vmap_offset_check],
 AC_ARG_WITH([papi],
   [AS_HELP_STRING([--with-papi=dir], [assume given directory for PAPI])])
 
-AC_ARG_WITH([veperf],
-  [AS_HELP_STRING([--with-veperf=dir], [assume given directory for Veperf])])
-
 AM_CONDITIONAL([PAPI_AVAIL], [test "$enable_papi" = "yes"])
 PAPI_HOME=$with_papi
 AC_SUBST([PAPI_HOME])
 
 AM_CONDITIONAL([VEPERF_AVAIL], [test "$enable_veperf" = "yes"])
-VEPERF_HOME=$with_veperf
-AC_SUBST([VEPERF_HOME])
-
 AM_CONDITIONAL([VMAP_OFFSET], [test "$enable_vmap_offset" = "yes"])
 AM_CONDITIONAL([MPI_PROFILING], [test "$enable_mpi_profiling" = "yes"])
 AM_CONDITIONAL([VMAP_OFFSET_CHECK], [test "$enable_vmap_offset_check" = "yes"])

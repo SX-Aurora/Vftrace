@@ -53,8 +53,7 @@ libvftrace_la_LDFLAGS += -L$(PAPI_HOME)/lib -lpapi
 endif
 
 if VEPERF_AVAIL
-libvftrace_la_CFLAGS += -DHAS_VEPERF -I$(VEPERF_HOME)/include
-libvftrace_la_LDFLAGS +=  -L$(VEPERF_HOME)/lib -lveperf_ext
+libvftrace_la_CFLAGS += -DHAS_VEPERF
 endif
 
 if VMAP_OFFSET

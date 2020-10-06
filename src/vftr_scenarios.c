@@ -29,10 +29,6 @@
 #include "jsmn.h"
 #include "tinyexpr.h"
 
-#ifdef HAS_VEPERF
-#include "veperf.h"
-#endif
-
 /**********************************************************************/
 
 void vftr_scenario_print_formula (FILE *fp, function_expr_t formula) {
