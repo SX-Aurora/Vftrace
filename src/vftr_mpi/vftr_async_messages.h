@@ -49,10 +49,10 @@ typedef struct vftr_request_list_type {
 //                               MPI_Comm comm, MPI_Request request,
 //                               long long tstart);
 
-void vftr_register_onesided_request(vftr_direction dir, int count,
-                                    MPI_Datatype type, int peer_rank,
-                                    MPI_Comm comm, MPI_Request request,
-                                    long long tstart);
+//void vftr_register_onesided_request(vftr_direction dir, int count,
+//                                    MPI_Datatype type, int peer_rank,
+//                                    MPI_Comm comm, MPI_Request request,
+//                                    long long tstart);
 
 void vftr_register_collective_request(vftr_direction dir, int nmsg, int *count,
                                       MPI_Datatype *type, int *peer_rank,

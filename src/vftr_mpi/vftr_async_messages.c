@@ -127,13 +127,13 @@ void vftr_register_request(vftr_direction dir, vftr_comm_t communication_type,
 //                         &peer_rank, tag, comm, request, tstart);
 //}
 
-void vftr_register_onesided_request(vftr_direction dir, int count,
-                                    MPI_Datatype type, int peer_rank,
-                                    MPI_Comm comm, MPI_Request request,
-                                    long long tstart) {
-   vftr_register_request(dir, vftr_comm_onesided, 1, &count, &type,
-                         &peer_rank, -1, comm, request, tstart);
-}
+//void vftr_register_onesided_request(vftr_direction dir, int count,
+//                                    MPI_Datatype type, int peer_rank,
+//                                    MPI_Comm comm, MPI_Request request,
+//                                    long long tstart) {
+//   vftr_register_request(dir, vftr_comm_onesided, 1, &count, &type,
+//                         &peer_rank, -1, comm, request, tstart);
+//}
 
 void vftr_register_collective_request(vftr_direction dir, int nmsg, int *count,
                                       MPI_Datatype *type, int *peer_rank,

@@ -21,6 +21,7 @@
 
 #include "vftr_timer.h"
 #include "vftr_async_messages.h"
+#include "vftr_onesided_requests.h"
 #include "vftr_mpi_utils.h"
 
 int vftr_MPI_Rget_accumulate(const void *origin_addr, int origin_count,
