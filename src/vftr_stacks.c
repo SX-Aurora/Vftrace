@@ -788,6 +788,7 @@ void vftr_print_function_stack (FILE *fp, int rank, char *func_name, int n_final
 
 int vftr_stacks_test_1 (FILE *fp_in, FILE *fp_out) {
 	unsigned long long addrs[6];
+	vftr_get_mpi_info (&vftr_mpirank, &vftr_mpisize);
 	fprintf (fp_out, "Initial vftr_stackscount: %d\n", vftr_stackscount);
 	function_t *func1 = vftr_new_function (NULL, "init", NULL, 0, false);
 	function_t *func2 = vftr_new_function ((void*)addrs, "func2", func1, 0, false);

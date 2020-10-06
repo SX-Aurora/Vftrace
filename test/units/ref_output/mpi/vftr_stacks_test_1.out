@@ -1,11 +1,11 @@
-Initial vftr_stackscount: 2
-init: 2 1
-func2: 3 0
-func3: 4 4
-func4: 5 6
-func5: 6 7
-func6: 7 5
-func4: 8 3
+Initial vftr_stackscount: 0
+init: 0 1
+func2: 1 0
+func3: 2 3
+func4: 3 5
+func5: 4 6
+func6: 5 4
+func4: 6 2
 Global stacklist: 
 Call stacks
 -------------------------
@@ -13,11 +13,10 @@ Call stacks
  -- --------------------- 
   0 func2<init
   1 init
-  2 MPI_Init<init
-  3 func4<func6<func2<init
-  4 func3<init
-  5 func6<func2<init
-  6 func4<func3<init
-  7 func5<func2<init
+  2 func4<func6<func2<init
+  3 func3<init
+  4 func6<func2<init
+  5 func4<func3<init
+  6 func5<func2<init
 -------------------------
 
