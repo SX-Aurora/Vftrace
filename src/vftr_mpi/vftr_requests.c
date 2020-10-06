@@ -23,6 +23,7 @@
 #include <stdlib.h>
 
 #include "vftr_requests.h"
+#include "vftr_p2p_requests.h"
 
 // create new request to be stored
 vftr_request_t* vftr_new_request(vftr_direction dir, int nmsg, int *count,
@@ -131,6 +132,10 @@ void vftr_remove_request(vftr_request_t **open_request_list,
          request->next->prev = request->prev;
       }
    }
+}
+
+void vftr_clear_completed_requests() {
+   vftr_clear_completed_P2P_requests();
 }
 
 #endif

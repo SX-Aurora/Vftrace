@@ -44,10 +44,10 @@ typedef struct vftr_request_list_type {
    long long tstart;
 } vftr_request_list_t;
 
-void vftr_register_P2P_request(vftr_direction dir, int count,
-                               MPI_Datatype type, int peer_rank, int tag,
-                               MPI_Comm comm, MPI_Request request,
-                               long long tstart);
+//void vftr_register_P2P_request(vftr_direction dir, int count,
+//                               MPI_Datatype type, int peer_rank, int tag,
+//                               MPI_Comm comm, MPI_Request request,
+//                               long long tstart);
 
 void vftr_register_onesided_request(vftr_direction dir, int count,
                                     MPI_Datatype type, int peer_rank,

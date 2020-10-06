@@ -40,7 +40,7 @@ typedef struct vftr_request_type {
 
 // create new request to be stored
 vftr_request_t* vftr_new_request(vftr_direction dir, int nmsg, int *count,
-                                 MPI_Datatype *type, int *peer_rank, int tag,
+                                 MPI_Datatype *type, int tag,
                                  MPI_Comm comm, MPI_Request request,
                                  long long tstart);
 
@@ -54,6 +54,8 @@ void vftr_request_prepend(vftr_request_t **open_request_list,
 // remove request from open_request_list
 void vftr_remove_request(vftr_request_t **open_request_list,
                          vftr_request_t *request);
+
+void vftr_clear_completed_requests();
 
 #endif
 #endif

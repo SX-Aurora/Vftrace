@@ -20,7 +20,7 @@
 #include <mpi.h>
 
 #include "vftr_timer.h"
-#include "vftr_async_messages.h"
+#include "vftr_p2p_requests.h"
 #include "vftr_mpi_utils.h"
 
 int vftr_MPI_Isend(const void *buf, int count, MPI_Datatype datatype,

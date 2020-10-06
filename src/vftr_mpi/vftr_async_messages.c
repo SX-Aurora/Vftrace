@@ -119,13 +119,13 @@ void vftr_register_request(vftr_direction dir, vftr_comm_t communication_type,
    }
 }
 
-void vftr_register_P2P_request(vftr_direction dir, int count,
-                               MPI_Datatype type, int peer_rank, int tag,
-                               MPI_Comm comm, MPI_Request request,
-                               long long tstart) {
-   vftr_register_request(dir, vftr_comm_P2P, 1, &count, &type,
-                         &peer_rank, tag, comm, request, tstart);
-}
+//void vftr_register_P2P_request(vftr_direction dir, int count,
+//                               MPI_Datatype type, int peer_rank, int tag,
+//                               MPI_Comm comm, MPI_Request request,
+//                               long long tstart) {
+//   vftr_register_request(dir, vftr_comm_P2P, 1, &count, &type,
+//                         &peer_rank, tag, comm, request, tstart);
+//}
 
 void vftr_register_onesided_request(vftr_direction dir, int count,
                                     MPI_Datatype type, int peer_rank,

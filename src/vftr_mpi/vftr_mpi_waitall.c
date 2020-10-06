@@ -23,6 +23,7 @@
 
 #include "vftr_mpi_pcontrol.h"
 #include "vftr_async_messages.h"
+#include "vftr_requests.h"
   
 int vftr_MPI_Waitall(int count, MPI_Request array_of_requests[],
                      MPI_Status array_of_statuses[]) {
@@ -59,6 +60,7 @@ int vftr_MPI_Waitall(int count, MPI_Request array_of_requests[],
             }
          }
          vftr_clear_completed_request();
+         vftr_clear_completed_requests();
       }
 
       free(req_completed);

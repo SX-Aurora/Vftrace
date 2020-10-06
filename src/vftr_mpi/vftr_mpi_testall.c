@@ -21,6 +21,7 @@
 
 #include "vftr_mpi_pcontrol.h"
 #include "vftr_async_messages.h"
+#include "vftr_requests.h"
   
 int vftr_MPI_Testall(int count, MPI_Request array_of_requests[],
                      int *flag, MPI_Status array_of_statuses[]) {
@@ -51,6 +52,7 @@ int vftr_MPI_Testall(int count, MPI_Request array_of_requests[],
       }
       // clear completed communications from the list of open requests
       vftr_clear_completed_request();
+      vftr_clear_completed_requests();
 
       if (flag) {
       // If all communications are completed
