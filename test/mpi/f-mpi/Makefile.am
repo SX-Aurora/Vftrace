@@ -8,13 +8,28 @@ endif
 ################
 # System Tests #
 ################
-check_PROGRAMS = init_finalize \
+check_PROGRAMS = init_finalize_1 \
+		 init_finalize_2 \
+		 init_finalize_3 \
+		 init_finalize_4 \
 		 ftypes \
 		 derived_ftypes
 		
-init_finalize_SOURCES = $(srcdir)/init_finalize.F90
-init_finalize_FCFLAGS = $(AM_FCFLAGS)
-init_finalize_LDFLAGS = $(AM_LDFLAGS)
+init_finalize_1_SOURCES = $(srcdir)/init_finalize.F90
+init_finalize_1_FCFLAGS = $(AM_FCFLAGS)
+init_finalize_1_LDFLAGS = $(AM_LDFLAGS)
+
+init_finalize_2_SOURCES = $(srcdir)/init_finalize.F90
+init_finalize_2_FCFLAGS = $(AM_FCFLAGS)
+init_finalize_2_LDFLAGS = $(AM_LDFLAGS)
+
+init_finalize_3_SOURCES = $(srcdir)/init_finalize.F90
+init_finalize_3_FCFLAGS = $(AM_FCFLAGS)
+init_finalize_3_LDFLAGS = $(AM_LDFLAGS)
+
+init_finalize_4_SOURCES = $(srcdir)/init_finalize.F90
+init_finalize_4_FCFLAGS = $(AM_FCFLAGS)
+init_finalize_4_LDFLAGS = $(AM_LDFLAGS)
 
 ftypes_SOURCES = $(srcdir)/ftypes.F90
 ftypes_FCFLAGS = $(AM_FCFLAGS)
@@ -72,6 +87,14 @@ issend_recv_SOURCES = $(srcdir)/issend_recv.F90
 issend_recv_FCFLAGS = $(AM_FCFLAGS)
 issend_recv_LDFLAGS = $(AM_LDFLAGS)
 
+rsend_recv_SOURCES = $(srcdir)/rsend_recv.F90
+rsend_recv_FCFLAGS = $(AM_FCFLAGS)
+rsend_recv_LDFLAGS = $(AM_LDFLAGS)
+
+irsend_recv_SOURCES = $(srcdir)/irsend_recv.F90
+irsend_recv_FCFLAGS = $(AM_FCFLAGS)
+irsend_recv_LDFLAGS = $(AM_LDFLAGS)
+
 send_irecv_SOURCES = $(srcdir)/send_irecv.F90
 send_irecv_FCFLAGS = $(AM_FCFLAGS)
 send_irecv_LDFLAGS = $(AM_LDFLAGS)
@@ -83,14 +106,6 @@ sendrecv_LDFLAGS = $(AM_LDFLAGS)
 sendrecv_replace_SOURCES = $(srcdir)/sendrecv_replace.F90
 sendrecv_replace_FCFLAGS = $(AM_FCFLAGS)
 sendrecv_replace_LDFLAGS = $(AM_LDFLAGS)
-
-rsend_recv_SOURCES = $(srcdir)/rsend_recv.F90
-rsend_recv_FCFLAGS = $(AM_FCFLAGS)
-rsend_recv_LDFLAGS = $(AM_LDFLAGS)
-
-irsend_recv_SOURCES = $(srcdir)/irsend_recv.F90
-irsend_recv_FCFLAGS = $(AM_FCFLAGS)
-irsend_recv_LDFLAGS = $(AM_LDFLAGS)
 
 probe_SOURCES = $(srcdir)/probe.F90
 probe_FCFLAGS = $(AM_FCFLAGS)
@@ -117,7 +132,7 @@ dist_noinst_SCRIPTS += send_recv.sh \
 #####################
 ## Collective tests #
 #####################
-#
+
 check_PROGRAMS += barrier \
 		  bcast \
 		  bcast_intercom \

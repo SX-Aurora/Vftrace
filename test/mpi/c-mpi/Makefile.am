@@ -8,13 +8,28 @@ endif
 ################
 # System Tests #
 ################
-check_PROGRAMS = init_finalize \
+check_PROGRAMS = init_finalize_1 \
+		 init_finalize_2 \
+		 init_finalize_3 \
+		 init_finalize_4 \
 		 ctypes \
 		 derived_ctypes
 		
-init_finalize_SOURCES = $(srcdir)/init_finalize.c
-init_finalize_CFLAGS  = $(AM_CFLAGS)
-init_finalize_LDFLAGS = $(AM_LDFLAGS)
+init_finalize_1_SOURCES = $(srcdir)/init_finalize.c
+init_finalize_1_CFLAGS  = $(AM_CFLAGS)
+init_finalize_1_LDFLAGS = $(AM_LDFLAGS)
+
+init_finalize_2_SOURCES = $(srcdir)/init_finalize.c
+init_finalize_2_CFLAGS  = $(AM_CFLAGS)
+init_finalize_2_LDFLAGS = $(AM_LDFLAGS)
+
+init_finalize_3_SOURCES = $(srcdir)/init_finalize.c
+init_finalize_3_CFLAGS  = $(AM_CFLAGS)
+init_finalize_3_LDFLAGS = $(AM_LDFLAGS)
+
+init_finalize_4_SOURCES = $(srcdir)/init_finalize.c
+init_finalize_4_CFLAGS  = $(AM_CFLAGS)
+init_finalize_4_LDFLAGS = $(AM_LDFLAGS)
 
 ctypes_SOURCES = $(srcdir)/ctypes.c
 ctypes_CFLAGS  = $(AM_CFLAGS)
@@ -36,13 +51,13 @@ dist_noinst_SCRIPTS = init_finalize-1.sh \
 ########################
 check_PROGRAMS += send_recv \
 		  isend_recv \
-		  send_irecv \
 		  bsend_recv \
 		  ibsend_recv \
 		  ssend_recv \
 		  issend_recv \
 		  rsend_recv \
 		  irsend_recv \
+		  send_irecv \
 		  sendrecv \
 		  sendrecv_replace \
 		  probe \
@@ -55,10 +70,6 @@ send_recv_LDFLAGS = $(AM_LDFLAGS)
 isend_recv_SOURCES = $(srcdir)/isend_recv.c
 isend_recv_CFLAGS  = $(AM_CFLAGS)
 isend_recv_LDFLAGS = $(AM_LDFLAGS)
-
-send_irecv_SOURCES = $(srcdir)/send_irecv.c
-send_irecv_CFLAGS  = $(AM_CFLAGS)
-send_irecv_LDFLAGS = $(AM_LDFLAGS)
 
 bsend_recv_SOURCES = $(srcdir)/bsend_recv.c
 bsend_recv_CFLAGS  = $(AM_CFLAGS)
@@ -83,6 +94,10 @@ rsend_recv_LDFLAGS = $(AM_LDFLAGS)
 irsend_recv_SOURCES = $(srcdir)/irsend_recv.c
 irsend_recv_CFLAGS  = $(AM_CFLAGS)
 irsend_recv_LDFLAGS = $(AM_LDFLAGS)
+
+send_irecv_SOURCES = $(srcdir)/send_irecv.c
+send_irecv_CFLAGS  = $(AM_CFLAGS)
+send_irecv_LDFLAGS = $(AM_LDFLAGS)
 
 sendrecv_SOURCES = $(srcdir)/sendrecv.c
 sendrecv_CFLAGS  = $(AM_CFLAGS)

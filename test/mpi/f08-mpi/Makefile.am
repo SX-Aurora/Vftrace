@@ -8,20 +8,35 @@ endif
 ################
 # System Tests #
 ################
-check_PROGRAMS = init_finalize 
+check_PROGRAMS = init_finalize_1 \
+		 init_finalize_2 \
+		 init_finalize_3 \
+		 init_finalize_4
 #		  ftypes \
 #		  derived_ftypes
 		
-init_finalize_SOURCES = $(srcdir)/init_finalize.F90
-init_finalize_FCFLAGS  = $(AM_FCFLAGS)
-init_finalize_LDFLAGS = $(AM_LDFLAGS)
+init_finalize_1_SOURCES = $(srcdir)/init_finalize.F90
+init_finalize_1_FCFLAGS = $(AM_FCFLAGS)
+init_finalize_1_LDFLAGS = $(AM_LDFLAGS)
+
+init_finalize_2_SOURCES = $(srcdir)/init_finalize.F90
+init_finalize_2_FCFLAGS = $(AM_FCFLAGS)
+init_finalize_2_LDFLAGS = $(AM_LDFLAGS)
+
+init_finalize_3_SOURCES = $(srcdir)/init_finalize.F90
+init_finalize_3_FCFLAGS = $(AM_FCFLAGS)
+init_finalize_3_LDFLAGS = $(AM_LDFLAGS)
+
+init_finalize_4_SOURCES = $(srcdir)/init_finalize.F90
+init_finalize_4_FCFLAGS = $(AM_FCFLAGS)
+init_finalize_4_LDFLAGS = $(AM_LDFLAGS)
 
 #ftypes_SOURCES = $(srcdir)/ftypes.F90
-#ftypes_FCFLAGS  = $(AM_FCFLAGS)
+#ftypes_FCFLAGS = $(AM_FCFLAGS)
 #ftypes_LDFLAGS = $(AM_LDFLAGS)
 #
 #derived_ftypes_SOURCES = $(srcdir)/derived_ftypes.F90
-#derived_ftypes_FCFLAGS  = $(AM_FCFLAGS)
+#derived_ftypes_FCFLAGS = $(AM_FCFLAGS)
 #derived_ftypes_LDFLAGS = $(AM_LDFLAGS)
 
 dist_noinst_SCRIPTS = init_finalize-1.sh \
@@ -72,7 +87,7 @@ else
 #####################
 ## Collective tests #
 #####################
-#
+
 check_PROGRAMS += barrier \
 		  bcast \
 		  bcast_intercom \
