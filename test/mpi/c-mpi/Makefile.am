@@ -13,7 +13,8 @@ check_PROGRAMS = init_finalize_1 \
 		 init_finalize_3 \
 		 init_finalize_4 \
 		 ctypes \
-		 derived_ctypes
+		 derived_ctypes \
+		 pcontrol
 		
 init_finalize_1_SOURCES = $(srcdir)/init_finalize.c
 init_finalize_1_CFLAGS  = $(AM_CFLAGS)
@@ -39,12 +40,17 @@ derived_ctypes_SOURCES = $(srcdir)/derived_ctypes.c
 derived_ctypes_CFLAGS  = $(AM_CFLAGS)
 derived_ctypes_LDFLAGS = $(AM_LDFLAGS)
 
+pcontrol_SOURCES = $(srcdir)/pcontrol.c
+pcontrol_CFLAGS  = $(AM_CFLAGS)
+pcontrol_LDFLAGS = $(AM_LDFLAGS)
+
 dist_noinst_SCRIPTS = init_finalize-1.sh \
                       init_finalize-2.sh \
                       init_finalize-3.sh \
                       init_finalize-4.sh \
 		      ctypes.sh \
-		      derived_ctypes.sh
+		      derived_ctypes.sh \
+		      pcontrol.sh
 
 ########################
 # point to point tests #

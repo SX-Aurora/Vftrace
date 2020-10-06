@@ -240,6 +240,7 @@ AM_COND_IF([MPI_PROFILING],
                             test/mpi/c-mpi/init_finalize-4.sh:test/mpi/testscripts/init_finalize-4.sh
                             test/mpi/c-mpi/ctypes.sh:test/mpi/testscripts/ctypes.sh
                             test/mpi/c-mpi/derived_ctypes.sh:test/mpi/testscripts/derived_ctypes.sh
+                            test/mpi/c-mpi/pcontrol.sh:test/mpi/testscripts/pcontrol.sh
                             test/mpi/c-mpi/send_recv.sh:test/mpi/testscripts/send_recv.sh
                             test/mpi/c-mpi/isend_recv.sh:test/mpi/testscripts/isend_recv.sh
                             test/mpi/c-mpi/bsend_recv.sh:test/mpi/testscripts/bsend_recv.sh
@@ -373,6 +374,7 @@ AM_COND_IF([MPI_PROFILING],
                             test/mpi/f-mpi/init_finalize-4.sh:test/mpi/testscripts/init_finalize-4.sh
                             test/mpi/f-mpi/ftypes.sh:test/mpi/testscripts/ftypes.sh
                             test/mpi/f-mpi/derived_ftypes.sh:test/mpi/testscripts/derived_ftypes.sh
+                            test/mpi/f-mpi/pcontrol.sh:test/mpi/testscripts/pcontrol.sh
                             test/mpi/f-mpi/send_recv.sh:test/mpi/testscripts/send_recv.sh
                             test/mpi/f-mpi/isend_recv.sh:test/mpi/testscripts/isend_recv.sh
                             test/mpi/f-mpi/bsend_recv.sh:test/mpi/testscripts/bsend_recv.sh
@@ -506,6 +508,7 @@ AM_COND_IF([MPI_PROFILING],
                             test/mpi/f08-mpi/init_finalize-4.sh:test/mpi/testscripts/init_finalize-4.sh
                             test/mpi/f08-mpi/ftypes.sh:test/mpi/testscripts/ftypes.sh
                             test/mpi/f08-mpi/derived_ftypes.sh:test/mpi/testscripts/derived_ftypes.sh
+                            test/mpi/f08-mpi/pcontrol.sh:test/mpi/testscripts/pcontrol.sh
                             test/mpi/f08-mpi/send_recv.sh:test/mpi/testscripts/send_recv.sh
                             test/mpi/f08-mpi/isend_recv.sh:test/mpi/testscripts/isend_recv.sh
                             test/mpi/f08-mpi/bsend_recv.sh:test/mpi/testscripts/bsend_recv.sh
