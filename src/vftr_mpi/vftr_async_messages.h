@@ -54,10 +54,10 @@ typedef struct vftr_request_list_type {
 //                                    MPI_Comm comm, MPI_Request request,
 //                                    long long tstart);
 
-void vftr_register_collective_request(vftr_direction dir, int nmsg, int *count,
-                                      MPI_Datatype *type, int *peer_rank,
-                                      MPI_Comm comm, MPI_Request request,
-                                      long long tstart);
+//void vftr_register_collective_request(vftr_direction dir, int nmsg, int *count,
+//                                      MPI_Datatype *type, int *peer_rank,
+//                                      MPI_Comm comm, MPI_Request request,
+//                                      long long tstart);
 
 // add an open communication request to the list of all open requests
 void vftr_register_request(vftr_direction dir, vftr_comm_t communication_type,
