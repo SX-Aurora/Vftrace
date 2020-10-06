@@ -23,7 +23,7 @@
 #include "vftr_regions.h"
 #include "vftr_environment.h"
 #include "vftr_async_messages.h"
-#include "vftr_mpi_pcontrol.h"
+#include "vftr_mpi_utils.h"
 #include "vftr_mpi_buf_addr_const.h"
 
 int vftr_MPI_Ireduce_scatter_block(const void *sendbuf, void *recvbuf, int recvcount,
@@ -31,7 +31,7 @@ int vftr_MPI_Ireduce_scatter_block(const void *sendbuf, void *recvbuf, int recvc
                                    MPI_Request *request) {
 
    // disable profiling based on the Pcontrol level
-   if (vftrace_Pcontrol_level == 0) {
+   if (vftr_no_mpi_logging()) {
       return PMPI_Ireduce_scatter_block(sendbuf, recvbuf, recvcount, datatype, op, comm, request);
    } else {
       long long tstart = vftr_get_runtime_usec();

@@ -23,7 +23,7 @@
 #include "vftr_regions.h"
 #include "vftr_environment.h"
 #include "vftr_sync_messages.h"
-#include "vftr_mpi_pcontrol.h"
+#include "vftr_mpi_utils.h"
 #include "vftr_mpi_buf_addr_const.h"
 
 int vftr_MPI_Scatterv(const void *sendbuf, const int *sendcounts,
@@ -32,7 +32,7 @@ int vftr_MPI_Scatterv(const void *sendbuf, const int *sendcounts,
                       int root, MPI_Comm comm) {
 
    // disable profiling based on the Pcontrol level
-   if (vftrace_Pcontrol_level == 0) {
+   if (vftr_no_mpi_logging()) {
       return PMPI_Scatterv(sendbuf, sendcounts, displs, sendtype,
                            recvbuf, recvcount, recvtype, root, comm);
    } else {

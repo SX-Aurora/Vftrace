@@ -21,14 +21,14 @@
 
 #include "vftr_timer.h"
 #include "vftr_sync_messages.h"
-#include "vftr_mpi_pcontrol.h"
+#include "vftr_mpi_utils.h"
 
 int vftr_MPI_Fetch_and_op(const void *origin_addr, void *result_addr,
                           MPI_Datatype datatype, int target_rank,
                           MPI_Aint target_disp, MPI_Op op, MPI_Win win) {
 
    // disable profiling based on the Pcontrol level
-   if (vftrace_Pcontrol_level == 0) {
+   if (vftr_no_mpi_logging()) {
       return PMPI_Fetch_and_op(origin_addr, result_addr, datatype,
                                target_rank, target_disp, op, win);
    } else {

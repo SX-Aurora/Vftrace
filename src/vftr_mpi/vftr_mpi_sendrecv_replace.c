@@ -21,14 +21,14 @@
 
 #include "vftr_timer.h"
 #include "vftr_sync_messages.h"
-#include "vftr_mpi_pcontrol.h"
+#include "vftr_mpi_utils.h"
 
 int vftr_MPI_Sendrecv_replace(void *buf, int count, MPI_Datatype datatype,
                               int dest, int sendtag, int source, int recvtag,
                               MPI_Comm comm, MPI_Status *status) {
 
    // disable profiling based on the Pcontrol level
-   if (vftrace_Pcontrol_level == 0) {
+   if (vftr_no_mpi_logging()) {
       return PMPI_Sendrecv_replace(buf, count, datatype, dest, sendtag,
                                    source, recvtag, comm, status);
    } else {

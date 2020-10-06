@@ -23,14 +23,14 @@
 #include "vftr_regions.h"
 #include "vftr_environment.h"
 #include "vftr_sync_messages.h"
-#include "vftr_mpi_pcontrol.h"
+#include "vftr_mpi_utils.h"
 #include "vftr_mpi_buf_addr_const.h"
 
 int vftr_MPI_Reduce_scatter(const void *sendbuf, void *recvbuf, const int *recvcounts,
                             MPI_Datatype datatype, MPI_Op op, MPI_Comm comm) {
 
    // disable profiling based on the Pcontrol level
-   if (vftrace_Pcontrol_level == 0) {
+   if (vftr_no_mpi_logging()) {
       return PMPI_Reduce_scatter(sendbuf, recvbuf, recvcounts, datatype, op, comm);
    } else {
       // Estimate synchronization time

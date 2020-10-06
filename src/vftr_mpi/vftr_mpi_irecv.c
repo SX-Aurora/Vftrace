@@ -21,13 +21,13 @@
 
 #include "vftr_timer.h"
 #include "vftr_async_messages.h"
-#include "vftr_mpi_pcontrol.h"
+#include "vftr_mpi_utils.h"
 
 int vftr_MPI_Irecv(void *buf, int count, MPI_Datatype datatype,
                    int source, int tag, MPI_Comm comm, MPI_Request *request) {
 
    // disable profiling based on the Pcontrol level
-   if (vftrace_Pcontrol_level == 0) {
+   if (vftr_no_mpi_logging()) {
       return PMPI_Irecv(buf, count, datatype, source, tag, comm, request);
    } else {
       long long tstart = vftr_get_runtime_usec();

@@ -21,7 +21,7 @@
 
 #include "vftr_timer.h"
 #include "vftr_async_messages.h"
-#include "vftr_mpi_pcontrol.h"
+#include "vftr_mpi_utils.h"
 #include "vftr_mpi_buf_addr_const.h"
 
 int vftr_MPI_Iexscan(const void *sendbuf, void *recvbuf, int count,
@@ -29,7 +29,7 @@ int vftr_MPI_Iexscan(const void *sendbuf, void *recvbuf, int count,
                      MPI_Request *request) {
 
    // disable profiling based on the Pcontrol level
-   if (vftrace_Pcontrol_level == 0) {
+   if (vftr_no_mpi_logging()) {
       return PMPI_Iexscan(sendbuf, recvbuf, count, datatype, op, comm, request);
    } else {
       long long tstart = vftr_get_runtime_usec();

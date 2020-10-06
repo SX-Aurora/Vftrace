@@ -23,7 +23,7 @@
 
 #include "vftr_timer.h"
 #include "vftr_async_messages.h"
-#include "vftr_mpi_pcontrol.h"
+#include "vftr_mpi_utils.h"
 #include "vftr_mpi_buf_addr_const.h"
 
 int vftr_MPI_Iallgatherv(const void *sendbuf, int sendcount,
@@ -33,7 +33,7 @@ int vftr_MPI_Iallgatherv(const void *sendbuf, int sendcount,
                          MPI_Request *request) {
 
    // disable profiling based on the Pcontrol level
-   if (vftrace_Pcontrol_level == 0) {
+   if (vftr_no_mpi_logging()) {
       return PMPI_Iallgatherv(sendbuf, sendcount, sendtype, recvbuf,
                               recvcounts, displs, recvtype, comm,
                               request);

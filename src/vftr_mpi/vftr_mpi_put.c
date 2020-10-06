@@ -21,7 +21,7 @@
 
 #include "vftr_timer.h"
 #include "vftr_sync_messages.h"
-#include "vftr_mpi_pcontrol.h"
+#include "vftr_mpi_utils.h"
 
 int vftr_MPI_Put(const void *origin_addr, int origin_count,
                  MPI_Datatype origin_datatype, int target_rank,
@@ -29,7 +29,7 @@ int vftr_MPI_Put(const void *origin_addr, int origin_count,
                  MPI_Datatype target_datatype, MPI_Win win) {
 
    // disable profiling based on the Pcontrol level
-   if (vftrace_Pcontrol_level == 0) {
+   if (vftr_no_mpi_logging()) {
       return PMPI_Put(origin_addr, origin_count, origin_datatype,
                       target_rank, target_disp, target_count,
                       target_datatype, win);
