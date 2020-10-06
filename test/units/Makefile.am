@@ -22,7 +22,7 @@ endif
 check_PROGRAMS = test_vftrace
 
 test_vftrace_SOURCES = $(srcdir)/test_vftrace.c
-test_vftrace_CFLAGS = $(AM_CFLAGS)
+test_vftrace_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
 test_vftrace_LDFLAGS = $(AM_LDFLAGS)
 
 

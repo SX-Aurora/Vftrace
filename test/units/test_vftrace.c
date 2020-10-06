@@ -22,7 +22,7 @@ int this_passes () {
 int main (int argc, char **argv) {
 
 #ifdef _MPI
-	MPI_Init (NULL, NULL);
+	PMPI_Init (NULL, NULL);
 #endif
 	
 	if (argc < 2) {
@@ -85,7 +85,7 @@ int main (int argc, char **argv) {
 	fp_out = NULL;
 	if (fp_in) fclose (fp_in);
 #ifdef _MPI
-        MPI_Finalize ();
+        PMPI_Finalize ();
 #endif
 	return retval;
 }
