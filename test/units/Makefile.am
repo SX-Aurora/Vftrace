@@ -9,7 +9,7 @@ endif
 
 AM_CFLAGS = -I$(top_srcdir)/src/ -I$(top_srcdir)/src/vftr_mpi
 
-AM_LDFLAGS = -L$(top_builddir)/src/.libs -lvftrace -lm
+AM_LDFLAGS = -L$(top_builddir)/src/.libs -lvftrace -lm -L$(VEPERF_HOME)/lib -lveperf
 
 if MPI_PROFILING
   AM_CFLAGS += -D_MPI
@@ -42,7 +42,9 @@ dist_check_SCRIPTS = this_passes.sh \
 	 	      vftr_functions_test_3.sh \
 	 	      vftr_functions_test_4.sh \
 	 	      vftr_functions_test_5.sh \
-		      vftr_stacks_test_1.sh
+		      vftr_stacks_test_1.sh \
+		      vftr_veperf_test_1.sh \
+		      vftr_veperf_test_2.sh
 
 if MPI_PROFILING
 dist_check_SCRIPTS += vftr_stacks_test_2.sh
