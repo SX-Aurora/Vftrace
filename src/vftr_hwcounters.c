@@ -277,8 +277,6 @@ int vftr_find_event_number (char *s) {
 /**********************************************************************/
 int vftr_veperf_test_1 (FILE *fp_in, FILE *fp_out) {
 #if defined(HAS_VEPERF)
-	//int n = 1000;
-	//double x[n], y[n], z[n];
 	int stat = __veperf_init();
 	if (stat) {
 		fprintf (fp_out, "__veperf_init() failed(%d)\n", stat);	  
