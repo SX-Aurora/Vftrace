@@ -852,8 +852,9 @@ int vftr_stacks_test_2 (FILE *fp_in, FILE *fp_out) {
 	for (int i = 0; i < vftr_mpisize; i++) {
 		if (vftr_mpirank == i) {
 			fprintf (fp_out, "Local stacklist for rank %d: \n", i);
-			int ntop = vftr_mpirank == 3 ? 3 : 5;
-			vftr_print_local_stacklist (vftr_func_table, fp_out, ntop);
+			// There is "init" + the four (rank 0 - 2) or two (rank 3) additional functions.
+			int n_functions = vftr_mpirank == 3 ? 3 : 5;
+			vftr_print_local_stacklist (vftr_func_table, fp_out, n_functions);
 		}
 		PMPI_Barrier (MPI_COMM_WORLD);
 	}
