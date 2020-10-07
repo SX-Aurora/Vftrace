@@ -1068,6 +1068,7 @@ int vftr_filewrite_test_2 (FILE *fp_in, FILE *fp_out) {
 	int n;
 	unsigned long long addrs [6];
 	unsigned long long vftr_test_runtime = 0;
+	vftr_get_mpi_info (&vftr_mpirank, &vftr_mpisize);
 	function_t *func1 = vftr_new_function (NULL, "init", NULL, 0, false);
 	function_t *func2 = vftr_new_function ((void*)addrs, "func2", func1, 0, false);
 	function_t *func3 = vftr_new_function ((void*)(addrs + 1), "func3", func1, 0, false);	
