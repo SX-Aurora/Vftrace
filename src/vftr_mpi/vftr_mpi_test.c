@@ -20,7 +20,7 @@
 #include <mpi.h>
 
 #include "vftr_mpi_pcontrol.h"
-#include "vftr_requests.h"
+#include "vftr_clear_requests.h"
   
 int vftr_MPI_Test(MPI_Request *request, int *flag, MPI_Status *status) {
 

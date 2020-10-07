@@ -32,7 +32,7 @@
 #include "vftr_pause.h"
 #include "vftr_timer.h"
 #include "vftr_stacks.h"
-#include "vftr_requests.h"
+#include "vftr_clear_requests.h"
 
 void vftr_region_entry (const char *s, void *addr, bool isPrecise);
 void vftr_region_exit();

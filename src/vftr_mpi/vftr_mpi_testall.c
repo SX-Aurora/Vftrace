@@ -19,8 +19,10 @@
 #ifdef _MPI
 #include <mpi.h>
 
+#include <stdbool.h>
+
 #include "vftr_mpi_pcontrol.h"
-#include "vftr_requests.h"
+#include "vftr_clear_requests.h"
   
 int vftr_MPI_Testall(int count, MPI_Request array_of_requests[],
                      int *flag, MPI_Status array_of_statuses[]) {

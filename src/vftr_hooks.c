@@ -33,7 +33,7 @@
 #include "vftr_pause.h"
 #include "vftr_timer.h"
 #include "vftr_stacks.h"
-#include "vftr_requests.h"
+#include "vftr_clear_requests.h"
 
 bool vftr_profile_wanted = false;
 

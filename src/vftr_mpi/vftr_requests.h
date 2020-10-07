@@ -55,7 +55,5 @@ void vftr_request_prepend(vftr_request_t **open_request_list,
 void vftr_remove_request(vftr_request_t **open_request_list,
                          vftr_request_t *request);
 
-void vftr_clear_completed_requests();
-
 #endif
 #endif
