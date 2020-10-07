@@ -175,6 +175,8 @@ AC_CONFIG_LINKS(test/units/ref_output/vftr_environment_test_1.out:test/units/ref
                 test/units/ref_output/vftr_setup_test_1.out:test/units/ref_output/vftr_setup_test_1.out
                 test/units/ref_output/vftr_setup_test_2.out:test/units/ref_output/vftr_setup_test_2.out
                 test/units/ref_output/vftr_symbols_test_1.out:test/units/ref_output/vftr_symbols_test_1.out
+                test/units/ref_output/vftr_veperf_test_1.out:test/units/ref_output/vftr_veperf_test_1.out
+                test/units/ref_output/vftr_veperf_test_2.out:test/units/ref_output/vftr_veperf_test_2.out
                )
 
 AM_COND_IF([MPI_PROFILING],[units_refdir=mpi], [units_refdir=serial])
@@ -207,9 +209,11 @@ AC_CONFIG_LINKS(test/units/this_passes.sh:test/units/this_passes.sh
                 test/units/vftr_functions_test_5.sh:test/units/vftr_functions_test_5.sh
                 test/units/vftr_stacks_test_1.sh:test/units/vftr_stacks_test_1.sh
                 test/units/vftr_stacks_test_2.sh:test/units/vftr_stacks_test_2.sh
+                test/units/vftr_veperf_test_1.sh:test/units/vftr_veperf_test_1.sh
+                test/units/vftr_veperf_test_2.sh:test/units/vftr_veperf_test_2.sh
                )
 
-# User funktion tests
+# User function tests
 AC_CONFIG_LINKS(test/user_functions/cregions1.sh:test/user_functions/cregions1.sh
                 test/user_functions/cregions2.sh:test/user_functions/cregions2.sh
                 test/user_functions/cregions3.sh:test/user_functions/cregions3.sh

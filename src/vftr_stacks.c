@@ -133,7 +133,7 @@ int vftr_normalize_stacks() {
        for (int istack=0; istack<vftr_stackscount; istack++) {
           int globID = local2global_ID[istack];
           vftr_gStackinfo[globID].name = strdup(vftr_func_table[istack]->name);
-	  if (vftr_environment->print_stack_profile->set) {
+	  if (vftr_environment && vftr_environment->print_stack_profile->set) {
 		if (vftr_pattern_match (vftr_environment->print_stack_profile->value, 
 				        vftr_func_table[istack]->name)) { 
 			vftr_gStackinfo[globID].print_profile = true;
@@ -314,7 +314,7 @@ int vftr_normalize_stacks() {
     // We also need to communicate if stack profiles with imbalances are to be printed,
     // because identical function stacks can be located at different positions in the
     // function table or not be present at all. 
-    if (vftr_environment->logfile_all_ranks->value || vftr_environment->print_stack_profile->value) {
+    if (vftr_environment && (vftr_environment->logfile_all_ranks->value || vftr_environment->print_stack_profile->value)) {
        // The amount of unique stacks is know due to the hash synchronisation earlier
        // allocate memory on all but 0th rank
        if (vftr_mpirank != 0) {
@@ -483,14 +483,15 @@ void vftr_write_stacks_vfd (FILE *fp, int level, function_t *func) {
 
 void vftr_print_local_stacklist (function_t **funcTable, FILE *pout, int ntop) {
     char *fmtFid;
-    int  i, fidp, namep, tableWidth, maxID;
+    int  fidp, tableWidth;
     int  useGid = (pout != stdout && (vftr_mpisize > 1));
     
     if (!vftr_profile_wanted) return;
 
     /* Compute column and table widths */
-
-    for (i = 0,namep = 0,maxID = 0; i < ntop; i++) {
+    int namep = 0;
+    int maxID = 0;
+    for (int i = 0; i < ntop; i++) {
         function_t *func = funcTable[i];
         if (func == NULL || !func->return_to) continue;
         int width, id;
@@ -521,7 +522,7 @@ void vftr_print_local_stacklist (function_t **funcTable, FILE *pout, int ntop) {
 
     /* Print table */
 
-    for (i = 0; i < ntop; i++) {
+    for (int i = 0; i < ntop; i++) {
         char *sep; 
         int  id;
         function_t *func = funcTable[i];
@@ -747,6 +748,7 @@ void vftr_print_function_stack (FILE *fp, int rank, char *func_name, int n_final
 			   int *final_stack_ids, int *final_func_ids) {
 	long long all_times [vftr_mpisize];
 	double imbalances [vftr_func_table_size];
+#ifdef _MPI
 	for (int fsid = 0; fsid < n_final_stack_ids; fsid++) {
 		long long t = vftr_func_table[final_func_ids[fsid]]->prof_current.timeIncl;
 		PMPI_Allgather (&t, 1, MPI_LONG_LONG_INT,
@@ -755,6 +757,11 @@ void vftr_print_function_stack (FILE *fp, int rank, char *func_name, int n_final
 		imbalances[final_func_ids[fsid]] = compute_mpi_imbalance (all_times, -1.0);
 	}
 	if (vftr_mpirank > 0) return;
+#else
+	for (int i  = 0; i < vftr_func_table_size; i++) {
+		imbalances[i] = 0;
+	}
+#endif
 	stack_leaf_t *stack_tree = NULL;
 	fprintf (fp, "Function stacks leading to %s: ", func_name);
 	if (n_final_stack_ids == 0) {
@@ -773,7 +780,6 @@ void vftr_print_function_stack (FILE *fp, int rank, char *func_name, int n_final
 			stack_ids[i] = stack_id;
 			stack_id = vftr_gStackinfo[stack_id].ret;
 		}
-		//printf ("name: %s, n_ids: %d, imba: %lf\n", func_name, n_functions_in_stack, imbalances[fsid]);
 		vftr_fill_into_stack_tree (&stack_tree, n_functions_in_stack, stack_ids, function_id);
 		free (stack_ids);
 	}
@@ -787,6 +793,7 @@ void vftr_print_function_stack (FILE *fp, int rank, char *func_name, int n_final
 
 int vftr_stacks_test_1 (FILE *fp_in, FILE *fp_out) {
 	unsigned long long addrs[6];
+	vftr_get_mpi_info (&vftr_mpirank, &vftr_mpisize);
 	fprintf (fp_out, "Initial vftr_stackscount: %d\n", vftr_stackscount);
 	function_t *func1 = vftr_new_function (NULL, "init", NULL, 0, false);
 	function_t *func2 = vftr_new_function ((void*)addrs, "func2", func1, 0, false);
@@ -813,6 +820,7 @@ int vftr_stacks_test_1 (FILE *fp_in, FILE *fp_out) {
 int vftr_stacks_test_2 (FILE *fp_in, FILE *fp_out) {
 #ifdef _MPI
 	unsigned long long addrs[6];
+	vftr_get_mpi_info (&vftr_mpirank, &vftr_mpisize);
 	function_t *func0 = vftr_new_function (NULL, "init", NULL, 0, false);	
 	if (vftr_mpirank == 0) {
 		function_t *func1 = vftr_new_function ((void*)addrs, "func1", func0, 0, false);
@@ -841,13 +849,14 @@ int vftr_stacks_test_2 (FILE *fp_in, FILE *fp_out) {
 
 	// Needs to be set for printing the local stacklist
 	vftr_profile_wanted = true;
-	for (int i = 0; i < 4; i++) {
+	for (int i = 0; i < vftr_mpisize; i++) {
 		if (vftr_mpirank == i) {
 			fprintf (fp_out, "Local stacklist for rank %d: \n", i);
-			int ntop = vftr_mpirank == 3 ? 5 : 7;
-			vftr_print_local_stacklist (vftr_func_table, fp_out, ntop);
+			// There is "init" + the four (rank 0 - 2) or two (rank 3) additional functions.
+			int n_functions = vftr_mpirank == 3 ? 3 : 5;
+			vftr_print_local_stacklist (vftr_func_table, fp_out, n_functions);
 		}
-		MPI_Barrier (MPI_COMM_WORLD);
+		PMPI_Barrier (MPI_COMM_WORLD);
 	}
 
 

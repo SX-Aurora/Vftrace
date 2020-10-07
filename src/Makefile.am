@@ -54,6 +54,7 @@ endif
 
 if VEPERF_AVAIL
 libvftrace_la_CFLAGS += -DHAS_VEPERF
+libvftrace_la_LDFLAGS +=  -L$(VEPERF_HOME)/lib -lveperf
 endif
 
 if VMAP_OFFSET
