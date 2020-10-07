@@ -20,7 +20,6 @@
 #include <mpi.h>
 
 #include "vftr_timer.h"
-#include "vftr_async_messages.h"
 #include "vftr_collective_requests.h"
 #include "vftr_mpi_utils.h"
 #include "vftr_mpi_buf_addr_const.h"
