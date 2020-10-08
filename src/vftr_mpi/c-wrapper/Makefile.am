@@ -26,6 +26,7 @@ libvftr_cmpiwrap_la_SOURCES += vftr_mpi_send_cwrap.c \
 ##################
 libvftr_cmpiwrap_la_SOURCES += vftr_mpi_send_init_cwrap.c \
 			       vftr_mpi_bsend_init_cwrap.c \
+			       vftr_mpi_ssend_init_cwrap.c \
 			       vftr_mpi_start_cwrap.c
 
 #########

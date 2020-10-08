@@ -256,6 +256,7 @@ AM_COND_IF([MPI_PROFILING],
                             test/mpi/c-mpi/iprobe.sh:test/mpi/testscripts/iprobe.sh
                             test/mpi/c-mpi/send_init.sh:test/mpi/testscripts/send_init.sh
                             test/mpi/c-mpi/bsend_init.sh:test/mpi/testscripts/bsend_init.sh
+                            test/mpi/c-mpi/ssend_init.sh:test/mpi/testscripts/ssend_init.sh
                             test/mpi/c-mpi/barrier.sh:test/mpi/testscripts/barrier.sh
                             test/mpi/c-mpi/bcast.sh:test/mpi/testscripts/bcast.sh
                             test/mpi/c-mpi/bcast_intercom.sh:test/mpi/testscripts/bcast_intercom.sh
@@ -392,6 +393,7 @@ AM_COND_IF([MPI_PROFILING],
                             test/mpi/f-mpi/iprobe.sh:test/mpi/testscripts/iprobe.sh
                             test/mpi/f-mpi/send_init.sh:test/mpi/testscripts/send_init.sh
                             test/mpi/f-mpi/bsend_init.sh:test/mpi/testscripts/bsend_init.sh
+                            test/mpi/f-mpi/ssend_init.sh:test/mpi/testscripts/ssend_init.sh
                             test/mpi/f-mpi/barrier.sh:test/mpi/testscripts/barrier.sh
                             test/mpi/f-mpi/bcast.sh:test/mpi/testscripts/bcast.sh
                             test/mpi/f-mpi/bcast_intercom.sh:test/mpi/testscripts/bcast_intercom.sh
@@ -528,6 +530,7 @@ AM_COND_IF([MPI_PROFILING],
                             test/mpi/f08-mpi/iprobe.sh:test/mpi/testscripts/iprobe.sh
                             test/mpi/f08-mpi/send_init.sh:test/mpi/testscripts/send_init.sh
                             test/mpi/f08-mpi/bsend_init.sh:test/mpi/testscripts/bsend_init.sh
+                            test/mpi/f08-mpi/ssend_init.sh:test/mpi/testscripts/ssend_init.sh
                             test/mpi/f08-mpi/barrier.sh:test/mpi/testscripts/barrier.sh
                             test/mpi/f08-mpi/bcast.sh:test/mpi/testscripts/bcast.sh
                             test/mpi/f08-mpi/bcast_intercom.sh:test/mpi/testscripts/bcast_intercom.sh
