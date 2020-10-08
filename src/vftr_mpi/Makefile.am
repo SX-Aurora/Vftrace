@@ -11,6 +11,7 @@ libvftr_mpi_la_SOURCES = vftr_mpi_utils.c
 if MPI_PROFILING
 libvftr_mpi_la_SOURCES += vftr_requests.c \
 			  vftr_p2p_requests.c \
+			  vftr_persistent_requests.c \
 			  vftr_collective_requests.c \
 			  vftr_onesided_requests.c \
 			  vftr_clear_requests.c \
@@ -49,6 +50,13 @@ libvftr_mpi_la_SOURCES += vftr_mpi_send_f.c \
 			  vftr_mpi_sendrecv_replace_f.c \
 			  vftr_mpi_probe_f.c \
 			  vftr_mpi_iprobe_f.c
+
+##################
+# persistent p2p #
+##################
+libvftr_mpi_la_SOURCES += vftr_mpi_send_init.c \
+			  vftr_mpi_start.c
+libvftr_mpi_la_SOURCES += 
 
 #########
 # tests #

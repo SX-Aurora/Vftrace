@@ -21,6 +21,12 @@ libvftr_cmpiwrap_la_SOURCES += vftr_mpi_send_cwrap.c \
 			       vftr_mpi_probe_cwrap.c \
 			       vftr_mpi_iprobe_cwrap.c
 
+##################
+# persistent p2p #
+##################
+libvftr_cmpiwrap_la_SOURCES += vftr_mpi_send_init_cwrap.c \
+			       vftr_mpi_start_cwrap.c
+
 #########
 # tests #
 #########

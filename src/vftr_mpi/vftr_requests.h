@@ -55,12 +55,9 @@ void vftr_request_prepend(vftr_request_t **open_request_list,
 void vftr_remove_request(vftr_request_t **open_request_list,
                          vftr_request_t *request);
 
-// returns true if the requests are
-bool vftr_compare_requests(vftr_request_t request_a, vftr_request_t request_b);
-
 // find a specific request in the request list.
 vftr_request_t *vftr_search_request(vftr_request_t *open_request_list,
-                                    vftr_request_t request);
+                                    MPI_Request request);
 
 #endif
 #endif

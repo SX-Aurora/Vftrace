@@ -24,7 +24,6 @@
 #include <stdbool.h>
 
 #include "vftr_requests.h"
-#include "vftr_p2p_requests.h"
 #include "vftr_collective_requests.h"
 #include "vftr_onesided_requests.h"
 
@@ -137,19 +136,14 @@ void vftr_remove_request(vftr_request_t **open_request_list,
    }
 }
 
-// returns true if the requests are 
-bool vftr_compare_requests(vftr_request_t request_a, vftr_request_t request_b) {
-   return request_a.request == request_b.request;
-}
-
 // find a specific request in the request list.
 vftr_request_t *vftr_search_request(vftr_request_t *open_request_list,
-                                    vftr_request_t request) {
+                                    MPI_Request request) {
    // go through the complete list and check the request
-   vftr_request_t *current_request = vftr_open_p2p_request_list;
+   vftr_request_t *current_request = open_request_list;
    vftr_request_t *matching_request = NULL;
    while (current_request != NULL && matching_request == NULL) {
-      if (vftr_compare_requests(*current_request, request)) {
+      if (current_request->request == request) {
          matching_request = current_request;
       } else {
          current_request = current_request->next;
