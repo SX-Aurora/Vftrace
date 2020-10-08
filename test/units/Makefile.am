@@ -12,8 +12,8 @@ AM_CFLAGS = -I$(top_srcdir)/src/ -I$(top_srcdir)/src/vftr_mpi
 AM_LDFLAGS = -L$(top_builddir)/src/.libs -lvftrace -lm
 
 if VEPERF_AVAIL
-AM_LDFLAGS += -L$(VEPERF_HOME)/lib -lveperf
-AM_CFLAGS += -DHAS_VEPERF -I$(VEPERF_HOME)/inclide
+# AM_LDFLAGS += -L$(VEPERF_HOME)/lib -lveperf
+# AM_CFLAGS += -DHAS_VEPERF -I$(VEPERF_HOME)/inclide
 endif
 
 if MPI_PROFILING

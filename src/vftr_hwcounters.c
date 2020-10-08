@@ -186,10 +186,9 @@ int vftr_init_hwc (char *scenario_file) {
 /**********************************************************************/
 
 #if defined(HAS_VEPERF)
-void vftr_read_counters_veperf (long long *event) {
-    int i, j, diag;
-    evtcounter_t *evc;
-    if (event == NULL) return;
+void vftr_read_sxhwc_registers (long long *foo) {
+    long long tmp[16];
+    //printf ("READ REGISTERS\n");
     asm volatile (
         "smir %0,  %%pmc0\n\t"
         "smir %1,  %%pmc1\n\t"
@@ -208,23 +207,80 @@ void vftr_read_counters_veperf (long long *event) {
         "smir %14, %%pmc14\n\t"
         "smir %15, %%pmc15\n\t"
         :
-        "=r"(vftr_echwc[0]),
-        "=r"(vftr_echwc[1]),
-        "=r"(vftr_echwc[2]),
-        "=r"(vftr_echwc[3]),
-        "=r"(vftr_echwc[4]),
-        "=r"(vftr_echwc[5]),
-        "=r"(vftr_echwc[6]),
-        "=r"(vftr_echwc[7]),
-        "=r"(vftr_echwc[8]),
-        "=r"(vftr_echwc[9]),
-        "=r"(vftr_echwc[10]),
-        "=r"(vftr_echwc[11]),
-        "=r"(vftr_echwc[12]),
-        "=r"(vftr_echwc[13]),
-        "=r"(vftr_echwc[14]),
-        "=r"(vftr_echwc[15])
+        "=r"(tmp[0]),
+        "=r"(tmp[1]),
+        "=r"(tmp[2]),
+        "=r"(tmp[3]),
+        "=r"(tmp[4]),
+        "=r"(tmp[5]),
+        "=r"(tmp[6]),
+        "=r"(tmp[7]),
+        "=r"(tmp[8]),
+        "=r"(tmp[9]),
+        "=r"(tmp[10]),
+        "=r"(tmp[11]),
+        "=r"(tmp[12]),
+        "=r"(tmp[13]),
+        "=r"(tmp[14]),
+        "=r"(tmp[15])
     );
+    //printf ("READING DONE\n");
+	for (int i = 0; i < 16; i++) {
+		//printf ("tmp[%d]: %lld\n", i, tmp[i]);
+		foo[i] = tmp[i];
+		//printf ("foo[%d]: %lld\n", i, foo[i]);
+	}
+    //printf ("COPY DONE\n");
+    //printf ("FOO: ");
+    //for (int i = 0; i < 16; i++) {
+    //    printf ("%d ", foo[i]);
+    //}
+    //printf ("\n");
+}
+
+/**********************************************************************/
+
+void vftr_read_counters_veperf (long long *event) {
+    int i, j, diag;
+    evtcounter_t *evc;
+    if (event == NULL) return;
+//    vftr_echwc = vftr_read_sxhwc_registers ();
+//    vftr_read_sxhwc_registers (&vftr_echwc);
+//    asm volatile (
+//        "smir %0,  %%pmc0\n\t"
+//        "smir %1,  %%pmc1\n\t"
+//        "smir %2,  %%pmc2\n\t"
+//        "smir %3,  %%pmc3\n\t"
+//        "smir %4,  %%pmc4\n\t"
+//        "smir %5,  %%pmc5\n\t"
+//        "smir %6,  %%pmc6\n\t"
+//        "smir %7,  %%pmc7\n\t"
+//        "smir %8,  %%pmc8\n\t"
+//        "smir %9,  %%pmc9\n\t"
+//        "smir %10, %%pmc10\n\t"
+//        "smir %11, %%pmc11\n\t"
+//        "smir %12, %%pmc12\n\t"
+//        "smir %13, %%pmc13\n\t"
+//        "smir %14, %%pmc14\n\t"
+//        "smir %15, %%pmc15\n\t"
+//        :
+//        "=r"(vftr_echwc[0]),
+//        "=r"(vftr_echwc[1]),
+//        "=r"(vftr_echwc[2]),
+//        "=r"(vftr_echwc[3]),
+//        "=r"(vftr_echwc[4]),
+//        "=r"(vftr_echwc[5]),
+//        "=r"(vftr_echwc[6]),
+//        "=r"(vftr_echwc[7]),
+//        "=r"(vftr_echwc[8]),
+//        "=r"(vftr_echwc[9]),
+//        "=r"(vftr_echwc[10]),
+//        "=r"(vftr_echwc[11]),
+//        "=r"(vftr_echwc[12]),
+//        "=r"(vftr_echwc[13]),
+//        "=r"(vftr_echwc[14]),
+//        "=r"(vftr_echwc[15])
+//    );
     memset (scenario_expr_counter_values, 0., sizeof(double) * scenario_expr_n_vars);
     /* Mask overflow bit and undefined bits */
     vftr_echwc[0] &= 0x000fffffffffffff; /* 52bit counter */
@@ -304,12 +360,12 @@ int vftr_find_event_number (char *s) {
 /**********************************************************************/
 int vftr_veperf_test_1 (FILE *fp_in, FILE *fp_out) {
 #if defined(HAS_VEPERF)
-	int stat = __veperf_init();
-	if (stat) {
-		fprintf (fp_out, "__veperf_init() failed(%d)\n", stat);	  
-		return stat;
-	}
-	veperf_get_pmcs ((int64_t *)vftr_echwc);
+	//int stat = __veperf_init();
+	//if (stat) {
+	//	fprintf (fp_out, "__veperf_init() failed(%d)\n", stat);	  
+	//	return stat;
+	//}
+	//veperf_get_pmcs ((int64_t *)vftr_echwc);
 	fprintf (fp_out, "veperf: success\n");
 #endif
 	return 0;
@@ -319,30 +375,38 @@ int vftr_veperf_test_1 (FILE *fp_in, FILE *fp_out) {
 
 int vftr_veperf_test_2 (FILE *fp_in, FILE *fp_out) {
 #if defined(HAS_VEPERF)
-	int n = 1000;
+	int n = 100000;
 	int n_iter = 50;
 	double x[n], y[n], z[n];
-	long long c1[MAX_HWC_EVENTS], c2[MAX_HWC_EVENTS], c_diff[MAX_HWC_EVENTS][n_iter];
+	//long long c1[MAX_HWC_EVENTS], c2[MAX_HWC_EVENTS], c_diff[MAX_HWC_EVENTS][n_iter];
+	long long *c1, *c2;
+	long long c_diff[MAX_HWC_EVENTS][n_iter];
+	c1 = (long long *)malloc (16 * sizeof(long long));
+	c2 = (long long *)malloc (16 * sizeof(long long));
 	fprintf (fp_out, "Checking reproducibility of SX Aurora hardware counters\n");
 	fprintf (fp_out, "Averaging over %d iterations\n", n_iter);
 	for (int i = 0; i < n; i++) {
 		x[i] = i;
 		y[i] = 0.5 * i;
 	}
-	int stat = __veperf_init();
-	if (stat) {
-		fprintf (fp_out, "__veperf_init() failed(%d)\n", stat);	  
-		return stat;
-	}
+	//int stat = __veperf_init();
+	//if (stat) {
+	//	fprintf (fp_out, "__veperf_init() failed(%d)\n", stat);	  
+	//	return stat;
+	//}
 	for (int n = 0; n < n_iter; n++) {
-		veperf_get_pmcs ((int64_t *)c1);
+		vftr_read_sxhwc_registers (c1);
+		//veperf_get_pmcs ((int64_t *)c1);
+		//printf ("DO STUFF\n");
 		for (int i = 0; i < n; i++) {
 			z[i] = x[i] + x[i] * y[i];
 		}
-		veperf_get_pmcs ((int64_t *)c2);
+		vftr_read_sxhwc_registers (c2);
+		//veperf_get_pmcs ((int64_t *)c2);
 		for (int i = 0; i < 15; i++) {
 			c_diff[i][n] = c2[i] - c1[i];
 		}
+		//printf ("DIFF COMPUTED\n");
 	}
 	
 	double c_avg[MAX_HWC_EVENTS];
@@ -357,6 +421,8 @@ int vftr_veperf_test_2 (FILE *fp_in, FILE *fp_out) {
 	for (int i = 0; i < 15; i++) {
 		fprintf (fp_out, "i: %d, c: %d\n", i, (int)floor(c_avg[i]));
 	}
+	free(c1);
+	free(c2);
 #endif
 	return 0;
 }
