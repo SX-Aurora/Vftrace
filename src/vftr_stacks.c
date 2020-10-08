@@ -793,7 +793,6 @@ void vftr_print_function_stack (FILE *fp, int rank, char *func_name, int n_final
 
 int vftr_stacks_test_1 (FILE *fp_in, FILE *fp_out) {
 	unsigned long long addrs[6];
-	vftr_get_mpi_info (&vftr_mpirank, &vftr_mpisize);
 	fprintf (fp_out, "Initial vftr_stackscount: %d\n", vftr_stackscount);
 	function_t *func1 = vftr_new_function (NULL, "init", NULL, 0, false);
 	function_t *func2 = vftr_new_function ((void*)addrs, "func2", func1, 0, false);
@@ -820,7 +819,6 @@ int vftr_stacks_test_1 (FILE *fp_in, FILE *fp_out) {
 int vftr_stacks_test_2 (FILE *fp_in, FILE *fp_out) {
 #ifdef _MPI
 	unsigned long long addrs[6];
-	vftr_get_mpi_info (&vftr_mpirank, &vftr_mpisize);
 	function_t *func0 = vftr_new_function (NULL, "init", NULL, 0, false);	
 	if (vftr_mpirank == 0) {
 		function_t *func1 = vftr_new_function ((void*)addrs, "func1", func0, 0, false);
@@ -835,8 +833,8 @@ int vftr_stacks_test_2 (FILE *fp_in, FILE *fp_out) {
 	} else if (vftr_mpirank == 2) {	
 		function_t *func1 = vftr_new_function ((void*)addrs, "func1", func0, 0, false);
 		function_t *func2 = vftr_new_function ((void*)(addrs + 1), "func2", func1, 0, false);
-		function_t *func3 = vftr_new_function ((void*)(addrs + 1), "func2", func2, 0, false);
-		function_t *func4 = vftr_new_function ((void*)(addrs + 1), "func2", func3, 0, false);
+		function_t *func3 = vftr_new_function ((void*)(addrs + 2), "func2", func2, 0, false);
+		function_t *func4 = vftr_new_function ((void*)(addrs + 3), "func2", func3, 0, false);
 	} else if (vftr_mpirank == 3) {
 		function_t *func1 = vftr_new_function ((void*)addrs, "func1", func0, 0, false);
 		function_t *func2 = vftr_new_function ((void*)(addrs + 3), "func4", func1, 0, false);
