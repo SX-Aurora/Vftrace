@@ -20,9 +20,7 @@
 #include <mpi.h>
 
 #include "vftr_timer.h"
-#include "vftr_requests.h"
 #include "vftr_persistent_requests.h"
-#include "vftr_mpi_utils.h"
 
 int vftr_MPI_Ssend_init(const void *buf, int count, MPI_Datatype datatype,
                         int dest, int tag, MPI_Comm comm, MPI_Request *request) {
