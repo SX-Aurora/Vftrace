@@ -254,6 +254,8 @@ AM_COND_IF([MPI_PROFILING],
                             test/mpi/c-mpi/sendrecv_replace.sh:test/mpi/testscripts/sendrecv_replace.sh
                             test/mpi/c-mpi/probe.sh:test/mpi/testscripts/probe.sh
                             test/mpi/c-mpi/iprobe.sh:test/mpi/testscripts/iprobe.sh
+                            test/mpi/c-mpi/start.sh:test/mpi/testscripts/start.sh
+                            test/mpi/c-mpi/startall.sh:test/mpi/testscripts/startall.sh
                             test/mpi/c-mpi/send_init.sh:test/mpi/testscripts/send_init.sh
                             test/mpi/c-mpi/bsend_init.sh:test/mpi/testscripts/bsend_init.sh
                             test/mpi/c-mpi/ssend_init.sh:test/mpi/testscripts/ssend_init.sh
@@ -393,6 +395,8 @@ AM_COND_IF([MPI_PROFILING],
                             test/mpi/f-mpi/sendrecv_replace.sh:test/mpi/testscripts/sendrecv_replace.sh
                             test/mpi/f-mpi/probe.sh:test/mpi/testscripts/probe.sh
                             test/mpi/f-mpi/iprobe.sh:test/mpi/testscripts/iprobe.sh
+                            test/mpi/f-mpi/start.sh:test/mpi/testscripts/start.sh
+                            test/mpi/f-mpi/startall.sh:test/mpi/testscripts/startall.sh
                             test/mpi/f-mpi/send_init.sh:test/mpi/testscripts/send_init.sh
                             test/mpi/f-mpi/bsend_init.sh:test/mpi/testscripts/bsend_init.sh
                             test/mpi/f-mpi/ssend_init.sh:test/mpi/testscripts/ssend_init.sh
@@ -532,6 +536,8 @@ AM_COND_IF([MPI_PROFILING],
                             test/mpi/f08-mpi/sendrecv_replace.sh:test/mpi/testscripts/sendrecv_replace.sh
                             test/mpi/f08-mpi/probe.sh:test/mpi/testscripts/probe.sh
                             test/mpi/f08-mpi/iprobe.sh:test/mpi/testscripts/iprobe.sh
+                            test/mpi/f08-mpi/start.sh:test/mpi/testscripts/start.sh
+                            test/mpi/f08-mpi/startall.sh:test/mpi/testscripts/startall.sh
                             test/mpi/f08-mpi/send_init.sh:test/mpi/testscripts/send_init.sh
                             test/mpi/f08-mpi/bsend_init.sh:test/mpi/testscripts/bsend_init.sh
                             test/mpi/f08-mpi/ssend_init.sh:test/mpi/testscripts/ssend_init.sh
