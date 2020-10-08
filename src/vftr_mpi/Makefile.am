@@ -55,6 +55,7 @@ libvftr_mpi_la_SOURCES += vftr_mpi_send_f.c \
 # persistent p2p #
 ##################
 libvftr_mpi_la_SOURCES += vftr_mpi_send_init.c \
+			  vftr_mpi_bsend_init.c \
 			  vftr_mpi_start.c
 libvftr_mpi_la_SOURCES += 
 

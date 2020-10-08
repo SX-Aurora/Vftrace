@@ -139,13 +139,19 @@ dist_noinst_SCRIPTS += send_recv.sh \
 # Persistent P2P tests #
 ########################
 
-check_PROGRAMS += send_init
+check_PROGRAMS += send_init \
+		  bsend_init
 
 send_init_SOURCES = $(srcdir)/send_init.c
 send_init_CFLAGS  = $(AM_CFLAGS)
 send_init_LDFLAGS = $(AM_LDFLAGS)
 
-dist_noinst_SCRIPTS += 
+bsend_init_SOURCES = $(srcdir)/bsend_init.c
+bsend_init_CFLAGS  = $(AM_CFLAGS)
+bsend_init_LDFLAGS = $(AM_LDFLAGS)
+
+dist_noinst_SCRIPTS += send_init.sh \
+		       bsend_init.sh
 
 ####################
 # Collective tests #

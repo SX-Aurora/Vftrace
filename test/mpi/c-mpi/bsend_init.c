@@ -25,7 +25,7 @@ int main(int argc, char** argv) {
 
    // require cmd-line argument
    if (argc < 3) {
-      printf("./send_init <msgsize in ints> <nrepetitions>\n");
+      printf("./bsend_init <msgsize in ints> <nrepetitions>\n");
       return 1;
    }
 
@@ -39,6 +39,11 @@ int main(int argc, char** argv) {
    for (int i=0; i<nints; i++) {rbuffer[i]=-1;}
    MPI_Request *myrequest = (MPI_Request*) malloc((comm_size-1)*sizeof(MPI_Request));
 
+   // allocating and attatching MPI-buffered mode buffer
+   int bufsize = nints*sizeof(int) + MPI_BSEND_OVERHEAD;
+   void *buffer = malloc(bufsize);
+   MPI_Buffer_attach(buffer, bufsize);
+
    // Messaging cycle
    bool valid_data = true;
    MPI_Status mystat;
@@ -47,27 +52,31 @@ int main(int argc, char** argv) {
       // prepare send to every other rank
       printf("Initialize sending messages from rank %d\n", my_rank);
       for (int recvrank=1; recvrank<comm_size; recvrank++) {
-         MPI_Send_init(sbuffer, nints, MPI_INT, recvrank, 0, MPI_COMM_WORLD,
-                       myrequest+reqidx);
+         MPI_Bsend_init(sbuffer, nints, MPI_INT, recvrank, 0, MPI_COMM_WORLD,
+                        myrequest+reqidx);
          reqidx++;
       }
 
       for (int irun=0; irun<nruns; irun++) {
          // send to every other rank
-         printf("Sending messages from rank %d\n", 0);
+         printf("Sending messages from rank %d\n", my_rank);
          for (int ireq=0; ireq<comm_size-1; ireq++) {
+            MPI_Barrier(MPI_COMM_WORLD);
             MPI_Start(myrequest+ireq);
-         }
-         // wait for completion of non-blocking sends
-         for (int ireq=0; ireq<comm_size-1; ireq++) {
+            // wait for completion of non-blocking sends
             MPI_Wait(myrequest+ireq, &mystat);
          }
       }
    } else {
       for (int irun=0; irun<nruns; irun++) {
          int* rbuffer = (int*) malloc(nints*sizeof(int));
-         printf("Receiving messages from rank %d\n", my_rank);
-         MPI_Recv(rbuffer, nints, MPI_INT, 0, 0, MPI_COMM_WORLD, &mystat);
+         printf("Receiving messages from rank %d\n", 0);
+         for (int irank=1; irank<comm_size; irank++) {
+            MPI_Barrier(MPI_COMM_WORLD);
+            if (irank == my_rank) {
+               MPI_Recv(rbuffer, nints, MPI_INT, 0, 0, MPI_COMM_WORLD, &mystat);
+            }
+         }
          // validate data
          for (int i=0; i<nints; i++) {
             if (rbuffer[i] != 0) {
@@ -78,12 +87,17 @@ int main(int argc, char** argv) {
          }
       }
    }
+
+   MPI_Buffer_detach(buffer, &bufsize);
    
    free(sbuffer);
    sbuffer=NULL;
 
    free(rbuffer);
    rbuffer=NULL;
+
+   free(buffer);
+   buffer=NULL;
 
    MPI_Finalize();
 
