@@ -141,7 +141,8 @@ dist_noinst_SCRIPTS += send_recv.sh \
 
 check_PROGRAMS += send_init \
 		  bsend_init \
-		  ssend_init
+		  ssend_init \
+		  rsend_init
 
 send_init_SOURCES = $(srcdir)/send_init.c
 send_init_CFLAGS  = $(AM_CFLAGS)
@@ -155,9 +156,14 @@ ssend_init_SOURCES = $(srcdir)/ssend_init.c
 ssend_init_CFLAGS  = $(AM_CFLAGS)
 ssend_init_LDFLAGS = $(AM_LDFLAGS)
 
+rsend_init_SOURCES = $(srcdir)/rsend_init.c
+rsend_init_CFLAGS  = $(AM_CFLAGS)
+rsend_init_LDFLAGS = $(AM_LDFLAGS)
+
 dist_noinst_SCRIPTS += send_init.sh \
 		       bsend_init.sh \
-		       ssend_init.sh
+		       ssend_init.sh \
+		       rsend_init.sh
 
 ####################
 # Collective tests #
