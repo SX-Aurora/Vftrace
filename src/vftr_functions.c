@@ -292,6 +292,76 @@ void vftr_find_function (char *func_name, int **func_indices, int **stack_indice
 
 /**********************************************************************/
 
+void vftr_find_function_in_table (char *func_name, int **indices, int *n_indices,
+				  bool to_lower_case) {
+	*n_indices = 0;
+	char *s_compare;
+	int n_count;
+	for (int i = 0; i < vftr_stackscount; i++) {
+		s_compare = strdup (vftr_func_table[i]->name);
+		if (to_lower_case) {
+			for (int i = 0; i < strlen(s_compare); i++) {
+				s_compare[i] = tolower(s_compare[i]);
+			}
+		}
+		if (!strcmp (s_compare, func_name)) {
+			(*n_indices)++;
+		}
+	}
+	if (*n_indices > 0) {
+		*indices = (int*)malloc(*n_indices * sizeof(int));
+		int idx = 0;
+		for (int i = 0; i < vftr_stackscount; i++) {
+		   s_compare = strdup (vftr_func_table[i]->name);
+		   if (to_lower_case) {
+		   	for (int i = 0; i < strlen(s_compare); i++) {
+		   		s_compare[i] = tolower(s_compare[i]);
+		   	}
+		   }
+		   if (!strcmp (s_compare, func_name)) {
+		   	(*indices)[idx++] = i;
+		   }
+		}
+	}
+}
+
+/**********************************************************************/
+
+void vftr_find_function_in_stack (char *func_name, int **indices, int *n_indices,
+				  bool to_lower_case) {
+	*n_indices = 0;
+	char *s_compare;
+	int n_count;
+	for (int i = 0; i < vftr_gStackscount; i++) {
+		s_compare = strdup (vftr_gStackinfo[i].name);
+		if (to_lower_case) {
+			for (int i = 0; i < strlen(s_compare); i++) {
+				s_compare[i] = tolower(s_compare[i]);
+			}
+		}
+		if (!strcmp (s_compare, func_name)) {
+			(*n_indices)++;
+		}
+	}
+	if (*n_indices > 0) {
+		*indices = (int*)malloc(*n_indices * sizeof(int));
+		int idx = 0;
+		for (int i = 0; i < vftr_gStackscount; i++) {
+		   s_compare = strdup (vftr_gStackinfo[i].name);
+		   if (to_lower_case) {
+		   	for (int i = 0; i < strlen(s_compare); i++) {
+		   		s_compare[i] = tolower(s_compare[i]);
+		   	}
+		   }
+		   if (!strcmp (s_compare, func_name)) {
+		   	(*indices)[idx++] = i;
+		   }
+		}
+	}
+}
+
+/**********************************************************************/
+
 void vftr_write_function_indices (FILE *fp, char *func_name, bool to_lower_case) {
 	int n_indices;
 	int *func_indices = NULL;

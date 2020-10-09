@@ -744,17 +744,21 @@ void vftr_print_stacktree (FILE *fp, stack_leaf_t *leaf, int n_spaces, long long
 
 /**********************************************************************/
 
-void vftr_print_function_stack (FILE *fp, int rank, char *func_name, int n_final_stack_ids,
+void vftr_print_function_stack (FILE *fp, int rank, char *func_name,
+		           int n_final_stack_ids, int n_final_func_ids,
 			   int *final_stack_ids, int *final_func_ids) {
 	long long all_times [vftr_mpisize];
 	double imbalances [vftr_func_table_size];
 #ifdef _MPI
 	for (int fsid = 0; fsid < n_final_stack_ids; fsid++) {
-		long long t = vftr_func_table[final_func_ids[fsid]]->prof_current.timeIncl;
+		int function_idx = vftr_gStackinfo[fsid].locID;
+		long long t = function_idx >= 0 ? vftr_func_table[function_idx]->prof_current.timeIncl : -1.0;
 		PMPI_Allgather (&t, 1, MPI_LONG_LONG_INT,
 				all_times, 1, MPI_LONG_LONG_INT, MPI_COMM_WORLD);
 
-		imbalances[final_func_ids[fsid]] = compute_mpi_imbalance (all_times, -1.0);
+		if (function_idx >= 0) {
+			imbalances[function_idx] = compute_mpi_imbalance (all_times, -1.0);
+		}
 	}
 	if (vftr_mpirank > 0) return;
 #else
@@ -772,10 +776,10 @@ void vftr_print_function_stack (FILE *fp, int rank, char *func_name, int n_final
 	}
 	fprintf (fp, "\n\n");
 	for (int fsid = 0; fsid < n_final_stack_ids; fsid++) {
+		int function_id = final_func_ids[fsid];
 		int n_functions_in_stack = vftr_stack_length (final_stack_ids[fsid]);
 		int *stack_ids = (int*)malloc (n_functions_in_stack * sizeof(int));
 		int stack_id = final_stack_ids[fsid];
-		int function_id = final_func_ids[fsid];
 		for (int i = 0; i < n_functions_in_stack; i++) {
 			stack_ids[i] = stack_id;
 			stack_id = vftr_gStackinfo[stack_id].ret;

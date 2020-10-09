@@ -44,6 +44,8 @@ typedef struct Function {
 } function_t;
 
 enum function_search_type {FUNC_TABLE, STACK_INFO};
+void vftr_find_function_in_table (char *func_name, int **indices, int *n_indices, bool to_lower_case);
+void vftr_find_function_in_stack (char *func_name, int **indices, int *n_indices, bool to_lower_case);
 void vftr_find_function (char *func_name, int **func_indices, int **stack_indices,
 		         int *n_indices, bool to_lower_case, enum function_search_type search_type);
 

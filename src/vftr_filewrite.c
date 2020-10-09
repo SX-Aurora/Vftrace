@@ -553,7 +553,8 @@ typedef struct display_function {
     double imbalance;
     long long this_mpi_time;
     long long this_sync_time;
-    int n_indices;
+    int n_stack_indices;
+    int n_func_indices;
     int *stack_indices;
     int *func_indices;
 } display_function_t;
@@ -564,34 +565,58 @@ typedef struct display_function {
 void evaluate_display_function (char *func_name, display_function_t **display_func,
 				bool display_sync_time) {
     char func_name_sync[strlen(func_name)+5];
-    int n_indices, *stack_indices = NULL, *func_indices = NULL;	
-    int n_indices_sync, *func_indices_sync = NULL, *stack_indices_sync = NULL;;
-    vftr_find_function (func_name, &func_indices, &stack_indices, &n_indices, true, FUNC_TABLE);
-    (*display_func)->n_indices = n_indices;
-    (*display_func)->stack_indices = (int*)malloc (n_indices * sizeof(int));
-    memcpy ((*display_func)->stack_indices, stack_indices, n_indices * sizeof(int));
-    (*display_func)->func_indices = (int*)malloc (n_indices * sizeof(int));
-    memcpy ((*display_func)->func_indices, func_indices, n_indices * sizeof(int));
+    int n_func_indices, n_stack_indices;
+    int *stack_indices = NULL, *func_indices = NULL;	
+    int n_func_indices_sync, n_stack_indices_sync;
+    int *func_indices_sync = NULL, *stack_indices_sync = NULL;
+    vftr_find_function_in_table (func_name, &func_indices, &n_func_indices, true);
+    PMPI_Barrier (MPI_COMM_WORLD);
+    if (vftr_mpirank == 0) {
+    	printf ("Found function: %s %d\n", func_name, n_func_indices);
+	for (int i = 0; i < n_func_indices; i++) {
+		printf ("FOO: %d %d\n", i, func_indices[i]);
+		if (func_indices[i] >= 0) printf ("Check: %d %s\n", i, vftr_func_table[func_indices[i]]->name);
+	}
+    }
+    PMPI_Barrier (MPI_COMM_WORLD);
+		
+    (*display_func)->n_func_indices = n_func_indices;
+    (*display_func)->func_indices = (int*)malloc (n_func_indices * sizeof(int));
+    memcpy ((*display_func)->func_indices, func_indices, n_func_indices * sizeof(int));
+
+
+    vftr_find_function_in_stack (func_name, &stack_indices, &n_stack_indices, true);
+    (*display_func)->n_stack_indices = n_stack_indices;
+    (*display_func)->stack_indices = (int*)malloc (n_stack_indices * sizeof(int));
+    memcpy ((*display_func)->stack_indices, stack_indices, n_stack_indices * sizeof(int));
 
     if (display_sync_time) {
     	strcpy (func_name_sync, func_name);
     	strcat (func_name_sync, "_sync");
-    	vftr_find_function (func_name_sync, &func_indices_sync,
-			    &stack_indices_sync, &n_indices_sync, true, STACK_INFO);
-    	if (n_indices_sync > 0 && n_indices != n_indices_sync) {
+    	//vftr_find_function (func_name_sync, &func_indices_sync,
+	//		    &stack_indices_sync, &n_indices_sync, true, STACK_INFO);
+	vftr_find_function_in_table (func_name_sync, &func_indices_sync, &n_func_indices_sync, true);
+    	if (n_func_indices_sync > 0 && n_func_indices != n_func_indices_sync) {
     	    printf ("Error: Number of synchronize regions does not match total number of regions: %d %d\n",
-    	    	n_indices, n_indices_sync);
+    	    	n_func_indices, n_func_indices_sync);
     	}
+	vftr_find_function_in_stack (func_name_sync, &stack_indices_sync, &n_stack_indices_sync, true);
+    	if (n_stack_indices_sync > 0 && n_stack_indices != n_stack_indices_sync) {
+    	    printf ("Error: Number of synchronize regions does not match total number of regions: %d %d\n",
+    	    	n_stack_indices, n_stack_indices_sync);
+    	}
+
     } else {
-	n_indices_sync = 0;
+	n_func_indices_sync = 0;
+	n_stack_indices_sync = 0;
     }
 
     (*display_func)->this_mpi_time = 0;
     (*display_func)->this_sync_time = 0;
     (*display_func)->n_calls = 0;
-    for (int i = 0; i < n_indices; i++) {
+    for (int i = 0; i < n_func_indices; i++) {
 	(*display_func)->this_mpi_time += vftr_func_table[func_indices[i]]->prof_current.timeIncl;
-	if (n_indices_sync > 0) (*display_func)->this_sync_time += vftr_func_table[func_indices_sync[i]]->prof_current.timeIncl;
+	if (n_func_indices_sync > 0) (*display_func)->this_sync_time += vftr_func_table[func_indices_sync[i]]->prof_current.timeIncl;
 	(*display_func)->n_calls += vftr_func_table[func_indices[i]]->prof_current.calls;
     }
     long long all_times [vftr_mpisize], all_times_sync [vftr_mpisize];
@@ -616,23 +641,23 @@ void evaluate_display_function (char *func_name, display_function_t **display_fu
     for (int i = 0; i < vftr_mpisize; i++) {
     	if (all_times[i] > 0) {
     		sum_times += all_times[i];
-		if (n_indices_sync > 0) sum_times_sync += all_times_sync[i];
+		if (n_func_indices_sync > 0) sum_times_sync += all_times_sync[i];
     		n_count++;
     	}
     }
     if (n_count > 0) {
        (*display_func)->t_avg = (double)sum_times / n_count;
-       if (n_indices_sync > 0) (*display_func)->t_sync_avg = (double)sum_times_sync / n_count;
+       if (n_func_indices_sync > 0) (*display_func)->t_sync_avg = (double)sum_times_sync / n_count;
        (*display_func)->imbalance = compute_mpi_imbalance (all_times, (*display_func)->t_avg);
        for (int i = 0; i < vftr_mpisize; i++) {	
        	  if (all_times[i] > 0) {
        		if (all_times[i] < (*display_func)->t_min) {
 			(*display_func)->t_min = all_times[i];
-			if (n_indices_sync > 0) (*display_func)->t_sync_min = all_times_sync[i];
+			if (n_func_indices_sync > 0) (*display_func)->t_sync_min = all_times_sync[i];
 		}
        		if (all_times[i] > (*display_func)->t_max) {
 			(*display_func)->t_max = all_times[i];
-			if (n_indices_sync > 0) (*display_func)->t_sync_max = all_times_sync[i];
+			if (n_func_indices_sync > 0) (*display_func)->t_sync_max = all_times_sync[i];
 		}
        	  }
        }
@@ -716,11 +741,13 @@ void vftr_print_function_statistics (FILE *pout, bool display_sync_time,
        }
     }
   }
+    fprintf (pout, "---------------------------------------------------------------------------\n");
 
   if (vftr_environment->print_stack_profile->value) {
   	for (int i = 0; i < n_display_functions; i++) {
   		vftr_print_function_stack (pout, vftr_mpirank, display_functions[i]->func_name, 
-				      display_functions[i]->n_indices,
+				      display_functions[i]->n_stack_indices,
+				      display_functions[i]->n_func_indices,
   				      display_functions[i]->stack_indices,
 				      display_functions[i]->func_indices);
 	}
@@ -735,10 +762,10 @@ void display_selected_stacks (FILE *pout, char *display_function_names[], int n_
 
 	int n_indices, *stack_indices = NULL;	
 	for (int i = 0; i < n_display_functions; i++) {
-		vftr_find_function (display_function_names[i], NULL,
-				    &stack_indices, &n_indices, true, STACK_INFO);
+		vftr_find_function_in_stack (display_function_names[i], &stack_indices, &n_indices, true);
 
-		vftr_print_function_stack (pout, vftr_mpirank, display_function_names[i], n_indices, stack_indices, NULL);
+		vftr_print_function_stack (pout, vftr_mpirank, display_function_names[i],
+					   n_indices, 0, stack_indices, NULL);
 		free (stack_indices);
 	}
 	
