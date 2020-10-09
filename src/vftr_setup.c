@@ -379,6 +379,7 @@ void vftr_finalize_() {
 int vftr_setup_test_1 (FILE *fp) {
 	fprintf (fp, "Check MPI rank and size received from environment variables\n");		
 	int mpi_rank, mpi_size;
+	vftr_get_mpi_info (&mpi_rank, &mpi_size);
 	fprintf (fp, "Rank: %d\n", mpi_rank);
 	fprintf (fp, "Size: %d\n", mpi_size);
 	return 0;
