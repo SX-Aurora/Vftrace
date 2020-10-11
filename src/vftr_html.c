@@ -75,3 +75,65 @@ void vftr_print_html_output (char *func_name, stack_leaf_t *leaf) {
 	fclose (fp);
 }
 
+/**********************************************************************/
+
+void vftr_print_style_file () {
+}
+/**********************************************************************/
+
+int vftr_html_test_1 (FILE *fp_in, FILE *fp_out) {
+	unsigned long long addrs[6];	
+	function_t *func1 = vftr_new_function (NULL, "init", NULL, 0, false);
+	function_t *func2 = vftr_new_function ((void*)addrs, "MAIN__", func1, 0, false);
+	function_t *func3 = vftr_new_function ((void*)(addrs + 1), "A", func1, 0, false);
+	function_t *func4 = vftr_new_function ((void*)(addrs + 2), "B", func1, 0, false);
+	function_t *func5 = vftr_new_function ((void*)(addrs + 3), "C", func3, 0, false);
+	function_t *func6 = vftr_new_function ((void*)(addrs + 4), "C", func4, 0, false);
+	printf ("Normalize stack\n");
+	vftr_normalize_stacks();
+	printf ("Normalize stack DONE\n");
+	fprintf (stdout, "%s: %d %d\n", func2->name, func2->id, func2->gid);
+	fprintf (stdout, "%s: %d %d\n", func3->name, func3->id, func3->gid);
+	fprintf (stdout, "%s: %d %d\n", func4->name, func4->id, func4->gid);
+	fprintf (stdout, "%s: %d %d\n", func5->name, func5->id, func5->gid);
+	fprintf (stdout, "%s: %d %d\n", func6->name, func6->id, func6->gid);
+	fprintf (stdout, "Global stacklist: \n");
+	vftr_print_global_stacklist (stdout);
+
+	int *stack_indices, *func_indices;
+	int n_indices;
+	vftr_find_function ("C", &func_indices, &stack_indices, &n_indices, false, STACK_INFO);	
+ 	stack_leaf_t *stack_tree = NULL;
+	printf ("n_indices: %d\n", n_indices);
+	for (int i = 0;  i < n_indices; i++) {
+		//int n_functions_in_stack = vftr_stack_length (stack_indices[i]);
+		// Why is n_functions_in_stack 2 instead of 3?
+		int n_functions_in_stack = 3;
+		printf ("n_function_in_stack: %d\n", n_functions_in_stack);
+		int *stack_ids = (int*)malloc (n_functions_in_stack * sizeof(int));	
+		int stack_id = stack_indices[i];
+		int function_id = func_indices[i];
+		printf ("stack_id: %d ", stack_id);
+		for (int j = 0; j < n_functions_in_stack; j++) {
+			stack_ids[j] = stack_id;
+			stack_id = vftr_gStackinfo[stack_id].ret;
+			printf ("%d ", stack_id);
+		}
+		printf ("\n");
+		vftr_fill_into_stack_tree (&stack_tree, n_functions_in_stack, stack_ids, function_id);
+		free (stack_ids);
+	}
+	printf ("Stack tree created\n");
+	if (stack_tree) {
+		printf ("Stack tree exists\n");
+	} else {
+		printf ("Pointer is zero\n");
+	}
+	long long dummy1;
+	double dummy2;
+	vftr_print_stacktree (stdout, stack_tree->origin, 0, &dummy1, &dummy2);
+	printf ("Stack tree printed\n");
+	vftr_print_html_output ("C", stack_tree->origin);
+	free (stack_tree);
+	return 0;
+}
