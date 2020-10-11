@@ -514,6 +514,22 @@ void set_formats (function_t **funcTable, double runtime,
 #ifdef _MPI
 double compute_mpi_imbalance (long long *all_times, double t_avg) {
 	double max_diff = 0;
+	// If no average time is given (e.g. when it is not of interest), compute it here
+	if (t_avg < 0.0) {
+		long long sum_times = 0ll;
+		int n = 0;
+		for (int i = 0; i < vftr_mpisize; i++) {
+			if (all_times[i] > 0) {
+				n++;
+				sum_times += all_times[i];
+			}
+		}
+		if (n > 0) {
+			t_avg = (double)sum_times / n;
+		} else {
+			return 0;
+		}
+	}
 	for (int i = 0; i < vftr_mpisize; i++) {
 		if (all_times[i] > 0) {
 			double d = fabs((double)(all_times[i]) - t_avg);
@@ -550,7 +566,7 @@ void evaluate_display_function (char *func_name, display_function_t **display_fu
     char func_name_sync[strlen(func_name)+5];
     int n_indices, *stack_indices = NULL, *func_indices = NULL;	
     int n_indices_sync, *func_indices_sync = NULL, *stack_indices_sync = NULL;;
-    vftr_find_function (func_name, &func_indices, &stack_indices, &n_indices, true);
+    vftr_find_function (func_name, &stack_indices, &func_indices, &n_indices, true, STACK_INFO);
     (*display_func)->n_indices = n_indices;
     (*display_func)->stack_indices = (int*)malloc (n_indices * sizeof(int));
     memcpy ((*display_func)->stack_indices, stack_indices, n_indices * sizeof(int));
@@ -560,7 +576,8 @@ void evaluate_display_function (char *func_name, display_function_t **display_fu
     if (display_sync_time) {
     	strcpy (func_name_sync, func_name);
     	strcat (func_name_sync, "_sync");
-    	vftr_find_function (func_name_sync, &func_indices_sync, &stack_indices_sync, &n_indices_sync, true);
+    	vftr_find_function (func_name_sync, &stack_indices_sync,
+			    &func_indices_sync, &n_indices_sync, true, STACK_INFO);
     	if (n_indices_sync > 0 && n_indices != n_indices_sync) {
     	    printf ("Error: Number of synchronize regions does not match total number of regions: %d %d\n",
     	    	n_indices, n_indices_sync);
@@ -700,9 +717,9 @@ void vftr_print_function_statistics (FILE *pout, bool display_sync_time,
     }
   }
 
-  if (vftr_mpirank == 0 && vftr_environment->print_stack_profile->set) {
+  if (vftr_environment->print_stack_profile->value) {
   	for (int i = 0; i < n_display_functions; i++) {
-  		print_function_stack (pout, display_functions[i]->func_name, 
+  		vftr_print_function_stack (pout, vftr_mpirank, display_functions[i]->func_name, 
 				      display_functions[i]->n_indices,
   				      display_functions[i]->stack_indices,
 				      display_functions[i]->func_indices);
@@ -718,9 +735,10 @@ void display_selected_stacks (FILE *pout, char *display_function_names[], int n_
 
 	int n_indices, *stack_indices = NULL;	
 	for (int i = 0; i < n_display_functions; i++) {
-		vftr_find_function (display_function_names[i], NULL, &stack_indices, &n_indices, true);
+		vftr_find_function (display_function_names[i], NULL,
+				    &stack_indices, &n_indices, true, STACK_INFO);
 
-		print_function_stack (pout, display_function_names[i], n_indices, stack_indices, NULL);
+		vftr_print_function_stack (pout, vftr_mpirank, display_function_names[i], n_indices, stack_indices, NULL);
 		free (stack_indices);
 	}
 	
@@ -1003,7 +1021,7 @@ void vftr_print_profile (FILE *pout, int *ntop, long long time0) {
         	}
 	}
 
-	fprintf (pout, "%s(%d)", funcTable[i_func]->name, i_func);
+	fprintf (pout, "%s", funcTable[i_func]->name);
         for (int j = strlen(funcTable[i_func]->name); j <= formats->func_name; j++) {
             fputc (' ', pout);
         }

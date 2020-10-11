@@ -296,6 +296,10 @@ void vftr_finalize() {
     if (vftr_env_do_sampling()) {
         vftr_write_to_vfd (finalize_time, vftr_prog_cycles, 0, SID_EXIT);
     }
+
+    if (vftr_environment->strip_module_names->value) {
+	vftr_strip_all_module_names ();
+    }
     
     bool valid_loadbalance_table = !vftr_normalize_stacks();
     vftr_calc_tree_format (vftr_froots);
