@@ -786,7 +786,7 @@ void vftr_print_function_stack (FILE *fp, int rank, char *func_name, int n_final
 	}
 	long long total_time = 0;
 	vftr_print_stacktree (fp, stack_tree->origin, 0, &total_time, imbalances);
-	vftr_print_html_output (func_name, stack_tree->origin);
+	vftr_print_html_output (NULL, func_name, stack_tree->origin);
 	free (stack_tree);
 	fprintf (fp, "Total(%s): %lf sec. \n\n", func_name, (double)total_time * 1e-6);
 }
