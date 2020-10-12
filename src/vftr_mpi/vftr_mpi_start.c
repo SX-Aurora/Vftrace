@@ -21,7 +21,6 @@
 
 #include "vftr_timer.h"
 #include "vftr_persistent_requests.h"
-#include "vftr_p2p_requests.h"
 #include "vftr_mpi_utils.h"
 
 int vftr_MPI_Start(MPI_Request *request) {
@@ -34,17 +33,7 @@ int vftr_MPI_Start(MPI_Request *request) {
       int retVal = PMPI_Start(request);
 
       long long t2start = vftr_get_runtime_usec();
-      vftr_request_t *matching_persistent_request = vftr_search_request(vftr_open_persistent_request_list,
-                                                                        *request);
-      vftr_register_P2P_request(matching_persistent_request->dir, 
-                                matching_persistent_request->count[0],
-                                matching_persistent_request->type[0],
-                                matching_persistent_request->rank[0],
-                                matching_persistent_request->tag,
-                                matching_persistent_request->comm,
-                                matching_persistent_request->request,
-                                tstart);
-
+      vftr_activate_persistent_request(*request, tstart);
       long long t2end = vftr_get_runtime_usec();
 
       vftr_mpi_overhead_usec += t2end - t2start;

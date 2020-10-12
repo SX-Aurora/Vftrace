@@ -19,11 +19,13 @@
 
 #ifdef _MPI
 #include "vftr_p2p_requests.h"
+#include "vftr_persistent_requests.h"
 #include "vftr_collective_requests.h"
 #include "vftr_onesided_requests.h"
 
 void vftr_clear_completed_requests() {
    vftr_clear_completed_P2P_requests();
+   vftr_deactivate_completed_persistent_requests();
    vftr_clear_completed_collective_requests();
    vftr_clear_completed_onesided_requests();
 }
