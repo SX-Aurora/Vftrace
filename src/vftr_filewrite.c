@@ -569,17 +569,8 @@ void evaluate_display_function (char *func_name, display_function_t **display_fu
     int *stack_indices = NULL, *func_indices = NULL;	
     int n_func_indices_sync, n_stack_indices_sync;
     int *func_indices_sync = NULL, *stack_indices_sync = NULL;
+
     vftr_find_function_in_table (func_name, &func_indices, &n_func_indices, true);
-    PMPI_Barrier (MPI_COMM_WORLD);
-    if (vftr_mpirank == 0) {
-    	printf ("Found function: %s %d\n", func_name, n_func_indices);
-	for (int i = 0; i < n_func_indices; i++) {
-		printf ("FOO: %d %d\n", i, func_indices[i]);
-		if (func_indices[i] >= 0) printf ("Check: %d %s\n", i, vftr_func_table[func_indices[i]]->name);
-	}
-    }
-    PMPI_Barrier (MPI_COMM_WORLD);
-		
     (*display_func)->n_func_indices = n_func_indices;
     (*display_func)->func_indices = (int*)malloc (n_func_indices * sizeof(int));
     memcpy ((*display_func)->func_indices, func_indices, n_func_indices * sizeof(int));
