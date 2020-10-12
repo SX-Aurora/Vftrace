@@ -16,27 +16,31 @@
    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-#ifndef VFTR_PERSISTENT_REQUESTS_H
-#define VFTR_PERSISTENT_REQUESTS_H
-
 #ifdef _MPI
-#include "vftr_requests.h"
+#include <mpi.h>
 
-extern vftr_request_t *vftr_open_persistent_request_list;
+#include "vftr_timer.h"
+#include "vftr_p2p_requests.h"
+#include "vftr_persistent_requests.h"
+#include "vftr_mpi_utils.h"
 
-void vftr_register_persistent_request(vftr_direction dir, int count,
-                                      MPI_Datatype type, int peer_rank, int tag,
-                                      MPI_Comm comm, MPI_Request request);
+int vftr_MPI_Request_free(MPI_Request *request) {
 
-void vftr_activate_persistent_request(MPI_Request request, long long tstart);
+   // disable profiling based on the Pcontrol level
+   if (vftr_no_mpi_logging()) {
+      return PMPI_Request_free(request);
+   } else {
+      long long t2start= vftr_get_runtime_usec();
+      vftr_mark_p2p_request_for_deallocation(*request) || 
+         vftr_mark_persistent_request_for_deallocation(*request);
 
-void vftr_deactivate_completed_persistent_requests();
+      *request = MPI_REQUEST_NULL;
+      long long t2end = vftr_get_runtime_usec();
 
-bool vftr_mark_persistent_request_for_deallocation(MPI_Request request);
+      vftr_mpi_overhead_usec += t2end - t2start;
 
-void vftr_deallocate_marked_persistent_requests();
+      return 0;
+   }
+}
 
-int vftr_number_of_open_persistent_requests();
-
-#endif
 #endif
