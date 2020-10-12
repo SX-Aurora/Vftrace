@@ -11,6 +11,11 @@ AM_CFLAGS = -I$(top_srcdir)/src/ -I$(top_srcdir)/src/vftr_mpi
 
 AM_LDFLAGS = -L$(top_builddir)/src/.libs -lvftrace -lm
 
+if VEPERF_AVAIL
+AM_LDFLAGS += -L$(VEPERF_HOME)/lib -lveperf
+AM_CFLAGS += -DHAS_VEPERF -I$(VEPERF_HOME)/inclide
+endif
+
 if MPI_PROFILING
   AM_CFLAGS += -D_MPI
 endif
@@ -22,7 +27,7 @@ endif
 check_PROGRAMS = test_vftrace
 
 test_vftrace_SOURCES = $(srcdir)/test_vftrace.c
-test_vftrace_CFLAGS = $(AM_CFLAGS)
+test_vftrace_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
 test_vftrace_LDFLAGS = $(AM_LDFLAGS)
 
 
@@ -47,6 +52,13 @@ dist_check_SCRIPTS = this_passes.sh \
 if MPI_PROFILING
 dist_check_SCRIPTS += vftr_stacks_test_2.sh
 endif
+
+if VEPERF_AVAIL
+dist_check_SCRIPTS += vftr_veperf_test_1.sh \
+		      vftr_veperf_test_2.sh
+endif
+
+
 
 TEST_EXTENSIONS = .sh
 SH_LOG_COMPILER = $(SHELL)

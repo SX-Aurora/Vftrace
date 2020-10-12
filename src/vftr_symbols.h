@@ -65,6 +65,8 @@ typedef struct library_list {
     struct library_list *next;
 } library_list_t;
 
+char *vftr_strip_module_name (char *base_name);
+
 FILE *get_fmap (char *target);
 
 // Returns 1 if the creation of the symbol table fails.

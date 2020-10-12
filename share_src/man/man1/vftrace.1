@@ -221,6 +221,16 @@ The latter case signifies that stack information should be printed for all ranks
 [group_base,group_base + group_size). For example, VFTR_PRINT_STACKS_FOR=1,4:10 switches on the
 inclusion of rank 1 and all ranks between 4 and 13 in the stack information.
 .\"
+.IP "\fBVFTR_STRIP_MODULE_NAMES\fR"
+.IX Item "VFTR_STRIP_MODULE_NAMES"
+The symbol names for subroutines and functions defined in Fortran modules can be put together from
+the module name and the function name, with a delimiter "_MP_". When this environment variable
+is set, the module name is split off from the symbol, leading to shorter output, e.g. in function stacks.
+Note that this way, there is no way to distinguish between functions with identical names from
+different modules only by their name. Instead, the stack ID has to be used. Also, the "_MP_" delimiter
+might be different, depending on the compiler or linker. In this case, the logfile output
+appears as in the case where the environment variable is not set.
+.\"
 .SS LIBRARY FUNCTIONS
 .IX Subsection "LIBRARY FUNCTIONS"
 Vftrace provides library functions which can be included in a C or Fortran application

@@ -296,13 +296,19 @@ void vftr_finalize() {
     if (vftr_env_do_sampling()) {
         vftr_write_to_vfd (finalize_time, vftr_prog_cycles, 0, SID_EXIT);
     }
+
+    if (vftr_environment->strip_module_names->value) {
+	vftr_strip_all_module_names ();
+    }
     
     bool valid_loadbalance_table = !vftr_normalize_stacks();
     vftr_calc_tree_format (vftr_froots);
 
     vftr_print_profile (vftr_log, &ntop, timer);
 #ifdef _MPI
-    vftr_print_mpi_statistics (vftr_log);
+    if (vftr_environment && vftr_environment->logfile_all_ranks->value) {
+       vftr_print_mpi_statistics (vftr_log);
+    }
 #endif
  
     funcTable = vftr_func_table;
