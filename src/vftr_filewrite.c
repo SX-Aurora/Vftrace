@@ -593,8 +593,6 @@ void evaluate_display_function (char *func_name, display_function_t **display_fu
     if (display_sync_time) {
     	strcpy (func_name_sync, func_name);
     	strcat (func_name_sync, "_sync");
-    	//vftr_find_function (func_name_sync, &func_indices_sync,
-	//		    &stack_indices_sync, &n_indices_sync, true, STACK_INFO);
 	vftr_find_function_in_table (func_name_sync, &func_indices_sync, &n_func_indices_sync, true);
     	if (n_func_indices_sync > 0 && n_func_indices != n_func_indices_sync) {
     	    printf ("Error: Number of synchronize regions does not match total number of regions: %d %d\n",
