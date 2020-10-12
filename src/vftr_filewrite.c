@@ -671,12 +671,58 @@ int vftr_compare_display_functions (const void *a1, const void *a2) {
 
 /**********************************************************************/
 
+void vftr_get_formats_for_function_statistics (display_function_t **display_functions,
+				int n_display_functions,
+				char *fmt_func, char *fmt_calls,
+				char *fmt_t_avg, char *fmt_t_min, char *fmt_t_max,
+				char *fmt_imba, char *fmt_t) {
+
+   	int n_func_max = strlen("function");
+	int n_calls_max = strlen("n_calls");
+	int n_t_avg_max = strlen ("avg. time [s]");
+	int n_t_min_max = strlen ("min. time [s]");
+  	int n_t_max_max = strlen ("max. time [s]");
+	int n_imba_max = strlen ("imbalance");
+	int n_t_max = strlen("This rank [s]");
+
+	int n;
+	for (int i = 0; i < n_display_functions; i++) {
+		if (display_functions[i]->n_calls > 0) {
+			n = strlen (display_functions[i]->func_name);
+			if (n > n_func_max) n_func_max = n;
+			n = count_digits (display_functions[i]->n_calls);
+			if (n > n_calls_max) n_calls_max = n;	
+			n = count_digits_double (display_functions[i]->t_avg * 1e-6);
+			if (n > n_t_avg_max) n_t_avg_max = n;
+			n = count_digits_double (display_functions[i]->t_min * 1e-6);
+			if (n > n_t_min_max) n_t_min_max = n;
+			n = count_digits_double (display_functions[i]->t_max * 1e-6);
+			if (n > n_t_max_max) n_t_max_max = n;
+			n = count_digits_double (display_functions[i]->imbalance);
+			if (n > n_imba_max) n_imba_max = n;
+			n = count_digits_double (display_functions[i]->this_mpi_time * 1e-6);
+			if (n > n_t_max) n_t_max = n;
+		}
+	}
+	printf ("n_func_max: %d\n", n_func_max);
+	printf ("n_calls_max: %d\n", n_calls_max);
+
+	sprintf (fmt_func, "| %%%ds ", n_func_max);
+	sprintf (fmt_calls, "| %%%dd ", n_calls_max);
+  	sprintf (fmt_t_avg, "| %%%d.3f ", n_t_avg_max);
+	sprintf (fmt_t_min, "| %%%d.3f ", n_t_min_max);
+	sprintf (fmt_t_max, "| %%%d.3f ", n_t_max_max);
+	sprintf (fmt_imba, "| %%%d.2f ", n_imba_max);
+	sprintf (fmt_t, "| %%%d.3f ", n_t_max);
+}
+
+/**********************************************************************/
 
 void vftr_print_function_statistics (FILE *pout, bool display_sync_time, 
 				     char *display_function_names[], int n_display_functions) {
 
     display_function_t **display_functions =
-	(display_function_t**) malloc (n_display_functions * sizeof(display_function_t*));
+			(display_function_t**) malloc (n_display_functions * sizeof(display_function_t*));
 
     for (int i = 0; i < n_display_functions; i++) {
 	display_functions[i] = (display_function_t*) malloc (sizeof(display_function_t));
@@ -697,8 +743,45 @@ void vftr_print_function_statistics (FILE *pout, bool display_sync_time,
 
     fprintf (pout, "Total time spent in MPI: %lf s\n", total_time);
     fprintf (pout, "Imbalance computed as: max (T - T_avg)\n");
-    fprintf (pout, "function     | %%MPI | n_calls | avg. time [s] | min. time [s] | max. time [s] | imb. | This rank [s] |\n");
+    int n_chars_max = strlen("function");
+    for (int i = 0; i < n_display_functions; i++) {
+	if (display_functions[i]->n_calls > 0) {
+	   
+int this_len = strlen(display_functions[i]->func_name);
+	   //printf ("func: %s, len: %d\n", display_functions[i]->func_name, this_len);
+	   if (this_len > n_chars_max) n_chars_max = this_len;
+	}
+    }
+    char fmt_func[11], fmt_calls[11];
+    char fmt_t_avg[11], fmt_t_min[11], fmt_t_max[11];
+    char fmt_imba[11], fmt_t[11];
+    //fprintf (pout, "n_chars_max: %d\n", n_chars_max);
+    //sprintf (fmtfunc, " %%%ds ", n_chars_max);
+    //
+    vftr_get_formats_for_function_statistics (display_functions, n_display_functions,
+	fmt_func, fmt_calls, fmt_t_avg, fmt_t_min, fmt_t_max, fmt_imba, fmt_t);
+		
+    //fprintf (pout, "function     | %%MPI | n_calls | avg. time [s] | min. time [s] | max. time [s] | imb. | This rank [s] |\n");
+    //fprintf (pout, "Test formats: \n");
+    //fprintf (pout, "fmt_func: %s\n", fmt_func);
+    //fprintf (pout, "fmt_calls: %s\n", fmt_calls);
+    //fprintf (pout, "fmt_t_avg: %s\n", fmt_t_avg);
+    //fprintf (pout, "fmt_t_min: %s\n", fmt_t_min);
+    //fprintf (pout, "fmt_t_max: %s\n", fmt_t_max);
+    //fprintf (pout, "fmt_imba: %s\n", fmt_imba);
+    //fprintf (pout, "fmt_t: %s\n", fmt_t);
+    fprintf (pout, fmt_func, "function");
+    fprintf (pout, "| %%MPI ");
+    fprintf (pout, fmt_calls, "n_calls");
+    fprintf (pout, fmt_t_avg, "avg. time [s]");
+    fprintf (pout, fmt_t_min, "min. time [s]");
+    fprintf (pout, fmt_t_max, "max. time [s]");
+    fprintf (pout, fmt_imba, "imbalance");
+    fprintf (pout, fmt_t, "This rank [s]");
+    fprintf (pout, "|\n");
+    //fprintf (pout, "| %%MPI | n_calls | avg. time [s] | min. time [s] | max. time [s] | imb. | This rank [s] |\n");
     fprintf (pout, "---------------------------------------------------------------------------\n");
+    fprintf (pout, "x%sx\n", fmt_calls);
     for (int i = 0; i < n_display_functions; i++) {
 	   
        if (display_functions[i]->n_calls > 0) {
@@ -718,15 +801,24 @@ void vftr_print_function_statistics (FILE *pout, bool display_sync_time,
 		(double)(display_functions[i]->this_mpi_time) * 1e-6,
 		(double)(display_functions[i]->this_sync_time) / (double)display_functions[i]->this_sync_time * 100);
 	} else {
-       	  fprintf (pout, "%14s|%2.2f|%10d|%16.3f|%16.3f|%16.3f|%4.2f|%16.3f|\n",
-		display_functions[i]->func_name,
-		(display_functions[i]->t_avg *1e-6) / total_time * 100,
-		display_functions[i]->n_calls,
-		display_functions[i]->t_avg * 1e-6,
-		(double)(display_functions[i]->t_min) * 1e-6,
-		(double)(display_functions[i]->t_max) * 1e-6,
-		display_functions[i]->imbalance,
-		(double)(display_functions[i]->this_mpi_time) * 1e-6);
+       	//  fprintf (pout, "%14s|%2.2f|%10d|%16.3f|%16.3f|%16.3f|%4.2f|%16.3f|\n",
+	//	display_functions[i]->func_name,
+	//	(display_functions[i]->t_avg *1e-6) / total_time * 100,
+	//	display_functions[i]->n_calls,
+	//	display_functions[i]->t_avg * 1e-6,
+	//	(double)(display_functions[i]->t_min) * 1e-6,
+	//	(double)(display_functions[i]->t_max) * 1e-6,
+	//	display_functions[i]->imbalance,
+	//	(double)(display_functions[i]->this_mpi_time) * 1e-6);
+	fprintf (pout, fmt_func, display_functions[i]->func_name);
+	fprintf (pout, "| %5.2f ", (display_functions[i]->t_avg * 1e-6) / total_time * 100);
+	fprintf (pout, fmt_calls, display_functions[i]->n_calls);
+	fprintf (pout, fmt_t_avg, display_functions[i]->t_avg * 1e-6);
+	fprintf (pout, fmt_t_min, display_functions[i]->t_min * 1e-6);
+	fprintf (pout, fmt_t_max, display_functions[i]->t_max * 1e-6);
+	fprintf (pout, fmt_imba, display_functions[i]->imbalance);
+	fprintf (pout, fmt_t, display_functions[i]->this_mpi_time * 1e-6);
+	fprintf (pout, "|\n");
        }
     }
   }

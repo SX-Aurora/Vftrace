@@ -23,6 +23,7 @@
 char *get_application_name ();
 
 int count_digits (int value);
+int count_digits_double (double value);
 char *vftr_bool_to_string (bool value);
 
 #endif

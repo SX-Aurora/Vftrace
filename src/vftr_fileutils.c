@@ -26,6 +26,7 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <string.h>
+#include <math.h>
 
 #define MAX_CMDLINE 1024
 char *get_application_name () {
@@ -64,6 +65,12 @@ int count_digits (int value) {
 	count++;
   }
   return count;
+}
+
+/**********************************************************************/
+
+int count_digits_double (double value) {
+  return count_digits((int)floor(value));
 }
 
 /**********************************************************************/
