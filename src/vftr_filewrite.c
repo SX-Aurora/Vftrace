@@ -813,7 +813,8 @@ void vftr_print_profile (FILE *pout, int *ntop, long long time0) {
 
     if (!vftr_stackscount) return;
 
-    funcTable = vftr_func_table;
+    funcTable = (function_t**) malloc (vftr_func_table_size * sizeof(function_t*));
+    memcpy (funcTable, vftr_func_table, vftr_func_table_size * sizeof(function_t*));
 
     qsort( (void *)funcTable, (size_t)vftr_stackscount, sizeof( function_t *),
 	   vftr_compare );    
@@ -1068,6 +1069,8 @@ void vftr_print_profile (FILE *pout, int *ntop, long long time0) {
     
     output_dashes_nextline (tableWidth, pout);   
     fprintf( pout, "\n" );
+    
+    free (funcTable);
 }
 
 /**********************************************************************/
