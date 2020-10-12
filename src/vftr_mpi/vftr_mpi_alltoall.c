@@ -23,7 +23,7 @@
 #include "vftr_regions.h"
 #include "vftr_environment.h"
 #include "vftr_sync_messages.h"
-#include "vftr_mpi_pcontrol.h"
+#include "vftr_mpi_utils.h"
 #include "vftr_mpi_buf_addr_const.h"
 
 int vftr_MPI_Alltoall(const void *sendbuf, int sendcount,
@@ -31,7 +31,7 @@ int vftr_MPI_Alltoall(const void *sendbuf, int sendcount,
                       MPI_Datatype recvtype, MPI_Comm comm) {
 
    // disable profiling based on the Pcontrol level
-   if (vftrace_Pcontrol_level == 0) {
+   if (vftr_no_mpi_logging()) {
       return PMPI_Alltoall(sendbuf, sendcount, sendtype, recvbuf,
                            recvcount, recvtype, comm);
    } else {
@@ -47,6 +47,7 @@ int vftr_MPI_Alltoall(const void *sendbuf, int sendcount,
                                  recvcount, recvtype, comm);
       long long tend = vftr_get_runtime_usec();
   
+      long long t2start = tend;
       // determine if inter or intra communicator
       int isintercom;
       PMPI_Comm_test_inter(comm, &isintercom);
@@ -102,6 +103,10 @@ int vftr_MPI_Alltoall(const void *sendbuf, int sendcount,
             }
          }
       }
+      long long t2end = vftr_get_runtime_usec();
+
+      vftr_mpi_overhead_usec += t2end - t2start;
+
       return retVal;
    }
 }

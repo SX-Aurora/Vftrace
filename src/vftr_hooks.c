@@ -33,7 +33,7 @@
 #include "vftr_pause.h"
 #include "vftr_timer.h"
 #include "vftr_stacks.h"
-#include "vftr_async_messages.h"
+#include "vftr_clear_requests.h"
 
 bool vftr_profile_wanted = false;
 
@@ -177,7 +177,7 @@ void vftr_function_entry (const char *s, void *addr, int line, bool isPrecise) {
            int mpi_isfinal;
            PMPI_Finalized(&mpi_isfinal);
            if (!mpi_isfinal) {
-              vftr_clear_completed_request();
+              vftr_clear_completed_requests();
            }
         }
 #endif
@@ -282,7 +282,7 @@ void vftr_function_exit(int line) {
            int mpi_isfinal;
            PMPI_Finalized(&mpi_isfinal);
            if (!mpi_isfinal) {
-              vftr_clear_completed_request();
+              vftr_clear_completed_requests();
            }
         }
 #endif

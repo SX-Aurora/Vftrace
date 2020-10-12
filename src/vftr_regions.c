@@ -32,7 +32,7 @@
 #include "vftr_pause.h"
 #include "vftr_timer.h"
 #include "vftr_stacks.h"
-#include "vftr_async_messages.h"
+#include "vftr_clear_requests.h"
 
 void vftr_region_entry (const char *s, void *addr, bool isPrecise);
 void vftr_region_exit();
@@ -185,7 +185,7 @@ void vftr_region_entry (const char *s, void *addr, bool isPrecise){
            int mpi_isfinal;
            PMPI_Finalized(&mpi_isfinal);
            if (!mpi_isfinal) {
-              vftr_clear_completed_request();
+              vftr_clear_completed_requests();
            }
         }
 #endif
@@ -279,7 +279,7 @@ void vftr_region_exit(){
            int mpi_isfinal;
            PMPI_Finalized(&mpi_isfinal);
            if (!mpi_isfinal) {
-              vftr_clear_completed_request();
+              vftr_clear_completed_requests();
            }
         }
 #endif

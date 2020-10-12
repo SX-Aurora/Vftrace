@@ -34,8 +34,8 @@ typedef struct CallsTimeRange {
 } callsTimeRange_t;
 
 // global sample timer
-long long vftr_prevsampletime;
-long long vftr_nextsampletime;
+extern long long vftr_prevsampletime;
+extern long long vftr_nextsampletime;
 
 //sample time in ms
 extern long long vftr_interval;
@@ -55,16 +55,22 @@ unsigned long long vftr_get_cycles();
 // Vftrace measures its own overhead in microseconds. 
 // It is incremented at each function entry and exit, as
 // well as after initialization.
-long long vftr_overhead_usec;
+extern long long vftr_overhead_usec;
 
-long long vftr_initcycles;
+#ifdef _MPI
+// vftrace measures the overhead of recording
+// the MPI communication pattern
+extern long long vftr_mpi_overhead_usec;
+#endif
+
+extern long long vftr_initcycles;
 
 // A time interval indicating when the function table should be sorted.
 // This is done also to dynamically assign the "detail" flag if the weight
 // of a function (in terms of cumulative cycles) grows. 
-double vftr_sorttime;
+extern double vftr_sorttime;
 
 // After each sorting, the vftr_sorttime is multiplied by this factor
-double vftr_sorttime_growth;
+extern double vftr_sorttime_growth;
 
 #endif

@@ -20,8 +20,8 @@
 #include <mpi.h>
 
 #include "vftr_timer.h"
-#include "vftr_async_messages.h"
-#include "vftr_mpi_pcontrol.h"
+#include "vftr_collective_requests.h"
+#include "vftr_mpi_utils.h"
 #include "vftr_mpi_buf_addr_const.h"
 
 int vftr_MPI_Iexscan(const void *sendbuf, void *recvbuf, int count,
@@ -29,12 +29,13 @@ int vftr_MPI_Iexscan(const void *sendbuf, void *recvbuf, int count,
                      MPI_Request *request) {
 
    // disable profiling based on the Pcontrol level
-   if (vftrace_Pcontrol_level == 0) {
+   if (vftr_no_mpi_logging()) {
       return PMPI_Iexscan(sendbuf, recvbuf, count, datatype, op, comm, request);
    } else {
       long long tstart = vftr_get_runtime_usec();
       int retVal = PMPI_Iexscan(sendbuf, recvbuf, count, datatype, op, comm, request);
 
+      long long t2start = vftr_get_runtime_usec();
       // Only intra-communicators, as the standard specifically states
       // that the scan operation is invalid for intercommunicators
       //
@@ -97,6 +98,9 @@ int vftr_MPI_Iexscan(const void *sendbuf, void *recvbuf, int count,
                                              &tmprank, comm, *request, tstart);
          }
       }
+      long long t2end = vftr_get_runtime_usec();
+
+      vftr_mpi_overhead_usec += t2end - t2start;
 
       return retVal;
    }

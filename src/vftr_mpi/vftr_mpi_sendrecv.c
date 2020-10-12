@@ -21,7 +21,7 @@
 
 #include "vftr_timer.h"
 #include "vftr_sync_messages.h"
-#include "vftr_mpi_pcontrol.h"
+#include "vftr_mpi_utils.h"
 
 int vftr_MPI_Sendrecv(const void *sendbuf, int sendcount,
                       MPI_Datatype sendtype, int dest, int sendtag,
@@ -30,7 +30,7 @@ int vftr_MPI_Sendrecv(const void *sendbuf, int sendcount,
                       MPI_Status *status) {
 
    // disable profiling based on the Pcontrol level
-   if (vftrace_Pcontrol_level == 0) {
+   if (vftr_no_mpi_logging()) {
       return PMPI_Sendrecv(sendbuf, sendcount, sendtype, dest, sendtag,
                            recvbuf, recvcount, recvtype, source, recvtag,
                            comm, status);
@@ -42,6 +42,7 @@ int vftr_MPI_Sendrecv(const void *sendbuf, int sendcount,
                                  comm, &tmpstatus);
       long long tend = vftr_get_runtime_usec();
   
+      long long t2start = tend;
       int rank;
       PMPI_Comm_rank(comm, &rank);
       vftr_store_sync_message_info(send, sendcount, sendtype, dest,
@@ -56,6 +57,9 @@ int vftr_MPI_Sendrecv(const void *sendbuf, int sendcount,
          status->MPI_TAG = tmpstatus.MPI_TAG;
          status->MPI_ERROR = tmpstatus.MPI_ERROR;
       }
+      long long t2end = vftr_get_runtime_usec();
+
+      vftr_mpi_overhead_usec += t2end - t2start;
   
       return retVal;
    }

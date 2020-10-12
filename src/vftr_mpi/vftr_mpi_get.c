@@ -21,7 +21,7 @@
 
 #include "vftr_timer.h"
 #include "vftr_sync_messages.h"
-#include "vftr_mpi_pcontrol.h"
+#include "vftr_mpi_utils.h"
 
 int vftr_MPI_Get(void *origin_addr, int origin_count,
                  MPI_Datatype origin_datatype, int target_rank,
@@ -29,7 +29,7 @@ int vftr_MPI_Get(void *origin_addr, int origin_count,
                  MPI_Datatype target_datatype, MPI_Win win) {
 
    // disable profiling based on the Pcontrol level
-   if (vftrace_Pcontrol_level == 0) {
+   if (vftr_no_mpi_logging()) {
       return PMPI_Get(origin_addr, origin_count, origin_datatype,
                       target_rank, target_disp, target_count,
                       target_datatype, win);
@@ -40,6 +40,7 @@ int vftr_MPI_Get(void *origin_addr, int origin_count,
                             target_datatype, win);
       long long tend = vftr_get_runtime_usec();
 
+      long long t2start = tend;
       // Need to figure out the partner rank in a known communicator to store info
       MPI_Group local_group;
       PMPI_Win_get_group(win, &local_group);
@@ -56,6 +57,10 @@ int vftr_MPI_Get(void *origin_addr, int origin_count,
 
       vftr_store_sync_message_info(recv, origin_count, origin_datatype,
                                    global_rank, -1, MPI_COMM_WORLD, tstart, tend);
+      long long t2end = vftr_get_runtime_usec();
+
+      vftr_mpi_overhead_usec += t2end - t2start;
+
       return retVal;
    }
 }

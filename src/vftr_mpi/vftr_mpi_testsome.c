@@ -19,8 +19,11 @@
 #ifdef _MPI
 #include <mpi.h>
 
+#include <stdbool.h>
+
+#include "vftr_mpi_utils.h"
 #include "vftr_mpi_pcontrol.h"
-#include "vftr_async_messages.h"
+#include "vftr_clear_requests.h"
   
 int vftr_MPI_Testsome(int incount, MPI_Request array_of_requests[],
                       int *outcount, int array_of_indices[],
@@ -70,7 +73,7 @@ int vftr_MPI_Testsome(int incount, MPI_Request array_of_requests[],
             (*outcount)++;
             array_of_indices[(*outcount)-1] = ireq;
             // remove completed communications from the list of open requests
-            vftr_clear_completed_request();
+            vftr_clear_completed_requests();
             // Mark the request as inactive, or deallocate it.
             if (array_of_statuses == MPI_STATUSES_IGNORE) {
                tmpretVal = PMPI_Test(array_of_requests+ireq,

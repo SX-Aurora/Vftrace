@@ -244,11 +244,28 @@ AM_COND_IF([MPI_PROFILING],
                             test/mpi/c-mpi/init_finalize-4.sh:test/mpi/testscripts/init_finalize-4.sh
                             test/mpi/c-mpi/ctypes.sh:test/mpi/testscripts/ctypes.sh
                             test/mpi/c-mpi/derived_ctypes.sh:test/mpi/testscripts/derived_ctypes.sh
+                            test/mpi/c-mpi/pcontrol.sh:test/mpi/testscripts/pcontrol.sh
                             test/mpi/c-mpi/send_recv.sh:test/mpi/testscripts/send_recv.sh
+                            test/mpi/c-mpi/isend_recv.sh:test/mpi/testscripts/isend_recv.sh
+                            test/mpi/c-mpi/bsend_recv.sh:test/mpi/testscripts/bsend_recv.sh
+                            test/mpi/c-mpi/ibsend_recv.sh:test/mpi/testscripts/ibsend_recv.sh
+                            test/mpi/c-mpi/ssend_recv.sh:test/mpi/testscripts/ssend_recv.sh
+                            test/mpi/c-mpi/issend_recv.sh:test/mpi/testscripts/issend_recv.sh
+                            test/mpi/c-mpi/rsend_recv.sh:test/mpi/testscripts/rsend_recv.sh
+                            test/mpi/c-mpi/irsend_recv.sh:test/mpi/testscripts/irsend_recv.sh
+                            test/mpi/c-mpi/send_irecv.sh:test/mpi/testscripts/send_irecv.sh
                             test/mpi/c-mpi/sendrecv.sh:test/mpi/testscripts/sendrecv.sh
                             test/mpi/c-mpi/sendrecv_replace.sh:test/mpi/testscripts/sendrecv_replace.sh
-                            test/mpi/c-mpi/isend_recv.sh:test/mpi/testscripts/isend_recv.sh
-                            test/mpi/c-mpi/send_irecv.sh:test/mpi/testscripts/send_irecv.sh
+                            test/mpi/c-mpi/probe.sh:test/mpi/testscripts/probe.sh
+                            test/mpi/c-mpi/iprobe.sh:test/mpi/testscripts/iprobe.sh
+                            test/mpi/c-mpi/start.sh:test/mpi/testscripts/start.sh
+                            test/mpi/c-mpi/startall.sh:test/mpi/testscripts/startall.sh
+                            test/mpi/c-mpi/send_init.sh:test/mpi/testscripts/send_init.sh
+                            test/mpi/c-mpi/bsend_init.sh:test/mpi/testscripts/bsend_init.sh
+                            test/mpi/c-mpi/ssend_init.sh:test/mpi/testscripts/ssend_init.sh
+                            test/mpi/c-mpi/rsend_init.sh:test/mpi/testscripts/rsend_init.sh
+                            test/mpi/c-mpi/recv_init.sh:test/mpi/testscripts/recv_init.sh
+                            test/mpi/c-mpi/barrier.sh:test/mpi/testscripts/barrier.sh
                             test/mpi/c-mpi/bcast.sh:test/mpi/testscripts/bcast.sh
                             test/mpi/c-mpi/bcast_intercom.sh:test/mpi/testscripts/bcast_intercom.sh
                             test/mpi/c-mpi/ibcast.sh:test/mpi/testscripts/ibcast.sh
@@ -319,6 +336,18 @@ AM_COND_IF([MPI_PROFILING],
                             test/mpi/c-mpi/iallreduce.sh:test/mpi/testscripts/iallreduce.sh
                             test/mpi/c-mpi/iallreduce_intercom.sh:test/mpi/testscripts/iallreduce_intercom.sh
                             test/mpi/c-mpi/iallreduce_inplace.sh:test/mpi/testscripts/iallreduce_inplace.sh
+                            test/mpi/c-mpi/reduce_scatter_block.sh:test/mpi/testscripts/reduce_scatter_block.sh
+                            test/mpi/c-mpi/reduce_scatter_block_intercom.sh:test/mpi/testscripts/reduce_scatter_block_intercom.sh
+                            test/mpi/c-mpi/reduce_scatter_block_inplace.sh:test/mpi/testscripts/reduce_scatter_block_inplace.sh
+                            test/mpi/c-mpi/ireduce_scatter_block.sh:test/mpi/testscripts/ireduce_scatter_block.sh
+                            test/mpi/c-mpi/ireduce_scatter_block_intercom.sh:test/mpi/testscripts/ireduce_scatter_block_intercom.sh
+                            test/mpi/c-mpi/ireduce_scatter_block_inplace.sh:test/mpi/testscripts/ireduce_scatter_block_inplace.sh
+                            test/mpi/c-mpi/reduce_scatter.sh:test/mpi/testscripts/reduce_scatter.sh
+                            test/mpi/c-mpi/reduce_scatter_intercom.sh:test/mpi/testscripts/reduce_scatter_intercom.sh
+                            test/mpi/c-mpi/reduce_scatter_inplace.sh:test/mpi/testscripts/reduce_scatter_inplace.sh
+                            test/mpi/c-mpi/ireduce_scatter.sh:test/mpi/testscripts/ireduce_scatter.sh
+                            test/mpi/c-mpi/ireduce_scatter_intercom.sh:test/mpi/testscripts/ireduce_scatter_intercom.sh
+                            test/mpi/c-mpi/ireduce_scatter_inplace.sh:test/mpi/testscripts/ireduce_scatter_inplace.sh
                             test/mpi/c-mpi/scan.sh:test/mpi/testscripts/scan.sh
                             test/mpi/c-mpi/scan_inplace.sh:test/mpi/testscripts/scan_inplace.sh
                             test/mpi/c-mpi/iscan.sh:test/mpi/testscripts/iscan.sh
@@ -333,6 +362,10 @@ AM_COND_IF([MPI_PROFILING],
                             test/mpi/c-mpi/rget.sh:test/mpi/testscripts/rget.sh
                             test/mpi/c-mpi/accumulate.sh:test/mpi/testscripts/accumulate.sh
                             test/mpi/c-mpi/raccumulate.sh:test/mpi/testscripts/raccumulate.sh
+                            test/mpi/c-mpi/get_accumulate.sh:test/mpi/testscripts/get_accumulate.sh
+                            test/mpi/c-mpi/rget_accumulate.sh:test/mpi/testscripts/rget_accumulate.sh
+                            test/mpi/c-mpi/fetch_and_op.sh:test/mpi/testscripts/fetch_and_op.sh
+                            test/mpi/c-mpi/compare_and_swap.sh:test/mpi/testscripts/compare_and_swap.sh
                             test/mpi/c-mpi/test.sh:test/mpi/testscripts/test.sh
                             test/mpi/c-mpi/testany.sh:test/mpi/testscripts/testany.sh
                             test/mpi/c-mpi/testsome.sh:test/mpi/testscripts/testsome.sh
@@ -352,11 +385,28 @@ AM_COND_IF([MPI_PROFILING],
                             test/mpi/f-mpi/init_finalize-4.sh:test/mpi/testscripts/init_finalize-4.sh
                             test/mpi/f-mpi/ftypes.sh:test/mpi/testscripts/ftypes.sh
                             test/mpi/f-mpi/derived_ftypes.sh:test/mpi/testscripts/derived_ftypes.sh
+                            test/mpi/f-mpi/pcontrol.sh:test/mpi/testscripts/pcontrol.sh
                             test/mpi/f-mpi/send_recv.sh:test/mpi/testscripts/send_recv.sh
+                            test/mpi/f-mpi/isend_recv.sh:test/mpi/testscripts/isend_recv.sh
+                            test/mpi/f-mpi/bsend_recv.sh:test/mpi/testscripts/bsend_recv.sh
+                            test/mpi/f-mpi/ibsend_recv.sh:test/mpi/testscripts/ibsend_recv.sh
+                            test/mpi/f-mpi/ssend_recv.sh:test/mpi/testscripts/ssend_recv.sh
+                            test/mpi/f-mpi/issend_recv.sh:test/mpi/testscripts/issend_recv.sh
+                            test/mpi/f-mpi/rsend_recv.sh:test/mpi/testscripts/rsend_recv.sh
+                            test/mpi/f-mpi/irsend_recv.sh:test/mpi/testscripts/irsend_recv.sh
+                            test/mpi/f-mpi/send_irecv.sh:test/mpi/testscripts/send_irecv.sh
                             test/mpi/f-mpi/sendrecv.sh:test/mpi/testscripts/sendrecv.sh
                             test/mpi/f-mpi/sendrecv_replace.sh:test/mpi/testscripts/sendrecv_replace.sh
-                            test/mpi/f-mpi/isend_recv.sh:test/mpi/testscripts/isend_recv.sh
-                            test/mpi/f-mpi/send_irecv.sh:test/mpi/testscripts/send_irecv.sh
+                            test/mpi/f-mpi/probe.sh:test/mpi/testscripts/probe.sh
+                            test/mpi/f-mpi/iprobe.sh:test/mpi/testscripts/iprobe.sh
+                            test/mpi/f-mpi/start.sh:test/mpi/testscripts/start.sh
+                            test/mpi/f-mpi/startall.sh:test/mpi/testscripts/startall.sh
+                            test/mpi/f-mpi/send_init.sh:test/mpi/testscripts/send_init.sh
+                            test/mpi/f-mpi/bsend_init.sh:test/mpi/testscripts/bsend_init.sh
+                            test/mpi/f-mpi/ssend_init.sh:test/mpi/testscripts/ssend_init.sh
+                            test/mpi/f-mpi/rsend_init.sh:test/mpi/testscripts/rsend_init.sh
+                            test/mpi/f-mpi/recv_init.sh:test/mpi/testscripts/recv_init.sh
+                            test/mpi/f-mpi/barrier.sh:test/mpi/testscripts/barrier.sh
                             test/mpi/f-mpi/bcast.sh:test/mpi/testscripts/bcast.sh
                             test/mpi/f-mpi/bcast_intercom.sh:test/mpi/testscripts/bcast_intercom.sh
                             test/mpi/f-mpi/ibcast.sh:test/mpi/testscripts/ibcast.sh
@@ -427,6 +477,18 @@ AM_COND_IF([MPI_PROFILING],
                             test/mpi/f-mpi/iallreduce.sh:test/mpi/testscripts/iallreduce.sh
                             test/mpi/f-mpi/iallreduce_intercom.sh:test/mpi/testscripts/iallreduce_intercom.sh
                             test/mpi/f-mpi/iallreduce_inplace.sh:test/mpi/testscripts/iallreduce_inplace.sh
+                            test/mpi/f-mpi/reduce_scatter_block.sh:test/mpi/testscripts/reduce_scatter_block.sh
+                            test/mpi/f-mpi/reduce_scatter_block_intercom.sh:test/mpi/testscripts/reduce_scatter_block_intercom.sh
+                            test/mpi/f-mpi/reduce_scatter_block_inplace.sh:test/mpi/testscripts/reduce_scatter_block_inplace.sh
+                            test/mpi/f-mpi/ireduce_scatter_block.sh:test/mpi/testscripts/ireduce_scatter_block.sh
+                            test/mpi/f-mpi/ireduce_scatter_block_intercom.sh:test/mpi/testscripts/ireduce_scatter_block_intercom.sh
+                            test/mpi/f-mpi/ireduce_scatter_block_inplace.sh:test/mpi/testscripts/ireduce_scatter_block_inplace.sh
+                            test/mpi/f-mpi/reduce_scatter.sh:test/mpi/testscripts/reduce_scatter.sh
+                            test/mpi/f-mpi/reduce_scatter_intercom.sh:test/mpi/testscripts/reduce_scatter_intercom.sh
+                            test/mpi/f-mpi/reduce_scatter_inplace.sh:test/mpi/testscripts/reduce_scatter_inplace.sh
+                            test/mpi/f-mpi/ireduce_scatter.sh:test/mpi/testscripts/ireduce_scatter.sh
+                            test/mpi/f-mpi/ireduce_scatter_intercom.sh:test/mpi/testscripts/ireduce_scatter_intercom.sh
+                            test/mpi/f-mpi/ireduce_scatter_inplace.sh:test/mpi/testscripts/ireduce_scatter_inplace.sh
                             test/mpi/f-mpi/scan.sh:test/mpi/testscripts/scan.sh
                             test/mpi/f-mpi/scan_inplace.sh:test/mpi/testscripts/scan_inplace.sh
                             test/mpi/f-mpi/iscan.sh:test/mpi/testscripts/iscan.sh
@@ -441,6 +503,10 @@ AM_COND_IF([MPI_PROFILING],
                             test/mpi/f-mpi/rget.sh:test/mpi/testscripts/rget.sh
                             test/mpi/f-mpi/accumulate.sh:test/mpi/testscripts/accumulate.sh
                             test/mpi/f-mpi/raccumulate.sh:test/mpi/testscripts/raccumulate.sh
+                            test/mpi/f-mpi/get_accumulate.sh:test/mpi/testscripts/get_accumulate.sh
+                            test/mpi/f-mpi/rget_accumulate.sh:test/mpi/testscripts/rget_accumulate.sh
+                            test/mpi/f-mpi/fetch_and_op.sh:test/mpi/testscripts/fetch_and_op.sh
+                            test/mpi/f-mpi/compare_and_swap.sh:test/mpi/testscripts/compare_and_swap.sh
                             test/mpi/f-mpi/test.sh:test/mpi/testscripts/test.sh
                             test/mpi/f-mpi/testany.sh:test/mpi/testscripts/testany.sh
                             test/mpi/f-mpi/testsome.sh:test/mpi/testscripts/testsome.sh
@@ -460,11 +526,28 @@ AM_COND_IF([MPI_PROFILING],
                             test/mpi/f08-mpi/init_finalize-4.sh:test/mpi/testscripts/init_finalize-4.sh
                             test/mpi/f08-mpi/ftypes.sh:test/mpi/testscripts/ftypes.sh
                             test/mpi/f08-mpi/derived_ftypes.sh:test/mpi/testscripts/derived_ftypes.sh
+                            test/mpi/f08-mpi/pcontrol.sh:test/mpi/testscripts/pcontrol.sh
                             test/mpi/f08-mpi/send_recv.sh:test/mpi/testscripts/send_recv.sh
+                            test/mpi/f08-mpi/isend_recv.sh:test/mpi/testscripts/isend_recv.sh
+                            test/mpi/f08-mpi/bsend_recv.sh:test/mpi/testscripts/bsend_recv.sh
+                            test/mpi/f08-mpi/ibsend_recv.sh:test/mpi/testscripts/ibsend_recv.sh
+                            test/mpi/f08-mpi/ssend_recv.sh:test/mpi/testscripts/ssend_recv.sh
+                            test/mpi/f08-mpi/issend_recv.sh:test/mpi/testscripts/issend_recv.sh
+                            test/mpi/f08-mpi/rsend_recv.sh:test/mpi/testscripts/rsend_recv.sh
+                            test/mpi/f08-mpi/irsend_recv.sh:test/mpi/testscripts/irsend_recv.sh
+                            test/mpi/f08-mpi/send_irecv.sh:test/mpi/testscripts/send_irecv.sh
                             test/mpi/f08-mpi/sendrecv.sh:test/mpi/testscripts/sendrecv.sh
                             test/mpi/f08-mpi/sendrecv_replace.sh:test/mpi/testscripts/sendrecv_replace.sh
-                            test/mpi/f08-mpi/isend_recv.sh:test/mpi/testscripts/isend_recv.sh
-                            test/mpi/f08-mpi/send_irecv.sh:test/mpi/testscripts/send_irecv.sh
+                            test/mpi/f08-mpi/probe.sh:test/mpi/testscripts/probe.sh
+                            test/mpi/f08-mpi/iprobe.sh:test/mpi/testscripts/iprobe.sh
+                            test/mpi/f08-mpi/start.sh:test/mpi/testscripts/start.sh
+                            test/mpi/f08-mpi/startall.sh:test/mpi/testscripts/startall.sh
+                            test/mpi/f08-mpi/send_init.sh:test/mpi/testscripts/send_init.sh
+                            test/mpi/f08-mpi/bsend_init.sh:test/mpi/testscripts/bsend_init.sh
+                            test/mpi/f08-mpi/ssend_init.sh:test/mpi/testscripts/ssend_init.sh
+                            test/mpi/f08-mpi/rsend_init.sh:test/mpi/testscripts/rsend_init.sh
+                            test/mpi/f08-mpi/recv_init.sh:test/mpi/testscripts/recv_init.sh
+                            test/mpi/f08-mpi/barrier.sh:test/mpi/testscripts/barrier.sh
                             test/mpi/f08-mpi/bcast.sh:test/mpi/testscripts/bcast.sh
                             test/mpi/f08-mpi/bcast_intercom.sh:test/mpi/testscripts/bcast_intercom.sh
                             test/mpi/f08-mpi/ibcast.sh:test/mpi/testscripts/ibcast.sh
@@ -535,6 +618,18 @@ AM_COND_IF([MPI_PROFILING],
                             test/mpi/f08-mpi/iallreduce.sh:test/mpi/testscripts/iallreduce.sh
                             test/mpi/f08-mpi/iallreduce_intercom.sh:test/mpi/testscripts/iallreduce_intercom.sh
                             test/mpi/f08-mpi/iallreduce_inplace.sh:test/mpi/testscripts/iallreduce_inplace.sh
+                            test/mpi/f08-mpi/reduce_scatter_block.sh:test/mpi/testscripts/reduce_scatter_block.sh
+                            test/mpi/f08-mpi/reduce_scatter_block_intercom.sh:test/mpi/testscripts/reduce_scatter_block_intercom.sh
+                            test/mpi/f08-mpi/reduce_scatter_block_inplace.sh:test/mpi/testscripts/reduce_scatter_block_inplace.sh
+                            test/mpi/f08-mpi/ireduce_scatter_block.sh:test/mpi/testscripts/ireduce_scatter_block.sh
+                            test/mpi/f08-mpi/ireduce_scatter_block_intercom.sh:test/mpi/testscripts/ireduce_scatter_block_intercom.sh
+                            test/mpi/f08-mpi/ireduce_scatter_block_inplace.sh:test/mpi/testscripts/ireduce_scatter_block_inplace.sh
+                            test/mpi/f08-mpi/reduce_scatter.sh:test/mpi/testscripts/reduce_scatter.sh
+                            test/mpi/f08-mpi/reduce_scatter_intercom.sh:test/mpi/testscripts/reduce_scatter_intercom.sh
+                            test/mpi/f08-mpi/reduce_scatter_inplace.sh:test/mpi/testscripts/reduce_scatter_inplace.sh
+                            test/mpi/f08-mpi/ireduce_scatter.sh:test/mpi/testscripts/ireduce_scatter.sh
+                            test/mpi/f08-mpi/ireduce_scatter_intercom.sh:test/mpi/testscripts/ireduce_scatter_intercom.sh
+                            test/mpi/f08-mpi/ireduce_scatter_inplace.sh:test/mpi/testscripts/ireduce_scatter_inplace.sh
                             test/mpi/f08-mpi/scan.sh:test/mpi/testscripts/scan.sh
                             test/mpi/f08-mpi/scan_inplace.sh:test/mpi/testscripts/scan_inplace.sh
                             test/mpi/f08-mpi/iscan.sh:test/mpi/testscripts/iscan.sh
@@ -549,6 +644,10 @@ AM_COND_IF([MPI_PROFILING],
                             test/mpi/f08-mpi/rget.sh:test/mpi/testscripts/rget.sh
                             test/mpi/f08-mpi/accumulate.sh:test/mpi/testscripts/accumulate.sh
                             test/mpi/f08-mpi/raccumulate.sh:test/mpi/testscripts/raccumulate.sh
+                            test/mpi/f08-mpi/get_accumulate.sh:test/mpi/testscripts/get_accumulate.sh
+                            test/mpi/f08-mpi/rget_accumulate.sh:test/mpi/testscripts/rget_accumulate.sh
+                            test/mpi/f08-mpi/fetch_and_op.sh:test/mpi/testscripts/fetch_and_op.sh
+                            test/mpi/f08-mpi/compare_and_swap.sh:test/mpi/testscripts/compare_and_swap.sh
                             test/mpi/f08-mpi/test.sh:test/mpi/testscripts/test.sh
                             test/mpi/f08-mpi/testany.sh:test/mpi/testscripts/testany.sh
                             test/mpi/f08-mpi/testsome.sh:test/mpi/testscripts/testsome.sh
