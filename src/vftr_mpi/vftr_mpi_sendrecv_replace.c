@@ -19,6 +19,7 @@
 #ifdef _MPI
 #include <mpi.h>
 
+#include "vftr_environment.h"
 #include "vftr_timer.h"
 #include "vftr_sync_messages.h"
 #include "vftr_mpi_utils.h"
@@ -39,13 +40,15 @@ int vftr_MPI_Sendrecv_replace(void *buf, int count, MPI_Datatype datatype,
       long long tend = vftr_get_runtime_usec();
 
       long long t2start = tend;
-      int rank;
-      PMPI_Comm_rank(comm, &rank);
-      vftr_store_sync_message_info(send, count, datatype, dest,
-                                   sendtag, comm, tstart, tend);
-      vftr_store_sync_message_info(recv, count, datatype,
-                                   tmpstatus.MPI_SOURCE, tmpstatus.MPI_TAG,
-                                   comm, tstart, tend);
+      if (vftr_env_do_sampling()) {
+         int rank;
+         PMPI_Comm_rank(comm, &rank);
+         vftr_store_sync_message_info(send, count, datatype, dest,
+                                      sendtag, comm, tstart, tend);
+         vftr_store_sync_message_info(recv, count, datatype,
+                                      tmpstatus.MPI_SOURCE, tmpstatus.MPI_TAG,
+                                      comm, tstart, tend);
+      }
 
       // handle the special case of MPI_STATUS_IGNORE
       if (status != MPI_STATUS_IGNORE) {
