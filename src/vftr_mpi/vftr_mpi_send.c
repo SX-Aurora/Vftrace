@@ -28,7 +28,7 @@ int vftr_MPI_Send(const void *buf, int count, MPI_Datatype datatype,
                   int dest, int tag, MPI_Comm comm) {
 
    // disable profiling based on the Pcontrol level
-   if (vftr_no_mpi_logging()) {
+   if (vftr_no_mpi_logging() || !vftr_env_do_sampling()) {
       return PMPI_Send(buf, count, datatype, dest, tag, comm);
    } else {
       long long tstart = vftr_get_runtime_usec();
@@ -36,9 +36,7 @@ int vftr_MPI_Send(const void *buf, int count, MPI_Datatype datatype,
       long long tend = vftr_get_runtime_usec();
 
       long long t2start = tend;
-      if (vftr_env_do_sampling ()) {
-      	vftr_store_sync_message_info(send, count, datatype, dest, tag, comm, tstart, tend);
-      }
+      vftr_store_sync_message_info(send, count, datatype, dest, tag, comm, tstart, tend);
       long long t2end = vftr_get_runtime_usec();
 
       vftr_mpi_overhead_usec += t2end - t2start;

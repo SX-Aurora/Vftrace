@@ -31,7 +31,7 @@ int vftr_MPI_Get_accumulate(const void *origin_addr, int origin_count,
                             MPI_Datatype target_datatype, MPI_Op op, MPI_Win win) {
 
    // disable profiling based on the Pcontrol level
-   if (vftr_no_mpi_logging()) {
+   if (vftr_no_mpi_logging() || !vftr_env_do_sampling()) {
       return PMPI_Get_accumulate(origin_addr, origin_count, origin_datatype,
                                  result_addr, result_count, result_datatype,
                                  target_rank, target_disp, target_count,
@@ -45,26 +45,24 @@ int vftr_MPI_Get_accumulate(const void *origin_addr, int origin_count,
       long long tend = vftr_get_runtime_usec();
 
       long long t2start = tend;
-      if (vftr_env_do_sampling()) {
-         // Need to figure out the partner rank in a known communicator to store info
-         MPI_Group local_group;
-         PMPI_Win_get_group(win, &local_group);
+      // Need to figure out the partner rank in a known communicator to store info
+      MPI_Group local_group;
+      PMPI_Win_get_group(win, &local_group);
 
-         MPI_Group global_group;
-         PMPI_Comm_group(MPI_COMM_WORLD, &global_group);
+      MPI_Group global_group;
+      PMPI_Comm_group(MPI_COMM_WORLD, &global_group);
 
-         int global_rank;
-         PMPI_Group_translate_ranks(local_group,
-                                    1,
-                                    &target_rank,
-                                    global_group,
-                                    &global_rank);
+      int global_rank;
+      PMPI_Group_translate_ranks(local_group,
+                                 1,
+                                 &target_rank,
+                                 global_group,
+                                 &global_rank);
 
-         vftr_store_sync_message_info(recv, target_count, target_datatype,
-                                      global_rank, -1, MPI_COMM_WORLD, tstart, tend);
-         vftr_store_sync_message_info(send, origin_count, origin_datatype,
-                                      global_rank, -1, MPI_COMM_WORLD, tstart, tend);
-      }
+      vftr_store_sync_message_info(recv, target_count, target_datatype,
+                                   global_rank, -1, MPI_COMM_WORLD, tstart, tend);
+      vftr_store_sync_message_info(send, origin_count, origin_datatype,
+                                   global_rank, -1, MPI_COMM_WORLD, tstart, tend);
 
       long long t2end = vftr_get_runtime_usec();
 

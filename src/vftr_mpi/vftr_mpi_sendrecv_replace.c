@@ -29,7 +29,7 @@ int vftr_MPI_Sendrecv_replace(void *buf, int count, MPI_Datatype datatype,
                               MPI_Comm comm, MPI_Status *status) {
 
    // disable profiling based on the Pcontrol level
-   if (vftr_no_mpi_logging()) {
+   if (vftr_no_mpi_logging() || !vftr_env_do_sampling()) {
       return PMPI_Sendrecv_replace(buf, count, datatype, dest, sendtag,
                                    source, recvtag, comm, status);
    } else {
@@ -40,15 +40,13 @@ int vftr_MPI_Sendrecv_replace(void *buf, int count, MPI_Datatype datatype,
       long long tend = vftr_get_runtime_usec();
 
       long long t2start = tend;
-      if (vftr_env_do_sampling()) {
-         int rank;
-         PMPI_Comm_rank(comm, &rank);
-         vftr_store_sync_message_info(send, count, datatype, dest,
-                                      sendtag, comm, tstart, tend);
-         vftr_store_sync_message_info(recv, count, datatype,
-                                      tmpstatus.MPI_SOURCE, tmpstatus.MPI_TAG,
-                                      comm, tstart, tend);
-      }
+      int rank;
+      PMPI_Comm_rank(comm, &rank);
+      vftr_store_sync_message_info(send, count, datatype, dest,
+                                   sendtag, comm, tstart, tend);
+      vftr_store_sync_message_info(recv, count, datatype,
+                                   tmpstatus.MPI_SOURCE, tmpstatus.MPI_TAG,
+                                   comm, tstart, tend);
 
       // handle the special case of MPI_STATUS_IGNORE
       if (status != MPI_STATUS_IGNORE) {

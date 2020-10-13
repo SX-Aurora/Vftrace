@@ -30,17 +30,18 @@ int vftr_MPI_Allgather(const void *sendbuf, int sendcount,
                        MPI_Datatype sendtype, void *recvbuf, int recvcount,
                        MPI_Datatype recvtype, MPI_Comm comm) {
 
+   // Estimate synchronization time
+   if (vftr_environment->mpi_show_sync_time->value) {
+      vftr_internal_region_begin("mpi_allgather_sync");
+      PMPI_Barrier(comm);
+      vftr_internal_region_end("mpi_allgather_sync");
+   }   
+
    // disable profiling based on the Pcontrol level
-   if (vftr_no_mpi_logging()) {
+   if (vftr_no_mpi_logging() || !vftr_env_do_sampling()) {
       return PMPI_Allgather(sendbuf, sendcount, sendtype, recvbuf,
                             recvcount, recvtype, comm);
    } else {
-      // Estimate synchronization time
-      if (vftr_environment->mpi_show_sync_time->value) {
-         vftr_internal_region_begin("mpi_allgather_sync");
-         PMPI_Barrier(comm);
-         vftr_internal_region_end("mpi_allgather_sync");
-      }   
       
       long long tstart = vftr_get_runtime_usec();
       int retVal = PMPI_Allgather(sendbuf, sendcount, sendtype, recvbuf,
@@ -48,59 +49,57 @@ int vftr_MPI_Allgather(const void *sendbuf, int sendcount,
       long long tend = vftr_get_runtime_usec();
 
       long long t2start = vftr_get_runtime_usec();
-      if (vftr_env_do_sampling()) {
-         // determine if inter or intra communicator
-         int isintercom;
-         PMPI_Comm_test_inter(comm, &isintercom);
-         if (isintercom) {
-            // Every process of group A sends sendcount data to and
-            // receives recvcount data from every process in group B and
-            // vice versa
-            int size;
-            PMPI_Comm_remote_size(comm, &size);
-            for (int i=0; i<size; i++) {
-               // translate the i-th rank in the remote group to the global rank
-               int global_peer_rank = vftr_remote2global_rank(comm, i);
-               // Store message info with MPI_COMM_WORLD as communicator
-               // to prevent additional (and thus faulty rank translation)
-               vftr_store_sync_message_info(send, sendcount, sendtype, 
-                                            global_peer_rank, -1, MPI_COMM_WORLD,
+      // determine if inter or intra communicator
+      int isintercom;
+      PMPI_Comm_test_inter(comm, &isintercom);
+      if (isintercom) {
+         // Every process of group A sends sendcount data to and
+         // receives recvcount data from every process in group B and
+         // vice versa
+         int size;
+         PMPI_Comm_remote_size(comm, &size);
+         for (int i=0; i<size; i++) {
+            // translate the i-th rank in the remote group to the global rank
+            int global_peer_rank = vftr_remote2global_rank(comm, i);
+            // Store message info with MPI_COMM_WORLD as communicator
+            // to prevent additional (and thus faulty rank translation)
+            vftr_store_sync_message_info(send, sendcount, sendtype, 
+                                         global_peer_rank, -1, MPI_COMM_WORLD,
+                                         tstart, tend);
+            vftr_store_sync_message_info(recv, recvcount, recvtype,
+                                         global_peer_rank, -1, MPI_COMM_WORLD,
+                                         tstart, tend);
+         }
+      } else {
+         int size;
+         PMPI_Comm_size(comm, &size);
+         // if sendbuf is special address MPI_IN_PLACE
+         // sendcount and sendtype are ignored.
+         // Use recvcount and recvtype for statistics
+         if (vftr_is_C_MPI_IN_PLACE(sendbuf)) {
+            sendtype = recvtype;
+            sendcount = recvcount;
+            // For the in-place option no self communication is executed
+            int rank;
+            PMPI_Comm_rank(comm, &rank);
+            for (int i=0; i<rank; i++) {
+               vftr_store_sync_message_info(send, sendcount, sendtype, i, -1, comm,
                                             tstart, tend);
-               vftr_store_sync_message_info(recv, recvcount, recvtype,
-                                            global_peer_rank, -1, MPI_COMM_WORLD,
+               vftr_store_sync_message_info(recv, recvcount, recvtype, i, -1, comm,
+                                            tstart, tend);
+            }
+            for (int i=rank+1; i<size; i++) {
+               vftr_store_sync_message_info(send, sendcount, sendtype, i, -1, comm,
+                                            tstart, tend);
+               vftr_store_sync_message_info(recv, recvcount, recvtype, i, -1, comm,
                                             tstart, tend);
             }
          } else {
-            int size;
-            PMPI_Comm_size(comm, &size);
-            // if sendbuf is special address MPI_IN_PLACE
-            // sendcount and sendtype are ignored.
-            // Use recvcount and recvtype for statistics
-            if (vftr_is_C_MPI_IN_PLACE(sendbuf)) {
-               sendtype = recvtype;
-               sendcount = recvcount;
-               // For the in-place option no self communication is executed
-               int rank;
-               PMPI_Comm_rank(comm, &rank);
-               for (int i=0; i<rank; i++) {
-                  vftr_store_sync_message_info(send, sendcount, sendtype, i, -1, comm,
-                                               tstart, tend);
-                  vftr_store_sync_message_info(recv, recvcount, recvtype, i, -1, comm,
-                                               tstart, tend);
-               }
-               for (int i=rank+1; i<size; i++) {
-                  vftr_store_sync_message_info(send, sendcount, sendtype, i, -1, comm,
-                                               tstart, tend);
-                  vftr_store_sync_message_info(recv, recvcount, recvtype, i, -1, comm,
-                                               tstart, tend);
-               }
-            } else {
-               for (int i=0; i<size; i++) {
-                  vftr_store_sync_message_info(send, sendcount, sendtype, i, -1, comm,
-                                               tstart, tend);
-                  vftr_store_sync_message_info(recv, recvcount, recvtype, i, -1, comm,
-                                               tstart, tend);
-               }
+            for (int i=0; i<size; i++) {
+               vftr_store_sync_message_info(send, sendcount, sendtype, i, -1, comm,
+                                            tstart, tend);
+               vftr_store_sync_message_info(recv, recvcount, recvtype, i, -1, comm,
+                                            tstart, tend);
             }
          }
       }
