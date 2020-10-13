@@ -36,7 +36,7 @@ int vftr_MPI_Rsend(const void *buf, int count, MPI_Datatype datatype,
       long long tend = vftr_get_runtime_usec();
 
       long long t2start = tend;
-      if (vftr_env_do_sampling()) vftr_store_sync_message_info(send, count, datatype, dest, tag, comm, tstart, tend);
+      vftr_store_sync_message_info(send, count, datatype, dest, tag, comm, tstart, tend);
       long long t2end = vftr_get_runtime_usec();
 
       vftr_mpi_overhead_usec += t2end - t2start;

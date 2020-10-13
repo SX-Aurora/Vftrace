@@ -29,7 +29,7 @@ int vftr_MPI_Sendrecv_replace(void *buf, int count, MPI_Datatype datatype,
                               MPI_Comm comm, MPI_Status *status) {
 
    // disable profiling based on the Pcontrol level
-   if (vftr_no_mpi_logging() || !vftr_env_do_sampling()) {
+   if (vftr_no_mpi_logging()) {
       return PMPI_Sendrecv_replace(buf, count, datatype, dest, sendtag,
                                    source, recvtag, comm, status);
    } else {

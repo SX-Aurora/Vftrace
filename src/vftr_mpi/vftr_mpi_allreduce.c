@@ -37,7 +37,7 @@ int vftr_MPI_Allreduce(const void *sendbuf, void *recvbuf, int count,
    }
 
    // disable profiling based on the Pcontrol level
-   if (vftr_no_mpi_logging() || !vftr_env_do_sampling()) {
+   if (vftr_no_mpi_logging()) {
       return PMPI_Allreduce(sendbuf, recvbuf, count, datatype, op, comm);
    } else {
 

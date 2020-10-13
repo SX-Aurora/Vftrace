@@ -37,7 +37,7 @@ int vftr_MPI_Bcast(void *buffer, int count, MPI_Datatype datatype,
    }
 
    // disable profiling based on the Pcontrol level
-   if (vftr_no_mpi_logging() || !vftr_env_do_sampling()) {
+   if (vftr_no_mpi_logging()) {
       return PMPI_Bcast(buffer, count, datatype, root, comm);
    } else {
 

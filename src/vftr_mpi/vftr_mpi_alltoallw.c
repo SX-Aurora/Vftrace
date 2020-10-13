@@ -39,7 +39,7 @@ int vftr_MPI_Alltoallw(const void *sendbuf, const int *sendcounts,
    }
 
    // disable profiling based on the Pcontrol level
-   if (vftr_no_mpi_logging() || !vftr_env_do_sampling()) {
+   if (vftr_no_mpi_logging()) {
       return PMPI_Alltoallw(sendbuf, sendcounts, sdispls, sendtypes,
                             recvbuf, recvcounts, rdispls, recvtypes, comm);
    } else {

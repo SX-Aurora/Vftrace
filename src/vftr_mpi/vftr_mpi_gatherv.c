@@ -38,7 +38,7 @@ int vftr_MPI_Gatherv(const void *sendbuf, int sendcount, MPI_Datatype sendtype,
    }   
 
    // disable profiling based on the Pcontrol level
-   if (vftr_no_mpi_logging() || !vftr_env_do_sampling()) {
+   if (vftr_no_mpi_logging()) {
       return PMPI_Gatherv(sendbuf, sendcount, sendtype, recvbuf,
                           recvcounts, displs, recvtype, root, comm);
    } else {

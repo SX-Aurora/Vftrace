@@ -31,7 +31,7 @@ int vftr_MPI_Accumulate(const void *origin_addr, int origin_count,
                         MPI_Win win) {
 
    // disable profiling based on the Pcontrol level
-   if (vftr_no_mpi_logging() || !vftr_env_do_samping()) {
+   if (vftr_no_mpi_logging()) {
       return PMPI_Accumulate(origin_addr, origin_count, origin_datatype,
                              target_rank, target_disp, target_count,
                              target_datatype, op, win);

@@ -28,7 +28,7 @@ int vftr_MPI_Ssend(const void *buf, int count, MPI_Datatype datatype,
                    int dest, int tag, MPI_Comm comm) {
 
    // disable profiling based on the Pcontrol level
-   if (vftr_no_mpi_logging() || !vftr_env_do_sampling()) {
+   if (vftr_no_mpi_logging()) {
       return PMPI_Ssend(buf, count, datatype, dest, tag, comm);
    } else {
       long long tstart = vftr_get_runtime_usec();

@@ -30,7 +30,7 @@ int vftr_MPI_Put(const void *origin_addr, int origin_count,
                  MPI_Datatype target_datatype, MPI_Win win) {
 
    // disable profiling based on the Pcontrol level
-   if (vftr_no_mpi_logging() || !vftr_env_do_sampling()) {
+   if (vftr_no_mpi_logging()) {
       return PMPI_Put(origin_addr, origin_count, origin_datatype,
                       target_rank, target_disp, target_count,
                       target_datatype, win);
