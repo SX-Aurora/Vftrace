@@ -22,7 +22,6 @@
 
 #include <stdlib.h>
 
-#include "vftr_environment.h"
 #include "vftr_requests.h"
 #include "vftr_timer.h"
 #include "vftr_filewrite.h"
@@ -89,16 +88,14 @@ void vftr_clear_completed_P2P_requests() {
             }
          }
          // store the completed communication info to the outfile
-         if (vftr_env_do_sampling ()) {
-            vftr_store_message_info(current_request->dir,
-                                    current_request->count[0],
-                                    current_request->type_idx[0],
-                                    current_request->type_size[0],
-                                    current_request->rank[0],
-                                    current_request->tag,
-                                    current_request->tstart,
-                                    tend);
-	 }
+         vftr_store_message_info(current_request->dir,
+                                 current_request->count[0],
+                                 current_request->type_idx[0],
+                                 current_request->type_size[0],
+                                 current_request->rank[0],
+                                 current_request->tag,
+                                 current_request->tstart,
+                                 tend);
 
          // Take the request out of the list and close the gap
          vftr_remove_request(&vftr_open_p2p_request_list, current_request);

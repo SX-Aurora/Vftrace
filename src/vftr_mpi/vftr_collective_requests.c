@@ -73,19 +73,17 @@ void vftr_clear_completed_collective_requests() {
          //            yields to small bandwidth.
          long long tend = vftr_get_runtime_usec ();
 
-         if (vftr_env_do_sampling ()) {
-            // Every rank should already be translated to the global rank
-            // by the register routine
-            for (int i=0; i<current_request->nmsg; i++) {
-               vftr_store_message_info(current_request->dir,
-                                       current_request->count[i],
-                                       current_request->type_idx[i],
-                                       current_request->type_size[i],
-                                       current_request->rank[i],
-                                       current_request->tag,
-                                       current_request->tstart,
-                                       tend);
-            }
+         // Every rank should already be translated to the global rank
+         // by the register routine
+         for (int i=0; i<current_request->nmsg; i++) {
+            vftr_store_message_info(current_request->dir,
+                                    current_request->count[i],
+                                    current_request->type_idx[i],
+                                    current_request->type_size[i],
+                                    current_request->rank[i],
+                                    current_request->tag,
+                                    current_request->tstart,
+                                    tend);
          }
 
          // Take the request out of the list and close the gap
