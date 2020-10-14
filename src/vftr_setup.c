@@ -306,9 +306,9 @@ void vftr_finalize() {
 
     vftr_print_profile (vftr_log, &ntop, timer);
 #ifdef _MPI
-    //if (vftr_environment && vftr_environment->logfile_all_ranks->value) {
+    if (vftr_environment && vftr_environment->mpi_log->value) {
        vftr_print_mpi_statistics (vftr_log);
-    //}
+    }
 #endif
  
     funcTable = vftr_func_table;
