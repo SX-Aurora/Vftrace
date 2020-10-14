@@ -672,18 +672,24 @@ int vftr_compare_display_functions (const void *a1, const void *a2) {
 /**********************************************************************/
 
 void vftr_get_display_width (display_function_t **display_functions,
-				int n_display_functions,
+				int n_display_functions, int n_decimal_places,
 				int *n_func_max, int *n_calls_max,
 				int *n_t_avg_max, int *n_t_min_max,
 				int *n_t_max_max, int *n_imba_max, int *n_t_max) {
 
-   	*n_func_max = strlen("function");
-	*n_calls_max = strlen("n_calls");
-	*n_t_avg_max = strlen ("avg. time [s]");
-	*n_t_min_max = strlen ("min. time [s]");
-  	*n_t_max_max = strlen ("max. time [s]");
-	*n_imba_max = strlen ("imbalance");
-	*n_t_max = strlen("This rank [s]");
+	// Loop over all display functions with calls and determine the maximum
+	// value of digits or characters required to represent the corresponding
+	// field value.
+	// For floating point numbers, only the digits in front of the comma are counted.
+	// and n_decimal_places + 1 (for the comma itself) is added.
+        *n_func_max = 0;
+        *n_calls_max = 0;
+        *n_t_avg_max = 0;
+        *n_t_min_max = 0;
+        *n_t_max_max = 0;
+        *n_imba_max = 0;
+        *n_t_max = 0;
+
 
 	int n;
 	for (int i = 0; i < n_display_functions; i++) {
@@ -704,6 +710,11 @@ void vftr_get_display_width (display_function_t **display_functions,
 			if (n > *n_t_max) *n_t_max = n;
 		}
 	}
+	*n_t_avg_max += n_decimal_places + 1;
+	*n_t_min_max += n_decimal_places + 1;
+	*n_t_max_max += n_decimal_places + 1;
+	*n_imba_max += n_decimal_places + 1;
+	*n_t_max += n_decimal_places + 1;
 }
 
 /**********************************************************************/
@@ -732,47 +743,130 @@ void vftr_print_function_statistics (FILE *pout, bool display_sync_time,
     fprintf (pout, "Total time spent in MPI: %lf s\n", total_time);
     fprintf (pout, "Imbalance computed as: max (T - T_avg)\n");
 
+    // Most of this code deals with the determination of the column widths.
+    // vftr_get_display_width loops over all display_functions and determines
+    // the maximum number of digits or characters required to display the
+    // corresponding column. 
     int n_func, n_calls, n_t_avg, n_t_min, n_t_max, n_imba, n_t;
-    vftr_get_display_width (display_functions, n_display_functions,
+    vftr_get_display_width (display_functions, n_display_functions, 3,
 	&n_func, &n_calls, &n_t_avg, &n_t_min, &n_t_max, &n_imba, &n_t);
-		
+
+    // The following headers appear in the function table but also define
+    // the minimum widths for each column. Below, we check if the previously
+    // computed widths are below these default values and increase them
+    // if necessary. 
+    // One complication arises through the display of the percentage of the time
+    // spent in the synthetic synchronization barrier for collective MPI calls.
+    // It is printed directly behind the associated absolute time in brackets "(%...)",
+    // requiring 8 characters. This value is added to the column width when 
+    // comparing to the default column widths.
+    const char *headers[8] = {"function", "%MPI", "n_calls",
+			      "avg. time [s]", "min. time [s]", "max. time [s]",
+			      "imbalance", "This rank [s]"};
+    enum column_ids {FUNC, MPI, CALLS, T_AVG, T_MIN, T_MAX, IMBA, THIS_T};
+
+    // Note that there is no treatment of the width of the %MPI column, since the value
+    // inside can never exceed 99.99%. Therefore, it has a fixed length of 5.
+    int n_func_0 = strlen(headers[FUNC]);
+    int n_calls_0 = strlen(headers[CALLS]);
+    int n_t_avg_0 = strlen (headers[T_AVG]);
+    int n_t_min_0 = strlen (headers[T_MIN]);
+    int n_t_max_0 = strlen (headers[T_MAX]);
+    int n_imba_0 = strlen (headers[IMBA]);
+    int n_t_0 = strlen(headers[THIS_T]);
+
+    int add_sync_spaces = display_sync_time ? 8 : 0;
+
+    if (n_func < n_func_0) n_func = n_func_0;
+    if (n_calls < n_calls_0) n_calls = n_calls_0;
+    if (n_t_avg + add_sync_spaces < n_t_avg_0) {
+	n_t_avg = n_t_avg_0;
+    } else {
+	n_t_avg += add_sync_spaces;
+    }
+    if (n_t_min + add_sync_spaces < n_t_min_0) {
+	n_t_min = n_t_min_0;
+    } else {
+	n_t_min += add_sync_spaces;
+    }
+    if (n_t_max + add_sync_spaces < n_t_max_0) {
+	n_t_max = n_t_max_0;
+    } else {
+	n_t_max += add_sync_spaces;
+    }
+    if (n_imba < n_imba_0) n_imba = n_imba_0;
+    if (n_t + add_sync_spaces < n_t_0) {
+	n_t = n_t_0;
+    } else {
+	n_t += add_sync_spaces;
+    }
+
+    // We compute the total width of the MPI table to print separator lines.
+    // There are the widths computed above, as well as the width of the MPI field, 
+    // which is 5. Additionally, there are 9 "|" characters and 16 spaces around them.
+    // So in total, we have a fixed summand of 5 + 9 + 16 = 30.
+    int n_spaces_tot = n_func + n_calls + n_t_avg + n_t_min + n_t_max + n_imba + n_t + 30;
+
+    // Print a separator line ("----------"), followed by the table header, followed
+    // by another separator line.
+    for (int i = 0; i < n_spaces_tot; i++) fprintf (pout, "-");
+    fprintf (pout, "\n");
     fprintf (pout, "| %*s | %*s | %*s | %*s | %*s | %*s | %*s | %*s |\n",
-	     n_func, "function", 5, "%MPI", n_calls, "n_calls", n_t_avg, "avg. time [s]",
-	     n_t_min, "min. time [s]", n_t_max, "max. time [s]",
-	     n_imba, "imbalance", n_t, "This rank [s]");
-    fprintf (pout, "---------------------------------------------------------------------------\n");
+	     n_func, headers[FUNC], 5, headers[MPI], n_calls, headers[CALLS],
+	     n_t_avg, headers[T_AVG],
+	     n_t_min, headers[T_MIN], n_t_max, headers[T_MAX],
+	     n_imba, headers[IMBA], n_t, headers[THIS_T]);
+    for (int i = 0; i < n_spaces_tot; i++) fprintf (pout, "-");
+    fprintf (pout, "\n");
+
+    // Print all the display functions, but omit those without any calls.
     for (int i = 0; i < n_display_functions; i++) {
 	   
        if (display_functions[i]->n_calls > 0) {
 	
 	if (display_functions[i]->t_sync_avg > 0) {
-       	  fprintf (pout, "%14s|%2.2f|%10d|%16.3f(%2.2f%%)|%16.3f(%2.2f%%)|%16.3f(%2.2f%%)|%4.2f|%16.3f(%2.2f%%)|\n",
-		display_functions[i]->func_name,
-		(display_functions[i]->t_avg *1e-6) / total_time * 100,
-		display_functions[i]->n_calls,
-		display_functions[i]->t_avg * 1e-6,
-		(double)display_functions[i]->t_sync_avg / (double)display_functions[i]->t_avg * 100,	
-		(double)(display_functions[i]->t_min) * 1e-6,
-		(double)(display_functions[i]->t_sync_min) / (double)display_functions[i]->t_min * 100,
-		(double)(display_functions[i]->t_max) * 1e-6,
-		(double)(display_functions[i]->t_sync_max) / (double)display_functions[i]->t_max * 100,	
-		display_functions[i]->imbalance,
-		(double)(display_functions[i]->this_mpi_time) * 1e-6,
-		(double)(display_functions[i]->this_sync_time) / (double)display_functions[i]->this_sync_time * 100);
+	  // There are synchronization times for this function. We make space for the additional
+	  // field "(xx.xx%)". Note that we need to subtract add_sync_spaces from the column widths.
+          fprintf (pout, "| %*s | %5.2f | %*d | %*.3f(%5.2f%%) | %*.3f(%5.2f%%) | %*.3f(%5.2f%%) | %*.3f | %*.3f(%5.2f%%) |\n",
+		   n_func, display_functions[i]->func_name,
+ 	  	   (display_functions[i]->t_avg * 1e-6) / total_time * 100,
+		   n_calls, display_functions[i]->n_calls,
+		   n_t_avg - add_sync_spaces, display_functions[i]->t_avg * 1e-6, (double)display_functions[i]->t_sync_avg / (double)display_functions[i]->t_avg * 100,
+		   n_t_min - add_sync_spaces, display_functions[i]->t_min * 1e-6, (double)display_functions[i]->t_sync_min / (double)display_functions[i]->t_min * 100,
+		   n_t_max - add_sync_spaces, display_functions[i]->t_max * 1e-6, (double)display_functions[i]->t_sync_max / (double)display_functions[i]->t_max * 100,
+		   n_imba, display_functions[i]->imbalance,
+		   n_t - add_sync_spaces, display_functions[i]->this_mpi_time * 1e-6, (double)display_functions[i]->this_sync_time / (double)display_functions[i]->this_mpi_time * 100);
+	} else if (display_sync_time){
+	   // This function does not have synchronization times, but others have. We take into
+	   // account the synchronization fields "(xx.xx%)" of other functions by adding
+	   // add_sync_spaces number of spaces. 
+	   fprintf (pout, "| %*s | %5.2f | %*d | %*.3f         | %*.3f         | %*.3f         | %*.2f | %*.3f         |\n",
+		    n_func, display_functions[i]->func_name,
+		    (display_functions[i]->t_avg * 1e-6) / total_time * 100,
+		    n_calls, display_functions[i]->n_calls,
+ 	            n_t_avg - add_sync_spaces, display_functions[i]->t_avg * 1e-6,
+		    n_t_min - add_sync_spaces, display_functions[i]->t_min * 1e-6,
+		    n_t_max - add_sync_spaces, display_functions[i]->t_max * 1e-6,
+		    n_imba, display_functions[i]->imbalance,
+		    n_t - add_sync_spaces, display_functions[i]->this_mpi_time * 1e-6);
+
 	} else {
-	fprintf (pout, "| %*s | %5.2f | %*d | %*.3f | %*.3f | %*.3f | %*.2f | %*.3f |\n",
-		 n_func, display_functions[i]->func_name,
-		 (display_functions[i]->t_avg * 1e-6) / total_time * 100,
-		 n_calls, display_functions[i]->n_calls,
- 	         n_t_avg, display_functions[i]->t_avg * 1e-6,
-		 n_t_min, display_functions[i]->t_min * 1e-6,
-		 n_t_max, display_functions[i]->t_max * 1e-6,
-		 n_imba, display_functions[i]->imbalance,
-		 n_t, display_functions[i]->this_mpi_time);
+           // No display function has synchronization times, so only the absolute times are printed.
+	   fprintf (pout, "| %*s | %5.2f | %*d | %*.3f | %*.3f | %*.3f | %*.2f | %*.3f |\n",
+		    n_func, display_functions[i]->func_name,
+		    (display_functions[i]->t_avg * 1e-6) / total_time * 100,
+		    n_calls, display_functions[i]->n_calls,
+ 	            n_t_avg, display_functions[i]->t_avg * 1e-6,
+		    n_t_min, display_functions[i]->t_min * 1e-6,
+		    n_t_max, display_functions[i]->t_max * 1e-6,
+		    n_imba, display_functions[i]->imbalance,
+		    n_t, display_functions[i]->this_mpi_time * 1e-6);
        }
     }
   }
-    fprintf (pout, "---------------------------------------------------------------------------\n");
+  //Print a final separator line.
+  for (int i = 0; i < n_spaces_tot; i++) fprintf (pout, "-");
+  fprintf (pout, "\n");
 
   if (vftr_environment->print_stack_profile->value) {
   	for (int i = 0; i < n_display_functions; i++) {

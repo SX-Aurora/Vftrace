@@ -60,11 +60,15 @@ char *get_application_name () {
 /**********************************************************************/
 
 int count_digits (int value) {
-  int count = 0;
-  for (int c = value; c > 0; c /= 10) {
-	count++;
+  if (value == 0) {
+     return 1;
+  } else {
+     int count = 0;
+     for (int c = value; c > 0; c /= 10) {
+           count++;
+     }
+     return count;
   }
-  return count;
 }
 
 /**********************************************************************/
