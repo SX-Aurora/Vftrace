@@ -141,7 +141,8 @@ dist_noinst_SCRIPTS += send_recv.sh \
 
 check_PROGRAMS += start \
 		  startall \
-		  send_init
+		  send_init \
+		  bsend_init
 
 start_SOURCES = $(srcdir)/start.F90
 start_FCFLAGS = $(AM_FCFLAGS)
@@ -155,9 +156,14 @@ send_init_SOURCES = $(srcdir)/send_init.F90
 send_init_FCFLAGS = $(AM_FCFLAGS)
 send_init_LDFLAGS = $(AM_LDFLAGS)
 
+bsend_init_SOURCES = $(srcdir)/bsend_init.F90
+bsend_init_FCFLAGS = $(AM_FCFLAGS)
+bsend_init_LDFLAGS = $(AM_LDFLAGS)
+
 dist_noinst_SCRIPTS += start.sh \
 		       startall.sh \
-		       send_init.sh
+		       send_init.sh \
+		       bsend_init.sh
 		  
 #####################
 ## Collective tests #
