@@ -80,6 +80,11 @@ libvftr_fmpiwrap_la_SOURCES += vftr_mpi_wait_fwrap.F90 \
 			       vftr_mpi_waitany_fwrap.F90 \
 			       vftr_mpi_waitsome_fwrap.F90 \
 			       vftr_mpi_waitall_fwrap.F90
+########################
+# request deallocation #
+########################
+libvftr_fmpiwrap_la_SOURCES += vftr_mpi_request_free_c2f.F90
+libvftr_fmpiwrap_la_SOURCES += vftr_mpi_request_free_fwrap.F90
 
 ###############
 # collectives #

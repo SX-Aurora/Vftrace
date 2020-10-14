@@ -97,7 +97,7 @@ libvftr_mpi_la_SOURCES += vftr_mpi_wait_f.c \
 # request deallocation #
 ########################
 libvftr_mpi_la_SOURCES += vftr_mpi_request_free.c
-libvftr_mpi_la_SOURCES +=
+libvftr_mpi_la_SOURCES += vftr_mpi_request_free_f.c
 
 ###############
 # collectives #
