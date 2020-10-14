@@ -39,6 +39,14 @@ libvftr_fmpiwrap_la_SOURCES += vftr_mpi_send_fwrap.F90 \
 			       vftr_mpi_probe_fwrap.F90 \
 			       vftr_mpi_iprobe_fwrap.F90
 
+##################
+# persistent p2p #
+##################
+libvftr_fmpiwrap_la_SOURCES += vftr_mpi_start_c2f.F90 \
+			       vftr_mpi_send_init_c2f.F90
+libvftr_fmpiwrap_la_SOURCES += vftr_mpi_start_fwrap.F90 \
+			       vftr_mpi_send_init_fwrap.F90
+
 #########
 # tests #
 #########

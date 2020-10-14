@@ -35,7 +35,7 @@ libvftr_mpi_la_SOURCES += vftr_mpi_send.c \
 			  vftr_mpi_sendrecv.c \
 			  vftr_mpi_sendrecv_replace.c \
 			  vftr_mpi_probe.c \
-			  vftr_mpi_iprobe.c \
+			  vftr_mpi_iprobe.c 
 libvftr_mpi_la_SOURCES += vftr_mpi_send_f.c \
 			  vftr_mpi_isend_f.c \
 			  vftr_mpi_bsend_f.c \
@@ -61,7 +61,8 @@ libvftr_mpi_la_SOURCES += vftr_mpi_start.c \
 			  vftr_mpi_ssend_init.c \
 			  vftr_mpi_rsend_init.c \
 			  vftr_mpi_recv_init.c
-libvftr_mpi_la_SOURCES += 
+libvftr_mpi_la_SOURCES += vftr_mpi_start_f.c \
+			  vftr_mpi_send_init_f.c
 
 #########
 # tests #

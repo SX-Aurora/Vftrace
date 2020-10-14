@@ -58,7 +58,7 @@ int main(int argc, char** argv) {
          MPI_Wait(myrequest+ireq, &mystat);
       }
    } else {
-      printf("Receiving messages from rank %d\n", my_rank);
+      printf("Receiving messages from rank %d\n", 0);
       MPI_Recv(rbuffer, nints, MPI_INT, 0, 0, MPI_COMM_WORLD, &mystat);
       // validate data
       for (int i=0; i<nints; i++) {
@@ -75,6 +75,9 @@ int main(int argc, char** argv) {
 
    free(rbuffer);
    rbuffer=NULL;
+
+   free(myrequest);
+   myrequest=NULL;
 
    MPI_Finalize();
 

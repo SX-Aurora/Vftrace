@@ -135,6 +135,24 @@ dist_noinst_SCRIPTS += send_recv.sh \
 		       probe.sh \
 		       iprobe.sh
 
+########################
+# Persistent P2P tests #
+########################
+
+check_PROGRAMS += start \
+		  send_init
+
+start_SOURCES = $(srcdir)/start.F90
+start_FCFLAGS = $(AM_FCFLAGS)
+start_LDFLAGS = $(AM_LDFLAGS)
+
+send_init_SOURCES = $(srcdir)/send_init.F90
+send_init_FCFLAGS = $(AM_FCFLAGS)
+send_init_LDFLAGS = $(AM_LDFLAGS)
+
+dist_noinst_SCRIPTS += start.sh \
+		       send_init.sh
+		  
 #####################
 ## Collective tests #
 #####################
