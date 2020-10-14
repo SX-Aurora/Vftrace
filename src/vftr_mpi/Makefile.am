@@ -64,7 +64,8 @@ libvftr_mpi_la_SOURCES += vftr_mpi_start.c \
 libvftr_mpi_la_SOURCES += vftr_mpi_start_f.c \
 			  vftr_mpi_startall_f.c \
 			  vftr_mpi_send_init_f.c \
-			  vftr_mpi_bsend_init_f.c
+			  vftr_mpi_bsend_init_f.c \
+			  vftr_mpi_ssend_init_f.c
 
 #########
 # tests #

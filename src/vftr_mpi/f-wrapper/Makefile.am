@@ -45,11 +45,13 @@ libvftr_fmpiwrap_la_SOURCES += vftr_mpi_send_fwrap.F90 \
 libvftr_fmpiwrap_la_SOURCES += vftr_mpi_start_c2f.F90 \
 			       vftr_mpi_startall_c2f.F90 \
 			       vftr_mpi_send_init_c2f.F90 \
-			       vftr_mpi_bsend_init_c2f.F90
+			       vftr_mpi_bsend_init_c2f.F90 \
+			       vftr_mpi_ssend_init_c2f.F90
 libvftr_fmpiwrap_la_SOURCES += vftr_mpi_start_fwrap.F90 \
 			       vftr_mpi_startall_fwrap.F90 \
 			       vftr_mpi_send_init_fwrap.F90 \
-			       vftr_mpi_bsend_init_fwrap.F90
+			       vftr_mpi_bsend_init_fwrap.F90 \
+			       vftr_mpi_ssend_init_fwrap.F90
 
 #########
 # tests #
