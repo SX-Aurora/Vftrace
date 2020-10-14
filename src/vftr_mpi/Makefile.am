@@ -62,6 +62,7 @@ libvftr_mpi_la_SOURCES += vftr_mpi_start.c \
 			  vftr_mpi_rsend_init.c \
 			  vftr_mpi_recv_init.c
 libvftr_mpi_la_SOURCES += vftr_mpi_start_f.c \
+			  vftr_mpi_startall_f.c \
 			  vftr_mpi_send_init_f.c
 
 #########
