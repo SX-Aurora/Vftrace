@@ -235,23 +235,13 @@ void vftr_reset_counts (function_t *func) {
 
 /**********************************************************************/
 
-
-void vftr_find_function (char *func_name, int **func_indices, int **stack_indices,
-			 int *n_indices, bool to_lower_case, enum function_search_type search_type) {
+void vftr_find_function_in_table (char *func_name, int **indices, int *n_indices,
+				  bool to_lower_case) {
 	*n_indices = 0;
 	char *s_compare;
 	int n_count;
-	if (search_type == FUNC_TABLE) {
-		n_count = vftr_stackscount;
-	} else {
-		n_count = vftr_gStackscount;
-	}
-	for (int i = 0; i < n_count; i++) {
-		if (search_type == FUNC_TABLE) {
-			s_compare = strdup (vftr_func_table[i]->name);
-		} else {
-			s_compare = strdup(vftr_gStackinfo[i].name);
-		}
+	for (int i = 0; i < vftr_stackscount; i++) {
+		s_compare = strdup (vftr_func_table[i]->name);
 		if (to_lower_case) {
 			for (int i = 0; i < strlen(s_compare); i++) {
 				s_compare[i] = tolower(s_compare[i]);
@@ -262,32 +252,55 @@ void vftr_find_function (char *func_name, int **func_indices, int **stack_indice
 		}
 	}
 	if (*n_indices > 0) {
-		if (stack_indices) *stack_indices = (int*)malloc(*n_indices * sizeof(int));
-		if (func_indices) *func_indices = (int*)malloc(*n_indices * sizeof(int));
+		*indices = (int*)malloc(*n_indices * sizeof(int));
 		int idx = 0;
-		for (int i = 0; i < n_count; i++) {
-			if (search_type == FUNC_TABLE) {
-				s_compare = strdup (vftr_func_table[i]->name);
-			} else {
-				s_compare = strdup(vftr_gStackinfo[i].name);
-			}
-			if (to_lower_case) {
-				for (int i = 0; i < strlen(s_compare); i++) {
-					s_compare[i] = tolower(s_compare[i]);
-				}
-			}	
-			if (!strcmp (s_compare, func_name)) {
-				if (search_type == FUNC_TABLE) {
-					if (func_indices) (*func_indices)[idx] = i;
-					if (stack_indices) (*stack_indices)[idx] = vftr_func_table[i]->gid;
-				} else {
-					if (func_indices) (*func_indices)[idx] = vftr_gStackinfo[i].locID;
-					if (stack_indices) (*stack_indices)[idx] = i;
-				}
-				idx++;
+		for (int i = 0; i < vftr_stackscount; i++) {
+		   s_compare = strdup (vftr_func_table[i]->name);
+		   if (to_lower_case) {
+		   	for (int i = 0; i < strlen(s_compare); i++) {
+		   		s_compare[i] = tolower(s_compare[i]);
+		   	}
+		   }
+		   if (!strcmp (s_compare, func_name)) {
+		   	(*indices)[idx++] = i;
+		   }
+		}
+	}
+}
+
+/**********************************************************************/
+
+void vftr_find_function_in_stack (char *func_name, int **indices, int *n_indices,
+				  bool to_lower_case) {
+	*n_indices = 0;
+	char *s_compare;
+	int n_count;
+	for (int i = 0; i < vftr_gStackscount; i++) {
+		s_compare = strdup (vftr_gStackinfo[i].name);
+		if (to_lower_case) {
+			for (int i = 0; i < strlen(s_compare); i++) {
+				s_compare[i] = tolower(s_compare[i]);
 			}
 		}
-	}	
+		if (!strcmp (s_compare, func_name)) {
+			(*n_indices)++;
+		}
+	}
+	if (*n_indices > 0) {
+		*indices = (int*)malloc(*n_indices * sizeof(int));
+		int idx = 0;
+		for (int i = 0; i < vftr_gStackscount; i++) {
+		   s_compare = strdup (vftr_gStackinfo[i].name);
+		   if (to_lower_case) {
+		   	for (int i = 0; i < strlen(s_compare); i++) {
+		   		s_compare[i] = tolower(s_compare[i]);
+		   	}
+		   }
+		   if (!strcmp (s_compare, func_name)) {
+		   	(*indices)[idx++] = i;
+		   }
+		}
+	}
 }
 
 /**********************************************************************/
@@ -295,7 +308,7 @@ void vftr_find_function (char *func_name, int **func_indices, int **stack_indice
 void vftr_write_function_indices (FILE *fp, char *func_name, bool to_lower_case) {
 	int n_indices;
 	int *func_indices = NULL;
-	vftr_find_function (func_name, &func_indices, NULL, &n_indices, to_lower_case, FUNC_TABLE);
+	vftr_find_function_in_table (func_name, &func_indices, &n_indices, to_lower_case);
 	if (!func_indices) {
 		fprintf (fp, "ERROR: No indices found for function %s\n", func_name);
 	} else {

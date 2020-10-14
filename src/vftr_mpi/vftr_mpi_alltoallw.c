@@ -31,18 +31,18 @@ int vftr_MPI_Alltoallw(const void *sendbuf, const int *sendcounts,
                        void *recvbuf, const int *recvcounts, const int *rdispls,
                        const MPI_Datatype *recvtypes, MPI_Comm comm) {
 
+   // Estimate synchronization time
+   if (vftr_environment->mpi_show_sync_time->value) {
+      vftr_internal_region_begin("MPI_Alltoallw_sync");
+      PMPI_Barrier(comm);
+      vftr_internal_region_end("MPI_Alltoallw_sync");
+   }
+
    // disable profiling based on the Pcontrol level
    if (vftr_no_mpi_logging()) {
       return PMPI_Alltoallw(sendbuf, sendcounts, sdispls, sendtypes,
                             recvbuf, recvcounts, rdispls, recvtypes, comm);
    } else {
-      // Estimate synchronization time
-      if (vftr_environment->mpi_show_sync_time->value) {
-         vftr_internal_region_begin("mpi_alltoallw_sync");
-         PMPI_Barrier(comm);
-         vftr_internal_region_end("mpi_alltoallw_sync");
-      }
-
       long long tstart = vftr_get_runtime_usec();
       int retVal = PMPI_Alltoallw(sendbuf, sendcounts, sdispls, sendtypes,
                                   recvbuf, recvcounts, rdispls, recvtypes, comm);

@@ -29,17 +29,18 @@
 int vftr_MPI_Reduce_scatter_block(const void *sendbuf, void *recvbuf, int recvcount,
                                   MPI_Datatype datatype, MPI_Op op, MPI_Comm comm) {
 
+   // Estimate synchronization time
+   if (vftr_environment->mpi_show_sync_time->value) {
+      vftr_internal_region_begin("MPI_Reduce_scatter_block_sync");
+      PMPI_Barrier(comm);
+      vftr_internal_region_end("MPI_Reduce_scatter_block_sync");
+   }
+
+
    // disable profiling based on the Pcontrol level
    if (vftr_no_mpi_logging()) {
       return PMPI_Reduce_scatter_block(sendbuf, recvbuf, recvcount, datatype, op, comm);
    } else {
-      // Estimate synchronization time
-      if (vftr_environment->mpi_show_sync_time->value) {
-         vftr_internal_region_begin("mpi_reduce_scatter_block_sync");
-         PMPI_Barrier(comm);
-         vftr_internal_region_end("mpi_reduce_scatter_block_sync");
-      }
-
       long long tstart = vftr_get_runtime_usec();
       int retVal = PMPI_Reduce_scatter_block(sendbuf, recvbuf, recvcount, datatype, op, comm);
       long long tend = vftr_get_runtime_usec();

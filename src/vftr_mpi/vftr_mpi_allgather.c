@@ -30,18 +30,18 @@ int vftr_MPI_Allgather(const void *sendbuf, int sendcount,
                        MPI_Datatype sendtype, void *recvbuf, int recvcount,
                        MPI_Datatype recvtype, MPI_Comm comm) {
 
+   // Estimate synchronization time
+   if (vftr_environment->mpi_show_sync_time->value) {
+      vftr_internal_region_begin("MPI_Allgather_sync");
+      PMPI_Barrier(comm);
+      vftr_internal_region_end("MPI_Allgather_sync");
+   }
+
    // disable profiling based on the Pcontrol level
    if (vftr_no_mpi_logging()) {
       return PMPI_Allgather(sendbuf, sendcount, sendtype, recvbuf,
                             recvcount, recvtype, comm);
    } else {
-      // Estimate synchronization time
-      if (vftr_environment->mpi_show_sync_time->value) {
-         vftr_internal_region_begin("mpi_allgather_sync");
-         PMPI_Barrier(comm);
-         vftr_internal_region_end("mpi_allgather_sync");
-      }   
-      
       long long tstart = vftr_get_runtime_usec();
       int retVal = PMPI_Allgather(sendbuf, sendcount, sendtype, recvbuf,
                                   recvcount, recvtype, comm);
