@@ -33,9 +33,9 @@ int vftr_MPI_Scatterv(const void *sendbuf, const int *sendcounts,
 
    // Estimate synchronization time
    if (vftr_environment->mpi_show_sync_time->value) {
-      vftr_internal_region_begin("mpi_scatterv_sync");
+      vftr_internal_region_begin("MPI_Scatterv_sync");
       PMPI_Barrier(comm);
-      vftr_internal_region_end("mpi_scatterv_sync");
+      vftr_internal_region_end("MPI_Scatterv_sync");
    }
 
    // disable profiling based on the Pcontrol level

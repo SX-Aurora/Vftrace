@@ -31,9 +31,9 @@ int vftr_MPI_Reduce_scatter(const void *sendbuf, void *recvbuf, const int *recvc
 
    // Estimate synchronization time
    if (vftr_environment->mpi_show_sync_time->value) {
-      vftr_internal_region_begin("mpi_reduce_scatter_sync");
+      vftr_internal_region_begin("MPI_Reduce_scatter_sync");
       PMPI_Barrier(comm);
-      vftr_internal_region_end("mpi_reduce_scatter_sync");
+      vftr_internal_region_end("MPI_Reduce_scatter_sync");
    }
 
    // disable profiling based on the Pcontrol level

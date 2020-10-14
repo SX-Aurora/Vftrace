@@ -31,9 +31,9 @@ int vftr_MPI_Scan(const void *sendbuf, void *recvbuf, int count,
 
    // Estimate synchronization time
    if (vftr_environment->mpi_show_sync_time->value) {
-      vftr_internal_region_begin("mpi_scan_sync");
+      vftr_internal_region_begin("MPI_Scan_sync");
       PMPI_Barrier(comm);
-      vftr_internal_region_end("mpi_scan_sync");
+      vftr_internal_region_end("MPI_Scan_sync");
    }
 
    // disable profiling based on the Pcontrol level

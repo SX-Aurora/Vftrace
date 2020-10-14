@@ -33,9 +33,9 @@ int vftr_MPI_Alltoallv(const void *sendbuf, const int *sendcounts,
 
    // Estimate synchronization time
    if (vftr_environment->mpi_show_sync_time->value) {
-      vftr_internal_region_begin("mpi_alltoallv_sync");
+      vftr_internal_region_begin("MPI_Alltoallv_sync");
       PMPI_Barrier(comm);
-      vftr_internal_region_end("mpi_alltoallv_sync");
+      vftr_internal_region_end("MPI_Alltoallv_sync");
    }
 
    // disable profiling based on the Pcontrol level

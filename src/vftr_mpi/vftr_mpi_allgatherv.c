@@ -33,9 +33,9 @@ int vftr_MPI_Allgatherv(const void *sendbuf, int sendcount,
 
    // Estimate synchronization time
    if (vftr_environment->mpi_show_sync_time->value) {
-      vftr_internal_region_begin("mpi_allgatherv_sync");
+      vftr_internal_region_begin("MPI_Allgatherv_sync");
       PMPI_Barrier(comm);
-      vftr_internal_region_end("mpi_allgatherv_sync");
+      vftr_internal_region_end("MPI_Allgatherv_sync");
    }
 
    // disable profiling based on the Pcontrol level
