@@ -20,6 +20,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdbool.h>
+#include <math.h>
 
 #define N_MPI_FUNCS 13
 char *mpi_function_names[N_MPI_FUNCS] = {"mpi_barrier", "mpi_bcast", "mpi_reduce",
@@ -129,6 +130,23 @@ int main (int argc, char *argv[]) {
 	   }
 	}
  	if (all_okay) printf ("All okay\n");
-	//printf ("Check that average times match across all ranks:\n");
+
+	printf ("Check that average times match across all ranks:\n");
+	all_okay = true;
+	// We are not (yet) interested in which of the values might be the correct one,
+	// we only check if they are all equal within a tolerance of 1%.
+	for (int i = 0; i < N_MPI_FUNCS; i++) {	
+		if  (i != 2 && i != 2) continue;
+		bool all_okay_local = true;
+		double this_t_avg = t_avg[i][0];
+		for (int i_file = 1; i_file < n_log_files && all_okay_local; i_file++) {
+			printf ("%lf %lf\n", this_t_avg, t_avg[i][i_file]);
+			all_okay_local = fabs (t_avg[i][i_file] / this_t_avg - 1.0) < 0.01;
+		}
+		if (!all_okay_local) printf ("Not okay: %s\n", mpi_function_names[i]);
+		all_okay &= all_okay_local;
+	}
+	if (all_okay) printf ("All okay\n");
+			
 	return 0;
 }
