@@ -19,7 +19,6 @@
 #ifdef _MPI
 #include <mpi.h>
 
-#include "vftr_environment.h"
 #include "vftr_timer.h"
 #include "vftr_sync_messages.h"
 #include "vftr_mpi_utils.h"
@@ -47,7 +46,6 @@ int vftr_MPI_Recv(void *buf, int count, MPI_Datatype datatype,
          status->MPI_TAG = tmpstatus.MPI_TAG;
          status->MPI_ERROR = tmpstatus.MPI_ERROR;
       }
-      
       long long t2end = vftr_get_runtime_usec();
 
       vftr_mpi_overhead_usec += t2end - t2start;

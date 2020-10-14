@@ -36,14 +36,13 @@ int vftr_MPI_Scatterv(const void *sendbuf, const int *sendcounts,
       vftr_internal_region_begin("mpi_scatterv_sync");
       PMPI_Barrier(comm);
       vftr_internal_region_end("mpi_scatterv_sync");
-   }   
+   }
 
    // disable profiling based on the Pcontrol level
    if (vftr_no_mpi_logging()) {
       return PMPI_Scatterv(sendbuf, sendcounts, displs, sendtype,
                            recvbuf, recvcount, recvtype, root, comm);
    } else {
-
       long long tstart = vftr_get_runtime_usec();
       int retVal = PMPI_Scatterv(sendbuf, sendcounts, displs, sendtype,
                                  recvbuf, recvcount, recvtype, root, comm);

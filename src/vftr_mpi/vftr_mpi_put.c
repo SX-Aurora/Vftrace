@@ -19,7 +19,6 @@
 #ifdef _MPI
 #include <mpi.h>
 
-#include "vftr_environment.h"
 #include "vftr_timer.h"
 #include "vftr_sync_messages.h"
 #include "vftr_mpi_utils.h"
@@ -58,7 +57,6 @@ int vftr_MPI_Put(const void *origin_addr, int origin_count,
 
       vftr_store_sync_message_info(send, origin_count, origin_datatype,
                                    global_rank, -1, MPI_COMM_WORLD, tstart, tend);
-      
       long long t2end = vftr_get_runtime_usec();
 
       vftr_mpi_overhead_usec += t2end - t2start;

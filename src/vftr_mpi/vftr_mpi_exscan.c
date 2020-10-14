@@ -40,7 +40,6 @@ int vftr_MPI_Exscan(const void *sendbuf, void *recvbuf, int count,
    if (vftr_no_mpi_logging()) {
       return PMPI_Exscan(sendbuf, recvbuf, count, datatype, op, comm);
    } else {
-
       long long tstart = vftr_get_runtime_usec();
       int retVal = PMPI_Exscan(sendbuf, recvbuf, count, datatype, op, comm);
       long long tend = vftr_get_runtime_usec();

@@ -40,7 +40,6 @@ int vftr_MPI_Bcast(void *buffer, int count, MPI_Datatype datatype,
    if (vftr_no_mpi_logging()) {
       return PMPI_Bcast(buffer, count, datatype, root, comm);
    } else {
-
       long long tstart = vftr_get_runtime_usec();
       int retVal = PMPI_Bcast(buffer, count, datatype, root, comm);
       long long tend = vftr_get_runtime_usec();

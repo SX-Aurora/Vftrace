@@ -40,7 +40,6 @@ int vftr_MPI_Reduce(const void *sendbuf, void *recvbuf, int count,
    if (vftr_no_mpi_logging()) {
       return PMPI_Reduce(sendbuf, recvbuf, count, datatype, op, root, comm);
    } else {
-
       long long tstart = vftr_get_runtime_usec();
       int retVal = PMPI_Reduce(sendbuf, recvbuf, count, datatype, op, root, comm);
       long long tend = vftr_get_runtime_usec();
@@ -111,7 +110,6 @@ int vftr_MPI_Reduce(const void *sendbuf, void *recvbuf, int count,
                                          root, -1, comm, tstart, tend);
          }
       }
-      
       long long t2end = vftr_get_runtime_usec();
 
       vftr_mpi_overhead_usec += t2end - t2start;

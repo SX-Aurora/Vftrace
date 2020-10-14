@@ -42,7 +42,6 @@ int vftr_MPI_Gather(const void *sendbuf, int sendcount,
       return PMPI_Gather(sendbuf, sendcount, sendtype, recvbuf, recvcount,
                          recvtype, root, comm);
    } else {
-
       long long tstart = vftr_get_runtime_usec();
       int retVal = PMPI_Gather(sendbuf, sendcount, sendtype, recvbuf, recvcount,
                                recvtype, root, comm);

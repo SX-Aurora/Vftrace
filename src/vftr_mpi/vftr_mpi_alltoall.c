@@ -42,7 +42,6 @@ int vftr_MPI_Alltoall(const void *sendbuf, int sendcount,
       return PMPI_Alltoall(sendbuf, sendcount, sendtype, recvbuf,
                            recvcount, recvtype, comm);
    } else {
-      
       long long tstart = vftr_get_runtime_usec();
       int retVal = PMPI_Alltoall(sendbuf, sendcount, sendtype, recvbuf,
                                  recvcount, recvtype, comm);

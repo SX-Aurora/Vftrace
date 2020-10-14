@@ -19,7 +19,6 @@
 #ifdef _MPI
 #include <mpi.h>
 
-#include "vftr_environment.h"
 #include "vftr_timer.h"
 #include "vftr_sync_messages.h"
 #include "vftr_mpi_utils.h"

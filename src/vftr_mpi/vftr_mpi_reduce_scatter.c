@@ -40,7 +40,6 @@ int vftr_MPI_Reduce_scatter(const void *sendbuf, void *recvbuf, const int *recvc
    if (vftr_no_mpi_logging()) {
       return PMPI_Reduce_scatter(sendbuf, recvbuf, recvcounts, datatype, op, comm);
    } else {
-
       long long tstart = vftr_get_runtime_usec();
       int retVal = PMPI_Reduce_scatter(sendbuf, recvbuf, recvcounts, datatype, op, comm);
       long long tend = vftr_get_runtime_usec();

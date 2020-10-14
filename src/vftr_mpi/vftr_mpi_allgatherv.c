@@ -43,7 +43,6 @@ int vftr_MPI_Allgatherv(const void *sendbuf, int sendcount,
       return PMPI_Allgatherv(sendbuf, sendcount, sendtype, recvbuf,
                              recvcounts, displs, recvtype, comm);
    } else {
-      
       long long tstart = vftr_get_runtime_usec();
       int retVal = PMPI_Allgatherv(sendbuf, sendcount, sendtype, recvbuf,
                                    recvcounts, displs, recvtype, comm);
