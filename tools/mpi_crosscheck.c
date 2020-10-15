@@ -154,7 +154,6 @@ bool check_t_min (int n_log_files, double t[N_MPI_FUNCS][n_log_files], double t_
 		if (!strcmp ("mpi_barrier", mpi_function_names[i])) continue;
 		while (t_min[i][i0] == 0.0) i0++;
 		for (int i_file = 0; i_file < n_log_files; i_file++) {
-			//if (i == 0) printf ("t: %lf\n", t[i][i_file]);
 			if (t[i][i_file] > 0.0 && t[i][i_file] < this_t_min) {
 				this_t_min = t[i][i_file]; 
 				n++;
@@ -183,7 +182,6 @@ bool check_t_max (int n_log_files, double t[N_MPI_FUNCS][n_log_files], double t_
 		int i0 = 0;
 		while (t_max[i][i0] == 0.0) i0++;
 		for (int i_file = 0; i_file < n_log_files; i_file++) {
-			//if (i == 0) printf ("t: %lf\n", t[i][i_file]);
 			if (t[i][i_file] > this_t_max) {
 				this_t_max = t[i][i_file]; 
 				n++;
@@ -261,6 +259,8 @@ bool check_if_imbalances_match (int n_log_files, double t[N_MPI_FUNCS][n_log_fil
 	double max_diff[N_MPI_FUNCS];
 	bool all_okay = true;
 	for (int i = 0; i < N_MPI_FUNCS; i++) {
+		// As above (check_t_min), we skip MPI_Barrier.
+		if (!strcmp ("mpi_barrier", mpi_function_names[i])) continue;
 		bool all_okay_local = true;
 		max_diff[i] = 0.0;
 		int i0 = 0;
@@ -273,9 +273,12 @@ bool check_if_imbalances_match (int n_log_files, double t[N_MPI_FUNCS][n_log_fil
 		}
 		double this_imba = max_diff[i] / t_avg[i][i0] * 100.0;
 		for (int i_file = 0; i_file < n_log_files; i_file++) {
-			all_okay_local &= equal_for_n_digits (this_imba, imbalances[i][i_file], 2);
+			if (t[i][i_file] == 0.0) continue; // If the function does not occur in this rank
+			bool tmp = equal_within_tolerance (this_imba, imbalances[i][i_file], 0.02);
+			if (!tmp) printf ("Not okay: %s(%d), %d, Time: %lf, This imba: %lf, Registered imba: %lf\n",
+					  mpi_function_names[i], i, i_file, t[i][i_file], this_imba, imbalances[i][i_file]);
+			all_okay_local &= tmp;
 		}
-		if (!all_okay_local) printf ("Not okay: %s\n", mpi_function_names[i]);
 		all_okay &= all_okay_local;
 	}	
 	return all_okay;
@@ -308,7 +311,6 @@ int main (int argc, char *argv[]) {
 	}
 
 	for (int i_file = 1; i_file < argc; i_file++) {
-		//printf ("Open: %s\n", argv[i_file]);
 		FILE *fp = fopen (argv[i_file], "r");
 		if (!fp) printf ("SOMETHING WENT WRONG\n");
 		char line[256];
@@ -403,7 +405,5 @@ int main (int argc, char *argv[]) {
 	all_okay = check_if_imbalances_match (n_log_files, this_t, t_avg, imbalance);
 	if (all_okay) printf ("All okay\n");
 	
-
-			
 	return 0;
 }
