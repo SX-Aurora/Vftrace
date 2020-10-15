@@ -19,26 +19,37 @@
 #ifdef _MPI
 #include <mpi.h>
 
+#include <stdbool.h>
+
 #include "vftr_timer.h"
+#include "vftr_requests.h"
+#include "vftr_p2p_requests.h"
 #include "vftr_persistent_requests.h"
 #include "vftr_mpi_utils.h"
 
-int vftr_MPI_Start(MPI_Request *request) {
+int vftr_MPI_Request_free(MPI_Request *request) {
 
    // disable profiling based on the Pcontrol level
    if (vftr_no_mpi_logging()) {
-      return PMPI_Start(request);
+      return PMPI_Request_free(request);
    } else {
-      long long tstart = vftr_get_runtime_usec();
-      int retVal = PMPI_Start(request);
+      long long t2start= vftr_get_runtime_usec();
+      vftr_request_t *matched_request = vftr_search_P2P_request(*request);
+      if (matched_request == NULL) {
+         matched_request = vftr_search_persistent_request(*request);
+      }
+      if (matched_request == NULL) {
+         PMPI_Request_free(request);
+      } else {
+         matched_request->marked_for_deallocation = true;
+      }
 
-      long long t2start = vftr_get_runtime_usec();
-      vftr_activate_persistent_request(*request, tstart);
+      *request = MPI_REQUEST_NULL;
       long long t2end = vftr_get_runtime_usec();
 
       vftr_mpi_overhead_usec += t2end - t2start;
 
-      return retVal;
+      return 0;
    }
 }
 

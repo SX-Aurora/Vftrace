@@ -28,5 +28,13 @@ void vftr_register_persistent_request(vftr_direction dir, int count,
                                       MPI_Datatype type, int peer_rank, int tag,
                                       MPI_Comm comm, MPI_Request request);
 
+void vftr_activate_persistent_request(MPI_Request request, long long tstart);
+
+void vftr_deactivate_completed_persistent_requests();
+
+vftr_request_t *vftr_search_persistent_request(MPI_Request request);
+
+int vftr_number_of_open_persistent_requests();
+
 #endif
 #endif

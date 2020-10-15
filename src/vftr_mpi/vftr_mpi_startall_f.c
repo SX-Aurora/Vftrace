@@ -19,27 +19,28 @@
 #ifdef _MPI
 #include <mpi.h>
 
-#include "vftr_timer.h"
-#include "vftr_persistent_requests.h"
-#include "vftr_mpi_utils.h"
+#include <stdlib.h>
 
-int vftr_MPI_Start(MPI_Request *request) {
+#include "vftr_mpi_startall.h"
+  
+void vftr_MPI_Startall_F(MPI_Fint *f_count, MPI_Fint *f_array_of_requests,
+                         MPI_Fint *f_error) {
 
-   // disable profiling based on the Pcontrol level
-   if (vftr_no_mpi_logging()) {
-      return PMPI_Start(request);
-   } else {
-      long long tstart = vftr_get_runtime_usec();
-      int retVal = PMPI_Start(request);
-
-      long long t2start = vftr_get_runtime_usec();
-      vftr_activate_persistent_request(*request, tstart);
-      long long t2end = vftr_get_runtime_usec();
-
-      vftr_mpi_overhead_usec += t2end - t2start;
-
-      return retVal;
+   int c_count = (int)(*f_count);
+   MPI_Request *c_array_of_requests = (MPI_Request*)
+                                      malloc(c_count*sizeof(MPI_Request));
+   for (int ireq=0; ireq<c_count; ireq++) {
+      c_array_of_requests[ireq] = PMPI_Request_f2c(f_array_of_requests[ireq]);
    }
+
+   int c_error = vftr_MPI_Startall(c_count,
+                                   c_array_of_requests);
+
+   for (int ireq=0; ireq<c_count; ireq++) {
+      f_array_of_requests[ireq] = PMPI_Request_c2f(c_array_of_requests[ireq]);
+   }
+   free(c_array_of_requests);
+   *f_error = (MPI_Fint) c_error;
 }
 
 #endif

@@ -48,6 +48,11 @@ libvftr_cmpiwrap_la_SOURCES += vftr_mpi_wait_cwrap.c \
 			       vftr_mpi_waitsome_cwrap.c \
 			       vftr_mpi_waitall_cwrap.c
 
+########################
+# request deallocation #
+########################
+libvftr_cmpiwrap_la_SOURCES += vftr_mpi_request_free_cwrap.c
+
 ###############
 # collectives #
 ###############

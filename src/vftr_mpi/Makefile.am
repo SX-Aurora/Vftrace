@@ -35,7 +35,7 @@ libvftr_mpi_la_SOURCES += vftr_mpi_send.c \
 			  vftr_mpi_sendrecv.c \
 			  vftr_mpi_sendrecv_replace.c \
 			  vftr_mpi_probe.c \
-			  vftr_mpi_iprobe.c
+			  vftr_mpi_iprobe.c 
 libvftr_mpi_la_SOURCES += vftr_mpi_send_f.c \
 			  vftr_mpi_isend_f.c \
 			  vftr_mpi_bsend_f.c \
@@ -61,7 +61,13 @@ libvftr_mpi_la_SOURCES += vftr_mpi_start.c \
 			  vftr_mpi_ssend_init.c \
 			  vftr_mpi_rsend_init.c \
 			  vftr_mpi_recv_init.c
-libvftr_mpi_la_SOURCES += 
+libvftr_mpi_la_SOURCES += vftr_mpi_start_f.c \
+			  vftr_mpi_startall_f.c \
+			  vftr_mpi_send_init_f.c \
+			  vftr_mpi_bsend_init_f.c \
+			  vftr_mpi_ssend_init_f.c \
+			  vftr_mpi_rsend_init_f.c \
+			  vftr_mpi_recv_init_f.c
 
 #########
 # tests #
@@ -86,6 +92,12 @@ libvftr_mpi_la_SOURCES += vftr_mpi_wait_f.c \
 			  vftr_mpi_waitany_f.c \
 			  vftr_mpi_waitsome_f.c \
 			  vftr_mpi_waitall_f.c
+
+########################
+# request deallocation #
+########################
+libvftr_mpi_la_SOURCES += vftr_mpi_request_free.c
+libvftr_mpi_la_SOURCES += vftr_mpi_request_free_f.c
 
 ###############
 # collectives #

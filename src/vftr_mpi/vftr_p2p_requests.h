@@ -29,5 +29,9 @@ void vftr_register_P2P_request(vftr_direction dir, int count,
 
 void vftr_clear_completed_P2P_requests();
 
+vftr_request_t *vftr_search_P2P_request(MPI_Request request);
+
+int vftr_number_of_open_p2p_requests();
+
 #endif
 #endif

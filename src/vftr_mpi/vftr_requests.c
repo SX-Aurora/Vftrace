@@ -36,6 +36,7 @@ vftr_request_t* vftr_new_request(vftr_direction dir, int nmsg, int *count,
    vftr_request_t *new_open_request = (vftr_request_t*) 
       malloc(sizeof(vftr_request_t));
    new_open_request->request   = request;
+   new_open_request->marked_for_deallocation = false;
    new_open_request->comm      = comm;
    new_open_request->nmsg      = nmsg;
    new_open_request->dir       = dir;

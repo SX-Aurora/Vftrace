@@ -43,7 +43,7 @@ int main(int argc, char** argv) {
    bool valid_data = true;
    if (my_rank == 0) {
       // prepare recv from every other rank
-      printf("Initialize receiving messages from rank %d\n", my_rank);
+      printf("Initialize receiving messages on rank %d\n", my_rank);
       for (int sendrank=1; sendrank<comm_size; sendrank++) {
          MPI_Recv_init(rbuffer+nints*(sendrank-1), nints, MPI_INT, sendrank, sendrank, MPI_COMM_WORLD,
                        myrequest+sendrank-1);
@@ -68,12 +68,15 @@ int main(int argc, char** argv) {
             for (int i=0; i<nints; i++) {
                if (rbuffer[(irank-1)*nints+i] != irank) {
                   printf("Rank %d received faulty data from rank %d\n", my_rank, irank);
-                  printf("Rank %d: %d != %d\n", my_rank, rbuffer[(irank-1)*nints+i], irank);
                   valid_data = false;
                   break;
                }
             }
          }
+      }
+      // mark persistent requests for deallocation
+      for (int ireq=0; ireq<comm_size-1; ireq++) {
+         MPI_Request_free(myrequest+ireq);
       }
    } else {
       for (int irun=0; irun<nruns; irun++) {

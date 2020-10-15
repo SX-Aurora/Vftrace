@@ -16,30 +16,13 @@
    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
+#ifndef VFTR_MPI_REQUEST_FREE_F_H
+#define VFTR_MPI_REQUEST_FREE_F_H
+
 #ifdef _MPI
 #include <mpi.h>
 
-#include "vftr_timer.h"
-#include "vftr_persistent_requests.h"
-#include "vftr_mpi_utils.h"
+void vftr_MPI_Request_free_F(MPI_Fint *f_request, MPI_Fint *f_error);
 
-int vftr_MPI_Start(MPI_Request *request) {
-
-   // disable profiling based on the Pcontrol level
-   if (vftr_no_mpi_logging()) {
-      return PMPI_Start(request);
-   } else {
-      long long tstart = vftr_get_runtime_usec();
-      int retVal = PMPI_Start(request);
-
-      long long t2start = vftr_get_runtime_usec();
-      vftr_activate_persistent_request(*request, tstart);
-      long long t2end = vftr_get_runtime_usec();
-
-      vftr_mpi_overhead_usec += t2end - t2start;
-
-      return retVal;
-   }
-}
-
+#endif
 #endif

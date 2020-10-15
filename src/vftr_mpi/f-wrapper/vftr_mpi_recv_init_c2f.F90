@@ -14,21 +14,40 @@
 ! with this program; if not, write to the Free Software Foundation, Inc.,
 ! 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
+MODULE vftr_mpi_recv_init_c2f
 #ifdef _MPI
 
-SUBROUTINE MPI_Waitall(COUNT, ARRAY_OREQUESTS, ARRAY_OF_STATUSES, ERROR)
-   USE vftr_mpi_waitall_c2f, &
-      ONLY : vftr_MPI_Waitall_F
-   USE mpi, ONLY: MPI_STATUS_SIZE
+   USE, INTRINSIC :: ISO_FORTRAN_ENV
+   USE, INTRINSIC :: ISO_C_BINDING
+
    IMPLICIT NONE
-   INTEGER COUNT
-   INTEGER ARRAY_OREQUESTS(*)
-   INTEGER ARRAY_OF_STATUSES(MPI_STATUS_SIZE,*)
-   INTEGER ERROR
 
-   CALL vftr_MPI_Waitall_F(COUNT, ARRAY_OREQUESTS, ARRAY_OF_STATUSES, ERROR)
+   PRIVATE
 
-END SUBROUTINE MPI_Waitall
+   PUBLIC :: vftr_MPI_Recv_init_F
 
-#endif 
+   INTERFACE 
+
+      SUBROUTINE vftr_MPI_Recv_init_F(BUF, COUNT, F_DATATYPE, SOURCE, TAG, F_COMM, F_REQUEST, F_ERROR) &
+         BIND(C, name="vftr_MPI_Recv_init_F")
+         USE mpi, ONLY : MPI_STATUS_SIZE
+         IMPLICIT NONE
+         INTEGER BUF
+         INTEGER COUNT
+         INTEGER F_DATATYPE
+         INTEGER SOURCE
+         INTEGER TAG
+         INTEGER F_COMM
+         INTEGER F_STATUS(MPI_STATUS_SIZE)
+         INTEGER F_REQUEST
+         INTEGER F_ERROR
+      END SUBROUTINE vftr_MPI_Recv_init_F
+
+   END INTERFACE
+
+#endif
+
+CONTAINS
+
+END MODULE vftr_mpi_recv_init_c2f
 

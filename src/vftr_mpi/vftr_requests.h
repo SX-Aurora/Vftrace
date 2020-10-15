@@ -20,12 +20,15 @@
 #define VFTR_REQUESTS_H
 
 #ifdef _MPI
+#include <stdbool.h>
+
 #include "vftr_mpi_utils.h"
 
 // store open requests as doubly linked list
 typedef struct vftr_request_type {
    struct vftr_request_type *prev, *next;
    MPI_Request request;
+   bool marked_for_deallocation;
    MPI_Comm comm;
    int nmsg;
    int dir;

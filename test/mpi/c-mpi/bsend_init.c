@@ -67,9 +67,13 @@ int main(int argc, char** argv) {
             MPI_Wait(myrequest+ireq, &mystat);
          }
       }
+      // mark persistent requests for deallocation
+      for (int ireq=0; ireq<comm_size-1; ireq++) {
+         MPI_Request_free(myrequest+ireq);
+      }
    } else {
       for (int irun=0; irun<nruns; irun++) {
-         int* rbuffer = (int*) malloc(nints*sizeof(int));
+         for (int i=0; i<nints; i++) {rbuffer[i]=-1;}
          printf("Receiving messages from rank %d\n", 0);
          for (int irank=1; irank<comm_size; irank++) {
             MPI_Barrier(MPI_COMM_WORLD);
