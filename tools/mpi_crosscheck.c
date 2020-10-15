@@ -51,6 +51,16 @@ bool equal_within_tolerance (double val1, double val2, double tolerance) {
 
 /**********************************************************************/
 
+bool equal_for_n_digits (double val1, double val2, int n_digits) {
+	double max_diff = 1.0;
+	for (int i = 0; i < n_digits; i++) {
+	   max_diff /= 10.0;
+	}
+	return (fabs(val1 - val2) <= max_diff);
+}
+
+/**********************************************************************/
+
 bool check_if_mpi_times_add_up (int n_log_files, double mpi_percentage[N_MPI_FUNCS][n_log_files],
 				char *filenames[n_log_files + 1]) {
 	bool all_okay = true;
@@ -181,7 +191,59 @@ bool check_t_max (int n_log_files, double t[N_MPI_FUNCS][n_log_files], double t_
 		
 /**********************************************************************/
 
+void check_each_time (FILE *fp, int n_calls_vftr[N_MPI_FUNCS], double t_tot[N_MPI_FUNCS], bool *all_calls_okay, bool *all_t_okay) {
+	char line[256];
+	int countdown = -1;	
+	int n_calls, n_calls_tot[N_MPI_FUNCS];
+	double t_inc, t_inc_tot[N_MPI_FUNCS];
+	double abs = 0.0;
 
+ 	for (int i = 0; i < N_MPI_FUNCS; i++) {
+	   n_calls_tot[i] = 0;
+	   t_inc_tot[i] = 0.0;
+        }
+
+	while (!feof(fp)) {
+  	   fgets (line, 256, fp);
+	   if (countdown < 0) {
+		if (strstr (line, "Runtime profile for rank")) {
+			countdown = 5;
+	        }
+   	   } else if (countdown > 0) {
+	      countdown--;
+	   } else {
+	      if (strstr(line, "----")) break;
+	      char *column;
+	      column = strtok (line, " "); // #Calls
+	      n_calls = atoi (column);	
+	      column = strtok (NULL, " "); // Exclusive time, skip
+	      column = strtok (NULL, " "); // Inclusive time
+	      t_inc = atof (column);
+	      column = strtok (NULL, " "); // %abs
+	      abs += atof (column);
+	      column = strtok (NULL, " "); // %rel, skip
+	      column = strtok (NULL, " "); // Function name
+	      int index;
+	      if ((index = mpi_index(column)) >= 0) {
+	         //printf ("column: X%sX: %d\n", column, index);
+		 n_calls_tot[index] += n_calls;
+		 t_inc_tot[index] += t_inc;
+	      }
+	   }
+        }
+
+	*all_calls_okay = true;
+	*all_t_okay = true;
+	for (int i = 0; i < N_MPI_FUNCS; i++) {
+	   *all_calls_okay &= (n_calls_tot[i] == n_calls_vftr[i]); 
+	   if (!equal_for_n_digits (t_inc_tot[i], t_tot[i], 2)) {
+		printf ("Found wrong numbers: %lf %lf\n", t_inc_tot[i], t_tot[i]);
+	   }
+	   *all_t_okay &= equal_for_n_digits (t_inc_tot[i], t_tot[i], 2);
+	}
+}
+
+/**********************************************************************/
 
 int main (int argc, char *argv[]) {
 	
@@ -216,9 +278,7 @@ int main (int argc, char *argv[]) {
 		int countdown = -1;
 		bool all_mpi_functions_read = false;
 		while (!feof(fp)) {
-		   //fscanf (fp, "%[^\n]", line);
 		   fgets (line, 256, fp);
-		   //printf ("This line: %s\n", line);
 		   if (countdown < 0) {
 			if (strstr (line, "Total time")) {
 			   countdown = 4;
@@ -284,6 +344,24 @@ int main (int argc, char *argv[]) {
 		printf ("Check if maximum time is reproudced: %s\n",
 			 check_t_max (n_log_files, this_t, t_max) ? "YES" : "NO");
 	}
+
+	for (int i_file = 0; i_file < n_log_files; i_file++) {
+	   printf ("Check that time values makes sense: %s\n", argv[i_file + 1]);
+	   FILE *fp = fopen (argv[i_file + 1], "r");
+	   int n_calls_this_rank[N_MPI_FUNCS];
+	   double this_t_this_rank[N_MPI_FUNCS];
+	   for (int i = 0; i < N_MPI_FUNCS; i++) {
+	   	n_calls_this_rank[i] = n_calls[i][i_file];
+	   	this_t_this_rank[i] = this_t[i][i_file];
+	   }
+	   bool all_calls_okay, all_t_okay;	
+	   check_each_time (fp, n_calls_this_rank, this_t_this_rank, 
+	   		    &all_calls_okay, &all_t_okay);
+	   printf ("Calls okay: %s\n", all_calls_okay ? "YES" : "NO");
+	   printf ("Times okay: %s\n", all_t_okay ? "YES" : "NO");
+	   fclose (fp);
+        }
+	
 
 			
 	return 0;
