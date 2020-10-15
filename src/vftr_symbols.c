@@ -32,6 +32,42 @@
 int        vftr_nsymbols;
 symtab_t **vftr_symtab;
 
+/**********************************************************************/
+
+// Fortran symbols can be given in the form module-name_MP_function-name.
+// For example, in large stack trees, the module names can reduce its
+// readability and it can be convenient to leave them out. Of course, this
+// leads to information loss because identical function names in different
+// modules cannot be resolved. Therefore, below function should always be used
+// optionally. Moreover, there is no guarantee that the delimiter token is 
+// always "_MP_".
+//
+// We go through the function names until a '_' character is encountered.
+// If this is the case, we check if the succeeding three characters match
+// the delimiter pattern. When this is the case, we exit the function and
+// return the reduced string. Otherwise, we go on until the end of the function
+// name, given by the '\0' character, is reached. If no delimiter is found
+// the original string is returned.
+
+char *vftr_strip_module_name (char *base_name) {
+	char *tmp = strdup (base_name);
+	char *func_name = tmp;
+	bool has_module_token = false;
+	while (*tmp != '\0') {
+		if (*tmp == '_') {
+			has_module_token = tmp[1] == 'M' && tmp[2] == 'P' && tmp[3] == '_';
+			if (has_module_token) {
+				func_name = tmp + 4;
+				break;
+			}
+		}
+		tmp++;
+	}
+	return func_name;
+}
+		
+/**********************************************************************/
+
 int vftr_cmpsym( const void *a, const void *b ) {
     symtab_t *s1 = *(symtab_t **) a;
     symtab_t *s2 = *(symtab_t **) b;
@@ -44,20 +80,23 @@ int vftr_cmpsym( const void *a, const void *b ) {
         return 1;
 }
 
-void vftr_print_symbol_table (FILE *f) {
-    int i;
-    fprintf (f, "SYMBOL TABLE: %d\n", vftr_nsymbols );
-    for (i = 0; i < vftr_nsymbols; i++) {
-	fprintf( f, "%5d %p %04x %d %s", 
+/**********************************************************************/
+
+void vftr_print_symbol_table (FILE *fp) {
+    fprintf (fp, "SYMBOL TABLE: %d\n", vftr_nsymbols);
+    for (int i = 0; i < vftr_nsymbols; i++) {
+	fprintf (fp, "%5d %p %04x %d %s", 
         i, vftr_symtab[i]->addr,
            vftr_symtab[i]->index,
-           vftr_symtab[i]->demangled,  vftr_symtab[i]->name );
-	if( vftr_symtab[i]->demangled )
-	    fprintf( f, " [%s]", vftr_symtab[i]->full );
-	fprintf( f, "\n" );
+           vftr_symtab[i]->demangled,  vftr_symtab[i]->name);
+	if (vftr_symtab[i]->demangled)
+	    fprintf (fp, " [%s]", vftr_symtab[i]->full);
+	fprintf (fp, "\n");
     }
-    fprintf( f, "-----------------------------------------------------------------\n" );
+    fprintf (fp, "-----------------------------------------------------------------\n");
 }
+
+/**********************************************************************/
 
 /*
 ** vftr_get_library_symtab - retrieve part of the symbol table for a libary or executable.
@@ -66,10 +105,8 @@ void vftr_print_symbol_table (FILE *f) {
 **    off_t  base       Library's base address
 **    int    pass       0: count only, 1: save symbols
 */
-#define vftr_get_library_symtab vftr_get_library_symtab_linux
 
-void vftr_get_library_symtab_linux( char *target, off_t base, int pass ) {
-    void           *addr;
+void vftr_get_library_symtab (char *target, FILE *fp_ext, off_t base, int pass) {
     char           *headerStringTable = NULL;
     char           *symbolStringTable = NULL;
     char           *padding = NULL;
@@ -82,14 +119,18 @@ void vftr_get_library_symtab_linux( char *target, off_t base, int pass ) {
     Elf64_Ehdr      ehdr;                /* ELF header */
     Elf64_Shdr     *shdr = NULL;         /* ELF section header */
     Elf64_Sym      *symbolTable = NULL;  /* ELF symbol table */
-    symtab_t       *found;
     
-    if ((exe = fopen( target, "r" )) == NULL) {
-	fprintf (vftr_log, "opening %s", target);
-        perror (target); abort();
+    if (fp_ext == NULL) {
+      if ((exe = fopen( target, "r" )) == NULL) {
+          fprintf (vftr_log, "opening %s", target);
+          perror (target); abort();
+      }
+    } else {
+      exe = fp_ext;
     }
+
     
-    if (fread (&ehdr, 1, nehdr, exe ) != nehdr) {
+    if (fread (&ehdr, 1, nehdr, exe) != nehdr) {
 	perror ("reading ELF header from executable");
 	abort();
     }
@@ -189,11 +230,14 @@ void vftr_get_library_symtab_linux( char *target, off_t base, int pass ) {
     free (shdr);
     free (padding);
     
-    if (fclose(exe )) {
-        perror ("fclose");
+    if (fp_ext == NULL) {
+      if (fclose(exe)) {
+          perror ("fclose");
+      }
     }
-
 }
+
+/**********************************************************************/
 
 FILE *get_fmap (char *target) {
     char maps[80];
@@ -203,10 +247,10 @@ FILE *get_fmap (char *target) {
       if( !strstr( target, "/maps" ) ) {
         /* Executable or library */
         vftr_nsymbols = 0;
-        vftr_get_library_symtab( target, 0L, 0 );
+        vftr_get_library_symtab (target, NULL, 0L, 0);
         vftr_symtab = (symtab_t **) malloc( vftr_nsymbols * sizeof(symtab_t *) );
         vftr_nsymbols = 0;
-        vftr_get_library_symtab( target, 0L, 1 );
+        vftr_get_library_symtab (target, NULL, 0L, 1);
         return NULL;
       }
       strcpy (maps, target);
@@ -222,6 +266,8 @@ FILE *get_fmap (char *target) {
     }
     return fmap;
 }
+
+/**********************************************************************/
 
 /* This function parses the lines in the /proc/pid/maps file. Each line consists of:
 	- an address range [base-top]. We split this at the "-" sign, since we
@@ -275,13 +321,15 @@ void parse_fmap_line (char *line, pathList_t **library, pathList_t **head) {
         (*library)->next = NULL;
 #ifdef __VMAP_OFFSET
 	(*library)->offset = strtoul(offset, NULL, 16);
-        vftr_get_library_symtab ((*library)->path, (*library)->base - (*library)->offset, 0 ); /* First pass, counting only */
+        vftr_get_library_symtab ((*library)->path, NULL, (*library)->base - (*library)->offset, 0 ); /* First pass, counting only */
 #else
-        vftr_get_library_symtab ((*library)->path, 0L, 0 ); /* First pass, counting only */
+        vftr_get_library_symtab ((*library)->path, NULL, 0L, 0 ); /* First pass, counting only */
 	(*library)->offset = 0L;
 #endif
 
 }
+
+/**********************************************************************/
 
 /*
 ** vftr_create_symbol_table - two-pass retrieval of symbol table: in the first pass
@@ -297,7 +345,6 @@ void parse_fmap_line (char *line, pathList_t **library, pathList_t **head) {
 */
 int vftr_create_symbol_table (int rank, char *target) {
     char line[LINESIZE];
-    int symCount = 0, pass;
     pathList_t *head, *library, *next;
 
     FILE *fmap = get_fmap (target);
@@ -322,11 +369,11 @@ int vftr_create_symbol_table (int rank, char *target) {
 
     for (library = head; library; library = next) {
 #ifdef __VMAP_OFFSET
-        vftr_get_library_symtab (library->path, library->base - library->offset, 1);
+        vftr_get_library_symtab (library->path, NULL, library->base - library->offset, 1);
 #else
         /* FIXME Need to understand why base has to be set this way, if at all correct */
         off_t base = strstr(library->path, ".so") ? library->base : 0L;
-        vftr_get_library_symtab( library->path, base, 1 );
+        vftr_get_library_symtab (library->path, NULL, base, 1);
 #endif
         next = library->next;
         free (library);
@@ -336,6 +383,8 @@ int vftr_create_symbol_table (int rank, char *target) {
     return 0;
 
 }
+
+/**********************************************************************/
 
 symtab_t **vftr_find_nearest(symtab_t **table, void *addr, int count) {
   int imid = 0;
@@ -392,3 +441,19 @@ char *vftr_find_symbol (void *addr, int line, char **full) {
     }
     return newname;
 }
+
+/**********************************************************************/
+
+int vftr_symbols_test_1 (FILE *fp_in, FILE *fp_out) {
+ 	vftr_nsymbols = 0;	
+	vftr_get_library_symtab ("", fp_in, 0L, 0);	
+	vftr_symtab = (symtab_t **) malloc (vftr_nsymbols * sizeof(symtab_t*));
+	vftr_nsymbols = 0;
+	rewind (fp_in);
+	vftr_get_library_symtab ("", fp_in, 0L, 1);	
+	vftr_print_symbol_table (fp_out);
+	free (vftr_symtab);
+	return 0;
+}
+
+/**********************************************************************/

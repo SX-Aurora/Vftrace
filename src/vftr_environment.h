@@ -19,9 +19,12 @@
 #ifndef VFTR_ENVIRONMENT_H
 #define VFTR_ENVIRONMENT_H
 
+#include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
 #include "vftr_regex.h"
+
+#define VFTR_ENV_VAR_MAX_LENGTH 50
 
 typedef struct env_var_int {
 	int value;
@@ -72,6 +75,7 @@ typedef struct vftr_envs {
 	env_var_bool_t *accurate_profile;	
 	env_var_bool_t *prof_truncate;
 	env_var_bool_t *mpi_log;	
+        env_var_bool_t *mpi_show_sync_time;
 	env_var_bool_t *signals_off;
 	env_var_int_t *bufsize;
 	env_var_regex_t *runtime_profile_funcs;
@@ -80,18 +84,22 @@ typedef struct vftr_envs {
 	env_var_double_t *detail_until_cum_cycles;
 	env_var_string_t *scenario_file;
 	env_var_regex_t *preciseregex;
+	env_var_regex_t *print_stack_profile;
 	env_var_bool_t *license_verbose;
         env_var_string_t *print_stacks_for;
         env_var_string_t *print_loadinfo_for;
+ 	env_var_bool_t *strip_module_names;
 } vftr_envs_t;
 
 extern vftr_envs_t *vftr_environment;
 
 void vftr_read_environment();
 void vftr_assert_environment();
+void vftr_free_environment();
 bool vftr_off();
 void vftr_switch_off();
 bool vftr_env_do_sampling();
 
+int vftr_environment_test_1 (FILE *fp);
 
 #endif

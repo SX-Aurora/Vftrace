@@ -24,7 +24,6 @@
 
 #include "vftr_symbols.h"
 #include "vftr_hwcounters.h"
-#include "vftr_omp.h"
 #include "vftr_setup.h"
 #include "vftr_environment.h"
 #include "vftr_hooks.h"
@@ -34,8 +33,7 @@
 #include "vftr_pause.h"
 #include "vftr_timer.h"
 #include "vftr_stacks.h"
-#include "vftr_dlopen.h"
-#include "vftr_async_messages.h"
+#include "vftr_clear_requests.h"
 
 bool vftr_profile_wanted = false;
 
@@ -44,8 +42,8 @@ int vftr_compare (const void *a1, const void *a2) {
     function_t *f2 = *(function_t **)a2;
     if(!f2) return -1; /* Order important to work around SX qsort problem */
     if(!f1) return  1;
-    long long t1 = f1->prof_current[0].timeExcl -f1->prof_previous[0].timeExcl;
-    long long t2 = f2->prof_current[0].timeExcl -f2->prof_previous[0].timeExcl;
+    long long t1 = f1->prof_current.timeExcl - f1->prof_previous.timeExcl;
+    long long t2 = f2->prof_current.timeExcl - f2->prof_previous.timeExcl;
     long long diff = t2 - t1;
     if( diff > 0 ) return  1;
     if( diff < 0 ) return -1;
@@ -54,16 +52,16 @@ int vftr_compare (const void *a1, const void *a2) {
 
 /**********************************************************************/
 
-void vftr_save_old_state (int me) {
+void vftr_save_old_state () {
     int i,j;
 
     for (j = 0; j < vftr_stackscount; j++) {
         function_t *func = vftr_func_table[j];
-        func->prof_previous[me].calls  = func->prof_current[me].calls;
-        func->prof_previous[me].cycles = func->prof_current[me].cycles;
-        func->prof_previous[me].timeExcl = func->prof_current[me].timeExcl;
+        func->prof_previous.calls  = func->prof_current.calls;
+        func->prof_previous.cycles = func->prof_current.cycles;
+        func->prof_previous.timeExcl = func->prof_current.timeExcl;
         for (i = 0; i < vftr_n_hw_obs; i++) {
-            func->prof_previous[me].event_count[i] = func->prof_current[me].event_count[i];
+            func->prof_previous.event_count[i] = func->prof_current.event_count[i];
 	}
     }
 }
@@ -71,13 +69,14 @@ void vftr_save_old_state (int me) {
 /**********************************************************************/
 
 void vftr_function_entry (const char *s, void *addr, int line, bool isPrecise) {
-    int e, me, read_counters;
-    long long timer, time0, delta;
+    int e, read_counters;
+    unsigned long long timer, delta;
+    unsigned long long cycles0;
     double wtime;
     static int vftr_init = 1;
     bool time_to_sample = false;
     function_t *caller, *func, *callee;
-    profdata_t *prof, *fprof;
+    profdata_t *prof_return;
 
     if (vftr_init) {
 	vftr_initialize ();
@@ -88,9 +87,8 @@ void vftr_function_entry (const char *s, void *addr, int line, bool isPrecise) {
     long long func_entry_time = vftr_get_runtime_usec();
     // log function entry and exit time to estimate the overhead time
     long long overhead_time_start = func_entry_time;
-    me = OMP_GET_THREAD_NUM;
     timer = vftr_get_runtime_usec ();
-    time0 = timer - vftr_inittime;
+    cycles0 = vftr_get_cycles() - vftr_initcycles;
 
     // This is the hook for shared libraries opened during the
     // application's runtime. The preloaded library vftr_dlopen.so
@@ -102,7 +100,7 @@ void vftr_function_entry (const char *s, void *addr, int line, bool isPrecise) {
     	vftr_create_symbol_table (vftr_mpirank, NULL);
     }
 
-    caller = vftr_fstack[me];
+    caller = vftr_fstack;
     // If the caller address equals the current address, we are
     // dealing with (simple) recursive function call. We filter
     // them out to avoid extensively large call stacks, e.g. 
@@ -117,72 +115,61 @@ void vftr_function_entry (const char *s, void *addr, int line, bool isPrecise) {
     // we are not dealing with a recursive function. 
     // 
     if (addr == caller->address) {
-        caller->prof_current[me].calls++;
+        caller->prof_current.calls++;
 	caller->recursion_depth++;
         return;
     }
 
-#ifdef _OPENMP
-#pragma omp critical
-#endif
-{
-    prof   = &vftr_prof_data[me];
-
     //
     // Check if the function is in the table
     //
-    callee = caller->call;
+    callee = caller->callee;
     
     if (callee == NULL) {
         // No calls at all yet: add new function
-        func = vftr_new_function(addr, s, caller, "no calls yet", line, isPrecise);
+        func = vftr_new_function(addr, s, caller, line, isPrecise);
     } else {
-	// Search the function name in the function list
+	// Search the function address in the function list
         func = callee;
         if (func->address != addr) {
            for ( ;; ) {
-               func = func->next;
+               func = func->next_in_level;
                if (func == callee || func->address == addr) {
-           	break;
+           	  break;
                }
            }
            if (func == callee) {
                // No call from this callee yet: add new function
-               func = vftr_new_function(addr, s, caller, "not in list", line, isPrecise);
+               func = vftr_new_function(addr, s, caller, line, isPrecise);
            }
         }
     }
-    caller->call = func; // Faster lookup next time around
-}
+    caller->callee = func; // Faster lookup next time around
 
     if (func->exclude_this) return;
     if (line > 0) assert (func->line_beg == line);
 
     if (func->profile_this) {
-        wtime = (vftr_get_runtime_usec() - vftr_overhead_usec[me]) * 1.0e-6;
-        vftr_print_stack (me, wtime, func, "profile before call to", 0);
+        wtime = (vftr_get_runtime_usec() - vftr_overhead_usec) * 1.0e-6;
+        vftr_write_stack_ascii (vftr_log, wtime, func, "profile before call to", 0);
         vftr_profile_wanted = true;
         int ntop;
-        vftr_print_profile (vftr_log, &ntop, time0);
+        vftr_print_profile (vftr_log, &ntop, timer);
         vftr_print_local_stacklist (vftr_func_table, vftr_log, ntop);
-	vftr_save_old_state (me);
+	vftr_save_old_state ();
     }
 
-    vftr_fstack[me] = func; /* Here's where we are now */
+    vftr_fstack = func; /* Here's where we are now */
 
     // Is it time for the next sample?
-    time_to_sample = (func_entry_time > vftr_nextsampletime[me]) || func->precise;  
+    time_to_sample = (func_entry_time > vftr_nextsampletime) || func->precise;  
 
-    read_counters = (func->ret->detail || func->detail) &&
+    read_counters = (func->return_to->detail || func->detail) &&
 		    vftr_events_enabled && 
                     (time_to_sample || vftr_environment->accurate_profile->value);
-#ifdef __ve__
-    // Do not read performance counters for OpenMP threads > 0
-    if (me) read_counters = 0;
-#endif
 
     if (time_to_sample && vftr_env_do_sampling ()) {
-        vftr_write_to_vfd (func_entry_time, vftr_prog_cycles[me], func->id, SID_ENTRY, me);
+        vftr_write_to_vfd (func_entry_time, vftr_prog_cycles, func->id, SID_ENTRY);
 #ifdef _MPI
         int mpi_isinit;
         PMPI_Initialized(&mpi_isinit);
@@ -190,67 +177,67 @@ void vftr_function_entry (const char *s, void *addr, int line, bool isPrecise) {
            int mpi_isfinal;
            PMPI_Finalized(&mpi_isfinal);
            if (!mpi_isfinal) {
-              vftr_clear_completed_request();
+              vftr_clear_completed_requests();
            }
         }
 #endif
     }
 
-    func->prof_current[me].calls++;
+    func->prof_current.calls++;
 
     // Maintain profile
 
-    if (func->ret && func->ret->prof_current) {
-        fprof = &func->ret->prof_current[me];
-        delta = time0 - prof->cycles;
-        fprof->cycles += delta;
-        fprof->timeExcl += func_entry_time - prof->timeExcl;
-        vftr_prog_cycles[me] += delta;
-        func->prof_current[me].cycInc -= time0;
-        func->prof_current[me].timeIncl -= func_entry_time;
+    if (func->return_to) {
+        prof_return = &func->return_to->prof_current;
+        delta = cycles0 - vftr_prof_data.cycles;
+	prof_return->cycles += delta;
+        prof_return->timeExcl += func_entry_time - vftr_prof_data.timeExcl;
+        vftr_prog_cycles += delta;
+        func->prof_current.timeIncl -= func_entry_time;
 	if (read_counters) {
-            int ic = prof->ic;
-            vftr_read_counters (prof->events[ic], me);
-            if (fprof->event_count && func->ret->detail) {
+            int ic = vftr_prof_data.ic;
+            vftr_read_counters (vftr_prof_data.events[ic]);
+            if (prof_return->event_count && func->return_to->detail) {
                 for (e = 0; e < vftr_n_hw_obs; e++) {
-                    long long delta = prof->events[ic][e] - prof->events[1-ic][e];
+                    long long delta = vftr_prof_data.events[ic][e] - vftr_prof_data.events[1-ic][e];
 #ifdef __ve__
                     if (delta < 0) /* Handle counter overflow */
                         delta += e < 2 ? (long long) 0x000fffffffffffff
                                        : (long long) 0x00ffffffffffffff;
 #endif
-		    fprof->event_count[e] += delta;
+		    prof_return->event_count[e] += delta;
                 }
             }
-	    prof->ic = 1 - ic;
+	    vftr_prof_data.ic = 1 - ic;
 	}
     }
 
     /* Compensate overhead */
-    vftr_prof_data[me].cycles = vftr_get_runtime_usec () - vftr_inittime;
-    // get the time to estimate vftrace overhead
+    // The stuff we did here added up cycles. Therefore, we have to reset
+    // the global cycle count and time value.
+    vftr_prof_data.cycles = vftr_get_cycles() - vftr_initcycles;
     long long overhead_time_end = vftr_get_runtime_usec();
-    vftr_prof_data[me].timeExcl = overhead_time_end;
-    vftr_overhead_usec[me] += overhead_time_end - overhead_time_start;
+    vftr_prof_data.timeExcl = overhead_time_end;
+    vftr_overhead_usec += overhead_time_end - overhead_time_start;
 }
 
 /**********************************************************************/
 
 void vftr_function_exit(int line) {
-    int           e, me, read_counters, timeToSample;
-    long long     time0, timer, delta;
+    int           e, read_counters, timeToSample;
+    long long     timer;
+    unsigned long long cycles0;
     function_t    *func;
     double        wtime;
-    profdata_t    *prof, *fprof;
+    profdata_t *prof_current;
 
     if (vftr_off() || vftr_paused) return;
 
-    me = OMP_GET_THREAD_NUM;
     /* See at the beginning of vftr_function_entry: If
      * we are dealing with a recursive function call, exit.
      */
-    if (vftr_fstack[me]->recursion_depth) {
-        vftr_fstack[me]->recursion_depth--;
+    if (vftr_fstack->recursion_depth) {
+        vftr_fstack->recursion_depth--;
         return;
     }
     long long func_exit_time = vftr_get_runtime_usec();
@@ -258,8 +245,8 @@ void vftr_function_exit(int line) {
     long long overhead_time_start = func_exit_time;
 
     timer = vftr_get_runtime_usec ();
-    time0 = timer - vftr_inittime;
-    func  = vftr_fstack[me];
+    cycles0 = vftr_get_cycles() - vftr_initcycles;
+    func  = vftr_fstack;
     if (func->exclude_this) return;
 
     if (line > 0) {
@@ -273,27 +260,21 @@ void vftr_function_exit(int line) {
         }
     }
 
-    prof   = &vftr_prof_data[me];
-    fprof  = &func->prof_current[me];
-    fprof->cycInc += time0;   /* Inclusive time */
-    fprof->timeIncl += func_exit_time;   /* Inclusive time */
+    prof_current = &func->prof_current;
+    prof_current->timeIncl += func_exit_time;   /* Inclusive time */
     
-    vftr_fstack[me] = func->ret;
+    vftr_fstack = func->return_to;
 
     /* Is it time for the next sample? */
 
-    timeToSample = (func_exit_time > vftr_nextsampletime[me]) || func->precise || 
-                   (func->ret && !func->ret->id) /* Return from main program: end of execution */;
+    timeToSample = (func_exit_time > vftr_nextsampletime) || func->precise || 
+                   (func->return_to && !func->return_to->id) /* Return from main program: end of execution */;
 
-    read_counters = (func->ret->detail || func->detail) &&
+    read_counters = (func->return_to->detail || func->detail) &&
 	  	    vftr_events_enabled && 
                     (timeToSample || vftr_environment->accurate_profile->value);
-#ifdef __ve__
-    if (me) read_counters = 0;
-#endif
-
     if (timeToSample && vftr_env_do_sampling ()) {
-        vftr_write_to_vfd(func_exit_time, fprof->cycles, func->id, SID_EXIT, me);
+        vftr_write_to_vfd(func_exit_time, prof_current->cycles, func->id, SID_EXIT);
 #ifdef _MPI
         int mpi_isinit;
         PMPI_Initialized(&mpi_isinit);
@@ -301,7 +282,7 @@ void vftr_function_exit(int line) {
            int mpi_isfinal;
            PMPI_Finalized(&mpi_isfinal);
            if (!mpi_isfinal) {
-              vftr_clear_completed_request();
+              vftr_clear_completed_requests();
            }
         }
 #endif
@@ -309,22 +290,22 @@ void vftr_function_exit(int line) {
 
     /* Maintain profile info */
 
-    fprof->cycles += time0;
-    fprof->timeExcl += func_exit_time;
-    vftr_prog_cycles[me]  += time0;
-    if( func->ret ) {
-        fprof->cycles -= prof->cycles;
-        fprof->timeExcl -= prof->timeExcl;
-        vftr_prog_cycles[me] -= prof->cycles;
+    prof_current->cycles += cycles0;
+    prof_current->timeExcl += func_exit_time;
+    vftr_prog_cycles += cycles0;
+    if (func->return_to) {
+        prof_current->cycles -= vftr_prof_data.cycles;
+        prof_current->timeExcl -= vftr_prof_data.timeExcl;
+        vftr_prog_cycles -= vftr_prof_data.cycles;
     }
-    delta = time0 - prof->cycles;
+
     if (read_counters) {
-        int ic = prof->ic;
-        vftr_read_counters (prof->events[ic], me);
-        fprof->ecreads++; /* Only at exit */
-        if (fprof->event_count && func->detail) {
+        int ic = vftr_prof_data.ic;
+        vftr_read_counters (vftr_prof_data.events[ic]);
+        prof_current->ecreads++; /* Only at exit */
+        if (prof_current->event_count && func->detail) {
             for (e = 0; e < vftr_n_hw_obs; e++) {
-                long long delta = prof->events[ic][e] - prof->events[1-ic][e];
+                long long delta = vftr_prof_data.events[ic][e] - vftr_prof_data.events[1-ic][e];
 #ifdef __ve__
 	        /* Handle counter overflow */
                 if (delta < 0) {
@@ -332,40 +313,33 @@ void vftr_function_exit(int line) {
                                        : (long long) 0x00ffffffffffffff;
  		}
 #endif
-		fprof->event_count[e] += delta;
+		prof_current->event_count[e] += delta;
             }
         }
-        prof->ic = 1 - ic;
+        vftr_prof_data.ic = 1 - ic;
     }
 
-    wtime = (vftr_get_runtime_usec() - vftr_overhead_usec[me]) * 1.0e-6;
+    wtime = (vftr_get_runtime_usec() - vftr_overhead_usec) * 1.0e-6;
 
     if (func->profile_this)  {
-        vftr_print_stack (me, wtime, func, "profile at exit from", timeToSample);
+        vftr_write_stack_ascii (vftr_log, wtime, func, "profile at exit from", timeToSample);
         vftr_profile_wanted = true;
         int ntop;
-        vftr_print_profile (stdout, &ntop, time0);
+        vftr_print_profile (stdout, &ntop, timer);
         vftr_print_local_stacklist( vftr_func_table, stdout, ntop );
     }
 
-    if( me == 0 && time0 >= vftr_timelimit ) {
-        fprintf( vftr_log, "vftr_timelimit exceeded - terminating execution\n" );
-	kill( getpid(), SIGTERM );
+    if (timer >= vftr_timelimit) {
+        fprintf (vftr_log, "vftr_timelimit exceeded - terminating execution\n");
+	kill (getpid(), SIGTERM);
     }
-#if defined(_SX) || defined(__ve__OFF)
-#ifdef _OPENMP
-    if( omp_in_parallel() ) vftr_in_parallel[me]--;
-#endif
-#endif
 
     /* Sort profile if it is time */
     
-    if (me == 0 && wtime >= vftr_sorttime)  {
+    if (wtime >= vftr_sorttime)  {
         int i, top;
         double tsum = 0.;
-        double scale = 100. / (double)vftr_prog_cycles[me];
-
-        /* TO DO for OpenMP: set lock guarding vftr_new_function() usage */
+        double scale = 100. / (double)vftr_prog_cycles;
 
         qsort (vftr_func_table, (size_t)vftr_stackscount, sizeof( function_t *),
 	       vftr_compare);
@@ -373,27 +347,40 @@ void vftr_function_exit(int line) {
         /* Set function detail flags while sum(time) < max */
         for (i = 0; i < vftr_stackscount; i++) {
             function_t *f = vftr_func_table[i];
-            tsum += (double)f->prof_current[0].cycles;
+            tsum += (double)f->prof_current.cycles;
 	    double cutoff = vftr_environment->detail_until_cum_cycles->value;
             if ((tsum * scale) > cutoff) break;
-            f->detail = 1;
+            f->detail = true;
         }
         top = i;
         /* Clear function detail flags for all others */
         for(; i<vftr_stackscount; i++) 
-            vftr_func_table[i]->detail = 0;
-
-        /* TO DO for OpenMP: unset lock guarding vftr_new_function() usage */
+            vftr_func_table[i]->detail = false;
 
         vftr_sorttime *= vftr_sorttime_growth;
     }
 
     /* Compensate overhead */
-    vftr_prof_data[me].cycles = vftr_get_runtime_usec () - vftr_inittime;
-    // get the time to estimate vftrace overhead
+    // The stuff we did here added up cycles. Therefore, we have to reset
+    // the global cycle count and time value.
+    vftr_prof_data.cycles = vftr_get_cycles() - vftr_initcycles;
     long long overhead_time_end = vftr_get_runtime_usec();
-    vftr_prof_data[me].timeExcl = overhead_time_end;
-    vftr_overhead_usec[me] += overhead_time_end - overhead_time_start;
+    vftr_prof_data.timeExcl = overhead_time_end;
+    vftr_overhead_usec += overhead_time_end - overhead_time_start;
+
+    /* Terminate Vftrace if we are exiting the main routine */
+    // When exiting main, there is no return value.
+    // This approach is in contrast to previous implementations, where
+    // vftr_finalize was a destructor. It has been agreed upon that
+    // we do not want to have invisible side effects, wherefore this
+    // method is much more transparent. Also, unit tests do not have 
+    // to cope with possibly non-associated symbols when calling vftr_finalize
+    // and are also purer that way. 
+    // A downside is that everything between the exit from the main function
+    // and the actual program termination as experienced by the user is not
+    // measured. Therefore, there is a theoretical, but miniscule, discrepancy
+    // the user time and the time measured by Vftrace.
+    if (!vftr_fstack->return_to) vftr_finalize();
 }
 
 // These are the actual Cygnus function hooks. 

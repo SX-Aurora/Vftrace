@@ -1,0 +1,26 @@
+Initial vftr_stackscount: 0
+Check test entries:
+Function: init_vftr
+	Called from: -/-
+	Currently calling: test_1
+	First in next Level: test_1
+	Next in current Level: -/-
+	Root: init_vftr
+	precise: false
+	ID: 0
+	Group ID: -1
+	Recursion depth: 0
+	StackHash: 15403095947709970261
+	Exclude: 0
+Function: test_1
+	Called from: init_vftr
+	Currently calling: -/-
+	First in next Level: -/-
+	Next in current Level: test_1
+	Root: init_vftr
+	precise: false
+	ID: 1
+	Group ID: -1
+	Recursion depth: 0
+	StackHash: 12005762785240717593
+	Exclude: 0

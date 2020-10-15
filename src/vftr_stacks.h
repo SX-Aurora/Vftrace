@@ -30,11 +30,8 @@
 #include "vftr_timer.h"
 #include "vftr_functions.h"
 
-// number of omp threads
-extern int vftr_omp_threads;
-
 // Maximum time in a call tree, searched for in vftr_finalize
-extern long long *vftr_maxtime;
+extern long long vftr_maxtime;
 
 // Stack information on local and global scale
 // TODO: fuse the stack info types
@@ -48,8 +45,11 @@ typedef struct StackInfo {
 typedef struct GStackInfo {
    // global id of the calling function
    int  ret;
+   // local id of the current function
+   int locID;
    // function name string of the current function
    char *name;
+   bool print_profile;
 } gstackinfo_t;
 
 // Profiling structs
@@ -74,26 +74,46 @@ extern function_t **vftr_func_table;
 extern unsigned int  vftr_func_table_size;
 
 // Function call stack
-extern function_t **vftr_fstack;
+//extern function_t **vftr_fstack;
+extern function_t *vftr_fstack;
 // Function call stack roots
-extern function_t **vftr_froots;
+extern function_t *vftr_froots;
 // Profile data
 extern struct Performance *vftr_prof;
 // Profile data sample
-extern profdata_t *vftr_prof_data;
+extern profdata_t vftr_prof_data;
 
 // initialize stacks only called from vftr_initialize
 void vftr_initialize_stacks();
 
-// Write the stacks out
-void vftr_write_stacks (FILE *fp, int level, function_t *func);
 
 // Synchronise stack-IDs between processes
 int vftr_normalize_stacks();
 
-void vftr_print_stack (int tid, double time, function_t *func, char *label, int timeToSample);
+// Write the stacks out
+void vftr_write_stacks_vfd (FILE *fp, int level, function_t *func);
+void vftr_write_stack_ascii (FILE *fp, double time, function_t *func, char *label, int timeToSample);
 void vftr_print_local_stacklist (function_t **funcTable, FILE *pout, int ntop);
 void vftr_print_local_demangled (function_t **funcTable, FILE *pout, int ntop);
-void vftr_print_global_stacklist (callsTime_t **gCallsTime, FILE *pout, int *list, int nlist);
+void vftr_print_global_stacklist (FILE *pout);
+
+typedef struct stack_leaf {
+	int stack_id;
+	int func_id;
+	struct stack_leaf *next_in_level;
+	struct stack_leaf *callee;	
+	struct stack_leaf *origin;
+} stack_leaf_t;	
+
+int vftr_stack_length (int stack_id0);
+void vftr_fill_into_stack_tree (stack_leaf_t **this_leaf, int n_stack_ids, int *stacks_ids, int func_id);
+void vftr_print_stacktree (FILE *fp, stack_leaf_t *leaf, int n_spaces, long long *total_time, double *imbalances);
+void vftr_print_function_stack (FILE *fp, int rank, char *func_name,
+				int n_final_stack_ids, int n_final_func_ids,
+				int *final_stack_ids, int *final_func_ids);
+
+// test functions
+int vftr_stacks_test_1(FILE *fp_in, FILE *fp_out);
+int vftr_stacks_test_2(FILE *fp_in, FILE *fp_out);
 
 #endif

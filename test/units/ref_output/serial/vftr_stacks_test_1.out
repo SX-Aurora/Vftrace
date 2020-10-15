@@ -1,0 +1,22 @@
+Initial vftr_stackscount: 0
+init: 0 0
+func2: 1 1
+func3: 2 2
+func4: 3 3
+func5: 4 4
+func6: 5 5
+func4: 6 6
+Global stacklist: 
+Call stacks
+-------------------------
+ ID Function call stack
+ -- --------------------- 
+  0 init
+  1 func2<init
+  2 func3<init
+  3 func4<func3<init
+  4 func5<func2<init
+  5 func6<func2<init
+  6 func4<func6<func2<init
+-------------------------
+

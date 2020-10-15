@@ -19,13 +19,34 @@
 #include <time.h>
 
 // global sample timer
-long long *vftr_prevsampletime;
-long long *vftr_nextsampletime;
+long long vftr_prevsampletime;
+long long vftr_nextsampletime;
 
 //sample time in ms
 long long vftr_interval;
 // maximum runtime in ms
 long long vftr_timelimit;
+
+// Vftrace measures its own overhead in microseconds.
+// It is incremented at each function entry and exit, as
+// well as after initialization.
+long long vftr_overhead_usec = 0ll;
+
+#ifdef _MPI
+// vftrace measures the overhead of recording
+// the MPI communication pattern
+long long vftr_mpi_overhead_usec = 0ll;
+#endif
+
+long long vftr_initcycles;
+
+// A time interval indicating when the function table should be sorted.
+// This is done also to dynamically assign the "detail" flag if the weight
+// of a function (in terms of cumulative cycles) grows.
+double vftr_sorttime;
+
+// After each sorting, the vftr_sorttime is multiplied by this factor
+double vftr_sorttime_growth;
 
 // the clock timer to use 
 // CLOCK_MONOTONIC is not affected by NTP or system time changes.
@@ -67,4 +88,20 @@ long long vftr_get_runtime_usec() {
 
    // return the amount of microseconds since the local reference time
    return 1000000l*delta_sec + delta_nsec/1000l;
+}
+
+// get the number of elapsed clock counts
+unsigned long long vftr_get_cycles () {
+  unsigned long long ret;
+#if defined (__ve__)
+// On SX Aurora, we obtain the number of elapsed cycles by reading the usrcc register
+// using the smir command. In earlier versions, lhm.l was used. However, this yields
+// VH clock counts, which is not the correct measure to compute e.g. the vector time.
+  asm volatile ("smir %0, %usrcc" : "=r"(ret));
+#elif defined (__x86_64__)
+    unsigned int a, d;
+    asm volatile("rdtsc" : "=a" (a), "=d" (d));
+    ret = ((unsigned long long)a) | (((unsigned long long)d) << 32);
+#endif
+  return ret;
 }

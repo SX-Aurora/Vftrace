@@ -144,4 +144,4 @@ C, C++ and Fortran. On top of that, the executable has to be in the ELF format a
 
 ### Does Vftrace support OpenMP?
 
-Although there are code passages which refer to OpenMP, Vftrace does not yet officially support OpenMP. This is because it is still an open question how the dynamic creation of threads can be combined with the function-stack structure of Vfrace.
+Vftrace does not yet support OpenMP. This is because it is still an open question how the dynamic creation of threads can be combined with the function-stack structure of Vfrace.

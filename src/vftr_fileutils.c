@@ -20,6 +20,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdbool.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
@@ -33,7 +34,7 @@ char *get_application_name () {
 	char proccmd[40];
 	char cmdline[MAX_CMDLINE];	
 
-    	sprintf (proccmd, "/proc/%d/cmdline", getpid());
+    	snprintf (proccmd, 39, "/proc/%d/cmdline", getpid());
         int last = 0;
         int fd = open (proccmd, O_RDONLY);
         char *p;
@@ -50,10 +51,12 @@ char *get_application_name () {
             program_path = strdup(p);
     	    close (fd);
         } else {
-            strcpy (program_path, "vftrace");
+            program_path = NULL;
         }
         return program_path;
 }
+
+/**********************************************************************/
 
 int count_digits (int value) {
   int count = 0;
@@ -62,3 +65,11 @@ int count_digits (int value) {
   }
   return count;
 }
+
+/**********************************************************************/
+
+char *vftr_bool_to_string (bool value) {
+	return value ? "true" : "false";
+}
+
+/**********************************************************************/

@@ -18,17 +18,22 @@
 #ifndef VFTR_SETUP_H
 #define VFTR_SETUP_H
 
+#include <stdio.h>
 #include <stdbool.h>
 
 extern bool vftr_timer_end;
 
 extern int vftr_mpirank;
 extern int vftr_mpisize;
-// Indicates if Vftrace is in an OMP parallel region
-extern int *vftr_in_parallel;
-extern unsigned int *vftr_samplecount;
+extern unsigned int vftr_samplecount;
 
 void vftr_initialize ();
-void vftr_finalize (void) __attribute__ ((destructor));
+void vftr_finalize () ;
+
+void vftr_get_mpi_info (int *rank, int *size);
+
+// test functions
+int vftr_setup_test_1 (FILE *fp);
+int vftr_setup_test_2 (FILE *fp);
 
 #endif

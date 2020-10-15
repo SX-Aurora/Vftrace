@@ -23,21 +23,22 @@
 
 #include "vftr_symbols.h"
 
-// OpenMP parallel regions
-regex_t *vftr_openmpregexp = NULL;
+/**********************************************************************/
 
-regex_t *vftr_compile_regexp(char *s) {
+regex_t *vftr_compile_regexp(char *pattern) {
     int err;
     regex_t *r;
     r = (regex_t*) malloc(sizeof(regex_t));
-    if (err = regcomp (r, s, REG_NOSUB|REG_EXTENDED)) {
+    if (err = regcomp (r, pattern, REG_NOSUB|REG_EXTENDED)) {
         char msg[256];
         size_t msglen;
         msglen = regerror(err, r, msg, 256);
-        fprintf(vftr_log, "ERROR in vftr_compile_regexp: input=%s msg=%s\n", s, msg);
+        fprintf(stderr, "Invalid Regular Expression (%s): %s\n", pattern, msg);
     }
     return err ? NULL : r;
 }
+
+/**********************************************************************/
 
 bool vftr_pattern_match(regex_t *r, char *s) {
     if (!r) {return 0;}

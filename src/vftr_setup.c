@@ -29,7 +29,6 @@
 #include "vftr_scenarios.h"
 #include "vftr_hwcounters.h"
 #include "vftr_version.h"
-#include "vftr_omp.h"
 #include "vftr_environment.h"
 #include "vftr_setup.h"
 #include "vftr_dlopen.h"
@@ -42,17 +41,16 @@
 #include "vftr_loadbalance.h"
 #include "vftr_timer.h"
 #include "vftr_monitoring_thread.h"
+#include "vftr_functions.h"
 
 bool vftr_timer_end;
 
 int vftr_mpirank;
 int vftr_mpisize;
-// Indicates if Vftrace is in an OMP parallel region
-int *vftr_in_parallel;
-unsigned int *vftr_samplecount;
+unsigned int vftr_samplecount;
 
-void vftr_print_disclaimer_full () {
-    fprintf( vftr_log, 
+void vftr_print_disclaimer_full (FILE *fp) {
+    fprintf (fp, 
         "\nThis program is free software; you can redistribute it and/or modify\n"
         "it under the terms of the GNU General Public License as published by\n"
         "the Free Software Foundation; either version 2 of the License , or\n"
@@ -70,14 +68,14 @@ void vftr_print_disclaimer_full () {
 
 /**********************************************************************/
 
-void vftr_print_disclaimer () {
+void vftr_print_disclaimer (FILE *fp) {
     int v_major = MAJOR_VERSION;
     int v_minor = MINOR_VERSION;
     int rev = REVISION;
-    fprintf (vftr_log, "Vftrace version %d.%d.%d\n", v_major, v_minor, rev);
-    fprintf (vftr_log, "Runtime profile for application: %s\n", "");
-    fprintf (vftr_log, "Date: "); 
-    fprintf( vftr_log, 
+    fprintf (fp, "Vftrace version %d.%d.%d\n", v_major, v_minor, rev);
+    fprintf (fp, "Runtime profile for application: %s\n", "");
+    fprintf (fp, "Date: "); 
+    fprintf (fp, 
         "This is free software with ABSOLUTELY NO WARRANTY.\n"
         "For details: use vftrace with environment variable VFTR_LICENSE\n"
         "set to 1, or run \"vfview -w\", or consult the COPYRIGHT file.\n" );
@@ -85,26 +83,46 @@ void vftr_print_disclaimer () {
 
 /**********************************************************************/
 
-#ifdef _OPENMP
-void vftr_init_omp_locks () {
-    omp_init_lock (&vftr_lock);
-    omp_init_lock (&vftr_lock_exp);
-    omp_init_lock (&vftr_lock_hook);
-    omp_init_lock (&vftr_lock_prof);
-}
+void vftr_get_mpi_info (int *rank, int *size) {
+#ifdef _MPI
+// At this point, MPI_Init has not been called yet, so we cannot
+// use MPI_Comm_size or MPI_Comm_rank. Instead, we have to rely
+// on these environment variables set by various MPI implementations.
+    if (getenv ("PMI_RANK")) {
+        *rank = atoi (getenv("PMI_RANK"));
+        *size = atoi (getenv("PMI_SIZE"));
+    } else if (getenv ("OMPI_COMM_WORLD_RANK")) {
+        *rank = atoi (getenv("OMPI_COMM_WORLD_RANK"));
+	*size = atoi (getenv("OMPI_COMM_WORLD_SIZE"));
+    } else if (getenv ("PMI_ID")) {
+        *rank = atoi (getenv("PMI_ID"));
+	*size = atoi (getenv("MPIRUN_NPROCS"));
+    } else if (getenv ("MPIRUN_RANK")) {
+        *rank = atoi (getenv ("MPIRUN_RANK"));
+	*size = atoi (getenv ("MPIRUN_NPROCS"));
+    } else if (getenv ("MPIRANK")) {
+        *rank = atoi (getenv ("MPIRANK"));
+        /* MPISIZE not set by MPI/SX, will be set after mpi_init call */
+	*size = atoi (getenv ("MPISIZE"));
+    } else if (getenv ("SLURM_PROCID")) {
+	*rank = atoi (getenv ("SLURM_PROCID"));
+	char *s;
+	if (s = getenv ("SLURM_NPROCS")) *size = atoi (s);
+    } else {
+	// Cannot find out how many MPI ranks there are, assume only one.
+	*rank = 0;
+	*size = 1;
+    }
+#else
+    // No MPI, only one rank exists.
+    *rank = 0;
+    *size = 1;
 #endif
-
+}
+	
 /**********************************************************************/
 
-// Assuming vftr_initialize will be called outside parallel region
 void vftr_initialize() {
-    char *s;
-    char *logfile_nameformat;
-    int j, n, me;
-    int task_digits, thread_digits;
-
-    me = OMP_GET_THREAD_NUM;
-
     // set the timer reference point for this process
     vftr_set_local_ref_time();
     
@@ -119,7 +137,6 @@ void vftr_initialize() {
 	
     lib_opened = 0;
 
-    char *vftr_program_path;
     vftr_timelimit = LONG_MAX;
 
     // No buffering for messages going directly to stdout
@@ -128,103 +145,24 @@ void vftr_initialize() {
     sprintf (vftr_fileid, "VFTRACE %07d", 
 	(100 * MAJOR_VERSION + MINOR_VERSION) * 100 + REVISION);
 
-    logfile_nameformat = malloc(1024*sizeof(char));
+    vftr_overhead_usec = 0ll;
+  
+    vftr_prog_cycles = 0ll;
 
-    vftr_omp_threads = OMP_GET_MAX_THREADS;
-    vftr_samplecount = (unsigned int *) malloc (vftr_omp_threads * sizeof(unsigned int));
-    vftr_prog_cycles = (long long *) malloc (vftr_omp_threads * sizeof(long long));
-    vftr_in_parallel = (int *) malloc (vftr_omp_threads * sizeof(unsigned int));
-    assert (vftr_samplecount);
+    vftr_program_path = vftr_get_program_path ();
+    vftr_get_mpi_info (&vftr_mpirank, &vftr_mpisize);
 
-    vftr_overhead_usec = (long long *) malloc (vftr_omp_threads * sizeof(long long));
-    assert (vftr_overhead_usec);
-    for (int i = 0; i < vftr_omp_threads; i++) {
-	vftr_overhead_usec[i] = 0ll;
-    }
-    assert (vftr_prog_cycles);
-    assert (vftr_in_parallel);
-
-    memset (vftr_prog_cycles, 0, vftr_omp_threads * sizeof(long long));
-
-#ifdef _OPENMP
-   vftr_init_omp_locks ();
-#endif
-
-    vftr_program_path = get_application_name ();
-    char *basename;
-    if (vftr_environment->logfile_basename->set) {
-	basename = vftr_environment->logfile_basename->value;
-    } else {
-	char *s;	
-	if (s = rindex (vftr_program_path, '/')) {
-		basename = strdup (s + 1);
-	} else {
-		basename = strdup (vftr_program_path);
-	}	
-    }
-
-#ifdef _MPI
-    if (getenv ("PMI_RANK")) {
-        vftr_mpirank  = atoi( getenv( "PMI_RANK" ) );
-        vftr_mpisize  = atoi( getenv( "PMI_SIZE" ) );
-    } else if( getenv( "OMPI_COMM_WORLD_RANK" ) ) {
-        vftr_mpirank  = atoi( getenv( "OMPI_COMM_WORLD_RANK" ) );
-	vftr_mpisize  = atoi( getenv( "OMPI_COMM_WORLD_SIZE" ) );
-    } else if( getenv( "PMI_ID" ) ) {
-        vftr_mpirank  = atoi( getenv( "PMI_ID" ) );
-	vftr_mpisize  = atoi( getenv( "MPIRUN_NPROCS" ) );
-    } else if( getenv( "MPIRUN_RANK" ) ) {
-        vftr_mpirank  = atoi( getenv( "MPIRUN_RANK" ) );
-	vftr_mpisize  = atoi( getenv( "MPIRUN_NPROCS" ) );
-    } else if( getenv( "MPIRANK" ) ) {
-        vftr_mpirank  = atoi( getenv( "MPIRANK" ) );
-        /* MPISIZE not set by MPI/SX, will be set after mpi_init call */
-	vftr_mpisize  = atoi( getenv( "MPISIZE" ) );
-    } else if( getenv( "SLURM_PROCID"   ) ) {
-	vftr_mpirank  = atoi( getenv( "SLURM_PROCID" ) );
-	if( s = getenv( "SLURM_NPROCS" ) ) vftr_mpisize  = atoi( s );
-    } else {
-	// Cannot find out how many MPI ranks there are, assume only one.
-	vftr_mpirank = 0;
-	vftr_mpisize = 1;
-    }
-#else
-    // No MPI, only one rank exists.
-    vftr_mpirank = 0;
-    vftr_mpisize = 1;
-#endif
-
-
-    // Count the number of digits in the number of MPI tasks and OpenMP threads
-    // in order to have the correct format in the log file name.
-    task_digits = count_digits (vftr_mpisize);
-    thread_digits = count_digits (vftr_omp_threads);
-
-    // Build filename format in a form that the filenames will
-    // be sorted in the correct way
-    //
-    sprintf (logfile_nameformat, "%s/%s_%%0%dd.log",
-             vftr_environment->output_directory->value,
-             basename, task_digits);
-    sprintf (vftr_logfile_name, logfile_nameformat, vftr_mpirank);
-    vftr_log = fopen( vftr_logfile_name, "w+");
+    vftr_logfile_name = vftr_create_logfile_name (vftr_mpirank, vftr_mpisize, "log");
+    vftr_log = fopen (vftr_logfile_name, "w+");
     assert (vftr_log);
-    
     // Do not buffer when writing into the log file
     setvbuf (vftr_log, NULL, _IOLBF, (size_t)0);
 
-#ifndef _OPENMP
-    if (vftr_omp_threads > 1 && !vftr_mpirank) {
-        fprintf( vftr_log, 
-	  "WARNING: vftrace library used does not support OpenMP\n" );
-    }
-#endif
-
-    if (!vftr_mpirank) {
+    if (vftr_mpirank == 0) {
        if (vftr_environment->license_verbose->value) {
-	  vftr_print_disclaimer_full ();
+	  vftr_print_disclaimer_full (vftr_log);
        } else {
-	  vftr_print_disclaimer ();
+	  vftr_print_disclaimer (vftr_log);
        }
     }
 
@@ -240,38 +178,13 @@ void vftr_initialize() {
         vftr_events_enabled = false;
     }
 
-
-    /* Formating info for call tree */
-    vftr_maxtime = (long long *) malloc (vftr_omp_threads * sizeof(long long));
-
-    n = vftr_omp_threads * sizeof(profdata_t);
-    vftr_prof_data = (profdata_t *) malloc( n );
-    assert (vftr_prof_data);
-
-    memset (vftr_prof_data, 0, n);
+    memset (&vftr_prof_data, 0, sizeof(profdata_t));
 
     // initialize the stack variables and tables
     vftr_initialize_stacks();
 
-    /* Allocate file pointers for each thread */
-    vftr_vfd_file = (FILE **) malloc( vftr_omp_threads * sizeof(FILE *) );
-    assert (vftr_vfd_file);
-    
-    /* Allocate time arrays for each thread */
-    n = vftr_omp_threads * sizeof(long long);
-    vftr_nextsampletime = (long long *) malloc( n );
-    vftr_prevsampletime = (long long *) malloc( n );
-    assert (vftr_nextsampletime);
-    assert (vftr_prevsampletime);
-    for (int i = 0; i < vftr_omp_threads; i++) {
-        vftr_nextsampletime[i] = 0;
-        vftr_prevsampletime [i] = 0;
-    }
-
-#ifdef _OPENMP
-    /* Regular expressions to detect OpenMP regions */
-    vftr_openmpregexp = vftr_compile_regexp( "\\$[0-9][0-9_]*$" );
-#endif
+    vftr_nextsampletime = 0ll;
+    vftr_prevsampletime = 0;
 
     /* Init event counters */
     vftr_n_hw_obs = 0;
@@ -286,15 +199,13 @@ void vftr_initialize() {
     }
 
     if (vftr_n_hw_obs  > 0) {
-    	for (int i = 0; i < vftr_omp_threads; i++) {
-    	    vftr_prof_data[i].events[0] = (long long *) malloc (vftr_n_hw_obs);
-    	    vftr_prof_data[i].events[1] = (long long *) malloc (vftr_n_hw_obs);
-    	    memset (vftr_prof_data[i].events[0], 0, n);
-    	    memset (vftr_prof_data[i].events[1], 0, n);
-    	}
+       vftr_prof_data.events[0] = (long long *) malloc (vftr_n_hw_obs * sizeof(long long));
+       vftr_prof_data.events[1] = (long long *) malloc (vftr_n_hw_obs * sizeof(long long));
+       memset (vftr_prof_data.events[0], 0, vftr_n_hw_obs * sizeof(long long));
+       memset (vftr_prof_data.events[1], 0, vftr_n_hw_obs * sizeof(long long));
     }
 
-    vftr_inittime = vftr_get_runtime_usec ();
+    vftr_initcycles = vftr_get_cycles();
     // convert the sampletime and timelimit to microseconds
     vftr_interval  = (long long) (vftr_environment->sampletime->value * 1.0e6);
     assert (vftr_interval > 0ll);
@@ -305,7 +216,7 @@ void vftr_initialize() {
 
     /* Create VFD files */
     if (vftr_env_do_sampling ()) {
-	vftr_init_vfd_file (basename, task_digits, thread_digits);
+	vftr_init_vfd_file ();
     }
     
     vftr_profile_wanted = (vftr_environment->logfile_all_ranks->value) ||
@@ -342,37 +253,31 @@ void vftr_initialize() {
 	vftr_define_signal_handlers ();
     }
 
-#ifdef _OPENMP
-#pragma omp parallel
-#endif
-    
     fflush (stdout);
-    vftr_inittime = vftr_get_runtime_usec (); /* Will be updated later if MPI used */
+    vftr_initcycles = vftr_get_cycles();
     
     // get the time to estimate vftrace overhead
     long long overhead_time_end = vftr_get_runtime_usec();
-    vftr_overhead_usec[me] += overhead_time_end - overhead_time_start;
+    vftr_overhead_usec += overhead_time_end - overhead_time_start;
 }
 
 /**********************************************************************/
 
 void vftr_calc_tree_format (function_t *func) {
-    function_t *f;
-    int         me, i, n;
     long long   fcalls, ftime;
 
     if (func == NULL) return;
 
-    for (me = 0; me < vftr_omp_threads; me++) {
-        fcalls = func->prof_current[me].calls;
-        ftime  = func->prof_current[me].cycles;
-        if (vftr_maxtime[me]  < ftime) vftr_maxtime [me] = ftime;
-    }
+    fcalls = func->prof_current.calls;
+    ftime  = func->prof_current.cycles;
+    if (vftr_maxtime < ftime) vftr_maxtime = ftime;
 
-    n = func->levels;
+    int n = func->levels;
 
     /* Recursive search of callees */
-    for (i = 0, f = func->first; i < n; i++,f = f->next) {
+    int i;
+    function_t *f;
+    for (i = 0, f = func->first_in_level; i < n; i++,f = f->next_in_level) {
         vftr_calc_tree_format (f);
     }
 }
@@ -380,14 +285,14 @@ void vftr_calc_tree_format (function_t *func) {
 /**********************************************************************/
 
 void vftr_finalize() {
-    int            i, me, ntop = 0;
-    function_t     **funcTable;
+    int ntop = 0;
+    function_t **funcTable;
+
     if (vftr_off())  return;
 
     // get the total runtime
     long long finalize_time = vftr_get_runtime_usec();
     long long timer = vftr_get_runtime_usec ();
-    long long time0 = timer - vftr_inittime;
 
     vftr_timer_end = true;
 
@@ -396,21 +301,23 @@ void vftr_finalize() {
 
     // Mark end of non-parallel interval
     if (vftr_env_do_sampling()) {
-        for (me = 1; me < vftr_omp_threads; me++)
-            vftr_write_to_vfd (finalize_time, vftr_prog_cycles[me], 0, SID_EXIT, me);
+        vftr_write_to_vfd (finalize_time, vftr_prog_cycles, 0, SID_EXIT);
+    }
+
+    if (vftr_environment->strip_module_names->value) {
+	vftr_strip_all_module_names ();
     }
     
     bool valid_loadbalance_table = !vftr_normalize_stacks();
-    vftr_calc_tree_format (vftr_froots[0]);
+    vftr_calc_tree_format (vftr_froots);
 
-    vftr_print_profile (vftr_log, &ntop, time0);
-
-    if (vftr_mpisize == 1 && vftr_omp_threads == 1) {
-        vftr_print_local_stacklist (vftr_func_table, vftr_log, ntop);
-        vftr_print_local_demangled (vftr_func_table, vftr_log, ntop);
+    vftr_print_profile (vftr_log, &ntop, timer);
+#ifdef _MPI
+    if (vftr_environment && vftr_environment->logfile_all_ranks->value) {
+       vftr_print_mpi_statistics (vftr_log);
     }
-    // else: stacks listed by vftr_print_global_stacklist after load balance table
-
+#endif
+ 
     funcTable = vftr_func_table;
 
     callsTime_t **loadbalance_info;
@@ -418,7 +325,7 @@ void vftr_finalize() {
 	loadbalance_info = vftr_get_loadbalance_info( funcTable );
     }
 
-    bool is_parallel = vftr_mpisize > 1 || vftr_omp_threads > 1;
+    bool is_parallel = vftr_mpisize > 1;
     if (is_parallel && vftr_mpirank == 0 && valid_loadbalance_table) {
         int *loadIDs = (int *) malloc (vftr_gStackscount * sizeof(int));
         int nLoadIDs;
@@ -434,19 +341,20 @@ void vftr_finalize() {
                 if (group_size <= 0) break;
                 vftr_print_loadbalance (loadbalance_info, group_base, group_size, vftr_log,
                                         loadIDs, &nLoadIDs);
-                vftr_print_global_stacklist (NULL, vftr_log, loadIDs, nLoadIDs);
+                vftr_print_global_stacklist (vftr_log);
 	        // Check if there is anything behind the comma of the environment variable. If so, proceed.
                 vftr_mpi_groups = *p ? p + 1 : p;
             }
         } else {
             vftr_print_loadbalance (loadbalance_info, 0, vftr_mpisize, vftr_log, loadIDs, &nLoadIDs);
-            vftr_print_global_stacklist (NULL, vftr_log, loadIDs, nLoadIDs);
+            vftr_print_global_stacklist (vftr_log);
         }
         if (valid_loadbalance_table) free (*loadbalance_info);
     }
 
-    if (vftr_profile_wanted && valid_loadbalance_table) {
-        vftr_print_local_stacklist( vftr_func_table, vftr_log, ntop );
+    if (vftr_profile_wanted) {
+    //if (vftr_profile_wanted && valid_loadbalance_table) {
+        vftr_print_global_stacklist(vftr_log);
         vftr_print_local_demangled( vftr_func_table, vftr_log, ntop );
     }
 
@@ -455,10 +363,12 @@ void vftr_finalize() {
 	fprintf(vftr_log, "error stopping H/W counters, ignored\n");
     }
     
-    bool is_empty = (ftello (vftr_log) == (off_t)0);
-    if (is_empty) unlink (vftr_logfile_name);
+    if (vftr_log) {
+    	bool is_empty = (ftello (vftr_log) == (off_t)0);
+    	if (is_empty) unlink (vftr_logfile_name);
 
-    fclose (vftr_log);
+    	fclose (vftr_log);
+    }
     vftr_switch_off();
 }
 
@@ -474,3 +384,23 @@ void vftr_finalize_() {
 }
 
 /**********************************************************************/
+
+int vftr_setup_test_1 (FILE *fp) {
+	fprintf (fp, "Check MPI rank and size received from environment variables\n");		
+	int mpi_rank, mpi_size;
+	vftr_get_mpi_info (&mpi_rank, &mpi_size);
+	fprintf (fp, "Rank: %d\n", mpi_rank);
+	fprintf (fp, "Size: %d\n", mpi_size);
+	return 0;
+}
+
+/**********************************************************************/
+
+int vftr_setup_test_2 (FILE *fp) {
+	fprintf (fp, "Check disclaimers\n");
+	vftr_print_disclaimer_full (fp);
+	fprintf (fp, "****************************************\n");
+	vftr_print_disclaimer (fp);
+	return 0;
+}
+

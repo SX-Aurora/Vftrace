@@ -19,19 +19,17 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "vftr_omp.h"
 #include "vftr_stacks.h"
 
 int vftrace_get_stack_string_length() {
-   int me = OMP_GET_THREAD_NUM;
-   function_t *func = vftr_fstack[me];
+   function_t *func = vftr_fstack;
 
    int stackstrlength = strlen(func->name);
    function_t *tmpfunc = func;
    // go down the stack until the bottom is reached
    // record the length of the function names each
-   while (tmpfunc->ret) {
-      tmpfunc = tmpfunc->ret;
+   while (tmpfunc->return_to) {
+      tmpfunc = tmpfunc->return_to;
       // add one chars for function division by "<"
       stackstrlength += 1;
       stackstrlength += strlen(tmpfunc->name);
@@ -41,8 +39,7 @@ int vftrace_get_stack_string_length() {
 }
 
 char *vftrace_get_stack() {
-   int me = OMP_GET_THREAD_NUM;
-   function_t *func = vftr_fstack[me];
+   function_t *func = vftr_fstack;
 
    // determine the length of the stack string
    int stackstrlength = vftrace_get_stack_string_length();
@@ -56,8 +53,8 @@ char *vftrace_get_stack() {
    strptr += strlen(tmpfunc->name);
    // go down the stack until the bottom is reached
    // copy the function names onto the string
-   while (tmpfunc->ret) {
-      tmpfunc = tmpfunc->ret;
+   while (tmpfunc->return_to) {
+      tmpfunc = tmpfunc->return_to;
       strcpy(strptr, "<");
       strptr += 1;
       strcpy(strptr, tmpfunc->name);

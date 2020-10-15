@@ -22,6 +22,8 @@
 #include <stdint.h>
 #include <string.h>
 
+#include "vftr_signals.h"
+#include "vftr_fileutils.h"
 #include "vftr_hwcounters.h"
 #include "vftr_scenarios.h"
 #include "jsmn.h"
@@ -30,6 +32,32 @@
 #ifdef HAS_VEPERF
 #include "veperf.h"
 #endif
+
+char *scenario_expr_counter_names[TE_MAX];
+char *scenario_expr_vars[TE_MAX];
+function_expr_t scenario_expr_formulas[TE_MAX];
+hwc_format_t scenario_expr_format[TE_MAX];
+
+int scenario_expr_n_vars;
+int scenario_expr_n_formulas;
+
+double *scenario_expr_counter_values;
+double scenario_expr_runtime;
+double scenario_expr_cycles;
+double scenario_expr_cycletime;
+
+
+/**********************************************************************/
+
+void vftr_scenario_print_formula (FILE *fp, function_expr_t formula) {
+	fprintf (fp, "Formula name: %s\n", formula.name);
+	fprintf (fp, "   Expression: %s\n", formula.formula);
+	fprintf (fp, "   Protected values: %s\n", 
+		 formula.protected_values ? formula.protected_values : "None");
+	fprintf (fp, "   Default value: %lf\n", formula.default_value);
+	fprintf (fp, "   Current value: %lf\n", formula.value);
+	fprintf (fp, "   Integrated: %s\n", vftr_bool_to_string (formula.integrated));
+}
 
 /**********************************************************************/
 
@@ -45,7 +73,7 @@ void vftr_write_scenario_header_to_vfd (FILE *fp) {
 
 /**********************************************************************/
 
-void vftr_write_observables_to_vfd (long long cycles, FILE *fp) {
+void vftr_write_observables_to_vfd (unsigned long long cycles, FILE *fp) {
 #if defined(HAS_VEPERF) || defined(HAS_PAPI)
 	scenario_expr_evaluate_all (0., cycles);
 	for (int i = 0; i < scenario_expr_n_formulas; i++) {
@@ -114,7 +142,7 @@ int json_fetch (const char *js, jsmntok_t *tok, size_t count) {
 			read_formula = 0;
 		} else if (read_runtime) {
 			if (!strcmp (s, "yes")) {
-				scenario_expr_formulas[scenario_expr_n_formulas-1].integrated = 0;
+				scenario_expr_formulas[scenario_expr_n_formulas-1].integrated = false;
 			}
 			read_runtime = 0;	
 		} else if (read_protected) {
@@ -205,7 +233,7 @@ int json_fetch (const char *js, jsmntok_t *tok, size_t count) {
 
 /**********************************************************************/
 
-int vftr_read_scenario_file (char *filename) {
+int vftr_read_scenario_file (char *filename, FILE *fp_ext) {
 	int token_len;
 	jsmn_parser p;
 	jsmntok_t *token;
@@ -227,17 +255,24 @@ int vftr_read_scenario_file (char *filename) {
 
 	token = malloc (sizeof(*token) * token_count);
 
-	if (filename) {
+// When an external file pointer is given, e.g. for a unit test
+// we do not want to close the file in this routine and assume
+// that this is done somewhere else.
+	bool need_to_close_file = true;
+	if (fp_ext == NULL) {
 		if ((fp = fopen (filename, "r")) == NULL) {
 			printf ("Failed to open scenario file %s\n", filename);
 			return -1;
 		}
+	} else if (fp_ext) {
+		fp = fp_ext;	
+		need_to_close_file = false;
 	} else {
 		return -1;
 	}
 	
 	for (int i = 0; i < TE_MAX; i++) {
-		scenario_expr_formulas[i].integrated = 1;
+		scenario_expr_formulas[i].integrated = true;
 	}
 	
 	while ((token_len = fread (buf, 1, sizeof(buf), fp))) { 
@@ -259,7 +294,7 @@ int vftr_read_scenario_file (char *filename) {
 			json_fetch (js, token, token_count);	
 		}
 	}
-	fclose (fp);
+	if (need_to_close_file) fclose (fp);
 	
 	te_vars = (te_variable *) malloc ((scenario_expr_n_vars + 3) * sizeof (te_variable));
 	scenario_expr_counter_values = (double *) malloc (scenario_expr_n_vars * sizeof (double));
@@ -290,7 +325,8 @@ int vftr_read_scenario_file (char *filename) {
 		expr[i] = te_compile (scenario_expr_formulas[i].formula, te_vars, scenario_expr_n_vars + 3, &err);
 		if (!expr[i]) {
 			printf ("ERROR COMPILING FORMULA:\n%s\n", scenario_expr_formulas[i].formula);
-			printf("%*s^\n", err - 1, "");
+			printf ("%*s^\n", err - 1, "");
+			vftr_abort();
 		}
 			
 	}
@@ -310,10 +346,11 @@ int variable_index (char *varname) {
 
 /**********************************************************************/
 
-void scenario_expr_evaluate (int i_scenario, double runtime, double cycles) {
+void scenario_expr_evaluate (int i_scenario, double runtime, unsigned long long cycles) {
 	scenario_expr_runtime = runtime;
-	scenario_expr_cycles = cycles;
-	scenario_expr_cycletime = cycles / runtime;
+	scenario_expr_cycles = (double)cycles;
+	scenario_expr_cycletime = runtime / cycles;
+
 	int i_protected = scenario_expr_formulas[i_scenario].protected_values ?
 		variable_index (scenario_expr_formulas[i_scenario].protected_values) : -1;
 	double check_value = -1.0;
@@ -338,7 +375,7 @@ void scenario_expr_evaluate (int i_scenario, double runtime, double cycles) {
 
 /**********************************************************************/
 
-void scenario_expr_evaluate_all (double runtime, double cycles) {
+void scenario_expr_evaluate_all (double runtime, unsigned long long cycles) {
 	for (int i = 0; i < scenario_expr_n_formulas; i++) {
 		scenario_expr_evaluate (i, runtime, cycles);
 	}
@@ -569,3 +606,71 @@ void scenario_expr_add_papi_counters () {
 		vftr_papi_counter (scenario_expr_counter_names[i]);
 	}
 }
+
+/**********************************************************************/
+
+int vftr_scenario_test_1 (FILE *fp_in, FILE *fp_out) {
+	vftr_read_scenario_file ("", fp_in);
+	fprintf (fp_out, "Registered variables: %d\n", scenario_expr_n_vars);
+	for (int i = 0; i < scenario_expr_n_vars; i++) {
+		fprintf (fp_out, "%d: name: %s\n", i, te_vars[i].name);		
+	}
+	fprintf (fp_out, "Check for the three additional entries: \n");
+	fprintf (fp_out, "%s\n", te_vars[scenario_expr_n_vars].name);
+	fprintf (fp_out, "%s\n", te_vars[scenario_expr_n_vars+1].name);
+	fprintf (fp_out, "%s\n", te_vars[scenario_expr_n_vars+2].name);
+	fprintf (fp_out, "Registered formulas: %d\n", scenario_expr_n_formulas);
+	for (int i = 0; i < scenario_expr_n_formulas; i++) {
+		vftr_scenario_print_formula (fp_out, scenario_expr_formulas[i]);
+	}
+	return 0;
+}
+
+/**********************************************************************/
+
+int vftr_scenario_test_2 (FILE *fp_in, FILE *fp_out) {
+	vftr_read_scenario_file ("", fp_in);
+	scenario_expr_counter_values[0] = 1.5; // c1
+	scenario_expr_counter_values[1] = 0.5; // c2
+	scenario_expr_counter_values[2] = -1.0; // c3
+	scenario_expr_evaluate_all (0.0, 0ll);
+// Test indices:
+// 0: sum
+// 1: difference
+// 2: product
+// 3: division
+// 4: abs
+// 5: exp
+// 6: log
+// 7: sqrt
+// 8: 1e3
+	fprintf (fp_out, "Check standard operations: \n");
+	fprintf (fp_out, "%s: %lf\n", scenario_expr_formulas[0].name, scenario_expr_formulas[0].value);
+	fprintf (fp_out, "%s: %lf\n", scenario_expr_formulas[1].name, scenario_expr_formulas[1].value);
+	fprintf (fp_out, "%s: %lf\n", scenario_expr_formulas[2].name, scenario_expr_formulas[2].value);
+	fprintf (fp_out, "%s: %lf\n", scenario_expr_formulas[3].name, scenario_expr_formulas[3].value);
+	fprintf (fp_out, "%s: %lf\n", scenario_expr_formulas[4].name, scenario_expr_formulas[4].value);
+	fprintf (fp_out, "%s: %lf\n", scenario_expr_formulas[5].name, scenario_expr_formulas[5].value);
+	fprintf (fp_out, "%s: %lf\n", scenario_expr_formulas[6].name, scenario_expr_formulas[6].value);
+	fprintf (fp_out, "%s: %lf\n", scenario_expr_formulas[7].name, scenario_expr_formulas[7].value);
+	fprintf (fp_out, "%s: %lf\n", scenario_expr_formulas[8].name, scenario_expr_formulas[8].value);
+	
+	fprintf (fp_out, "Check that division by zero is protected: \n");
+	scenario_expr_counter_values[1] = 0.0;
+	scenario_expr_evaluate (3, 0.0, 0ll);
+	fprintf (fp_out, "%s: %lf\n", scenario_expr_formulas[3].name, scenario_expr_formulas[3].value);
+	return 0;
+// Check that division by zero is protected
+}
+
+/**********************************************************************/
+
+// This test expects a scenario file with wrong syntax in the formulas .
+// It should be tagged as XFAIL.
+
+int vftr_scenario_test_3 (FILE *fp_in, FILE *fp_out) {
+	vftr_read_scenario_file ("", fp_in);
+	return 0;
+}
+
+/**********************************************************************/

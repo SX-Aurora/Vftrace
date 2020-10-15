@@ -99,6 +99,21 @@ Switches on the logging of MPI communication.
 .br
 \fBDefault: "off"
 .\"
+.IP "\fBVFTR_MPI_SHOW_SYNC_TIME\fR"
+.IX Item "VFTR_MPI_SHOW_SYNC_TIME\fR"
+\fBEnable\fR(1,"YES","Yes","yes","ON","On","on")
+.br
+\fBDisable\fR(0,"NO","No","no","OFF","Off","off")
+.br
+Switches on the estimation of synchronization times for blocking collective MPI communication.
+These are: Allgather, Allgatherv, Allreduce, Alltoall, Alltoallv, Alltoallw, Exscan, Gather, Gatherv, Reduce, Scan, Scatter, Scatterv.
+Every process measures the time it takes until all other processes arrive at the call.
+The synchronization time will be measured as a seperate function call "MPI_<mpi-function-name>_sync" (e.g. MPI_Allreduce_sync).
+Note that this might prevent processes from starting communication with already arrived processes.
+Therefore, communication imbalances can be computed inexcact.
+.br
+\fBDefault: "off"
+.\"
 .IP "\fBVFTR_OFF\fR"
 .IX Item "VFTR_OFF"
 \fBDisable\fR(1,"YES","Yes","yes")
@@ -118,11 +133,8 @@ Sets the output directory for the profiling data files (.vfd) and logfiles (.log
 .\"
 .IP "\fBVFTR_PRECISE\fR"
 .IX Item "VFTR_PRECISE"
-\fBEnable\fR(1,"YES","Yes","yes","ON","On","on")
 .br
-\fBDisable\fR(0,"NO","No","no","OFF","Off","off")
-.br
-Enables precise sampling off all functions.
+A regular expression specifying which functions should be sampled precisely.
 This ignores the minimum time given by \fBVFTR_SAMPLETIME\fR and registers
 every function exit and entry.
 Note that this potentially leads to a significant increase in profiling overhead and
@@ -209,6 +221,16 @@ The latter case signifies that stack information should be printed for all ranks
 [group_base,group_base + group_size). For example, VFTR_PRINT_STACKS_FOR=1,4:10 switches on the
 inclusion of rank 1 and all ranks between 4 and 13 in the stack information.
 .\"
+.IP "\fBVFTR_STRIP_MODULE_NAMES\fR"
+.IX Item "VFTR_STRIP_MODULE_NAMES"
+The symbol names for subroutines and functions defined in Fortran modules can be put together from
+the module name and the function name, with a delimiter "_MP_". When this environment variable
+is set, the module name is split off from the symbol, leading to shorter output, e.g. in function stacks.
+Note that this way, there is no way to distinguish between functions with identical names from
+different modules only by their name. Instead, the stack ID has to be used. Also, the "_MP_" delimiter
+might be different, depending on the compiler or linker. In this case, the logfile output
+appears as in the case where the environment variable is not set.
+.\"
 .SS LIBRARY FUNCTIONS
 .IX Subsection "LIBRARY FUNCTIONS"
 Vftrace provides library functions which can be included in a C or Fortran application
@@ -229,6 +251,7 @@ level == 0 Profiling is disabled.
 level == 1 Profiling is enabled at a normal default level of detail.
 .br
 level == 2 Profile buffers are flushed, which may be a no-op.
+.br
 Changing the level between the start and the corresponding Wait/Test of a
 non-blocking communication can lead to undefined behavior.
 Users are encouraged to use the \fBvftr_pause\fR and \fBvftr_resume\fR routines instead.
@@ -269,7 +292,7 @@ Returns a (char*) in C and a (character(len=*), pointer) in Fortran that contain
 current callstack.
 .br
 \fBExample in C:\fR
-   printf("%s\n", vftrace_get_stack());
+   printf("%s\\n", vftrace_get_stack());
 .br
 \fBExample in Fortran:\fR
    write(*,*) vftrace_get_stack()
