@@ -245,6 +245,33 @@ void check_each_time (FILE *fp, int n_calls_vftr[N_MPI_FUNCS], double t_tot[N_MP
 
 /**********************************************************************/
 
+bool check_if_imbalances_match (int n_log_files, double t[N_MPI_FUNCS][n_log_files],
+			        double t_avg[N_MPI_FUNCS][n_log_files],
+				double imbalances[N_MPI_FUNCS][n_log_files]) {
+	double max_diff[N_MPI_FUNCS];
+	bool all_okay = true;
+	for (int i = 0; i < N_MPI_FUNCS; i++) {
+		bool all_okay_local = true;
+		max_diff[i] = 0.0;
+		int i0 = 0;
+		while (t_avg[i][i0] == 0.0) i0++;
+		for (int i_file = 0; i_file < n_log_files; i_file++) {
+			if (t[i][i_file] > 0.0) {
+				double d = fabs(t[i][i_file] - t_avg[i][i0]);
+				if (d > max_diff[i]) max_diff[i] = d;	
+			}	
+		}
+		double this_imba = max_diff[i] / t_avg[i][i0];
+		for (int i_file = 0; i_file < n_log_files; i_file++) {
+			all_okay_local &= equal_for_n_digits (this_imba, imbalances[i][i_file], 2);
+		}
+		if (!all_okay_local) printf ("Not okay: %s\n", mpi_function_names[i]);
+		all_okay &= all_okay_local;
+	}	
+	return all_okay;
+}
+/**********************************************************************/
+
 int main (int argc, char *argv[]) {
 	
 	int n_log_files = argc - 1;
@@ -361,6 +388,10 @@ int main (int argc, char *argv[]) {
 	   printf ("Times okay: %s\n", all_t_okay ? "YES" : "NO");
 	   fclose (fp);
         }
+
+	printf ("Check imbalances: \n");
+	all_okay = check_if_imbalances_match (n_log_files, this_t, t_avg, imbalance);
+	if (all_okay) printf ("All okay\n");
 	
 
 			
