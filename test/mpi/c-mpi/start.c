@@ -53,8 +53,16 @@ int main(int argc, char** argv) {
       for (int ireq=0; ireq<comm_size-1; ireq++) {
          MPI_Start(myrequest+ireq);
       }
+      // mark persistent requests for deallocation
+      // this is done here intentionally
+      // to test the request free functionality
+      //
+      // half of the requests are freed the other half is waited for.
+      for (int ireq=0; ireq<comm_size-1; ireq+=2) {
+         MPI_Request_free(myrequest+ireq);
+      }
       // wait for completion of non-blocking sends
-      for (int ireq=0; ireq<comm_size-1; ireq++) {
+      for (int ireq=1; ireq<comm_size-1; ireq+=2) {
          MPI_Wait(myrequest+ireq, &mystat);
       }
    } else {
@@ -69,6 +77,7 @@ int main(int argc, char** argv) {
          }
       }
    }
+   MPI_Barrier(MPI_COMM_WORLD);
    
    free(sbuffer);
    sbuffer=NULL;

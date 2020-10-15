@@ -19,7 +19,10 @@
 #ifdef _MPI
 #include <mpi.h>
 
+#include <stdbool.h>
+
 #include "vftr_timer.h"
+#include "vftr_requests.h"
 #include "vftr_p2p_requests.h"
 #include "vftr_persistent_requests.h"
 #include "vftr_mpi_utils.h"
@@ -31,8 +34,15 @@ int vftr_MPI_Request_free(MPI_Request *request) {
       return PMPI_Request_free(request);
    } else {
       long long t2start= vftr_get_runtime_usec();
-      vftr_mark_p2p_request_for_deallocation(*request) || 
-         vftr_mark_persistent_request_for_deallocation(*request);
+      vftr_request_t *matched_request = vftr_search_P2P_request(*request);
+      if (matched_request == NULL) {
+         matched_request = vftr_search_persistent_request(*request);
+      }
+      if (matched_request == NULL) {
+         PMPI_Request_free(request);
+      } else {
+         matched_request->marked_for_deallocation = true;
+      }
 
       *request = MPI_REQUEST_NULL;
       long long t2end = vftr_get_runtime_usec();

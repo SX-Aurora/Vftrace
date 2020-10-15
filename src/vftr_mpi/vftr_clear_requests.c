@@ -28,9 +28,6 @@ void vftr_clear_completed_requests() {
    vftr_deactivate_completed_persistent_requests();
    vftr_clear_completed_collective_requests();
    vftr_clear_completed_onesided_requests();
-
-   vftr_deallocate_marked_p2p_requests();
-   vftr_deallocate_marked_persistent_requests();
 }
 
 #endif

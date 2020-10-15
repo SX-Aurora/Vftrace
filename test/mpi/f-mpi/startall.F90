@@ -68,8 +68,16 @@ PROGRAM startall
       ! send to every other rank
       WRITE(UNIT=OUTPUT_UNIT, FMT="(A,I4)") "Sending messages from rank ", my_rank
       CALL MPI_Startall(comm_size-1, myrequest, ierr)
+      ! mark persistent requests for deallocation
+      ! this is done here intentionally
+      ! to test the request free functionality
+      !
+      ! half of the requests are freed the other half is waited for.
+      DO ireq = 1, comm_size-1, 2
+         CALL MPI_Request_free(myrequest(ireq), ierr);
+      END DO
       ! wait for completion of non-blocking sends
-      DO ireq = 1, comm_size-1
+      DO ireq = 2, comm_size-1, 2
          CALL MPI_Wait(myrequest(ireq), mystat, ierr)
       END DO
    ELSE 
@@ -81,6 +89,7 @@ PROGRAM startall
          valid_data = .FALSE.
       END IF
    END IF
+   CALL MPI_Barrier(MPI_COMM_WORLD, ierr)
 
    DEALLOCATE(sbuffer)
    DEALLOCATE(rbuffer)

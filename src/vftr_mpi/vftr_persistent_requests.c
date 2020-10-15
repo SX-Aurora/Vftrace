@@ -29,6 +29,10 @@
 vftr_request_t *vftr_open_persistent_request_list = NULL;
 vftr_request_t *vftr_active_persistent_request_list = NULL;
 
+vftr_request_t *vftr_search_persistent_request(MPI_Request request) {
+   return vftr_search_request(vftr_open_persistent_request_list, request);
+}
+
 void vftr_register_persistent_request(vftr_direction dir, int count,
                                       MPI_Datatype type, int peer_rank, int tag,
                                       MPI_Comm comm, MPI_Request request) {
@@ -43,7 +47,7 @@ void vftr_register_persistent_request(vftr_direction dir, int count,
 }
 
 void vftr_activate_persistent_request(MPI_Request request, long long tstart) {
-   vftr_request_t *matching_persistent_request = vftr_search_request(vftr_open_persistent_request_list, request);
+   vftr_request_t *matching_persistent_request = vftr_search_persistent_request(request);
    if (matching_persistent_request != NULL) {
       vftr_request_t *new_request = vftr_new_request(matching_persistent_request->dir,
                                                      1,
@@ -119,49 +123,20 @@ void vftr_deactivate_completed_persistent_requests() {
          vftr_request_t * tmp_current_request = current_request;
          // advance in list
          current_request = current_request->next;
+         // check if the request is marked for deallocation
+         vftr_request_t *matched_request = vftr_search_request(vftr_open_persistent_request_list, 
+                                                               tmp_current_request->request);
+         if (matched_request->marked_for_deallocation) {
+            vftr_remove_request(&vftr_open_persistent_request_list, matched_request);
+            PMPI_Request_free(&(matched_request->request));
+            vftr_free_request(&matched_request);
+         }
          vftr_free_request(&tmp_current_request);
       } else {
          // advance in list
          current_request = current_request->next;
       }
    } // end of while loop
-}
-
-bool vftr_mark_persistent_request_for_deallocation(MPI_Request request) {
-   // check if the request is in the list of open persistent requests
-   vftr_request_t *matching_persistent_request = vftr_search_request(vftr_open_persistent_request_list, request);
-   if (matching_persistent_request != NULL) {
-      // only mark it for deallocation if it is not an active request
-      vftr_request_t *matching_active_persistent_request = vftr_search_request(vftr_active_persistent_request_list, request);
-      if (matching_active_persistent_request == NULL) {
-         matching_persistent_request->marked_for_deallocation = true;
-         return true;
-      } else {
-         return false;
-      }
-   } else {
-      return false;
-   }
-}
-
-void vftr_deallocate_marked_persistent_requests() {
-   // go through the complete list and check the request
-   vftr_request_t *current_request = vftr_open_persistent_request_list;
-   while (current_request != NULL) {
-      if (current_request->marked_for_deallocation) {
-         // Take the request out of the list and close the gap
-         vftr_remove_request(&vftr_open_persistent_request_list, current_request);
-
-         // create a temporary pointer to the current element to be used for deallocation
-         vftr_request_t * tmp_current_request = current_request;
-         // advance in list
-         current_request = current_request->next;
-         vftr_free_request(&tmp_current_request);
-      } else {
-         // advance in list
-         current_request = current_request->next;
-      }
-   }
 }
 
 int vftr_number_of_open_persistent_requests() {

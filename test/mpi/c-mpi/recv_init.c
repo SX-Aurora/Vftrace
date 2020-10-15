@@ -74,6 +74,10 @@ int main(int argc, char** argv) {
             }
          }
       }
+      // mark persistent requests for deallocation
+      for (int ireq=0; ireq<comm_size-1; ireq++) {
+         MPI_Request_free(myrequest+ireq);
+      }
    } else {
       for (int irun=0; irun<nruns; irun++) {
          printf("Sending messages from rank %d\n", my_rank);

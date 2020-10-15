@@ -70,8 +70,16 @@ PROGRAM start
       DO ireq = 1, comm_size-1
          CALL MPI_Start(myrequest(ireq), ierr)
       END DO
+      ! mark persistent requests for deallocation
+      ! this is done here intentionally
+      ! to test the request free functionality
+      !
+      ! half of the requests are freed the other half is waited for.
+      DO ireq = 1, comm_size-1, 2
+         CALL MPI_Request_free(myrequest(ireq), ierr);
+      END DO
       ! wait for completion of non-blocking sends
-      DO ireq = 1, comm_size-1
+      DO ireq = 2, comm_size-1, 2
          CALL MPI_Wait(myrequest(ireq), mystat, ierr)
       END DO
    ELSE 
@@ -83,6 +91,7 @@ PROGRAM start
          valid_data = .FALSE.
       END IF
    END IF
+   CALL MPI_Barrier(MPI_COMM_WORLD, ierr)
 
    DEALLOCATE(sbuffer)
    DEALLOCATE(rbuffer)

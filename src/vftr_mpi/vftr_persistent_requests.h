@@ -32,9 +32,7 @@ void vftr_activate_persistent_request(MPI_Request request, long long tstart);
 
 void vftr_deactivate_completed_persistent_requests();
 
-bool vftr_mark_persistent_request_for_deallocation(MPI_Request request);
-
-void vftr_deallocate_marked_persistent_requests();
+vftr_request_t *vftr_search_persistent_request(MPI_Request request);
 
 int vftr_number_of_open_persistent_requests();
 

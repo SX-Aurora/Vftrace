@@ -28,6 +28,11 @@
 
 vftr_request_t *vftr_open_p2p_request_list = NULL;
 
+vftr_request_t *vftr_search_P2P_request(MPI_Request request) {
+   return vftr_search_request(vftr_open_p2p_request_list, request);
+}
+
+
 void vftr_register_P2P_request(vftr_direction dir, int count,
                                MPI_Datatype type, int peer_rank, int tag,
                                MPI_Comm comm, MPI_Request request,
@@ -104,43 +109,16 @@ void vftr_clear_completed_P2P_requests() {
          vftr_request_t * tmp_current_request = current_request;
          // advance in list
          current_request = current_request->next;
+         // if the request is marked for deallocation do so
+         if (tmp_current_request->marked_for_deallocation) {
+            PMPI_Request_free(&(tmp_current_request->request));
+         }
          vftr_free_request(&tmp_current_request);
       } else {
          // advance in list
          current_request = current_request->next;
       }
    } // end of while loop
-}
-
-bool vftr_mark_p2p_request_for_deallocation(MPI_Request request) {
-   // check if the request is in the list of open p2p requests
-   vftr_request_t *matching_p2p_request = vftr_search_request(vftr_open_p2p_request_list, request);
-   if (matching_p2p_request != NULL) {
-      matching_p2p_request->marked_for_deallocation = true;
-      return true;
-   } else {
-      return false;
-   }
-}
-
-void vftr_deallocate_marked_p2p_requests() {
-   // go through the complete list and check the request
-   vftr_request_t *current_request = vftr_open_p2p_request_list;
-   while (current_request != NULL) {
-      if (current_request->marked_for_deallocation) {
-         // Take the request out of the list and close the gap
-         vftr_remove_request(&vftr_open_p2p_request_list, current_request);
-
-         // create a temporary pointer to the current element to be used for deallocation
-         vftr_request_t * tmp_current_request = current_request;
-         // advance in list
-         current_request = current_request->next;
-         vftr_free_request(&tmp_current_request);
-      } else {
-         // advance in list
-         current_request = current_request->next;
-      }
-   }
 }
 
 int vftr_number_of_open_p2p_requests() {

@@ -87,6 +87,10 @@ PROGRAM bsend_init
             CALL MPI_Wait(myrequest(ireq), mystat, ierr)
          END DO
       END DO
+      ! mark persistent requests for deallocation
+      DO ireq = 1, comm_size-1
+         CALL MPI_Request_free(myrequest(ireq), ierr);
+      END DO
    ELSE 
       DO irun = 1, nruns
          rbuffer(:) = -1

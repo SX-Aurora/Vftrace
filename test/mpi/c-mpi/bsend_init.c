@@ -67,6 +67,10 @@ int main(int argc, char** argv) {
             MPI_Wait(myrequest+ireq, &mystat);
          }
       }
+      // mark persistent requests for deallocation
+      for (int ireq=0; ireq<comm_size-1; ireq++) {
+         MPI_Request_free(myrequest+ireq);
+      }
    } else {
       for (int irun=0; irun<nruns; irun++) {
          for (int i=0; i<nints; i++) {rbuffer[i]=-1;}
