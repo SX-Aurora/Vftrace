@@ -23,6 +23,17 @@
 #include <math.h>
 #include <float.h>
 
+// This program reads in a given number of Vftrace log files which
+// belong to the same run. It parses the MPI summary table as well
+// as the function profile to perform cross-checks across individual
+// functions and ranks. For example, it checks that the individual times
+// listed in the summary table are equal to the sum of (inclusive) times
+// for that function in the performance overview, or whether the printed
+// average time matches the average time computed from the local individual
+// times
+
+// These are the functions which can appear in the MPI summary table. They
+// are identical to those defined in src/vftr_filewrite.c.
 #define N_MPI_FUNCS 13
 char *mpi_function_names[N_MPI_FUNCS] = {"mpi_barrier", "mpi_bcast", "mpi_reduce",
              		                 "mpi_allreduce", "mpi_gatherv", "mpi_gather",
@@ -69,7 +80,7 @@ bool check_if_mpi_times_add_up (int n_log_files, double mpi_percentage[N_MPI_FUN
 	   for (int i = 0; i < N_MPI_FUNCS; i++) {
 	   	p_tot += mpi_percentage[i][i_file];
 	   }
-	   // +- 0.05% are tolerable
+	   // +- 0.05% are tolerable (Not using equal_within_tolerance because that checks relative deviations)
 	   if (p_tot > 100.05 || p_tot < 99.95) {
 		all_okay = false;
 		printf ("Not okay: %s (%lf)\n", filenames[i_file + 1], p_tot);
@@ -198,13 +209,13 @@ bool check_t_max (int n_log_files, double t[N_MPI_FUNCS][n_log_files], double t_
 }
 		
 /**********************************************************************/
+#define LINEBUFSIZE 256
 
 void check_each_time (FILE *fp, int n_calls_vftr[N_MPI_FUNCS], double t_tot[N_MPI_FUNCS], bool *all_calls_okay, bool *all_t_okay) {
-	char line[256];
+	char line[LINEBUFSIZE];
 	int countdown = -1;	
 	int n_calls, n_calls_tot[N_MPI_FUNCS];
 	double t_inc, t_inc_tot[N_MPI_FUNCS];
-	double abs = 0.0;
 
  	for (int i = 0; i < N_MPI_FUNCS; i++) {
 	   n_calls_tot[i] = 0;
@@ -212,8 +223,10 @@ void check_each_time (FILE *fp, int n_calls_vftr[N_MPI_FUNCS], double t_tot[N_MP
         }
 
 	while (!feof(fp)) {
-  	   fgets (line, 256, fp);
+  	   fgets (line, LINEBUFSIZE, fp);
 	   if (countdown < 0) {
+		// When this string is found, there are five more lines afterwards
+		// before the actual profile starts.
 		if (strstr (line, "Runtime profile for rank")) {
 			countdown = 5;
 	        }
@@ -227,13 +240,11 @@ void check_each_time (FILE *fp, int n_calls_vftr[N_MPI_FUNCS], double t_tot[N_MP
 	      column = strtok (NULL, " "); // Exclusive time, skip
 	      column = strtok (NULL, " "); // Inclusive time
 	      t_inc = atof (column);
-	      column = strtok (NULL, " "); // %abs
-	      abs += atof (column);
+	      column = strtok (NULL, " "); // %abs, skip
 	      column = strtok (NULL, " "); // %rel, skip
 	      column = strtok (NULL, " "); // Function name
 	      int index;
 	      if ((index = mpi_index(column)) >= 0) {
-	         //printf ("column: X%sX: %d\n", column, index);
 		 n_calls_tot[index] += n_calls;
 		 t_inc_tot[index] += t_inc;
 	      }
@@ -245,7 +256,8 @@ void check_each_time (FILE *fp, int n_calls_vftr[N_MPI_FUNCS], double t_tot[N_MP
 	for (int i = 0; i < N_MPI_FUNCS; i++) {
 	   *all_calls_okay &= (n_calls_tot[i] == n_calls_vftr[i]); 
 	   if (!equal_for_n_digits (t_inc_tot[i], t_tot[i], 2)) {
-		printf ("Found wrong numbers: %lf %lf\n", t_inc_tot[i], t_tot[i]);
+		printf ("Added and registered time are not equal: %lf %lf\n",
+			t_inc_tot[i], t_tot[i]);
 	   }
 	   *all_t_okay &= equal_for_n_digits (t_inc_tot[i], t_tot[i], 2);
 	}
@@ -287,6 +299,7 @@ bool check_if_imbalances_match (int n_log_files, double t[N_MPI_FUNCS][n_log_fil
 
 int main (int argc, char *argv[]) {
 	
+	// Read in all these fields from the MPI table in the given log files.
 	int n_log_files = argc - 1;
         double mpi_time[N_MPI_FUNCS][n_log_files];
 	double mpi_percentage[N_MPI_FUNCS][n_log_files];
@@ -312,13 +325,18 @@ int main (int argc, char *argv[]) {
 
 	for (int i_file = 1; i_file < argc; i_file++) {
 		FILE *fp = fopen (argv[i_file], "r");
-		if (!fp) printf ("SOMETHING WENT WRONG\n");
-		char line[256];
+		if (!fp) {
+			printf ("Error: Could not open %s\n", argv[i_file]);
+			return -1;
+		}
+		char line[LINEBUFSIZE];
 		int countdown = -1;
 		bool all_mpi_functions_read = false;
 		while (!feof(fp)) {
-		   fgets (line, 256, fp);
+		   fgets (line, LINEBUFSIZE, fp);
 		   if (countdown < 0) {
+			// When this string is found, there are four more lines afterwards
+			// before the actual profile starts.
 			if (strstr (line, "Total time")) {
 			   countdown = 4;
 			}
@@ -355,6 +373,8 @@ int main (int argc, char *argv[]) {
 		fclose (fp);	
 	}
 
+	// All data has been read in. Now begin with the consistency checks.
+
 	bool all_okay;
 	printf ("Check if MPI percentages add up to 100%%:\n");
 	all_okay = check_if_mpi_times_add_up (n_log_files, mpi_percentage, argv);
@@ -385,7 +405,7 @@ int main (int argc, char *argv[]) {
 	}
 
 	for (int i_file = 0; i_file < n_log_files; i_file++) {
-	   printf ("Check that time values makes sense: %s\n", argv[i_file + 1]);
+	   printf ("Check that time values add up to the registered values: %s\n", argv[i_file + 1]);
 	   FILE *fp = fopen (argv[i_file + 1], "r");
 	   int n_calls_this_rank[N_MPI_FUNCS];
 	   double this_t_this_rank[N_MPI_FUNCS];
