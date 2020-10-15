@@ -68,7 +68,6 @@ bool check_if_mpi_times_add_up (int n_log_files, double mpi_percentage[N_MPI_FUN
 	   double p_tot = 0.0;
 	   for (int i = 0; i < N_MPI_FUNCS; i++) {
 	   	p_tot += mpi_percentage[i][i_file];
-		//printf ("Add: %lf %lf\n", mpi_percentage[i], p_tot);
 	   }
 	   // +- 0.05% are tolerable
 	   if (p_tot > 100.05 || p_tot < 99.95) {
@@ -98,7 +97,6 @@ bool check_if_global_times_match (int n_log_files, double t[N_MPI_FUNCS][n_log_f
 			// MPI collective. Therefore, it is skipped.
 			if (t[i][i_file] == 0.0) continue;
 			// A deviation of one percent is tolerated.
-			//all_okay_local = fabs (t[i][i_file] / this_t - 1.0) < 0.01;
 			all_okay_local = equal_within_tolerance (t[i][i_file], this_t, 0.01);
 		}
 		if (!all_okay_local) printf ("Not okay: %s\n", mpi_function_names[i]);
@@ -127,9 +125,11 @@ bool check_t_avg (int n_log_files, double t[N_MPI_FUNCS][n_log_files], double t_
 			// multiplied by 1e-6, whereas here, we already have floating point
 			// numbers.
 			double this_t_avg = sum_t / n;
-			//all_okay_local = fabs (this_t_avg / t_avg[i][0] - 1.0) < 0.02;
 			all_okay_local = equal_within_tolerance (this_t_avg, t_avg[i][0], 0.02);
-			if (!all_okay_local) printf ("Not okay: %s %lf %lf\n", mpi_function_names[i], this_t_avg, this_t_avg / t_avg[i][0]);
+			if (!all_okay_local) {
+		    	   printf ("Not okay: %s %lf %lf\n", mpi_function_names[i],
+				   this_t_avg, this_t_avg / t_avg[i][0]);
+			}
 		}
 		all_okay &= all_okay_local;
 	}
@@ -145,6 +145,13 @@ bool check_t_min (int n_log_files, double t[N_MPI_FUNCS][n_log_files], double t_
 		double this_t_min = DBL_MAX;
 		int n = 0;
 		int i0 = 0;
+		// MPI_Barrier is a bit cumbersome: Often, one rank has a very
+		// small registered time, so that the three digits are not
+		// sufficient to display it and it appears as zero. 
+		// For this reason, we skip MPI_Barrier. If there might be issues
+		// with it, the user will have to check it separately.
+
+		if (!strcmp ("mpi_barrier", mpi_function_names[i])) continue;
 		while (t_min[i][i0] == 0.0) i0++;
 		for (int i_file = 0; i_file < n_log_files; i_file++) {
 			//if (i == 0) printf ("t: %lf\n", t[i][i_file]);
@@ -154,9 +161,11 @@ bool check_t_min (int n_log_files, double t[N_MPI_FUNCS][n_log_files], double t_
 			}
 		}
 		if (n > 0) {
-			//all_okay_local = fabs (this_t_min / t_min[i][0] - 1.0) < 0.02;
 			all_okay_local = equal_within_tolerance (this_t_min, t_min[i][i0], 0.02);
-			if (!all_okay_local) printf ("Not okay: %s(%d) %lf %lf %lf\n", mpi_function_names[i], i, this_t_min, t_min[i][i0], this_t_min / t_min[i][i0]);
+			if (!all_okay_local) {
+			   printf ("Not okay: %s(%d) %lf %lf %lf\n", mpi_function_names[i],
+			   i, this_t_min, t_min[i][i0], this_t_min / t_min[i][i0]);
+			}
 		}
 		all_okay &= all_okay_local;
 	}
@@ -182,7 +191,8 @@ bool check_t_max (int n_log_files, double t[N_MPI_FUNCS][n_log_files], double t_
 		}
 		if (n > 0) {
 			all_okay_local = equal_within_tolerance (this_t_max, t_max[i][i0], 0.02);
-			if (!all_okay_local) printf ("Not okay: %s(%d) %lf %lf %lf\n", mpi_function_names[i], i, this_t_max, t_max[i][i0], this_t_max / t_max[i][i0]);
+			if (!all_okay_local) printf ("Not okay: %s(%d) %lf %lf %lf\n", 
+			    mpi_function_names[i], i, this_t_max, t_max[i][i0], this_t_max / t_max[i][i0]);
 		}
 		all_okay &= all_okay_local;
 	}
@@ -261,7 +271,7 @@ bool check_if_imbalances_match (int n_log_files, double t[N_MPI_FUNCS][n_log_fil
 				if (d > max_diff[i]) max_diff[i] = d;	
 			}	
 		}
-		double this_imba = max_diff[i] / t_avg[i][i0];
+		double this_imba = max_diff[i] / t_avg[i][i0] * 100.0;
 		for (int i_file = 0; i_file < n_log_files; i_file++) {
 			all_okay_local &= equal_for_n_digits (this_imba, imbalances[i][i_file], 2);
 		}

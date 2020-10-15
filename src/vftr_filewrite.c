@@ -827,7 +827,7 @@ void vftr_print_function_statistics (FILE *pout, bool display_sync_time,
 	if (display_functions[i]->t_sync_avg > 0) {
 	  // There are synchronization times for this function. We make space for the additional
 	  // field "(xx.xx%)". Note that we need to subtract add_sync_spaces from the column widths.
-          fprintf (pout, "| %*s | %5.2f | %*d | %*.3f(%5.2f%%) | %*.3f(%5.2f%%) | %*.3f(%5.2f%%) | %*.3f | %*.3f(%5.2f%%) |\n",
+          fprintf (pout, "| %*s | %5.2f | %*d | %*.5f(%5.2f%%) | %*.5f(%5.2f%%) | %*.5f(%5.2f%%) | %*.5f | %*.5f(%5.2f%%) |\n",
 		   n_func, display_functions[i]->func_name,
  	  	   (display_functions[i]->t_avg * 1e-6) / total_time * 100,
 		   n_calls, display_functions[i]->n_calls,
@@ -840,7 +840,7 @@ void vftr_print_function_statistics (FILE *pout, bool display_sync_time,
 	   // This function does not have synchronization times, but others have. We take into
 	   // account the synchronization fields "(xx.xx%)" of other functions by adding
 	   // add_sync_spaces number of spaces. 
-	   fprintf (pout, "| %*s | %5.2f | %*d | %*.3f         | %*.3f         | %*.3f         | %*.2f | %*.3f         |\n",
+	   fprintf (pout, "| %*s | %5.2f | %*d | %*.5f         | %*.5f         | %*.5f         | %*.5f | %*.5f         |\n",
 		    n_func, display_functions[i]->func_name,
 		    (display_functions[i]->t_avg * 1e-6) / total_time * 100,
 		    n_calls, display_functions[i]->n_calls,
@@ -852,7 +852,10 @@ void vftr_print_function_statistics (FILE *pout, bool display_sync_time,
 
 	} else {
            // No display function has synchronization times, so only the absolute times are printed.
-	   fprintf (pout, "| %*s | %5.2f | %*d | %*.3f | %*.3f | %*.3f | %*.2f | %*.3f |\n",
+           if (!strcmp (display_functions[i]->func_name, "mpi_barrier")) {
+		printf ("t_min_barrier: %lld %lf\n", display_functions[i]->t_min, display_functions[i]->t_min * 1e-6);
+	   }
+	   fprintf (pout, "| %*s | %5.2f | %*d | %*.5f | %*.5f | %*.5f | %*.5f | %*.5f |\n",
 		    n_func, display_functions[i]->func_name,
 		    (display_functions[i]->t_avg * 1e-6) / total_time * 100,
 		    n_calls, display_functions[i]->n_calls,
@@ -905,7 +908,8 @@ void vftr_print_mpi_statistics (FILE *fp) {
 			     "mpi_alltoall", "mpi_alltoallv", "mpi_alltoallw"};
 
     int n_mpi_functions = 13;
-    vftr_print_function_statistics (fp, true, mpi_function_names, n_mpi_functions);
+    vftr_print_function_statistics (fp, vftr_environment->mpi_show_sync_time->value,
+				    mpi_function_names, n_mpi_functions);
 }
 #endif
 
