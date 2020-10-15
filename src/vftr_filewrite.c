@@ -1037,6 +1037,9 @@ void vftr_print_profile (FILE *pout, int *ntop, long long time0) {
     if (vftr_mpisize > 1) {
         fprintf (pout, " for rank %d", vftr_mpirank);
     }
+    if (vftr_environment && vftr_environment->prof_truncate->value) {
+	fprintf (pout, " (truncated)");
+    }
     fprintf (pout, "\n");
     int n_indices = count_indices_to_evaluate (funcTable, application_runtime);
     int *indices = (int *)malloc (n_indices * sizeof(int));

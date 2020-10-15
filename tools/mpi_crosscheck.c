@@ -323,6 +323,7 @@ int main (int argc, char *argv[]) {
 		}
 	}
 
+	bool prof_truncated = false;
 	for (int i_file = 1; i_file < argc; i_file++) {
 		FILE *fp = fopen (argv[i_file], "r");
 		if (!fp) {
@@ -339,6 +340,8 @@ int main (int argc, char *argv[]) {
 			// before the actual profile starts.
 			if (strstr (line, "Total time")) {
 			   countdown = 4;
+			} else if (!prof_truncated && strstr (line, "Runtime profile")) {
+			   prof_truncated = strstr(line, "truncated");
 			}
 		   } else if (countdown > 0) {
 			countdown--;
@@ -402,6 +405,13 @@ int main (int argc, char *argv[]) {
 		printf ("All okay\n");
 		printf ("Check if maximum time is reproudced: %s\n",
 			 check_t_max (n_log_files, this_t, t_max) ? "YES" : "NO");
+	}
+
+	if (prof_truncated) {
+	   printf ("The runtime profile is truncated, which means that not all functions are listed.\n");
+	   printf ("The intra-file crosschecks will be inaccurate and are skipped.\n");
+	   printf ("Redo the Vftrace measurement with VFTR_PROF_TRUNCATE=no in order to execute them.\n");
+	   return 0;
 	}
 
 	for (int i_file = 0; i_file < n_log_files; i_file++) {
