@@ -852,9 +852,6 @@ void vftr_print_function_statistics (FILE *pout, bool display_sync_time,
 
 	} else {
            // No display function has synchronization times, so only the absolute times are printed.
-           if (!strcmp (display_functions[i]->func_name, "mpi_barrier")) {
-		printf ("t_min_barrier: %lld %lf\n", display_functions[i]->t_min, display_functions[i]->t_min * 1e-6);
-	   }
 	   fprintf (pout, "| %*s | %5.2f | %*d | %*.5f | %*.5f | %*.5f | %*.5f | %*.5f |\n",
 		    n_func, display_functions[i]->func_name,
 		    (display_functions[i]->this_mpi_time * 1e-6) / total_time * 100,
