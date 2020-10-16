@@ -107,7 +107,8 @@ typedef struct stack_leaf {
 
 int vftr_stack_length (int stack_id0);
 void vftr_fill_into_stack_tree (stack_leaf_t **this_leaf, int n_stack_ids, int *stacks_ids, int func_id);
-void vftr_print_stacktree (FILE *fp, stack_leaf_t *leaf, int n_spaces, long long *total_time, double *imbalances);
+void vftr_print_stacktree (FILE *fp, stack_leaf_t *leaf, int n_spaces, int n_spaces_max, 
+			   long long *total_time, double *imbalances);
 void vftr_print_function_stack (FILE *fp, int rank, char *func_name,
 				int n_final_stack_ids, int n_final_func_ids,
 				int *final_stack_ids, int *final_func_ids);
