@@ -211,11 +211,13 @@ bool check_t_max (int n_log_files, double t[N_MPI_FUNCS][n_log_files], double t_
 /**********************************************************************/
 #define LINEBUFSIZE 256
 
-void check_each_time (FILE *fp, int n_calls_vftr[N_MPI_FUNCS], double t_tot[N_MPI_FUNCS], bool *all_calls_okay, bool *all_t_okay) {
+void check_each_time (FILE *fp, int n_calls_vftr[N_MPI_FUNCS], double t_tot[N_MPI_FUNCS], double t_tot_all,
+		      bool *all_calls_okay, bool *all_t_okay, bool *t_tot_okay) {
 	char line[LINEBUFSIZE];
 	int countdown = -1;	
 	int n_calls, n_calls_tot[N_MPI_FUNCS];
 	double t_inc, t_inc_tot[N_MPI_FUNCS];
+	double this_t_tot = 0.0;
 
  	for (int i = 0; i < N_MPI_FUNCS; i++) {
 	   n_calls_tot[i] = 0;
@@ -255,11 +257,17 @@ void check_each_time (FILE *fp, int n_calls_vftr[N_MPI_FUNCS], double t_tot[N_MP
 	*all_t_okay = true;
 	for (int i = 0; i < N_MPI_FUNCS; i++) {
 	   *all_calls_okay &= (n_calls_tot[i] == n_calls_vftr[i]); 
-	   if (!equal_for_n_digits (t_inc_tot[i], t_tot[i], 2)) {
+	   bool tmp = equal_for_n_digits (t_inc_tot[i], t_tot[i], 2);
+	   if (!tmp) {
 		printf ("Added and registered time are not equal(%d): %lf %lf\n",
 			i, t_inc_tot[i], t_tot[i]);
 	   }
-	   *all_t_okay &= equal_for_n_digits (t_inc_tot[i], t_tot[i], 2);
+	   *all_t_okay &= tmp;
+	   this_t_tot += t_inc_tot[i];
+	}
+	*t_tot_okay = equal_for_n_digits (this_t_tot, t_tot_all, 1);
+	if (!*t_tot_okay) {
+		printf ("Total MPI does not match: %lf %lf\n", this_t_tot, t_tot_all);
 	}
 }
 
@@ -309,6 +317,7 @@ int main (int argc, char *argv[]) {
 	double t_max[N_MPI_FUNCS][n_log_files];
 	double imbalance[N_MPI_FUNCS][n_log_files];
 	double this_t[N_MPI_FUNCS][n_log_files];
+   	double t_tot[n_log_files];
 
 	for (int i = 0; i < N_MPI_FUNCS; i++) {
 		for (int j = 0; j < n_log_files; j++) {
@@ -320,6 +329,7 @@ int main (int argc, char *argv[]) {
 			t_max[i][j] = 0.0;
 			imbalance[i][j] = 0.0;
 			this_t[i][j] = 0.0;
+			t_tot[j] = 0.0;
 		}
 	}
 
@@ -332,6 +342,7 @@ int main (int argc, char *argv[]) {
 		}
 		char line[LINEBUFSIZE];
 		int countdown = -1;
+		char *column;
 		bool all_mpi_functions_read = false;
 		while (!feof(fp)) {
 		   fgets (line, LINEBUFSIZE, fp);
@@ -340,13 +351,17 @@ int main (int argc, char *argv[]) {
 			// before the actual profile starts.
 			if (strstr (line, "Total time")) {
 			   countdown = 4;
+			   column = strtok (line, " ");   
+			   int i = 0;	
+			   while (i++ < 8) column = strtok (NULL, " ");
+			   t_tot[i_file - 1] = atof (column);
 			} else if (!prof_truncated && strstr (line, "Runtime profile")) {
 			   prof_truncated = strstr(line, "truncated");
 			}
 		   } else if (countdown > 0) {
 			countdown--;
 		   } else {
-		  	char *column = strtok (line, "|");
+		  	column = strtok (line, "|");
 			int index = mpi_index (column);
 			if (index < 0) {	
 				all_mpi_functions_read = true;
@@ -423,11 +438,12 @@ int main (int argc, char *argv[]) {
 	   	n_calls_this_rank[i] = n_calls[i][i_file];
 	   	this_t_this_rank[i] = this_t[i][i_file];
 	   }
-	   bool all_calls_okay, all_t_okay;	
-	   check_each_time (fp, n_calls_this_rank, this_t_this_rank, 
-	   		    &all_calls_okay, &all_t_okay);
+	   bool all_calls_okay, all_t_okay, t_tot_okay;	
+	   check_each_time (fp, n_calls_this_rank, this_t_this_rank, t_tot[i_file],  
+	   		    &all_calls_okay, &all_t_okay, &t_tot_okay);
 	   printf ("Calls okay: %s\n", all_calls_okay ? "YES" : "NO");
 	   printf ("Times okay: %s\n", all_t_okay ? "YES" : "NO");
+	   printf ("Total time okay: %s\n", t_tot_okay ? "YES" : "NO");
 	   fclose (fp);
         }
 

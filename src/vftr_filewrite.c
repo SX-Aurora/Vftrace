@@ -733,14 +733,14 @@ void vftr_print_function_statistics (FILE *pout, bool display_sync_time,
     double total_time = 0;
     for (int i = 0; i < n_display_functions; i++) {
        evaluate_display_function (display_function_names[i], &(display_functions[i]), display_sync_time);
-       total_time += display_functions[i]->t_avg * 1e-6;
+       total_time += display_functions[i]->this_mpi_time * 1e-6;
     }
 
     qsort ((void*)display_functions, (size_t)n_display_functions,
 	    sizeof (display_function_t *), vftr_compare_display_functions);
 
 
-    fprintf (pout, "Total time spent in MPI: %lf s\n", total_time);
+    fprintf (pout, "Total time spent in MPI for rank %d: %lf s\n", vftr_mpirank, total_time);
     fprintf (pout, "Imbalance computed as: max (T - T_avg)\n");
 
     // Most of this code deals with the determination of the column widths.
@@ -829,7 +829,7 @@ void vftr_print_function_statistics (FILE *pout, bool display_sync_time,
 	  // field "(xx.xx%)". Note that we need to subtract add_sync_spaces from the column widths.
           fprintf (pout, "| %*s | %5.2f | %*d | %*.5f(%5.2f%%) | %*.5f(%5.2f%%) | %*.5f(%5.2f%%) | %*.5f | %*.5f(%5.2f%%) |\n",
 		   n_func, display_functions[i]->func_name,
- 	  	   (display_functions[i]->t_avg * 1e-6) / total_time * 100,
+ 	  	   (display_functions[i]->this_mpi_time * 1e-6) / total_time * 100,
 		   n_calls, display_functions[i]->n_calls,
 		   n_t_avg - add_sync_spaces, display_functions[i]->t_avg * 1e-6, (double)display_functions[i]->t_sync_avg / (double)display_functions[i]->t_avg * 100,
 		   n_t_min - add_sync_spaces, display_functions[i]->t_min * 1e-6, (double)display_functions[i]->t_sync_min / (double)display_functions[i]->t_min * 100,
@@ -842,7 +842,7 @@ void vftr_print_function_statistics (FILE *pout, bool display_sync_time,
 	   // add_sync_spaces number of spaces. 
 	   fprintf (pout, "| %*s | %5.2f | %*d | %*.5f         | %*.5f         | %*.5f         | %*.5f | %*.5f         |\n",
 		    n_func, display_functions[i]->func_name,
-		    (display_functions[i]->t_avg * 1e-6) / total_time * 100,
+		    (display_functions[i]->this_mpi_time * 1e-6) / total_time * 100,
 		    n_calls, display_functions[i]->n_calls,
  	            n_t_avg - add_sync_spaces, display_functions[i]->t_avg * 1e-6,
 		    n_t_min - add_sync_spaces, display_functions[i]->t_min * 1e-6,
@@ -857,7 +857,7 @@ void vftr_print_function_statistics (FILE *pout, bool display_sync_time,
 	   }
 	   fprintf (pout, "| %*s | %5.2f | %*d | %*.5f | %*.5f | %*.5f | %*.5f | %*.5f |\n",
 		    n_func, display_functions[i]->func_name,
-		    (display_functions[i]->t_avg * 1e-6) / total_time * 100,
+		    (display_functions[i]->this_mpi_time * 1e-6) / total_time * 100,
 		    n_calls, display_functions[i]->n_calls,
  	            n_t_avg, display_functions[i]->t_avg * 1e-6,
 		    n_t_min, display_functions[i]->t_min * 1e-6,
