@@ -29,6 +29,7 @@ int main (int argc, char **argv) {
 	vftr_mpirank = 0;
 	vftr_mpisize = 1;
 #endif
+	vftr_read_environment();
 	
 	if (argc < 2) {
 		printf ("Usage: test_vftrace <test_name> [<input_file>]\n");

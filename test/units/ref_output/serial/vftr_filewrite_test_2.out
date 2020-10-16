@@ -1,14 +1,14 @@
-MPI size          1
-Total runtime:        0.28 seconds
-Application time:     0.28 seconds
-Overhead:             0.00 seconds (0.00%)
+MPI size              1
+Total runtime:            0.28 seconds
+Application time:         0.28 seconds
+Overhead:                 0.00 seconds (0.00%)
 
 Raw counter totals
 ------------------------------------------------------------
 Time Stamp Counter                    :                    0
 ------------------------------------------------------------
 
-Runtime profile
+Runtime profile (truncated)
 ---------------------------
      Time[s]____ 
  Cal Excl  Incl  %abs %cum Funct Caller ID 
