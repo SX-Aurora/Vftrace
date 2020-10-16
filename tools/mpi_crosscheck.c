@@ -286,7 +286,7 @@ bool check_if_imbalances_match (int n_log_files, double t[N_MPI_FUNCS][n_log_fil
 		double this_imba = max_diff[i] / t_avg[i][i0] * 100.0;
 		for (int i_file = 0; i_file < n_log_files; i_file++) {
 			if (t[i][i_file] == 0.0) continue; // If the function does not occur in this rank
-			bool tmp = equal_within_tolerance (this_imba, imbalances[i][i_file], 0.02);
+			bool tmp = equal_within_tolerance (this_imba, imbalances[i][i_file], 0.05);
 			if (!tmp) printf ("Not okay: %s(%d), %d, Time: %lf, This imba: %lf, Registered imba: %lf\n",
 					  mpi_function_names[i], i, i_file, t[i][i_file], this_imba, imbalances[i][i_file]);
 			all_okay_local &= tmp;
