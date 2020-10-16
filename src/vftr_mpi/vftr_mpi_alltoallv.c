@@ -32,7 +32,7 @@ int vftr_MPI_Alltoallv(const void *sendbuf, const int *sendcounts,
                        MPI_Datatype recvtype, MPI_Comm comm) {
 
    // Estimate synchronization time
-   if (vftr_environment->mpi_show_sync_time->value) {
+   if (vftr_environment.mpi_show_sync_time->value) {
       vftr_internal_region_begin("MPI_Alltoallv_sync");
       PMPI_Barrier(comm);
       vftr_internal_region_end("MPI_Alltoallv_sync");

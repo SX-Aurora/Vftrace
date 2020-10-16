@@ -158,7 +158,7 @@ void vftr_initialize() {
     setvbuf (vftr_log, NULL, _IOLBF, (size_t)0);
 
     if (vftr_mpirank == 0) {
-       if (vftr_environment->license_verbose->value) {
+       if (vftr_environment.license_verbose->value) {
 	  vftr_print_disclaimer_full (vftr_log);
        } else {
 	  vftr_print_disclaimer (vftr_log);
@@ -187,8 +187,8 @@ void vftr_initialize() {
 
     /* Init event counters */
     vftr_n_hw_obs = 0;
-    if (vftr_environment->scenario_file->set) {
-	vftr_events_enabled = !vftr_init_hwc (vftr_environment->scenario_file->value);
+    if (vftr_environment.scenario_file->set) {
+	vftr_events_enabled = !vftr_init_hwc (vftr_environment.scenario_file->value);
     } else {
 	vftr_events_enabled = false;
     }
@@ -206,9 +206,9 @@ void vftr_initialize() {
 
     vftr_initcycles = vftr_get_cycles();
     // convert the sampletime and timelimit to microseconds
-    vftr_interval  = (long long) (vftr_environment->sampletime->value * 1.0e6);
+    vftr_interval  = (long long) (vftr_environment.sampletime->value * 1.0e6);
     assert (vftr_interval > 0ll);
-    vftr_timelimit = vftr_environment->stoptime->value * 1000000ll;
+    vftr_timelimit = vftr_environment.stoptime->value * 1000000ll;
 
     vftr_sorttime = 15.;
     vftr_sorttime_growth = 2.;
@@ -218,11 +218,11 @@ void vftr_initialize() {
 	vftr_init_vfd_file ();
     }
     
-    vftr_profile_wanted = (vftr_environment->logfile_all_ranks->value) ||
+    vftr_profile_wanted = (vftr_environment.logfile_all_ranks->value) ||
                           (vftr_mpirank == 0);
 
-    if (vftr_environment->print_stacks_for->set) {
-        char *vftr_print_groups = vftr_environment->print_stacks_for->value;
+    if (vftr_environment.print_stacks_for->set) {
+        char *vftr_print_groups = vftr_environment.print_stacks_for->value;
         while (*vftr_print_groups && !vftr_profile_wanted) {
             int group_base, group_size;
             char *p;
@@ -245,7 +245,7 @@ void vftr_initialize() {
     }
 
     /* Define signal handlers */
-    if (!vftr_environment->signals_off->value) {
+    if (!vftr_environment.signals_off->value) {
 	vftr_define_signal_handlers ();
     }
 
@@ -297,7 +297,7 @@ void vftr_finalize() {
         vftr_write_to_vfd (finalize_time, vftr_prog_cycles, 0, SID_EXIT);
     }
 
-    if (vftr_environment->strip_module_names->value) {
+    if (vftr_environment.strip_module_names->value) {
 	vftr_strip_all_module_names ();
     }
     
@@ -306,7 +306,7 @@ void vftr_finalize() {
 
     vftr_print_profile (vftr_log, &ntop, timer);
 #ifdef _MPI
-    if (vftr_environment && vftr_environment->mpi_log->value) {
+    if (vftr_environment.mpi_log->value) {
        vftr_print_mpi_statistics (vftr_log);
     }
 #endif
@@ -323,8 +323,8 @@ void vftr_finalize() {
         int *loadIDs = (int *) malloc (vftr_gStackscount * sizeof(int));
         int nLoadIDs;
 	int group_base, group_size;
-        if (vftr_environment->print_loadinfo_for->set) {
-	    char *vftr_mpi_groups = vftr_environment->print_loadinfo_for->value;
+        if (vftr_environment.print_loadinfo_for->set) {
+	    char *vftr_mpi_groups = vftr_environment.print_loadinfo_for->value;
             while (*vftr_mpi_groups) {
                 char *p;
 		// Loop to the end of the group, indicated by ","

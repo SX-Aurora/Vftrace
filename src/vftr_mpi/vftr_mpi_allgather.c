@@ -31,7 +31,7 @@ int vftr_MPI_Allgather(const void *sendbuf, int sendcount,
                        MPI_Datatype recvtype, MPI_Comm comm) {
 
    // Estimate synchronization time
-   if (vftr_environment->mpi_show_sync_time->value) {
+   if (vftr_environment.mpi_show_sync_time->value) {
       vftr_internal_region_begin("MPI_Allgather_sync");
       PMPI_Barrier(comm);
       vftr_internal_region_end("MPI_Allgather_sync");

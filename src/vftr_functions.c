@@ -135,10 +135,7 @@ function_t *vftr_new_function(void *arg, const char *function_name,
    if (line > 0) func->line_beg = line;
 
    if (arg) { // Skip if address not defined (when function is "init")
-      if (vftr_environment) {
-         func->precise = is_precise || vftr_pattern_match (vftr_environment->preciseregex->value,
-                                                          func->name);
-      }
+      func->precise = is_precise || vftr_pattern_match (vftr_environment.preciseregex->value, func->name);
    }
 
    // Check if the new function is meant to be pricisely sampled.
@@ -165,15 +162,13 @@ function_t *vftr_new_function(void *arg, const char *function_name,
    }
 
    // Determine if this function should be profiled
-   if (vftr_environment) {
-      func->profile_this = vftr_pattern_match(vftr_environment->runtime_profile_funcs->value, func->name);
-   }
+   func->profile_this = vftr_pattern_match(vftr_environment.runtime_profile_funcs->value, func->name);
 
-   if (!func->exclude_this && vftr_environment) {
-      if (vftr_environment->include_only_regex->set) {
-         func->exclude_this = !vftr_pattern_match(vftr_environment->include_only_regex->value, func->name);
-      } else if (vftr_environment->exclude_functions_regex->set) {
-         func->exclude_this = vftr_pattern_match(vftr_environment->exclude_functions_regex->value, func->name);
+   if (!func->exclude_this) {
+      if (vftr_environment.include_only_regex->set) {
+         func->exclude_this = !vftr_pattern_match(vftr_environment.include_only_regex->value, func->name);
+      } else if (vftr_environment.exclude_functions_regex->set) {
+         func->exclude_this = vftr_pattern_match(vftr_environment.exclude_functions_regex->value, func->name);
       }
    }
 

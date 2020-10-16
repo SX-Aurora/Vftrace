@@ -65,14 +65,10 @@ long vftr_samples_offset;
 /**********************************************************************/
 
 char *vftr_get_program_path () {
-	bool read_from_env = false;
 	char *basename;
 	// User-defined output file
-	if (vftr_environment) {
-		read_from_env = vftr_environment->logfile_basename->set;
-	}
-	if (read_from_env) {
-		basename = vftr_environment->logfile_basename->value;
+	if (vftr_environment.logfile_basename->set) {
+		basename = vftr_environment.logfile_basename->value;
 	} else {
 		// program_path is either <abs_path>/app_name or ./app_name
 		char *program_path = get_application_name ();
@@ -103,11 +99,8 @@ char *vftr_create_logfile_name (int mpi_rank, int mpi_size, char *suffix) {
 	bool read_from_env = false;
 	// The user can also define a different output directory
 	char *out_directory;
-	if (vftr_environment) {
-		read_from_env = vftr_environment->output_directory->set;
-	}
-	if (read_from_env) {
-		out_directory = vftr_environment->output_directory->value;
+	if (vftr_environment.output_directory->set) {
+		out_directory = vftr_environment.output_directory->value;
 	} else {
 		out_directory = strdup (".");
 	}
@@ -131,7 +124,7 @@ void vftr_init_vfd_file () {
 	char *filename = vftr_create_logfile_name (vftr_mpirank, vftr_mpisize, "vfd");
 	FILE *fp = fopen (filename, "w+");
 	assert (fp);
-	size_t size = vftr_environment->bufsize->value * 1024 * 1024;
+	size_t size = vftr_environment.bufsize->value * 1024 * 1024;
 	char *buf = (char *) malloc (size);
 	assert (buf);
 	int status = setvbuf (fp, buf, _IOFBF, size);
@@ -402,9 +395,7 @@ void fill_indices_to_evaluate (function_t **funcTable, double runtime, int *indi
 		indices[j++] = i;
 		get_stack_times (prof_current, prof_previous, runtime, &t_excl, &t_incl, &t_part);
 		ctime += t_part;
-		if (vftr_environment) {
-			if (vftr_environment->prof_truncate->value && ctime > max_ctime) break;
-		}
+		if (vftr_environment.prof_truncate->value && ctime > max_ctime) break;
 	}
 }
 
@@ -426,11 +417,7 @@ int count_indices_to_evaluate (function_t **funcTable, double runtime) {
 
 		get_stack_times (prof_current, prof_previous, runtime, &t_excl, &t_incl, &t_part);
 		ctime += t_part;
-		if (vftr_environment) {
-		   if (vftr_environment->prof_truncate->value && ctime > max_ctime) {
-		   	break;
-		   }
-		}
+		if (vftr_environment.prof_truncate->value && ctime > max_ctime) break;
 	}
 	return n_indices;
 }
@@ -868,7 +855,7 @@ void vftr_print_function_statistics (FILE *pout, bool display_sync_time,
   for (int i = 0; i < n_spaces_tot; i++) fprintf (pout, "-");
   fprintf (pout, "\n");
 
-  if (vftr_environment->print_stack_profile->value) {
+  if (vftr_environment.print_stack_profile->value) {
   	for (int i = 0; i < n_display_functions; i++) {
   		vftr_print_function_stack (pout, vftr_mpirank, display_functions[i]->func_name, 
 				      display_functions[i]->n_stack_indices,
@@ -905,7 +892,7 @@ void vftr_print_mpi_statistics (FILE *fp) {
 			     "mpi_alltoall", "mpi_alltoallv", "mpi_alltoallw"};
 
     int n_mpi_functions = 13;
-    vftr_print_function_statistics (fp, vftr_environment->mpi_show_sync_time->value,
+    vftr_print_function_statistics (fp, vftr_environment.mpi_show_sync_time->value,
 				    mpi_function_names, n_mpi_functions);
 }
 #endif
@@ -1034,7 +1021,7 @@ void vftr_print_profile (FILE *pout, int *ntop, long long time0) {
     if (vftr_mpisize > 1) {
         fprintf (pout, " for rank %d", vftr_mpirank);
     }
-    if (vftr_environment && vftr_environment->prof_truncate->value) {
+    if (vftr_environment.prof_truncate->value) {
 	fprintf (pout, " (truncated)");
     }
     fprintf (pout, "\n");
