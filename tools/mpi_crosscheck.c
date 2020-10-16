@@ -430,7 +430,6 @@ int main (int argc, char *argv[]) {
 	}
 
 	for (int i_file = 0; i_file < n_log_files; i_file++) {
-	   printf ("Check that time values add up to the registered values: %s\n", argv[i_file + 1]);
 	   FILE *fp = fopen (argv[i_file + 1], "r");
 	   int n_calls_this_rank[N_MPI_FUNCS];
 	   double this_t_this_rank[N_MPI_FUNCS];
@@ -441,9 +440,15 @@ int main (int argc, char *argv[]) {
 	   bool all_calls_okay, all_t_okay, t_tot_okay;	
 	   check_each_time (fp, n_calls_this_rank, this_t_this_rank, t_tot[i_file],  
 	   		    &all_calls_okay, &all_t_okay, &t_tot_okay);
-	   printf ("Calls okay: %s\n", all_calls_okay ? "YES" : "NO");
-	   printf ("Times okay: %s\n", all_t_okay ? "YES" : "NO");
-	   printf ("Total time okay: %s\n", t_tot_okay ? "YES" : "NO");
+	   printf ("Intra-file check for %s: ", argv[i_file + 1]);
+	   if (all_calls_okay && all_t_okay && t_tot_okay) {
+		printf ("OKAY\n");
+	   } else {
+		printf ("NOT OKAY\n");
+	        if (!all_calls_okay) printf ("#Calls do not match.\n");
+	 	if (!all_t_okay) printf ("Individual times do not match.\n");
+		if (!t_tot_okay) printf ("Total MPI time does not match.\n");
+	   }
 	   fclose (fp);
         }
 
