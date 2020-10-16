@@ -228,7 +228,7 @@ void check_each_time (FILE *fp, int n_calls_vftr[N_MPI_FUNCS], double t_tot[N_MP
 		// When this string is found, there are five more lines afterwards
 		// before the actual profile starts.
 		if (strstr (line, "Runtime profile for rank")) {
-			countdown = 5;
+			countdown = 4;
 	        }
    	   } else if (countdown > 0) {
 	      countdown--;
@@ -256,8 +256,8 @@ void check_each_time (FILE *fp, int n_calls_vftr[N_MPI_FUNCS], double t_tot[N_MP
 	for (int i = 0; i < N_MPI_FUNCS; i++) {
 	   *all_calls_okay &= (n_calls_tot[i] == n_calls_vftr[i]); 
 	   if (!equal_for_n_digits (t_inc_tot[i], t_tot[i], 2)) {
-		printf ("Added and registered time are not equal: %lf %lf\n",
-			t_inc_tot[i], t_tot[i]);
+		printf ("Added and registered time are not equal(%d): %lf %lf\n",
+			i, t_inc_tot[i], t_tot[i]);
 	   }
 	   *all_t_okay &= equal_for_n_digits (t_inc_tot[i], t_tot[i], 2);
 	}
