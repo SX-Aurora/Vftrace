@@ -59,7 +59,7 @@ char *get_application_name () {
 
 /**********************************************************************/
 
-int count_digits (int value) {
+int vftr_count_digits (int value) {
   if (value == 0) {
      return 1;
   } else {
@@ -73,14 +73,21 @@ int count_digits (int value) {
 
 /**********************************************************************/
 
-int count_digits_double (double value) {
-  return count_digits((int)floor(value));
+int vftr_count_digits_double (double value) {
+  return vftr_count_digits((int)floor(value));
 }
 
 /**********************************************************************/
 
 char *vftr_bool_to_string (bool value) {
 	return value ? "true" : "false";
+}
+
+/**********************************************************************/
+
+void vftr_print_dashes (FILE *fp, int n) {
+	for (int i = 0; i < n; i++) fprintf (fp, "-");
+	fprintf (fp, "\n");
 }
 
 /**********************************************************************/

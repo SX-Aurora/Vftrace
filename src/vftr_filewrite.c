@@ -114,7 +114,7 @@ char *vftr_create_logfile_name (int mpi_rank, int mpi_size, char *suffix) {
 	
 	vftr_program_path = vftr_get_program_path ();	
 	// Finally create the output file name
-	int task_digits = count_digits (mpi_size);
+	int task_digits = vftr_count_digits (mpi_size);
 	char *logfile_nameformat = (char*)malloc (1024 * sizeof(char));
 	sprintf (logfile_nameformat, "%s/%s_%%0%dd.%s",
 		 out_directory, vftr_program_path, task_digits, suffix);
@@ -696,17 +696,17 @@ void vftr_get_display_width (display_function_t **display_functions,
 		if (display_functions[i]->n_calls > 0) {
 			n = strlen (display_functions[i]->func_name);
 			if (n > *n_func_max) *n_func_max = n;
-			n = count_digits (display_functions[i]->n_calls);
+			n = vftr_count_digits (display_functions[i]->n_calls);
 			if (n > *n_calls_max) *n_calls_max = n;	
-			n = count_digits_double (display_functions[i]->t_avg * 1e-6);
+			n = vftr_count_digits_double (display_functions[i]->t_avg * 1e-6);
 			if (n > *n_t_avg_max) *n_t_avg_max = n;
-			n = count_digits_double (display_functions[i]->t_min * 1e-6);
+			n = vftr_count_digits_double (display_functions[i]->t_min * 1e-6);
 			if (n > *n_t_min_max) *n_t_min_max = n;
-			n = count_digits_double (display_functions[i]->t_max * 1e-6);
+			n = vftr_count_digits_double (display_functions[i]->t_max * 1e-6);
 			if (n > *n_t_max_max) *n_t_max_max = n;
-			n = count_digits_double (display_functions[i]->imbalance);
+			n = vftr_count_digits_double (display_functions[i]->imbalance);
 			if (n > *n_imba_max) *n_imba_max = n;
-			n = count_digits_double (display_functions[i]->this_mpi_time * 1e-6);
+			n = vftr_count_digits_double (display_functions[i]->this_mpi_time * 1e-6);
 			if (n > *n_t_max) *n_t_max = n;
 		}
 	}

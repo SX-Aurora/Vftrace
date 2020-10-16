@@ -29,6 +29,7 @@
 #include "vftr_setup.h"
 #include "vftr_hooks.h"
 #include "vftr_filewrite.h"
+#include "vftr_fileutils.h"
 
 #include "vftr_output_macros.h"
 
