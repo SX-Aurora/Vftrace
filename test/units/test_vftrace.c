@@ -9,6 +9,7 @@
 #include "vftr_symbols.h"
 #include "vftr_environment.h"
 #include "vftr_hwcounters.h"
+#include "vftr_html.h"
 
 int this_fails () {
 	return 1;
@@ -88,6 +89,8 @@ int main (int argc, char **argv) {
 		retval = vftr_veperf_test_1 (fp_in, fp_out);
 	} else if (!strcmp (argv[1], "vftr_veperf_test_2")) {
 		retval = vftr_veperf_test_2 (fp_in, fp_out);
+	} else if (!strcmp (argv[1], "vftr_html_test_1")) {
+		retval = vftr_html_test_1 (fp_in, fp_out);
 	} else {
 		printf ("No matching test found\n");
 	}
