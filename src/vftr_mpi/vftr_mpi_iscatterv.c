@@ -22,8 +22,8 @@
 #include <stdlib.h>
 
 #include "vftr_timer.h"
-#include "vftr_async_messages.h"
-#include "vftr_mpi_pcontrol.h"
+#include "vftr_collective_requests.h"
+#include "vftr_mpi_utils.h"
 #include "vftr_mpi_buf_addr_const.h"
 
 int vftr_MPI_Iscatterv(const void *sendbuf, const int *sendcounts,
@@ -32,14 +32,15 @@ int vftr_MPI_Iscatterv(const void *sendbuf, const int *sendcounts,
                        int root, MPI_Comm comm, MPI_Request *request) {
 
    // disable profiling based on the Pcontrol level
-   if (vftrace_Pcontrol_level == 0) {
+   if (vftr_no_mpi_logging()) {
       return PMPI_Iscatterv(sendbuf, sendcounts, displs, sendtype,
                            recvbuf, recvcount, recvtype, root, comm, request);
    } else {
       long long tstart = vftr_get_runtime_usec();
       int retVal = PMPI_Iscatterv(sendbuf, sendcounts, displs, sendtype,
                                  recvbuf, recvcount, recvtype, root, comm, request);
-  
+
+      long long t2start = vftr_get_runtime_usec();
       // determine if inter or intra communicator
       int isintercom;
       PMPI_Comm_test_inter(comm, &isintercom);
@@ -160,6 +161,9 @@ int vftr_MPI_Iscatterv(const void *sendbuf, const int *sendcounts,
                                              comm, *request, tstart);
          }
       }
+      long long t2end = vftr_get_runtime_usec();
+
+      vftr_mpi_overhead_usec += t2end - t2start;
   
       return retVal;
    }

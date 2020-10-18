@@ -32,6 +32,42 @@
 int        vftr_nsymbols;
 symtab_t **vftr_symtab;
 
+/**********************************************************************/
+
+// Fortran symbols can be given in the form module-name_MP_function-name.
+// For example, in large stack trees, the module names can reduce its
+// readability and it can be convenient to leave them out. Of course, this
+// leads to information loss because identical function names in different
+// modules cannot be resolved. Therefore, below function should always be used
+// optionally. Moreover, there is no guarantee that the delimiter token is 
+// always "_MP_".
+//
+// We go through the function names until a '_' character is encountered.
+// If this is the case, we check if the succeeding three characters match
+// the delimiter pattern. When this is the case, we exit the function and
+// return the reduced string. Otherwise, we go on until the end of the function
+// name, given by the '\0' character, is reached. If no delimiter is found
+// the original string is returned.
+
+char *vftr_strip_module_name (char *base_name) {
+	char *tmp = strdup (base_name);
+	char *func_name = tmp;
+	bool has_module_token = false;
+	while (*tmp != '\0') {
+		if (*tmp == '_') {
+			has_module_token = tmp[1] == 'M' && tmp[2] == 'P' && tmp[3] == '_';
+			if (has_module_token) {
+				func_name = tmp + 4;
+				break;
+			}
+		}
+		tmp++;
+	}
+	return func_name;
+}
+		
+/**********************************************************************/
+
 int vftr_cmpsym( const void *a, const void *b ) {
     symtab_t *s1 = *(symtab_t **) a;
     symtab_t *s2 = *(symtab_t **) b;
@@ -43,6 +79,8 @@ int vftr_cmpsym( const void *a, const void *b ) {
     } else
         return 1;
 }
+
+/**********************************************************************/
 
 void vftr_print_symbol_table (FILE *fp) {
     fprintf (fp, "SYMBOL TABLE: %d\n", vftr_nsymbols);
@@ -57,6 +95,8 @@ void vftr_print_symbol_table (FILE *fp) {
     }
     fprintf (fp, "-----------------------------------------------------------------\n");
 }
+
+/**********************************************************************/
 
 /*
 ** vftr_get_library_symtab - retrieve part of the symbol table for a libary or executable.
@@ -197,6 +237,8 @@ void vftr_get_library_symtab (char *target, FILE *fp_ext, off_t base, int pass) 
     }
 }
 
+/**********************************************************************/
+
 FILE *get_fmap (char *target) {
     char maps[80];
     FILE *fmap;
@@ -224,6 +266,8 @@ FILE *get_fmap (char *target) {
     }
     return fmap;
 }
+
+/**********************************************************************/
 
 /* This function parses the lines in the /proc/pid/maps file. Each line consists of:
 	- an address range [base-top]. We split this at the "-" sign, since we
@@ -285,6 +329,8 @@ void parse_fmap_line (char *line, pathList_t **library, pathList_t **head) {
 
 }
 
+/**********************************************************************/
+
 /*
 ** vftr_create_symbol_table - two-pass retrieval of symbol table: in the first pass
 ** the symbols are counted, in the second pass the symbols are saved.
@@ -337,6 +383,8 @@ int vftr_create_symbol_table (int rank, char *target) {
     return 0;
 
 }
+
+/**********************************************************************/
 
 symtab_t **vftr_find_nearest(symtab_t **table, void *addr, int count) {
   int imid = 0;
@@ -394,6 +442,8 @@ char *vftr_find_symbol (void *addr, int line, char **full) {
     return newname;
 }
 
+/**********************************************************************/
+
 int vftr_symbols_test_1 (FILE *fp_in, FILE *fp_out) {
  	vftr_nsymbols = 0;	
 	vftr_get_library_symtab ("", fp_in, 0L, 0);	
@@ -405,3 +455,5 @@ int vftr_symbols_test_1 (FILE *fp_in, FILE *fp_out) {
 	free (vftr_symtab);
 	return 0;
 }
+
+/**********************************************************************/

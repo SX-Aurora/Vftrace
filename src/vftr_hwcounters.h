@@ -49,4 +49,7 @@ void vftr_read_counters (long long *event);
 void vftr_papi_counter (char *name);
 void vftr_sx_counter (char *name, int id);
 
+int vftr_veperf_test_1 (FILE *fp_in, FILE *fp_out);
+int vftr_veperf_test_2 (FILE *fp_in, FILE *fp_out);
+
 #endif

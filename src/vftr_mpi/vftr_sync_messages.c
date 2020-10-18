@@ -29,7 +29,7 @@ void vftr_store_sync_message_info(vftr_direction dir, int count, MPI_Datatype ty
                                   long long tstart, long long tend) {
 
    // only continue if sampling and mpi_loggin is enabled
-   bool mpi_log = vftr_environment->mpi_log->value;
+   bool mpi_log = vftr_environment.mpi_log->value;
    if (vftr_off() || !mpi_log || vftr_paused) return;
 
    // immediately return if peer is MPI_PROC_NULL as this is a dummy rank

@@ -8,6 +8,7 @@
 #include "vftr_stacks.h"
 #include "vftr_symbols.h"
 #include "vftr_environment.h"
+#include "vftr_hwcounters.h"
 
 int this_fails () {
 	return 1;
@@ -21,9 +22,14 @@ int this_passes () {
 
 int main (int argc, char **argv) {
 
-#ifdef _MPI
-	MPI_Init (NULL, NULL);
+#if defined(_MPI)
+	PMPI_Init (NULL, NULL);
+	vftr_get_mpi_info (&vftr_mpirank, &vftr_mpisize);
+#else
+	vftr_mpirank = 0;
+	vftr_mpisize = 1;
 #endif
+	vftr_read_environment();
 	
 	if (argc < 2) {
 		printf ("Usage: test_vftrace <test_name> [<input_file>]\n");
@@ -78,6 +84,10 @@ int main (int argc, char **argv) {
 		retval = vftr_stacks_test_1 (fp_in, fp_out);
 	} else if (!strcmp (argv[1], "vftr_stacks_test_2")) {
 		retval = vftr_stacks_test_2 (fp_in, fp_out);
+	} else if (!strcmp (argv[1], "vftr_veperf_test_1")) {
+		retval = vftr_veperf_test_1 (fp_in, fp_out);
+	} else if (!strcmp (argv[1], "vftr_veperf_test_2")) {
+		retval = vftr_veperf_test_2 (fp_in, fp_out);
 	} else {
 		printf ("No matching test found\n");
 	}
@@ -85,7 +95,7 @@ int main (int argc, char **argv) {
 	fp_out = NULL;
 	if (fp_in) fclose (fp_in);
 #ifdef _MPI
-        MPI_Finalize ();
+        PMPI_Finalize ();
 #endif
 	return retval;
 }

@@ -33,7 +33,7 @@
 #include "vftr_pause.h"
 #include "vftr_timer.h"
 #include "vftr_stacks.h"
-#include "vftr_async_messages.h"
+#include "vftr_clear_requests.h"
 
 bool vftr_profile_wanted = false;
 
@@ -166,7 +166,7 @@ void vftr_function_entry (const char *s, void *addr, int line, bool isPrecise) {
 
     read_counters = (func->return_to->detail || func->detail) &&
 		    vftr_events_enabled && 
-                    (time_to_sample || vftr_environment->accurate_profile->value);
+                    (time_to_sample || vftr_environment.accurate_profile->value);
 
     if (time_to_sample && vftr_env_do_sampling ()) {
         vftr_write_to_vfd (func_entry_time, vftr_prog_cycles, func->id, SID_ENTRY);
@@ -177,7 +177,7 @@ void vftr_function_entry (const char *s, void *addr, int line, bool isPrecise) {
            int mpi_isfinal;
            PMPI_Finalized(&mpi_isfinal);
            if (!mpi_isfinal) {
-              vftr_clear_completed_request();
+              vftr_clear_completed_requests();
            }
         }
 #endif
@@ -272,7 +272,7 @@ void vftr_function_exit(int line) {
 
     read_counters = (func->return_to->detail || func->detail) &&
 	  	    vftr_events_enabled && 
-                    (timeToSample || vftr_environment->accurate_profile->value);
+                    (timeToSample || vftr_environment.accurate_profile->value);
     if (timeToSample && vftr_env_do_sampling ()) {
         vftr_write_to_vfd(func_exit_time, prof_current->cycles, func->id, SID_EXIT);
 #ifdef _MPI
@@ -282,7 +282,7 @@ void vftr_function_exit(int line) {
            int mpi_isfinal;
            PMPI_Finalized(&mpi_isfinal);
            if (!mpi_isfinal) {
-              vftr_clear_completed_request();
+              vftr_clear_completed_requests();
            }
         }
 #endif
@@ -348,7 +348,7 @@ void vftr_function_exit(int line) {
         for (i = 0; i < vftr_stackscount; i++) {
             function_t *f = vftr_func_table[i];
             tsum += (double)f->prof_current.cycles;
-	    double cutoff = vftr_environment->detail_until_cum_cycles->value;
+	    double cutoff = vftr_environment.detail_until_cum_cycles->value;
             if ((tsum * scale) > cutoff) break;
             f->detail = true;
         }

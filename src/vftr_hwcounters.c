@@ -20,6 +20,7 @@
 #include <limits.h>
 #include <stdio.h>
 #include <string.h>
+#include <math.h>
 
 #if defined(HAS_VEPERF)
 #include <stdint.h>
@@ -272,3 +273,65 @@ int vftr_find_event_number (char *s) {
 #endif
     return -1;
 }
+
+/**********************************************************************/
+int vftr_veperf_test_1 (FILE *fp_in, FILE *fp_out) {
+#if defined(HAS_VEPERF)
+	int stat = __veperf_init();
+	if (stat) {
+		fprintf (fp_out, "__veperf_init() failed(%d)\n", stat);	  
+		return stat;
+	}
+	veperf_get_pmcs ((int64_t *)vftr_echwc);
+	fprintf (fp_out, "veperf: success\n");
+#endif
+	return 0;
+}
+
+/**********************************************************************/
+
+int vftr_veperf_test_2 (FILE *fp_in, FILE *fp_out) {
+#if defined(HAS_VEPERF)
+	int n = 1000;
+	int n_iter = 50;
+	double x[n], y[n], z[n];
+	long long c1[MAX_HWC_EVENTS], c2[MAX_HWC_EVENTS], c_diff[MAX_HWC_EVENTS][n_iter];
+	fprintf (fp_out, "Checking reproducibility of SX Aurora hardware counters\n");
+	fprintf (fp_out, "Averaging over %d iterations\n", n_iter);
+	for (int i = 0; i < n; i++) {
+		x[i] = i;
+		y[i] = 0.5 * i;
+	}
+	int stat = __veperf_init();
+	if (stat) {
+		fprintf (fp_out, "__veperf_init() failed(%d)\n", stat);	  
+		return stat;
+	}
+	for (int n = 0; n < n_iter; n++) {
+		veperf_get_pmcs ((int64_t *)c1);
+		for (int i = 0; i < n; i++) {
+			z[i] = x[i] + x[i] * y[i];
+		}
+		veperf_get_pmcs ((int64_t *)c2);
+		for (int i = 0; i < 15; i++) {
+			c_diff[i][n] = c2[i] - c1[i];
+		}
+	}
+	
+	double c_avg[MAX_HWC_EVENTS];
+	long long sum_c;
+	for (int i = 0; i < 15; i++) {
+		sum_c = 0;
+		for (int n = 0; n < n_iter; n++) {
+			sum_c += c_diff[i][n];
+		}
+		c_avg[i] = (double)sum_c / n_iter;
+	}
+	for (int i = 0; i < 15; i++) {
+		fprintf (fp_out, "i: %d, c: %d\n", i, (int)floor(c_avg[i]));
+	}
+#endif
+	return 0;
+}
+
+/**********************************************************************/

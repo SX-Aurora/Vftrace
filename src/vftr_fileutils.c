@@ -26,6 +26,7 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <string.h>
+#include <math.h>
 
 #define MAX_CMDLINE 1024
 char *get_application_name () {
@@ -58,18 +59,35 @@ char *get_application_name () {
 
 /**********************************************************************/
 
-int count_digits (int value) {
-  int count = 0;
-  for (int c = value; c > 0; c /= 10) {
-	count++;
+int vftr_count_digits (int value) {
+  if (value == 0) {
+     return 1;
+  } else {
+     int count = 0;
+     for (int c = value; c > 0; c /= 10) {
+           count++;
+     }
+     return count;
   }
-  return count;
+}
+
+/**********************************************************************/
+
+int vftr_count_digits_double (double value) {
+  return vftr_count_digits((int)floor(value));
 }
 
 /**********************************************************************/
 
 char *vftr_bool_to_string (bool value) {
 	return value ? "true" : "false";
+}
+
+/**********************************************************************/
+
+void vftr_print_dashes (FILE *fp, int n) {
+	for (int i = 0; i < n; i++) fprintf (fp, "-");
+	fprintf (fp, "\n");
 }
 
 /**********************************************************************/

@@ -23,27 +23,28 @@
 #include "vftr_regions.h"
 #include "vftr_environment.h"
 #include "vftr_sync_messages.h"
-#include "vftr_mpi_pcontrol.h"
+#include "vftr_mpi_utils.h"
 #include "vftr_mpi_buf_addr_const.h"
 
 int vftr_MPI_Bcast(void *buffer, int count, MPI_Datatype datatype,
                    int root, MPI_Comm comm) {
 
+   // Estimate synchronization time
+   if (vftr_environment.mpi_show_sync_time->value) {
+      vftr_internal_region_begin("MPI_Bcast_sync");
+      PMPI_Barrier(comm);
+      vftr_internal_region_end("MPI_Bcast_sync");
+   }
+
    // disable profiling based on the Pcontrol level
-   if (vftrace_Pcontrol_level == 0) {
+   if (vftr_no_mpi_logging()) {
       return PMPI_Bcast(buffer, count, datatype, root, comm);
    } else {
-      // Estimate synchronization time
-      if (vftr_environment->mpi_show_sync_time->value) {
-         vftr_internal_region_begin("MPI_Bcast_sync");
-         PMPI_Barrier(comm);
-         vftr_internal_region_end("MPI_Bcast_sync");
-      }
-
       long long tstart = vftr_get_runtime_usec();
       int retVal = PMPI_Bcast(buffer, count, datatype, root, comm);
       long long tend = vftr_get_runtime_usec();
 
+      long long t2start = tend;
       // determine if inter or intra communicator
       int isintercom;
       PMPI_Comm_test_inter(comm, &isintercom);
@@ -93,6 +94,9 @@ int vftr_MPI_Bcast(void *buffer, int count, MPI_Datatype datatype,
                                          comm, tstart, tend);
          }
       }
+      long long t2end = vftr_get_runtime_usec();
+
+      vftr_mpi_overhead_usec += t2end - t2start;
 
       return retVal;
    }

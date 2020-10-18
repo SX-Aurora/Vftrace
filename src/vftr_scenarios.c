@@ -33,6 +33,20 @@
 #include "veperf.h"
 #endif
 
+char *scenario_expr_counter_names[TE_MAX];
+char *scenario_expr_vars[TE_MAX];
+function_expr_t scenario_expr_formulas[TE_MAX];
+hwc_format_t scenario_expr_format[TE_MAX];
+
+int scenario_expr_n_vars;
+int scenario_expr_n_formulas;
+
+double *scenario_expr_counter_values;
+double scenario_expr_runtime;
+double scenario_expr_cycles;
+double scenario_expr_cycletime;
+
+
 /**********************************************************************/
 
 void vftr_scenario_print_formula (FILE *fp, function_expr_t formula) {

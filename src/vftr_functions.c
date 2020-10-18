@@ -135,10 +135,7 @@ function_t *vftr_new_function(void *arg, const char *function_name,
    if (line > 0) func->line_beg = line;
 
    if (arg) { // Skip if address not defined (when function is "init")
-      if (vftr_environment) {
-         func->precise = is_precise || vftr_pattern_match (vftr_environment->preciseregex->value,
-                                                          func->name);
-      }
+      func->precise = is_precise || vftr_pattern_match (vftr_environment.preciseregex->value, func->name);
    }
 
    // Check if the new function is meant to be pricisely sampled.
@@ -165,15 +162,13 @@ function_t *vftr_new_function(void *arg, const char *function_name,
    }
 
    // Determine if this function should be profiled
-   if (vftr_environment) {
-      func->profile_this = vftr_pattern_match(vftr_environment->runtime_profile_funcs->value, func->name);
-   }
+   func->profile_this = vftr_pattern_match(vftr_environment.runtime_profile_funcs->value, func->name);
 
-   if (!func->exclude_this && vftr_environment) {
-      if (vftr_environment->include_only_regex->set) {
-         func->exclude_this = !vftr_pattern_match(vftr_environment->include_only_regex->value, func->name);
-      } else if (vftr_environment->exclude_functions_regex->set) {
-         func->exclude_this = vftr_pattern_match(vftr_environment->exclude_functions_regex->value, func->name);
+   if (!func->exclude_this) {
+      if (vftr_environment.include_only_regex->set) {
+         func->exclude_this = !vftr_pattern_match(vftr_environment.include_only_regex->value, func->name);
+      } else if (vftr_environment.exclude_functions_regex->set) {
+         func->exclude_this = vftr_pattern_match(vftr_environment.exclude_functions_regex->value, func->name);
       }
    }
 
@@ -235,12 +230,13 @@ void vftr_reset_counts (function_t *func) {
 
 /**********************************************************************/
 
-void vftr_find_function (char *func_name, int **func_indices, int **stack_indices,
-			 int *n_indices, bool to_lower_case) {
+void vftr_find_function_in_table (char *func_name, int **indices, int *n_indices,
+				  bool to_lower_case) {
 	*n_indices = 0;
 	char *s_compare;
+	int n_count;
 	for (int i = 0; i < vftr_stackscount; i++) {
-		s_compare = strdup(vftr_func_table[i]->name);
+		s_compare = strdup (vftr_func_table[i]->name);
 		if (to_lower_case) {
 			for (int i = 0; i < strlen(s_compare); i++) {
 				s_compare[i] = tolower(s_compare[i]);
@@ -251,22 +247,55 @@ void vftr_find_function (char *func_name, int **func_indices, int **stack_indice
 		}
 	}
 	if (*n_indices > 0) {
-		*stack_indices = (int*)malloc(*n_indices * sizeof(int));
-		*func_indices = (int*)malloc(*n_indices * sizeof(int));
+		*indices = (int*)malloc(*n_indices * sizeof(int));
 		int idx = 0;
 		for (int i = 0; i < vftr_stackscount; i++) {
-			s_compare = strdup(vftr_func_table[i]->name);
-			if (to_lower_case) {
-				for (int i = 0; i < strlen(s_compare); i++) {
-					s_compare[i] = tolower(s_compare[i]);
-				}
-			}	
-			if (!strcmp (s_compare, func_name)) {
-				(*func_indices)[idx] = i;
-				(*stack_indices)[idx++] = vftr_func_table[i]->gid;
+		   s_compare = strdup (vftr_func_table[i]->name);
+		   if (to_lower_case) {
+		   	for (int i = 0; i < strlen(s_compare); i++) {
+		   		s_compare[i] = tolower(s_compare[i]);
+		   	}
+		   }
+		   if (!strcmp (s_compare, func_name)) {
+		   	(*indices)[idx++] = i;
+		   }
+		}
+	}
+}
+
+/**********************************************************************/
+
+void vftr_find_function_in_stack (char *func_name, int **indices, int *n_indices,
+				  bool to_lower_case) {
+	*n_indices = 0;
+	char *s_compare;
+	int n_count;
+	for (int i = 0; i < vftr_gStackscount; i++) {
+		s_compare = strdup (vftr_gStackinfo[i].name);
+		if (to_lower_case) {
+			for (int i = 0; i < strlen(s_compare); i++) {
+				s_compare[i] = tolower(s_compare[i]);
 			}
 		}
-	}	
+		if (!strcmp (s_compare, func_name)) {
+			(*n_indices)++;
+		}
+	}
+	if (*n_indices > 0) {
+		*indices = (int*)malloc(*n_indices * sizeof(int));
+		int idx = 0;
+		for (int i = 0; i < vftr_gStackscount; i++) {
+		   s_compare = strdup (vftr_gStackinfo[i].name);
+		   if (to_lower_case) {
+		   	for (int i = 0; i < strlen(s_compare); i++) {
+		   		s_compare[i] = tolower(s_compare[i]);
+		   	}
+		   }
+		   if (!strcmp (s_compare, func_name)) {
+		   	(*indices)[idx++] = i;
+		   }
+		}
+	}
 }
 
 /**********************************************************************/
@@ -274,7 +303,7 @@ void vftr_find_function (char *func_name, int **func_indices, int **stack_indice
 void vftr_write_function_indices (FILE *fp, char *func_name, bool to_lower_case) {
 	int n_indices;
 	int *func_indices = NULL;
-	vftr_find_function (func_name, &func_indices, NULL, &n_indices, to_lower_case);
+	vftr_find_function_in_table (func_name, &func_indices, &n_indices, to_lower_case);
 	if (!func_indices) {
 		fprintf (fp, "ERROR: No indices found for function %s\n", func_name);
 	} else {
@@ -337,6 +366,13 @@ void vftr_write_function (FILE *fp, function_t *func) {
 	fprintf (fp, "\tExclude: %d\n", func->exclude_this);
 }
 		
+/**********************************************************************/
+
+void vftr_strip_all_module_names () {
+	for (int i = 0; i < vftr_stackscount; i++) {
+		vftr_func_table[i]->name = vftr_strip_module_name (vftr_func_table[i]->name);
+	}
+}
 /**********************************************************************/
 
 int vftr_functions_test_1 (FILE *fp_in, FILE *fp_out) {
