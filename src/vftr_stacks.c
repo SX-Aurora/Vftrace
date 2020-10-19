@@ -754,11 +754,11 @@ void vftr_scan_for_maximum_values (stack_leaf_t *leaf, int this_n_spaces, double
 
 const char *stacktree_headers[4] = {"T[s]", "n_calls", "imbalance[%]", "stackID"};
 
-void vftr_print_stacktree_header (FILE *fp, char *func_name,
+void vftr_print_stacktree_header (FILE *fp, int n_stacks, char *func_name,
 				  int n_spaces_max, int fmt_calls, int fmt_t, int fmt_imba, int fmt_stackid) {
 	int n_char_tot = n_spaces_max + fmt_calls + fmt_t + fmt_imba + fmt_stackid + 12;
 	char title[64];
-	sprintf (title, "Function stacks leading to %s", func_name);
+	sprintf (title, "Function stacks leading to %s: %d", func_name, n_stacks);
 	fprintf (fp, "%s", title);
 	for (int i = 0; i < n_spaces_max - strlen(title); i++) fprintf (fp, " ");
 	fprintf (fp, "   %*s   %*s   %*s   %*s\n", fmt_t, stacktree_headers[0],
@@ -860,7 +860,7 @@ void vftr_print_function_stack (FILE *fp, int rank, char *func_name,
 	int fmt_imba = (vftr_count_digits_double(imba_max) + 6) > strlen(stacktree_headers[2]) ? vftr_count_digits_double(imba_max) + 6: strlen(stacktree_headers[2]);
 	int fmt_stackid = vftr_count_digits(vftr_gStackscount) > strlen(stacktree_headers[3]) ?
 			 vftr_count_digits(vftr_gStackscount) : strlen(stacktree_headers[3]);
-	vftr_print_stacktree_header (fp, func_name, n_spaces_max, fmt_calls, fmt_t, fmt_imba, fmt_stackid);
+	vftr_print_stacktree_header (fp, n_final_stack_ids, func_name, n_spaces_max, fmt_calls, fmt_t, fmt_imba, fmt_stackid);
 	vftr_print_stacktree (fp, stack_tree->origin, 0, imbalances,
 			      n_spaces_max, fmt_calls, fmt_t, fmt_imba, fmt_stackid, &total_time);
 	free (stack_tree);
