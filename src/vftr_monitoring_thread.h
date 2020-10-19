@@ -1,6 +1,11 @@
 #include <stdbool.h>
 #include <pthread.h>
 
+// Monitoring values
+typedef struct {
+   long max_memory_since_last_sample;
+} vftr_monitored_values_t;
+
 // lock for thread synchronisation
 extern pthread_mutex_t vftr_lock_monitor_thread;
 

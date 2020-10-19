@@ -2,6 +2,7 @@
 #include <time.h>
 #include <pthread.h>
 #include "vftr_timer.h"
+#include "vftr_memory.h"
 #include "vftr_monitoring_thread.h"
 
 // seperate pthread to monitor program activities in the background
@@ -36,7 +37,12 @@ void *vftr_monitor_thread_fkt(void *arg) {
    pthread_mutex_lock(&vftr_monitor_thread_lock_handle);
    while (vftr_keep_monitor_thread_alive) {
       // Calls to shared variables
-      
+
+      // Measure memory usage
+      long tmp_memory_usage = vftr_current_memory_usage();
+      vftr_max_monitored_values.vftr_max_monitored_values = 
+         (tmp_memory_usage > vftr_max_monitored_values.vftr_max_monitored_values) ?
+            tmp_memory_usage : vftr_max_monitored_values.vftr_max_monitored_values;
 
       pthread_mutex_unlock(&vftr_monitor_thread_lock_handle);
       // Calls to local variables
