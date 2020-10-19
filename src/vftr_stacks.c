@@ -824,7 +824,6 @@ void vftr_print_function_stack (FILE *fp, int rank, char *func_name,
 			imbalances[function_idx] = compute_mpi_imbalance (all_times, -1.0);
 		}
 	}
-	if (vftr_mpirank > 0) return;
 #else
 	for (int i  = 0; i < vftr_func_table_size; i++) {
 		imbalances[i] = 0;
