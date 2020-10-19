@@ -22,6 +22,9 @@ typedef struct {
 } vftr_monitor_data_t;
 vftr_monitor_data_t thread_data;
 
+// Maximum values of monotored observables
+vftr_monitored_values_t vftr_max_monitored_values = {0l};
+
 // monitoring function to be run by a seperate pthread
 void *vftr_monitor_thread_fkt(void *arg) {
    // translate variables from arg-struct to individual variables
