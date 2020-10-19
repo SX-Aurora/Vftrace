@@ -33,6 +33,7 @@
 
 #include "vftr_environment.h"
 #include "vftr_hwcounters.h"
+#include "vftr_monitoring_thread.h"
 #include "vftr_scenarios.h"
 #include "vftr_stacks.h"
 

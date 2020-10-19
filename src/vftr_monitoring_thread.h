@@ -3,7 +3,7 @@
 
 // Monitoring values
 typedef struct {
-   long max_memory_since_last_sample;
+   long max_memory;
 } vftr_monitored_values_t;
 
 // lock for thread synchronisation

@@ -43,9 +43,9 @@ void *vftr_monitor_thread_fkt(void *arg) {
 
       // Measure memory usage
       long tmp_memory_usage = vftr_current_memory_usage();
-      vftr_max_monitored_values.vftr_max_monitored_values = 
-         (tmp_memory_usage > vftr_max_monitored_values.vftr_max_monitored_values) ?
-            tmp_memory_usage : vftr_max_monitored_values.vftr_max_monitored_values;
+      vftr_max_monitored_values.max_memory = 
+         (tmp_memory_usage > vftr_max_monitored_values.max_memory) ?
+         tmp_memory_usage : vftr_max_monitored_values.max_memory;
 
       pthread_mutex_unlock(&vftr_monitor_thread_lock_handle);
       // Calls to local variables

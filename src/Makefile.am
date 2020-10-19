@@ -22,6 +22,7 @@ libvftrace_la_SOURCES = demangle.cpp \
 		       vftr_symbols.c \
                        vftr_hwcounters.c \
 		       vftr_monitoring_thread.c \
+		       vftr_memory.c \
 		       vftr_hooks.c \
 		       vftr_setup.c \
 		       vftr_filewrite.c \
