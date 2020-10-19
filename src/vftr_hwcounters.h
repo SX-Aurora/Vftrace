@@ -30,15 +30,8 @@ extern long long vftr_prog_cycles;
 #else
 #define MAX_HWC_EVENTS                4
 #endif
-#define MAX_EVENTS                   (MAX_HWC_EVENTS+10)
-
-#if defined(HAS_VEPERF)
-#define vftr_read_counters vftr_read_counters_veperf
-#elif defined(HAS_PAPI)
-#define vftr_read_counters vftr_read_counters_papi
-#else
-#define vftr_read_counters vftr_read_counters_dummy
-#endif
+#define MONITORED_EVENTS              1
+#define MAX_EVENTS                   (MAX_HWC_EVENTS+MONITORED_EVENTS+10)
 
 extern long long vftr_echwc[MAX_HWC_EVENTS];
 

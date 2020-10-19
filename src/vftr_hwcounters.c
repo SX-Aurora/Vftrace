@@ -245,6 +245,18 @@ void vftr_read_counters_dummy (long long *event) {
 
 /**********************************************************************/
 
+void vftr_read_counters (long long *event) {
+#if defined(HAS_VEPERF)
+   vftr_read_counters_veperf(event);
+#elif defined(HAS_PAPI)
+   vftr_read_counters_papi(event);
+#else
+   vftr_read_counters_dummy(event);
+#endif
+}
+
+/**********************************************************************/
+
 int vftr_stop_hwc () {
     int diag = 0;
 #if defined(HAS_PAPI)
