@@ -815,7 +815,7 @@ void vftr_print_function_stack (FILE *fp, int rank, char *func_name,
 	double imbalances [vftr_func_table_size];
 #ifdef _MPI
 	for (int fsid = 0; fsid < n_final_stack_ids; fsid++) {
-		int function_idx = vftr_gStackinfo[fsid].locID;
+		int function_idx = vftr_gStackinfo[final_stack_ids[fsid]].locID;
 		long long t = function_idx >= 0 ? vftr_func_table[function_idx]->prof_current.timeIncl : -1.0;
 		PMPI_Allgather (&t, 1, MPI_LONG_LONG_INT,
 				all_times, 1, MPI_LONG_LONG_INT, MPI_COMM_WORLD);
