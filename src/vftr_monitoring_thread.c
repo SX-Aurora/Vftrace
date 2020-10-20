@@ -111,3 +111,18 @@ void vftr_lock_monitoring_thread() {
 void vftr_unlock_monitor_thread() {
    pthread_mutex_unlock(&vftr_monitor_thread_lock_handle);
 }
+
+vftr_monitored_values_t vftr_get_and_reset_monitored_values() {
+   vftr_monitored_values_t monitored_values;
+   // in order to access the monitored data the thread needs to be locked
+   pthread_mutex_lock(&vftr_monitor_thread_lock_handle);
+   // Copy data here
+
+   // memory measurements
+   monitored_values.max_memory = vftr_max_monitored_values.max_memory;
+   vftr_max_monitored_values.max_memory = vftr_current_memory_usage();
+
+   // No more access after this comment
+   pthread_mutex_unlock(&vftr_monitor_thread_lock_handle);
+   return monitored_values;
+}
