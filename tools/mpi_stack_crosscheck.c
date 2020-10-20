@@ -51,7 +51,11 @@ bool equal_for_n_digits (double val1, double val2, int n_digits) {
 }
 
 bool equal_within_tolerance (double val1, double val2, double tolerance) {
-	return fabs (val1 / val2 - 1.0) < tolerance;
+	if (val2 == 0.0) {
+	   return fabs(val1) < tolerance;
+	} else {
+	   return fabs (val1 / val2 - 1.0) < tolerance;
+	}
 }
 
 /**********************************************************************/
@@ -90,6 +94,20 @@ bool decompose_stack_line (char *line, double *t, int *n_calls, double *imba, in
    return true;
 }
 
+void decompose_final_line (char *line, int *i_mpi, double *t_tot) {
+   char *token;
+   token = strtok (line, " ");
+   // Skip the six characters of Total(
+   token += 6;
+   // Loop to the closing bracket and set the terminator there.
+   char *tmp = token;
+   while (*tmp != ')') tmp++;
+   *tmp = '\0';
+   *i_mpi = mpi_index (token);
+   token = strtok (NULL, " ");
+   *t_tot = atof (token);
+}
+
 /**********************************************************************/
 
 int find_stack_index (int *all_ids[N_MPI_FUNCS][64], int i_mpi, int i_file, int search_id, int n_stacks) {
@@ -106,13 +124,15 @@ int main (int argc, char *argv[]) {
    int n_log_files = argc - 1;
    int n_stacks[N_MPI_FUNCS][n_log_files];
    long filepos[N_MPI_FUNCS][n_log_files];
-   long table_filepos[N_MPI_FUNCS];
    int *all_n_calls[N_MPI_FUNCS][n_log_files];
    double *all_t[N_MPI_FUNCS][n_log_files];
    double *all_imba[N_MPI_FUNCS][n_log_files];
    int *all_stack_ids[N_MPI_FUNCS][n_log_files];
    int *all_stack_ids_for_i_mpi[N_MPI_FUNCS];
    int n_stack_ids[N_MPI_FUNCS];
+   int mpi_size = 0;
+   bool all_okay;
+   double t_tot[N_MPI_FUNCS][n_log_files];
    for (int i = 1; i < argc; i++) {
       FILE *fp = fopen (argv[i], "r");
       int max_n_stacks = 0;
@@ -129,7 +149,12 @@ int main (int argc, char *argv[]) {
       while (!feof(fp)) {
 	 long this_fp = ftell(fp);
          fgets (line, LINEBUFSIZE, fp);
-         if (strstr (line, "Function stacks leading to")) {
+	 if (strstr (line, "MPI size")) {
+	    token = strtok (line, " ");	
+	    token = strtok (NULL, " ");
+	    token = strtok (NULL, " ");
+	    mpi_size = atoi(token);
+         } else if (strstr (line, "Function stacks leading to")) {
             token = strtok (line, " "); 
 	    int i = 0;
 	    while (i++ < 4) token = strtok (NULL, " ");
@@ -185,15 +210,43 @@ int main (int argc, char *argv[]) {
 	    }
         }	
         fgets (line, LINEBUFSIZE, fp);
+	if (n_stacks[i_mpi][i_file] > 0) {
+	 	int dummy;
+		double this_t_tot;
+		//decompose_final_line (line, &dummy, &(t_tot[i_mpi][i_file]));
+		decompose_final_line (line, &dummy, &this_t_tot);
+		t_tot[i_mpi][i_file] = this_t_tot;
+	}
         current_filepos = ftell(fp);
       }
+   }
 
+   printf ("Check that the summed up times in each file match with the preceeding times:\n");
+   all_okay = true;
+   for (int i_file = 0; i_file < n_log_files; i_file++) {
+     for (int i_mpi = 0; i_mpi < N_MPI_FUNCS; i_mpi++) {
+        double t_sum = 0;
+	for (int i_stack = 0; i_stack < n_stacks[i_mpi][i_file]; i_stack++) {
+	   t_sum += all_t[i_mpi][i_file][i_stack];
+	}
+	if (!equal_within_tolerance (t_sum, t_tot[i_mpi][i_file], 0.02)) {
+	   printf ("Not okay: %d %d %lf %lf\n", i_file, i_mpi, t_sum, t_tot[i_mpi][i_file]);
+	   all_okay = false;
+	}
+     }
+   }
+   if (all_okay) printf ("ALL OKAY\n");
+ 
+   if (n_log_files != mpi_size) {
+     printf ("The number of log files does not match the registered MPI size! ");
+     printf ("Found %d log files, but there should be %d.\n", n_log_files, mpi_size);
+     return -1;
    }
 
    printf ("Check that number of stacks matches arcoss all ranks\n");
    for (int i_mpi = 0; i_mpi < N_MPI_FUNCS; i_mpi++) {
       int n_stacks_0 = n_stacks[i_mpi][0];
-      bool all_okay = true;
+      all_okay = true;
       for (int i_file = 1; i_file < n_log_files; i_file++) {
 	 all_okay &= n_stacks[i_mpi][i_file] == n_stacks_0;
       }
@@ -220,8 +273,7 @@ int main (int argc, char *argv[]) {
       }
    }
       
-
-   printf ("Check imbalances\n");
+   printf ("Check imbalances:\n");
    double *t_avg[N_MPI_FUNCS];
    double *max_diff[N_MPI_FUNCS];
    for (int i_mpi = 0; i_mpi < N_MPI_FUNCS; i_mpi++) {
