@@ -89,6 +89,8 @@ int main (int argc, char *argv[]) {
    double *all_t[N_MPI_FUNCS][n_log_files];
    double *all_imba[N_MPI_FUNCS][n_log_files];
    int *all_stack_ids[N_MPI_FUNCS][n_log_files];
+   int *all_stack_ids_for_i_mpi[N_MPI_FUNCS];
+   int n_stack_ids[N_MPI_FUNCS];
    for (int i = 1; i < argc; i++) {
       FILE *fp = fopen (argv[i], "r");
       int max_n_stacks = 0;
@@ -207,6 +209,42 @@ int main (int argc, char *argv[]) {
       }
 
    }
+
+   printf ("Check that #stacks match arcoss all ranks\n");
+   for (int i_mpi = 0; i_mpi < N_MPI_FUNCS; i_mpi++) {
+      int n_stacks_0 = n_stacks[i_mpi][0];
+      bool all_okay = true;
+      for (int i_file = 1; i_file < n_log_files; i_file++) {
+	 all_okay &= n_stacks[i_mpi][i_file] == n_stacks_0;
+      }
+      printf ("%d: %s\n", i_mpi, all_okay ? "OKAY" : "NOT OKAY");
+      n_stack_ids[i_mpi] = n_stacks_0;
+      all_stack_ids_for_i_mpi[i_mpi] = (int*) malloc (n_stacks_0 * sizeof(int));
+      for (int i_stack = 0; i_stack < n_stacks_0; i_stack++) {
+	 all_stack_ids_for_i_mpi[i_mpi][i_stack] = -1;
+      }
+      int n_found = 0;
+      for (int i_file = 0; i_file < n_log_files; i_file++) {
+         for (int i_stack = 0; i_stack < n_stacks_0; i_stack++) {
+  	    if (n_found == 0) {
+		all_stack_ids_for_i_mpi[i_mpi][n_found] = all_stack_ids[i_mpi][i_file][i_stack];
+	        n_found++;
+	    } else {
+		bool found = false;
+	        for (int ii = 0; ii < n_found; ii++) {
+	 	   found |= all_stack_ids[i_mpi][i_file][i_stack] == all_stack_ids_for_i_mpi[i_mpi][ii];
+	        }
+		if (!found) all_stack_ids_for_i_mpi[i_mpi][n_found++] = all_stack_ids[i_mpi][i_file][i_stack];
+	    }
+         }
+      }
+      printf ("All stack IDS for %s: ", mpi_function_names[i_mpi]);
+      for (int i = 0; i < n_stack_ids[i_mpi]; i++) {
+	 printf ("%d ", all_stack_ids_for_i_mpi[i_mpi][i]);
+      }
+      printf ("\n");
+   }
+      
 
    double *t_avg[N_MPI_FUNCS];
    double *max_diff[N_MPI_FUNCS];
