@@ -530,6 +530,7 @@ double compute_mpi_imbalance (long long *all_times, double t_avg) {
 
 typedef struct display_function {
     char *func_name;
+    int i_orig; // The original index of the display function. Used to undo sortings by various other field values, e.g. t_avg.
     int n_calls;
     double t_avg;
     long long t_min;
@@ -642,8 +643,7 @@ void evaluate_display_function (char *func_name, display_function_t **display_fu
 
 /**********************************************************************/
 
-
-int vftr_compare_display_functions (const void *a1, const void *a2) {
+int vftr_compare_display_functions_tavg (const void *a1, const void *a2) {
 	display_function_t *f1 = *(display_function_t **)a1;
 	display_function_t *f2 = *(display_function_t **)a2;
 	if (!f2) return -1;
@@ -654,6 +654,19 @@ int vftr_compare_display_functions (const void *a1, const void *a2) {
 	if (diff > 0) return 1;
 	if (diff < 0) return -1;
 	return 0; 
+}
+
+int vftr_compare_display_functions_iorig (const void *a1, const void *a2) {
+	display_function_t *f1 = *(display_function_t **)a1;
+	display_function_t *f2 = *(display_function_t **)a2;
+	if (!f2) return -1;
+	if (!f1) return 1;
+	double t1 = f1->i_orig;
+	double t2 = f2->i_orig;
+	double diff = t1 - t2; // Small indices first
+	if (diff > 0) return 1;
+	if (diff < 0) return -1;
+	return 0;
 }
 
 /**********************************************************************/
@@ -715,6 +728,7 @@ void vftr_print_function_statistics (FILE *pout, bool display_sync_time,
     for (int i = 0; i < n_display_functions; i++) {
 	display_functions[i] = (display_function_t*) malloc (sizeof(display_function_t));
 	display_functions[i]->func_name = strdup(display_function_names[i]);
+        display_functions[i]->i_orig = i;
     }
     
     double total_time = 0;
@@ -724,7 +738,7 @@ void vftr_print_function_statistics (FILE *pout, bool display_sync_time,
     }
 
     qsort ((void*)display_functions, (size_t)n_display_functions,
-	    sizeof (display_function_t *), vftr_compare_display_functions);
+	    sizeof (display_function_t *), vftr_compare_display_functions_tavg);
 
 
     fprintf (pout, "Total time spent in MPI for rank %d: %lf s\n", vftr_mpirank, total_time);
@@ -856,6 +870,28 @@ void vftr_print_function_statistics (FILE *pout, bool display_sync_time,
   fprintf (pout, "\n");
 
   if (vftr_environment.print_stack_profile->value) {
+	// Next, we print the function stack trees. But first, we need to undo the sorting done before. 
+	// This is because inside of vftr_print_function_stack, the run times of individual stacks are
+	// gathered across all ranks. If the order of the display functions is not the same for all ranks,
+	// which can happen for example when one of them is an I/O rank, the gathered values can correspond
+	// to different functions.  	
+	//
+	qsort ((void*)display_functions, (size_t)n_display_functions,
+	       sizeof (display_function_t *), vftr_compare_display_functions_iorig);
+	for (int i = 0; i < vftr_mpisize; i++) {
+		if (vftr_mpirank == 0 && i == 0) {
+			printf ("display functions for rank 0: \n");
+			for (int j = 0; j < n_display_functions; j++) {
+				printf ("%s\n", display_functions[j]->func_name);
+			}
+		} else if (vftr_mpirank == 63 && i == 63) {
+			printf ("display functions for rank 0: \n");
+			for (int j = 0; j < n_display_functions; j++) {
+				printf ("%s\n", display_functions[j]->func_name);
+			}
+		}
+		PMPI_Barrier (MPI_COMM_WORLD);
+	}
   	for (int i = 0; i < n_display_functions; i++) {
   		vftr_print_function_stack (pout, vftr_mpirank, display_functions[i]->func_name, 
 				      display_functions[i]->n_stack_indices,
