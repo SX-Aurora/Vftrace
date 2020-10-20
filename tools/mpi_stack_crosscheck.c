@@ -146,56 +146,16 @@ int main (int argc, char *argv[]) {
          this_stack_ids[i_mpi] = (int*)malloc (n_stacks[i_mpi][i_file] * sizeof(int));
 	 i_stack[i_mpi] = 0;
       }
-      // Second pass: Register table stack IDs
-      //printf ("Second pass\n");
-      //rewind (fp);
-      //while (!feof(fp)) {
-      //   long this_fp = ftell(fp);
-      //   fgets (line, LINEBUFSIZE, fp);
-      //   if (strstr (line, "Runtime profile for rank")) {
-      //      countdown_for_table = 4;
-      //   } else if (countdown_for_table > 0) {
-      //      countdown_for_table--;
-      //   } else if (countdown_for_table == 0) {
-      //      if (strstr(line, "-----")) break;
-      //      int n_calls, stack_id;
-      //      double t_excl, t_incl, p_abs, p_cum;
-      //      char *func_name, *caller_name;
-      //  	//printf ("Decompose: %s\n", line);
-      //      decompose_table_line (line, &n_calls, &t_excl, &t_incl, &p_abs, &p_cum,
-      //  		 	  &func_name, &caller_name, &stack_id);
-      //  	//printf ("Decompose DONE\n");
-      //      int i_mpi = mpi_index(func_name);
-      //      if (i_mpi >= 0) {
-      //         this_stack_ids[i_mpi][i_stack[i_mpi]++] = stack_id;
-      //      }
-      //   }
-      //}
 
-      //for (i_mpi = 0; i_mpi < N_MPI_FUNCS; i_mpi++) {
-	 //printf ("Stack IDs for %s: \n", mpi_function_names[i_mpi]);
-	 //for (int ii_stack = 0; ii_stack < n_stacks[i_mpi][i_file]; ii_stack++) {
-	 //   printf ("%d ", this_stack_ids[i_mpi][ii_stack]);
-	 //}
-	 //printf ("\n");
-      //}
-      // Third pass: Parse stack trees and crosscheck #stacks
-
-      //printf ("Third pass\n");
       rewind (fp);
       for (i_mpi = 0; i_mpi < N_MPI_FUNCS; i_mpi++) {
-        //if (n_stacks[i_mpi][i_file] == 0) continue;
-	//printf ("filepos: %ld\n", filepos[i_mpi][i_file]);
         fseek (fp, filepos[i_mpi][i_file] - current_filepos, SEEK_CUR);
         fgets (line, LINEBUFSIZE, fp);
-	//printf ("line: %s\n", line);
         fgets (line, LINEBUFSIZE, fp);
-	//printf ("line: %s\n", line);
         for (int i_stack = 0; i_stack < n_stacks[i_mpi][i_file]; i_stack++) {
             fgets (line, LINEBUFSIZE, fp);
 	    double t, imba;
 	    int n_calls, stack_id;
-	    //printf ("decompose stack line: %s\n", line);
        	    if (decompose_stack_line (line, &t, &n_calls, &imba, &stack_id)) {
 	       all_t[i_mpi][i_file][i_stack] = t;
 	       all_n_calls[i_mpi][i_file][i_stack] = n_calls;
@@ -204,7 +164,6 @@ int main (int argc, char *argv[]) {
 	    }
         }	
         fgets (line, LINEBUFSIZE, fp);
-        //printf ("Check: %s\n", line);
         current_filepos = ftell(fp);
       }
 
@@ -269,7 +228,6 @@ int main (int argc, char *argv[]) {
 	    if (all_t[i_mpi][i_file][i_stack] > 0.0) {
 	       double d = fabs (all_t[i_mpi][i_file][i_stack] - t_avg[i_mpi][i_stack]);
 	       if (d > max_diff[i_mpi][i_stack]) {
-	         //printf ("max_diff for %lf\n", all_t[i_mpi][i_file][i_stack]);
 		 max_diff[i_mpi][i_stack] = d;
 	       }
             }
@@ -277,23 +235,13 @@ int main (int argc, char *argv[]) {
          bool all_okay = true;
 	 for (int i_file = 0; i_file < n_log_files; i_file++) {
 	    if (i_mpi != 0) continue;
-	    //printf ("%lf ", all_t[i_mpi][i_file][3]);
 	    if (all_t[i_mpi][i_file][i_stack] == 0.0) continue;
-	//    printf ("%s(%d,%d): %lf %lf %lf %lf %lf\n", mpi_function_names[i_mpi], i_file, i_stack, all_t[i_mpi][i_file][i_stack],
-	//					    t_avg[i_mpi][i_stack], max_diff[i_mpi][i_stack], max_diff[i_mpi][i_stack] / t_avg[i_mpi][i_stack] * 100, 
-	//				 	    all_imba[i_mpi][i_file][i_stack]);
-	//   printf ("%s(%d,%d): %lf %d %lf %d\n", mpi_function_names[i_mpi], i_file, i_stack,
-	//	   all_t[i_mpi][i_file][i_stack], all_n_calls[i_mpi][i_file][i_stack],
-	//	   all_imba[i_mpi][i_file][i_stack], 0);
 	    all_okay = all_okay && equal_for_n_digits (all_imba[i_mpi][i_file][i_stack], max_diff[i_mpi][i_stack] / t_avg[i_mpi][i_stack] * 100, 2);
-	    //printf ("%s(%d,%d): OKAY\n", mpi_function_names[i_mpi], i_file, i_stack);
 	    }
          if (i_mpi == 0) printf ("\n");
 	 if (i_mpi == 0) printf ("%s(%d): %s\n", mpi_function_names[i_mpi], i_stack, all_okay ? "OKAY" : "NOT OKAY");
 	 }
       }
-
-   
 
    return 0;
 }
