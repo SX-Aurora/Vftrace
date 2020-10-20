@@ -31,12 +31,16 @@ char *mpi_function_names[N_MPI_FUNCS] = {"mpi_barrier", "mpi_bcast", "mpi_reduce
              		                 "mpi_scatterv", "mpi_scatter",
              		                 "mpi_alltoallv", "mpi_alltoallw", "mpi_alltoall"};
 
+/**********************************************************************/
+
 int mpi_index (char *s) {
 	for (int i = 0; i < N_MPI_FUNCS; i++) {
 		if (strstr (s, mpi_function_names[i])) return i;
 	}
 	return -1;
 }
+
+/**********************************************************************/
 
 bool equal_for_n_digits (double val1, double val2, int n_digits) {
 	double max_diff = 1.0;
@@ -45,6 +49,12 @@ bool equal_for_n_digits (double val1, double val2, int n_digits) {
 	}
 	return (fabs(val1 - val2) <= max_diff);
 }
+
+bool equal_within_tolerance (double val1, double val2, double tolerance) {
+	return fabs (val1 / val2 - 1.0) < tolerance;
+}
+
+/**********************************************************************/
 
 void decompose_table_line (char *line, int *n_calls, double *t_excl, double *t_incl, double *p_abs, double *p_cum,
 			   char **func_name, char **caller_name, int *stack_id) {
@@ -80,6 +90,18 @@ bool decompose_stack_line (char *line, double *t, int *n_calls, double *imba, in
    return true;
 }
 
+/**********************************************************************/
+
+int find_stack_index (int *all_ids[N_MPI_FUNCS][64], int i_mpi, int i_file, int search_id, int n_stacks) {
+  int i_stack;
+  for (i_stack = 0; i_stack < n_stacks; i_stack++) {
+     if (all_ids[i_mpi][i_file][i_stack] == search_id) return i_stack;
+  }
+  return -1;
+}
+
+/**********************************************************************/
+
 int main (int argc, char *argv[]) {
    int n_log_files = argc - 1;
    int n_stacks[N_MPI_FUNCS][n_log_files];
@@ -104,7 +126,6 @@ int main (int argc, char *argv[]) {
       char *token;
       int i_mpi;
       // First pass:  Count stacks and register the file positions 
-      //printf ("First pass\n");
       while (!feof(fp)) {
 	 long this_fp = ftell(fp);
          fgets (line, LINEBUFSIZE, fp);
@@ -116,30 +137,30 @@ int main (int argc, char *argv[]) {
 	    token = strtok (NULL, " ");
 	    n_stacks[i_mpi][i_file] = atoi (token);
             if (n_stacks[i_mpi][i_file] > max_n_stacks) max_n_stacks = n_stacks[i_mpi][i_file];
-	    //printf ("this_fp: %ld\n", this_fp);
 	    filepos[i_mpi][i_file] = this_fp;
             all_n_calls[i_mpi][i_file] = (int*) malloc (n_stacks[i_mpi][i_file] * sizeof(int));
 	    all_t[i_mpi][i_file] = (double*) malloc (n_stacks[i_mpi][i_file] * sizeof(double));
 	    all_imba[i_mpi][i_file] = (double*) malloc (n_stacks[i_mpi][i_file] * sizeof(double));
 	    all_stack_ids[i_mpi][i_file] = (int*) malloc (n_stacks[i_mpi][i_file] * sizeof(int));
+	    for (int i = 0; i < n_stacks[i_mpi][i_file]; i++) {
+	       all_n_calls[i_mpi][i_file][i] = 0;
+	       all_t[i_mpi][i_file][i] = 0.0;
+	       all_imba[i_mpi][i_file][i] = 0.0;
+	       all_stack_ids[i_mpi][i_file][i] = -1;
+	    }
 	    n_mpi_read++;
         } else if (strstr (line, "No stack IDs")) {
 	    token = strtok (line, " ");
 	    int i = 0; 
 	    while (i++ < 4) token = strtok (NULL, " ");
 	    i_mpi = mpi_index(token);
-	    //printf ("No stack ids for: %s %d\n", token, i_mpi);
 	    n_stacks[i_mpi][i_file] = 0;
 	    filepos[i_mpi][i_file] = this_fp;
 	    n_mpi_read++;
         }
         if (n_mpi_read == N_MPI_FUNCS) break;
       }   
-      //if (n_mpi_read != N_MPI_FUNCS) {
-      //   printf ("Not all MPI functions have been found in %s\n", argv[i]);
-      //}
       long current_filepos = 0;
-      int countdown_for_table = -1;
       int *this_stack_ids[N_MPI_FUNCS];
       int i_stack[N_MPI_FUNCS];
       for (i_mpi = 0; i_mpi < N_MPI_FUNCS; i_mpi++) {
@@ -169,7 +190,7 @@ int main (int argc, char *argv[]) {
 
    }
 
-   printf ("Check that #stacks match arcoss all ranks\n");
+   printf ("Check that number of stacks matches arcoss all ranks\n");
    for (int i_mpi = 0; i_mpi < N_MPI_FUNCS; i_mpi++) {
       int n_stacks_0 = n_stacks[i_mpi][0];
       bool all_okay = true;
@@ -197,36 +218,35 @@ int main (int argc, char *argv[]) {
 	    }
          }
       }
-      printf ("All stack IDS for %s: ", mpi_function_names[i_mpi]);
-      for (int i = 0; i < n_stack_ids[i_mpi]; i++) {
-	 printf ("%d ", all_stack_ids_for_i_mpi[i_mpi][i]);
-      }
-      printf ("\n");
    }
       
 
+   printf ("Check imbalances\n");
    double *t_avg[N_MPI_FUNCS];
    double *max_diff[N_MPI_FUNCS];
    for (int i_mpi = 0; i_mpi < N_MPI_FUNCS; i_mpi++) {
-      t_avg[i_mpi] = (double*) malloc (n_stacks[i_mpi][0] * sizeof(double));
-      max_diff[i_mpi] = (double*) malloc (n_stacks[i_mpi][0] * sizeof(double));
-      for (int i_stack = 0; i_stack < n_stacks[i_mpi][0]; i_stack++) {
+      int this_n_stacks = n_stack_ids[i_mpi];
+      t_avg[i_mpi] = (double*) malloc (this_n_stacks * sizeof(double));
+      max_diff[i_mpi] = (double*) malloc (this_n_stacks * sizeof(double));
+      for (int i_stack = 0; i_stack < this_n_stacks; i_stack++) {
          t_avg[i_mpi][i_stack] = 0.0;
 	 max_diff[i_mpi][i_stack] = 0.0;
       }
-      for (int i_stack = 0; i_stack < n_stacks[i_mpi][0]; i_stack++) {
+      for (int i_stack = 0; i_stack < this_n_stacks; i_stack++) {
 	 int n = 0;
+	 int this_stack_id = all_stack_ids_for_i_mpi[i_mpi][i_stack];
          for (int i_file = 0; i_file < n_log_files; i_file++) {
-	    if (all_t[i_mpi][i_file][i_stack] > 0.0) {
-               t_avg[i_mpi][i_stack] += all_t[i_mpi][i_file][i_stack];
+	    int this_i_stack = find_stack_index (all_stack_ids, i_mpi, i_file, this_stack_id, this_n_stacks);
+	    if (all_t[i_mpi][i_file][this_i_stack] > 0.0) {
+               t_avg[i_mpi][i_stack] += all_t[i_mpi][i_file][this_i_stack];
 	       n++;
             }
          }
 	 if (n > 0) t_avg[i_mpi][i_stack] /= n;
 	 for (int i_file = 0; i_file < n_log_files; i_file++) {
-            if (i_file == 63 && i_mpi == 0 && i_stack == 3) printf ("t: %lf\n", all_t[i_mpi][i_file][i_stack]);
-	    if (all_t[i_mpi][i_file][i_stack] > 0.0) {
-	       double d = fabs (all_t[i_mpi][i_file][i_stack] - t_avg[i_mpi][i_stack]);
+	    int this_i_stack = find_stack_index (all_stack_ids, i_mpi, i_file, this_stack_id, this_n_stacks);
+	    if (all_t[i_mpi][i_file][this_i_stack] > 0.0) {
+	       double d = fabs (all_t[i_mpi][i_file][this_i_stack] - t_avg[i_mpi][i_stack]);
 	       if (d > max_diff[i_mpi][i_stack]) {
 		 max_diff[i_mpi][i_stack] = d;
 	       }
@@ -234,14 +254,13 @@ int main (int argc, char *argv[]) {
 	 }
          bool all_okay = true;
 	 for (int i_file = 0; i_file < n_log_files; i_file++) {
-	    if (i_mpi != 0) continue;
-	    if (all_t[i_mpi][i_file][i_stack] == 0.0) continue;
-	    all_okay = all_okay && equal_for_n_digits (all_imba[i_mpi][i_file][i_stack], max_diff[i_mpi][i_stack] / t_avg[i_mpi][i_stack] * 100, 2);
+	    int this_i_stack = find_stack_index (all_stack_ids, i_mpi, i_file, this_stack_id, this_n_stacks);
+	    if (this_i_stack < 0) continue;
+	    if (all_t[i_mpi][i_file][this_i_stack] == 0.0) continue;
+	    all_okay = all_okay && equal_within_tolerance (all_imba[i_mpi][i_file][this_i_stack], max_diff[i_mpi][i_stack] / t_avg[i_mpi][i_stack] * 100, 0.05);
 	    }
-         if (i_mpi == 0) printf ("\n");
 	 if (i_mpi == 0) printf ("%s(%d): %s\n", mpi_function_names[i_mpi], i_stack, all_okay ? "OKAY" : "NOT OKAY");
 	 }
       }
-
    return 0;
 }
