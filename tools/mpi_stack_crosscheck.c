@@ -259,7 +259,7 @@ int main (int argc, char *argv[]) {
 	    if (all_t[i_mpi][i_file][this_i_stack] == 0.0) continue;
 	    all_okay = all_okay && equal_within_tolerance (all_imba[i_mpi][i_file][this_i_stack], max_diff[i_mpi][i_stack] / t_avg[i_mpi][i_stack] * 100, 0.05);
 	    }
-	 if (i_mpi == 0) printf ("%s(%d): %s\n", mpi_function_names[i_mpi], i_stack, all_okay ? "OKAY" : "NOT OKAY");
+	 printf ("%s(%d): %s\n", mpi_function_names[i_mpi], i_stack, all_okay ? "OKAY" : "NOT OKAY");
 	 }
       }
    return 0;

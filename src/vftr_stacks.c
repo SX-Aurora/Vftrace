@@ -790,7 +790,7 @@ void vftr_print_stacktree (FILE *fp, stack_leaf_t *leaf, int n_spaces, double *i
 			for (int i = n_spaces + strlen(vftr_gStackinfo[leaf->stack_id].name) + 2; i < n_spaces_max; i++) {
 			   fprintf (fp, " ");
 			}
-			fprintf (fp, "   %*.5f   %*d   %*.5f   %*d\n",
+			fprintf (fp, "   %*.6f   %*d   %*.2f   %*d\n",
 				 fmt_t, (double)vftr_func_table[leaf->func_id]->prof_current.timeIncl * 1e-6,
 				 fmt_calls, vftr_func_table[leaf->func_id]->prof_current.calls,
 				 fmt_imba, imbalances[leaf->func_id],
@@ -854,9 +854,13 @@ void vftr_print_function_stack (FILE *fp, int rank, char *func_name,
 	double imba_max = 0.0;
 	vftr_scan_for_maximum_values (stack_tree->origin, 0, imbalances,
 				         &n_spaces_max, &t_max, &n_calls_max, &imba_max);	
-	int fmt_t = (vftr_count_digits_double(t_max) + 6) > strlen(stacktree_headers[0]) ? vftr_count_digits_double(t_max) + 6: strlen(stacktree_headers[0]);;
+	// We have six digits behind the comma for time values. More do not make sense since we have a resolution
+	// of microseconds.
+	// We add this value of 6 to the number of digits in front of the comma, plus one for the comma itself.
+	int fmt_t = (vftr_count_digits_double(t_max) + 7) > strlen(stacktree_headers[0]) ? vftr_count_digits_double(t_max) + 7: strlen(stacktree_headers[0]);;
 	int fmt_calls = vftr_count_digits(n_calls_max) > strlen(stacktree_headers[1]) ? vftr_count_digits(n_calls_max) : strlen(stacktree_headers[1]);;
-	int fmt_imba = (vftr_count_digits_double(imba_max) + 6) > strlen(stacktree_headers[2]) ? vftr_count_digits_double(imba_max) + 6: strlen(stacktree_headers[2]);
+	// For percentage values, two decimal points are enough.
+	int fmt_imba = (vftr_count_digits_double(imba_max) + 3) > strlen(stacktree_headers[2]) ? vftr_count_digits_double(imba_max) + 3: strlen(stacktree_headers[2]);
 	int fmt_stackid = vftr_count_digits(vftr_gStackscount) > strlen(stacktree_headers[3]) ?
 			 vftr_count_digits(vftr_gStackscount) : strlen(stacktree_headers[3]);
 	vftr_print_stacktree_header (fp, n_final_stack_ids, func_name, n_spaces_max, fmt_calls, fmt_t, fmt_imba, fmt_stackid);
