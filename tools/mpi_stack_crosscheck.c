@@ -60,23 +60,45 @@ bool equal_within_tolerance (double val1, double val2, double tolerance) {
 
 /**********************************************************************/
 
+int decompose_mpi_size (char *line) {
+   char *token;
+   token = strtok (line, " ");	
+   token = strtok (NULL, " ");
+   token = strtok (NULL, " ");
+   return atoi(token); 
+}
+
+void decompose_stack_leaf_header (char *line, int *i_mpi, int *n_stacks) {
+   char *token;
+   int i = 0;
+   token = strtok (line, " "); 
+   while (i++ < 4) token = strtok (NULL, " ");
+   *i_mpi = mpi_index(token); 
+   token = strtok (NULL, " ");
+   if (!token) {
+      *n_stacks = 0;
+   } else {
+      *n_stacks = atoi(token);
+   }
+}
+
 void decompose_table_line (char *line, int *n_calls, double *t_excl, double *t_incl, double *p_abs, double *p_cum,
 			   char **func_name, char **caller_name, int *stack_id) {
-	char *token;
-	token = strtok (line, " ");
-	*n_calls = atoi(token);
-	token = strtok (NULL, " ");
-	*t_excl = atof (token);
-	token = strtok (NULL, " ");
-	*t_incl = atof (token);
-	token = strtok (NULL, " ");
-	*p_abs = atof (token);
-	token = strtok (NULL, " ");
-	*p_cum = atof (token);
-	*func_name = strtok (NULL, " ");
-	*caller_name = strtok (NULL, " ");
-	token = strtok (NULL, " ");	
-	*stack_id = atoi(token);
+   char *token;
+   token = strtok (line, " ");
+   *n_calls = atoi(token);
+   token = strtok (NULL, " ");
+   *t_excl = atof (token);
+   token = strtok (NULL, " ");
+   *t_incl = atof (token);
+   token = strtok (NULL, " ");
+   *p_abs = atof (token);
+   token = strtok (NULL, " ");
+   *p_cum = atof (token);
+   *func_name = strtok (NULL, " ");
+   *caller_name = strtok (NULL, " ");
+   token = strtok (NULL, " ");	
+   *stack_id = atoi(token);
 }
 
 bool decompose_stack_line (char *line, double *t, int *n_calls, double *imba, int *stack_id) {
@@ -135,7 +157,6 @@ int main (int argc, char *argv[]) {
    double t_tot[N_MPI_FUNCS][n_log_files];
    for (int i = 1; i < argc; i++) {
       FILE *fp = fopen (argv[i], "r");
-      int max_n_stacks = 0;
       int n_mpi_read = 0;
       if (!fp) {
          printf ("Error: Could not open %s\n", argv[i]);
@@ -143,26 +164,23 @@ int main (int argc, char *argv[]) {
       }
       int i_file = i - 1;
       char line[LINEBUFSIZE];
-      char *token;
       int i_mpi;
       // First pass:  Count stacks and register the file positions 
       while (!feof(fp)) {
+	 int n;
 	 long this_fp = ftell(fp);
          fgets (line, LINEBUFSIZE, fp);
+	 bool has_subsequent_leaves = strstr(line, "Function stacks leading to");
+         bool has_no_stack_ids = strstr(line, "No stack IDs");
 	 if (strstr (line, "MPI size")) {
-	    token = strtok (line, " ");	
-	    token = strtok (NULL, " ");
-	    token = strtok (NULL, " ");
-	    mpi_size = atoi(token);
-         } else if (strstr (line, "Function stacks leading to")) {
-            token = strtok (line, " "); 
-	    int i = 0;
-	    while (i++ < 4) token = strtok (NULL, " ");
-	    i_mpi = mpi_index(token); 
-	    token = strtok (NULL, " ");
-	    n_stacks[i_mpi][i_file] = atoi (token);
-            if (n_stacks[i_mpi][i_file] > max_n_stacks) max_n_stacks = n_stacks[i_mpi][i_file];
+	    mpi_size = decompose_mpi_size (line);
+	 } else if (has_subsequent_leaves || has_no_stack_ids) {
+	    decompose_stack_leaf_header (line, &i_mpi, &n);
+	    n_stacks[i_mpi][i_file] = n;
 	    filepos[i_mpi][i_file] = this_fp;
+	    n_mpi_read++;
+         }
+         if (has_subsequent_leaves) {
             all_n_calls[i_mpi][i_file] = (int*) malloc (n_stacks[i_mpi][i_file] * sizeof(int));
 	    all_t[i_mpi][i_file] = (double*) malloc (n_stacks[i_mpi][i_file] * sizeof(double));
 	    all_imba[i_mpi][i_file] = (double*) malloc (n_stacks[i_mpi][i_file] * sizeof(double));
@@ -173,15 +191,6 @@ int main (int argc, char *argv[]) {
 	       all_imba[i_mpi][i_file][i] = 0.0;
 	       all_stack_ids[i_mpi][i_file][i] = -1;
 	    }
-	    n_mpi_read++;
-        } else if (strstr (line, "No stack IDs")) {
-	    token = strtok (line, " ");
-	    int i = 0; 
-	    while (i++ < 4) token = strtok (NULL, " ");
-	    i_mpi = mpi_index(token);
-	    n_stacks[i_mpi][i_file] = 0;
-	    filepos[i_mpi][i_file] = this_fp;
-	    n_mpi_read++;
         }
         if (n_mpi_read == N_MPI_FUNCS) break;
       }   
@@ -212,10 +221,7 @@ int main (int argc, char *argv[]) {
         fgets (line, LINEBUFSIZE, fp);
 	if (n_stacks[i_mpi][i_file] > 0) {
 	 	int dummy;
-		double this_t_tot;
-		//decompose_final_line (line, &dummy, &(t_tot[i_mpi][i_file]));
-		decompose_final_line (line, &dummy, &this_t_tot);
-		t_tot[i_mpi][i_file] = this_t_tot;
+		decompose_final_line (line, &dummy, &(t_tot[i_mpi][i_file]));
 	}
         current_filepos = ftell(fp);
       }
