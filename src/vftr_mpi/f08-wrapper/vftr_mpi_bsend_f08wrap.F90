@@ -32,7 +32,7 @@ SUBROUTINE MPI_Bsend_f08(buf, count, datatype, dest, tag, comm, error)
    INTEGER, OPTIONAL, INTENT(OUT) :: error
    INTEGER :: tmperror
 
-   CALL vftr_MPI_Bsend_F(buf, count, datatype%MPI_VAL, dest, tag, comm%MPI_VAL, error)
+   CALL vftr_MPI_Bsend_F(buf, count, datatype%MPI_VAL, dest, tag, comm%MPI_VAL, tmperror)
 
    IF (PRESENT(error)) error = tmperror
 
