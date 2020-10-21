@@ -18,6 +18,10 @@ typedef struct ProfileData {
    long long flops, *event_count, *events[2], ecreads;
    //
    int pfcount, ic;
+#ifdef _MPI
+   long mpi_tot_send_bytes;
+   long mpi_tot_recv_bytes;
+#endif
 } profdata_t;
 
 typedef struct Function {

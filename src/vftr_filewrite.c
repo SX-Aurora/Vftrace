@@ -222,6 +222,20 @@ void vftr_write_to_vfd(long long runtime, unsigned long long cycles, int stack_i
 /**********************************************************************/
 
 #ifdef _MPI
+// store some message information for use in the log file
+void vftr_log_message_info(vftr_direction dir, int count, int type_idx,
+                           int type_size, int rank, int tag,
+                           long long tstart, long long tend) {
+   // vftr_stack is the current function stack pointer
+   vftr_fstack;
+
+   if (dir == send) {
+      vftr_fstack->prof_current.mpi_tot_send_bytes += count * type_size;
+   } else {
+      vftr_fstack->prof_current.mpi_tot_recv_bytes += count * type_size;
+   }
+}
+
 // Store the message information in a vfd file
 void vftr_store_message_info(vftr_direction dir, int count, int type_idx,
                              int type_size, int rank, int tag,
@@ -545,6 +559,8 @@ typedef struct display_function {
     int n_func_indices;
     int *stack_indices;
     int *func_indices;
+    double mpi_tot_send_bytes;
+    double mpi_tot_recv_bytes;
 } display_function_t;
 
 
@@ -591,10 +607,14 @@ void evaluate_display_function (char *func_name, display_function_t **display_fu
     (*display_func)->this_mpi_time = 0;
     (*display_func)->this_sync_time = 0;
     (*display_func)->n_calls = 0;
+    (*display_func)->mpi_tot_send_bytes = 0;
+    (*display_func)->mpi_tot_recv_bytes = 0;
     for (int i = 0; i < n_func_indices; i++) {
 	(*display_func)->this_mpi_time += vftr_func_table[func_indices[i]]->prof_current.timeIncl;
 	if (n_func_indices_sync > 0) (*display_func)->this_sync_time += vftr_func_table[func_indices_sync[i]]->prof_current.timeIncl;
 	(*display_func)->n_calls += vftr_func_table[func_indices[i]]->prof_current.calls;
+	(*display_func)->mpi_tot_send_bytes += vftr_func_table[func_indices[i]]->prof_current.mpi_tot_send_bytes;
+	(*display_func)->mpi_tot_recv_bytes += vftr_func_table[func_indices[i]]->prof_current.mpi_tot_recv_bytes;
     }
     long long all_times [vftr_mpisize], all_times_sync [vftr_mpisize];
     PMPI_Allgather (&(*display_func)->this_mpi_time, 1, MPI_LONG_LONG_INT, all_times,
@@ -762,14 +782,17 @@ void vftr_print_function_statistics (FILE *pout, bool display_sync_time,
     // requiring 8 characters. This value is added to the column width when 
     // comparing to the default column widths.
     const char *headers[8] = {"function", "%MPI", "n_calls",
+                              "total bytes send", "total bytes recv",
 			      "avg. time [s]", "min. time [s]", "max. time [s]",
 			      "imbalance", "This rank [s]"};
-    enum column_ids {FUNC, MPI, CALLS, T_AVG, T_MIN, T_MAX, IMBA, THIS_T};
+    enum column_ids {FUNC, MPI, CALLS, TOT_SEND_BYTES, TOT_RECV_BYTES, T_AVG, T_MIN, T_MAX, IMBA, THIS_T};
 
     // Note that there is no treatment of the width of the %MPI column, since the value
     // inside can never exceed 99.99%. Therefore, it has a fixed length of 5.
     int n_func_0 = strlen(headers[FUNC]);
     int n_calls_0 = strlen(headers[CALLS]);
+    int n_tot_send_bytes = strlen(headers[TOT_SEND_BYTES]) - 4;
+    int n_tot_recv_bytes = strlen(headers[TOT_RECV_BYTES]) - 4;
     int n_t_avg_0 = strlen (headers[T_AVG]);
     int n_t_min_0 = strlen (headers[T_MIN]);
     int n_t_max_0 = strlen (headers[T_MAX]);
@@ -812,8 +835,9 @@ void vftr_print_function_statistics (FILE *pout, bool display_sync_time,
     // by another separator line.
     for (int i = 0; i < n_spaces_tot; i++) fprintf (pout, "-");
     fprintf (pout, "\n");
-    fprintf (pout, "| %*s | %*s | %*s | %*s | %*s | %*s | %*s | %*s |\n",
+    fprintf (pout, "| %*s | %*s | %*s | %*s | %*s | %*s | %*s | %*s | %*s | %*s |\n",
 	     n_func, headers[FUNC], 5, headers[MPI], n_calls, headers[CALLS],
+             n_tot_send_bytes, headers[TOT_SEND_BYTES], n_tot_recv_bytes, headers[TOT_RECV_BYTES],
 	     n_t_avg, headers[T_AVG],
 	     n_t_min, headers[T_MIN], n_t_max, headers[T_MAX],
 	     n_imba, headers[IMBA], n_t, headers[THIS_T]);
@@ -822,16 +846,24 @@ void vftr_print_function_statistics (FILE *pout, bool display_sync_time,
 
     // Print all the display functions, but omit those without any calls.
     for (int i = 0; i < n_display_functions; i++) {
+
+       // prepare the message size output
+       char *send_unit_str;
+       char *recv_unit_str;
+       vftr_memory_unit(&(display_functions[i]->mpi_tot_send_bytes), &send_unit_str);
+       vftr_memory_unit(&(display_functions[i]->mpi_tot_recv_bytes), &recv_unit_str);
 	   
        if (display_functions[i]->n_calls > 0) {
 	
 	if (display_functions[i]->t_sync_avg > 0) {
 	  // There are synchronization times for this function. We make space for the additional
 	  // field "(xx.xx%)". Note that we need to subtract add_sync_spaces from the column widths.
-          fprintf (pout, "| %*s | %5.2f | %*d | %*.5f(%5.2f%%) | %*.5f(%5.2f%%) | %*.5f(%5.2f%%) | %*.5f | %*.5f(%5.2f%%) |\n",
+          fprintf (pout, "| %*s | %5.2f | %*d | %*.2f %s | %*.2f %s | %*.5f(%5.2f%%) | %*.5f(%5.2f%%) | %*.5f(%5.2f%%) | %*.5f | %*.5f(%5.2f%%) |\n",
 		   n_func, display_functions[i]->func_name,
  	  	   (display_functions[i]->this_mpi_time * 1e-6) / total_time * 100,
 		   n_calls, display_functions[i]->n_calls,
+                   n_tot_send_bytes, display_functions[i]->mpi_tot_send_bytes, send_unit_str,
+                   n_tot_recv_bytes, display_functions[i]->mpi_tot_recv_bytes, recv_unit_str,
 		   n_t_avg - add_sync_spaces, display_functions[i]->t_avg * 1e-6, (double)display_functions[i]->t_sync_avg / (double)display_functions[i]->t_avg * 100,
 		   n_t_min - add_sync_spaces, display_functions[i]->t_min * 1e-6, (double)display_functions[i]->t_sync_min / (double)display_functions[i]->t_min * 100,
 		   n_t_max - add_sync_spaces, display_functions[i]->t_max * 1e-6, (double)display_functions[i]->t_sync_max / (double)display_functions[i]->t_max * 100,
@@ -1278,6 +1310,36 @@ int vftr_filewrite_test_2 (FILE *fp_in, FILE *fp_out) {
 #endif
 	vftr_print_profile (fp_out, &n, vftr_test_runtime);		
 	return 0;
+}
+
+vftr_memory_unit(double *value, char **unit) {
+
+   int unit_idx = 0;
+   while (*value > 1024.0) {
+      unit_idx++;
+      *value /= 1024.0;
+   }
+
+   switch (unit_idx) {
+      case 0:
+         *unit = "KiB";
+         break;
+      case 1:
+         *unit = "MiB";
+         break;
+      case 2:
+         *unit = "GiB";
+         break;
+      case 3:
+         *unit = "TiB";
+         break;
+      case 4:
+         *unit = "PiB";
+         break;
+      default:
+         *unit = "   ";
+         break;
+   }
 }
 
 /**********************************************************************/
