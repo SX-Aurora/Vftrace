@@ -878,20 +878,7 @@ void vftr_print_function_statistics (FILE *pout, bool display_sync_time,
 	//
 	qsort ((void*)display_functions, (size_t)n_display_functions,
 	       sizeof (display_function_t *), vftr_compare_display_functions_iorig);
-	for (int i = 0; i < vftr_mpisize; i++) {
-		if (vftr_mpirank == 0 && i == 0) {
-			printf ("display functions for rank 0: \n");
-			for (int j = 0; j < n_display_functions; j++) {
-				printf ("%s\n", display_functions[j]->func_name);
-			}
-		} else if (vftr_mpirank == 63 && i == 63) {
-			printf ("display functions for rank 0: \n");
-			for (int j = 0; j < n_display_functions; j++) {
-				printf ("%s\n", display_functions[j]->func_name);
-			}
-		}
-		PMPI_Barrier (MPI_COMM_WORLD);
-	}
+
   	for (int i = 0; i < n_display_functions; i++) {
   		vftr_print_function_stack (pout, vftr_mpirank, display_functions[i]->func_name, 
 				      display_functions[i]->n_stack_indices,
