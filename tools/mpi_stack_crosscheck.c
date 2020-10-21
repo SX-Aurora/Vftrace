@@ -22,6 +22,7 @@
 #include <stdbool.h>
 #include <math.h>
 #include <float.h>
+#include <ctype.h>
 
 #define N_MPI_FUNCS 13
 #define LINEBUFSIZE 256
@@ -34,8 +35,24 @@ char *mpi_function_names[N_MPI_FUNCS] = {"mpi_barrier", "mpi_bcast", "mpi_reduce
 /**********************************************************************/
 
 int mpi_index (char *s) {
+	char *tmp = s;
+	bool before = true;
+        while (*tmp != '\0') {
+	   if (!isalpha(*tmp) && !isdigit(*tmp) && *tmp != '_') {
+	      if (before) {
+	         s = tmp;
+	      } else {
+		 *tmp = '\0';
+	      }
+           } else {
+	      before = false;
+	   }
+	   tmp++;
+	}
 	for (int i = 0; i < N_MPI_FUNCS; i++) {
-		if (strstr (s, mpi_function_names[i])) return i;
+		if (strstr (s, mpi_function_names[i])) {
+			return i;
+		}
 	}
 	return -1;
 }
