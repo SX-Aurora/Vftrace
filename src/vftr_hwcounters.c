@@ -135,7 +135,7 @@ void vftr_start_hwcounters () {
     int diag;
 
     for (int i = 0; e; i++, e = e->next) {
-           if ((diag = Pvftr_API_add_event(papi_event_set, e->id)) != PAPI_OK) {
+           if ((diag = PAPI_add_event(papi_event_set, e->id)) != PAPI_OK) {
 	       PAPI_perror (errmsg);
 	       fprintf(vftr_log, "vftr_start_hwcounters - "
                                  "PAPI_add_event error: %s when adding %s\n",
