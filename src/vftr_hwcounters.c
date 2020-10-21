@@ -39,8 +39,8 @@
 
 int vftr_find_event_number (char *);
 
-evtcounter_t *first_counter = NULL;
-evtcounter_t *next_counter = NULL;
+evtcounter_t *vftr_first_counter = NULL;
+evtcounter_t *vftr_next_counter = NULL;
 
 int vftr_n_hw_obs;
 bool vftr_events_enabled;
@@ -69,10 +69,10 @@ void vftr_new_counter (char *name, int id, int rank) {
     evc->id = id;
     evc->rank = rank;
 
-    if (!first_counter) {
-	first_counter = next_counter = evc;
+    if (!vftr_first_counter) {
+	vftr_first_counter = vftr_next_counter = evc;
     } else {
-	next_counter = next_counter->next = evc;
+	vftr_next_counter = vftr_next_counter->next = evc;
     }
 
     vftr_n_hw_obs++;
@@ -131,11 +131,11 @@ void vftr_start_hwcounters () {
     if (err_no_hwc_support) return;
 
     char errmsg[256];
-    evtcounter_t *e;
+    evtcounter_t *e = vftr_first_counter;
     int diag;
 
-    for (int i = 0, e = first_counter; e; i++, e = e->next) {
-           if ((diag = PAPI_add_event(papi_event_set, e->id)) != PAPI_OK) {
+    for (int i = 0; e; i++, e = e->next) {
+           if ((diag = Pvftr_API_add_event(papi_event_set, e->id)) != PAPI_OK) {
 	       PAPI_perror (errmsg);
 	       fprintf(vftr_log, "vftr_start_hwcounters - "
                                  "PAPI_add_event error: %s when adding %s\n",
@@ -207,8 +207,8 @@ void vftr_read_counters_veperf (long long *event) {
     for (int i = 0; i < scenario_expr_n_vars; i++) {
 	scenario_expr_counter_values[i] = vftr_echwc[i];
     }
-    for (i = j  = 0, evc = first_counter; evc; i++, evc = evc->next) {
-        evc->count = vftr_echwc[j++];
+    for (i = j  = 0, evc = vftr_first_counter; evc; i++, evc = evc->next) {
+        evc->count = vftr_evftr_chwc[j++];
         event[i] = evc->count;
     }
 
@@ -228,12 +228,12 @@ void vftr_read_counters_papi (long long *event) {
                 fprintf(vftr_log, "error: PAPI_read returned %d\n", diag);
     	}
         }
-        for (j = 0,evc = first_counter; evc; evc = evc->next) {
-            evc->count = vftr_echwc[j++];
+        for (j = 0,evc = vftr_first_counter; evc; evc = evc->next) {
+            evc->count = vftr_vftr_echwc[j++];
         }
     }
-    for (i = 0,evc = first_counter; evc; i++, evc = evc->next) {
-        event[i] = evc->count;
+    for (i = 0,evc = vftr_first_counter; evc; i++, evc = evc->next) {
+        event[i] = evvftr_c->count;
     }
 }
 #endif
@@ -272,7 +272,7 @@ int vftr_stop_hwc () {
 /**********************************************************************/
 
 evtcounter_t  *vftr_get_counters( void ) {
-    return first_counter;
+    return vftr_first_counter;
 }
 
 /**********************************************************************/
