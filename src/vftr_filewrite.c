@@ -791,8 +791,8 @@ void vftr_print_function_statistics (FILE *pout, bool display_sync_time,
     // inside can never exceed 99.99%. Therefore, it has a fixed length of 5.
     int n_func_0 = strlen(headers[FUNC]);
     int n_calls_0 = strlen(headers[CALLS]);
-    int n_tot_send_bytes = strlen(headers[TOT_SEND_BYTES]) - 4;
-    int n_tot_recv_bytes = strlen(headers[TOT_RECV_BYTES]) - 4;
+    int n_tot_send_bytes = strlen(headers[TOT_SEND_BYTES]);
+    int n_tot_recv_bytes = strlen(headers[TOT_RECV_BYTES]);
     int n_t_avg_0 = strlen (headers[T_AVG]);
     int n_t_min_0 = strlen (headers[T_MIN]);
     int n_t_max_0 = strlen (headers[T_MAX]);
@@ -826,17 +826,17 @@ void vftr_print_function_statistics (FILE *pout, bool display_sync_time,
     }
 
     // We compute the total width of the MPI table to print separator lines.
-    // There are the widths computed above, as well as the width of the MPI field, 
-    // which is 5. Additionally, there are 9 "|" characters and 16 spaces around them.
-    // So in total, we have a fixed summand of 5 + 9 + 16 = 30.
-    int n_spaces_tot = n_func + n_calls + n_t_avg + n_t_min + n_t_max + n_imba + n_t + 30;
+    // There are the widths computed above, as well as the width of the MPI field (6), 
+    // which is 5. Additionally, there are 11 "|" characters and 20 spaces around them.
+    // So in total, we have a fixed summand of 11 + 20 = 31.
+    int n_spaces_tot = n_func + 6 + n_calls + n_tot_send_bytes + n_tot_recv_bytes + n_t_avg + n_t_min + n_t_max + n_imba + n_t + 31;
 
     // Print a separator line ("----------"), followed by the table header, followed
     // by another separator line.
     for (int i = 0; i < n_spaces_tot; i++) fprintf (pout, "-");
     fprintf (pout, "\n");
     fprintf (pout, "| %*s | %*s | %*s | %*s | %*s | %*s | %*s | %*s | %*s | %*s |\n",
-	     n_func, headers[FUNC], 5, headers[MPI], n_calls, headers[CALLS],
+	     n_func, headers[FUNC], 6, headers[MPI], n_calls, headers[CALLS],
              n_tot_send_bytes, headers[TOT_SEND_BYTES], n_tot_recv_bytes, headers[TOT_RECV_BYTES],
 	     n_t_avg, headers[T_AVG],
 	     n_t_min, headers[T_MIN], n_t_max, headers[T_MAX],
@@ -858,12 +858,12 @@ void vftr_print_function_statistics (FILE *pout, bool display_sync_time,
 	if (display_functions[i]->t_sync_avg > 0) {
 	  // There are synchronization times for this function. We make space for the additional
 	  // field "(xx.xx%)". Note that we need to subtract add_sync_spaces from the column widths.
-          fprintf (pout, "| %*s | %5.2f | %*d | %*.2f %s | %*.2f %s | %*.5f(%5.2f%%) | %*.5f(%5.2f%%) | %*.5f(%5.2f%%) | %*.5f | %*.5f(%5.2f%%) |\n",
+          fprintf (pout, "| %*s | %6.2f | %*d | %*.2f %s | %*.2f %s | %*.5f(%5.2f%%) | %*.5f(%5.2f%%) | %*.5f(%5.2f%%) | %*.5f | %*.5f(%5.2f%%) |\n",
 		   n_func, display_functions[i]->func_name,
  	  	   (display_functions[i]->this_mpi_time * 1e-6) / total_time * 100,
 		   n_calls, display_functions[i]->n_calls,
-                   n_tot_send_bytes, display_functions[i]->mpi_tot_send_bytes, send_unit_str,
-                   n_tot_recv_bytes, display_functions[i]->mpi_tot_recv_bytes, recv_unit_str,
+                   n_tot_send_bytes-4, display_functions[i]->mpi_tot_send_bytes, send_unit_str,
+                   n_tot_recv_bytes-4, display_functions[i]->mpi_tot_recv_bytes, recv_unit_str,
 		   n_t_avg - add_sync_spaces, display_functions[i]->t_avg * 1e-6, (double)display_functions[i]->t_sync_avg / (double)display_functions[i]->t_avg * 100,
 		   n_t_min - add_sync_spaces, display_functions[i]->t_min * 1e-6, (double)display_functions[i]->t_sync_min / (double)display_functions[i]->t_min * 100,
 		   n_t_max - add_sync_spaces, display_functions[i]->t_max * 1e-6, (double)display_functions[i]->t_sync_max / (double)display_functions[i]->t_max * 100,
@@ -873,10 +873,12 @@ void vftr_print_function_statistics (FILE *pout, bool display_sync_time,
 	   // This function does not have synchronization times, but others have. We take into
 	   // account the synchronization fields "(xx.xx%)" of other functions by adding
 	   // add_sync_spaces number of spaces. 
-	   fprintf (pout, "| %*s | %5.2f | %*d | %*.5f         | %*.5f         | %*.5f         | %*.5f | %*.5f         |\n",
+	   fprintf (pout, "| %*s | %5.2f | %*d | %*.2f %s | %*.2f %s | %*.5f         | %*.5f         | %*.5f         | %*.5f | %*.5f         |\n",
 		    n_func, display_functions[i]->func_name,
 		    (display_functions[i]->this_mpi_time * 1e-6) / total_time * 100,
 		    n_calls, display_functions[i]->n_calls,
+                    n_tot_send_bytes-4, display_functions[i]->mpi_tot_send_bytes, send_unit_str,
+                    n_tot_recv_bytes-4, display_functions[i]->mpi_tot_recv_bytes, recv_unit_str,
  	            n_t_avg - add_sync_spaces, display_functions[i]->t_avg * 1e-6,
 		    n_t_min - add_sync_spaces, display_functions[i]->t_min * 1e-6,
 		    n_t_max - add_sync_spaces, display_functions[i]->t_max * 1e-6,
@@ -885,10 +887,12 @@ void vftr_print_function_statistics (FILE *pout, bool display_sync_time,
 
 	} else {
            // No display function has synchronization times, so only the absolute times are printed.
-	   fprintf (pout, "| %*s | %5.2f | %*d | %*.5f | %*.5f | %*.5f | %*.5f | %*.5f |\n",
+	   fprintf (pout, "| %*s | %5.2f | %*d | %*.2f %s | %*.2f %s | %*.5f | %*.5f | %*.5f | %*.5f | %*.5f |\n",
 		    n_func, display_functions[i]->func_name,
 		    (display_functions[i]->this_mpi_time * 1e-6) / total_time * 100,
 		    n_calls, display_functions[i]->n_calls,
+                    n_tot_send_bytes-4, display_functions[i]->mpi_tot_send_bytes, send_unit_str,
+                    n_tot_recv_bytes-4, display_functions[i]->mpi_tot_recv_bytes, recv_unit_str,
  	            n_t_avg, display_functions[i]->t_avg * 1e-6,
 		    n_t_min, display_functions[i]->t_min * 1e-6,
 		    n_t_max, display_functions[i]->t_max * 1e-6,
@@ -1312,8 +1316,7 @@ int vftr_filewrite_test_2 (FILE *fp_in, FILE *fp_out) {
 	return 0;
 }
 
-vftr_memory_unit(double *value, char **unit) {
-
+void vftr_memory_unit(double *value, char **unit) {
    int unit_idx = 0;
    while (*value > 1024.0) {
       unit_idx++;
@@ -1322,22 +1325,25 @@ vftr_memory_unit(double *value, char **unit) {
 
    switch (unit_idx) {
       case 0:
-         *unit = "KiB";
+         *unit = "  B";
          break;
       case 1:
-         *unit = "MiB";
+         *unit = "KiB";
          break;
       case 2:
-         *unit = "GiB";
+         *unit = "MiB";
          break;
       case 3:
-         *unit = "TiB";
+         *unit = "GiB";
          break;
       case 4:
+         *unit = "TiB";
+         break;
+      case 5:
          *unit = "PiB";
          break;
       default:
-         *unit = "   ";
+         *unit = "  B";
          break;
    }
 }
