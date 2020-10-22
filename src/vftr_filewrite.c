@@ -1316,6 +1316,8 @@ int vftr_filewrite_test_2 (FILE *fp_in, FILE *fp_out) {
 	return 0;
 }
 
+/**********************************************************************/
+
 void vftr_memory_unit(double *value, char **unit) {
    int unit_idx = 0;
    while (*value > 1024.0) {
