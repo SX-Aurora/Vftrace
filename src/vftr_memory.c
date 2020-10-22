@@ -16,8 +16,11 @@
    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
+#include <stdbool.h>
+#include <stdio.h>
 #include <sys/time.h>
 #include <sys/resource.h>
+#include <unistd.h>
 
 // returns the processes current maximum resident set size
 long vftr_current_memory_usage() {
@@ -39,7 +42,8 @@ long vftr_current_memory_usage() {
    long resident = 0;
 
    fscanf(fileptr,"%ld %ld", &size, &resident);
-   fclose(f)
+   fclose(fileptr);
+
    return (double) resident * pagesize;
 #endif
 }
