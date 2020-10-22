@@ -782,7 +782,7 @@ void vftr_print_function_statistics (FILE *pout, bool display_sync_time,
     // requiring 8 characters. This value is added to the column width when 
     // comparing to the default column widths.
     const char *headers[10] = {"function", "%MPI", "n_calls",
-                              "total bytes send", "total bytes recv",
+                              "Total send ", "Total recv.",
 			      "avg. time [s]", "min. time [s]", "max. time [s]",
 			      "imbalance", "This rank [s]"};
     enum column_ids {FUNC, MPI, CALLS, TOT_SEND_BYTES, TOT_RECV_BYTES, T_AVG, T_MIN, T_MAX, IMBA, THIS_T};
@@ -826,8 +826,8 @@ void vftr_print_function_statistics (FILE *pout, bool display_sync_time,
     }
 
     // We compute the total width of the MPI table to print separator lines.
-    // There are the widths computed above, as well as the width of the MPI field (6), 
-    // which is 5. Additionally, there are 11 "|" characters and 20 spaces around them.
+    // There are the widths computed above, as well as the width of the MPI field,
+    // which is 6. Additionally, there are 11 "|" characters and 20 spaces around them.
     // So in total, we have a fixed summand of 11 + 20 = 31.
     int n_spaces_tot = n_func + 6 + n_calls + n_tot_send_bytes + n_tot_recv_bytes + n_t_avg + n_t_min + n_t_max + n_imba + n_t + 31;
 
