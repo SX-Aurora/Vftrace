@@ -769,7 +769,7 @@ void vftr_print_function_statistics (FILE *pout, bool display_sync_time,
     // the maximum number of digits or characters required to display the
     // corresponding column. 
     int n_func, n_calls, n_t_avg, n_t_min, n_t_max, n_imba, n_t;
-    vftr_get_display_width (display_functions, n_display_functions, 3,
+    vftr_get_display_width (display_functions, n_display_functions, 5,
 	&n_func, &n_calls, &n_t_avg, &n_t_min, &n_t_max, &n_imba, &n_t);
 
     // The following headers appear in the function table but also define
@@ -873,7 +873,7 @@ void vftr_print_function_statistics (FILE *pout, bool display_sync_time,
 	   // This function does not have synchronization times, but others have. We take into
 	   // account the synchronization fields "(xx.xx%)" of other functions by adding
 	   // add_sync_spaces number of spaces. 
-	   fprintf (pout, "| %*s | %5.2f | %*d | %*.2f %s | %*.2f %s | %*.5f         | %*.5f         | %*.5f         | %*.5f | %*.5f         |\n",
+	   fprintf (pout, "| %*s | %6.2f | %*d | %*.2f %s | %*.2f %s | %*.5f         | %*.5f         | %*.5f         | %*.5f | %*.5f         |\n",
 		    n_func, display_functions[i]->func_name,
 		    (display_functions[i]->this_mpi_time * 1e-6) / total_time * 100,
 		    n_calls, display_functions[i]->n_calls,
@@ -887,7 +887,7 @@ void vftr_print_function_statistics (FILE *pout, bool display_sync_time,
 
 	} else {
            // No display function has synchronization times, so only the absolute times are printed.
-	   fprintf (pout, "| %*s | %5.2f | %*d | %*.2f %s | %*.2f %s | %*.5f | %*.5f | %*.5f | %*.5f | %*.5f |\n",
+	   fprintf (pout, "| %*s | %6.2f | %*d | %*.2f %s | %*.2f %s | %*.5f | %*.5f | %*.5f | %*.5f | %*.5f |\n",
 		    n_func, display_functions[i]->func_name,
 		    (display_functions[i]->this_mpi_time * 1e-6) / total_time * 100,
 		    n_calls, display_functions[i]->n_calls,
