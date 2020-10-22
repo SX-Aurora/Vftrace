@@ -781,7 +781,7 @@ void vftr_print_function_statistics (FILE *pout, bool display_sync_time,
     // It is printed directly behind the associated absolute time in brackets "(%...)",
     // requiring 8 characters. This value is added to the column width when 
     // comparing to the default column widths.
-    const char *headers[8] = {"function", "%MPI", "n_calls",
+    const char *headers[10] = {"function", "%MPI", "n_calls",
                               "total bytes send", "total bytes recv",
 			      "avg. time [s]", "min. time [s]", "max. time [s]",
 			      "imbalance", "This rank [s]"};
