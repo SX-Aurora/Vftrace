@@ -306,7 +306,7 @@ void vftr_finalize() {
 
     vftr_print_profile (vftr_log, &ntop, timer);
 #ifdef _MPI
-    if (vftr_environment.mpi_log->value) {
+    if (vftr_environment.print_stack_profile->value) {
        vftr_print_mpi_statistics (vftr_log);
     }
 #endif
