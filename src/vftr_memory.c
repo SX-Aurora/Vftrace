@@ -21,7 +21,25 @@
 
 // returns the processes current maximum resident set size
 long vftr_current_memory_usage() {
+
+#ifdef __ve__
    struct rusage myrusage;
    getrusage(RUSAGE_SELF, &myrusage);
    return myrusage.ru_maxrss;
+#else
+   static bool need_pagesize = true;
+   static int pagesize = 0;
+   if (need_pagesize) {
+      pagesize = getpagesize();
+   }
+
+   FILE *fileptr = fopen("/proc/self/statm", "r");
+
+   long size = 0;
+   long resident = 0;
+
+   fscanf(fileptr,"%ld %ld", &size, &resident);
+   fclose(f)
+   return (double) resident * pagesize;
+#endif
 }
