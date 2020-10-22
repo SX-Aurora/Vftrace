@@ -174,8 +174,7 @@ bool vftr_no_mpi_logging() {
    return vftrace_Pcontrol_level == 0 || 
           vftr_off() ||
           !vftr_environment.mpi_log->value ||
-          vftr_paused ||
-          !vftr_environment.do_sampling->value;
+          vftr_paused;
 }
 
 // Translate a rank from a local group to the global rank

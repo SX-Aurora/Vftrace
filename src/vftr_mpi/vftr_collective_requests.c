@@ -22,6 +22,7 @@
 
 #include <stdlib.h>
 
+#include "vftr_environment.h"
 #include "vftr_requests.h"
 #include "vftr_timer.h"
 #include "vftr_filewrite.h"
@@ -75,15 +76,17 @@ void vftr_clear_completed_collective_requests() {
 
          // Every rank should already be translated to the global rank
          // by the register routine
-         for (int i=0; i<current_request->nmsg; i++) {
-            vftr_store_message_info(current_request->dir,
-                                    current_request->count[i],
-                                    current_request->type_idx[i],
-                                    current_request->type_size[i],
-                                    current_request->rank[i],
-                                    current_request->tag,
-                                    current_request->tstart,
-                                    tend);
+         if (vftr_environment.do_sampling->value) {
+            for (int i=0; i<current_request->nmsg; i++) {
+               vftr_store_message_info(current_request->dir,
+                                       current_request->count[i],
+                                       current_request->type_idx[i],
+                                       current_request->type_size[i],
+                                       current_request->rank[i],
+                                       current_request->tag,
+                                       current_request->tstart,
+                                       tend);
+            }
          }
 
          // Take the request out of the list and close the gap
