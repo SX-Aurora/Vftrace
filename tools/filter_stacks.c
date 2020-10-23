@@ -30,12 +30,14 @@ struct arguments {
    double t_min;
    int n_calls_min;
    double imba_min;
+   char *only_func;
    char *filename;
 };
 
 static struct argp_option options[] = {
    {"min-imbalance", 'i', "IMBA_MIN", 0, "Minimum imbalance on stack branch in percent."},
    {"min-calls", 'n', "N_CALLS_MIN", 0, "Minimum number of calls."},
+   {"only-func", 'o', "ONLY_FUNC", 0, "Only display this function."},
    {"min-time", 't', "T_MIN", 0, "Minimum time spent in stack branch."},
    {0}
 };
@@ -49,6 +51,9 @@ static error_t parse_opt (int key, char *arg, struct argp_state *state) {
         break;
       case 'n': 
         arguments->n_calls_min = atoi(arg);
+	break;
+      case 'o':
+        arguments->only_func = arg;
 	break;
       case 't':
         arguments->t_min = atof(arg);
@@ -65,8 +70,8 @@ static error_t parse_opt (int key, char *arg, struct argp_state *state) {
     return 0;
 }
 
-static char args_doc[] = "FOO";
-static char doc[] = "BAR";
+static char args_doc[] = "Vftrace log file";
+static char doc[] = "Filter Vftrace stack graphs.";
 static struct argp argp = {options, parse_opt, args_doc, doc};
 
 /**********************************************************************/
@@ -188,16 +193,21 @@ bool print_this_line (struct arguments arguments, double t, int n_calls, double 
 
 /**********************************************************************/
 
-int main (int argc, char *argv[]) {
-
-   //char *filename = argv[1];
-   //
+struct arguments init_arguments () {
    struct arguments arguments;
    arguments.t_min = 0.0;
    arguments.n_calls_min = 0;
    arguments.imba_min = 0.0;
+   arguments.only_func = NULL;
    arguments.filename = NULL;
+   return arguments;
+}
 
+/**********************************************************************/
+
+int main (int argc, char *argv[]) {
+
+   struct arguments arguments = init_arguments();
    argp_parse (&argp, argc, argv, 0, 0, &arguments);
 
    FILE *fp;
@@ -214,11 +224,12 @@ int main (int argc, char *argv[]) {
    int fmt_t, fmt_n_calls, fmt_imba;
    get_formats (&fmt_t, &fmt_n_calls, &fmt_imba);
    while (!feof(fp)) {
-      if (n_funcs > 0) break;
       fgets (line, LINEBUFSIZE, fp);
       if (strstr (line, "Function stacks")) {
 	  int n_filtered = 0;
           read_header (line, &func_name, &n_funcs);
+	  // When the -o option is used, skip all functions which do not match the argument.
+	  if (arguments.only_func && strcmp (arguments.only_func, func_name)) continue;
 	  print_table_header (arguments, func_name, fmt_t, fmt_n_calls, fmt_imba);
 	  stack_string[0] = '\0';
 	  for (int i = 0; i < n_funcs + 1; i++) {
