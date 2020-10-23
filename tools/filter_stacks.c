@@ -18,11 +18,58 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <stdbool.h>
 #include <string.h>
+#include <argp.h>
 
 #include "vftr_stacks.h"
 
 #define LINEBUFSIZE 256
+
+struct arguments {
+   double t_min;
+   int n_calls_min;
+   double imba_min;
+   char *filename;
+};
+
+static struct argp_option options[] = {
+   {"min-imbalance", 'i', "IMBA_MIN", 0, "Minimum imbalance on stack branch."},
+   {"min-calls", 'n', "N_CALLS_MIN", 0, "Minimum number of calls."},
+   {"min-time", 't', "T_MIN", 0, "Minimum time spent in stack branch."},
+   {0}
+};
+
+static error_t parse_opt (int key, char *arg, struct argp_state *state) {
+   struct arguments *arguments = state->input;
+   
+   switch(key) {
+      case 'i':
+        arguments->imba_min = atof(arg);
+        break;
+      case 'n': 
+        arguments->n_calls_min = atoi(arg);
+	break;
+      case 't':
+        arguments->t_min = atof(arg);
+        break;
+      case ARGP_KEY_ARG:
+        arguments->filename = arg;
+	break;
+      case ARGP_KEY_END:
+        if (state->arg_num < 1) argp_usage (state);
+        break;
+      default:
+        return ARGP_ERR_UNKNOWN;
+    }
+    return 0;
+}
+
+static char args_doc[] = "FOO";
+static char doc[] = "BAR";
+static struct argp argp = {options, parse_opt, args_doc, doc};
+
+/**********************************************************************/
 
 void read_header (char *line, char **func_name, int *n_funcs) {
    // Header starts with "Function stacks leading to <func>: n_funcs
@@ -58,6 +105,8 @@ void read_stack_line (char *line, int *n_spaces, char **branch,
    
 }
 
+/**********************************************************************/
+
 #define STACK_STRING_SIZE 100
 char stack_string[STACK_STRING_SIZE];
 
@@ -81,16 +130,30 @@ void overwrite_stack_string (char *new, int n_spaces) {
     }
 }
 
+/**********************************************************************/
+
+bool print_this_line (struct arguments arguments, double t, int n_calls, double imba) {
+   return t >= arguments.t_min && n_calls >= arguments.n_calls_min && imba >= arguments.imba_min;
+}
+
+/**********************************************************************/
+
 int main (int argc, char *argv[]) {
 
-   char *filename = argv[1];
+   //char *filename = argv[1];
+   //
+   struct arguments arguments;
+   arguments.t_min = 0.0;
+   arguments.n_calls_min = 0;
+   arguments.filename = NULL;
+
+   argp_parse (&argp, argc, argv, 0, 0, &arguments);
+
    FILE *fp;
-   if (!(fp = fopen (argv[1], "r"))) {
-	printf ("Could not open %s!\n", argv[1]);
+   if (!(fp = fopen (arguments.filename, "r"))) {
+	printf ("Could not open %s!\n", arguments.filename);
 	return -1;
    }
-
-   double t_threshold = 0.01;
 
    char line[LINEBUFSIZE];
    char *func_name;
@@ -110,7 +173,7 @@ int main (int argc, char *argv[]) {
 	      char *branch;
 	      read_stack_line (line, &n_spaces, &branch, &this_t, &n_calls, &imba);
 	      overwrite_stack_string (branch, n_spaces);
-	      if (this_t >= t_threshold) {
+	      if (print_this_line (arguments, this_t, n_calls, imba)) {
 		 printf ("%*s %13.6f %8d %6.2lf\n", STACK_STRING_SIZE, stack_string, this_t, n_calls, imba);
 	      }   
 	  }
