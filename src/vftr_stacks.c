@@ -752,9 +752,6 @@ void vftr_scan_for_maximum_values (stack_leaf_t *leaf, int this_n_spaces, double
 
 /**********************************************************************/
 
-const char *stacktree_headers[6] = {"T[s]", "Calls", "Imbalance[%]", "Total send", "Total recv.", "Stack ID"};
-enum column_ids {TIME, CALLS, IMBA, SEND_BYTES, RECV_BYTES, STACK_ID};
-
 void vftr_print_stacktree_header (FILE *fp, int n_stacks, char *func_name,
 				  int n_spaces_max, int fmt_calls, int fmt_t, int fmt_imba,
 				  int fmt_send_bytes, int fmt_recv_bytes, int fmt_stackid) {
