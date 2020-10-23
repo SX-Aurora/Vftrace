@@ -259,7 +259,7 @@ FILE *get_fmap (char *target) {
       strcpy (maps, target);
     } else {
       /* Normal use: from vftr_initialize() */
-      sprintf (maps, "/proc/%d/maps", getpid());
+      strcpy (maps, "/proc/self/maps");
     }
 
     if ((fmap = fopen (maps, "r")) == NULL) {
