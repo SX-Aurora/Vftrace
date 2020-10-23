@@ -58,6 +58,29 @@ void read_stack_line (char *line, int *n_spaces, char **branch,
    
 }
 
+#define STACK_STRING_SIZE 100
+char stack_string[STACK_STRING_SIZE];
+
+void overwrite_stack_string (char *new, int n_spaces) {
+    int i = 0;
+    if (stack_string[0] == '\0') {
+       // Don't forget that strlen does not count the terminating character.
+       for (i = 0; i < strlen(new); i++) {
+           stack_string[i] = new[i];
+        }
+       stack_string[i] = '\0';
+    } else {
+       char *tmp = &stack_string[0];
+       while (i++ <= n_spaces) tmp++;
+       i = 0;
+       while (i++ <= strlen(new)) {
+          *tmp = new[i];
+          tmp++;
+       }
+       *tmp = '\0';
+    }
+}
+
 int main (int argc, char *argv[]) {
 
    char *filename = argv[1];
@@ -79,36 +102,16 @@ int main (int argc, char *argv[]) {
       fgets (line, LINEBUFSIZE, fp);
       if (strstr (line, "Function stacks")) {
           read_header (line, &func_name, &n_funcs);
-	  //printf ("Function: %s, n: %d\n", func_name, n_funcs);
-	  char tot_function_string[LINEBUFSIZE];
+	  stack_string[0] = '\0';
 	  for (int i = 0; i < n_funcs + 1; i++) {
 	      fgets (line, LINEBUFSIZE, fp);
+	      // The first line is the delimiter "----".
  	      if (i == 0) continue;
 	      char *branch;
 	      read_stack_line (line, &n_spaces, &branch, &this_t, &n_calls, &imba);
- 	      //printf ("n_spaces: %d, branch: %s, this_t: %lf, n_calls: %d, imbal: %lf\n",
-	      //	 n_spaces, branch, this_t, n_calls, imba);
-	      int j;
-	      if (i == 1) {
-	         for (j = 0; j < strlen(branch); j++) {
-	 	    tot_function_string[j] = branch[j];
-	 	 }
-		 tot_function_string[j] = '\0';
- 	      } else {
-		 char *tmp = &tot_function_string[0];
-		 j = 0;
-	         while (j++ <= n_spaces) tmp++;
-		 //printf ("tmp: %s\n", tmp);
-		 j = 0;
-		 while (j++ <= strlen(branch)) {
-		    *tmp = branch[j];
-		    tmp++;
-		 }
-		 *tmp = '\0';
-		 //printf ("tot_function_string: %s\n", tot_function_string);
-	      }
+	      overwrite_stack_string (branch, n_spaces);
 	      if (this_t >= t_threshold) {
-		 printf ("%s %lf %d %lf\n", tot_function_string, this_t, n_calls, imba);
+		 printf ("%*s %13.6f %8d %6.2lf\n", STACK_STRING_SIZE, stack_string, this_t, n_calls, imba);
 	      }   
 	  }
       }
