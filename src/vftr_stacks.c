@@ -56,6 +56,8 @@ function_t *vftr_froots = NULL;
 // Profile data sample
 profdata_t vftr_prof_data;
 
+const char *vftr_stacktree_headers[6] = {"T[s]", "Calls", "Imbalance[%]", "Total send", "Total recv.", "Stack ID"};
+
 /**********************************************************************/
 
 // initialize stacks only called from vftr_initialize
@@ -760,10 +762,10 @@ void vftr_print_stacktree_header (FILE *fp, int n_stacks, char *func_name,
 	sprintf (title, "Function stacks leading to %s: %d", func_name, n_stacks);
 	fprintf (fp, "%s", title);
 	for (int i = 0; i < n_spaces_max - strlen(title); i++) fprintf (fp, " ");
-	fprintf (fp, "   %*s   %*s   %*s   %*s   %*s   %*s\n", fmt_t, stacktree_headers[TIME],
-		 fmt_calls, stacktree_headers[CALLS], fmt_imba, stacktree_headers[IMBA],
-		 fmt_send_bytes, stacktree_headers[SEND_BYTES], fmt_recv_bytes, stacktree_headers[RECV_BYTES],
-		 fmt_stackid, stacktree_headers[STACK_ID]);
+	fprintf (fp, "   %*s   %*s   %*s   %*s   %*s   %*s\n", fmt_t, vftr_stacktree_headers[TIME],
+		 fmt_calls, vftr_stacktree_headers[CALLS], fmt_imba, vftr_stacktree_headers[IMBA],
+		 fmt_send_bytes, vftr_stacktree_headers[SEND_BYTES], fmt_recv_bytes, vftr_stacktree_headers[RECV_BYTES],
+		 fmt_stackid, vftr_stacktree_headers[STACK_ID]);
 	vftr_print_dashes (fp, n_char_tot);
 }
 
@@ -867,14 +869,14 @@ void vftr_print_function_stack (FILE *fp, int rank, char *func_name,
 	// We have six digits behind the comma for time values. More do not make sense since we have a resolution
 	// of microseconds.
 	// We add this value of 6 to the number of digits in front of the comma, plus one for the comma itself.
-	int fmt_t = (vftr_count_digits_double(t_max) + 7) > strlen(stacktree_headers[TIME]) ? vftr_count_digits_double(t_max) + 7: strlen(stacktree_headers[TIME]);
-	int fmt_calls = vftr_count_digits(n_calls_max) > strlen(stacktree_headers[CALLS]) ? vftr_count_digits(n_calls_max) : strlen(stacktree_headers[CALLS]);;
+	int fmt_t = (vftr_count_digits_double(t_max) + 7) > strlen(vftr_stacktree_headers[TIME]) ? vftr_count_digits_double(t_max) + 7: strlen(vftr_stacktree_headers[TIME]);
+	int fmt_calls = vftr_count_digits(n_calls_max) > strlen(vftr_stacktree_headers[CALLS]) ? vftr_count_digits(n_calls_max) : strlen(vftr_stacktree_headers[CALLS]);;
 	// For percentage values, two decimal points are enough.
-	int fmt_imba = (vftr_count_digits_double(imba_max) + 3) > strlen(stacktree_headers[IMBA]) ? vftr_count_digits_double(imba_max) + 3: strlen(stacktree_headers[IMBA]);
-	int fmt_stackid = vftr_count_digits(vftr_gStackscount) > strlen(stacktree_headers[STACK_ID]) ?
-			 vftr_count_digits(vftr_gStackscount) : strlen(stacktree_headers[STACK_ID]);
-	int fmt_mpi_send = strlen (stacktree_headers[SEND_BYTES]);
-	int fmt_mpi_recv = strlen (stacktree_headers[RECV_BYTES]);
+	int fmt_imba = (vftr_count_digits_double(imba_max) + 3) > strlen(vftr_stacktree_headers[IMBA]) ? vftr_count_digits_double(imba_max) + 3: strlen(vftr_stacktree_headers[IMBA]);
+	int fmt_stackid = vftr_count_digits(vftr_gStackscount) > strlen(vftr_stacktree_headers[STACK_ID]) ?
+			 vftr_count_digits(vftr_gStackscount) : strlen(vftr_stacktree_headers[STACK_ID]);
+	int fmt_mpi_send = strlen (vftr_stacktree_headers[SEND_BYTES]);
+	int fmt_mpi_recv = strlen (vftr_stacktree_headers[RECV_BYTES]);
 	vftr_print_stacktree_header (fp, n_final_stack_ids, func_name, n_spaces_max, fmt_calls,
 				     fmt_t, fmt_imba, fmt_mpi_send, fmt_mpi_recv, fmt_stackid);
 	vftr_print_stacktree (fp, stack_tree->origin, 0, imbalances,

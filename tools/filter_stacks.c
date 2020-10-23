@@ -113,9 +113,9 @@ void read_stack_line (char *line, int *n_spaces, char **branch,
 #define IMBA_COLUMN_SIZE 6
 
 void get_formats (int *fmt_t, int *fmt_n_calls, int *fmt_imba) {
-  *fmt_t = TIME_COLUMN_SIZE > strlen(stacktree_headers[TIME]) ? TIME_COLUMN_SIZE : strlen(stacktree_headers[TIME]);
-  *fmt_n_calls = CALL_COLUMN_SIZE > strlen(stacktree_headers[CALLS]) ? CALL_COLUMN_SIZE : strlen(stacktree_headers[CALLS]);
-  *fmt_imba = IMBA_COLUMN_SIZE > strlen(stacktree_headers[IMBA]) ? IMBA_COLUMN_SIZE : strlen(stacktree_headers[IMBA]);
+  *fmt_t = TIME_COLUMN_SIZE > strlen(vftr_stacktree_headers[TIME]) ? TIME_COLUMN_SIZE : strlen(vftr_stacktree_headers[TIME]);
+  *fmt_n_calls = CALL_COLUMN_SIZE > strlen(vftr_stacktree_headers[CALLS]) ? CALL_COLUMN_SIZE : strlen(vftr_stacktree_headers[CALLS]);
+  *fmt_imba = IMBA_COLUMN_SIZE > strlen(vftr_stacktree_headers[IMBA]) ? IMBA_COLUMN_SIZE : strlen(vftr_stacktree_headers[IMBA]);
 }
 
 /**********************************************************************/
@@ -151,8 +151,8 @@ void print_table_header (struct arguments arguments, char *func_name, int fmt_t,
    *tmp = ' '; 
 
    printf ("\n");
-   printf ("%s %*s %*s %*s\n", table_header, fmt_t, stacktree_headers[TIME],
- 	  fmt_n_calls, stacktree_headers[CALLS], fmt_imba, stacktree_headers[IMBA]);
+   printf ("%s %*s %*s %*s\n", table_header, fmt_t, vftr_stacktree_headers[TIME],
+ 	  fmt_n_calls, vftr_stacktree_headers[CALLS], fmt_imba, vftr_stacktree_headers[IMBA]);
    print_dashes (STACK_STRING_SIZE + fmt_t + fmt_n_calls + fmt_imba + 3);
 }
 

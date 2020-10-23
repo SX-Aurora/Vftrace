@@ -19,8 +19,10 @@ show_function_stacks_CFLAGS += -I${srcdir}/../src/vftr_mpi/
 show_function_stacks_LDFLAGS = -L${top_builddir}/src/.libs -lvftrace -lm
 
 filter_stacks_CFLAGS = -I${srcdir}/../src/
+filter_stacks_LDFLAGS = -L${top_builddir}/src/.libs -lvftrace -lm
 
 if USES_NEC_MPI
   tracedump_LDFLAGS += -mpiprof
   show_function_stacks_LDFLAGS += -mpiprof
+  filter_stacks_LDFLAGS += -mpiprof
 endif
