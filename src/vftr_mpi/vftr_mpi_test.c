@@ -20,7 +20,7 @@
 #include <mpi.h>
 
 #include "vftr_mpi_pcontrol.h"
-#include "vftr_async_messages.h"
+#include "vftr_clear_requests.h"
   
 int vftr_MPI_Test(MPI_Request *request, int *flag, MPI_Status *status) {
 
@@ -38,7 +38,7 @@ int vftr_MPI_Test(MPI_Request *request, int *flag, MPI_Status *status) {
       if (*flag) {
          // Communication is done.
          // Clear finished communications from the open request list
-         vftr_clear_completed_request();
+         vftr_clear_completed_requests();
          // Now that the danger of deleating needed requests is banned
          // actually call MPI_Test   
          retVal = PMPI_Test(request, flag, status);

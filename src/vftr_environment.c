@@ -26,7 +26,7 @@
 #include "vftr_filewrite.h"
 #include "vftr_fileutils.h"
 
-vftr_envs_t *vftr_environment = NULL;
+vftr_envs_t vftr_environment;
 
 env_var_int_t *vftr_read_env_int (char *env_name, int val_default) {
     char *s;
@@ -199,46 +199,43 @@ env_var_regex_t *vftr_read_env_regex (char *env_name, regex_t *val_default) {
 }
 
 void vftr_read_environment () {
-    vftr_environment = (vftr_envs_t*)malloc (sizeof (vftr_envs_t));
-
-    vftr_environment->vftrace_off = vftr_read_env_bool ("VFTR_OFF", false);
-    vftr_environment->do_sampling = vftr_read_env_bool ("VFTR_SAMPLING", false);
-    vftr_environment->regions_precise = vftr_read_env_bool ("VFTR_REGIONS_PRECISE", true);
-    vftr_environment->output_directory = vftr_read_env_string ("VFTR_OUT_DIRECTORY", ".");
-    vftr_environment->logfile_basename = vftr_read_env_string ("VFTR_LOGFILE_BASENAME", NULL);
-    vftr_environment->logfile_all_ranks = vftr_read_env_bool ("VFTR_LOGFILE_ALL_RANKS", false);
-    vftr_environment->sampletime = vftr_read_env_double ("VFTR_SAMPLETIME", 0.005);
-    vftr_environment->stoptime = vftr_read_env_long_long ("VFTR_STOPTIME", 7ll*24ll*60ll*60ll);
-    vftr_environment->accurate_profile = vftr_read_env_bool ("VFTR_ACCURATE_PROFILE", false);
-    vftr_environment->prof_truncate = vftr_read_env_bool ("VFTR_PROF_TRUNCATE", true);
-    vftr_environment->mpi_log = vftr_read_env_bool ("VFTR_MPI_LOG", false);
-    vftr_environment->mpi_show_sync_time = vftr_read_env_bool ("VFTR_MPI_SHOW_SYNC_TIME", false);
-    vftr_environment->signals_off = vftr_read_env_bool ("VFTR_SIGNALS_OFF", true);
-    vftr_environment->bufsize = vftr_read_env_int ("VFTR_BUFSIZE", 8); 
-    vftr_environment->runtime_profile_funcs = vftr_read_env_regex ("VFTR_RUNTIME_PROFILE_FUNCS", NULL);
-    vftr_environment->include_only_regex = vftr_read_env_regex ("VFTR_INCLUDE_ONLY", NULL);
-    vftr_environment->exclude_functions_regex = vftr_read_env_regex ("VFTR_EXCLUDE", NULL);
-    vftr_environment->detail_until_cum_cycles = vftr_read_env_double ("VFTR_DETAIL_UNTIL_CUM_CYCLES", 90.0);
-    vftr_environment->scenario_file = vftr_read_env_string ("VFTR_SCENARIO_FILE", NULL);
-    vftr_environment->preciseregex = vftr_read_env_regex ("VFTR_PRECISE", NULL);
-    vftr_environment->print_stack_profile = vftr_read_env_regex ("VFTR_PRINT_STACK_PROFILE", NULL);
-    vftr_environment->license_verbose = vftr_read_env_bool ("VFTR_LICENSE_VERBOSE", false);
-    vftr_environment->print_stacks_for = vftr_read_env_string ("VFTR_PRINT_STACKS_FOR", NULL);
-    vftr_environment->print_loadinfo_for = vftr_read_env_string ("VFTR_PRINT_LOADINFO_FOR", NULL);
-    vftr_environment->strip_module_names = vftr_read_env_bool ("VFTR_STRIP_MODULE_NAMES", false);
+    vftr_environment.vftrace_off = vftr_read_env_bool ("VFTR_OFF", false);
+    vftr_environment.do_sampling = vftr_read_env_bool ("VFTR_SAMPLING", false);
+    vftr_environment.regions_precise = vftr_read_env_bool ("VFTR_REGIONS_PRECISE", true);
+    vftr_environment.output_directory = vftr_read_env_string ("VFTR_OUT_DIRECTORY", ".");
+    vftr_environment.logfile_basename = vftr_read_env_string ("VFTR_LOGFILE_BASENAME", NULL);
+    vftr_environment.logfile_all_ranks = vftr_read_env_bool ("VFTR_LOGFILE_ALL_RANKS", false);
+    vftr_environment.sampletime = vftr_read_env_double ("VFTR_SAMPLETIME", 0.005);
+    vftr_environment.stoptime = vftr_read_env_long_long ("VFTR_STOPTIME", 7ll*24ll*60ll*60ll);
+    vftr_environment.accurate_profile = vftr_read_env_bool ("VFTR_ACCURATE_PROFILE", false);
+    vftr_environment.prof_truncate = vftr_read_env_bool ("VFTR_PROF_TRUNCATE", true);
+    vftr_environment.mpi_log = vftr_read_env_bool ("VFTR_MPI_LOG", false);
+    vftr_environment.mpi_show_sync_time = vftr_read_env_bool ("VFTR_MPI_SHOW_SYNC_TIME", false);
+    vftr_environment.signals_off = vftr_read_env_bool ("VFTR_SIGNALS_OFF", true);
+    vftr_environment.bufsize = vftr_read_env_int ("VFTR_BUFSIZE", 8); 
+    vftr_environment.runtime_profile_funcs = vftr_read_env_regex ("VFTR_RUNTIME_PROFILE_FUNCS", NULL);
+    vftr_environment.include_only_regex = vftr_read_env_regex ("VFTR_INCLUDE_ONLY", NULL);
+    vftr_environment.exclude_functions_regex = vftr_read_env_regex ("VFTR_EXCLUDE", NULL);
+    vftr_environment.detail_until_cum_cycles = vftr_read_env_double ("VFTR_DETAIL_UNTIL_CUM_CYCLES", 90.0);
+    vftr_environment.scenario_file = vftr_read_env_string ("VFTR_SCENARIO_FILE", NULL);
+    vftr_environment.preciseregex = vftr_read_env_regex ("VFTR_PRECISE", NULL);
+    vftr_environment.print_stack_profile = vftr_read_env_regex ("VFTR_PRINT_STACK_PROFILE", NULL);
+    vftr_environment.license_verbose = vftr_read_env_bool ("VFTR_LICENSE_VERBOSE", false);
+    vftr_environment.print_stacks_for = vftr_read_env_string ("VFTR_PRINT_STACKS_FOR", NULL);
+    vftr_environment.print_loadinfo_for = vftr_read_env_string ("VFTR_PRINT_LOADINFO_FOR", NULL);
+    vftr_environment.strip_module_names = vftr_read_env_bool ("VFTR_STRIP_MODULE_NAMES", false);
 }
 
 void vftr_assert_environment () {
-	if (!vftr_environment) return;
-	assert (vftr_environment->bufsize->value > 0);
-	if (vftr_environment->include_only_regex->set && vftr_environment->exclude_functions_regex->set) {
-		vftr_environment->exclude_functions_regex->set = false;
+	assert (vftr_environment.bufsize->value > 0);
+	if (vftr_environment.include_only_regex->set && vftr_environment.exclude_functions_regex->set) {
+		vftr_environment.exclude_functions_regex->set = false;
 	}
 
-	if (vftr_environment->scenario_file->set) {
+	if (vftr_environment.scenario_file->set) {
 		FILE *fp;
-		if (!(fp = fopen (vftr_environment->scenario_file->value, "r"))) {
-			vftr_environment->scenario_file->set = false;
+		if (!(fp = fopen (vftr_environment.scenario_file->value, "r"))) {
+			vftr_environment.scenario_file->set = false;
 		} else {
 			fclose(fp);
 		}
@@ -246,21 +243,21 @@ void vftr_assert_environment () {
 
 	// When neither VEPERF nor PAPI are activated, any given scenario file is ignored
 #if !defined(HAS_VEPERF) && !defined(HAS_PAPI)
-	vftr_environment->scenario_file->set = false;
+	vftr_environment.scenario_file->set = false;
 #endif
 
-	if (vftr_environment->detail_until_cum_cycles->value > 100.0 || 
-	    vftr_environment->detail_until_cum_cycles->value < 0.0) {
+	if (vftr_environment.detail_until_cum_cycles->value > 100.0 || 
+	    vftr_environment.detail_until_cum_cycles->value < 0.0) {
 		printf ("Warning: Invalid value for VFTR_DETAIL_UNTIL_CUM_CYLES (%lf). Set to default value of 90.0\n",
-			vftr_environment->detail_until_cum_cycles->value);
-		vftr_environment->detail_until_cum_cycles->value = 90.0;
+			vftr_environment.detail_until_cum_cycles->value);
+		vftr_environment.detail_until_cum_cycles->value = 90.0;
 	}
 
 	// We check whether the number given after the ":", i.e. the group size, is positive.
 	// Note that group_size == 0 is not supported, it is to be activated by leaving out the
 	// colon instead.
-	if (vftr_environment->print_stacks_for->set) {
-		char *vftr_print_groups = vftr_environment->print_stacks_for->value;
+	if (vftr_environment.print_stacks_for->set) {
+		char *vftr_print_groups = vftr_environment.print_stacks_for->value;
 		while (*vftr_print_groups) {
 			int group_base, group_size;
 			char *p;
@@ -270,15 +267,15 @@ void vftr_assert_environment () {
 				if (group_size <= 0) {
 					printf ("Warning: The group size in the environment variable VFTR_PRINT_STACKS_FOR=<group_base>:<group_size>	has to be greater than zero.\n");
 					printf ("No additional stack info will be printed.\n");
-					vftr_environment->print_stacks_for->set = false;
+					vftr_environment.print_stacks_for->set = false;
 				}
 			}
 			vftr_print_groups = *p ? p + 1 : p;
 		}		
 	}
 	// The same for VFTR_PRINT_LOADINFO_FOR
-	if (vftr_environment->print_loadinfo_for->set) {
-		char *vftr_mpi_groups = vftr_environment->print_loadinfo_for->value;
+	if (vftr_environment.print_loadinfo_for->set) {
+		char *vftr_mpi_groups = vftr_environment.print_loadinfo_for->value;
 		while (*vftr_mpi_groups) {
 			int group_base, group_size;
 			char *p;
@@ -288,7 +285,7 @@ void vftr_assert_environment () {
 				if (group_size <= 0) {
 					printf ("Warning: The group size in the environment variable VFTR_PRINT_LOADINFO_FOR=<group_base>:<group_size>	has to be greater than zero.\n");
 					printf ("No additional stack info will be printed.\n");
-					vftr_environment->print_loadinfo_for->set = false;
+					vftr_environment.print_loadinfo_for->set = false;
 				}
 			}
 			vftr_mpi_groups = *p ? p + 1 : p;
@@ -302,81 +299,67 @@ void vftr_assert_environment () {
 // or by a call to vftr_switch off. We need to check if the evironment is initialized
 // beforehand, otherwise this yields a segfault in vftr_finalize, which is always called.
 bool vftr_off () {
-	if (vftr_environment) {
-		return vftr_environment->vftrace_off->value;
-	} else {
-		return true;
-	}
+	return vftr_environment.vftrace_off->value;
 }
 
 void vftr_switch_off () {
-	if (vftr_environment) {
-		vftr_environment->vftrace_off->value = true;
-	}
+	vftr_environment.vftrace_off->value = true;
 }
 
 bool vftr_env_do_sampling () {
-	if (vftr_environment) {
-		return vftr_environment->do_sampling->value;
-	} else {
-		return false;
-	}
+	return vftr_environment.do_sampling->value;
 }
 
 void vftr_free_environment () {
-	if (!vftr_environment) return;
-	free (vftr_environment->vftrace_off);
-	free (vftr_environment->do_sampling);
-	free (vftr_environment->regions_precise);
-	free (vftr_environment->output_directory);
-	free (vftr_environment->logfile_basename);
-	free (vftr_environment->logfile_all_ranks);
-	free (vftr_environment->sampletime);
-	free (vftr_environment->stoptime);
-	free (vftr_environment->accurate_profile);
-	free (vftr_environment->prof_truncate);
-	free (vftr_environment->mpi_log);
-	free (vftr_environment->mpi_show_sync_time);
-	free (vftr_environment->signals_off);
-	free (vftr_environment->bufsize);
-	free (vftr_environment->runtime_profile_funcs);
-	free (vftr_environment->include_only_regex);
-	free (vftr_environment->exclude_functions_regex);
-	free (vftr_environment->detail_until_cum_cycles);
-	free (vftr_environment->scenario_file);
-	free (vftr_environment->preciseregex);
-	free (vftr_environment->license_verbose);
-	free (vftr_environment->print_stacks_for);
-	free (vftr_environment->print_loadinfo_for);
-	free (vftr_environment);
-	vftr_environment = NULL;
+	free (vftr_environment.vftrace_off);
+	free (vftr_environment.do_sampling);
+	free (vftr_environment.regions_precise);
+	free (vftr_environment.output_directory);
+	free (vftr_environment.logfile_basename);
+	free (vftr_environment.logfile_all_ranks);
+	free (vftr_environment.sampletime);
+	free (vftr_environment.stoptime);
+	free (vftr_environment.accurate_profile);
+	free (vftr_environment.prof_truncate);
+	free (vftr_environment.mpi_log);
+	free (vftr_environment.mpi_show_sync_time);
+	free (vftr_environment.signals_off);
+	free (vftr_environment.bufsize);
+	free (vftr_environment.runtime_profile_funcs);
+	free (vftr_environment.include_only_regex);
+	free (vftr_environment.exclude_functions_regex);
+	free (vftr_environment.detail_until_cum_cycles);
+	free (vftr_environment.scenario_file);
+	free (vftr_environment.preciseregex);
+	free (vftr_environment.license_verbose);
+	free (vftr_environment.print_stacks_for);
+	free (vftr_environment.print_loadinfo_for);
 }
 
 // We leave out the regular expression in this printing function
 
 void vftr_print_environment (FILE *fp) {
-	if (!vftr_environment) return;
-	print_env_bool (fp, "VFTR_OFF", vftr_environment->vftrace_off);
-	print_env_bool (fp, "VFTR_SAMPLING", vftr_environment->do_sampling);
-	print_env_bool (fp, "VFTR_REGIONS_PRECISE", vftr_environment->regions_precise);
-	print_env_string (fp, "VFTR_OUT_DIRECTORY", vftr_environment->output_directory);
-	print_env_string (fp, "VFTR_LOGFILE_BASENAME", vftr_environment->logfile_basename);
-	print_env_bool (fp, "VFTR_LOGFILE_ALL_RANKS", vftr_environment->logfile_all_ranks);
-	print_env_double (fp, "VFTR_SAMPLETIME", vftr_environment->sampletime);
-	print_env_long_long (fp, "VFTR_STOPTIME", vftr_environment->stoptime);
-	print_env_bool (fp, "VFTR_ACCURATE_PROFILE", vftr_environment->accurate_profile);
-	print_env_bool (fp, "VFTR_PROF_TRUNCATE", vftr_environment->prof_truncate);
-	print_env_bool (fp, "VFTR_MPI_LOG", vftr_environment->mpi_log);
-	print_env_bool (fp, "VFTR_MPI_SHOW_SYNC_TIME", vftr_environment->mpi_show_sync_time);
-	print_env_bool (fp, "VFTR_SIGNALS_OFF", vftr_environment->signals_off);
-	print_env_int (fp, "VFTR_BUFSIZE", vftr_environment->bufsize);
-	print_env_bool (fp, "VFTR_ACCURATE_PROFILE", vftr_environment->accurate_profile);
-	print_env_double (fp, "VFTR_DETAIL_UNTIL_CUM_CYCLES" , vftr_environment->detail_until_cum_cycles);
-	print_env_string (fp, "VFTR_SCENARIO_FILE", vftr_environment->scenario_file);
-	print_env_bool (fp, "VFTR_LICENSE_VERBOSE", vftr_environment->license_verbose);
-	print_env_string (fp, "VFTR_PRINT_STACKS_FOR", vftr_environment->print_stacks_for);
-	print_env_string (fp, "VFTR_PRINT_LOADINFO_FOR", vftr_environment->print_loadinfo_for);
-	print_env_bool (fp, "VFTR_STRIP_MODULE_NAMES", vftr_environment->strip_module_names);
+	print_env_bool (fp, "VFTR_OFF", vftr_environment.vftrace_off);
+	print_env_bool (fp, "VFTR_SAMPLING", vftr_environment.do_sampling);
+	print_env_bool (fp, "VFTR_REGIONS_PRECISE", vftr_environment.regions_precise);
+	print_env_string (fp, "VFTR_OUT_DIRECTORY", vftr_environment.output_directory);
+	print_env_string (fp, "VFTR_LOGFILE_BASENAME", vftr_environment.logfile_basename);
+	print_env_bool (fp, "VFTR_LOGFILE_ALL_RANKS", vftr_environment.logfile_all_ranks);
+	print_env_double (fp, "VFTR_SAMPLETIME", vftr_environment.sampletime);
+	print_env_long_long (fp, "VFTR_STOPTIME", vftr_environment.stoptime);
+	print_env_bool (fp, "VFTR_ACCURATE_PROFILE", vftr_environment.accurate_profile);
+	print_env_bool (fp, "VFTR_PROF_TRUNCATE", vftr_environment.prof_truncate);
+	print_env_bool (fp, "VFTR_MPI_LOG", vftr_environment.mpi_log);
+	print_env_bool (fp, "VFTR_MPI_SHOW_SYNC_TIME", vftr_environment.mpi_show_sync_time);
+	print_env_bool (fp, "VFTR_SIGNALS_OFF", vftr_environment.signals_off);
+	print_env_int (fp, "VFTR_BUFSIZE", vftr_environment.bufsize);
+	print_env_bool (fp, "VFTR_ACCURATE_PROFILE", vftr_environment.accurate_profile);
+	print_env_double (fp, "VFTR_DETAIL_UNTIL_CUM_CYCLES" , vftr_environment.detail_until_cum_cycles);
+	print_env_string (fp, "VFTR_SCENARIO_FILE", vftr_environment.scenario_file);
+	print_env_bool (fp, "VFTR_LICENSE_VERBOSE", vftr_environment.license_verbose);
+	print_env_string (fp, "VFTR_PRINT_STACKS_FOR", vftr_environment.print_stacks_for);
+	print_env_string (fp, "VFTR_PRINT_LOADINFO_FOR", vftr_environment.print_loadinfo_for);
+	print_env_bool (fp, "VFTR_STRIP_MODULE_NAMES", vftr_environment.strip_module_names);
 }
 
 int vftr_environment_test_1 (FILE *fp) {

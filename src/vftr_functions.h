@@ -18,6 +18,10 @@ typedef struct ProfileData {
    long long flops, *event_count, *events[2], ecreads;
    //
    int pfcount, ic;
+#ifdef _MPI
+   long mpi_tot_send_bytes;
+   long mpi_tot_recv_bytes;
+#endif
 } profdata_t;
 
 typedef struct Function {
@@ -43,9 +47,12 @@ typedef struct Function {
    uint64_t stackHash;
 } function_t;
 
-enum function_search_type {FUNC_TABLE, STACK_INFO};
-void vftr_find_function (char *func_name, int **func_indices, int **stack_indices,
-		         int *n_indices, bool to_lower_case, enum function_search_type search_type);
+void vftr_find_function_in_table (char *func_name, int **indices, int *n_indices, bool to_lower_case);
+void vftr_find_function_in_stack (char *func_name, int **indices, int *n_indices, bool to_lower_case);
+
+// Remove everything in front of (and including) _MP_ for all the symbols in
+// the table, if necessary.
+void vftr_strip_all_module_names ();
 
 // add a new function to the stack tables
 function_t *vftr_new_function(void *arg, const char *function_name,

@@ -16,9 +16,9 @@
    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-#ifndef DEMANGE_H
+#ifndef DEMANGLE_H
+#define DEMANGLE_H
 
 int demangle (char *mangled_name, char **demangled_name, char **demangled_full);
 
-#define DEMANGE_H
 #endif

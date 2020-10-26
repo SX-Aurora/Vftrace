@@ -29,7 +29,7 @@ void vftr_store_sync_message_info(vftr_direction dir, int count, MPI_Datatype ty
                                   long long tstart, long long tend) {
 
    // only continue if sampling and mpi_loggin is enabled
-   bool mpi_log = vftr_environment->mpi_log->value;
+   bool mpi_log = vftr_environment.mpi_log->value;
    if (vftr_off() || !mpi_log || vftr_paused) return;
 
    // immediately return if peer is MPI_PROC_NULL as this is a dummy rank
@@ -56,7 +56,14 @@ void vftr_store_sync_message_info(vftr_direction dir, int count, MPI_Datatype ty
    } else {
       type_size = 0;
    }
-   vftr_store_message_info(dir, count, type_idx, type_size, rank, tag, tstart, tend);
+
+   // accumulate information for later use in the log file statistics
+   vftr_log_message_info(dir, count, type_idx, type_size, rank, tag, tstart, tend);
+
+   // store message in vfd-file
+   if (vftr_environment.do_sampling->value) {
+      vftr_store_message_info(dir, count, type_idx, type_size, rank, tag, tstart, tend);
+   }
 
    return;
 }

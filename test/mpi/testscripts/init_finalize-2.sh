@@ -1,6 +1,6 @@
 #!/bin/bash
 
-vftr_binary=init_finalize
+vftr_binary=init_finalize_2
 nprocs=4
 
 export VFTR_SAMPLING="Yes"

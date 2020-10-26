@@ -91,7 +91,7 @@ typedef struct vftr_envs {
  	env_var_bool_t *strip_module_names;
 } vftr_envs_t;
 
-extern vftr_envs_t *vftr_environment;
+extern vftr_envs_t vftr_environment;
 
 void vftr_read_environment();
 void vftr_assert_environment();

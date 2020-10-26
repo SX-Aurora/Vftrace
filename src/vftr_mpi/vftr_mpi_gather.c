@@ -23,30 +23,31 @@
 #include "vftr_regions.h"
 #include "vftr_environment.h"
 #include "vftr_sync_messages.h"
-#include "vftr_mpi_pcontrol.h"
+#include "vftr_mpi_utils.h"
 #include "vftr_mpi_buf_addr_const.h"
 
 int vftr_MPI_Gather(const void *sendbuf, int sendcount,
                     MPI_Datatype sendtype, void *recvbuf, int recvcount,
                     MPI_Datatype recvtype, int root, MPI_Comm comm) {
 
+   // Estimate synchronization time
+   if (vftr_environment.mpi_show_sync_time->value) {
+      vftr_internal_region_begin("MPI_Gather_sync");
+      PMPI_Barrier(comm);
+      vftr_internal_region_end("MPI_Gather_sync");
+   }
+
    // disable profiling based on the Pcontrol level
-   if (vftrace_Pcontrol_level == 0) {
+   if (vftr_no_mpi_logging()) {
       return PMPI_Gather(sendbuf, sendcount, sendtype, recvbuf, recvcount,
                          recvtype, root, comm);
    } else {
-      // Estimate synchronization time
-      if (vftr_environment->mpi_show_sync_time->value) {
-         vftr_internal_region_begin("mpi_gather_sync");
-         PMPI_Barrier(comm);
-         vftr_internal_region_end("mpi_gather_sync");
-      }
-
       long long tstart = vftr_get_runtime_usec();
       int retVal = PMPI_Gather(sendbuf, sendcount, sendtype, recvbuf, recvcount,
                                recvtype, root, comm);
       long long tend = vftr_get_runtime_usec();
 
+      long long t2start = tend;
       // determine if inter or intra communicator
       int isintercom;
       PMPI_Comm_test_inter(comm, &isintercom);
@@ -114,6 +115,9 @@ int vftr_MPI_Gather(const void *sendbuf, int sendcount,
                                          root, -1, comm, tstart, tend);
          }
       }
+      long long t2end = vftr_get_runtime_usec();
+
+      vftr_mpi_overhead_usec += t2end - t2start;
 
       return retVal;
    }

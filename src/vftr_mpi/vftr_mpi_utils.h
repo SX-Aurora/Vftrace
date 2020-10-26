@@ -46,6 +46,10 @@ int vftr_local2global_rank(MPI_Comm comm, int local_rank);
 // Translate a rank from a remote group
 int vftr_remote2global_rank(MPI_Comm comm, int remote_rank);
 
+// determine based on several criteria if
+// the communication should just be executed or also logged
+bool vftr_no_mpi_logging();
+
 #endif
 
 // Converts an mpi-datatype into a name string for that type

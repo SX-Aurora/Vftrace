@@ -25,6 +25,9 @@
 #include "vftr_setup.h"
 #include "vftr_hwcounters.h"
 #include "vftr_filewrite.h"
+#include "vftr_pause.h"
+#include "vftr_mpi_utils.h"
+#include "vftr_mpi_pcontrol.h"
 
 void vftr_reset_counts (function_t *func);
 
@@ -163,6 +166,15 @@ const char *vftr_get_mpitype_string(MPI_Datatype mpi_type) {
    } else {
       return "MPI_UNDEFINED_TYPE";
    }
+}
+
+// determine based on several criteria if
+// the communication should just be executed or also logged
+bool vftr_no_mpi_logging() {
+   return vftrace_Pcontrol_level == 0 || 
+          vftr_off() ||
+          !vftr_environment.mpi_log->value ||
+          vftr_paused;
 }
 
 // Translate a rank from a local group to the global rank

@@ -19,8 +19,10 @@
 #ifdef _MPI
 #include <mpi.h>
 
+#include <stdbool.h>
+
 #include "vftr_mpi_pcontrol.h"
-#include "vftr_async_messages.h"
+#include "vftr_clear_requests.h"
   
 int vftr_MPI_Wait(MPI_Request *request, MPI_Status *status) {
 
@@ -40,7 +42,7 @@ int vftr_MPI_Wait(MPI_Request *request, MPI_Status *status) {
          // either the communication is completed, or not
          // other communications might be completed in the background
          // clear those from the list of open requests
-         vftr_clear_completed_request();
+         vftr_clear_completed_requests();
       }
       // Properly set the request and status variable
       retVal = PMPI_Wait(request, status);

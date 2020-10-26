@@ -27,6 +27,27 @@ long long vftr_interval;
 // maximum runtime in ms
 long long vftr_timelimit;
 
+// Vftrace measures its own overhead in microseconds.
+// It is incremented at each function entry and exit, as
+// well as after initialization.
+long long vftr_overhead_usec = 0ll;
+
+#ifdef _MPI
+// vftrace measures the overhead of recording
+// the MPI communication pattern
+long long vftr_mpi_overhead_usec = 0ll;
+#endif
+
+long long vftr_initcycles;
+
+// A time interval indicating when the function table should be sorted.
+// This is done also to dynamically assign the "detail" flag if the weight
+// of a function (in terms of cumulative cycles) grows.
+double vftr_sorttime;
+
+// After each sorting, the vftr_sorttime is multiplied by this factor
+double vftr_sorttime_growth;
+
 // the clock timer to use 
 // CLOCK_MONOTONIC is not affected by NTP or system time changes.
 const clockid_t vftr_clock = CLOCK_MONOTONIC;

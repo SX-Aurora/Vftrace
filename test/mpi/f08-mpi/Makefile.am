@@ -8,20 +8,35 @@ endif
 ################
 # System Tests #
 ################
-check_PROGRAMS = init_finalize 
+check_PROGRAMS = init_finalize_1 \
+		 init_finalize_2 \
+		 init_finalize_3 \
+		 init_finalize_4
 #		  ftypes \
 #		  derived_ftypes
 		
-init_finalize_SOURCES = $(srcdir)/init_finalize.F90
-init_finalize_FCFLAGS  = $(AM_FCFLAGS)
-init_finalize_LDFLAGS = $(AM_LDFLAGS)
+init_finalize_1_SOURCES = $(srcdir)/init_finalize.F90
+init_finalize_1_FCFLAGS = $(AM_FCFLAGS)
+init_finalize_1_LDFLAGS = $(AM_LDFLAGS)
+
+init_finalize_2_SOURCES = $(srcdir)/init_finalize.F90
+init_finalize_2_FCFLAGS = $(AM_FCFLAGS)
+init_finalize_2_LDFLAGS = $(AM_LDFLAGS)
+
+init_finalize_3_SOURCES = $(srcdir)/init_finalize.F90
+init_finalize_3_FCFLAGS = $(AM_FCFLAGS)
+init_finalize_3_LDFLAGS = $(AM_LDFLAGS)
+
+init_finalize_4_SOURCES = $(srcdir)/init_finalize.F90
+init_finalize_4_FCFLAGS = $(AM_FCFLAGS)
+init_finalize_4_LDFLAGS = $(AM_LDFLAGS)
 
 #ftypes_SOURCES = $(srcdir)/ftypes.F90
-#ftypes_FCFLAGS  = $(AM_FCFLAGS)
+#ftypes_FCFLAGS = $(AM_FCFLAGS)
 #ftypes_LDFLAGS = $(AM_LDFLAGS)
 #
 #derived_ftypes_SOURCES = $(srcdir)/derived_ftypes.F90
-#derived_ftypes_FCFLAGS  = $(AM_FCFLAGS)
+#derived_ftypes_FCFLAGS = $(AM_FCFLAGS)
 #derived_ftypes_LDFLAGS = $(AM_LDFLAGS)
 
 dist_noinst_SCRIPTS = init_finalize-1.sh \
@@ -72,8 +87,9 @@ else
 #####################
 ## Collective tests #
 #####################
-#
-check_PROGRAMS += bcast \
+
+check_PROGRAMS += barrier \
+		  bcast \
 		  bcast_intercom \
 		  gather \
 		  gather_intercom \
@@ -102,6 +118,10 @@ check_PROGRAMS += bcast \
 		  alltoallw \
 		  alltoallw_intercom \
 		  alltoallw_inplace
+
+barrier_SOURCES = $(srcdir)/barrier.F90
+barrier_FCFLAGS = $(AM_FCFLAGS)
+barrier_LDFLAGS = $(AM_LDFLAGS)
 
 bcast_SOURCES = $(srcdir)/bcast.F90
 bcast_FCFLAGS = $(AM_FCFLAGS)
@@ -219,7 +239,8 @@ alltoallw_inplace_SOURCES = $(srcdir)/alltoallw_inplace.F90
 alltoallw_inplace_FCFLAGS = $(AM_FCFLAGS)
 alltoallw_inplace_LDFLAGS = $(AM_LDFLAGS)
 
-dist_noinst_SCRIPTS += bcast.sh \
+dist_noinst_SCRIPTS += barrier.sh \
+		       bcast.sh \
 		       bcast_intercom.sh \
 		       gather.sh \
 		       gather_intercom.sh \
@@ -259,6 +280,12 @@ check_PROGRAMS += reduce \
 		  allreduce \
 		  allreduce_intercom \
 		  allreduce_inplace \
+		  reduce_scatter_block \
+		  reduce_scatter_block_intercom \
+		  reduce_scatter_block_inplace \
+		  reduce_scatter \
+		  reduce_scatter_intercom \
+		  reduce_scatter_inplace \
 		  scan \
 		  scan_inplace \
 		  exscan \
@@ -288,6 +315,30 @@ allreduce_inplace_SOURCES = $(srcdir)/allreduce_inplace.F90
 allreduce_inplace_FCFLAGS = $(AM_FCFLAGS)
 allreduce_inplace_LDFLAGS = $(AM_LDFLAGS)
 
+reduce_scatter_block_SOURCES = $(srcdir)/reduce_scatter_block.F90
+reduce_scatter_block_FCFLAGS = $(AM_FCFLAGS)
+reduce_scatter_block_LDFLAGS = $(AM_LDFLAGS)
+
+reduce_scatter_block_intercom_SOURCES = $(srcdir)/reduce_scatter_block_intercom.F90
+reduce_scatter_block_intercom_FCFLAGS = $(AM_FCFLAGS)
+reduce_scatter_block_intercom_LDFLAGS = $(AM_LDFLAGS)
+
+reduce_scatter_block_inplace_SOURCES = $(srcdir)/reduce_scatter_block_inplace.F90
+reduce_scatter_block_inplace_FCFLAGS = $(AM_FCFLAGS)
+reduce_scatter_block_inplace_LDFLAGS = $(AM_LDFLAGS)
+
+reduce_scatter_SOURCES = $(srcdir)/reduce_scatter.F90
+reduce_scatter_FCFLAGS = $(AM_FCFLAGS)
+reduce_scatter_LDFLAGS = $(AM_LDFLAGS)
+
+reduce_scatter_intercom_SOURCES = $(srcdir)/reduce_scatter_intercom.F90
+reduce_scatter_intercom_FCFLAGS = $(AM_FCFLAGS)
+reduce_scatter_intercom_LDFLAGS = $(AM_LDFLAGS)
+
+reduce_scatter_inplace_SOURCES = $(srcdir)/reduce_scatter_inplace.F90
+reduce_scatter_inplace_FCFLAGS = $(AM_FCFLAGS)
+reduce_scatter_inplace_LDFLAGS = $(AM_LDFLAGS)
+
 scan_SOURCES = $(srcdir)/scan.F90
 scan_FCFLAGS = $(AM_FCFLAGS)
 scan_LDFLAGS = $(AM_LDFLAGS)
@@ -310,6 +361,12 @@ dist_noinst_SCRIPTS += reduce.sh \
 		       allreduce.sh \
 		       allreduce_intercom.sh \
 		       allreduce_inplace.sh \
+		       reduce_scatter_block.sh \
+		       reduce_scatter_block_intercom.sh \
+		       reduce_scatter_block_inplace.sh \
+		       reduce_scatter.sh \
+		       reduce_scatter_intercom.sh \
+		       reduce_scatter_inplace.sh \
 		       scan.sh \
 		       scan_inplace.sh \
 		       exscan.sh \
@@ -320,7 +377,10 @@ dist_noinst_SCRIPTS += reduce.sh \
 ###################
 check_PROGRAMS += put \
 		  get \
-		  accumulate
+		  accumulate \
+		  get_accumulate \
+		  fetch_and_op \
+		  compare_and_swap
 
 put_SOURCES = $(srcdir)/put.F90
 put_FCFLAGS = $(AM_FCFLAGS)
@@ -334,9 +394,24 @@ accumulate_SOURCES = $(srcdir)/accumulate.F90
 accumulate_FCFLAGS = $(AM_FCFLAGS)
 accumulate_LDFLAGS = $(AM_LDFLAGS)
 
+get_accumulate_SOURCES = $(srcdir)/get_accumulate.F90
+get_accumulate_FCFLAGS = $(AM_FCFLAGS)
+get_accumulate_LDFLAGS = $(AM_LDFLAGS)
+
+fetch_and_op_SOURCES = $(srcdir)/fetch_and_op.F90
+fetch_and_op_FCFLAGS = $(AM_FCFLAGS)
+fetch_and_op_LDFLAGS = $(AM_LDFLAGS)
+
+compare_and_swap_SOURCES = $(srcdir)/compare_and_swap.F90
+compare_and_swap_FCFLAGS = $(AM_FCFLAGS)
+compare_and_swap_LDFLAGS = $(AM_LDFLAGS)
+
 dist_noinst_SCRIPTS += put.sh \
 		       get.sh \
-		       accumulate.sh
+		       accumulate.sh \
+		       get_accumulate.sh \
+		       fetch_and_op.sh \
+		       compare_and_swap.sh
 
 ###############
 ## Test tests #
