@@ -22,12 +22,10 @@
 #include <string.h>
 #include <math.h>
 
-#if defined(HAS_VEPERF)
-#include "vftr_filewrite.h"
-#elif defined(HAS_PAPI)
+#if defined(HAS_PAPI)
 #include "papi.h"
-#include "vftr_filewrite.h"
 #endif
+#include "vftr_filewrite.h"
 
 #include "vftr_environment.h"
 #include "vftr_hwcounters.h"
@@ -171,8 +169,8 @@ int vftr_init_hwc (char *scenario_file) {
     // TODO: Compare with cpu given in the model file
 #endif
 
-#if defined(HAS_VEPERF)
-    scenario_expr_add_veperf_counters ();
+#if defined(HAS_SXHWC)
+    scenario_expr_add_sx_counters ();
 #elif defined(HAS_PAPI)
     scenario_expr_add_papi_counters ();
 #endif
@@ -185,7 +183,7 @@ int vftr_init_hwc (char *scenario_file) {
 
 /**********************************************************************/
 
-#if defined(HAS_VEPERF)
+#if defined(HAS_SXHWC)
 void vftr_read_sxhwc_registers (long long *foo) {
     long long tmp[16];
     //printf ("READ REGISTERS\n");
@@ -240,7 +238,7 @@ void vftr_read_sxhwc_registers (long long *foo) {
 
 /**********************************************************************/
 
-void vftr_read_counters_veperf (long long *event) {
+void vftr_read_counters_sx (long long *event) {
     int i, j, diag;
     evtcounter_t *evc;
     if (event == NULL) return;
@@ -358,69 +356,54 @@ int vftr_find_event_number (char *s) {
 }
 
 /**********************************************************************/
-int vftr_veperf_test_1 (FILE *fp_in, FILE *fp_out) {
-#if defined(HAS_VEPERF)
-	//int stat = __veperf_init();
-	//if (stat) {
-	//	fprintf (fp_out, "__veperf_init() failed(%d)\n", stat);	  
-	//	return stat;
-	//}
-	//veperf_get_pmcs ((int64_t *)vftr_echwc);
-	fprintf (fp_out, "veperf: success\n");
-#endif
-	return 0;
-}
 
-/**********************************************************************/
-
-int vftr_veperf_test_2 (FILE *fp_in, FILE *fp_out) {
-#if defined(HAS_VEPERF)
+int vftr_sxhwc_test_1 (FILE *fp_in, FILE *fp_out) {
+#if defined(HAS_SXHWC)
+#define N_DIGITS 6
+	const char *sx_counter_names[16] = {"EX", "VX", "FPEC", "VE", "VECC", "L1MCC", 
+		"VE2", "VAREC", "VLDEC", "PCCC", "VLPC", "VLEC", "VLCME", "FMAEC", "PTCC", "TTCC"};
 	int n = 100000;
-	int n_iter = 50;
+	int n_iter = 1000;
 	double x[n], y[n], z[n];
-	//long long c1[MAX_HWC_EVENTS], c2[MAX_HWC_EVENTS], c_diff[MAX_HWC_EVENTS][n_iter];
 	long long *c1, *c2;
 	long long c_diff[MAX_HWC_EVENTS][n_iter];
 	c1 = (long long *)malloc (16 * sizeof(long long));
 	c2 = (long long *)malloc (16 * sizeof(long long));
 	fprintf (fp_out, "Checking reproducibility of SX Aurora hardware counters\n");
 	fprintf (fp_out, "Averaging over %d iterations\n", n_iter);
+
 	for (int i = 0; i < n; i++) {
 		x[i] = i;
 		y[i] = 0.5 * i;
 	}
-	//int stat = __veperf_init();
-	//if (stat) {
-	//	fprintf (fp_out, "__veperf_init() failed(%d)\n", stat);	  
-	//	return stat;
-	//}
 	for (int n = 0; n < n_iter; n++) {
 		vftr_read_sxhwc_registers (c1);
-		//veperf_get_pmcs ((int64_t *)c1);
-		//printf ("DO STUFF\n");
 		for (int i = 0; i < n; i++) {
 			z[i] = x[i] + x[i] * y[i];
 		}
 		vftr_read_sxhwc_registers (c2);
-		//veperf_get_pmcs ((int64_t *)c2);
-		for (int i = 0; i < 15; i++) {
+		for (int i = 0; i < 16; i++) {
 			c_diff[i][n] = c2[i] - c1[i];
 		}
-		//printf ("DIFF COMPUTED\n");
 	}
 	
 	double c_avg[MAX_HWC_EVENTS];
 	long long sum_c;
-	for (int i = 0; i < 15; i++) {
+	for (int i = 0; i < 16; i++) {
 		sum_c = 0;
 		for (int n = 0; n < n_iter; n++) {
 			sum_c += c_diff[i][n];
 		}
 		c_avg[i] = (double)sum_c / n_iter;
 	}
-	for (int i = 0; i < 15; i++) {
-		fprintf (fp_out, "i: %d, c: %d\n", i, (int)floor(c_avg[i]));
-	}
+        // The counters ending with a "C" are clock counters. They depend on the momentary performance of
+        // the system. Therefore, the mean value is not reliable and is therefore not printed. We constrain
+        // this output only to the hardware counters without a "C".
+	fprintf (fp_out, "%*s: %*d\n", N_DIGITS, sx_counter_names[0], N_DIGITS, (int)floor(c_avg[0])); // EX
+	fprintf (fp_out, "%*s: %*d\n", N_DIGITS, sx_counter_names[1], N_DIGITS, (int)floor(c_avg[1])); // VX 
+	fprintf (fp_out, "%*s: %*d\n", N_DIGITS, sx_counter_names[3], N_DIGITS, (int)floor(c_avg[3])); // VE
+	fprintf (fp_out, "%*s: %*d\n", N_DIGITS, sx_counter_names[6], N_DIGITS, (int)floor(c_avg[6])); // VE2
+	fprintf (fp_out, "%*s: %*d\n", N_DIGITS, sx_counter_names[12], N_DIGITS, (int)floor(c_avg[12])); // VLCME
 	free(c1);
 	free(c2);
 #endif

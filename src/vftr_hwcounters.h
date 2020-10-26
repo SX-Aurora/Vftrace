@@ -32,8 +32,8 @@ extern long long vftr_prog_cycles;
 #endif
 #define MAX_EVENTS                   (MAX_HWC_EVENTS+10)
 
-#if defined(HAS_VEPERF)
-#define vftr_read_counters vftr_read_counters_veperf
+#if defined(HAS_SXHWC)
+#define vftr_read_counters vftr_read_counters_sx
 #elif defined(HAS_PAPI)
 #define vftr_read_counters vftr_read_counters_papi
 #else
@@ -49,7 +49,6 @@ void vftr_read_counters (long long *event);
 void vftr_papi_counter (char *name);
 void vftr_sx_counter (char *name, int id);
 
-int vftr_veperf_test_1 (FILE *fp_in, FILE *fp_out);
-int vftr_veperf_test_2 (FILE *fp_in, FILE *fp_out);
+int vftr_sxhwc_test_1 (FILE *fp_in, FILE *fp_out);
 
 #endif

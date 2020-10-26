@@ -42,8 +42,6 @@ double scenario_expr_runtime;
 double scenario_expr_cycles;
 double scenario_expr_cycletime;
 
-
->>>>>>> master
 /**********************************************************************/
 
 void vftr_scenario_print_formula (FILE *fp, function_expr_t formula) {
@@ -60,7 +58,7 @@ void vftr_scenario_print_formula (FILE *fp, function_expr_t formula) {
 
 void vftr_write_scenario_header_to_vfd (FILE *fp) {
 	fwrite (&scenario_expr_n_formulas, sizeof(int), 1, fp);
-#if defined(HAS_VEPERF) || defined(HAS_PAPI)
+#if defined(HAS_SXHWC) || defined(HAS_PAPI)
 	for (int i = 0; i < scenario_expr_n_formulas; i++) {
 		fwrite (scenario_expr_formulas[i].name, SCENARIO_NAME_LEN, 1, fp);
 		fwrite (&scenario_expr_formulas[i].integrated, sizeof(int), 1, fp);
@@ -71,7 +69,7 @@ void vftr_write_scenario_header_to_vfd (FILE *fp) {
 /**********************************************************************/
 
 void vftr_write_observables_to_vfd (unsigned long long cycles, FILE *fp) {
-#if defined(HAS_VEPERF) || defined(HAS_PAPI)
+#if defined(HAS_SXHWC) || defined(HAS_PAPI)
 	scenario_expr_evaluate_all (0., cycles);
 	for (int i = 0; i < scenario_expr_n_formulas; i++) {
 		fwrite (&scenario_expr_formulas[i].value, sizeof(double), 1, fp);
@@ -590,7 +588,7 @@ void scenario_expr_print_header (FILE *fp) {
 
 /**********************************************************************/
 
-void scenario_expr_add_veperf_counters () {
+void scenario_expr_add_sx_counters () {
 	for (int i = 0; i < scenario_expr_n_vars; i++) {
 		vftr_sx_counter (scenario_expr_counter_names[i], i);	
 	}

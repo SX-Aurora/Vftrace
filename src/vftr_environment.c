@@ -242,7 +242,7 @@ void vftr_assert_environment () {
 	}
 
 	// When neither VEPERF nor PAPI are activated, any given scenario file is ignored
-#if !defined(HAS_VEPERF) && !defined(HAS_PAPI)
+#if !defined(HAS_SXHWC) && !defined(HAS_PAPI)
 	vftr_environment.scenario_file->set = false;
 #endif
 

@@ -1,0 +1,7 @@
+Checking reproducibility of SX Aurora hardware counters
+Averaging over 1000 iterations
+    EX:    112
+    VX:     11
+    VE:   2030
+   VE2:   2030
+ VLCME:      0

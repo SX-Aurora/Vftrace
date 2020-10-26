@@ -109,7 +109,7 @@ void scenario_expr_print_header (FILE *fp);
 void scenario_expr_print_group (FILE *fp);
 void scenario_expr_print_subgroup (FILE *fp);
 void scenario_expr_add_papi_counters ();
-void scenario_expr_add_veperf_counters ();
+void scenario_expr_add_sx_counters ();
 
 // test functions
 int vftr_scenario_test_1 (FILE *fp_in, FILE *fp_out);
