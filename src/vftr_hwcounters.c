@@ -31,6 +31,7 @@
 #include "vftr_hwcounters.h"
 #include "vftr_scenarios.h"
 #include "vftr_stacks.h"
+#include "vftr_setup.h"
 
 int vftr_find_event_number (char *);
 
@@ -49,9 +50,6 @@ long long vftr_echwc[MAX_HWC_EVENTS];
 
 // As each hardware observable is registered, this counter is incremented. 
 int hwc_event_num = 0;
-
-// Should be allocated to hwc_event_num ?
-long long vftr_echwc[MAX_HWC_EVENTS];
 
 void vftr_new_counter (char *name, int id, int rank) {
     evtcounter_t *evc;
@@ -184,7 +182,7 @@ int vftr_init_hwc (char *scenario_file) {
 /**********************************************************************/
 
 #if defined(HAS_SXHWC)
-void vftr_read_sxhwc_registers (long long *foo) {
+void vftr_read_sxhwc_registers (long long hwc[MAX_HWC_EVENTS]) {
     long long tmp[16];
     //printf ("READ REGISTERS\n");
     asm volatile (
@@ -205,35 +203,23 @@ void vftr_read_sxhwc_registers (long long *foo) {
         "smir %14, %%pmc14\n\t"
         "smir %15, %%pmc15\n\t"
         :
-        "=r"(tmp[0]),
-        "=r"(tmp[1]),
-        "=r"(tmp[2]),
-        "=r"(tmp[3]),
-        "=r"(tmp[4]),
-        "=r"(tmp[5]),
-        "=r"(tmp[6]),
-        "=r"(tmp[7]),
-        "=r"(tmp[8]),
-        "=r"(tmp[9]),
-        "=r"(tmp[10]),
-        "=r"(tmp[11]),
-        "=r"(tmp[12]),
-        "=r"(tmp[13]),
-        "=r"(tmp[14]),
-        "=r"(tmp[15])
+        "=r"(hwc[0]),
+        "=r"(hwc[1]),
+        "=r"(hwc[2]),
+        "=r"(hwc[3]),
+        "=r"(hwc[4]),
+        "=r"(hwc[5]),
+        "=r"(hwc[6]),
+        "=r"(hwc[7]),
+        "=r"(hwc[8]),
+        "=r"(hwc[9]),
+        "=r"(hwc[10]),
+        "=r"(hwc[11]),
+        "=r"(hwc[12]),
+        "=r"(hwc[13]),
+        "=r"(hwc[14]),
+        "=r"(hwc[15])
     );
-    //printf ("READING DONE\n");
-	for (int i = 0; i < 16; i++) {
-		//printf ("tmp[%d]: %lld\n", i, tmp[i]);
-		foo[i] = tmp[i];
-		//printf ("foo[%d]: %lld\n", i, foo[i]);
-	}
-    //printf ("COPY DONE\n");
-    //printf ("FOO: ");
-    //for (int i = 0; i < 16; i++) {
-    //    printf ("%d ", foo[i]);
-    //}
-    //printf ("\n");
 }
 
 /**********************************************************************/
@@ -242,43 +228,7 @@ void vftr_read_counters_sx (long long *event) {
     int i, j, diag;
     evtcounter_t *evc;
     if (event == NULL) return;
-//    vftr_echwc = vftr_read_sxhwc_registers ();
-//    vftr_read_sxhwc_registers (&vftr_echwc);
-//    asm volatile (
-//        "smir %0,  %%pmc0\n\t"
-//        "smir %1,  %%pmc1\n\t"
-//        "smir %2,  %%pmc2\n\t"
-//        "smir %3,  %%pmc3\n\t"
-//        "smir %4,  %%pmc4\n\t"
-//        "smir %5,  %%pmc5\n\t"
-//        "smir %6,  %%pmc6\n\t"
-//        "smir %7,  %%pmc7\n\t"
-//        "smir %8,  %%pmc8\n\t"
-//        "smir %9,  %%pmc9\n\t"
-//        "smir %10, %%pmc10\n\t"
-//        "smir %11, %%pmc11\n\t"
-//        "smir %12, %%pmc12\n\t"
-//        "smir %13, %%pmc13\n\t"
-//        "smir %14, %%pmc14\n\t"
-//        "smir %15, %%pmc15\n\t"
-//        :
-//        "=r"(vftr_echwc[0]),
-//        "=r"(vftr_echwc[1]),
-//        "=r"(vftr_echwc[2]),
-//        "=r"(vftr_echwc[3]),
-//        "=r"(vftr_echwc[4]),
-//        "=r"(vftr_echwc[5]),
-//        "=r"(vftr_echwc[6]),
-//        "=r"(vftr_echwc[7]),
-//        "=r"(vftr_echwc[8]),
-//        "=r"(vftr_echwc[9]),
-//        "=r"(vftr_echwc[10]),
-//        "=r"(vftr_echwc[11]),
-//        "=r"(vftr_echwc[12]),
-//        "=r"(vftr_echwc[13]),
-//        "=r"(vftr_echwc[14]),
-//        "=r"(vftr_echwc[15])
-//    );
+    vftr_read_sxhwc_registers (vftr_echwc);
     memset (scenario_expr_counter_values, 0., sizeof(double) * scenario_expr_n_vars);
     /* Mask overflow bit and undefined bits */
     vftr_echwc[0] &= 0x000fffffffffffff; /* 52bit counter */
