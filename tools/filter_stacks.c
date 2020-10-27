@@ -24,7 +24,7 @@
 
 #include "vftr_stacks.h"
 
-#define LINEBUFSIZE 256
+#define LINEBUFSIZE 4096
 
 struct arguments {
    double t_min;
