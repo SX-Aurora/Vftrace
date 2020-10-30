@@ -37,6 +37,8 @@ char *vftrace_get_stack();
 void vftrace_pause();
 void vftrace_resume();
 
+void vftrace_show_stacktree_size();
+
 #ifdef __cplusplus 
 }
 #endif

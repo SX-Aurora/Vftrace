@@ -38,6 +38,8 @@ module vftrace
    public :: vftrace_pause, &
              vftrace_resume
 
+   public :: vftrace_show_stacktree_size
+
    interface
 
       ! pause and resume sampling via vftrace in user code
@@ -48,6 +50,11 @@ module vftrace
  
       subroutine vftrace_resume() &
          bind(c, name="vftrace_resume")
+         implicit none
+      end subroutine
+
+      subroutine vftrace_show_stacktree_size() &
+         bind(c, name="vftrace_show_stacktree_size")
          implicit none
       end subroutine
 
