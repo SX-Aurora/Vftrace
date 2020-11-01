@@ -113,7 +113,8 @@ int vftr_html_test_1 (FILE *fp_in, FILE *fp_out) {
 
 	int *stack_indices, *func_indices;
 	int n_indices;
-	vftr_find_function ("C", &func_indices, &stack_indices, &n_indices, false, STACK_INFO);	
+	vftr_find_function_in_table ("C", &func_indices, &n_indices, false);	
+	vftr_find_function_in_stack ("C", &stack_indices, &n_indices, false);
  	stack_leaf_t *stack_tree = NULL;
 	for (int i = 0;  i < n_indices; i++) {
 		//int n_functions_in_stack = vftr_stack_length (stack_indices[i]);

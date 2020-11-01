@@ -882,7 +882,7 @@ void vftr_print_function_stack (FILE *fp, int rank, char *func_name,
 				     fmt_t, fmt_imba, fmt_mpi_send, fmt_mpi_recv, fmt_stackid);
 	vftr_print_stacktree (fp, stack_tree->origin, 0, imbalances,
 			      n_spaces_max, fmt_calls, fmt_t, fmt_imba, fmt_mpi_send, fmt_mpi_recv, fmt_stackid, &total_time);
-	vftr_print_html_output (func_name, stack_tree->origin);
+	vftr_print_html_output (stdout, func_name, stack_tree->origin);
 	free (stack_tree);
 	fprintf (fp, "Total(%s): %lf sec. \n", func_name, (double)total_time * 1e-6);
 }
