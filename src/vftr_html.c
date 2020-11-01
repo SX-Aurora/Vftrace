@@ -28,14 +28,17 @@ void vftr_make_html_indent (FILE *fp, int n_indent_0, int n_indent_extra) {
 	for (int i = 0; i < n_indent_0 + n_indent_extra * INDENT_SPACES; i++) fprintf (fp, " ");
 }
 
-void vftr_print_html_function_element (FILE *fp, int stack_id, int n_spaces) {
+void vftr_print_html_function_element (FILE *fp, int stack_id, int func_id, int n_spaces) {
 	vftr_make_html_indent (fp, n_spaces, 0);
 	fprintf (fp, "<a hfref=\"#\">%s\n", vftr_gStackinfo[stack_id].name);
-	int func_id = vftr_gStackinfo[stack_id].locID;
 	vftr_make_html_indent (fp, n_spaces + 3, 0);
-	fprintf (fp, "<ttt class=\"ttt\">function name: %s\n", vftr_func_table[func_id]->name);
+	fprintf (fp, "<ttt class=\"ttt\">function name: %s\n", vftr_gStackinfo[stack_id].name);
 	vftr_make_html_indent (fp, n_spaces + 3, 0);
-	fprintf (fp, "<br>n_calls: %d\n", vftr_func_table[func_id]->prof_current.calls);
+	if (func_id < 0) {
+	   fprintf (fp, "<br>n_calls: %d\n", -1);
+	} else {
+	   fprintf (fp, "<br>n_calls: %d\n", vftr_func_table[func_id]->prof_current.calls);
+	}
 	vftr_make_html_indent (fp, n_spaces + 3, 0);
 	fprintf (fp, "</ttt>\n");
 	vftr_make_html_indent (fp, n_spaces, 0);
@@ -46,7 +49,7 @@ void vftr_print_html_function_element (FILE *fp, int stack_id, int n_spaces) {
 
 void vftr_print_stacktree_to_html (FILE *fp, stack_leaf_t *leaf, int n_spaces, long long *total_time) {
 	if (!leaf) return;
-	vftr_print_html_function_element (fp, leaf->stack_id, n_spaces);
+	vftr_print_html_function_element (fp, leaf->stack_id, leaf->func_id, n_spaces);
 	if (leaf->callee) {
 		vftr_make_html_indent (fp, n_spaces, 0);
 		fprintf (fp, "<ul>\n");
