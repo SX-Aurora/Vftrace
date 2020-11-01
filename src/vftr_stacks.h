@@ -105,6 +105,12 @@ typedef struct stack_leaf {
 	struct stack_leaf *origin;
 } stack_leaf_t;	
 
+// The headers of the stacktree table.
+// The enums below allow for an access to fields without having to care about the actual number, e.g.
+// when the order of elements is rearranged.
+extern const char *vftr_stacktree_headers[6];
+enum column_ids {TIME, CALLS, IMBA, SEND_BYTES, RECV_BYTES, STACK_ID};
+
 int vftr_stack_length (int stack_id0);
 void vftr_fill_into_stack_tree (stack_leaf_t **this_leaf, int n_stack_ids, int *stacks_ids, int func_id);
 void vftr_print_function_stack (FILE *fp, int rank, char *func_name,

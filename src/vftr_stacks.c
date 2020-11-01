@@ -57,6 +57,8 @@ function_t *vftr_froots = NULL;
 // Profile data sample
 profdata_t vftr_prof_data;
 
+const char *vftr_stacktree_headers[6] = {"T[s]", "Calls", "Imbalance[%]", "Total send", "Total recv.", "Stack ID"};
+
 /**********************************************************************/
 
 // initialize stacks only called from vftr_initialize
@@ -753,25 +755,26 @@ void vftr_scan_for_maximum_values (stack_leaf_t *leaf, int this_n_spaces, double
 
 /**********************************************************************/
 
-const char *stacktree_headers[4] = {"T[s]", "n_calls", "imbalance[%]", "stackID"};
-
-void vftr_print_stacktree_header (FILE *fp, char *func_name,
-				  int n_spaces_max, int fmt_calls, int fmt_t, int fmt_imba, int fmt_stackid) {
-	int n_char_tot = n_spaces_max + fmt_calls + fmt_t + fmt_imba + fmt_stackid + 12;
+void vftr_print_stacktree_header (FILE *fp, int n_stacks, char *func_name,
+				  int n_spaces_max, int fmt_calls, int fmt_t, int fmt_imba,
+				  int fmt_send_bytes, int fmt_recv_bytes, int fmt_stackid) {
+	int n_char_tot = n_spaces_max + fmt_calls + fmt_t + fmt_imba + fmt_send_bytes + fmt_recv_bytes + fmt_stackid + 18;
 	char title[64];
-	sprintf (title, "Function stacks leading to %s", func_name);
+	sprintf (title, "Function stacks leading to %s: %d", func_name, n_stacks);
 	fprintf (fp, "%s", title);
 	for (int i = 0; i < n_spaces_max - strlen(title); i++) fprintf (fp, " ");
-	fprintf (fp, "   %*s   %*s   %*s   %*s\n", fmt_t, stacktree_headers[0],
-		 fmt_calls, stacktree_headers[1], fmt_imba, stacktree_headers[2],
-		 fmt_stackid, stacktree_headers[3]);
+	fprintf (fp, "   %*s   %*s   %*s   %*s   %*s   %*s\n", fmt_t, vftr_stacktree_headers[TIME],
+		 fmt_calls, vftr_stacktree_headers[CALLS], fmt_imba, vftr_stacktree_headers[IMBA],
+		 fmt_send_bytes, vftr_stacktree_headers[SEND_BYTES], fmt_recv_bytes, vftr_stacktree_headers[RECV_BYTES],
+		 fmt_stackid, vftr_stacktree_headers[STACK_ID]);
 	vftr_print_dashes (fp, n_char_tot);
 }
 
 /**********************************************************************/
 
 void vftr_print_stacktree (FILE *fp, stack_leaf_t *leaf, int n_spaces, double *imbalances, 
-			   int n_spaces_max, int fmt_calls, int fmt_t, int fmt_imba, int fmt_stackid,
+			   int n_spaces_max, int fmt_calls, int fmt_t, int fmt_imba,
+		           int fmt_send_bytes, int fmt_recv_bytes, int fmt_stackid,
 			   long long *total_time) {
 	if (!leaf) return;
 	fprintf (fp, vftr_gStackinfo[leaf->stack_id].name);
@@ -780,7 +783,8 @@ void vftr_print_stacktree (FILE *fp, stack_leaf_t *leaf, int n_spaces, double *i
 		int new_n_spaces = n_spaces + strlen(vftr_gStackinfo[leaf->stack_id].name);
 		if (n_spaces > 0) new_n_spaces++;
 		vftr_print_stacktree (fp, leaf->callee, new_n_spaces, imbalances,
-				      n_spaces_max, fmt_calls, fmt_t, fmt_imba, fmt_stackid,
+				      n_spaces_max, fmt_calls, fmt_t, fmt_imba,
+			              fmt_send_bytes, fmt_recv_bytes, fmt_stackid,
 				      total_time);
 	} else {
 		if (leaf->func_id < 0) {
@@ -791,10 +795,17 @@ void vftr_print_stacktree (FILE *fp, stack_leaf_t *leaf, int n_spaces, double *i
 			for (int i = n_spaces + strlen(vftr_gStackinfo[leaf->stack_id].name) + 2; i < n_spaces_max; i++) {
 			   fprintf (fp, " ");
 			}
-			fprintf (fp, "   %*.5f   %*d   %*.5f   %*d\n",
+			char *send_unit_str, *recv_unit_str;
+		        double mpi_tot_send_bytes = vftr_func_table[leaf->func_id]->prof_current.mpi_tot_send_bytes;
+		        double mpi_tot_recv_bytes = vftr_func_table[leaf->func_id]->prof_current.mpi_tot_recv_bytes;
+			vftr_memory_unit (&mpi_tot_send_bytes, &send_unit_str);	
+			vftr_memory_unit (&mpi_tot_recv_bytes, &recv_unit_str);	
+			fprintf (fp, "   %*.6f   %*d   %*.2f   %*.lf %s   %*.lf %s   %*d\n",
 				 fmt_t, (double)vftr_func_table[leaf->func_id]->prof_current.timeIncl * 1e-6,
 				 fmt_calls, vftr_func_table[leaf->func_id]->prof_current.calls,
 				 fmt_imba, imbalances[leaf->func_id],
+			 	 fmt_send_bytes - 4, mpi_tot_send_bytes, send_unit_str,
+				 fmt_recv_bytes - 4, mpi_tot_recv_bytes, recv_unit_str,
 				 fmt_stackid, leaf->stack_id);
 		}
 	}
@@ -802,7 +813,8 @@ void vftr_print_stacktree (FILE *fp, stack_leaf_t *leaf, int n_spaces, double *i
 		for (int i = 0; i < n_spaces; i++) fprintf (fp, " ");
 		fprintf (fp, ">");
 		vftr_print_stacktree (fp, leaf->next_in_level, n_spaces, imbalances,
-				      n_spaces_max, fmt_calls, fmt_t, fmt_imba, fmt_stackid,
+				      n_spaces_max, fmt_calls, fmt_t, fmt_imba,
+				      fmt_send_bytes, fmt_recv_bytes, fmt_stackid,
 				      total_time);
 	}
 }
@@ -816,7 +828,7 @@ void vftr_print_function_stack (FILE *fp, int rank, char *func_name,
 	double imbalances [vftr_func_table_size];
 #ifdef _MPI
 	for (int fsid = 0; fsid < n_final_stack_ids; fsid++) {
-		int function_idx = vftr_gStackinfo[fsid].locID;
+		int function_idx = vftr_gStackinfo[final_stack_ids[fsid]].locID;
 		long long t = function_idx >= 0 ? vftr_func_table[function_idx]->prof_current.timeIncl : -1.0;
 		PMPI_Allgather (&t, 1, MPI_LONG_LONG_INT,
 				all_times, 1, MPI_LONG_LONG_INT, MPI_COMM_WORLD);
@@ -825,7 +837,6 @@ void vftr_print_function_stack (FILE *fp, int rank, char *func_name,
 			imbalances[function_idx] = compute_mpi_imbalance (all_times, -1.0);
 		}
 	}
-	if (vftr_mpirank > 0) return;
 #else
 	for (int i  = 0; i < vftr_func_table_size; i++) {
 		imbalances[i] = 0;
@@ -856,14 +867,21 @@ void vftr_print_function_stack (FILE *fp, int rank, char *func_name,
 	double imba_max = 0.0;
 	vftr_scan_for_maximum_values (stack_tree->origin, 0, imbalances,
 				         &n_spaces_max, &t_max, &n_calls_max, &imba_max);	
-	int fmt_t = (vftr_count_digits_double(t_max) + 6) > strlen(stacktree_headers[0]) ? vftr_count_digits_double(t_max) + 6: strlen(stacktree_headers[0]);;
-	int fmt_calls = vftr_count_digits(n_calls_max) > strlen(stacktree_headers[1]) ? vftr_count_digits(n_calls_max) : strlen(stacktree_headers[1]);;
-	int fmt_imba = (vftr_count_digits_double(imba_max) + 6) > strlen(stacktree_headers[2]) ? vftr_count_digits_double(imba_max) + 6: strlen(stacktree_headers[2]);
-	int fmt_stackid = vftr_count_digits(vftr_gStackscount) > strlen(stacktree_headers[3]) ?
-			 vftr_count_digits(vftr_gStackscount) : strlen(stacktree_headers[3]);
-	vftr_print_stacktree_header (fp, func_name, n_spaces_max, fmt_calls, fmt_t, fmt_imba, fmt_stackid);
+	// We have six digits behind the comma for time values. More do not make sense since we have a resolution
+	// of microseconds.
+	// We add this value of 6 to the number of digits in front of the comma, plus one for the comma itself.
+	int fmt_t = (vftr_count_digits_double(t_max) + 7) > strlen(vftr_stacktree_headers[TIME]) ? vftr_count_digits_double(t_max) + 7: strlen(vftr_stacktree_headers[TIME]);
+	int fmt_calls = vftr_count_digits(n_calls_max) > strlen(vftr_stacktree_headers[CALLS]) ? vftr_count_digits(n_calls_max) : strlen(vftr_stacktree_headers[CALLS]);;
+	// For percentage values, two decimal points are enough.
+	int fmt_imba = (vftr_count_digits_double(imba_max) + 3) > strlen(vftr_stacktree_headers[IMBA]) ? vftr_count_digits_double(imba_max) + 3: strlen(vftr_stacktree_headers[IMBA]);
+	int fmt_stackid = vftr_count_digits(vftr_gStackscount) > strlen(vftr_stacktree_headers[STACK_ID]) ?
+			 vftr_count_digits(vftr_gStackscount) : strlen(vftr_stacktree_headers[STACK_ID]);
+	int fmt_mpi_send = strlen (vftr_stacktree_headers[SEND_BYTES]);
+	int fmt_mpi_recv = strlen (vftr_stacktree_headers[RECV_BYTES]);
+	vftr_print_stacktree_header (fp, n_final_stack_ids, func_name, n_spaces_max, fmt_calls,
+				     fmt_t, fmt_imba, fmt_mpi_send, fmt_mpi_recv, fmt_stackid);
 	vftr_print_stacktree (fp, stack_tree->origin, 0, imbalances,
-			      n_spaces_max, fmt_calls, fmt_t, fmt_imba, fmt_stackid, &total_time);
+			      n_spaces_max, fmt_calls, fmt_t, fmt_imba, fmt_mpi_send, fmt_mpi_recv, fmt_stackid, &total_time);
 	vftr_print_html_output (func_name, stack_tree->origin);
 	free (stack_tree);
 	fprintf (fp, "Total(%s): %lf sec. \n", func_name, (double)total_time * 1e-6);

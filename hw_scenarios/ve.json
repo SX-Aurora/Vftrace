@@ -42,6 +42,10 @@
       "symbol": "pccc"
     },
     {
+      "papi_name": "VLPC",
+      "symbol": "vlpc"
+    },
+    {
       "papi_name": "VLEC",
       "symbol": "vlec"
     },

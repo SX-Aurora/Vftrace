@@ -42,6 +42,8 @@ symtab_t **vftr_symtab;
 // optionally. Moreover, there is no guarantee that the delimiter token is 
 // always "_MP_".
 //
+// Also, contained subroutines can be prefixed by "_EP_". We remove that too.
+//
 // We go through the function names until a '_' character is encountered.
 // If this is the case, we check if the succeeding three characters match
 // the delimiter pattern. When this is the case, we exit the function and
@@ -55,7 +57,8 @@ char *vftr_strip_module_name (char *base_name) {
 	bool has_module_token = false;
 	while (*tmp != '\0') {
 		if (*tmp == '_') {
-			has_module_token = tmp[1] == 'M' && tmp[2] == 'P' && tmp[3] == '_';
+			// First letter is E or M
+			has_module_token = (tmp[1] == 'M' || tmp[1] == 'E') && tmp[2] == 'P' && tmp[3] == '_';
 			if (has_module_token) {
 				func_name = tmp + 4;
 				break;
@@ -256,7 +259,7 @@ FILE *get_fmap (char *target) {
       strcpy (maps, target);
     } else {
       /* Normal use: from vftr_initialize() */
-      sprintf (maps, "/proc/%d/maps", getpid());
+      strcpy (maps, "/proc/self/maps");
     }
 
     if ((fmap = fopen (maps, "r")) == NULL) {

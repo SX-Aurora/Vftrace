@@ -35,9 +35,9 @@ AC_ARG_ENABLE([papi],
   [AS_HELP_STRING([--enable-papi], [enable PAPI [[no]]])],
   [], [enable_papi="no"])
 
-AC_ARG_ENABLE([veperf],
-  [AS_HELP_STRING([--enable-veperf], [enable VEPERF for SX Aurora [[no]]])],
-  [], [enable_veperf="no"])
+AC_ARG_ENABLE([sx_hwc],
+  [AS_HELP_STRING([--enable-sx-hwc], [enable hardware counters for SX Aurora [[no]]])],
+  [], [enable_sx_hwc="no"])
 
 AC_ARG_ENABLE([mpi_profiling],
   [AS_HELP_STRING([--enable-mpi-profiling], [enable MPI profiling [[no]]])],
@@ -54,17 +54,11 @@ AC_ARG_ENABLE([vmap_offset_check],
 AC_ARG_WITH([papi],
   [AS_HELP_STRING([--with-papi=dir], [assume given directory for PAPI])])
 
-AC_ARG_WITH([veperf],
-  [AS_HELP_STRING([--with-veperf=dir], [assume given directory for Veperf])])
-
 AM_CONDITIONAL([PAPI_AVAIL], [test "$enable_papi" = "yes"])
 PAPI_HOME=$with_papi
 AC_SUBST([PAPI_HOME])
 
-AM_CONDITIONAL([VEPERF_AVAIL], [test "$enable_veperf" = "yes"])
-VEPERF_HOME=$with_veperf
-AC_SUBST([VEPERF_HOME])
-
+AM_CONDITIONAL([VEPERF_AVAIL], [test "$enable_sx_hwc" = "yes"])
 AM_CONDITIONAL([VMAP_OFFSET], [test "$enable_vmap_offset" = "yes"])
 AM_CONDITIONAL([MPI_PROFILING], [test "$enable_mpi_profiling" = "yes"])
 AM_CONDITIONAL([VMAP_OFFSET_CHECK], [test "$enable_vmap_offset_check" = "yes"])
@@ -181,8 +175,7 @@ AC_CONFIG_LINKS(test/units/ref_output/vftr_environment_test_1.out:test/units/ref
                 test/units/ref_output/vftr_setup_test_1.out:test/units/ref_output/vftr_setup_test_1.out
                 test/units/ref_output/vftr_setup_test_2.out:test/units/ref_output/vftr_setup_test_2.out
                 test/units/ref_output/vftr_symbols_test_1.out:test/units/ref_output/vftr_symbols_test_1.out
-                test/units/ref_output/vftr_veperf_test_1.out:test/units/ref_output/vftr_veperf_test_1.out
-                test/units/ref_output/vftr_veperf_test_2.out:test/units/ref_output/vftr_veperf_test_2.out
+                test/units/ref_output/vftr_sxhwc_test_1.out:test/units/ref_output/vftr_sxhwc_test_1.out
                )
 
 AM_COND_IF([MPI_PROFILING],[units_refdir=mpi], [units_refdir=serial])
@@ -193,9 +186,11 @@ AC_CONFIG_LINKS(test/units/ref_output/vftr_functions_test_1.out:test/units/ref_o
                 test/units/ref_output/vftr_functions_test_4.out:test/units/ref_output/$units_refdir/vftr_functions_test_4.out
                 test/units/ref_output/vftr_functions_test_5.out:test/units/ref_output/$units_refdir/vftr_functions_test_5.out
                 test/units/ref_output/vftr_filewrite_test_2.out:test/units/ref_output/$units_refdir/vftr_filewrite_test_2.out
-                test/units/ref_output/vftr_stacks_test_1.out:test/units/ref_output/$units_refdir/vftr_stacks_test_1.out
-                test/units/ref_output/vftr_stacks_test_2.out:test/units/ref_output/$units_refdir/vftr_stacks_test_2.out
-		)
+                test/units/ref_output/vftr_stacks_test_1.out:test/units/ref_output/$units_refdir/vftr_stacks_test_1.out)
+
+AM_COND_IF([MPI_PROFILING],
+           [AC_CONFIG_LINKS(test/units/ref_output/vftr_stacks_test_2.out:test/units/ref_output/$units_refdir/vftr_stacks_test_2.out)]
+          )
 
 AC_CONFIG_LINKS(test/units/this_passes.sh:test/units/this_passes.sh
                 test/units/this_fails.sh:test/units/this_fails.sh
@@ -214,10 +209,11 @@ AC_CONFIG_LINKS(test/units/this_passes.sh:test/units/this_passes.sh
                 test/units/vftr_functions_test_4.sh:test/units/vftr_functions_test_4.sh
                 test/units/vftr_functions_test_5.sh:test/units/vftr_functions_test_5.sh
                 test/units/vftr_stacks_test_1.sh:test/units/vftr_stacks_test_1.sh
-                test/units/vftr_stacks_test_2.sh:test/units/vftr_stacks_test_2.sh
-                test/units/vftr_veperf_test_1.sh:test/units/vftr_veperf_test_1.sh
-                test/units/vftr_veperf_test_2.sh:test/units/vftr_veperf_test_2.sh
+                test/units/vftr_sxhwc_test_1.sh:test/units/vftr_sxhwc_test_1.sh
                )
+AM_COND_IF([MPI_PROFILING],
+           [AC_CONFIG_LINKS(test/units/vftr_stacks_test_2.sh:test/units/vftr_stacks_test_2.sh)]
+          )
 
 # User function tests
 AC_CONFIG_LINKS(test/user_functions/cregions1.sh:test/user_functions/cregions1.sh

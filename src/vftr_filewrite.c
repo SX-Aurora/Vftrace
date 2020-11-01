@@ -222,6 +222,20 @@ void vftr_write_to_vfd(long long runtime, unsigned long long cycles, int stack_i
 /**********************************************************************/
 
 #ifdef _MPI
+// store some message information for use in the log file
+void vftr_log_message_info(vftr_direction dir, int count, int type_idx,
+                           int type_size, int rank, int tag,
+                           long long tstart, long long tend) {
+   // vftr_stack is the current function stack pointer
+   vftr_fstack;
+
+   if (dir == send) {
+      vftr_fstack->prof_current.mpi_tot_send_bytes += count * type_size;
+   } else {
+      vftr_fstack->prof_current.mpi_tot_recv_bytes += count * type_size;
+   }
+}
+
 // Store the message information in a vfd file
 void vftr_store_message_info(vftr_direction dir, int count, int type_idx,
                              int type_size, int rank, int tag,
@@ -530,6 +544,7 @@ double compute_mpi_imbalance (long long *all_times, double t_avg) {
 
 typedef struct display_function {
     char *func_name;
+    int i_orig; // The original index of the display function. Used to undo sortings by various other field values, e.g. t_avg.
     int n_calls;
     double t_avg;
     long long t_min;
@@ -544,6 +559,8 @@ typedef struct display_function {
     int n_func_indices;
     int *stack_indices;
     int *func_indices;
+    double mpi_tot_send_bytes;
+    double mpi_tot_recv_bytes;
 } display_function_t;
 
 
@@ -590,10 +607,14 @@ void evaluate_display_function (char *func_name, display_function_t **display_fu
     (*display_func)->this_mpi_time = 0;
     (*display_func)->this_sync_time = 0;
     (*display_func)->n_calls = 0;
+    (*display_func)->mpi_tot_send_bytes = 0;
+    (*display_func)->mpi_tot_recv_bytes = 0;
     for (int i = 0; i < n_func_indices; i++) {
 	(*display_func)->this_mpi_time += vftr_func_table[func_indices[i]]->prof_current.timeIncl;
 	if (n_func_indices_sync > 0) (*display_func)->this_sync_time += vftr_func_table[func_indices_sync[i]]->prof_current.timeIncl;
 	(*display_func)->n_calls += vftr_func_table[func_indices[i]]->prof_current.calls;
+	(*display_func)->mpi_tot_send_bytes += vftr_func_table[func_indices[i]]->prof_current.mpi_tot_send_bytes;
+	(*display_func)->mpi_tot_recv_bytes += vftr_func_table[func_indices[i]]->prof_current.mpi_tot_recv_bytes;
     }
     long long all_times [vftr_mpisize], all_times_sync [vftr_mpisize];
     PMPI_Allgather (&(*display_func)->this_mpi_time, 1, MPI_LONG_LONG_INT, all_times,
@@ -642,8 +663,7 @@ void evaluate_display_function (char *func_name, display_function_t **display_fu
 
 /**********************************************************************/
 
-
-int vftr_compare_display_functions (const void *a1, const void *a2) {
+int vftr_compare_display_functions_tavg (const void *a1, const void *a2) {
 	display_function_t *f1 = *(display_function_t **)a1;
 	display_function_t *f2 = *(display_function_t **)a2;
 	if (!f2) return -1;
@@ -654,6 +674,19 @@ int vftr_compare_display_functions (const void *a1, const void *a2) {
 	if (diff > 0) return 1;
 	if (diff < 0) return -1;
 	return 0; 
+}
+
+int vftr_compare_display_functions_iorig (const void *a1, const void *a2) {
+	display_function_t *f1 = *(display_function_t **)a1;
+	display_function_t *f2 = *(display_function_t **)a2;
+	if (!f2) return -1;
+	if (!f1) return 1;
+	double t1 = f1->i_orig;
+	double t2 = f2->i_orig;
+	double diff = t1 - t2; // Small indices first
+	if (diff > 0) return 1;
+	if (diff < 0) return -1;
+	return 0;
 }
 
 /**********************************************************************/
@@ -715,6 +748,7 @@ void vftr_print_function_statistics (FILE *pout, bool display_sync_time,
     for (int i = 0; i < n_display_functions; i++) {
 	display_functions[i] = (display_function_t*) malloc (sizeof(display_function_t));
 	display_functions[i]->func_name = strdup(display_function_names[i]);
+        display_functions[i]->i_orig = i;
     }
     
     double total_time = 0;
@@ -724,7 +758,7 @@ void vftr_print_function_statistics (FILE *pout, bool display_sync_time,
     }
 
     qsort ((void*)display_functions, (size_t)n_display_functions,
-	    sizeof (display_function_t *), vftr_compare_display_functions);
+	    sizeof (display_function_t *), vftr_compare_display_functions_tavg);
 
 
     fprintf (pout, "Total time spent in MPI for rank %d: %lf s\n", vftr_mpirank, total_time);
@@ -735,7 +769,7 @@ void vftr_print_function_statistics (FILE *pout, bool display_sync_time,
     // the maximum number of digits or characters required to display the
     // corresponding column. 
     int n_func, n_calls, n_t_avg, n_t_min, n_t_max, n_imba, n_t;
-    vftr_get_display_width (display_functions, n_display_functions, 3,
+    vftr_get_display_width (display_functions, n_display_functions, 5,
 	&n_func, &n_calls, &n_t_avg, &n_t_min, &n_t_max, &n_imba, &n_t);
 
     // The following headers appear in the function table but also define
@@ -747,15 +781,18 @@ void vftr_print_function_statistics (FILE *pout, bool display_sync_time,
     // It is printed directly behind the associated absolute time in brackets "(%...)",
     // requiring 8 characters. This value is added to the column width when 
     // comparing to the default column widths.
-    const char *headers[8] = {"function", "%MPI", "n_calls",
-			      "avg. time [s]", "min. time [s]", "max. time [s]",
-			      "imbalance", "This rank [s]"};
-    enum column_ids {FUNC, MPI, CALLS, T_AVG, T_MIN, T_MAX, IMBA, THIS_T};
+    const char *headers[10] = {"Function", "%MPI", "Calls",
+                              "Total send ", "Total recv.",
+			      "Avg. time [s]", "Min. time [s]", "Max. time [s]",
+			      "Imbalance", "This rank [s]"};
+    enum column_ids {FUNC, MPI, CALLS, TOT_SEND_BYTES, TOT_RECV_BYTES, T_AVG, T_MIN, T_MAX, IMBA, THIS_T};
 
     // Note that there is no treatment of the width of the %MPI column, since the value
     // inside can never exceed 99.99%. Therefore, it has a fixed length of 5.
     int n_func_0 = strlen(headers[FUNC]);
     int n_calls_0 = strlen(headers[CALLS]);
+    int n_tot_send_bytes = strlen(headers[TOT_SEND_BYTES]);
+    int n_tot_recv_bytes = strlen(headers[TOT_RECV_BYTES]);
     int n_t_avg_0 = strlen (headers[T_AVG]);
     int n_t_min_0 = strlen (headers[T_MIN]);
     int n_t_max_0 = strlen (headers[T_MAX]);
@@ -789,17 +826,18 @@ void vftr_print_function_statistics (FILE *pout, bool display_sync_time,
     }
 
     // We compute the total width of the MPI table to print separator lines.
-    // There are the widths computed above, as well as the width of the MPI field, 
-    // which is 5. Additionally, there are 9 "|" characters and 16 spaces around them.
-    // So in total, we have a fixed summand of 5 + 9 + 16 = 30.
-    int n_spaces_tot = n_func + n_calls + n_t_avg + n_t_min + n_t_max + n_imba + n_t + 30;
+    // There are the widths computed above, as well as the width of the MPI field,
+    // which is 6. Additionally, there are 11 "|" characters and 20 spaces around them.
+    // So in total, we have a fixed summand of 11 + 20 = 31.
+    int n_spaces_tot = n_func + 6 + n_calls + n_tot_send_bytes + n_tot_recv_bytes + n_t_avg + n_t_min + n_t_max + n_imba + n_t + 31;
 
     // Print a separator line ("----------"), followed by the table header, followed
     // by another separator line.
     for (int i = 0; i < n_spaces_tot; i++) fprintf (pout, "-");
     fprintf (pout, "\n");
-    fprintf (pout, "| %*s | %*s | %*s | %*s | %*s | %*s | %*s | %*s |\n",
-	     n_func, headers[FUNC], 5, headers[MPI], n_calls, headers[CALLS],
+    fprintf (pout, "| %*s | %*s | %*s | %*s | %*s | %*s | %*s | %*s | %*s | %*s |\n",
+	     n_func, headers[FUNC], 6, headers[MPI], n_calls, headers[CALLS],
+             n_tot_send_bytes, headers[TOT_SEND_BYTES], n_tot_recv_bytes, headers[TOT_RECV_BYTES],
 	     n_t_avg, headers[T_AVG],
 	     n_t_min, headers[T_MIN], n_t_max, headers[T_MAX],
 	     n_imba, headers[IMBA], n_t, headers[THIS_T]);
@@ -808,16 +846,24 @@ void vftr_print_function_statistics (FILE *pout, bool display_sync_time,
 
     // Print all the display functions, but omit those without any calls.
     for (int i = 0; i < n_display_functions; i++) {
+
+       // prepare the message size output
+       char *send_unit_str;
+       char *recv_unit_str;
+       vftr_memory_unit(&(display_functions[i]->mpi_tot_send_bytes), &send_unit_str);
+       vftr_memory_unit(&(display_functions[i]->mpi_tot_recv_bytes), &recv_unit_str);
 	   
        if (display_functions[i]->n_calls > 0) {
 	
 	if (display_functions[i]->t_sync_avg > 0) {
 	  // There are synchronization times for this function. We make space for the additional
 	  // field "(xx.xx%)". Note that we need to subtract add_sync_spaces from the column widths.
-          fprintf (pout, "| %*s | %5.2f | %*d | %*.5f(%5.2f%%) | %*.5f(%5.2f%%) | %*.5f(%5.2f%%) | %*.5f | %*.5f(%5.2f%%) |\n",
+          fprintf (pout, "| %*s | %6.2f | %*d | %*.2f %s | %*.2f %s | %*.5f(%5.2f%%) | %*.5f(%5.2f%%) | %*.5f(%5.2f%%) | %*.5f | %*.5f(%5.2f%%) |\n",
 		   n_func, display_functions[i]->func_name,
  	  	   (display_functions[i]->this_mpi_time * 1e-6) / total_time * 100,
 		   n_calls, display_functions[i]->n_calls,
+                   n_tot_send_bytes-4, display_functions[i]->mpi_tot_send_bytes, send_unit_str,
+                   n_tot_recv_bytes-4, display_functions[i]->mpi_tot_recv_bytes, recv_unit_str,
 		   n_t_avg - add_sync_spaces, display_functions[i]->t_avg * 1e-6, (double)display_functions[i]->t_sync_avg / (double)display_functions[i]->t_avg * 100,
 		   n_t_min - add_sync_spaces, display_functions[i]->t_min * 1e-6, (double)display_functions[i]->t_sync_min / (double)display_functions[i]->t_min * 100,
 		   n_t_max - add_sync_spaces, display_functions[i]->t_max * 1e-6, (double)display_functions[i]->t_sync_max / (double)display_functions[i]->t_max * 100,
@@ -827,10 +873,12 @@ void vftr_print_function_statistics (FILE *pout, bool display_sync_time,
 	   // This function does not have synchronization times, but others have. We take into
 	   // account the synchronization fields "(xx.xx%)" of other functions by adding
 	   // add_sync_spaces number of spaces. 
-	   fprintf (pout, "| %*s | %5.2f | %*d | %*.5f         | %*.5f         | %*.5f         | %*.5f | %*.5f         |\n",
+	   fprintf (pout, "| %*s | %6.2f | %*d | %*.2f %s | %*.2f %s | %*.5f         | %*.5f         | %*.5f         | %*.5f | %*.5f         |\n",
 		    n_func, display_functions[i]->func_name,
 		    (display_functions[i]->this_mpi_time * 1e-6) / total_time * 100,
 		    n_calls, display_functions[i]->n_calls,
+                    n_tot_send_bytes-4, display_functions[i]->mpi_tot_send_bytes, send_unit_str,
+                    n_tot_recv_bytes-4, display_functions[i]->mpi_tot_recv_bytes, recv_unit_str,
  	            n_t_avg - add_sync_spaces, display_functions[i]->t_avg * 1e-6,
 		    n_t_min - add_sync_spaces, display_functions[i]->t_min * 1e-6,
 		    n_t_max - add_sync_spaces, display_functions[i]->t_max * 1e-6,
@@ -839,10 +887,12 @@ void vftr_print_function_statistics (FILE *pout, bool display_sync_time,
 
 	} else {
            // No display function has synchronization times, so only the absolute times are printed.
-	   fprintf (pout, "| %*s | %5.2f | %*d | %*.5f | %*.5f | %*.5f | %*.5f | %*.5f |\n",
+	   fprintf (pout, "| %*s | %6.2f | %*d | %*.2f %s | %*.2f %s | %*.5f | %*.5f | %*.5f | %*.5f | %*.5f |\n",
 		    n_func, display_functions[i]->func_name,
 		    (display_functions[i]->this_mpi_time * 1e-6) / total_time * 100,
 		    n_calls, display_functions[i]->n_calls,
+                    n_tot_send_bytes-4, display_functions[i]->mpi_tot_send_bytes, send_unit_str,
+                    n_tot_recv_bytes-4, display_functions[i]->mpi_tot_recv_bytes, recv_unit_str,
  	            n_t_avg, display_functions[i]->t_avg * 1e-6,
 		    n_t_min, display_functions[i]->t_min * 1e-6,
 		    n_t_max, display_functions[i]->t_max * 1e-6,
@@ -856,6 +906,15 @@ void vftr_print_function_statistics (FILE *pout, bool display_sync_time,
   fprintf (pout, "\n");
 
   if (vftr_environment.print_stack_profile->value) {
+	// Next, we print the function stack trees. But first, we need to undo the sorting done before. 
+	// This is because inside of vftr_print_function_stack, the run times of individual stacks are
+	// gathered across all ranks. If the order of the display functions is not the same for all ranks,
+	// which can happen for example when one of them is an I/O rank, the gathered values can correspond
+	// to different functions.  	
+	//
+	qsort ((void*)display_functions, (size_t)n_display_functions,
+	       sizeof (display_function_t *), vftr_compare_display_functions_iorig);
+
   	for (int i = 0; i < n_display_functions; i++) {
   		vftr_print_function_stack (pout, vftr_mpirank, display_functions[i]->func_name, 
 				      display_functions[i]->n_stack_indices,
@@ -1255,6 +1314,40 @@ int vftr_filewrite_test_2 (FILE *fp_in, FILE *fp_out) {
 #endif
 	vftr_print_profile (fp_out, &n, vftr_test_runtime);		
 	return 0;
+}
+
+/**********************************************************************/
+
+void vftr_memory_unit(double *value, char **unit) {
+   int unit_idx = 0;
+   while (*value > 1024.0) {
+      unit_idx++;
+      *value /= 1024.0;
+   }
+
+   switch (unit_idx) {
+      case 0:
+         *unit = "  B";
+         break;
+      case 1:
+         *unit = "KiB";
+         break;
+      case 2:
+         *unit = "MiB";
+         break;
+      case 3:
+         *unit = "GiB";
+         break;
+      case 4:
+         *unit = "TiB";
+         break;
+      case 5:
+         *unit = "PiB";
+         break;
+      default:
+         *unit = "  B";
+         break;
+   }
 }
 
 /**********************************************************************/
