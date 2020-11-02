@@ -1,8 +1,19 @@
 if MPI_PROFILING
-  AM_TESTS_ENVIRONMENT=. $(top_srcdir)/test/environment/set_necmpi.sh;
-#   AM_TESTS_ENVIRONMENT=export HAS_MPI="YES"; \
-#                        export MPI_EXEC="mpirun"; \
-# 		       export NP="-np";  
+if USES_OPEN_MPI
+AM_TESTS_ENVIRONMENT=. $(top_srcdir)/test/environment/set_openmpi.sh;
+endif
+
+if USES_NEC_MPI
+   AM_TESTS_ENVIRONMENT=. $(top_srcdir)/test/environment/set_necmpi.sh;
+endif
+
+if USES_INTEL_MPI
+   AM_TESTS_ENVIRONMENT=. $(top_srcdir)/test/environment/set_necmpi.sh;
+endif
+
+ifndef AM_TESTS_ENVIRONMENT
+   AM_TESTS_ENVIRONMENT=. $(top_srcdir)/test/environment/set_genericmpi.sh;
+endif
 else
   AM_TESTS_ENVIRONMENT=. $(top_srcdir)/test/environment/set_nompi.sh;
 endif
