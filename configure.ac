@@ -20,15 +20,7 @@ AM_PROG_CC_C_O
 # WO_PROG_COMPILERS()
 ################################
 # Check if C-compiler supports c99 standard
-AX_CHECK_COMPILE_FLAG([-std=gnu11],
-   [AX_APPEND_FLAG([-std=gnu11])],
-   [AX_CHECK_COMPILE_FLAG([-std=c11],
-      [AX_APPEND_FLAG([-std=c11])],
-      [AX_CHECK_COMPILE_FLAG([-std=c99],
-         [AX_APPEND_FLAG([-std=c99])],
-         [AC_MSG_ERROR([C compiler does not support at least C99!])])
-      ])
-   ])
+AX_CHECK_C99_STD
 
 ################################
 AC_ARG_ENABLE([papi],
