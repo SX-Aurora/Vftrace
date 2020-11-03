@@ -28,6 +28,12 @@
 
 #define LINEBUFSIZE 4096
 
+// The number of stacks is obtained by reading the last line of the stack table at the end of the log file.
+// It is the second last line in the file in total, followed by a line of dashes.
+// We go to the end of the file and read it backwards, until the first space (' ') is encountered. This signalises that
+// the next characters make up the stack ID. We cannot just check if a digit occurs, since these can also be
+// parts of function names appearing in the stack list. 
+
 int read_n_stacks (FILE *fp) {
    char buf[2*LINEBUFSIZE + 1];
    fseek (fp, -2*LINEBUFSIZE, SEEK_END);
@@ -38,13 +44,15 @@ int read_n_stacks (FILE *fp) {
    bool read_number = false;
    while (i >= 0) {
        if (!read_number) {
-   	read_number = buf[i] == ' ';
+	  // We found the space, next we read the stack ID
+   	  read_number = buf[i] == ' ';
        } else {
+	  // As long as the character is a digit, we add it up at the corresponding decimal place (we are reading the number backwards).
           if (isdigit(buf[i])) {
-   	  n_stacks += (buf[i] - '0') * decimal_place;
-   	  decimal_place *= 10;
+   	     n_stacks += (buf[i] - '0') * decimal_place; // -'0' converts the character to an integer.
+   	     decimal_place *= 10;
           } else {
-   	  break;
+   	     break; // Number has been read, exit the loop.
           }
        }
        i--;
@@ -180,8 +188,8 @@ int main (int argc, char *argv[]) {
 
 	int fmt_t0 = strlen ("Tx[s]");
 	int fmt_t = fmt_t0;
-       int fmt_stackpos = strlen ("stackID");
-       int fmt_func = strlen ("Function");
+        int fmt_stackpos = strlen ("stackID");
+        int fmt_func = strlen ("Function");
 	read_table (fp1, t1, stack_id_position_1, func_names_1, 
 		    &fmt_t, &fmt_stackpos, &fmt_func);
 	read_table (fp2, t2, stack_id_position_2, func_names_2,
