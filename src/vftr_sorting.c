@@ -18,6 +18,7 @@
 
 #include <stdint.h>
 #include <stdlib.h>
+#include <stdbool.h>
 
 // sorts a list of unsigned 64 bit integer with linear scaling radix sort
 // one bit at a time
@@ -96,9 +97,9 @@ void vftr_sort_double (double **d_array, int n, bool ascending) {
    }
 
    if (ascending) {
-      qsort (d_array, (size_t)n, sizeof(int*), vftr_compare_double_ascending);
+      qsort (tmp, (size_t)n, sizeof(double), vftr_compare_double_ascending);
    } else {
-      qsort (d_array, (size_t)n, sizeof(int*), vftr_compare_double_descending);
+      qsort (tmp, (size_t)n, sizeof(double), vftr_compare_double_descending);
    }
 
    for (int i = 0; i < n; i++) {

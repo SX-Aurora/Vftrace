@@ -866,9 +866,6 @@ void vftr_print_function_stack (FILE *fp, int rank, char *func_name,
 	}
 	long long total_time = 0;
 	int n_spaces_max = 0;
-	if (n_final_stack_ids == 0) {
-		printf ("FOUND 0 rank: %d\n", vftr_mpirank);
-        }
 	double *t_final = (double*) malloc (n_final_stack_ids * sizeof(double));
 	int *n_calls_final = (int*) malloc (n_final_stack_ids * sizeof(int));	
 	double *imba_final = (double*) malloc (n_final_stack_ids * sizeof(double));
@@ -884,6 +881,9 @@ void vftr_print_function_stack (FILE *fp, int rank, char *func_name,
 	int n_calls_max = n_calls_final[0];
 	double imba_max = imba_final[0];
 	free (rank_final_ids);
+        free (t_final);
+        free (n_calls_final);
+        free (imba_final);
 
 	// We have six digits behind the comma for time values. More do not make sense since we have a resolution
 	// of microseconds.
