@@ -1,4 +1,4 @@
-if MPI_PROFILING
+if WITH_MPI
 if USES_OPEN_MPI
 AM_TESTS_ENVIRONMENT=. $(top_srcdir)/test/environment/set_openmpi.sh;
 endif
@@ -22,7 +22,7 @@ AM_CFLAGS = -I$(top_srcdir)/src/ -I$(top_srcdir)/src/vftr_mpi
 
 AM_LDFLAGS = -L$(top_builddir)/src/.libs -lvftrace -lm
 
-if MPI_PROFILING
+if WITH_MPI
   AM_CFLAGS += -D_MPI
 endif
 
@@ -55,7 +55,7 @@ dist_check_SCRIPTS = this_passes.sh \
 	 	      vftr_functions_test_5.sh \
 		      vftr_stacks_test_1.sh
 
-if MPI_PROFILING
+if WITH_MPI
 dist_check_SCRIPTS += vftr_stacks_test_2.sh
 endif
 

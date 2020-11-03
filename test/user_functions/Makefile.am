@@ -1,4 +1,4 @@
-if MPI_PROFILING
+if WITH_MPI
    AM_TESTS_ENVIRONMENT=. $(top_srcdir)/test/environment/set_necmpi.sh;
 else
    AM_TESTS_ENVIRONMENT=. $(top_srcdir)/test/environment/set_nompi.sh;
@@ -12,7 +12,7 @@ AM_FCFLAGS += -I$(top_builddir)/src/
 
 AM_LDFLAGS = -L$(top_builddir)/src/.libs -lvftrace -lm
 
-if MPI_PROFILING
+if WITH_MPI
   AM_CFLAGS += -D_MPI
   AM_FCFLAGS += -D_MPI
 endif

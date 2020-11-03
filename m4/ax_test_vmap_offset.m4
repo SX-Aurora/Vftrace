@@ -112,15 +112,15 @@ int main (int argc, char *argv[]) {
    off_t symbol_addr = read_symbol_addr(argv[0]);
    int (*testfunction_addr)() = testfunction;
    off_t off_testfunction_addr = (off_t) testfunction_addr;
-   printf("function addr = %p\n", testfunction_addr);
-   printf("base addr     = %p\n", (void*) base_addr);
-   printf("relative addr = %p\n", (void*) testfunction_addr - base_addr);
-   printf("symbol_addr   = %p\n", (void*) symbol_addr);
+//   printf("function addr = %p\n", testfunction_addr);
+//   printf("base addr     = %p\n", (void*) base_addr);
+//   printf("relative addr = %p\n", (void*) testfunction_addr - base_addr);
+//   printf("symbol_addr   = %p\n", (void*) symbol_addr);
    if (symbol_addr == off_testfunction_addr) {
-      printf("OFFSET: NO\n");
+//      printf("OFFSET: NO\n");
       return 0;
    } else if (symbol_addr == off_testfunction_addr - base_addr) {
-      printf("OFFSET: YES\n");
+//      printf("OFFSET: YES\n");
       return 1;
    } else {
       printf("ERROR: \n");

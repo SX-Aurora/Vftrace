@@ -8,7 +8,7 @@ SUBDIRS = vftr_mpi
 
 libvftrace_la_LIBADD = libvftr_pause.la \
 		       vftr_mpi/libvftr_mpi.la
-if MPI_PROFILING
+if WITH_MPI
 libvftrace_la_LIBADD += vftr_mpi/c-wrapper/libvftr_cmpiwrap.la \
 		        vftr_mpi/f-wrapper/libvftr_fmpiwrap.la \
 		        vftr_mpi/f08-wrapper/libvftr_f08mpiwrap.la
@@ -60,7 +60,7 @@ if VMAP_OFFSET
 libvftrace_la_CFLAGS += -D__VMAP_OFFSET
 endif
 
-if MPI_PROFILING
+if WITH_MPI
 libvftrace_la_CFLAGS += -D_MPI
 libvftrace_la_FCFLAGS += -D_MPI
 endif 
