@@ -24,7 +24,7 @@
 
 #include <math.h>
 
-//#include "vftr_stacks.h"
+#include "vftr_fileutils.h"
 
 #define LINEBUFSIZE 4096
 
@@ -76,7 +76,8 @@ void decompose_table_line (char *line, int *n_calls, double *t_excl, double *t_i
 
 /**********************************************************************/
 
-void read_table (FILE *fp, double t[], int stack_pos[], char *func_names[]) {
+void read_table (FILE *fp, double t[], int stack_pos[], char *func_names[],
+		 int *fmt_t, int *fmt_stackpos, int *fmt_func) {
    char line[LINEBUFSIZE];
    int countdown = -1;
    int i_t = 0;
@@ -87,16 +88,21 @@ void read_table (FILE *fp, double t[], int stack_pos[], char *func_names[]) {
       } else if (countdown > 0) {
          countdown--;
       } else {
-         //printf ("Line: %s\n", line);
          if (strstr(line, "--------")) break;
          int n_calls, stack_id;
          double t_excl, t_incl, p_abs, p_cum;
          char *func_name, *caller_name; 
          decompose_table_line (line, &n_calls, &t_excl, &t_incl, &p_abs, &p_cum,
    			    &func_name, &caller_name, &stack_id);
-         t[i_t] = t_excl;
+   	 int n;
+	 n = strlen (func_name);
+	 if (n > *fmt_func) *fmt_func = n;
+	 n = vftr_count_digits_double (t_incl);
+	 if (n > *fmt_t) *fmt_t = n;
+	 n = vftr_count_digits (stack_id);
+	 if (n > *fmt_stackpos) *fmt_stackpos = n;
+         t[i_t] = t_incl;
 	 func_names[stack_id] = strdup(func_name);
-	 //if (i_t == 0) printf ("func_name: %s %s\n", func_name, func_names[i_t]);
          stack_pos[stack_id] = i_t;
          i_t++;
       }
@@ -151,9 +157,6 @@ int main (int argc, char *argv[]) {
 	   return -1;
 	}
 
-	printf ("n_stacks in %s: %d\n", argv[1], n_stacks_1);
-	printf ("n_stacks in %s: %d\n", argv[2], n_stacks_2);
-
 	int stack_id_position_1[n_stacks_1];
 	int stack_id_position_2[n_stacks_2];
 	double t1[n_stacks_1];
@@ -162,7 +165,6 @@ int main (int argc, char *argv[]) {
 	char *func_names_1[n_stacks_1];
 	char *func_names_2[n_stacks_2];
 
-	//double t_diff[n_stacks_1];
 	delta_t **deltas = (delta_t**) malloc (n_stacks_1 * sizeof(delta_t*));
 
 	for (int i = 0; i < n_stacks_1; i++) {
@@ -176,29 +178,46 @@ int main (int argc, char *argv[]) {
 	   deltas[i]->stack_id = -1;
 	}
 
-	read_table (fp1, t1, stack_id_position_1, func_names_1);
-	read_table (fp2, t2, stack_id_position_2, func_names_2);
-	//printf ("Check: %s %s\n", func_names_1[0], func_names_2[0]);
+	int fmt_t0 = strlen ("Tx[s]");
+	int fmt_t = fmt_t0;
+       int fmt_stackpos = strlen ("stackID");
+       int fmt_func = strlen ("Function");
+	read_table (fp1, t1, stack_id_position_1, func_names_1, 
+		    &fmt_t, &fmt_stackpos, &fmt_func);
+	read_table (fp2, t2, stack_id_position_2, func_names_2,
+		    &fmt_t, &fmt_stackpos, &fmt_func);
+	if (fmt_t0 + 6 > fmt_t) fmt_t += 6;
 
+	int fmt_abs = strlen ("T_diff[s]");
+	int fmt_rel = strlen ("T_diff[%]");
 	for (int i = 0; i < n_stacks_1; i++) {
-	   //t_diff[i] = t1[stack_id_position_1[i]] - t1[stack_id_position_2[i]];
 	   int i1 = stack_id_position_1[i];
 	   int i2 = stack_id_position_2[i];
 	   deltas[i]->t_diff_abs = t1[i1] - t2[i2];
+	   int n = vftr_count_digits_double (deltas[i]->t_diff_abs);
+	   if (n > fmt_abs) fmt_abs = n;
 	   if (t1[i1] > 0.0) {
-	      //deltas[i]->t_diff_rel = deltas[i]->t_diff_abs / t1[stack_id_position_1[i]];
-	      deltas[i]->t_diff_rel = t1[stack_id_position_2[i]] / t2[stack_id_position_1[i]];
+	      deltas[i]->t_diff_rel = deltas[i]->t_diff_abs / t1[stack_id_position_1[i]] * 100;
+	      n = vftr_count_digits_double (deltas[i]->t_diff_rel);
+	      if (n > fmt_rel) fmt_rel = n; 
 	   }
 	   deltas[i]->stack_id = i;
 	}
 
 	qsort (deltas, (size_t)n_stacks_1, sizeof(double*), sort_by_absolute_time);
 
+	printf ("%*s  %*s  %*s  %*s  %*s  %*s\n", fmt_func, "Function", fmt_t, "T1[s]",
+		fmt_t, "T2[s]", fmt_abs, "T_diff[s]", fmt_rel, "T_diff[%]", fmt_stackpos, "stackID");
 	for (int i = 0; i < n_stacks_1; i++) {
 		int stack_id = deltas[i]->stack_id;
-		printf ("%4d:   %lf   %lf   %7.3f   %7.3f   %s\n",
-			 stack_id, t1[stack_id_position_1[stack_id]], t2[stack_id_position_2[stack_id]], 
-			 deltas[i]->t_diff_abs, deltas[i]->t_diff_rel, func_names_1[stack_id]);
+		int i_t1 = stack_id_position_1[stack_id];
+		int i_t2 = stack_id_position_2[stack_id];
+		if (i_t1 > 0 && i_t2 > 0) {
+	           printf ("%*s  %*.5f  %*.5f  %*.3f  %*.3f  %*d\n", 
+		 	 fmt_func, func_names_1[stack_id], fmt_t, t1[i_t1], fmt_t, t2[i_t2],
+			 fmt_abs, deltas[i]->t_diff_abs, fmt_rel, deltas[i]->t_diff_rel,
+			 fmt_stackpos, stack_id);
+		}
 	}
 
 	fclose (fp1);
