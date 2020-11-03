@@ -186,9 +186,11 @@ AC_CONFIG_LINKS(test/units/ref_output/vftr_functions_test_1.out:test/units/ref_o
                 test/units/ref_output/vftr_functions_test_4.out:test/units/ref_output/$units_refdir/vftr_functions_test_4.out
                 test/units/ref_output/vftr_functions_test_5.out:test/units/ref_output/$units_refdir/vftr_functions_test_5.out
                 test/units/ref_output/vftr_filewrite_test_2.out:test/units/ref_output/$units_refdir/vftr_filewrite_test_2.out
-                test/units/ref_output/vftr_stacks_test_1.out:test/units/ref_output/$units_refdir/vftr_stacks_test_1.out
-                test/units/ref_output/vftr_stacks_test_2.out:test/units/ref_output/$units_refdir/vftr_stacks_test_2.out
-		)
+                test/units/ref_output/vftr_stacks_test_1.out:test/units/ref_output/$units_refdir/vftr_stacks_test_1.out)
+
+AM_COND_IF([MPI_PROFILING],
+           [AC_CONFIG_LINKS(test/units/ref_output/vftr_stacks_test_2.out:test/units/ref_output/$units_refdir/vftr_stacks_test_2.out)]
+          )
 
 AC_CONFIG_LINKS(test/units/this_passes.sh:test/units/this_passes.sh
                 test/units/this_fails.sh:test/units/this_fails.sh
@@ -207,9 +209,11 @@ AC_CONFIG_LINKS(test/units/this_passes.sh:test/units/this_passes.sh
                 test/units/vftr_functions_test_4.sh:test/units/vftr_functions_test_4.sh
                 test/units/vftr_functions_test_5.sh:test/units/vftr_functions_test_5.sh
                 test/units/vftr_stacks_test_1.sh:test/units/vftr_stacks_test_1.sh
-                test/units/vftr_stacks_test_2.sh:test/units/vftr_stacks_test_2.sh
                 test/units/vftr_sxhwc_test_1.sh:test/units/vftr_sxhwc_test_1.sh
                )
+AM_COND_IF([MPI_PROFILING],
+           [AC_CONFIG_LINKS(test/units/vftr_stacks_test_2.sh:test/units/vftr_stacks_test_2.sh)]
+          )
 
 # User function tests
 AC_CONFIG_LINKS(test/user_functions/cregions1.sh:test/user_functions/cregions1.sh
