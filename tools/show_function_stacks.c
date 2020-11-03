@@ -137,7 +137,7 @@ void print_stacktree (stack_leaf_t *leaf, int n_spaces, double *total_mpi_time) 
 /**********************************************************************/
 
 int count_stacks (stack_leaf_t *leaf, int *n_stacks) {
-	if (!leaf) return;
+	if (!leaf) return 0;
 	if (leaf->callee) {
 		count_stacks (leaf->callee, n_stacks);
 	} else {
