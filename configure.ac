@@ -22,6 +22,9 @@ AM_PROG_CC_C_O
 # Check if C-compiler supports c99 standard
 AX_CHECK_C99_STD
 
+# Check if elf-symbols align with function pointers
+AX_CHECK_VMAP_OFFSET
+
 ################################
 AC_ARG_ENABLE([papi],
   [AS_HELP_STRING([--enable-papi], [enable PAPI [[no]]])],
@@ -35,14 +38,6 @@ AC_ARG_ENABLE([mpi_profiling],
   [AS_HELP_STRING([--enable-mpi-profiling], [enable MPI profiling [[no]]])],
   [], [enable_mpi_profiling="no"])
 
-AC_ARG_ENABLE([vmap_offset],
-  [AS_HELP_STRING([--enable-vmap-offset], [enable VMAP offset [[no]]])],
-  [], [enable_vmap_offset="no"])
-
-AC_ARG_ENABLE([vmap_offset_check],
-  [AS_HELP_STRING([--enable-vmap-offset-check], [enable VMAP offset check [[yes]]])],
-  [], [enable_vmap_offset_check="yes"])
-
 AC_ARG_WITH([papi],
   [AS_HELP_STRING([--with-papi=dir], [assume given directory for PAPI])])
 
@@ -51,21 +46,8 @@ PAPI_HOME=$with_papi
 AC_SUBST([PAPI_HOME])
 
 AM_CONDITIONAL([VEPERF_AVAIL], [test "$enable_sx_hwc" = "yes"])
-AM_CONDITIONAL([VMAP_OFFSET], [test "$enable_vmap_offset" = "yes"])
 AM_CONDITIONAL([MPI_PROFILING], [test "$enable_mpi_profiling" = "yes"])
-AM_CONDITIONAL([VMAP_OFFSET_CHECK], [test "$enable_vmap_offset_check" = "yes"])
 ################################
-
-if test "$enable_vmap_offset_check" = yes; then
-  AC_MSG_CHECKING([if virtual map offset has to be used])
-  doit='src/aux/config_test.sh'
-  if AC_TRY_EVAL(doit); then
-     use_vmap_offset=yes
-  else
-     use_vmap_offset=no
-  fi 
-  AC_MSG_RESULT([$use_vmap_offset])
-fi
 
 if test "$enable_mpi_profiling" = yes; then
   AC_MSG_CHECKING([if Intel MPI is used])
