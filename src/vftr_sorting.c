@@ -53,3 +53,86 @@ void vftr_radixsort_uint64(int n, uint64_t *list) {
    return;
 }
 
+/**********************************************************************/
+
+int vftr_compare_integer_ascending (const void *a1, const void *a2) {
+   return (*(int*)a1 - *(int*)a2);
+}
+
+int vftr_compare_integer_descending (const void *a1, const void *a2) {
+   return (*(int*)a2 - *(int*)a1);
+}
+
+int vftr_compare_double_ascending (const void *a1, const void *a2) {
+   return (*(double*)a1 - *(double*)a2);
+}
+
+int vftr_compare_double_descending (const void *a1, const void *a2) {
+   return (*(double*)a2 - *(double*)a1);
+}
+
+void vftr_sort_integer (int **i_array, int n, bool ascending) {
+   int *tmp = (int*)malloc (n * sizeof(int));
+   for (int i = 0; i < n; i++) {
+      tmp[i] = (*i_array)[i];
+   }
+
+   if (ascending) {
+      qsort (tmp, (size_t)n, sizeof(int), vftr_compare_integer_ascending);
+   } else {
+      qsort (tmp, (size_t)n, sizeof(int), vftr_compare_integer_descending);
+   }
+
+   for (int i = 0; i < n; i++) {
+      (*i_array)[i] = tmp[i];
+   }
+   free(tmp);
+}
+
+void vftr_sort_double (double **d_array, int n, bool ascending) {
+   double *tmp = (double*) malloc (n * sizeof(double)); 
+   for (int i = 0; i < n; i++) {
+      tmp[i] = (*d_array)[i];
+   }
+
+   if (ascending) {
+      qsort (d_array, (size_t)n, sizeof(int*), vftr_compare_double_ascending);
+   } else {
+      qsort (d_array, (size_t)n, sizeof(int*), vftr_compare_double_descending);
+   }
+
+   for (int i = 0; i < n; i++) {
+      (*d_array)[i] = tmp[i];
+   }
+   free(tmp);
+}
+
+typedef struct index_container_double {
+  double value;
+  int index;
+} index_container_double_t; 
+
+int vftr_compare_index_container (const void *a1, const void *a2) {
+   index_container_double_t c1 = *(index_container_double_t *)a1; 
+   index_container_double_t c2 = *(index_container_double_t *)a2; 
+   double diff = c2.value - c1.value;
+   if (diff > 0) return 1;
+   if (diff < 0) return -1;
+   return 0;
+}
+
+
+void vftr_sort_double_with_indices (double **values, int **indices, int n) {
+  index_container_double_t c[n];
+  for (int i = 0; i < n; i++) {
+     c[i].value = (*values)[i];
+     c[i].index = i;
+  }   
+  qsort (c, (size_t)n, sizeof(index_container_double_t), vftr_compare_index_container);
+  for (int i = 0; i < n; i++) { 	
+     (*values)[i] = c[i].value;
+     (*indices)[i] = c[i].index;
+  }
+}
+ 
+

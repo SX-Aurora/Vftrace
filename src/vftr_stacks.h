@@ -100,6 +100,7 @@ void vftr_print_global_stacklist (FILE *pout);
 typedef struct stack_leaf {
 	int stack_id;
 	int func_id;
+	int final_id;
 	struct stack_leaf *next_in_level;
 	struct stack_leaf *callee;	
 	struct stack_leaf *origin;

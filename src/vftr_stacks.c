@@ -672,6 +672,7 @@ void vftr_create_new_leaf (stack_leaf_t **new_leaf, int stack_id, int func_id, e
 		*new_leaf = (stack_leaf_t*) malloc (sizeof(stack_leaf_t));
 		(*new_leaf)->stack_id = stack_id;
 		(*new_leaf)->func_id = func_id;
+	 	(*new_leaf)->final_id = -1;
 		(*new_leaf)->next_in_level = NULL;
 		(*new_leaf)->callee = NULL;
 		(*new_leaf)->origin = (stack_leaf_t*) malloc (sizeof(stack_leaf_t));
@@ -680,6 +681,7 @@ void vftr_create_new_leaf (stack_leaf_t **new_leaf, int stack_id, int func_id, e
 		(*new_leaf)->next_in_level = (stack_leaf_t*)malloc (sizeof(stack_leaf_t));
 		(*new_leaf)->next_in_level->stack_id = stack_id;
 		(*new_leaf)->next_in_level->func_id = func_id;
+	 	(*new_leaf)->final_id = -1;
 		(*new_leaf)->next_in_level->next_in_level = NULL;	
 		(*new_leaf)->next_in_level->callee = NULL;
 		(*new_leaf)->next_in_level->origin = (stack_leaf_t*)malloc (sizeof(stack_leaf_t));
@@ -688,6 +690,7 @@ void vftr_create_new_leaf (stack_leaf_t **new_leaf, int stack_id, int func_id, e
 			(*new_leaf)->callee = (stack_leaf_t*) malloc (sizeof(stack_leaf_t));
 			(*new_leaf)->callee->stack_id = stack_id;	
 			(*new_leaf)->callee->func_id = func_id;	
+	 		(*new_leaf)->final_id = -1;
 			(*new_leaf)->callee->next_in_level = NULL;
 			(*new_leaf)->callee->callee = NULL;
 			(*new_leaf)->callee->origin = (stack_leaf_t*)malloc (sizeof(stack_leaf_t));
@@ -727,29 +730,30 @@ void vftr_fill_into_stack_tree (stack_leaf_t **this_leaf, int n_stack_ids,
 
 /**********************************************************************/
 
-void vftr_scan_for_maximum_values (stack_leaf_t *leaf, int this_n_spaces, double *imbalances,
-				   int *n_spaces_max, double *t_max, int *n_calls_max, double *imba_max) {
+void vftr_scan_for_final_values (stack_leaf_t *leaf, int this_n_spaces, double *imbalances,
+				   int *n_spaces_max, int *n_final, double **t_final, int **n_calls_final, double **imba_final) {
 	if (!leaf) return;
 	if (leaf->callee) {
 		int new_n_spaces = this_n_spaces + strlen(vftr_gStackinfo[leaf->stack_id].name);
 		if (this_n_spaces > 0) new_n_spaces++;
-		vftr_scan_for_maximum_values (leaf->callee, new_n_spaces, imbalances,
-					      n_spaces_max, t_max, n_calls_max, imba_max);
+		vftr_scan_for_final_values (leaf->callee, new_n_spaces, imbalances,
+					      n_spaces_max, n_final, t_final, n_calls_final, imba_final);
 	} else {
 		int new_n_spaces = this_n_spaces + strlen(vftr_gStackinfo[leaf->stack_id].name) + 1; // + 1 for the colon at the end
 		if (this_n_spaces > 0) new_n_spaces++;
 		if (new_n_spaces > *n_spaces_max) *n_spaces_max = new_n_spaces;
 		if (leaf->func_id > 0) {
 		   double this_t = (double)vftr_func_table[leaf->func_id]->prof_current.timeIncl * 1e-6;
-		   if (this_t > *t_max) *t_max = this_t;
+		   (*t_final)[*n_final] = this_t;
 		   int this_n_calls = vftr_func_table[leaf->func_id]->prof_current.calls;
-		   if (this_n_calls > *n_calls_max) *n_calls_max = this_n_calls;
-		   if (imbalances[leaf->func_id] > *imba_max) *imba_max = imbalances[leaf->func_id];
+		   (*n_calls_final)[*n_final] = this_n_calls;
+		   (*imba_final)[*n_final] = imbalances[leaf->func_id];
+		   *n_final = *n_final + 1;
 		}
 	}
 	if (leaf->next_in_level) {
-		vftr_scan_for_maximum_values (leaf->next_in_level, this_n_spaces, imbalances,
-					      n_spaces_max, t_max, n_calls_max, imba_max);
+		vftr_scan_for_final_values (leaf->next_in_level, this_n_spaces, imbalances,
+					      n_spaces_max, n_final, t_final, n_calls_final, imba_final);
 	}
 }
 
@@ -862,11 +866,25 @@ void vftr_print_function_stack (FILE *fp, int rank, char *func_name,
 	}
 	long long total_time = 0;
 	int n_spaces_max = 0;
-	double t_max = 0.0;
-	int n_calls_max = 0;
-	double imba_max = 0.0;
-	vftr_scan_for_maximum_values (stack_tree->origin, 0, imbalances,
-				         &n_spaces_max, &t_max, &n_calls_max, &imba_max);	
+	if (n_final_stack_ids == 0) {
+		printf ("FOUND 0 rank: %d\n", vftr_mpirank);
+        }
+	double *t_final = (double*) malloc (n_final_stack_ids * sizeof(double));
+	int *n_calls_final = (int*) malloc (n_final_stack_ids * sizeof(int));	
+	double *imba_final = (double*) malloc (n_final_stack_ids * sizeof(double));
+        int n_final = 0;
+	vftr_scan_for_final_values (stack_tree->origin, 0, imbalances,
+				      &n_spaces_max, &n_final, &t_final, &n_calls_final, &imba_final);	
+	int *rank_final_ids = (int*) malloc (n_final * sizeof(int));
+	vftr_sort_double_with_indices (&t_final, &rank_final_ids, n_final);
+	vftr_sort_integer (&n_calls_final, n_final, false);
+	vftr_sort_double (&imba_final, n_final, false);
+
+	double t_max = t_final[0];
+	int n_calls_max = n_calls_final[0];
+	double imba_max = imba_final[0];
+	free (rank_final_ids);
+
 	// We have six digits behind the comma for time values. More do not make sense since we have a resolution
 	// of microseconds.
 	// We add this value of 6 to the number of digits in front of the comma, plus one for the comma itself.
