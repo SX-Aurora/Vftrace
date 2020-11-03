@@ -58,11 +58,10 @@ void vftr_clear_completed_collective_requests() {
       // Note: MPI_Test is a destructive test. It will destroy the request
       //       Thus, running with and without vftr can lead to different program executions
       //       MPI_Request_get_status is a non destructive status check
-      MPI_Status tmpStatus;
       int flag;
       PMPI_Request_get_status(current_request->request,
                               &flag,
-                              &tmpStatus);
+                              MPI_STATUS_IGNORE);
 
       // if the requested communication is finished write the communication out
       // and remove the request from the request list
@@ -103,5 +102,17 @@ void vftr_clear_completed_collective_requests() {
       }
    } // end of while loop
 }
+
+int vftr_number_of_open_collective_requests() {
+   int nrequests = 0;
+   // go through the complete list and check the request
+   vftr_request_t *current_request = vftr_open_collective_request_list;
+   while (current_request != NULL) {
+      nrequests++;
+      current_request = current_request->next;
+   }
+   return nrequests;
+}
+
 
 #endif
