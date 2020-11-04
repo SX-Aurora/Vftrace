@@ -32,31 +32,15 @@ AX_CHECK_VE
 # Check MPI
 AX_CHECK_MPI
 
+# Enable hardware counters
+AX_ENABLE_HWC
 
+# Check for Papi library
+AX_PAPI_LIBRARY
 
+# Check consistency of HWC, Architecture, and Papi
+AX_CHECK_HWC_CONSISTENCY
 
-
-
-AC_ARG_ENABLE([papi],
-  [AS_HELP_STRING([--enable-papi], [enable PAPI [[no]]])],
-  [], [enable_papi="no"])
-
-AC_ARG_ENABLE([sx_hwc],
-  [AS_HELP_STRING([--enable-sx-hwc], [enable hardware counters for SX Aurora [[no]]])],
-  [], [enable_sx_hwc="no"])
-
-#AC_ARG_ENABLE([mpi_profiling],
-#  [AS_HELP_STRING([--enable-mpi-profiling], [enable MPI profiling [[no]]])],
-#  [], [enable_mpi_profiling="no"])
-
-AC_ARG_WITH([papi],
-  [AS_HELP_STRING([--with-papi=dir], [assume given directory for PAPI])])
-
-AM_CONDITIONAL([PAPI_AVAIL], [test "$enable_papi" = "yes"])
-PAPI_HOME=$with_papi
-AC_SUBST([PAPI_HOME])
-
-AM_CONDITIONAL([VEPERF_AVAIL], [test "$enable_sx_hwc" = "yes"])
 AC_MSG_CHECKING([if Intel compiler is used])
 check_if_intel_compiler='$CC --version | grep Intel'
 if AC_TRY_EVAL(check_if_intel_compiler); then
@@ -65,19 +49,8 @@ else
   uses_intel_compiler=no
 fi 
 AC_MSG_RESULT([$uses_intel_compiler])
-
-dnl # AM_CONDITIONAL([USES_INTEL_MPI], [test "$uses_intel_mpi" = "yes"])
-dnl # AM_CONDITIONAL([USES_NEC_MPI], [test "$uses_nec_mpi" = "yes"])
 AM_CONDITIONAL([USES_INTEL_COMPILER], [test "$uses_intel_compiler" = "yes"])
-dnl # 
-dnl # 
-dnl # 
-dnl # 
-dnl # 
-dnl # 
-dnl # # WO_PROG_PAPI()
-dnl # # WO_PROG_COMPONENTS()
-dnl # # Enable libtool
+
 LT_INIT(dlopen)
 AC_CONFIG_FILES([Makefile])
 AC_CONFIG_FILES([src/Makefile])
