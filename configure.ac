@@ -1,4 +1,4 @@
-AC_INIT([vftrace], [1.0], [foo@foo.org])
+AC_INIT([vftrace], [1.0], [felix.uhl@emea.nec.com,christian.weiss@emea.nec.com])
 : ${CFLAGS="-O2"}
 : ${CXXFLAGS="-O2"}
 : ${FCFLAGS="-O2"}
