@@ -759,6 +759,22 @@ void vftr_scan_for_final_values (stack_leaf_t *leaf, int this_n_spaces, double *
 
 /**********************************************************************/
 
+void vftr_stacktree_assign_positions (stack_leaf_t *leaf, int *pos, int *indices) {
+   if (!leaf) return;
+   if (leaf->callee) {
+      vftr_stacktree_assign_positions (leaf->callee, pos, indices);
+   } else if (leaf->func_id > 0) {
+      //if (vftr_mpirank == 0) printf ("%d, %d\n", *pos, indices[*pos]);
+      leaf->final_id = indices[*pos];
+      *pos = *pos + 1;	
+   }
+   if (leaf->next_in_level) {
+      vftr_stacktree_assign_positions (leaf->next_in_level, pos, indices); 
+   }
+}
+   
+/**********************************************************************/
+
 void vftr_print_stacktree_header (FILE *fp, int n_stacks, char *func_name,
 				  int n_spaces_max, int fmt_calls, int fmt_t, int fmt_imba,
 				  int fmt_send_bytes, int fmt_recv_bytes, int fmt_stackid) {
@@ -872,16 +888,33 @@ void vftr_print_function_stack (FILE *fp, int rank, char *func_name,
         int n_final = 0;
 	vftr_scan_for_final_values (stack_tree->origin, 0, imbalances,
 				      &n_spaces_max, &n_final, &t_final, &n_calls_final, &imba_final);	
-	int *rank_final_ids = (int*) malloc (n_final * sizeof(int));
-	vftr_sort_double_with_indices (&t_final, &rank_final_ids, n_final);
+	int *rank_final_ids = (int*) malloc (n_final_stack_ids * sizeof(int));
+	double *t_final_sorted = (double*) malloc (n_final_stack_ids * sizeof(double));
+        vftr_sort_double_copy (t_final, n_final, false, &t_final_sorted);
+        for (int i = 0; i < n_final; i++) {
+	   rank_final_ids[i] = -1;
+           double search_for = t_final[i];
+           for (int j = 0; j < n_final; j++) {
+	      if (t_final_sorted[j] == search_for) {
+		 rank_final_ids[i] = j + 1;
+		 break;
+	      }
+           }
+        }
+               
 	vftr_sort_integer (&n_calls_final, n_final, false);
 	vftr_sort_double (&imba_final, n_final, false);
 
-	double t_max = t_final[0];
+	double t_max = t_final_sorted[0];
 	int n_calls_max = n_calls_final[0];
 	double imba_max = imba_final[0];
+
+        int pos0 = 0;
+        vftr_stacktree_assign_positions (stack_tree->origin, &pos0, rank_final_ids); 
+
 	free (rank_final_ids);
         free (t_final);
+	free (t_final_sorted);
         free (n_calls_final);
         free (imba_final);
 

@@ -65,11 +65,17 @@ int vftr_compare_integer_descending (const void *a1, const void *a2) {
 }
 
 int vftr_compare_double_ascending (const void *a1, const void *a2) {
-   return (*(double*)a1 - *(double*)a2);
+   double diff = *(double*)a1 - *(double*)a2;
+   if (diff > 0) return 1;
+   if (diff < 0) return -1;
+   return 0;
 }
 
 int vftr_compare_double_descending (const void *a1, const void *a2) {
-   return (*(double*)a2 - *(double*)a1);
+   double diff = *(double*)a2 - *(double*)a1;
+   if (diff > 0) return 1;
+   if (diff < 0) return -1;
+   return 0;
 }
 
 void vftr_sort_integer (int **i_array, int n, bool ascending) {
@@ -108,32 +114,27 @@ void vftr_sort_double (double **d_array, int n, bool ascending) {
    free(tmp);
 }
 
-typedef struct index_container_double {
-  double value;
-  int index;
-} index_container_double_t; 
+void vftr_sort_double_copy (double *d_array, int n, bool ascending, double **d_copy) {
+   double *tmp = (double*) malloc (n * sizeof(double)); 
+   for (int i = 0; i < n; i++) {
+      tmp[i] = d_array[i];
+   }
 
-int vftr_compare_index_container (const void *a1, const void *a2) {
-   index_container_double_t c1 = *(index_container_double_t *)a1; 
-   index_container_double_t c2 = *(index_container_double_t *)a2; 
-   double diff = c2.value - c1.value;
-   if (diff > 0) return 1;
-   if (diff < 0) return -1;
-   return 0;
+   if (ascending) {
+      qsort (tmp, (size_t)n, sizeof(double), vftr_compare_double_ascending);
+   } else {
+      qsort (tmp, (size_t)n, sizeof(double), vftr_compare_double_descending);
+   }
+
+   if (vftr_mpirank == 0) {
+     printf ("tmp: ");
+     for (int i = 0; i < n; i++) {
+	printf ("%lf ", tmp[i]);
+     }
+     printf ("\n");
+   }
+   for (int i = 0; i < n; i++) {
+      (*d_copy)[i] = tmp[i];
+   }
+   free(tmp);
 }
-
-
-void vftr_sort_double_with_indices (double **values, int **indices, int n) {
-  index_container_double_t c[n];
-  for (int i = 0; i < n; i++) {
-     c[i].value = (*values)[i];
-     c[i].index = i;
-  }   
-  qsort (c, (size_t)n, sizeof(index_container_double_t), vftr_compare_index_container);
-  for (int i = 0; i < n; i++) { 	
-     (*values)[i] = c[i].value;
-     (*indices)[i] = c[i].index;
-  }
-}
- 
-
