@@ -47,6 +47,152 @@ void vftr_print_html_function_element (FILE *fp, int stack_id, int func_id, int 
 
 /**********************************************************************/
 
+vftr_print_css_header (FILE *fp) {
+
+   fprintf (fp, "<style>\n");
+   fprintf (fp, "*,\n");
+   fprintf (fp, "*:before,\n");
+   fprintf (fp, "*:after {\n");
+   fprintf (fp, "  -webkit-box-sizing: border-box;\n");
+   fprintf (fp, "  -moz-box-sizing: border-box;\n");
+   fprintf (fp, "  box-sizing: border-box;\n");
+   fprintf (fp, "}\n");
+   fprintf (fp, "\n");
+   fprintf (fp, "* {\n");
+   fprintf (fp, "  position: relative;\n");
+   fprintf (fp, "  margin: 0;\n");
+   fprintf (fp, "  padding: 0;\n");
+   fprintf (fp, "\n"); 
+   fprintf (fp, "  border: 0 none;\n");
+   fprintf (fp, "\n"); 
+   fprintf (fp, "  -webkit-transition: all ease .4s;\n");
+   fprintf (fp, "  -moz-transition: all ease .4s;\n");
+   fprintf (fp, "    transition: all ease .4s;\n");
+   fprintf (fp, "}\n");
+   fprintf (fp, "\n");
+   fprintf (fp, "html, body {\n");
+   fprintf (fp, "  width: 100%;\n");
+   fprintf (fp, "  height: 100%;\n");
+   fprintf (fp, "  background: white;\n");
+   fprintf (fp, "  font-family: 'Fjalla One', sans-serif;\n");
+   fprintf (fp, "  font-size: 18px;\n");
+   fprintf (fp, "}\n");
+   fprintf (fp, "\n");
+   fprintf (fp, "h1 {\n");
+   fprintf (fp, "  padding-top: 40px;\n");
+   fprintf (fp, "  color: black;\n");
+   fprintf (fp, "  text-align: center;\n");
+   fprintf (fp, "  font-size: 1.8rem;\n");
+   fprintf (fp, "}\n");
+   fprintf (fp, "\n");
+   fprintf (fp, ".nav {\n");
+   fprintf (fp, "  margin: 100px auto;\n");
+   fprintf (fp, "  width: 5000px;\n");
+   fprintf (fp, "  min-height: auto;\n");
+   fprintf (fp, "}\n");
+   fprintf (fp, "\n");
+   fprintf (fp, ".nav ul {\n");
+   fprintf (fp, "  position: relative;\n");
+   fprintf (fp, "  padding-top: 20px;\n");
+   fprintf (fp, "}\n");
+   fprintf (fp, "\n");
+   fprintf (fp, ".nav li {\n");
+   fprintf (fp, "  position: relative;\n");
+   fprintf (fp, "  padding: 20px 3px 0 3px;\n");
+   fprintf (fp, "  float: left;\n");
+   fprintf (fp, "\n");
+   fprintf (fp, "  text-align: center;\n");
+   fprintf (fp, "  list-style-type: none;\n");
+   fprintf (fp, "}\n");
+   fprintf (fp, "\n");
+   fprintf (fp, ".nav li::before, .nav li::after{\n");
+   fprintf (fp, "  content: '';\n");
+   fprintf (fp, "  position: absolute;\n");
+   fprintf (fp, "  top: 0;\n");
+   fprintf (fp, "  right: 50%;\n");
+   fprintf (fp, "  width: 50%;\n");
+   fprintf (fp, "  height: 20px;\n");
+   fprintf (fp, "  border-top: 1px solid black;\n");
+   fprintf (fp, "}\n");
+   fprintf (fp, "\n");
+   fprintf (fp, ".nav li::after{\n");
+   fprintf (fp, "  left: 50%;\n");
+   fprintf (fp, "  right: auto;\n");
+   fprintf (fp, "\n");  
+   fprintf (fp, "  border-left: 1px solid black;\n");
+   fprintf (fp, "}\n");
+   fprintf (fp, "\n");
+   fprintf (fp, ".nav li:only-child::after, .nav li:only-child::before {\n");
+   fprintf (fp, "  content: '';\n");
+   fprintf (fp, "  display: none;\n");
+   fprintf (fp, "}\n");
+   fprintf (fp, "\n");
+   fprintf (fp, ".nav li:only-child{ padding-top: 0;}\n");
+   fprintf (fp, ".nav li:first-child::before, .nav li:last-child::after{\n");
+   fprintf (fp, "  border: 0 none;\n");
+   fprintf (fp, "}\n");
+   fprintf (fp, "\n");
+   fprintf (fp, ".nav li:last-child::before{\n");
+   fprintf (fp, "  border-right: 1px solid black;\n");
+   fprintf (fp, "  border-radius: 0 5px 0 0;\n");
+   fprintf (fp, "}\n");
+   fprintf (fp, "\n");
+   fprintf (fp, ".nav li:first-child::after{\n");
+   fprintf (fp, "    border-radius: 5px 0 0 0;\n");
+   fprintf (fp, "}\n");
+   fprintf (fp, ".nav ul ul::before{\n");
+   fprintf (fp, "  content: '';\n");
+   fprintf (fp, "  position: absolute; top: 0; left: 50%;\n");
+   fprintf (fp, "  border-left: 1px solid black;\n");
+   fprintf (fp, "  width: 0;\n");
+   fprintf (fp, "  height: 20px;\n");
+   fprintf (fp, "}\n");
+   fprintf (fp, "\n");
+   fprintf (fp, ".nav li a{\n");
+   fprintf (fp, "  display: inline-block;\n");
+   fprintf (fp, "  padding: 5px 10px;\n");
+   fprintf (fp, "  border-radius: 5px;\n");
+   fprintf (fp, "  border: 1px solid black;\n");
+   fprintf (fp, "  text-decoration: none;\n");
+   fprintf (fp, "  text-transform: uppercase;\n");
+   fprintf (fp, "  background-color: #edebeb;\n");
+   fprintf (fp, "  color: black;\n");
+   fprintf (fp, "  font-family: arial, verdana, tahoma;\n");
+   fprintf (fp, "  font-size: 11px;\n");
+   fprintf (fp, "}\n");
+   fprintf (fp, "\n");
+   fprintf (fp, "/* This is the stack info box which appears when hovering over a function node */\n");
+   fprintf (fp, "\n");
+   fprintf (fp, "a .ttt {\n");
+   fprintf (fp, "  visibility: hidden;\n");
+   fprintf (fp, "  width: 100%;\n");
+   fprintf (fp, "  background-color: black;\n");
+   fprintf (fp, "  color: #fff;\n");
+   fprintf (fp, "  text-align: center;\n");
+   fprintf (fp, "  border-radius: 6px; /* Rounded corners */\n");
+   fprintf (fp, "  padding: 10px 0;\n");
+   fprintf (fp, "  position: absolute;\n");
+   fprintf (fp, "  z-index: 1; /* Precedence of this element - atop of the leaf. */\n");
+   fprintf (fp, "}\n");
+   fprintf (fp, "\n");
+   fprintf (fp, "a:hover .ttt{\n");
+   fprintf (fp, "  visibility: visible;\n");
+   fprintf (fp, "}\n");
+   fprintf (fp, "\n");
+   fprintf (fp, "hr {\n");
+   fprintf (fp, "  display: block;\n");
+   fprintf (fp, "  height: 1px;\n");
+   fprintf (fp, "  border: 0;\n");
+   fprintf (fp, "  border-top: 1px solid black;\n");
+   fprintf (fp, "  margin: 1em 0;\n");
+   fprintf (fp, "  padding: 0;\n");
+   fprintf (fp, "}\n");
+   fprintf (fp, "}\n");
+   fprintf (fp, "</style>\n");
+}
+
+/**********************************************************************/
+
 void vftr_print_stacktree_to_html (FILE *fp, stack_leaf_t *leaf, int n_spaces, long long *total_time) {
 	if (!leaf) return;
 	vftr_print_html_function_element (fp, leaf->stack_id, leaf->func_id, n_spaces);
@@ -60,7 +206,13 @@ void vftr_print_stacktree_to_html (FILE *fp, stack_leaf_t *leaf, int n_spaces, l
 		fprintf (fp, "</li>\n");
 		vftr_make_html_indent (fp, n_spaces, 0);
 		fprintf (fp, "</ul>\n");
+	} else {
+	       vftr_make_html_indent (fp, n_spaces, 0);
+	       fprintf (fp, "<hr/>\n");
+	       vftr_make_html_indent (fp, n_spaces, 0);
+	       fprintf (fp, "Position: %d\n", leaf->final_id);
 	}
+		
 
 	if (leaf->next_in_level) {
 		vftr_make_html_indent (fp, n_spaces, 0);
@@ -83,6 +235,7 @@ void vftr_print_html_output (FILE *fp_out, char *func_name, stack_leaf_t *leaf) 
         } else {
 	   fp = fp_out;
         }
+	vftr_print_css_header (fp);
 	fprintf (fp, "<h1>Vftrace stack tree for %s</h1>\n", func_name);
 	fprintf (fp, "<link rel=\"stylesheet\" href=\"/usr/uhome/aurora/ess/esscw/tmp/flow.css\">\n");
 	fprintf (fp, "<nav class=\"nav\"/>\n");
