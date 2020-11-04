@@ -25,6 +25,8 @@ AX_CHECK_C99_STD
 # Check if elf-symbols align with function pointers
 AX_CHECK_VMAP_OFFSET
 
+# Check if on VE or VH (x86)
+AX_CHECK_VE
 ################################
 
 # Check MPI
