@@ -783,10 +783,10 @@ void vftr_print_stacktree_header (FILE *fp, int n_stacks, char *func_name,
 	sprintf (title, "Function stacks leading to %s: %d", func_name, n_stacks);
 	fprintf (fp, "%s", title);
 	for (int i = 0; i < n_spaces_max - strlen(title); i++) fprintf (fp, " ");
-	fprintf (fp, "   %*s   %*s   %*s   %*s   %*s   %*s\n", fmt_t, vftr_stacktree_headers[TIME],
+	fprintf (fp, "   %*s   %*s   %*s   %*s   %*s   %*s   %*s\n", fmt_t, vftr_stacktree_headers[TIME],
 		 fmt_calls, vftr_stacktree_headers[CALLS], fmt_imba, vftr_stacktree_headers[IMBA],
 		 fmt_send_bytes, vftr_stacktree_headers[SEND_BYTES], fmt_recv_bytes, vftr_stacktree_headers[RECV_BYTES],
-		 fmt_stackid, vftr_stacktree_headers[STACK_ID]);
+		 fmt_stackid, vftr_stacktree_headers[STACK_ID], strlen("position"), "position");
 	vftr_print_dashes (fp, n_char_tot);
 }
 
@@ -820,13 +820,13 @@ void vftr_print_stacktree (FILE *fp, stack_leaf_t *leaf, int n_spaces, double *i
 		        double mpi_tot_recv_bytes = vftr_func_table[leaf->func_id]->prof_current.mpi_tot_recv_bytes;
 			vftr_memory_unit (&mpi_tot_send_bytes, &send_unit_str);	
 			vftr_memory_unit (&mpi_tot_recv_bytes, &recv_unit_str);	
-			fprintf (fp, "   %*.6f   %*d   %*.2f   %*.lf %s   %*.lf %s   %*d\n",
+			fprintf (fp, "   %*.6f   %*d   %*.2f   %*.lf %s   %*.lf %s   %*d   %*d\n",
 				 fmt_t, (double)vftr_func_table[leaf->func_id]->prof_current.timeIncl * 1e-6,
 				 fmt_calls, vftr_func_table[leaf->func_id]->prof_current.calls,
 				 fmt_imba, imbalances[leaf->func_id],
 			 	 fmt_send_bytes - 4, mpi_tot_send_bytes, send_unit_str,
 				 fmt_recv_bytes - 4, mpi_tot_recv_bytes, recv_unit_str,
-				 fmt_stackid, leaf->stack_id);
+				 fmt_stackid, leaf->stack_id, strlen("position"), leaf->final_id);
 		}
 	}
 	if (leaf->next_in_level) {
