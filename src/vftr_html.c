@@ -193,7 +193,7 @@ vftr_print_css_header (FILE *fp) {
 
 /**********************************************************************/
 
-void vftr_print_stacktree_to_html (FILE *fp, stack_leaf_t *leaf, int n_spaces, long long *total_time) {
+void vftr_print_stacktree_to_html (FILE *fp, stack_leaf_t *leaf, int n_spaces, long long *total_time, double *imbalances) {
 	if (!leaf) return;
 	vftr_print_html_function_element (fp, leaf->stack_id, leaf->func_id, n_spaces);
 	if (leaf->callee) {
@@ -201,7 +201,7 @@ void vftr_print_stacktree_to_html (FILE *fp, stack_leaf_t *leaf, int n_spaces, l
 		fprintf (fp, "<ul>\n");
 		vftr_make_html_indent (fp, n_spaces, 1);
 		fprintf (fp, "<li>\n");
-		vftr_print_stacktree_to_html (fp, leaf->callee, n_spaces + 2 * INDENT_SPACES, 0);
+		vftr_print_stacktree_to_html (fp, leaf->callee, n_spaces + 2 * INDENT_SPACES, 0, imbalances);
 		vftr_make_html_indent (fp, n_spaces, 1);
 		fprintf (fp, "</li>\n");
 		vftr_make_html_indent (fp, n_spaces, 0);
@@ -209,15 +209,33 @@ void vftr_print_stacktree_to_html (FILE *fp, stack_leaf_t *leaf, int n_spaces, l
 	} else {
 	       vftr_make_html_indent (fp, n_spaces, 0);
 	       fprintf (fp, "<hr/>\n");
-	       vftr_make_html_indent (fp, n_spaces, 0);
-	       fprintf (fp, "Position: %d\n", leaf->final_id);
+	       if (leaf->func_id < 0) { 
+	          vftr_make_html_indent (fp, n_spaces, 0);
+		  fprintf (fp, "[not on this rank]\n");
+	       } else { 
+	          vftr_make_html_indent (fp, n_spaces, 0);
+	          fprintf (fp, "Position: %d<br>\n", leaf->final_id);
+	          vftr_make_html_indent (fp, n_spaces, 0);
+		  fprintf (fp, "Time %lf s<br>\n", vftr_func_table[leaf->func_id]->prof_current.timeIncl * 1e-6);
+	          vftr_make_html_indent (fp, n_spaces, 0);
+		  if (imbalances != NULL) fprintf (fp, "Imbalance: %lf %<br>\n", imbalances[leaf->func_id]);
+		  double n_bytes = vftr_func_table[leaf->func_id]->prof_current.mpi_tot_send_bytes;
+		  char *unit_str;
+		  vftr_memory_unit (&n_bytes, &unit_str);
+	          vftr_make_html_indent (fp, n_spaces, 0);
+		  fprintf (fp, "Send: %lf %s<br>\n", n_bytes, unit_str);
+		  n_bytes = vftr_func_table[leaf->func_id]->prof_current.mpi_tot_recv_bytes;
+		  vftr_memory_unit (&n_bytes, &unit_str);
+	          vftr_make_html_indent (fp, n_spaces, 0);
+		  fprintf (fp, "Recv: %lf %s<br>\n", n_bytes, unit_str);
+	     }
 	}
 		
 
 	if (leaf->next_in_level) {
 		vftr_make_html_indent (fp, n_spaces, 0);
 		fprintf (fp, "<li>\n");
-		vftr_print_stacktree_to_html (fp, leaf->next_in_level, n_spaces + INDENT_SPACES, 0);
+		vftr_print_stacktree_to_html (fp, leaf->next_in_level, n_spaces + INDENT_SPACES, 0, imbalances);
 		vftr_make_html_indent (fp, n_spaces, 0);
 		fprintf (fp, "</li>\n");
 	}
@@ -225,7 +243,7 @@ void vftr_print_stacktree_to_html (FILE *fp, stack_leaf_t *leaf, int n_spaces, l
 
 /**********************************************************************/
 
-void vftr_print_html_output (FILE *fp_out, char *func_name, stack_leaf_t *leaf) {
+void vftr_print_html_output (FILE *fp_out, char *func_name, stack_leaf_t *leaf, double *imbalances) {
 	// No external file (e.g. for tests) given. Create filename <func_name>.html
 	FILE *fp;
 	if (!fp_out) {
@@ -243,7 +261,7 @@ void vftr_print_html_output (FILE *fp_out, char *func_name, stack_leaf_t *leaf) 
 	fprintf (fp, "<ul>\n");
 	vftr_make_html_indent (fp, 0, 2);
 	fprintf (fp, "<li>\n");
-	vftr_print_stacktree_to_html (fp, leaf->origin, 3 * INDENT_SPACES, 0);
+	vftr_print_stacktree_to_html (fp, leaf->origin, 3 * INDENT_SPACES, 0, imbalances);
 	vftr_make_html_indent (fp, 0, 2);
 	fprintf (fp, "</li>\n");
 	vftr_make_html_indent (fp, 0, 1);
@@ -290,7 +308,7 @@ int vftr_html_test_1 (FILE *fp_in, FILE *fp_out) {
 	}
 	long long dummy1;
 	double dummy2;
-	vftr_print_html_output (fp_out, "C", stack_tree->origin);
+	vftr_print_html_output (fp_out, "C", stack_tree->origin, NULL);
 	free (stack_tree);
 	return 0;
 }
