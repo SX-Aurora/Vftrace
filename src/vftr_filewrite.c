@@ -896,11 +896,20 @@ void vftr_print_function_statistics (FILE *pout, bool display_sync_time,
 	}
 
   	for (int i = 0; i < n_display_functions; i++) {
+		stack_leaf_t *stack_tree = NULL;
+		double *imbalances = (double*) malloc (vftr_func_table_size * sizeof (double));
+		vftr_stack_compute_imbalances (&imbalances, display_functions[i]->n_stack_indices,
+					       display_functions[i]->stack_indices);
+		vftr_create_stacktree (&stack_tree, display_functions[i]->n_stack_indices, display_functions[i]->stack_indices);
   		vftr_print_function_stack (pout, vftr_mpirank, display_functions[i]->func_name, 
 				      display_functions[i]->n_stack_indices,
 				      display_functions[i]->n_func_indices,
   				      display_functions[i]->stack_indices,
-				      display_functions[i]->func_indices);
+				      display_functions[i]->func_indices,	
+				      imbalances,
+				      stack_tree);
+		free (stack_tree);
+		free (imbalances);
 	}
   }
 
@@ -911,14 +920,14 @@ void vftr_print_function_statistics (FILE *pout, bool display_sync_time,
 
 void display_selected_stacks (FILE *pout, char *display_function_names[], int n_display_functions) {
 
-	int n_indices, *stack_indices = NULL;	
-	for (int i = 0; i < n_display_functions; i++) {
-		vftr_find_function_in_stack (display_function_names[i], &stack_indices, &n_indices, true);
+	//int n_indices, *stack_indices = NULL;	
+	//for (int i = 0; i < n_display_functions; i++) {
+	//	vftr_find_function_in_stack (display_function_names[i], &stack_indices, &n_indices, true);
 
-		vftr_print_function_stack (pout, vftr_mpirank, display_function_names[i],
-					   n_indices, 0, stack_indices, NULL);
-		free (stack_indices);
-	}
+	//	vftr_print_function_stack (pout, vftr_mpirank, display_function_names[i],
+	//				   n_indices, 0, stack_indices, NULL);
+	//	free (stack_indices);
+	//}
 	
 }
 /**********************************************************************/

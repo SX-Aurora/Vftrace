@@ -114,9 +114,13 @@ enum column_ids {TIME, CALLS, IMBA, SEND_BYTES, RECV_BYTES, STACK_ID};
 
 int vftr_stack_length (int stack_id0);
 void vftr_fill_into_stack_tree (stack_leaf_t **this_leaf, int n_stack_ids, int *stacks_ids, int func_id);
+void vftr_stack_compute_imbalances (double **imbalances, int n_final_stack_ids, int *final_stack_ids);
+void vftr_create_stacktree (stack_leaf_t **stack_tree, int n_final_stack_ids, int *final_stack_ids);
 void vftr_print_function_stack (FILE *fp, int rank, char *func_name,
 				int n_final_stack_ids, int n_final_func_ids,
-				int *final_stack_ids, int *final_func_ids);
+				int *final_stack_ids, int *final_func_ids,
+			 	double *imbalances,
+				stack_leaf_t *stack_tree);
 
 // test functions
 int vftr_stacks_test_1(FILE *fp_in, FILE *fp_out);
