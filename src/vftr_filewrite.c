@@ -896,20 +896,28 @@ void vftr_print_function_statistics (FILE *pout, bool display_sync_time,
 	}
 
   	for (int i = 0; i < n_display_functions; i++) {
-		stack_leaf_t *stack_tree = NULL;
-		double *imbalances = (double*) malloc (vftr_func_table_size * sizeof (double));
-		vftr_stack_compute_imbalances (&imbalances, display_functions[i]->n_stack_indices,
-					       display_functions[i]->stack_indices);
-		vftr_create_stacktree (&stack_tree, display_functions[i]->n_stack_indices, display_functions[i]->stack_indices);
-  		vftr_print_function_stack (pout, vftr_mpirank, display_functions[i]->func_name, 
-				      display_functions[i]->n_stack_indices,
-				      display_functions[i]->n_func_indices,
-  				      display_functions[i]->stack_indices,
-				      display_functions[i]->func_indices,	
-				      imbalances,
-				      stack_tree);
-		free (stack_tree);
-		free (imbalances);
+		if (display_functions[i]->n_stack_indices == 0) {;
+		   //print empty stack
+		   //print epmty html
+		} else {
+		   stack_leaf_t *stack_tree = NULL;
+		   double *imbalances = (double*) malloc (vftr_func_table_size * sizeof (double));
+		   vftr_stack_compute_imbalances (&imbalances, display_functions[i]->n_stack_indices,
+		   			       display_functions[i]->stack_indices);
+		   vftr_create_stacktree (&stack_tree, display_functions[i]->n_stack_indices, display_functions[i]->stack_indices);
+		   long long total_time = 0;
+		   vftr_stack_get_total_time (stack_tree->origin, &total_time);
+  		   vftr_print_function_stack (pout, vftr_mpirank, display_functions[i]->func_name, 
+		   		      display_functions[i]->n_stack_indices,
+		   		      display_functions[i]->n_func_indices,
+  		   		      display_functions[i]->stack_indices,
+		   		      display_functions[i]->func_indices,	
+		   		      imbalances, total_time,
+		   		      stack_tree);
+		   vftr_print_html_output (NULL, display_functions[i]->func_name, stack_tree->origin, imbalances, (double)total_time * 1e-6);
+		   free (stack_tree);
+		   free (imbalances);
+	       }
 	}
   }
 
