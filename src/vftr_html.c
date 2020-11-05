@@ -337,14 +337,23 @@ void vftr_print_html_output (FILE *fp_out, char *func_name, stack_leaf_t *leaf, 
 	// No external file (e.g. for tests) given. Create filename <func_name>.html
 	FILE *fp;
 	if (!fp_out) {
-	   char html_filename[strlen(func_name) + 6];
-	   snprintf (html_filename, strlen(func_name) + 6, "%s.html", func_name);
+	   char outdir[strlen(func_name) + 6];
+	   snprintf (outdir, strlen(func_name) + 6, "html/%s", func_name);
+	   if (vftr_mpirank == 0) {
+	      mkdir (outdir, 0777);
+	   }
+#ifdef _MPI
+	   PMPI_Barrier(MPI_COMM_WORLD);
+#endif
+	   char html_filename[2*(strlen(func_name) + 6)];
+	   snprintf (html_filename, 2*(strlen(func_name) + 6) + vftr_count_digits(vftr_mpisize) + 1,
+		     "%s/%s_%d.html", outdir, func_name, vftr_mpirank);
 	   fp = fopen (html_filename, "w");
         } else {
 	   fp = fp_out;
         }
 	vftr_print_css_header (fp);
-	fprintf (fp, "<h1>Vftrace stack tree for %s</h1>\n", func_name);
+	fprintf (fp, "<h1>%s, rank %d</h1>\n", func_name, vftr_mpirank);
 	fprintf (fp, "<nav class=\"nav\"/>\n");
 	vftr_make_html_indent (fp, 0, 1);
 	fprintf (fp, "<ul>\n");

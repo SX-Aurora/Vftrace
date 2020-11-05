@@ -933,13 +933,13 @@ void vftr_print_function_stack (FILE *fp, int rank, char *func_name,
 				     fmt_t, fmt_imba, fmt_mpi_send, fmt_mpi_recv, fmt_stackid);
 	vftr_print_stacktree (fp, stack_tree->origin, 0, imbalances,
 			      n_spaces_max, fmt_calls, fmt_t, fmt_imba, fmt_mpi_send, fmt_mpi_recv, fmt_stackid, &total_time);
-	if (vftr_mpirank == 0) {
-		double total_time = 0.0;
-		for (int i = 0; i < n_final; i++) {
-		   total_time += t_final[i];
-                }
-		vftr_print_html_output (NULL, func_name, stack_tree->origin, imbalances, total_time);
-	}
+	//if (vftr_mpirank == 0) {
+		///double total_time_d = 0.0;
+		///for (int i = 0; i < n_final; i++) {
+		///   total_time_d += t_final[i];
+                ///}
+		vftr_print_html_output (NULL, func_name, stack_tree->origin, imbalances, (double)total_time * 1e-6);
+	//}
 	free (stack_tree);
 	fprintf (fp, "Total(%s): %lf sec. \n", func_name, (double)total_time * 1e-6);
 }
