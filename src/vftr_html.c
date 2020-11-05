@@ -19,6 +19,9 @@
 #include <string.h>
 #include <math.h>
 
+#include "vftr_setup.h"
+#include "vftr_filewrite.h"
+#include "vftr_fileutils.h"
 #include "vftr_stacks.h"
 
 /**********************************************************************/
@@ -28,6 +31,54 @@
 void vftr_make_html_indent (FILE *fp, int n_indent_0, int n_indent_extra) {
 	for (int i = 0; i < n_indent_0 + n_indent_extra * INDENT_SPACES; i++) fprintf (fp, " ");
 }
+
+/**********************************************************************/
+
+void vftr_print_index_html (display_function_t **funcs, int n_funcs) {
+   FILE *fp = fopen ("index.html", "w+");
+   fprintf (fp, "<h1>Choose your function\n");
+   for (int i = 0; i < n_funcs; i++) {
+      if (funcs[i]->n_calls > 0) {
+         vftr_make_html_indent (fp, 0, 1);
+         fprintf (fp, "<br><a href=\"%s.html\">%s</a>\n", funcs[i]->func_name, funcs[i]->func_name);
+      }
+   }
+   fprintf (fp, "</h1>\n");	
+   fclose (fp); 
+}
+
+/**********************************************************************/
+
+void vftr_create_rank_dropdown (FILE *fp, char *func_name) {
+   vftr_make_html_indent (fp, 0, 1);
+   fprintf (fp, "<li style=\"display: inline;\" class=\"dropdown\">\n"); 
+   vftr_make_html_indent (fp, 0, 2);
+   fprintf (fp, "<a href=\"javascript:void(0)\" class=\"dropbtn\">Choose rank</a>\n");
+   vftr_make_html_indent (fp, 0, 2);
+   fprintf (fp, "<div class=\"dropdown-content\">\n");
+   for (int i = 0; i < vftr_mpisize; i++) {
+      vftr_make_html_indent (fp, 0, 3);
+      int n = strlen(func_name) + vftr_count_digits(i) + 6;
+      char target_fun[n];
+      snprintf (target_fun, n, "%s_%d.html", func_name, i);
+      fprintf (fp, "<a href=\"%s\">%d</a>\n", target_fun, i);
+   }
+   vftr_make_html_indent (fp, 0, 2);
+   fprintf (fp, "</div>\n");
+   vftr_make_html_indent (fp, 0, 1);
+   fprintf (fp, "</li>\n");
+}
+
+/**********************************************************************/
+void vftr_print_navigation_bar (FILE *fp, display_function_t **funcs, int this_i_func) {
+   fprintf (fp, "<ul style=\"list-style-type: none;margin-top: 0px;margin-left: 150px; background-color: #f1f1f1;\">\n");
+   vftr_make_html_indent (fp, 0, 1);
+   fprintf (fp, "<li style=\"display: inline;\"><a href=\"#home\">HOME</a></li>\n");
+   vftr_create_rank_dropdown (fp, funcs[this_i_func]->func_name);
+   fprintf (fp, "</ul>\n");
+}
+
+/**********************************************************************/
 
 void vftr_print_html_function_element (FILE *fp, int final_id, int stack_id, int func_id, int n_spaces, double total_time) {
 	vftr_make_html_indent (fp, n_spaces, 0);
@@ -197,7 +248,36 @@ vftr_print_css_header (FILE *fp) {
    fprintf (fp, "  margin: 1em 0;\n");
    fprintf (fp, "  padding: 0;\n");
    fprintf (fp, "}\n");
+
+   fprintf (fp, "\n");
+   fprintf (fp, "li a, .dropbtn {\n");
+   fprintf (fp, "  display: inline-block;\n");
+   fprintf (fp, "  color: gray;\n");
+   fprintf (fp, "  text-align: center;\n");
+   fprintf (fp, "  padding: 14px 16px;\n");
+   fprintf (fp, "  text-decoration: none;\n");
    fprintf (fp, "}\n");
+   fprintf (fp, "\n");
+   fprintf (fp, ".dropdown-content {\n");
+   fprintf (fp, "  display: none;\n");
+   fprintf (fp, "  position: absolute;\n");
+   fprintf (fp, "  background-color: #f9f9f9;\n");
+   fprintf (fp, "  min-width: 160px;\n");
+   fprintf (fp, "  z-index: 1;\n");
+   fprintf (fp, "}\n");
+   fprintf (fp, "\n");
+   fprintf (fp, ".dropdown-content a:hover {\n");
+   fprintf (fp, "  background-color: #f1f1f1;\n");
+   fprintf (fp, "}\n");
+   fprintf (fp, "\n");
+   fprintf (fp, ".dropdown:hover .dropdown-content {\n");
+   fprintf (fp, "  display: block;\n");
+   fprintf (fp, "}\n");
+   fprintf (fp, "\n");
+   fprintf (fp, "li.dropdown {\n");
+   fprintf (fp, "  display: inline-block;\n");
+   fprintf (fp, "}\n");
+
    fprintf (fp, "</style>\n");
 }
 

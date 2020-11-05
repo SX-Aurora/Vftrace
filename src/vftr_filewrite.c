@@ -542,30 +542,6 @@ double compute_mpi_imbalance (long long *all_times, double t_avg) {
 
 /**********************************************************************/
 
-typedef struct display_function {
-    char *func_name;
-    int i_orig; // The original index of the display function. Used to undo sortings by various other field values, e.g. t_avg.
-    int n_calls;
-    double t_avg;
-    long long t_min;
-    long long t_max;
-    double t_sync_avg;
-    long long t_sync_min;
-    long long t_sync_max;
-    double imbalance;
-    long long this_mpi_time;
-    long long this_sync_time;
-    int n_stack_indices;
-    int n_func_indices;
-    int *stack_indices;
-    int *func_indices;
-    double mpi_tot_send_bytes;
-    double mpi_tot_recv_bytes;
-} display_function_t;
-
-
-/**********************************************************************/
-
 void evaluate_display_function (char *func_name, display_function_t **display_func,
 				bool display_sync_time) {
     char func_name_sync[strlen(func_name)+5];
