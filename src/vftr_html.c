@@ -17,6 +17,7 @@
 */
 
 #include <string.h>
+#include <math.h>
 
 #include "vftr_stacks.h"
 
@@ -28,9 +29,18 @@ void vftr_make_html_indent (FILE *fp, int n_indent_0, int n_indent_extra) {
 	for (int i = 0; i < n_indent_0 + n_indent_extra * INDENT_SPACES; i++) fprintf (fp, " ");
 }
 
-void vftr_print_html_function_element (FILE *fp, int stack_id, int func_id, int n_spaces) {
+void vftr_print_html_function_element (FILE *fp, int final_id, int stack_id, int func_id, int n_spaces, double total_time) {
 	vftr_make_html_indent (fp, n_spaces, 0);
-	fprintf (fp, "<a hfref=\"#\">%s\n", vftr_gStackinfo[stack_id].name);
+	if (final_id > 0) {
+	   double this_t = func_id >= 0 ? vftr_func_table[func_id]->prof_current.timeIncl * 1e-6 : 0.0;
+	   int x = total_time > 0 ? (int)(floor (510 * this_t / total_time)) : 0;
+	   int rvalue = x > 255 ? 255 : 255 - x;
+	   int gvalue = x > 255 ? 510 - x : 255;
+	   fprintf (fp, "<a hfref=\"#\" style=\"background-color: rgb(%d,%d,0)\">%s\n",
+		    rvalue, gvalue, vftr_gStackinfo[stack_id].name);
+	} else {
+	   fprintf (fp, "<a hfref=\"#\" style=\"background-color: #edebeb\">%s\n", vftr_gStackinfo[stack_id].name);
+	}
 	vftr_make_html_indent (fp, n_spaces + 3, 0);
 	fprintf (fp, "<ttt class=\"ttt\">function name: %s\n", vftr_gStackinfo[stack_id].name);
 	vftr_make_html_indent (fp, n_spaces + 3, 0);
@@ -155,7 +165,7 @@ vftr_print_css_header (FILE *fp) {
    fprintf (fp, "  border: 1px solid black;\n");
    fprintf (fp, "  text-decoration: none;\n");
    fprintf (fp, "  text-transform: uppercase;\n");
-   fprintf (fp, "  background-color: #edebeb;\n");
+//   fprintf (fp, "  background-color: #edebeb;\n");
    fprintf (fp, "  color: black;\n");
    fprintf (fp, "  font-family: arial, verdana, tahoma;\n");
    fprintf (fp, "  font-size: 11px;\n");
@@ -193,15 +203,15 @@ vftr_print_css_header (FILE *fp) {
 
 /**********************************************************************/
 
-void vftr_print_stacktree_to_html (FILE *fp, stack_leaf_t *leaf, int n_spaces, long long *total_time, double *imbalances) {
+void vftr_print_stacktree_to_html (FILE *fp, stack_leaf_t *leaf, int n_spaces, double total_time, double *imbalances) {
 	if (!leaf) return;
-	vftr_print_html_function_element (fp, leaf->stack_id, leaf->func_id, n_spaces);
+	vftr_print_html_function_element (fp, leaf->final_id, leaf->stack_id, leaf->func_id, n_spaces, total_time);
 	if (leaf->callee) {
 		vftr_make_html_indent (fp, n_spaces, 0);
 		fprintf (fp, "<ul>\n");
 		vftr_make_html_indent (fp, n_spaces, 1);
 		fprintf (fp, "<li>\n");
-		vftr_print_stacktree_to_html (fp, leaf->callee, n_spaces + 2 * INDENT_SPACES, 0, imbalances);
+		vftr_print_stacktree_to_html (fp, leaf->callee, n_spaces + 2 * INDENT_SPACES, total_time, imbalances);
 		vftr_make_html_indent (fp, n_spaces, 1);
 		fprintf (fp, "</li>\n");
 		vftr_make_html_indent (fp, n_spaces, 0);
@@ -235,7 +245,7 @@ void vftr_print_stacktree_to_html (FILE *fp, stack_leaf_t *leaf, int n_spaces, l
 	if (leaf->next_in_level) {
 		vftr_make_html_indent (fp, n_spaces, 0);
 		fprintf (fp, "<li>\n");
-		vftr_print_stacktree_to_html (fp, leaf->next_in_level, n_spaces + INDENT_SPACES, 0, imbalances);
+		vftr_print_stacktree_to_html (fp, leaf->next_in_level, n_spaces + INDENT_SPACES, total_time, imbalances);
 		vftr_make_html_indent (fp, n_spaces, 0);
 		fprintf (fp, "</li>\n");
 	}
@@ -243,7 +253,7 @@ void vftr_print_stacktree_to_html (FILE *fp, stack_leaf_t *leaf, int n_spaces, l
 
 /**********************************************************************/
 
-void vftr_print_html_output (FILE *fp_out, char *func_name, stack_leaf_t *leaf, double *imbalances) {
+void vftr_print_html_output (FILE *fp_out, char *func_name, stack_leaf_t *leaf, double *imbalances, double total_time) {
 	// No external file (e.g. for tests) given. Create filename <func_name>.html
 	FILE *fp;
 	if (!fp_out) {
@@ -255,13 +265,12 @@ void vftr_print_html_output (FILE *fp_out, char *func_name, stack_leaf_t *leaf, 
         }
 	vftr_print_css_header (fp);
 	fprintf (fp, "<h1>Vftrace stack tree for %s</h1>\n", func_name);
-	fprintf (fp, "<link rel=\"stylesheet\" href=\"/usr/uhome/aurora/ess/esscw/tmp/flow.css\">\n");
 	fprintf (fp, "<nav class=\"nav\"/>\n");
 	vftr_make_html_indent (fp, 0, 1);
 	fprintf (fp, "<ul>\n");
 	vftr_make_html_indent (fp, 0, 2);
 	fprintf (fp, "<li>\n");
-	vftr_print_stacktree_to_html (fp, leaf->origin, 3 * INDENT_SPACES, 0, imbalances);
+	vftr_print_stacktree_to_html (fp, leaf->origin, 3 * INDENT_SPACES, total_time, imbalances);
 	vftr_make_html_indent (fp, 0, 2);
 	fprintf (fp, "</li>\n");
 	vftr_make_html_indent (fp, 0, 1);
@@ -308,7 +317,7 @@ int vftr_html_test_1 (FILE *fp_in, FILE *fp_out) {
 	}
 	long long dummy1;
 	double dummy2;
-	vftr_print_html_output (fp_out, "C", stack_tree->origin, NULL);
+	vftr_print_html_output (fp_out, "C", stack_tree->origin, NULL, 0.0);
 	free (stack_tree);
 	return 0;
 }
