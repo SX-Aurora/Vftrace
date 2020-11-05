@@ -126,13 +126,6 @@ void vftr_sort_double_copy (double *d_array, int n, bool ascending, double **d_c
       qsort (tmp, (size_t)n, sizeof(double), vftr_compare_double_descending);
    }
 
-   if (vftr_mpirank == 0) {
-     printf ("tmp: ");
-     for (int i = 0; i < n; i++) {
-	printf ("%lf ", tmp[i]);
-     }
-     printf ("\n");
-   }
    for (int i = 0; i < n; i++) {
       (*d_copy)[i] = tmp[i];
    }
