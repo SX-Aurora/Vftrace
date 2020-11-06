@@ -34,24 +34,34 @@ void vftr_make_html_indent (FILE *fp, int n_indent_0, int n_indent_extra) {
 
 /**********************************************************************/
 
-void vftr_create_rank_dropdown (FILE *fp, char *func_name) {
-   vftr_make_html_indent (fp, 0, 1);
-   fprintf (fp, "<li style=\"display: inline;\" class=\"dropdown\">\n"); 
-   vftr_make_html_indent (fp, 0, 2);
-   fprintf (fp, "<a href=\"javascript:void(0)\" class=\"dropbtn\">Choose rank</a>\n");
-   vftr_make_html_indent (fp, 0, 2);
-   fprintf (fp, "<div class=\"dropdown-content\">\n");
-   for (int i = 0; i < vftr_mpisize; i++) {
-      vftr_make_html_indent (fp, 0, 3);
-      int n = strlen(func_name) + vftr_count_digits(i) + 7;
+void vftr_create_callgraph_dropdown (FILE *fp, char *func_name, bool is_index) {
+   if (is_index) { 
+      vftr_make_html_indent (fp, 0, 1);
+      fprintf (fp, "<li style=\"display: inline;\">\n"); 
+      vftr_make_html_indent (fp, 0, 2);
+      int n = strlen(func_name) + 8;
       char target_fun[n];
-      snprintf (target_fun, n, "%s_%d.html", func_name, i);
-      fprintf (fp, "<a href=\"%s\">%d</a>\n", target_fun, i);
+      snprintf (target_fun, n, "%s_%d.html", func_name, 0);
+      fprintf (fp, "<a href=\"%s/%s\">Call graphs</a>\n", func_name, target_fun);
+   } else {
+      vftr_make_html_indent (fp, 0, 1);
+      fprintf (fp, "<li style=\"display: inline;\" class=\"dropdown\">\n"); 
+      vftr_make_html_indent (fp, 0, 2);
+      fprintf (fp, "<a href=\"javascript:void(0)\" class=\"dropbtn\">Call graphs</a>\n");
+      vftr_make_html_indent (fp, 0, 2);
+      fprintf (fp, "<div class=\"dropdown-content\">\n");
+      for (int i = 0; i < vftr_mpisize; i++) {
+         vftr_make_html_indent (fp, 0, 3);
+         int n = strlen(func_name) + vftr_count_digits(i) + 7;
+         char target_fun[n];
+         snprintf (target_fun, n, "%s_%d.html", func_name, i);
+         fprintf (fp, "<a href=\"%s\">%d</a>\n", target_fun, i);
+      }
+      vftr_make_html_indent (fp, 0, 2);
+      fprintf (fp, "</div>\n");
+      vftr_make_html_indent (fp, 0, 1);
+      fprintf (fp, "</li>\n");
    }
-   vftr_make_html_indent (fp, 0, 2);
-   fprintf (fp, "</div>\n");
-   vftr_make_html_indent (fp, 0, 1);
-   fprintf (fp, "</li>\n");
 }
 
 /**********************************************************************/
@@ -59,8 +69,12 @@ void vftr_create_rank_dropdown (FILE *fp, char *func_name) {
 void vftr_print_navigation_bars (FILE *fp, display_function_t **funcs, int n_display_functions, int this_i_func, bool is_index) {
    fprintf (fp, "<ul style=\"list-style-type: none;margin-top: 0px;margin-left: 150px; background-color: #f1f1f1;\">\n");
    vftr_make_html_indent (fp, 0, 1);
-   fprintf (fp, "<li style=\"display: inline;\"><a href=\"#home\">HOME</a></li>\n");
-   vftr_create_rank_dropdown (fp, funcs[this_i_func]->func_name);
+   if (is_index) {
+      fprintf (fp, "<li style=\"display: inline;\"><a href=\"index.html\">HOME</a></li>\n");
+   } else {
+      fprintf (fp, "<li style=\"display: inline;\"><a href=\"../index.html\">HOME</a></li>\n");
+   }
+   vftr_create_callgraph_dropdown (fp, funcs[this_i_func]->func_name, is_index);
    fprintf (fp, "</ul>\n");
    fprintf (fp, "\n");
    fprintf (fp, "<ul style=\"float: left;list-style-type: none;margin: 0;padding: 0; width: 150px;background-color: #f1f1f1;\">\n");
@@ -89,8 +103,32 @@ void vftr_print_index_html (display_function_t **funcs, int n_funcs) {
    FILE *fp = fopen ("html/index.html", "w+");
    vftr_print_css_header (fp);
    vftr_print_navigation_bars (fp, funcs, n_funcs, 0, true);
+   fprintf (fp, "<div stype=\"margin-left:150px; padding 1px, 16px\">\n");
+   vftr_make_html_indent (fp, 0, 1);
    fprintf (fp, "<h1>Vfbrowse</h1>\n");
-   fprintf (fp, "<h2>Application: %s</h2>\n", "COSMO");
+   vftr_make_html_indent (fp, 0, 1);
+   fprintf (fp, "<p>Application: %s</p>\n", vftr_get_program_path ());
+   vftr_make_html_indent (fp, 0, 1);
+   fprintf (fp, "<p>Start date: %s</p>\n", vftr_start_date);
+   vftr_make_html_indent (fp, 0, 1);
+   fprintf (fp, "<p>End date: %s</p>\n", vftr_end_date);
+   vftr_make_html_indent (fp, 0, 1);
+   fprintf (fp, "<p>Number of MPI ranks: %d</p>\n", vftr_mpisize);
+
+   double total_runtime, sampling_overhead_time, total_overhead_time, mpi_overhead_time, application_runtime;
+   vftr_get_application_times (0, &total_runtime, &sampling_overhead_time, &mpi_overhead_time, 
+			       &total_overhead_time, &application_runtime);
+   vftr_make_html_indent (fp, 0, 1);
+   fprintf (fp, "<p>Total runtime: %8.2f seconds</p>\n", total_runtime);
+   vftr_make_html_indent (fp, 0, 1);
+   fprintf (fp, "<p>Application time: %8.2f seconds</p>\n", application_runtime);
+   vftr_make_html_indent (fp, 0, 1);
+   fprintf (fp, "<p>Overhead: %8.2f seconds (%.2f%%)</p>\n", total_overhead_time, total_overhead_time / total_runtime * 100.0);
+   vftr_make_html_indent (fp, 0, 1);
+   fprintf (fp, "<p>Sampling overhead: %8.2f seconds (%.2f%%)</p>\n", sampling_overhead_time, sampling_overhead_time / total_runtime * 100.0);
+   vftr_make_html_indent (fp, 0, 1);
+   fprintf (fp, "<p>MPI overhead: %8.2f seconds (%.2f%%)</p>\n", mpi_overhead_time, mpi_overhead_time / total_runtime * 100.0);
+   fprintf (fp, "</div>\n");
    fclose (fp); 
 }
 

@@ -29,7 +29,7 @@
 #include <math.h>
 
 #define MAX_CMDLINE 1024
-char *get_application_name () {
+char *vftr_get_application_name () {
 	char *program_path;
 
 	char proccmd[40];

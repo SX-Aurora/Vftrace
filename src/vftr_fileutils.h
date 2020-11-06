@@ -20,7 +20,7 @@
 
 #include <stdbool.h>
 
-char *get_application_name ();
+char *vftr_get_application_name ();
 
 int vftr_count_digits (int value);
 int vftr_count_digits_double (double value);

@@ -71,7 +71,7 @@ char *vftr_get_program_path () {
 		basename = vftr_environment.logfile_basename->value;
 	} else {
 		// program_path is either <abs_path>/app_name or ./app_name
-		char *program_path = get_application_name ();
+		char *program_path = vftr_get_application_name ();
 		char *s;
 		if (program_path) {
 		  // rindex returns a pointer to the last occurence of '/'
@@ -959,6 +959,22 @@ void vftr_print_mpi_statistics (FILE *fp) {
 
 /**********************************************************************/
 
+void vftr_get_application_times (double time0, double *total_runtime, double *sampling_overhead_time,
+			  	 double *mpi_overhead_time, double *total_overhead_time, double *application_time) {
+   *total_runtime = time0 > 0 ? time0 * 1e-6 : vftr_get_runtime_usec() * 1e-6; 
+   *sampling_overhead_time = vftr_overhead_usec * 1e-6;
+   *total_overhead_time = *sampling_overhead_time;
+#if defined(_MPI)
+   *mpi_overhead_time = vftr_mpi_overhead_usec * 1e-6;
+   *total_overhead_time = *sampling_overhead_time + *mpi_overhead_time;
+#else
+   *mpi_overhead_time = 0;
+#endif
+   *application_time = *total_runtime - *total_overhead_time;
+}
+
+/**********************************************************************/
+
 void vftr_print_profile (FILE *pout, int *ntop, long long time0) {
     float pscale, ctime;
     double rtime;
@@ -1010,14 +1026,9 @@ void vftr_print_profile (FILE *pout, int *ntop, long long time0) {
 	    }
 	}
     }
-    double total_runtime = time0 > 0 ? (double)time0 * 1e-6 : vftr_get_runtime_usec() * 1.0e-6;
-    double sampling_overhead_time = vftr_overhead_usec * 1.0e-6;
-    double total_overhead_time = sampling_overhead_time;
-#ifdef _MPI
-    double mpi_overhead_time = vftr_mpi_overhead_usec * 1.0e-6;
-    total_overhead_time = sampling_overhead_time + mpi_overhead_time;
-#endif
-    double application_runtime = total_runtime - total_overhead_time;
+    double total_runtime, sampling_overhead_time, total_overhead_time, mpi_overhead_time, application_runtime;
+    vftr_get_application_times (time0, &total_runtime, &sampling_overhead_time, &mpi_overhead_time, 
+				&total_overhead_time, &application_runtime);
     rtime = application_runtime;
 
     /* Print profile info */
@@ -1025,7 +1036,7 @@ void vftr_print_profile (FILE *pout, int *ntop, long long time0) {
     fprintf(pout, "MPI size              %d\n", vftr_mpisize);
     fprintf(pout, "Total runtime:        %8.2f seconds\n", total_runtime);
     fprintf(pout, "Application time:     %8.2f seconds\n", application_runtime);
-    fprintf(pout, "Overhead:             %8.2f seconds (%.2f%%)\n",
+    	fprintf(pout, "Overhead:             %8.2f seconds (%.2f%%)\n",
             total_overhead_time, 100.0*total_overhead_time/total_runtime);
 #ifdef _MPI
     fprintf(pout, "   Sampling overhead: %8.2f seconds (%.2f%%)\n",

@@ -71,6 +71,8 @@ void vftr_store_message_info(vftr_direction dir, int count, int type_idx,
                              int type_size, int rank, int tag,
                              long long tstart, long long tend);
 
+void vftr_get_application_times (double time0, double *total_runtime, double *sampling_overhead_time,
+			  	 double *mpi_overhead_time, double *total_overhead_time, double *application_time);
 void vftr_print_profile (FILE *pout, int *ntop, long long t0);
 char *vftr_get_program_path ();
 char *vftr_create_logfile_name (int mpi_rank, int mpi_size, char *suffix);
