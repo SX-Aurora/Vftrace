@@ -890,11 +890,10 @@ void vftr_stack_get_total_time (stack_leaf_t *leaf, long long *total_time) {
 
 /**********************************************************************/
 
-void vftr_print_function_stack (FILE *fp, int rank, char *func_name,
-		           int n_final_stack_ids, int n_final_func_ids,
-			   int *final_stack_ids, int *final_func_ids,
-			   double *imbalances, long long total_time,
-			   stack_leaf_t *stack_tree) {
+void vftr_print_function_stack (FILE *fp, int rank,
+		                char *func_name, int n_final_stack_ids,
+			        double *imbalances, long long total_time,
+			        stack_leaf_t *stack_tree) {
 	fprintf (fp, "\n");
 	if (n_final_stack_ids == 0) {
 		fprintf (fp, "No stack IDs for %s registered.\n", func_name);

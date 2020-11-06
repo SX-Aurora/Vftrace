@@ -892,11 +892,13 @@ void vftr_print_function_statistics (FILE *pout, bool display_sync_time,
 	       sizeof (display_function_t *), vftr_compare_display_functions_iorig);
 
 
-	if (vftr_mpirank == 0) {
-	   mkdir ("html", 0777);
-	   vftr_print_index_html (display_functions, n_display_functions);
-	}
-	PMPI_Barrier (MPI_COMM_WORLD);
+	if (vftr_environment.create_html->value) {
+	   if (vftr_mpirank == 0) {
+	      mkdir ("html", 0777);
+	      vftr_print_index_html (display_functions, n_display_functions);
+	   }
+	   PMPI_Barrier (MPI_COMM_WORLD);
+        }
 
   	for (int i = 0; i < n_display_functions; i++) {
 		if (display_functions[i]->n_stack_indices == 0) {;
@@ -912,13 +914,11 @@ void vftr_print_function_statistics (FILE *pout, bool display_sync_time,
 		   vftr_stack_get_total_time (stack_tree->origin, &total_time);
   		   vftr_print_function_stack (pout, vftr_mpirank, display_functions[i]->func_name, 
 		   		      display_functions[i]->n_stack_indices,
-		   		      display_functions[i]->n_func_indices,
-  		   		      display_functions[i]->stack_indices,
-		   		      display_functions[i]->func_indices,	
-		   		      imbalances, total_time,
-		   		      stack_tree);
-		   vftr_print_html_output (NULL, display_functions, n_display_functions, i, stack_tree->origin,
-					   imbalances, (double)total_time * 1e-6);
+		   		      imbalances, total_time, stack_tree);
+		   if (vftr_environment.create_html->value) {
+		      vftr_print_html_output (NULL, display_functions, n_display_functions, i, stack_tree->origin,
+					      imbalances, (double)total_time * 1e-6);
+		   }
 		   free (stack_tree);
 		   free (imbalances);
 	       }

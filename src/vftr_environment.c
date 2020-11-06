@@ -52,6 +52,8 @@ void print_env_int (FILE *fp, char *env_name, env_var_int_t *var) {
 	fprintf (fp, "%s: %d\n", display_name, var->value);	
 }
 
+/**********************************************************************/
+
 env_var_long_t *vftr_read_env_long (char *env_name, long val_default) {
     char *s;
     env_var_long_t *var;
@@ -71,6 +73,8 @@ void print_env_long (FILE *fp, char *env_name, env_var_long_t *var) {
 	if (!var->set) strcat (s, strdup ("(default)"));
 	fprintf (fp, "%s: %ld\n", s, var->value);
 }
+
+/**********************************************************************/
 
 env_var_long_long_t *vftr_read_env_long_long (char *env_name, long long val_default) {
     char *s;
@@ -95,6 +99,8 @@ void print_env_long_long (FILE *fp, char *env_name, env_var_long_long_t *var) {
 	}
 	fprintf (fp, "%s: %lld\n", display_name, var->value);
 }
+
+/**********************************************************************/
 
 env_var_bool_t *vftr_read_env_bool (char *env_name, bool val_default) {
     env_var_bool_t *var;
@@ -135,6 +141,8 @@ void print_env_bool (FILE *fp, char *env_name, env_var_bool_t *var) {
 	fprintf (fp, "%s: %s\n", display_name, vftr_bool_to_string (var->value));
 }
 
+/**********************************************************************/
+
 env_var_double_t *vftr_read_env_double (char *env_name, double val_default) {
     char *s;
     env_var_double_t *var;
@@ -157,8 +165,9 @@ void print_env_double (FILE *fp, char *env_name, env_var_double_t *var) {
 		snprintf (display_name, VFTR_ENV_VAR_MAX_LENGTH, "%s(default)", env_name);
 	}
 	fprintf (fp, "%s: %4.2f\n", display_name, var->value);
-}
-	
+}	
+
+/**********************************************************************/
 
 env_var_string_t *vftr_read_env_string (char *env_name, char *val_default) {
     char *s;
@@ -184,6 +193,8 @@ void print_env_string (FILE *fp, char *env_name, env_var_string_t *var) {
 	fprintf (fp, "%s: %s\n", display_name, var->value);
 }
 
+/**********************************************************************/
+
 env_var_regex_t *vftr_read_env_regex (char *env_name, regex_t *val_default) {
     char *s;
     env_var_regex_t *var;
@@ -197,6 +208,8 @@ env_var_regex_t *vftr_read_env_regex (char *env_name, regex_t *val_default) {
     }
     return var;
 }
+
+/**********************************************************************/
 
 void vftr_read_environment () {
     vftr_environment.vftrace_off = vftr_read_env_bool ("VFTR_OFF", false);
@@ -224,7 +237,10 @@ void vftr_read_environment () {
     vftr_environment.print_stacks_for = vftr_read_env_string ("VFTR_PRINT_STACKS_FOR", NULL);
     vftr_environment.print_loadinfo_for = vftr_read_env_string ("VFTR_PRINT_LOADINFO_FOR", NULL);
     vftr_environment.strip_module_names = vftr_read_env_bool ("VFTR_STRIP_MODULE_NAMES", false);
+    vftr_environment.create_html = vftr_read_env_bool ("VFTR_CREATE_HTML", false);
 }
+
+/**********************************************************************/
 
 void vftr_assert_environment () {
 	assert (vftr_environment.bufsize->value > 0);
@@ -295,6 +311,8 @@ void vftr_assert_environment () {
 
 }
 
+/**********************************************************************/
+
 // We check if Vftrace has been switched off, either by an environment variable
 // or by a call to vftr_switch off. We need to check if the evironment is initialized
 // beforehand, otherwise this yields a segfault in vftr_finalize, which is always called.
@@ -309,6 +327,8 @@ void vftr_switch_off () {
 bool vftr_env_do_sampling () {
 	return vftr_environment.do_sampling->value;
 }
+
+/**********************************************************************/
 
 void vftr_free_environment () {
 	free (vftr_environment.vftrace_off);
@@ -334,7 +354,11 @@ void vftr_free_environment () {
 	free (vftr_environment.license_verbose);
 	free (vftr_environment.print_stacks_for);
 	free (vftr_environment.print_loadinfo_for);
+	free (vftr_environment.strip_module_names);
+	free (vftr_environment.create_html);
 }
+
+/**********************************************************************/
 
 // We leave out the regular expression in this printing function
 
@@ -360,7 +384,10 @@ void vftr_print_environment (FILE *fp) {
 	print_env_string (fp, "VFTR_PRINT_STACKS_FOR", vftr_environment.print_stacks_for);
 	print_env_string (fp, "VFTR_PRINT_LOADINFO_FOR", vftr_environment.print_loadinfo_for);
 	print_env_bool (fp, "VFTR_STRIP_MODULE_NAMES", vftr_environment.strip_module_names);
+	print_env_bool (fp, "VFTR_CREATE_HTML", vftr_environment.create_html);
 }
+
+/**********************************************************************/
 
 int vftr_environment_test_1 (FILE *fp) {
 	putenv ("VFTR_OFF=yes");
