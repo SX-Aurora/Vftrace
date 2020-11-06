@@ -58,7 +58,7 @@ void vftr_create_rank_dropdown (FILE *fp, char *func_name) {
    fprintf (fp, "<div class=\"dropdown-content\">\n");
    for (int i = 0; i < vftr_mpisize; i++) {
       vftr_make_html_indent (fp, 0, 3);
-      int n = strlen(func_name) + vftr_count_digits(i) + 6;
+      int n = strlen(func_name) + vftr_count_digits(i) + 7;
       char target_fun[n];
       snprintf (target_fun, n, "%s_%d.html", func_name, i);
       fprintf (fp, "<a href=\"%s\">%d</a>\n", target_fun, i);
@@ -70,12 +70,29 @@ void vftr_create_rank_dropdown (FILE *fp, char *func_name) {
 }
 
 /**********************************************************************/
-void vftr_print_navigation_bar (FILE *fp, display_function_t **funcs, int this_i_func) {
+void vftr_print_navigation_bars (FILE *fp, display_function_t **funcs, int n_display_functions, int this_i_func) {
    fprintf (fp, "<ul style=\"list-style-type: none;margin-top: 0px;margin-left: 150px; background-color: #f1f1f1;\">\n");
    vftr_make_html_indent (fp, 0, 1);
    fprintf (fp, "<li style=\"display: inline;\"><a href=\"#home\">HOME</a></li>\n");
    vftr_create_rank_dropdown (fp, funcs[this_i_func]->func_name);
    fprintf (fp, "</ul>\n");
+   fprintf (fp, "\n");
+   fprintf (fp, "<ul style=\"list-style-type: none;margin: 0;padding: 0; width: 150px;background-color: #f1f1f1;\">\n");
+   for (int i = 0; i < n_display_functions; i++) {
+      if (funcs[i]->n_stack_indices > 0) {
+         vftr_make_html_indent (fp, 0, 1);
+	 int n = strlen (funcs[i]->func_name) + vftr_count_digits(vftr_mpirank) + 7;
+	 char target_fun[n];
+	 snprintf (target_fun, n, "%s_%d.html", funcs[i]->func_name, vftr_mpirank);
+	 if (i == this_i_func) {
+            fprintf (fp, "<li><a href=\"%s\">%s</a></li>\n", target_fun, funcs[i]->func_name);
+	 } else {
+            fprintf (fp, "<li><a href=\"../%s/%s\">%s</a></li>\n", funcs[i]->func_name, target_fun, funcs[i]->func_name);
+         }	
+       }
+   }
+   fprintf (fp, "</ul>\n");
+   fprintf (fp, "\n");
 }
 
 /**********************************************************************/
@@ -333,27 +350,31 @@ void vftr_print_stacktree_to_html (FILE *fp, stack_leaf_t *leaf, int n_spaces, d
 
 /**********************************************************************/
 
-void vftr_print_html_output (FILE *fp_out, char *func_name, stack_leaf_t *leaf, double *imbalances, double total_time) {
+void vftr_print_html_output (FILE *fp_out, display_function_t **display_funcs, int n_display_functions, int this_i_func,
+			     stack_leaf_t *leaf, double *imbalances, double total_time) {
 	// No external file (e.g. for tests) given. Create filename <func_name>.html
 	FILE *fp;
+	char *this_func_name = display_funcs[this_i_func]->func_name;
 	if (!fp_out) {
-	   char outdir[strlen(func_name) + 6];
-	   snprintf (outdir, strlen(func_name) + 6, "html/%s", func_name);
+	   char outdir[strlen(this_func_name) + 6];
+	   snprintf (outdir, strlen(this_func_name) + 6, "html/%s", this_func_name);
 	   if (vftr_mpirank == 0) {
 	      mkdir (outdir, 0777);
 	   }
 #ifdef _MPI
 	   PMPI_Barrier(MPI_COMM_WORLD);
 #endif
-	   char html_filename[2*(strlen(func_name) + 6)];
-	   snprintf (html_filename, 2*(strlen(func_name) + 6) + vftr_count_digits(vftr_mpisize) + 1,
-		     "%s/%s_%d.html", outdir, func_name, vftr_mpirank);
+	   char html_filename[2*(strlen(this_func_name) + 6)];
+	   snprintf (html_filename, 2*(strlen(this_func_name) + 6) + vftr_count_digits(vftr_mpisize) + 1,
+		     "%s/%s_%d.html", outdir, this_func_name, vftr_mpirank);
 	   fp = fopen (html_filename, "w");
         } else {
 	   fp = fp_out;
         }
 	vftr_print_css_header (fp);
-	fprintf (fp, "<h1>%s, rank %d</h1>\n", func_name, vftr_mpirank);
+        vftr_print_navigation_bars (fp, display_funcs, n_display_functions, this_i_func); 
+	fprintf (fp, "<div style=\"margin-left:150px; margin-top:0px; padding: 1px 16px\">\n");
+	fprintf (fp, "<h1>%s, rank %d</h1>\n", this_func_name, vftr_mpirank);
 	fprintf (fp, "<nav class=\"nav\"/>\n");
 	vftr_make_html_indent (fp, 0, 1);
 	fprintf (fp, "<ul>\n");
@@ -365,6 +386,7 @@ void vftr_print_html_output (FILE *fp_out, char *func_name, stack_leaf_t *leaf, 
 	vftr_make_html_indent (fp, 0, 1);
 	fprintf (fp, "</ul>\n");
 	fprintf (fp, "</nav>\n");
+	fprintf (fp, "</div>\n");
 	if (!fp_out) fclose (fp); //External file is supposed to be closed elsewhere
 }
 
@@ -406,7 +428,7 @@ int vftr_html_test_1 (FILE *fp_in, FILE *fp_out) {
 	}
 	long long dummy1;
 	double dummy2;
-	vftr_print_html_output (fp_out, "C", stack_tree->origin, NULL, 0.0);
+	//vftr_print_html_output (fp_out, "C", stack_tree->origin, NULL, 0.0);
 	free (stack_tree);
 	return 0;
 }

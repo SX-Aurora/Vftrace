@@ -914,7 +914,8 @@ void vftr_print_function_statistics (FILE *pout, bool display_sync_time,
 		   		      display_functions[i]->func_indices,	
 		   		      imbalances, total_time,
 		   		      stack_tree);
-		   vftr_print_html_output (NULL, display_functions[i]->func_name, stack_tree->origin, imbalances, (double)total_time * 1e-6);
+		   vftr_print_html_output (NULL, display_functions, n_display_functions, i, stack_tree->origin,
+					   imbalances, (double)total_time * 1e-6);
 		   free (stack_tree);
 		   free (imbalances);
 	       }
