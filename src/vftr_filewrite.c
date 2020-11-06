@@ -891,9 +891,12 @@ void vftr_print_function_statistics (FILE *pout, bool display_sync_time,
 	qsort ((void*)display_functions, (size_t)n_display_functions,
 	       sizeof (display_function_t *), vftr_compare_display_functions_iorig);
 
+
 	if (vftr_mpirank == 0) {
+	   mkdir ("html", 0777);
 	   vftr_print_index_html (display_functions, n_display_functions);
 	}
+	PMPI_Barrier (MPI_COMM_WORLD);
 
   	for (int i = 0; i < n_display_functions; i++) {
 		if (display_functions[i]->n_stack_indices == 0) {;

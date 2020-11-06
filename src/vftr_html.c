@@ -34,21 +34,6 @@ void vftr_make_html_indent (FILE *fp, int n_indent_0, int n_indent_extra) {
 
 /**********************************************************************/
 
-void vftr_print_index_html (display_function_t **funcs, int n_funcs) {
-   FILE *fp = fopen ("index.html", "w+");
-   fprintf (fp, "<h1>Choose your function\n");
-   for (int i = 0; i < n_funcs; i++) {
-      if (funcs[i]->n_calls > 0) {
-         vftr_make_html_indent (fp, 0, 1);
-         fprintf (fp, "<br><a href=\"%s.html\">%s</a>\n", funcs[i]->func_name, funcs[i]->func_name);
-      }
-   }
-   fprintf (fp, "</h1>\n");	
-   fclose (fp); 
-}
-
-/**********************************************************************/
-
 void vftr_create_rank_dropdown (FILE *fp, char *func_name) {
    vftr_make_html_indent (fp, 0, 1);
    fprintf (fp, "<li style=\"display: inline;\" class=\"dropdown\">\n"); 
@@ -70,21 +55,24 @@ void vftr_create_rank_dropdown (FILE *fp, char *func_name) {
 }
 
 /**********************************************************************/
-void vftr_print_navigation_bars (FILE *fp, display_function_t **funcs, int n_display_functions, int this_i_func) {
+
+void vftr_print_navigation_bars (FILE *fp, display_function_t **funcs, int n_display_functions, int this_i_func, bool is_index) {
    fprintf (fp, "<ul style=\"list-style-type: none;margin-top: 0px;margin-left: 150px; background-color: #f1f1f1;\">\n");
    vftr_make_html_indent (fp, 0, 1);
    fprintf (fp, "<li style=\"display: inline;\"><a href=\"#home\">HOME</a></li>\n");
    vftr_create_rank_dropdown (fp, funcs[this_i_func]->func_name);
    fprintf (fp, "</ul>\n");
    fprintf (fp, "\n");
-   fprintf (fp, "<ul style=\"list-style-type: none;margin: 0;padding: 0; width: 150px;background-color: #f1f1f1;\">\n");
+   fprintf (fp, "<ul style=\"float: left;list-style-type: none;margin: 0;padding: 0; width: 150px;background-color: #f1f1f1;\">\n");
    for (int i = 0; i < n_display_functions; i++) {
       if (funcs[i]->n_stack_indices > 0) {
          vftr_make_html_indent (fp, 0, 1);
 	 int n = strlen (funcs[i]->func_name) + vftr_count_digits(vftr_mpirank) + 7;
 	 char target_fun[n];
 	 snprintf (target_fun, n, "%s_%d.html", funcs[i]->func_name, vftr_mpirank);
-	 if (i == this_i_func) {
+	 if (is_index) {
+            fprintf (fp, "<li><a href=\"%s/%s\">%s</a></li>\n", funcs[i]->func_name, target_fun, funcs[i]->func_name);
+	 } else if (i == this_i_func) {
             fprintf (fp, "<li><a href=\"%s\">%s</a></li>\n", target_fun, funcs[i]->func_name);
 	 } else {
             fprintf (fp, "<li><a href=\"../%s/%s\">%s</a></li>\n", funcs[i]->func_name, target_fun, funcs[i]->func_name);
@@ -93,6 +81,17 @@ void vftr_print_navigation_bars (FILE *fp, display_function_t **funcs, int n_dis
    }
    fprintf (fp, "</ul>\n");
    fprintf (fp, "\n");
+}
+
+/**********************************************************************/
+
+void vftr_print_index_html (display_function_t **funcs, int n_funcs) {
+   FILE *fp = fopen ("html/index.html", "w+");
+   vftr_print_css_header (fp);
+   vftr_print_navigation_bars (fp, funcs, n_funcs, 0, true);
+   fprintf (fp, "<h1>Vfbrowse</h1>\n");
+   fprintf (fp, "<h2>Application: %s</h2>\n", "COSMO");
+   fclose (fp); 
 }
 
 /**********************************************************************/
@@ -348,6 +347,7 @@ void vftr_print_stacktree_to_html (FILE *fp, stack_leaf_t *leaf, int n_spaces, d
 	}
 }
 
+  
 /**********************************************************************/
 
 void vftr_print_html_output (FILE *fp_out, display_function_t **display_funcs, int n_display_functions, int this_i_func,
@@ -372,7 +372,7 @@ void vftr_print_html_output (FILE *fp_out, display_function_t **display_funcs, i
 	   fp = fp_out;
         }
 	vftr_print_css_header (fp);
-        vftr_print_navigation_bars (fp, display_funcs, n_display_functions, this_i_func); 
+        vftr_print_navigation_bars (fp, display_funcs, n_display_functions, this_i_func, false); 
 	fprintf (fp, "<div style=\"margin-left:150px; margin-top:0px; padding: 1px 16px\">\n");
 	fprintf (fp, "<h1>%s, rank %d</h1>\n", this_func_name, vftr_mpirank);
 	fprintf (fp, "<nav class=\"nav\"/>\n");

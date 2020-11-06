@@ -152,9 +152,6 @@ void vftr_initialize() {
     vftr_get_mpi_info (&vftr_mpirank, &vftr_mpisize);
 
     vftr_logfile_name = vftr_create_logfile_name (vftr_mpirank, vftr_mpisize, "log");
-    if (vftr_mpirank == 0) {
-       int stat =mkdir ("html", 0777);
-    }
 
     vftr_log = fopen (vftr_logfile_name, "w+");
     assert (vftr_log);
