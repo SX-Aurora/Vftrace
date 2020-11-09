@@ -58,6 +58,9 @@ typedef struct display_function {
     double mpi_tot_recv_bytes;
 } display_function_t;
 
+extern char *vftr_mpi_function_names[];
+extern int vftr_n_mpi_functions;
+
 enum sample_id {SID_ENTRY, SID_EXIT, SID_MESSAGE};
 
 void vftr_init_vfd_file ();
