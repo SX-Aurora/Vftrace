@@ -253,7 +253,14 @@ void vftr_create_profile_dropdown (FILE *fp, enum origin_page op) {
       fprintf (fp, "<a href=\"profile_%d.html\">Profile tables</a>\n", vftr_mpirank);
       vftr_make_html_indent (fp, 0, 1);
       fprintf (fp, "</li>\n");
-    } else {
+    } else if (op = TREE) {
+      vftr_make_html_indent (fp, 0, 1);
+      fprintf (fp, "<li style=\"display: inline;\">\n");
+      vftr_make_html_indent (fp, 0, 2);
+      fprintf (fp, "<a href=\"../profile_%d.html\">Profile tables</a>\n", vftr_mpirank);
+      vftr_make_html_indent (fp, 0, 1);
+      fprintf (fp, "</li>\n");
+   } else {
       vftr_make_html_indent (fp, 0, 1);
       fprintf (fp, "<li style=\"display: inline;\" class=\"dropdown\">\n"); 
       vftr_make_html_indent (fp, 0, 2);
