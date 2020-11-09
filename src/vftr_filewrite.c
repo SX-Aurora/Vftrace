@@ -36,6 +36,7 @@
 #include "vftr_setup.h"
 #include "vftr_mpi_utils.h"
 #include "vftr_stacks.h"
+#include "vftr_html.h"
 
 // File pointer of the log file
 FILE *vftr_log = NULL;
@@ -894,10 +895,8 @@ void vftr_print_function_statistics (FILE *pout, bool display_sync_time,
 
 	if (vftr_environment.create_html->value) {
 	   if (vftr_mpirank == 0) {
-	      mkdir ("html", 0777);
 	      vftr_print_index_html (display_functions, n_display_functions);
 	   }
-	   PMPI_Barrier (MPI_COMM_WORLD);
         }
 
   	for (int i = 0; i < n_display_functions; i++) {
@@ -985,6 +984,30 @@ void vftr_print_profile (FILE *pout, int *ntop, long long time0) {
     int offset, tableWidth;
 
     char fmtcalls[10], fmttime[10], fmttimeInc[10], fmtfid[10];
+
+    FILE *f_html;
+    if (vftr_environment.create_html->value) {
+       int n = 14 + vftr_count_digits(vftr_mpirank);
+       printf ("Write filename: %d\n", n);
+       char html_profile[n];
+       snprintf (html_profile, n, "html/profile_%d", vftr_mpirank);
+       if (vftr_mpirank == 0) {
+	  mkdir ("html", 0777);
+       }
+       PMPI_Barrier (MPI_COMM_WORLD);
+       printf ("OPEN html: %s\n", html_profile);
+       f_html = fopen (html_profile, "w+");
+       fprintf (f_html,"<style>\n");
+       vftr_make_html_indent (f_html, 0, 1);
+       fprintf (f_html, "th, td {\n");
+       vftr_make_html_indent (f_html, 0, 2);
+       fprintf (f_html, "border: 1px solid black;\n");
+       vftr_make_html_indent (f_html, 0, 2);
+       fprintf (f_html, "border-collapse: collapse;\n");
+       vftr_make_html_indent (f_html, 0, 1);
+       fprintf (f_html, "}\n");
+       fprintf (f_html, "</style>\n");
+    }
 
     function_t   **funcTable;
 
@@ -1174,6 +1197,20 @@ void vftr_print_profile (FILE *pout, int *ntop, long long time0) {
     output_header ("Excl", formats->excl_time, pout);
     output_header ("Incl", formats->incl_time, pout);
 
+    if (vftr_environment.create_html->value) {
+       fprintf (f_html, "<table>\n");
+       fprintf (f_html, "<tr>\n");
+       fprintf (f_html, "<th>Calls</th>\n");
+       fprintf (f_html, "<th>Excl. time</th>\n");
+       fprintf (f_html, "<th>Incl. time</th>\n");
+       fprintf (f_html, "<th>%%abs</th>\n");
+       fprintf (f_html, "<th>%%cum</th>\n");
+       fprintf (f_html, "<th>Function</th>\n");
+       fprintf (f_html, "<th>Caller</th>\n");
+       fprintf (f_html, "<th>ID</th>\n");
+       fprintf (f_html, "</tr>\n");
+    }
+
     fputs ("%abs %cum ", pout);
     if (evc0) fputs ("%evc ", pout);
 
@@ -1216,12 +1253,22 @@ void vftr_print_profile (FILE *pout, int *ntop, long long time0) {
         calls  = prof_current->calls  - prof_previous->calls;
         fputc (' ', pout);
         fprintf (pout, fmtcalls, calls);
+	if (vftr_environment.create_html->value) {
+	   fprintf (f_html, "<tr>\n");
+	   fprintf (f_html, "<td>%d</td>\n", calls);
+	}
 
 	float t_excl, t_incl, t_part;
 	get_stack_times (prof_current, prof_previous, application_runtime, &t_excl, &t_incl, &t_part);
 	rtime = t_excl;
 	ctime += t_part;
 	print_stack_time (pout, calls, fmttime, fmttimeInc, t_excl, t_incl, t_part, ctime);
+	if (vftr_environment.create_html->value) {
+           fprintf (f_html, "<td>%lf</td>\n", t_excl);
+           fprintf (f_html, "<td>%lf</td>\n", t_incl);
+           fprintf (f_html, "<td>%lf</td>\n", t_part);
+           fprintf (f_html, "<td>%lf</td>\n", ctime);
+	}
 
         /* NOTE - counter info only printed for thread 0! */
 	if (vftr_events_enabled) {
@@ -1248,11 +1295,18 @@ void vftr_print_profile (FILE *pout, int *ntop, long long time0) {
 	}
 
 	fprintf (pout, "%s", funcTable[i_func]->name);
+	if (vftr_environment.create_html->value) {
+	   fprintf (f_html, "<td>%s</td>\n", funcTable[i_func]->name);
+        }
         for (int j = strlen(funcTable[i_func]->name); j <= formats->func_name; j++) {
             fputc (' ', pout);
         }
 
 	if (funcTable[i_func]->return_to) {
+	   if (vftr_environment.create_html->value) {
+	      fprintf (f_html, "<td>%s</td>\n", funcTable[i_func]->return_to->name);
+           }
+
             fprintf (pout, "%s", funcTable[i_func]->return_to->name);
             for (int j = strlen(funcTable[i_func]->return_to->name); j <= formats->caller_name; j++) {
                 fputc (' ', pout);
@@ -1262,7 +1316,15 @@ void vftr_print_profile (FILE *pout, int *ntop, long long time0) {
 	fid = funcTable[i_func]->gid;
         fprintf (pout, fmtfid, fid);
         fprintf (pout, "\n");
+	if (vftr_environment.create_html->value) {
+   	   fprintf (f_html, "<td>%d</td>\n", fid);
+	   fprintf (f_html, "</tr>\n");
+        }
 
+    }
+    if (vftr_environment.create_html->value) {
+	fprintf (f_html, "</table>\n");
+	fclose (f_html);
     }
     
     output_dashes_nextline (tableWidth, pout);   
