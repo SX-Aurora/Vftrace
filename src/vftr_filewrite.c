@@ -63,7 +63,7 @@ FILE *vftr_vfd_file;
 long vftr_admin_offset;
 long vftr_samples_offset;
 
-char *vftr_mpi_function_names[] = {"mpi_barrier", "mpi_bcast", "mpi_reduce",
+char *vftr_mpi_collective_function_names[] = {"mpi_barrier", "mpi_bcast", "mpi_reduce",
 			     "mpi_allreduce", "mpi_gather", "mpi_gatherv",
 			     "mpi_allgather", "mpi_allgatherv",
 			     "mpi_scatter", "mpi_scatterv",
@@ -71,6 +71,12 @@ char *vftr_mpi_function_names[] = {"mpi_barrier", "mpi_bcast", "mpi_reduce",
 
 int vftr_n_mpi_functions = 13;
 
+bool vftr_is_collective_mpi_function (char *func_name) {
+   for (int i = 0; i < vftr_n_mpi_functions; i++) { 
+      if (!strcmp (func_name, vftr_mpi_collective_function_names[i])) return true;
+   }
+   return false;
+}
 
 /**********************************************************************/
 
@@ -904,7 +910,7 @@ void vftr_print_function_statistics (FILE *pout, bool display_sync_time,
 
 	if (vftr_environment.create_html->value) {
 	   if (vftr_mpirank == 0) {
-	      vftr_print_index_html (vftr_mpi_function_names, vftr_n_mpi_functions);
+	      vftr_print_index_html (vftr_mpi_collective_function_names, vftr_n_mpi_functions);
 	   }
         }
 
@@ -924,7 +930,7 @@ void vftr_print_function_statistics (FILE *pout, bool display_sync_time,
 		   		      display_functions[i]->n_stack_indices,
 		   		      imbalances, total_time, stack_tree);
 		   if (vftr_environment.create_html->value) {
-		      vftr_print_html_output (NULL, vftr_mpi_function_names, vftr_n_mpi_functions, i, stack_tree->origin,
+		      vftr_print_html_output (NULL, vftr_mpi_collective_function_names, vftr_n_mpi_functions, i, stack_tree->origin,
 					      imbalances, (double)total_time * 1e-6);
 		   }
 		   free (stack_tree);
@@ -954,7 +960,7 @@ void display_selected_stacks (FILE *pout, char *display_function_names[], int n_
 
 void vftr_print_mpi_statistics (FILE *fp) {
     vftr_print_function_statistics (fp, vftr_environment.mpi_show_sync_time->value,
-				    vftr_mpi_function_names, vftr_n_mpi_functions);
+				    vftr_mpi_collective_function_names, vftr_n_mpi_functions);
 }
 #endif
 
@@ -1022,7 +1028,7 @@ void vftr_print_profile (FILE *pout, int *ntop, long long time0) {
        vftr_make_html_indent (f_html, 0, 1);
        fprintf (f_html, "}\n");
        fprintf (f_html, "</style>\n");
-       vftr_print_navigation_bars (f_html, vftr_mpi_function_names, vftr_n_mpi_functions, 0, PROFILE);
+       vftr_print_navigation_bars (f_html, vftr_mpi_collective_function_names, vftr_n_mpi_functions, 0, PROFILE);
     }
 
     function_t   **funcTable;
@@ -1312,7 +1318,15 @@ void vftr_print_profile (FILE *pout, int *ntop, long long time0) {
 
 	fprintf (pout, "%s", funcTable[i_func]->name);
 	if (vftr_environment.create_html->value) {
-	   fprintf (f_html, "<td>%s</td>\n", funcTable[i_func]->name);
+	   char *s = funcTable[i_func]->name;
+	   if (vftr_is_collective_mpi_function (s)) {
+              int n = strlen (s) + vftr_count_digits (vftr_mpirank) + 7;
+	      char target_fun[n];
+	      snprintf (target_fun, n, "%s_%d.html", s, vftr_mpirank);
+    	      fprintf (f_html, "<td><a href=\"%s/%s\">%s</a></td>\n", s, target_fun, s); 
+	   } else {
+	      fprintf (f_html, "<td>%s</td>\n", s);
+           }
         }
         for (int j = strlen(funcTable[i_func]->name); j <= formats->func_name; j++) {
             fputc (' ', pout);
