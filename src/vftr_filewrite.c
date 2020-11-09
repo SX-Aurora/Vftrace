@@ -999,6 +999,7 @@ void vftr_print_profile (FILE *pout, int *ntop, long long time0) {
        PMPI_Barrier (MPI_COMM_WORLD);
        printf ("OPEN html: %s\n", html_profile);
        f_html = fopen (html_profile, "w+");
+       vftr_print_css_header (f_html);
        fprintf (f_html,"<style>\n");
        vftr_make_html_indent (f_html, 0, 1);
        fprintf (f_html, "th, td {\n");
@@ -1009,7 +1010,7 @@ void vftr_print_profile (FILE *pout, int *ntop, long long time0) {
        vftr_make_html_indent (f_html, 0, 1);
        fprintf (f_html, "}\n");
        fprintf (f_html, "</style>\n");
-       vftr_print_navigation_bars (f_html, vftr_mpi_function_names, vftr_n_mpi_functions, 0, false);
+       vftr_print_navigation_bars (f_html, vftr_mpi_function_names, vftr_n_mpi_functions, 0, PROFILE);
     }
 
     function_t   **funcTable;
