@@ -12,10 +12,10 @@ AC_PROG_CXX
 AC_PROG_FC
 AC_FC_SRCEXT(F90)
 AM_PROG_AR
-#AC_PROG_RANLIB
 # Enable per-target flags for C
 # According to the documentation, this should be obsolete
 # but without, autoreconf explicitly asks for it ... ?
+LT_INIT
 AM_PROG_CC_C_O
 # WO_PROG_COMPILERS()
 ################################

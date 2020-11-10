@@ -31,7 +31,7 @@ AC_DEFUN([AX_PAPI_LIBRARY], [
                [
                if test -z "$with_papi_inc" -a -z "$with_papi_lib" ; then
                   CPPFLAGS="-I$withval/include $CPPFLAGS"
-                  LDFLAGS="-L$withval/lib $LDFLAGS"
+                  LDFLAGS="-L$withval/lib -lpapi $LDFLAGS"
                   has_papi=yes
                else
                   AC_MSG_FAILURE([Do not use --with-papi and --with-papi-inc/--with-papi-lib options simultaneously.])

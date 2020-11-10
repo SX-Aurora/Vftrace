@@ -47,13 +47,14 @@ libvftrace_la_LDFLAGS =
 
 libvftrace_la_CFLAGS += -I${srcdir}/vftr_mpi/
 
-if PAPI_AVAIL
-libvftrace_la_CFLAGS += -DHAS_PAPI -I$(PAPI_HOME)/include
-libvftrace_la_LDFLAGS += -L$(PAPI_HOME)/lib -lpapi
-endif
-
-if VEPERF_AVAIL
+if ENABLE_HWC
+libvftrace_la_CFLAGS += -DHAS_HWC
+if ON_VECTOR_ENGINE
 libvftrace_la_CFLAGS += -DHAS_SXHWC
+endif
+if HAS_PAPI
+libvftrace_la_CFLAGS += -DHAS_PAPI
+endif
 endif
 
 if VMAP_OFFSET
