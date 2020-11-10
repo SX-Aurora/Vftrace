@@ -246,7 +246,7 @@ void vftr_create_callgraph_dropdown (FILE *fp, char *func_name, enum origin_page
 /**********************************************************************/
 
 void vftr_create_profile_dropdown (FILE *fp, enum origin_page op) {
-    if (op == HOME || op == TREE) {
+    if (op == HOME) {
       vftr_make_html_indent (fp, 0, 1);
       fprintf (fp, "<li style=\"display: inline;\">\n");
       vftr_make_html_indent (fp, 0, 2);
@@ -280,7 +280,6 @@ void vftr_create_profile_dropdown (FILE *fp, enum origin_page op) {
 
 /**********************************************************************/
 
-//void vftr_print_navigation_bars (FILE *fp, display_function_t **funcs, int n_display_functions, int this_i_func, bool is_index) {
 void vftr_print_navigation_bars (FILE *fp, char *func_names[], int n_funcs, int this_i_func, enum origin_page op) {
    // Horizontal navigation bar
    fprintf (fp, "<ul style=\"list-style-type: none;margin-top: 0px;margin-left: 150px; background-color: #f1f1f1;\">\n");
