@@ -1002,7 +1002,9 @@ void vftr_print_profile (FILE *pout, int *ntop, long long time0) {
        if (vftr_mpirank == 0) {
 	  mkdir ("html", 0777);
        }
+#ifdef _MPI
        PMPI_Barrier (MPI_COMM_WORLD);
+#endif
        printf ("OPEN html: %s\n", html_profile);
        f_html = fopen (html_profile, "w+");
        vftr_print_css_header (f_html);
