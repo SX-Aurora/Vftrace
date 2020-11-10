@@ -12,6 +12,7 @@
 #
 
 AC_DEFUN([AX_PAPI_LIBRARY], [
+   AC_LANG(C)
    AC_PREREQ(2.50)
    AC_ARG_WITH([papi_inc],
                [AC_HELP_STRING([--with-papi-inc=DIR],
