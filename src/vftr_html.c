@@ -607,7 +607,7 @@ int vftr_html_test_1 (FILE *fp_in, FILE *fp_out) {
 	long long dummy1;
 	double dummy2;
 	char *func_names[1] = {"C"};
-	vftr_print_html_output (fp_out, func_names, 1, 0, stack_tree->origin, NULL, 0.0);
+	vftr_print_html_stacktree_page (fp_out, false, func_names, 1, 0, stack_tree->origin, NULL, 0.0);
 	free (stack_tree);
 	return 0;
 }
