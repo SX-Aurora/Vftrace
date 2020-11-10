@@ -301,7 +301,7 @@ void vftr_print_navigation_bars (FILE *fp, char *func_names[], int n_funcs, int 
 	 int n = strlen (func_names[i]) + vftr_count_digits(vftr_mpirank) + 7;
 	 char target_fun[n];
 	 snprintf (target_fun, n, "%s_%d.html", func_names[i], vftr_mpirank);
-	 if (op == HOME || op == TREE) {
+	 if (op == HOME) {
             fprintf (fp, "<li><a href=\"%s/%s\">%s</a></li>\n", func_names[i], target_fun, func_names[i]);
 	 } else if (i == this_i_func) {
             fprintf (fp, "<li><a href=\"%s\">%s</a></li>\n", target_fun, func_names[i]);
