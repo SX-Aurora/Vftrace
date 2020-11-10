@@ -15,7 +15,7 @@
 AC_DEFUN([AX_CHECK_VMAP_OFFSET], [
    AC_PREREQ(2.50)
    AC_LANG(C)
-   AC_MSG_CHECKING([if ELF-symbols need vmap offset])
+   AC_MSG_CHECKING([whether ELF-symbols need vmap offset])
    AC_RUN_IFELSE(
       [AC_LANG_SOURCE([[
 #include <stdio.h>
