@@ -777,7 +777,8 @@ void vftr_stacktree_assign_positions (stack_leaf_t *leaf, int *pos, int *indices
 void vftr_print_stacktree_header (FILE *fp, int n_stacks, char *func_name,
 				  int n_spaces_max, int fmt_calls, int fmt_t, int fmt_imba,
 				  int fmt_send_bytes, int fmt_recv_bytes, int fmt_stackid) {
-	int n_char_tot = n_spaces_max + fmt_calls + fmt_t + fmt_imba + fmt_send_bytes + fmt_recv_bytes + fmt_stackid + 18;
+	int fmt_position = strlen("position");
+	int n_char_tot = n_spaces_max + fmt_calls + fmt_t + fmt_imba + fmt_send_bytes + fmt_recv_bytes + fmt_stackid + fmt_position + 21;
 	char title[64];
 	sprintf (title, "Function stacks leading to %s: %d", func_name, n_stacks);
 	fprintf (fp, "%s", title);
