@@ -296,19 +296,17 @@ void vftr_print_navigation_bars (FILE *fp, char *func_names[], int n_funcs, int 
    // Vertical navigation bar
    fprintf (fp, "<ul style=\"float: left;list-style-type: none;margin: 0;padding: 0; width: 150px;background-color: #f1f1f1;\">\n");
    for (int i = 0; i < n_funcs; i++) {
-      //if (funcs[i]->n_stack_indices > 0) {
-         vftr_make_html_indent (fp, 0, 1);
-	 int n = strlen (func_names[i]) + vftr_count_digits(vftr_mpirank) + 7;
-	 char target_fun[n];
-	 snprintf (target_fun, n, "%s_%d.html", func_names[i], vftr_mpirank);
-	 if (op == HOME) {
-            fprintf (fp, "<li><a href=\"%s/%s\">%s</a></li>\n", func_names[i], target_fun, func_names[i]);
-	 } else if (i == this_i_func) {
-            fprintf (fp, "<li><a href=\"%s\">%s</a></li>\n", target_fun, func_names[i]);
-	 } else {
-            fprintf (fp, "<li><a href=\"../%s/%s\">%s</a></li>\n", func_names[i], target_fun, func_names[i]);
-         }	
-      //}
+      vftr_make_html_indent (fp, 0, 1);
+      int n = strlen (func_names[i]) + vftr_count_digits(vftr_mpirank) + 7;
+      char target_fun[n];
+      snprintf (target_fun, n, "%s_%d.html", func_names[i], vftr_mpirank);
+      if (op == HOME) {
+         fprintf (fp, "<li><a href=\"%s/%s\">%s</a></li>\n", func_names[i], target_fun, func_names[i]);
+      } else if (i == this_i_func) {
+         fprintf (fp, "<li><a href=\"%s\">%s</a></li>\n", target_fun, func_names[i]);
+      } else {
+         fprintf (fp, "<li><a href=\"../%s/%s\">%s</a></li>\n", func_names[i], target_fun, func_names[i]);
+      }	
    }
    fprintf (fp, "</ul>\n");
    fprintf (fp, "\n");
@@ -316,7 +314,6 @@ void vftr_print_navigation_bars (FILE *fp, char *func_names[], int n_funcs, int 
 
 /**********************************************************************/
 
-//void vftr_print_index_html (display_function_t **funcs, int n_funcs) {
 void vftr_print_index_html (char *func_names[], int n_funcs) {
    FILE *fp = fopen ("html/index.html", "w+");
    vftr_print_css_header (fp);
@@ -417,7 +414,6 @@ void vftr_print_stacktree_to_html (FILE *fp, stack_leaf_t *leaf, int n_spaces, d
 		  fprintf (fp, "Recv: %lf %s<br>\n", n_bytes, unit_str);
 	     }
 	}
-		
 
 	if (leaf->next_in_level) {
 		vftr_make_html_indent (fp, n_spaces, 0);
@@ -427,12 +423,11 @@ void vftr_print_stacktree_to_html (FILE *fp, stack_leaf_t *leaf, int n_spaces, d
 		fprintf (fp, "</li>\n");
 	}
 }
-
   
 /**********************************************************************/
 
-void vftr_print_html_output (FILE *fp_out, char *func_names[], int n_funcs, int this_i_func,
-			     stack_leaf_t *leaf, double *imbalances, double total_time) {
+void vftr_print_html_stacktree_page (FILE *fp_out, bool is_empty, char *func_names[], int n_funcs, int this_i_func,
+			             stack_leaf_t *leaf, double *imbalances, double total_time) {
 	// No external file (e.g. for tests) given. Create filename <func_name>.html
 	FILE *fp;
 	char *this_func_name = func_names[this_i_func];
@@ -461,7 +456,11 @@ void vftr_print_html_output (FILE *fp_out, char *func_names[], int n_funcs, int 
 	fprintf (fp, "<ul>\n");
 	vftr_make_html_indent (fp, 0, 2);
 	fprintf (fp, "<li>\n");
-	vftr_print_stacktree_to_html (fp, leaf->origin, 3 * INDENT_SPACES, total_time, imbalances);
+	if (!is_empty) {
+	   vftr_print_stacktree_to_html (fp, leaf->origin, 3 * INDENT_SPACES, total_time, imbalances);
+        } else {
+	   fprintf (fp, "<h2>No stack IDs!\n</h2>");
+	}
 	vftr_make_html_indent (fp, 0, 2);
 	fprintf (fp, "</li>\n");
 	vftr_make_html_indent (fp, 0, 1);

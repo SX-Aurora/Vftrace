@@ -918,7 +918,8 @@ void vftr_print_function_statistics (FILE *pout, bool display_sync_time,
   	for (int i = 0; i < n_display_functions; i++) {
 		if (display_functions[i]->n_stack_indices == 0) {;
 		   //print empty stack
-		   //print epmty html
+		   vftr_print_html_stacktree_page (NULL, false, vftr_mpi_collective_function_names,
+						   vftr_n_collective_mpi_functions, i, NULL, NULL, 0.0);
 		} else {
 		   stack_leaf_t *stack_tree = NULL;
 		   double *imbalances = (double*) malloc (vftr_func_table_size * sizeof (double));
@@ -931,8 +932,9 @@ void vftr_print_function_statistics (FILE *pout, bool display_sync_time,
 		   		      display_functions[i]->n_stack_indices,
 		   		      imbalances, total_time, stack_tree);
 		   if (vftr_environment.create_html->value) {
-		      vftr_print_html_output (NULL, vftr_mpi_collective_function_names, vftr_n_collective_mpi_functions, i, stack_tree->origin,
-					      imbalances, (double)total_time * 1e-6);
+		      vftr_print_html_stacktree_page (NULL, false, vftr_mpi_collective_function_names,
+						      vftr_n_collective_mpi_functions, i, stack_tree->origin,
+					              imbalances, (double)total_time * 1e-6);
 		   }
 		   free (stack_tree);
 		   free (imbalances);
