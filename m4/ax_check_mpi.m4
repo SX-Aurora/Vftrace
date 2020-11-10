@@ -8,8 +8,7 @@
 #
 # DESCRIPTION
 #
-#   This macro tries to find find an appropriate std-flag for the used c-compiler
-#   such that the C99 standard is supported.
+#   This macro checks if MPI support is wanted and available
 #
 
 AC_DEFUN([AX_CHECK_MPI], [
@@ -44,7 +43,7 @@ AC_DEFUN([AX_CHECK_MPI], [
    # Check for MPI-vendor
    AM_COND_IF([WITH_MPI], [
       # OpenMPI
-      AC_MSG_CHECKING([if OpenMPI is used])
+      AC_MSG_CHECKING([whether OpenMPI is used])
       if test "x$(mpirun --version 2> /dev/null | grep "Open MPI" | wc -l)" = "x1" ; then
          uses_open_mpi="yes"
       else
@@ -56,7 +55,7 @@ AC_DEFUN([AX_CHECK_MPI], [
 
    AM_COND_IF([WITH_MPI], [
       # NEC-MPI
-      AC_MSG_CHECKING([if NEC-MPI is used])
+      AC_MSG_CHECKING([whether NEC-MPI is used])
       if test "x$(mpirun --version 2> /dev/null | grep "NEC MPI" | wc -l)" = "x1" ; then
          uses_nec_mpi="yes"
       else
@@ -68,7 +67,7 @@ AC_DEFUN([AX_CHECK_MPI], [
 
    AM_COND_IF([WITH_MPI], [
       # IntelMPI
-      AC_MSG_CHECKING([if IntelMPI is used])
+      AC_MSG_CHECKING([whether IntelMPI is used])
       if test "x$(mpirun --version 2> /dev/null | grep "Intel MPI" | wc -l)" = "x1" ; then
          uses_intel_mpi="yes"
       else
@@ -83,7 +82,7 @@ AC_DEFUN([AX_CHECK_MPI], [
    AC_LANG(Fortran)
    AM_COND_IF(
       [WITH_MPI],
-      [AC_MSG_CHECKING([if MPI-F90 supports TS29113])
+      [AC_MSG_CHECKING([whether MPI-F90 supports TS29113])
        AC_RUN_IFELSE(
          [AC_LANG_SOURCE([[
 PROGRAM test
@@ -100,7 +99,7 @@ END PROGRAM test]])],
    # Fortran 2008:
    AM_COND_IF(
       [WITH_MPI],
-      [AC_MSG_CHECKING([if MPI-F08 supports TS29113])
+      [AC_MSG_CHECKING([whether MPI-F08 supports TS29113])
        AC_RUN_IFELSE(
          [AC_LANG_SOURCE([[
 PROGRAM test
