@@ -91,10 +91,10 @@ PROGRAM test
    STOP 0
 END PROGRAM test]])],
          [supports_mpi_f90_ts29113=no],
-         [supports_mpi_f90_ts29113=yes])]
+         [supports_mpi_f90_ts29113=yes])
+       AC_MSG_RESULT([$supports_mpi_f90_ts29113])]
    )
    AM_CONDITIONAL([SUPPORTS_MPIF90_TS], [test "$supports_mpi_f90_ts29113" = "yes"])
-   AC_MSG_RESULT([$supports_mpi_f90_ts29113])
    
    # Fortran 2008:
    AM_COND_IF(
@@ -108,8 +108,8 @@ PROGRAM test
    STOP 0
 END PROGRAM test]])],
          [supports_mpi_f08_ts29113=no],
-         [supports_mpi_f08_ts29113=yes])]
+         [supports_mpi_f08_ts29113=yes])
+       AC_MSG_RESULT([$supports_mpi_f08_ts29113])]
    )
-   AC_MSG_RESULT([$supports_mpi_f08_ts29113])
    AM_CONDITIONAL([SUPPORTS_MPIF08_TS], [test "$supports_mpi_f08_ts29113" = "yes"])
 ])
