@@ -14,7 +14,7 @@
 AC_DEFUN([AX_CHECK_VE], [
    AC_PREREQ(2.50)
    AC_LANG(C)
-      AC_MSG_CHECKING([if on vector engine])
+      AC_MSG_CHECKING([whether on vector engine])
       AC_RUN_IFELSE(
         [AC_LANG_SOURCE([[
 main() {
