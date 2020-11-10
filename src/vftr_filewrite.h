@@ -58,7 +58,7 @@ typedef struct display_function {
     double mpi_tot_recv_bytes;
 } display_function_t;
 
-extern char *vftr_mpi_function_names[];
+extern char *vftr_mpi_collective_function_names[];
 extern int vftr_n_collective_mpi_functions;
 
 enum sample_id {SID_ENTRY, SID_EXIT, SID_MESSAGE};

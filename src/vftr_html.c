@@ -473,6 +473,104 @@ void vftr_print_html_output (FILE *fp_out, char *func_names[], int n_funcs, int 
 
 /**********************************************************************/
 
+void vftr_html_create_directory () {
+       if (vftr_mpirank == 0) {
+	  mkdir ("html", 0777);
+       }
+#ifdef _MPI
+       PMPI_Barrier (MPI_COMM_WORLD);
+#endif
+}
+
+/**********************************************************************/
+
+FILE *vftr_html_init_profile_table () {
+       FILE *fp;
+       int n = 19 + vftr_count_digits(vftr_mpirank);
+       printf ("Write filename: %d\n", n);
+       char html_profile[n];
+       snprintf (html_profile, n, "html/profile_%d.html", vftr_mpirank);
+       fp = fopen (html_profile, "w+");
+       vftr_print_css_header (fp);
+       fprintf (fp,"<style>\n");
+       vftr_make_html_indent (fp, 0, 1);
+       fprintf (fp, "table {\n");
+       vftr_make_html_indent (fp, 0, 2);
+       fprintf (fp, "border-collapse: collapse;\n");
+       vftr_make_html_indent (fp, 0, 1);
+       fprintf (fp, "}\n");
+       vftr_make_html_indent (fp, 0, 1);
+       fprintf (fp, "th, td {\n");
+       vftr_make_html_indent (fp, 0, 2);
+       fprintf (fp, "border: 1px solid black;\n");
+       vftr_make_html_indent (fp, 0, 2);
+       fprintf (fp, "border-collapse: collapse;\n");
+       vftr_make_html_indent (fp, 0, 1);
+       fprintf (fp, "}\n");
+       vftr_make_html_indent (fp, 0, 1);
+       fprintf (fp, "th {\n");
+       vftr_make_html_indent (fp, 0, 2);
+       fprintf (fp, "background-color: #dddddd;\n");
+       vftr_make_html_indent (fp, 0, 1);
+       fprintf (fp, "}\n");
+       fprintf (fp, "</style>\n");
+       vftr_print_navigation_bars (fp, vftr_mpi_collective_function_names, vftr_n_collective_mpi_functions, 0, PROFILE);
+       
+       return fp;
+}
+
+/**********************************************************************/
+
+void vftr_html_create_profile_header (FILE *fp) {
+   fprintf (fp, "<table>\n");
+   fprintf (fp, "<tr>\n");
+   fprintf (fp, "<th>Calls</th>\n");
+   fprintf (fp, "<th>Excl. time</th>\n");
+   fprintf (fp, "<th>Incl. time</th>\n");
+   fprintf (fp, "<th>%%abs</th>\n");
+   fprintf (fp, "<th>%%cum</th>\n");
+   fprintf (fp, "<th>Function</th>\n");
+   fprintf (fp, "<th>Caller</th>\n");
+   fprintf (fp, "<th>ID</th>\n");
+   fprintf (fp, "</tr>\n");
+}
+
+/**********************************************************************/
+
+void vftr_html_print_table_line (FILE *fp, int stack_id, int n_calls, double t_excl, double t_incl,
+				 double t_rel, double t_cum, char *func_name, char *call_name) {
+	   fprintf (fp, "<tr>\n");
+
+	   fprintf (fp, "<td>%d</td>\n", n_calls);
+           fprintf (fp, "<td>%lf</td>\n", t_excl);
+           fprintf (fp, "<td>%lf</td>\n", t_incl);
+           fprintf (fp, "<td>%lf</td>\n", t_rel);
+           fprintf (fp, "<td>%lf</td>\n", t_cum);
+	   
+	   if (vftr_is_collective_mpi_function (func_name)) {
+	      int n = strlen(func_name) + vftr_count_digits (vftr_mpirank) + 7;
+	      char target_fun[n];
+	      snprintf (target_fun, n, "%s_%d.html", func_name, vftr_mpirank);
+    	      fprintf (fp, "<td><a href=\"%s/%s\">%s</a></td>\n", func_name, target_fun, func_name); 
+	   } else {
+	      fprintf (fp, "<td>%s</td>\n", func_name);
+           }
+
+	   fprintf (fp, "<td>%s</td>\n", call_name);
+	   fprintf (fp, "<td>%d</td>\n", stack_id);
+
+	   fprintf (fp, "</tr>\n");
+}
+
+/**********************************************************************/
+
+void vftr_html_finalize_table (FILE *fp) {
+   fprintf (fp, "</table>\n");
+   fclose (fp);
+}
+
+/**********************************************************************/
+
 int vftr_html_test_1 (FILE *fp_in, FILE *fp_out) {
 	unsigned long long addrs[6];	
 	function_t *func1 = vftr_new_function (NULL, "init", NULL, 0, false);

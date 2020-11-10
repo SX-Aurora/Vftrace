@@ -13,5 +13,12 @@ void vftr_print_html_output (FILE *fp_out, char *func_names[], int n_funcs, int 
 void vftr_print_navigation_bars (FILE *fp, char *func_names[], int n_funcs, int this_i_func, enum origin_page op);
 void vftr_print_index_html (char *func_names[], int n_funcs);
 
+void vftr_html_create_directory ();
+FILE *vftr_html_init_profile_table ();
+void vftr_htm_create_profile_header (FILE *fp);
+void vftr_html_print_table_line (FILE *fp, int stack_id, int n_calls, double t_excl, double t_incl,
+				 double t_rel, double t_cum, char *func_name, char *call_name);
+void vftr_html_finalize_table (FILE *fp);
+
 int vftr_html_test_1 (FILE *fp_in, FILE *fp_out);
 #endif
