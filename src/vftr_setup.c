@@ -76,7 +76,7 @@ void vftr_print_disclaimer (FILE *fp) {
     int rev = REVISION;
     fprintf (fp, "Vftrace version %d.%d.%d\n", v_major, v_minor, rev);
     fprintf (fp, "Runtime profile for application: %s\n", "");
-    fprintf (fp, "Date: "); 
+    fprintf (fp, "Start Date: %s\n", vftr_start_date); 
     fprintf (fp, 
         "This is free software with ABSOLUTELY NO WARRANTY.\n"
         "For details: use vftrace with environment variable VFTR_LICENSE\n"
