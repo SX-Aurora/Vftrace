@@ -1,9 +1,24 @@
 if WITH_MPI
+if USES_OPEN_MPI
+   AM_TESTS_ENVIRONMENT=. $(top_srcdir)/test/environment/set_openmpi.sh;
+else
+if USES_NEC_MPI
+if ON_VECTOR_ENGINE
    AM_TESTS_ENVIRONMENT=. $(top_srcdir)/test/environment/set_necmpi.sh;
+else
+   AM_TESTS_ENVIRONMENT=. $(top_srcdir)/test/environment/set_necvhmpi.sh;
+endif
+else
+if USES_INTEL_MPI
+   AM_TESTS_ENVIRONMENT=. $(top_srcdir)/test/environment/set_intelmpi.sh;
+else
+   AM_TESTS_ENVIRONMENT=. $(top_srcdir)/test/environment/set_genericmpi.sh;
+endif
+endif
+endif
 else
    AM_TESTS_ENVIRONMENT=. $(top_srcdir)/test/environment/set_nompi.sh;
 endif
-
 
 AM_CFLAGS = -O3 -finstrument-functions 
 AM_CFLAGS += -I$(top_srcdir)/src/

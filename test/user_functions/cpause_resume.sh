@@ -8,7 +8,7 @@ export VFTR_PROF_TRUNCATE="no"
 export VFTR_PRECISE="fkt*"
 
 if [ "x$HAS_MPI" == "xYES" ]; then
-   ${MPI_EXEC} ${NP} ${nprocs} ./${vftr_binary} ${maxnreg} || exit 1
+   ${MPI_EXEC} ${MPI_OPTS} ${NP} ${nprocs} ./${vftr_binary} ${maxnreg} || exit 1
 else
    ./${vftr_binary} ${maxnreg} || exit 1
 fi

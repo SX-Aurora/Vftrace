@@ -8,7 +8,7 @@ outfile=$testname.out
 rm -f $outfile
 
 if [ "x$HAS_MPI" == "xYES" ]; then
-   $MPI_EXEC $NP 1 ./test_vftrace $testname $ref_in_dir/$testname.x
+   ${MPI_EXEC} ${MPI_OPTS} ${NP} 1 ./test_vftrace $testname $ref_in_dir/$testname.x
 else
    ./test_vftrace $testname $ref_in_dir/$testname.x
 fi

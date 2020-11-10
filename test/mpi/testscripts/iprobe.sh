@@ -9,7 +9,7 @@ export VFTR_PRECISE="MPI_*|mpi_*"
 
 nb=$(bc <<< "32*${RANDOM}")
 
-mpirun -np ${nprocs} ./${vftr_binary} ${nb} || exit 1
+${MPI_EXEC} ${MPI_OPTS} ${NP} ${nprocs} ./${vftr_binary} ${nb} || exit 1
 
 irank=1
 

@@ -7,7 +7,7 @@ export VFTR_SAMPLING="Yes"
 export VFTR_MPI_LOG="Yes"
 export VFTR_PRECISE="MPI_*|mpi_*"
 
-mpirun -np ${nprocs} ./${vftr_binary} || exit 1
+${MPI_EXEC} ${MPI_OPTS} ${NP} ${nprocs} ./${vftr_binary} || exit 1
 
 for irank in $(seq 0 1 $(bc <<< "${nprocs}-1"));
 do
