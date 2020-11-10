@@ -16,7 +16,8 @@ void vftr_print_index_html (char *func_names[], int n_funcs);
 void vftr_html_create_directory ();
 FILE *vftr_html_init_profile_table ();
 void vftr_htm_create_profile_header (FILE *fp);
-void vftr_html_print_table_line (FILE *fp, int stack_id, int n_calls, double t_excl, double t_incl,
+void vftr_html_print_table_line (FILE *fp, int stack_id, int n_calls,
+				 int format_excl, int format_incl, double t_excl, double t_incl,
 				 double t_rel, double t_cum, char *func_name, char *call_name);
 void vftr_html_finalize_table (FILE *fp);
 

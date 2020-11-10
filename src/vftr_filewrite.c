@@ -1269,7 +1269,9 @@ void vftr_print_profile (FILE *pout, int *ntop, long long time0) {
         fprintf (pout, fmtfid, fid);
         fprintf (pout, "\n");
 	if (vftr_environment.create_html->value) {
-	   vftr_html_print_table_line (f_html, fid, calls, t_excl, t_incl, t_part, ctime,
+	   vftr_html_print_table_line (f_html, fid, calls,
+				       formats->incl_time, formats->excl_time,
+				       t_excl, t_incl, t_part, ctime,
 				       funcTable[i_func]->name, funcTable[i_func]->return_to->name); 
         }
 

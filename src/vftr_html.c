@@ -536,15 +536,16 @@ void vftr_html_create_profile_header (FILE *fp) {
 
 /**********************************************************************/
 
-void vftr_html_print_table_line (FILE *fp, int stack_id, int n_calls, double t_excl, double t_incl,
+void vftr_html_print_table_line (FILE *fp, int stack_id, int n_calls,
+				 int format_excl, int format_incl, double t_excl, double t_incl,
 				 double t_rel, double t_cum, char *func_name, char *call_name) {
 	   fprintf (fp, "<tr>\n");
 
 	   fprintf (fp, "<td>%d</td>\n", n_calls);
-           fprintf (fp, "<td>%lf</td>\n", t_excl);
-           fprintf (fp, "<td>%lf</td>\n", t_incl);
-           fprintf (fp, "<td>%lf</td>\n", t_rel);
-           fprintf (fp, "<td>%lf</td>\n", t_cum);
+           fprintf (fp, "<td>%*.3f</td>\n", format_excl, t_excl);
+           fprintf (fp, "<td>%*.3f</td>\n", format_incl, t_incl);
+           fprintf (fp, "<td>%5.2f</td>\n", t_rel);
+           fprintf (fp, "<td>%5.2f</td>\n", t_cum);
 	   
 	   if (vftr_is_collective_mpi_function (func_name)) {
 	      int n = strlen(func_name) + vftr_count_digits (vftr_mpirank) + 7;
