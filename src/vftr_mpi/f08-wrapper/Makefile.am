@@ -68,7 +68,7 @@ libvftr_f08mpiwrap_la_SOURCES += vftr_mpi_pcontrol_f08wrap.F90
 
 libvftr_f08mpiwrap_la_FCFLAGS = -finstrument-functions
 libvftr_f08mpiwrap_la_FCFLAGS += -I${builddir}/../f-wrapper/
-if MPI_PROFILING
+if WITH_MPI
 libvftr_f08mpiwrap_la_FCFLAGS += -D_MPI
 endif
 

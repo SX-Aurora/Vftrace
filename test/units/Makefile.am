@@ -1,22 +1,34 @@
-if MPI_PROFILING
-  AM_TESTS_ENVIRONMENT=. $(top_srcdir)/test/environment/set_necmpi.sh;
-#   AM_TESTS_ENVIRONMENT=export HAS_MPI="YES"; \
-#                        export MPI_EXEC="mpirun"; \
-# 		       export NP="-np";  
+if WITH_MPI
+if USES_OPEN_MPI
+   AM_TESTS_ENVIRONMENT=. $(top_srcdir)/test/environment/set_openmpi.sh;
 else
-  AM_TESTS_ENVIRONMENT=. $(top_srcdir)/test/environment/set_nompi.sh;
+if USES_NEC_MPI
+if ON_VECTOR_ENGINE
+   AM_TESTS_ENVIRONMENT=. $(top_srcdir)/test/environment/set_necmpi.sh;
+else
+   AM_TESTS_ENVIRONMENT=. $(top_srcdir)/test/environment/set_necvhmpi.sh;
+endif
+else
+if USES_INTEL_MPI
+   AM_TESTS_ENVIRONMENT=. $(top_srcdir)/test/environment/set_intelmpi.sh;
+else
+   AM_TESTS_ENVIRONMENT=. $(top_srcdir)/test/environment/set_genericmpi.sh;
+endif
+endif
+endif
+else
+   AM_TESTS_ENVIRONMENT=. $(top_srcdir)/test/environment/set_nompi.sh;
 endif
 
 AM_CFLAGS = -I$(top_srcdir)/src/ -I$(top_srcdir)/src/vftr_mpi
 
 AM_LDFLAGS = -L$(top_builddir)/src/.libs -lvftrace -lm
 
-if MPI_PROFILING
+if WITH_MPI
   AM_CFLAGS += -D_MPI
-endif
-
 if USES_NEC_MPI
   AM_LDFLAGS += -mpiprof
+endif
 endif
 
 check_PROGRAMS = test_vftrace
@@ -42,14 +54,17 @@ dist_check_SCRIPTS = this_passes.sh \
 	 	      vftr_functions_test_3.sh \
 	 	      vftr_functions_test_4.sh \
 	 	      vftr_functions_test_5.sh \
-		      vftr_stacks_test_1.sh
+		      vftr_stacks_test_1.sh \
+		      vftr_html_test_1.sh
 
-if MPI_PROFILING
+if WITH_MPI
 dist_check_SCRIPTS += vftr_stacks_test_2.sh
 endif
 
-if VEPERF_AVAIL
+if ENABLE_HWC
+if ON_VECTOR_ENGINE
 dist_check_SCRIPTS += vftr_sxhwc_test_1.sh
+endif
 endif
 
 TEST_EXTENSIONS = .sh

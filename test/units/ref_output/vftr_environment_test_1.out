@@ -19,6 +19,7 @@ VFTR_LICENSE_VERBOSE(default): false
 VFTR_PRINT_STACKS_FOR(default): (null)
 VFTR_PRINT_LOADINFO_FOR(default): (null)
 VFTR_STRIP_MODULE_NAMES(default): false
+VFTR_CREATE_HTML(default): false
 ***************************
 VFTR_OFF: false
 VFTR_SAMPLING: true
@@ -41,3 +42,4 @@ VFTR_LICENSE_VERBOSE(default): false
 VFTR_PRINT_STACKS_FOR(default): (null)
 VFTR_PRINT_LOADINFO_FOR(default): (null)
 VFTR_STRIP_MODULE_NAMES(default): false
+VFTR_CREATE_HTML(default): false

@@ -1,6 +1,6 @@
 SUBDIRS = units
 SUBDIRS += user_functions
-if MPI_PROFILING 
+if WITH_MPI 
 SUBDIRS += mpi
 endif
 

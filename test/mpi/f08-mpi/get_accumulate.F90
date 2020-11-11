@@ -82,8 +82,13 @@ PROGRAM get_accumulate
                                  resultbuffer, nints, MPI_INTEGER, & ! result info
                                  irank, targetdisp, nints, MPI_INTEGER, & ! target info
                                  MPI_SUM, window, ierr)
+         CALL MPI_Win_fence(0, window, ierr)
          ! copy the resultbuffer to the origin buffer
          originbuffer(:) = originbuffer(:) + resultbuffer(:)
+      END DO
+   ELSE
+      DO irank = 1, comm_size - 1
+         CALL MPI_Win_fence(0, window, ierr)
       END DO
    END IF
 

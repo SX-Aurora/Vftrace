@@ -36,6 +36,7 @@
 #include "vftr_setup.h"
 #include "vftr_mpi_utils.h"
 #include "vftr_stacks.h"
+#include "vftr_html.h"
 
 // File pointer of the log file
 FILE *vftr_log = NULL;
@@ -62,6 +63,21 @@ FILE *vftr_vfd_file;
 long vftr_admin_offset;
 long vftr_samples_offset;
 
+char *vftr_mpi_collective_function_names[] = {"mpi_barrier", "mpi_bcast", "mpi_reduce",
+			     "mpi_allreduce", "mpi_gather", "mpi_gatherv",
+			     "mpi_allgather", "mpi_allgatherv",
+			     "mpi_scatter", "mpi_scatterv",
+			     "mpi_alltoall", "mpi_alltoallv", "mpi_alltoallw"};
+
+int vftr_n_collective_mpi_functions = 13;
+
+bool vftr_is_collective_mpi_function (char *func_name) {
+   for (int i = 0; i < vftr_n_collective_mpi_functions; i++) { 
+      if (!strcmp (func_name, vftr_mpi_collective_function_names[i])) return true;
+   }
+   return false;
+}
+
 /**********************************************************************/
 
 char *vftr_get_program_path () {
@@ -71,7 +87,7 @@ char *vftr_get_program_path () {
 		basename = vftr_environment.logfile_basename->value;
 	} else {
 		// program_path is either <abs_path>/app_name or ./app_name
-		char *program_path = get_application_name ();
+		char *program_path = vftr_get_application_name ();
 		char *s;
 		if (program_path) {
 		  // rindex returns a pointer to the last occurence of '/'
@@ -292,6 +308,7 @@ void vftr_write_profile () {
 
     /* Write profile info */
     
+/**********************************************************************/
     fwrite (&rtime, sizeof(double), 1, fp);  /* Application time */
     fwrite (&zero, sizeof(int), 1, fp);  /* Scenario */
     fwrite (&vftr_n_hw_obs, sizeof(int), 1, fp);  /* Nr of events */
@@ -539,30 +556,6 @@ double compute_mpi_imbalance (long long *all_times, double t_avg) {
 	}
 	return max_diff / t_avg * 100;
 }
-
-/**********************************************************************/
-
-typedef struct display_function {
-    char *func_name;
-    int i_orig; // The original index of the display function. Used to undo sortings by various other field values, e.g. t_avg.
-    int n_calls;
-    double t_avg;
-    long long t_min;
-    long long t_max;
-    double t_sync_avg;
-    long long t_sync_min;
-    long long t_sync_max;
-    double imbalance;
-    long long this_mpi_time;
-    long long this_sync_time;
-    int n_stack_indices;
-    int n_func_indices;
-    int *stack_indices;
-    int *func_indices;
-    double mpi_tot_send_bytes;
-    double mpi_tot_recv_bytes;
-} display_function_t;
-
 
 /**********************************************************************/
 
@@ -915,12 +908,37 @@ void vftr_print_function_statistics (FILE *pout, bool display_sync_time,
 	qsort ((void*)display_functions, (size_t)n_display_functions,
 	       sizeof (display_function_t *), vftr_compare_display_functions_iorig);
 
+
+	if (vftr_environment.create_html->value) {
+	   if (vftr_mpirank == 0) {
+	      vftr_print_index_html (vftr_mpi_collective_function_names, vftr_n_collective_mpi_functions);
+	   }
+        }
+
   	for (int i = 0; i < n_display_functions; i++) {
-  		vftr_print_function_stack (pout, vftr_mpirank, display_functions[i]->func_name, 
-				      display_functions[i]->n_stack_indices,
-				      display_functions[i]->n_func_indices,
-  				      display_functions[i]->stack_indices,
-				      display_functions[i]->func_indices);
+		if (display_functions[i]->n_stack_indices == 0) {;
+		   //print empty stack
+		   vftr_print_html_stacktree_page (NULL, true, vftr_mpi_collective_function_names,
+						   vftr_n_collective_mpi_functions, i, NULL, NULL, 0.0);
+		} else {
+		   stack_leaf_t *stack_tree = NULL;
+		   double *imbalances = (double*) malloc (vftr_func_table_size * sizeof (double));
+		   vftr_stack_compute_imbalances (&imbalances, display_functions[i]->n_stack_indices,
+		   			       display_functions[i]->stack_indices);
+		   vftr_create_stacktree (&stack_tree, display_functions[i]->n_stack_indices, display_functions[i]->stack_indices);
+		   long long total_time = 0;
+		   vftr_stack_get_total_time (stack_tree->origin, &total_time);
+  		   vftr_print_function_stack (pout, vftr_mpirank, display_functions[i]->func_name, 
+		   		      display_functions[i]->n_stack_indices,
+		   		      imbalances, total_time, stack_tree);
+		   if (vftr_environment.create_html->value) {
+		      vftr_print_html_stacktree_page (NULL, false, vftr_mpi_collective_function_names,
+						      vftr_n_collective_mpi_functions, i, stack_tree->origin,
+					              imbalances, (double)total_time * 1e-6);
+		   }
+		   free (stack_tree);
+		   free (imbalances);
+	       }
 	}
   }
 
@@ -929,32 +947,27 @@ void vftr_print_function_statistics (FILE *pout, bool display_sync_time,
 
 /**********************************************************************/
 
-void display_selected_stacks (FILE *pout, char *display_function_names[], int n_display_functions) {
-
-	int n_indices, *stack_indices = NULL;	
-	for (int i = 0; i < n_display_functions; i++) {
-		vftr_find_function_in_stack (display_function_names[i], &stack_indices, &n_indices, true);
-
-		vftr_print_function_stack (pout, vftr_mpirank, display_function_names[i],
-					   n_indices, 0, stack_indices, NULL);
-		free (stack_indices);
-	}
-	
-}
-/**********************************************************************/
-
 void vftr_print_mpi_statistics (FILE *fp) {
-    char *mpi_function_names[] = {"mpi_barrier", "mpi_bcast", "mpi_reduce",
-			     "mpi_allreduce", "mpi_gather", "mpi_gatherv",
-			     "mpi_allgather", "mpi_allgatherv",
-			     "mpi_scatter", "mpi_scatterv",
-			     "mpi_alltoall", "mpi_alltoallv", "mpi_alltoallw"};
-
-    int n_mpi_functions = 13;
     vftr_print_function_statistics (fp, vftr_environment.mpi_show_sync_time->value,
-				    mpi_function_names, n_mpi_functions);
+				    vftr_mpi_collective_function_names, vftr_n_collective_mpi_functions);
 }
 #endif
+
+/**********************************************************************/
+
+void vftr_get_application_times (double time0, double *total_runtime, double *sampling_overhead_time,
+			  	 double *mpi_overhead_time, double *total_overhead_time, double *application_time) {
+   *total_runtime = time0 > 0 ? time0 * 1e-6 : vftr_get_runtime_usec() * 1e-6; 
+   *sampling_overhead_time = vftr_overhead_usec * 1e-6;
+   *total_overhead_time = *sampling_overhead_time;
+#if defined(_MPI)
+   *mpi_overhead_time = vftr_mpi_overhead_usec * 1e-6;
+   *total_overhead_time = *sampling_overhead_time + *mpi_overhead_time;
+#else
+   *mpi_overhead_time = 0;
+#endif
+   *application_time = *total_runtime - *total_overhead_time;
+}
 
 /**********************************************************************/
 
@@ -968,6 +981,12 @@ void vftr_print_profile (FILE *pout, int *ntop, long long time0) {
     int offset, tableWidth;
 
     char fmtcalls[10], fmttime[10], fmttimeInc[10], fmtfid[10];
+
+    FILE *f_html;
+    if (vftr_environment.create_html->value) {
+       vftr_html_create_directory ();
+       f_html = vftr_html_init_profile_table ();
+    }
 
     function_t   **funcTable;
 
@@ -1009,14 +1028,9 @@ void vftr_print_profile (FILE *pout, int *ntop, long long time0) {
 	    }
 	}
     }
-    double total_runtime = time0 > 0 ? (double)time0 * 1e-6 : vftr_get_runtime_usec() * 1.0e-6;
-    double sampling_overhead_time = vftr_overhead_usec * 1.0e-6;
-    double total_overhead_time = sampling_overhead_time;
-#ifdef _MPI
-    double mpi_overhead_time = vftr_mpi_overhead_usec * 1.0e-6;
-    total_overhead_time = sampling_overhead_time + mpi_overhead_time;
-#endif
-    double application_runtime = total_runtime - total_overhead_time;
+    double total_runtime, sampling_overhead_time, total_overhead_time, mpi_overhead_time, application_runtime;
+    vftr_get_application_times (time0, &total_runtime, &sampling_overhead_time, &mpi_overhead_time, 
+				&total_overhead_time, &application_runtime);
     rtime = application_runtime;
 
     /* Print profile info */
@@ -1024,7 +1038,7 @@ void vftr_print_profile (FILE *pout, int *ntop, long long time0) {
     fprintf(pout, "MPI size              %d\n", vftr_mpisize);
     fprintf(pout, "Total runtime:        %8.2f seconds\n", total_runtime);
     fprintf(pout, "Application time:     %8.2f seconds\n", application_runtime);
-    fprintf(pout, "Overhead:             %8.2f seconds (%.2f%%)\n",
+    	fprintf(pout, "Overhead:             %8.2f seconds (%.2f%%)\n",
             total_overhead_time, 100.0*total_overhead_time/total_runtime);
 #ifdef _MPI
     fprintf(pout, "   Sampling overhead: %8.2f seconds (%.2f%%)\n",
@@ -1162,6 +1176,10 @@ void vftr_print_profile (FILE *pout, int *ntop, long long time0) {
     output_header ("Excl", formats->excl_time, pout);
     output_header ("Incl", formats->incl_time, pout);
 
+    if (vftr_environment.create_html->value) {
+       vftr_html_create_profile_header (f_html);
+    }
+
     fputs ("%abs %cum ", pout);
     if (evc0) fputs ("%evc ", pout);
 
@@ -1250,8 +1268,15 @@ void vftr_print_profile (FILE *pout, int *ntop, long long time0) {
 	fid = funcTable[i_func]->gid;
         fprintf (pout, fmtfid, fid);
         fprintf (pout, "\n");
+	if (vftr_environment.create_html->value) {
+	   vftr_html_print_table_line (f_html, fid, calls,
+				       formats->incl_time, formats->excl_time,
+				       t_excl, t_incl, t_part, ctime,
+				       funcTable[i_func]->name, funcTable[i_func]->return_to->name); 
+        }
 
     }
+    if (vftr_environment.create_html->value) vftr_html_finalize_table(f_html);
     
     output_dashes_nextline (tableWidth, pout);   
     fprintf( pout, "\n" );

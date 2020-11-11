@@ -1,0 +1,619 @@
+/*
+   This file is part of Vftrace.
+
+   Vftrace is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation; either version 2 of the License, or
+   (at your option) any later version.
+
+   Vftrace is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License along
+   with this program; if not, write to the Free Software Foundation, Inc.,
+   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+*/
+
+#include <string.h>
+#include <math.h>
+
+#include "vftr_html.h"
+#include "vftr_setup.h"
+#include "vftr_filewrite.h"
+#include "vftr_fileutils.h"
+#include "vftr_stacks.h"
+
+/**********************************************************************/
+
+void vftr_print_css_header (FILE *fp) {
+
+   fprintf (fp, "<style>\n");
+   fprintf (fp, "*,\n");
+   fprintf (fp, "*:before,\n");
+   fprintf (fp, "*:after {\n");
+   fprintf (fp, "  -webkit-box-sizing: border-box;\n");
+   fprintf (fp, "  -moz-box-sizing: border-box;\n");
+   fprintf (fp, "  box-sizing: border-box;\n");
+   fprintf (fp, "}\n");
+   fprintf (fp, "\n");
+   fprintf (fp, "* {\n");
+   fprintf (fp, "  position: relative;\n");
+   fprintf (fp, "  margin: 0;\n");
+   fprintf (fp, "  padding: 0;\n");
+   fprintf (fp, "\n"); 
+   fprintf (fp, "  border: 0 none;\n");
+   fprintf (fp, "\n"); 
+   fprintf (fp, "  -webkit-transition: all ease .4s;\n");
+   fprintf (fp, "  -moz-transition: all ease .4s;\n");
+   fprintf (fp, "    transition: all ease .4s;\n");
+   fprintf (fp, "}\n");
+   fprintf (fp, "\n");
+   fprintf (fp, "html, body {\n");
+   fprintf (fp, "  width: 100%;\n");
+   fprintf (fp, "  height: 100%;\n");
+   fprintf (fp, "  background: white;\n");
+   fprintf (fp, "  font-family: 'Fjalla One', sans-serif;\n");
+   fprintf (fp, "  font-size: 18px;\n");
+   fprintf (fp, "}\n");
+   fprintf (fp, "\n");
+   fprintf (fp, "h1 {\n");
+   fprintf (fp, "  padding-top: 40px;\n");
+   fprintf (fp, "  color: black;\n");
+   fprintf (fp, "  text-align: center;\n");
+   fprintf (fp, "  font-size: 1.8rem;\n");
+   fprintf (fp, "}\n");
+   fprintf (fp, "\n");
+   fprintf (fp, ".nav {\n");
+   fprintf (fp, "  margin: 100px auto;\n");
+   fprintf (fp, "  width: 5000px;\n");
+   fprintf (fp, "  min-height: auto;\n");
+   fprintf (fp, "}\n");
+   fprintf (fp, "\n");
+   fprintf (fp, ".nav ul {\n");
+   fprintf (fp, "  position: relative;\n");
+   fprintf (fp, "  padding-top: 20px;\n");
+   fprintf (fp, "}\n");
+   fprintf (fp, "\n");
+   fprintf (fp, ".nav li {\n");
+   fprintf (fp, "  position: relative;\n");
+   fprintf (fp, "  padding: 20px 3px 0 3px;\n");
+   fprintf (fp, "  float: left;\n");
+   fprintf (fp, "\n");
+   fprintf (fp, "  text-align: center;\n");
+   fprintf (fp, "  list-style-type: none;\n");
+   fprintf (fp, "}\n");
+   fprintf (fp, "\n");
+   fprintf (fp, ".nav li::before, .nav li::after{\n");
+   fprintf (fp, "  content: '';\n");
+   fprintf (fp, "  position: absolute;\n");
+   fprintf (fp, "  top: 0;\n");
+   fprintf (fp, "  right: 50%;\n");
+   fprintf (fp, "  width: 50%;\n");
+   fprintf (fp, "  height: 20px;\n");
+   fprintf (fp, "  border-top: 1px solid black;\n");
+   fprintf (fp, "}\n");
+   fprintf (fp, "\n");
+   fprintf (fp, ".nav li::after{\n");
+   fprintf (fp, "  left: 50%;\n");
+   fprintf (fp, "  right: auto;\n");
+   fprintf (fp, "\n");  
+   fprintf (fp, "  border-left: 1px solid black;\n");
+   fprintf (fp, "}\n");
+   fprintf (fp, "\n");
+   fprintf (fp, ".nav li:only-child::after, .nav li:only-child::before {\n");
+   fprintf (fp, "  content: '';\n");
+   fprintf (fp, "  display: none;\n");
+   fprintf (fp, "}\n");
+   fprintf (fp, "\n");
+   fprintf (fp, ".nav li:only-child{ padding-top: 0;}\n");
+   fprintf (fp, ".nav li:first-child::before, .nav li:last-child::after{\n");
+   fprintf (fp, "  border: 0 none;\n");
+   fprintf (fp, "}\n");
+   fprintf (fp, "\n");
+   fprintf (fp, ".nav li:last-child::before{\n");
+   fprintf (fp, "  border-right: 1px solid black;\n");
+   fprintf (fp, "  border-radius: 0 5px 0 0;\n");
+   fprintf (fp, "}\n");
+   fprintf (fp, "\n");
+   fprintf (fp, ".nav li:first-child::after{\n");
+   fprintf (fp, "    border-radius: 5px 0 0 0;\n");
+   fprintf (fp, "}\n");
+   fprintf (fp, ".nav ul ul::before{\n");
+   fprintf (fp, "  content: '';\n");
+   fprintf (fp, "  position: absolute; top: 0; left: 50%;\n");
+   fprintf (fp, "  border-left: 1px solid black;\n");
+   fprintf (fp, "  width: 0;\n");
+   fprintf (fp, "  height: 20px;\n");
+   fprintf (fp, "}\n");
+   fprintf (fp, "\n");
+   fprintf (fp, ".nav li a{\n");
+   fprintf (fp, "  display: inline-block;\n");
+   fprintf (fp, "  padding: 5px 10px;\n");
+   fprintf (fp, "  border-radius: 5px;\n");
+   fprintf (fp, "  border: 1px solid black;\n");
+   fprintf (fp, "  text-decoration: none;\n");
+   fprintf (fp, "  text-transform: uppercase;\n");
+//   fprintf (fp, "  background-color: #edebeb;\n");
+   fprintf (fp, "  color: black;\n");
+   fprintf (fp, "  font-family: arial, verdana, tahoma;\n");
+   fprintf (fp, "  font-size: 11px;\n");
+   fprintf (fp, "}\n");
+   fprintf (fp, "\n");
+   fprintf (fp, "/* This is the stack info box which appears when hovering over a function node */\n");
+   fprintf (fp, "\n");
+   fprintf (fp, "a .ttt {\n");
+   fprintf (fp, "  visibility: hidden;\n");
+   fprintf (fp, "  width: 100%;\n");
+   fprintf (fp, "  background-color: black;\n");
+   fprintf (fp, "  color: #fff;\n");
+   fprintf (fp, "  text-align: center;\n");
+   fprintf (fp, "  border-radius: 6px; /* Rounded corners */\n");
+   fprintf (fp, "  padding: 10px 0;\n");
+   fprintf (fp, "  position: absolute;\n");
+   fprintf (fp, "  z-index: 1; /* Precedence of this element - atop of the leaf. */\n");
+   fprintf (fp, "}\n");
+   fprintf (fp, "\n");
+   fprintf (fp, "a:hover .ttt{\n");
+   fprintf (fp, "  visibility: visible;\n");
+   fprintf (fp, "}\n");
+   fprintf (fp, "\n");
+   fprintf (fp, "hr {\n");
+   fprintf (fp, "  display: block;\n");
+   fprintf (fp, "  height: 1px;\n");
+   fprintf (fp, "  border: 0;\n");
+   fprintf (fp, "  border-top: 1px solid black;\n");
+   fprintf (fp, "  margin: 1em 0;\n");
+   fprintf (fp, "  padding: 0;\n");
+   fprintf (fp, "}\n");
+
+   fprintf (fp, "\n");
+   fprintf (fp, "li a, .dropbtn {\n");
+   fprintf (fp, "  display: inline-block;\n");
+   fprintf (fp, "  color: gray;\n");
+   fprintf (fp, "  text-align: center;\n");
+   fprintf (fp, "  padding: 14px 16px;\n");
+   fprintf (fp, "  text-decoration: none;\n");
+   fprintf (fp, "}\n");
+   fprintf (fp, "\n");
+   fprintf (fp, ".dropdown-content {\n");
+   fprintf (fp, "  display: none;\n");
+   fprintf (fp, "  position: absolute;\n");
+   fprintf (fp, "  background-color: #f9f9f9;\n");
+   fprintf (fp, "  min-width: 160px;\n");
+   fprintf (fp, "  z-index: 1;\n");
+   fprintf (fp, "}\n");
+   fprintf (fp, "\n");
+   fprintf (fp, ".dropdown-content a:hover {\n");
+   fprintf (fp, "  background-color: #f1f1f1;\n");
+   fprintf (fp, "}\n");
+   fprintf (fp, "\n");
+   fprintf (fp, ".dropdown:hover .dropdown-content {\n");
+   fprintf (fp, "  display: block;\n");
+   fprintf (fp, "}\n");
+   fprintf (fp, "\n");
+   fprintf (fp, "li.dropdown {\n");
+   fprintf (fp, "  display: inline-block;\n");
+   fprintf (fp, "}\n");
+
+   fprintf (fp, "</style>\n");
+}
+
+/**********************************************************************/
+
+#define INDENT_SPACES 3
+
+void vftr_make_html_indent (FILE *fp, int n_indent_0, int n_indent_extra) {
+	for (int i = 0; i < n_indent_0 + n_indent_extra * INDENT_SPACES; i++) fprintf (fp, " ");
+}
+
+/**********************************************************************/
+
+
+void vftr_create_callgraph_dropdown (FILE *fp, char *func_name, enum origin_page op) {
+   if (op == HOME || op == PROFILE) { 
+      vftr_make_html_indent (fp, 0, 1);
+      fprintf (fp, "<li style=\"display: inline;\">\n"); 
+      vftr_make_html_indent (fp, 0, 2);
+      int n = strlen(func_name) + 8;
+      char target_fun[n];
+      snprintf (target_fun, n, "%s_%d.html", func_name, 0);
+      fprintf (fp, "<a href=\"%s/%s\">Call graphs</a>\n", func_name, target_fun);
+      vftr_make_html_indent (fp, 0, 2);
+      fprintf (fp, "</li>\n");
+   } else {
+      vftr_make_html_indent (fp, 0, 1);
+      fprintf (fp, "<li style=\"display: inline;\" class=\"dropdown\">\n"); 
+      vftr_make_html_indent (fp, 0, 2);
+      fprintf (fp, "<a href=\"javascript:void(0)\" class=\"dropbtn\">Call graphs</a>\n");
+      vftr_make_html_indent (fp, 0, 2);
+      fprintf (fp, "<div class=\"dropdown-content\">\n");
+      for (int i = 0; i < vftr_mpisize; i++) {
+         vftr_make_html_indent (fp, 0, 3);
+         int n = strlen(func_name) + vftr_count_digits(i) + 7;
+         char target_fun[n];
+         snprintf (target_fun, n, "%s_%d.html", func_name, i);
+         fprintf (fp, "<a href=\"%s\">%d</a>\n", target_fun, i);
+      }
+      vftr_make_html_indent (fp, 0, 2);
+      fprintf (fp, "</div>\n");
+      vftr_make_html_indent (fp, 0, 1);
+      fprintf (fp, "</li>\n");
+   }
+}
+
+/**********************************************************************/
+
+void vftr_create_profile_dropdown (FILE *fp, enum origin_page op) {
+    if (op == HOME) {
+      vftr_make_html_indent (fp, 0, 1);
+      fprintf (fp, "<li style=\"display: inline;\">\n");
+      vftr_make_html_indent (fp, 0, 2);
+      fprintf (fp, "<a href=\"profile_%d.html\">Profile tables</a>\n", vftr_mpirank);
+      vftr_make_html_indent (fp, 0, 1);
+      fprintf (fp, "</li>\n");
+    } else if (op == TREE) {
+      vftr_make_html_indent (fp, 0, 1);
+      fprintf (fp, "<li style=\"display: inline;\">\n");
+      vftr_make_html_indent (fp, 0, 2);
+      fprintf (fp, "<a href=\"../profile_%d.html\">Profile tables</a>\n", vftr_mpirank);
+      vftr_make_html_indent (fp, 0, 1);
+      fprintf (fp, "</li>\n");
+   } else {
+      vftr_make_html_indent (fp, 0, 1);
+      fprintf (fp, "<li style=\"display: inline;\" class=\"dropdown\">\n"); 
+      vftr_make_html_indent (fp, 0, 2);
+      fprintf (fp, "<a href=\"javascript:void(0)\" class=\"dropbtn\">Profile tables</a>\n");
+      vftr_make_html_indent (fp, 0, 2);
+      fprintf (fp, "<div class=\"dropdown-content\">\n");
+      for (int i = 0; i < vftr_mpisize; i++) {
+         vftr_make_html_indent (fp, 0, 3);
+         fprintf (fp, "<a href=\"profile_%d.html\">%d</a>\n", i, i);
+      }
+      vftr_make_html_indent (fp, 0, 2);
+      fprintf (fp, "</div>\n");
+      vftr_make_html_indent (fp, 0, 1);
+      fprintf (fp, "</li>\n");
+   }
+}
+
+/**********************************************************************/
+
+void vftr_print_navigation_bars (FILE *fp, char *func_names[], int n_funcs, int this_i_func, enum origin_page op) {
+   // Horizontal navigation bar
+   fprintf (fp, "<ul style=\"list-style-type: none;margin-top: 0px;margin-left: 150px; background-color: #f1f1f1;\">\n");
+   vftr_make_html_indent (fp, 0, 1);
+   if (op == HOME || op == PROFILE) {
+      fprintf (fp, "<li style=\"display: inline;\"><a href=\"index.html\">HOME</a></li>\n");
+   } else {
+      fprintf (fp, "<li style=\"display: inline;\"><a href=\"../index.html\">HOME</a></li>\n");
+   }
+   vftr_create_callgraph_dropdown (fp, func_names[this_i_func], op);
+   vftr_create_profile_dropdown (fp, op);
+   fprintf (fp, "</ul>\n");
+   fprintf (fp, "\n");
+   // Vertical navigation bar
+   fprintf (fp, "<ul style=\"float: left;list-style-type: none;margin: 0;padding: 0; width: 150px;background-color: #f1f1f1;\">\n");
+   for (int i = 0; i < n_funcs; i++) {
+      vftr_make_html_indent (fp, 0, 1);
+      int n = strlen (func_names[i]) + vftr_count_digits(vftr_mpirank) + 7;
+      char target_fun[n];
+      snprintf (target_fun, n, "%s_%d.html", func_names[i], vftr_mpirank);
+      if (op == HOME) {
+         fprintf (fp, "<li><a href=\"%s/%s\">%s</a></li>\n", func_names[i], target_fun, func_names[i]);
+      } else if (i == this_i_func) {
+         fprintf (fp, "<li><a href=\"%s\">%s</a></li>\n", target_fun, func_names[i]);
+      } else {
+         fprintf (fp, "<li><a href=\"../%s/%s\">%s</a></li>\n", func_names[i], target_fun, func_names[i]);
+      }	
+   }
+   fprintf (fp, "</ul>\n");
+   fprintf (fp, "\n");
+}
+
+/**********************************************************************/
+
+void vftr_print_index_html (char *func_names[], int n_funcs) {
+   FILE *fp = fopen ("html/index.html", "w+");
+   vftr_print_css_header (fp);
+   vftr_print_navigation_bars (fp, func_names, n_funcs, 0, HOME);
+   fprintf (fp, "<div stype=\"margin-left:150px; padding 1px, 16px\">\n");
+   vftr_make_html_indent (fp, 0, 1);
+   fprintf (fp, "<h1>Vfbrowse</h1>\n");
+   vftr_make_html_indent (fp, 0, 1);
+   fprintf (fp, "<p>Application: %s</p>\n", vftr_get_program_path ());
+   vftr_make_html_indent (fp, 0, 1);
+   fprintf (fp, "<p>Start date: %s</p>\n", vftr_start_date);
+   vftr_make_html_indent (fp, 0, 1);
+   fprintf (fp, "<p>End date: %s</p>\n", vftr_end_date);
+   vftr_make_html_indent (fp, 0, 1);
+   fprintf (fp, "<p>Number of MPI ranks: %d</p>\n", vftr_mpisize);
+
+   double total_runtime, sampling_overhead_time, total_overhead_time, mpi_overhead_time, application_runtime;
+   vftr_get_application_times (0, &total_runtime, &sampling_overhead_time, &mpi_overhead_time, 
+			       &total_overhead_time, &application_runtime);
+   vftr_make_html_indent (fp, 0, 1);
+   fprintf (fp, "<p>Total runtime: %8.2f seconds</p>\n", total_runtime);
+   vftr_make_html_indent (fp, 0, 1);
+   fprintf (fp, "<p>Application time: %8.2f seconds</p>\n", application_runtime);
+   vftr_make_html_indent (fp, 0, 1);
+   fprintf (fp, "<p>Overhead: %8.2f seconds (%.2f%%)</p>\n", total_overhead_time, total_overhead_time / total_runtime * 100.0);
+   vftr_make_html_indent (fp, 0, 1);
+   fprintf (fp, "<p>Sampling overhead: %8.2f seconds (%.2f%%)</p>\n", sampling_overhead_time, sampling_overhead_time / total_runtime * 100.0);
+   vftr_make_html_indent (fp, 0, 1);
+   fprintf (fp, "<p>MPI overhead: %8.2f seconds (%.2f%%)</p>\n", mpi_overhead_time, mpi_overhead_time / total_runtime * 100.0);
+   fprintf (fp, "</div>\n");
+   fclose (fp); 
+}
+
+/**********************************************************************/
+
+void vftr_print_html_function_element (FILE *fp, int final_id, int stack_id, int func_id, int n_spaces, double total_time) {
+	vftr_make_html_indent (fp, n_spaces, 0);
+	if (final_id > 0) {
+	   double this_t = func_id >= 0 ? vftr_func_table[func_id]->prof_current.timeIncl * 1e-6 : 0.0;
+	   int x = total_time > 0 ? (int)(floor (510 * this_t / total_time)) : 0;
+	   int rvalue = x > 255 ? 255 : 255 - x;
+	   int gvalue = x > 255 ? 510 - x : 255;
+	   fprintf (fp, "<a hfref=\"#\" style=\"background-color: rgb(%d,%d,0)\">%s\n",
+		    rvalue, gvalue, vftr_gStackinfo[stack_id].name);
+	} else {
+	   fprintf (fp, "<a hfref=\"#\" style=\"background-color: #edebeb\">%s\n", vftr_gStackinfo[stack_id].name);
+	}
+	vftr_make_html_indent (fp, n_spaces + 3, 0);
+	fprintf (fp, "<ttt class=\"ttt\">function name: %s\n", vftr_gStackinfo[stack_id].name);
+	vftr_make_html_indent (fp, n_spaces + 3, 0);
+	if (func_id < 0) {
+	   fprintf (fp, "<br>n_calls: %d\n", -1);
+	} else {
+	   fprintf (fp, "<br>n_calls: %d\n", vftr_func_table[func_id]->prof_current.calls);
+	}
+	vftr_make_html_indent (fp, n_spaces + 3, 0);
+	fprintf (fp, "</ttt>\n");
+	vftr_make_html_indent (fp, n_spaces, 0);
+	fprintf (fp, "</a>\n");
+}
+
+/**********************************************************************/
+
+void vftr_print_stacktree_to_html (FILE *fp, stack_leaf_t *leaf, int n_spaces, double total_time, double *imbalances) {
+	if (!leaf) return;
+	vftr_print_html_function_element (fp, leaf->final_id, leaf->stack_id, leaf->func_id, n_spaces, total_time);
+	if (leaf->callee) {
+		vftr_make_html_indent (fp, n_spaces, 0);
+		fprintf (fp, "<ul>\n");
+		vftr_make_html_indent (fp, n_spaces, 1);
+		fprintf (fp, "<li>\n");
+		vftr_print_stacktree_to_html (fp, leaf->callee, n_spaces + 2 * INDENT_SPACES, total_time, imbalances);
+		vftr_make_html_indent (fp, n_spaces, 1);
+		fprintf (fp, "</li>\n");
+		vftr_make_html_indent (fp, n_spaces, 0);
+		fprintf (fp, "</ul>\n");
+	} else {
+	       vftr_make_html_indent (fp, n_spaces, 0);
+	       fprintf (fp, "<hr/>\n");
+	       if (leaf->func_id < 0) { 
+	          vftr_make_html_indent (fp, n_spaces, 0);
+		  fprintf (fp, "[not on this rank]\n");
+	       } else { 
+	          vftr_make_html_indent (fp, n_spaces, 0);
+	          fprintf (fp, "Position: %d<br>\n", leaf->final_id);
+	          vftr_make_html_indent (fp, n_spaces, 0);
+		  double t = vftr_func_table[leaf->func_id]->prof_current.timeIncl * 1e-6;
+		  fprintf (fp, "Time %*.3f s<br>\n", vftr_count_digits_double (t), t);
+	          vftr_make_html_indent (fp, n_spaces, 0);
+		  if (imbalances != NULL) fprintf (fp, "Imbalance: %6.2f %<br>\n", imbalances[leaf->func_id]);
+		  double n_bytes = vftr_func_table[leaf->func_id]->prof_current.mpi_tot_send_bytes;
+		  char *unit_str;
+		  vftr_memory_unit (&n_bytes, &unit_str);
+	          vftr_make_html_indent (fp, n_spaces, 0);
+		  fprintf (fp, "Send: %*.2f %s<br>\n", vftr_count_digits_double (n_bytes), n_bytes, unit_str);
+		  n_bytes = vftr_func_table[leaf->func_id]->prof_current.mpi_tot_recv_bytes;
+		  vftr_memory_unit (&n_bytes, &unit_str);
+	          vftr_make_html_indent (fp, n_spaces, 0);
+		  fprintf (fp, "Recv: %*.2f %s<br>\n", vftr_count_digits_double(n_bytes), n_bytes, unit_str);
+	     }
+	}
+
+	if (leaf->next_in_level) {
+		vftr_make_html_indent (fp, n_spaces, 0);
+		fprintf (fp, "<li>\n");
+		vftr_print_stacktree_to_html (fp, leaf->next_in_level, n_spaces + INDENT_SPACES, total_time, imbalances);
+		vftr_make_html_indent (fp, n_spaces, 0);
+		fprintf (fp, "</li>\n");
+	}
+}
+  
+/**********************************************************************/
+
+void vftr_print_html_stacktree_page (FILE *fp_out, bool is_empty, char *func_names[], int n_funcs, int this_i_func,
+			             stack_leaf_t *leaf, double *imbalances, double total_time) {
+	// No external file (e.g. for tests) given. Create filename <func_name>.html
+	FILE *fp;
+	char *this_func_name = func_names[this_i_func];
+	if (!fp_out) {
+	   char outdir[strlen(this_func_name) + 6];
+	   snprintf (outdir, strlen(this_func_name) + 6, "html/%s", this_func_name);
+	   if (vftr_mpirank == 0) {
+	      mkdir (outdir, 0777);
+	   }
+#ifdef _MPI
+	   PMPI_Barrier(MPI_COMM_WORLD);
+#endif
+	   char html_filename[2*(strlen(this_func_name) + 6)];
+	   snprintf (html_filename, 2*(strlen(this_func_name) + 6) + vftr_count_digits(vftr_mpisize) + 1,
+		     "%s/%s_%d.html", outdir, this_func_name, vftr_mpirank);
+	   fp = fopen (html_filename, "w");
+        } else {
+	   fp = fp_out;
+        }
+	vftr_print_css_header (fp);
+        vftr_print_navigation_bars (fp, func_names, n_funcs, this_i_func, TREE);
+	fprintf (fp, "<div style=\"margin-left:150px; margin-top:0px; padding: 1px 16px\">\n");
+	fprintf (fp, "<h1>%s, rank %d</h1>\n", this_func_name, vftr_mpirank);
+	fprintf (fp, "<nav class=\"nav\"/>\n");
+	vftr_make_html_indent (fp, 0, 1);
+	fprintf (fp, "<ul>\n");
+	vftr_make_html_indent (fp, 0, 2);
+	fprintf (fp, "<li>\n");
+	if (!is_empty) {
+	   vftr_print_stacktree_to_html (fp, leaf->origin, 3 * INDENT_SPACES, total_time, imbalances);
+        } else {
+	   fprintf (fp, "<h2>No stack IDs!\n</h2>");
+	}
+	vftr_make_html_indent (fp, 0, 2);
+	fprintf (fp, "</li>\n");
+	vftr_make_html_indent (fp, 0, 1);
+	fprintf (fp, "</ul>\n");
+	fprintf (fp, "</nav>\n");
+	fprintf (fp, "</div>\n");
+	if (!fp_out) fclose (fp); //External file is supposed to be closed elsewhere
+}
+
+/**********************************************************************/
+
+void vftr_html_create_directory () {
+       if (vftr_mpirank == 0) {
+	  mkdir ("html", 0777);
+       }
+#ifdef _MPI
+       PMPI_Barrier (MPI_COMM_WORLD);
+#endif
+}
+
+/**********************************************************************/
+
+FILE *vftr_html_init_profile_table () {
+       FILE *fp;
+       int n = 19 + vftr_count_digits(vftr_mpirank);
+       printf ("Write filename: %d\n", n);
+       char html_profile[n];
+       snprintf (html_profile, n, "html/profile_%d.html", vftr_mpirank);
+       fp = fopen (html_profile, "w+");
+       vftr_print_css_header (fp);
+       fprintf (fp,"<style>\n");
+       vftr_make_html_indent (fp, 0, 1);
+       fprintf (fp, "table {\n");
+       vftr_make_html_indent (fp, 0, 2);
+       fprintf (fp, "border-collapse: collapse;\n");
+       vftr_make_html_indent (fp, 0, 1);
+       fprintf (fp, "}\n");
+       vftr_make_html_indent (fp, 0, 1);
+       fprintf (fp, "th, td {\n");
+       vftr_make_html_indent (fp, 0, 2);
+       fprintf (fp, "border: 1px solid black;\n");
+       vftr_make_html_indent (fp, 0, 2);
+       fprintf (fp, "border-collapse: collapse;\n");
+       vftr_make_html_indent (fp, 0, 1);
+       fprintf (fp, "padding: 2px 12px 2px 23px;\n");
+       vftr_make_html_indent (fp, 0, 1);
+       fprintf (fp, "}\n");
+       vftr_make_html_indent (fp, 0, 1);
+       fprintf (fp, "th {\n");
+       vftr_make_html_indent (fp, 0, 2);
+       fprintf (fp, "background-color: #dddddd;\n");
+       vftr_make_html_indent (fp, 0, 1);
+       fprintf (fp, "}\n");
+       fprintf (fp, "</style>\n");
+       vftr_print_navigation_bars (fp, vftr_mpi_collective_function_names, vftr_n_collective_mpi_functions, 0, PROFILE);
+       
+       return fp;
+}
+
+/**********************************************************************/
+
+void vftr_html_create_profile_header (FILE *fp) {
+   fprintf (fp, "<table>\n");
+   fprintf (fp, "<tr>\n");
+   fprintf (fp, "<th>Calls</th>\n");
+   fprintf (fp, "<th>Excl. time [s]</th>\n");
+   fprintf (fp, "<th>Incl. time [s]</th>\n");
+   fprintf (fp, "<th>%%abs</th>\n");
+   fprintf (fp, "<th>%%cum</th>\n");
+   fprintf (fp, "<th>Function</th>\n");
+   fprintf (fp, "<th>Caller</th>\n");
+   fprintf (fp, "<th>ID</th>\n");
+   fprintf (fp, "</tr>\n");
+}
+
+/**********************************************************************/
+
+void vftr_html_print_table_line (FILE *fp, int stack_id, int n_calls,
+				 int format_excl, int format_incl, double t_excl, double t_incl,
+				 double t_rel, double t_cum, char *func_name, char *call_name) {
+	   fprintf (fp, "<tr>\n");
+
+	   fprintf (fp, "<td>%d</td>\n", n_calls);
+           fprintf (fp, "<td>%*.3f</td>\n", format_excl, t_excl);
+           fprintf (fp, "<td>%*.3f</td>\n", format_incl, t_incl);
+           fprintf (fp, "<td>%5.2f</td>\n", t_rel);
+           fprintf (fp, "<td>%5.2f</td>\n", t_cum);
+	   
+	   if (vftr_is_collective_mpi_function (func_name)) {
+	      int n = strlen(func_name) + vftr_count_digits (vftr_mpirank) + 7;
+	      char target_fun[n];
+	      snprintf (target_fun, n, "%s_%d.html", func_name, vftr_mpirank);
+    	      fprintf (fp, "<td><a href=\"%s/%s\">%s</a></td>\n", func_name, target_fun, func_name); 
+	   } else {
+	      fprintf (fp, "<td>%s</td>\n", func_name);
+           }
+
+	   fprintf (fp, "<td>%s</td>\n", call_name);
+	   fprintf (fp, "<td>%d</td>\n", stack_id);
+
+	   fprintf (fp, "</tr>\n");
+}
+
+/**********************************************************************/
+
+void vftr_html_finalize_table (FILE *fp) {
+   fprintf (fp, "</table>\n");
+   fclose (fp);
+}
+
+/**********************************************************************/
+
+int vftr_html_test_1 (FILE *fp_in, FILE *fp_out) {
+	unsigned long long addrs[6];	
+	function_t *func1 = vftr_new_function (NULL, "init", NULL, 0, false);
+	function_t *func2 = vftr_new_function ((void*)addrs, "MAIN__", func1, 0, false);
+	function_t *func3 = vftr_new_function ((void*)(addrs + 1), "A", func1, 0, false);
+	function_t *func4 = vftr_new_function ((void*)(addrs + 2), "B", func1, 0, false);
+	function_t *func5 = vftr_new_function ((void*)(addrs + 3), "C", func3, 0, false);
+	function_t *func6 = vftr_new_function ((void*)(addrs + 4), "C", func4, 0, false);
+	vftr_normalize_stacks();
+	for (int i = 0; i < vftr_stackscount; i++) {
+		vftr_func_table[i]->prof_current.calls = i + 1;
+	}
+
+	int *stack_indices, *func_indices;
+	int n_indices;
+	vftr_find_function_in_table ("C", &func_indices, &n_indices, false);	
+	vftr_find_function_in_stack ("C", &stack_indices, &n_indices, false);
+ 	stack_leaf_t *stack_tree = NULL;
+	for (int i = 0;  i < n_indices; i++) {
+		//int n_functions_in_stack = vftr_stack_length (stack_indices[i]);
+		// Why is n_functions_in_stack 2 instead of 3?
+		int n_functions_in_stack = 3;
+		int *stack_ids = (int*)malloc (n_functions_in_stack * sizeof(int));	
+		int stack_id = stack_indices[i];
+		int function_id = func_indices[i];
+		for (int j = 0; j < n_functions_in_stack; j++) {
+			stack_ids[j] = stack_id;
+			stack_id = vftr_gStackinfo[stack_id].ret;
+			printf ("%d ", stack_id);
+		}
+		printf ("\n");
+		vftr_fill_into_stack_tree (&stack_tree, n_functions_in_stack, stack_ids, function_id);
+		free (stack_ids);
+	}
+	long long dummy1;
+	double dummy2;
+	char *func_names[1] = {"C"};
+	vftr_print_html_stacktree_page (fp_out, false, func_names, 1, 0, stack_tree->origin, NULL, 0.0);
+	free (stack_tree);
+	return 0;
+}
+
+/**********************************************************************/

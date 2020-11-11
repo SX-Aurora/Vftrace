@@ -8,7 +8,7 @@ SUBDIRS = vftr_mpi
 
 libvftrace_la_LIBADD = libvftr_pause.la \
 		       vftr_mpi/libvftr_mpi.la
-if MPI_PROFILING
+if WITH_MPI
 libvftrace_la_LIBADD += vftr_mpi/c-wrapper/libvftr_cmpiwrap.la \
 		        vftr_mpi/f-wrapper/libvftr_fmpiwrap.la \
 		        vftr_mpi/f08-wrapper/libvftr_f08mpiwrap.la
@@ -37,6 +37,7 @@ libvftrace_la_SOURCES = demangle.cpp \
 	 	       vftr_environment.c \
 		       vftr_signals.c \
 		       vftr_loadbalance.c \
+		       vftr_html.c \
 		       vftrace_mod.F90
 
 
@@ -47,20 +48,21 @@ libvftrace_la_LDFLAGS =
 
 libvftrace_la_CFLAGS += -I${srcdir}/vftr_mpi/
 
-if PAPI_AVAIL
-libvftrace_la_CFLAGS += -DHAS_PAPI -I$(PAPI_HOME)/include
-libvftrace_la_LDFLAGS += -L$(PAPI_HOME)/lib -lpapi
-endif
-
-if VEPERF_AVAIL
+if ENABLE_HWC
+libvftrace_la_CFLAGS += -DHAS_HWC
+if ON_VECTOR_ENGINE
 libvftrace_la_CFLAGS += -DHAS_SXHWC
+endif
+if HAS_PAPI
+libvftrace_la_CFLAGS += -DHAS_PAPI
+endif
 endif
 
 if VMAP_OFFSET
 libvftrace_la_CFLAGS += -D__VMAP_OFFSET
 endif
 
-if MPI_PROFILING
+if WITH_MPI
 libvftrace_la_CFLAGS += -D_MPI
 libvftrace_la_FCFLAGS += -D_MPI
 endif 
