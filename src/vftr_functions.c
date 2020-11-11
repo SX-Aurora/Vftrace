@@ -377,9 +377,10 @@ void vftr_strip_all_module_names () {
 
 /**********************************************************************/
 
-void vftrace_show_stacktree_size () {
-	printf ("Function graph size for rank %d: %d\n", vftr_mpirank, vftr_stackscount);
+int vftrace_show_stacktree_size () {
+   return vftr_stackscount;
 }
+
 /**********************************************************************/
 
 int vftr_functions_test_1 (FILE *fp_in, FILE *fp_out) {
