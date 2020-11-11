@@ -18,6 +18,7 @@
 
 #include <string.h>
 #include <math.h>
+#include <sys/stat.h>
 
 #include "vftr_html.h"
 #include "vftr_setup.h"
@@ -51,8 +52,8 @@ void vftr_print_css_header (FILE *fp) {
    fprintf (fp, "}\n");
    fprintf (fp, "\n");
    fprintf (fp, "html, body {\n");
-   fprintf (fp, "  width: 100%;\n");
-   fprintf (fp, "  height: 100%;\n");
+   fprintf (fp, "  width: 100%%;\n");
+   fprintf (fp, "  height: 100%%;\n");
    fprintf (fp, "  background: white;\n");
    fprintf (fp, "  font-family: 'Fjalla One', sans-serif;\n");
    fprintf (fp, "  font-size: 18px;\n");
@@ -89,8 +90,8 @@ void vftr_print_css_header (FILE *fp) {
    fprintf (fp, "  content: '';\n");
    fprintf (fp, "  position: absolute;\n");
    fprintf (fp, "  top: 0;\n");
-   fprintf (fp, "  right: 50%;\n");
-   fprintf (fp, "  width: 50%;\n");
+   fprintf (fp, "  right: 50%%;\n");
+   fprintf (fp, "  width: 50%%;\n");
    fprintf (fp, "  height: 20px;\n");
    fprintf (fp, "  border-top: 1px solid black;\n");
    fprintf (fp, "}\n");
@@ -122,7 +123,7 @@ void vftr_print_css_header (FILE *fp) {
    fprintf (fp, "}\n");
    fprintf (fp, ".nav ul ul::before{\n");
    fprintf (fp, "  content: '';\n");
-   fprintf (fp, "  position: absolute; top: 0; left: 50%;\n");
+   fprintf (fp, "  position: absolute; top: 0; left: 50%%;\n");
    fprintf (fp, "  border-left: 1px solid black;\n");
    fprintf (fp, "  width: 0;\n");
    fprintf (fp, "  height: 20px;\n");
@@ -135,7 +136,6 @@ void vftr_print_css_header (FILE *fp) {
    fprintf (fp, "  border: 1px solid black;\n");
    fprintf (fp, "  text-decoration: none;\n");
    fprintf (fp, "  text-transform: uppercase;\n");
-//   fprintf (fp, "  background-color: #edebeb;\n");
    fprintf (fp, "  color: black;\n");
    fprintf (fp, "  font-family: arial, verdana, tahoma;\n");
    fprintf (fp, "  font-size: 11px;\n");
@@ -145,7 +145,7 @@ void vftr_print_css_header (FILE *fp) {
    fprintf (fp, "\n");
    fprintf (fp, "a .ttt {\n");
    fprintf (fp, "  visibility: hidden;\n");
-   fprintf (fp, "  width: 100%;\n");
+   fprintf (fp, "  width: 100%%;\n");
    fprintf (fp, "  background-color: black;\n");
    fprintf (fp, "  color: #fff;\n");
    fprintf (fp, "  text-align: center;\n");
@@ -367,7 +367,7 @@ void vftr_print_html_function_element (FILE *fp, int final_id, int stack_id, int
 	if (func_id < 0) {
 	   fprintf (fp, "<br>n_calls: %d\n", -1);
 	} else {
-	   fprintf (fp, "<br>n_calls: %d\n", vftr_func_table[func_id]->prof_current.calls);
+	   fprintf (fp, "<br>n_calls: %lld\n", vftr_func_table[func_id]->prof_current.calls);
 	}
 	vftr_make_html_indent (fp, n_spaces + 3, 0);
 	fprintf (fp, "</ttt>\n");
@@ -403,7 +403,7 @@ void vftr_print_stacktree_to_html (FILE *fp, stack_leaf_t *leaf, int n_spaces, d
 		  double t = vftr_func_table[leaf->func_id]->prof_current.timeIncl * 1e-6;
 		  fprintf (fp, "Time %*.3f s<br>\n", vftr_count_digits_double (t), t);
 	          vftr_make_html_indent (fp, n_spaces, 0);
-		  if (imbalances != NULL) fprintf (fp, "Imbalance: %6.2f %<br>\n", imbalances[leaf->func_id]);
+		  if (imbalances != NULL) fprintf (fp, "Imbalance: %6.2f %%<br>\n", imbalances[leaf->func_id]);
 		  double n_bytes = vftr_func_table[leaf->func_id]->prof_current.mpi_tot_send_bytes;
 		  char *unit_str;
 		  vftr_memory_unit (&n_bytes, &unit_str);
