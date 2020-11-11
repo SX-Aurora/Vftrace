@@ -608,8 +608,10 @@ int vftr_html_test_1 (FILE *fp_in, FILE *fp_out) {
 		vftr_fill_into_stack_tree (&stack_tree, n_functions_in_stack, stack_ids, function_id);
 		free (stack_ids);
 	}
-	long long dummy1;
-	double dummy2;
+	long long dummy_l1;
+	double dummy_d1, dummy_d2;
+	int dummy_i1, dummy_i2;
+ 	vftr_scan_stacktree (stack_tree->origin, 2, NULL, &dummy_d1, &dummy_i1, &dummy_d2, &dummy_i2);
 	char *func_names[1] = {"C"};
 	vftr_print_html_stacktree_page (fp_out, false, func_names, 1, 0, stack_tree->origin, NULL, 0.0);
 	free (stack_tree);
