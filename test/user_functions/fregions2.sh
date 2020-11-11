@@ -24,9 +24,9 @@ if [ "${inprof}" -ne "2" ] ; then
 fi
 
 
-../../tools/tracedump ${vftr_binary}_0.vfd
+../../tools/vftrace_vfd_dump ${vftr_binary}_0.vfd
 
-ncalls=$(../../tools/tracedump ${vftr_binary}_0.vfd | \
+ncalls=$(../../tools/vftrace_vfd_dump ${vftr_binary}_0.vfd | \
          grep "call user-region-1" | \
          wc -l)
 if [ "${ncalls}" -ne "1" ] ; then
@@ -34,7 +34,7 @@ if [ "${ncalls}" -ne "1" ] ; then
    exit 1;
 fi
 
-nexits=$(../../tools/tracedump ${vftr_binary}_0.vfd | \
+nexits=$(../../tools/vftrace_vfd_dump ${vftr_binary}_0.vfd | \
          grep "exit user-region-1" | \
          wc -l)
 
