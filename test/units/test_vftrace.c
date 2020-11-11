@@ -9,7 +9,7 @@
 #include "vftr_symbols.h"
 #include "vftr_environment.h"
 #include "vftr_hwcounters.h"
-#include "vftr_html.h"
+#include "vftr_browse.h"
 
 int this_fails () {
 	return 1;
@@ -85,8 +85,8 @@ int main (int argc, char **argv) {
 		retval = vftr_stacks_test_1 (fp_in, fp_out);
 	} else if (!strcmp (argv[1], "vftr_stacks_test_2")) {
 		retval = vftr_stacks_test_2 (fp_in, fp_out);
-	} else if (!strcmp (argv[1], "vftr_html_test_1")) {
-		retval = vftr_html_test_1 (fp_in, fp_out);
+	} else if (!strcmp (argv[1], "vftr_browse_test_1")) {
+		retval = vftr_browse_test_1 (fp_in, fp_out);
 	} else if (!strcmp (argv[1], "vftr_sxhwc_test_1")) {
 		retval = vftr_sxhwc_test_1 (fp_in, fp_out);
 	} else {

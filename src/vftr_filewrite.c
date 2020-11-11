@@ -36,7 +36,7 @@
 #include "vftr_setup.h"
 #include "vftr_mpi_utils.h"
 #include "vftr_stacks.h"
-#include "vftr_html.h"
+#include "vftr_browse.h"
 
 // File pointer of the log file
 FILE *vftr_log = NULL;
@@ -911,14 +911,14 @@ void vftr_print_function_statistics (FILE *pout, bool display_sync_time,
 
 	if (vftr_environment.create_html->value) {
 	   if (vftr_mpirank == 0) {
-	      vftr_print_index_html (vftr_mpi_collective_function_names, vftr_n_collective_mpi_functions);
+	      vftr_browse_print_index_html (vftr_mpi_collective_function_names, vftr_n_collective_mpi_functions);
 	   }
         }
 
   	for (int i = 0; i < n_display_functions; i++) {
 		if (display_functions[i]->n_stack_indices == 0) {;
 		   //print empty stack
-		   vftr_print_html_stacktree_page (NULL, true, vftr_mpi_collective_function_names,
+		   vftr_browse_print_stacktree_page (NULL, true, vftr_mpi_collective_function_names,
 						   vftr_n_collective_mpi_functions, i, NULL, NULL, 0.0);
 		} else {
 		   stack_leaf_t *stack_tree = NULL;
@@ -939,7 +939,7 @@ void vftr_print_function_statistics (FILE *pout, bool display_sync_time,
 					      t_max, n_calls_max, imba_max, n_spaces_max,
 					      stack_tree);
 		   if (vftr_environment.create_html->value) {
-		      vftr_print_html_stacktree_page (NULL, false, vftr_mpi_collective_function_names,
+		      vftr_browse_print_stacktree_page (NULL, false, vftr_mpi_collective_function_names,
 						      vftr_n_collective_mpi_functions, i, stack_tree->origin,
 					              imbalances, (double)total_time * 1e-6);
 		   }
@@ -991,8 +991,8 @@ void vftr_print_profile (FILE *pout, int *ntop, long long time0) {
 
     FILE *f_html;
     if (vftr_environment.create_html->value) {
-       vftr_html_create_directory ();
-       f_html = vftr_html_init_profile_table ();
+       vftr_browse_create_directory ();
+       f_html = vftr_browse_init_profile_table ();
     }
 
     function_t   **funcTable;
@@ -1184,7 +1184,7 @@ void vftr_print_profile (FILE *pout, int *ntop, long long time0) {
     output_header ("Incl", formats->incl_time, pout);
 
     if (vftr_environment.create_html->value) {
-       vftr_html_create_profile_header (f_html);
+       vftr_browse_create_profile_header (f_html);
     }
 
     fputs ("%abs %cum ", pout);
@@ -1276,14 +1276,14 @@ void vftr_print_profile (FILE *pout, int *ntop, long long time0) {
         fprintf (pout, fmtfid, fid);
         fprintf (pout, "\n");
 	if (vftr_environment.create_html->value) {
-	   vftr_html_print_table_line (f_html, fid, calls,
+	   vftr_browse_print_table_line (f_html, fid, calls,
 				       formats->incl_time, formats->excl_time,
 				       t_excl, t_incl, t_part, ctime,
 				       funcTable[i_func]->name, funcTable[i_func]->return_to->name); 
         }
 
     }
-    if (vftr_environment.create_html->value) vftr_html_finalize_table(f_html);
+    if (vftr_environment.create_html->value) vftr_browse_finalize_table(f_html);
     
     output_dashes_nextline (tableWidth, pout);   
     fprintf( pout, "\n" );

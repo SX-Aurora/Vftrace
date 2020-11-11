@@ -28,7 +28,7 @@
 #include "vftr_timer.h"
 #include "vftr_setup.h"
 #include "vftr_hooks.h"
-#include "vftr_html.h"
+#include "vftr_browse.h"
 #include "vftr_filewrite.h"
 #include "vftr_fileutils.h"
 

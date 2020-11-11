@@ -55,7 +55,7 @@ dist_check_SCRIPTS = this_passes.sh \
 	 	      vftr_functions_test_4.sh \
 	 	      vftr_functions_test_5.sh \
 		      vftr_stacks_test_1.sh \
-		      vftr_html_test_1.sh
+		      vftr_browse_test_1.sh
 
 if WITH_MPI
 dist_check_SCRIPTS += vftr_stacks_test_2.sh
