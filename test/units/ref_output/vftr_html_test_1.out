@@ -173,12 +173,12 @@ li.dropdown {
       </div>
    </li>
    <li style="display: inline;">
-      <a href="profile_0.html">Profile tables</a>
+      <a href="../profile_0.html">Profile tables</a>
    </li>
 </ul>
 
 <ul style="float: left;list-style-type: none;margin: 0;padding: 0; width: 150px;background-color: #f1f1f1;">
-   <li><a href="C/C_0.html">C</a></li>
+   <li><a href="C_0.html">C</a></li>
 </ul>
 
 <div style="margin-left:150px; margin-top:0px; padding: 1px 16px">
@@ -200,16 +200,16 @@ li.dropdown {
                </a>
                <ul>
                   <li>
-                     <a hfref="#" style="background-color: rgb(255,255,0)">C
+                     <a hfref="#" style="background-color: #edebeb">C
                         <ttt class="ttt">function name: C
                         <br>n_calls: 5
                         </ttt>
                      </a>
                      <hr/>
-                     Position: 21074400<br>
-                     Time 0.000000 s<br>
-                                          Send: 0.000000   B<br>
-                     Recv: 0.000000   B<br>
+                     Position: 0<br>
+                     Time 0.000 s<br>
+                                          Send: 0.00   B<br>
+                     Recv: 0.00   B<br>
                   </li>
                </ul>
                <li>
@@ -220,16 +220,16 @@ li.dropdown {
                   </a>
                   <ul>
                      <li>
-                        <a hfref="#" style="background-color: rgb(255,255,0)">C
+                        <a hfref="#" style="background-color: #edebeb">C
                            <ttt class="ttt">function name: C
                            <br>n_calls: 6
                            </ttt>
                         </a>
                         <hr/>
-                        Position: 21074400<br>
-                        Time 0.000000 s<br>
-                                                Send: 0.000000   B<br>
-                        Recv: 0.000000   B<br>
+                        Position: 0<br>
+                        Time 0.000 s<br>
+                                                Send: 0.00   B<br>
+                        Recv: 0.00   B<br>
                      </li>
                   </ul>
                </li>
