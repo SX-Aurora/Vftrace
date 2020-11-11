@@ -486,7 +486,7 @@ void vftr_browse_create_directory () {
 
 FILE *vftr_browse_init_profile_table () {
        FILE *fp;
-       int n = 19 + vftr_count_digits(vftr_mpirank);
+       int n = 21 + vftr_count_digits(vftr_mpirank);
        printf ("Write filename: %d\n", n);
        char html_profile[n];
        snprintf (html_profile, n, "browse/profile_%d.html", vftr_mpirank);
