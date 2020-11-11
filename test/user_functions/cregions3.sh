@@ -28,11 +28,11 @@ do
 done
 
 
-../../tools/tracedump ${vftr_binary}_0.vfd
+../../tools/vftrace_vfd_dump ${vftr_binary}_0.vfd
 
 for ireg in $(seq 1 1 ${maxnreg});
 do
-   ncalls=$(../../tools/tracedump ${vftr_binary}_0.vfd | \
+   ncalls=$(../../tools/vftrace_vfd_dump ${vftr_binary}_0.vfd | \
             grep "call user-region-${ireg}" | \
             wc -l)
    if [ "${ncalls}" -ne "1" ] ; then
@@ -40,7 +40,7 @@ do
       exit 1;
    fi
    
-   nexits=$(../../tools/tracedump ${vftr_binary}_0.vfd | \
+   nexits=$(../../tools/vftrace_vfd_dump ${vftr_binary}_0.vfd | \
             grep "exit user-region-${ireg}" | \
             wc -l)
    

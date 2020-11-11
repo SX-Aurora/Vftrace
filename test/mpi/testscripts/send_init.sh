@@ -20,7 +20,7 @@ do
    for irank in $(seq 0 1 $(bc <<< "${nprocs}-1"));
    do
 
-      ../../../tools/tracedump ${vftr_binary}_${irank}.vfd
+      ../../../tools/vftrace_vfd_dump ${vftr_binary}_${irank}.vfd
 
       if [[ "${irank}" -eq "0" ]] ; then 
 
@@ -31,14 +31,14 @@ do
                ientry=$(bc <<< "(${jrank}-1)*${nr} + ${irun}")
                # Validate sending
                # Get actually used message size
-               count=$(../../../tools/tracedump ${vftr_binary}_${irank}.vfd | \
+               count=$(../../../tools/vftrace_vfd_dump ${vftr_binary}_${irank}.vfd | \
                        awk '$2=="send" && $3!="end"{getline;print;}' | \
                        sed 's/=/ /g' | \
                        sort -nk 9 | \
                        awk '{print $2}' | \
                        head -n ${ientry} | tail -n 1)
                # get peer process
-               peer=$(../../../tools/tracedump ${vftr_binary}_${irank}.vfd | \
+               peer=$(../../../tools/vftrace_vfd_dump ${vftr_binary}_${irank}.vfd | \
                       awk '$2=="send" && $3!="end"{getline;print;}' | \
                       sed 's/=/ /g' | \
                       sort -nk 9 | \
@@ -67,14 +67,14 @@ do
             ientry=$(bc <<< "${irun}")
             # Validate receiving
             # Get actually used message size
-            count=$(../../../tools/tracedump ${vftr_binary}_${irank}.vfd | \
+            count=$(../../../tools/vftrace_vfd_dump ${vftr_binary}_${irank}.vfd | \
                     awk '$2=="recv" && $3!="end"{getline;print;}' | \
                     sed 's/=/ /g' | \
                     sort -nk 9 | \
                     awk '{print $2}' | \
                     head -n ${ientry} | tail -n 1)
             # get peer process
-            peer=$(../../../tools/tracedump ${vftr_binary}_${irank}.vfd | \
+            peer=$(../../../tools/vftrace_vfd_dump ${vftr_binary}_${irank}.vfd | \
                    awk '$2=="recv" && $3!="end"{getline;print;}' | \
                    sed 's/=/ /g' | \
                    sort -nk 9 | \

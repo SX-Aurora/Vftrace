@@ -14,19 +14,19 @@ do
    nb=$(bc <<< "32*${RANDOM}")
    ${MPI_EXEC} ${MPI_OPTS} ${NP} ${nprocs} ./${vftr_binary} ${nb} || exit 1
 
-   ../../../tools/tracedump ${vftr_binary}_0.vfd
+   ../../../tools/vftrace_vfd_dump ${vftr_binary}_0.vfd
    for irank in $(seq 1 1 $(bc <<< "${nprocs}-1"));
    do
      # Validate receiving
      # Get actually used message size
-     count=$(../../../tools/tracedump ${vftr_binary}_0.vfd | \
+     count=$(../../../tools/vftrace_vfd_dump ${vftr_binary}_0.vfd | \
              awk '$2=="send" && $3!="end"{getline;print;}' | \
              sed 's/=/ /g' | \
              sort -nk 9 | \
              awk '{print $2}' | \
              head -n ${irank} | tail -n 1)
      # get peer process
-     peer=$(../../../tools/tracedump ${vftr_binary}_0.vfd | \
+     peer=$(../../../tools/vftrace_vfd_dump ${vftr_binary}_0.vfd | \
             awk '$2=="send" && $3!="end"{getline;print;}' | \
             sed 's/=/ /g' | \
             sort -nk 9 | \

@@ -1,33 +1,33 @@
-bin_PROGRAMS = tracedump \
-	       show_function_stacks \
-	       mpi_crosscheck \
-	       mpi_stack_crosscheck \
-	       filter_stacks \
-	       diff_profiles
+bin_PROGRAMS = vftrace_vfd_dump \
+	       vftrace_show_function_stacks \
+	       vftrace_mpi_table_crosscheck \
+	       vftrace_mpi_stack_crosscheck \
+	       vftrace_filter_stacks \
+	       vftrace_diff_profiles
 
-mpi_crosscheck_SOURCES = mpi_crosscheck.c
-mpi_stack_crosscheck_SOURCES = mpi_stack_crosscheck.c
+vftrace_mpi_table_crosscheck_SOURCES = vftrace_mpi_table_crosscheck.c
+vftrace_mpi_stack_crosscheck_SOURCES = vftrace_mpi_stack_crosscheck.c
 
-tracedump_SOURCES = tracedump.c vftr_vfd_utils.c
-tracedump_CFLAGS = -I${srcdir}/../src/
-tracedump_CFLAGS += -I${srcdir}/../src/vftr_mpi/
-tracedump_LDFLAGS = -L${top_builddir}/src/.libs -lvftrace -lm
+vftrace_vfd_dump_SOURCES = vftrace_vfd_dump.c vftr_vfd_utils.c
+vftrace_vfd_dump_CFLAGS = -I${srcdir}/../src/
+vftrace_vfd_dump_CFLAGS += -I${srcdir}/../src/vftr_mpi/
+vftrace_vfd_dump_LDFLAGS = -L${top_builddir}/src/.libs -lvftrace -lm
 
-show_function_stacks_SOURCES = show_function_stacks.c vftr_vfd_utils.c
-show_function_stacks_CFLAGS = -I${srcdir}/../src/
-show_function_stacks_CFLAGS += -I${srcdir}/../src/vftr_mpi/
-show_function_stacks_LDFLAGS = -L${top_builddir}/src/.libs -lvftrace -lm
+vftrace_show_function_stacks_SOURCES = vftrace_show_function_stacks.c vftr_vfd_utils.c
+vftrace_show_function_stacks_CFLAGS = -I${srcdir}/../src/
+vftrace_show_function_stacks_CFLAGS += -I${srcdir}/../src/vftr_mpi/
+vftrace_show_function_stacks_LDFLAGS = -L${top_builddir}/src/.libs -lvftrace -lm
 
-filter_stacks_SOURCES = filter_stacks.c
-filter_stacks_CFLAGS = -I${srcdir}/../src/
-filter_stacks_LDFLAGS = -L${top_builddir}/src/.libs -lvftrace -lm
+vftrace_filter_stacks_SOURCES = vftrace_filter_stacks.c
+vftrace_filter_stacks_CFLAGS = -I${srcdir}/../src/
+vftrace_filter_stacks_LDFLAGS = -L${top_builddir}/src/.libs -lvftrace -lm
 
-diff_profiles_SOURCES = diff_profiles.c
-diff_profiles_CFLAGS = -I${srcdir}/../src
-diff_profiles_LDFLAGS = -L${top_builddir}/src/.libs -lvftrace -lm
+vftrace_diff_profiles_SOURCES = vftrace_diff_profiles.c
+vftrace_diff_profiles_CFLAGS = -I${srcdir}/../src
+vftrace_diff_profiles_LDFLAGS = -L${top_builddir}/src/.libs -lvftrace -lm
 
 if USES_NEC_MPI
-  tracedump_LDFLAGS += -mpiprof
-  show_function_stacks_LDFLAGS += -mpiprof
-  filter_stacks_LDFLAGS += -mpiprof
+  vftrace_vfd_dump_LDFLAGS += -mpiprof
+  vftrace_show_function_stacks_LDFLAGS += -mpiprof
+  vftrace_filter_stacks_LDFLAGS += -mpiprof
 endif

@@ -18,7 +18,7 @@ do
    # patterns in the vfd file
    for irank in $(seq 0 1 $(bc <<< "${nprocs}-1"));
    do
-      ../../../tools/tracedump ${vftr_binary}_${irank}.vfd
+      ../../../tools/vftrace_vfd_dump ${vftr_binary}_${irank}.vfd
 
       for jrank in $(seq 0 1 $(bc <<< "${irank}-1")) \
                    $(seq $(bc <<< "${irank}+1") 1 $(bc <<< "${nprocs}-1"));
@@ -31,14 +31,14 @@ do
          tmpnb=$(bc <<< "${nb}")
          # Validate sending
          # Get actually used message size
-         count=$(../../../tools/tracedump ${vftr_binary}_${irank}.vfd | \
+         count=$(../../../tools/vftrace_vfd_dump ${vftr_binary}_${irank}.vfd | \
                  awk '$2=="send" && $3!="end"{getline;print;}' | \
                  sed 's/=/ /g' | \
                  sort -nk 9 | \
                  awk '{print $2}' | \
                  head -n ${ipeer} | tail -n 1)
          # get peer process
-         peer=$(../../../tools/tracedump ${vftr_binary}_${irank}.vfd | \
+         peer=$(../../../tools/vftrace_vfd_dump ${vftr_binary}_${irank}.vfd | \
                 awk '$2=="send" && $3!="end"{getline;print;}' | \
                 sed 's/=/ /g' | \
                 sort -nk 9 | \
@@ -62,14 +62,14 @@ do
          tmpnb=$(bc <<< "${nb}")
          # validate receiving
          # Get actually used message size
-         count=$(../../../tools/tracedump ${vftr_binary}_${irank}.vfd | \
+         count=$(../../../tools/vftrace_vfd_dump ${vftr_binary}_${irank}.vfd | \
                  awk '$2=="recv" && $3!="end"{getline;print;}' | \
                  sed 's/=/ /g' | \
                  sort -nk 9 | \
                  awk '{print $2}' | \
                  head -n ${ipeer} | tail -n 1)
          # get peer process
-         peer=$(../../../tools/tracedump ${vftr_binary}_${irank}.vfd | \
+         peer=$(../../../tools/vftrace_vfd_dump ${vftr_binary}_${irank}.vfd | \
                 awk '$2=="recv" && $3!="end"{getline;print;}' | \
                 sed 's/=/ /g' | \
                 sort -nk 9 | \

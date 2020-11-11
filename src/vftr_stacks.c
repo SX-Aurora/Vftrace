@@ -747,7 +747,7 @@ void vftr_scan_for_final_values (stack_leaf_t *leaf, int this_n_spaces, double *
 		   (*t_final)[*n_final] = this_t;
 		   int this_n_calls = vftr_func_table[leaf->func_id]->prof_current.calls;
 		   (*n_calls_final)[*n_final] = this_n_calls;
-		   (*imba_final)[*n_final] = imbalances[leaf->func_id];
+		   if (imbalances) (*imba_final)[*n_final] = imbalances[leaf->func_id];
 		   *n_final = *n_final + 1;
 		}
 	}
@@ -891,52 +891,58 @@ void vftr_stack_get_total_time (stack_leaf_t *leaf, long long *total_time) {
 
 /**********************************************************************/
 
-void vftr_print_function_stack (FILE *fp, int rank,
-		                char *func_name, int n_final_stack_ids,
+void vftr_scan_stacktree (stack_leaf_t *stack_tree, int n_final_stack_ids, double *imbalances,
+			  double *t_max, int *n_calls_max, double *imba_max, int *n_spaces_max) {
+   *n_spaces_max = 0;
+   double *t_final = (double*) malloc (n_final_stack_ids * sizeof(double));
+   int *n_calls_final = (int*) malloc (n_final_stack_ids * sizeof(int));	
+   double *imba_final = (double*) malloc (n_final_stack_ids * sizeof(double));
+   int n_final = 0;
+   vftr_scan_for_final_values (stack_tree->origin, 0, imbalances,
+   		               n_spaces_max, &n_final, &t_final, &n_calls_final, &imba_final);	
+
+   int *rank_final_ids = (int*) malloc (n_final_stack_ids * sizeof(int));
+   double *t_final_sorted = (double*) malloc (n_final_stack_ids * sizeof(double));
+   vftr_sort_double_copy (t_final, n_final, false, &t_final_sorted);
+   for (int i = 0; i < n_final; i++) {
+      rank_final_ids[i] = -1;
+      double search_for = t_final[i];
+      for (int j = 0; j < n_final; j++) {
+         if (t_final_sorted[j] == search_for) {
+   	 rank_final_ids[i] = j + 1;
+   	 break;
+         }
+      }
+   }
+          
+   vftr_sort_integer (&n_calls_final, n_final, false);
+   vftr_sort_double (&imba_final, n_final, false);
+
+   *t_max = t_final_sorted[0];
+   *n_calls_max = n_calls_final[0];
+   *imba_max = imba_final[0];
+
+   int pos0 = 0;
+   vftr_stacktree_assign_positions (stack_tree->origin, &pos0, rank_final_ids); 
+
+   free (rank_final_ids);
+   free (t_final);
+   free (t_final_sorted);
+   free (n_calls_final);
+   free (imba_final);
+}
+
+/**********************************************************************/
+
+void vftr_print_function_stack (FILE *fp, char *func_name, int n_final_stack_ids,
 			        double *imbalances, long long total_time,
+			        double t_max, int n_calls_max, double imba_max, int n_spaces_max, 
 			        stack_leaf_t *stack_tree) {
 	fprintf (fp, "\n");
 	if (n_final_stack_ids == 0) {
 		fprintf (fp, "No stack IDs for %s registered.\n", func_name);
 		return;
 	}
-	int n_spaces_max = 0;
-	double *t_final = (double*) malloc (n_final_stack_ids * sizeof(double));
-	int *n_calls_final = (int*) malloc (n_final_stack_ids * sizeof(int));	
-	double *imba_final = (double*) malloc (n_final_stack_ids * sizeof(double));
-        int n_final = 0;
-	vftr_scan_for_final_values (stack_tree->origin, 0, imbalances,
-				      &n_spaces_max, &n_final, &t_final, &n_calls_final, &imba_final);	
-	int *rank_final_ids = (int*) malloc (n_final_stack_ids * sizeof(int));
-	double *t_final_sorted = (double*) malloc (n_final_stack_ids * sizeof(double));
-        vftr_sort_double_copy (t_final, n_final, false, &t_final_sorted);
-        for (int i = 0; i < n_final; i++) {
-	   rank_final_ids[i] = -1;
-           double search_for = t_final[i];
-           for (int j = 0; j < n_final; j++) {
-	      if (t_final_sorted[j] == search_for) {
-		 rank_final_ids[i] = j + 1;
-		 break;
-	      }
-           }
-        }
-               
-	vftr_sort_integer (&n_calls_final, n_final, false);
-	vftr_sort_double (&imba_final, n_final, false);
-
-	double t_max = t_final_sorted[0];
-	int n_calls_max = n_calls_final[0];
-	double imba_max = imba_final[0];
-
-        int pos0 = 0;
-        vftr_stacktree_assign_positions (stack_tree->origin, &pos0, rank_final_ids); 
-
-	free (rank_final_ids);
-        free (t_final);
-	free (t_final_sorted);
-        free (n_calls_final);
-        free (imba_final);
-
 	// We have six digits behind the comma for time values. More do not make sense since we have a resolution
 	// of microseconds.
 	// We add this value of 6 to the number of digits in front of the comma, plus one for the comma itself.
