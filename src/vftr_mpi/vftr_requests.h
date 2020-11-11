@@ -31,7 +31,7 @@ typedef struct vftr_request_type {
    bool marked_for_deallocation;
    MPI_Comm comm;
    int nmsg;
-   int dir;
+   vftr_direction dir;
    int *count;
    MPI_Datatype *type;
    int *type_idx;

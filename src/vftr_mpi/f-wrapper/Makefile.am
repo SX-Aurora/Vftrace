@@ -191,7 +191,7 @@ libvftr_fmpiwrap_la_SOURCES += vftr_mpi_pcontrol_c2f.F90
 libvftr_fmpiwrap_la_SOURCES += vftr_mpi_pcontrol_fwrap.F90
 
 libvftr_fmpiwrap_la_FCFLAGS = -finstrument-functions
-if MPI_PROFILING
+if WITH_MPI
 libvftr_fmpiwrap_la_FCFLAGS += -D_MPI
 endif
 

@@ -89,6 +89,7 @@ typedef struct vftr_envs {
         env_var_string_t *print_stacks_for;
         env_var_string_t *print_loadinfo_for;
  	env_var_bool_t *strip_module_names;
+	env_var_bool_t *create_html;
 } vftr_envs_t;
 
 extern vftr_envs_t vftr_environment;

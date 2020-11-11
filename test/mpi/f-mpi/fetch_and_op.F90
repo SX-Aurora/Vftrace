@@ -80,8 +80,13 @@ PROGRAM fetch_and_op
          ! The remote target buffer gets the sum of origin+itself
          CALL MPI_Fetch_and_op(originbuffer, resultbuffer, MPI_INTEGER, &
                                irank, targetdisp, MPI_SUM, window, ierr)
+         CALL MPI_Win_fence(0, window, ierr)
          ! copy the resultbuffer to the origin buffer
          originbuffer(:) = originbuffer(:) + resultbuffer(:)
+      END DO
+   ELSE
+      DO irank = 1, comm_size - 1
+         CALL MPI_Win_fence(0, window, ierr)
       END DO
    END IF
 

@@ -2,5 +2,8 @@
 
 vftr_binary=init_finalize_1
 nprocs=4
-
-mpirun -np ${nprocs} ./${vftr_binary} || exit 1
+echo ${MPI_EXEC}
+echo ${MPI_OPTS}
+echo ${NP}
+echo ${nprocs}
+${MPI_EXEC} ${MPI_OPTS} ${NP} ${nprocs} ./${vftr_binary} || exit 1

@@ -39,10 +39,9 @@ int main(int argc, char** argv) {
       for (int i=0; i<nints; i++) {originbuffer[i]=my_rank;}
       resultbuffer = (int*) malloc(nints*sizeof(int));
       for (int i=0; i<nints; i++) {resultbuffer[i]=0;}
-   } else {
-      targetbuffer = (int*) malloc(nints*sizeof(int));
-      for (int i=0; i<nints; i++) {targetbuffer[i]=my_rank;}
    }
+   targetbuffer = (int*) malloc(nints*sizeof(int));
+   for (int i=0; i<nints; i++) {targetbuffer[i]=my_rank;}
 
    // open memory to remote memory access
    MPI_Win window;
@@ -59,8 +58,13 @@ int main(int argc, char** argv) {
          // The remote target buffer gets the sum of origin+itself
          MPI_Fetch_and_op(originbuffer, resultbuffer, MPI_INT,
                           irank, 0, MPI_SUM, window);
+         MPI_Win_fence(0, window);
          // copy the resultbuffer to the origin buffer
          for (int i=0; i<nints; i++) {originbuffer[i]+=resultbuffer[i];}
+      }
+   } else {
+      for (int irank=1; irank<comm_size; irank++) {
+         MPI_Win_fence(0, window);
       }
    }
    

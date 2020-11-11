@@ -28,6 +28,7 @@
 #include "vftr_timer.h"
 #include "vftr_setup.h"
 #include "vftr_hooks.h"
+#include "vftr_html.h"
 #include "vftr_filewrite.h"
 #include "vftr_fileutils.h"
 
@@ -671,6 +672,7 @@ void vftr_create_new_leaf (stack_leaf_t **new_leaf, int stack_id, int func_id, e
 		*new_leaf = (stack_leaf_t*) malloc (sizeof(stack_leaf_t));
 		(*new_leaf)->stack_id = stack_id;
 		(*new_leaf)->func_id = func_id;
+	 	(*new_leaf)->final_id = -1;
 		(*new_leaf)->next_in_level = NULL;
 		(*new_leaf)->callee = NULL;
 		(*new_leaf)->origin = (stack_leaf_t*) malloc (sizeof(stack_leaf_t));
@@ -679,18 +681,20 @@ void vftr_create_new_leaf (stack_leaf_t **new_leaf, int stack_id, int func_id, e
 		(*new_leaf)->next_in_level = (stack_leaf_t*)malloc (sizeof(stack_leaf_t));
 		(*new_leaf)->next_in_level->stack_id = stack_id;
 		(*new_leaf)->next_in_level->func_id = func_id;
+	 	(*new_leaf)->final_id = -1;
 		(*new_leaf)->next_in_level->next_in_level = NULL;	
 		(*new_leaf)->next_in_level->callee = NULL;
 		(*new_leaf)->next_in_level->origin = (stack_leaf_t*)malloc (sizeof(stack_leaf_t));
 		(*new_leaf)->next_in_level->origin = (*new_leaf)->origin;
 	} else if (leaf_type == CALLEE) {
-			(*new_leaf)->callee = (stack_leaf_t*) malloc (sizeof(stack_leaf_t));
-			(*new_leaf)->callee->stack_id = stack_id;	
-			(*new_leaf)->callee->func_id = func_id;	
-			(*new_leaf)->callee->next_in_level = NULL;
-			(*new_leaf)->callee->callee = NULL;
-			(*new_leaf)->callee->origin = (stack_leaf_t*)malloc (sizeof(stack_leaf_t));
-			(*new_leaf)->callee->origin = (*new_leaf)->origin;
+		(*new_leaf)->callee = (stack_leaf_t*) malloc (sizeof(stack_leaf_t));
+		(*new_leaf)->callee->stack_id = stack_id;	
+		(*new_leaf)->callee->func_id = func_id;	
+		(*new_leaf)->final_id = -1;
+		(*new_leaf)->callee->next_in_level = NULL;
+		(*new_leaf)->callee->callee = NULL;
+		(*new_leaf)->callee->origin = (stack_leaf_t*)malloc (sizeof(stack_leaf_t));
+		(*new_leaf)->callee->origin = (*new_leaf)->origin;
 	}
 }
 
@@ -726,46 +730,63 @@ void vftr_fill_into_stack_tree (stack_leaf_t **this_leaf, int n_stack_ids,
 
 /**********************************************************************/
 
-void vftr_scan_for_maximum_values (stack_leaf_t *leaf, int this_n_spaces, double *imbalances,
-				   int *n_spaces_max, double *t_max, int *n_calls_max, double *imba_max) {
+void vftr_scan_for_final_values (stack_leaf_t *leaf, int this_n_spaces, double *imbalances,
+				   int *n_spaces_max, int *n_final, double **t_final, int **n_calls_final, double **imba_final) {
 	if (!leaf) return;
 	if (leaf->callee) {
 		int new_n_spaces = this_n_spaces + strlen(vftr_gStackinfo[leaf->stack_id].name);
 		if (this_n_spaces > 0) new_n_spaces++;
-		vftr_scan_for_maximum_values (leaf->callee, new_n_spaces, imbalances,
-					      n_spaces_max, t_max, n_calls_max, imba_max);
+		vftr_scan_for_final_values (leaf->callee, new_n_spaces, imbalances,
+					      n_spaces_max, n_final, t_final, n_calls_final, imba_final);
 	} else {
 		int new_n_spaces = this_n_spaces + strlen(vftr_gStackinfo[leaf->stack_id].name) + 1; // + 1 for the colon at the end
 		if (this_n_spaces > 0) new_n_spaces++;
 		if (new_n_spaces > *n_spaces_max) *n_spaces_max = new_n_spaces;
 		if (leaf->func_id > 0) {
 		   double this_t = (double)vftr_func_table[leaf->func_id]->prof_current.timeIncl * 1e-6;
-		   if (this_t > *t_max) *t_max = this_t;
+		   (*t_final)[*n_final] = this_t;
 		   int this_n_calls = vftr_func_table[leaf->func_id]->prof_current.calls;
-		   if (this_n_calls > *n_calls_max) *n_calls_max = this_n_calls;
-		   if (imbalances[leaf->func_id] > *imba_max) *imba_max = imbalances[leaf->func_id];
+		   (*n_calls_final)[*n_final] = this_n_calls;
+		   (*imba_final)[*n_final] = imbalances[leaf->func_id];
+		   *n_final = *n_final + 1;
 		}
 	}
 	if (leaf->next_in_level) {
-		vftr_scan_for_maximum_values (leaf->next_in_level, this_n_spaces, imbalances,
-					      n_spaces_max, t_max, n_calls_max, imba_max);
+		vftr_scan_for_final_values (leaf->next_in_level, this_n_spaces, imbalances,
+					      n_spaces_max, n_final, t_final, n_calls_final, imba_final);
 	}
 }
 
 /**********************************************************************/
 
+void vftr_stacktree_assign_positions (stack_leaf_t *leaf, int *pos, int *indices) {
+   if (!leaf) return;
+   if (leaf->callee) {
+      vftr_stacktree_assign_positions (leaf->callee, pos, indices);
+   } else if (leaf->func_id > 0) {
+      leaf->final_id = indices[*pos];
+      *pos = *pos + 1;	
+   }
+   if (leaf->next_in_level) {
+      vftr_stacktree_assign_positions (leaf->next_in_level, pos, indices); 
+   }
+}
+   
+/**********************************************************************/
+
 void vftr_print_stacktree_header (FILE *fp, int n_stacks, char *func_name,
 				  int n_spaces_max, int fmt_calls, int fmt_t, int fmt_imba,
 				  int fmt_send_bytes, int fmt_recv_bytes, int fmt_stackid) {
-	int n_char_tot = n_spaces_max + fmt_calls + fmt_t + fmt_imba + fmt_send_bytes + fmt_recv_bytes + fmt_stackid + 18;
+	int fmt_position = strlen("position");
+	int n_char_tot = n_spaces_max + fmt_calls + fmt_t + fmt_imba + fmt_send_bytes + fmt_recv_bytes + fmt_stackid + fmt_position + 21;
 	char title[64];
 	sprintf (title, "Function stacks leading to %s: %d", func_name, n_stacks);
 	fprintf (fp, "%s", title);
 	for (int i = 0; i < n_spaces_max - strlen(title); i++) fprintf (fp, " ");
-	fprintf (fp, "   %*s   %*s   %*s   %*s   %*s   %*s\n", fmt_t, vftr_stacktree_headers[TIME],
+	fprintf (fp, "   %*s   %*s   %*s   %*s   %*s   %*s   %*s\n", fmt_t, vftr_stacktree_headers[TIME],
 		 fmt_calls, vftr_stacktree_headers[CALLS], fmt_imba, vftr_stacktree_headers[IMBA],
 		 fmt_send_bytes, vftr_stacktree_headers[SEND_BYTES], fmt_recv_bytes, vftr_stacktree_headers[RECV_BYTES],
-		 fmt_stackid, vftr_stacktree_headers[STACK_ID]);
+		 fmt_stackid, vftr_stacktree_headers[STACK_ID], strlen("position"), "position");
 	vftr_print_dashes (fp, n_char_tot);
 }
 
@@ -773,8 +794,7 @@ void vftr_print_stacktree_header (FILE *fp, int n_stacks, char *func_name,
 
 void vftr_print_stacktree (FILE *fp, stack_leaf_t *leaf, int n_spaces, double *imbalances, 
 			   int n_spaces_max, int fmt_calls, int fmt_t, int fmt_imba,
-		           int fmt_send_bytes, int fmt_recv_bytes, int fmt_stackid,
-			   long long *total_time) {
+		           int fmt_send_bytes, int fmt_recv_bytes, int fmt_stackid) {
 	if (!leaf) return;
 	fprintf (fp, vftr_gStackinfo[leaf->stack_id].name);
 	if (leaf->callee) {
@@ -783,13 +803,11 @@ void vftr_print_stacktree (FILE *fp, stack_leaf_t *leaf, int n_spaces, double *i
 		if (n_spaces > 0) new_n_spaces++;
 		vftr_print_stacktree (fp, leaf->callee, new_n_spaces, imbalances,
 				      n_spaces_max, fmt_calls, fmt_t, fmt_imba,
-			              fmt_send_bytes, fmt_recv_bytes, fmt_stackid,
-				      total_time);
+			              fmt_send_bytes, fmt_recv_bytes, fmt_stackid);
 	} else {
 		if (leaf->func_id < 0) {
 			fprintf (fp, "[not on this rank]\n");
 		} else {
-			*total_time += vftr_func_table[leaf->func_id]->prof_current.timeIncl;
 		        fprintf (fp, ":");
 			for (int i = n_spaces + strlen(vftr_gStackinfo[leaf->stack_id].name) + 2; i < n_spaces_max; i++) {
 			   fprintf (fp, " ");
@@ -799,13 +817,13 @@ void vftr_print_stacktree (FILE *fp, stack_leaf_t *leaf, int n_spaces, double *i
 		        double mpi_tot_recv_bytes = vftr_func_table[leaf->func_id]->prof_current.mpi_tot_recv_bytes;
 			vftr_memory_unit (&mpi_tot_send_bytes, &send_unit_str);	
 			vftr_memory_unit (&mpi_tot_recv_bytes, &recv_unit_str);	
-			fprintf (fp, "   %*.6f   %*d   %*.2f   %*.lf %s   %*.lf %s   %*d\n",
+			fprintf (fp, "   %*.6f   %*d   %*.2f   %*.lf %s   %*.lf %s   %*d   %*d\n",
 				 fmt_t, (double)vftr_func_table[leaf->func_id]->prof_current.timeIncl * 1e-6,
 				 fmt_calls, vftr_func_table[leaf->func_id]->prof_current.calls,
 				 fmt_imba, imbalances[leaf->func_id],
 			 	 fmt_send_bytes - 4, mpi_tot_send_bytes, send_unit_str,
 				 fmt_recv_bytes - 4, mpi_tot_recv_bytes, recv_unit_str,
-				 fmt_stackid, leaf->stack_id);
+				 fmt_stackid, leaf->stack_id, strlen("position"), leaf->final_id);
 		}
 	}
 	if (leaf->next_in_level) {
@@ -813,19 +831,32 @@ void vftr_print_stacktree (FILE *fp, stack_leaf_t *leaf, int n_spaces, double *i
 		fprintf (fp, ">");
 		vftr_print_stacktree (fp, leaf->next_in_level, n_spaces, imbalances,
 				      n_spaces_max, fmt_calls, fmt_t, fmt_imba,
-				      fmt_send_bytes, fmt_recv_bytes, fmt_stackid,
-				      total_time);
+				      fmt_send_bytes, fmt_recv_bytes, fmt_stackid);
 	}
 }
 
 /**********************************************************************/
 
-void vftr_print_function_stack (FILE *fp, int rank, char *func_name,
-		           int n_final_stack_ids, int n_final_func_ids,
-			   int *final_stack_ids, int *final_func_ids) {
-	long long all_times [vftr_mpisize];
-	double imbalances [vftr_func_table_size];
+void vftr_create_stacktree (stack_leaf_t **stack_tree, int n_final_stack_ids, int *final_stack_ids) {
+   for (int fsid = 0; fsid < n_final_stack_ids; fsid++) {
+   	int n_functions_in_stack = vftr_stack_length (final_stack_ids[fsid]);
+   	int *stack_ids = (int*)malloc (n_functions_in_stack * sizeof(int));
+   	int stack_id = final_stack_ids[fsid];
+   	int function_id = vftr_gStackinfo[stack_id].locID;
+   	for (int i = 0; i < n_functions_in_stack; i++) {
+   		stack_ids[i] = stack_id;
+   		stack_id = vftr_gStackinfo[stack_id].ret;
+   	}
+   	vftr_fill_into_stack_tree (stack_tree, n_functions_in_stack, stack_ids, function_id);
+   	free (stack_ids);
+   }
+}
+
+/**********************************************************************/
+
+void vftr_stack_compute_imbalances (double **imbalances, int n_final_stack_ids, int *final_stack_ids) {
 #ifdef _MPI
+	long long all_times [vftr_mpisize];
 	for (int fsid = 0; fsid < n_final_stack_ids; fsid++) {
 		int function_idx = vftr_gStackinfo[final_stack_ids[fsid]].locID;
 		long long t = function_idx >= 0 ? vftr_func_table[function_idx]->prof_current.timeIncl : -1.0;
@@ -833,39 +864,79 @@ void vftr_print_function_stack (FILE *fp, int rank, char *func_name,
 				all_times, 1, MPI_LONG_LONG_INT, MPI_COMM_WORLD);
 
 		if (function_idx >= 0) {
-			imbalances[function_idx] = compute_mpi_imbalance (all_times, -1.0);
+			(*imbalances)[function_idx] = compute_mpi_imbalance (all_times, -1.0);
 		}
 	}
 #else
 	for (int i  = 0; i < vftr_func_table_size; i++) {
-		imbalances[i] = 0;
+		(*imbalances)[i] = 0;
 	}
 #endif
-	stack_leaf_t *stack_tree = NULL;
+
+}
+
+/**********************************************************************/
+
+void vftr_stack_get_total_time (stack_leaf_t *leaf, long long *total_time) {
+   if (!leaf) return;
+   if (leaf->callee) {
+	vftr_stack_get_total_time (leaf->callee, total_time);  
+   } else {
+	if (leaf->func_id >= 0) {
+	   *total_time += vftr_func_table[leaf->func_id]->prof_current.timeIncl;
+	}
+   }
+   if (leaf->next_in_level) vftr_stack_get_total_time (leaf->next_in_level, total_time);
+}
+
+/**********************************************************************/
+
+void vftr_print_function_stack (FILE *fp, int rank,
+		                char *func_name, int n_final_stack_ids,
+			        double *imbalances, long long total_time,
+			        stack_leaf_t *stack_tree) {
 	fprintf (fp, "\n");
 	if (n_final_stack_ids == 0) {
 		fprintf (fp, "No stack IDs for %s registered.\n", func_name);
 		return;
 	}
-	for (int fsid = 0; fsid < n_final_stack_ids; fsid++) {
-		int n_functions_in_stack = vftr_stack_length (final_stack_ids[fsid]);
-		int *stack_ids = (int*)malloc (n_functions_in_stack * sizeof(int));
-		int stack_id = final_stack_ids[fsid];
-		int function_id = vftr_gStackinfo[stack_id].locID;
-		for (int i = 0; i < n_functions_in_stack; i++) {
-			stack_ids[i] = stack_id;
-			stack_id = vftr_gStackinfo[stack_id].ret;
-		}
-		vftr_fill_into_stack_tree (&stack_tree, n_functions_in_stack, stack_ids, function_id);
-		free (stack_ids);
-	}
-	long long total_time = 0;
 	int n_spaces_max = 0;
-	double t_max = 0.0;
-	int n_calls_max = 0;
-	double imba_max = 0.0;
-	vftr_scan_for_maximum_values (stack_tree->origin, 0, imbalances,
-				         &n_spaces_max, &t_max, &n_calls_max, &imba_max);	
+	double *t_final = (double*) malloc (n_final_stack_ids * sizeof(double));
+	int *n_calls_final = (int*) malloc (n_final_stack_ids * sizeof(int));	
+	double *imba_final = (double*) malloc (n_final_stack_ids * sizeof(double));
+        int n_final = 0;
+	vftr_scan_for_final_values (stack_tree->origin, 0, imbalances,
+				      &n_spaces_max, &n_final, &t_final, &n_calls_final, &imba_final);	
+	int *rank_final_ids = (int*) malloc (n_final_stack_ids * sizeof(int));
+	double *t_final_sorted = (double*) malloc (n_final_stack_ids * sizeof(double));
+        vftr_sort_double_copy (t_final, n_final, false, &t_final_sorted);
+        for (int i = 0; i < n_final; i++) {
+	   rank_final_ids[i] = -1;
+           double search_for = t_final[i];
+           for (int j = 0; j < n_final; j++) {
+	      if (t_final_sorted[j] == search_for) {
+		 rank_final_ids[i] = j + 1;
+		 break;
+	      }
+           }
+        }
+               
+	vftr_sort_integer (&n_calls_final, n_final, false);
+	vftr_sort_double (&imba_final, n_final, false);
+
+	double t_max = t_final_sorted[0];
+	int n_calls_max = n_calls_final[0];
+	double imba_max = imba_final[0];
+
+        int pos0 = 0;
+        vftr_stacktree_assign_positions (stack_tree->origin, &pos0, rank_final_ids); 
+
+	free (rank_final_ids);
+        free (t_final);
+	free (t_final_sorted);
+        free (n_calls_final);
+        free (imba_final);
+
 	// We have six digits behind the comma for time values. More do not make sense since we have a resolution
 	// of microseconds.
 	// We add this value of 6 to the number of digits in front of the comma, plus one for the comma itself.
@@ -880,8 +951,7 @@ void vftr_print_function_stack (FILE *fp, int rank, char *func_name,
 	vftr_print_stacktree_header (fp, n_final_stack_ids, func_name, n_spaces_max, fmt_calls,
 				     fmt_t, fmt_imba, fmt_mpi_send, fmt_mpi_recv, fmt_stackid);
 	vftr_print_stacktree (fp, stack_tree->origin, 0, imbalances,
-			      n_spaces_max, fmt_calls, fmt_t, fmt_imba, fmt_mpi_send, fmt_mpi_recv, fmt_stackid, &total_time);
-	free (stack_tree);
+			      n_spaces_max, fmt_calls, fmt_t, fmt_imba, fmt_mpi_send, fmt_mpi_recv, fmt_stackid);
 	fprintf (fp, "Total(%s): %lf sec. \n", func_name, (double)total_time * 1e-6);
 }
 

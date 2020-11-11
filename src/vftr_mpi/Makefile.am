@@ -1,14 +1,14 @@
 noinst_LTLIBRARIES = libvftr_mpi.la
 
 SUBDIRS =
-if MPI_PROFILING
+if WITH_MPI
 SUBDIRS += c-wrapper \
            f-wrapper \
            f08-wrapper
 endif
 
 libvftr_mpi_la_SOURCES = vftr_mpi_utils.c
-if MPI_PROFILING
+if WITH_MPI
 libvftr_mpi_la_SOURCES += vftr_requests.c \
 			  vftr_p2p_requests.c \
 			  vftr_persistent_requests.c \
@@ -212,7 +212,7 @@ libvftr_mpi_la_FCFLAGS =
 
 libvftr_mpi_la_CFLAGS += -I${srcdir}/../
 
-if MPI_PROFILING
+if WITH_MPI
 libvftr_mpi_la_CFLAGS += -D_MPI
 libvftr_mpi_la_FCFLAGS += -D_MPI
 endif

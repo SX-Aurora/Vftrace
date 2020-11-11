@@ -13,7 +13,7 @@ do
    # Generate a random message size
    nb=$(bc <<< "32*${RANDOM}")
    nr=$(bc <<< "(${RANDOM}%5)+5")
-   mpirun -np ${nprocs} ./${vftr_binary} ${nb} ${nr} || exit 1
+   ${MPI_EXEC} ${MPI_OPTS} ${NP} ${nprocs} ./${vftr_binary} ${nb} ${nr} || exit 1
 
    # check each rank for the correct message communication
    # patterns in the vfd file

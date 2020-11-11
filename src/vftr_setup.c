@@ -48,6 +48,9 @@ int vftr_mpirank;
 int vftr_mpisize;
 unsigned int vftr_samplecount;
 
+char *vftr_start_date;
+char *vftr_end_date;
+
 void vftr_print_disclaimer_full (FILE *fp) {
     fprintf (fp, 
         "\nThis program is free software; you can redistribute it and/or modify\n"
@@ -73,7 +76,7 @@ void vftr_print_disclaimer (FILE *fp) {
     int rev = REVISION;
     fprintf (fp, "Vftrace version %d.%d.%d\n", v_major, v_minor, rev);
     fprintf (fp, "Runtime profile for application: %s\n", "");
-    fprintf (fp, "Date: "); 
+    fprintf (fp, "Start Date: %s\n", vftr_start_date); 
     fprintf (fp, 
         "This is free software with ABSOLUTELY NO WARRANTY.\n"
         "For details: use vftrace with environment variable VFTR_LICENSE\n"
@@ -121,9 +124,24 @@ void vftr_get_mpi_info (int *rank, int *size) {
 	
 /**********************************************************************/
 
+void vftr_set_start_date () {
+   time_t t;
+   time(&t);
+   vftr_start_date = strdup(ctime (&t));
+}
+
+void vftr_set_end_date () {
+   time_t t;
+   time(&t);
+   vftr_end_date = strdup(ctime (&t));
+}
+
+/**********************************************************************/
+
 void vftr_initialize() {
     // set the timer reference point for this process
     vftr_set_local_ref_time();
+    vftr_set_start_date();
     
     // measure overhead induced by vftrace
     long long overhead_time_start = vftr_get_runtime_usec();
@@ -152,6 +170,7 @@ void vftr_initialize() {
     vftr_get_mpi_info (&vftr_mpirank, &vftr_mpisize);
 
     vftr_logfile_name = vftr_create_logfile_name (vftr_mpirank, vftr_mpisize, "log");
+
     vftr_log = fopen (vftr_logfile_name, "w+");
     assert (vftr_log);
     // Do not buffer when writing into the log file
@@ -285,6 +304,7 @@ void vftr_finalize() {
     function_t **funcTable;
 
     if (vftr_off())  return;
+    vftr_set_end_date();
 
     // get the total runtime
     long long finalize_time = vftr_get_runtime_usec();

@@ -7,7 +7,8 @@ outfile=$testname.out
 
 rm -f $outfile
 if [ "x$HAS_MPI" == "xYES" ]; then
-   $MPI_EXEC $NP 1 ./test_vftrace $testname $ref_in_dir/$testname.json
+   ${MPI_EXEC} ${MPI_OPTS} ${NP} 1 ./test_vftrace \
+      $testname $ref_in_dir/$testname.json
 else
   ./test_vftrace $testname $ref_in_dir/$testname.json
 fi
