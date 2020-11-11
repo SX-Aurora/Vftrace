@@ -19,7 +19,7 @@ do
    for irank in $(seq 0 1 $(bc <<< "${nprocs}-1"));
    do
 
-      ../../../tools/tracedump ${vftr_binary}_${irank}.vfd
+      ../../../tools/vftrace_vfd_dump ${vftr_binary}_${irank}.vfd
 
       my_group=$(bc <<< "(2*${irank})/${nprocs}")
       minlocalpeerrank=$(bc <<< "${my_group}*((${nprocs}+1)/2)")
@@ -35,14 +35,14 @@ do
       # First every process sends the complete sendbuffer to the 0 process of the remote group
       jrank=${minremotepeerrank}
       # Get the actually used message size
-      count=$(../../../tools/tracedump ${vftr_binary}_${irank}.vfd | \
+      count=$(../../../tools/vftrace_vfd_dump ${vftr_binary}_${irank}.vfd | \
               awk '$2=="send" && $3!="end"{getline;print;}' | \
               sed 's/=/ /g' | \
               sort -srnk 2 | \
               awk '{print $2}' | \
               head -n 1 | tail -n 1)
       #get peer process
-      peer=$(../../../tools/tracedump ${vftr_binary}_${irank}.vfd | \
+      peer=$(../../../tools/vftrace_vfd_dump ${vftr_binary}_${irank}.vfd | \
              awk '$2=="send" && $3!="end"{getline;print;}' | \
              sed 's/=/ /g' | \
              sort -srnk 2 | \
@@ -69,14 +69,14 @@ do
          do
             ((ipeer+=1))
             # Get the actually used message size
-            count=$(../../../tools/tracedump ${vftr_binary}_${irank}.vfd | \
+            count=$(../../../tools/vftrace_vfd_dump ${vftr_binary}_${irank}.vfd | \
                     awk '$2=="recv" && $3!="end"{getline;print;}' | \
                     sed 's/=/ /g' | \
                     sort -nk 9 | sort -srnk 2 | \
                     awk '{print $2}' | \
                     head -n ${ipeer} | tail -n 1)
             #get peer process
-            peer=$(../../../tools/tracedump ${vftr_binary}_${irank}.vfd | \
+            peer=$(../../../tools/vftrace_vfd_dump ${vftr_binary}_${irank}.vfd | \
                    awk '$2=="recv" && $3!="end"{getline;print;}' | \
                    sed 's/=/ /g' | \
                    sort -nk 9 | sort -srnk 2 | \
@@ -110,14 +110,14 @@ do
             tmpsize=$(bc <<< "${tmpsize} + (${jrank}-${minlocalpeerrank} >= ${local_group_size}/2) * ((${local_group_size}+1)%2)")
             ((ipeer+=1))
             # Get the actually used message size
-            count=$(../../../tools/tracedump ${vftr_binary}_${irank}.vfd | \
+            count=$(../../../tools/vftrace_vfd_dump ${vftr_binary}_${irank}.vfd | \
                     awk '$2=="send" && $3!="end"{getline;print;}' | \
                     sed 's/=/ /g' | \
                     sort -nk 2 | \
                     awk '{print $2}' | \
                     head -n ${ipeer} | tail -n 1)
             #get peer process
-            peer=$(../../../tools/tracedump ${vftr_binary}_${irank}.vfd | \
+            peer=$(../../../tools/vftrace_vfd_dump ${vftr_binary}_${irank}.vfd | \
                    awk '$2=="send" && $3!="end"{getline;print;}' | \
                    sed 's/=/ /g' | \
                    sort -nk 2 | \
@@ -147,14 +147,14 @@ do
       tmpsize=$(bc <<< "${sbufsize} / ${local_group_size} - ${local_group_size} / 2 + ${irank}-${minlocalpeerrank}")
       tmpsize=$(bc <<< "${tmpsize} + (${irank}-${minlocalpeerrank} >= ${local_group_size}/2) * ((${local_group_size}+1)%2)")
       # Get the actually used message size
-      count=$(../../../tools/tracedump ${vftr_binary}_${irank}.vfd | \
+      count=$(../../../tools/vftrace_vfd_dump ${vftr_binary}_${irank}.vfd | \
               awk '$2=="recv" && $3!="end"{getline;print;}' | \
               sed 's/=/ /g' | \
               sort -nk 2 | \
               awk '{print $2}' | \
               head -n 1 | tail -n 1)
       #get peer process
-      peer=$(../../../tools/tracedump ${vftr_binary}_${irank}.vfd | \
+      peer=$(../../../tools/vftrace_vfd_dump ${vftr_binary}_${irank}.vfd | \
              awk '$2=="recv" && $3!="end"{getline;print;}' | \
              sed 's/=/ /g' | \
              sort -nk 2 | \

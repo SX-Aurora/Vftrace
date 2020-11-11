@@ -19,7 +19,7 @@ do
    # patterns in the vfd file
    for irank in $(seq 0 1 $(bc <<< "${nprocs}-1"));
    do
-      ../../../tools/tracedump ${vftr_binary}_${irank}.vfd
+      ../../../tools/vftrace_vfd_dump ${vftr_binary}_${irank}.vfd
 
       my_group=$(bc <<< "(2*${irank})/${nprocs}")
       if [ "${my_group}" -eq "0" ] ; then
@@ -34,14 +34,14 @@ do
                ((ipeer+=1))
                # Validate receiving
                # Get actually used message size
-               count=$(../../../tools/tracedump ${vftr_binary}_${irank}.vfd | \
+               count=$(../../../tools/vftrace_vfd_dump ${vftr_binary}_${irank}.vfd | \
                        awk '$2=="send" && $3!="end"{getline;print;}' | \
                        sed 's/=/ /g' | \
                        sort -nk 9 | \
                        awk '{print $2}' | \
                        head -n ${ipeer} | tail -n 1)
                # get peer process
-               peer=$(../../../tools/tracedump ${vftr_binary}_${irank}.vfd | \
+               peer=$(../../../tools/vftrace_vfd_dump ${vftr_binary}_${irank}.vfd | \
                       awk '$2=="send" && $3!="end"{getline;print;}' | \
                       sed 's/=/ /g' | \
                       sort -nk 9 | \
@@ -65,7 +65,7 @@ do
          else
             # Non participating processes in the sending group
             # must not show any communication
-            ncom=$(../../../tools/tracedump ${vftr_binary}_${irank}.vfd | \
+            ncom=$(../../../tools/vftrace_vfd_dump ${vftr_binary}_${irank}.vfd | \
                    awk '($2=="send" || $2=="recv") && $3!="end"{getline;print;}' | \
                    wc -l)
             if [[ "${ncomm}" -ne "0" ]] ; then
@@ -77,14 +77,14 @@ do
       else
          # the receiving group
          # Get actually used message size
-         count=$(../../../tools/tracedump ${vftr_binary}_${irank}.vfd | \
+         count=$(../../../tools/vftrace_vfd_dump ${vftr_binary}_${irank}.vfd | \
                  awk '$2=="recv" && $3!="end"{getline;print;}' | \
                  sed 's/=/ /g' | \
                  sort -nk 9 | \
                  awk '{print $2}' | \
                  head -n 1)
          # get peer process
-         peer=$(../../../tools/tracedump ${vftr_binary}_${irank}.vfd | \
+         peer=$(../../../tools/vftrace_vfd_dump ${vftr_binary}_${irank}.vfd | \
                 awk '$2=="recv" && $3!="end"{getline;print;}' | \
                 sed 's/=/ /g' | \
                 sort -nk 9 | \

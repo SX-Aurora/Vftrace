@@ -12,7 +12,7 @@ ${MPI_EXEC} ${MPI_OPTS} ${NP} ${nprocs} ./${vftr_binary} || exit 1
 for ivfd in $(seq 0 1 $(bc <<< "${nprocs} - 1"));
 do
 
-   ../../../tools/tracedump ${vftr_binary}_${ivfd}.vfd
+   ../../../tools/vftrace_vfd_dump ${vftr_binary}_${ivfd}.vfd
 
    itype=0
    for mpitype in MPI_CHAR MPI_SHORT MPI_INT MPI_LONG MPI_LONG_LONG_INT \
@@ -26,7 +26,7 @@ do
                   MPI_BYTE ;
    do
       ((itype+=1))
-      tmptype=$(../../../tools/tracedump ${vftr_binary}_${ivfd}.vfd | \
+      tmptype=$(../../../tools/vftrace_vfd_dump ${vftr_binary}_${ivfd}.vfd | \
                 awk '($2=="send" || $2=="recv") && $3!="end"{getline;print;}' | \
                 sed 's/=/ /g;s/(/ /g' | \
                 awk '{print $4}' | \
