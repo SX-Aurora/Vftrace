@@ -127,13 +127,15 @@ void vftr_start_hwcounters () {
     evtcounter_t *e;
     int diag;
 
-    for (int i = 0, e = first_counter; e; i++, e = e->next) {
+    e = first_counter;
+    for (int i = 0; e; i++) {
            if ((diag = PAPI_add_event(papi_event_set, e->id)) != PAPI_OK) {
 	       PAPI_perror (errmsg);
 	       fprintf(vftr_log, "vftr_start_hwcounters - "
                                  "PAPI_add_event error: %s when adding %s\n",
                                  errmsg, e->name );
            }
+           e = e->next;
     }
     if (eventset_is_filled()) {
     	if ((diag = PAPI_start(papi_event_set)) != PAPI_OK) {
@@ -254,7 +256,7 @@ void vftr_read_counters_papi (long long *event) {
     if (event == NULL) return;
     if (hwc_event_num > 0) {
         if (papi_event_set != PAPI_NULL) {
-            if ((diag = PAPI_read(vftr_echwc)) != PAPI_OK) {
+            if ((diag = PAPI_read(papi_event_set, vftr_echwc)) != PAPI_OK) {
                 fprintf(vftr_log, "error: PAPI_read returned %d\n", diag);
     	}
         }
@@ -279,7 +281,6 @@ void vftr_read_counters_dummy (long long *event) {
 int vftr_stop_hwc () {
     int diag = 0;
 #if defined(HAS_PAPI)
-    int diag;
     long long ec[MAX_HWC_EVENTS];
     if ((diag = PAPI_stop(papi_event_set, ec)) != PAPI_OK)
     fprintf(vftr_log, "vftr_stop_hwc error: PAPI_stop returned %d\n", diag);
