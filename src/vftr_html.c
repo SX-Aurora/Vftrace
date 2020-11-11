@@ -506,6 +506,8 @@ FILE *vftr_html_init_profile_table () {
        vftr_make_html_indent (fp, 0, 2);
        fprintf (fp, "border-collapse: collapse;\n");
        vftr_make_html_indent (fp, 0, 1);
+       fprintf (fp, "padding: 2px 12px 2px 23px;\n");
+       vftr_make_html_indent (fp, 0, 1);
        fprintf (fp, "}\n");
        vftr_make_html_indent (fp, 0, 1);
        fprintf (fp, "th {\n");
@@ -525,8 +527,8 @@ void vftr_html_create_profile_header (FILE *fp) {
    fprintf (fp, "<table>\n");
    fprintf (fp, "<tr>\n");
    fprintf (fp, "<th>Calls</th>\n");
-   fprintf (fp, "<th>Excl. time</th>\n");
-   fprintf (fp, "<th>Incl. time</th>\n");
+   fprintf (fp, "<th>Excl. time [s]</th>\n");
+   fprintf (fp, "<th>Incl. time [s]</th>\n");
    fprintf (fp, "<th>%%abs</th>\n");
    fprintf (fp, "<th>%%cum</th>\n");
    fprintf (fp, "<th>Function</th>\n");
