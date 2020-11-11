@@ -400,18 +400,19 @@ void vftr_print_stacktree_to_html (FILE *fp, stack_leaf_t *leaf, int n_spaces, d
 	          vftr_make_html_indent (fp, n_spaces, 0);
 	          fprintf (fp, "Position: %d<br>\n", leaf->final_id);
 	          vftr_make_html_indent (fp, n_spaces, 0);
-		  fprintf (fp, "Time %lf s<br>\n", vftr_func_table[leaf->func_id]->prof_current.timeIncl * 1e-6);
+		  double t = vftr_func_table[leaf->func_id]->prof_current.timeIncl * 1e-6;
+		  fprintf (fp, "Time %*.3f s<br>\n", vftr_count_digits_double (t), t);
 	          vftr_make_html_indent (fp, n_spaces, 0);
-		  if (imbalances != NULL) fprintf (fp, "Imbalance: %lf %<br>\n", imbalances[leaf->func_id]);
+		  if (imbalances != NULL) fprintf (fp, "Imbalance: %6.2f %<br>\n", imbalances[leaf->func_id]);
 		  double n_bytes = vftr_func_table[leaf->func_id]->prof_current.mpi_tot_send_bytes;
 		  char *unit_str;
 		  vftr_memory_unit (&n_bytes, &unit_str);
 	          vftr_make_html_indent (fp, n_spaces, 0);
-		  fprintf (fp, "Send: %lf %s<br>\n", n_bytes, unit_str);
+		  fprintf (fp, "Send: %*.2f %s<br>\n", vftr_count_digits_double (n_bytes), n_bytes, unit_str);
 		  n_bytes = vftr_func_table[leaf->func_id]->prof_current.mpi_tot_recv_bytes;
 		  vftr_memory_unit (&n_bytes, &unit_str);
 	          vftr_make_html_indent (fp, n_spaces, 0);
-		  fprintf (fp, "Recv: %lf %s<br>\n", n_bytes, unit_str);
+		  fprintf (fp, "Recv: %*.2f %s<br>\n", vftr_count_digits_double(n_bytes), n_bytes, unit_str);
 	     }
 	}
 
