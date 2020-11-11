@@ -200,13 +200,13 @@ li.dropdown {
                </a>
                <ul>
                   <li>
-                     <a hfref="#" style="background-color: #edebeb">C
+                     <a hfref="#" style="background-color: rgb(255,255,0)">C
                         <ttt class="ttt">function name: C
                         <br>n_calls: 5
                         </ttt>
                      </a>
                      <hr/>
-                     Position: 0<br>
+                     Position: 1<br>
                      Time 0.000 s<br>
                                           Send: 0.00   B<br>
                      Recv: 0.00   B<br>
@@ -220,13 +220,13 @@ li.dropdown {
                   </a>
                   <ul>
                      <li>
-                        <a hfref="#" style="background-color: #edebeb">C
+                        <a hfref="#" style="background-color: rgb(255,255,0)">C
                            <ttt class="ttt">function name: C
                            <br>n_calls: 6
                            </ttt>
                         </a>
                         <hr/>
-                        Position: 0<br>
+                        Position: 1<br>
                         Time 0.000 s<br>
                                                 Send: 0.00   B<br>
                         Recv: 0.00   B<br>

@@ -69,6 +69,7 @@ void vftr_write_to_vfd (long long runtime, unsigned long long cycles, int stack_
 #ifdef _MPI
 double compute_mpi_imbalance (long long *all_times, double t_avg);
 #endif
+bool vftr_is_collective_mpi_function (char *func_name);
 
 void vftr_store_message_info(vftr_direction dir, int count, int type_idx,
                              int type_size, int rank, int tag,
