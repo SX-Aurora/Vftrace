@@ -18,6 +18,7 @@
 
 #include <stdint.h>
 #include <stdlib.h>
+#include <stdbool.h>
 
 // sorts a list of unsigned 64 bit integer with linear scaling radix sort
 // one bit at a time
@@ -53,3 +54,80 @@ void vftr_radixsort_uint64(int n, uint64_t *list) {
    return;
 }
 
+/**********************************************************************/
+
+int vftr_compare_integer_ascending (const void *a1, const void *a2) {
+   return (*(int*)a1 - *(int*)a2);
+}
+
+int vftr_compare_integer_descending (const void *a1, const void *a2) {
+   return (*(int*)a2 - *(int*)a1);
+}
+
+int vftr_compare_double_ascending (const void *a1, const void *a2) {
+   double diff = *(double*)a1 - *(double*)a2;
+   if (diff > 0) return 1;
+   if (diff < 0) return -1;
+   return 0;
+}
+
+int vftr_compare_double_descending (const void *a1, const void *a2) {
+   double diff = *(double*)a2 - *(double*)a1;
+   if (diff > 0) return 1;
+   if (diff < 0) return -1;
+   return 0;
+}
+
+void vftr_sort_integer (int **i_array, int n, bool ascending) {
+   int *tmp = (int*)malloc (n * sizeof(int));
+   for (int i = 0; i < n; i++) {
+      tmp[i] = (*i_array)[i];
+   }
+
+   if (ascending) {
+      qsort (tmp, (size_t)n, sizeof(int), vftr_compare_integer_ascending);
+   } else {
+      qsort (tmp, (size_t)n, sizeof(int), vftr_compare_integer_descending);
+   }
+
+   for (int i = 0; i < n; i++) {
+      (*i_array)[i] = tmp[i];
+   }
+   free(tmp);
+}
+
+void vftr_sort_double (double **d_array, int n, bool ascending) {
+   double *tmp = (double*) malloc (n * sizeof(double)); 
+   for (int i = 0; i < n; i++) {
+      tmp[i] = (*d_array)[i];
+   }
+
+   if (ascending) {
+      qsort (tmp, (size_t)n, sizeof(double), vftr_compare_double_ascending);
+   } else {
+      qsort (tmp, (size_t)n, sizeof(double), vftr_compare_double_descending);
+   }
+
+   for (int i = 0; i < n; i++) {
+      (*d_array)[i] = tmp[i];
+   }
+   free(tmp);
+}
+
+void vftr_sort_double_copy (double *d_array, int n, bool ascending, double **d_copy) {
+   double *tmp = (double*) malloc (n * sizeof(double)); 
+   for (int i = 0; i < n; i++) {
+      tmp[i] = d_array[i];
+   }
+
+   if (ascending) {
+      qsort (tmp, (size_t)n, sizeof(double), vftr_compare_double_ascending);
+   } else {
+      qsort (tmp, (size_t)n, sizeof(double), vftr_compare_double_descending);
+   }
+
+   for (int i = 0; i < n; i++) {
+      (*d_copy)[i] = tmp[i];
+   }
+   free(tmp);
+}

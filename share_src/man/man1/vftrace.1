@@ -231,6 +231,13 @@ different modules only by their name. Instead, the stack ID has to be used. Also
 might be different, depending on the compiler or linker. In this case, the logfile output
 appears as in the case where the environment variable is not set.
 .\"
+.IP "\fBVFTR_CREATE_HTML\fR"
+.IX Item "VFTR_CREATE_HTML"
+This option creates the browser view output of stack trees and profie tables. In the application directory,
+a directory called html is created. In there is an index.html as well as files for each rank and MPI function.
+It can be viewed with a common browser, either by downloading the entire html directory to your local machine,
+or by accessing it remotely (given suitable network configurations).
+.\"
 .SS LIBRARY FUNCTIONS
 .IX Subsection "LIBRARY FUNCTIONS"
 Vftrace provides library functions which can be included in a C or Fortran application

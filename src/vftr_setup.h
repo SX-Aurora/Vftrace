@@ -27,6 +27,9 @@ extern int vftr_mpirank;
 extern int vftr_mpisize;
 extern unsigned int vftr_samplecount;
 
+extern char *vftr_start_date;
+extern char *vftr_end_date;
+
 void vftr_initialize ();
 void vftr_finalize () ;
 
