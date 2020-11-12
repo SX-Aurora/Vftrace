@@ -408,7 +408,6 @@ void vftr_browse_print_stacktree (FILE *fp, stack_leaf_t *leaf, int n_spaces, do
 		  double t = vftr_func_table[leaf->func_id]->prof_current.timeIncl * 1e-6;
 		  char *t_unit;
 		  vftr_time_unit (&t, &t_unit, true); 
-		  if (vftr_mpirank == 63) printf ("Time spent in %s: %lf %s\n", vftr_gStackinfo[leaf->stack_id].name, t, t_unit);
 		  fprintf (fp, "Time %6.2f %s<br>\n", t, t_unit);
 	          vftr_browse_make_html_indent (fp, n_spaces, 0);
 		  if (imbalances != NULL) {

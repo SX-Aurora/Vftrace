@@ -1387,6 +1387,12 @@ void vftr_memory_unit(double *value, char **unit) {
 
 void vftr_time_unit (double *value, char **unit, bool for_html) {
    int unit_idx = 0;
+   // Explicitly treat zero. Otherwise, the loop below will be indefinite.
+   if (*value == 0.0) {
+      *unit = "s";
+      return;
+   }
+
    while (*value < 1.0) {
 	unit_idx++;
 	*value *= 1000;
