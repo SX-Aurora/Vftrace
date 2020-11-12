@@ -69,7 +69,15 @@ int vftr_compare_integer_ascending (const void *a1, const void *a2) {
 }
 
 int vftr_compare_integer_descending (const void *a1, const void *a2) {
-   return (*(int*)a2 - *(int*)a1);
+   int ia1 = *(int*)a1;
+   int ia2 = *(int*)a2;
+   if (ia1 < ia2) {
+      return 1;
+   } else if (ia1 > ia2) {
+      return -1;
+   } else {
+      return 0;
+   }
 }
 
 int vftr_compare_double_ascending (const void *a1, const void *a2) {
