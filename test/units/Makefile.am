@@ -67,6 +67,14 @@ dist_check_SCRIPTS += vftr_sxhwc_test_1.sh
 endif
 endif
 
+check_PROGRAMS += radixsort_uint64
+
+radixsort_uint64_SOURCES = $(srcdir)/radixsort_uint64.c
+radixsort_uint64_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
+radixsort_uint64_LDFLAGS = $(AM_LDFLAGS)
+
+dist_check_SCRIPTS += radixsort_uint64.sh
+
 TEST_EXTENSIONS = .sh
 SH_LOG_COMPILER = $(SHELL)
 

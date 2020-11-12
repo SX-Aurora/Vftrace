@@ -70,4 +70,7 @@ AC_CONFIG_LINKS(test/units/this_passes.sh:test/units/this_passes.sh
 AM_COND_IF([WITH_MPI],
            [AC_CONFIG_LINKS(test/units/vftr_stacks_test_2.sh:test/units/vftr_stacks_test_2.sh)]
           )
+
+AC_CONFIG_LINKS(test/units/radixsort_uint64.sh:test/units/radixsort_uint64.sh
+               )
 ])
