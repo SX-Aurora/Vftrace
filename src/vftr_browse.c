@@ -542,6 +542,7 @@ FILE *vftr_browse_init_profile_table () {
 /**********************************************************************/
 
 void vftr_browse_create_profile_header (FILE *fp) {
+   fprintf (fp, "<h2>Runtime profile for rank %d</h2>\n", vftr_mpirank);
    fprintf (fp, "<table>\n");
    fprintf (fp, "<tr>\n");
    fprintf (fp, "<th>Calls</th>\n");
