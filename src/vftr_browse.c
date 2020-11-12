@@ -364,16 +364,16 @@ void vftr_browse_print_tree_element (FILE *fp, int final_id, int stack_id, int f
 	} else {
 	   fprintf (fp, "<a hfref=\"#\" style=\"background-color: #edebeb\">%s\n", vftr_gStackinfo[stack_id].name);
 	}
-	vftr_browse_make_html_indent (fp, n_spaces + 3, 0);
-	fprintf (fp, "<ttt class=\"ttt\">function name: %s\n", vftr_gStackinfo[stack_id].name);
-	vftr_browse_make_html_indent (fp, n_spaces + 3, 0);
-	if (func_id < 0) {
-	   fprintf (fp, "<br>n_calls: %d\n", -1);
-	} else {
-	   fprintf (fp, "<br>n_calls: %lld\n", vftr_func_table[func_id]->prof_current.calls);
-	}
-	vftr_browse_make_html_indent (fp, n_spaces + 3, 0);
-	fprintf (fp, "</ttt>\n");
+	//vftr_browse_make_html_indent (fp, n_spaces + 3, 0);
+	//fprintf (fp, "<ttt class=\"ttt\">function name: %s\n", vftr_gStackinfo[stack_id].name);
+	//vftr_browse_make_html_indent (fp, n_spaces + 3, 0);
+	//if (func_id < 0) {
+	//   fprintf (fp, "<br>n_calls: %d\n", -1);
+	//} else {
+	//   fprintf (fp, "<br>n_calls: %lld\n", vftr_func_table[func_id]->prof_current.calls);
+	//}
+	//vftr_browse_make_html_indent (fp, n_spaces + 3, 0);
+	//fprintf (fp, "</ttt>\n");
 	vftr_browse_make_html_indent (fp, n_spaces, 0);
 	fprintf (fp, "</a>\n");
 }
@@ -403,10 +403,21 @@ void vftr_browse_print_stacktree (FILE *fp, stack_leaf_t *leaf, int n_spaces, do
 	          vftr_browse_make_html_indent (fp, n_spaces, 0);
 	          fprintf (fp, "Position: %d<br>\n", leaf->final_id);
 	          vftr_browse_make_html_indent (fp, n_spaces, 0);
-		  double t = vftr_func_table[leaf->func_id]->prof_current.timeIncl * 1e-6;
-		  fprintf (fp, "Time %*.3f s<br>\n", vftr_count_digits_double (t), t);
+		  fprintf (fp, "Calls: %d<br>\n", vftr_func_table[leaf->func_id]->prof_current.calls);
 	          vftr_browse_make_html_indent (fp, n_spaces, 0);
-		  if (imbalances != NULL) fprintf (fp, "Imbalance: %6.2f %%<br>\n", imbalances[leaf->func_id]);
+		  double t = vftr_func_table[leaf->func_id]->prof_current.timeIncl * 1e-6;
+		  char *t_unit;
+		  vftr_time_unit (&t, &t_unit, true); 
+		  if (vftr_mpirank == 63) printf ("Time spent in %s: %lf %s\n", vftr_gStackinfo[leaf->stack_id].name, t, t_unit);
+		  fprintf (fp, "Time %6.2f %s<br>\n", t, t_unit);
+	          vftr_browse_make_html_indent (fp, n_spaces, 0);
+		  if (imbalances != NULL) {
+			if (imbalances[leaf->func_id] > 0.0) {
+			   fprintf (fp, "Imbalance: %6.2f %%<br>\n", imbalances[leaf->func_id]);
+			} else {
+			   fprintf (fp, "Imbalance: -/-<br>\n");
+			}
+		  }	
 		  double n_bytes = vftr_func_table[leaf->func_id]->prof_current.mpi_tot_send_bytes;
 		  char *unit_str;
 		  vftr_memory_unit (&n_bytes, &unit_str);

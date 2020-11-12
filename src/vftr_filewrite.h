@@ -87,5 +87,6 @@ int vftr_filewrite_test_2 (FILE *fp_in, FILE *fp_out);
 void vftr_print_mpi_statistics (FILE *pout);
 
 void vftr_memory_unit(double *value, char **unit);
+void vftr_time_unit (double *value, char **unit, bool for_html);
 
 #endif

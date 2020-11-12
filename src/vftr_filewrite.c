@@ -1385,3 +1385,28 @@ void vftr_memory_unit(double *value, char **unit) {
 
 /**********************************************************************/
 
+void vftr_time_unit (double *value, char **unit, bool for_html) {
+   int unit_idx = 0;
+   while (*value < 1.0) {
+	unit_idx++;
+	*value *= 1000;
+   }
+
+   switch (unit_idx) {
+      case 0:
+	  *unit = "s";
+	  break;
+      case 1:
+	  *unit = "ms";
+	  break;
+      case 2:
+	  *unit = for_html ? "&#956s" : "mus";
+	  break;
+      case 3:
+	  *unit = "ns";
+          break;
+   }
+}
+
+/**********************************************************************/
+
