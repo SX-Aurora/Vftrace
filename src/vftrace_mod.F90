@@ -38,6 +38,8 @@ module vftrace
    public :: vftrace_pause, &
              vftrace_resume
 
+   public :: vftrace_get_stacktree_size
+
    interface
 
       ! pause and resume sampling via vftrace in user code
@@ -50,6 +52,17 @@ module vftrace
          bind(c, name="vftrace_resume")
          implicit none
       end subroutine
+
+   end interface
+
+   interface 
+
+      function vftrace_get_stacktree_size() &
+         bind(c, name="vftrace_get_stacktree_size")
+         use iso_c_binding, only: c_int
+         implicit none
+         integer(kind=c_int) :: vftrace_get_stacktree_size
+      end function vftrace_get_stacktree_size
 
    end interface
 
@@ -146,5 +159,5 @@ contains
          vftrace_get_stack(i:i+1) = tmpstring(i)
       end do
    end function vftrace_get_stack
-   
+
 end module vftrace

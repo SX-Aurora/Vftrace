@@ -28,7 +28,7 @@
 #include "vftr_timer.h"
 #include "vftr_setup.h"
 #include "vftr_hooks.h"
-#include "vftr_html.h"
+#include "vftr_browse.h"
 #include "vftr_filewrite.h"
 #include "vftr_fileutils.h"
 #include "vftr_sorting.h"
@@ -732,17 +732,19 @@ void vftr_fill_into_stack_tree (stack_leaf_t **this_leaf, int n_stack_ids,
 /**********************************************************************/
 
 void vftr_scan_for_final_values (stack_leaf_t *leaf, int this_n_spaces, double *imbalances,
-				   int *n_spaces_max, int *n_final, double **t_final, int **n_calls_final, double **imba_final) {
+				   int *n_spaces_max, int *n_chars_max, int *n_final, double **t_final, int **n_calls_final, double **imba_final) {
 	if (!leaf) return;
 	if (leaf->callee) {
 		int new_n_spaces = this_n_spaces + strlen(vftr_gStackinfo[leaf->stack_id].name);
 		if (this_n_spaces > 0) new_n_spaces++;
 		vftr_scan_for_final_values (leaf->callee, new_n_spaces, imbalances,
-					      n_spaces_max, n_final, t_final, n_calls_final, imba_final);
+					      n_spaces_max, n_chars_max, n_final, t_final, n_calls_final, imba_final);
 	} else {
 		int new_n_spaces = this_n_spaces + strlen(vftr_gStackinfo[leaf->stack_id].name) + 1; // + 1 for the colon at the end
 		if (this_n_spaces > 0) new_n_spaces++;
 		if (new_n_spaces > *n_spaces_max) *n_spaces_max = new_n_spaces;
+		   int this_n_chars = leaf->func_id > 0 ? strlen(vftr_func_table[leaf->func_id]->name) : strlen("[not on this rank]");
+		   if (this_n_chars > *n_chars_max) *n_chars_max = this_n_chars;
 		if (leaf->func_id > 0) {
 		   double this_t = (double)vftr_func_table[leaf->func_id]->prof_current.timeIncl * 1e-6;
 		   (*t_final)[*n_final] = this_t;
@@ -754,7 +756,7 @@ void vftr_scan_for_final_values (stack_leaf_t *leaf, int this_n_spaces, double *
 	}
 	if (leaf->next_in_level) {
 		vftr_scan_for_final_values (leaf->next_in_level, this_n_spaces, imbalances,
-					      n_spaces_max, n_final, t_final, n_calls_final, imba_final);
+					    n_spaces_max, n_chars_max, n_final, t_final, n_calls_final, imba_final);
 	}
 }
 
@@ -893,14 +895,15 @@ void vftr_stack_get_total_time (stack_leaf_t *leaf, long long *total_time) {
 /**********************************************************************/
 
 void vftr_scan_stacktree (stack_leaf_t *stack_tree, int n_final_stack_ids, double *imbalances,
-			  double *t_max, int *n_calls_max, double *imba_max, int *n_spaces_max) {
+			  double *t_max, int *n_calls_max, double *imba_max, int *n_spaces_max, int *n_chars_max) {
    *n_spaces_max = 0;
+   *n_chars_max = 0;
    double *t_final = (double*) malloc (n_final_stack_ids * sizeof(double));
    int *n_calls_final = (int*) malloc (n_final_stack_ids * sizeof(int));	
    double *imba_final = (double*) malloc (n_final_stack_ids * sizeof(double));
    int n_final = 0;
    vftr_scan_for_final_values (stack_tree->origin, 0, imbalances,
-   		               n_spaces_max, &n_final, &t_final, &n_calls_final, &imba_final);	
+   		               n_spaces_max, n_chars_max, &n_final, &t_final, &n_calls_final, &imba_final);	
 
    int *rank_final_ids = (int*) malloc (n_final_stack_ids * sizeof(int));
    double *t_final_sorted = (double*) malloc (n_final_stack_ids * sizeof(double));

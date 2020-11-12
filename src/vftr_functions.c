@@ -23,6 +23,7 @@
 #include <ctype.h>
 #include <stdbool.h>
 
+#include "vftr_setup.h"
 #include "vftr_symbols.h"
 #include "vftr_stacks.h"
 #include "vftr_hashing.h"
@@ -373,6 +374,13 @@ void vftr_strip_all_module_names () {
 		vftr_func_table[i]->name = vftr_strip_module_name (vftr_func_table[i]->name);
 	}
 }
+
+/**********************************************************************/
+
+int vftrace_show_stacktree_size () {
+   return vftr_stackscount;
+}
+
 /**********************************************************************/
 
 int vftr_functions_test_1 (FILE *fp_in, FILE *fp_out) {

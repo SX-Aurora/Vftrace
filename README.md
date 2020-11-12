@@ -2,7 +2,7 @@
 
 ## About
 
-Vftrace (visual ftrace) is a performance profiling library with a focus on applications in high-performance computing (HPC). It is compatible with C and Fortran. It supports NEC's SX Aurora vector architecture and x86 architectures. On top of that, Vftrace can be linked against Veperf (SX Aurora) or PAPI (x86) to measure hardware counters. These hardware counters can be transformed into user-defined performance observables, such as GFLOPS or vector length, using json configuration files.
+Vftrace (visual ftrace) is a performance profiling library with a focus on applications in high-performance computing (HPC). It is compatible with C and Fortran. It supports NEC's SX Aurora vector architecture and x86 architectures. On top of that, Vftrace can be linked against the PAPI library to measure hardware counters on X86 processors. Hardware counter access for SX-Aurora architectures is already build into Vftrace and does not require addtional libraries. These hardware counters can be transformed into user-defined performance observables, such as GFLOPS or vector length, using json configuration files.
 Vftrace produces an overview of the function calls appearing during an application's runtime and registers the call number and the time spent in the code parts. If hardware observables are defined, their value is also reported.
 The generated profile can be visualized and analyzed with the Vfview tool.
 
@@ -108,6 +108,9 @@ The environment variable `VFTR_SCENARIO_FILE` is used to read in the scenario fi
 ## Graphical User Interface
 
 The graphical visualization tool for Vtrace profiles, Vfview, is located at https://github.com/SX-Aurora/Vfview.
+
+With the environment variable `VFTRACE_CREATE_HTML`, Vftrace produces a graphical visualization of profiling results as HTML output. In the application directory, a directory called "browse" is created. In there is an index.html, which can be opened with
+a usual web browser. It allows for navigation between different views, MPI ranks and MPI collective functions.You can either download the entire browse directory to your local machine, or access it remotely (given suitable network configurations).
 
 ## Authors
 

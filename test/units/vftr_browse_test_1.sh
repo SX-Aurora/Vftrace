@@ -2,7 +2,7 @@
 set -x
 ref_out_dir=ref_output
 ref_in_dir=ref_input
-testname=vftr_html_test_1
+testname=vftr_browse_test_1
 outfile=$testname.out
 
 rm -f $outfile
