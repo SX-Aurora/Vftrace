@@ -109,7 +109,8 @@ The environment variable `VFTR_SCENARIO_FILE` is used to read in the scenario fi
 
 The graphical visualization tool for Vtrace profiles, Vfview, is located at https://github.com/SX-Aurora/Vfview.
 
-With the environment variable `VFTRACE_CREATE_HTML` active Vftrace will produce a set of html files containing information about stack trees and profile tables. In the application directory, a directory called html is created. In there is an index.html as well as files for each rank and MPI  function. It can be visualized with a common browser, either by downloading the entire html directory to your local machine, or by accessing it remotely (given suitable network configurations).
+With the environment variable `VFTRACE_CREATE_HTML`, Vftrace produces a graphical visualization of profiling results as HTML output. In the application directory, a directory called "browse" is created. In there is an index.html, which can be opened with
+a usual web browser. It allows for navigation between different views, MPI ranks and MPI collective functions.You can either download the entire browse directory to your local machine, or access it remotely (given suitable network configurations).
 
 ## Authors
 
