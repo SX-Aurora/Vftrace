@@ -433,16 +433,16 @@ void vftr_browse_print_stacktree_page (FILE *fp_out, bool is_empty, char *func_n
 	FILE *fp;
 	char *this_func_name = func_names[this_i_func];
 	if (!fp_out) {
-	   char outdir[strlen(this_func_name) + 6];
-	   snprintf (outdir, strlen(this_func_name) + 6, "browse/%s", this_func_name);
+	   char outdir[strlen(this_func_name) + 8];
+	   snprintf (outdir, strlen(this_func_name) + 8, "browse/%s", this_func_name);
 	   if (vftr_mpirank == 0) {
 	      mkdir (outdir, 0777);
 	   }
 #ifdef _MPI
 	   PMPI_Barrier(MPI_COMM_WORLD);
 #endif
-	   char html_filename[2*(strlen(this_func_name) + 6)];
-	   snprintf (html_filename, 2*(strlen(this_func_name) + 6) + vftr_count_digits(vftr_mpisize) + 1,
+	   char html_filename[2*(strlen(this_func_name) + 8)];
+	   snprintf (html_filename, 2*(strlen(this_func_name) + 8) + vftr_count_digits(vftr_mpisize) + 1,
 		     "%s/%s_%d.html", outdir, this_func_name, vftr_mpirank);
 	   fp = fopen (html_filename, "w");
         } else {
