@@ -118,7 +118,7 @@ void vftr_stack_compute_imbalances (double **imbalances, int n_final_stack_ids, 
 void vftr_stack_get_total_time (stack_leaf_t *leaf, long long *total_time);
 void vftr_create_stacktree (stack_leaf_t **stack_tree, int n_final_stack_ids, int *final_stack_ids);
 void vftr_scan_stacktree (stack_leaf_t *stack_tree, int n_final_stack_ids, double *imbalances,
-			  double *t_max, int *n_calls_max, double *imba_max, int *n_spaces_max);
+			  double *t_max, int *n_calls_max, double *imba_max, int *n_spaces_max, int *n_chars_max);
 void vftr_print_function_stack (FILE *fp, char *func_name, int n_final_stack_ids,
 			        double *imbalances, long long total_time,
 			        double t_max, int n_calls_max, double imba_max, int n_spaces_max, 

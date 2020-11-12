@@ -28,7 +28,10 @@
 
 /**********************************************************************/
 
-void vftr_browse_print_css_header (FILE *fp) {
+#define TREE_EXTRA_SPACES 10
+#define CSS_DEFAULT_WIDTH 1000
+
+void vftr_browse_print_css_header (FILE *fp, int n_chars_max, int n_final) {
 
    fprintf (fp, "<style>\n");
    fprintf (fp, "*,\n");
@@ -68,7 +71,7 @@ void vftr_browse_print_css_header (FILE *fp) {
    fprintf (fp, "\n");
    fprintf (fp, ".nav {\n");
    fprintf (fp, "  margin: 100px auto;\n");
-   fprintf (fp, "  width: 5000px;\n");
+   fprintf (fp, "  width: %dch;\n", (n_chars_max + TREE_EXTRA_SPACES) * n_final);
    fprintf (fp, "  min-height: auto;\n");
    fprintf (fp, "}\n");
    fprintf (fp, "\n");
@@ -316,7 +319,7 @@ void vftr_browse_print_navigation_bars (FILE *fp, char *func_names[], int n_func
 
 void vftr_browse_print_index_html (char *func_names[], int n_funcs) {
    FILE *fp = fopen ("browse/index.html", "w+");
-   vftr_browse_print_css_header (fp);
+   vftr_browse_print_css_header (fp, CSS_DEFAULT_WIDTH, 1);
    vftr_browse_print_navigation_bars (fp, func_names, n_funcs, 0, HOME);
    fprintf (fp, "<div stype=\"margin-left:150px; padding 1px, 16px\">\n");
    vftr_browse_make_html_indent (fp, 0, 1);
@@ -428,7 +431,8 @@ void vftr_browse_print_stacktree (FILE *fp, stack_leaf_t *leaf, int n_spaces, do
 /**********************************************************************/
 
 void vftr_browse_print_stacktree_page (FILE *fp_out, bool is_empty, char *func_names[], int n_funcs, int this_i_func,
-			             stack_leaf_t *leaf, double *imbalances, double total_time) {
+			               stack_leaf_t *leaf, double *imbalances, double total_time,
+				       int n_chars_max, int n_final) {
 	// No external file (e.g. for tests) given. Create filename <func_name>.html
 	FILE *fp;
 	char *this_func_name = func_names[this_i_func];
@@ -448,7 +452,11 @@ void vftr_browse_print_stacktree_page (FILE *fp_out, bool is_empty, char *func_n
         } else {
 	   fp = fp_out;
         }
-	vftr_browse_print_css_header (fp);
+	if (!is_empty) {
+	   vftr_browse_print_css_header (fp, n_chars_max, n_final);
+	} else {
+	   vftr_browse_print_css_header (fp, strlen ("No stack IDs!"), 1);
+	}
         vftr_browse_print_navigation_bars (fp, func_names, n_funcs, this_i_func, TREE);
 	fprintf (fp, "<div style=\"margin-left:150px; margin-top:0px; padding: 1px 16px\">\n");
 	fprintf (fp, "<h1>%s, rank %d</h1>\n", this_func_name, vftr_mpirank);
@@ -487,11 +495,10 @@ void vftr_browse_create_directory () {
 FILE *vftr_browse_init_profile_table () {
        FILE *fp;
        int n = 21 + vftr_count_digits(vftr_mpirank);
-       printf ("Write filename: %d\n", n);
        char html_profile[n];
        snprintf (html_profile, n, "browse/profile_%d.html", vftr_mpirank);
        fp = fopen (html_profile, "w+");
-       vftr_browse_print_css_header (fp);
+       vftr_browse_print_css_header (fp, CSS_DEFAULT_WIDTH, 1);
        fprintf (fp,"<style>\n");
        vftr_browse_make_html_indent (fp, 0, 1);
        fprintf (fp, "table {\n");
@@ -608,12 +615,12 @@ int vftr_browse_test_1 (FILE *fp_in, FILE *fp_out) {
 		vftr_fill_into_stack_tree (&stack_tree, n_functions_in_stack, stack_ids, function_id);
 		free (stack_ids);
 	}
-	long long dummy_l1;
-	double dummy_d1, dummy_d2;
-	int dummy_i1, dummy_i2;
- 	vftr_scan_stacktree (stack_tree->origin, 2, NULL, &dummy_d1, &dummy_i1, &dummy_d2, &dummy_i2);
+	long long dummy_l;
+	double dummy_d;
+	int dummy_i;
+ 	vftr_scan_stacktree (stack_tree->origin, 2, NULL, &dummy_d, &dummy_i, &dummy_d, &dummy_i, &dummy_i);
 	char *func_names[1] = {"C"};
-	vftr_browse_print_stacktree_page (fp_out, false, func_names, 1, 0, stack_tree->origin, NULL, 0.0);
+	vftr_browse_print_stacktree_page (fp_out, false, func_names, 1, 0, stack_tree->origin, NULL, 0.0, 1000, 1);
 	free (stack_tree);
 	return 0;
 }

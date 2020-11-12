@@ -919,7 +919,7 @@ void vftr_print_function_statistics (FILE *pout, bool display_sync_time,
 		if (display_functions[i]->n_stack_indices == 0) {;
 		   //print empty stack
 		   vftr_browse_print_stacktree_page (NULL, true, vftr_mpi_collective_function_names,
-						   vftr_n_collective_mpi_functions, i, NULL, NULL, 0.0);
+						     vftr_n_collective_mpi_functions, i, NULL, NULL, 0.0, 0, 0);
 		} else {
 		   stack_leaf_t *stack_tree = NULL;
 		   double *imbalances = (double*) malloc (vftr_func_table_size * sizeof (double));
@@ -930,9 +930,9 @@ void vftr_print_function_statistics (FILE *pout, bool display_sync_time,
 		   vftr_stack_get_total_time (stack_tree->origin, &total_time);
 
 		   double t_max, imba_max;
-		   int n_calls_max, n_spaces_max;
+		   int n_calls_max, n_spaces_max, n_chars_max;
 		   vftr_scan_stacktree (stack_tree, display_functions[i]->n_stack_indices, imbalances,
-					&t_max, &n_calls_max, &imba_max, &n_spaces_max);
+					&t_max, &n_calls_max, &imba_max, &n_spaces_max, &n_chars_max);
   		   vftr_print_function_stack (pout, display_functions[i]->func_name, 
 		   		              display_functions[i]->n_stack_indices,
 		   		              imbalances, total_time,
@@ -941,7 +941,8 @@ void vftr_print_function_statistics (FILE *pout, bool display_sync_time,
 		   if (vftr_environment.create_html->value) {
 		      vftr_browse_print_stacktree_page (NULL, false, vftr_mpi_collective_function_names,
 						      vftr_n_collective_mpi_functions, i, stack_tree->origin,
-					              imbalances, (double)total_time * 1e-6);
+					              imbalances, (double)total_time * 1e-6, n_chars_max,
+						      display_functions[i]->n_stack_indices);
 		   }
 		   free (stack_tree);
 		   free (imbalances);
