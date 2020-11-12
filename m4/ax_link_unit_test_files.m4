@@ -75,5 +75,6 @@ AC_CONFIG_LINKS(test/units/radixsort_uint64.sh:test/units/radixsort_uint64.sh
                 test/units/sort_integer_ascending.sh:test/units/sort_integer_ascending.sh
                 test/units/sort_integer_descending.sh:test/units/sort_integer_descending.sh
                 test/units/sort_double_ascending.sh:test/units/sort_double_ascending.sh
+                test/units/sort_double_descending.sh:test/units/sort_double_descending.sh
                )
 ])

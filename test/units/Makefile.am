@@ -70,7 +70,8 @@ endif
 check_PROGRAMS += radixsort_uint64 \
 		  sort_integer_ascending \
 		  sort_integer_descending \
-		  sort_double_ascending
+		  sort_double_ascending \
+		  sort_double_descending
 
 radixsort_uint64_SOURCES = $(srcdir)/radixsort_uint64.c
 radixsort_uint64_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
@@ -88,10 +89,15 @@ sort_double_ascending_SOURCES = $(srcdir)/sort_double_ascending.c
 sort_double_ascending_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
 sort_double_ascending_LDFLAGS = $(AM_LDFLAGS)
 
+sort_double_descending_SOURCES = $(srcdir)/sort_double_descending.c
+sort_double_descending_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
+sort_double_descending_LDFLAGS = $(AM_LDFLAGS)
+
 dist_check_SCRIPTS += radixsort_uint64.sh \
 		      sort_integer_ascending.sh \
 		      sort_integer_descending.sh \
-		      sort_double_ascending.sh
+		      sort_double_ascending.sh \
+		      sort_double_descending.sh
 
 TEST_EXTENSIONS = .sh
 SH_LOG_COMPILER = $(SHELL)

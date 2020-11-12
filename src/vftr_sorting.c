@@ -93,10 +93,15 @@ int vftr_compare_double_ascending (const void *a1, const void *a2) {
 }
 
 int vftr_compare_double_descending (const void *a1, const void *a2) {
-   double diff = *(double*)a2 - *(double*)a1;
-   if (diff > 0) return 1;
-   if (diff < 0) return -1;
-   return 0;
+   double ia1 = *(double*)a1;
+   double ia2 = *(double*)a2;
+   if (ia1 < ia2) {
+      return 1;
+   } else if (ia1 > ia2) {
+      return -1;
+   } else {
+      return 0;
+   }
 }
 
 void vftr_sort_integer (int *i_array, int n, bool ascending) {
