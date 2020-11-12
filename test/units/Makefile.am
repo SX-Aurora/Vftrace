@@ -39,23 +39,23 @@ test_vftrace_LDFLAGS = $(AM_LDFLAGS)
 
 
 dist_check_SCRIPTS = this_passes.sh \
-		      this_fails.sh \
-		      vftr_symbols_test_1.sh \
-		      vftr_environment_test_1.sh \
-		      vftr_setup_test_1.sh \
-		      vftr_setup_test_2.sh \
-		      vftr_filewrite_test_1.sh \
-		      vftr_filewrite_test_2.sh \
-		      vftr_scenario_test_1.sh \
-		      vftr_scenario_test_2.sh \
-		      vftr_scenario_test_3.sh \
-	 	      vftr_functions_test_1.sh \
-	 	      vftr_functions_test_2.sh \
-	 	      vftr_functions_test_3.sh \
-	 	      vftr_functions_test_4.sh \
-	 	      vftr_functions_test_5.sh \
-		      vftr_stacks_test_1.sh \
-		      vftr_html_test_1.sh
+		     this_fails.sh \
+		     vftr_symbols_test_1.sh \
+		     vftr_environment_test_1.sh \
+		     vftr_setup_test_1.sh \
+		     vftr_setup_test_2.sh \
+		     vftr_filewrite_test_1.sh \
+		     vftr_filewrite_test_2.sh \
+		     vftr_scenario_test_1.sh \
+		     vftr_scenario_test_2.sh \
+		     vftr_scenario_test_3.sh \
+	 	     vftr_functions_test_1.sh \
+	 	     vftr_functions_test_2.sh \
+	 	     vftr_functions_test_3.sh \
+	 	     vftr_functions_test_4.sh \
+	 	     vftr_functions_test_5.sh \
+		     vftr_stacks_test_1.sh \
+		     vftr_html_test_1.sh
 
 if WITH_MPI
 dist_check_SCRIPTS += vftr_stacks_test_2.sh
