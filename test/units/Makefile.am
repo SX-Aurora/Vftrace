@@ -67,13 +67,19 @@ dist_check_SCRIPTS += vftr_sxhwc_test_1.sh
 endif
 endif
 
-check_PROGRAMS += radixsort_uint64
+check_PROGRAMS += radixsort_uint64 \
+		  sort_integer_ascending
 
 radixsort_uint64_SOURCES = $(srcdir)/radixsort_uint64.c
 radixsort_uint64_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
 radixsort_uint64_LDFLAGS = $(AM_LDFLAGS)
 
-dist_check_SCRIPTS += radixsort_uint64.sh
+sort_integer_ascending_SOURCES = $(srcdir)/sort_integer_ascending.c
+sort_integer_ascending_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
+sort_integer_ascending_LDFLAGS = $(AM_LDFLAGS)
+
+dist_check_SCRIPTS += radixsort_uint64.sh \
+		      sort_integer_ascending.sh
 
 TEST_EXTENSIONS = .sh
 SH_LOG_COMPILER = $(SHELL)

@@ -57,7 +57,15 @@ void vftr_radixsort_uint64(int n, uint64_t *list) {
 /**********************************************************************/
 
 int vftr_compare_integer_ascending (const void *a1, const void *a2) {
-   return (*(int*)a1 - *(int*)a2);
+   int ia1 = *(int*)a1;
+   int ia2 = *(int*)a2;
+   if (ia1 < ia2) {
+      return -1;
+   } else if (ia1 > ia2) {
+      return 1;
+   } else {
+      return 0;
+   }
 }
 
 int vftr_compare_integer_descending (const void *a1, const void *a2) {
@@ -78,24 +86,13 @@ int vftr_compare_double_descending (const void *a1, const void *a2) {
    return 0;
 }
 
-void vftr_sort_integer (int **i_array, int n, bool ascending) {
-   int *tmp = (int*)malloc (n * sizeof(int));
-   for (int i = 0; i < n; i++) {
-      tmp[i] = (*i_array)[i];
-   }
-
+void vftr_sort_integer (int *i_array, int n, bool ascending) {
    if (ascending) {
-      qsort (tmp, (size_t)n, sizeof(int), vftr_compare_integer_ascending);
+      qsort (i_array, (size_t)n, sizeof(int), vftr_compare_integer_ascending);
    } else {
-      qsort (tmp, (size_t)n, sizeof(int), vftr_compare_integer_descending);
+      qsort (i_array, (size_t)n, sizeof(int), vftr_compare_integer_descending);
    }
-
-   for (int i = 0; i < n; i++) {
-      (*i_array)[i] = tmp[i];
-   }
-   free(tmp);
 }
-
 void vftr_sort_double (double **d_array, int n, bool ascending) {
    double *tmp = (double*) malloc (n * sizeof(double)); 
    for (int i = 0; i < n; i++) {

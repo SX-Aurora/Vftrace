@@ -31,6 +31,7 @@
 #include "vftr_html.h"
 #include "vftr_filewrite.h"
 #include "vftr_fileutils.h"
+#include "vftr_sorting.h"
 
 #include "vftr_output_macros.h"
 
@@ -915,7 +916,7 @@ void vftr_scan_stacktree (stack_leaf_t *stack_tree, int n_final_stack_ids, doubl
       }
    }
           
-   vftr_sort_integer (&n_calls_final, n_final, false);
+   vftr_sort_integer (n_calls_final, n_final, false);
    vftr_sort_double (&imba_final, n_final, false);
 
    *t_max = t_final_sorted[0];

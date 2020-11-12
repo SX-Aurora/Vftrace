@@ -24,7 +24,7 @@
 
 void vftr_radixsort_uint64(int n, uint64_t *list);
 
-void vftr_sort_integer (int **i_array, int n, bool ascending);
+void vftr_sort_integer (int *i_array, int n, bool ascending);
 void vftr_sort_double (int **d_array, int n, bool ascending);
 void vftr_sort_double_copy (int **d_array, int n, bool ascending, double **d_copy);
 
