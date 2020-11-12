@@ -120,20 +120,9 @@ void vftr_sort_double (double *d_array, int n, bool ascending) {
    }
 }
 
-void vftr_sort_double_copy (double *d_array, int n, bool ascending, double **d_copy) {
-   double *tmp = (double*) malloc (n * sizeof(double)); 
-   for (int i = 0; i < n; i++) {
-      tmp[i] = d_array[i];
+void vftr_sort_double_copy (double *d_array, int n, bool ascending, double *d_copy) {
+   for (int i=0; i<n; i++) {
+      d_copy[i] = d_array[i];
    }
-
-   if (ascending) {
-      qsort (tmp, (size_t)n, sizeof(double), vftr_compare_double_ascending);
-   } else {
-      qsort (tmp, (size_t)n, sizeof(double), vftr_compare_double_descending);
-   }
-
-   for (int i = 0; i < n; i++) {
-      (*d_copy)[i] = tmp[i];
-   }
-   free(tmp);
+   vftr_sort_double(d_copy, n, ascending);
 }

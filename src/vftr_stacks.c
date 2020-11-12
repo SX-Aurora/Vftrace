@@ -904,7 +904,7 @@ void vftr_scan_stacktree (stack_leaf_t *stack_tree, int n_final_stack_ids, doubl
 
    int *rank_final_ids = (int*) malloc (n_final_stack_ids * sizeof(int));
    double *t_final_sorted = (double*) malloc (n_final_stack_ids * sizeof(double));
-   vftr_sort_double_copy (t_final, n_final, false, &t_final_sorted);
+   vftr_sort_double_copy (t_final, n_final, false, t_final_sorted);
    for (int i = 0; i < n_final; i++) {
       rank_final_ids[i] = -1;
       double search_for = t_final[i];
