@@ -35,16 +35,13 @@ int main(int argc, char **argv) {
       return 1;
    }
    int *list = (int*) malloc(n*sizeof(int));
-   list[0] = 0xbbb439e7;
-   for (int i=1; i<n; i++) {
-      list[i] = list[i-1]<<1;
-      if (i%3 == 0) {
-         list[i] += 1;
-      }
-      if (i%5 == 0) {
-         list[i] += 1;
-      }
+   srand(137);
+   list[0] = 1;
+   list[1] = 0;
+   for (int i=2; i<n; i++) {
+      list[i] = -2*(rand()-RAND_MAX/2);
    }
+
    bool sorted_before = int_list_sorted(n, list);
    printf("sorted before: %s\n", sorted_before ? "true" : "false");
 
