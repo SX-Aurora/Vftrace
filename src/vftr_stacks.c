@@ -742,9 +742,9 @@ void vftr_scan_for_final_values (stack_leaf_t *leaf, int this_n_spaces, double *
 		int new_n_spaces = this_n_spaces + strlen(vftr_gStackinfo[leaf->stack_id].name) + 1; // + 1 for the colon at the end
 		if (this_n_spaces > 0) new_n_spaces++;
 		if (new_n_spaces > *n_spaces_max) *n_spaces_max = new_n_spaces;
-		if (leaf->func_id > 0) {
-		   int this_n_chars = strlen(vftr_func_table[leaf->func_id]->name);
+		   int this_n_chars = leaf->func_id > 0 ? strlen(vftr_func_table[leaf->func_id]->name) : strlen("[not on this rank]");
 		   if (this_n_chars > *n_chars_max) *n_chars_max = this_n_chars;
+		if (leaf->func_id > 0) {
 		   double this_t = (double)vftr_func_table[leaf->func_id]->prof_current.timeIncl * 1e-6;
 		   (*t_final)[*n_final] = this_t;
 		   int this_n_calls = vftr_func_table[leaf->func_id]->prof_current.calls;
