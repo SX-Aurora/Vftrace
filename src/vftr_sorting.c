@@ -106,17 +106,17 @@ int vftr_compare_double_descending (const void *a1, const void *a2) {
 
 void vftr_sort_integer (int *i_array, int n, bool ascending) {
    if (ascending) {
-      qsort (i_array, (size_t)n, sizeof(int), vftr_compare_integer_ascending);
+      qsort ((void*) i_array, (size_t)n, sizeof(int), vftr_compare_integer_ascending);
    } else {
-      qsort (i_array, (size_t)n, sizeof(int), vftr_compare_integer_descending);
+      qsort ((void*) i_array, (size_t)n, sizeof(int), vftr_compare_integer_descending);
    }
 }
 
 void vftr_sort_double (double *d_array, int n, bool ascending) {
    if (ascending) {
-      qsort (d_array, (size_t)n, sizeof(double), vftr_compare_double_ascending);
+      qsort ((void*) d_array, (size_t)n, sizeof(double), vftr_compare_double_ascending);
    } else {
-      qsort (d_array, (size_t)n, sizeof(double), vftr_compare_double_descending);
+      qsort ((void*) d_array, (size_t)n, sizeof(double), vftr_compare_double_descending);
    }
 }
 
