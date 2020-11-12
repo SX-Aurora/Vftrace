@@ -97,7 +97,7 @@ void vftr_print_css_header (FILE *fp) {
    fprintf (fp, "}\n");
    fprintf (fp, "\n");
    fprintf (fp, ".nav li::after{\n");
-   fprintf (fp, "  left: 50%;\n");
+   fprintf (fp, "  left: 50%%;\n");
    fprintf (fp, "  right: auto;\n");
    fprintf (fp, "\n");  
    fprintf (fp, "  border-left: 1px solid black;\n");
