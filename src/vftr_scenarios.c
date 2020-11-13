@@ -663,7 +663,7 @@ int vftr_scenario_test_2 (FILE *fp_in, FILE *fp_out) {
 // This test expects a scenario file with wrong syntax in the formulas .
 // It should be tagged as XFAIL.
 
-int vftr_scenario_test_3 (FILE *fp_in, FILE *fp_out) {
+int vftr_scenario_test_3 (FILE *fp_in) {
 	vftr_read_scenario_file ("", fp_in);
 	return 0;
 }

@@ -114,6 +114,6 @@ void scenario_expr_add_sx_counters ();
 // test functions
 int vftr_scenario_test_1 (FILE *fp_in, FILE *fp_out);
 int vftr_scenario_test_2 (FILE *fp_in, FILE *fp_out);
-int vftr_scenario_test_3 (FILE *fp_in, FILE *fp_out);
+int vftr_scenario_test_3 (FILE *fp_in);
 
 #endif
