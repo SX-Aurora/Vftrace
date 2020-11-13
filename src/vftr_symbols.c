@@ -133,7 +133,7 @@ void vftr_get_library_symtab (char *target, FILE *fp_ext, off_t base, int pass) 
     }
 
     
-    if (fread (&ehdr, 1, nehdr, exe) != nehdr) {
+    if ((int)fread (&ehdr, 1, nehdr, exe) != nehdr) {
 	perror ("reading ELF header from executable");
 	abort();
     }
@@ -141,7 +141,7 @@ void vftr_get_library_symtab (char *target, FILE *fp_ext, off_t base, int pass) 
     n = ehdr.e_shnum * sizeof(Elf64_Shdr);
     shdr = (Elf64_Shdr *) malloc( n );
     fseek( exe, (long)ehdr.e_shoff, SEEK_SET );
-    if (fread( shdr, 1, n, exe ) != n) {
+    if ((int)fread( shdr, 1, n, exe ) != n) {
 	perror ("reading section headers from executable");
 	abort();
     }
@@ -152,7 +152,7 @@ void vftr_get_library_symtab (char *target, FILE *fp_ext, off_t base, int pass) 
     headerStringTable = (char *)malloc(nst);
     memset (headerStringTable, 0, nst);
     fseek (exe, (long)shdr[ehdr.e_shstrndx].sh_offset, SEEK_SET);
-    if (fread( headerStringTable, 1, nst, exe ) != nst)  {
+    if ((int)fread( headerStringTable, 1, nst, exe ) != nst)  {
 	perror( "reading string table from executable" );
 	abort();
     }
