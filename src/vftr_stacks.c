@@ -826,7 +826,7 @@ void vftr_print_stacktree (FILE *fp, stack_leaf_t *leaf, int n_spaces, double *i
 				 fmt_imba, imbalances[leaf->func_id],
 			 	 fmt_send_bytes - 4, mpi_tot_send_bytes, send_unit_str,
 				 fmt_recv_bytes - 4, mpi_tot_recv_bytes, recv_unit_str,
-				 fmt_stackid, leaf->stack_id, strlen("position"), leaf->final_id);
+				 fmt_stackid, leaf->stack_id, (int)strlen("position"), leaf->final_id);
 		}
 	}
 	if (leaf->next_in_level) {
