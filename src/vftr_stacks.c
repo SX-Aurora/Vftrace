@@ -789,7 +789,7 @@ void vftr_print_stacktree_header (FILE *fp, int n_stacks, char *func_name,
 	fprintf (fp, "   %*s   %*s   %*s   %*s   %*s   %*s   %*s\n", fmt_t, vftr_stacktree_headers[TIME],
 		 fmt_calls, vftr_stacktree_headers[CALLS], fmt_imba, vftr_stacktree_headers[IMBA],
 		 fmt_send_bytes, vftr_stacktree_headers[SEND_BYTES], fmt_recv_bytes, vftr_stacktree_headers[RECV_BYTES],
-		 fmt_stackid, vftr_stacktree_headers[STACK_ID], strlen("position"), "position");
+		 fmt_stackid, vftr_stacktree_headers[STACK_ID], (int)strlen("position"), "position");
 	vftr_print_dashes (fp, n_char_tot);
 }
 
