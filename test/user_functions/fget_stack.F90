@@ -5,8 +5,6 @@ PROGRAM fget_stack
 
    IMPLICIT NONE
 
-   INTEGER :: sum
-
 #ifdef _MPI
    INTEGER :: ierr
 
