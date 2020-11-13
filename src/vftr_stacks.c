@@ -820,7 +820,7 @@ void vftr_print_stacktree (FILE *fp, stack_leaf_t *leaf, int n_spaces, double *i
 		        double mpi_tot_recv_bytes = vftr_func_table[leaf->func_id]->prof_current.mpi_tot_recv_bytes;
 			vftr_memory_unit (&mpi_tot_send_bytes, &send_unit_str);	
 			vftr_memory_unit (&mpi_tot_recv_bytes, &recv_unit_str);	
-			fprintf (fp, "   %*.6f   %*d   %*.2f   %*.lf %s   %*.lf %s   %*d   %*d\n",
+			fprintf (fp, "   %*.6f   %*lld   %*.2f   %*.lf %s   %*.lf %s   %*d   %*d\n",
 				 fmt_t, (double)vftr_func_table[leaf->func_id]->prof_current.timeIncl * 1e-6,
 				 fmt_calls, vftr_func_table[leaf->func_id]->prof_current.calls,
 				 fmt_imba, imbalances[leaf->func_id],
