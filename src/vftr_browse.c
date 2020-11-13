@@ -403,7 +403,7 @@ void vftr_browse_print_stacktree (FILE *fp, stack_leaf_t *leaf, int n_spaces, do
 	          vftr_browse_make_html_indent (fp, n_spaces, 0);
 	          fprintf (fp, "Position: %d<br>\n", leaf->final_id);
 	          vftr_browse_make_html_indent (fp, n_spaces, 0);
-		  fprintf (fp, "Calls: %d<br>\n", vftr_func_table[leaf->func_id]->prof_current.calls);
+		  fprintf (fp, "Calls: %lld<br>\n", vftr_func_table[leaf->func_id]->prof_current.calls);
 	          vftr_browse_make_html_indent (fp, n_spaces, 0);
 		  double t = vftr_func_table[leaf->func_id]->prof_current.timeIncl * 1e-6;
 		  char *t_unit;
