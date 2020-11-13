@@ -799,7 +799,7 @@ void vftr_print_stacktree (FILE *fp, stack_leaf_t *leaf, int n_spaces, double *i
 			   int n_spaces_max, int fmt_calls, int fmt_t, int fmt_imba,
 		           int fmt_send_bytes, int fmt_recv_bytes, int fmt_stackid) {
 	if (!leaf) return;
-	fprintf (fp, vftr_gStackinfo[leaf->stack_id].name);
+	fprintf (fp, "%s", vftr_gStackinfo[leaf->stack_id].name);
 	if (leaf->callee) {
 		fprintf (fp, ">");
 		int new_n_spaces = n_spaces + strlen(vftr_gStackinfo[leaf->stack_id].name);
