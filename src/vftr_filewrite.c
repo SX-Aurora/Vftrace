@@ -1156,7 +1156,7 @@ void vftr_print_profile (FILE *pout, int *ntop, long long time0) {
     fputs (" ", pout);
     vftr_output_column_header ("", formats->n_calls, pout);
     vftr_output_column_header ("Time[s]________________",
-		               formats->excl_time + formats->incl_time, pout);
+		               formats->excl_time + formats->incl_time + 1, pout);
     n = 10;
     if (evc0) n += 5;
     if (vftr_events_enabled) {
