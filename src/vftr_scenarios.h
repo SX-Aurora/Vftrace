@@ -52,9 +52,6 @@ enum ve_counters {
 	TTCC
 };	
 
-void vector_engine_compute_counters (long long *regs, double current_runtime,
-				double *mflops, double *vlen, double *pvec, double *pbank);
-
 void vftr_write_scenario_header_to_vfd (FILE *fp);
 void vftr_write_observables_to_vfd (unsigned long long cycles, FILE *fp);
 
@@ -94,22 +91,22 @@ extern double scenario_expr_cycles;
 extern double scenario_expr_cycletime;
 
 int vftr_read_scenario_file (char *filename, FILE *fp_ext);
-void scenario_expr_evaluate (int i_scenario, double runtime, unsigned long long cycles);
-void scenario_expr_evaluate_all (double runtime, unsigned long long cycles);
-void scenario_expr_print_summary (FILE *fp);
-void scenario_expr_print_raw_counters (FILE *fp);
-double scenario_expr_get_value (int i_scenario);
-void scenario_expr_set_formats ();
-void scenario_expr_print_column (FILE *f, int i_scenario);
-void scenario_expr_print_all_columns (FILE *f);
-int scenario_expr_get_table_width ();
-int scenario_expr_get_column_width (int i_scenario);
-void scenario_expr_unique_group_indices (int *n_groups, int *is_unique, int id);
-void scenario_expr_print_header (FILE *fp);
-void scenario_expr_print_group (FILE *fp);
-void scenario_expr_print_subgroup (FILE *fp);
-void scenario_expr_add_papi_counters ();
-void scenario_expr_add_sx_counters ();
+void vftr_scenario_expr_evaluate (int i_scenario, double runtime, unsigned long long cycles);
+void vftr_scenario_expr_evaluate_all (double runtime, unsigned long long cycles);
+void vftr_scenario_expr_print_summary (FILE *fp);
+void vftr_scenario_expr_print_raw_counters (FILE *fp);
+double vftr_scenario_expr_get_value (int i_scenario);
+void vftr_scenario_expr_set_formats ();
+void vftr_scenario_expr_print_column (FILE *f, int i_scenario);
+void vftr_scenario_expr_print_all_columns (FILE *f);
+int vftr_scenario_expr_get_table_width ();
+int vftr_scenario_expr_get_column_width (int i_scenario);
+void vftr_scenario_expr_unique_group_indices (int *n_groups, int *is_unique, int id);
+void vftr_scenario_expr_print_header (FILE *fp);
+void vftr_scenario_expr_print_group (FILE *fp);
+void vftr_scenario_expr_print_subgroup (FILE *fp);
+void vftr_scenario_expr_add_papi_counters ();
+void vftr_scenario_expr_add_sx_counters ();
 
 // test functions
 int vftr_scenario_test_1 (FILE *fp_in, FILE *fp_out);

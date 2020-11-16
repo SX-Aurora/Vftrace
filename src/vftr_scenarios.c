@@ -70,7 +70,7 @@ void vftr_write_scenario_header_to_vfd (FILE *fp) {
 
 void vftr_write_observables_to_vfd (unsigned long long cycles, FILE *fp) {
 #if defined(HAS_SXHWC) || defined(HAS_PAPI)
-	scenario_expr_evaluate_all (0., cycles);
+	vftr_scenario_expr_evaluate_all (0., cycles);
 	for (int i = 0; i < scenario_expr_n_formulas; i++) {
 		fwrite (&scenario_expr_formulas[i].value, sizeof(double), 1, fp);
 	}
@@ -115,7 +115,7 @@ int read_spec;
 // TODO: Implement this
 char *vftr_scenario_string;
 
-int json_fetch (const char *js, jsmntok_t *tok, size_t count) {
+int vftr_read_json (const char *js, jsmntok_t *tok, size_t count) {
 	jsmntok_t *key;
 	if (tok->type == JSMN_PRIMITIVE) {
 		return 1;
@@ -210,16 +210,16 @@ int json_fetch (const char *js, jsmntok_t *tok, size_t count) {
 		int j = 0;
 		for (int i = 0; i < tok->size; i++) {
 			key = tok + j + 1;
-			j += json_fetch (js, key, count - j);
+			j += vftr_read_json (js, key, count - j);
 			if (key->size > 0) {
-				j += json_fetch (js, tok + j + 1, count - j);
+				j += vftr_read_json (js, tok + j + 1, count - j);
 			}
 		}
 		return j + 1;
 	} else if (tok->type == JSMN_ARRAY) {
 		int j = 0;
 		for (int i = 0; i < tok->size; i++) {
-			j += json_fetch (js, tok + j + 1, count - j);
+			j += vftr_read_json (js, tok + j + 1, count - j);
 		}
 		return j + 1;
 	}
@@ -286,7 +286,7 @@ int vftr_read_scenario_file (char *filename, FILE *fp_ext) {
 				goto again;
 			}	
 		} else {
-			json_fetch (js, token, token_count);	
+			vftr_read_json (js, token, token_count);	
 		}
 	}
 	if (need_to_close_file) fclose (fp);
@@ -330,7 +330,7 @@ int vftr_read_scenario_file (char *filename, FILE *fp_ext) {
 
 /**********************************************************************/
 
-int variable_index (char *varname) {
+int vftr_scenario_variable_index (char *varname) {
 	for (int i = 0; i < scenario_expr_n_vars + 1; i++) {
 		if (!strcmp (varname, te_vars[i].name)) {
 			return i;
@@ -341,13 +341,13 @@ int variable_index (char *varname) {
 
 /**********************************************************************/
 
-void scenario_expr_evaluate (int i_scenario, double runtime, unsigned long long cycles) {
+void vftr_scenario_expr_evaluate (int i_scenario, double runtime, unsigned long long cycles) {
 	scenario_expr_runtime = runtime;
 	scenario_expr_cycles = (double)cycles;
 	scenario_expr_cycletime = runtime / cycles;
 
 	int i_protected = scenario_expr_formulas[i_scenario].protected_values ?
-		variable_index (scenario_expr_formulas[i_scenario].protected_values) : -1;
+		vftr_scenario_variable_index (scenario_expr_formulas[i_scenario].protected_values) : -1;
 	double check_value = -1.0;
 	if (i_protected < 0) {
 		scenario_expr_formulas[i_scenario].value = te_eval (expr[i_scenario]);		
@@ -370,30 +370,19 @@ void scenario_expr_evaluate (int i_scenario, double runtime, unsigned long long 
 
 /**********************************************************************/
 
-void scenario_expr_evaluate_all (double runtime, unsigned long long cycles) {
+void vftr_scenario_expr_evaluate_all (double runtime, unsigned long long cycles) {
 	for (int i = 0; i < scenario_expr_n_formulas; i++) {
-		scenario_expr_evaluate (i, runtime, cycles);
+		vftr_scenario_expr_evaluate (i, runtime, cycles);
 	}
 }
 
 /**********************************************************************/
-
-static int n_decimal_places (int i_scenario) {
-	long long count;
-	int k;
-	int n_decimal_places = 1;
-	for (count = (long long)scenario_expr_formulas[i_scenario].value, k = 0; count; count /= 10, k++);
-	if (k > n_decimal_places) n_decimal_places = k;
-	return n_decimal_places;
-}
-
-/**********************************************************************/
 		
-static void get_format (char *fmt, int i) {
+static void vftr_scenario_get_format (char *fmt, int i) {
 	int behind_comma = scenario_expr_format[i].decpl_2;
 	static int total = 0;
 	int tmp = scenario_expr_format[i].decpl_1 > 0 ?
-		scenario_expr_format[i].decpl_1 : n_decimal_places(i) + behind_comma;
+		scenario_expr_format[i].decpl_1 : vftr_count_digits(i) + behind_comma;
 	total = tmp > total ? tmp : total;
 	sprintf (fmt, "%%%d.%dlf ", total, behind_comma);
 }
@@ -402,11 +391,11 @@ static void get_format (char *fmt, int i) {
 
 char *formats[TE_MAX];
 
-void scenario_expr_set_formats () {
+void vftr_scenario_expr_set_formats () {
 	char tmp[10];
 	for (int i = 0; i < scenario_expr_n_formulas; i++) {
 		// I'm to stupid to use format directly
-		get_format (tmp, i);
+		vftr_scenario_get_format (tmp, i);
 		formats[i] = strdup(tmp);
 	}
 }
@@ -414,7 +403,7 @@ void scenario_expr_set_formats () {
 /**********************************************************************/
 
 #define SUMMARY_LINE_SIZE 27
-void scenario_expr_print_summary (FILE *fp) {
+void vftr_scenario_expr_print_summary (FILE *fp) {
 	char fmt[10];
 	for (int i = 0; i < scenario_expr_n_formulas; i++) {
 		int n_chars = strlen(scenario_expr_formulas[i].name);
@@ -422,7 +411,7 @@ void scenario_expr_print_summary (FILE *fp) {
 			// Trim name
 		}
 		int n_spaces = SUMMARY_LINE_SIZE - n_chars - 2; // Count ":" and one space too
-		get_format (fmt, i);
+		vftr_scenario_get_format (fmt, i);
 		fprintf (fp, "%s: ", scenario_expr_formulas[i].name);
 		for (int i = 0; i < n_spaces; i++) {
 			fputc (' ', fp);
@@ -434,21 +423,21 @@ void scenario_expr_print_summary (FILE *fp) {
 
 /**********************************************************************/
 
-void scenario_expr_print_column (FILE *fp, int i_scenario) {
+void vftr_scenario_expr_print_column (FILE *fp, int i_scenario) {
 	fprintf (fp, formats[i_scenario], scenario_expr_formulas[i_scenario].value);
 }
 
 /**********************************************************************/
 
-void scenario_expr_print_all_columns (FILE *fp) {
+void vftr_scenario_expr_print_all_columns (FILE *fp) {
 	for (int i = 0; i < scenario_expr_n_formulas; i++) {
-		scenario_expr_print_column (fp, i);
+		vftr_scenario_expr_print_column (fp, i);
 	}
 }
 
 /**********************************************************************/
 
-void scenario_expr_print_raw_counters (FILE *f) {
+void vftr_scenario_expr_print_raw_counters (FILE *f) {
 	for (int i = 0; i < scenario_expr_n_vars; i++) {
 		fprintf (f, "%-37s : %20ld\n", scenario_expr_counter_names[i],
 			 (long) scenario_expr_counter_values[i]);
@@ -457,23 +446,23 @@ void scenario_expr_print_raw_counters (FILE *f) {
 
 /**********************************************************************/
 
-double scenario_expr_get_value (int i_scenario) {
+double vftr_scenario_expr_get_value (int i_scenario) {
 	return scenario_expr_formulas[i_scenario].value;
 }
 
 /**********************************************************************/
 
-int scenario_expr_get_column_width (int i_scenario) {
+int vftr_scenario_expr_get_column_width (int i_scenario) {
 	return scenario_expr_format[i_scenario].decpl_1 + 1;
 }
 
 /**********************************************************************/
 
-int scenario_expr_get_table_width () {
+int vftr_scenario_expr_get_table_width () {
 	int tw = 0;
 	for (int i = 0; i < scenario_expr_n_formulas; i++) {
 		if (scenario_expr_format[i].decpl_1 == 0) {
-			tw += n_decimal_places(i) + scenario_expr_format[i].decpl_2 + 1;
+			tw += vftr_count_digits(i) + scenario_expr_format[i].decpl_2 + 1;
 		} else {
 			tw += scenario_expr_format[i].decpl_1 + 1;
 		}
@@ -483,7 +472,7 @@ int scenario_expr_get_table_width () {
 
 /**********************************************************************/
 
-void scenario_expr_unique_group_indices (int *n_groups, int *is_unique, int id) {
+void vftr_scenario_expr_unique_group_indices (int *n_groups, int *is_unique, int id) {
 	char *tmp[scenario_expr_n_formulas];
 	for (int i = 0; i < scenario_expr_n_formulas; i++) {
 		tmp[i] = "";
@@ -514,7 +503,7 @@ void scenario_expr_unique_group_indices (int *n_groups, int *is_unique, int id) 
 
 /**********************************************************************/
 
-void print_formatted (FILE *fp, int *is_unique, int id) {
+void vftr_scenario_print_formatted (FILE *fp, int *is_unique, int id) {
 	char all_columns[80] = "";
 	int select;
 	for (int i = 0; i < scenario_expr_n_formulas; i++) {
@@ -535,7 +524,7 @@ void print_formatted (FILE *fp, int *is_unique, int id) {
 		}
 	}
 	char *foo = all_columns;
-	int tw = scenario_expr_get_table_width ();
+	int tw = vftr_scenario_expr_get_table_width ();
 	int ns = strlen (foo);
 	int nc = ns < tw ? ns : tw;
 	int nb = ns < tw ? tw - ns + 1 : 1;
@@ -549,32 +538,32 @@ void print_formatted (FILE *fp, int *is_unique, int id) {
 
 /**********************************************************************/
 
-void scenario_expr_print_group (FILE *fp) {
+void vftr_scenario_expr_print_group (FILE *fp) {
 	int n_groups;
 	int is_unique[scenario_expr_n_formulas];
-	scenario_expr_unique_group_indices (&n_groups, is_unique, 0);
-	print_formatted (fp, is_unique, 0);
+	vftr_scenario_expr_unique_group_indices (&n_groups, is_unique, 0);
+	vftr_scenario_print_formatted (fp, is_unique, 0);
 }
 
 /**********************************************************************/
 
-void scenario_expr_print_subgroup (FILE *fp) {
+void vftr_scenario_expr_print_subgroup (FILE *fp) {
 	int n_groups;
 	int is_unique[scenario_expr_n_formulas];
-	scenario_expr_unique_group_indices (&n_groups, is_unique, 1);
-	print_formatted (fp, is_unique, 1);
+	vftr_scenario_expr_unique_group_indices (&n_groups, is_unique, 1);
+	vftr_scenario_print_formatted (fp, is_unique, 1);
 }
 
 /**********************************************************************/
 
-void scenario_expr_print_header (FILE *fp) {
+void vftr_scenario_expr_print_header (FILE *fp) {
 	char all_columns[80] = "";
 	for (int i = 0; i < scenario_expr_n_formulas; i++) {
 		strcat (all_columns, strdup(scenario_expr_format[i].column2));
 		strcat (all_columns, " ");
 	}
 	char *foo = all_columns;
-	int tw = scenario_expr_get_table_width ();
+	int tw = vftr_scenario_expr_get_table_width ();
 	int ns = strlen (foo);
 	int nc = ns < tw ? ns : tw;
 	int nb = ns < tw ? tw - ns + 1 : 1;
@@ -588,7 +577,7 @@ void scenario_expr_print_header (FILE *fp) {
 
 /**********************************************************************/
 
-void scenario_expr_add_sx_counters () {
+void vftr_scenario_expr_add_sx_counters () {
 	for (int i = 0; i < scenario_expr_n_vars; i++) {
 		vftr_sx_counter (scenario_expr_counter_names[i], i);	
 	}
@@ -596,7 +585,7 @@ void scenario_expr_add_sx_counters () {
 
 /**********************************************************************/
 
-void scenario_expr_add_papi_counters () {
+void vftr_scenario_expr_add_papi_counters () {
 	for (int i = 0; i < scenario_expr_n_vars; i++) {
 		vftr_papi_counter (scenario_expr_counter_names[i]);
 	}
@@ -628,7 +617,7 @@ int vftr_scenario_test_2 (FILE *fp_in, FILE *fp_out) {
 	scenario_expr_counter_values[0] = 1.5; // c1
 	scenario_expr_counter_values[1] = 0.5; // c2
 	scenario_expr_counter_values[2] = -1.0; // c3
-	scenario_expr_evaluate_all (0.0, 0ll);
+	vftr_scenario_expr_evaluate_all (0.0, 0ll);
 // Test indices:
 // 0: sum
 // 1: difference
@@ -652,7 +641,7 @@ int vftr_scenario_test_2 (FILE *fp_in, FILE *fp_out) {
 	
 	fprintf (fp_out, "Check that division by zero is protected: \n");
 	scenario_expr_counter_values[1] = 0.0;
-	scenario_expr_evaluate (3, 0.0, 0ll);
+	vftr_scenario_expr_evaluate (3, 0.0, 0ll);
 	fprintf (fp_out, "%s: %lf\n", scenario_expr_formulas[3].name, scenario_expr_formulas[3].value);
 	return 0;
 // Check that division by zero is protected

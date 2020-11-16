@@ -342,7 +342,7 @@ void vftr_write_profile () {
 // entire header. The entire string length is "largest_column_length". We print "header",
 // and fill up all characters up to "largest_column_length" with empty spaces. This way,
 // all elements of this column start at the same position. 
-void output_header (char *header, int largest_column_length, FILE *fp) {
+void vftr_output_column_header (char *header, int largest_column_length, FILE *fp) {
 	char *sh = header;
 	int name_length = strlen(header);
 	int n_chars = name_length < largest_column_length ? name_length : largest_column_length;
@@ -359,7 +359,7 @@ void output_header (char *header, int largest_column_length, FILE *fp) {
 
 // Compute the column width by checking how many times value can be divided by 10. If this number
 // exceeds the existing width value, overwrite it.
-void compute_column_width (long long value, int *width) {
+void vftr_compute_column_width (long long value, int *width) {
 	int count, this_width;
 	for (count = value, this_width = 0; count; count /= 10, this_width++);
 	if (this_width > *width) *width = this_width;
@@ -367,17 +367,7 @@ void compute_column_width (long long value, int *width) {
 
 /**********************************************************************/
 
-// Prints n_dashes "-"
-void output_dashes_nextline (int n_dashes, FILE *fp) {
-	for (int j = 0; j < n_dashes; j++) {
-		fputc ('-', fp);
-	}
-	fputc ('\n', fp);
-}
-
-/**********************************************************************/
-
-void print_stack_time (FILE *fp, int calls, char *fmttime, char *fmttimeInc, float t_excl, float t_incl, float t_part, float t_cumm) {
+void vftr_print_stack_time (FILE *fp, int calls, char *fmttime, char *fmttimeInc, float t_excl, float t_incl, float t_part, float t_cumm) {
 
 	float stime = calls ? t_excl : 0;
         fprintf (fp, fmttime, stime);
@@ -389,18 +379,18 @@ void print_stack_time (FILE *fp, int calls, char *fmttime, char *fmttimeInc, flo
 
 /**********************************************************************/
 
-void set_evc_decipl (int n_indices, int n_scenarios, evtcounter_t *evc1, evtcounter_t *evc) {
+void vftr_set_evc_decipl (int n_indices, int n_scenarios, evtcounter_t *evc1, evtcounter_t *evc) {
     int e;
     for (int i = 0; i < n_indices; i++) {
         for (e = 0, evc = evc1; evc; e++, evc = evc->next) {
-            compute_column_width (scenario_expr_counter_values[e], &evc->decipl);
+            vftr_compute_column_width (scenario_expr_counter_values[e], &evc->decipl);
         }
     }
 }
 
 /**********************************************************************/
 
-void get_stack_times (profdata_t *prof_current, profdata_t *prof_previous, float runtime,
+void vftr_get_stack_times (profdata_t *prof_current, profdata_t *prof_previous, float runtime,
                       float *t_excl, float *t_incl, float *t_part) {
 	long long timeExcl_usec = prof_current->timeExcl - prof_previous->timeExcl;
 	long long timeIncl_usec = prof_current->timeIncl - prof_previous->timeIncl;
@@ -411,7 +401,7 @@ void get_stack_times (profdata_t *prof_current, profdata_t *prof_previous, float
 
 /**********************************************************************/
 
-void fill_indices_to_evaluate (function_t **funcTable, double runtime, int *indices) {
+void vftr_fill_indices_to_evaluate (function_t **funcTable, double runtime, int *indices) {
 	float ctime = 0.;
     	float max_ctime = 99.;
 	float t_excl, t_incl, t_part;
@@ -424,7 +414,7 @@ void fill_indices_to_evaluate (function_t **funcTable, double runtime, int *indi
 		/* If function has a caller and has been called */
 		if (!(funcTable[i]->return_to && prof_current->calls)) continue;
 		indices[j++] = i;
-		get_stack_times (prof_current, prof_previous, runtime, &t_excl, &t_incl, &t_part);
+		vftr_get_stack_times (prof_current, prof_previous, runtime, &t_excl, &t_incl, &t_part);
 		ctime += t_part;
 		if (vftr_environment.prof_truncate->value && ctime > max_ctime) break;
 	}
@@ -432,7 +422,7 @@ void fill_indices_to_evaluate (function_t **funcTable, double runtime, int *indi
 
 /**********************************************************************/
 
-int count_indices_to_evaluate (function_t **funcTable, double runtime) {
+int vftr_count_indices_to_evaluate (function_t **funcTable, double runtime) {
 	int n_indices = 0;
 	float ctime = 0.;
     	float max_ctime = 99.;
@@ -446,7 +436,7 @@ int count_indices_to_evaluate (function_t **funcTable, double runtime) {
 		
 		n_indices++;
 
-		get_stack_times (prof_current, prof_previous, runtime, &t_excl, &t_incl, &t_part);
+		vftr_get_stack_times (prof_current, prof_previous, runtime, &t_excl, &t_incl, &t_part);
 		ctime += t_part;
 		if (vftr_environment.prof_truncate->value && ctime > max_ctime) break;
 	}
@@ -477,7 +467,7 @@ void fill_scenario_counter_values (double *val, int n_vars, profdata_t *prof_cur
 #define MIN_EXCLTIME_NCHAR 1
 #define MIN_INCTIME_NCHAR 1
 
-void set_formats (function_t **funcTable, double runtime,
+void vftr_set_column_formats (function_t **funcTable, double runtime,
 		   int n_indices, int *indices, format_t *format) {
 	long long ev;
 	for (format->fid = 0, ev = vftr_gStackscount; ev; ev /= 10, format->fid++);
@@ -511,16 +501,16 @@ void set_formats (function_t **funcTable, double runtime,
         	int calls  = prof_current->calls - prof_previous->calls;
 		
 		float t_excl, t_incl, t_part;
-		get_stack_times (prof_current, prof_previous, runtime, &t_excl, &t_incl, &t_part);
+		vftr_get_stack_times (prof_current, prof_previous, runtime, &t_excl, &t_incl, &t_part);
 
-        	compute_column_width (calls, &(format->n_calls));
-        	compute_column_width (t_excl * 10000., &(format->excl_time));
-        	compute_column_width (t_incl * 10000., &(format->incl_time));
+        	vftr_compute_column_width (calls, &(format->n_calls));
+        	vftr_compute_column_width (t_excl * 10000., &(format->excl_time));
+        	vftr_compute_column_width (t_incl * 10000., &(format->incl_time));
 
 		if (vftr_events_enabled) {
 		    unsigned long long cycles = prof_current->cycles - prof_previous->cycles;
-		    scenario_expr_evaluate_all (t_excl, cycles);
-		    scenario_expr_set_formats ();
+		    vftr_scenario_expr_evaluate_all (t_excl, cycles);
+		    vftr_scenario_expr_set_formats ();
 	        }
 	}
 	if (format->excl_time < 5) format->excl_time = 5;
@@ -1057,8 +1047,8 @@ void vftr_print_profile (FILE *pout, int *ntop, long long time0) {
 
     /* Print overall info */
     if (vftr_events_enabled) {
-	scenario_expr_evaluate_all (rtime, total_cycles);	
-	scenario_expr_print_summary (pout);
+	vftr_scenario_expr_evaluate_all (rtime, total_cycles);	
+	vftr_scenario_expr_print_summary (pout);
     }
 
     /* Print all raw counter totals */
@@ -1067,7 +1057,7 @@ void vftr_print_profile (FILE *pout, int *ntop, long long time0) {
             "%-37s : %20llu\n", 
             "Time Stamp Counter", total_cycles  );
     if (vftr_events_enabled) {
-    	scenario_expr_print_raw_counters (pout);
+    	vftr_scenario_expr_print_raw_counters (pout);
     }
 
     fprintf( pout,
@@ -1106,17 +1096,17 @@ void vftr_print_profile (FILE *pout, int *ntop, long long time0) {
 	fprintf (pout, " (truncated)");
     }
     fprintf (pout, "\n");
-    int n_indices = count_indices_to_evaluate (funcTable, application_runtime);
+    int n_indices = vftr_count_indices_to_evaluate (funcTable, application_runtime);
     int *indices = (int *)malloc (n_indices * sizeof(int));
     *ntop = n_indices;
-    fill_indices_to_evaluate (funcTable, application_runtime, indices);
+    vftr_fill_indices_to_evaluate (funcTable, application_runtime, indices);
 
     /* Compute nr of decimal places needed */
     format_t *formats = (format_t *)malloc (sizeof(format_t));
-    set_formats (funcTable, application_runtime, n_indices, indices, formats);
+    vftr_set_column_formats (funcTable, application_runtime, n_indices, indices, formats);
     formats->caller_name++; /* One more place to contain the asterisk marking missing event counts */
     if (vftr_events_enabled) {
-    	set_evc_decipl (n_indices, vftr_n_hw_obs, evc1, evc);
+    	vftr_set_evc_decipl (n_indices, vftr_n_hw_obs, evc1, evc);
     }
 
     /* Offset of first full event counter name header */
@@ -1125,7 +1115,7 @@ void vftr_print_profile (FILE *pout, int *ntop, long long time0) {
     if (evc0) offset += 5;
 
     if (vftr_events_enabled) {
-    	offset += scenario_expr_get_table_width ();
+    	offset += vftr_scenario_expr_get_table_width ();
     }
 
     /* The full event count headers start at "offset"
@@ -1144,7 +1134,7 @@ void vftr_print_profile (FILE *pout, int *ntop, long long time0) {
 		   + formats->caller_name + 1 + formats->fid;
     }
 
-    output_dashes_nextline (tableWidth, pout);
+    vftr_print_dashes (pout, tableWidth);
 
     /* Generic header line - 1 of 3 */ 
 
@@ -1157,32 +1147,31 @@ void vftr_print_profile (FILE *pout, int *ntop, long long time0) {
         for (int i = 0; i < n; i++) {
 		fputc (' ', pout);
 	}
-        scenario_expr_print_group (pout);
+        vftr_scenario_expr_print_group (pout);
         fputs ("\n", pout);
     }
 
     /* Generic header line - 2 of 3 */ 
 
     fputs (" ", pout);
-    output_header ("", formats->n_calls, pout);
-    output_header ("Time[s]________________",
-		   formats->excl_time + 1
-		   + formats->incl_time, pout);
+    vftr_output_column_header ("", formats->n_calls, pout);
+    vftr_output_column_header ("Time[s]________________",
+		               formats->excl_time + formats->incl_time, pout);
     n = 10;
     if (evc0) n += 5;
     if (vftr_events_enabled) {
         for (int i = 0; i < n; i++) {
 		fputc (' ', pout);
 	}
-    	scenario_expr_print_subgroup (pout);
+    	vftr_scenario_expr_print_subgroup (pout);
     }
     fputs ("\n ", pout);
 
     /* Generic header line - 3 of 3 */ 
 
-    output_header ("Calls", formats->n_calls, pout);
-    output_header ("Excl", formats->excl_time, pout);
-    output_header ("Incl", formats->incl_time, pout);
+    vftr_output_column_header ("Calls", formats->n_calls, pout);
+    vftr_output_column_header ("Excl", formats->excl_time, pout);
+    vftr_output_column_header ("Incl", formats->incl_time, pout);
 
     if (vftr_environment.create_html->value) {
        vftr_browse_create_profile_header (f_html);
@@ -1192,26 +1181,26 @@ void vftr_print_profile (FILE *pout, int *ntop, long long time0) {
     if (evc0) fputs ("%evc ", pout);
 
     if (vftr_events_enabled) {
-        scenario_expr_print_header (pout);
+        vftr_scenario_expr_print_header (pout);
     }
 
     if (vftr_events_enabled) {
     	int j = 0;
     	for (evc = evc1; evc; evc = evc->next) {
     	    if (ectot[j++]) {
-    	        output_header (evc->name, evc->decipl, pout);
+    	        vftr_output_column_header (evc->name, evc->decipl, pout);
     	    }
     	}
     }
-    output_header ("Function", formats->func_name, pout);
-    output_header ("Caller", formats->caller_name, pout);
-    output_header ("ID", formats->fid, pout);
+    vftr_output_column_header ("Function", formats->func_name, pout);
+    vftr_output_column_header ("Caller", formats->caller_name, pout);
+    vftr_output_column_header ("ID", formats->fid, pout);
     fputs ("\n", pout);
 
     /* Horizontal lines (collection of dashes) */
     fputs (" ", pout);
 
-    output_dashes_nextline (tableWidth, pout);
+    vftr_print_dashes (pout, tableWidth);
 
     /* All headers printed at this point */
     /* Next: the numbers */
@@ -1232,10 +1221,10 @@ void vftr_print_profile (FILE *pout, int *ntop, long long time0) {
         fprintf (pout, fmtcalls, calls);
 
 	float t_excl, t_incl, t_part;
-	get_stack_times (prof_current, prof_previous, application_runtime, &t_excl, &t_incl, &t_part);
+	vftr_get_stack_times (prof_current, prof_previous, application_runtime, &t_excl, &t_incl, &t_part);
 	rtime = t_excl;
 	ctime += t_part;
-	print_stack_time (pout, calls, fmttime, fmttimeInc, t_excl, t_incl, t_part, ctime);
+	vftr_print_stack_time (pout, calls, fmttime, fmttimeInc, t_excl, t_incl, t_part, ctime);
 
         /* NOTE - counter info only printed for thread 0! */
 	if (vftr_events_enabled) {
@@ -1249,9 +1238,9 @@ void vftr_print_profile (FILE *pout, int *ntop, long long time0) {
         	}
         
 		unsigned long long cycles = prof_current->cycles - prof_previous->cycles;
-	    	scenario_expr_evaluate_all (rtime, cycles);
+	    	vftr_scenario_expr_evaluate_all (rtime, cycles);
 	    	//Formats should be set at this point
-	    	scenario_expr_print_all_columns (pout);
+	    	vftr_scenario_expr_print_all_columns (pout);
 
         	int j = 0;
         	for (k = 0, evc = evc1; k < vftr_n_hw_obs; k++, evc = evc->next) {
@@ -1286,7 +1275,7 @@ void vftr_print_profile (FILE *pout, int *ntop, long long time0) {
     }
     if (vftr_environment.create_html->value) vftr_browse_finalize_table(f_html);
     
-    output_dashes_nextline (tableWidth, pout);   
+    vftr_print_dashes (pout, tableWidth);
     fprintf( pout, "\n" );
     
     free (funcTable);
