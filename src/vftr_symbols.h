@@ -67,7 +67,7 @@ typedef struct library_list {
 
 char *vftr_strip_module_name (char *base_name);
 
-FILE *get_fmap (char *target);
+FILE *vftr_get_fmap (char *target);
 
 // Returns 1 if the creation of the symbol table fails.
 // This can happen when symbol table offsets are found, but

@@ -242,7 +242,7 @@ void vftr_get_library_symtab (char *target, FILE *fp_ext, off_t base, int pass) 
 
 /**********************************************************************/
 
-FILE *get_fmap (char *target) {
+FILE *vftr_get_fmap (char *target) {
     char maps[80];
     FILE *fmap;
     if (target) {
@@ -281,7 +281,7 @@ FILE *get_fmap (char *target) {
 	- the path to the file the memory range was mapped from, i.e. the
           libraries we want to process.
 */
-void parse_fmap_line (char *line, pathList_t **library, pathList_t **head) {
+void vftr_parse_fmap_line (char *line, pathList_t **library, pathList_t **head) {
     	char *base, *top, *permissions, *offset, *device, *inode, *path;
         pathList_t *newlib;
 
@@ -350,13 +350,13 @@ int vftr_create_symbol_table (int rank, char *target) {
     char line[LINESIZE];
     pathList_t *head, *library, *next;
 
-    FILE *fmap = get_fmap (target);
+    FILE *fmap = vftr_get_fmap (target);
     if (!fmap) return 1;
     /* Read the application libraries in the maps info */
     library = NULL;
     head = NULL;
     while (fgets (line, LINESIZE, fmap)) {
-	parse_fmap_line (line, &library, &head);
+	vftr_parse_fmap_line (line, &library, &head);
     }
     if (head == NULL) {
 	return 1;
