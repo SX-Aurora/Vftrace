@@ -445,7 +445,7 @@ int vftr_count_indices_to_evaluate (function_t **funcTable, double runtime) {
 
 /**********************************************************************/
 
-void fill_scenario_counter_values (double *val, int n_vars, profdata_t *prof_current, profdata_t *prof_previous) {
+void vftr_fill_scenario_counter_values (double *val, int n_vars, profdata_t *prof_current, profdata_t *prof_previous) {
 	memset (scenario_expr_counter_values, 0., sizeof (double) * scenario_expr_n_vars);
 	if (prof_current->event_count) {
 		for (int i = 0; i < n_vars; i++) {
@@ -486,7 +486,7 @@ void vftr_set_column_formats (function_t **funcTable, double runtime,
 		profdata_t *prof_previous = &funcTable[i_func]->prof_previous;
 
 		if (vftr_events_enabled) {
-			fill_scenario_counter_values (scenario_expr_counter_values,
+			vftr_fill_scenario_counter_values (scenario_expr_counter_values,
 				scenario_expr_n_vars, prof_current, prof_previous);
 		}
 
@@ -520,7 +520,7 @@ void vftr_set_column_formats (function_t **funcTable, double runtime,
 /**********************************************************************/
 
 #ifdef _MPI
-double compute_mpi_imbalance (long long *all_times, double t_avg) {
+double vftr_compute_mpi_imbalance (long long *all_times, double t_avg) {
 	double max_diff = 0;
 	// If no average time is given (e.g. when it is not of interest), compute it here
 	if (t_avg < 0.0) {
@@ -549,7 +549,7 @@ double compute_mpi_imbalance (long long *all_times, double t_avg) {
 
 /**********************************************************************/
 
-void evaluate_display_function (char *func_name, display_function_t **display_func,
+void vftr_evaluate_display_function (char *func_name, display_function_t **display_func,
 				bool display_sync_time) {
     char func_name_sync[strlen(func_name)+5];
     int n_func_indices, n_stack_indices;
@@ -628,7 +628,7 @@ void evaluate_display_function (char *func_name, display_function_t **display_fu
     if (n_count > 0) {
        (*display_func)->t_avg = (double)sum_times / n_count;
        if (n_func_indices_sync > 0) (*display_func)->t_sync_avg = (double)sum_times_sync / n_count;
-       (*display_func)->imbalance = compute_mpi_imbalance (all_times, (*display_func)->t_avg);
+       (*display_func)->imbalance = vftr_compute_mpi_imbalance (all_times, (*display_func)->t_avg);
        for (int i = 0; i < vftr_mpisize; i++) {	
        	  if (all_times[i] > 0) {
        		if (all_times[i] < (*display_func)->t_min) {
@@ -736,7 +736,7 @@ void vftr_print_function_statistics (FILE *pout, bool display_sync_time,
     
     double total_time = 0;
     for (int i = 0; i < n_display_functions; i++) {
-       evaluate_display_function (display_function_names[i], &(display_functions[i]), display_sync_time);
+       vftr_evaluate_display_function (display_function_names[i], &(display_functions[i]), display_sync_time);
        total_time += display_functions[i]->this_mpi_time * 1e-6;
     }
 
@@ -1228,7 +1228,7 @@ void vftr_print_profile (FILE *pout, int *ntop, long long time0) {
 
         /* NOTE - counter info only printed for thread 0! */
 	if (vftr_events_enabled) {
-		fill_scenario_counter_values (scenario_expr_counter_values, scenario_expr_n_vars, 
+		vftr_fill_scenario_counter_values (scenario_expr_counter_values, scenario_expr_n_vars, 
 			prof_current, prof_previous);
 
         	if (evc0) {
