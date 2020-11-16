@@ -1,6 +1,7 @@
 #ifndef VFTR_FUNCTIONS_H
 #define VFTR_FUNCTIONS_H
 
+#include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
 #include <stdbool.h>

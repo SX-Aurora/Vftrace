@@ -211,6 +211,23 @@ env_var_regex_t *vftr_read_env_regex (char *env_name, regex_t *val_default) {
 
 /**********************************************************************/
 
+int vftr_profile_sorting_method () {
+  char *s = vftr_environment.sort_profile_table->value;
+  if (!strcmp (s, "EXCL_TIME")) {
+     return EXCL_TIME;
+  } else if (!strcmp (s, "INCL_TIME")) {
+     return INCL_TIME;
+  } else if (!strcmp (s, "CALLS")) {
+     return N_CALLS;
+  } else if (!strcmp (s, "STACK_ID")) {
+     return STACK_ID;
+  } else {
+     return INVALID;
+  } 
+}
+
+/**********************************************************************/
+
 void vftr_read_environment () {
     vftr_environment.vftrace_off = vftr_read_env_bool ("VFTR_OFF", false);
     vftr_environment.do_sampling = vftr_read_env_bool ("VFTR_SAMPLING", false);
@@ -238,6 +255,7 @@ void vftr_read_environment () {
     vftr_environment.print_loadinfo_for = vftr_read_env_string ("VFTR_PRINT_LOADINFO_FOR", NULL);
     vftr_environment.strip_module_names = vftr_read_env_bool ("VFTR_STRIP_MODULE_NAMES", false);
     vftr_environment.create_html = vftr_read_env_bool ("VFTR_CREATE_HTML", false);
+    vftr_environment.sort_profile_table = vftr_read_env_string ("VFTR_SORT_PROFILE_TABLE", "EXCL_TIME");
 }
 
 /**********************************************************************/
@@ -307,8 +325,12 @@ void vftr_assert_environment () {
 			vftr_mpi_groups = *p ? p + 1 : p;
 		}		
 	}
-
-
+        
+       	if (vftr_environment.sort_profile_table->set) {
+	   if (vftr_profile_sorting_method() == INVALID) {
+               printf ("Warning: The profile table sorting method \"%s\" is not defined. Defaulting to TIME_EXCL.\n");
+	   }
+        } 
 }
 
 /**********************************************************************/
@@ -356,6 +378,7 @@ void vftr_free_environment () {
 	free (vftr_environment.print_loadinfo_for);
 	free (vftr_environment.strip_module_names);
 	free (vftr_environment.create_html);
+        free (vftr_environment.sort_profile_table);
 }
 
 /**********************************************************************/
@@ -385,6 +408,7 @@ void vftr_print_environment (FILE *fp) {
 	print_env_string (fp, "VFTR_PRINT_LOADINFO_FOR", vftr_environment.print_loadinfo_for);
 	print_env_bool (fp, "VFTR_STRIP_MODULE_NAMES", vftr_environment.strip_module_names);
 	print_env_bool (fp, "VFTR_CREATE_HTML", vftr_environment.create_html);
+	print_env_string (fp, "VFTR_SORT_PROFILE_TABLE", vftr_environment.sort_profile_table);
 }
 
 /**********************************************************************/

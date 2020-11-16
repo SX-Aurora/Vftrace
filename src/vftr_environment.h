@@ -90,9 +90,12 @@ typedef struct vftr_envs {
         env_var_string_t *print_loadinfo_for;
  	env_var_bool_t *strip_module_names;
 	env_var_bool_t *create_html;
+	env_var_string_t *sort_profile_table;
 } vftr_envs_t;
 
 extern vftr_envs_t vftr_environment;
+
+enum vftr_profile_sortings {EXCL_TIME, INCL_TIME, N_CALLS, STACK_ID, INVALID}; 
 
 void vftr_read_environment();
 void vftr_assert_environment();
@@ -100,6 +103,7 @@ void vftr_free_environment();
 bool vftr_off();
 void vftr_switch_off();
 bool vftr_env_do_sampling();
+int vftr_profile_sorting_method();
 
 int vftr_environment_test_1 (FILE *fp);
 

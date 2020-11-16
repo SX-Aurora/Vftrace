@@ -20,6 +20,9 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
+#include "vftr_functions.h"
+#include "vftr_environment.h"
+
 // sorts a list of unsigned 64 bit integer with linear scaling radix sort
 // one bit at a time
 void vftr_radixsort_uint64(int n, uint64_t *list) {
@@ -126,3 +129,84 @@ void vftr_sort_double_copy (double *d_array, int n, bool ascending, double *d_co
    }
    vftr_sort_double(d_copy, n, ascending);
 }
+
+/**********************************************************************/
+
+int vftr_compare_function_excl_time (const void *a1, const void *a2) {
+    function_t *f1 = *(function_t **)a1;
+    function_t *f2 = *(function_t **)a2;
+    if(!f2) return -1; /* Order important to work around SX qsort problem */
+    if(!f1) return  1;
+    long long t1 = f1->prof_current.timeExcl - f1->prof_previous.timeExcl;
+    long long t2 = f2->prof_current.timeExcl - f2->prof_previous.timeExcl;
+    long long diff = t2 - t1;
+    if (diff > 0) return  1;
+    if (diff < 0) return -1;
+    return  0;
+}
+
+/**********************************************************************/
+
+int vftr_compare_function_incl_time (const void *a1, const void *a2) {
+    function_t *f1 = *(function_t **)a1;
+    function_t *f2 = *(function_t **)a2;
+    if(!f2) return -1; /* Order important to work around SX qsort problem */
+    if(!f1) return  1;
+    long long t1 = f1->prof_current.timeIncl - f1->prof_previous.timeIncl;
+    long long t2 = f2->prof_current.timeIncl - f2->prof_previous.timeIncl;
+    long long diff = t2 - t1;
+    if (diff > 0) return  1;
+    if (diff < 0) return -1;
+    return  0;
+}
+
+/**********************************************************************/
+
+int vftr_compare_function_n_calls (const void *a1, const void *a2) {
+    function_t *f1 = *(function_t **)a1;
+    function_t *f2 = *(function_t **)a2;
+    if(!f2) return -1; /* Order important to work around SX qsort problem */
+    if(!f1) return  1;
+    long long n1 = f1->prof_current.calls - f1->prof_previous.calls;
+    long long n2 = f2->prof_current.calls - f2->prof_previous.calls;
+    long long diff = n2 - n1;
+    if (diff > 0) return  1;
+    if (diff < 0) return -1;
+    return  0;
+}
+
+/**********************************************************************/
+
+int vftr_compare_function_stack_id (const void *a1, const void *a2) {
+    function_t *f1 = *(function_t **)a1;
+    function_t *f2 = *(function_t **)a2;
+    if(!f2) return -1; /* Order important to work around SX qsort problem */
+    if(!f1) return  1;
+    int diff = f2->gid - f1->gid;
+    // In contrast to the above sorting functions, we want to have stack IDs in ascending order.
+    if (diff > 0) return  -1;
+    if (diff < 0) return 1;
+    return  0;
+}
+
+/**********************************************************************/
+
+
+int (*vftr_get_compare_function()) (const void *, const void *) {
+  switch (vftr_profile_sorting_method()) {
+    case EXCL_TIME: 
+       return vftr_compare_function_excl_time;
+    case INCL_TIME: 
+       return vftr_compare_function_incl_time;
+    case N_CALLS:
+       return vftr_compare_function_n_calls;
+    case STACK_ID:
+       return vftr_compare_function_stack_id;
+    default: 
+       return vftr_compare_function_excl_time;
+   }
+}
+
+/**********************************************************************/
+
+

@@ -34,23 +34,10 @@
 #include "vftr_timer.h"
 #include "vftr_stacks.h"
 #include "vftr_clear_requests.h"
+#include "vftr_sorting.h"
 
 bool vftr_profile_wanted = false;
 
-int vftr_compare (const void *a1, const void *a2) {
-    function_t *f1 = *(function_t **)a1;
-    function_t *f2 = *(function_t **)a2;
-    if(!f2) return -1; /* Order important to work around SX qsort problem */
-    if(!f1) return  1;
-    long long t1 = f1->prof_current.timeExcl - f1->prof_previous.timeExcl;
-    long long t2 = f2->prof_current.timeExcl - f2->prof_previous.timeExcl;
-    long long diff = t2 - t1;
-    if( diff > 0 ) return  1;
-    if( diff < 0 ) return -1;
-    return  0;
-}
-
-/**********************************************************************/
 
 void vftr_save_old_state () {
     int i,j;
@@ -341,8 +328,8 @@ void vftr_function_exit(int line) {
         double tsum = 0.;
         double scale = 100. / (double)vftr_prog_cycles;
 
-        qsort (vftr_func_table, (size_t)vftr_stackscount, sizeof( function_t *),
-	       vftr_compare);
+        //qsort (vftr_func_table, (size_t)vftr_stackscount, sizeof( function_t *), vftr_compare_excl_time);
+        qsort (vftr_func_table, (size_t)vftr_stackscount, sizeof( function_t *), vftr_get_compare_function());
 
         /* Set function detail flags while sum(time) < max */
         for (i = 0; i < vftr_stackscount; i++) {

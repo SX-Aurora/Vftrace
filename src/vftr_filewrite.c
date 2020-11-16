@@ -37,6 +37,7 @@
 #include "vftr_mpi_utils.h"
 #include "vftr_stacks.h"
 #include "vftr_browse.h"
+#include "vftr_sorting.h"
 
 // File pointer of the log file
 FILE *vftr_log = NULL;
@@ -1005,8 +1006,8 @@ void vftr_print_profile (FILE *pout, int *ntop, long long time0) {
     funcTable = (function_t**) malloc (vftr_func_table_size * sizeof(function_t*));
     memcpy (funcTable, vftr_func_table, vftr_func_table_size * sizeof(function_t*));
 
-    qsort( (void *)funcTable, (size_t)vftr_stackscount, sizeof( function_t *),
-	   vftr_compare );    
+    //qsort ((void *)funcTable, (size_t)vftr_stackscount, sizeof (function_t *), vftr_compare_excl_time);
+    qsort ((void *)funcTable, (size_t)vftr_stackscount, sizeof (function_t *), vftr_get_compare_function());
 
     if (!vftr_profile_wanted)  return;
 

@@ -33,6 +33,7 @@
 #include "vftr_timer.h"
 #include "vftr_stacks.h"
 #include "vftr_clear_requests.h"
+#include "vftr_sorting.h"
 
 void vftr_region_entry (const char *s, void *addr, bool isPrecise);
 void vftr_region_exit();
@@ -338,8 +339,7 @@ void vftr_region_exit(){
         double tsum = 0.;
         double scale = 100. / (double)vftr_prog_cycles;
 
-        qsort (vftr_func_table, (size_t)vftr_stackscount, sizeof( function_t *),
-	       vftr_compare);
+        qsort (vftr_func_table, (size_t)vftr_stackscount, sizeof (function_t *), vftr_get_compare_function());
 
         /* Set function detail flags while sum(time) < max */
         for (i = 0; i < vftr_stackscount; i++) {
