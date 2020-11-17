@@ -73,7 +73,8 @@ bool vftr_is_collective_mpi_function (char *func_name);
 
 void vftr_store_message_info(vftr_direction dir, int count, int type_idx,
                              int type_size, int rank, int tag,
-                             long long tstart, long long tend);
+                             long long tstart, long long tend,
+                             int callingStackID);
 
 void vftr_get_application_times (double time0, double *total_runtime, double *sampling_overhead_time,
 			  	 double *mpi_overhead_time, double *total_overhead_time, double *application_time);

@@ -84,7 +84,8 @@ void vftr_clear_completed_collective_requests() {
                                        current_request->rank[i],
                                        current_request->tag,
                                        current_request->tstart,
-                                       tend);
+                                       tend,
+                                       current_request->callingstackID);
             }
          }
 

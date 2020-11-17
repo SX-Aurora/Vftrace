@@ -255,7 +255,8 @@ void vftr_log_message_info(vftr_direction dir, int count, int type_idx,
 // Store the message information in a vfd file
 void vftr_store_message_info(vftr_direction dir, int count, int type_idx,
                              int type_size, int rank, int tag,
-                             long long tstart, long long tend) {
+                             long long tstart, long long tend,
+                             int callingStackID) {
    
    int sid = SID_MESSAGE;
    fwrite(&sid, sizeof(int), 1, vftr_vfd_file);
@@ -267,6 +268,7 @@ void vftr_store_message_info(vftr_direction dir, int count, int type_idx,
    fwrite(&tag, sizeof(int), 1, vftr_vfd_file);
    fwrite(&tstart, sizeof(long long), 1, vftr_vfd_file);
    fwrite(&tend, sizeof(long long), 1, vftr_vfd_file);
+   fwrite(&callingStackID, sizeof(int), 1, vftr_vfd_file);
 
    vftr_message_samplecount++;
 }

@@ -21,6 +21,7 @@
 #include "vftr_mpi_utils.h"
 #include "vftr_environment.h"
 #include "vftr_filewrite.h"
+#include "vftr_stacks.h"
 #include "vftr_pause.h"
 
 // store message info for synchronous mpi-communication
@@ -62,7 +63,7 @@ void vftr_store_sync_message_info(vftr_direction dir, int count, MPI_Datatype ty
 
    // store message in vfd-file
    if (vftr_environment.do_sampling->value) {
-      vftr_store_message_info(dir, count, type_idx, type_size, rank, tag, tstart, tend);
+      vftr_store_message_info(dir, count, type_idx, type_size, rank, tag, tstart, tend, vftr_fstack->id);
    }
 
    return;

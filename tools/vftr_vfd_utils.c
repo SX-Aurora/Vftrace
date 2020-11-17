@@ -181,7 +181,8 @@ void skip_hw_observables (FILE *fp, int n_hw_obs) {
 
 void read_mpi_message_sample (FILE *fp, int *direction, int *rank, int *type_index,
 			      int *type_size, int *count, int *tag,
-			      double *dt_start, double *dt_stop, double *rate) {
+			      double *dt_start, double *dt_stop, double *rate,
+                              int *callingStackID) {
 	long long t_start, t_stop;
 	fread (direction, sizeof(int), 1, fp);
 	fread (rank, sizeof(int), 1, fp);
@@ -197,6 +198,7 @@ void read_mpi_message_sample (FILE *fp, int *direction, int *rank, int *type_ind
 	*dt_stop = t_stop * 1.0e-6;
 // Normalize to Megabytes.
 	*rate = (*count) * (*type_size) / (*dt_stop - *dt_start) / (1024.0 * 1024.0);
+        fread (callingStackID, sizeof(int), 1, fp);
 }
 
 /**********************************************************************/
@@ -204,7 +206,7 @@ void read_mpi_message_sample (FILE *fp, int *direction, int *rank, int *type_ind
 // Skip the given number of integers and long longs. 
 // If the MPI VFD entry format changes one day, just adapt these parameters.
 void skip_mpi_message_sample (FILE *fp) {
-#define N_MPI_SAMPLE_INT 6
+#define N_MPI_SAMPLE_INT 7
 #define N_MPI_SAMPLE_LONG 2
 	struct {int dummy_i[N_MPI_SAMPLE_INT];
 		long long dummy_l[N_MPI_SAMPLE_LONG];
