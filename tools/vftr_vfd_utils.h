@@ -14,7 +14,6 @@ typedef struct FileHeader {
     unsigned int message_samplecount;
     unsigned int stackscount;
     long sampleoffset, stacksoffset;
-    unsigned int reserved;
     int n_hw_obs;
 } vfd_header_t;
 

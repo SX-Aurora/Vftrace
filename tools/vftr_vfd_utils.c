@@ -39,7 +39,6 @@ void read_fileheader (vfd_header_t *vfd_header, FILE *fp) {
     fread (&vfd_header->stackscount, 1, sizeof(unsigned int), fp);
     fread (&vfd_header->stacksoffset, 1, sizeof(long), fp);
     fread (&vfd_header->sampleoffset, 1, sizeof(long), fp);
-    fread (&vfd_header->reserved, 1, sizeof(unsigned int), fp);
     vfd_header->samplecount = vfd_header->function_samplecount+vfd_header->message_samplecount;
 }
 
