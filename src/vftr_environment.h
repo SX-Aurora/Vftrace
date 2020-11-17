@@ -95,7 +95,7 @@ typedef struct vftr_envs {
 
 extern vftr_envs_t vftr_environment;
 
-enum vftr_profile_sortings {EXCL_TIME, INCL_TIME, N_CALLS, STACK_ID, INVALID}; 
+enum vftr_profile_sortings {SORT_EXCL_TIME, SORT_INCL_TIME, SORT_N_CALLS, SORT_STACK_ID, SORT_INVALID}; 
 
 void vftr_read_environment();
 void vftr_assert_environment();

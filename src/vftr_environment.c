@@ -214,15 +214,15 @@ env_var_regex_t *vftr_read_env_regex (char *env_name, regex_t *val_default) {
 int vftr_profile_sorting_method () {
   char *s = vftr_environment.sort_profile_table->value;
   if (!strcmp (s, "EXCL_TIME")) {
-     return EXCL_TIME;
+     return SORT_EXCL_TIME;
   } else if (!strcmp (s, "INCL_TIME")) {
-     return INCL_TIME;
+     return SORT_INCL_TIME;
   } else if (!strcmp (s, "CALLS")) {
-     return N_CALLS;
+     return SORT_N_CALLS;
   } else if (!strcmp (s, "STACK_ID")) {
-     return STACK_ID;
+     return SORT_STACK_ID;
   } else {
-     return INVALID;
+     return SORT_INVALID;
   } 
 }
 
@@ -327,7 +327,7 @@ void vftr_assert_environment () {
 	}
         
        	if (vftr_environment.sort_profile_table->set) {
-	   if (vftr_profile_sorting_method() == INVALID) {
+	   if (vftr_profile_sorting_method() == SORT_INVALID) {
                printf ("Warning: The profile table sorting method \"%s\" is not defined. Defaulting to TIME_EXCL.\n");
 	   }
         } 

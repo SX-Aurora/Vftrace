@@ -194,13 +194,13 @@ int vftr_compare_function_stack_id (const void *a1, const void *a2) {
 
 int (*vftr_get_compare_function()) (const void *, const void *) {
   switch (vftr_profile_sorting_method()) {
-    case EXCL_TIME: 
+    case SORT_EXCL_TIME: 
        return vftr_compare_function_excl_time;
-    case INCL_TIME: 
+    case SORT_INCL_TIME: 
        return vftr_compare_function_incl_time;
-    case N_CALLS:
+    case SORT_N_CALLS:
        return vftr_compare_function_n_calls;
-    case STACK_ID:
+    case SORT_STACK_ID:
        return vftr_compare_function_stack_id;
     default: 
        return vftr_compare_function_excl_time;
