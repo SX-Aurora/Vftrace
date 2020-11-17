@@ -93,8 +93,10 @@ typedef struct vftr_envs {
 	env_var_string_t *sort_profile_table;
 } vftr_envs_t;
 
+// The global container for environment variables.
 extern vftr_envs_t vftr_environment;
 
+// These constants indicate how the final ASCII profile table is sorted.
 enum vftr_profile_sortings {SORT_EXCL_TIME, SORT_INCL_TIME, SORT_N_CALLS, SORT_STACK_ID, SORT_INVALID}; 
 
 void vftr_read_environment();

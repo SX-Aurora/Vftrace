@@ -31,6 +31,6 @@ void vftr_sort_double (double *d_array, int n, bool ascending);
 void vftr_sort_double_copy (double *d_array, int n, bool ascending, double *d_copy);
 
 int vftr_compare_function_excl_time (const void *a1, const void *a2);
-int (*vftr_get_compare_function()) (const void *, const void *);
+int (*vftr_get_profile_compare_function()) (const void *, const void *);
 
 #endif

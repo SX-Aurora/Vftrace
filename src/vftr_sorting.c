@@ -131,11 +131,14 @@ void vftr_sort_double_copy (double *d_array, int n, bool ascending, double *d_co
 }
 
 /**********************************************************************/
+// The next functions compare various components of the function struct.
+// This allows to sort e.g. vftr_func_table wrt. exclusive time, inclusive time, etc.
+// If not stated otherwise, they all sort in decsending order.
 
 int vftr_compare_function_excl_time (const void *a1, const void *a2) {
     function_t *f1 = *(function_t **)a1;
     function_t *f2 = *(function_t **)a2;
-    if(!f2) return -1; /* Order important to work around SX qsort problem */
+    if(!f2) return -1;
     if(!f1) return  1;
     long long t1 = f1->prof_current.timeExcl - f1->prof_previous.timeExcl;
     long long t2 = f2->prof_current.timeExcl - f2->prof_previous.timeExcl;
@@ -150,7 +153,7 @@ int vftr_compare_function_excl_time (const void *a1, const void *a2) {
 int vftr_compare_function_incl_time (const void *a1, const void *a2) {
     function_t *f1 = *(function_t **)a1;
     function_t *f2 = *(function_t **)a2;
-    if(!f2) return -1; /* Order important to work around SX qsort problem */
+    if(!f2) return -1;
     if(!f1) return  1;
     long long t1 = f1->prof_current.timeIncl - f1->prof_previous.timeIncl;
     long long t2 = f2->prof_current.timeIncl - f2->prof_previous.timeIncl;
@@ -165,7 +168,7 @@ int vftr_compare_function_incl_time (const void *a1, const void *a2) {
 int vftr_compare_function_n_calls (const void *a1, const void *a2) {
     function_t *f1 = *(function_t **)a1;
     function_t *f2 = *(function_t **)a2;
-    if(!f2) return -1; /* Order important to work around SX qsort problem */
+    if(!f2) return -1;
     if(!f1) return  1;
     long long n1 = f1->prof_current.calls - f1->prof_previous.calls;
     long long n2 = f2->prof_current.calls - f2->prof_previous.calls;
@@ -180,7 +183,7 @@ int vftr_compare_function_n_calls (const void *a1, const void *a2) {
 int vftr_compare_function_stack_id (const void *a1, const void *a2) {
     function_t *f1 = *(function_t **)a1;
     function_t *f2 = *(function_t **)a2;
-    if(!f2) return -1; /* Order important to work around SX qsort problem */
+    if(!f2) return -1;
     if(!f1) return  1;
     int diff = f2->gid - f1->gid;
     // In contrast to the above sorting functions, we want to have stack IDs in ascending order.
@@ -192,7 +195,7 @@ int vftr_compare_function_stack_id (const void *a1, const void *a2) {
 /**********************************************************************/
 
 
-int (*vftr_get_compare_function()) (const void *, const void *) {
+int (*vftr_get_profile_compare_function()) (const void *, const void *) {
   switch (vftr_profile_sorting_method()) {
     case SORT_EXCL_TIME: 
        return vftr_compare_function_excl_time;

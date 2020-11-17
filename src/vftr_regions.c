@@ -339,7 +339,8 @@ void vftr_region_exit(){
         double tsum = 0.;
         double scale = 100. / (double)vftr_prog_cycles;
 
-        qsort (vftr_func_table, (size_t)vftr_stackscount, sizeof (function_t *), vftr_get_compare_function());
+        //qsort (vftr_func_table, (size_t)vftr_stackscount, sizeof (function_t *), vftr_compare_excl_time);
+        qsort (vftr_func_table, (size_t)vftr_stackscount, sizeof (function_t *), vftr_get_profile_compare_function());
 
         /* Set function detail flags while sum(time) < max */
         for (i = 0; i < vftr_stackscount; i++) {
