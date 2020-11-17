@@ -134,7 +134,8 @@ void vftr_after_mpi_init() {
 
    vftr_prevsampletime = 0;
    vftr_nextsampletime = 0ll;
-   vftr_samplecount = 0;
+   vftr_function_samplecount = 0;
+   vftr_message_samplecount = 0;
    vftr_prog_cycles = 0ll;
 
    vftr_reset_counts (vftr_froots);

@@ -34,11 +34,13 @@ void read_fileheader (vfd_header_t *vfd_header, FILE *fp) {
     fread (&vfd_header->cycletime.l, 1, sizeof(long long), fp);
     fread (&vfd_header->inittime, 1, sizeof(long long), fp);
     fread (&vfd_header->runtime.l, 1, sizeof(long long), fp);
-    fread (&vfd_header->samplecount, 1, sizeof(unsigned int), fp);
+    fread (&vfd_header->function_samplecount, 1, sizeof(unsigned int), fp);
+    fread (&vfd_header->message_samplecount, 1, sizeof(unsigned int), fp);
     fread (&vfd_header->stackscount, 1, sizeof(unsigned int), fp);
     fread (&vfd_header->stacksoffset, 1, sizeof(long), fp);
     fread (&vfd_header->sampleoffset, 1, sizeof(long), fp);
     fread (&vfd_header->reserved, 1, sizeof(unsigned int), fp);
+    vfd_header->samplecount = vfd_header->function_samplecount+vfd_header->message_samplecount;
 }
 
 /**********************************************************************/
@@ -138,6 +140,8 @@ void print_fileheader (FILE *fp, vfd_header_t vfd_header) {
     fprintf (fp, "Init time:     %lld\n", vfd_header.inittime);
     fprintf (fp, "Job runtime:   %.3lf seconds\n", vfd_header.runtime.d);
     fprintf (fp, "Samples:       %d\n", vfd_header.samplecount );
+    fprintf (fp, "   Function:   %d\n", vfd_header.function_samplecount );
+    fprintf (fp, "   Messages:   %d\n", vfd_header.message_samplecount );
     fprintf (fp, "Unique stacks: %u\n", vfd_header.stackscount);
     fprintf (fp, "Stacks offset: %ld\n", vfd_header.stacksoffset);
     fprintf (fp, "Sample offset: %ld\n", vfd_header.sampleoffset);

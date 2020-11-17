@@ -46,7 +46,8 @@ bool vftr_timer_end;
 
 int vftr_mpirank;
 int vftr_mpisize;
-unsigned int vftr_samplecount;
+unsigned int vftr_function_samplecount;
+unsigned int vftr_message_samplecount;
 
 char *vftr_start_date;
 char *vftr_end_date;

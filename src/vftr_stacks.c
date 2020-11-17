@@ -73,7 +73,8 @@ void vftr_initialize_stacks() {
    function_t *func = vftr_new_function (NULL, strdup (s), NULL, 0, true);
    func->next_in_level = func; /* Close circular linked list to itself */
    vftr_fstack = func;
-   vftr_samplecount = 0;
+   vftr_function_samplecount = 0;
+   vftr_message_samplecount = 0;
    vftr_maxtime = 0;
    vftr_froots = func;
 }

@@ -176,8 +176,8 @@ void vftr_init_vfd_file () {
 	fwrite (zerolong, sizeof(long long), 1, fp);
   	// vftr runtime
 	fwrite (zerodouble, sizeof(double), 1, fp);
-        // Five integers: sample_count, stacks_count, stacks_offset, sample_offset and ???
-	fwrite (zeroint, sizeof(unsigned int), 2, fp);
+        // Six integers: function_samplecount, message_samplecount, stacks_count, stacks_offset, sample_offset and ???
+	fwrite (zeroint, sizeof(unsigned int), 3, fp);
 	fwrite (zerolong, sizeof(long), 1, fp);
 	fwrite (zerolong, sizeof(long), 1, fp);
 	fwrite (zerolong, sizeof(long), 1, fp);
@@ -213,7 +213,8 @@ void vftr_finalize_vfd_file (long long finalize_time, int signal_number) {
         // fwrite(&vftr_inittime, sizeof(long long), 1, vftr_vfd_file);
 	fwrite (zerolong, sizeof(long long), 1, vftr_vfd_file);
         fwrite (&runtime, sizeof(double), 1, vftr_vfd_file);
-        fwrite (&vftr_samplecount, sizeof(unsigned int), 1, vftr_vfd_file);
+        fwrite (&vftr_function_samplecount, sizeof(unsigned int), 1, vftr_vfd_file);
+        fwrite (&vftr_message_samplecount, sizeof(unsigned int), 1, vftr_vfd_file);
         fwrite (&vftr_stackscount, sizeof(unsigned int), 1, vftr_vfd_file);
         fwrite (&stackstable_offset, sizeof(long), 1, vftr_vfd_file);
         fwrite (&vftr_samples_offset, sizeof(long), 1, vftr_vfd_file);
@@ -233,7 +234,7 @@ void vftr_write_to_vfd(long long runtime, unsigned long long cycles, int stack_i
 
     vftr_nextsampletime = runtime + vftr_interval;
     vftr_prevsampletime = runtime;
-    vftr_samplecount++;
+    vftr_function_samplecount++;
 }
 
 /**********************************************************************/
@@ -269,7 +270,7 @@ void vftr_store_message_info(vftr_direction dir, int count, int type_idx,
    fwrite(&tstart, sizeof(long long), 1, vftr_vfd_file);
    fwrite(&tend, sizeof(long long), 1, vftr_vfd_file);
 
-   vftr_samplecount++;
+   vftr_message_samplecount++;
 }
 #endif
 

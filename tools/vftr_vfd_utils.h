@@ -9,7 +9,10 @@ typedef struct FileHeader {
     int threads, thread, tasks, task; 
     union { double d; unsigned long long l; } cycletime, runtime;
     long long inittime;
-    unsigned int samplecount, stackscount;
+    unsigned int samplecount;
+    unsigned int function_samplecount;
+    unsigned int message_samplecount;
+    unsigned int stackscount;
     long sampleoffset, stacksoffset;
     unsigned int reserved;
     int n_hw_obs;
