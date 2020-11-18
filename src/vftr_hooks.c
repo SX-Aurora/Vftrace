@@ -133,6 +133,7 @@ void vftr_function_entry (const char *s, void *addr, int line, bool isPrecise) {
     }
     caller->callee = func; // Faster lookup next time around
 
+    vftr_fstack = func; /* Here's where we are now */
     if (func->exclude_this) return;
     if (line > 0) assert (func->line_beg == line);
 
@@ -146,7 +147,6 @@ void vftr_function_entry (const char *s, void *addr, int line, bool isPrecise) {
 	vftr_save_old_state ();
     }
 
-    vftr_fstack = func; /* Here's where we are now */
 
     // Is it time for the next sample?
     time_to_sample = (func_entry_time > vftr_nextsampletime) || func->precise;  
@@ -234,7 +234,10 @@ void vftr_function_exit(int line) {
     timer = vftr_get_runtime_usec ();
     cycles0 = vftr_get_cycles() - vftr_initcycles;
     func  = vftr_fstack;
-    if (func->exclude_this) return;
+    if (func->exclude_this) {
+      vftr_fstack = func->return_to;
+      return;
+    }
 
     if (line > 0) {
         if (func->line_end) {
