@@ -2,7 +2,7 @@
 #define VFTR_FILEWRITE_H
 
 #define VFTR_FILEIDSIZE 16
-#define VFD_VERSION 1
+#define VFD_VERSION 2
 
 #include <stdio.h>
 #include "vftr_mpi_utils.h"
