@@ -31,9 +31,7 @@ void read_fileheader (vfd_header_t *vfd_header, FILE *fp) {
     fread (&vfd_header->thread,	1, sizeof(int), fp);
     fread (&vfd_header->tasks, 1, sizeof(int), fp);
     fread (&vfd_header->task, 1, sizeof(int), fp);
-    fread (&vfd_header->cycletime.l, 1, sizeof(long long), fp);
-    fread (&vfd_header->inittime, 1, sizeof(long long), fp);
-    fread (&vfd_header->runtime.l, 1, sizeof(long long), fp);
+    fread (&vfd_header->runtime, 1, sizeof(double), fp);
     fread (&vfd_header->function_samplecount, 1, sizeof(unsigned int), fp);
     fread (&vfd_header->message_samplecount, 1, sizeof(unsigned int), fp);
     fread (&vfd_header->stackscount, 1, sizeof(unsigned int), fp);
@@ -136,8 +134,7 @@ void print_fileheader (FILE *fp, vfd_header_t vfd_header) {
     fprintf (fp, "MPI tasks:  rank=%d count=%d\n", vfd_header.task, vfd_header.tasks); 
     fprintf (fp, "OpenMP threads:  thread=%d count=%d\n", vfd_header.thread, vfd_header.threads);
     fprintf (fp, "Sample interval: %12.6le seconds\n", vfd_header.interval*1.0e-6);
-    fprintf (fp, "Init time:     %lld\n", vfd_header.inittime);
-    fprintf (fp, "Job runtime:   %.3lf seconds\n", vfd_header.runtime.d);
+    fprintf (fp, "Job runtime:   %.3lf seconds\n", vfd_header.runtime);
     fprintf (fp, "Samples:       %d\n", vfd_header.samplecount );
     fprintf (fp, "   Function:   %d\n", vfd_header.function_samplecount );
     fprintf (fp, "   Messages:   %d\n", vfd_header.message_samplecount );

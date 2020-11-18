@@ -7,8 +7,7 @@ typedef struct FileHeader {
     char fileid[VFTR_FILEIDSIZE], date[24];
     long long interval;
     int threads, thread, tasks, task; 
-    union { double d; unsigned long long l; } cycletime, runtime;
-    long long inittime;
+    double runtime;
     unsigned int samplecount;
     unsigned int function_samplecount;
     unsigned int message_samplecount;

@@ -170,10 +170,6 @@ void vftr_init_vfd_file () {
     	long long zerolong[] = {0};
 	// vftr_mpi_size and vftr_mpi_rank
 	fwrite (zeroint, sizeof(unsigned int), 2, fp);
-	// vftr_cycletime
-	fwrite (zerodouble, sizeof(double), 1, fp);
-	// vftr_inittime
-	fwrite (zerolong, sizeof(long long), 1, fp);
   	// vftr runtime
 	fwrite (zerodouble, sizeof(double), 1, fp);
         // Three integers: function_samplecount, message_samplecount, stacks_count
@@ -206,11 +202,6 @@ void vftr_finalize_vfd_file (long long finalize_time, int signal_number) {
         fseek (vftr_vfd_file, vftr_admin_offset, SEEK_SET);
         fwrite (&vftr_mpisize, sizeof(int), 1, vftr_vfd_file); 
         fwrite (&vftr_mpirank, sizeof(int),1, vftr_vfd_file); 
-        fwrite (zerodouble, sizeof(double),	1, vftr_vfd_file); 
-	// vftr_inittime has to be removed from the vfd file format, as
-	// it is always zero! But we have to check it against the viewer.
-        // fwrite(&vftr_inittime, sizeof(long long), 1, vftr_vfd_file);
-	fwrite (zerolong, sizeof(long long), 1, vftr_vfd_file);
         fwrite (&runtime, sizeof(double), 1, vftr_vfd_file);
         fwrite (&vftr_function_samplecount, sizeof(unsigned int), 1, vftr_vfd_file);
         fwrite (&vftr_message_samplecount, sizeof(unsigned int), 1, vftr_vfd_file);
