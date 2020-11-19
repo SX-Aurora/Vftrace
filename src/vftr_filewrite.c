@@ -1225,6 +1225,7 @@ void vftr_print_profile (FILE *pout, int *ntop, long long time0) {
 	rtime = t_excl;
 	ctime += t_part;
 	vftr_print_stack_time (pout, calls, fmttime, fmttimeInc, t_excl, t_incl, t_part, ctime);
+        fprintf (pout, " %lld ", funcTable[i_func]->overhead);
 
         /* NOTE - counter info only printed for thread 0! */
 	if (vftr_events_enabled) {

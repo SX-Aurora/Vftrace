@@ -200,6 +200,7 @@ function_t *vftr_new_function(void *arg, const char *function_name,
       vftr_func_table = newtable;
       vftr_func_table_size = newsize;
    }
+   func->overhead = 0;
    vftr_func_table[vftr_stackscount++] = func;
 
    return func;

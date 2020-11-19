@@ -206,6 +206,7 @@ void vftr_function_entry (const char *s, void *addr, int line, bool isPrecise) {
     long long overhead_time_end = vftr_get_runtime_usec();
     vftr_prof_data.timeExcl = overhead_time_end;
     vftr_overhead_usec += overhead_time_end - overhead_time_start;
+    func->overhead += overhead_time_end - overhead_time_start;
 }
 
 /**********************************************************************/
@@ -353,6 +354,8 @@ void vftr_function_exit(int line) {
     long long overhead_time_end = vftr_get_runtime_usec();
     vftr_prof_data.timeExcl = overhead_time_end;
     vftr_overhead_usec += overhead_time_end - overhead_time_start;
+    func->overhead += overhead_time_end - overhead_time_start;
+    
 
     /* Terminate Vftrace if we are exiting the main routine */
     // When exiting main, there is no return value.

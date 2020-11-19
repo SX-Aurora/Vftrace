@@ -44,6 +44,7 @@ typedef struct Function {
    // Unique hash of the callstack 
    // needed vor stack comparison among processes
    uint64_t stackHash;
+   long long overhead;
 } function_t;
 
 void vftr_find_function_in_table (char *func_name, int **indices, int *n_indices, bool to_lower_case);
