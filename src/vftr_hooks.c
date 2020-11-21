@@ -38,6 +38,8 @@
 
 bool vftr_profile_wanted = false;
 
+void *current_exclude_addr = NULL;
+excl_fun_t *exclude_addr = NULL;
 
 void vftr_save_old_state () {
     int i,j;
@@ -70,6 +72,22 @@ void vftr_function_entry (const char *s, void *addr, int line, bool isPrecise) {
 	vftr_init = 0;
     }
     if (vftr_off() || vftr_paused) return;
+
+    // Did we already find functions to exclude?
+    if (current_exclude_addr != NULL) {
+       // If the current exclude address matches the address of this function, we
+       // return from Vftrace. Otherwise, we search the list of registered exclude
+       // addresses for matches and return, if necessary.
+       if (current_exclude_addr == addr) {
+	  return;
+       } else {
+	  excl_fun_t *this_addr = exclude_addr;
+	  while (this_addr) {
+             if (this_addr->addr == addr) return;
+	     this_addr = this_addr->next;
+	  }
+       }
+    }
 
     long long func_entry_time = vftr_get_runtime_usec();
     // log function entry and exit time to estimate the overhead time
@@ -134,7 +152,25 @@ void vftr_function_entry (const char *s, void *addr, int line, bool isPrecise) {
     caller->callee = func; // Faster lookup next time around
 
     vftr_fstack = func; /* Here's where we are now */
-    if (func->exclude_this) return;
+
+    // All known exclude functions have been treated above, so this one is new.
+    if (func->exclude_this) {
+       // The first exclude address.
+       if (current_exclude_addr == NULL) {
+          exclude_addr = (excl_fun_t *) malloc (sizeof(excl_fun_t)); 
+          exclude_addr->addr = addr;
+ 	  exclude_addr->next = NULL;
+       } else {
+	  excl_fun_t *this_addr = exclude_addr;
+          while (this_addr->next) this_addr = this_addr->next;
+	  this_addr->next = (excl_fun_t *) malloc (sizeof(excl_fun_t));
+	  this_addr->next->addr = addr;
+	  this_addr->next->next = NULL;
+       }
+       // In any case, return.
+       current_exclude_addr = addr;
+       return;
+    }
     if (line > 0) assert (func->line_beg == line);
 
     if (func->profile_this) {
