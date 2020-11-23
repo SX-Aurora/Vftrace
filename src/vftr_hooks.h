@@ -22,9 +22,25 @@
 
 extern bool vftr_profile_wanted;
 
+// We keep a list of the addresses of the exluded functions.
+// This way, we can check early in vftr_function_entry, if the
+// given function should be skipped, before a time-consuming lookup in the
+// function tree is done.
+// current_exclude_addr stores the address of the last encountered excluded function.
+// We assume, that consecutive calls are frequent, so this saves time by not needing to search in the list.
+extern void *current_exclude_addr;
+typedef struct excl_addr_list {
+   void *addr;
+   struct excl_addr_list *next;
+} excl_fun_t;
+
+extern excl_fun_t *exclude_addr;
+
 void vftr_function_entry (const char *s, void *addr, int line, bool isPrecise);
 void vftr_function_exit (int line);
 
 void vftr_save_old_state ();
+
+
 
 #endif
