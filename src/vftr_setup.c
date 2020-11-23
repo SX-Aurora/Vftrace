@@ -308,7 +308,6 @@ void vftr_finalize() {
 
     // get the total runtime
     long long finalize_time = vftr_get_runtime_usec();
-    long long timer = vftr_get_runtime_usec ();
 
     vftr_timer_end = true;
 
@@ -324,7 +323,7 @@ void vftr_finalize() {
     bool valid_loadbalance_table = !vftr_normalize_stacks();
     vftr_calc_tree_format (vftr_froots);
 
-    vftr_print_profile (vftr_log, &ntop, timer);
+    vftr_print_profile (vftr_log, &ntop, vftr_get_runtime_usec());
 #ifdef _MPI
     if (vftr_environment.print_stack_profile->value) {
        vftr_print_mpi_statistics (vftr_log);
