@@ -107,7 +107,7 @@ void read_table (FILE *fp, double t[], int stack_pos[], char *func_names[],
 	 if (n > *fmt_func) *fmt_func = n;
 	 n = vftr_count_digits_double (t_incl);
 	 if (n > *fmt_t) *fmt_t = n;
-	 n = vftr_count_digits (stack_id);
+	 n = vftr_count_digits_int (stack_id);
 	 if (n > *fmt_stackpos) *fmt_stackpos = n;
          t[i_t] = t_incl;
 	 func_names[stack_id] = strdup(func_name);

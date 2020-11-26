@@ -951,11 +951,11 @@ void vftr_print_function_stack (FILE *fp, char *func_name, int n_final_stack_ids
 	// of microseconds.
 	// We add this value of 6 to the number of digits in front of the comma, plus one for the comma itself.
 	int fmt_t = (vftr_count_digits_double(t_max) + 7) > strlen(vftr_stacktree_headers[TIME]) ? vftr_count_digits_double(t_max) + 7: strlen(vftr_stacktree_headers[TIME]);
-	int fmt_calls = vftr_count_digits(n_calls_max) > strlen(vftr_stacktree_headers[CALLS]) ? vftr_count_digits(n_calls_max) : strlen(vftr_stacktree_headers[CALLS]);;
+	int fmt_calls = vftr_count_digits_int(n_calls_max) > strlen(vftr_stacktree_headers[CALLS]) ? vftr_count_digits_int(n_calls_max) : strlen(vftr_stacktree_headers[CALLS]);;
 	// For percentage values, two decimal points are enough.
 	int fmt_imba = (vftr_count_digits_double(imba_max) + 3) > strlen(vftr_stacktree_headers[IMBA]) ? vftr_count_digits_double(imba_max) + 3: strlen(vftr_stacktree_headers[IMBA]);
-	int fmt_stackid = vftr_count_digits(vftr_gStackscount) > strlen(vftr_stacktree_headers[STACK_ID]) ?
-			 vftr_count_digits(vftr_gStackscount) : strlen(vftr_stacktree_headers[STACK_ID]);
+	int fmt_stackid = vftr_count_digits_int(vftr_gStackscount) > strlen(vftr_stacktree_headers[STACK_ID]) ?
+			 vftr_count_digits_int(vftr_gStackscount) : strlen(vftr_stacktree_headers[STACK_ID]);
 	int fmt_mpi_send = strlen (vftr_stacktree_headers[SEND_BYTES]);
 	int fmt_mpi_recv = strlen (vftr_stacktree_headers[RECV_BYTES]);
 	vftr_print_stacktree_header (fp, n_final_stack_ids, func_name, n_spaces_max, fmt_calls,
