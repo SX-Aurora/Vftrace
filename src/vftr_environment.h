@@ -97,7 +97,7 @@ typedef struct vftr_envs {
 extern vftr_envs_t vftr_environment;
 
 // These constants indicate how the final ASCII profile table is sorted.
-enum vftr_profile_sortings {SORT_EXCL_TIME, SORT_INCL_TIME, SORT_N_CALLS, SORT_STACK_ID, SORT_INVALID}; 
+enum vftr_profile_sortings {SORT_EXCL_TIME, SORT_INCL_TIME, SORT_N_CALLS, SORT_STACK_ID, SORT_OVERHEAD, SORT_OVERHEAD_RELATIVE, SORT_INVALID}; 
 
 void vftr_read_environment();
 void vftr_assert_environment();

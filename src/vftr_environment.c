@@ -221,6 +221,10 @@ int vftr_profile_sorting_method () {
      return SORT_N_CALLS;
   } else if (!strcmp (s, "STACK_ID")) {
      return SORT_STACK_ID;
+  } else if (!strcmp (s, "OVERHEAD")) {
+     return SORT_OVERHEAD;
+  } else if (!strcmp (s, "OVERHEAD_RELATIVE")) {
+     return SORT_OVERHEAD_RELATIVE;
   } else {
      return SORT_INVALID;
   } 
