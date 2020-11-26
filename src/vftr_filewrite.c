@@ -1172,23 +1172,25 @@ void vftr_print_profile (FILE *pout, int *ntop, long long time0) {
 
     /* Generic header line - 3 of 3 */ 
 
-    vftr_output_column_header ("Calls", formats->n_calls, pout);
-    vftr_output_column_header ("Excl", formats->excl_time, pout);
-    vftr_output_column_header ("Incl", formats->incl_time, pout);
-    vftr_output_column_header ("Overhead", formats->incl_time, pout);
-
     if (vftr_environment.create_html->value) {
        vftr_browse_create_profile_header (f_html);
     }
 
-    
-    fputs ("%overhead overhead / exlc ", pout);
+    vftr_output_column_header ("Calls", formats->n_calls, pout);
+    vftr_output_column_header ("Excl", formats->excl_time, pout);
+    vftr_output_column_header ("Incl", formats->incl_time, pout);
 
-    if (vftr_events_enabled) {
-        vftr_scenario_expr_print_header (pout);
+    fputs ("%abs %cum ", pout);
+    if (evc0) fputs ("%evc ", pout);
+
+    if (vftr_environment.show_overhead->value) {
+        vftr_output_column_header ("Overhead", formats->overhead, pout);
+	vftr_output_column_header ("%overhead", formats->overhead, pout);
+	vftr_output_column_header ("overhead /excl", formats->overhead, pout);
     }
 
     if (vftr_events_enabled) {
+        vftr_scenario_expr_print_header (pout);
     	int j = 0;
     	for (evc = evc1; evc; evc = evc->next) {
     	    if (ectot[j++]) {
@@ -1196,6 +1198,7 @@ void vftr_print_profile (FILE *pout, int *ntop, long long time0) {
     	    }
     	}
     }
+
     vftr_output_column_header ("Function", formats->func_name, pout);
     vftr_output_column_header ("Caller", formats->caller_name, pout);
     vftr_output_column_header ("ID", formats->fid, pout);
@@ -1229,9 +1232,11 @@ void vftr_print_profile (FILE *pout, int *ntop, long long time0) {
 	rtime = t_excl;
 	ctime += t_part;
 	vftr_print_stack_time (pout, calls, fmttime, fmttimeInc, t_excl, t_incl, t_part, ctime);
-        fprintf (pout, " %*.3f %6.2f %5.3f ", formats->overhead, funcTable[i_func]->overhead * 1e-6, 
-		 funcTable[i_func]->overhead * 1e-6 / sampling_overhead_time * 100.0,
-		 t_excl > 0 ? funcTable[i_func]->overhead * 1e-6 / t_excl : 0.0);
+	if (vftr_environment.show_overhead->value) {
+           fprintf (pout, " %*.3f %6.2f %5.3f ", formats->overhead, funcTable[i_func]->overhead * 1e-6, 
+	   	 funcTable[i_func]->overhead * 1e-6 / sampling_overhead_time * 100.0,
+	   	 t_excl > 0 ? funcTable[i_func]->overhead * 1e-6 / t_excl : 0.0);
+	}
 
         /* NOTE - counter info only printed for thread 0! */
 	if (vftr_events_enabled) {

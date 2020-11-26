@@ -260,6 +260,7 @@ void vftr_read_environment () {
     vftr_environment.strip_module_names = vftr_read_env_bool ("VFTR_STRIP_MODULE_NAMES", false);
     vftr_environment.create_html = vftr_read_env_bool ("VFTR_CREATE_HTML", false);
     vftr_environment.sort_profile_table = vftr_read_env_string ("VFTR_SORT_PROFILE_TABLE", "EXCL_TIME");
+    vftr_environment.show_overhead = vftr_read_env_bool ("VFTR_SHOW_FUNCTION_OVERHEAD", false);
 }
 
 /**********************************************************************/
@@ -331,8 +332,13 @@ void vftr_assert_environment () {
 	}
         
        	if (vftr_environment.sort_profile_table->set) {
-	   if (vftr_profile_sorting_method() == SORT_INVALID) {
+      	   int method = vftr_profile_sorting_method(); 
+	   if (method == SORT_INVALID) {
                printf ("Warning: The profile table sorting method \"%s\" is not defined. Defaulting to TIME_EXCL.\n");
+	       vftr_environment.sort_profile_table->value = SORT_EXCL_TIME;
+	   } else if ((method == SORT_OVERHEAD || method == SORT_OVERHEAD_RELATIVE) && !vftr_environment.show_overhead->value) {
+	       printf ("Warning: You specified VFTR_SORT_PROFILE_TABLE=OVERHEAD(_RELATIVE), but overhead display is not enabled. Defaulting to TIME_EXLC.\n");
+	       vftr_environment.sort_profile_table->value = SORT_EXCL_TIME;
 	   }
         } 
 }
@@ -383,6 +389,7 @@ void vftr_free_environment () {
 	free (vftr_environment.strip_module_names);
 	free (vftr_environment.create_html);
         free (vftr_environment.sort_profile_table);
+	free (vftr_environment.show_overhead);
 }
 
 /**********************************************************************/
@@ -413,6 +420,7 @@ void vftr_print_environment (FILE *fp) {
 	print_env_bool (fp, "VFTR_STRIP_MODULE_NAMES", vftr_environment.strip_module_names);
 	print_env_bool (fp, "VFTR_CREATE_HTML", vftr_environment.create_html);
 	print_env_string (fp, "VFTR_SORT_PROFILE_TABLE", vftr_environment.sort_profile_table);
+        print_env_bool (fp, "VFTR_SHOW_FUNCTION_OVERHEAD", vftr_environment.show_overhead);
 }
 
 /**********************************************************************/
