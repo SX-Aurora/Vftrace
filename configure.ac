@@ -22,6 +22,9 @@ AM_PROG_CC_C_O
 # Check if C-compiler supports c99 standard
 AX_CHECK_C99_STD
 
+# Check if fortran is selected or not
+AX_ENABLE_FORTRAN
+
 # Check if elf-symbols align with function pointers
 AX_CHECK_VMAP_OFFSET
 
