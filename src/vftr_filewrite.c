@@ -358,16 +358,6 @@ void vftr_output_column_header (char *header, int largest_column_length, FILE *f
 
 /**********************************************************************/
 
-// Compute the column width by checking how many times value can be divided by 10. If this number
-// exceeds the existing width value, overwrite it.
-//void vftr_compute_column_width (long long value, int *width) {
-//	int count, this_width;
-//	for (count = value, this_width = 0; count; count /= 10, this_width++);
-//	if (this_width > *width) *width = this_width;
-//}
-
-/**********************************************************************/
-
 void vftr_print_stack_time (FILE *fp, int calls, char *fmttime, char *fmttimeInc, float t_excl, float t_incl, float t_part, float t_cumm) {
 
 	float stime = calls ? t_excl : 0;
@@ -480,7 +470,12 @@ void vftr_set_column_formats (function_t **funcTable, double runtime,
 	format->caller_name = MIN_CALLER_NCHAR;
 	format->incl_time = MIN_INCTIME_NCHAR;
         format->excl_time = MIN_EXCLTIME_NCHAR;
-        format->overhead = MIN_EXCLTIME_NCHAR;
+	if (vftr_environment.show_overhead->value) {
+           format->overhead = MIN_EXCLTIME_NCHAR;
+ 	} else {
+           format->overhead = 0;
+	}
+	
 	// 
 	for (int i = 0; i < n_indices; i++) {
 		int i_func = indices[i];
@@ -512,8 +507,10 @@ void vftr_set_column_formats (function_t **funcTable, double runtime,
 		if (n > format->excl_time) format->excl_time = n;
 		n = vftr_count_digits_double (t_incl * 10000.);
 		if (n > format->incl_time) format->incl_time = n;
-		n = vftr_count_digits_double (t_overhead * 10000.);
-		if (n > format->overhead) format->overhead = n;
+	        if (vftr_environment.show_overhead->value) {
+		   n = vftr_count_digits_double (t_overhead * 10000.);
+		   if (n > format->overhead) format->overhead = n;
+		}
 
 		if (vftr_events_enabled) {
 		    unsigned long long cycles = prof_current->cycles - prof_previous->cycles;
