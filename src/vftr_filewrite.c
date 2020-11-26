@@ -452,65 +452,97 @@ void vftr_fill_scenario_counter_values (double *val, int n_vars, profdata_t *pro
 
 /**********************************************************************/
 
-#define MIN_CALLS_NCHAR 3
-#define MIN_FUNC_NCHAR 1
-#define MIN_CALLER_NCHAR 5
-#define MIN_EXCLTIME_NCHAR 1
-#define MIN_INCTIME_NCHAR 1
+void vftr_prof_column_init (char *name, int n_decimal_places, int type, column_t *c) {
+	c->header = strdup (name);
+	c->n_chars = strlen(name);
+	c->n_decimal_places = n_decimal_places;
+	c->type = type;
+}
 
-void vftr_set_column_formats (function_t **funcTable, double runtime,
-		   int n_indices, int *indices, format_t *format) {
-	long long ev;
-	for (format->fid = 0, ev = vftr_gStackscount; ev; ev /= 10, format->fid++);
-	for (format->rank = 0, ev = vftr_mpisize; ev; ev /= 10, format->rank++);
-	format->fid = 2;
-	format->rank = 2;
-	format->n_calls = MIN_CALLS_NCHAR;
-	format->func_name = MIN_FUNC_NCHAR;
-	format->caller_name = MIN_CALLER_NCHAR;
-	format->incl_time = MIN_INCTIME_NCHAR;
-        format->excl_time = MIN_EXCLTIME_NCHAR;
-	if (vftr_environment.show_overhead->value) {
-           format->overhead = MIN_EXCLTIME_NCHAR;
- 	} else {
-           format->overhead = 0;
+void vftr_prof_column_set_n_chars (void *value, column_t *c) {
+	int n;
+	int *i;
+	double *f;
+	switch (c->type) {
+	   case COL_INT:
+	      i = (int*)value;	
+	      n = vftr_count_digits_int (*i);
+	      break;
+	   case COL_DOUBLE:
+	      f = (double *)value;
+	      // For double values, we need to add the decimal places and the decimal point itself.
+	      n = vftr_count_digits_double (*f) + c->n_decimal_places + 1;
+	      break;
+	   case COL_CHAR:
+	      n = sizeof(value) / sizeof(char);
+	      break;
 	}
-	
-	// 
-	for (int i = 0; i < n_indices; i++) {
-		int i_func = indices[i];
-		profdata_t *prof_current = &funcTable[i_func]->prof_current;
-		profdata_t *prof_previous = &funcTable[i_func]->prof_previous;
+	if (n > c->n_chars) c->n_chars = n;
+}
+
+void vftr_prof_column_set_format (column_t *c) {
+	switch (c->type) {
+	   case COL_INT:
+	      sprintf (c->format, "%%d");
+	      break;
+	   case COL_DOUBLE:
+              sprintf (c->format, "%%%d.%df", c->n_chars, c->n_decimal_places);
+	      break;
+	   case COL_CHAR:
+	      sprintf (c->format, "%%%ds", c->n_chars);
+	}
+}
+
+/**********************************************************************/
+
+void vftr_set_proftab_column_formats (function_t **funcTable,
+	double runtime, double sampling_overhead_time, 
+	int n_funcs, int *func_indices, column_t **columns) {
+	int i_column = 0;
+        vftr_prof_column_init ("Calls", 0, COL_INT, &(*columns)[i_column++]);
+        vftr_prof_column_init ("t_excl[s]", 3, COL_DOUBLE, &(*columns)[i_column++]);
+        vftr_prof_column_init ("t_incl[s]", 3, COL_DOUBLE, &(*columns)[i_column++]);
+        vftr_prof_column_init ("%abs", 1, COL_DOUBLE, &(*columns)[i_column++]);
+        vftr_prof_column_init ("%cum", 1, COL_DOUBLE, &(*columns)[i_column++]);
+        if (vftr_environment.show_overhead->value) {
+	   vftr_prof_column_init ("t_ovhd[s]", 3, COL_DOUBLE, &(*columns)[i_column++]);
+	   vftr_prof_column_init ("%ovhd", 1, COL_DOUBLE, &(*columns)[i_column++]);
+	   vftr_prof_column_init ("t_ovhd / t_excl", 1, COL_DOUBLE, &(*columns)[i_column++]);
+        }
+        // Set scenario columns here
+        vftr_prof_column_init ("Function", 0, COL_CHAR, &(*columns)[i_column++]);
+        vftr_prof_column_init ("Caller", 0, COL_CHAR, &(*columns)[i_column++]);
+        vftr_prof_column_init ("ID", 0, COL_INT, &(*columns)[i_column++]);
+        double t_cum = 0;
+        for (int i = 0; i < n_funcs; i++) {
+            int i_func = func_indices[i];
+            profdata_t *prof_current = &funcTable[i_func]->prof_current;
+            profdata_t *prof_previous = &funcTable[i_func]->prof_previous;
+            double t_excl, t_incl, t_part, t_overhead;
+            vftr_get_stack_times (prof_current, prof_previous, runtime, &t_excl, &t_incl, &t_part);
+            t_cum += t_part;
+            t_overhead = (double)funcTable[i_func]->overhead * 1e-6;
+            int n_calls = prof_current->calls - prof_previous->calls;
+            i_column = 0;
+            vftr_prof_column_set_n_chars (&n_calls, &(*columns)[i_column++]);
+            vftr_prof_column_set_n_chars (&t_excl, &(*columns)[i_column++]);
+            vftr_prof_column_set_n_chars (&t_part, &(*columns)[i_column++]);
+            vftr_prof_column_set_n_chars (&t_cum, &(*columns)[i_column++]);
+            if (vftr_environment.show_overhead->value) {
+                vftr_prof_column_set_n_chars (&t_overhead, &(*columns)[i_column++]);
+                double rel = sampling_overhead_time > 0.0 ? t_overhead / sampling_overhead_time * 100.0 : 0.0;
+                vftr_prof_column_set_n_chars (&rel, &(*columns)[i_column++]);
+                rel = t_excl > 0.0 ? t_overhead / t_excl : 0.0;
+                vftr_prof_column_set_n_chars (&rel, &(*columns)[i_column++]);
+            }
+            vftr_prof_column_set_n_chars (funcTable[i_func]->name, &(*columns)[i_column++]);
+            vftr_prof_column_set_n_chars (funcTable[i_func]->return_to, &(*columns)[i_column++]);
 
 		if (vftr_events_enabled) {
 			vftr_fill_scenario_counter_values (scenario_expr_counter_values,
 				scenario_expr_n_vars, prof_current, prof_previous);
 		}
 
-        	int k = strlen(funcTable[i_func]->name);
-		if (k > format->func_name) format->func_name = k;
-		function_t *func;
-        	if (func = funcTable[i_func]->return_to) {
-        	    k = strlen(func->name);
-		    if (k > format->caller_name) format->caller_name = k;
-        	}
-
-        	int calls  = prof_current->calls - prof_previous->calls;
-		
-		double t_excl, t_incl, t_part;
-		vftr_get_stack_times (prof_current, prof_previous, runtime, &t_excl, &t_incl, &t_part);
-		double t_overhead = (double)funcTable[i_func]->overhead;
-
-    		int n = vftr_count_digits_int (calls);
-	        if (n > format->n_calls) format->n_calls = n;
-      		n = vftr_count_digits_double (t_excl * 10000.);
-		if (n > format->excl_time) format->excl_time = n;
-		n = vftr_count_digits_double (t_incl * 10000.);
-		if (n > format->incl_time) format->incl_time = n;
-	        if (vftr_environment.show_overhead->value) {
-		   n = vftr_count_digits_double (t_overhead * 10000.);
-		   if (n > format->overhead) format->overhead = n;
-		}
 
 		if (vftr_events_enabled) {
 		    unsigned long long cycles = prof_current->cycles - prof_previous->cycles;
@@ -518,8 +550,26 @@ void vftr_set_column_formats (function_t **funcTable, double runtime,
 		    vftr_scenario_expr_set_formats ();
 	        }
 	}
-	if (format->excl_time < 5) format->excl_time = 5;
-    	if (format->incl_time < 5) format->incl_time = 5;
+	columns[0]->n_chars++;
+}
+
+/**********************************************************************/
+
+void vftr_proftab_print_header (FILE *fp, column_t *columns) {
+	int i;
+	for (i = 0; i < 5; i++) {
+	   fprintf (fp, "%*s ", columns[i].n_chars, columns[i].header);
+	}
+	if (vftr_environment.show_overhead->value) {
+	   fprintf (fp, "%*s ", columns[i].n_chars, columns[i++].header);
+	   fprintf (fp, "%*s ", columns[i].n_chars, columns[i++].header);
+	   fprintf (fp, "%*s ", columns[i].n_chars, columns[i++].header);
+	}
+	// TODO: Scenario headers
+	fprintf (fp, "%*s ", columns[i].n_chars, columns[i++].header);
+	fprintf (fp, "%*s ", columns[i].n_chars, columns[i++].header);
+	fprintf (fp, "%*s ", columns[i].n_chars, columns[i++].header);
+	fprintf (fp, "\n");
 }
 
 /**********************************************************************/
@@ -1105,12 +1155,40 @@ void vftr_print_profile (FILE *pout, int *ntop, long long time0) {
     *ntop = n_indices;
     vftr_fill_indices_to_evaluate (funcTable, application_runtime, indices);
 
+    // Number of columns. Default: nCalls, exclusive & inclusive time, %abs, %cum,
+    // function & caller name and stack ID (i.e. 8 columns). 
+    int n_columns = 8;
+    // Add one column for each hardware counter.
+    n_columns += vftr_n_hw_obs;
+    // If function overhead is displayed, add three more columns.
+    if (vftr_environment.show_overhead->value) n_columns += 3;
+    int i_column = 0;
+    column_t *prof_columns = (column_t*) malloc (n_columns * sizeof(column_t));
+    //column_t **prof_columns = (column_t**) malloc (n_columns * sizeof(column_t*));
+    vftr_set_proftab_column_formats (funcTable, application_runtime, sampling_overhead_time, n_indices, indices, &prof_columns);
+    printf ("F0: %d\n", prof_columns[0].n_chars);
+    printf ("F1: %d\n", prof_columns[1].n_chars);
+    printf ("F2: %d\n", prof_columns[2].n_chars);
+    printf ("F3: %d\n", prof_columns[3].n_chars);
+    printf ("F4: %d\n", prof_columns[4].n_chars);
+    printf ("F5: %d\n", prof_columns[5].n_chars);
+    printf ("F6: %d\n", prof_columns[6].n_chars);
+    printf ("F7: %d\n", prof_columns[7].n_chars);
     /* Compute nr of decimal places needed */
     format_t *formats = (format_t *)malloc (sizeof(format_t));
-    vftr_set_column_formats (funcTable, application_runtime, n_indices, indices, formats);
-    formats->caller_name++; /* One more place to contain the asterisk marking missing event counts */
+//    vftr_set_proftab_column_formats (funcTable, strlen("Calls"), strlen("Excl"), strlen("Incl"),
+//				     strlen("Overhead / Excl"), strlen("Function"), strlen("Caller"),
+//				     application_runtime, n_indices, indices, formats);
+//    formats->caller_name++; /* One more place to contain the asterisk marking missing event counts */
     if (vftr_events_enabled) {
     	vftr_set_evc_decipl (n_indices, vftr_n_hw_obs, evc1, evc);
+    }
+
+    for (int i = 0; i < n_columns; i++) {
+	vftr_prof_column_set_format (&(prof_columns[i]));
+    }
+    for (int i = 0; i < n_columns; i++) {
+	printf ("FORM: %s\n", prof_columns[i].format);
     }
 
     /* Offset of first full event counter name header */
@@ -1138,7 +1216,7 @@ void vftr_print_profile (FILE *pout, int *ntop, long long time0) {
 		   + formats->caller_name + 1 + formats->fid;
     }
 
-    vftr_print_dashes (pout, tableWidth);
+////    vftr_print_dashes (pout, tableWidth);
 
     /* Generic header line - 1 of 3 */ 
 
@@ -1157,10 +1235,10 @@ void vftr_print_profile (FILE *pout, int *ntop, long long time0) {
 
     /* Generic header line - 2 of 3 */ 
 
-    fputs (" ", pout);
-    vftr_output_column_header ("", formats->n_calls, pout);
-    vftr_output_column_header ("Time[s]__________________",
-		               formats->excl_time + formats->incl_time + formats->overhead + 1, pout);
+////    fputs (" ", pout);
+////    vftr_output_column_header ("", formats->n_calls, pout);
+////    vftr_output_column_header ("Time[s]__________________",
+////		               formats->excl_time + formats->incl_time + formats->overhead + 1, pout);
     n = 10;
     if (evc0) n += 5;
     if (vftr_events_enabled) {
@@ -1177,18 +1255,18 @@ void vftr_print_profile (FILE *pout, int *ntop, long long time0) {
        vftr_browse_create_profile_header (f_html);
     }
 
-    vftr_output_column_header ("Calls", formats->n_calls, pout);
-    vftr_output_column_header ("Excl", formats->excl_time, pout);
-    vftr_output_column_header ("Incl", formats->incl_time, pout);
+    //vftr_output_column_header ("Calls", formats->n_calls, pout);
+    //vftr_output_column_header ("Excl", formats->excl_time, pout);
+    //vftr_output_column_header ("Incl", formats->incl_time, pout);
 
-    fputs ("%abs %cum ", pout);
+    //fputs ("%abs %cum ", pout);
     if (evc0) fputs ("%evc ", pout);
 
-    if (vftr_environment.show_overhead->value) {
-        vftr_output_column_header ("Overhead", formats->overhead, pout);
-	vftr_output_column_header ("%overhead", formats->overhead, pout);
-	vftr_output_column_header ("overhead /excl", formats->overhead, pout);
-    }
+    //if (vftr_environment.show_overhead->value) {
+    //    vftr_output_column_header ("Overhead", formats->overhead, pout);
+    //    vftr_output_column_header ("%overhead", formats->overhead, pout);
+    //    vftr_output_column_header ("overhead /excl", formats->overhead, pout);
+    //}
 
     if (vftr_events_enabled) {
         vftr_scenario_expr_print_header (pout);
@@ -1200,10 +1278,11 @@ void vftr_print_profile (FILE *pout, int *ntop, long long time0) {
     	}
     }
 
-    vftr_output_column_header ("Function", formats->func_name, pout);
-    vftr_output_column_header ("Caller", formats->caller_name, pout);
-    vftr_output_column_header ("ID", formats->fid, pout);
-    fputs ("\n", pout);
+    //vftr_output_column_header ("Function", formats->func_name, pout);
+    //vftr_output_column_header ("Caller", formats->caller_name, pout);
+    //vftr_output_column_header ("ID", formats->fid, pout);
+    //fputs ("\n", pout);
+    vftr_proftab_print_header (pout, prof_columns);
 
     /* Horizontal lines (collection of dashes) */
     fputs (" ", pout);
@@ -1234,9 +1313,9 @@ void vftr_print_profile (FILE *pout, int *ntop, long long time0) {
 	ctime += t_part;
 	vftr_print_stack_time (pout, calls, fmttime, fmttimeInc, t_excl, t_incl, t_part, ctime);
 	if (vftr_environment.show_overhead->value) {
-           fprintf (pout, " %*.3f %6.2f %5.3f ", formats->overhead, funcTable[i_func]->overhead * 1e-6, 
-	   	 funcTable[i_func]->overhead * 1e-6 / sampling_overhead_time * 100.0,
-	   	 t_excl > 0 ? funcTable[i_func]->overhead * 1e-6 / t_excl : 0.0);
+           fprintf (pout, " %*.3f %*.3f %*.3f ", formats->overhead, funcTable[i_func]->overhead * 1e-6, 
+	   	 formats->overhead, funcTable[i_func]->overhead * 1e-6 / sampling_overhead_time * 100.0,
+	   	 formats->overhead, t_excl > 0 ? funcTable[i_func]->overhead * 1e-6 / t_excl : 0.0);
 	}
 
         /* NOTE - counter info only printed for thread 0! */

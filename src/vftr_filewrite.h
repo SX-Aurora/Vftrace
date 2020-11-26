@@ -27,6 +27,16 @@ extern FILE *vftr_vfd_file;
 extern long vftr_admin_offset;
 extern long vftr_samples_offset;
 
+enum column_data_type {COL_INT, COL_DOUBLE, COL_CHAR};
+
+typedef struct column {
+	int type;
+	char *header;
+	int n_chars;
+	int n_decimal_places;
+	char format[10];
+} column_t;
+
 typedef struct format_t {
 	int fid;
 	int rank;
