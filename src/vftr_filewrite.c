@@ -506,10 +506,14 @@ void vftr_set_column_formats (function_t **funcTable, double runtime,
 		vftr_get_stack_times (prof_current, prof_previous, runtime, &t_excl, &t_incl, &t_part);
 		double t_overhead = (double)funcTable[i_func]->overhead;
 
-	        format->n_calls = vftr_count_digits_int (calls);
-      		format->excl_time = vftr_count_digits_double (t_excl * 10000.);
-      		format->incl_time = vftr_count_digits_double (t_incl * 10000.);
-		format->overhead = vftr_count_digits_double (t_overhead * 10000.);
+    		int n = vftr_count_digits_int (calls);
+	        if (n > format->n_calls) format->n_calls = n;
+      		n = vftr_count_digits_double (t_excl * 10000.);
+		if (n > format->excl_time) format->excl_time = n;
+		n = vftr_count_digits_double (t_incl * 10000.);
+		if (n > format->incl_time) format->incl_time = n;
+		n = vftr_count_digits_double (t_overhead * 10000.);
+		if (n > format->overhead) format->overhead = n;
 
 		if (vftr_events_enabled) {
 		    unsigned long long cycles = prof_current->cycles - prof_previous->cycles;
