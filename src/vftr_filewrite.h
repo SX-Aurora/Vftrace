@@ -68,7 +68,7 @@ void vftr_init_vfd_file ();
 void vftr_finalize_vfd_file (long long finalize_time, int signal_number);
 void vftr_write_to_vfd (long long runtime, unsigned long long cycles, int stack_id, unsigned int sid);
 #ifdef _MPI
-double compute_mpi_imbalance (long long *all_times, double t_avg);
+double vftr_compute_mpi_imbalance (long long *all_times, double t_avg);
 #endif
 bool vftr_is_collective_mpi_function (char *func_name);
 
