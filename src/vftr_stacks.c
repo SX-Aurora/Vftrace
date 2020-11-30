@@ -857,7 +857,7 @@ void vftr_create_stacktree (stack_leaf_t **stack_tree, int n_final_stack_ids, in
 
 /**********************************************************************/
 
-void vftr_stack_compute_imbalances (double **imbalances, int n_final_stack_ids, int *final_stack_ids) {
+void vftr_stack_compute_imbalances (double *imbalances, int n_final_stack_ids, int *final_stack_ids) {
 #ifdef _MPI
 	long long all_times [vftr_mpisize];
 	for (int fsid = 0; fsid < n_final_stack_ids; fsid++) {
@@ -867,12 +867,12 @@ void vftr_stack_compute_imbalances (double **imbalances, int n_final_stack_ids, 
 				all_times, 1, MPI_LONG_LONG_INT, MPI_COMM_WORLD);
 
 		if (function_idx >= 0) {
-			(*imbalances)[function_idx] = vftr_compute_mpi_imbalance (all_times, -1.0);
+			imbalances[function_idx] = vftr_compute_mpi_imbalance (all_times, -1.0);
 		}
 	}
 #else
 	for (int i  = 0; i < vftr_func_table_size; i++) {
-		(*imbalances)[i] = 0;
+		imbalances[i] = 0;
 	}
 #endif
 

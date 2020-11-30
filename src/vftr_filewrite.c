@@ -918,7 +918,7 @@ void vftr_print_function_statistics (FILE *pout, bool display_sync_time,
 		} else {
 		   stack_leaf_t *stack_tree = NULL;
 		   double *imbalances = (double*) malloc (vftr_func_table_size * sizeof (double));
-		   vftr_stack_compute_imbalances (&imbalances, display_functions[i]->n_stack_indices,
+		   vftr_stack_compute_imbalances (imbalances, display_functions[i]->n_stack_indices,
 		   			       display_functions[i]->stack_indices);
 		   vftr_create_stacktree (&stack_tree, display_functions[i]->n_stack_indices, display_functions[i]->stack_indices);
 		   long long total_time = 0;
