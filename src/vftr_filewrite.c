@@ -912,9 +912,10 @@ void vftr_print_function_statistics (FILE *pout, bool display_sync_time,
 
   	for (int i = 0; i < n_display_functions; i++) {
 		if (display_functions[i]->n_stack_indices == 0) {;
-		   //print empty stack
-		   vftr_browse_print_stacktree_page (NULL, true, vftr_mpi_collective_function_names,
-						     vftr_n_collective_mpi_functions, i, NULL, NULL, 0.0, 0, 0);
+	 	   if (vftr_environment.create_html->value) {
+		      vftr_browse_print_stacktree_page (NULL, true, vftr_mpi_collective_function_names,
+		         				vftr_n_collective_mpi_functions, i, NULL, NULL, 0.0, 0, 0);
+          	   }
 		} else {
 		   stack_leaf_t *stack_tree = NULL;
 		   double *imbalances = (double*) malloc (vftr_func_table_size * sizeof (double));
