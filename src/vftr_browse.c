@@ -234,7 +234,7 @@ void vftr_create_callgraph_dropdown (FILE *fp, char *func_name, enum origin_page
       fprintf (fp, "<div class=\"dropdown-content\">\n");
       for (int i = 0; i < vftr_mpisize; i++) {
          vftr_browse_make_html_indent (fp, 0, 3);
-         int n = strlen(func_name) + vftr_count_digits(i) + 7;
+         int n = strlen(func_name) + vftr_count_digits_int(i) + 7;
          char target_fun[n];
          snprintf (target_fun, n, "%s_%d.html", func_name, i);
          fprintf (fp, "<a href=\"%s\">%d</a>\n", target_fun, i);
@@ -300,7 +300,7 @@ void vftr_browse_print_navigation_bars (FILE *fp, char *func_names[], int n_func
    fprintf (fp, "<ul style=\"float: left;list-style-type: none;margin: 0;padding: 0; width: 150px;background-color: #f1f1f1;\">\n");
    for (int i = 0; i < n_funcs; i++) {
       vftr_browse_make_html_indent (fp, 0, 1);
-      int n = strlen (func_names[i]) + vftr_count_digits(vftr_mpirank) + 7;
+      int n = strlen (func_names[i]) + vftr_count_digits_int(vftr_mpirank) + 7;
       char target_fun[n];
       snprintf (target_fun, n, "%s_%d.html", func_names[i], vftr_mpirank);
       if (op == HOME) {
@@ -456,7 +456,7 @@ void vftr_browse_print_stacktree_page (FILE *fp_out, bool is_empty, char *func_n
 	   PMPI_Barrier(MPI_COMM_WORLD);
 #endif
 	   char html_filename[2*(strlen(this_func_name) + 8)];
-	   snprintf (html_filename, 2*(strlen(this_func_name) + 8) + vftr_count_digits(vftr_mpisize) + 1,
+	   snprintf (html_filename, 2*(strlen(this_func_name) + 8) + vftr_count_digits_int(vftr_mpisize) + 1,
 		     "%s/%s_%d.html", outdir, this_func_name, vftr_mpirank);
 	   fp = fopen (html_filename, "w");
         } else {
@@ -504,7 +504,7 @@ void vftr_browse_create_directory () {
 
 FILE *vftr_browse_init_profile_table () {
        FILE *fp;
-       int n = 21 + vftr_count_digits(vftr_mpirank);
+       int n = 21 + vftr_count_digits_int(vftr_mpirank);
        char html_profile[n];
        snprintf (html_profile, n, "browse/profile_%d.html", vftr_mpirank);
        fp = fopen (html_profile, "w+");
@@ -569,7 +569,7 @@ void vftr_browse_print_table_line (FILE *fp, int stack_id, int n_calls,
            fprintf (fp, "<td>%5.2f</td>\n", t_cum);
 	   
 	   if (vftr_is_collective_mpi_function (func_name)) {
-	      int n = strlen(func_name) + vftr_count_digits (vftr_mpirank) + 7;
+	      int n = strlen(func_name) + vftr_count_digits_int (vftr_mpirank) + 7;
 	      char target_fun[n];
 	      snprintf (target_fun, n, "%s_%d.html", func_name, vftr_mpirank);
     	      fprintf (fp, "<td><a href=\"%s/%s\">%s</a></td>\n", func_name, target_fun, func_name); 

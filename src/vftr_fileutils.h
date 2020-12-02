@@ -22,7 +22,8 @@
 
 char *vftr_get_application_name ();
 
-int vftr_count_digits (int value);
+int vftr_count_digits_long  (long long value);
+int vftr_count_digits_int (int value);
 int vftr_count_digits_double (double value);
 char *vftr_bool_to_string (bool value);
 void vftr_print_dashes (FILE *fp, int n);

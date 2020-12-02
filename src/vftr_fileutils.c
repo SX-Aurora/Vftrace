@@ -59,7 +59,7 @@ char *vftr_get_application_name () {
 
 /**********************************************************************/
 
-int vftr_count_digits (int value) {
+int vftr_count_digits_long (long long value) {
   if (value == 0) {
      return 1;
   } else {
@@ -73,8 +73,14 @@ int vftr_count_digits (int value) {
 
 /**********************************************************************/
 
+int vftr_count_digits_int (int value) {
+  return vftr_count_digits_long ((long long )value);
+}
+
+/**********************************************************************/
+
 int vftr_count_digits_double (double value) {
-  return vftr_count_digits((int)floor(value));
+  return vftr_count_digits_long ((long long)floor(value));
 }
 
 /**********************************************************************/

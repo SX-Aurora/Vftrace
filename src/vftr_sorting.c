@@ -180,6 +180,36 @@ int vftr_compare_function_n_calls (const void *a1, const void *a2) {
 
 /**********************************************************************/
 
+int vftr_compare_function_overhead (const void *a1, const void *a2) {
+    function_t *f1 = *(function_t **)a1;
+    function_t *f2 = *(function_t **)a2;
+    if(!f2) return -1;
+    if(!f1) return  1;
+    long long diff = f2->overhead - f1->overhead;
+    if (diff > 0) return  1;
+    if (diff < 0) return -1;
+    return  0;
+}
+
+/**********************************************************************/
+
+int vftr_compare_function_overhead_relative (const void *a1, const void *a2) {
+    function_t *f1 = *(function_t **)a1;
+    function_t *f2 = *(function_t **)a2;
+    if(!f2) return -1;
+    if(!f1) return  1;
+    long long t1 = f1->prof_current.timeExcl - f1->prof_previous.timeExcl;
+    long long t2 = f2->prof_current.timeExcl - f2->prof_previous.timeExcl;
+    double x1 = (double)f1->overhead / t1;
+    double x2 = (double)f2->overhead / t2;
+    double diff = x2 - x1;
+    if (diff > 0) return  1;
+    if (diff < 0) return -1;
+    return  0;
+}
+
+/**********************************************************************/
+
 int vftr_compare_function_stack_id (const void *a1, const void *a2) {
     function_t *f1 = *(function_t **)a1;
     function_t *f2 = *(function_t **)a2;
@@ -205,6 +235,10 @@ int (*vftr_get_profile_compare_function()) (const void *, const void *) {
        return vftr_compare_function_n_calls;
     case SORT_STACK_ID:
        return vftr_compare_function_stack_id;
+    case SORT_OVERHEAD:
+       return vftr_compare_function_overhead;
+    case SORT_OVERHEAD_RELATIVE:
+       return vftr_compare_function_overhead_relative;
     default: 
        return vftr_compare_function_excl_time;
    }

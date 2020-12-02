@@ -382,7 +382,7 @@ static void vftr_scenario_get_format (char *fmt, int i) {
 	int behind_comma = scenario_expr_format[i].decpl_2;
 	static int total = 0;
 	int tmp = scenario_expr_format[i].decpl_1 > 0 ?
-		scenario_expr_format[i].decpl_1 : vftr_count_digits(i) + behind_comma;
+		scenario_expr_format[i].decpl_1 : vftr_count_digits_int(i) + behind_comma;
 	total = tmp > total ? tmp : total;
 	sprintf (fmt, "%%%d.%dlf ", total, behind_comma);
 }
@@ -462,7 +462,7 @@ int vftr_scenario_expr_get_table_width () {
 	int tw = 0;
 	for (int i = 0; i < scenario_expr_n_formulas; i++) {
 		if (scenario_expr_format[i].decpl_1 == 0) {
-			tw += vftr_count_digits(i) + scenario_expr_format[i].decpl_2 + 1;
+			tw += vftr_count_digits_int(i) + scenario_expr_format[i].decpl_2 + 1;
 		} else {
 			tw += scenario_expr_format[i].decpl_1 + 1;
 		}

@@ -241,8 +241,13 @@ or by accessing it remotely (given suitable network configurations).
 .IP "\fBVFTR_SORT_PROFILE_TABLE\fR"
 .IX Item "VFTR_SORT_PROFILE_TABLE\fR"
 Specifies how the profile table is sorted. Possible values are TIME_EXLC (exclusive time, default), 
-TIME_INCL (inclusive time), CALLS (number of calls) and STACK_ID.
+TIME_INCL (inclusive time), CALLS (number of calls), STACK_ID, OVERHEAD and OVERHEAD_RELATIVE.
 .\"
+.IP "\fBVFTR_SHOW_FUNCTION_OVERHEAD\fR"
+.IX Item "VFTR_SHOW_FUNCTION_OVERHEAD\R"
+Displays, for each function in the profile table, the overhead time, its relative part of the total
+overhead time, and the ratio of overhead to exclusive time. Can be sorted with
+VFTR_SORT_PROFILE_TABLE=OVERHEAD(_RELATIVE), where _RELATIVE refers to the ratio to the exclusive time.
 .SS LIBRARY FUNCTIONS
 .IX Subsection "LIBRARY FUNCTIONS"
 Vftrace provides library functions which can be included in a C or Fortran application
