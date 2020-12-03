@@ -26,6 +26,7 @@
 #include "vftr_requests.h"
 #include "vftr_collective_requests.h"
 #include "vftr_onesided_requests.h"
+#include "vftr_stacks.h"
 
 // create new request to be stored
 vftr_request_t* vftr_new_request(vftr_direction dir, int nmsg, int *count,
@@ -70,6 +71,7 @@ vftr_request_t* vftr_new_request(vftr_direction dir, int nmsg, int *count,
    // communications, only memory space is provided and is to be filled later.
    new_open_request->tag = tag;
    new_open_request->rank = (int*) malloc(sizeof(int)*nmsg);
+   new_open_request->callingstackID = vftr_fstack->id;
 
    return new_open_request;
 }

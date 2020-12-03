@@ -25,7 +25,8 @@ extern bool vftr_timer_end;
 
 extern int vftr_mpirank;
 extern int vftr_mpisize;
-extern unsigned int vftr_samplecount;
+extern unsigned int vftr_function_samplecount;
+extern unsigned int vftr_message_samplecount;
 
 extern char *vftr_start_date;
 extern char *vftr_end_date;

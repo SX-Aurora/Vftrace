@@ -170,17 +170,12 @@ void vftr_init_vfd_file () {
     	long long zerolong[] = {0};
 	// vftr_mpi_size and vftr_mpi_rank
 	fwrite (zeroint, sizeof(unsigned int), 2, fp);
-	// vftr_cycletime
-	fwrite (zerodouble, sizeof(double), 1, fp);
-	// vftr_inittime
-	fwrite (zerolong, sizeof(long long), 1, fp);
   	// vftr runtime
 	fwrite (zerodouble, sizeof(double), 1, fp);
-        // Five integers: sample_count, stacks_count, stacks_offset, sample_offset and ???
-	fwrite (zeroint, sizeof(unsigned int), 2, fp);
-	fwrite (zerolong, sizeof(long), 1, fp);
-	fwrite (zerolong, sizeof(long), 1, fp);
-	fwrite (zerolong, sizeof(long), 1, fp);
+        // Three integers: function_samplecount, message_samplecount, stacks_count
+	fwrite (zeroint, sizeof(unsigned int), 3, fp);
+        // Two longs: stacks_offset, sample_offset 
+	fwrite (zerolong, sizeof(long), 2, fp);
 	// Store global information about hardware scenarios
 	vftr_write_scenario_header_to_vfd (fp);	
 
@@ -207,17 +202,12 @@ void vftr_finalize_vfd_file (long long finalize_time, int signal_number) {
         fseek (vftr_vfd_file, vftr_admin_offset, SEEK_SET);
         fwrite (&vftr_mpisize, sizeof(int), 1, vftr_vfd_file); 
         fwrite (&vftr_mpirank, sizeof(int),1, vftr_vfd_file); 
-        fwrite (zerodouble, sizeof(double),	1, vftr_vfd_file); 
-	// vftr_inittime has to be removed from the vfd file format, as
-	// it is always zero! But we have to check it against the viewer.
-        // fwrite(&vftr_inittime, sizeof(long long), 1, vftr_vfd_file);
-	fwrite (zerolong, sizeof(long long), 1, vftr_vfd_file);
         fwrite (&runtime, sizeof(double), 1, vftr_vfd_file);
-        fwrite (&vftr_samplecount, sizeof(unsigned int), 1, vftr_vfd_file);
+        fwrite (&vftr_function_samplecount, sizeof(unsigned int), 1, vftr_vfd_file);
+        fwrite (&vftr_message_samplecount, sizeof(unsigned int), 1, vftr_vfd_file);
         fwrite (&vftr_stackscount, sizeof(unsigned int), 1, vftr_vfd_file);
         fwrite (&stackstable_offset, sizeof(long), 1, vftr_vfd_file);
         fwrite (&vftr_samples_offset, sizeof(long), 1, vftr_vfd_file);
-        fwrite (&profile_offset, sizeof(long), 1, vftr_vfd_file);
         fclose (vftr_vfd_file);
     }
 }
@@ -233,7 +223,7 @@ void vftr_write_to_vfd(long long runtime, unsigned long long cycles, int stack_i
 
     vftr_nextsampletime = runtime + vftr_interval;
     vftr_prevsampletime = runtime;
-    vftr_samplecount++;
+    vftr_function_samplecount++;
 }
 
 /**********************************************************************/
@@ -256,7 +246,8 @@ void vftr_log_message_info(vftr_direction dir, int count, int type_idx,
 // Store the message information in a vfd file
 void vftr_store_message_info(vftr_direction dir, int count, int type_idx,
                              int type_size, int rank, int tag,
-                             long long tstart, long long tend) {
+                             long long tstart, long long tend,
+                             int callingStackID) {
    
    int sid = SID_MESSAGE;
    fwrite(&sid, sizeof(int), 1, vftr_vfd_file);
@@ -268,8 +259,9 @@ void vftr_store_message_info(vftr_direction dir, int count, int type_idx,
    fwrite(&tag, sizeof(int), 1, vftr_vfd_file);
    fwrite(&tstart, sizeof(long long), 1, vftr_vfd_file);
    fwrite(&tend, sizeof(long long), 1, vftr_vfd_file);
+   fwrite(&callingStackID, sizeof(int), 1, vftr_vfd_file);
 
-   vftr_samplecount++;
+   vftr_message_samplecount++;
 }
 #endif
 
@@ -962,13 +954,14 @@ void vftr_print_function_statistics (FILE *pout, bool display_sync_time,
 
   	for (int i = 0; i < n_display_functions; i++) {
 		if (display_functions[i]->n_stack_indices == 0) {;
-		   //print empty stack
-		   vftr_browse_print_stacktree_page (NULL, true, vftr_mpi_collective_function_names,
-						     vftr_n_collective_mpi_functions, i, NULL, NULL, 0.0, 0, 0);
+	 	   if (vftr_environment.create_html->value) {
+		      vftr_browse_print_stacktree_page (NULL, true, vftr_mpi_collective_function_names,
+		         				vftr_n_collective_mpi_functions, i, NULL, NULL, 0.0, 0, 0);
+          	   }
 		} else {
 		   stack_leaf_t *stack_tree = NULL;
 		   double *imbalances = (double*) malloc (vftr_func_table_size * sizeof (double));
-		   vftr_stack_compute_imbalances (&imbalances, display_functions[i]->n_stack_indices,
+		   vftr_stack_compute_imbalances (imbalances, display_functions[i]->n_stack_indices,
 		   			       display_functions[i]->stack_indices);
 		   vftr_create_stacktree (&stack_tree, display_functions[i]->n_stack_indices, display_functions[i]->stack_indices);
 		   long long total_time = 0;

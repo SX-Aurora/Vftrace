@@ -124,10 +124,12 @@ int main (int argc, char **argv) {
 	    int direction, rank, tag, count;
 	    int type_size, type_index;
 	    double dt_start, dt_stop, rate;
+            int callingStackID_loc;
 	    read_mpi_message_sample (fp, &direction, &rank, &type_index, &type_size,
-				     &count, &tag, &dt_start, &dt_stop, &rate);
+				     &count, &tag, &dt_start, &dt_stop, &rate,
+                                     &callingStackID_loc);
 					
-            fprintf (fp_out, "%16.6f %s\n", dt_start, direction ? "recv" : "send");
+            fprintf (fp_out, "%16.6f %s in stackID %d\n", dt_start, direction ? "recv" : "send", callingStackID_loc);
             fprintf (fp_out, "%16s count=%d type=%s(%iBytes) rate= %8.4lf MiB/s peer=%d tag=%d\n",
                     "", count, vftr_get_mpitype_string_from_idx(type_index), 
                     type_size, rate, rank, tag);

@@ -31,14 +31,13 @@ void read_fileheader (vfd_header_t *vfd_header, FILE *fp) {
     fread (&vfd_header->thread,	1, sizeof(int), fp);
     fread (&vfd_header->tasks, 1, sizeof(int), fp);
     fread (&vfd_header->task, 1, sizeof(int), fp);
-    fread (&vfd_header->cycletime.l, 1, sizeof(long long), fp);
-    fread (&vfd_header->inittime, 1, sizeof(long long), fp);
-    fread (&vfd_header->runtime.l, 1, sizeof(long long), fp);
-    fread (&vfd_header->samplecount, 1, sizeof(unsigned int), fp);
+    fread (&vfd_header->runtime, 1, sizeof(double), fp);
+    fread (&vfd_header->function_samplecount, 1, sizeof(unsigned int), fp);
+    fread (&vfd_header->message_samplecount, 1, sizeof(unsigned int), fp);
     fread (&vfd_header->stackscount, 1, sizeof(unsigned int), fp);
     fread (&vfd_header->stacksoffset, 1, sizeof(long), fp);
     fread (&vfd_header->sampleoffset, 1, sizeof(long), fp);
-    fread (&vfd_header->reserved, 1, sizeof(unsigned int), fp);
+    vfd_header->samplecount = vfd_header->function_samplecount+vfd_header->message_samplecount;
 }
 
 /**********************************************************************/
@@ -135,9 +134,10 @@ void print_fileheader (FILE *fp, vfd_header_t vfd_header) {
     fprintf (fp, "MPI tasks:  rank=%d count=%d\n", vfd_header.task, vfd_header.tasks); 
     fprintf (fp, "OpenMP threads:  thread=%d count=%d\n", vfd_header.thread, vfd_header.threads);
     fprintf (fp, "Sample interval: %12.6le seconds\n", vfd_header.interval*1.0e-6);
-    fprintf (fp, "Init time:     %lld\n", vfd_header.inittime);
-    fprintf (fp, "Job runtime:   %.3lf seconds\n", vfd_header.runtime.d);
+    fprintf (fp, "Job runtime:   %.3lf seconds\n", vfd_header.runtime);
     fprintf (fp, "Samples:       %d\n", vfd_header.samplecount );
+    fprintf (fp, "   Function:   %d\n", vfd_header.function_samplecount );
+    fprintf (fp, "   Messages:   %d\n", vfd_header.message_samplecount );
     fprintf (fp, "Unique stacks: %u\n", vfd_header.stackscount);
     fprintf (fp, "Stacks offset: %ld\n", vfd_header.stacksoffset);
     fprintf (fp, "Sample offset: %ld\n", vfd_header.sampleoffset);
@@ -178,7 +178,8 @@ void skip_hw_observables (FILE *fp, int n_hw_obs) {
 
 void read_mpi_message_sample (FILE *fp, int *direction, int *rank, int *type_index,
 			      int *type_size, int *count, int *tag,
-			      double *dt_start, double *dt_stop, double *rate) {
+			      double *dt_start, double *dt_stop, double *rate,
+                              int *callingStackID) {
 	long long t_start, t_stop;
 	fread (direction, sizeof(int), 1, fp);
 	fread (rank, sizeof(int), 1, fp);
@@ -194,6 +195,7 @@ void read_mpi_message_sample (FILE *fp, int *direction, int *rank, int *type_ind
 	*dt_stop = t_stop * 1.0e-6;
 // Normalize to Megabytes.
 	*rate = (*count) * (*type_size) / (*dt_stop - *dt_start) / (1024.0 * 1024.0);
+        fread (callingStackID, sizeof(int), 1, fp);
 }
 
 /**********************************************************************/
@@ -201,7 +203,7 @@ void read_mpi_message_sample (FILE *fp, int *direction, int *rank, int *type_ind
 // Skip the given number of integers and long longs. 
 // If the MPI VFD entry format changes one day, just adapt these parameters.
 void skip_mpi_message_sample (FILE *fp) {
-#define N_MPI_SAMPLE_INT 6
+#define N_MPI_SAMPLE_INT 7
 #define N_MPI_SAMPLE_LONG 2
 	struct {int dummy_i[N_MPI_SAMPLE_INT];
 		long long dummy_l[N_MPI_SAMPLE_LONG];

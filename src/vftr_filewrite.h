@@ -2,7 +2,7 @@
 #define VFTR_FILEWRITE_H
 
 #define VFTR_FILEIDSIZE 16
-#define VFD_VERSION 1
+#define VFD_VERSION 2
 
 #include <stdio.h>
 #include "vftr_mpi_utils.h"
@@ -78,13 +78,14 @@ void vftr_init_vfd_file ();
 void vftr_finalize_vfd_file (long long finalize_time, int signal_number);
 void vftr_write_to_vfd (long long runtime, unsigned long long cycles, int stack_id, unsigned int sid);
 #ifdef _MPI
-double compute_mpi_imbalance (long long *all_times, double t_avg);
+double vftr_compute_mpi_imbalance (long long *all_times, double t_avg);
 #endif
 bool vftr_is_collective_mpi_function (char *func_name);
 
 void vftr_store_message_info(vftr_direction dir, int count, int type_idx,
                              int type_size, int rank, int tag,
-                             long long tstart, long long tend);
+                             long long tstart, long long tend,
+                             int callingStackID);
 
 void vftr_get_application_times (double time0, double *total_runtime, double *sampling_overhead_time,
 			  	 double *mpi_overhead_time, double *total_overhead_time, double *application_time);
