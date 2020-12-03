@@ -350,14 +350,14 @@ void vftr_output_column_header (char *header, int largest_column_length, FILE *f
 
 /**********************************************************************/
 
-void vftr_print_stack_time (FILE *fp, int calls, char *fmttime, char *fmttimeInc, float t_excl, float t_incl, float t_part, float t_cumm) {
+void vftr_print_stack_time (FILE *fp, int calls, double t_excl, double t_incl, double t_part, double t_cum, int *i_column, column_t *prof_columns) {
 
-	float stime = calls ? t_excl : 0;
-        fprintf (fp, fmttime, stime);
+	double stime = calls ? t_excl : 0;
+        fprintf (fp, prof_columns[(*i_column)++].format, stime);
 	stime  = calls ? t_incl : 0;
-        fprintf (fp, fmttimeInc , stime < 0. ? 0. : stime);
-        fprintf (fp, t_part < 99.95 ? "%4.1f " : "100. ", t_part);
-        fprintf (fp, t_cumm < 99.95 ? "%4.1f " : "100. ", t_cumm);
+        fprintf (fp, prof_columns[(*i_column)++].format, stime < 0. ? 0. : stime);
+        fprintf (fp, prof_columns[(*i_column)++].format, t_part);
+        fprintf (fp, prof_columns[(*i_column)++].format, t_cum);
 }
 
 /**********************************************************************/
@@ -455,6 +455,7 @@ void vftr_prof_column_set_n_chars (void *value, column_t *c) {
 	int n;
 	int *i;
 	double *f;
+        char *ch;
 	switch (c->type) {
 	   case COL_INT:
 	      i = (int*)value;	
@@ -466,7 +467,8 @@ void vftr_prof_column_set_n_chars (void *value, column_t *c) {
 	      n = vftr_count_digits_double (*f) + c->n_decimal_places + 1;
 	      break;
 	   case COL_CHAR:
-	      n = sizeof(value) / sizeof(char);
+	      ch = (char*)value;
+   	      n = strlen(ch);
 	      break;
 	}
 	if (n > c->n_chars) c->n_chars = n;
@@ -475,13 +477,13 @@ void vftr_prof_column_set_n_chars (void *value, column_t *c) {
 void vftr_prof_column_set_format (column_t *c) {
 	switch (c->type) {
 	   case COL_INT:
-	      sprintf (c->format, "%%d");
+	      sprintf (c->format, " %%%dd ", c->n_chars);
 	      break;
 	   case COL_DOUBLE:
-              sprintf (c->format, "%%%d.%df", c->n_chars, c->n_decimal_places);
+              sprintf (c->format, " %%%d.%df ", c->n_chars, c->n_decimal_places);
 	      break;
 	   case COL_CHAR:
-	      sprintf (c->format, "%%%ds", c->n_chars);
+	      sprintf (c->format, " %%%ds ", c->n_chars);
 	}
 }
 
@@ -518,6 +520,7 @@ void vftr_set_proftab_column_formats (function_t **funcTable,
             i_column = 0;
             vftr_prof_column_set_n_chars (&n_calls, &(*columns)[i_column++]);
             vftr_prof_column_set_n_chars (&t_excl, &(*columns)[i_column++]);
+            vftr_prof_column_set_n_chars (&t_incl, &(*columns)[i_column++]);
             vftr_prof_column_set_n_chars (&t_part, &(*columns)[i_column++]);
             vftr_prof_column_set_n_chars (&t_cum, &(*columns)[i_column++]);
             if (vftr_environment.show_overhead->value) {
@@ -528,7 +531,7 @@ void vftr_set_proftab_column_formats (function_t **funcTable,
                 vftr_prof_column_set_n_chars (&rel, &(*columns)[i_column++]);
             }
             vftr_prof_column_set_n_chars (funcTable[i_func]->name, &(*columns)[i_column++]);
-            vftr_prof_column_set_n_chars (funcTable[i_func]->return_to, &(*columns)[i_column++]);
+            vftr_prof_column_set_n_chars (funcTable[i_func]->return_to->name, &(*columns)[i_column++]);
 
 		if (vftr_events_enabled) {
 			vftr_fill_scenario_counter_values (scenario_expr_counter_values,
@@ -550,17 +553,17 @@ void vftr_set_proftab_column_formats (function_t **funcTable,
 void vftr_proftab_print_header (FILE *fp, column_t *columns) {
 	int i;
 	for (i = 0; i < 5; i++) {
-	   fprintf (fp, "%*s ", columns[i].n_chars, columns[i].header);
+	   fprintf (fp, " %*s ", columns[i].n_chars, columns[i].header);
 	}
 	if (vftr_environment.show_overhead->value) {
-	   fprintf (fp, "%*s ", columns[i].n_chars, columns[i++].header);
-	   fprintf (fp, "%*s ", columns[i].n_chars, columns[i++].header);
-	   fprintf (fp, "%*s ", columns[i].n_chars, columns[i++].header);
+	   fprintf (fp, " %*s ", columns[i].n_chars, columns[i++].header);
+	   fprintf (fp, " %*s ", columns[i].n_chars, columns[i++].header);
+	   fprintf (fp, " %*s ", columns[i].n_chars, columns[i++].header);
 	}
 	// TODO: Scenario headers
-	fprintf (fp, "%*s ", columns[i].n_chars, columns[i++].header);
-	fprintf (fp, "%*s ", columns[i].n_chars, columns[i++].header);
-	fprintf (fp, "%*s ", columns[i].n_chars, columns[i++].header);
+	fprintf (fp, " %*s ", columns[i].n_chars, columns[i++].header);
+	fprintf (fp, " %*s ", columns[i].n_chars, columns[i++].header);
+	fprintf (fp, " %*s ", columns[i].n_chars, columns[i++].header);
 	fprintf (fp, "\n");
 }
 
@@ -1159,6 +1162,7 @@ void vftr_print_profile (FILE *pout, int *ntop, long long time0) {
     column_t *prof_columns = (column_t*) malloc (n_columns * sizeof(column_t));
     //column_t **prof_columns = (column_t**) malloc (n_columns * sizeof(column_t*));
     vftr_set_proftab_column_formats (funcTable, application_runtime, sampling_overhead_time, n_indices, indices, &prof_columns);
+    if (vftr_mpirank == 0) {
     printf ("F0: %d\n", prof_columns[0].n_chars);
     printf ("F1: %d\n", prof_columns[1].n_chars);
     printf ("F2: %d\n", prof_columns[2].n_chars);
@@ -1167,8 +1171,9 @@ void vftr_print_profile (FILE *pout, int *ntop, long long time0) {
     printf ("F5: %d\n", prof_columns[5].n_chars);
     printf ("F6: %d\n", prof_columns[6].n_chars);
     printf ("F7: %d\n", prof_columns[7].n_chars);
+    }
     /* Compute nr of decimal places needed */
-    format_t *formats = (format_t *)malloc (sizeof(format_t));
+//    format_t *formats = (format_t *)malloc (sizeof(format_t));
 //    vftr_set_proftab_column_formats (funcTable, strlen("Calls"), strlen("Excl"), strlen("Incl"),
 //				     strlen("Overhead / Excl"), strlen("Function"), strlen("Caller"),
 //				     application_runtime, n_indices, indices, formats);
@@ -1180,13 +1185,17 @@ void vftr_print_profile (FILE *pout, int *ntop, long long time0) {
     for (int i = 0; i < n_columns; i++) {
 	vftr_prof_column_set_format (&(prof_columns[i]));
     }
+    if (vftr_mpirank == 0) {
     for (int i = 0; i < n_columns; i++) {
 	printf ("FORM: %s\n", prof_columns[i].format);
+    }
     }
 
     /* Offset of first full event counter name header */
 
-    offset = 1 + formats->n_calls + 1 + formats->excl_time + 1 + formats->incl_time + 1 + 5 + 5;
+//    offset = 1 + formats->n_calls + 1 + formats->excl_time + 1 + formats->incl_time + 1 + 5 + 5;
+    offset = 0;
+
     if (evc0) offset += 5;
 
     if (vftr_events_enabled) {
@@ -1205,17 +1214,18 @@ void vftr_print_profile (FILE *pout, int *ntop, long long time0) {
     	for (evc = evc1; evc; evc = evc->next ) {
     	    if (ectot[j++]) tableWidth += evc->decipl + 1;
     	}
-    	tableWidth += formats->func_name + 1 
-		   + formats->caller_name + 1 + formats->fid;
+    	//tableWidth += formats->func_name + 1 
+	//	   + formats->caller_name + 1 + formats->fid;
     }
 
 ////    vftr_print_dashes (pout, tableWidth);
 
     /* Generic header line - 1 of 3 */ 
 
-    n = 1 + formats->n_calls + 1
-          + formats->excl_time + 1
-          + formats->incl_time + 1 + 10;
+    //n = 1 + formats->n_calls + 1
+    //      + formats->excl_time + 1
+    //      + formats->incl_time + 1 + 10;
+    n = 0;
     if (evc0) n += 5;
 
     if (vftr_events_enabled) {
@@ -1285,31 +1295,35 @@ void vftr_print_profile (FILE *pout, int *ntop, long long time0) {
     /* All headers printed at this point */
     /* Next: the numbers */
 
-    sprintf (fmtcalls, "%%%dld ", formats->n_calls);
-    sprintf (fmttimeInc, "%%%d.3f ", formats->incl_time);
-    sprintf (fmttime, "%%%d.3f ", formats->excl_time);
-    sprintf (fmtfid, "%%%dd", formats->fid);
+    //sprintf (fmtcalls, "%%%dld ", formats->n_calls);
+    //sprintf (fmttimeInc, "%%%d.3f ", formats->incl_time);
+    //sprintf (fmttime, "%%%d.3f ", formats->excl_time);
+    //sprintf (fmtfid, "%%%dd", formats->fid);
     
     ctime = 0.;
+    //int i_column;
     for (int i = 0; i < n_indices; i++) {
+	i_column = 0;
 	int i_func = indices[i];
         profdata_t *prof_current   = &funcTable[i_func]->prof_current;
         profdata_t *prof_previous  = &funcTable[i_func]->prof_previous;
 
         calls  = prof_current->calls  - prof_previous->calls;
         fputc (' ', pout);
-        fprintf (pout, fmtcalls, calls);
+        //fprintf (pout, fmtcalls, calls);
+        fprintf (pout, prof_columns[i_column++].format, calls);
 
 	double t_excl, t_incl, t_part;
 	vftr_get_stack_times (prof_current, prof_previous, application_runtime, &t_excl, &t_incl, &t_part);
 	rtime = t_excl;
 	ctime += t_part;
-	vftr_print_stack_time (pout, calls, fmttime, fmttimeInc, t_excl, t_incl, t_part, ctime);
-	if (vftr_environment.show_overhead->value) {
-           fprintf (pout, " %*.3f %*.3f %*.3f ", formats->overhead, funcTable[i_func]->overhead * 1e-6, 
-	   	 formats->overhead, funcTable[i_func]->overhead * 1e-6 / sampling_overhead_time * 100.0,
-	   	 formats->overhead, t_excl > 0 ? funcTable[i_func]->overhead * 1e-6 / t_excl : 0.0);
-	}
+	//vftr_print_stack_time (pout, calls, fmttime, fmttimeInc, t_excl, t_incl, t_part, ctime);
+	vftr_print_stack_time (pout, calls, t_excl, t_incl, t_part, ctime, &i_column, prof_columns);
+	///if (vftr_environment.show_overhead->value) {
+        ///   fprintf (pout, " %*.3f %*.3f %*.3f ", formats->overhead, funcTable[i_func]->overhead * 1e-6, 
+	///   	 formats->overhead, funcTable[i_func]->overhead * 1e-6 / sampling_overhead_time * 100.0,
+	///   	 formats->overhead, t_excl > 0 ? funcTable[i_func]->overhead * 1e-6 / t_excl : 0.0);
+	///}
 
         /* NOTE - counter info only printed for thread 0! */
 	if (vftr_events_enabled) {
@@ -1335,29 +1349,30 @@ void vftr_print_profile (FILE *pout, int *ntop, long long time0) {
         	}
 	}
 
-	fprintf (pout, "%s", funcTable[i_func]->name);
-        for (int j = strlen(funcTable[i_func]->name); j <= formats->func_name; j++) {
-            fputc (' ', pout);
-        }
+	fprintf (pout, prof_columns[i_column++].format, funcTable[i_func]->name);
+        ///for (int j = strlen(funcTable[i_func]->name); j <= formats->func_name; j++) {
+        ///    fputc (' ', pout);
+        ///}
 
 	if (funcTable[i_func]->return_to) {
-            fprintf (pout, "%s", funcTable[i_func]->return_to->name);
-            for (int j = strlen(funcTable[i_func]->return_to->name); j <= formats->caller_name; j++) {
-                fputc (' ', pout);
-            }
+            fprintf (pout, prof_columns[i_column++].format, funcTable[i_func]->return_to->name);
+            //for (int j = strlen(funcTable[i_func]->return_to->name); j <= formats->caller_name; j++) {
+            //    fputc (' ', pout);
+            //}
         }
 
 	fid = funcTable[i_func]->gid;
-        fprintf (pout, fmtfid, fid);
+        fprintf (pout, prof_columns[i_column++].format, fid);
         fprintf (pout, "\n");
-	if (vftr_environment.create_html->value) {
-	   vftr_browse_print_table_line (f_html, fid, calls,
-				       formats->incl_time, formats->excl_time,
-				       t_excl, t_incl, t_part, ctime,
-				       funcTable[i_func]->name, funcTable[i_func]->return_to->name); 
-        }
+	//if (vftr_environment.create_html->value) {
+	//   vftr_browse_print_table_line (f_html, fid, calls,
+	//			       formats->incl_time, formats->excl_time,
+	//			       t_excl, t_incl, t_part, ctime,
+	//			       funcTable[i_func]->name, funcTable[i_func]->return_to->name); 
+        //}
 
     }
+    return;
     if (vftr_environment.create_html->value) vftr_browse_finalize_table(f_html);
     
     vftr_print_dashes (pout, tableWidth);
