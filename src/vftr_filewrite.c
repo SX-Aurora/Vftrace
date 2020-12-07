@@ -551,6 +551,18 @@ void vftr_set_proftab_column_formats (function_t **funcTable,
 
 /**********************************************************************/
 
+int vftr_get_tablewidth_from_columns (column_t *columns, int n_columns) {
+   // Initialize tablewidth to the number of spaces (two per column), then
+   // add the individual column widths to it.
+   int tw = 2 * n_columns;
+   for (int i = 0; i < n_columns; i++) {
+      tw += columns[i].n_chars;
+   }
+   return tw;
+}
+
+/**********************************************************************/
+
 void vftr_proftab_print_header (FILE *fp, column_t *columns) {
 	int i;
 	for (i = 0; i < 5; i++) {
@@ -1202,6 +1214,8 @@ void vftr_print_profile (FILE *pout, int *ntop, long long time0) {
     	//tableWidth += formats->func_name + 1 
 	//	   + formats->caller_name + 1 + formats->fid;
     }
+
+    tableWidth = vftr_get_tablewidth_from_columns (prof_columns, n_columns);
 
 ////    vftr_print_dashes (pout, tableWidth);
 
