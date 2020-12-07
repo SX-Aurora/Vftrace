@@ -59,12 +59,9 @@ void vftr_write_observables_to_vfd (unsigned long long cycles, FILE *fp);
 #define SCENARIO_EXPR_BUF_SIZE 200
 
 typedef struct {
+	char *header;
+	int decimal_places;
 	char *unit;
-	char *group;
-	char *column1;
-	char *column2;
-	int decpl_1;
-	int decpl_2;
 } hwc_format_t;
 
 

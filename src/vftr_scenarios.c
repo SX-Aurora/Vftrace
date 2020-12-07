@@ -21,6 +21,7 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include <string.h>
+#include <stdbool.h>
 
 #include "vftr_signals.h"
 #include "vftr_fileutils.h"
@@ -79,7 +80,7 @@ void vftr_write_observables_to_vfd (unsigned long long cycles, FILE *fp) {
 
 /**********************************************************************/
 
-void trim_trailing_white_spaces (char *s) {
+void vftr_trim_trailing_white_spaces (char *s) {
 	int last_index = -1;
 	int i = 0;
 	while (s[i] != '\0') {
@@ -95,21 +96,23 @@ void trim_trailing_white_spaces (char *s) {
 te_variable *te_vars;
 te_expr **expr;
 
-int read_counters;
-int read_observables;
-int read_papi_name;
-int read_name;
-int read_symbol;
-int read_formula;
-int read_runtime;
-int read_protected;
-int read_default;
-int read_unit;
-int read_group;
-int read_column1;
-int read_column2;
-int read_scenario_name;
-int read_spec;
+bool read_counters;
+bool read_observables;
+bool read_papi_name;
+bool read_name;
+bool read_symbol;
+bool read_formula;
+bool read_runtime;
+bool read_protected;
+bool read_default;
+bool read_unit;
+//bool read_group;
+//bool read_column1;
+//bool read_column2;
+bool read_header;
+bool read_scenario_name;
+//bool read_spec;
+bool read_decimal_points;
 
 // The user can define a scenario name to be included in the logfile
 // TODO: Implement this
@@ -123,87 +126,98 @@ int vftr_read_json (const char *js, jsmntok_t *tok, size_t count) {
 		char *s = strndup(js + tok->start, tok->end - tok->start);
 		if (read_papi_name) {
 			vftr_scenario_expr_counter_names[vftr_scenario_expr_n_vars] = strdup(s);
-			read_papi_name = 0;
+			read_papi_name = false;
 		} else if (read_counters && read_symbol) {
 			vftr_scenario_expr_vars[vftr_scenario_expr_n_vars] = strdup(s);
-			read_symbol = 0;
+			read_symbol = false;
 			vftr_scenario_expr_n_vars++;
 		} else if (read_name) {
 			vftr_scenario_expr_formulas[vftr_scenario_expr_n_formulas++].name = strdup(s);
 			vftr_scenario_expr_formulas[vftr_scenario_expr_n_formulas-1].protected_values = NULL;
-			read_name = 0;
+			read_name = false;
 		} else if (read_formula) {
 			vftr_scenario_expr_formulas[vftr_scenario_expr_n_formulas-1].formula = strdup(s);		
-			read_formula = 0;
+			read_formula = false;
 		} else if (read_runtime) {
 			if (!strcmp (s, "yes")) {
 				vftr_scenario_expr_formulas[vftr_scenario_expr_n_formulas-1].integrated = false;
 			}
-			read_runtime = 0;	
+			read_runtime = false;	
 		} else if (read_protected) {
 			vftr_scenario_expr_formulas[vftr_scenario_expr_n_formulas-1].protected_values = strdup(s);
-			read_protected = 0;
+			read_protected = false;
 		} else if (read_default) {
 			sscanf (s, "%lf", &vftr_scenario_expr_formulas[vftr_scenario_expr_n_formulas-1].default_value);	
-			read_default = 0;
+			read_default = false;
 		} else if (read_unit) {
 			vftr_scenario_expr_format[vftr_scenario_expr_n_formulas-1].unit = strdup (s);
-			read_unit = 0;
-		} else if (read_group) {
-			vftr_scenario_expr_format[vftr_scenario_expr_n_formulas-1].group = strdup (s);
-			read_group = 0;
-		} else if (read_column1) {
-			vftr_scenario_expr_format[vftr_scenario_expr_n_formulas-1].column1 = strdup (s);
-			read_column1 = 0;
-		} else if (read_column2) {
-			vftr_scenario_expr_format[vftr_scenario_expr_n_formulas-1].column2 = strdup (s);
-			read_column2 = 0;
+			read_unit = false;
+///		} else if (read_group) {
+///			vftr_scenario_expr_format[vftr_scenario_expr_n_formulas-1].group = strdup (s);
+///			read_group = 0;
+///		} else if (read_column1) {
+///			vftr_scenario_expr_format[vftr_scenario_expr_n_formulas-1].column1 = strdup (s);
+///			read_column1 = 0;
+///		} else if (read_column2) {
+///			vftr_scenario_expr_format[vftr_scenario_expr_n_formulas-1].column2 = strdup (s);
+///			read_column2 = 0;
+		} else if (read_header) {
+			vftr_scenario_expr_format[vftr_scenario_expr_n_formulas-1].header = strdup(s);
+			read_header = false;
 		} else if (read_scenario_name) {
 			vftr_scenario_string = strdup (s);
-			read_scenario_name = 0;
-		} else if (read_spec) {
-			char *s1 = strtok (s, ".");
-			if (!strcmp (s1, "*")) {
-				vftr_scenario_expr_format[vftr_scenario_expr_n_formulas-1].decpl_1 = 0;
-			} else {
-				vftr_scenario_expr_format[vftr_scenario_expr_n_formulas-1].decpl_1 = atoi(s1);
-			}
-			vftr_scenario_expr_format[vftr_scenario_expr_n_formulas-1].decpl_2 = atoi(strtok (NULL, ""));
-			read_spec = 0;
+			read_scenario_name = false;
+///		} else if (read_spec) {
+///			char *s1 = strtok (s, ".");
+///			if (!strcmp (s1, "*")) {
+///				vftr_scenario_expr_format[vftr_scenario_expr_n_formulas-1].decpl_1 = 0;
+///			} else {
+///				vftr_scenario_expr_format[vftr_scenario_expr_n_formulas-1].decpl_1 = atoi(s1);
+///			}
+///			vftr_scenario_expr_format[vftr_scenario_expr_n_formulas-1].decpl_2 = atoi(strtok (NULL, ""));
+///			read_spec = 0;
+///		}
+		} else if (read_decimal_points) {
+			vftr_scenario_expr_format[vftr_scenario_expr_n_formulas-1].decimal_places = atoi(s);
+			read_decimal_points = false;
 		}
 
 		if (!strcmp (s, "counters")) {
-			read_counters = 1;
-			read_observables = 0;
+			read_counters = true;
+			read_observables = false;
 		} else if (!strcmp (s, "observables")) {
-			read_observables = 1;
-			read_counters = 0;
+			read_observables = true;
+			read_counters = false;
 		} else if (!strcmp (s, "papi_name")) {
-			read_papi_name = 1;
+			read_papi_name = true;
 		} else if (!strcmp (s, "name")) {
-			read_name = 1;
+			read_name = true;
 		} else if (!strcmp (s, "symbol")) {
-			read_symbol = 1;
+			read_symbol = true;
 		} else if (!strcmp (s, "formula")) {
-			read_formula = 1;
+			read_formula = true;
 		} else if (!strcmp (s, "divide_by_runtime")) {
-			read_runtime = 1;
+			read_runtime = true;
 		} else if (!strcmp (s, "protected")) {
-			read_protected = 1;
+			read_protected = true;
 		} else if (!strcmp (s, "default")) {
-			read_default = 1;
+			read_default = true;
 		} else if (!strcmp (s, "unit")) {
-			read_unit = 1;
-		} else if (!strcmp (s, "spec")) {
-			read_spec = 1;
-		} else if (!strcmp (s, "group")) {
-			read_group = 1;
-		} else if (!strcmp (s, "column1")) {
-			read_column1 = 1;
-		} else if (!strcmp (s, "column2")) {
-			read_column2 = 1;
+			read_unit = true;
+///		} else if (!strcmp (s, "spec")) {
+///			read_spec = 1;
+///		} else if (!strcmp (s, "group")) {
+///			read_group = 1;
+///		} else if (!strcmp (s, "column1")) {
+///			read_column1 = 1;
+///		} else if (!strcmp (s, "column2")) {
+///			read_column2 = 1;
+		} else if (!strcmp (s, "decimal_points")) {
+			read_decimal_points = true;
+		} else if (!strcmp (s, "header")) {
+			read_header = true;
 		} else if (!strcmp (s, "scenario_name")) {
-			read_scenario_name = 1;
+			read_scenario_name = true;
 		}
 		return 1;
 	} else if (tok->type == JSMN_OBJECT) {
@@ -379,25 +393,13 @@ void vftr_scenario_expr_evaluate_all (double runtime, unsigned long long cycles)
 /**********************************************************************/
 		
 static void vftr_scenario_get_format (char *fmt, int i) {
-	int behind_comma = vftr_scenario_expr_format[i].decpl_2;
+	int behind_comma = vftr_scenario_expr_format[i].decimal_places;
 	static int total = 0;
-	int tmp = vftr_scenario_expr_format[i].decpl_1 > 0 ?
-		vftr_scenario_expr_format[i].decpl_1 : vftr_count_digits_int(i) + behind_comma;
+	//int tmp = vftr_scenario_expr_format[i].decpl_1 > 0 ?
+	//	vftr_scenario_expr_format[i].decpl_1 : vftr_count_digits_int(i) + behind_comma;
+	int tmp = vftr_count_digits_int(i);
 	total = tmp > total ? tmp : total;
 	sprintf (fmt, "%%%d.%dlf ", total, behind_comma);
-}
-
-/**********************************************************************/
-
-char *formats[TE_MAX];
-
-void vftr_scenario_expr_set_formats () {
-	char tmp[10];
-	for (int i = 0; i < vftr_scenario_expr_n_formulas; i++) {
-		// I'm to stupid to use format directly
-		vftr_scenario_get_format (tmp, i);
-		formats[i] = strdup(tmp);
-	}
 }
 
 /**********************************************************************/
@@ -423,20 +425,6 @@ void vftr_scenario_expr_print_summary (FILE *fp) {
 
 /**********************************************************************/
 
-void vftr_scenario_expr_print_column (FILE *fp, int i_scenario) {
-	fprintf (fp, formats[i_scenario], vftr_scenario_expr_formulas[i_scenario].value);
-}
-
-/**********************************************************************/
-
-void vftr_scenario_expr_print_all_columns (FILE *fp) {
-	for (int i = 0; i < vftr_scenario_expr_n_formulas; i++) {
-		vftr_scenario_expr_print_column (fp, i);
-	}
-}
-
-/**********************************************************************/
-
 void vftr_scenario_expr_print_raw_counters (FILE *f) {
 	for (int i = 0; i < vftr_scenario_expr_n_vars; i++) {
 		fprintf (f, "%-37s : %20ld\n", vftr_scenario_expr_counter_names[i],
@@ -448,131 +436,6 @@ void vftr_scenario_expr_print_raw_counters (FILE *f) {
 
 double vftr_scenario_expr_get_value (int i_scenario) {
 	return vftr_scenario_expr_formulas[i_scenario].value;
-}
-
-/**********************************************************************/
-
-int vftr_scenario_expr_get_column_width (int i_scenario) {
-	return vftr_scenario_expr_format[i_scenario].decpl_1 + 1;
-}
-
-/**********************************************************************/
-
-int vftr_scenario_expr_get_table_width () {
-	int tw = 0;
-	for (int i = 0; i < vftr_scenario_expr_n_formulas; i++) {
-		if (vftr_scenario_expr_format[i].decpl_1 == 0) {
-			tw += vftr_count_digits_int(i) + vftr_scenario_expr_format[i].decpl_2 + 1;
-		} else {
-			tw += vftr_scenario_expr_format[i].decpl_1 + 1;
-		}
-	}
-	return tw;
-}
-
-/**********************************************************************/
-
-void vftr_scenario_expr_unique_group_indices (int *n_groups, int *is_unique, int id) {
-	char *tmp[vftr_scenario_expr_n_formulas];
-	for (int i = 0; i < vftr_scenario_expr_n_formulas; i++) {
-		tmp[i] = "";
-	}
-	*n_groups = 0;
-	for (int i = 0; i < vftr_scenario_expr_n_formulas; i++) {
-		int found = 0;
-		for (int j = 0; j < *n_groups; j++) {
-			if (id == 0) {
-				found = found || !strcmp (tmp[j], vftr_scenario_expr_format[i].group);
-			} else if (id == 1) {
-				found = found || !strcmp (tmp[j], vftr_scenario_expr_format[i].column1);
-			}
-		}
-		if (!found) {
-			if (id == 0) {
-				tmp[*n_groups] = strdup (vftr_scenario_expr_format[i].group);
-			} else if (id == 1) {
-				tmp[*n_groups] = strdup (vftr_scenario_expr_format[i].column1);
-			}
-			is_unique[i] = 1;
-			*n_groups = *n_groups + 1;
-		} else {
-			is_unique[i] = 0;
-		}
-	}
-}
-
-/**********************************************************************/
-
-void vftr_scenario_print_formatted (FILE *fp, int *is_unique, int id) {
-	char all_columns[80] = "";
-	int select;
-	for (int i = 0; i < vftr_scenario_expr_n_formulas; i++) {
-		if (is_unique == NULL) {
-			select = 0;
-		} else {
-			select = is_unique[i];
-		}
-		if (select) {
-			if (id == 0) {
-				strcat (all_columns, strdup(vftr_scenario_expr_format[i].group));
-			} else if (id == 1) {
-				strcat (all_columns, strdup(vftr_scenario_expr_format[i].column1));
-			} else if (id == 2) {
-				strcat (all_columns, strdup(vftr_scenario_expr_format[i].column2));
-			}
-			strcat (all_columns, " ");
-		}
-	}
-	char *foo = all_columns;
-	int tw = vftr_scenario_expr_get_table_width ();
-	int ns = strlen (foo);
-	int nc = ns < tw ? ns : tw;
-	int nb = ns < tw ? tw - ns + 1 : 1;
-	for (int is = 0; is < nc; is++) {
-		fputc (*foo++, fp);
-	}
-	for (int is = 0; is < nb; is++) {
-		fputc (' ', fp);
-	}	
-}
-
-/**********************************************************************/
-
-void vftr_scenario_expr_print_group (FILE *fp) {
-	int n_groups;
-	int is_unique[vftr_scenario_expr_n_formulas];
-	vftr_scenario_expr_unique_group_indices (&n_groups, is_unique, 0);
-	vftr_scenario_print_formatted (fp, is_unique, 0);
-}
-
-/**********************************************************************/
-
-void vftr_scenario_expr_print_subgroup (FILE *fp) {
-	int n_groups;
-	int is_unique[vftr_scenario_expr_n_formulas];
-	vftr_scenario_expr_unique_group_indices (&n_groups, is_unique, 1);
-	vftr_scenario_print_formatted (fp, is_unique, 1);
-}
-
-/**********************************************************************/
-
-void vftr_scenario_expr_print_header (FILE *fp) {
-	char all_columns[80] = "";
-	for (int i = 0; i < vftr_scenario_expr_n_formulas; i++) {
-		strcat (all_columns, strdup(vftr_scenario_expr_format[i].column2));
-		strcat (all_columns, " ");
-	}
-	char *foo = all_columns;
-	int tw = vftr_scenario_expr_get_table_width ();
-	int ns = strlen (foo);
-	int nc = ns < tw ? ns : tw;
-	int nb = ns < tw ? tw - ns + 1 : 1;
-	for (int is = 0; is < nc; is++) {
-		fputc (*foo++, fp);
-	}
-	for (int is = 0; is < nb; is++) {
-		fputc (' ', fp);
-	}	
 }
 
 /**********************************************************************/

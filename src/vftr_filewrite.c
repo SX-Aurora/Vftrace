@@ -505,7 +505,20 @@ void vftr_set_proftab_column_formats (function_t **funcTable,
 
 	if (vftr_events_enabled) {
 		for (int i = 0; i < vftr_scenario_expr_n_formulas; i++) {
-		   vftr_prof_column_init (vftr_scenario_expr_format[i].column2, NULL, 3, COL_DOUBLE, &(*columns)[i_column++]);
+		   int n1 = strlen(vftr_scenario_expr_format[i].header);
+		   char *header_with_unit;
+		   if (vftr_scenario_expr_format[i].unit) {
+		     	int n2 = strlen(vftr_scenario_expr_format[i].unit); 
+			header_with_unit = (char*)malloc ((n1 + n2 + 3) * sizeof(char));
+			snprintf (header_with_unit, n1 + n2 + 3, "%s [%s]", vftr_scenario_expr_format[i].header, vftr_scenario_expr_format[i].unit);
+		   } else {
+			header_with_unit = (char*)malloc (n1 * sizeof(char));
+			snprintf (header_with_unit, n1, "%s", vftr_scenario_expr_format[i].header);
+		   }
+		   ///vftr_prof_column_init (vftr_scenario_expr_format[i].column2, NULL, 3, COL_DOUBLE, &(*columns)[i_column++]);
+		   vftr_prof_column_init (header_with_unit, NULL, vftr_scenario_expr_format[i].decimal_places,
+					  COL_DOUBLE, &(*columns)[i_column++]);
+		   free (header_with_unit);
 		} 
  	}
 
