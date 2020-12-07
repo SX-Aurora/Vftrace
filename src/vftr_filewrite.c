@@ -444,8 +444,9 @@ void vftr_fill_scenario_counter_values (double *val, int n_vars, profdata_t *pro
 
 /**********************************************************************/
 
-void vftr_prof_column_init (char *name, int n_decimal_places, int type, column_t *c) {
+void vftr_prof_column_init (char *name, char *group_header, int n_decimal_places, int type, column_t *c) {
 	c->header = strdup (name);
+	c->group_header = group_header != NULL ? strdup (group_header) : NULL;
 	c->n_chars = strlen(name);
 	c->n_decimal_places = n_decimal_places;
 	c->type = type;
@@ -493,20 +494,20 @@ void vftr_set_proftab_column_formats (function_t **funcTable,
 	double runtime, double sampling_overhead_time, 
 	int n_funcs, int *func_indices, column_t **columns) {
 	int i_column = 0;
-        vftr_prof_column_init ("Calls", 0, COL_INT, &(*columns)[i_column++]);
-        vftr_prof_column_init ("t_excl[s]", 3, COL_DOUBLE, &(*columns)[i_column++]);
-        vftr_prof_column_init ("t_incl[s]", 3, COL_DOUBLE, &(*columns)[i_column++]);
-        vftr_prof_column_init ("%abs", 1, COL_DOUBLE, &(*columns)[i_column++]);
-        vftr_prof_column_init ("%cum", 1, COL_DOUBLE, &(*columns)[i_column++]);
+        vftr_prof_column_init ("Calls", NULL, 0, COL_INT, &(*columns)[i_column++]);
+        vftr_prof_column_init ("t_excl[s]", NULL, 3, COL_DOUBLE, &(*columns)[i_column++]);
+        vftr_prof_column_init ("t_incl[s]", NULL, 3, COL_DOUBLE, &(*columns)[i_column++]);
+        vftr_prof_column_init ("%abs", NULL, 1, COL_DOUBLE, &(*columns)[i_column++]);
+        vftr_prof_column_init ("%cum", NULL, 1, COL_DOUBLE, &(*columns)[i_column++]);
         if (vftr_environment.show_overhead->value) {
-	   vftr_prof_column_init ("t_ovhd[s]", 3, COL_DOUBLE, &(*columns)[i_column++]);
-	   vftr_prof_column_init ("%ovhd", 1, COL_DOUBLE, &(*columns)[i_column++]);
-	   vftr_prof_column_init ("t_ovhd / t_excl", 1, COL_DOUBLE, &(*columns)[i_column++]);
+	   vftr_prof_column_init ("t_ovhd[s]", NULL, 3, COL_DOUBLE, &(*columns)[i_column++]);
+	   vftr_prof_column_init ("%ovhd", NULL, 1, COL_DOUBLE, &(*columns)[i_column++]);
+	   vftr_prof_column_init ("t_ovhd / t_excl", NULL, 1, COL_DOUBLE, &(*columns)[i_column++]);
         }
         // Set scenario columns here
-        vftr_prof_column_init ("Function", 0, COL_CHAR, &(*columns)[i_column++]);
-        vftr_prof_column_init ("Caller", 0, COL_CHAR, &(*columns)[i_column++]);
-        vftr_prof_column_init ("ID", 0, COL_INT, &(*columns)[i_column++]);
+        vftr_prof_column_init ("Function", NULL, 0, COL_CHAR, &(*columns)[i_column++]);
+        vftr_prof_column_init ("Caller", NULL, 0, COL_CHAR, &(*columns)[i_column++]);
+        vftr_prof_column_init ("ID", NULL, 0, COL_INT, &(*columns)[i_column++]);
         double t_cum = 0;
         for (int i = 0; i < n_funcs; i++) {
             int i_func = func_indices[i];
@@ -1160,18 +1161,7 @@ void vftr_print_profile (FILE *pout, int *ntop, long long time0) {
     if (vftr_environment.show_overhead->value) n_columns += 3;
     int i_column = 0;
     column_t *prof_columns = (column_t*) malloc (n_columns * sizeof(column_t));
-    //column_t **prof_columns = (column_t**) malloc (n_columns * sizeof(column_t*));
     vftr_set_proftab_column_formats (funcTable, application_runtime, sampling_overhead_time, n_indices, indices, &prof_columns);
-    if (vftr_mpirank == 0) {
-    printf ("F0: %d\n", prof_columns[0].n_chars);
-    printf ("F1: %d\n", prof_columns[1].n_chars);
-    printf ("F2: %d\n", prof_columns[2].n_chars);
-    printf ("F3: %d\n", prof_columns[3].n_chars);
-    printf ("F4: %d\n", prof_columns[4].n_chars);
-    printf ("F5: %d\n", prof_columns[5].n_chars);
-    printf ("F6: %d\n", prof_columns[6].n_chars);
-    printf ("F7: %d\n", prof_columns[7].n_chars);
-    }
     /* Compute nr of decimal places needed */
 //    format_t *formats = (format_t *)malloc (sizeof(format_t));
 //    vftr_set_proftab_column_formats (funcTable, strlen("Calls"), strlen("Excl"), strlen("Incl"),
@@ -1184,11 +1174,6 @@ void vftr_print_profile (FILE *pout, int *ntop, long long time0) {
 
     for (int i = 0; i < n_columns; i++) {
 	vftr_prof_column_set_format (&(prof_columns[i]));
-    }
-    if (vftr_mpirank == 0) {
-    for (int i = 0; i < n_columns; i++) {
-	printf ("FORM: %s\n", prof_columns[i].format);
-    }
     }
 
     /* Offset of first full event counter name header */

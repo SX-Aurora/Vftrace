@@ -32,6 +32,7 @@ enum column_data_type {COL_INT, COL_DOUBLE, COL_CHAR};
 typedef struct column {
 	int type;
 	char *header;
+   	char *group_header;
 	int n_chars;
 	int n_decimal_places;
 	char format[10];
