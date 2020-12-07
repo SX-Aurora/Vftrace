@@ -437,7 +437,7 @@ int vftr_count_indices_to_evaluate (function_t **funcTable, double runtime) {
 /**********************************************************************/
 
 void vftr_fill_scenario_counter_values (double *val, int n_vars, profdata_t *prof_current, profdata_t *prof_previous) {
-	memset (scenario_expr_counter_values, 0., sizeof (double) * scenario_expr_n_vars);
+	memset (scenario_expr_counter_values, 0., sizeof (double) * vftr_scenario_expr_n_vars);
 	if (prof_current->event_count) {
 		for (int i = 0; i < n_vars; i++) {
 			val[i] += (double)prof_current->event_count[i];
@@ -507,11 +507,19 @@ void vftr_set_proftab_column_formats (function_t **funcTable,
         vftr_prof_column_init ("t_incl[s]", NULL, 3, COL_DOUBLE, &(*columns)[i_column++]);
         vftr_prof_column_init ("%abs", NULL, 1, COL_DOUBLE, &(*columns)[i_column++]);
         vftr_prof_column_init ("%cum", NULL, 1, COL_DOUBLE, &(*columns)[i_column++]);
+
         if (vftr_environment.show_overhead->value) {
 	   vftr_prof_column_init ("t_ovhd[s]", NULL, 3, COL_DOUBLE, &(*columns)[i_column++]);
 	   vftr_prof_column_init ("%ovhd", NULL, 1, COL_DOUBLE, &(*columns)[i_column++]);
 	   vftr_prof_column_init ("t_ovhd / t_excl", NULL, 1, COL_DOUBLE, &(*columns)[i_column++]);
         }
+
+	if (vftr_events_enabled) {
+		for (int i = 0; i < vftr_scenario_expr_n_formulas; i++) {
+		   vftr_prof_column_init (scenario_expr_format[i].column2, NULL, 3, COL_DOUBLE, &(*columns)[i_column++]);
+		} 
+ 	}
+
         // Set scenario columns here
         vftr_prof_column_init ("Function", NULL, 0, COL_CHAR, &(*columns)[i_column++]);
         vftr_prof_column_init ("Caller", NULL, 0, COL_CHAR, &(*columns)[i_column++]);
@@ -532,6 +540,7 @@ void vftr_set_proftab_column_formats (function_t **funcTable,
             vftr_prof_column_set_n_chars (&t_incl, &(*columns)[i_column++]);
             vftr_prof_column_set_n_chars (&t_part, &(*columns)[i_column++]);
             vftr_prof_column_set_n_chars (&t_cum, &(*columns)[i_column++]);
+
             if (vftr_environment.show_overhead->value) {
                 vftr_prof_column_set_n_chars (&t_overhead, &(*columns)[i_column++]);
                 double rel = sampling_overhead_time > 0.0 ? t_overhead / sampling_overhead_time * 100.0 : 0.0;
@@ -539,20 +548,32 @@ void vftr_set_proftab_column_formats (function_t **funcTable,
                 rel = t_excl > 0.0 ? t_overhead / t_excl : 0.0;
                 vftr_prof_column_set_n_chars (&rel, &(*columns)[i_column++]);
             }
+
+	    if (vftr_events_enabled) {
+		vftr_fill_scenario_counter_values (scenario_expr_counter_values,
+		          vftr_scenario_expr_n_vars, prof_current, prof_previous);
+		unsigned long long cycles = prof_current->cycles - prof_previous->cycles;
+		vftr_scenario_expr_evaluate_all (t_excl, cycles);
+		for (int j = 0; j < vftr_scenario_expr_n_formulas; j++) {
+		   double tmp = scenario_expr_formulas[j].value;
+		   vftr_prof_column_set_n_chars (&tmp, &(*columns)[i_column++]);
+	   	}
+	    }
+
             vftr_prof_column_set_n_chars (funcTable[i_func]->name, &(*columns)[i_column++]);
             vftr_prof_column_set_n_chars (funcTable[i_func]->return_to->name, &(*columns)[i_column++]);
 
-		if (vftr_events_enabled) {
-			vftr_fill_scenario_counter_values (scenario_expr_counter_values,
-				scenario_expr_n_vars, prof_current, prof_previous);
-		}
+		//if (vftr_events_enabled) {
+		//    vftr_fill_scenario_counter_values (scenario_expr_counter_values,
+		//	scenario_expr_n_vars, prof_current, prof_previous);
+		//    unsigned long long cycles = prof_current->cycles - prof_previous->cycles;
+		//    vftr_scenario_expr_evaluate_all (t_excl, cycles);
+		//}
 
 
-		if (vftr_events_enabled) {
-		    unsigned long long cycles = prof_current->cycles - prof_previous->cycles;
-		    vftr_scenario_expr_evaluate_all (t_excl, cycles);
-		    vftr_scenario_expr_set_formats ();
-	        }
+		//if (vftr_events_enabled) {
+		//    vftr_scenario_expr_set_formats ();
+	        //}
 	}
 	columns[0]->n_chars++;
 }
@@ -573,14 +594,28 @@ int vftr_get_tablewidth_from_columns (column_t *columns, int n_columns) {
 
 void vftr_proftab_print_header (FILE *fp, column_t *columns) {
 	int i;
+	///if (vftr_mpirank == 0) {
+	///printf ("All the headers: \n");
+	///for (i = 0; i < 12; i++) {
+	///   printf ("%s\n", columns[i].header);
+	///}
+	///}
 	for (i = 0; i < 5; i++) {
 	   fprintf (fp, " %*s ", columns[i].n_chars, columns[i].header);
 	}
+
 	if (vftr_environment.show_overhead->value) {
 	   fprintf (fp, " %*s ", columns[i].n_chars, columns[i++].header);
 	   fprintf (fp, " %*s ", columns[i].n_chars, columns[i++].header);
 	   fprintf (fp, " %*s ", columns[i].n_chars, columns[i++].header);
 	}
+
+	if (vftr_events_enabled) {
+	   for (int j = 0; j < vftr_scenario_expr_n_formulas; j++) {
+	      fprintf (fp, " %*s ", columns[i].n_chars, columns[i++].header);
+	   }
+   	}
+			
 	// TODO: Scenario headers
 	fprintf (fp, " %*s ", columns[i].n_chars, columns[i++].header);
 	fprintf (fp, " %*s ", columns[i].n_chars, columns[i++].header);
@@ -1065,7 +1100,7 @@ void vftr_print_profile (FILE *fp_log, int *ntop, long long time0) {
 	ectot[i] = 0;
     }
 
-    for (int i = 0; i < scenario_expr_n_vars; i++) {
+    for (int i = 0; i < vftr_scenario_expr_n_vars; i++) {
 	scenario_expr_counter_values[i] = 0.0;
     }
 
@@ -1092,7 +1127,7 @@ void vftr_print_profile (FILE *fp_log, int *ntop, long long time0) {
             profdata_t *prof_previous = &funcTable[i]->prof_previous;
 	    total_cycles += prof_current->cycles - prof_previous->cycles;
             if (!prof_current->event_count || !prof_previous->event_count) continue;
-	    for (int j = 0; j < scenario_expr_n_vars; j++) {
+	    for (int j = 0; j < vftr_scenario_expr_n_vars; j++) {
 		scenario_expr_counter_values[j] += (double)(prof_current->event_count[j] - prof_previous->event_count[j]);
 	    }
 	}
@@ -1140,24 +1175,6 @@ void vftr_print_profile (FILE *fp_log, int *ntop, long long time0) {
     }
 
     //pscale = 100. / rtime;
-/* 
-   Build a header with varying column widths, depending on the decimal places
-   required. Column headers are truncated accordingly, but event names are
-   printed in full on separate lines.
-   Example:
-                                      L2_RQSTS_PREFETCH_HIT
-                                          L2_RQSTS_PREFETCH_MISS
-                                                       L2_RQSTS_PREFETCHES
-                                                             L2_RQSTS_REFERENCES
-       Time             MFLOPS    L3
-   Cal  (s)  %abs %cum Vecto Sca %Hit L2_ L2_RQSTS_PRE L2_RQ L2_RQS Functio Call stack
-   --- ----- ---- ---- ----- --- ---- --- ------------ ----- ------ ------- --------------
-   100 3.378 46.4 46.4  5692 237 97.4 378 373782558255 37825 378255 matmul3 <MAIN__<init
-   100 1.302 17.8 64.3 15542   0 96.7 302 303024722472 30247 302472 matmul1 <MAIN__<init
-   100 1.289 17.7 82.0 15566   0 96.7 289 282893779377 28937 289377 matmul2 <MAIN__<init
-   100 1.265 17.3 99.4 15879   0 96.6 265 262651745174 26517 265174 matmul4 <MAIN__<init
-
-*/
 
     fprintf (fp_log, "Runtime profile");
     if (vftr_mpisize > 1) {
@@ -1176,7 +1193,7 @@ void vftr_print_profile (FILE *fp_log, int *ntop, long long time0) {
     // function & caller name and stack ID (i.e. 8 columns). 
     int n_columns = 8;
     // Add one column for each hardware counter.
-    n_columns += vftr_n_hw_obs;
+    n_columns += vftr_scenario_expr_n_formulas;
     // If function overhead is displayed, add three more columns.
     if (vftr_environment.show_overhead->value) n_columns += 3;
     int i_column = 0;
@@ -1270,7 +1287,7 @@ void vftr_print_profile (FILE *fp_log, int *ntop, long long time0) {
     //vftr_output_column_header ("Incl", formats->incl_time, fp_log);
 
     //fputs ("%abs %cum ", fp_log);
-    if (evc0) fputs ("%evc ", fp_log);
+    //if (evc0) fputs ("%evc ", fp_log);
 
     //if (vftr_environment.show_overhead->value) {
     //    vftr_output_column_header ("Overhead", formats->overhead, fp_log);
@@ -1278,15 +1295,15 @@ void vftr_print_profile (FILE *fp_log, int *ntop, long long time0) {
     //    vftr_output_column_header ("overhead /excl", formats->overhead, fp_log);
     //}
 
-    if (vftr_events_enabled) {
-        vftr_scenario_expr_print_header (fp_log);
-    	int j = 0;
-    	for (evc = evc1; evc; evc = evc->next) {
-    	    if (ectot[j++]) {
-    	        vftr_output_column_header (evc->name, evc->decipl, fp_log);
-    	    }
-    	}
-    }
+    //if (vftr_events_enabled) {
+    //    vftr_scenario_expr_print_header (fp_log);
+    //	int j = 0;
+    //	for (evc = evc1; evc; evc = evc->next) {
+    //	    if (ectot[j++]) {
+    //	        vftr_output_column_header (evc->name, evc->decipl, fp_log);
+    //	    }
+    //	}
+    //}
 
     //vftr_output_column_header ("Function", formats->func_name, fp_log);
     //vftr_output_column_header ("Caller", formats->caller_name, fp_log);
@@ -1341,26 +1358,29 @@ void vftr_print_profile (FILE *fp_log, int *ntop, long long time0) {
 
         /* NOTE - counter info only printed for thread 0! */
 	if (vftr_events_enabled) {
-		vftr_fill_scenario_counter_values (scenario_expr_counter_values, scenario_expr_n_vars, 
+		vftr_fill_scenario_counter_values (scenario_expr_counter_values, vftr_scenario_expr_n_vars, 
 			prof_current, prof_previous);
 
-        	if (evc0) {
-        	    long long reads = prof_current->ecreads- prof_previous->ecreads;
-        	    double ratio = 100. * (double)reads / (double)calls;
-        	    fprintf (fp_log, ratio < 99.95 ? "%4.1f " : "100. ", ratio);
-        	}
+        	//if (evc0) {
+        	//    long long reads = prof_current->ecreads- prof_previous->ecreads;
+        	//    double ratio = 100. * (double)reads / (double)calls;
+        	//    fprintf (fp_log, ratio < 99.95 ? "%4.1f " : "100. ", ratio);
+        	//}
         
 		unsigned long long cycles = prof_current->cycles - prof_previous->cycles;
 	    	vftr_scenario_expr_evaluate_all (rtime, cycles);
 	    	//Formats should be set at this point
-	    	vftr_scenario_expr_print_all_columns (fp_log);
+	    	//vftr_scenario_expr_print_all_columns (fp_log);
+	    	for (int j = 0; j < vftr_scenario_expr_n_formulas; j++) {
+		   fprintf (fp_log, prof_columns[i_column++].format, scenario_expr_formulas[j].value);
+		}
 
-        	int j = 0;
-        	for (k = 0, evc = evc1; k < vftr_n_hw_obs; k++, evc = evc->next) {
-        	    if (ectot[j++]) {
-				fprintf (fp_log, evc->fmt, scenario_expr_counter_values[k]);
-		    }
-        	}
+        	//int j = 0;
+        	//for (k = 0, evc = evc1; k < vftr_n_hw_obs; k++, evc = evc->next) {
+        	//    if (ectot[j++]) {
+		//		fprintf (fp_log, evc->fmt, scenario_expr_counter_values[k]);
+		//    }
+        	//}
 	}
 
 	fprintf (fp_log, prof_columns[i_column++].format, funcTable[i_func]->name);

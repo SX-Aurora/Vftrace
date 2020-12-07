@@ -82,8 +82,8 @@ extern char *scenario_expr_vars[TE_MAX];
 extern function_expr_t scenario_expr_formulas[TE_MAX];
 extern hwc_format_t scenario_expr_format[TE_MAX];
 
-extern int scenario_expr_n_vars;
-extern int scenario_expr_n_formulas;
+extern int vftr_scenario_expr_n_vars;
+extern int vftr_scenario_expr_n_formulas;
 
 extern double *scenario_expr_counter_values;
 extern double scenario_expr_runtime;

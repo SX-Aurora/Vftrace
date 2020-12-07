@@ -34,8 +34,8 @@ char *scenario_expr_vars[TE_MAX];
 function_expr_t scenario_expr_formulas[TE_MAX];
 hwc_format_t scenario_expr_format[TE_MAX];
 
-int scenario_expr_n_vars;
-int scenario_expr_n_formulas;
+int vftr_scenario_expr_n_vars;
+int vftr_scenario_expr_n_formulas;
 
 double *scenario_expr_counter_values;
 double scenario_expr_runtime;
@@ -57,9 +57,9 @@ void vftr_scenario_print_formula (FILE *fp, function_expr_t formula) {
 /**********************************************************************/
 
 void vftr_write_scenario_header_to_vfd (FILE *fp) {
-	fwrite (&scenario_expr_n_formulas, sizeof(int), 1, fp);
+	fwrite (&vftr_scenario_expr_n_formulas, sizeof(int), 1, fp);
 #if defined(HAS_SXHWC) || defined(HAS_PAPI)
-	for (int i = 0; i < scenario_expr_n_formulas; i++) {
+	for (int i = 0; i < vftr_scenario_expr_n_formulas; i++) {
 		fwrite (scenario_expr_formulas[i].name, SCENARIO_NAME_LEN, 1, fp);
 		fwrite (&scenario_expr_formulas[i].integrated, sizeof(int), 1, fp);
 	}
@@ -71,7 +71,7 @@ void vftr_write_scenario_header_to_vfd (FILE *fp) {
 void vftr_write_observables_to_vfd (unsigned long long cycles, FILE *fp) {
 #if defined(HAS_SXHWC) || defined(HAS_PAPI)
 	vftr_scenario_expr_evaluate_all (0., cycles);
-	for (int i = 0; i < scenario_expr_n_formulas; i++) {
+	for (int i = 0; i < vftr_scenario_expr_n_formulas; i++) {
 		fwrite (&scenario_expr_formulas[i].value, sizeof(double), 1, fp);
 	}
 #endif
@@ -122,41 +122,41 @@ int vftr_read_json (const char *js, jsmntok_t *tok, size_t count) {
 	} else if (tok->type == JSMN_STRING) {
 		char *s = strndup(js + tok->start, tok->end - tok->start);
 		if (read_papi_name) {
-			scenario_expr_counter_names[scenario_expr_n_vars] = strdup(s);
+			scenario_expr_counter_names[vftr_scenario_expr_n_vars] = strdup(s);
 			read_papi_name = 0;
 		} else if (read_counters && read_symbol) {
-			scenario_expr_vars[scenario_expr_n_vars] = strdup(s);
+			scenario_expr_vars[vftr_scenario_expr_n_vars] = strdup(s);
 			read_symbol = 0;
-			scenario_expr_n_vars++;
+			vftr_scenario_expr_n_vars++;
 		} else if (read_name) {
-			scenario_expr_formulas[scenario_expr_n_formulas++].name = strdup(s);
-			scenario_expr_formulas[scenario_expr_n_formulas-1].protected_values = NULL;
+			scenario_expr_formulas[vftr_scenario_expr_n_formulas++].name = strdup(s);
+			scenario_expr_formulas[vftr_scenario_expr_n_formulas-1].protected_values = NULL;
 			read_name = 0;
 		} else if (read_formula) {
-			scenario_expr_formulas[scenario_expr_n_formulas-1].formula = strdup(s);		
+			scenario_expr_formulas[vftr_scenario_expr_n_formulas-1].formula = strdup(s);		
 			read_formula = 0;
 		} else if (read_runtime) {
 			if (!strcmp (s, "yes")) {
-				scenario_expr_formulas[scenario_expr_n_formulas-1].integrated = false;
+				scenario_expr_formulas[vftr_scenario_expr_n_formulas-1].integrated = false;
 			}
 			read_runtime = 0;	
 		} else if (read_protected) {
-			scenario_expr_formulas[scenario_expr_n_formulas-1].protected_values = strdup(s);
+			scenario_expr_formulas[vftr_scenario_expr_n_formulas-1].protected_values = strdup(s);
 			read_protected = 0;
 		} else if (read_default) {
-			sscanf (s, "%lf", &scenario_expr_formulas[scenario_expr_n_formulas-1].default_value);	
+			sscanf (s, "%lf", &scenario_expr_formulas[vftr_scenario_expr_n_formulas-1].default_value);	
 			read_default = 0;
 		} else if (read_unit) {
-			scenario_expr_format[scenario_expr_n_formulas-1].unit = strdup (s);
+			scenario_expr_format[vftr_scenario_expr_n_formulas-1].unit = strdup (s);
 			read_unit = 0;
 		} else if (read_group) {
-			scenario_expr_format[scenario_expr_n_formulas-1].group = strdup (s);
+			scenario_expr_format[vftr_scenario_expr_n_formulas-1].group = strdup (s);
 			read_group = 0;
 		} else if (read_column1) {
-			scenario_expr_format[scenario_expr_n_formulas-1].column1 = strdup (s);
+			scenario_expr_format[vftr_scenario_expr_n_formulas-1].column1 = strdup (s);
 			read_column1 = 0;
 		} else if (read_column2) {
-			scenario_expr_format[scenario_expr_n_formulas-1].column2 = strdup (s);
+			scenario_expr_format[vftr_scenario_expr_n_formulas-1].column2 = strdup (s);
 			read_column2 = 0;
 		} else if (read_scenario_name) {
 			vftr_scenario_string = strdup (s);
@@ -164,11 +164,11 @@ int vftr_read_json (const char *js, jsmntok_t *tok, size_t count) {
 		} else if (read_spec) {
 			char *s1 = strtok (s, ".");
 			if (!strcmp (s1, "*")) {
-				scenario_expr_format[scenario_expr_n_formulas-1].decpl_1 = 0;
+				scenario_expr_format[vftr_scenario_expr_n_formulas-1].decpl_1 = 0;
 			} else {
-				scenario_expr_format[scenario_expr_n_formulas-1].decpl_1 = atoi(s1);
+				scenario_expr_format[vftr_scenario_expr_n_formulas-1].decpl_1 = atoi(s1);
 			}
-			scenario_expr_format[scenario_expr_n_formulas-1].decpl_2 = atoi(strtok (NULL, ""));
+			scenario_expr_format[vftr_scenario_expr_n_formulas-1].decpl_2 = atoi(strtok (NULL, ""));
 			read_spec = 0;
 		}
 
@@ -291,33 +291,33 @@ int vftr_read_scenario_file (char *filename, FILE *fp_ext) {
 	}
 	if (need_to_close_file) fclose (fp);
 	
-	te_vars = (te_variable *) malloc ((scenario_expr_n_vars + 3) * sizeof (te_variable));
-	scenario_expr_counter_values = (double *) malloc (scenario_expr_n_vars * sizeof (double));
-	for (int i = 0; i < scenario_expr_n_vars; i++) {
+	te_vars = (te_variable *) malloc ((vftr_scenario_expr_n_vars + 3) * sizeof (te_variable));
+	scenario_expr_counter_values = (double *) malloc (vftr_scenario_expr_n_vars * sizeof (double));
+	for (int i = 0; i < vftr_scenario_expr_n_vars; i++) {
 		te_vars[i].name = scenario_expr_vars[i];
 		te_vars[i].address = &scenario_expr_counter_values[i];
 		te_vars[i].type = 0;
 		te_vars[i].context = NULL;
 	}	
-	te_vars[scenario_expr_n_vars].name = "runtime";
-	te_vars[scenario_expr_n_vars].address = &scenario_expr_runtime;
-	te_vars[scenario_expr_n_vars].type = 0;
-	te_vars[scenario_expr_n_vars].context = NULL;
+	te_vars[vftr_scenario_expr_n_vars].name = "runtime";
+	te_vars[vftr_scenario_expr_n_vars].address = &scenario_expr_runtime;
+	te_vars[vftr_scenario_expr_n_vars].type = 0;
+	te_vars[vftr_scenario_expr_n_vars].context = NULL;
 
-	te_vars[scenario_expr_n_vars+1].name = "cycles";
-	te_vars[scenario_expr_n_vars+1].address = &scenario_expr_cycles;
-	te_vars[scenario_expr_n_vars+1].type = 0;
-	te_vars[scenario_expr_n_vars+1].context = NULL;
+	te_vars[vftr_scenario_expr_n_vars+1].name = "cycles";
+	te_vars[vftr_scenario_expr_n_vars+1].address = &scenario_expr_cycles;
+	te_vars[vftr_scenario_expr_n_vars+1].type = 0;
+	te_vars[vftr_scenario_expr_n_vars+1].context = NULL;
 
-	te_vars[scenario_expr_n_vars+2].name = "cycletime";
-	te_vars[scenario_expr_n_vars+2].address = &scenario_expr_cycletime;
-	te_vars[scenario_expr_n_vars+2].type = 0;
-	te_vars[scenario_expr_n_vars+2].context = NULL;
+	te_vars[vftr_scenario_expr_n_vars+2].name = "cycletime";
+	te_vars[vftr_scenario_expr_n_vars+2].address = &scenario_expr_cycletime;
+	te_vars[vftr_scenario_expr_n_vars+2].type = 0;
+	te_vars[vftr_scenario_expr_n_vars+2].context = NULL;
 
 	int err;
-	expr = (te_expr **) malloc (scenario_expr_n_formulas * sizeof (te_expr *));	
-	for (int i = 0; i < scenario_expr_n_formulas; i++) {
-		expr[i] = te_compile (scenario_expr_formulas[i].formula, te_vars, scenario_expr_n_vars + 3, &err);
+	expr = (te_expr **) malloc (vftr_scenario_expr_n_formulas * sizeof (te_expr *));	
+	for (int i = 0; i < vftr_scenario_expr_n_formulas; i++) {
+		expr[i] = te_compile (scenario_expr_formulas[i].formula, te_vars, vftr_scenario_expr_n_vars + 3, &err);
 		if (!expr[i]) {
 			printf ("ERROR COMPILING FORMULA:\n%s\n", scenario_expr_formulas[i].formula);
 			printf ("%*s^\n", err - 1, "");
@@ -331,7 +331,7 @@ int vftr_read_scenario_file (char *filename, FILE *fp_ext) {
 /**********************************************************************/
 
 int vftr_scenario_variable_index (char *varname) {
-	for (int i = 0; i < scenario_expr_n_vars + 1; i++) {
+	for (int i = 0; i < vftr_scenario_expr_n_vars + 1; i++) {
 		if (!strcmp (varname, te_vars[i].name)) {
 			return i;
 		}
@@ -351,9 +351,9 @@ void vftr_scenario_expr_evaluate (int i_scenario, double runtime, unsigned long 
 	double check_value = -1.0;
 	if (i_protected < 0) {
 		scenario_expr_formulas[i_scenario].value = te_eval (expr[i_scenario]);		
-	} else if (i_protected == scenario_expr_n_vars) {
+	} else if (i_protected == vftr_scenario_expr_n_vars) {
 		check_value = scenario_expr_runtime;
-	} else if (i_protected == scenario_expr_n_vars + 1) {
+	} else if (i_protected == vftr_scenario_expr_n_vars + 1) {
 		check_value = scenario_expr_runtime;
 	} else {
 		check_value = (double)scenario_expr_counter_values[i_protected];
@@ -371,7 +371,7 @@ void vftr_scenario_expr_evaluate (int i_scenario, double runtime, unsigned long 
 /**********************************************************************/
 
 void vftr_scenario_expr_evaluate_all (double runtime, unsigned long long cycles) {
-	for (int i = 0; i < scenario_expr_n_formulas; i++) {
+	for (int i = 0; i < vftr_scenario_expr_n_formulas; i++) {
 		vftr_scenario_expr_evaluate (i, runtime, cycles);
 	}
 }
@@ -393,7 +393,7 @@ char *formats[TE_MAX];
 
 void vftr_scenario_expr_set_formats () {
 	char tmp[10];
-	for (int i = 0; i < scenario_expr_n_formulas; i++) {
+	for (int i = 0; i < vftr_scenario_expr_n_formulas; i++) {
 		// I'm to stupid to use format directly
 		vftr_scenario_get_format (tmp, i);
 		formats[i] = strdup(tmp);
@@ -405,7 +405,7 @@ void vftr_scenario_expr_set_formats () {
 #define SUMMARY_LINE_SIZE 27
 void vftr_scenario_expr_print_summary (FILE *fp) {
 	char fmt[10];
-	for (int i = 0; i < scenario_expr_n_formulas; i++) {
+	for (int i = 0; i < vftr_scenario_expr_n_formulas; i++) {
 		int n_chars = strlen(scenario_expr_formulas[i].name);
 		if (n_chars > SUMMARY_LINE_SIZE) {
 			// Trim name
@@ -430,7 +430,7 @@ void vftr_scenario_expr_print_column (FILE *fp, int i_scenario) {
 /**********************************************************************/
 
 void vftr_scenario_expr_print_all_columns (FILE *fp) {
-	for (int i = 0; i < scenario_expr_n_formulas; i++) {
+	for (int i = 0; i < vftr_scenario_expr_n_formulas; i++) {
 		vftr_scenario_expr_print_column (fp, i);
 	}
 }
@@ -438,7 +438,7 @@ void vftr_scenario_expr_print_all_columns (FILE *fp) {
 /**********************************************************************/
 
 void vftr_scenario_expr_print_raw_counters (FILE *f) {
-	for (int i = 0; i < scenario_expr_n_vars; i++) {
+	for (int i = 0; i < vftr_scenario_expr_n_vars; i++) {
 		fprintf (f, "%-37s : %20ld\n", scenario_expr_counter_names[i],
 			 (long) scenario_expr_counter_values[i]);
 	}
@@ -460,7 +460,7 @@ int vftr_scenario_expr_get_column_width (int i_scenario) {
 
 int vftr_scenario_expr_get_table_width () {
 	int tw = 0;
-	for (int i = 0; i < scenario_expr_n_formulas; i++) {
+	for (int i = 0; i < vftr_scenario_expr_n_formulas; i++) {
 		if (scenario_expr_format[i].decpl_1 == 0) {
 			tw += vftr_count_digits_int(i) + scenario_expr_format[i].decpl_2 + 1;
 		} else {
@@ -473,12 +473,12 @@ int vftr_scenario_expr_get_table_width () {
 /**********************************************************************/
 
 void vftr_scenario_expr_unique_group_indices (int *n_groups, int *is_unique, int id) {
-	char *tmp[scenario_expr_n_formulas];
-	for (int i = 0; i < scenario_expr_n_formulas; i++) {
+	char *tmp[vftr_scenario_expr_n_formulas];
+	for (int i = 0; i < vftr_scenario_expr_n_formulas; i++) {
 		tmp[i] = "";
 	}
 	*n_groups = 0;
-	for (int i = 0; i < scenario_expr_n_formulas; i++) {
+	for (int i = 0; i < vftr_scenario_expr_n_formulas; i++) {
 		int found = 0;
 		for (int j = 0; j < *n_groups; j++) {
 			if (id == 0) {
@@ -506,7 +506,7 @@ void vftr_scenario_expr_unique_group_indices (int *n_groups, int *is_unique, int
 void vftr_scenario_print_formatted (FILE *fp, int *is_unique, int id) {
 	char all_columns[80] = "";
 	int select;
-	for (int i = 0; i < scenario_expr_n_formulas; i++) {
+	for (int i = 0; i < vftr_scenario_expr_n_formulas; i++) {
 		if (is_unique == NULL) {
 			select = 0;
 		} else {
@@ -540,7 +540,7 @@ void vftr_scenario_print_formatted (FILE *fp, int *is_unique, int id) {
 
 void vftr_scenario_expr_print_group (FILE *fp) {
 	int n_groups;
-	int is_unique[scenario_expr_n_formulas];
+	int is_unique[vftr_scenario_expr_n_formulas];
 	vftr_scenario_expr_unique_group_indices (&n_groups, is_unique, 0);
 	vftr_scenario_print_formatted (fp, is_unique, 0);
 }
@@ -549,7 +549,7 @@ void vftr_scenario_expr_print_group (FILE *fp) {
 
 void vftr_scenario_expr_print_subgroup (FILE *fp) {
 	int n_groups;
-	int is_unique[scenario_expr_n_formulas];
+	int is_unique[vftr_scenario_expr_n_formulas];
 	vftr_scenario_expr_unique_group_indices (&n_groups, is_unique, 1);
 	vftr_scenario_print_formatted (fp, is_unique, 1);
 }
@@ -558,7 +558,7 @@ void vftr_scenario_expr_print_subgroup (FILE *fp) {
 
 void vftr_scenario_expr_print_header (FILE *fp) {
 	char all_columns[80] = "";
-	for (int i = 0; i < scenario_expr_n_formulas; i++) {
+	for (int i = 0; i < vftr_scenario_expr_n_formulas; i++) {
 		strcat (all_columns, strdup(scenario_expr_format[i].column2));
 		strcat (all_columns, " ");
 	}
@@ -578,7 +578,7 @@ void vftr_scenario_expr_print_header (FILE *fp) {
 /**********************************************************************/
 
 void vftr_scenario_expr_add_sx_counters () {
-	for (int i = 0; i < scenario_expr_n_vars; i++) {
+	for (int i = 0; i < vftr_scenario_expr_n_vars; i++) {
 		vftr_sx_counter (scenario_expr_counter_names[i], i);	
 	}
 }
@@ -586,7 +586,7 @@ void vftr_scenario_expr_add_sx_counters () {
 /**********************************************************************/
 
 void vftr_scenario_expr_add_papi_counters () {
-	for (int i = 0; i < scenario_expr_n_vars; i++) {
+	for (int i = 0; i < vftr_scenario_expr_n_vars; i++) {
 		vftr_papi_counter (scenario_expr_counter_names[i]);
 	}
 }
@@ -595,16 +595,16 @@ void vftr_scenario_expr_add_papi_counters () {
 
 int vftr_scenario_test_1 (FILE *fp_in, FILE *fp_out) {
 	vftr_read_scenario_file ("", fp_in);
-	fprintf (fp_out, "Registered variables: %d\n", scenario_expr_n_vars);
-	for (int i = 0; i < scenario_expr_n_vars; i++) {
+	fprintf (fp_out, "Registered variables: %d\n", vftr_scenario_expr_n_vars);
+	for (int i = 0; i < vftr_scenario_expr_n_vars; i++) {
 		fprintf (fp_out, "%d: name: %s\n", i, te_vars[i].name);		
 	}
 	fprintf (fp_out, "Check for the three additional entries: \n");
-	fprintf (fp_out, "%s\n", te_vars[scenario_expr_n_vars].name);
-	fprintf (fp_out, "%s\n", te_vars[scenario_expr_n_vars+1].name);
-	fprintf (fp_out, "%s\n", te_vars[scenario_expr_n_vars+2].name);
-	fprintf (fp_out, "Registered formulas: %d\n", scenario_expr_n_formulas);
-	for (int i = 0; i < scenario_expr_n_formulas; i++) {
+	fprintf (fp_out, "%s\n", te_vars[vftr_scenario_expr_n_vars].name);
+	fprintf (fp_out, "%s\n", te_vars[vftr_scenario_expr_n_vars+1].name);
+	fprintf (fp_out, "%s\n", te_vars[vftr_scenario_expr_n_vars+2].name);
+	fprintf (fp_out, "Registered formulas: %d\n", vftr_scenario_expr_n_formulas);
+	for (int i = 0; i < vftr_scenario_expr_n_formulas; i++) {
 		vftr_scenario_print_formula (fp_out, scenario_expr_formulas[i]);
 	}
 	return 0;
