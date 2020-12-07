@@ -77,18 +77,18 @@ typedef struct {
 	bool integrated;
 } function_expr_t;
 	
-extern char *scenario_expr_counter_names[TE_MAX];
-extern char *scenario_expr_vars[TE_MAX];
-extern function_expr_t scenario_expr_formulas[TE_MAX];
-extern hwc_format_t scenario_expr_format[TE_MAX];
+extern char *vftr_scenario_expr_counter_names[TE_MAX];
+extern char *vftr_scenario_expr_vars[TE_MAX];
+extern function_expr_t vftr_scenario_expr_formulas[TE_MAX];
+extern hwc_format_t vftr_scenario_expr_format[TE_MAX];
 
 extern int vftr_scenario_expr_n_vars;
 extern int vftr_scenario_expr_n_formulas;
 
-extern double *scenario_expr_counter_values;
-extern double scenario_expr_runtime;
-extern double scenario_expr_cycles;
-extern double scenario_expr_cycletime;
+extern double *vftr_scenario_expr_counter_values;
+extern double vftr_scenario_expr_runtime;
+extern double vftr_scenario_expr_cycles;
+extern double vftr_scenario_expr_cycletime;
 
 int vftr_read_scenario_file (char *filename, FILE *fp_ext);
 void vftr_scenario_expr_evaluate (int i_scenario, double runtime, unsigned long long cycles);

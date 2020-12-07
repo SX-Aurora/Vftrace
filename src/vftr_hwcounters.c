@@ -231,13 +231,13 @@ void vftr_read_counters_sx (long long *event) {
     evtcounter_t *evc;
     if (event == NULL) return;
     vftr_read_sxhwc_registers (vftr_echwc);
-    memset (scenario_expr_counter_values, 0., sizeof(double) * vftr_scenario_expr_n_vars);
+    memset (vftr_scenario_expr_counter_values, 0., sizeof(double) * vftr_scenario_expr_n_vars);
     /* Mask overflow bit and undefined bits */
     vftr_echwc[0] &= 0x000fffffffffffff; /* 52bit counter */
     vftr_echwc[1] &= 0x000fffffffffffff; /* 52bit counter */
     for (i = 2; i < 16; i++) vftr_echwc[i] &= 0x00ffffffffffffff; /* 56bit counter */
     for (int i = 0; i < vftr_scenario_expr_n_vars; i++) {
-	scenario_expr_counter_values[i] = vftr_echwc[i];
+	vftr_scenario_expr_counter_values[i] = vftr_echwc[i];
     }
     for (i = j  = 0, evc = first_counter; evc; i++, evc = evc->next) {
         evc->count = vftr_echwc[j++];

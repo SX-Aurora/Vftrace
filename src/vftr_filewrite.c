@@ -426,7 +426,7 @@ int vftr_count_func_indices_up_to_truncate (function_t **funcTable, double runti
 /**********************************************************************/
 
 void vftr_fill_scenario_counter_values (double *val, int n_vars, profdata_t *prof_current, profdata_t *prof_previous) {
-	memset (scenario_expr_counter_values, 0., sizeof (double) * vftr_scenario_expr_n_vars);
+	memset (vftr_scenario_expr_counter_values, 0., sizeof (double) * vftr_scenario_expr_n_vars);
 	if (prof_current->event_count) {
 		for (int i = 0; i < n_vars; i++) {
 			val[i] += (double)prof_current->event_count[i];
@@ -505,7 +505,8 @@ void vftr_set_proftab_column_formats (function_t **funcTable,
 
 	if (vftr_events_enabled) {
 		for (int i = 0; i < vftr_scenario_expr_n_formulas; i++) {
-		   vftr_prof_column_init (scenario_expr_format[i].column2, NULL, 3, COL_DOUBLE, &(*columns)[i_column++]);
+		   vftr_prof_column_init (vftr_scenario_expr_format[i].column2, NULL, 3, COL_DOUBLE, &(*columns)[i_column++]);
+		   //printf ("HUHU: %s\n", scenario_expr_format[i].column2);
 		} 
  	}
 
@@ -539,12 +540,12 @@ void vftr_set_proftab_column_formats (function_t **funcTable,
             }
 
 	    if (vftr_events_enabled) {
-		vftr_fill_scenario_counter_values (scenario_expr_counter_values,
+		vftr_fill_scenario_counter_values (vftr_scenario_expr_counter_values,
 		          vftr_scenario_expr_n_vars, prof_current, prof_previous);
 		unsigned long long cycles = prof_current->cycles - prof_previous->cycles;
 		vftr_scenario_expr_evaluate_all (t_excl, cycles);
 		for (int j = 0; j < vftr_scenario_expr_n_formulas; j++) {
-		   double tmp = scenario_expr_formulas[j].value;
+		   double tmp = vftr_scenario_expr_formulas[j].value;
 		   vftr_prof_column_set_n_chars (&tmp, &(*columns)[i_column++]);
 	   	}
 	    }
@@ -553,7 +554,7 @@ void vftr_set_proftab_column_formats (function_t **funcTable,
             vftr_prof_column_set_n_chars (funcTable[i_func]->return_to->name, &(*columns)[i_column++]);
 
 		//if (vftr_events_enabled) {
-		//    vftr_fill_scenario_counter_values (scenario_expr_counter_values,
+		//    vftr_fill_scenario_counter_values (vftr_vftr_scenario_expr_counter_values,
 		//	scenario_expr_n_vars, prof_current, prof_previous);
 		//    unsigned long long cycles = prof_current->cycles - prof_previous->cycles;
 		//    vftr_scenario_expr_evaluate_all (t_excl, cycles);
@@ -1091,7 +1092,7 @@ void vftr_print_profile_summary (FILE *fp_log, function_t **func_table, double t
     	      total_cycles += prof_current->cycles - prof_previous->cycles;
               if (!prof_current->event_count || !prof_previous->event_count) continue;
     	      for (int j = 0; j < vftr_scenario_expr_n_vars; j++) {
-    	          scenario_expr_counter_values[j] += (double)(prof_current->event_count[j] - prof_previous->event_count[j]);
+    	          vftr_scenario_expr_counter_values[j] += (double)(prof_current->event_count[j] - prof_previous->event_count[j]);
     	      }
     	   }
         }
@@ -1133,14 +1134,14 @@ void vftr_print_profile_line (FILE *fp_log, int i_line, double application_runti
    }
    
    if (vftr_events_enabled) {
-   	vftr_fill_scenario_counter_values (scenario_expr_counter_values, vftr_scenario_expr_n_vars, 
+   	vftr_fill_scenario_counter_values (vftr_scenario_expr_counter_values, vftr_scenario_expr_n_vars, 
    		prof_current, prof_previous);
    
    	unsigned long long cycles = prof_current->cycles - prof_previous->cycles;
        	vftr_scenario_expr_evaluate_all (t_excl, cycles);
        	// Scenario formats should be set at this point
        	for (int j = 0; j < vftr_scenario_expr_n_formulas; j++) {
-   	   fprintf (fp_log, prof_columns[i_column++].format, scenario_expr_formulas[j].value);
+   	   fprintf (fp_log, prof_columns[i_column++].format, vftr_scenario_expr_formulas[j].value);
    	}
    }
    
@@ -1175,7 +1176,7 @@ void vftr_print_profile (FILE *fp_log, int *n_func_indices, long long time0) {
     function_t **func_table;
 
     for (int i = 0; i < vftr_scenario_expr_n_vars; i++) {
-	scenario_expr_counter_values[i] = 0.0;
+	vftr_scenario_expr_counter_values[i] = 0.0;
     }
 
     func_table = (function_t**) malloc (vftr_func_table_size * sizeof(function_t*));
