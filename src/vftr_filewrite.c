@@ -381,7 +381,7 @@ void vftr_get_stack_times (profdata_t *prof_current, profdata_t *prof_previous, 
 
 /**********************************************************************/
 
-void vftr_fill_indices_to_evaluate (function_t **funcTable, double runtime, int *indices) {
+void vftr_fill_func_indices_up_to_truncate (function_t **funcTable, double runtime, int *indices) {
 	double cumulative_time = 0.;
     	double max_cumulative_time = 99.;
 	double t_excl, t_incl, t_part;
@@ -402,7 +402,7 @@ void vftr_fill_indices_to_evaluate (function_t **funcTable, double runtime, int 
 
 /**********************************************************************/
 
-int vftr_count_indices_to_evaluate (function_t **funcTable, double runtime) {
+int vftr_count_func_indices_up_to_truncate (function_t **funcTable, double runtime) {
 	int n_indices = 0;
 	double cumulative_time = 0.;
     	double max_cumulative_time = 99.;
@@ -1111,14 +1111,62 @@ void vftr_print_profile_summary (FILE *fp_log, function_t **func_table, double t
 
 /**********************************************************************/
 
-void vftr_print_profile (FILE *fp_log, int *ntop, long long time0) {
+void vftr_print_profile_line (FILE *fp_log, int i_line, double application_runtime, double sampling_overhead_time,
+			      double *cumulative_time, int *indices,
+			      function_t **func_table, column_t *prof_columns) {
+   int i_column = 0;
+   int i_func = indices[i_line];
+   profdata_t *prof_current   = &func_table[i_func]->prof_current;
+   profdata_t *prof_previous  = &func_table[i_func]->prof_previous;
+   
+   unsigned long long calls = prof_current->calls  - prof_previous->calls;
+   fprintf (fp_log, prof_columns[i_column++].format, calls);
+   
+   double t_excl, t_incl, t_part;
+   vftr_get_stack_times (prof_current, prof_previous, application_runtime, &t_excl, &t_incl, &t_part);
+   *cumulative_time += t_part;
+   vftr_print_stack_time (fp_log, calls, t_excl, t_incl, t_part, *cumulative_time, &i_column, prof_columns);
+
+   if (vftr_environment.show_overhead->value) {
+      vftr_print_overhead_time (fp_log, func_table[i_func]->overhead * 1e-6, sampling_overhead_time, t_excl,
+   			     &i_column, prof_columns);
+   }
+   
+   if (vftr_events_enabled) {
+   	vftr_fill_scenario_counter_values (scenario_expr_counter_values, vftr_scenario_expr_n_vars, 
+   		prof_current, prof_previous);
+   
+   	unsigned long long cycles = prof_current->cycles - prof_previous->cycles;
+       	vftr_scenario_expr_evaluate_all (t_excl, cycles);
+       	// Scenario formats should be set at this point
+       	for (int j = 0; j < vftr_scenario_expr_n_formulas; j++) {
+   	   fprintf (fp_log, prof_columns[i_column++].format, scenario_expr_formulas[j].value);
+   	}
+   }
+   
+   fprintf (fp_log, prof_columns[i_column++].format, func_table[i_func]->name);
+   if (func_table[i_func]->return_to) {
+       fprintf (fp_log, prof_columns[i_column++].format, func_table[i_func]->return_to->name);
+   }
+   
+   int fid = func_table[i_func]->gid;
+   fprintf (fp_log, prof_columns[i_column++].format, fid);
+   fprintf (fp_log, "\n");
+}
+
+/**********************************************************************/
+
+void vftr_print_profile (FILE *fp_log, int *n_func_indices, long long time0) {
     unsigned long long calls;
-    evtcounter_t *evc0, *evc1, *evc;
     
     int k, fid;
     int table_width;
 
     FILE *f_html;
+
+    if (!vftr_stackscount) return;
+    if (!vftr_profile_wanted)  return;
+
     if (vftr_environment.create_html->value) {
        vftr_browse_create_directory ();
        f_html = vftr_browse_init_profile_table ();
@@ -1130,17 +1178,11 @@ void vftr_print_profile (FILE *fp_log, int *ntop, long long time0) {
 	scenario_expr_counter_values[i] = 0.0;
     }
 
-    evc1 = evc0 = vftr_get_counters();
-    /* Find first event counter after scenario counters */
-
-    if (!vftr_stackscount) return;
-
     func_table = (function_t**) malloc (vftr_func_table_size * sizeof(function_t*));
+    // Create a local copy of the global function table to sort it.
     memcpy (func_table, vftr_func_table, vftr_func_table_size * sizeof(function_t*));
 
     qsort ((void *)func_table, (size_t)vftr_stackscount, sizeof (function_t *), vftr_get_profile_compare_function());
-
-    if (!vftr_profile_wanted)  return;
 
     double total_runtime, sampling_overhead_time, total_overhead_time, mpi_overhead_time, application_runtime;
     vftr_get_application_times (time0, &total_runtime, &sampling_overhead_time, &mpi_overhead_time, 
@@ -1158,10 +1200,9 @@ void vftr_print_profile (FILE *fp_log, int *ntop, long long time0) {
     }
     fprintf (fp_log, ":\n\n");
 
-    int n_indices = vftr_count_indices_to_evaluate (func_table, application_runtime);
-    int *indices = (int *)malloc (n_indices * sizeof(int));
-    *ntop = n_indices;
-    vftr_fill_indices_to_evaluate (func_table, application_runtime, indices);
+    *n_func_indices = vftr_count_func_indices_up_to_truncate (func_table, application_runtime);
+    int *func_indices = (int *)malloc (*n_func_indices * sizeof(int));
+    vftr_fill_func_indices_up_to_truncate (func_table, application_runtime, func_indices);
 
     // Number of columns. Default: nCalls, exclusive & inclusive time, %abs, %cum,
     // function & caller name and stack ID (i.e. 8 columns). 
@@ -1173,12 +1214,11 @@ void vftr_print_profile (FILE *fp_log, int *ntop, long long time0) {
 
     int i_column = 0;
     column_t *prof_columns = (column_t*) malloc (n_columns * sizeof(column_t));
-    vftr_set_proftab_column_formats (func_table, application_runtime, sampling_overhead_time, n_indices, indices, &prof_columns);
+    vftr_set_proftab_column_formats (func_table, application_runtime, sampling_overhead_time, *n_func_indices, func_indices, &prof_columns);
 
     for (int i = 0; i < n_columns; i++) {
 	vftr_prof_column_set_format (&(prof_columns[i]));
     }
-
 
     table_width = vftr_get_tablewidth_from_columns (prof_columns, n_columns);
 
@@ -1193,45 +1233,11 @@ void vftr_print_profile (FILE *fp_log, int *ntop, long long time0) {
     // Next: the numbers
 
     double cumulative_time = 0.;
-    for (int i = 0; i < n_indices; i++) {
-	i_column = 0;
-	int i_func = indices[i];
-        profdata_t *prof_current   = &func_table[i_func]->prof_current;
-        profdata_t *prof_previous  = &func_table[i_func]->prof_previous;
-
-        calls  = prof_current->calls  - prof_previous->calls;
-        fprintf (fp_log, prof_columns[i_column++].format, calls);
-
-	double t_excl, t_incl, t_part;
-	vftr_get_stack_times (prof_current, prof_previous, application_runtime, &t_excl, &t_incl, &t_part);
-	cumulative_time += t_part;
-	vftr_print_stack_time (fp_log, calls, t_excl, t_incl, t_part, cumulative_time, &i_column, prof_columns);
-        if (vftr_environment.show_overhead->value) {
-	   vftr_print_overhead_time (fp_log, func_table[i_func]->overhead * 1e-6, sampling_overhead_time, t_excl,
-				     &i_column, prof_columns);
-        }
-
-	if (vftr_events_enabled) {
-		vftr_fill_scenario_counter_values (scenario_expr_counter_values, vftr_scenario_expr_n_vars, 
-			prof_current, prof_previous);
-
-		unsigned long long cycles = prof_current->cycles - prof_previous->cycles;
-	    	vftr_scenario_expr_evaluate_all (t_excl, cycles);
-	    	// Scenario formats should be set at this point
-	    	for (int j = 0; j < vftr_scenario_expr_n_formulas; j++) {
-		   fprintf (fp_log, prof_columns[i_column++].format, scenario_expr_formulas[j].value);
-		}
-	}
-
-	fprintf (fp_log, prof_columns[i_column++].format, func_table[i_func]->name);
-	if (func_table[i_func]->return_to) {
-            fprintf (fp_log, prof_columns[i_column++].format, func_table[i_func]->return_to->name);
-        }
-
-	fid = func_table[i_func]->gid;
-        fprintf (fp_log, prof_columns[i_column++].format, fid);
-        fprintf (fp_log, "\n");
+    for (int i = 0; i < *n_func_indices; i++) {
+       vftr_print_profile_line (fp_log, i, application_runtime, sampling_overhead_time, &cumulative_time,
+				func_indices, func_table, prof_columns);
     }
+
     if (vftr_environment.create_html->value) vftr_browse_finalize_table(f_html);
     
     vftr_print_dashes (fp_log, table_width);
