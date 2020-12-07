@@ -362,6 +362,14 @@ void vftr_print_stack_time (FILE *fp, int calls, double t_excl, double t_incl, d
 
 /**********************************************************************/
 
+void vftr_print_overhead_time (FILE *fp, double t_ovhd, double sampling_overhead_time, double t_excl, int *i_column, column_t *prof_columns) {
+	fprintf (fp, prof_columns[(*i_column)++].format, t_ovhd);
+	fprintf (fp, prof_columns[(*i_column)++].format, t_ovhd / sampling_overhead_time * 100.0);
+	fprintf (fp, prof_columns[(*i_column)++].format, t_excl > 0 ? t_ovhd / t_excl : 0.0);
+}
+
+/**********************************************************************/
+
 void vftr_set_evc_decipl (int n_indices, int n_scenarios, evtcounter_t *evc1, evtcounter_t *evc) {
     int e;
     for (int i = 0; i < n_indices; i++) {
@@ -1318,6 +1326,10 @@ void vftr_print_profile (FILE *pout, int *ntop, long long time0) {
 	ctime += t_part;
 	//vftr_print_stack_time (pout, calls, fmttime, fmttimeInc, t_excl, t_incl, t_part, ctime);
 	vftr_print_stack_time (pout, calls, t_excl, t_incl, t_part, ctime, &i_column, prof_columns);
+        if (vftr_environment.show_overhead->value) {
+	   vftr_print_overhead_time (pout, funcTable[i_func]->overhead * 1e-6, sampling_overhead_time, t_excl,
+				     &i_column, prof_columns);
+        }
 	///if (vftr_environment.show_overhead->value) {
         ///   fprintf (pout, " %*.3f %*.3f %*.3f ", formats->overhead, funcTable[i_func]->overhead * 1e-6, 
 	///   	 formats->overhead, funcTable[i_func]->overhead * 1e-6 / sampling_overhead_time * 100.0,
