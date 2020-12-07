@@ -1065,8 +1065,54 @@ void vftr_get_application_times (double time0, double *total_runtime, double *sa
 
 /**********************************************************************/
 
+void vftr_print_profile_summary (FILE *fp_log, function_t **func_table, double total_runtime, double application_runtime,
+				 double total_overhead_time, double sampling_overhead_time, double mpi_overhead_time) {
+
+    fprintf(fp_log, "MPI size              %d\n", vftr_mpisize);
+    fprintf(fp_log, "Total runtime:        %8.2f seconds\n", total_runtime);
+    fprintf(fp_log, "Application time:     %8.2f seconds\n", application_runtime);
+    fprintf(fp_log, "Overhead:             %8.2f seconds (%.2f%%)\n",
+            total_overhead_time, 100.0*total_overhead_time/total_runtime);
+#ifdef _MPI
+    fprintf(fp_log, "   Sampling overhead: %8.2f seconds (%.2f%%)\n",
+            sampling_overhead_time, 100.0*sampling_overhead_time/total_runtime);
+    fprintf(fp_log, "   MPI overhead:      %8.2f seconds (%.2f%%)\n",
+            mpi_overhead_time, 100.0*mpi_overhead_time/total_runtime);
+#endif
+
+    if (vftr_events_enabled) {
+	unsigned long long total_cycles = 0;
+
+        for (int i = 0; i < vftr_stackscount; i++) {
+    	   if (func_table[i] == NULL) continue;
+    	   if (func_table[i]->return_to && func_table[i]->prof_current.calls) {
+              profdata_t *prof_current  = &func_table[i]->prof_current;
+              profdata_t *prof_previous = &func_table[i]->prof_previous;
+    	      total_cycles += prof_current->cycles - prof_previous->cycles;
+              if (!prof_current->event_count || !prof_previous->event_count) continue;
+    	      for (int j = 0; j < vftr_scenario_expr_n_vars; j++) {
+    	          scenario_expr_counter_values[j] += (double)(prof_current->event_count[j] - prof_previous->event_count[j]);
+    	      }
+    	   }
+        }
+
+	vftr_scenario_expr_evaluate_all (application_runtime, total_cycles);	
+	vftr_scenario_expr_print_summary (fp_log);
+
+        fprintf (fp_log, "\nRaw counter totals\n"
+            "------------------------------------------------------------\n"
+            "%-37s : %20llu\n", 
+            "Time Stamp Counter", total_cycles);
+    	vftr_scenario_expr_print_raw_counters (fp_log);
+
+    }
+    fprintf (fp_log, "------------------------------------------------------------\n\n");
+}
+
+/**********************************************************************/
+
 void vftr_print_profile (FILE *fp_log, int *ntop, long long time0) {
-    unsigned long long total_cycles, calls;
+    unsigned long long calls;
     evtcounter_t *evc0, *evc1, *evc;
     
     int k, fid;
@@ -1096,56 +1142,12 @@ void vftr_print_profile (FILE *fp_log, int *ntop, long long time0) {
 
     if (!vftr_profile_wanted)  return;
 
-    total_cycles = 0;
- 
-    /* Sum all cycles and counts */
-    for (int i = 0; i < vftr_stackscount; i++) {
-	if (func_table[i] == NULL) continue;
-	if (func_table[i]->return_to && func_table[i]->prof_current.calls) {
-            profdata_t *prof_current  = &func_table[i]->prof_current;
-            profdata_t *prof_previous = &func_table[i]->prof_previous;
-	    total_cycles += prof_current->cycles - prof_previous->cycles;
-            if (!prof_current->event_count || !prof_previous->event_count) continue;
-	    for (int j = 0; j < vftr_scenario_expr_n_vars; j++) {
-		scenario_expr_counter_values[j] += (double)(prof_current->event_count[j] - prof_previous->event_count[j]);
-	    }
-	}
-    }
     double total_runtime, sampling_overhead_time, total_overhead_time, mpi_overhead_time, application_runtime;
     vftr_get_application_times (time0, &total_runtime, &sampling_overhead_time, &mpi_overhead_time, 
 				&total_overhead_time, &application_runtime);
 
-    /* Print profile info */
-
-    fprintf(fp_log, "MPI size              %d\n", vftr_mpisize);
-    fprintf(fp_log, "Total runtime:        %8.2f seconds\n", total_runtime);
-    fprintf(fp_log, "Application time:     %8.2f seconds\n", application_runtime);
-    	fprintf(fp_log, "Overhead:             %8.2f seconds (%.2f%%)\n",
-            total_overhead_time, 100.0*total_overhead_time/total_runtime);
-#ifdef _MPI
-    fprintf(fp_log, "   Sampling overhead: %8.2f seconds (%.2f%%)\n",
-            sampling_overhead_time, 100.0*sampling_overhead_time/total_runtime);
-    fprintf(fp_log, "   MPI overhead:      %8.2f seconds (%.2f%%)\n",
-            mpi_overhead_time, 100.0*mpi_overhead_time/total_runtime);
-#endif
-
-    /* Print overall info */
-    if (vftr_events_enabled) {
-	vftr_scenario_expr_evaluate_all (application_runtime, total_cycles);	
-	vftr_scenario_expr_print_summary (fp_log);
-    }
-
-    /* Print all raw counter totals */
-    fprintf( fp_log, "\nRaw counter totals\n"
-            "------------------------------------------------------------\n"
-            "%-37s : %20llu\n", 
-            "Time Stamp Counter", total_cycles  );
-    if (vftr_events_enabled) {
-    	vftr_scenario_expr_print_raw_counters (fp_log);
-    }
-
-    fprintf( fp_log,
-            "------------------------------------------------------------\n\n" );
+    vftr_print_profile_summary (fp_log, func_table, total_runtime, application_runtime,
+				total_overhead_time, sampling_overhead_time, mpi_overhead_time);
 
     fprintf (fp_log, "Runtime profile");
     if (vftr_mpisize > 1) {
@@ -1154,7 +1156,8 @@ void vftr_print_profile (FILE *fp_log, int *ntop, long long time0) {
     if (vftr_environment.prof_truncate->value) {
 	fprintf (fp_log, " (truncated)");
     }
-    fprintf (fp_log, "\n");
+    fprintf (fp_log, ":\n\n");
+
     int n_indices = vftr_count_indices_to_evaluate (func_table, application_runtime);
     int *indices = (int *)malloc (n_indices * sizeof(int));
     *ntop = n_indices;
