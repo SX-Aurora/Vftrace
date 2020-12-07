@@ -506,7 +506,6 @@ void vftr_set_proftab_column_formats (function_t **funcTable,
 	if (vftr_events_enabled) {
 		for (int i = 0; i < vftr_scenario_expr_n_formulas; i++) {
 		   vftr_prof_column_init (vftr_scenario_expr_format[i].column2, NULL, 3, COL_DOUBLE, &(*columns)[i_column++]);
-		   //printf ("HUHU: %s\n", scenario_expr_format[i].column2);
 		} 
  	}
 
@@ -552,18 +551,6 @@ void vftr_set_proftab_column_formats (function_t **funcTable,
 
             vftr_prof_column_set_n_chars (funcTable[i_func]->name, &(*columns)[i_column++]);
             vftr_prof_column_set_n_chars (funcTable[i_func]->return_to->name, &(*columns)[i_column++]);
-
-		//if (vftr_events_enabled) {
-		//    vftr_fill_scenario_counter_values (vftr_vftr_scenario_expr_counter_values,
-		//	scenario_expr_n_vars, prof_current, prof_previous);
-		//    unsigned long long cycles = prof_current->cycles - prof_previous->cycles;
-		//    vftr_scenario_expr_evaluate_all (t_excl, cycles);
-		//}
-
-
-		//if (vftr_events_enabled) {
-		//    vftr_scenario_expr_set_formats ();
-	        //}
 	}
 	columns[0]->n_chars++;
 }
@@ -584,12 +571,6 @@ int vftr_get_tablewidth_from_columns (column_t *columns, int n_columns) {
 
 void vftr_proftab_print_header (FILE *fp, column_t *columns) {
 	int i;
-	///if (vftr_mpirank == 0) {
-	///printf ("All the headers: \n");
-	///for (i = 0; i < 12; i++) {
-	///   printf ("%s\n", columns[i].header);
-	///}
-	///}
 	for (i = 0; i < 5; i++) {
 	   fprintf (fp, " %*s ", columns[i].n_chars, columns[i].header);
 	}
@@ -606,7 +587,6 @@ void vftr_proftab_print_header (FILE *fp, column_t *columns) {
 	   }
    	}
 			
-	// TODO: Scenario headers
 	fprintf (fp, " %*s ", columns[i].n_chars, columns[i++].header);
 	fprintf (fp, " %*s ", columns[i].n_chars, columns[i++].header);
 	fprintf (fp, " %*s ", columns[i].n_chars, columns[i++].header);
@@ -1160,7 +1140,6 @@ void vftr_print_profile_line (FILE *fp_log, int i_line, double application_runti
 void vftr_print_profile (FILE *fp_log, int *n_func_indices, long long time0) {
     unsigned long long calls;
     
-    int k, fid;
     int table_width;
 
     FILE *f_html;
