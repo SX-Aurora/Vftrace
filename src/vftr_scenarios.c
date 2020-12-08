@@ -91,13 +91,13 @@ void vftr_write_observables_to_vfd (unsigned long long cycles, FILE *fp) {
 /**********************************************************************/
 
 void vftr_trim_trailing_white_spaces (char *s) {
-	int last_index = -1;
-	int i = 0;
-	while (s[i] != '\0') {
-		last_index = (s[i] != ' ' && s[i] != '\t' && s[i] != '\n') ? i : last_index;
-		i++;
-	}
-	s[last_index+1] = '\0';
+   int last_index = -1;
+   int i = 0;
+   while (s[i] != '\0') {
+      last_index = (s[i] != ' ' && s[i] != '\t' && s[i] != '\n') ? i : last_index;
+      i++;
+   }
+   s[last_index+1] = '\0';
 }
 
 /**********************************************************************/
@@ -116,17 +116,8 @@ bool read_runtime;
 bool read_protected;
 bool read_default;
 bool read_unit;
-//bool read_group;
-//bool read_column1;
-//bool read_column2;
 bool read_header;
-bool read_scenario_name;
-//bool read_spec;
 bool read_decimal_places;
-
-// The user can define a scenario name to be included in the logfile
-// TODO: Implement this
-char *vftr_scenario_string;
 
 int vftr_read_json (const char *js, jsmntok_t *tok, size_t count) {
 	jsmntok_t *key;
@@ -165,9 +156,6 @@ int vftr_read_json (const char *js, jsmntok_t *tok, size_t count) {
 		} else if (read_header) {
 			vftr_scenario_expr_format[vftr_scenario_expr_n_formulas-1].header = strdup(s);
 			read_header = false;
-		} else if (read_scenario_name) {
-			vftr_scenario_string = strdup (s);
-			read_scenario_name = false;
 		} else if (read_decimal_places) {
 			vftr_scenario_expr_format[vftr_scenario_expr_n_formulas-1].decimal_places = atoi(s);
 			read_decimal_places = false;
@@ -199,8 +187,6 @@ int vftr_read_json (const char *js, jsmntok_t *tok, size_t count) {
 			read_decimal_places = true;
 		} else if (!strcmp (s, "header")) {
 			read_header = true;
-		} else if (!strcmp (s, "scenario_name")) {
-			read_scenario_name = true;
 		}
 		return 1;
 	} else if (tok->type == JSMN_OBJECT) {
