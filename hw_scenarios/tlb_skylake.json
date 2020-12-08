@@ -25,11 +25,9 @@
       "formula": "f1 * 100 / (f1 + f2)",
       "default": "0",
       "format": [{
+		"header": "TLB Hit",
 		"unit": "%",
-		"spec": "4.1",
-		"group": "Memory",
-		"column1": "TLB",
-		"column2": "%Hit"}]
+		"decimal_places": "1"}]
     },
     {
       "name": "Memory throughput",
@@ -37,11 +35,9 @@
       "protected": "runtime",
       "default": "0",
       "format": [{
-		"unit": "GB/s sustained",
-		"spec": "4.3",
-		"group": "Memory",
-		"column1": "Mem",
-		"column2": "GB/s"}]
+		"header": "Memory",
+		"unit": "GB/s",
+		"decimal_places": "3"}]
     },
     {
       "name": "L3 cache hit ratio",
@@ -49,11 +45,9 @@
       "protected": "f3",
       "default": "0",
       "format": [{
+		"header": "L3 Hit",
 		"unit": "%",
-		"spec": "4.1",
-		"group": "Memory",
-		"column1": "L3",
-		"column2": "%Hit"}]
+		"decimal_places": "1"}]
     }
   ]
 }

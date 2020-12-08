@@ -25,22 +25,18 @@
       "formula": "f1 * 100 / (f1 + f2)",
       "default": "0",
       "format": [{
+		"header": "L1D Hit"
 		"unit": "%",
-		"spec": "4.1",
-		"group": "D-cache",
-		"column1": "L1D",
-		"column2": "%Hit"}]
+		"decimal_places": "1"}]
     },
     {
       "name": "L2D cache hit ratio",
       "formula": "f4 * 100. / f3",
       "default": "0",
       "format": [{
+		"header": "L2D Hit"
 		"unit": "%",
-		"spec": "4.1",
-		"group": "D-cache",
-		"column1": "L2D",
-		"column2": "%Hit"}]
+		"decimal_places": "1"}]
     }
   ]
 }

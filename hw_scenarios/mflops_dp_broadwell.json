@@ -24,11 +24,9 @@
       "protected": "runtime",
       "default": "0",
       "format": [{
-		"unit": "MFLOPS sustained",
-		"spec": "*.0",
-		"group": "MFLOPS_DP______",
-		"column1": "Scalar",
-		"column2": "Scalar"}]
+		"header": "Scalar",
+		"unit": "MFLOPS",
+		"decimal_places": "1"}]
     },
     {
       "name": "Vector 128b_packed",
@@ -36,11 +34,9 @@
       "protected": "runtime",
       "default": "0",
       "format": [{
-		"unit": "MFLOPS sustained",
-		"spec": "*.0",
-		"group": "MFLOPS_DP______",
-		"column1": "Vector",
-		"column2": "128B__"}]
+		"header": "Vector 128B",
+		"unit": "MFLOPS",
+		"decimal_places": "1"}]
     },
     {
       "name": "Vector 256b_packed",
@@ -48,11 +44,9 @@
       "protected": "runtime",
       "default": "0",
       "format": [{
-		"unit": "MFLOPS sustained",
-		"spec": "*.0",
-		"group": "MFLOPS_DP______",
-		"column1": "Vector",
-		"column2": "256B__"}]
+		"header": "Vector 256B",
+		"unit": "MFLOPS",
+		"decimal_places": "1"}]
     },
     {
       "name": "Clocks per instruction",
@@ -60,11 +54,9 @@
       "protected": "f4",
       "default": "0",
       "format": [{
-		"unit": "MFLOPS sustained",
-		"spec": "*.0",
-		"group": "MFLOPS_DP______",
-		"column1": "Cost",
-		"column2": "CPI"}]
+		"header", "Clocks / instruction",
+		"unit": "",
+		"decimal_places": "2"}]
     }
   ]
 }

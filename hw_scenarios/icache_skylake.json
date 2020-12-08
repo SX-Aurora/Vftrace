@@ -26,22 +26,18 @@
       "protected": "f1",
       "default": "0",
       "format": [{
+		"header": "L1I Hit",
 		"unit": "%",
-		"spec": "4.1",
-		"group": "I-cache",
-		"column1": "L1I",
-		"column2": "%Hit"}]
+		"decimal_places": "1"}]
     },
     {
       "name": "L2I cache hit ratio",
       "formula": "f3 * 100. / (f3 + f4)",
       "default": "0",
       "format": [{
+		"header": "L2I Hit",
 		"unit": "%",
-		"spec": "4.1",
-		"group": "I-cache",
-		"column1": "L2I",
-		"column2": "%Hit"}]
+		"decimal_places": "1"}]
     }
   ]
 }

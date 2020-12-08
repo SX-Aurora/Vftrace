@@ -24,11 +24,9 @@
       "protected": "runtime",
       "default": "0",
       "format": [{
-		"unit": "MFLOPS sustained",
-		"spec": "*.0",
-		"group": "MFLOPS_______",
-		"column1": "Single",
-		"column2": "Scalar"}]
+		"header": "Scalar Single"
+		"unit": "MFLOPS",
+		"decimal_places": "1"}]
     },
     {
       "name": "Vector single",
@@ -36,11 +34,9 @@
       "protected": "runtime",
       "default": "0",
       "format": [{
-		"unit": "MFLOPS sustained",
-		"spec": "*.0",
-		"group": "MFLOPS_______",
-		"column1": "Single",
-		"column2": "Vector"}]
+		"header": "Vector Single"
+		"unit": "MFLOPS",
+		"decimal_places": "1"}]
     },
     {
       "name": "Scalar double",
@@ -48,11 +44,9 @@
       "protected": "runtime",
       "default": "0",
       "format": [{
-		"unit": "MFLOPS sustained",
-		"spec": "*.0",
-		"group": "MFLOPS_______",
-		"column1": "Double",
-		"column2": "Scalar"}]
+		"header": "Scalar Double",
+		"unit": "MFLOPS",
+		"decimal_places": "1"}]
     },
     {
       "name": "Vector double",
@@ -60,11 +54,9 @@
       "protected": "runtime",
       "default": "0",
       "format": [{
-		"unit": "MFLOPS sustained",
-		"spec": "*.0",
-		"group": "MFLOPS_______",
-		"column1": "Double",
-		"column2": "Vector"}]
+		"header": "Vector Double"
+		"unit": "MFLOPS",
+		"decimal_places": "1"}]
     }
   ]
 }

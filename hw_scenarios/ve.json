@@ -73,11 +73,9 @@
       "divide_by_runtime": "yes",
       "default": "0",
       "format": [{
-		"unit": "MFLOPS sustained",
-		"spec": "*.0",
-		"group": "",
-		"column1": "",
-		"column2": "MFLOPS"}]
+   	        "header": "MFLOPS",
+		"unit": "",
+		"decimal_places": "3"}]
     },
     {
       "name": "Vector length",
@@ -86,11 +84,9 @@
       "protected": "vx",
       "default": "0",
       "format": [{
+		"header": "vector length",
 		"unit": "",
-		"spec": "3.0",
-		"group": "",
-		"column1": "",
-		"column2": "VL"}]
+		"decimal_places": "1"}]
     },
     {
       "name": "Relative vector time",
@@ -98,11 +94,9 @@
       "divide_by_runtime": "yes",
       "default": "0",
       "format": [{
+		"header": "Rel. vector time",
 		"unit": "%",
-		"spec": "4.2",
-		"group": "",
-		"column1": "",
-		"column2": "%Vec"}]
+		"decimal_places": "2"}]
     },
     {
       "name": "Relative bank conflict time",
@@ -110,11 +104,9 @@
       "divide_by_runtime": "yes",
       "default": "0",
       "format": [{
+		"header": "Rel. back conflicts",
 		"unit": "%",
-		"spec": "4.2",
-		"group": "",
-		"column1": "",
-		"column2": "%Prt"}]
+		"decimal_places": "2"}]
     }
   ]
 }

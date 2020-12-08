@@ -24,11 +24,9 @@
       "protected": "runtime",
       "default": "0",
       "format": [{
-		"unit": "MFLOPS sustained",
-		"spec": "*.0",
-		"group": "MFLOPS_DP______",
-		"column1": "AVX",
-		"column2": "Vector"}]
+		"header": "AVX Vector",
+		"unit": "MFLOPS",
+		"decimal_places": "1"}]
     },
     {
       "name": "SSE Vector double",
@@ -36,11 +34,9 @@
       "protected": "runtime",
       "default": "0",
       "format": [{
-		"unit": "MFLOPS sustained",
-		"spec": "*.0",
-		"group": "MFLOPS_DP______",
-		"column1": "SSE",
-		"column2": "Vector"}]
+		"header": "SSE Vector",
+		"unit": "MFLOPS",
+		"decimal_places": "1"}]
     },
     {
       "name": "SSE Scalar double",
@@ -48,11 +44,9 @@
       "protected": "runtime",
       "default": "0",
       "format": [{
+		"header": "SSE Scalar",
 		"unit": "MFLOPS sustained",
-		"spec": "*.0",
-		"group": "MFLOPS_DP______",
-		"column1": "SSE",
-		"column2": "Scalar"}]
+		"decimal_places": "1"}]
     },
     {
       "name": "Clocks per instruction",
@@ -60,11 +54,9 @@
       "protected": "f4",
       "default": "0",
       "format": [{
+		"header": "Clocks / instruction",
 		"unit": "",
-		"spec": "*.0",
-		"group": "MFLOPS_DP______",
-		"column1": "Cost",
-		"column2": "CPI"}]
+		"decimal_places": "2"}]
     }
   ]
 }
