@@ -45,6 +45,16 @@ double vftr_scenario_expr_cycletime;
 
 /**********************************************************************/
 
+void vftr_init_scenario_formats () {
+   for (int i = 0; i < TE_MAX; i++) {
+      vftr_scenario_expr_format[i].header = NULL;
+      vftr_scenario_expr_format[i].unit = NULL; 
+      vftr_scenario_expr_format[i].decimal_places = 0;
+   }
+}
+
+/**********************************************************************/
+
 void vftr_scenario_print_formula (FILE *fp, function_expr_t formula) {
 	fprintf (fp, "Formula name: %s\n", formula.name);
 	fprintf (fp, "   Expression: %s\n", formula.formula);

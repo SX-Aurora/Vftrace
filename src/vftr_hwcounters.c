@@ -154,6 +154,7 @@ int vftr_init_hwc (char *scenario_file) {
 #endif
 
     vftr_n_hw_obs = 0;
+    vftr_init_scenario_formats ();
     if (vftr_read_scenario_file (scenario_file, NULL)) {
 	return -1;
     }

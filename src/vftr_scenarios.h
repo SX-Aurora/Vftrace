@@ -60,8 +60,8 @@ void vftr_write_observables_to_vfd (unsigned long long cycles, FILE *fp);
 
 typedef struct {
 	char *header;
-	int decimal_places;
 	char *unit;
+	int decimal_places;
 } hwc_format_t;
 
 
@@ -87,6 +87,7 @@ extern double vftr_scenario_expr_runtime;
 extern double vftr_scenario_expr_cycles;
 extern double vftr_scenario_expr_cycletime;
 
+void vftr_init_scenario_formats ();
 int vftr_read_scenario_file (char *filename, FILE *fp_ext);
 void vftr_scenario_expr_evaluate (int i_scenario, double runtime, unsigned long long cycles);
 void vftr_scenario_expr_evaluate_all (double runtime, unsigned long long cycles);
