@@ -3,15 +3,15 @@
   "CPU Type": "Skylake",
   "counters": [
     {
-      "papi_name": "RESOURCE_STALLS:ANY",
+      "hwc_name": "RESOURCE_STALLS:ANY",
       "symbol": "f1"
     },
     {
-      "papi_name": "UNHALTED_CORE_CYCLES",
+      "hwc_name": "UNHALTED_CORE_CYCLES",
       "symbol": "f2"
     },
     {
-      "papi_name": "INST_RETIRED:ANY_P",
+      "hwc_name": "INST_RETIRED:ANY_P",
       "symbol": "f3"
     }
   ],

@@ -108,7 +108,7 @@ te_expr **expr;
 
 bool read_counters;
 bool read_observables;
-bool read_papi_name;
+bool read_hwc_name;
 bool read_name;
 bool read_symbol;
 bool read_formula;
@@ -134,9 +134,9 @@ int vftr_read_json (const char *js, jsmntok_t *tok, size_t count) {
 		return 1;
 	} else if (tok->type == JSMN_STRING) {
 		char *s = strndup(js + tok->start, tok->end - tok->start);
-		if (read_papi_name) {
+		if (read_hwc_name) {
 			vftr_scenario_expr_counter_names[vftr_scenario_expr_n_vars] = strdup(s);
-			read_papi_name = false;
+			read_hwc_name = false;
 		} else if (read_counters && read_symbol) {
 			vftr_scenario_expr_vars[vftr_scenario_expr_n_vars] = strdup(s);
 			read_symbol = false;
@@ -179,8 +179,8 @@ int vftr_read_json (const char *js, jsmntok_t *tok, size_t count) {
 		} else if (!strcmp (s, "observables")) {
 			read_observables = true;
 			read_counters = false;
-		} else if (!strcmp (s, "papi_name")) {
-			read_papi_name = true;
+		} else if (!strcmp (s, "hwc_name")) {
+			read_hwc_name = true;
 		} else if (!strcmp (s, "name")) {
 			read_name = true;
 		} else if (!strcmp (s, "symbol")) {

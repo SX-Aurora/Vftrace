@@ -1,19 +1,19 @@
 {
   "counters": [
     {
-      "papi_name": "FP_ARITH:SCALAR_SINGLE",
+      "hwc_name": "FP_ARITH:SCALAR_SINGLE",
       "symbol": "f1"
     },
     {
-      "papi_name": "FP_ARITH:256B_PACKED_SINGLE",
+      "hwc_name": "FP_ARITH:256B_PACKED_SINGLE",
       "symbol": "f2"
     },
     {
-      "papi_name": "FP_ARTIH:SCALAR_DOUBLE",
+      "hwc_name": "FP_ARTIH:SCALAR_DOUBLE",
       "symbol": "f3"
     },
     {
-      "papi_name": "FP_ARITH:256B_PACKED_DOUBLE",
+      "hwc_name": "FP_ARITH:256B_PACKED_DOUBLE",
       "symbol": "f4"
     }
   ],

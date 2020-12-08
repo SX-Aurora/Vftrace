@@ -3,19 +3,19 @@
   "CPU Type": "Skylake",
   "counters": [
     {
-      "papi_name": "PERF_COUNT_HW_CACHE_L1D:ACCESS",
+      "hwc_name": "PERF_COUNT_HW_CACHE_L1D:ACCESS",
       "symbol": "f1"
     },
     {
-      "papi_name": "PERF_COUNT_HW_CACHE_L1D:MISS",
+      "hwc_name": "PERF_COUNT_HW_CACHE_L1D:MISS",
       "symbol": "f2"
     },
     {
-      "papi_name": "L2_RQSTS:ALL_DEMAND_DATA_RD",
+      "hwc_name": "L2_RQSTS:ALL_DEMAND_DATA_RD",
       "symbol": "f3"
     },
     {
-      "papi_name": "L2_RQSTS:DEMAND_DATA_RD_HIT",
+      "hwc_name": "L2_RQSTS:DEMAND_DATA_RD_HIT",
       "symbol": "f4"
     }
   ],
