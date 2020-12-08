@@ -20,8 +20,12 @@
 #include <math.h>
 #include <sys/stat.h>
 
+#include "vftr_environment.h"
+#include "vftr_hwcounters.h"
+#include "vftr_scenarios.h"
 #include "vftr_browse.h"
 #include "vftr_setup.h"
+#include "vftr_functions.h"
 #include "vftr_filewrite.h"
 #include "vftr_fileutils.h"
 #include "vftr_stacks.h"
@@ -557,28 +561,55 @@ void vftr_browse_create_profile_header (FILE *fp) {
 
 /**********************************************************************/
 
-void vftr_browse_print_table_line (FILE *fp, int stack_id, int n_calls,
-				 int format_excl, int format_incl, double t_excl, double t_incl,
-				 double t_rel, double t_cum, char *func_name, char *call_name) {
+char *vftr_browse_table_cell_format (char *base_format) {
+   char format[64];
+   snprintf (format, strlen(base_format) + 11, "<td>%s</td>\n", base_format);
+   return strdup (format);
+}
+
+char *vftr_browse_table_cell_format_with_link (char *base_dir, char *func_name, char *base_format) {
+   char format[256];
+   snprintf (format, strlen(base_dir) + strlen(func_name) + strlen(base_format) + 27, "<td><a href=\"%s/%s\">%s</a></td>\n",
+             base_dir, func_name, base_format);  
+   return strdup (format);
+}
+
+void vftr_browse_print_table_line (FILE *fp, int stack_id, double sampling_overhead_time,
+				   int n_calls, double t_excl, double t_incl, double t_part, double t_cum, double t_overhead,
+				   char *func_name, char *caller_name, column_t *prof_columns) {
+	   int i_column = 0;
+	   
 	   fprintf (fp, "<tr>\n");
 
-	   fprintf (fp, "<td>%d</td>\n", n_calls);
-           fprintf (fp, "<td>%*.3f</td>\n", format_excl, t_excl);
-           fprintf (fp, "<td>%*.3f</td>\n", format_incl, t_incl);
-           fprintf (fp, "<td>%5.2f</td>\n", t_rel);
-           fprintf (fp, "<td>%5.2f</td>\n", t_cum);
+	   fprintf (fp, vftr_browse_table_cell_format (prof_columns[i_column++].format), (int)n_calls);
+           fprintf (fp, vftr_browse_table_cell_format (prof_columns[i_column++].format), n_calls > 0 ? t_excl : 0);
+           fprintf (fp, vftr_browse_table_cell_format (prof_columns[i_column++].format), n_calls > 0 ? t_incl : 0);
+           fprintf (fp, vftr_browse_table_cell_format (prof_columns[i_column++].format), t_part);
+           fprintf (fp, vftr_browse_table_cell_format (prof_columns[i_column++].format), t_cum);
+
+	   if (vftr_environment.show_overhead->value) {
+	      fprintf (fp, prof_columns[i_column++].format, t_overhead);
+	      fprintf (fp, prof_columns[i_column++].format, t_overhead / sampling_overhead_time * 100.0);  
+	      fprintf (fp, prof_columns[i_column++].format, t_excl > 0 ? t_overhead / t_excl : 0.0);
+	   }
+
+	   if (vftr_events_enabled) {
+  	      for (int i = 0; i < vftr_scenario_expr_n_formulas; i++) {
+		 fprintf (fp, prof_columns[i_column++].format, vftr_scenario_expr_formulas[i].value);
+	      }
+	   }
 	   
 	   if (vftr_is_collective_mpi_function (func_name)) {
 	      int n = strlen(func_name) + vftr_count_digits_int (vftr_mpirank) + 7;
 	      char target_fun[n];
 	      snprintf (target_fun, n, "%s_%d.html", func_name, vftr_mpirank);
-    	      fprintf (fp, "<td><a href=\"%s/%s\">%s</a></td>\n", func_name, target_fun, func_name); 
+    	      fprintf (fp, vftr_browse_table_cell_format_with_link (func_name, target_fun, prof_columns[i_column++].format), func_name);
 	   } else {
-	      fprintf (fp, "<td>%s</td>\n", func_name);
+	      fprintf (fp, vftr_browse_table_cell_format (prof_columns[i_column++].format), func_name);
            }
 
-	   fprintf (fp, "<td>%s</td>\n", call_name);
-	   fprintf (fp, "<td>%d</td>\n", stack_id);
+	   fprintf (fp, vftr_browse_table_cell_format (prof_columns[i_column++].format), caller_name);
+	   fprintf (fp, vftr_browse_table_cell_format (prof_columns[i_column++].format), stack_id);
 
 	   fprintf (fp, "</tr>\n");
 }

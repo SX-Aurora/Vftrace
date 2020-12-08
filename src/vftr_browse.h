@@ -1,6 +1,7 @@
 #ifndef VFTR_BROWSE_H
 #define VFTR_BROWSE_H
 
+#include "vftr_functions.h"
 #include "vftr_filewrite.h"
 #include "vftr_stacks.h"
 
@@ -17,9 +18,9 @@ void vftr_browse_print_index_html (char *func_names[], int n_funcs);
 void vftr_browse_create_directory ();
 FILE *vftr_browse_init_profile_table ();
 void vftr_browse_create_profile_header (FILE *fp);
-void vftr_browse_print_table_line (FILE *fp, int stack_id, int n_calls,
-				 int format_excl, int format_incl, double t_excl, double t_incl,
-				 double t_rel, double t_cum, char *func_name, char *call_name);
+void vftr_browse_print_table_line (FILE *fp, int stack_id, double sampling_overhead_time,
+				   int n_calls, double t_excl, double t_incl, double t_part, double t_cum, double t_overhead,
+				   char *func_name, char *caller_name, column_t *prof_columns);
 void vftr_browse_finalize_table (FILE *fp);
 
 int vftr_browse_test_1 (FILE *fp_in, FILE *fp_out);
