@@ -512,9 +512,9 @@ void vftr_set_proftab_column_formats (function_t **funcTable,
 		      int n1 = strlen(vftr_scenario_expr_format[i].header);
 		      if (vftr_scenario_expr_format[i].unit) {
 		           int n2 = strlen(vftr_scenario_expr_format[i].unit); 
-		           snprintf (header_with_unit, n1 + n2 + 3, "%s [%s]", vftr_scenario_expr_format[i].header, vftr_scenario_expr_format[i].unit);
+		           snprintf (header_with_unit, n1 + n2 + 4, "%s [%s]", vftr_scenario_expr_format[i].header, vftr_scenario_expr_format[i].unit);
 		      } else {
-		           snprintf (header_with_unit, n1, "%s", vftr_scenario_expr_format[i].header);
+		           snprintf (header_with_unit, n1 + 1, "%s", vftr_scenario_expr_format[i].header);
 		      }
 		   }
 		   vftr_prof_column_init (header_with_unit, NULL, vftr_scenario_expr_format[i].decimal_places,

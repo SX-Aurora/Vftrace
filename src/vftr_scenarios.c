@@ -122,7 +122,7 @@ bool read_unit;
 bool read_header;
 bool read_scenario_name;
 //bool read_spec;
-bool read_decimal_points;
+bool read_decimal_places;
 
 // The user can define a scenario name to be included in the logfile
 // TODO: Implement this
@@ -160,36 +160,17 @@ int vftr_read_json (const char *js, jsmntok_t *tok, size_t count) {
 			sscanf (s, "%lf", &vftr_scenario_expr_formulas[vftr_scenario_expr_n_formulas-1].default_value);	
 			read_default = false;
 		} else if (read_unit) {
-			vftr_scenario_expr_format[vftr_scenario_expr_n_formulas-1].unit = strdup (s);
+			if (strcmp (s, "")) vftr_scenario_expr_format[vftr_scenario_expr_n_formulas-1].unit = strdup (s);
 			read_unit = false;
-///		} else if (read_group) {
-///			vftr_scenario_expr_format[vftr_scenario_expr_n_formulas-1].group = strdup (s);
-///			read_group = 0;
-///		} else if (read_column1) {
-///			vftr_scenario_expr_format[vftr_scenario_expr_n_formulas-1].column1 = strdup (s);
-///			read_column1 = 0;
-///		} else if (read_column2) {
-///			vftr_scenario_expr_format[vftr_scenario_expr_n_formulas-1].column2 = strdup (s);
-///			read_column2 = 0;
 		} else if (read_header) {
 			vftr_scenario_expr_format[vftr_scenario_expr_n_formulas-1].header = strdup(s);
 			read_header = false;
 		} else if (read_scenario_name) {
 			vftr_scenario_string = strdup (s);
 			read_scenario_name = false;
-///		} else if (read_spec) {
-///			char *s1 = strtok (s, ".");
-///			if (!strcmp (s1, "*")) {
-///				vftr_scenario_expr_format[vftr_scenario_expr_n_formulas-1].decpl_1 = 0;
-///			} else {
-///				vftr_scenario_expr_format[vftr_scenario_expr_n_formulas-1].decpl_1 = atoi(s1);
-///			}
-///			vftr_scenario_expr_format[vftr_scenario_expr_n_formulas-1].decpl_2 = atoi(strtok (NULL, ""));
-///			read_spec = 0;
-///		}
-		} else if (read_decimal_points) {
+		} else if (read_decimal_places) {
 			vftr_scenario_expr_format[vftr_scenario_expr_n_formulas-1].decimal_places = atoi(s);
-			read_decimal_points = false;
+			read_decimal_places = false;
 		}
 
 		if (!strcmp (s, "counters")) {
@@ -214,16 +195,8 @@ int vftr_read_json (const char *js, jsmntok_t *tok, size_t count) {
 			read_default = true;
 		} else if (!strcmp (s, "unit")) {
 			read_unit = true;
-///		} else if (!strcmp (s, "spec")) {
-///			read_spec = 1;
-///		} else if (!strcmp (s, "group")) {
-///			read_group = 1;
-///		} else if (!strcmp (s, "column1")) {
-///			read_column1 = 1;
-///		} else if (!strcmp (s, "column2")) {
-///			read_column2 = 1;
-		} else if (!strcmp (s, "decimal_points")) {
-			read_decimal_points = true;
+		} else if (!strcmp (s, "decimal_places")) {
+			read_decimal_places = true;
 		} else if (!strcmp (s, "header")) {
 			read_header = true;
 		} else if (!strcmp (s, "scenario_name")) {
