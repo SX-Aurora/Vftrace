@@ -575,26 +575,36 @@ int vftr_get_tablewidth_from_columns (column_t *columns, int n_columns) {
 /**********************************************************************/
 
 void vftr_proftab_print_header (FILE *fp, column_t *columns) {
+	// NOTE: The evaluation order of function arguments is not strictly defined.
+	// Therefore, do not increment an array index if it is used more than
+	// once in the function call, like func(a[i], b[i++]);
 	int i;
 	for (i = 0; i < 5; i++) {
 	   fprintf (fp, " %*s ", columns[i].n_chars, columns[i].header);
 	}
 
 	if (vftr_environment.show_overhead->value) {
-	   fprintf (fp, " %*s ", columns[i].n_chars, columns[i++].header);
-	   fprintf (fp, " %*s ", columns[i].n_chars, columns[i++].header);
-	   fprintf (fp, " %*s ", columns[i].n_chars, columns[i++].header);
+	   fprintf (fp, " %*s ", columns[i].n_chars, columns[i].header);
+	   i++; // See above
+	   fprintf (fp, " %*s ", columns[i].n_chars, columns[i].header);
+	   i++;
+	   fprintf (fp, " %*s ", columns[i].n_chars, columns[i].header);
+	   i++;
 	}
 
 	if (vftr_events_enabled) {
 	   for (int j = 0; j < vftr_scenario_expr_n_formulas; j++) {
-	      fprintf (fp, " %*s ", columns[i].n_chars, columns[i++].header);
+	      fprintf (fp, " %*s ", columns[i].n_chars, columns[i].header);
+	      i++;
 	   }
    	}
 			
-	fprintf (fp, " %*s ", columns[i].n_chars, columns[i++].header);
-	fprintf (fp, " %*s ", columns[i].n_chars, columns[i++].header);
-	fprintf (fp, " %*s ", columns[i].n_chars, columns[i++].header);
+	fprintf (fp, " %*s ", columns[i].n_chars, columns[i].header);
+	i++;
+	fprintf (fp, " %*s ", columns[i].n_chars, columns[i].header);
+	i++;
+	fprintf (fp, " %*s ", columns[i].n_chars, columns[i].header);
+	i++;
 	fprintf (fp, "\n");
 }
 
