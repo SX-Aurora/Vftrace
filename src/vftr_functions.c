@@ -165,14 +165,6 @@ function_t *vftr_new_function(void *arg, const char *function_name,
    // Determine if this function should be profiled
    func->profile_this = vftr_pattern_match(vftr_environment.runtime_profile_funcs->value, func->name);
 
-   if (!func->exclude_this) {
-      if (vftr_environment.include_only_regex->set) {
-         func->exclude_this = !vftr_pattern_match(vftr_environment.include_only_regex->value, func->name);
-      } else if (vftr_environment.exclude_functions_regex->set) {
-         func->exclude_this = vftr_pattern_match(vftr_environment.exclude_functions_regex->value, func->name);
-      }
-   }
-
    // Is this function a branch or the root of the calltree?
    if (caller != NULL) {
       if (caller->callee) {
@@ -365,7 +357,6 @@ void vftr_write_function (FILE *fp, function_t *func) {
 	fprintf (fp, "\tGroup ID: %d\n", func->gid);
 	fprintf (fp, "\tRecursion depth: %d\n", func->recursion_depth);
 	fprintf (fp, "\tStackHash: %lu\n", func->stackHash);
-	fprintf (fp, "\tExclude: %d\n", func->exclude_this);
 }
 		
 /**********************************************************************/
