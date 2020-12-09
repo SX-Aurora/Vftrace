@@ -156,8 +156,6 @@ void vftr_region_entry (const char *s, void *addr, bool isPrecise){
     }
     caller->callee = func; // Faster lookup next time around
 
-    if (func->exclude_this) return;
-
     if (func->profile_this) {
         wtime = (vftr_get_runtime_usec() - vftr_overhead_usec) * 1.0e-6;
         vftr_write_stack_ascii (vftr_log, wtime, func, "profile before call to", 0);
@@ -256,7 +254,6 @@ void vftr_region_exit(){
     timer = vftr_get_runtime_usec ();
     cycles0 = vftr_get_cycles() - vftr_initcycles;
     func  = vftr_fstack;
-    if (func->exclude_this) return;
 
     prof_current = &func->prof_current;
     prof_current->timeIncl += func_exit_time;   /* Inclusive time */

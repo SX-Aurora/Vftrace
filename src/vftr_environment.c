@@ -249,7 +249,6 @@ void vftr_read_environment () {
     vftr_environment.bufsize = vftr_read_env_int ("VFTR_BUFSIZE", 8); 
     vftr_environment.runtime_profile_funcs = vftr_read_env_regex ("VFTR_RUNTIME_PROFILE_FUNCS", NULL);
     vftr_environment.include_only_regex = vftr_read_env_regex ("VFTR_INCLUDE_ONLY", NULL);
-    vftr_environment.exclude_functions_regex = vftr_read_env_regex ("VFTR_EXCLUDE", NULL);
     vftr_environment.detail_until_cum_cycles = vftr_read_env_double ("VFTR_DETAIL_UNTIL_CUM_CYCLES", 90.0);
     vftr_environment.scenario_file = vftr_read_env_string ("VFTR_SCENARIO_FILE", NULL);
     vftr_environment.preciseregex = vftr_read_env_regex ("VFTR_PRECISE", NULL);
@@ -267,9 +266,6 @@ void vftr_read_environment () {
 
 void vftr_assert_environment () {
 	assert (vftr_environment.bufsize->value > 0);
-	if (vftr_environment.include_only_regex->set && vftr_environment.exclude_functions_regex->set) {
-		vftr_environment.exclude_functions_regex->set = false;
-	}
 
 	if (vftr_environment.scenario_file->set) {
 		FILE *fp;
@@ -379,7 +375,6 @@ void vftr_free_environment () {
 	free (vftr_environment.bufsize);
 	free (vftr_environment.runtime_profile_funcs);
 	free (vftr_environment.include_only_regex);
-	free (vftr_environment.exclude_functions_regex);
 	free (vftr_environment.detail_until_cum_cycles);
 	free (vftr_environment.scenario_file);
 	free (vftr_environment.preciseregex);

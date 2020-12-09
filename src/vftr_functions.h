@@ -38,7 +38,7 @@ typedef struct Function {
    bool precise;
    // local and global stack-ID
    int id, gid;
-   bool profile_this, exclude_this;
+   bool profile_this;
    bool new, detail;
    int levels, recursion_depth, line_beg, line_end;
    // Unique hash of the callstack 
