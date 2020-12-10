@@ -828,7 +828,7 @@ void vftr_print_function_statistics (FILE *fp_log, bool display_sync_time, int *
 	display_functions[i] = (display_function_t*) malloc (sizeof(display_function_t));
 	//display_functions[i]->func_name = strdup(display_function_names[i]);
 	display_functions[i]->func_name = strdup(vftr_gStackinfo[ii].name);
-	vftr_find_function_in_stack (display_functions[i]->func_name, &stack_indices, &n_stack_indices, true);
+	//vftr_find_function_in_stack (display_functions[i]->func_name, &stack_indices, &n_stack_indices, true);
         display_functions[i]->i_orig = i;
     }
     
