@@ -60,6 +60,10 @@ char *vftr_precise_functions[] = {
    NULL // Null pointer to terminate the list
 };
 
+int *print_stackid_list;
+int n_print_stackids;
+int stackid_list_size;
+
 // add a new function to the stack tables
 function_t *vftr_new_function(void *arg, const char *function_name,
                               function_t *caller, int line, bool is_precise) {
@@ -259,8 +263,7 @@ void vftr_find_function_in_table (char *func_name, int **indices, int *n_indices
 
 /**********************************************************************/
 
-void vftr_find_function_in_stack (char *func_name, int **indices, int *n_indices,
-				  bool to_lower_case) {
+void vftr_find_function_in_stack (char *func_name, int **indices, int *n_indices, bool to_lower_case) {
 	*n_indices = 0;
 	char *s_compare;
 	int n_count;
@@ -359,6 +362,34 @@ void vftr_write_function (FILE *fp, function_t *func) {
 	fprintf (fp, "\tStackHash: %lu\n", func->stackHash);
 }
 		
+/**********************************************************************/
+
+void vftr_stackid_list_init () {
+   n_print_stackids = 0;
+   stackid_list_size = STACKID_LIST_INC;
+   print_stackid_list = (int*)malloc(STACKID_LIST_INC);
+}
+
+void vftr_stackid_list_add (int stack_id) {
+   if (n_print_stackids + 1 >= stackid_list_size) {
+      stackid_list_size += STACKID_LIST_INC;
+      print_stackid_list = realloc (print_stackid_list, stackid_list_size);
+   }
+   print_stackid_list[n_print_stackids++] = stack_id;
+}
+
+void vftr_stackid_list_print (FILE *fp) {
+   fprintf (fp, "Print stack IDs: ");
+   for (int i = 0; i < n_print_stackids; i++) {
+      fprintf (fp, "%d ", print_stackid_list[i]);
+   }
+   fprintf (fp, "\n");
+}
+
+void vftr_stackid_list_finalize () {
+   free (print_stackid_list);
+}
+
 /**********************************************************************/
 
 void vftr_strip_all_module_names () {

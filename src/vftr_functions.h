@@ -61,6 +61,16 @@ function_t *vftr_new_function(void *arg, const char *function_name,
 // Reset all function internal counters
 void vftr_reset_counts (function_t *func);
 
+extern int *print_stackid_list;
+extern int n_print_stackids;
+extern int stackid_list_size; 
+#define STACKID_LIST_INC 50
+
+void vftr_stackid_list_init ();
+void vftr_stackid_list_add (int stack_id);
+void vftr_stackid_list_print (FILE *fp);
+void vftr_stackid_list_finalize ();
+
 // test functions
 int vftr_functions_test_1 (FILE *fp_in, FILE *fp_out);
 int vftr_functions_test_2 (FILE *fp_in, FILE *fp_out);
