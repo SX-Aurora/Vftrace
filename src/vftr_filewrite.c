@@ -1053,60 +1053,17 @@ void vftr_print_function_statistics (FILE *fp_log, bool display_sync_time, int *
 /**********************************************************************/
 
 void vftr_print_mpi_statistics (FILE *fp) {
-    //if (vftr_mpirank == 0) {
        vftr_stackid_list_init();
        for (int i = 0; i < vftr_gStackscount; i++) {
            if (vftr_pattern_match (vftr_environment.print_stack_profile->value, vftr_gStackinfo[i].name)) {
-           //if (vftr_pattern_match (vftr_environment.print_stack_profile->value, vftr_func_table[i]->name)) {
-              //vftr_stackid_list_add (vftr_func_table[i]->gid);
-              int *this_stack_ids = NULL;
- 	      int n_this_stack_ids = 0;
-	      //vftr_find_function_in_stack (vftr_func_table[i]->name, &this_stack_ids, &n_this_stack_ids, true);
-	      //for (int j = 0; j < n_this_stack_ids; j++) {
-                 vftr_stackid_list_add (i);
-	      //}
-	      if (this_stack_ids != NULL) free (this_stack_ids);
+	      //printf ("Match: %s\n", vftr_gStackinfo[i].name);
+	      //if (vftr_mpirank == 0) printf ("Add: %d %d\n", i, vftr_mpirank);
+              vftr_stackid_list_add (i);
+	      //if (vftr_mpirank == 0) printf ("Added: %d %d\n", i, vftr_mpirank);
            }
        }
-    //}
     vftr_stackid_list_print (stdout);
 
-    //printf ("Going to print functions(%d): %d ", vftr_mpirank, n_print_stackids);
-    //for (int i = 0; i < n_print_stackids; i++) {
-    //   printf ("%d ", print_stackid_list[i]);
-    //}
-    //printf ("\n");
-
-    //int nn = 0;
-    //int all_n_stack_ids[vftr_mpisize], displ[vftr_mpisize];
-    //PMPI_Allgather (&n_print_stackids, 1, MPI_INT, all_n_stack_ids, 1, MPI_INT, MPI_COMM_WORLD);
-    //PMPI_Allreduce (&n_print_stackids, &nn, 1, MPI_INT, MPI_SUM, MPI_COMM_WORLD);
-    //if (vftr_mpirank == 0) {
-    //   printf ("all_n_stack_ids: ");
-    //   for (int i = 0; i < vftr_mpisize; i++) {
-    //      printf ("%d ", all_n_stack_ids[i]);
-    //   }
-    //   printf ("\n");
-    //}
-
-    //int current_dis = 0;
-    //for (int i = 0; i < vftr_mpisize; i++) {
-    //    displ[i] = current_dis;
-    //    current_dis += all_n_stack_ids[i]; 
-    //}
-
-    //int all_stack_ids[nn];
-
-    //PMPI_Allgatherv (print_stackid_list, n_print_stackids, MPI_INT,
-    //    	     all_stack_ids, all_n_stack_ids, displ, MPI_INT, MPI_COMM_WORLD);
-    //if (vftr_mpirank == 0) {
-    //  printf ("All the stack ids: %d\n", nn);
-    //  for (int i = 0; i < nn; i++) {
-    //     printf ("%d ", all_stack_ids[i]);
-    //  }
-    //  printf ("\n");
-    //}
-    //return;
     vftr_print_function_statistics (fp, vftr_environment.mpi_show_sync_time->value,
 				    //vftr_mpi_collective_function_names, vftr_n_collective_mpi_functions);
 				    print_stackid_list, n_print_stackids);

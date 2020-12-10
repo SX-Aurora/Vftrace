@@ -367,13 +367,13 @@ void vftr_write_function (FILE *fp, function_t *func) {
 void vftr_stackid_list_init () {
    n_print_stackids = 0;
    stackid_list_size = STACKID_LIST_INC;
-   print_stackid_list = (int*)malloc(STACKID_LIST_INC);
+   print_stackid_list = (int*)malloc(STACKID_LIST_INC * sizeof(int));
 }
 
 void vftr_stackid_list_add (int stack_id) {
-   if (n_print_stackids + 1 >= stackid_list_size) {
+   if (n_print_stackids + 1 > stackid_list_size) {
       stackid_list_size += STACKID_LIST_INC;
-      print_stackid_list = realloc (print_stackid_list, stackid_list_size);
+      print_stackid_list = (int*)realloc (print_stackid_list, stackid_list_size * sizeof(int));
    }
    print_stackid_list[n_print_stackids++] = stack_id;
 }
