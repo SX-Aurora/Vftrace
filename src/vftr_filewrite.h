@@ -66,6 +66,8 @@ typedef struct display_function {
     int n_func_indices;
     int *stack_indices;
     int *func_indices;
+    bool is_mpi;
+    bool is_collective_mpi;
     double mpi_tot_send_bytes;
     double mpi_tot_recv_bytes;
 } display_function_t;

@@ -64,6 +64,55 @@ FILE *vftr_vfd_file;
 long vftr_admin_offset;
 long vftr_samples_offset;
 
+char *vftr_supported_mpi_function_names[] = {"mpi_accumulate",
+					     "mpi_allgather", "mpi_allgatherv",
+					     "mpi_allreduce",
+				             "mpi_alltoall", "mpi_alltoallv", "mpi_alltoallw",
+					     "mpi_barrier",
+					     "mpi_bcast",
+					     "mpi_bsend",
+					     "mpi_exscan",
+					     "mpi_fetch_and_op",
+					     "mpi_finalize",
+					     "mpi_gather", "mpi_gatherv",
+					     "mpi_get", "mpi_get_accumulate",
+					     "mpi_iallgather", "mpi_iallreduce",
+					     "mpi_iallreduce",
+					     "mpi_ialltoall", "mpi_ialltoallv", "mpi_ialltoallw",
+					     "mpi_ibcast",
+					     "mpi_ibsend",
+					     "mpi_iexscan",
+					     "mpi_igather", "mpi_igatherv",
+					     "mpi_init",
+					     "mpi_iprobe",
+					     "mpi_irecv",
+					     "mpi_ireduce", "mpi_ireduce_scatter", "mpi_ireduce_scatter_block",
+					     "mpi_irsend",
+					     "mpi_iscan",
+					     "mpi_iscatter", "mpi_iscatterv",
+					     "mpi_isend",
+					     "mpi_issend",
+					     "mpi_pcontrol",
+					     "mpi_probe",
+				             "mpi_put",
+					     "mpi_raccumulate",
+					     "mpi_recv",
+					     "mpi_reduce", "mpi_reduce_scatter", "mpi_reduce_scatter_block",
+					     "mpi_request_free",
+					     "mpi_rget", "mpi_rget_accumulate",
+					     "mpi_rput",
+				             "mpi_rsend",
+					     "mpi_scan",
+					     "mpi_scatter", "mpi_scatterv",
+				 	     "mpi_send",
+					     "mpi_sendrecv",
+					     "mpi_ssend",
+					     "mpi_start", "mpi_startall",
+					     "mpi_test", "mpi_testall", "mpi_testany", "mpi_testsome",
+					     "mpi_wait", "mpi_waitall", "mpi_waitany", "mpi_waitsome"};
+
+int vftr_n_supported_mpi_functions = 70;
+
 char *vftr_mpi_collective_function_names[] = {"mpi_barrier", "mpi_bcast", "mpi_reduce",
 			     "mpi_allreduce", "mpi_gather", "mpi_gatherv",
 			     "mpi_allgather", "mpi_allgatherv",
@@ -77,6 +126,23 @@ bool vftr_is_collective_mpi_function (char *func_name) {
       if (!strcmp (func_name, vftr_mpi_collective_function_names[i])) return true;
    }
    return false;
+}
+
+void vftr_is_mpi_function (char *func_name, bool *is_mpi, bool *is_collective) {
+   *is_mpi = false;
+   *is_collective = false;
+   if (!strncmp (func_name, "mpi_", 4)) {
+      for (int i = 0; i < vftr_n_supported_mpi_functions; i++) {
+         if (!strcmp (func_name, vftr_supported_mpi_function_names[i])) {
+            *is_mpi = true;
+	    break;
+         }
+      }
+   }
+   if (*is_mpi) {
+      *is_collective = vftr_is_collective_mpi_function (func_name);
+   }
+   return;
 }
 
 /**********************************************************************/
@@ -829,6 +895,7 @@ void vftr_print_function_statistics (FILE *fp_log, bool display_sync_time, int *
 	//display_functions[i]->func_name = strdup(display_function_names[i]);
 	display_functions[i]->func_name = strdup(vftr_gStackinfo[ii].name);
 	//vftr_find_function_in_stack (display_functions[i]->func_name, &stack_indices, &n_stack_indices, true);
+	vftr_is_mpi_function (display_functions[i]->func_name, &(display_functions[i]->is_mpi), &(display_functions[i]->is_collective_mpi));
         display_functions[i]->i_orig = i;
     }
     
