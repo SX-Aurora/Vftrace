@@ -889,27 +889,43 @@ void vftr_print_function_statistics (FILE *fp_log, bool display_sync_time, int *
 
 
     //for (int i = 0; i < n_display_functions; i++) {
+    int i_disp_f = 0;
+    //printf ("Count display functions\n");
     for (int i = 0; i < n_indices; i++) {
-	int ii = func_indices[i];
-	display_functions[i] = (display_function_t*) malloc (sizeof(display_function_t));
-	//display_functions[i]->func_name = strdup(display_function_names[i]);
-	display_functions[i]->func_name = strdup(vftr_gStackinfo[ii].name);
+        bool name_already_there = false;
+	int i_func = func_indices[i];
+	for (int j = 0; j < i_disp_f; j++) {
+	   if (!strcmp(display_functions[j]->func_name, vftr_gStackinfo[i_func].name)) {
+	     name_already_there = true;
+	     break;
+           }
+        }
+	if (name_already_there) continue;
+	display_functions[i_disp_f] = (display_function_t*) malloc (sizeof(display_function_t));
+	display_functions[i_disp_f]->func_name = strdup(vftr_gStackinfo[i_func].name);
 	//vftr_find_function_in_stack (display_functions[i]->func_name, &stack_indices, &n_stack_indices, true);
-	vftr_is_mpi_function (display_functions[i]->func_name, &(display_functions[i]->is_mpi), &(display_functions[i]->is_collective_mpi));
-        display_functions[i]->i_orig = i;
+	vftr_is_mpi_function (display_functions[i_disp_f]->func_name, &(display_functions[i_disp_f]->is_mpi), &(display_functions[i_disp_f]->is_collective_mpi));
+        display_functions[i_disp_f]->i_orig = i_disp_f;
+	i_disp_f++;
     }
+
+    int n_display_funcs = i_disp_f;
+    //printf ("DO REALLOC: %d\n", vftr_mpirank);
+    //display_functions = (display_function_t **) realloc(display_functions, n_display_funcs * sizeof(display_function_t*));
+    //printf ("HAVE REALLOCED: %d\n", vftr_mpirank);
     
     double total_time = 0;
     //for (int i = 0; i < n_display_functions; i++) {
     //char **display_function_names = (char**)malloc (n_indices * sizeof(char*));
-    for (int i = 0; i < n_indices; i++) {
+    //for (int i = 0; i < n_indices; i++) {
+    for (int i = 0; i < n_display_funcs; i++) {
        //vftr_evaluate_display_function (display_function_names[i], &(display_functions[i]), display_sync_time);
        vftr_evaluate_display_function (display_functions[i]->func_name, &(display_functions[i]), display_sync_time);
        total_time += display_functions[i]->this_mpi_time * 1e-6;
     }
 
-    //qsort ((void*)display_functions, (size_t)n_display_functions,
-    qsort ((void*)display_functions, (size_t)n_indices,
+    //qsort ((void*)display_functions, (size_t)n_indices,
+    qsort ((void*)display_functions, (size_t)n_display_funcs,
 	    sizeof (display_function_t *), vftr_compare_display_functions_tavg);
 
 
@@ -921,8 +937,8 @@ void vftr_print_function_statistics (FILE *fp_log, bool display_sync_time, int *
     // the maximum number of digits or characters required to display the
     // corresponding column. 
     int n_func, n_calls, n_t_avg, n_t_min, n_t_max, n_imba, n_t;
-    //vftr_get_display_width (display_functions, n_display_functions, 5,
-    vftr_get_display_width (display_functions, n_indices, 5,
+    //vftr_get_display_width (display_functions, n_indices, 5,
+    vftr_get_display_width (display_functions, n_display_funcs, 5,
 	&n_func, &n_calls, &n_t_avg, &n_t_min, &n_t_max, &n_imba, &n_t);
 
     // The following headers appear in the function table but also define
@@ -998,8 +1014,8 @@ void vftr_print_function_statistics (FILE *fp_log, bool display_sync_time, int *
     fprintf (fp_log, "\n");
 
     // Print all the display functions, but omit those without any calls.
-    //for (int i = 0; i < n_display_functions; i++) {
-    for (int i = 0; i < n_indices; i++) {
+    //for (int i = 0; i < n_indices; i++) {
+    for (int i = 0; i < n_display_funcs; i++) {
 
        // prepare the message size output
        char *send_unit_str;
@@ -1066,8 +1082,8 @@ void vftr_print_function_statistics (FILE *fp_log, bool display_sync_time, int *
 	// which can happen for example when one of them is an I/O rank, the gathered values can correspond
 	// to different functions.  	
 	//
-	//qsort ((void*)display_functions, (size_t)n_display_functions,
-	qsort ((void*)display_functions, (size_t)n_indices,
+	//qsort ((void*)display_functions, (size_t)n_indices,
+	qsort ((void*)display_functions, (size_t)n_display_funcs,
 	       sizeof (display_function_t *), vftr_compare_display_functions_iorig);
 
 
@@ -1077,8 +1093,8 @@ void vftr_print_function_statistics (FILE *fp_log, bool display_sync_time, int *
 	   }
         }
 
-  	//for (int i = 0; i < n_display_functions; i++) {
-  	for (int i = 0; i < n_indices; i++) {
+  	//for (int i = 0; i < n_indices; i++) {
+  	for (int i = 0; i < n_display_funcs; i++) {
 		if (display_functions[i]->n_stack_indices == 0) {;
 	 	   if (vftr_environment.create_html->value) {
 		      vftr_browse_print_stacktree_page (NULL, true, vftr_mpi_collective_function_names,
@@ -1123,10 +1139,7 @@ void vftr_print_mpi_statistics (FILE *fp) {
        vftr_stackid_list_init();
        for (int i = 0; i < vftr_gStackscount; i++) {
            if (vftr_pattern_match (vftr_environment.print_stack_profile->value, vftr_gStackinfo[i].name)) {
-	      //printf ("Match: %s\n", vftr_gStackinfo[i].name);
-	      //if (vftr_mpirank == 0) printf ("Add: %d %d\n", i, vftr_mpirank);
               vftr_stackid_list_add (i);
-	      //if (vftr_mpirank == 0) printf ("Added: %d %d\n", i, vftr_mpirank);
            }
        }
     vftr_stackid_list_print (stdout);
