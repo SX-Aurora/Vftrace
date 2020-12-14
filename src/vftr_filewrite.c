@@ -671,14 +671,48 @@ void vftr_set_proftab_column_formats (function_t **funcTable,
 
 /**********************************************************************/
 
-int vftr_get_tablewidth_from_columns (column_t *columns, int n_columns) {
+int vftr_get_tablewidth_from_columns (column_t *columns, int n_columns, bool use_separators) {
    // Initialize tablewidth to the number of spaces (two per column), then
    // add the individual column widths to it.
    int tw = 2 * n_columns;
+   // If separator lines (|) are used, add their number (n_columns + 1)
+   tw += n_columns + 1;
    for (int i = 0; i < n_columns; i++) {
       tw += columns[i].n_chars;
    }
    return tw;
+}
+
+/**********************************************************************/
+
+void vftr_summary_print_header (FILE *fp, column_t *columns, int table_width, bool print_mpi) {
+   enum column_ids {FUNC, MPI, CALLS, TOT_SEND_BYTES, TOT_RECV_BYTES, T_AVG, T_MIN, T_MAX, IMBA, THIS_T};
+   for (int i = 0; i < table_width; i++) fprintf (fp, "-");
+   fprintf (fp, "\n");
+   if (print_mpi) {
+      fprintf (fp, "| %*s | %*s | %*s | %*s | %*s | %*s | %*s | %*s | %*s | %*s |\n",
+	       columns[FUNC].n_chars, columns[FUNC].header,
+               columns[MPI].n_chars, columns[MPI].header,
+	       columns[CALLS].n_chars, columns[CALLS].header,
+ 	       columns[TOT_SEND_BYTES].n_chars, columns[TOT_SEND_BYTES].header,
+	       columns[TOT_RECV_BYTES].n_chars, columns[TOT_RECV_BYTES].header,
+	       columns[T_AVG].n_chars, columns[T_AVG].header,
+	       columns[T_MIN].n_chars, columns[T_MIN].header,
+	       columns[T_MAX].n_chars, columns[T_MAX].header,
+	       columns[IMBA].n_chars, columns[IMBA].header,
+	       columns[THIS_T].n_chars, columns[THIS_T].header);
+   } else {
+      fprintf (fp, "| %*s | %*s | %*s | %*s | %*s | %*s | %*s |\n",
+	       columns[FUNC].n_chars, columns[FUNC].header,
+	       columns[CALLS].n_chars, columns[CALLS].header,
+	       columns[T_AVG].n_chars, columns[T_AVG].header,
+	       columns[T_MIN].n_chars, columns[T_MIN].header,
+	       columns[T_MAX].n_chars, columns[T_MAX].header,
+	       columns[IMBA].n_chars, columns[IMBA].header,
+	       columns[THIS_T].n_chars, columns[THIS_T].header);
+   }
+   for (int i = 0; i < table_width; i++) fprintf (fp, "-");
+   fprintf (fp, "\n");
 }
 
 /**********************************************************************/
@@ -1018,10 +1052,19 @@ void vftr_print_function_statistics (FILE *fp_log, bool display_sync_time, int *
 
     int add_sync_spaces = display_sync_time ? 8 : 0;
 
+    bool print_mpi_columns = true;
     int n_columns = print_mpi_columns ? 10 : 7;
 
     column_t *columns = (column_t*) malloc (n_columns * sizeof(column_t));
     vftr_set_summary_column_formats (print_mpi_columns, n_display_funcs, display_functions, &columns);
+    for (int i = 0; i < n_columns; i++) {
+       vftr_prof_column_set_format (&(columns[i]));
+    }
+   
+    int table_width = vftr_get_tablewidth_from_columns (columns, n_columns, true); 
+    if (vftr_mpirank == 0) {
+      vftr_summary_print_header (stdout, columns, table_width, print_mpi_columns);
+    }
 
     if (n_func < n_func_0) n_func = n_func_0;
     if (n_calls < n_calls_0) n_calls = n_calls_0;
@@ -1383,7 +1426,7 @@ void vftr_print_profile (FILE *fp_log, int *n_func_indices, long long time0) {
 	vftr_prof_column_set_format (&(prof_columns[i]));
     }
 
-    table_width = vftr_get_tablewidth_from_columns (prof_columns, n_columns);
+    table_width = vftr_get_tablewidth_from_columns (prof_columns, n_columns, false);
 
     if (vftr_environment.create_html->value) {
        vftr_browse_create_profile_header (f_html);
