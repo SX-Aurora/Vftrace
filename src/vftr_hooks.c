@@ -132,6 +132,7 @@ void vftr_function_entry (const char *s, void *addr, int line, bool isPrecise) {
     }
     caller->callee = func; // Faster lookup next time around
     vftr_fstack = func; /* Here's where we are now */
+    func->open = true;
 
     if (line > 0) assert (func->line_beg == line);
 
@@ -367,6 +368,7 @@ void vftr_function_exit(int line) {
     // measured. Therefore, there is a theoretical, but miniscule, discrepancy
     // the user time and the time measured by Vftrace.
     if (!vftr_fstack->return_to) vftr_finalize();
+    func->open = false;
 }
 
 // These are the actual Cygnus function hooks. 

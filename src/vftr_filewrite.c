@@ -128,13 +128,13 @@ bool vftr_is_collective_mpi_function (char *func_name) {
    return false;
 }
 
-void vftr_is_mpi_function (char *func_name, bool *is_mpi, bool *is_collective) {
+void vftr_is_traceable_mpi_function (char *func_name, bool *is_mpi, bool *is_collective) {
    *is_mpi = false;
    *is_collective = false;
    if (!strncmp (func_name, "mpi_", 4)) {
       for (int i = 0; i < vftr_n_supported_mpi_functions; i++) {
          if (!strcmp (func_name, vftr_supported_mpi_function_names[i])) {
-            *is_mpi = true;
+            *is_mpi = strcmp(func_name, "mpi_finalize");
 	    break;
          }
       }
@@ -749,13 +749,16 @@ void vftr_evaluate_display_function (char *func_name, display_function_t **displ
     (*display_func)->n_calls = 0;
     (*display_func)->mpi_tot_send_bytes = 0;
     (*display_func)->mpi_tot_recv_bytes = 0;
+    (*display_func)->properly_terminated = true;
     for (int i = 0; i < n_func_indices; i++) {
 	(*display_func)->this_mpi_time += vftr_func_table[func_indices[i]]->prof_current.timeIncl;
 	if (n_func_indices_sync > 0) (*display_func)->this_sync_time += vftr_func_table[func_indices_sync[i]]->prof_current.timeIncl;
 	(*display_func)->n_calls += vftr_func_table[func_indices[i]]->prof_current.calls;
 	(*display_func)->mpi_tot_send_bytes += vftr_func_table[func_indices[i]]->prof_current.mpi_tot_send_bytes;
 	(*display_func)->mpi_tot_recv_bytes += vftr_func_table[func_indices[i]]->prof_current.mpi_tot_recv_bytes;
+	(*display_func)->properly_terminated &= !vftr_func_table[func_indices[i]]->open;
     }
+    if (!(*display_func)->properly_terminated) return;
     long long all_times [vftr_mpisize], all_times_sync [vftr_mpisize];
     PMPI_Allgather (&(*display_func)->this_mpi_time, 1, MPI_LONG_LONG_INT, all_times,
 		 1, MPI_LONG_LONG_INT, MPI_COMM_WORLD);
@@ -853,7 +856,7 @@ void vftr_get_display_width (display_function_t **display_functions,
 
 	int n;
 	for (int i = 0; i < n_display_functions; i++) {
-		if (display_functions[i]->n_calls > 0) {
+		if (display_functions[i]->n_calls > 0 && display_functions[i]->properly_terminated) {
 			n = strlen (display_functions[i]->func_name);
 			if (n > *n_func_max) *n_func_max = n;
 			n = vftr_count_digits_int (display_functions[i]->n_calls);
@@ -904,7 +907,8 @@ void vftr_print_function_statistics (FILE *fp_log, bool display_sync_time, int *
 	display_functions[i_disp_f] = (display_function_t*) malloc (sizeof(display_function_t));
 	display_functions[i_disp_f]->func_name = strdup(vftr_gStackinfo[i_func].name);
 	//vftr_find_function_in_stack (display_functions[i]->func_name, &stack_indices, &n_stack_indices, true);
-	vftr_is_mpi_function (display_functions[i_disp_f]->func_name, &(display_functions[i_disp_f]->is_mpi), &(display_functions[i_disp_f]->is_collective_mpi));
+	vftr_is_traceable_mpi_function (display_functions[i_disp_f]->func_name,
+				        &(display_functions[i_disp_f]->is_mpi), &(display_functions[i_disp_f]->is_collective_mpi));
         display_functions[i_disp_f]->i_orig = i_disp_f;
 	i_disp_f++;
     }
@@ -921,6 +925,7 @@ void vftr_print_function_statistics (FILE *fp_log, bool display_sync_time, int *
     for (int i = 0; i < n_display_funcs; i++) {
        //vftr_evaluate_display_function (display_function_names[i], &(display_functions[i]), display_sync_time);
        vftr_evaluate_display_function (display_functions[i]->func_name, &(display_functions[i]), display_sync_time);
+       if (!display_functions[i]->properly_terminated) continue;
        total_time += display_functions[i]->this_mpi_time * 1e-6;
     }
 
@@ -1017,13 +1022,13 @@ void vftr_print_function_statistics (FILE *fp_log, bool display_sync_time, int *
     //for (int i = 0; i < n_indices; i++) {
     for (int i = 0; i < n_display_funcs; i++) {
 
-       // prepare the message size output
-       char *send_unit_str;
-       char *recv_unit_str;
-       vftr_memory_unit(&(display_functions[i]->mpi_tot_send_bytes), &send_unit_str);
-       vftr_memory_unit(&(display_functions[i]->mpi_tot_recv_bytes), &recv_unit_str);
+       if (display_functions[i]->n_calls > 0 && display_functions[i]->properly_terminated) {
+         // prepare the message size output
+         char *send_unit_str;
+         char *recv_unit_str;
+         vftr_memory_unit(&(display_functions[i]->mpi_tot_send_bytes), &send_unit_str);
+         vftr_memory_unit(&(display_functions[i]->mpi_tot_recv_bytes), &recv_unit_str);
 	   
-       if (display_functions[i]->n_calls > 0) {
 	
 	if (display_functions[i]->t_sync_avg > 0) {
 	  // There are synchronization times for this function. We make space for the additional
@@ -1095,6 +1100,7 @@ void vftr_print_function_statistics (FILE *fp_log, bool display_sync_time, int *
 
   	//for (int i = 0; i < n_indices; i++) {
   	for (int i = 0; i < n_display_funcs; i++) {
+                if (!display_functions[i]->properly_terminated) continue;
 		if (display_functions[i]->n_stack_indices == 0) {;
 	 	   if (vftr_environment.create_html->value) {
 		      vftr_browse_print_stacktree_page (NULL, true, vftr_mpi_collective_function_names,

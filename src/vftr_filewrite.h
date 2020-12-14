@@ -70,6 +70,7 @@ typedef struct display_function {
     bool is_collective_mpi;
     double mpi_tot_send_bytes;
     double mpi_tot_recv_bytes;
+    bool properly_terminated;
 } display_function_t;
 
 extern char *vftr_mpi_collective_function_names[];
