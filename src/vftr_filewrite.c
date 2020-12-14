@@ -545,7 +545,7 @@ void vftr_prof_column_set_format (column_t *c) {
 
 /**********************************************************************/
 
-void vftr_set_summary_column_formats (bool print_mpi, int n_display_funcs, display_function_t *display_functions, column_t **columns) {
+void vftr_set_summary_column_formats (bool print_mpi, int n_display_funcs, display_function_t **display_functions, column_t **columns) {
     const char *headers[10] = {"Function", "%MPI", "Calls",
                               "Total send ", "Total recv.",
 			      "Avg. time [s]", "Min. time [s]", "Max. time [s]",
@@ -568,21 +568,21 @@ void vftr_set_summary_column_formats (bool print_mpi, int n_display_funcs, displ
   
     for (int i = 0; i < n_display_funcs; i++) {
        i_column = 0;
-       vftr_prof_column_set_n_chars (&display_functions[i].func_name, &(*columns)[i_column++]);
+       vftr_prof_column_set_n_chars (&display_functions[i]->func_name, &(*columns)[i_column++]);
        // Set n_chars for %MPI
-       vftr_prof_column_set_n_chars (&display_functions[i].n_calls, &(*columns)[i_column++]);
+       vftr_prof_column_set_n_chars (&display_functions[i]->n_calls, &(*columns)[i_column++]);
        if (print_mpi) {
-	  vftr_prof_column_set_n_chars (&display_functions[i].mpi_tot_send_bytes, &(*columns)[i_column++]);
-	  vftr_prof_column_set_n_chars (&display_functions[i].mpi_tot_recv_bytes, &(*columns)[i_column++]);
+	  vftr_prof_column_set_n_chars (&display_functions[i]->mpi_tot_send_bytes, &(*columns)[i_column++]);
+	  vftr_prof_column_set_n_chars (&display_functions[i]->mpi_tot_recv_bytes, &(*columns)[i_column++]);
        } 
-       double t = display_functions[i].t_avg * 1e-6;
+       double t = display_functions[i]->t_avg * 1e-6;
        vftr_prof_column_set_n_chars (&t, &(*columns)[i_column++]);
-       t = display_functions[i].t_min * 1e-6;
+       t = display_functions[i]->t_min * 1e-6;
        vftr_prof_column_set_n_chars (&t, &(*columns)[i_column++]);
-       t = display_functions[i].t_max * 1e-6;
+       t = display_functions[i]->t_max * 1e-6;
        vftr_prof_column_set_n_chars (&t, &(*columns)[i_column++]);
-       vftr_prof_column_set_n_chars (&display_functions[i].imbalance, &(*columns)[i_column++]);
-       vftr_prof_column_set_n_chars (&display_functions[i].this_mpi_time, &(*columns)[i_column++]);
+       vftr_prof_column_set_n_chars (&display_functions[i]->imbalance, &(*columns)[i_column++]);
+       vftr_prof_column_set_n_chars (&display_functions[i]->this_mpi_time, &(*columns)[i_column++]);
     }
 }
 
