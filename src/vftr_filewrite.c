@@ -499,7 +499,7 @@ void vftr_fill_scenario_counter_values (double *val, int n_vars, profdata_t prof
 
 /**********************************************************************/
 
-void vftr_prof_column_init (char *name, char *group_header, int n_decimal_places, int type, column_t *c) {
+void vftr_prof_column_init (const char *name, char *group_header, int n_decimal_places, int type, column_t *c) {
 	c->header = strdup (name);
 	c->group_header = group_header != NULL ? strdup (group_header) : NULL;
 	c->n_chars = strlen(name);
@@ -541,6 +541,49 @@ void vftr_prof_column_set_format (column_t *c) {
 	   case COL_CHAR:
 	      sprintf (c->format, " %%%ds ", c->n_chars);
 	}
+}
+
+/**********************************************************************/
+
+void vftr_set_summary_column_formats (bool print_mpi, int n_display_funcs, display_function_t *display_functions, column_t **columns) {
+    const char *headers[10] = {"Function", "%MPI", "Calls",
+                              "Total send ", "Total recv.",
+			      "Avg. time [s]", "Min. time [s]", "Max. time [s]",
+			      "Imbalance", "This rank [s]"};
+    enum column_ids {FUNC, MPI, CALLS, TOT_SEND_BYTES, TOT_RECV_BYTES, T_AVG, T_MIN, T_MAX, IMBA, THIS_T};
+
+    int i_column = 0;
+    vftr_prof_column_init (headers[FUNC], NULL, 0, COL_CHAR, &(*columns)[i_column++]);
+    if (print_mpi) vftr_prof_column_init (headers[MPI], NULL, 2, COL_DOUBLE, &(*columns)[i_column++]);
+    vftr_prof_column_init (headers[CALLS], NULL, 0, COL_INT, &(*columns)[i_column++]);
+    if (print_mpi) {
+       vftr_prof_column_init (headers[TOT_SEND_BYTES], NULL, 2, COL_DOUBLE, &(*columns)[i_column++]);
+       vftr_prof_column_init (headers[TOT_RECV_BYTES], NULL, 2, COL_DOUBLE, &(*columns)[i_column++]);
+    }
+    vftr_prof_column_init (headers[T_AVG], NULL, 2, COL_DOUBLE, &(*columns)[i_column++]);
+    vftr_prof_column_init (headers[T_MIN], NULL, 2, COL_DOUBLE, &(*columns)[i_column++]);
+    vftr_prof_column_init (headers[T_MAX], NULL, 2, COL_DOUBLE, &(*columns)[i_column++]);
+    vftr_prof_column_init (headers[IMBA], NULL, 2, COL_DOUBLE, &(*columns)[i_column++]);
+    vftr_prof_column_init (headers[THIS_T], NULL, 2, COL_DOUBLE, &(*columns)[i_column++]);
+  
+    for (int i = 0; i < n_display_funcs; i++) {
+       i_column = 0;
+       vftr_prof_column_set_n_chars (&display_functions[i].func_name, &(*columns)[i_column++]);
+       // Set n_chars for %MPI
+       vftr_prof_column_set_n_chars (&display_functions[i].n_calls, &(*columns)[i_column++]);
+       if (print_mpi) {
+	  vftr_prof_column_set_n_chars (&display_functions[i].mpi_tot_send_bytes, &(*columns)[i_column++]);
+	  vftr_prof_column_set_n_chars (&display_functions[i].mpi_tot_recv_bytes, &(*columns)[i_column++]);
+       } 
+       double t = display_functions[i].t_avg * 1e-6;
+       vftr_prof_column_set_n_chars (&t, &(*columns)[i_column++]);
+       t = display_functions[i].t_min * 1e-6;
+       vftr_prof_column_set_n_chars (&t, &(*columns)[i_column++]);
+       t = display_functions[i].t_max * 1e-6;
+       vftr_prof_column_set_n_chars (&t, &(*columns)[i_column++]);
+       vftr_prof_column_set_n_chars (&display_functions[i].imbalance, &(*columns)[i_column++]);
+       vftr_prof_column_set_n_chars (&display_functions[i].this_mpi_time, &(*columns)[i_column++]);
+    }
 }
 
 /**********************************************************************/
@@ -944,7 +987,7 @@ void vftr_print_function_statistics (FILE *fp_log, bool display_sync_time, int *
     int n_func, n_calls, n_t_avg, n_t_min, n_t_max, n_imba, n_t;
     //vftr_get_display_width (display_functions, n_indices, 5,
     vftr_get_display_width (display_functions, n_display_funcs, 5,
-	&n_func, &n_calls, &n_t_avg, &n_t_min, &n_t_max, &n_imba, &n_t);
+	                    &n_func, &n_calls, &n_t_avg, &n_t_min, &n_t_max, &n_imba, &n_t);
 
     // The following headers appear in the function table but also define
     // the minimum widths for each column. Below, we check if the previously
@@ -974,6 +1017,11 @@ void vftr_print_function_statistics (FILE *fp_log, bool display_sync_time, int *
     int n_t_0 = strlen(headers[THIS_T]);
 
     int add_sync_spaces = display_sync_time ? 8 : 0;
+
+    int n_columns = print_mpi_columns ? 10 : 7;
+
+    column_t *columns = (column_t*) malloc (n_columns * sizeof(column_t));
+    vftr_set_summary_column_formats (print_mpi_columns, n_display_funcs, display_functions, &columns);
 
     if (n_func < n_func_0) n_func = n_func_0;
     if (n_calls < n_calls_0) n_calls = n_calls_0;
