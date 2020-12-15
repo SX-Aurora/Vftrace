@@ -526,6 +526,11 @@ void vftr_prof_column_set_n_chars (void *value, column_t *c, int *stat) {
 	      ch = (char*)value;
    	      n = strlen(ch);
 	      break;
+	   case COL_MEM:
+              // Floating-point value + memory unit
+              f = (double *)value;
+  	      n = strlen(vftr_memory_unit_string (*(double*)value, c->n_decimal_places));    
+              break;
            default:
               *stat = -1;
 	}
@@ -542,6 +547,7 @@ void vftr_prof_column_set_format (column_t *c) {
               sprintf (c->format, " %%%d.%df ", c->n_chars, c->n_decimal_places);
 	      break;
 	   case COL_CHAR:
+	   case COL_MEM:
 	      sprintf (c->format, " %%%ds ", c->n_chars);
 	}
 }
@@ -556,6 +562,9 @@ void vftr_prof_column_print (FILE *fp, column_t c, void *value) {
 	 break;
       case COL_CHAR:
          fprintf (fp, c.format, (char*)value);
+	 break;
+      case COL_MEM:
+         fprintf (fp, c.format, vftr_memory_unit_string (*(double*)value, c.n_decimal_places));
 	 break;
    }
 }
@@ -574,8 +583,8 @@ void vftr_set_summary_column_formats (bool print_mpi, int n_display_funcs, displ
     if (print_mpi) vftr_prof_column_init (headers[MPI], NULL, 2, COL_DOUBLE, &(*columns)[i_column++]);
     vftr_prof_column_init (headers[CALLS], NULL, 0, COL_INT, &(*columns)[i_column++]);
     if (print_mpi) {
-       vftr_prof_column_init (headers[TOT_SEND_BYTES], NULL, 0, COL_CHAR, &(*columns)[i_column++]);
-       vftr_prof_column_init (headers[TOT_RECV_BYTES], NULL, 0, COL_CHAR, &(*columns)[i_column++]);
+       vftr_prof_column_init (headers[TOT_SEND_BYTES], NULL, 0, COL_MEM, &(*columns)[i_column++]);
+       vftr_prof_column_init (headers[TOT_RECV_BYTES], NULL, 0, COL_MEM, &(*columns)[i_column++]);
     }
     vftr_prof_column_init (headers[T_AVG], NULL, 2, COL_DOUBLE, &(*columns)[i_column++]);
     vftr_prof_column_init (headers[T_MIN], NULL, 2, COL_DOUBLE, &(*columns)[i_column++]);
@@ -593,10 +602,8 @@ void vftr_set_summary_column_formats (bool print_mpi, int n_display_funcs, displ
        }
        vftr_prof_column_set_n_chars (&display_functions[i]->n_calls, &(*columns)[i_column++], &stat);
        if (print_mpi) {
-	  char *foo = vftr_memory_unit_string (display_functions[i]->mpi_tot_send_bytes, 2);
-	  vftr_prof_column_set_n_chars (foo, &(*columns)[i_column++], &stat);  
-	  foo = vftr_memory_unit_string (display_functions[i]->mpi_tot_recv_bytes, 2);
-	  vftr_prof_column_set_n_chars (foo, &(*columns)[i_column++], &stat);
+	  vftr_prof_column_set_n_chars (&display_functions[i]->mpi_tot_send_bytes, &(*columns)[i_column++], &stat);  
+	  vftr_prof_column_set_n_chars (&display_functions[i]->mpi_tot_recv_bytes, &(*columns)[i_column++], &stat);
        } 
        double t = display_functions[i]->t_avg * 1e-6;
        vftr_prof_column_set_n_chars (&t, &(*columns)[i_column++], &stat);
@@ -745,31 +752,35 @@ void vftr_summary_print_header (FILE *fp, column_t *columns, int table_width, bo
 void vftr_summary_print_line (FILE *fp, display_function_t *displ_f, column_t *columns, double total_time, bool print_mpi) {
    int i_column = 0;
    fprintf (fp, "|");
-   fprintf (fp, columns[i_column++].format, displ_f->func_name);
+   vftr_prof_column_print (fp, columns[i_column++], displ_f->func_name);
+   double t;
    if (print_mpi) {
       fprintf (fp, "|");
-      fprintf (fp, columns[i_column++].format, displ_f->this_mpi_time * 1e-6 / total_time * 100);
+      t = displ_f->this_mpi_time * 1e-6 / total_time * 100;
+      vftr_prof_column_print (fp, columns[i_column++], &t);
    }
    fprintf (fp, "|");
-   fprintf (fp, columns[i_column++].format, displ_f->n_calls);
+   vftr_prof_column_print (fp, columns[i_column++], &displ_f->n_calls);
    if (print_mpi) {
       fprintf (fp, "|");
-      fprintf (fp, columns[i_column].format, vftr_memory_unit_string (displ_f->mpi_tot_send_bytes, columns[i_column].n_decimal_places));
-      i_column++;
+      vftr_prof_column_print (fp, columns[i_column++], &displ_f->mpi_tot_send_bytes);
       fprintf (fp, "|");
-      fprintf (fp, columns[i_column].format, vftr_memory_unit_string (displ_f->mpi_tot_recv_bytes, columns[i_column].n_decimal_places));
-      i_column++;
+      vftr_prof_column_print (fp, columns[i_column++], &displ_f->mpi_tot_recv_bytes);
    }
    fprintf (fp, "|");
-   fprintf (fp, columns[i_column++].format, displ_f->t_avg * 1e-6);
+   t = displ_f->t_avg * 1e-6;
+   vftr_prof_column_print (fp, columns[i_column++], &t);
    fprintf (fp, "|");
-   fprintf (fp, columns[i_column++].format, displ_f->t_min * 1e-6);
+   t = displ_f->t_min * 1e-6;
+   vftr_prof_column_print (fp, columns[i_column++], &t);
    fprintf (fp, "|");
-   fprintf (fp, columns[i_column++].format, displ_f->t_max * 1e-6);
+   t = displ_f->t_max * 1e-6;
+   vftr_prof_column_print (fp, columns[i_column++], &t);
    fprintf (fp, "|");
-   fprintf (fp, columns[i_column++].format, displ_f->imbalance * 1e-6);
+   vftr_prof_column_print (fp, columns[i_column++], &displ_f->imbalance);
    fprintf (fp, "|");
-   fprintf (fp, columns[i_column++].format, displ_f->this_mpi_time * 1e-6);
+   t = displ_f->this_mpi_time * 1e-6;
+   vftr_prof_column_print (fp, columns[i_column++], &t);
    fprintf (fp, "|\n");
 }
 
