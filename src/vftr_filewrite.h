@@ -27,13 +27,14 @@ extern FILE *vftr_vfd_file;
 extern long vftr_admin_offset;
 extern long vftr_samples_offset;
 
-enum column_data_type {COL_INT, COL_DOUBLE, COL_CHAR, COL_MEM};
+enum column_data_type {COL_INT, COL_DOUBLE, COL_CHAR, COL_MEM, COL_SYNC};
 
 typedef struct column {
 	int type;
 	char *header;
    	char *group_header;
 	int n_chars;
+	int n_chars_extra;
 	int n_decimal_places;
 	char format[10];
 } column_t;
@@ -106,6 +107,6 @@ void vftr_memory_unit(double *value, char **unit);
 char *vftr_memory_unit_string (double value, int n_decimal_places);
 void vftr_time_unit (double *value, char **unit, bool for_html);
 
-void vftr_prof_column_print (FILE *fp, column_t c, void *value);
+void vftr_prof_column_print (FILE *fp, column_t c, void *value_1, void *value_2);
 
 #endif

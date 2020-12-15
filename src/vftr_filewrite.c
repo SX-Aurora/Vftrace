@@ -419,11 +419,11 @@ void vftr_output_column_header (char *header, int largest_column_length, FILE *f
 void vftr_print_stack_time (FILE *fp, int calls, double t_excl, double t_incl, double t_part, double t_cum, int *i_column, column_t *prof_columns) {
 
 	double stime = calls ? t_excl : 0;
-        vftr_prof_column_print (fp, prof_columns[(*i_column)++], &stime);
+        vftr_prof_column_print (fp, prof_columns[(*i_column)++], &stime, NULL);
 	stime  = calls ? t_incl : 0;
-        vftr_prof_column_print (fp, prof_columns[(*i_column)++], &stime);
-        vftr_prof_column_print (fp, prof_columns[(*i_column)++], &t_part);
-        vftr_prof_column_print (fp, prof_columns[(*i_column)++], &t_cum);
+        vftr_prof_column_print (fp, prof_columns[(*i_column)++], &stime, NULL);
+        vftr_prof_column_print (fp, prof_columns[(*i_column)++], &t_part, NULL);
+        vftr_prof_column_print (fp, prof_columns[(*i_column)++], &t_cum, NULL);
 }
 
 /**********************************************************************/
@@ -503,34 +503,46 @@ void vftr_prof_column_init (const char *name, char *group_header, int n_decimal_
 	c->header = strdup (name);
 	c->group_header = group_header != NULL ? strdup (group_header) : NULL;
 	c->n_chars = strlen(name);
+	c->n_chars_extra = 0;
 	c->n_decimal_places = n_decimal_places;
 	c->type = type;
 }
 
-void vftr_prof_column_set_n_chars (void *value, column_t *c, int *stat) {
+void vftr_prof_column_set_n_chars (void *value_1, void *value_2, column_t *c, int *stat) {
 	int n;
 	int *i;
 	double *f;
         char *ch;
 	switch (c->type) {
 	   case COL_INT:
-	      i = (int*)value;	
+	      i = (int*)value_1;	
 	      n = vftr_count_digits_int (*i);
 	      break;
 	   case COL_DOUBLE:
-	      f = (double *)value;
+	      f = (double *)value_1;
 	      // For double values, we need to add the decimal places and the decimal point itself.
 	      n = vftr_count_digits_double (*f) + c->n_decimal_places + 1;
 	      break;
 	   case COL_CHAR:
-	      ch = (char*)value;
+	      ch = (char*)value_1;
    	      n = strlen(ch);
 	      break;
 	   case COL_MEM:
               // Floating-point value + memory unit
-              f = (double *)value;
-  	      n = strlen(vftr_memory_unit_string (*(double*)value, c->n_decimal_places));    
+              f = (double *)value_1;
+  	      n = strlen(vftr_memory_unit_string (*(double*)value_1, c->n_decimal_places));    
               break;
+           case COL_SYNC:
+              f = (double *)value_1;
+	      n = vftr_count_digits_double (*f) + c->n_decimal_places + 1;
+	      if (value_2) {
+                 double *f2 = (double *)value_2;
+	         if (*f2 > 0) {
+	            int n2 = vftr_count_digits_double (*f2 / *f * 100) + 3;
+		    if (n2 > c->n_chars_extra) c->n_chars_extra = n2;
+	         }
+              }
+	      break;
            default:
               *stat = -1;
 	}
@@ -549,23 +561,35 @@ void vftr_prof_column_set_format (column_t *c) {
 	   case COL_CHAR:
 	   case COL_MEM:
 	      sprintf (c->format, " %%%ds ", c->n_chars);
+	      break;
+	   case COL_SYNC:
+	      // Needs to be computed case-by-case
+	      break; 
 	}
 }
 
-void vftr_prof_column_print (FILE *fp, column_t c, void *value) {
+void vftr_prof_column_print (FILE *fp, column_t c, void *value_1, void *value_2) {
    switch (c.type) {
       case COL_INT:
-         fprintf (fp, c.format, *(int*)value);
+         fprintf (fp, c.format, *(int*)value_1);
          break;
       case COL_DOUBLE:
-         fprintf (fp, c.format, *(double*)value);
+         fprintf (fp, c.format, *(double*)value_1);
 	 break;
       case COL_CHAR:
-         fprintf (fp, c.format, (char*)value);
+         fprintf (fp, c.format, (char*)value_1);
 	 break;
       case COL_MEM:
-         fprintf (fp, c.format, vftr_memory_unit_string (*(double*)value, c.n_decimal_places));
+         fprintf (fp, c.format, vftr_memory_unit_string (*(double*)value_1, c.n_decimal_places));
 	 break;
+      case COL_SYNC:
+         if (c.n_chars_extra > 0) {
+	    sprintf (c.format, " %%%d.%df(%%%d.2f) ", c.n_chars, c.n_decimal_places, c.n_chars_extra);
+            fprintf (fp, c.format, *(double*)value_1, c.n_decimal_places, *(double*)value_2);
+	 } else {
+            sprintf (c.format, " %%%d.%df ", c.n_chars, c.n_decimal_places);
+            fprintf (fp, c.format, *(double*)value_1);
+	 }
    }
 }
 
@@ -595,24 +619,27 @@ void vftr_set_summary_column_formats (bool print_mpi, int n_display_funcs, displ
     int stat;
     for (int i = 0; i < n_display_funcs; i++) {
        i_column = 0;
-       vftr_prof_column_set_n_chars (display_functions[i]->func_name, &(*columns)[i_column++], &stat);
+       vftr_prof_column_set_n_chars (display_functions[i]->func_name, NULL, &(*columns)[i_column++], &stat);
        if (print_mpi) {
           double tmp = display_functions[i]->this_mpi_time * 1e-6 / total_time * 100;
-	  vftr_prof_column_set_n_chars (&tmp, &(*columns)[i_column++], &stat);
+	  vftr_prof_column_set_n_chars (&tmp, NULL, &(*columns)[i_column++], &stat);
        }
-       vftr_prof_column_set_n_chars (&display_functions[i]->n_calls, &(*columns)[i_column++], &stat);
+       vftr_prof_column_set_n_chars (&display_functions[i]->n_calls, NULL, &(*columns)[i_column++], &stat);
        if (print_mpi) {
-	  vftr_prof_column_set_n_chars (&display_functions[i]->mpi_tot_send_bytes, &(*columns)[i_column++], &stat);  
-	  vftr_prof_column_set_n_chars (&display_functions[i]->mpi_tot_recv_bytes, &(*columns)[i_column++], &stat);
+	  vftr_prof_column_set_n_chars (&display_functions[i]->mpi_tot_send_bytes, NULL, &(*columns)[i_column++], &stat);  
+	  vftr_prof_column_set_n_chars (&display_functions[i]->mpi_tot_recv_bytes, NULL, &(*columns)[i_column++], &stat);
        } 
        double t = display_functions[i]->t_avg * 1e-6;
-       vftr_prof_column_set_n_chars (&t, &(*columns)[i_column++], &stat);
+       double t2 = display_functions[i]->t_sync_avg * 1e-6;
+       vftr_prof_column_set_n_chars (&t, &t2, &(*columns)[i_column++], &stat);
        t = display_functions[i]->t_min * 1e-6;
-       vftr_prof_column_set_n_chars (&t, &(*columns)[i_column++], &stat);
+       t2 = display_functions[i]->t_sync_min * 1e-6;
+       vftr_prof_column_set_n_chars (&t, &t2, &(*columns)[i_column++], &stat);
        t = display_functions[i]->t_max * 1e-6;
-       vftr_prof_column_set_n_chars (&t, &(*columns)[i_column++], &stat);
-       vftr_prof_column_set_n_chars (&display_functions[i]->imbalance, &(*columns)[i_column++], &stat);
-       vftr_prof_column_set_n_chars (&display_functions[i]->this_mpi_time, &(*columns)[i_column++], &stat);
+       t2 = display_functions[i]->t_sync_max * 1e-6;
+       vftr_prof_column_set_n_chars (&t, &t2, &(*columns)[i_column++], &stat);
+       vftr_prof_column_set_n_chars (&display_functions[i]->imbalance, NULL, &(*columns)[i_column++], &stat);
+       vftr_prof_column_set_n_chars (&display_functions[i]->this_mpi_time, NULL, &(*columns)[i_column++], &stat);
     }
 }
 
@@ -669,18 +696,18 @@ void vftr_set_proftab_column_formats (function_t **funcTable,
             t_overhead = (double)funcTable[i_func]->overhead * 1e-6;
             int n_calls = prof_current.calls - prof_previous.calls;
             i_column = 0;
-            vftr_prof_column_set_n_chars (&n_calls, &(*columns)[i_column++], &stat);
-            vftr_prof_column_set_n_chars (&t_excl, &(*columns)[i_column++], &stat);
-            vftr_prof_column_set_n_chars (&t_incl, &(*columns)[i_column++], &stat);
-            vftr_prof_column_set_n_chars (&t_part, &(*columns)[i_column++], &stat);
-            vftr_prof_column_set_n_chars (&t_cum, &(*columns)[i_column++], &stat);
+            vftr_prof_column_set_n_chars (&n_calls, NULL, &(*columns)[i_column++], &stat);
+            vftr_prof_column_set_n_chars (&t_excl, NULL, &(*columns)[i_column++], &stat);
+            vftr_prof_column_set_n_chars (&t_incl, NULL, &(*columns)[i_column++], &stat);
+            vftr_prof_column_set_n_chars (&t_part, NULL, &(*columns)[i_column++], &stat);
+            vftr_prof_column_set_n_chars (&t_cum, NULL, &(*columns)[i_column++], &stat);
 
             if (vftr_environment.show_overhead->value) {
-                vftr_prof_column_set_n_chars (&t_overhead, &(*columns)[i_column++], &stat);
+                vftr_prof_column_set_n_chars (&t_overhead, NULL, &(*columns)[i_column++], &stat);
                 double rel = sampling_overhead_time > 0.0 ? t_overhead / sampling_overhead_time * 100.0 : 0.0;
-                vftr_prof_column_set_n_chars (&rel, &(*columns)[i_column++], &stat);
+                vftr_prof_column_set_n_chars (&rel, NULL, &(*columns)[i_column++], &stat);
                 rel = t_excl > 0.0 ? t_overhead / t_excl : 0.0;
-                vftr_prof_column_set_n_chars (&rel, &(*columns)[i_column++], &stat);
+                vftr_prof_column_set_n_chars (&rel, NULL, &(*columns)[i_column++], &stat);
             }
 
 	    if (vftr_events_enabled) {
@@ -690,13 +717,13 @@ void vftr_set_proftab_column_formats (function_t **funcTable,
 		vftr_scenario_expr_evaluate_all (t_excl, cycles);
 		for (int j = 0; j < vftr_scenario_expr_n_formulas; j++) {
 		   double tmp = vftr_scenario_expr_formulas[j].value;
-		   vftr_prof_column_set_n_chars (&tmp, &(*columns)[i_column++], &stat);
+		   vftr_prof_column_set_n_chars (&tmp, NULL, &(*columns)[i_column++], &stat);
 	   	}
 	    }
 
-            vftr_prof_column_set_n_chars (funcTable[i_func]->name, &(*columns)[i_column++], &stat);
+            vftr_prof_column_set_n_chars (funcTable[i_func]->name, NULL, &(*columns)[i_column++], &stat);
 	    //if (vftr_mpirank == 0) printf ("HUHU: %d %s %d\n", i_func, funcTable[i_func]->name, columns[i_column-1]->n_chars);
-            vftr_prof_column_set_n_chars (funcTable[i_func]->return_to->name, &(*columns)[i_column++], &stat);
+            vftr_prof_column_set_n_chars (funcTable[i_func]->return_to->name, NULL, &(*columns)[i_column++], &stat);
 	}
 	columns[0]->n_chars++;
 }
@@ -752,35 +779,38 @@ void vftr_summary_print_header (FILE *fp, column_t *columns, int table_width, bo
 void vftr_summary_print_line (FILE *fp, display_function_t *displ_f, column_t *columns, double total_time, bool print_mpi) {
    int i_column = 0;
    fprintf (fp, "|");
-   vftr_prof_column_print (fp, columns[i_column++], displ_f->func_name);
-   double t;
+   vftr_prof_column_print (fp, columns[i_column++], displ_f->func_name, NULL);
+   double t, t2;
    if (print_mpi) {
       fprintf (fp, "|");
       t = displ_f->this_mpi_time * 1e-6 / total_time * 100;
-      vftr_prof_column_print (fp, columns[i_column++], &t);
+      vftr_prof_column_print (fp, columns[i_column++], &t, NULL);
    }
    fprintf (fp, "|");
-   vftr_prof_column_print (fp, columns[i_column++], &displ_f->n_calls);
+   vftr_prof_column_print (fp, columns[i_column++], &displ_f->n_calls, NULL);
    if (print_mpi) {
       fprintf (fp, "|");
-      vftr_prof_column_print (fp, columns[i_column++], &displ_f->mpi_tot_send_bytes);
+      vftr_prof_column_print (fp, columns[i_column++], &displ_f->mpi_tot_send_bytes, NULL);
       fprintf (fp, "|");
-      vftr_prof_column_print (fp, columns[i_column++], &displ_f->mpi_tot_recv_bytes);
+      vftr_prof_column_print (fp, columns[i_column++], &displ_f->mpi_tot_recv_bytes, NULL);
    }
    fprintf (fp, "|");
    t = displ_f->t_avg * 1e-6;
-   vftr_prof_column_print (fp, columns[i_column++], &t);
+   t2 = displ_f->t_sync_avg * 1e-6;
+   vftr_prof_column_print (fp, columns[i_column++], &t, &t2);
    fprintf (fp, "|");
    t = displ_f->t_min * 1e-6;
-   vftr_prof_column_print (fp, columns[i_column++], &t);
+   t2 = displ_f->t_sync_min * 1e-6;
+   vftr_prof_column_print (fp, columns[i_column++], &t, &t2);
    fprintf (fp, "|");
    t = displ_f->t_max * 1e-6;
-   vftr_prof_column_print (fp, columns[i_column++], &t);
+   t2 = displ_f->t_sync_max * 1e-6;
+   vftr_prof_column_print (fp, columns[i_column++], &t, &t2);
    fprintf (fp, "|");
-   vftr_prof_column_print (fp, columns[i_column++], &displ_f->imbalance);
+   vftr_prof_column_print (fp, columns[i_column++], &displ_f->imbalance, NULL);
    fprintf (fp, "|");
    t = displ_f->this_mpi_time * 1e-6;
-   vftr_prof_column_print (fp, columns[i_column++], &t);
+   vftr_prof_column_print (fp, columns[i_column++], &t, NULL);
    fprintf (fp, "|\n");
 }
 
@@ -1411,30 +1441,30 @@ void vftr_print_profile_line (FILE *fp_log, int stack_id, double sampling_overhe
 			      int n_calls, double t_excl, double t_incl, double t_part, double t_cum, double t_overhead,
 			      char *func_name, char *caller_name, column_t *prof_columns) {
    int i_column = 0;
-   vftr_prof_column_print (fp_log, prof_columns[i_column++], &n_calls);
+   vftr_prof_column_print (fp_log, prof_columns[i_column++], &n_calls, NULL);
    vftr_print_stack_time (fp_log, n_calls, t_excl, t_incl, t_part, t_cum, &i_column, prof_columns);
 
    double t;
    if (vftr_environment.show_overhead->value) {
-      vftr_prof_column_print (fp_log, prof_columns[i_column++], &t_overhead); 
+      vftr_prof_column_print (fp_log, prof_columns[i_column++], &t_overhead, NULL); 
       t = t_overhead / sampling_overhead_time * 100.0;
-      vftr_prof_column_print (fp_log, prof_columns[i_column++], &t); 
+      vftr_prof_column_print (fp_log, prof_columns[i_column++], &t, NULL); 
       t = t_excl > 0 ? t_overhead / t_excl : 0.0;
-      vftr_prof_column_print (fp_log, prof_columns[i_column++], &t); 
+      vftr_prof_column_print (fp_log, prof_columns[i_column++], &t, NULL); 
    }
    
    if (vftr_events_enabled) {
        	for (int i = 0; i < vftr_scenario_expr_n_formulas; i++) {
-   	   vftr_prof_column_print (fp_log, prof_columns[i_column++], &vftr_scenario_expr_formulas[i].value);
+   	   vftr_prof_column_print (fp_log, prof_columns[i_column++], &vftr_scenario_expr_formulas[i].value, NULL);
    	}
    }
    
-   vftr_prof_column_print (fp_log, prof_columns[i_column++], func_name);
+   vftr_prof_column_print (fp_log, prof_columns[i_column++], func_name, NULL);
    if (caller_name) {
-       vftr_prof_column_print (fp_log, prof_columns[i_column++], caller_name);
+       vftr_prof_column_print (fp_log, prof_columns[i_column++], caller_name, NULL);
    }
    
-   vftr_prof_column_print (fp_log, prof_columns[i_column++], &stack_id);
+   vftr_prof_column_print (fp_log, prof_columns[i_column++], &stack_id, NULL);
    fprintf (fp_log, "\n");
 }
 
