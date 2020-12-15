@@ -560,8 +560,8 @@ void vftr_set_summary_column_formats (bool print_mpi, int n_display_funcs, displ
     if (print_mpi) vftr_prof_column_init (headers[MPI], NULL, 2, COL_DOUBLE, &(*columns)[i_column++]);
     vftr_prof_column_init (headers[CALLS], NULL, 0, COL_INT, &(*columns)[i_column++]);
     if (print_mpi) {
-       vftr_prof_column_init (headers[TOT_SEND_BYTES], NULL, 2, COL_DOUBLE, &(*columns)[i_column++]);
-       vftr_prof_column_init (headers[TOT_RECV_BYTES], NULL, 2, COL_DOUBLE, &(*columns)[i_column++]);
+       vftr_prof_column_init (headers[TOT_SEND_BYTES], NULL, 0, COL_CHAR, &(*columns)[i_column++]);
+       vftr_prof_column_init (headers[TOT_RECV_BYTES], NULL, 0, COL_CHAR, &(*columns)[i_column++]);
     }
     vftr_prof_column_init (headers[T_AVG], NULL, 2, COL_DOUBLE, &(*columns)[i_column++]);
     vftr_prof_column_init (headers[T_MIN], NULL, 2, COL_DOUBLE, &(*columns)[i_column++]);
@@ -579,8 +579,10 @@ void vftr_set_summary_column_formats (bool print_mpi, int n_display_funcs, displ
        }
        vftr_prof_column_set_n_chars (&display_functions[i]->n_calls, &(*columns)[i_column++], &stat);
        if (print_mpi) {
-	  vftr_prof_column_set_n_chars (&display_functions[i]->mpi_tot_send_bytes, &(*columns)[i_column++], &stat);
-	  vftr_prof_column_set_n_chars (&display_functions[i]->mpi_tot_recv_bytes, &(*columns)[i_column++], &stat);
+	  char *foo = vftr_memory_unit_string (display_functions[i]->mpi_tot_send_bytes, 2);
+	  vftr_prof_column_set_n_chars (foo, &(*columns)[i_column++], &stat);  
+	  foo = vftr_memory_unit_string (display_functions[i]->mpi_tot_recv_bytes, 2);
+	  vftr_prof_column_set_n_chars (foo, &(*columns)[i_column++], &stat);
        } 
        double t = display_functions[i]->t_avg * 1e-6;
        vftr_prof_column_set_n_chars (&t, &(*columns)[i_column++], &stat);
@@ -738,9 +740,11 @@ void vftr_summary_print_line (FILE *fp, display_function_t *displ_f, column_t *c
    fprintf (fp, columns[i_column++].format, displ_f->n_calls);
    if (print_mpi) {
       fprintf (fp, "|");
-      fprintf (fp, columns[i_column++].format, displ_f->mpi_tot_send_bytes);
+      fprintf (fp, columns[i_column].format, vftr_memory_unit_string (displ_f->mpi_tot_send_bytes, columns[i_column].n_decimal_places));
+      i_column++;
       fprintf (fp, "|");
-      fprintf (fp, columns[i_column++].format, displ_f->mpi_tot_recv_bytes);
+      fprintf (fp, columns[i_column].format, vftr_memory_unit_string (displ_f->mpi_tot_recv_bytes, columns[i_column].n_decimal_places));
+      i_column++;
    }
    fprintf (fp, "|");
    fprintf (fp, columns[i_column++].format, displ_f->t_avg * 1e-6);
@@ -1154,6 +1158,7 @@ void vftr_print_function_statistics (FILE *fp_log, bool display_sync_time, int *
     for (int i = 0; i < n_display_funcs; i++) {
 
        if (display_functions[i]->n_calls > 0 && display_functions[i]->properly_terminated) {
+         if (vftr_mpirank == 0) vftr_summary_print_line (stdout, display_functions[i], columns, total_time, print_mpi_columns);
          // prepare the message size output
          char *send_unit_str;
          char *recv_unit_str;
@@ -1210,6 +1215,10 @@ void vftr_print_function_statistics (FILE *fp_log, bool display_sync_time, int *
   //Print a final separator line.
   for (int i = 0; i < n_spaces_tot; i++) fprintf (fp_log, "-");
   fprintf (fp_log, "\n");
+  if (vftr_mpirank == 0) {
+  for (int i = 0; i < table_width; i++) fprintf (stdout, "-");
+  fprintf (stdout, "\n");
+  }
 
   if (vftr_environment.print_stack_profile->value) {
 	// Next, we print the function stack trees. But first, we need to undo the sorting done before. 
@@ -1595,6 +1604,19 @@ void vftr_memory_unit(double *value, char **unit) {
          break;
    }
 }
+
+/**********************************************************************/
+
+char *vftr_memory_unit_string (double value, int n_decimal_places) {
+   char s[36], *s_unit;
+   double v = value;
+   vftr_memory_unit (&v, &s_unit);
+   int n = vftr_count_digits_double (v) + n_decimal_places + 1;
+   char f_tmp[16];
+   sprintf (f_tmp, "%%%d.%df %%s", n, n_decimal_places);
+   sprintf (s, f_tmp, v, s_unit);
+   return strdup (s);
+} 
 
 /**********************************************************************/
 
