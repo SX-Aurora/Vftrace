@@ -106,4 +106,6 @@ void vftr_memory_unit(double *value, char **unit);
 char *vftr_memory_unit_string (double value, int n_decimal_places);
 void vftr_time_unit (double *value, char **unit, bool for_html);
 
+void vftr_prof_column_print (FILE *fp, column_t c, void *value);
+
 #endif
