@@ -379,7 +379,6 @@ void vftr_stackid_list_add (int stack_id) {
 }
 
 void vftr_stackid_list_print (FILE *fp) {
-   fprintf (fp, "Print stack IDs: ");
    for (int i = 0; i < n_print_stackids; i++) {
       fprintf (fp, "%d ", print_stackid_list[i]);
    }
