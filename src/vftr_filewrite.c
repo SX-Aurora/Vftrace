@@ -1068,18 +1068,12 @@ void vftr_get_display_width (display_function_t **display_functions,
 
 /**********************************************************************/
 
-//void vftr_print_function_statistics (FILE *fp_log, bool display_sync_time, 
-//				     char *display_function_names[], int n_display_functions) {
 void vftr_print_function_statistics (FILE *fp_log, bool display_sync_time, int *func_indices, int n_indices) {
 
     display_function_t **display_functions =
-			//(display_function_t**) malloc (n_display_functions * sizeof(display_function_t*));
 			(display_function_t**) malloc (n_indices * sizeof(display_function_t*));
 
-
-    //for (int i = 0; i < n_display_functions; i++) {
     int i_disp_f = 0;
-    //printf ("Count display functions\n");
     for (int i = 0; i < n_indices; i++) {
         bool name_already_there = false;
 	int i_func = func_indices[i];
@@ -1092,7 +1086,6 @@ void vftr_print_function_statistics (FILE *fp_log, bool display_sync_time, int *
 	if (name_already_there) continue;
 	display_functions[i_disp_f] = (display_function_t*) malloc (sizeof(display_function_t));
 	display_functions[i_disp_f]->func_name = strdup(vftr_gStackinfo[i_func].name);
-	//vftr_find_function_in_stack (display_functions[i]->func_name, &stack_indices, &n_stack_indices, true);
 	vftr_is_traceable_mpi_function (display_functions[i_disp_f]->func_name,
 				        &(display_functions[i_disp_f]->is_mpi), &(display_functions[i_disp_f]->is_collective_mpi));
         display_functions[i_disp_f]->i_orig = i_disp_f;
@@ -1100,22 +1093,13 @@ void vftr_print_function_statistics (FILE *fp_log, bool display_sync_time, int *
     }
 
     int n_display_funcs = i_disp_f;
-    //printf ("DO REALLOC: %d\n", vftr_mpirank);
-    //display_functions = (display_function_t **) realloc(display_functions, n_display_funcs * sizeof(display_function_t*));
-    //printf ("HAVE REALLOCED: %d\n", vftr_mpirank);
-    
     double total_time = 0;
-    //for (int i = 0; i < n_display_functions; i++) {
-    //char **display_function_names = (char**)malloc (n_indices * sizeof(char*));
-    //for (int i = 0; i < n_indices; i++) {
     for (int i = 0; i < n_display_funcs; i++) {
-       //vftr_evaluate_display_function (display_function_names[i], &(display_functions[i]), display_sync_time);
        vftr_evaluate_display_function (display_functions[i]->func_name, &(display_functions[i]), display_sync_time);
        if (!display_functions[i]->properly_terminated) continue;
        total_time += display_functions[i]->this_mpi_time * 1e-6;
     }
 
-    //qsort ((void*)display_functions, (size_t)n_indices,
     qsort ((void*)display_functions, (size_t)n_display_funcs,
 	    sizeof (display_function_t *), vftr_compare_display_functions_tavg);
 
@@ -1123,47 +1107,8 @@ void vftr_print_function_statistics (FILE *fp_log, bool display_sync_time, int *
     fprintf (fp_log, "Total time spent in MPI for rank %d: %lf s\n", vftr_mpirank, total_time);
     fprintf (fp_log, "Imbalance computed as: max (T - T_avg)\n");
 
-    // Most of this code deals with the determination of the column widths.
-    // vftr_get_display_width loops over all display_functions and determines
-    // the maximum number of digits or characters required to display the
-    // corresponding column. 
-    int n_func, n_calls, n_t_avg, n_t_min, n_t_max, n_imba, n_t;
-    //vftr_get_display_width (display_functions, n_indices, 5,
-    vftr_get_display_width (display_functions, n_display_funcs, 5,
-	                    &n_func, &n_calls, &n_t_avg, &n_t_min, &n_t_max, &n_imba, &n_t);
-
-    // The following headers appear in the function table but also define
-    // the minimum widths for each column. Below, we check if the previously
-    // computed widths are below these default values and increase them
-    // if necessary. 
-    // One complication arises through the display of the percentage of the time
-    // spent in the synthetic synchronization barrier for collective MPI calls.
-    // It is printed directly behind the associated absolute time in brackets "(%...)",
-    // requiring 8 characters. This value is added to the column width when 
-    // comparing to the default column widths.
-    const char *headers[10] = {"Function", "%MPI", "Calls",
-                              "Total send ", "Total recv.",
-			      "Avg. time [s]", "Min. time [s]", "Max. time [s]",
-			      "Imbalance", "This rank [s]"};
-    enum column_ids {FUNC, MPI, CALLS, TOT_SEND_BYTES, TOT_RECV_BYTES, T_AVG, T_MIN, T_MAX, IMBA, THIS_T};
-
-    // Note that there is no treatment of the width of the %MPI column, since the value
-    // inside can never exceed 99.99%. Therefore, it has a fixed length of 5.
-    int n_func_0 = strlen(headers[FUNC]);
-    int n_calls_0 = strlen(headers[CALLS]);
-    int n_tot_send_bytes = strlen(headers[TOT_SEND_BYTES]);
-    int n_tot_recv_bytes = strlen(headers[TOT_RECV_BYTES]);
-    int n_t_avg_0 = strlen (headers[T_AVG]);
-    int n_t_min_0 = strlen (headers[T_MIN]);
-    int n_t_max_0 = strlen (headers[T_MAX]);
-    int n_imba_0 = strlen (headers[IMBA]);
-    int n_t_0 = strlen(headers[THIS_T]);
-
-    int add_sync_spaces = display_sync_time ? 8 : 0;
-
     bool print_mpi_columns = true;
     int n_columns = print_mpi_columns ? 10 : 7;
-
     column_t *columns = (column_t*) malloc (n_columns * sizeof(column_t));
     vftr_set_summary_column_formats (print_mpi_columns, n_display_funcs, display_functions, &columns, total_time);
     for (int i = 0; i < n_columns; i++) {
@@ -1171,131 +1116,30 @@ void vftr_print_function_statistics (FILE *fp_log, bool display_sync_time, int *
     }
    
     int table_width = vftr_get_tablewidth_from_columns (columns, n_columns, true); 
-    if (vftr_mpirank == 0) {
-      vftr_summary_print_header (stdout, columns, table_width, print_mpi_columns);
-    }
-
-    if (n_func < n_func_0) n_func = n_func_0;
-    if (n_calls < n_calls_0) n_calls = n_calls_0;
-    if (n_t_avg + add_sync_spaces < n_t_avg_0) {
-	n_t_avg = n_t_avg_0;
-    } else {
-	n_t_avg += add_sync_spaces;
-    }
-    if (n_t_min + add_sync_spaces < n_t_min_0) {
-	n_t_min = n_t_min_0;
-    } else {
-	n_t_min += add_sync_spaces;
-    }
-    if (n_t_max + add_sync_spaces < n_t_max_0) {
-	n_t_max = n_t_max_0;
-    } else {
-	n_t_max += add_sync_spaces;
-    }
-    if (n_imba < n_imba_0) n_imba = n_imba_0;
-    if (n_t + add_sync_spaces < n_t_0) {
-	n_t = n_t_0;
-    } else {
-	n_t += add_sync_spaces;
-    }
-
-    // We compute the total width of the MPI table to print separator lines.
-    // There are the widths computed above, as well as the width of the MPI field,
-    // which is 6. Additionally, there are 11 "|" characters and 20 spaces around them.
-    // So in total, we have a fixed summand of 11 + 20 = 31.
-    int n_spaces_tot = n_func + 6 + n_calls + n_tot_send_bytes + n_tot_recv_bytes + n_t_avg + n_t_min + n_t_max + n_imba + n_t + 31;
-
-    // Print a separator line ("----------"), followed by the table header, followed
-    // by another separator line.
-    for (int i = 0; i < n_spaces_tot; i++) fprintf (fp_log, "-");
-    fprintf (fp_log, "\n");
-    fprintf (fp_log, "| %*s | %*s | %*s | %*s | %*s | %*s | %*s | %*s | %*s | %*s |\n",
-	     n_func, headers[FUNC], 6, headers[MPI], n_calls, headers[CALLS],
-             n_tot_send_bytes, headers[TOT_SEND_BYTES], n_tot_recv_bytes, headers[TOT_RECV_BYTES],
-	     n_t_avg, headers[T_AVG],
-	     n_t_min, headers[T_MIN], n_t_max, headers[T_MAX],
-	     n_imba, headers[IMBA], n_t, headers[THIS_T]);
-    for (int i = 0; i < n_spaces_tot; i++) fprintf (fp_log, "-");
-    fprintf (fp_log, "\n");
+    vftr_summary_print_header (fp_log, columns, table_width, print_mpi_columns);
 
     // Print all the display functions, but omit those without any calls.
-    //for (int i = 0; i < n_indices; i++) {
     for (int i = 0; i < n_display_funcs; i++) {
-
        if (display_functions[i]->n_calls > 0 && display_functions[i]->properly_terminated) {
-         if (vftr_mpirank == 0) vftr_summary_print_line (stdout, display_functions[i], columns, total_time, print_mpi_columns);
-         // prepare the message size output
-         char *send_unit_str;
-         char *recv_unit_str;
-         vftr_memory_unit(&(display_functions[i]->mpi_tot_send_bytes), &send_unit_str);
-         vftr_memory_unit(&(display_functions[i]->mpi_tot_recv_bytes), &recv_unit_str);
-	   
-	
-	if (display_functions[i]->t_sync_avg > 0) {
-	  // There are synchronization times for this function. We make space for the additional
-	  // field "(xx.xx%)". Note that we need to subtract add_sync_spaces from the column widths.
-          fprintf (fp_log, "| %*s | %6.2f | %*d | %*.2f %s | %*.2f %s | %*.5f(%5.2f%%) | %*.5f(%5.2f%%) | %*.5f(%5.2f%%) | %*.5f | %*.5f(%5.2f%%) |\n",
-		   n_func, display_functions[i]->func_name,
- 	  	   (display_functions[i]->this_mpi_time * 1e-6) / total_time * 100,
-		   n_calls, display_functions[i]->n_calls,
-                   n_tot_send_bytes-4, display_functions[i]->mpi_tot_send_bytes, send_unit_str,
-                   n_tot_recv_bytes-4, display_functions[i]->mpi_tot_recv_bytes, recv_unit_str,
-		   n_t_avg - add_sync_spaces, display_functions[i]->t_avg * 1e-6, (double)display_functions[i]->t_sync_avg / (double)display_functions[i]->t_avg * 100,
-		   n_t_min - add_sync_spaces, display_functions[i]->t_min * 1e-6, (double)display_functions[i]->t_sync_min / (double)display_functions[i]->t_min * 100,
-		   n_t_max - add_sync_spaces, display_functions[i]->t_max * 1e-6, (double)display_functions[i]->t_sync_max / (double)display_functions[i]->t_max * 100,
-		   n_imba, display_functions[i]->imbalance,
-		   n_t - add_sync_spaces, display_functions[i]->this_mpi_time * 1e-6, (double)display_functions[i]->this_sync_time / (double)display_functions[i]->this_mpi_time * 100);
-	} else if (display_sync_time){
-	   // This function does not have synchronization times, but others have. We take into
-	   // account the synchronization fields "(xx.xx%)" of other functions by adding
-	   // add_sync_spaces number of spaces. 
-	   fprintf (fp_log, "| %*s | %6.2f | %*d | %*.2f %s | %*.2f %s | %*.5f         | %*.5f         | %*.5f         | %*.5f | %*.5f         |\n",
-		    n_func, display_functions[i]->func_name,
-		    (display_functions[i]->this_mpi_time * 1e-6) / total_time * 100,
-		    n_calls, display_functions[i]->n_calls,
-                    n_tot_send_bytes-4, display_functions[i]->mpi_tot_send_bytes, send_unit_str,
-                    n_tot_recv_bytes-4, display_functions[i]->mpi_tot_recv_bytes, recv_unit_str,
- 	            n_t_avg - add_sync_spaces, display_functions[i]->t_avg * 1e-6,
-		    n_t_min - add_sync_spaces, display_functions[i]->t_min * 1e-6,
-		    n_t_max - add_sync_spaces, display_functions[i]->t_max * 1e-6,
-		    n_imba, display_functions[i]->imbalance,
-		    n_t - add_sync_spaces, display_functions[i]->this_mpi_time * 1e-6);
-
-	} else {
-           // No display function has synchronization times, so only the absolute times are printed.
-	   fprintf (fp_log, "| %*s | %6.2f | %*d | %*.2f %s | %*.2f %s | %*.5f | %*.5f | %*.5f | %*.5f | %*.5f |\n",
-		    n_func, display_functions[i]->func_name,
-		    (display_functions[i]->this_mpi_time * 1e-6) / total_time * 100,
-		    n_calls, display_functions[i]->n_calls,
-                    n_tot_send_bytes-4, display_functions[i]->mpi_tot_send_bytes, send_unit_str,
-                    n_tot_recv_bytes-4, display_functions[i]->mpi_tot_recv_bytes, recv_unit_str,
- 	            n_t_avg, display_functions[i]->t_avg * 1e-6,
-		    n_t_min, display_functions[i]->t_min * 1e-6,
-		    n_t_max, display_functions[i]->t_max * 1e-6,
-		    n_imba, display_functions[i]->imbalance,
-		    n_t, display_functions[i]->this_mpi_time * 1e-6);
+          vftr_summary_print_line (fp_log, display_functions[i], columns, total_time, print_mpi_columns);
        }
-    }
-  }
-  //Print a final separator line.
-  for (int i = 0; i < n_spaces_tot; i++) fprintf (fp_log, "-");
-  fprintf (fp_log, "\n");
-  if (vftr_mpirank == 0) {
-     for (int i = 0; i < table_width; i++) fprintf (stdout, "-");
-     fprintf (stdout, "\n");
-  }
+     }
 
-  if (vftr_environment.print_stack_profile->value) {
+    //Print a final separator line.
+    if (vftr_mpirank == 0) {
+       for (int i = 0; i < table_width; i++) fprintf (fp_log, "-");
+       fprintf (fp_log, "\n");
+    }
+
+    if (vftr_environment.print_stack_profile->value) {
 	// Next, we print the function stack trees. But first, we need to undo the sorting done before. 
 	// This is because inside of vftr_print_function_stack, the run times of individual stacks are
 	// gathered across all ranks. If the order of the display functions is not the same for all ranks,
 	// which can happen for example when one of them is an I/O rank, the gathered values can correspond
 	// to different functions.  	
 	//
-	//qsort ((void*)display_functions, (size_t)n_indices,
 	qsort ((void*)display_functions, (size_t)n_display_funcs,
 	       sizeof (display_function_t *), vftr_compare_display_functions_iorig);
-
 
 	if (vftr_environment.create_html->value) {
 	   if (vftr_mpirank == 0) {
@@ -1303,7 +1147,6 @@ void vftr_print_function_statistics (FILE *fp_log, bool display_sync_time, int *
 	   }
         }
 
-  	//for (int i = 0; i < n_indices; i++) {
   	for (int i = 0; i < n_display_funcs; i++) {
                 if (!display_functions[i]->properly_terminated) continue;
 		if (display_functions[i]->n_stack_indices == 0) {;
@@ -1353,10 +1196,8 @@ void vftr_print_mpi_statistics (FILE *fp) {
               vftr_stackid_list_add (i);
            }
        }
-    //vftr_stackid_list_print (stdout);
 
     vftr_print_function_statistics (fp, vftr_environment.mpi_show_sync_time->value,
-				    //vftr_mpi_collective_function_names, vftr_n_collective_mpi_functions);
 				    print_stackid_list, n_print_stackids);
 }
 #endif
