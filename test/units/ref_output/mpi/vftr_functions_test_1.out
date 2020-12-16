@@ -11,7 +11,6 @@ Function: init_vftr
 	Group ID: -1
 	Recursion depth: 0
 	StackHash: 15403095947709970261
-	Exclude: 0
 Function: test_1
 	Called from: init_vftr
 	Currently calling: -/-
@@ -23,4 +22,3 @@ Function: test_1
 	Group ID: -1
 	Recursion depth: 0
 	StackHash: 12005762785240717593
-	Exclude: 0
