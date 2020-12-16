@@ -336,10 +336,10 @@ void vftr_write_profile () {
     evtcounter_t    *evc;
     FILE           *fp = vftr_vfd_file;
 
-    function_t   **funcTable;
+    function_t   **func_table;
 
     if (!vftr_stackscount)return;
-    funcTable = vftr_func_table;
+    func_table = vftr_func_table;
 
     ec = (unsigned long long *) malloc (vftr_n_hw_obs * sizeof(long long));
     for (int j = 0; j < vftr_n_hw_obs; j++) {
@@ -350,8 +350,8 @@ void vftr_write_profile () {
  
     /* Sum all cycles and counts */
     for (int i = 0; i < vftr_stackscount; i++) {
-	if (funcTable[i] && funcTable[i]->return_to && funcTable[i]->prof_current.calls) {
-            profdata_t *prof_current = &funcTable[i]->prof_current;
+	if (func_table[i] && func_table[i]->return_to && func_table[i]->prof_current.calls) {
+            profdata_t *prof_current = &func_table[i]->prof_current;
 	    total_cycles += prof_current->cycles;
             if (!prof_current->event_count) continue;
             for (int j = 0; j < vftr_n_hw_obs; j++) {
@@ -375,8 +375,8 @@ void vftr_write_profile () {
                                                        fp );  /* Raw total event counts */
 
     for (int i = 0; i < vftr_stackscount; i++) {
-        if (!funcTable[i]) continue;
-        profdata_t *prof_current  = &funcTable[i]->prof_current;
+        if (!func_table[i]) continue;
+        profdata_t *prof_current  = &func_table[i]->prof_current;
 	calls  = prof_current->calls ;
 	cycles = prof_current->calls ? prof_current->cycles : 0;
         fwrite (&calls, sizeof(long long), 1, fp);  /* Calls */
@@ -435,18 +435,18 @@ void vftr_get_stack_times (profdata_t prof_current, profdata_t prof_previous, do
 
 /**********************************************************************/
 
-void vftr_fill_func_indices_up_to_truncate (function_t **funcTable, double runtime, int *indices) {
+void vftr_fill_func_indices_up_to_truncate (function_t **func_table, double runtime, int *indices) {
 	double cumulative_time = 0.;
     	double max_cumulative_time = 99.;
 	double t_excl, t_incl, t_part;
 	int j = 0;
 	cumulative_time = 0.;
 	for (int i = 0; i < vftr_stackscount; i++) {
-		if (funcTable[i] == NULL) continue;
-		profdata_t prof_current = funcTable[i]->prof_current;
-		profdata_t prof_previous = funcTable[i]->prof_previous;
+		if (func_table[i] == NULL) continue;
+		profdata_t prof_current = func_table[i]->prof_current;
+		profdata_t prof_previous = func_table[i]->prof_previous;
 		/* If function has a caller and has been called */
-		if (!(funcTable[i]->return_to && prof_current.calls)) continue;
+		if (!(func_table[i]->return_to && prof_current.calls)) continue;
 		indices[j++] = i;
 		vftr_get_stack_times (prof_current, prof_previous, runtime, &t_excl, &t_incl, &t_part);
 		cumulative_time += t_part;
@@ -456,17 +456,17 @@ void vftr_fill_func_indices_up_to_truncate (function_t **funcTable, double runti
 
 /**********************************************************************/
 
-int vftr_count_func_indices_up_to_truncate (function_t **funcTable, double runtime) {
+int vftr_count_func_indices_up_to_truncate (function_t **func_table, double runtime) {
 	int n_indices = 0;
 	double cumulative_time = 0.;
     	double max_cumulative_time = 99.;
 	double t_excl, t_incl, t_part;
 	for (int i = 0; i < vftr_stackscount; i++) {
-		if (funcTable[i] == NULL) continue;
-		profdata_t prof_current = funcTable[i]->prof_current;
-		profdata_t prof_previous = funcTable[i]->prof_previous;
+		if (func_table[i] == NULL) continue;
+		profdata_t prof_current = func_table[i]->prof_current;
+		profdata_t prof_previous = func_table[i]->prof_previous;
 		/* If function has a caller and has been called */
-		if (!(funcTable[i]->return_to && prof_current.calls)) continue;
+		if (!(func_table[i]->return_to && prof_current.calls)) continue;
 		
 		n_indices++;
 
@@ -651,7 +651,7 @@ void vftr_set_summary_column_formats (bool print_mpi, int n_display_funcs, displ
 
 /**********************************************************************/
 
-void vftr_set_proftab_column_formats (function_t **funcTable,
+void vftr_set_proftab_column_formats (function_t **func_table,
 	double runtime, double sampling_overhead_time, 
 	int n_funcs, int *func_indices, column_t **columns) {
 	int i_column = 0;
@@ -694,12 +694,13 @@ void vftr_set_proftab_column_formats (function_t **funcTable,
         int stat;
         for (int i = 0; i < n_funcs; i++) {
             int i_func = func_indices[i];
-            profdata_t prof_current = funcTable[i_func]->prof_current;
-            profdata_t prof_previous = funcTable[i_func]->prof_previous;
+	    if (func_table[i_func]->open) continue;
+            profdata_t prof_current = func_table[i_func]->prof_current;
+            profdata_t prof_previous = func_table[i_func]->prof_previous;
             double t_excl, t_incl, t_part, t_overhead;
             vftr_get_stack_times (prof_current, prof_previous, runtime, &t_excl, &t_incl, &t_part);
             t_cum += t_part;
-            t_overhead = (double)funcTable[i_func]->overhead * 1e-6;
+            t_overhead = (double)func_table[i_func]->overhead * 1e-6;
             int n_calls = prof_current.calls - prof_previous.calls;
             i_column = 0;
             vftr_prof_column_set_n_chars (&n_calls, NULL, &(*columns)[i_column++], &stat);
@@ -727,8 +728,8 @@ void vftr_set_proftab_column_formats (function_t **funcTable,
 	   	}
 	    }
 
-            vftr_prof_column_set_n_chars (funcTable[i_func]->name, NULL, &(*columns)[i_column++], &stat);
-            vftr_prof_column_set_n_chars (funcTable[i_func]->return_to->name, NULL, &(*columns)[i_column++], &stat);
+            vftr_prof_column_set_n_chars (func_table[i_func]->name, NULL, &(*columns)[i_column++], &stat);
+            vftr_prof_column_set_n_chars (func_table[i_func]->return_to->name, NULL, &(*columns)[i_column++], &stat);
 	}
 	columns[0]->n_chars++;
 }
@@ -1227,7 +1228,7 @@ void vftr_print_profile_summary (FILE *fp_log, function_t **func_table, double t
 
         for (int i = 0; i < vftr_stackscount; i++) {
     	   if (func_table[i] == NULL) continue;
-    	   if (func_table[i]->return_to && func_table[i]->prof_current.calls) {
+    	   if (func_table[i]->return_to && !func_table[i]->open && func_table[i]->prof_current.calls) {
               profdata_t *prof_current  = &func_table[i]->prof_current;
               profdata_t *prof_previous = &func_table[i]->prof_previous;
     	      total_cycles += prof_current->cycles - prof_previous->cycles;
@@ -1386,6 +1387,7 @@ void vftr_print_profile (FILE *fp_log, int *n_func_indices, long long time0) {
     double cumulative_time = 0.;
     for (int i = 0; i < *n_func_indices; i++) {
        int i_func = func_indices[i];
+       if (func_table[i_func]->open) continue;
        int n_calls;
        double t_excl, t_incl, t_part, t_overhead;
        vftr_compute_line_content (func_table[i_func], application_runtime, sampling_overhead_time,
