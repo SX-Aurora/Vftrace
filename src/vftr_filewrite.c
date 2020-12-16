@@ -761,25 +761,25 @@ void vftr_summary_print_header (FILE *fp, column_t *columns, int table_width, bo
    fprintf (fp, "\n");
    if (print_mpi) {
       fprintf (fp, "| %*s | %*s | %*s | %*s | %*s | %*s | %*s | %*s | %*s | %*s |\n",
-	       columns[FUNC].n_chars, columns[FUNC].header,
-               columns[MPI].n_chars, columns[MPI].header,
-	       columns[CALLS].n_chars, columns[CALLS].header,
- 	       columns[TOT_SEND_BYTES].n_chars, columns[TOT_SEND_BYTES].header,
-	       columns[TOT_RECV_BYTES].n_chars, columns[TOT_RECV_BYTES].header,
-	       columns[T_AVG].n_chars, columns[T_AVG].header,
-	       columns[T_MIN].n_chars, columns[T_MIN].header,
-	       columns[T_MAX].n_chars, columns[T_MAX].header,
-	       columns[IMBA].n_chars, columns[IMBA].header,
-	       columns[THIS_T].n_chars, columns[THIS_T].header);
+	       columns[0].n_chars, columns[0].header,
+               columns[1].n_chars, columns[1].header,
+	       columns[2].n_chars, columns[2].header,
+ 	       columns[3].n_chars, columns[3].header,
+	       columns[4].n_chars, columns[4].header,
+	       columns[5].n_chars, columns[5].header,
+	       columns[6].n_chars, columns[6].header,
+	       columns[7].n_chars, columns[7].header,
+	       columns[8].n_chars, columns[8].header,
+	       columns[9].n_chars, columns[9].header);
    } else {
       fprintf (fp, "| %*s | %*s | %*s | %*s | %*s | %*s | %*s |\n",
-	       columns[FUNC].n_chars, columns[FUNC].header,
-	       columns[CALLS].n_chars, columns[CALLS].header,
-	       columns[T_AVG].n_chars, columns[T_AVG].header,
-	       columns[T_MIN].n_chars, columns[T_MIN].header,
-	       columns[T_MAX].n_chars, columns[T_MAX].header,
-	       columns[IMBA].n_chars, columns[IMBA].header,
-	       columns[THIS_T].n_chars, columns[THIS_T].header);
+	       columns[0].n_chars, columns[0].header,
+	       columns[1].n_chars, columns[1].header,
+	       columns[2].n_chars, columns[2].header,
+	       columns[3].n_chars, columns[3].header,
+	       columns[4].n_chars, columns[4].header,
+	       columns[5].n_chars, columns[5].header,
+	       columns[6].n_chars, columns[6].header);
    }
    for (int i = 0; i < table_width; i++) fprintf (fp, "-");
    fprintf (fp, "\n");
@@ -1067,6 +1067,7 @@ void vftr_print_function_statistics (FILE *fp_log, bool display_sync_time, int *
 			(display_function_t**) malloc (n_indices * sizeof(display_function_t*));
 
     int i_disp_f = 0;
+    bool print_mpi_columns = false;
     for (int i = 0; i < n_indices; i++) {
         bool name_already_there = false;
 	int i_func = func_indices[i];
@@ -1081,6 +1082,7 @@ void vftr_print_function_statistics (FILE *fp_log, bool display_sync_time, int *
 	display_functions[i_disp_f]->func_name = strdup(vftr_gStackinfo[i_func].name);
 	vftr_is_traceable_mpi_function (display_functions[i_disp_f]->func_name,
 				        &(display_functions[i_disp_f]->is_mpi), &(display_functions[i_disp_f]->is_collective_mpi));
+	print_mpi_columns |= display_functions[i_disp_f]->is_mpi;
         display_functions[i_disp_f]->i_orig = i_disp_f;
 	i_disp_f++;
     }
@@ -1100,7 +1102,6 @@ void vftr_print_function_statistics (FILE *fp_log, bool display_sync_time, int *
     fprintf (fp_log, "Total time spent in MPI for rank %d: %lf s\n", vftr_mpirank, total_time);
     fprintf (fp_log, "Imbalance computed as: max (T - T_avg)\n");
 
-    bool print_mpi_columns = true;
     int n_columns = print_mpi_columns ? 10 : 7;
     column_t *columns = (column_t*) malloc (n_columns * sizeof(column_t));
     vftr_set_summary_column_formats (print_mpi_columns, n_display_funcs, display_functions, &columns, total_time);
