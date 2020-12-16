@@ -370,6 +370,8 @@ void vftr_stackid_list_init () {
    print_stackid_list = (int*)malloc(STACKID_LIST_INC * sizeof(int));
 }
 
+/**********************************************************************/
+
 void vftr_stackid_list_add (int stack_id) {
    if (n_print_stackids + 1 > stackid_list_size) {
       stackid_list_size += STACKID_LIST_INC;
@@ -378,12 +380,16 @@ void vftr_stackid_list_add (int stack_id) {
    print_stackid_list[n_print_stackids++] = stack_id;
 }
 
+/**********************************************************************/
+
 void vftr_stackid_list_print (FILE *fp) {
    for (int i = 0; i < n_print_stackids; i++) {
       fprintf (fp, "%d ", print_stackid_list[i]);
    }
    fprintf (fp, "\n");
 }
+
+/**********************************************************************/
 
 void vftr_stackid_list_finalize () {
    free (print_stackid_list);

@@ -128,9 +128,8 @@ bool vftr_is_collective_mpi_function (char *func_name) {
    return false;
 }
 
-void vftr_is_traceable_mpi_function (char *func_name, bool *is_mpi, bool *is_collective) {
+void vftr_is_traceable_mpi_function (char *func_name, bool *is_mpi) {
    *is_mpi = false;
-   *is_collective = false;
    if (!strncmp (func_name, "mpi_", 4)) {
       for (int i = 0; i < vftr_n_supported_mpi_functions; i++) {
          if (!strcmp (func_name, vftr_supported_mpi_function_names[i])) {
@@ -138,9 +137,6 @@ void vftr_is_traceable_mpi_function (char *func_name, bool *is_mpi, bool *is_col
 	    break;
          }
       }
-   }
-   if (*is_mpi) {
-      *is_collective = vftr_is_collective_mpi_function (func_name);
    }
    return;
 }
@@ -566,7 +562,6 @@ void vftr_prof_column_set_format (column_t *c) {
 	      break;
 	   case COL_SYNC:
 	      if (c->n_chars_extra > 0) {
-		 if (vftr_mpirank == 0) printf ("FOO:  %d %d %d\n", c->n_chars - c->n_chars_extra - 3, c->n_decimal_places, c->n_chars_extra);
                  sprintf (c->format, " %%%d.%df(%%%d.2f%%) ", c->n_chars - c->n_chars_extra - 3, c->n_decimal_places, c->n_chars_extra);
 	      } else {
                  sprintf (c->format, " %%%d.%df ", c->n_chars, c->n_decimal_places);
@@ -733,7 +728,6 @@ void vftr_set_proftab_column_formats (function_t **funcTable,
 	    }
 
             vftr_prof_column_set_n_chars (funcTable[i_func]->name, NULL, &(*columns)[i_column++], &stat);
-	    //if (vftr_mpirank == 0) printf ("HUHU: %d %s %d\n", i_func, funcTable[i_func]->name, columns[i_column-1]->n_chars);
             vftr_prof_column_set_n_chars (funcTable[i_func]->return_to->name, NULL, &(*columns)[i_column++], &stat);
 	}
 	columns[0]->n_chars++;
@@ -1080,8 +1074,7 @@ void vftr_print_function_statistics (FILE *fp_log, bool display_sync_time, int *
 	if (name_already_there) continue;
 	display_functions[i_disp_f] = (display_function_t*) malloc (sizeof(display_function_t));
 	display_functions[i_disp_f]->func_name = strdup(vftr_gStackinfo[i_func].name);
-	vftr_is_traceable_mpi_function (display_functions[i_disp_f]->func_name,
-				        &(display_functions[i_disp_f]->is_mpi), &(display_functions[i_disp_f]->is_collective_mpi));
+	vftr_is_traceable_mpi_function (display_functions[i_disp_f]->func_name, &(display_functions[i_disp_f]->is_mpi));
 	print_mpi_columns |= display_functions[i_disp_f]->is_mpi;
         display_functions[i_disp_f]->i_orig = i_disp_f;
 	i_disp_f++;
