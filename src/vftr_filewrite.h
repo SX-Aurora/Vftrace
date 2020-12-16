@@ -28,15 +28,17 @@ extern long vftr_admin_offset;
 extern long vftr_samples_offset;
 
 enum column_data_type {COL_INT, COL_DOUBLE, COL_CHAR, COL_MEM, COL_SYNC};
+enum separator_t {SEP_NONE, SEP_MID, SEP_LAST};
 
 typedef struct column {
-	int type;
+	int col_type;
 	char *header;
    	char *group_header;
 	int n_chars;
 	int n_chars_extra;
 	int n_decimal_places;
 	char format[16];
+	int separator_type;
 } column_t;
 
 typedef struct format_t {
