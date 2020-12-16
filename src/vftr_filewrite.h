@@ -36,7 +36,7 @@ typedef struct column {
 	int n_chars;
 	int n_chars_extra;
 	int n_decimal_places;
-	char format[10];
+	char format[16];
 } column_t;
 
 typedef struct format_t {
