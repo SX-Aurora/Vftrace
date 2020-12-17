@@ -21,18 +21,6 @@
 
 #include <time.h>
 
-typedef struct CallsTime {
-    long long calls;
-    float     time;
-} callsTime_t;
-
-typedef struct CallsTimeRange {
-    int       stackIndex;
-    long long minMPIcalls, maxMPIcalls, avgMPIcalls;
-    float     minMPItime, maxMPItime, avgMPItime;
-    int       minMPIindxc, maxMPIindxc, minMPIindxt, maxMPIindxt;
-} callsTimeRange_t;
-
 // global sample timer
 extern long long vftr_prevsampletime;
 extern long long vftr_nextsampletime;

@@ -36,7 +36,6 @@ libvftrace_la_SOURCES = demangle.cpp \
 		       vftr_regex.c \
 	 	       vftr_environment.c \
 		       vftr_signals.c \
-		       vftr_loadbalance.c \
 		       vftr_browse.c \
 		       vftrace_mod.F90
 

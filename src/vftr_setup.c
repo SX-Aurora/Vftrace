@@ -38,7 +38,6 @@
 #include "vftr_signals.h"
 #include "vftr_stacks.h"
 #include "vftr_hooks.h"
-#include "vftr_loadbalance.h"
 #include "vftr_timer.h"
 #include "vftr_functions.h"
 
@@ -321,7 +320,6 @@ void vftr_finalize() {
 	vftr_strip_all_module_names ();
     }
     
-    bool valid_loadbalance_table = !vftr_normalize_stacks();
     vftr_calc_tree_format (vftr_froots);
 
     vftr_print_profile (vftr_log, &ntop, vftr_get_runtime_usec());
@@ -333,40 +331,7 @@ void vftr_finalize() {
  
     funcTable = vftr_func_table;
 
-    callsTime_t **loadbalance_info;
-    if (valid_loadbalance_table) {
-	loadbalance_info = vftr_get_loadbalance_info( funcTable );
-    }
-
-    bool is_parallel = vftr_mpisize > 1;
-    if (is_parallel && vftr_mpirank == 0 && valid_loadbalance_table) {
-        int *loadIDs = (int *) malloc (vftr_gStackscount * sizeof(int));
-        int nLoadIDs;
-	int group_base, group_size;
-        if (vftr_environment.print_loadinfo_for->set) {
-	    char *vftr_mpi_groups = vftr_environment.print_loadinfo_for->value;
-            while (*vftr_mpi_groups) {
-                char *p;
-		// Loop to the end of the group, indicated by ","
-                for (p = vftr_mpi_groups; *p && *p != ','; p++);
-                sscanf (vftr_mpi_groups, "%d:%d", &group_base, &group_size);
-		// Is it guaranteed to be <= 0 if no group size is given? 
-                if (group_size <= 0) break;
-                vftr_print_loadbalance (loadbalance_info, group_base, group_size, vftr_log,
-                                        loadIDs, &nLoadIDs);
-                vftr_print_global_stacklist (vftr_log);
-	        // Check if there is anything behind the comma of the environment variable. If so, proceed.
-                vftr_mpi_groups = *p ? p + 1 : p;
-            }
-        } else {
-            vftr_print_loadbalance (loadbalance_info, 0, vftr_mpisize, vftr_log, loadIDs, &nLoadIDs);
-            vftr_print_global_stacklist (vftr_log);
-        }
-        if (valid_loadbalance_table) free (*loadbalance_info);
-    }
-
     if (vftr_profile_wanted) {
-    //if (vftr_profile_wanted && valid_loadbalance_table) {
         vftr_print_global_stacklist(vftr_log);
         vftr_print_local_demangled( vftr_func_table, vftr_log, ntop );
     }
