@@ -61,7 +61,6 @@ char *vftr_strip_module_name (char *base_name) {
 			has_module_token = (tmp[1] == 'M' || tmp[1] == 'E') && tmp[2] == 'P' && tmp[3] == '_';
 			if (has_module_token) {
 				func_name = tmp + 4;
-				break;
 			}
 		}
 		tmp++;
