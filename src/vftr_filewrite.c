@@ -1364,9 +1364,9 @@ void vftr_print_profile (FILE *fp_log, int *n_func_indices, long long time0) {
     fprintf (fp_log, ":\n\n");
 
     long long tt = total_runtime_usec - sampling_overhead_time_usec;
-    *n_func_indices = vftr_count_func_indices_up_to_truncate (func_table, tt * 1e-6);
+    *n_func_indices = vftr_count_func_indices_up_to_truncate (func_table, tt);
     int *func_indices = (int *)malloc (*n_func_indices * sizeof(int));
-    vftr_fill_func_indices_up_to_truncate (func_table, application_runtime_usec * 1e-6, func_indices);
+    vftr_fill_func_indices_up_to_truncate (func_table, tt, func_indices);
 
     // Number of columns. Default: nCalls, exclusive & inclusive time, %abs, %cum,
     // function & caller name and stack ID (i.e. 8 columns). 
