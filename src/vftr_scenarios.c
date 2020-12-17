@@ -364,8 +364,6 @@ void vftr_scenario_expr_evaluate_all (double runtime, unsigned long long cycles)
 static void vftr_scenario_get_format (char *fmt, int i) {
 	int behind_comma = vftr_scenario_expr_format[i].decimal_places;
 	static int total = 0;
-	//int tmp = vftr_scenario_expr_format[i].decpl_1 > 0 ?
-	//	vftr_scenario_expr_format[i].decpl_1 : vftr_count_digits_int(i) + behind_comma;
 	int tmp = vftr_count_digits_int(i);
 	total = tmp > total ? tmp : total;
 	sprintf (fmt, "%%%d.%dlf ", total, behind_comma);

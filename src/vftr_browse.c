@@ -337,19 +337,22 @@ void vftr_browse_print_index_html (char *func_names[], int n_funcs) {
    vftr_browse_make_html_indent (fp, 0, 1);
    fprintf (fp, "<p>Number of MPI ranks: %d</p>\n", vftr_mpisize);
 
-   double total_runtime, sampling_overhead_time, total_overhead_time, mpi_overhead_time, application_runtime;
-   vftr_get_application_times (0, &total_runtime, &sampling_overhead_time, &mpi_overhead_time, 
-			       &total_overhead_time, &application_runtime);
+   long long total_runtime_usec, sampling_overhead_time_usec, total_overhead_time_usec;
+   long long mpi_overhead_time_usec, application_runtime_usec;
+   vftr_get_application_times_usec (0, &total_runtime_usec, &sampling_overhead_time_usec, &mpi_overhead_time_usec, 
+			       &total_overhead_time_usec, &application_runtime_usec);
    vftr_browse_make_html_indent (fp, 0, 1);
-   fprintf (fp, "<p>Total runtime: %8.2f seconds</p>\n", total_runtime);
+   fprintf (fp, "<p>Total runtime: %8.2f seconds</p>\n", total_runtime_usec * 1e-6);
    vftr_browse_make_html_indent (fp, 0, 1);
-   fprintf (fp, "<p>Application time: %8.2f seconds</p>\n", application_runtime);
+   fprintf (fp, "<p>Application time: %8.2f seconds</p>\n", application_runtime_usec * 1e-6);
    vftr_browse_make_html_indent (fp, 0, 1);
-   fprintf (fp, "<p>Overhead: %8.2f seconds (%.2f%%)</p>\n", total_overhead_time, total_overhead_time / total_runtime * 100.0);
+   fprintf (fp, "<p>Overhead: %8.2f seconds (%.2f%%)</p>\n", total_overhead_time_usec * 1e-6, total_overhead_time_usec / total_runtime_usec * 100.0);
    vftr_browse_make_html_indent (fp, 0, 1);
-   fprintf (fp, "<p>Sampling overhead: %8.2f seconds (%.2f%%)</p>\n", sampling_overhead_time, sampling_overhead_time / total_runtime * 100.0);
+   fprintf (fp, "<p>Sampling overhead: %8.2f seconds (%.2f%%)</p>\n", sampling_overhead_time_usec * 1e-6,
+	    sampling_overhead_time_usec / total_runtime_usec * 100.0);
    vftr_browse_make_html_indent (fp, 0, 1);
-   fprintf (fp, "<p>MPI overhead: %8.2f seconds (%.2f%%)</p>\n", mpi_overhead_time, mpi_overhead_time / total_runtime * 100.0);
+   fprintf (fp, "<p>MPI overhead: %8.2f seconds (%.2f%%)</p>\n", mpi_overhead_time_usec * 1e-6,
+	   mpi_overhead_time_usec / total_runtime_usec * 100.0);
    fprintf (fp, "</div>\n");
    fclose (fp); 
 }
@@ -574,23 +577,28 @@ char *vftr_browse_table_cell_format_with_link (char *base_dir, char *func_name, 
    return strdup (format);
 }
 
-void vftr_browse_print_table_line (FILE *fp, int stack_id, double sampling_overhead_time,
-				   int n_calls, double t_excl, double t_incl, double t_part, double t_cum, double t_overhead,
+void vftr_browse_print_table_line (FILE *fp, int stack_id,
+				   long long application_runtime_usec, double sampling_overhead_time,
+				   int n_calls, long long t_excl_usec, long long t_incl_usec, long long t_sum_usec, double t_overhead,
 				   char *func_name, char *caller_name, column_t *prof_columns) {
 	   int i_column = 0;
 	   
 	   fprintf (fp, "<tr>\n");
 
+           double t_excl_sec = t_excl_usec * 1e-6;
+           double t_incl_sec = t_incl_usec * 1e-6;
 	   fprintf (fp, vftr_browse_table_cell_format (prof_columns[i_column++].format), (int)n_calls);
-           fprintf (fp, vftr_browse_table_cell_format (prof_columns[i_column++].format), n_calls > 0 ? t_excl : 0);
-           fprintf (fp, vftr_browse_table_cell_format (prof_columns[i_column++].format), n_calls > 0 ? t_incl : 0);
+           fprintf (fp, vftr_browse_table_cell_format (prof_columns[i_column++].format), n_calls > 0 ? t_excl_sec * 1e-6 : 0);
+           fprintf (fp, vftr_browse_table_cell_format (prof_columns[i_column++].format), n_calls > 0 ? t_incl_sec * 1e-6 : 0);
+           double t_part = (double)t_excl_usec / (double)application_runtime_usec * 100.0;
            fprintf (fp, vftr_browse_table_cell_format (prof_columns[i_column++].format), t_part);
+           double t_cum = (double)t_sum_usec / (double)application_runtime_usec * 100.0;
            fprintf (fp, vftr_browse_table_cell_format (prof_columns[i_column++].format), t_cum);
 
 	   if (vftr_environment.show_overhead->value) {
 	      fprintf (fp, prof_columns[i_column++].format, t_overhead);
 	      fprintf (fp, prof_columns[i_column++].format, t_overhead / sampling_overhead_time * 100.0);  
-	      fprintf (fp, prof_columns[i_column++].format, t_excl > 0 ? t_overhead / t_excl : 0.0);
+	      fprintf (fp, prof_columns[i_column++].format, t_excl_sec > 0 ? t_overhead / t_excl_sec : 0.0);
 	   }
 
 	   if (vftr_events_enabled) {
