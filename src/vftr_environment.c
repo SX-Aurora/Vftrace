@@ -338,6 +338,10 @@ void vftr_assert_environment () {
 	       vftr_environment.sort_profile_table->value = SORT_EXCL_TIME;
 	   }
         } 
+
+	if (vftr_environment.prof_truncate_cutoff->set && !vftr_environment.prof_truncate->value) {
+    	   printf ("Warning: Profile cutoff is given but VFTR_PROF_TRUNCATE is not set. Ignore!\n");
+        } 
 }
 
 /**********************************************************************/
