@@ -433,7 +433,6 @@ void vftr_get_stack_times (profdata_t prof_current, profdata_t prof_previous, lo
 
 void vftr_fill_func_indices_up_to_truncate (function_t **func_table, long long runtime_usec, int *indices) {
 	long long cumulative_time_usec = 0;
-    	double max_cumulative_time_rel = 99.;
 	long long t_excl, t_incl;
 	int j = 0;
 	for (int i = 0; i < vftr_stackscount; i++) {
@@ -449,7 +448,7 @@ void vftr_fill_func_indices_up_to_truncate (function_t **func_table, long long r
 		cumulative_time_usec += t_excl;
 		//if (vftr_environment.prof_truncate->value && cumulative_time > max_cumulative_time) break;
 		double t_cum = (double)cumulative_time_usec / (double)runtime_usec * 100.0;
-		if (vftr_environment.prof_truncate->value && t_cum > max_cumulative_time_rel) break;
+		if (vftr_environment.prof_truncate->value && t_cum > vftr_environment.prof_truncate_cutoff->value) break;
 	}
 }
 
@@ -458,7 +457,6 @@ void vftr_fill_func_indices_up_to_truncate (function_t **func_table, long long r
 int vftr_count_func_indices_up_to_truncate (function_t **func_table, long long runtime_usec) {
 	int n_indices = 0;
 	long long cumulative_time_usec = 0;
-    	double max_cumulative_time_rel = 99.;
 	long long t_excl, t_incl;
 	for (int i = 0; i < vftr_stackscount; i++) {
 		if (func_table[i] == NULL) continue;
@@ -472,7 +470,7 @@ int vftr_count_func_indices_up_to_truncate (function_t **func_table, long long r
 		vftr_get_stack_times (prof_current, prof_previous, &t_excl, &t_incl);
 		cumulative_time_usec += t_excl;
 		double t_cum = (double)cumulative_time_usec / (double)runtime_usec * 100.0;
-		if (vftr_environment.prof_truncate->value && t_cum > max_cumulative_time_rel) break;
+		if (vftr_environment.prof_truncate->value && t_cum > vftr_environment.prof_truncate_cutoff->value) break;
 	}
 	return n_indices;
 }
@@ -1359,7 +1357,7 @@ void vftr_print_profile (FILE *fp_log, int *n_func_indices, long long time0) {
         fprintf (fp_log, " for rank %d", vftr_mpirank);
     }
     if (vftr_environment.prof_truncate->value) {
-	fprintf (fp_log, " (truncated)");
+	fprintf (fp_log, " (truncated to %3.0f%%)", vftr_environment.prof_truncate_cutoff->value);
     }
     fprintf (fp_log, ":\n\n");
 

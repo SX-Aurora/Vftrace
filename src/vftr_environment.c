@@ -243,6 +243,7 @@ void vftr_read_environment () {
     vftr_environment.stoptime = vftr_read_env_long_long ("VFTR_STOPTIME", 7ll*24ll*60ll*60ll);
     vftr_environment.accurate_profile = vftr_read_env_bool ("VFTR_ACCURATE_PROFILE", false);
     vftr_environment.prof_truncate = vftr_read_env_bool ("VFTR_PROF_TRUNCATE", true);
+    vftr_environment.prof_truncate_cutoff = vftr_read_env_double ("VFTR_PROF_TRUNCATE_CUTOFF", 98.0);
     vftr_environment.mpi_log = vftr_read_env_bool ("VFTR_MPI_LOG", false);
     vftr_environment.mpi_show_sync_time = vftr_read_env_bool ("VFTR_MPI_SHOW_SYNC_TIME", false);
     vftr_environment.signals_off = vftr_read_env_bool ("VFTR_SIGNALS_OFF", true);
