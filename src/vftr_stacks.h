@@ -88,7 +88,7 @@ void vftr_initialize_stacks();
 
 
 // Synchronise stack-IDs between processes
-int vftr_normalize_stacks();
+void vftr_normalize_stacks();
 
 // Write the stacks out
 void vftr_write_stacks_vfd (FILE *fp, int level, function_t *func);

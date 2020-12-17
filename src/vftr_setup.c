@@ -320,6 +320,7 @@ void vftr_finalize() {
 	vftr_strip_all_module_names ();
     }
     
+    vftr_normalize_stacks();
     vftr_calc_tree_format (vftr_froots);
 
     vftr_print_profile (vftr_log, &ntop, vftr_get_runtime_usec());

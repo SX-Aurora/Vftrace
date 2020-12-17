@@ -82,7 +82,7 @@ void vftr_initialize_stacks() {
 /**********************************************************************/
 
 // synchronise the global stack IDs among different processes
-int vftr_normalize_stacks() {
+void vftr_normalize_stacks() {
     // fill the local hashtable for stacks
     vftr_gStackscount = vftr_stackscount;
     uint64_t *stackhashtable = (uint64_t*) malloc(vftr_stackscount*sizeof(uint64_t));
@@ -432,7 +432,6 @@ int vftr_normalize_stacks() {
     free(local2global_ID);
     free(global2local_ID);
 
-    return 0;
 }
 
 /**********************************************************************/
