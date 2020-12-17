@@ -442,11 +442,8 @@ void vftr_fill_func_indices_up_to_truncate (function_t **func_table, long long r
 		/* If function has a caller and has been called */
 		if (!(func_table[i]->return_to && prof_current.calls)) continue;
 		indices[j++] = i;
-		//vftr_get_stack_times (prof_current, prof_previous, runtime, &t_excl, &t_incl, &t_part);
 		vftr_get_stack_times (prof_current, prof_previous, &t_excl, &t_incl);
-		//cumulative_time += t_part;
 		cumulative_time_usec += t_excl;
-		//if (vftr_environment.prof_truncate->value && cumulative_time > max_cumulative_time) break;
 		double t_cum = (double)cumulative_time_usec / (double)runtime_usec * 100.0;
 		if (vftr_environment.prof_truncate->value && t_cum > vftr_environment.prof_truncate_cutoff->value) break;
 	}
@@ -688,10 +685,7 @@ void vftr_set_proftab_column_formats (function_t **func_table,
         vftr_prof_column_init ("Function", NULL, 0, COL_CHAR, SEP_NONE, &(*columns)[i_column++]);
         vftr_prof_column_init ("Caller", NULL, 0, COL_CHAR, SEP_NONE, &(*columns)[i_column++]);
         vftr_prof_column_init ("ID", NULL, 0, COL_INT, SEP_NONE, &(*columns)[i_column++]);
-        double t_cum = 0;
         int stat;
-        double t_sum_double = 0;
- 	long long t_sum_long = 0;
         long long t_sum = 0;
         for (int i = 0; i < n_funcs; i++) {
             int i_func = func_indices[i];
@@ -1361,10 +1355,10 @@ void vftr_print_profile (FILE *fp_log, int *n_func_indices, long long time0) {
     }
     fprintf (fp_log, ":\n\n");
 
-    long long tt = total_runtime_usec - sampling_overhead_time_usec;
-    *n_func_indices = vftr_count_func_indices_up_to_truncate (func_table, tt);
+    long long function_time = total_runtime_usec - sampling_overhead_time_usec;
+    *n_func_indices = vftr_count_func_indices_up_to_truncate (func_table, function_time);
     int *func_indices = (int *)malloc (*n_func_indices * sizeof(int));
-    vftr_fill_func_indices_up_to_truncate (func_table, tt, func_indices);
+    vftr_fill_func_indices_up_to_truncate (func_table, function_time, func_indices);
 
     // Number of columns. Default: nCalls, exclusive & inclusive time, %abs, %cum,
     // function & caller name and stack ID (i.e. 8 columns). 
@@ -1376,7 +1370,7 @@ void vftr_print_profile (FILE *fp_log, int *n_func_indices, long long time0) {
 
     int i_column = 0;
     column_t *prof_columns = (column_t*) malloc (n_columns * sizeof(column_t));
-    vftr_set_proftab_column_formats (func_table, tt, sampling_overhead_time_usec * 1e-6,
+    vftr_set_proftab_column_formats (func_table, function_time, sampling_overhead_time_usec * 1e-6,
 				     *n_func_indices, func_indices, &prof_columns);
 
     for (int i = 0; i < n_columns; i++) {
@@ -1405,13 +1399,13 @@ void vftr_print_profile (FILE *fp_log, int *n_func_indices, long long time0) {
        vftr_compute_line_content (func_table[i_func], &n_calls, &t_excl, &t_incl, &t_overhead);
        cumulative_time += t_excl;
        vftr_print_profile_line (fp_log, func_table[i_func]->gid,
-			        tt, sampling_overhead_time_usec * 1e-6,
+			        function_time, sampling_overhead_time_usec * 1e-6,
 			        n_calls, t_excl, t_incl, cumulative_time, t_overhead,
 				func_table[i_func]->name, func_table[i_func]->return_to->name, prof_columns);
 
        if (vftr_environment.create_html->value) {
 	  vftr_browse_print_table_line (f_html, func_table[i_func]->gid,
-				        tt, sampling_overhead_time_usec * 1e-6,
+				        function_time, sampling_overhead_time_usec * 1e-6,
 					n_calls, t_excl, t_incl, cumulative_time, t_overhead,
 				        func_table[i_func]->name, func_table[i_func]->return_to->name, prof_columns);
        }
