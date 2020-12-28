@@ -564,10 +564,18 @@ void vftr_browse_create_profile_header (FILE *fp) {
 
 /**********************************************************************/
 
-char *vftr_browse_table_cell_format (char *base_format) {
-   char format[64];
-   snprintf (format, strlen(base_format) + 11, "<td>%s</td>\n", base_format);
-   return strdup (format);
+void vftr_browse_table_cell_print (FILE *fp, column_t c, void *value_1, void *value_2) {
+   switch (c.col_type) {
+      case COL_INT:
+         fprintf (fp, "<td> %*d </td>\n", c.n_chars, *(int*)value_1);
+         break;
+      case COL_DOUBLE:
+         fprintf (fp, "<td> %*.*f </td>\n", c.n_chars, c.n_decimal_places, *(double*)value_1);
+  	 break;
+      case COL_CHAR:
+         fprintf (fp, "<td> %*.s </td>\n", c.n_chars, (char*)value_1);
+	 break;
+   }
 }
 
 char *vftr_browse_table_cell_format_with_link (char *base_dir, char *func_name, char *base_format) {
@@ -587,23 +595,27 @@ void vftr_browse_print_table_line (FILE *fp, int stack_id,
 
            double t_excl_sec = t_excl_usec * 1e-6;
            double t_incl_sec = t_incl_usec * 1e-6;
-	   fprintf (fp, vftr_browse_table_cell_format (prof_columns[i_column++].format), (int)n_calls);
-           fprintf (fp, vftr_browse_table_cell_format (prof_columns[i_column++].format), n_calls > 0 ? t_excl_sec * 1e-6 : 0);
-           fprintf (fp, vftr_browse_table_cell_format (prof_columns[i_column++].format), n_calls > 0 ? t_incl_sec * 1e-6 : 0);
+	   vftr_browse_table_cell_print (fp, prof_columns[i_column++], &n_calls, NULL);
+    	   double value = n_calls > 0 ? t_excl_sec : 0;
+           vftr_browse_table_cell_print (fp, prof_columns[i_column++], &value, NULL);
+	   value = n_calls > 0 ? t_incl_sec : 0;
+           vftr_browse_table_cell_print (fp, prof_columns[i_column++], &value, NULL);
            double t_part = (double)t_excl_usec / (double)application_runtime_usec * 100.0;
-           fprintf (fp, vftr_browse_table_cell_format (prof_columns[i_column++].format), t_part);
+           vftr_browse_table_cell_print (fp, prof_columns[i_column++], &t_part, NULL);
            double t_cum = (double)t_sum_usec / (double)application_runtime_usec * 100.0;
-           fprintf (fp, vftr_browse_table_cell_format (prof_columns[i_column++].format), t_cum);
+           vftr_browse_table_cell_print (fp, prof_columns[i_column++], &t_cum, NULL);
 
 	   if (vftr_environment.show_overhead->value) {
-	      fprintf (fp, prof_columns[i_column++].format, t_overhead);
-	      fprintf (fp, prof_columns[i_column++].format, t_overhead / sampling_overhead_time * 100.0);  
-	      fprintf (fp, prof_columns[i_column++].format, t_excl_sec > 0 ? t_overhead / t_excl_sec : 0.0);
+	      vftr_browse_table_cell_print (fp, prof_columns[i_column++], &t_overhead, NULL);
+	      value = t_overhead / sampling_overhead_time * 100.0;
+	      vftr_browse_table_cell_print (fp, prof_columns[i_column++], &value, NULL);
+	      value = t_excl_sec > 0 ? t_overhead / t_excl_sec : 0.0;
+	      vftr_browse_table_cell_print (fp, prof_columns[i_column++], &value, NULL);
 	   }
 
 	   if (vftr_events_enabled) {
   	      for (int i = 0; i < vftr_scenario_expr_n_formulas; i++) {
-		 fprintf (fp, prof_columns[i_column++].format, vftr_scenario_expr_formulas[i].value);
+		 vftr_browse_table_cell_print (fp, prof_columns[i_column++], &vftr_scenario_expr_formulas[i].value, NULL);
 	      }
 	   }
 	   
@@ -611,13 +623,13 @@ void vftr_browse_print_table_line (FILE *fp, int stack_id,
 	      int n = strlen(func_name) + vftr_count_digits_int (vftr_mpirank) + 7;
 	      char target_fun[n];
 	      snprintf (target_fun, n, "%s_%d.html", func_name, vftr_mpirank);
-    	      fprintf (fp, vftr_browse_table_cell_format_with_link (func_name, target_fun, prof_columns[i_column++].format), func_name);
+    	      fprintf (fp, vftr_browse_table_cell_format_with_link (func_name, target_fun, " %s "), func_name);
 	   } else {
-	      fprintf (fp, vftr_browse_table_cell_format (prof_columns[i_column++].format), func_name);
+	      vftr_browse_table_cell_print (fp, prof_columns[i_column++], func_name, NULL);
            }
 
-	   fprintf (fp, vftr_browse_table_cell_format (prof_columns[i_column++].format), caller_name);
-	   fprintf (fp, vftr_browse_table_cell_format (prof_columns[i_column++].format), stack_id);
+	   vftr_browse_table_cell_print (fp, prof_columns[i_column++], caller_name, NULL);
+	   vftr_browse_table_cell_print (fp, prof_columns[i_column++], &stack_id, NULL);
 
 	   fprintf (fp, "</tr>\n");
 }

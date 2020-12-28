@@ -543,49 +543,27 @@ void vftr_prof_column_set_n_chars (void *value_1, void *value_2, column_t *c, in
 	*stat = n;
 }
 
-void vftr_prof_column_set_format (column_t *c) {
-	switch (c->col_type) {
-	   case COL_INT:
-	      sprintf (c->format, " %%%dd ", c->n_chars);
-	      break;
-	   case COL_DOUBLE:
-              sprintf (c->format, " %%%d.%df ", c->n_chars, c->n_decimal_places);
-	      break;
-	   case COL_CHAR:
-	   case COL_MEM:
-	      sprintf (c->format, " %%%ds ", c->n_chars);
-	      break;
-	   case COL_SYNC:
-	      if (c->n_chars_extra > 0) {
-                 sprintf (c->format, " %%%d.%df(%%%d.2f%%) ", c->n_chars - c->n_chars_extra - 3, c->n_decimal_places, c->n_chars_extra);
-	      } else {
-                 sprintf (c->format, " %%%d.%df ", c->n_chars, c->n_decimal_places);
-	      }
-	      break; 
-	}
-}
-
 void vftr_prof_column_print (FILE *fp, column_t c, void *value_1, void *value_2) {
    if (c.separator_type == SEP_MID || c.separator_type == SEP_LAST) fprintf (fp, "|");
    switch (c.col_type) {
       case COL_INT:
-         fprintf (fp, c.format, *(int*)value_1);
+         fprintf (fp, " %*d ", c.n_chars, *(int*)value_1);
          break;
       case COL_DOUBLE:
-         fprintf (fp, c.format, *(double*)value_1);
+         fprintf (fp, " %*.*f ", c.n_chars, c.n_decimal_places, *(double*)value_1);
 	 break;
       case COL_CHAR:
-         fprintf (fp, c.format, (char*)value_1);
+         fprintf (fp, " %*s ", c.n_chars, (char*)value_1);
 	 break;
       case COL_MEM:
-         fprintf (fp, c.format, vftr_memory_unit_string (*(double*)value_1, c.n_decimal_places));
+         fprintf (fp, " %*s ", c.n_chars, vftr_memory_unit_string (*(double*)value_1, c.n_decimal_places));
 	 break;
       case COL_SYNC:
          if (value_2 != NULL && c.n_chars_extra > 0 && *(double*)value_2 > 0.0) {
-            fprintf (fp, c.format, *(double*)value_1, *(double*)value_2 / *(double*)value_1 * 100.0);
+            fprintf (fp, " %*.*f(%*.2f) ", c.n_chars - c.n_chars_extra - 3, c.n_decimal_places, c.n_chars_extra,
+		     *(double*)value_1, *(double*)value_2 / *(double*)value_1 * 100.0);
 	 } else {
-            sprintf (c.format, " %%%d.%df ", c.n_chars, c.n_decimal_places);
-            fprintf (fp, c.format, *(double*)value_1);
+            fprintf (fp, " %*.*f ", c.n_chars, c.n_decimal_places, *(double*)value_1);
 	 }
    }
    if (c.separator_type == SEP_LAST) fprintf (fp, "|");
@@ -1096,9 +1074,6 @@ void vftr_print_function_statistics (FILE *fp_log, bool display_sync_time, int *
     int n_columns = print_mpi_columns ? 10 : 7;
     column_t *columns = (column_t*) malloc (n_columns * sizeof(column_t));
     vftr_set_summary_column_formats (print_mpi_columns, n_display_funcs, display_functions, &columns, total_time);
-    for (int i = 0; i < n_columns; i++) {
-       vftr_prof_column_set_format (&(columns[i]));
-    }
    
     int table_width = vftr_get_tablewidth_from_columns (columns, n_columns, true); 
     vftr_summary_print_header (fp_log, columns, table_width, print_mpi_columns);
@@ -1372,10 +1347,6 @@ void vftr_print_profile (FILE *fp_log, int *n_func_indices, long long time0) {
     column_t *prof_columns = (column_t*) malloc (n_columns * sizeof(column_t));
     vftr_set_proftab_column_formats (func_table, function_time, sampling_overhead_time_usec * 1e-6,
 				     *n_func_indices, func_indices, &prof_columns);
-
-    for (int i = 0; i < n_columns; i++) {
-	vftr_prof_column_set_format (&(prof_columns[i]));
-    }
 
     table_width = vftr_get_tablewidth_from_columns (prof_columns, n_columns, false);
 
