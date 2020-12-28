@@ -594,6 +594,7 @@ void vftr_set_summary_column_formats (bool print_mpi, int n_display_funcs, displ
   
     int stat;
     for (int i = 0; i < n_display_funcs; i++) {
+       if (!display_functions[i]->properly_terminated) continue;       
        i_column = 0;
        vftr_prof_column_set_n_chars (display_functions[i]->func_name, NULL, &(*columns)[i_column++], &stat);
        if (print_mpi) {
