@@ -1175,10 +1175,10 @@ void vftr_print_function_statistics (FILE *fp_log, display_function_t **display_
 					      t_max, n_calls_max, imba_max, n_spaces_max,
 					      stack_tree);
 		   if (vftr_environment.create_html->value) {
-		      vftr_browse_print_stacktree_page (NULL, true, display_functions, i,
-						      vftr_n_collective_mpi_functions, stack_tree->origin,
-					              imbalances, (double)total_time * 1e-6, n_chars_max,
-						      display_functions[i]->n_stack_indices);
+		      vftr_browse_print_stacktree_page (NULL, false, display_functions, i,
+						        vftr_n_collective_mpi_functions, stack_tree->origin,
+					                imbalances, (double)total_time * 1e-6, n_chars_max,
+						        display_functions[i]->n_stack_indices);
 		   }
 		   free (stack_tree);
 		   free (imbalances);
