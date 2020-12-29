@@ -1479,8 +1479,7 @@ int vftr_filewrite_test_2 (FILE *fp_in, FILE *fp_out) {
 #ifdef _MPI
         vftr_mpi_overhead_usec = 0;
 #endif
- 	// TODO: FIX profile print with non-existing display functions
-	//vftr_print_profile (fp_out, &n, vftr_test_runtime);		
+	vftr_print_profile (fp_out, NULL, 0, &n, vftr_test_runtime);		
 	return 0;
 }
 

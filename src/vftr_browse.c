@@ -541,7 +541,9 @@ FILE *vftr_browse_init_profile_table (display_function_t **display_functions, in
        vftr_browse_make_html_indent (fp, 0, 1);
        fprintf (fp, "}\n");
        fprintf (fp, "</style>\n");
-       vftr_browse_print_navigation_bars (fp, display_functions, 0, n_display_functions, PROFILE);
+       if (display_functions != NULL) {
+          vftr_browse_print_navigation_bars (fp, display_functions, 0, n_display_functions, PROFILE);
+       }
        
        return fp;
 }
