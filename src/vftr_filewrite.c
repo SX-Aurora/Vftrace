@@ -1154,7 +1154,7 @@ void vftr_print_function_statistics (FILE *fp_log, display_function_t **display_
 		if (display_functions[i]->n_stack_indices == 0) {;
 	 	   if (vftr_environment.create_html->value) {
 		      vftr_browse_print_stacktree_page (NULL, true, display_functions, i,
-		         				vftr_n_collective_mpi_functions, NULL, NULL, 0.0, 0, 0);
+		         				n_display_funcs, NULL, NULL, 0.0, 0, 0);
           	   }
 		} else {
 		   stack_leaf_t *stack_tree = NULL;
@@ -1176,7 +1176,7 @@ void vftr_print_function_statistics (FILE *fp_log, display_function_t **display_
 					      stack_tree);
 		   if (vftr_environment.create_html->value) {
 		      vftr_browse_print_stacktree_page (NULL, false, display_functions, i,
-						        vftr_n_collective_mpi_functions, stack_tree->origin,
+						        n_display_funcs, stack_tree->origin,
 					                imbalances, (double)total_time * 1e-6, n_chars_max,
 						        display_functions[i]->n_stack_indices);
 		   }
