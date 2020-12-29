@@ -447,24 +447,23 @@ void vftr_browse_print_stacktree (FILE *fp, stack_leaf_t *leaf, int n_spaces, do
   
 /**********************************************************************/
 
-void vftr_browse_print_stacktree_page (FILE *fp_out, bool is_empty, char *func_names[], int n_funcs, int this_i_func,
+void vftr_browse_print_stacktree_page (FILE *fp_out, bool is_empty, char *func_name, int n_funcs,
 			               stack_leaf_t *leaf, double *imbalances, double total_time,
 				       int n_chars_max, int n_final) {
 	// No external file (e.g. for tests) given. Create filename <func_name>.html
 	FILE *fp;
-	char *this_func_name = func_names[this_i_func];
 	if (!fp_out) {
-	   char outdir[strlen(this_func_name) + 8];
-	   snprintf (outdir, strlen(this_func_name) + 8, "browse/%s", this_func_name);
+	   char outdir[strlen(func_name) + 8];
+	   snprintf (outdir, strlen(func_name) + 8, "browse/%s", func_name);
 	   if (vftr_mpirank == 0) {
 	      mkdir (outdir, 0777);
 	   }
 #ifdef _MPI
 	   PMPI_Barrier(MPI_COMM_WORLD);
 #endif
-	   char html_filename[2*(strlen(this_func_name) + 8)];
-	   snprintf (html_filename, 2*(strlen(this_func_name) + 8) + vftr_count_digits_int(vftr_mpisize) + 1,
-		     "%s/%s_%d.html", outdir, this_func_name, vftr_mpirank);
+	   char html_filename[2*(strlen(func_name) + 8)];
+	   snprintf (html_filename, 2*(strlen(func_name) + 8) + vftr_count_digits_int(vftr_mpisize) + 1,
+		     "%s/%s_%d.html", outdir, func_name, vftr_mpirank);
 	   fp = fopen (html_filename, "w");
         } else {
 	   fp = fp_out;
@@ -474,9 +473,8 @@ void vftr_browse_print_stacktree_page (FILE *fp_out, bool is_empty, char *func_n
 	} else {
 	   vftr_browse_print_css_header (fp, strlen ("No stack IDs!"), 1);
 	}
-        vftr_browse_print_navigation_bars (fp, func_names, n_funcs, this_i_func, TREE);
 	fprintf (fp, "<div style=\"margin-left:150px; margin-top:0px; padding: 1px 16px\">\n");
-	fprintf (fp, "<h1>%s, rank %d</h1>\n", this_func_name, vftr_mpirank);
+	fprintf (fp, "<h1>%s, rank %d</h1>\n", func_name, vftr_mpirank);
 	fprintf (fp, "<nav class=\"nav\"/>\n");
 	vftr_browse_make_html_indent (fp, 0, 1);
 	fprintf (fp, "<ul>\n");
@@ -670,7 +668,7 @@ int vftr_browse_test_1 (FILE *fp_in, FILE *fp_out) {
 	int dummy_i;
  	vftr_scan_stacktree (stack_tree->origin, 2, NULL, &dummy_d, &dummy_i, &dummy_d, &dummy_i, &dummy_i);
 	char *func_names[1] = {"C"};
-	vftr_browse_print_stacktree_page (fp_out, false, func_names, 1, 0, stack_tree->origin, NULL, 0.0, 1000, 1);
+	vftr_browse_print_stacktree_page (fp_out, false, func_names[0], 1, stack_tree->origin, NULL, 0.0, 1000, 1);
 	free (stack_tree);
 	return 0;
 }

@@ -1137,8 +1137,8 @@ void vftr_print_function_statistics (FILE *fp_log, bool display_sync_time, int *
                 if (!display_functions[i]->properly_terminated) continue;
 		if (display_functions[i]->n_stack_indices == 0) {;
 	 	   if (vftr_environment.create_html->value) {
-		      vftr_browse_print_stacktree_page (NULL, true, vftr_mpi_collective_function_names,
-		         				vftr_n_collective_mpi_functions, i, NULL, NULL, 0.0, 0, 0);
+		      vftr_browse_print_stacktree_page (NULL, true, display_functions[i]->func_name,
+		         				vftr_n_collective_mpi_functions, NULL, NULL, 0.0, 0, 0);
           	   }
 		} else {
 		   stack_leaf_t *stack_tree = NULL;
@@ -1159,8 +1159,8 @@ void vftr_print_function_statistics (FILE *fp_log, bool display_sync_time, int *
 					      t_max, n_calls_max, imba_max, n_spaces_max,
 					      stack_tree);
 		   if (vftr_environment.create_html->value) {
-		      vftr_browse_print_stacktree_page (NULL, false, vftr_mpi_collective_function_names,
-						      vftr_n_collective_mpi_functions, i, stack_tree->origin,
+		      vftr_browse_print_stacktree_page (NULL, false, display_functions[i]->func_name,
+						      vftr_n_collective_mpi_functions, stack_tree->origin,
 					              imbalances, (double)total_time * 1e-6, n_chars_max,
 						      display_functions[i]->n_stack_indices);
 		   }
