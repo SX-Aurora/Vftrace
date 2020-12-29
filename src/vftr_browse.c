@@ -670,7 +670,10 @@ int vftr_browse_test_1 (FILE *fp_in, FILE *fp_out) {
 	double dummy_d;
 	int dummy_i;
  	vftr_scan_stacktree (stack_tree->origin, 2, NULL, &dummy_d, &dummy_i, &dummy_d, &dummy_i, &dummy_i);
-	char *func_names[1] = {"C"};
+        display_function_t *display_functions[1];
+	display_functions[0] = (display_function_t*)malloc (sizeof(display_function_t));
+        display_functions[0]->func_name = "C";
+        vftr_browse_print_stacktree_page (fp_out, false, display_functions, 0, 1, stack_tree->origin, NULL, 0.0, 1000, 1);
 	free (stack_tree);
 	return 0;
 }
