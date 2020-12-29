@@ -141,7 +141,7 @@ void vftr_function_entry (const char *s, void *addr, int line, bool isPrecise) {
         vftr_write_stack_ascii (vftr_log, wtime, func, "profile before call to", 0);
         vftr_profile_wanted = true;
         int ntop;
-        vftr_print_profile (vftr_log, &ntop, timer);
+        vftr_print_profile (vftr_log, NULL, 0, &ntop, timer);
         vftr_print_local_stacklist (vftr_func_table, vftr_log, ntop);
 	vftr_save_old_state ();
     }
@@ -311,7 +311,7 @@ void vftr_function_exit(int line) {
         vftr_write_stack_ascii (vftr_log, wtime, func, "profile at exit from", timeToSample);
         vftr_profile_wanted = true;
         int ntop;
-        vftr_print_profile (stdout, &ntop, timer);
+        vftr_print_profile (stdout, NULL, 0, &ntop, timer);
         vftr_print_local_stacklist( vftr_func_table, stdout, ntop );
     }
 
