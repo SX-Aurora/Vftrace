@@ -20,6 +20,17 @@ class function_entry:
   def __repr__(self):
     return self.__str__()
 
+# For a reliable performance prediction, all stacks should be fully resolved.
+# This means, that there should be no stand-alone function names in each stack line,
+# except for "init". Moreover, each stack line has to end with "init".
+# If these are not the case, we issue a warning.
+def check_if_stack_line_is_consistent (stack_line):
+  funcs = stack_line.split("<") # Individual functions are seperated by "<"
+  if len(funcs) == 1 and funcs[0] != "init":
+    print ("Warning: There is a function without stack trace: ", funcs[0], "No predictions can be made for it.")
+  elif funcs[-1] != "init":
+    print ("Warning: There is a stack which does not end in init")
+
 def create_dictionary (filename):
   f = open(filename, "r")
   lines = f.readlines()
@@ -27,7 +38,7 @@ def create_dictionary (filename):
   countdown_profile = -1
   countdown_stacks = -1
   functions = []
-  function_stacks = []
+  function_stacks = {}
   for line in lines:
     if "Runtime profile for rank" in line:
       countdown_profile = 3
@@ -46,7 +57,8 @@ def create_dictionary (filename):
     elif countdown_stacks == 0:
       if not "-----------" in line:
         tmp = line.split()
-        function_stacks.append(tmp[1])
+        check_if_stack_line_is_consistent(tmp[1])
+        function_stacks[tmp[0]] = tmp[1]
       else:
         countdown_stacks = -1
     
@@ -67,7 +79,7 @@ def create_dictionary (filename):
     caller_name = tmp[6]
     stack_id = tmp[7]
     func_dict[stack_id] = function_entry (n_calls, t_excl, t_incl, percent_abs, percent_cum,
-			                  function_name, caller_name, function_stacks[int(stack_id)])
+			                  function_name, caller_name, function_stacks[stack_id])
     if i_stack_id < 5:
       top_5_stack_ids.append(stack_id)
       i_stack_id += 1
