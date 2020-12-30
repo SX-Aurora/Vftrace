@@ -23,14 +23,14 @@ def do_prediction():
 
 # Do the prediction
     x_predict = float(entry_entry.get())
-    print ("Predict for: ", x_predict)
     t_predict = 0
     for this_hash, prog_entry in global_dict.items():
       progression.determine_progression_type(prog_entry, len(sys.argv) - 1)
       if not isinstance(prog_entry.progression_type, progression.prog_undefined):
          t_predict += prog_entry.progression_type.predict(x_predict)
 
-    print ("Prediction: ", t_predict)
+    result_label["text"] = "Prediction: " + str(t_predict) + "s"
+
   else:
     print ("Require at least one log file as argument!")
 
@@ -47,6 +47,11 @@ entry_label.grid (row=0, column=0)
 entry_entry.grid (row=0, column=1)
 entry_button.grid (row=0, column=2)
 frame_entry.grid (row=0, column=0)
+
+result_frame = tk.Frame (master = window)
+result_label = tk.Label (master = result_frame, text = "Prediction: ")
+result_label.grid(row=0, column=0)
+result_frame.grid(row=1, column=0)
 
 window.mainloop()
 

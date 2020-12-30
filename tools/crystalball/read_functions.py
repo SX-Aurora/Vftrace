@@ -87,7 +87,7 @@ def create_dictionary (filename):
   return top_5_stack_ids, func_dict
 
 
-global_x = [0.25, 0.5, 1.0]
+global_x = [0.25, 0.5, 1.0, 2.0, 3.0]
 def synchronize_dictionaries (dictos):
   global_dict = {}
   i_dict = 0
