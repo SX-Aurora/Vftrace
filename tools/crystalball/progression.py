@@ -28,7 +28,7 @@ class prog_linear:
     pass
 
   def __str__(self):
-    return "PROG: Linear"
+    return "PROG: Linear (" + str(self.m) + "," + str(self.n) + ")"
 
   def predict(self, x):
     return self.m * x + self.n
@@ -39,7 +39,7 @@ class prog_constant:
     pass
 
   def __str__(self):
-    return "PROG: Constant"
+    return "PROG: Constant (" + str(self.value) + ")"
 
   def predict(self, x):
     return self.value
@@ -51,9 +51,9 @@ class prog_undefined:
   def __str__(self):
     return "PROG: Undefined"
 
-def determine_progression_type (prog_entry):
+def determine_progression_type (prog_entry, n_require):
   n = len(prog_entry.x)
-  if n == 3:
+  if n == n_require:
     delta_x = [prog_entry.x[i+1] - prog_entry.x[i] for i in range(n-1)]
     delta_calls = [prog_entry.n_calls[i+1] - prog_entry.n_calls[i] for i in range(n-1)] 
     if all(tmp == 0 for tmp in delta_calls):
