@@ -44,8 +44,8 @@ def do_prediction():
   else:
     print ("Require at least one log file as argument!")
 
-def update_crystalball(open_files):
-  for f in open_files:
+def update_crystalball(wcontrol):
+  for f in wcontrol.open_files:
     overview, func_dict = read_functions.create_dictionary(f)
     ttk.Label(scrollable_frame, text = f + ":").pack()
     ttk.Label(scrollable_frame, text = str(overview)).pack()
@@ -61,13 +61,14 @@ def update_crystalball(open_files):
     func_names.append(prog_entry.func_name)
     if i == 5: break
   ax.legend(axes, func_names)
+  ax.set_xlabel (wcontrol.xlabel)
+  if wcontrol.ylabel != '': ax.set_ylabel (wcnotrol.ylabel)
   plot_canvas.draw()
     
 def create_sample():
   wcontrol.open_window()
   if wcontrol.valid:
-    open_files = wcontrol.open_files.copy()
-    update_crystalball(open_files)
+    update_crystalball(wcontrol)
 
 window = tk.Tk()
 window.protocol ("WM_DELETE_WINDOW", window.destroy)
@@ -107,10 +108,10 @@ frame_plot = tk.Frame (master = window)
 frame_plot.grid(row=0, column=1)
 
 fig, ax = plt.subplots()
+ax.set_ylabel ("t[s]")
 axes = []
 func_names = []
 
-ax.set_ylabel ("t[s]")
 
 plot_canvas = FigureCanvasTkAgg(fig, master = frame_plot)
 plot_canvas.draw()
