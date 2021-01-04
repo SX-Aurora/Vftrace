@@ -52,7 +52,7 @@ def update_crystalball(wcontrol):
     ttk.Label(scrollable_frame, text = "-------------------------").pack()
     all_dicts.append(func_dict)
 
-  global_dict = read_functions.synchronize_dictionaries(all_dicts)
+  global_dict = read_functions.synchronize_dictionaries(wcontrol.x_values, all_dicts)
   axes = []
   func_names = []
   for i, prog_entry in enumerate(global_dict.values()):
