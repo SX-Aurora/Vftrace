@@ -1,6 +1,13 @@
+from scipy import optimize 
+import numpy as np
+
+def test_linear(x, a, b):
+  return a + b * x
+
 class progression_entry:
 
-  def __init__(self, this_x, this_n_calls, this_t):
+  def __init__(self, func_name, this_x, this_n_calls, this_t):
+    self.func_name = func_name
     self.x = [float(this_x)]
     self.n_calls = [int(this_n_calls)]
     self.t = [float(this_t)] 
@@ -8,12 +15,14 @@ class progression_entry:
 
   def __str__(self):
     s = ""
+    # Use enumerate
     for i in range(len(self.x)):
-      s += "(" + str(self.x[i]) + "," + str(self.n_calls[i]) + "," + str(self.t[i]) + ")"
+      s += "(" + str(self.x[i]) + "," + str(self.n_calls[i]) + "," + str(self.t[i]) +  "," + str(float(self.t[i]) / float(self.n_calls[i])) + ")"
       if i != len(self.x) - 1:
         s += " -> "
-    if self.progression_type != None:
-      s += "[" + str(self.progression_type) + "]"
+       
+    #if self.progression_type != None:
+    #  s += "[" + str(self.progression_type) + "]"
     return s
 
   def append(self, this_x, this_n_calls, this_t):
@@ -64,4 +73,9 @@ def determine_progression_type (prog_entry, n_require):
       prog_entry.progression_type = prog_linear(m, n)
   else:
     prog_entry.progression_type = prog_undefined()
+  params, params_covariance = optimize.curve_fit(test_linear, prog_entry.x, prog_entry.t)
+  if np.all(params_covariance.all != None):
+    pass
+    #print ("progtype: ", prog_entry.progression_type, ", stderr: ", np.sqrt(np.diag(params_covariance))) 
+
     

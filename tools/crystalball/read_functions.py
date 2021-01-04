@@ -94,9 +94,10 @@ def synchronize_dictionaries (dictos):
   for dicto in dictos:
     for stack_id, fe in dicto.items():
       if fe.hash in global_dict:
+#        print ("i_dict: ", i_dict)
         global_dict[fe.hash].append(global_x[i_dict], fe.n_calls, fe.t_excl)
       else:
-        global_dict[fe.hash] = progression.progression_entry(global_x[i_dict], fe.n_calls, fe.t_excl)
+        global_dict[fe.hash] = progression.progression_entry(fe.function_name, global_x[i_dict], fe.n_calls, fe.t_excl)
     i_dict += 1
   return global_dict
 
