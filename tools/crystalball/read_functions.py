@@ -1,5 +1,28 @@
 import progression
 
+class vftrace_overview:
+  def __init__(self):
+    self.mpi_size = 0
+    self.total_runtime = 0.0
+    self.estimated_application_runtime = 0.0
+    self.estimated_overhead = 0.0
+    self.sampling_overhead = 0.0
+    self.mpi_overhead = 0.0
+
+  def __str__(self):
+    ratio_overhead = self.estimated_overhead / self.total_runtime * 100
+    ratio_sampling = self.sampling_overhead / self.total_runtime * 100
+    ratio_mpi = self.mpi_overhead / self.total_runtime * 100
+    return "MPI size: " + str(self.mpi_size) + "\n" + \
+           "Total runtime: " + str(self.total_runtime) + "s\n" + \
+           "Est. application time: " + str(self.estimated_application_runtime) + "s\n" + \
+           "Est. Overhead: " + str(self.estimated_overhead) + "s (" + str(ratio_overhead) + "%)\n" + \
+           "   Sampling: " + str(self.sampling_overhead) + "s (" + str(ratio_sampling) + "%)\n" + \
+           "   MPI: " + str(self.mpi_overhead) + "s (" + str(ratio_mpi) + "%)"
+    
+  def __repr__(self):
+    return self.__str__()
+
 class function_entry:
   def __init__(self, n_calls, t_excl, t_incl, percent_abs, percent_cum, function_name, caller_name, stack_string):
     self.n_calls = n_calls
@@ -35,11 +58,24 @@ def create_dictionary (filename):
   f = open(filename, "r")
   lines = f.readlines()
 
+  overview = vftrace_overview()
   countdown_profile = -1
   countdown_stacks = -1
   functions = []
   function_stacks = {}
   for line in lines:
+    if "MPI size" in line:
+      overview.mpi_size = int(line.split()[2])
+    if "Total runtime" in line:
+      overview.total_runtime = float(line.split()[2])
+    if "Application time" in line:
+      overview.estimated_application_runtime = float(line.split()[2])
+    if "Overhead" in line:
+      overview.estimated_overhead = float(line.split()[1])
+    if "Sampling overhead" in line:
+      overview.sampling_overhead = float(line.split()[2])
+    if "MPI overhead" in line:
+      overview.mpi_overhead = float(line.split()[2])
     if "Runtime profile for rank" in line:
       countdown_profile = 3
     elif countdown_profile > 0:
@@ -66,12 +102,12 @@ def create_dictionary (filename):
   func_dict = {}
   
   # A dictionary keeps its order, so the elements are automatically sorted in the same way as Vftrace has sorted them. 
-  top_5_stack_ids = []
-  i_stack_id = 0
+  total_time = 0.0
   for function in functions:
     tmp = function.split()
     n_calls = tmp[0]
     t_excl = tmp[1]
+    total_time += float(t_excl)
     t_incl = tmp[2]
     percent_abs = tmp[3]
     percent_cum = tmp[4]
@@ -80,12 +116,9 @@ def create_dictionary (filename):
     stack_id = tmp[7]
     func_dict[stack_id] = function_entry (n_calls, t_excl, t_incl, percent_abs, percent_cum,
 			                  function_name, caller_name, function_stacks[stack_id])
-    if i_stack_id < 5:
-      top_5_stack_ids.append(stack_id)
-      i_stack_id += 1
   print ("Total time in " + filename + ": ", total_time)
   
-  return top_5_stack_ids, func_dict
+  return overview, func_dict
 
 
 #global_x = [0.25, 0.5, 1.0, 2.0, 3.0]
