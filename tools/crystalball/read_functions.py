@@ -83,22 +83,24 @@ def create_dictionary (filename):
     if i_stack_id < 5:
       top_5_stack_ids.append(stack_id)
       i_stack_id += 1
+  print ("Total time in " + filename + ": ", total_time)
   
   return top_5_stack_ids, func_dict
 
 
-global_x = [0.25, 0.5, 1.0, 2.0, 3.0]
+#global_x = [0.25, 0.5, 1.0, 2.0, 3.0]
+global_x = [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0]
 def synchronize_dictionaries (dictos):
   global_dict = {}
   i_dict = 0
-  for dicto in dictos:
+  for i_dict, dicto in enumerate(dictos):
     for stack_id, fe in dicto.items():
       if fe.hash in global_dict:
 #        print ("i_dict: ", i_dict)
         global_dict[fe.hash].append(global_x[i_dict], fe.n_calls, fe.t_excl)
       else:
         global_dict[fe.hash] = progression.progression_entry(fe.function_name, global_x[i_dict], fe.n_calls, fe.t_excl)
-    i_dict += 1
+    #i_dict += 1
   return global_dict
 
 
