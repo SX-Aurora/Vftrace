@@ -10,6 +10,7 @@ class vftrace_overview:
     self.mpi_overhead = 0.0
     self.recorded_time = 0.0
     self.n_recorded_functions = 0
+    self.n_recorded_calls = 0
     self.profile_truncated = False
     self.truncated_at = 0.0
 
@@ -24,6 +25,7 @@ class vftrace_overview:
          "   Sampling: " + str(self.sampling_overhead) + "s (" + str("%.2f"%ratio_sampling) + "%)\n" + \
          "   MPI: " + str(self.mpi_overhead) + "s (" + str("%.2f"%ratio_mpi) + "%)\n" + \
          "Nr. of recorded functions: " + str(self.n_recorded_functions) + "\n" + \
+         "Nr. of recorded calls: " + str(self.n_recorded_calls) + "\n" + \
          "Recorded time: " + str("%.2f"%self.recorded_time) + "s"
     if self.is_truncated:
       s += " (truncated at " + str(self.truncated_at) + "%)"
@@ -119,6 +121,7 @@ def create_dictionary (filename):
   for function in functions:
     tmp = function.split()
     n_calls = tmp[0]
+    overview.n_recorded_calls += int(n_calls)
     t_excl = tmp[1]
     overview.recorded_time += float(t_excl)
     t_incl = tmp[2]
@@ -133,7 +136,7 @@ def create_dictionary (filename):
   return overview, func_dict
 
 
-def synchronize_dictionaries (global_x, dictos):
+def synchronize_dictionaries (global_x, overviews, dictos):
   global_dict = {}
   for i_dict, dicto in enumerate(dictos):
     for stack_id, fe in dicto.items():
@@ -141,6 +144,11 @@ def synchronize_dictionaries (global_x, dictos):
         global_dict[fe.hash].append(global_x[i_dict], fe.n_calls, fe.t_excl)
       else:
         global_dict[fe.hash] = progression.progression_entry(fe.function_name, global_x[i_dict], fe.n_calls, fe.t_excl)
+  for i, overview in enumerate(overviews):
+    if i == 0:
+      global_dict["total"] = progression.progression_entry("total", global_x[i], overview.n_recorded_calls, overview.recorded_time)
+    else:
+      global_dict["total"].append(global_x[i], overview.n_recorded_calls, overview.recorded_time)
   return global_dict
 
 

@@ -44,33 +44,43 @@ def do_prediction():
   else:
     print ("Require at least one log file as argument!")
 
+def plot_function(plot_data, x, y):
+  plot_data.set_xdata(x)
+  plot_data.set_ydata(y)
+  plot_data.set_linestyle("-")
+
 def update_crystalball(wcontrol):
   global global_dict_created
   global global_dict
   global n_calls_checked
   global plot_data
   if not global_dict_created:
+    overviews = []
     for f in wcontrol.open_files:
       overview, func_dict = read_functions.create_dictionary(f)
       ttk.Label(scrollable_frame, text = f + ":").pack()
       ttk.Label(scrollable_frame, text = str(overview)).pack()
       ttk.Label(scrollable_frame, text = "-------------------------").pack()
       all_dicts.append(func_dict)
+      overviews.append(overview)
 
-    global_dict = read_functions.synchronize_dictionaries(wcontrol.x_values, all_dicts)
+    global_dict = read_functions.synchronize_dictionaries(wcontrol.x_values, overviews, all_dicts)
     global_dict_created = True
 
   axes = []
   func_names = []
   for i, prog_entry in enumerate(global_dict.values()):
-    if i == 5: break
-    plot_data[i].set_xdata(prog_entry.x)
-    if n_calls_checked.get() == 1:
-      plot_data[i].set_ydata(prog_entry.n_calls)
+    if i < 5:
+      pp = prog_entry
+    elif i == 5:
+      pp = global_dict["total"]
     else:
-      plot_data[i].set_ydata(prog_entry.t)
-    plot_data[i].set_linestyle("-")
-    func_names.append(prog_entry.func_name)
+      break
+    if n_calls_checked.get() == 1:
+      plot_function(plot_data[i], pp.x, pp.n_calls)
+    else:
+      plot_function(plot_data[i], pp.x, pp.t)
+    func_names.append(pp.func_name)
   ax.relim()
   ax.autoscale_view()
   ax.legend(plot_data, func_names)
@@ -141,7 +151,7 @@ frame_plot.grid(row=0, column=1)
 
 fig, ax = plt.subplots()
 plot_data = []
-for i in range(5):
+for i in range(6):
   p, = ax.plot([],[], "o")
   plot_data.append(p)
 
