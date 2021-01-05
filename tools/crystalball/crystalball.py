@@ -59,6 +59,10 @@ def update_crystalball(wcontrol):
   global n_total_checked
   global n_normal_checked
   global plot_data
+  global n_current_plots
+  global n_max_plots
+  global n_functions_entry
+  n_max_plots = int(n_functions_entry.get())
   if not global_dict_created:
     overviews = []
     for f in wcontrol.open_files:
@@ -74,15 +78,18 @@ def update_crystalball(wcontrol):
 
   axes = []
   func_names = []
+  n_previous_plots = n_current_plots
   for i, prog_entry in enumerate(global_dict.values()):
     plot_this = True
-    if i > 5:
-      break
-    elif i < 5:
-      pp = prog_entry
-    else: # i == 5
+    if i == n_max_plots:
       pp = global_dict["total"]
       plot_this = n_total_checked.get()
+    elif i > n_max_plots and i < n_previous_plots:
+      plot_this = False
+    elif i < n_max_plots:
+      pp = prog_entry
+    else:
+      break
 
     normal_value = None
     if n_normal_checked.get():
@@ -91,7 +98,11 @@ def update_crystalball(wcontrol):
       else:
         normal_value = global_dict["total"].t
 
+    if i == len(plot_data):
+      p, = ax.plot([],[], "o")
+      plot_data.append(p)
     if plot_this:
+      n_current_plots += 1
       if n_calls_checked.get():
         plot_function(plot_data[i], pp.x, pp.n_calls, normal_value)
       else:
@@ -176,9 +187,8 @@ frame_plot.grid(row=0, column=1)
 
 fig, ax = plt.subplots()
 plot_data = []
-for i in range(6):
-  p, = ax.plot([],[], "o")
-  plot_data.append(p)
+n_current_plots = 0
+n_max_plots = 5
 
 axes = []
 func_names = []
@@ -192,15 +202,20 @@ checkbox_frame = tk.Frame(frame_plot)
 n_calls_checked = tk.IntVar()
 n_total_checked = tk.IntVar()
 n_normal_checked = tk.IntVar()
+n_functions_button = tk.Button (checkbox_frame, text = "Set n_functions: ",
+                                command = switch_button).grid(row=0, column=0)
+n_functions_entry = tk.Entry (checkbox_frame, width=2)
+n_functions_entry.insert(tk.END, n_max_plots)
+n_functions_entry.grid(row=0, column=1)
 check_calls_box = tk.Checkbutton(checkbox_frame, text = "Show n_calls",
                                  variable = n_calls_checked, onvalue = 1, offvalue = 0,
-                                 command = switch_button).grid(row=0, column=0)
+                                 command = switch_button).grid(row=0, column=2)
 check_total_box = tk.Checkbutton(checkbox_frame, text = "Show total",
                                  variable = n_total_checked, onvalue = 1, offvalue = 0,
-                                 command = switch_button).grid(row=0, column=1)
+                                 command = switch_button).grid(row=0, column=3)
 check_normal_box = tk.Checkbutton(checkbox_frame, text = "Normalize",
                                   variable = n_normal_checked, onvalue = 1, offvalue = 0,
-                                  command = switch_button).grid(row=0, column=2)
+                                  command = switch_button).grid(row=0, column=4)
 checkbox_frame.pack()
 
 
