@@ -325,11 +325,9 @@ void vftr_finalize() {
 
     display_function_t **display_functions;
     int n_display_functions;
-    printf ("Create display functions\n");
     if (vftr_environment.print_stack_profile->value || vftr_environment.create_html->value) {
        display_functions = vftr_create_display_functions (vftr_environment.mpi_show_sync_time->value, &n_display_functions); 
     }
-    printf ("DISPLAY functions created\n");
 
     vftr_print_profile (vftr_log, display_functions, n_display_functions, &ntop, vftr_get_runtime_usec());
 #ifdef _MPI
