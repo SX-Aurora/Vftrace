@@ -48,6 +48,7 @@ def update_crystalball(wcontrol):
   global global_dict_created
   global global_dict
   global n_calls_checked
+  global plot_data
   print  ("Update crystalball: ", n_calls_checked.get())
   if not global_dict_created:
     for f in wcontrol.open_files:
@@ -63,16 +64,17 @@ def update_crystalball(wcontrol):
   axes = []
   func_names = []
   for i, prog_entry in enumerate(global_dict.values()):
-    print ("HUHU: ", n_calls_checked.get())
-    if n_calls_checked.get() == 1:
-      l, = ax.plot(prog_entry.x, prog_entry.n_calls)
-      axes.append(l)
-    else:
-      l, = ax.plot(prog_entry.x, prog_entry.t)
-      axes.append(l)
-    func_names.append(prog_entry.func_name)
     if i == 5: break
-  ax.legend(axes, func_names)
+    plot_data[i].set_xdata(prog_entry.x)
+    if n_calls_checked.get() == 1:
+      plot_data[i].set_ydata(prog_entry.n_calls)
+    else:
+      plot_data[i].set_ydata(prog_entry.t)
+    plot_data[i].set_linestyle("-")
+    func_names.append(prog_entry.func_name)
+  ax.relim()
+  ax.autoscale_view()
+  ax.legend(plot_data, func_names)
   ax.set_xlabel (wcontrol.xlabel)
   if wcontrol.ylabel != '':
     ax.set_ylabel (wcnotrol.ylabel)
@@ -81,6 +83,7 @@ def update_crystalball(wcontrol):
   else:
     ax.set_ylabel ("t[s]")
   plot_canvas.draw()
+  plot_canvas.flush_events()
 
 def switch_to_ncalls():
   if wcontrol.valid: update_crystalball(wcontrol)
@@ -131,21 +134,20 @@ frame_plot = tk.Frame (master = window)
 frame_plot.grid(row=0, column=1)
 
 fig, ax = plt.subplots()
+plot_data = []
+for i in range(5):
+  p, = ax.plot([],[], "o")
+  plot_data.append(p)
+
 axes = []
 func_names = []
 
 
 plot_canvas = FigureCanvasTkAgg(fig, master = frame_plot)
-#plot_canvas = FigureCanvasTk(fig, master = frame_plot)
 plot_canvas.draw()
 plot_canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=1)
 
-#toolbar = NavigationToolbar2Tk(plot_canvas, frame_plot)
-#toolbar.update()
-plot_canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=1)
 checkbox_frame = tk.Frame(frame_plot)
-#check_calls_label = tk.Label(checkbox_frame, text = "Show n_calls")
-#check_calls_label.grid(row=0, column=0)
 n_calls_checked = tk.IntVar()
 check_calls_box = tk.Checkbutton(checkbox_frame, text = "Show n_calls",
                                  variable = n_calls_checked, onvalue = 1, offvalue = 0,
