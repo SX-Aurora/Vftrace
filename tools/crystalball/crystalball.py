@@ -49,7 +49,6 @@ def update_crystalball(wcontrol):
   global global_dict
   global n_calls_checked
   global plot_data
-  print  ("Update crystalball: ", n_calls_checked.get())
   if not global_dict_created:
     for f in wcontrol.open_files:
       overview, func_dict = read_functions.create_dictionary(f)
@@ -93,6 +92,12 @@ def create_sample():
   if wcontrol.valid:
     update_crystalball(wcontrol)
 
+def save_plot():
+  global fig
+  filename = filedialog.asksaveasfilename(initialdir="/home/christian/Vftrace/tool/crystalball", title = "Save as",
+                                          filetypes = (("jpeg", "*.jpg"),("png", "*.png"),("all files", "*")))
+  fig.savefig(filename)
+
 window = tk.Tk()
 window.protocol ("WM_DELETE_WINDOW", window.destroy)
 window.wm_title ("The crystal ball performance predictor")
@@ -103,10 +108,11 @@ global_dict = {}
 wcontrol = control_window.control_window(window)
 menubar = tk.Menu(window)
 file_menu = tk.Menu(menubar, tearoff=0)
-file_menu.add_command(label="Create Sample", command=create_sample)
+file_menu.add_command(label="Create Sample", command = create_sample)
+file_menu.add_command(label="Save plot", command = save_plot)
 file_menu.add_separator()
-file_menu.add_command(label="Exit", command=window.quit)
-menubar.add_cascade(label="File", menu=file_menu)
+file_menu.add_command(label="Exit", command = window.quit)
+menubar.add_cascade(label="Actions", menu=file_menu)
 window.config(menu=menubar)
 
 list_frame = tk.Frame (master = window)
