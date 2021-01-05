@@ -11,6 +11,7 @@ class progression_entry:
     self.x = [float(this_x)]
     self.n_calls = [int(this_n_calls)]
     self.t = [float(this_t)] 
+    self.total_time = float(this_t)
     self.progression_type = None
 
   def __str__(self):
@@ -29,6 +30,7 @@ class progression_entry:
     self.x.append(float(this_x))
     self.n_calls.append(int(this_n_calls))
     self.t.append(float(this_t))
+    self.total_time += float(this_t)
 
 class prog_linear:
   def __init__(self, m, n):

@@ -120,7 +120,8 @@ def create_dictionary (filename):
   overview.n_recorded_functions = len(functions)
   overview.truncated_at = functions[-1].split()[4]
   
-  for function in functions:
+  top_5_stackids = []
+  for i, function in enumerate(functions):
     tmp = function.split()
     n_calls = tmp[0]
     overview.n_recorded_calls += int(n_calls)
@@ -146,11 +147,13 @@ def synchronize_dictionaries (global_x, overviews, dictos):
         global_dict[fe.hash].append(global_x[i_dict], fe.n_calls, fe.t_excl)
       else:
         global_dict[fe.hash] = progression.progression_entry(fe.function_name, global_x[i_dict], fe.n_calls, fe.t_excl)
+  global_dict = OrderedDict(sorted(global_dict.items(), key = lambda x: x[1].total_time, reverse = True))
   for i, overview in enumerate(overviews):
     if i == 0:
       global_dict["total"] = progression.progression_entry("total", global_x[i], overview.n_recorded_calls, overview.recorded_time)
     else:
       global_dict["total"].append(global_x[i], overview.n_recorded_calls, overview.recorded_time)
+
   return global_dict
 
 
