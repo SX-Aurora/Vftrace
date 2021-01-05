@@ -44,15 +44,20 @@ def do_prediction():
   else:
     print ("Require at least one log file as argument!")
 
-def plot_function(plot_data, x, y):
+def plot_function(plot_data, x, y, normal_value=None):
   plot_data.set_xdata(x)
-  plot_data.set_ydata(y)
+  if normal_value is not None:
+    plot_data.set_ydata([round(y_val / n_val * 100, 2) for y_val, n_val in zip(y, normal_value)])
+  else:
+    plot_data.set_ydata(y)
   plot_data.set_linestyle("-")
 
 def update_crystalball(wcontrol):
   global global_dict_created
   global global_dict
   global n_calls_checked
+  global n_total_checked
+  global n_normal_checked
   global plot_data
   if not global_dict_created:
     overviews = []
@@ -70,31 +75,51 @@ def update_crystalball(wcontrol):
   axes = []
   func_names = []
   for i, prog_entry in enumerate(global_dict.values()):
-    if i < 5:
-      pp = prog_entry
-    elif i == 5:
-      pp = global_dict["total"]
-    else:
+    plot_this = True
+    if i > 5:
       break
-    if n_calls_checked.get() == 1:
-      plot_function(plot_data[i], pp.x, pp.n_calls)
+    elif i < 5:
+      pp = prog_entry
+    else: # i == 5
+      pp = global_dict["total"]
+      plot_this = n_total_checked.get()
+
+    normal_value = None
+    if n_normal_checked.get():
+      if n_calls_checked.get():
+        normal_value = global_dict["total"].n_calls
+      else:
+        normal_value = global_dict["total"].t
+
+    if plot_this:
+      if n_calls_checked.get():
+        plot_function(plot_data[i], pp.x, pp.n_calls, normal_value)
+      else:
+        plot_function(plot_data[i], pp.x, pp.t, normal_value)
+      func_names.append(pp.func_name)
     else:
-      plot_function(plot_data[i], pp.x, pp.t)
-    func_names.append(pp.func_name)
+      plot_data[i].set_xdata([])
+      plot_data[i].set_ydata([])
   ax.relim()
   ax.autoscale_view()
   ax.legend(plot_data, func_names)
   ax.set_xlabel (wcontrol.xlabel)
   if wcontrol.ylabel != '':
     ax.set_ylabel (wcnotrol.ylabel)
-  elif n_calls_checked.get() == 1:
-    ax.set_ylabel ("#Calls")
+  elif n_calls_checked.get():
+    if n_normal_checked.get():
+      ax.set_ylabel("%Calls")
+    else:
+      ax.set_ylabel ("#Calls")
   else:
-    ax.set_ylabel ("t[s]")
+    if n_normal_checked.get():
+      ax.set_ylabel ("%t")
+    else:
+      ax.set_ylabel ("t[s]")
   plot_canvas.draw()
   plot_canvas.flush_events()
 
-def switch_to_ncalls():
+def switch_button():
   if wcontrol.valid: update_crystalball(wcontrol)
     
 def create_sample():
@@ -165,9 +190,17 @@ plot_canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=1)
 
 checkbox_frame = tk.Frame(frame_plot)
 n_calls_checked = tk.IntVar()
+n_total_checked = tk.IntVar()
+n_normal_checked = tk.IntVar()
 check_calls_box = tk.Checkbutton(checkbox_frame, text = "Show n_calls",
                                  variable = n_calls_checked, onvalue = 1, offvalue = 0,
-                                 command = switch_to_ncalls).grid(row=0, column=1)
+                                 command = switch_button).grid(row=0, column=0)
+check_total_box = tk.Checkbutton(checkbox_frame, text = "Show total",
+                                 variable = n_total_checked, onvalue = 1, offvalue = 0,
+                                 command = switch_button).grid(row=0, column=1)
+check_normal_box = tk.Checkbutton(checkbox_frame, text = "Normalize",
+                                  variable = n_normal_checked, onvalue = 1, offvalue = 0,
+                                  command = switch_button).grid(row=0, column=2)
 checkbox_frame.pack()
 
 
