@@ -16,9 +16,9 @@ class vftrace_overview:
     return "MPI size: " + str(self.mpi_size) + "\n" + \
            "Total runtime: " + str(self.total_runtime) + "s\n" + \
            "Est. application time: " + str(self.estimated_application_runtime) + "s\n" + \
-           "Est. Overhead: " + str(self.estimated_overhead) + "s (" + str(ratio_overhead) + "%)\n" + \
-           "   Sampling: " + str(self.sampling_overhead) + "s (" + str(ratio_sampling) + "%)\n" + \
-           "   MPI: " + str(self.mpi_overhead) + "s (" + str(ratio_mpi) + "%)"
+           "Est. Overhead: " + str(self.estimated_overhead) + "s (" + str("%.2f"%ratio_overhead) + "%)\n" + \
+           "   Sampling: " + str(self.sampling_overhead) + "s (" + str("%.2f"%ratio_sampling) + "%)\n" + \
+           "   MPI: " + str(self.mpi_overhead) + "s (" + str("%.2f"%ratio_mpi) + "%)"
     
   def __repr__(self):
     return self.__str__()
