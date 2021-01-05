@@ -1,3 +1,5 @@
+from collections import OrderedDict
+
 import progression
 
 class vftrace_overview:
@@ -112,7 +114,7 @@ def create_dictionary (filename):
         countdown_stacks = -1
     
   
-  func_dict = {}
+  func_dict = OrderedDict()
   
   # A dictionary keeps its order, so the elements are automatically sorted in the same way as Vftrace has sorted them. 
   overview.n_recorded_functions = len(functions)
@@ -137,7 +139,7 @@ def create_dictionary (filename):
 
 
 def synchronize_dictionaries (global_x, overviews, dictos):
-  global_dict = {}
+  global_dict = OrderedDict()
   for i_dict, dicto in enumerate(dictos):
     for stack_id, fe in dicto.items():
       if fe.hash in global_dict:

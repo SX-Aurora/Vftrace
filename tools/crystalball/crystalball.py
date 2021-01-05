@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 import sys
+from collections import OrderedDict
 
 import tkinter as tk
 from tkinter import filedialog
@@ -149,7 +150,7 @@ window.protocol ("WM_DELETE_WINDOW", window.destroy)
 window.wm_title ("The crystal ball performance predictor")
 
 global_dict_created = False
-global_dict = {}
+global_dict = OrderedDict()
 
 wcontrol = control_window.control_window(window)
 menubar = tk.Menu(window)
@@ -180,7 +181,6 @@ scrollbar.pack(side="right", fill="y")
 list_frame.grid(row=0, column=0)
 
 all_dicts = []
-global_dict = {}
 
 frame_plot = tk.Frame (master = window)
 frame_plot.grid(row=0, column=1)
