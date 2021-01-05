@@ -8,17 +8,27 @@ class vftrace_overview:
     self.estimated_overhead = 0.0
     self.sampling_overhead = 0.0
     self.mpi_overhead = 0.0
+    self.recorded_time = 0.0
+    self.n_recorded_functions = 0
+    self.profile_truncated = False
+    self.truncated_at = 0.0
 
   def __str__(self):
     ratio_overhead = self.estimated_overhead / self.total_runtime * 100
     ratio_sampling = self.sampling_overhead / self.total_runtime * 100
     ratio_mpi = self.mpi_overhead / self.total_runtime * 100
-    return "MPI size: " + str(self.mpi_size) + "\n" + \
-           "Total runtime: " + str(self.total_runtime) + "s\n" + \
-           "Est. application time: " + str(self.estimated_application_runtime) + "s\n" + \
-           "Est. Overhead: " + str(self.estimated_overhead) + "s (" + str("%.2f"%ratio_overhead) + "%)\n" + \
-           "   Sampling: " + str(self.sampling_overhead) + "s (" + str("%.2f"%ratio_sampling) + "%)\n" + \
-           "   MPI: " + str(self.mpi_overhead) + "s (" + str("%.2f"%ratio_mpi) + "%)"
+    s =  "MPI size: " + str(self.mpi_size) + "\n" + \
+         "Total runtime: " + str(self.total_runtime) + "s\n" + \
+         "Est. application time: " + str(self.estimated_application_runtime) + "s\n" + \
+         "Est. Overhead: " + str(self.estimated_overhead) + "s (" + str("%.2f"%ratio_overhead) + "%)\n" + \
+         "   Sampling: " + str(self.sampling_overhead) + "s (" + str("%.2f"%ratio_sampling) + "%)\n" + \
+         "   MPI: " + str(self.mpi_overhead) + "s (" + str("%.2f"%ratio_mpi) + "%)\n" + \
+         "Nr. of recorded functions: " + str(self.n_recorded_functions) + "\n" + \
+         "Recorded time: " + str("%.2f"%self.recorded_time) + "s"
+    if self.is_truncated:
+      s += " (truncated at " + str(self.truncated_at) + "%)"
+    return s
+ 
     
   def __repr__(self):
     return self.__str__()
@@ -77,6 +87,7 @@ def create_dictionary (filename):
     if "MPI overhead" in line:
       overview.mpi_overhead = float(line.split()[2])
     if "Runtime profile for rank" in line:
+      overview.is_truncated = "truncated" in line
       countdown_profile = 3
     elif countdown_profile > 0:
       countdown_profile -= 1
@@ -102,12 +113,14 @@ def create_dictionary (filename):
   func_dict = {}
   
   # A dictionary keeps its order, so the elements are automatically sorted in the same way as Vftrace has sorted them. 
-  total_time = 0.0
+  overview.n_recorded_functions = len(functions)
+  overview.truncated_at = functions[-1].split()[4]
+  
   for function in functions:
     tmp = function.split()
     n_calls = tmp[0]
     t_excl = tmp[1]
-    total_time += float(t_excl)
+    overview.recorded_time += float(t_excl)
     t_incl = tmp[2]
     percent_abs = tmp[3]
     percent_cum = tmp[4]
@@ -116,7 +129,6 @@ def create_dictionary (filename):
     stack_id = tmp[7]
     func_dict[stack_id] = function_entry (n_calls, t_excl, t_incl, percent_abs, percent_cum,
 			                  function_name, caller_name, function_stacks[stack_id])
-  print ("Total time in " + filename + ": ", total_time)
   
   return overview, func_dict
 
