@@ -68,7 +68,6 @@ class progression_entry:
     return self.extrapolation
 
   def test_models(self):
-    #print ("Test: ", self.func_name)
     extrapolate_functions = [self.extrapolate_linear, self.extrapolate_constant, self.extrapolate_amdahl, self.extrapolate_log]
     extrapolate_types = ["linear", "constant", "amdahl", "log"]
     residuals = [0.0 for i in range(4)]

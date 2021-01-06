@@ -26,7 +26,7 @@ def do_prediction():
     x_predict = float(prediction_entry.get())
     t_predict = 0.0
     for key, p in global_dict.items():  
-      if key == "total": continue
+      if key == "total" or key == "mpi_overhead": continue
       t_predict += p.extrapolate_function(x_predict)
     print ("Predict: ", t_predict)
 
@@ -48,6 +48,8 @@ def update_crystalball(wcontrol):
   global n_calls_checked
   global n_total_checked
   global n_normal_checked
+  global n_sampling_checked
+  global n_mpi_checked
   global plot_data
   global n_current_plots
   global n_max_plots
@@ -74,7 +76,13 @@ def update_crystalball(wcontrol):
     if i == n_max_plots:
       pp = global_dict["total"]
       plot_this = n_total_checked.get()
-    elif i > n_max_plots and i < n_previous_plots:
+    elif i == n_max_plots + 1:
+      pp = global_dict["sampling_overhead"]
+      plot_this = n_sampling_checked.get()
+    elif i == n_max_plots + 2:
+      pp = global_dict["mpi_overhead"]
+      plot_this = n_mpi_checked.get()
+    elif i > n_max_plots + 2 and i < n_previous_plots:
       plot_this = False
     elif i < n_max_plots:
       pp = prog_entry
@@ -191,6 +199,8 @@ checkbox_frame = tk.Frame(frame_plot)
 n_calls_checked = tk.IntVar()
 n_total_checked = tk.IntVar()
 n_normal_checked = tk.IntVar()
+n_sampling_checked = tk.IntVar()
+n_mpi_checked = tk.IntVar()
 n_functions_button = tk.Button (checkbox_frame, text = "Set n_functions: ",
                                 command = switch_button).grid(row=0, column=0)
 n_functions_entry = tk.Entry (checkbox_frame, width=2)
@@ -202,9 +212,17 @@ check_calls_box = tk.Checkbutton(checkbox_frame, text = "Show n_calls",
 check_total_box = tk.Checkbutton(checkbox_frame, text = "Show total",
                                  variable = n_total_checked, onvalue = 1, offvalue = 0,
                                  command = switch_button).grid(row=0, column=3)
+check_sampling_box = tk.Checkbutton(checkbox_frame, text = "Show sampling ovhd",
+                                    variable = n_sampling_checked, onvalue = 1, offvalue = 0,
+                                    command = switch_button).grid(row=0, column=4)
+check_mpi_box = tk.Checkbutton(checkbox_frame, text = "Show mpi ovhd",
+                               variable = n_mpi_checked, onvalue = 1, offvalue = 0,
+                               command = switch_button).grid(row=0, column=5)
 check_normal_box = tk.Checkbutton(checkbox_frame, text = "Normalize",
                                   variable = n_normal_checked, onvalue = 1, offvalue = 0,
-                                  command = switch_button).grid(row=0, column=4)
+                                  command = switch_button).grid(row=0, column=6)
+
+
 checkbox_frame.pack()
 prediction_frame = tk.Frame(frame_plot)
 prediction_button = tk.Button (prediction_frame, text = "Predict for x = ", command = do_prediction).grid(row=0, column=0)

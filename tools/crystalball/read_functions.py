@@ -151,8 +151,12 @@ def synchronize_dictionaries (global_x, overviews, dictos):
   for i, overview in enumerate(overviews):
     if i == 0:
       global_dict["total"] = progression.progression_entry("total", global_x[i], overview.n_recorded_calls, overview.recorded_time)
+      global_dict["sampling_overhead"] = progression.progression_entry("sampling_overhead", global_x[i], overview.n_recorded_calls, overview.sampling_overhead)
+      global_dict["mpi_overhead"] = progression.progression_entry("mpi_overhead", global_x[i], 0, overview.mpi_overhead)
     else:
       global_dict["total"].append(global_x[i], overview.n_recorded_calls, overview.recorded_time)
+      global_dict["sampling_overhead"].append(global_x[i], overview.n_recorded_calls, overview.sampling_overhead)
+      global_dict["mpi_overhead"].append(global_x[i], 0, overview.mpi_overhead)
 
   return global_dict
 
