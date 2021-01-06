@@ -1,8 +1,21 @@
 from scipy import optimize 
 import numpy as np
+import scipy
 
 def test_linear(x, a, b):
-  return a + b * x
+  #print ("type(a): ", type(a))
+  #print ("type(b): ", type(b))
+  #print ("type(x): ", type(x))
+  return a * x + b
+
+def test_constant(x, a):
+  return a
+
+def test_amdahl(x, a, b):
+  return a / x + b 
+
+def test_log(x, a, b):
+  return a * x * np.log(x) + b
 
 class progression_entry:
 
@@ -12,7 +25,9 @@ class progression_entry:
     self.n_calls = [int(this_n_calls)]
     self.t = [float(this_t)] 
     self.total_time = float(this_t)
-    self.progression_type = None
+    self.extrapolate_function = None
+    self.a = None
+    self.b = None
 
   def __str__(self):
     s = ""
@@ -31,6 +46,48 @@ class progression_entry:
     self.n_calls.append(int(this_n_calls))
     self.t.append(float(this_t))
     self.total_time += float(this_t)
+
+  def extrapolate_constant(self, x):
+    return self.a
+
+  def extrapolate_linear(self, x):
+    return self.a * x + self.b
+
+  def extrapolate_log (self, x):
+    return self.a * x * np.log(x) + self.b
+
+  def extrapolate_amdahl (self, x):
+    return self.a / x + self.b
+
+  def test_models(self):
+    #print ("Test: ", self.func_name)
+    extrapolate_functions = [self.extrapolate_linear, self.extrapolate_constant, self.extrapolate_amdahl, self.extrapolate_log]
+    residuals = [0.0 for i in range(4)]
+    a = [0.0 for i in range(4)]
+    b = [0.0 for i in range(4)]
+    if len(self.x) > 1:
+      popt, _ = scipy.optimize.curve_fit(test_linear, self.x, self.t)
+      a[0], b[0] = popt
+      for x, y in zip(self.x, self.t):
+        residuals[0] += (test_linear(x, a[0], b[0]) - y)**2
+    popt, _ = scipy.optimize.curve_fit(test_constant, self.x, self.t)
+    a[1] = popt
+    for x, y in zip(self.x, self.t):
+      residuals[1] += (test_constant(x, a[1]) - y)**2
+    if len(self.x) > 1:
+      popt, _ = scipy.optimize.curve_fit(test_amdahl, self.x, self.t)
+      a[2], b[2] = popt
+      for x, y in zip(self.x, self.t):
+        residuals[2] += (test_amdahl(x, a[2], b[2]) - y)**2
+      popt, _ = scipy.optimize.curve_fit(test_log, self.x, self.t)
+      a[3], b[3] = popt
+      for x, y in zip(self.x, self.t):
+        residuals[3] += (test_log(x, a[3], b[3]) - y)**2
+    min_res = residuals.index(min(residuals))
+    self.extrapolate_function = extrapolate_functions[min_res]
+    self.a = a[min_res]
+    self.b = b[min_res]
+     
 
 class prog_linear:
   def __init__(self, m, n):

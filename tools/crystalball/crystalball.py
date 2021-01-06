@@ -18,32 +18,44 @@ import progression
 
 def do_prediction():
 
-  if len(sys.argv) > 1:
-    all_dicts = []
-    for filename in sys.argv[1:]:
-      func_dict, overview = read_functions.create_dictionary(filename)
-      all_dicts.append(func_dict) 
-      
-      print ("top_5 in " + filename + ": ")
-      for i in top_5_stack_ids:
-        print (func_dict[i])
-      print ("**************************************************")
-  
-    global_dict = read_functions.synchronize_dictionaries(all_dicts) 
+  global prediction_entry
+  if global_dict_created:
+    for p in global_dict.values():
+      p.test_models ()
 
-# Do the prediction
-    x_predict = float(entry_entry.get())
-    t_predict = 0
-    for this_hash, prog_entry in global_dict.items():
-      progression.determine_progression_type(prog_entry, len(sys.argv) - 1)
-      if not isinstance(prog_entry.progression_type, progression.prog_undefined):
-         t_predict += prog_entry.progression_type.predict(x_predict)
-      print (prog_entry)
+    x_predict = float(prediction_entry.get())
+    t_predict = 0.0
+    for key, p in global_dict.items():  
+      if key == "total": continue
+      t_predict += p.extrapolate_function(x_predict)
+    print ("Predict: ", t_predict)
 
-    result_label["text"] = "Prediction: " + str(t_predict) + "s"
-
-  else:
-    print ("Require at least one log file as argument!")
+#   if len(sys.argv) > 1:
+#     all_dicts = []
+#     for filename in sys.argv[1:]:
+#       func_dict, overview = read_functions.create_dictionary(filename)
+#       all_dicts.append(func_dict) 
+#       
+#       print ("top_5 in " + filename + ": ")
+#       for i in top_5_stack_ids:
+#         print (func_dict[i])
+#       print ("**************************************************")
+#   
+#     global_dict = read_functions.synchronize_dictionaries(all_dicts) 
+# 
+# # Do the prediction
+#     x_predict = float(entry_entry.get())
+#     t_predict = 0
+#     for this_hash, prog_entry in global_dict.items():
+#       progression.determine_progression_type(prog_entry, len(sys.argv) - 1)
+#       if not isinstance(prog_entry.progression_type, progression.prog_undefined):
+#          t_predict += prog_entry.progression_type.predict(x_predict)
+#       print (prog_entry)
+# 
+#     result_label["text"] = "Prediction: " + str(t_predict) + "s"
+# 
+#   else:
+#     print ("Require at least one log file as argument!")
 
 def plot_function(plot_data, x, y, normal_value=None):
   plot_data.set_xdata(x)
@@ -217,6 +229,11 @@ check_normal_box = tk.Checkbutton(checkbox_frame, text = "Normalize",
                                   variable = n_normal_checked, onvalue = 1, offvalue = 0,
                                   command = switch_button).grid(row=0, column=4)
 checkbox_frame.pack()
+prediction_frame = tk.Frame(frame_plot)
+prediction_button = tk.Button (prediction_frame, text = "Predict for x = ", command = do_prediction).grid(row=0, column=0)
+prediction_entry = tk.Entry (prediction_frame, width=3)
+prediction_entry.grid(row=0, column=1) # If gridded above, prediction_entry will be None-type...
+prediction_frame.pack()
 
 
 
