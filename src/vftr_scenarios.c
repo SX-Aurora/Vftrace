@@ -25,6 +25,7 @@
 
 #include "vftr_signals.h"
 #include "vftr_fileutils.h"
+#include "vftr_functions.h"
 #include "vftr_hwcounters.h"
 #include "vftr_scenarios.h"
 #include "jsmn.h"
@@ -79,11 +80,13 @@ void vftr_write_scenario_header_to_vfd (FILE *fp) {
 
 /**********************************************************************/
 
-void vftr_write_observables_to_vfd (unsigned long long cycles, FILE *fp) {
+void vftr_write_observables_to_vfd (profdata_t *prof_current, profdata_t *prof_previous, FILE *fp) {
 #if defined(HAS_SXHWC) || defined(HAS_PAPI)
-	vftr_scenario_expr_evaluate_all (0., cycles);
-	for (int i = 0; i < vftr_scenario_expr_n_formulas; i++) {
-		fwrite (&vftr_scenario_expr_formulas[i].value, sizeof(double), 1, fp);
+	for (int i = 0; i < vftr_scenario_expr_n_vars; i++) {
+                double value = (double)(prof_current->event_count[i] - prof_previous->event_count[i]);
+		printf ("value: %lf\n", value);
+		//fwrite (&vftr_scenario_expr_formulas[i].value, sizeof(double), 1, fp);
+		fwrite (&value, sizeof(double), 1, fp);
 	}
 #endif
 }

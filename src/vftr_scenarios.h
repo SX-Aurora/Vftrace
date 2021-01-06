@@ -21,6 +21,7 @@
 
 #include <stdio.h>
 #include <stdbool.h>
+#include "vftr_functions.h"
 
 #define SCENARIO_NAME_LEN 32
 
@@ -53,7 +54,7 @@ enum ve_counters {
 };	
 
 void vftr_write_scenario_header_to_vfd (FILE *fp);
-void vftr_write_observables_to_vfd (unsigned long long cycles, FILE *fp);
+void vftr_write_observables_to_vfd (profdata_t *prof_current, profdata_t *prof_previous, FILE *fp);
 
 #define TE_MAX 50
 #define SCENARIO_EXPR_BUF_SIZE 200

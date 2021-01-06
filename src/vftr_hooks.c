@@ -155,7 +155,9 @@ void vftr_function_entry (const char *s, void *addr, int line, bool isPrecise) {
                     (time_to_sample || vftr_environment.accurate_profile->value);
 
     if (time_to_sample && vftr_env_do_sampling ()) {
-        vftr_write_to_vfd (func_entry_time, vftr_prog_cycles, func->id, SID_ENTRY);
+        profdata_t *prof_current = &func->prof_current;
+        profdata_t *prof_previous = &func->prof_previous;
+        vftr_write_to_vfd (func_entry_time, prof_current, prof_previous, func->id, SID_ENTRY);
 #ifdef _MPI
         int mpi_isinit;
         PMPI_Initialized(&mpi_isinit);
@@ -260,7 +262,8 @@ void vftr_function_exit(int line) {
 	  	    vftr_events_enabled && 
                     (timeToSample || vftr_environment.accurate_profile->value);
     if (timeToSample && vftr_env_do_sampling ()) {
-        vftr_write_to_vfd(func_exit_time, prof_current->cycles, func->id, SID_EXIT);
+        profdata_t *prof_previous = &func->prof_previous;
+        vftr_write_to_vfd(func_exit_time, prof_current, prof_previous, func->id, SID_EXIT);
 #ifdef _MPI
         int mpi_isinit;
         PMPI_Initialized(&mpi_isinit);

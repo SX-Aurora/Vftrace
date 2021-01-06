@@ -276,12 +276,12 @@ void vftr_finalize_vfd_file (long long finalize_time, int signal_number) {
 
 /**********************************************************************/
 
-void vftr_write_to_vfd(long long runtime, unsigned long long cycles, int stack_id, unsigned int sid) {
+void vftr_write_to_vfd(long long runtime, profdata_t *prof_current, profdata_t *prof_previous, int stack_id, unsigned int sid) {
     fwrite (&sid, sizeof(unsigned int), 1, vftr_vfd_file);
     fwrite (&stack_id, sizeof(int), 1, vftr_vfd_file);
     fwrite (&runtime, sizeof(long long), 1, vftr_vfd_file);
 
-    vftr_write_observables_to_vfd (cycles, vftr_vfd_file);
+    vftr_write_observables_to_vfd (prof_current, prof_previous, vftr_vfd_file);
 
     vftr_nextsampletime = runtime + vftr_interval;
     vftr_prevsampletime = runtime;
