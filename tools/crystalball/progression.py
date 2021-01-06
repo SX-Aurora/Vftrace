@@ -25,20 +25,24 @@ class progression_entry:
     self.n_calls = [int(this_n_calls)]
     self.t = [float(this_t)] 
     self.total_time = float(this_t)
+    self.extrapolate_type = ""
     self.extrapolate_function = None
     self.a = None
     self.b = None
+    self.extrapolation = -1.0
 
   def __str__(self):
     s = ""
-    # Use enumerate
+    s = self.func_name + ": "
     for i in range(len(self.x)):
-      s += "(" + str(self.x[i]) + "," + str(self.n_calls[i]) + "," + str(self.t[i]) +  "," + str(float(self.t[i]) / float(self.n_calls[i])) + ")"
+      s += "(" + str(self.x[i]) + "," + str(self.n_calls[i]) + "," + str(self.t[i]) + ")"
       if i != len(self.x) - 1:
         s += " -> "
        
-    #if self.progression_type != None:
-    #  s += "[" + str(self.progression_type) + "]"
+    if self.extrapolate_type != "":
+      s += "[" + str(self.extrapolate_type) + "]"
+    if self.extrapolation >= 0.0: s += " - Extra: " + str(self.extrapolation)
+    s += "\n"
     return s
 
   def append(self, this_x, this_n_calls, this_t):
@@ -48,20 +52,25 @@ class progression_entry:
     self.total_time += float(this_t)
 
   def extrapolate_constant(self, x):
-    return self.a
+    self.extrapolation = self.a
+    return self.extrapolation
 
   def extrapolate_linear(self, x):
-    return self.a * x + self.b
+    self.extrapolation = self.a * x + self.b
+    return self.extrapolation
 
   def extrapolate_log (self, x):
-    return self.a * x * np.log(x) + self.b
+    self.extrapolation = self.a * x * np.log(x) + self.b
+    return self.extrapolation
 
   def extrapolate_amdahl (self, x):
-    return self.a / x + self.b
+    self.extrapolation =  self.a / x + self.b
+    return self.extrapolation
 
   def test_models(self):
     #print ("Test: ", self.func_name)
     extrapolate_functions = [self.extrapolate_linear, self.extrapolate_constant, self.extrapolate_amdahl, self.extrapolate_log]
+    extrapolate_types = ["linear", "constant", "amdahl", "log"]
     residuals = [0.0 for i in range(4)]
     a = [0.0 for i in range(4)]
     b = [0.0 for i in range(4)]
@@ -84,6 +93,7 @@ class progression_entry:
       for x, y in zip(self.x, self.t):
         residuals[3] += (test_log(x, a[3], b[3]) - y)**2
     min_res = residuals.index(min(residuals))
+    self.extrapolate_type = extrapolate_types[min_res]
     self.extrapolate_function = extrapolate_functions[min_res]
     self.a = a[min_res]
     self.b = b[min_res]

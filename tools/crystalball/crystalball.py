@@ -30,32 +30,9 @@ def do_prediction():
       t_predict += p.extrapolate_function(x_predict)
     print ("Predict: ", t_predict)
 
-#   if len(sys.argv) > 1:
-#     all_dicts = []
-#     for filename in sys.argv[1:]:
-#       func_dict, overview = read_functions.create_dictionary(filename)
-#       all_dicts.append(func_dict) 
-#       
-#       print ("top_5 in " + filename + ": ")
-#       for i in top_5_stack_ids:
-#         print (func_dict[i])
-#       print ("**************************************************")
-#   
-#     global_dict = read_functions.synchronize_dictionaries(all_dicts) 
-# 
-# # Do the prediction
-#     x_predict = float(entry_entry.get())
-#     t_predict = 0
-#     for this_hash, prog_entry in global_dict.items():
-#       progression.determine_progression_type(prog_entry, len(sys.argv) - 1)
-#       if not isinstance(prog_entry.progression_type, progression.prog_undefined):
-#          t_predict += prog_entry.progression_type.predict(x_predict)
-#       print (prog_entry)
-# 
-#     result_label["text"] = "Prediction: " + str(t_predict) + "s"
-# 
-#   else:
-#     print ("Require at least one log file as argument!")
+    with open("extrapolate.out", "w") as f:
+      for p in global_dict.values():
+        f.write(str(p))  
 
 def plot_function(plot_data, x, y, normal_value=None):
   plot_data.set_xdata(x)
