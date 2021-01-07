@@ -49,39 +49,49 @@ int papi_event_set;
 long long vftr_echwc[MAX_HWC_EVENTS];
 
 // As each hardware observable is registered, this counter is incremented. 
-int hwc_event_num = 0;
 
 void vftr_new_counter (char *name, int id, int rank) {
-    evtcounter_t *evc;
-    evc = (evtcounter_t *) malloc (sizeof(evtcounter_t));
-    evc->name = strdup (name);
-    evc->namelen = strlen (name);
-    evc->count = 0ll;
-    evc->next = NULL;
-    evc->decipl  = 1;
-    evc->id = id;
-    evc->rank = rank;
-
-    if (!first_counter) {
-	first_counter = next_counter = evc;
-    } else {
-	next_counter = next_counter->next = evc;
-    }
+//    evtcounter_t *evc;
+//    evc = (evtcounter_t *) malloc (sizeof(evtcounter_t));
+//    evc->name = strdup (name);
+//    evc->namelen = strlen (name);
+//    evc->count = 0ll;
+//    evc->next = NULL;
+//    evc->decipl  = 1;
+//    evc->id = id;
+//    evc->rank = rank;
+//
+//    if (!first_counter) {
+//        //first_counter = next_counter = evc;
+//        first_counter = (evtcounter_t*) malloc (sizeof(evtcounter_t));
+//        memcpy(first_counter, evc, sizeof(evc));
+//        //first_counter = evc;
+//        next_counter = (evtcounter_t*) malloc (sizeof(evtcounter_t));
+//        memcpy(next_counter, evc, sizeof(evc));
+//        //next_counter = evc;
+//    } else {
+//        //next_counter->next = evc;
+//        next_counter->next = (evtcounter_t*) malloc (sizeof(evtcounter_t));
+//        next_counter->next = evc;
+//        next_counter = next_counter->next;
+//        //next_counter = next_counter->next = evc;
+//    }
 
     vftr_n_hw_obs++;
+   // printf ("n_hw_obs: %d\n", vftr_n_hw_obs);
 }
 
 /**********************************************************************/
 
 void vftr_papi_counter (char *name) {
     int id   = err_no_hwc_support ? -1 : vftr_find_event_number (name);
-    vftr_new_counter (name, id, hwc_event_num++);
+    vftr_new_counter (name, id, 0);
 }
 
 /**********************************************************************/
 
 void vftr_sx_counter (char *name, int id) {
-    vftr_new_counter( name, id, hwc_event_num++);
+    vftr_new_counter( name, id, 0);
 }
 
 /**********************************************************************/

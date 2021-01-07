@@ -82,7 +82,7 @@ void vftr_write_scenario_header_to_vfd (FILE *fp) {
 
 void vftr_write_observables_to_vfd (profdata_t *prof_current, profdata_t *prof_previous, FILE *fp) {
 #if defined(HAS_SXHWC) || defined(HAS_PAPI)
-	for (int i = 0; i < vftr_scenario_expr_n_vars; i++) {
+        for (int i = 0; i < vftr_n_hw_obs; i++) {
 		double value;
 		if (prof_current != NULL && prof_previous != NULL) {
                   value = (double)(prof_current->event_count[i] - prof_previous->event_count[i]);

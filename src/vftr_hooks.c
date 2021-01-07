@@ -22,6 +22,7 @@
 #include <string.h>
 #include <signal.h>
 
+#include <stdbool.h>
 #include "vftr_symbols.h"
 #include "vftr_hwcounters.h"
 #include "vftr_setup.h"

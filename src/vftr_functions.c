@@ -64,6 +64,20 @@ int *print_stackid_list;
 int n_print_stackids;
 int stackid_list_size;
 
+void vftr_init_profdata (profdata_t *prof) {
+  prof->calls = 0;
+  prof->cycles = 0;
+  prof->timeExcl = 0;
+  prof->timeIncl = 0;
+  prof->event_count = NULL; 
+  prof->events[0] = NULL;
+  prof->events[1] = NULL;
+  prof->ic = 0;
+  prof->mpi_tot_send_bytes = 0;
+  prof->mpi_tot_recv_bytes = 0;
+  
+}
+
 // add a new function to the stack tables
 function_t *vftr_new_function(void *arg, const char *function_name,
                               function_t *caller, int line, bool is_precise) {
@@ -156,8 +170,10 @@ function_t *vftr_new_function(void *arg, const char *function_name,
    }
 
    // preparing the function specific profiling data
-   memset(&(func->prof_current), 0, sizeof(profdata_t));
-   memset(&(func->prof_previous), 0, sizeof(profdata_t));
+   //memset(&(func->prof_current), 0, sizeof(profdata_t));
+   //memset(&(func->prof_previous), 0, sizeof(profdata_t));
+   vftr_init_profdata (&func->prof_current);
+   vftr_init_profdata (&func->prof_previous);
 
    if (vftr_n_hw_obs > 0) {
       func->prof_current.event_count = (long long*) malloc(vftr_n_hw_obs * sizeof(long long));
@@ -209,15 +225,18 @@ void vftr_reset_counts (function_t *func) {
    int i, n;
    int m = vftr_n_hw_obs * sizeof(long long);
 
-   if( func == NULL ) return;
+   if (func == NULL) return;
 
-   memset (func->prof_current.event_count,  0, m );
-   memset (func->prof_previous.event_count, 0, m );
-   func->prof_current.calls   = 0;
+   if (func->prof_current.event_count) {
+     memset (func->prof_current.event_count,  0, m );
+   }
+   if (func->prof_previous.event_count) {
+     memset (func->prof_previous.event_count, 0, m );
+   }
    func->prof_current.cycles  = 0;
    func->prof_current.timeExcl = 0;
    func->prof_current.timeIncl = 0;
-   func->prof_current.flops   = 0;
+   //func->prof_current.flops   = 0;   
    n = func->levels;
 
    /* Recursive scan of callees */

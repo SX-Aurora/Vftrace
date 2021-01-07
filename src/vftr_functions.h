@@ -16,9 +16,10 @@ typedef struct ProfileData {
    // time spend in the function (including subfunctions)
    long long timeIncl;
    // 
-   long long flops, *event_count, *events[2], ecreads;
+   //long long *event_count, *events[2], ecreads;
+   long long *event_count, *events[2];
    //
-   int pfcount, ic;
+   int ic;
    long mpi_tot_send_bytes;
    long mpi_tot_recv_bytes;
 } profdata_t;

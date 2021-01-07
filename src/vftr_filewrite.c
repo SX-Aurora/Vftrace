@@ -1211,7 +1211,7 @@ void vftr_print_profile_summary (FILE *fp_log, function_t **func_table, double t
               profdata_t *prof_previous = &func_table[i]->prof_previous;
     	      total_cycles += prof_current->cycles - prof_previous->cycles;
               if (!prof_current->event_count || !prof_previous->event_count) continue;
-    	      for (int j = 0; j < vftr_scenario_expr_n_vars; j++) {
+    	      for (int j = 0; j < vftr_n_hw_obs; j++) {
     	          vftr_scenario_expr_counter_values[j] += (double)(prof_current->event_count[j] - prof_previous->event_count[j]);
     	      }
     	   }
