@@ -83,8 +83,12 @@ void vftr_write_scenario_header_to_vfd (FILE *fp) {
 void vftr_write_observables_to_vfd (profdata_t *prof_current, profdata_t *prof_previous, FILE *fp) {
 #if defined(HAS_SXHWC) || defined(HAS_PAPI)
 	for (int i = 0; i < vftr_scenario_expr_n_vars; i++) {
-                double value = (double)(prof_current->event_count[i] - prof_previous->event_count[i]);
-		printf ("value: %lf\n", value);
+		double value;
+		if (prof_current != NULL && prof_previous != NULL) {
+                  value = (double)(prof_current->event_count[i] - prof_previous->event_count[i]);
+		} else { // Dummy entry, e.g. for vftr_finalize
+		  value = 0.0;
+                }
 		//fwrite (&vftr_scenario_expr_formulas[i].value, sizeof(double), 1, fp);
 		fwrite (&value, sizeof(double), 1, fp);
 	}
