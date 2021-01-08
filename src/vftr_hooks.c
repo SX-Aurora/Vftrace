@@ -268,7 +268,6 @@ void vftr_function_exit(int line) {
     if (read_counters) {
         int ic = vftr_prof_data.ic;
         vftr_read_counters (vftr_prof_data.events[ic]);
-        prof_current->ecreads++; /* Only at exit */
         if (prof_current->event_count && func->detail) {
             for (e = 0; e < vftr_n_hw_obs; e++) {
                 long long delta = vftr_prof_data.events[ic][e] - vftr_prof_data.events[1-ic][e];

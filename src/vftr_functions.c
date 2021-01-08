@@ -236,7 +236,6 @@ void vftr_reset_counts (function_t *func) {
    func->prof_current.cycles  = 0;
    func->prof_current.timeExcl = 0;
    func->prof_current.timeIncl = 0;
-   //func->prof_current.flops   = 0;   
    n = func->levels;
 
    /* Recursive scan of callees */
