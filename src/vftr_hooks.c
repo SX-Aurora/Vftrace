@@ -155,21 +155,24 @@ void vftr_function_entry (const char *s, void *addr, int line, bool isPrecise) {
 		    vftr_events_enabled && 
                     (time_to_sample || vftr_environment.accurate_profile->value);
 
-    if (func->return_to && read_counters) {
-        int ic = vftr_prof_data.ic;
-        vftr_read_counters (vftr_prof_data.events[ic]);
-        if (prof_return->event_count && func->return_to->detail) {
-            for (e = 0; e < vftr_n_hw_obs; e++) {
-                long long delta = vftr_prof_data.events[ic][e] - vftr_prof_data.events[1-ic][e];
-#ifdef __ve__
-                if (delta < 0) /* Handle counter overflow */
-                    delta += e < 2 ? (long long) 0x000fffffffffffff
-                                   : (long long) 0x00ffffffffffffff;
+    if (func->return_to) {
+        prof_return = &func->return_to->prof_current;
+        if (read_counters) {
+           int ic = vftr_prof_data.ic;
+           vftr_read_counters (vftr_prof_data.events[ic]);
+           if (prof_return->event_count && func->return_to->detail) {
+               for (e = 0; e < vftr_n_hw_obs; e++) {
+                   long long delta = vftr_prof_data.events[ic][e] - vftr_prof_data.events[1-ic][e];
+#ifdef _   _ve__
+                   if (delta < 0) /* Handle counter overflow */
+                       delta += e < 2 ? (long long) 0x000fffffffffffff
+                                      : (long long) 0x00ffffffffffffff;
 #endif
-    	    prof_return->event_count[e] += delta;
-            }
-        }
-        vftr_prof_data.ic = 1 - ic;
+    	       prof_return->event_count[e] += delta;
+               }
+           }
+           vftr_prof_data.ic = 1 - ic;
+       }
     }
 
 
@@ -195,7 +198,6 @@ void vftr_function_entry (const char *s, void *addr, int line, bool isPrecise) {
     // Maintain profile
 
     if (func->return_to) {
-        prof_return = &func->return_to->prof_current;
         delta = cycles0 - vftr_prof_data.cycles;
 	prof_return->cycles += delta;
         prof_return->timeExcl += func_entry_time - vftr_prof_data.timeExcl;
