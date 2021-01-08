@@ -168,7 +168,7 @@ void vftr_function_entry (const char *s, void *addr, int line, bool isPrecise) {
                        delta += e < 2 ? (long long) 0x000fffffffffffff
                                       : (long long) 0x00ffffffffffffff;
 #endif
-    	       prof_return->event_count[e] += delta;
+    	           prof_return->event_count[e] += delta;
                }
            }
            vftr_prof_data.ic = 1 - ic;
