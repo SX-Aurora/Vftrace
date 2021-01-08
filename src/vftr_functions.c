@@ -170,8 +170,6 @@ function_t *vftr_new_function(void *arg, const char *function_name,
    }
 
    // preparing the function specific profiling data
-   //memset(&(func->prof_current), 0, sizeof(profdata_t));
-   //memset(&(func->prof_previous), 0, sizeof(profdata_t));
    vftr_init_profdata (&func->prof_current);
    vftr_init_profdata (&func->prof_previous);
 
