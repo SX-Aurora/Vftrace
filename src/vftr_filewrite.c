@@ -627,18 +627,18 @@ void vftr_set_summary_column_formats (bool print_mpi, int n_display_funcs, displ
 
 void vftr_set_proftab_column_formats (function_t **func_table,
 	long long runtime_usec, double sampling_overhead_time, 
-	int n_funcs, int *func_indices, column_t **columns) {
+	int n_funcs, int *func_indices, column_t *columns) {
 	int i_column = 0;
-        vftr_prof_column_init ("Calls", NULL, 0, COL_INT, SEP_NONE, &(*columns)[i_column++]);
-        vftr_prof_column_init ("t_excl[s]", NULL, 3, COL_DOUBLE, SEP_NONE, &(*columns)[i_column++]);
-        vftr_prof_column_init ("t_incl[s]", NULL, 3, COL_DOUBLE, SEP_NONE, &(*columns)[i_column++]);
-        vftr_prof_column_init ("%abs", NULL, 1, COL_DOUBLE, SEP_NONE, &(*columns)[i_column++]);
-        vftr_prof_column_init ("%cum", NULL, 1, COL_DOUBLE, SEP_NONE, &(*columns)[i_column++]);
+        vftr_prof_column_init ("Calls", NULL, 0, COL_INT, SEP_NONE, &(columns)[i_column++]);
+        vftr_prof_column_init ("t_excl[s]", NULL, 3, COL_DOUBLE, SEP_NONE, &(columns)[i_column++]);
+        vftr_prof_column_init ("t_incl[s]", NULL, 3, COL_DOUBLE, SEP_NONE, &(columns)[i_column++]);
+        vftr_prof_column_init ("%abs", NULL, 1, COL_DOUBLE, SEP_NONE, &(columns)[i_column++]);
+        vftr_prof_column_init ("%cum", NULL, 1, COL_DOUBLE, SEP_NONE, &(columns)[i_column++]);
 
         if (vftr_environment.show_overhead->value) {
-	   vftr_prof_column_init ("t_ovhd[s]", NULL, 3, COL_DOUBLE, SEP_NONE, &(*columns)[i_column++]);
-	   vftr_prof_column_init ("%ovhd", NULL, 1, COL_DOUBLE, SEP_NONE, &(*columns)[i_column++]);
-	   vftr_prof_column_init ("t_ovhd / t_excl", NULL, 1, COL_DOUBLE, SEP_NONE, &(*columns)[i_column++]);
+	   vftr_prof_column_init ("t_ovhd[s]", NULL, 3, COL_DOUBLE, SEP_NONE, &(columns)[i_column++]);
+	   vftr_prof_column_init ("%ovhd", NULL, 1, COL_DOUBLE, SEP_NONE, &(columns)[i_column++]);
+	   vftr_prof_column_init ("t_ovhd / t_excl", NULL, 1, COL_DOUBLE, SEP_NONE, &(columns)[i_column++]);
         }
 
 	if (vftr_events_enabled) {
@@ -656,14 +656,13 @@ void vftr_set_proftab_column_formats (function_t **func_table,
 		      }
 		   }
 		   vftr_prof_column_init (header_with_unit, NULL, vftr_scenario_expr_format[i].decimal_places,
-		           		  COL_DOUBLE, SEP_NONE, &(*columns)[i_column++]);
+		           		  COL_DOUBLE, SEP_NONE, &(columns)[i_column++]);
 		} 
  	}
 
-        // Set scenario columns here
-        vftr_prof_column_init ("Function", NULL, 0, COL_CHAR, SEP_NONE, &(*columns)[i_column++]);
-        vftr_prof_column_init ("Caller", NULL, 0, COL_CHAR, SEP_NONE, &(*columns)[i_column++]);
-        vftr_prof_column_init ("ID", NULL, 0, COL_INT, SEP_NONE, &(*columns)[i_column++]);
+        vftr_prof_column_init ("Function", NULL, 0, COL_CHAR, SEP_NONE, &(columns)[i_column++]);
+        vftr_prof_column_init ("Caller", NULL, 0, COL_CHAR, SEP_NONE, &(columns)[i_column++]);
+        vftr_prof_column_init ("ID", NULL, 0, COL_INT, SEP_NONE, &(columns)[i_column++]);
         int stat;
         long long t_sum = 0;
         for (int i = 0; i < n_funcs; i++) {
@@ -676,38 +675,38 @@ void vftr_set_proftab_column_formats (function_t **func_table,
      	    t_sum += t_excl;
             int n_calls = prof_current.calls - prof_previous.calls;
             i_column = 0;
-            vftr_prof_column_set_n_chars (&n_calls, NULL, &(*columns)[i_column++], &stat);
-            vftr_prof_column_set_n_chars (&t_excl, NULL, &(*columns)[i_column++], &stat);
-            vftr_prof_column_set_n_chars (&t_incl, NULL, &(*columns)[i_column++], &stat);
+            vftr_prof_column_set_n_chars (&n_calls, NULL, &(columns)[i_column++], &stat);
+            vftr_prof_column_set_n_chars (&t_excl, NULL, &(columns)[i_column++], &stat);
+            vftr_prof_column_set_n_chars (&t_incl, NULL, &(columns)[i_column++], &stat);
 	    double t = (double)t_excl / (double)runtime_usec * 100;
-            vftr_prof_column_set_n_chars (&t, NULL, &(*columns)[i_column++], &stat);
+            vftr_prof_column_set_n_chars (&t, NULL, &(columns)[i_column++], &stat);
 	    t = (double)t_sum / (double)runtime_usec * 100;
-            vftr_prof_column_set_n_chars (&t, NULL, &(*columns)[i_column++], &stat);
+            vftr_prof_column_set_n_chars (&t, NULL, &(columns)[i_column++], &stat);
 
             if (vftr_environment.show_overhead->value) {
                 double t_overhead = func_table[i_func]->overhead * 1e-6;
-                vftr_prof_column_set_n_chars (&t_overhead, NULL, &(*columns)[i_column++], &stat);
+                vftr_prof_column_set_n_chars (&t_overhead, NULL, &(columns)[i_column++], &stat);
                 double rel = sampling_overhead_time > 0.0 ? t_overhead / sampling_overhead_time * 99.99 : 0.0;
-                vftr_prof_column_set_n_chars (&rel, NULL, &(*columns)[i_column++], &stat);
+                vftr_prof_column_set_n_chars (&rel, NULL, &(columns)[i_column++], &stat);
                 rel = t_excl > 0.0 ? t_overhead / t_excl : 0.0;
-                vftr_prof_column_set_n_chars (&rel, NULL, &(*columns)[i_column++], &stat);
+                vftr_prof_column_set_n_chars (&rel, NULL, &(columns)[i_column++], &stat);
             }
 
 	    if (vftr_events_enabled) {
 		vftr_fill_scenario_counter_values (vftr_scenario_expr_counter_values,
 		          vftr_scenario_expr_n_vars, prof_current, prof_previous);
 		unsigned long long cycles = prof_current.cycles - prof_previous.cycles;
-		vftr_scenario_expr_evaluate_all (t_excl, cycles);
+		vftr_scenario_expr_evaluate_all (t_excl * 1e-6, cycles);
 		for (int j = 0; j < vftr_scenario_expr_n_formulas; j++) {
 		   double tmp = vftr_scenario_expr_formulas[j].value;
-		   vftr_prof_column_set_n_chars (&tmp, NULL, &(*columns)[i_column++], &stat);
+		   vftr_prof_column_set_n_chars (&tmp, NULL, &(columns)[i_column++], &stat);
 	   	}
 	    }
 
-            vftr_prof_column_set_n_chars (func_table[i_func]->name, NULL, &(*columns)[i_column++], &stat);
-            vftr_prof_column_set_n_chars (func_table[i_func]->return_to->name, NULL, &(*columns)[i_column++], &stat);
+            vftr_prof_column_set_n_chars (func_table[i_func]->name, NULL, &(columns)[i_column++], &stat);
+            vftr_prof_column_set_n_chars (func_table[i_func]->return_to->name, NULL, &(columns)[i_column++], &stat);
 	}
-	columns[0]->n_chars++;
+	columns[0].n_chars++;
 }
 
 /**********************************************************************/
@@ -1353,7 +1352,7 @@ void vftr_print_profile (FILE *fp_log, display_function_t **display_functions, i
     int i_column = 0;
     column_t *prof_columns = (column_t*) malloc (n_columns * sizeof(column_t));
     vftr_set_proftab_column_formats (func_table, function_time, sampling_overhead_time_usec * 1e-6,
-				     *n_func_indices, func_indices, &prof_columns);
+				     *n_func_indices, func_indices, prof_columns);
 
     table_width = vftr_get_tablewidth_from_columns (prof_columns, n_columns, false);
 
