@@ -101,7 +101,7 @@ int main (int argc, char **argv) {
         for (int i = 0; i < vfd_header.n_hw_obs; i++) {
           hw_values[i] = 0.0;
         }
-	read_scenario_header (fp, vfd_header.n_hw_obs, vfd_header.n_formulas);
+	read_scenario_header (fp, vfd_header.n_hw_obs, vfd_header.n_formulas, true);
     }
     
     fprintf (fp_out, "Unique stacks: %d\n", vfd_header.stackscount);

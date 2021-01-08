@@ -23,8 +23,6 @@
 #include <stdbool.h>
 #include "vftr_functions.h"
 
-#define SCENARIO_NAME_LEN 32
-
 typedef struct EventCounter {
     int                 id, namelen, decipl;
     long long           count;

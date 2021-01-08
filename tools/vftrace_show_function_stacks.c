@@ -307,8 +307,9 @@ int main (int argc, char **argv) {
 	    // We need the number of hardware scenarios, because when scanning the samples
 	    // and a message is encountered (sample_id == SID_MESSAGE), we need to scan over these
 	    // values in order to be synchronized. Also, we allocate the corresponding (dummy-)buffer
+	    fread (&(vfd_header.n_formulas), sizeof(int), 1, fp);
 	    fread (&(vfd_header.n_hw_obs), sizeof(int), 1, fp);
-	    skip_hw_observables (fp, vfd_header.n_hw_obs);
+            read_scenario_header (fp, vfd_header.n_hw_obs, vfd_header.n_formulas, false); 
 	    
 	    // Although not needed elsewhere here, we need the "precise_functions" array
 	    // because it is used inside of read_stacks to compute indices. Other routines

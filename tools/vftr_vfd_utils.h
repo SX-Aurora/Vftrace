@@ -46,7 +46,7 @@ void read_mpi_message_sample (FILE *fp, int *direction, int *rank, int *type_ind
                               int *callingStackID);
 void skip_mpi_message_sample (FILE *fp);
 
-void read_scenario_header (FILE *fp, int n_hw_obs, int n_formulas);
+void read_scenario_header (FILE *fp, int n_hw_obs, int n_formulas, bool verbose);
 void skip_hw_observables (FILE *fp, int n_hw_obs);
 
 void read_stack_sample (FILE *fp, int n_hw_obs, int *stack_id,

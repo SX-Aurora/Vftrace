@@ -147,7 +147,7 @@ void print_fileheader (FILE *fp, vfd_header_t vfd_header) {
 
 // Reads the observable names and checks if it is integrated.
 // Also, allocates the array which stores the hardware counter values.
-void read_scenario_header (FILE *fp, int n_hw_obs, int n_formulas) {
+void read_scenario_header (FILE *fp, int n_hw_obs, int n_formulas, bool verbose) {
 	int slength;
         for (int i = 0; i < n_hw_obs; i++) {
            fread (&slength, sizeof(int), 1, fp);
@@ -156,7 +156,7 @@ void read_scenario_header (FILE *fp, int n_hw_obs, int n_formulas) {
            fread (&slength, sizeof(int), 1, fp);
            char *variable_name = (char*)malloc(sizeof(char) * slength);
            fread (variable_name, sizeof(char), slength, fp);
-           printf ("Hardware counter %d: %s, variable: %s\n", i, hw_obs_name, variable_name);
+           if (verbose) printf ("Hardware counter %d: %s, variable: %s\n", i, hw_obs_name, variable_name);
            free (hw_obs_name);
            free (variable_name);
         }
@@ -169,23 +169,10 @@ void read_scenario_header (FILE *fp, int n_hw_obs, int n_formulas) {
            fread (formula_expr, sizeof(char), slength, fp);
            int is_integrated;
            fread (&is_integrated, sizeof(int), 1, fp);
-           printf ("%s: %s (%s)\n", formula_name, formula_expr, is_integrated ? "integrated" : "differential");
+           if (verbose) printf ("%s: %s (%s)\n", formula_name, formula_expr, is_integrated ? "integrated" : "differential");
            free (formula_name);
            free (formula_expr);
         }
-}
-
-/**********************************************************************/
-
-// Skip the hardware header.
-void skip_hw_observables (FILE *fp, int n_hw_obs) {
-#define N_HW_SAMPLE_INT 1
-	struct {char dummy_name[SCENARIO_NAME_LEN];
-		int dummy_i[N_HW_SAMPLE_INT];
-	       }dummy;
-	for (int i = 0; i < n_hw_obs; i++) {
-		fread (&dummy, SCENARIO_NAME_LEN + N_HW_SAMPLE_INT * sizeof(int), 1, fp);
-	}
 }
 
 /**********************************************************************/
