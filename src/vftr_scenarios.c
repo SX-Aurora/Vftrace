@@ -106,7 +106,6 @@ void vftr_write_observables_to_vfd (profdata_t *prof_current, profdata_t *prof_p
         	} else { // Dummy entry, e.g. for vftr_finalize
         	  value = 0.0;
                 }
-        	if (vftr_mpirank == 0) printf ("write hwc: %d %lf\n", i, value);
         	fwrite (&value, sizeof(double), 1, fp);
 	}
 #endif

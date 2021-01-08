@@ -163,7 +163,7 @@ void vftr_function_entry (const char *s, void *addr, int line, bool isPrecise) {
            if (prof_return->event_count && func->return_to->detail) {
                for (e = 0; e < vftr_n_hw_obs; e++) {
                    long long delta = vftr_prof_data.events[ic][e] - vftr_prof_data.events[1-ic][e];
-#ifdef _   _ve__
+#ifdef __ve__
                    if (delta < 0) /* Handle counter overflow */
                        delta += e < 2 ? (long long) 0x000fffffffffffff
                                       : (long long) 0x00ffffffffffffff;
