@@ -147,17 +147,31 @@ void print_fileheader (FILE *fp, vfd_header_t vfd_header) {
 
 // Reads the observable names and checks if it is integrated.
 // Also, allocates the array which stores the hardware counter values.
-void init_hw_observables (FILE *fp, int n_hw_obs, double **hw_values) {
-    	char name[SCENARIO_NAME_LEN];
-	*hw_values = (double*)malloc (n_hw_obs * sizeof(double));
+void read_scenario_header (FILE *fp, int n_hw_obs, int n_formulas) {
+	int slength;
         for (int i = 0; i < n_hw_obs; i++) {
-            	fread (name, SCENARIO_NAME_LEN, 1, fp);
-            	printf ("Hardware observable name: %s\n", name);
-            	int is_integrated;
-            	fread (&is_integrated, sizeof(int), 1, fp);
-            	printf ("Integrated counter: ");
-            	is_integrated == 0 ? printf ("NO\n") : printf ("YES\n");
-	        (*hw_values)[i] = 0.0;
+           fread (&slength, sizeof(int), 1, fp);
+           char *hw_obs_name = (char*)malloc(sizeof(char) * slength);
+           fread (hw_obs_name, sizeof(char), slength, fp);
+           fread (&slength, sizeof(int), 1, fp);
+           char *variable_name = (char*)malloc(sizeof(char) * slength);
+           fread (variable_name, sizeof(char), slength, fp);
+           printf ("Hardware counter %d: %s, variable: %s\n", i, hw_obs_name, variable_name);
+           free (hw_obs_name);
+           free (variable_name);
+        }
+        for (int i = 0; i < n_formulas; i++) {
+           fread (&slength, sizeof(int), 1, fp);
+           char *formula_name = (char*) malloc (sizeof(char) * slength);
+           fread (formula_name, sizeof(char), slength, fp);
+           fread (&slength, sizeof(int), 1, fp);
+           char *formula_expr = (char*) malloc (sizeof(char) * slength);
+           fread (formula_expr, sizeof(char), slength, fp);
+           int is_integrated;
+           fread (&is_integrated, sizeof(int), 1, fp);
+           printf ("%s: %s (%s)\n", formula_name, formula_expr, is_integrated ? "integrated" : "differential");
+           free (formula_name);
+           free (formula_expr);
         }
 }
 
@@ -217,11 +231,11 @@ void skip_mpi_message_sample (FILE *fp) {
 // Read the stack ID, which indicates from which path the function has been called.
 // Read the time spent in this part of the program.
 void read_stack_sample (FILE *fp, int n_hw_obs, int *stack_id,
-			long long *sample_time, double **hw_values) {
+			long long *sample_time, double *hw_values) {
 	fread (stack_id, sizeof(int), 1, fp);
 	fread (sample_time, sizeof(long long), 1, fp);
 	for (int i = 0; i < n_hw_obs; i++) {
-		fread (hw_values[i], sizeof(double), 1, fp);
+           fread (&(hw_values[i]), sizeof(double), 1, fp);
 	}
 }
 

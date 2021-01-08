@@ -44,6 +44,8 @@ double vftr_scenario_expr_runtime;
 double vftr_scenario_expr_cycles;
 double vftr_scenario_expr_cycletime;
 
+te_variable *te_vars;
+
 /**********************************************************************/
 
 void vftr_init_scenario_formats () {
@@ -69,10 +71,25 @@ void vftr_scenario_print_formula (FILE *fp, function_expr_t formula) {
 /**********************************************************************/
 
 void vftr_write_scenario_header_to_vfd (FILE *fp) {
-	fwrite (&vftr_scenario_expr_n_formulas, sizeof(int), 1, fp);
+        fwrite (&vftr_scenario_expr_n_formulas, sizeof(int), 1, fp);
+	fwrite (&vftr_n_hw_obs, sizeof(int), 1, fp);
 #if defined(HAS_SXHWC) || defined(HAS_PAPI)
+        int slength;
+        for (int i = 0; i < vftr_n_hw_obs; i++) {
+          slength = strlen(vftr_scenario_expr_counter_names[i]) + 1;
+          fwrite (&slength, sizeof(int), 1, fp);
+	  fwrite (vftr_scenario_expr_counter_names[i], sizeof(char), slength, fp);
+          slength = strlen(te_vars[i].name) + 1;
+          fwrite (&slength, sizeof(int), 1, fp);
+          fwrite (te_vars[i].name, sizeof(char), slength, fp);
+        }
 	for (int i = 0; i < vftr_scenario_expr_n_formulas; i++) {
-		fwrite (vftr_scenario_expr_formulas[i].name, SCENARIO_NAME_LEN, 1, fp);
+		slength = strlen(vftr_scenario_expr_formulas[i].name) + 1;
+	        fwrite (&slength, sizeof(int), 1, fp);
+		fwrite (vftr_scenario_expr_formulas[i].name, sizeof(char), slength, fp);
+		slength = strlen(vftr_scenario_expr_formulas[i].formula) + 1;
+		fwrite (&slength, sizeof(int), 1, fp);
+ 		fwrite (vftr_scenario_expr_formulas[i].formula, sizeof(char), slength, fp);
 		fwrite (&vftr_scenario_expr_formulas[i].integrated, sizeof(int), 1, fp);
 	}
 #endif
@@ -83,14 +100,14 @@ void vftr_write_scenario_header_to_vfd (FILE *fp) {
 void vftr_write_observables_to_vfd (profdata_t *prof_current, profdata_t *prof_previous, FILE *fp) {
 #if defined(HAS_SXHWC) || defined(HAS_PAPI)
         for (int i = 0; i < vftr_n_hw_obs; i++) {
-		double value;
-		if (prof_current != NULL && prof_previous != NULL) {
+        	double value;
+        	if (prof_current != NULL && prof_previous != NULL) {
                   value = (double)(prof_current->event_count[i] - prof_previous->event_count[i]);
-		} else { // Dummy entry, e.g. for vftr_finalize
-		  value = 0.0;
+        	} else { // Dummy entry, e.g. for vftr_finalize
+        	  value = 0.0;
                 }
-		//fwrite (&vftr_scenario_expr_formulas[i].value, sizeof(double), 1, fp);
-		fwrite (&value, sizeof(double), 1, fp);
+        	if (vftr_mpirank == 0) printf ("write hwc: %d %lf\n", i, value);
+        	fwrite (&value, sizeof(double), 1, fp);
 	}
 #endif
 }
@@ -110,7 +127,6 @@ void vftr_trim_trailing_white_spaces (char *s) {
 /**********************************************************************/
 //What follows it an inconveniently ugly and naive json parser
 
-te_variable *te_vars;
 te_expr **expr;
 
 bool read_counters;
