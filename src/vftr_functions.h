@@ -12,9 +12,9 @@ typedef struct ProfileData {
    // cycles spend in the function (excluding subfunctions)
    long long cycles;
    // time spend in the function (excluding subfunctions)
-   long long timeExcl;
+   long long time_excl;
    // time spend in the function (including subfunctions)
-   long long timeIncl;
+   long long time_incl;
    // 
    long long *event_count, *events[2];
    //

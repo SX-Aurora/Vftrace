@@ -67,8 +67,8 @@ int stackid_list_size;
 void vftr_init_profdata (profdata_t *prof) {
   prof->calls = 0;
   prof->cycles = 0;
-  prof->timeExcl = 0;
-  prof->timeIncl = 0;
+  prof->time_excl = 0;
+  prof->time_incl = 0;
   prof->event_count = NULL; 
   prof->events[0] = NULL;
   prof->events[1] = NULL;
@@ -234,8 +234,8 @@ void vftr_reset_counts (function_t *func) {
      memset (func->prof_previous.event_count, 0, m );
    }
    func->prof_current.cycles  = 0;
-   func->prof_current.timeExcl = 0;
-   func->prof_current.timeIncl = 0;
+   func->prof_current.time_excl = 0;
+   func->prof_current.time_incl = 0;
    n = func->levels;
 
    /* Recursive scan of callees */

@@ -200,9 +200,9 @@ void vftr_region_entry (const char *s, void *addr, bool isPrecise){
         prof_return = &func->return_to->prof_current;
         delta = cycles0 - vftr_prof_data.cycles;
 	prof_return->cycles += delta;
-        prof_return->timeExcl += func_entry_time - vftr_prof_data.timeExcl;
+        prof_return->time_excl += func_entry_time - vftr_prof_data.time_excl;
         vftr_prog_cycles += delta;
-        func->prof_current.timeIncl -= func_entry_time;
+        func->prof_current.time_incl -= func_entry_time;
 	if (read_counters) {
             int ic = vftr_prof_data.ic;
             vftr_read_counters (vftr_prof_data.events[ic]);
@@ -226,7 +226,7 @@ void vftr_region_entry (const char *s, void *addr, bool isPrecise){
     // the global cycle count and time value.
     vftr_prof_data.cycles = vftr_get_cycles() - vftr_initcycles;
     long long overhead_time_end = vftr_get_runtime_usec();
-    vftr_prof_data.timeExcl = overhead_time_end;
+    vftr_prof_data.time_excl = overhead_time_end;
     vftr_overhead_usec += overhead_time_end - overhead_time_start;
 }
 
@@ -258,7 +258,7 @@ void vftr_region_exit(){
     func  = vftr_fstack;
 
     prof_current = &func->prof_current;
-    prof_current->timeIncl += func_exit_time;   /* Inclusive time */
+    prof_current->time_incl += func_exit_time;   /* Inclusive time */
     
     vftr_fstack = func->return_to;
 
@@ -290,11 +290,11 @@ void vftr_region_exit(){
     /* Maintain profile info */
 
     prof_current->cycles += cycles0;
-    prof_current->timeExcl += func_exit_time;
+    prof_current->time_excl += func_exit_time;
     vftr_prog_cycles += cycles0;
     if (func->return_to) {
         prof_current->cycles -= vftr_prof_data.cycles;
-        prof_current->timeExcl -= vftr_prof_data.timeExcl;
+        prof_current->time_excl -= vftr_prof_data.time_excl;
         vftr_prog_cycles -= vftr_prof_data.cycles;
     }
 
@@ -363,7 +363,7 @@ void vftr_region_exit(){
     // the global cycle count and time value.
     vftr_prof_data.cycles = vftr_get_cycles() - vftr_initcycles;
     long long overhead_time_end = vftr_get_runtime_usec();
-    vftr_prof_data.timeExcl = overhead_time_end;
+    vftr_prof_data.time_excl = overhead_time_end;
     vftr_overhead_usec += overhead_time_end - overhead_time_start;
 
     /* Terminate Vftrace if we are exiting the main routine */

@@ -46,7 +46,7 @@ void vftr_save_old_state () {
         function_t *func = vftr_func_table[j];
         func->prof_previous.calls  = func->prof_current.calls;
         func->prof_previous.cycles = func->prof_current.cycles;
-        func->prof_previous.timeExcl = func->prof_current.timeExcl;
+        func->prof_previous.time_excl = func->prof_current.time_excl;
         for (i = 0; i < vftr_n_hw_obs; i++) {
             func->prof_previous.event_count[i] = func->prof_current.event_count[i];
 	}
@@ -200,9 +200,9 @@ void vftr_function_entry (const char *s, void *addr, int line, bool isPrecise) {
     if (func->return_to) {
         delta = cycles0 - vftr_prof_data.cycles;
 	prof_return->cycles += delta;
-        prof_return->timeExcl += func_entry_time - vftr_prof_data.timeExcl;
+        prof_return->time_excl += func_entry_time - vftr_prof_data.time_excl;
         vftr_prog_cycles += delta;
-        func->prof_current.timeIncl -= func_entry_time;
+        func->prof_current.time_incl -= func_entry_time;
     }
 
     /* Compensate overhead */
@@ -210,7 +210,7 @@ void vftr_function_entry (const char *s, void *addr, int line, bool isPrecise) {
     // the global cycle count and time value.
     vftr_prof_data.cycles = vftr_get_cycles() - vftr_initcycles;
     long long overhead_time_end = vftr_get_runtime_usec();
-    vftr_prof_data.timeExcl = overhead_time_end;
+    vftr_prof_data.time_excl = overhead_time_end;
     vftr_overhead_usec += overhead_time_end - overhead_time_start;
     func->overhead += overhead_time_end - overhead_time_start;
 }
@@ -254,7 +254,7 @@ void vftr_function_exit(int line) {
     }
 
     prof_current = &func->prof_current;
-    prof_current->timeIncl += func_exit_time;   /* Inclusive time */
+    prof_current->time_incl += func_exit_time;   /* Inclusive time */
     
     vftr_fstack = func->return_to;
 
@@ -305,11 +305,11 @@ void vftr_function_exit(int line) {
     /* Maintain profile info */
 
     prof_current->cycles += cycles0;
-    prof_current->timeExcl += func_exit_time;
+    prof_current->time_excl += func_exit_time;
     vftr_prog_cycles += cycles0;
     if (func->return_to) {
         prof_current->cycles -= vftr_prof_data.cycles;
-        prof_current->timeExcl -= vftr_prof_data.timeExcl;
+        prof_current->time_excl -= vftr_prof_data.time_excl;
         vftr_prog_cycles -= vftr_prof_data.cycles;
     }
 
@@ -358,7 +358,7 @@ void vftr_function_exit(int line) {
     // the global cycle count and time value.
     vftr_prof_data.cycles = vftr_get_cycles() - vftr_initcycles;
     long long overhead_time_end = vftr_get_runtime_usec();
-    vftr_prof_data.timeExcl = overhead_time_end;
+    vftr_prof_data.time_excl = overhead_time_end;
     vftr_overhead_usec += overhead_time_end - overhead_time_start;
     func->overhead += overhead_time_end - overhead_time_start;
     

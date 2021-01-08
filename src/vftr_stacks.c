@@ -745,7 +745,7 @@ void vftr_scan_for_final_values (stack_leaf_t *leaf, int this_n_spaces, double *
 		   int this_n_chars = leaf->func_id > 0 ? strlen(vftr_func_table[leaf->func_id]->name) : strlen("[not on this rank]");
 		   if (this_n_chars > *n_chars_max) *n_chars_max = this_n_chars;
 		if (leaf->func_id > 0) {
-		   double this_t = (double)vftr_func_table[leaf->func_id]->prof_current.timeIncl * 1e-6;
+		   double this_t = (double)vftr_func_table[leaf->func_id]->prof_current.time_incl * 1e-6;
 		   (*t_final)[*n_final] = this_t;
 		   int this_n_calls = vftr_func_table[leaf->func_id]->prof_current.calls;
 		   (*n_calls_final)[*n_final] = this_n_calls;
@@ -821,7 +821,7 @@ void vftr_print_stacktree (FILE *fp, stack_leaf_t *leaf, int n_spaces, double *i
 			vftr_memory_unit (&mpi_tot_send_bytes, &send_unit_str);	
 			vftr_memory_unit (&mpi_tot_recv_bytes, &recv_unit_str);	
 			fprintf (fp, "   %*.6f   %*lld   %*.2f   %*.lf %s   %*.lf %s   %*d   %*d\n",
-				 fmt_t, (double)vftr_func_table[leaf->func_id]->prof_current.timeIncl * 1e-6,
+				 fmt_t, (double)vftr_func_table[leaf->func_id]->prof_current.time_incl * 1e-6,
 				 fmt_calls, vftr_func_table[leaf->func_id]->prof_current.calls,
 				 fmt_imba, imbalances[leaf->func_id],
 			 	 fmt_send_bytes - 4, mpi_tot_send_bytes, send_unit_str,
@@ -862,7 +862,7 @@ void vftr_stack_compute_imbalances (double *imbalances, int n_final_stack_ids, i
 	long long all_times [vftr_mpisize];
 	for (int fsid = 0; fsid < n_final_stack_ids; fsid++) {
 		int function_idx = vftr_gStackinfo[final_stack_ids[fsid]].locID;
-		long long t = function_idx >= 0 ? vftr_func_table[function_idx]->prof_current.timeIncl : -1.0;
+		long long t = function_idx >= 0 ? vftr_func_table[function_idx]->prof_current.time_incl : -1.0;
 		PMPI_Allgather (&t, 1, MPI_LONG_LONG_INT,
 				all_times, 1, MPI_LONG_LONG_INT, MPI_COMM_WORLD);
 
@@ -886,7 +886,7 @@ void vftr_stack_get_total_time (stack_leaf_t *leaf, long long *total_time) {
 	vftr_stack_get_total_time (leaf->callee, total_time);  
    } else {
 	if (leaf->func_id >= 0) {
-	   *total_time += vftr_func_table[leaf->func_id]->prof_current.timeIncl;
+	   *total_time += vftr_func_table[leaf->func_id]->prof_current.time_incl;
 	}
    }
    if (leaf->next_in_level) vftr_stack_get_total_time (leaf->next_in_level, total_time);

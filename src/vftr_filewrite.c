@@ -425,8 +425,8 @@ void vftr_print_stack_time (FILE *fp, int calls, double t_excl, double t_incl, d
 /**********************************************************************/
 
 void vftr_get_stack_times (profdata_t prof_current, profdata_t prof_previous, long long *t_excl_usec, long long *t_incl_usec) {
-	*t_excl_usec = prof_current.timeExcl - prof_previous.timeExcl;
-	*t_incl_usec = prof_current.timeIncl - prof_previous.timeIncl;
+	*t_excl_usec = prof_current.time_excl - prof_previous.time_excl;
+	*t_incl_usec = prof_current.time_incl - prof_previous.time_incl;
 }
 
 /**********************************************************************/
@@ -901,8 +901,8 @@ void vftr_evaluate_display_function (char *func_name, display_function_t **displ
     (*display_func)->mpi_tot_recv_bytes = 0;
     (*display_func)->properly_terminated = true;
     for (int i = 0; i < n_func_indices; i++) {
-	(*display_func)->this_mpi_time += vftr_func_table[func_indices[i]]->prof_current.timeIncl;
-	if (n_func_indices_sync > 0) (*display_func)->this_sync_time += vftr_func_table[func_indices_sync[i]]->prof_current.timeIncl;
+	(*display_func)->this_mpi_time += vftr_func_table[func_indices[i]]->prof_current.time_incl;
+	if (n_func_indices_sync > 0) (*display_func)->this_sync_time += vftr_func_table[func_indices_sync[i]]->prof_current.time_incl;
 	(*display_func)->n_calls += vftr_func_table[func_indices[i]]->prof_current.calls;
 	(*display_func)->mpi_tot_send_bytes += vftr_func_table[func_indices[i]]->prof_current.mpi_tot_send_bytes;
 	(*display_func)->mpi_tot_recv_bytes += vftr_func_table[func_indices[i]]->prof_current.mpi_tot_recv_bytes;
@@ -1434,14 +1434,14 @@ int vftr_filewrite_test_2 (FILE *fp_in, FILE *fp_out) {
 		vftr_func_table[i]->prof_current.calls = i + 1;
 		vftr_func_table[i]->prof_current.cycles = 0;
 		vftr_func_table[i]->prof_previous.cycles = 0;
-		vftr_func_table[i]->prof_current.timeExcl = (long long)(i+1) * 100000;
-		vftr_func_table[i]->prof_previous.timeExcl = (long long)(i+1) * 90000;
-		vftr_func_table[i]->prof_current.timeIncl =
-			2 * vftr_func_table[i]->prof_current.timeExcl;
-		vftr_func_table[i]->prof_previous.timeIncl =
-			2 * vftr_func_table[i]->prof_previous.timeExcl;
-		vftr_test_runtime += vftr_func_table[i]->prof_current.timeExcl
-				   - vftr_func_table[i]->prof_previous.timeExcl;
+		vftr_func_table[i]->prof_current.time_excl = (long long)(i+1) * 100000;
+		vftr_func_table[i]->prof_previous.time_excl = (long long)(i+1) * 90000;
+		vftr_func_table[i]->prof_current.time_incl =
+			2 * vftr_func_table[i]->prof_current.time_excl;
+		vftr_func_table[i]->prof_previous.time_incl =
+			2 * vftr_func_table[i]->prof_previous.time_excl;
+		vftr_test_runtime += vftr_func_table[i]->prof_current.time_excl
+				   - vftr_func_table[i]->prof_previous.time_excl;
 	}
 
 	vftr_profile_wanted = true;
