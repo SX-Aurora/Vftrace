@@ -1,19 +1,19 @@
 {
   "counters": [
     {
-      "papi_name": "SIMD_FP_256:PACKED_SINGLE",
+      "hwc_name": "SIMD_FP_256:PACKED_SINGLE",
       "symbol": "f1"
     },
     {
-      "papi_name": "SIMD_FP_256:PACKED_DOUBLE",
+      "hwc_name": "SIMD_FP_256:PACKED_DOUBLE",
       "symbol": "f2"
     },
     {
-      "papi_name": "FP_COMP_OPS_EXE:SSE_PACKED_SINGLE",
+      "hwc_name": "FP_COMP_OPS_EXE:SSE_PACKED_SINGLE",
       "symbol": "f3"
     },
     {
-      "papi_name": "FP_COMP_OPS_EXE:SSE_FP_PACKED_DOUBLE",
+      "hwc_name": "FP_COMP_OPS_EXE:SSE_FP_PACKED_DOUBLE",
       "symbol": "f4"
     }
   ],

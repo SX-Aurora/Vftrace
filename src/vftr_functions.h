@@ -12,13 +12,13 @@ typedef struct ProfileData {
    // cycles spend in the function (excluding subfunctions)
    long long cycles;
    // time spend in the function (excluding subfunctions)
-   long long timeExcl;
+   long long time_excl;
    // time spend in the function (including subfunctions)
-   long long timeIncl;
+   long long time_incl;
    // 
-   long long flops, *event_count, *events[2], ecreads;
+   long long *event_count, *events[2];
    //
-   int pfcount, ic;
+   int ic;
    long mpi_tot_send_bytes;
    long mpi_tot_recv_bytes;
 } profdata_t;
@@ -38,13 +38,14 @@ typedef struct Function {
    bool precise;
    // local and global stack-ID
    int id, gid;
-   bool profile_this, exclude_this;
+   bool profile_this;
    bool new, detail;
    int levels, recursion_depth, line_beg, line_end;
    // Unique hash of the callstack 
    // needed vor stack comparison among processes
    uint64_t stackHash;
    long long overhead;
+   bool open;
 } function_t;
 
 void vftr_find_function_in_table (char *func_name, int **indices, int *n_indices, bool to_lower_case);
@@ -60,6 +61,16 @@ function_t *vftr_new_function(void *arg, const char *function_name,
 
 // Reset all function internal counters
 void vftr_reset_counts (function_t *func);
+
+extern int *print_stackid_list;
+extern int n_print_stackids;
+extern int stackid_list_size; 
+#define STACKID_LIST_INC 50
+
+void vftr_stackid_list_init ();
+void vftr_stackid_list_add (int stack_id);
+void vftr_stackid_list_print (FILE *fp);
+void vftr_stackid_list_finalize ();
 
 // test functions
 int vftr_functions_test_1 (FILE *fp_in, FILE *fp_out);

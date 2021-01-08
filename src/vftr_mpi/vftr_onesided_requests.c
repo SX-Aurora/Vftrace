@@ -79,7 +79,8 @@ void vftr_clear_completed_onesided_requests() {
                                     current_request->rank[0],
                                     current_request->tag,
                                     current_request->tstart,
-                                    tend);
+                                    tend,
+                                    current_request->callingstackID);
 	 }
 
          // Take the request out of the list and close the gap

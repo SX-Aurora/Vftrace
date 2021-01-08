@@ -140,8 +140,8 @@ int vftr_compare_function_excl_time (const void *a1, const void *a2) {
     function_t *f2 = *(function_t **)a2;
     if(!f2) return -1;
     if(!f1) return  1;
-    long long t1 = f1->prof_current.timeExcl - f1->prof_previous.timeExcl;
-    long long t2 = f2->prof_current.timeExcl - f2->prof_previous.timeExcl;
+    long long t1 = f1->prof_current.time_excl - f1->prof_previous.time_excl;
+    long long t2 = f2->prof_current.time_excl - f2->prof_previous.time_excl;
     long long diff = t2 - t1;
     if (diff > 0) return  1;
     if (diff < 0) return -1;
@@ -155,8 +155,8 @@ int vftr_compare_function_incl_time (const void *a1, const void *a2) {
     function_t *f2 = *(function_t **)a2;
     if(!f2) return -1;
     if(!f1) return  1;
-    long long t1 = f1->prof_current.timeIncl - f1->prof_previous.timeIncl;
-    long long t2 = f2->prof_current.timeIncl - f2->prof_previous.timeIncl;
+    long long t1 = f1->prof_current.time_incl - f1->prof_previous.time_incl;
+    long long t2 = f2->prof_current.time_incl - f2->prof_previous.time_incl;
     long long diff = t2 - t1;
     if (diff > 0) return  1;
     if (diff < 0) return -1;
@@ -198,8 +198,8 @@ int vftr_compare_function_overhead_relative (const void *a1, const void *a2) {
     function_t *f2 = *(function_t **)a2;
     if(!f2) return -1;
     if(!f1) return  1;
-    long long t1 = f1->prof_current.timeExcl - f1->prof_previous.timeExcl;
-    long long t2 = f2->prof_current.timeExcl - f2->prof_previous.timeExcl;
+    long long t1 = f1->prof_current.time_excl - f1->prof_previous.time_excl;
+    long long t2 = f2->prof_current.time_excl - f2->prof_previous.time_excl;
     double x1 = (double)f1->overhead / t1;
     double x2 = (double)f2->overhead / t2;
     double diff = x2 - x1;

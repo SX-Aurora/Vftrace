@@ -11,7 +11,6 @@ Function: init_vftr
 	Group ID: -1
 	Recursion depth: 0
 	StackHash: 15403095947709970261
-	Exclude: 0
 Function: func2
 	Called from: init_vftr
 	Currently calling: func5
@@ -23,7 +22,6 @@ Function: func2
 	Group ID: -1
 	Recursion depth: 0
 	StackHash: 12477145892117383178
-	Exclude: 0
 Function: func3
 	Called from: init_vftr
 	Currently calling: func4
@@ -35,7 +33,6 @@ Function: func3
 	Group ID: -1
 	Recursion depth: 0
 	StackHash: 6394144206379927802
-	Exclude: 0
 Function: func4
 	Called from: func3
 	Currently calling: -/-
@@ -47,7 +44,6 @@ Function: func4
 	Group ID: -1
 	Recursion depth: 0
 	StackHash: 3805102824116269950
-	Exclude: 0
 Function: func5
 	Called from: func2
 	Currently calling: -/-
@@ -59,7 +55,6 @@ Function: func5
 	Group ID: -1
 	Recursion depth: 0
 	StackHash: 5273649837550830595
-	Exclude: 0
 Function: func6
 	Called from: func2
 	Currently calling: func4
@@ -71,7 +66,6 @@ Function: func6
 	Group ID: -1
 	Recursion depth: 0
 	StackHash: 2564090743405391060
-	Exclude: 0
 Function: func4
 	Called from: func6
 	Currently calling: -/-
@@ -83,7 +77,6 @@ Function: func4
 	Group ID: -1
 	Recursion depth: 0
 	StackHash: 15442597198475932591
-	Exclude: 0
 Test if callee pointer is changed properly
 Function: func2
 	Called from: init_vftr
@@ -96,7 +89,6 @@ Function: func2
 	Group ID: -1
 	Recursion depth: 0
 	StackHash: 12477145892117383178
-	Exclude: 0
 vftr_func_table_size: 10000
 vftr_stackscount: 7
 Check functions registered in function table: 
@@ -111,7 +103,6 @@ Function: init_vftr
 	Group ID: -1
 	Recursion depth: 0
 	StackHash: 15403095947709970261
-	Exclude: 0
 Function: func2
 	Called from: init_vftr
 	Currently calling: func6
@@ -123,7 +114,6 @@ Function: func2
 	Group ID: -1
 	Recursion depth: 0
 	StackHash: 12477145892117383178
-	Exclude: 0
 Function: func3
 	Called from: init_vftr
 	Currently calling: func4
@@ -135,7 +125,6 @@ Function: func3
 	Group ID: -1
 	Recursion depth: 0
 	StackHash: 6394144206379927802
-	Exclude: 0
 Function: func4
 	Called from: func3
 	Currently calling: -/-
@@ -147,7 +136,6 @@ Function: func4
 	Group ID: -1
 	Recursion depth: 0
 	StackHash: 3805102824116269950
-	Exclude: 0
 Function: func5
 	Called from: func2
 	Currently calling: -/-
@@ -159,7 +147,6 @@ Function: func5
 	Group ID: -1
 	Recursion depth: 0
 	StackHash: 5273649837550830595
-	Exclude: 0
 Function: func6
 	Called from: func2
 	Currently calling: func4
@@ -171,7 +158,6 @@ Function: func6
 	Group ID: -1
 	Recursion depth: 0
 	StackHash: 2564090743405391060
-	Exclude: 0
 Function: func4
 	Called from: func6
 	Currently calling: -/-
@@ -183,4 +169,3 @@ Function: func4
 	Group ID: -1
 	Recursion depth: 0
 	StackHash: 15442597198475932591
-	Exclude: 0

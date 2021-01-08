@@ -39,6 +39,7 @@ typedef struct vftr_request_type {
    int *rank;
    int tag;
    long long tstart;
+   int callingstackID;
 } vftr_request_t;
 
 // create new request to be stored

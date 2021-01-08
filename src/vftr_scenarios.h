@@ -21,50 +21,27 @@
 
 #include <stdio.h>
 #include <stdbool.h>
-
-#define SCENARIO_NAME_LEN 32
+#include "vftr_functions.h"
 
 typedef struct EventCounter {
-    int                 rank, id, namelen, decipl;
+    int                 id, namelen, decipl;
     long long           count;
-    char                *name, fmt[10];
+    char *name;
     struct EventCounter *next;
 } evtcounter_t;
 
 evtcounter_t  *vftr_get_counters ( void );
 
-enum ve_counters {
-	EX, // 0
-	VX,
-	FPEC, // 2
-	VE,
-	VECC, // 4
-	L1MCC,
-	VE2, // 6
-	VAREC,
-	VLDEC, // 8
-	PCCC,
-	VLDCC, // 10
-	VLEC,
-	VLECME, // 12
-	FMAEC,
-	PTCC, // 14
-	TTCC
-};	
-
 void vftr_write_scenario_header_to_vfd (FILE *fp);
-void vftr_write_observables_to_vfd (unsigned long long cycles, FILE *fp);
+void vftr_write_observables_to_vfd (profdata_t *prof_current, profdata_t *prof_previous, FILE *fp);
 
 #define TE_MAX 50
 #define SCENARIO_EXPR_BUF_SIZE 200
 
 typedef struct {
+	char *header;
 	char *unit;
-	char *group;
-	char *column1;
-	char *column2;
-	int decpl_1;
-	int decpl_2;
+	int decimal_places;
 } hwc_format_t;
 
 
@@ -77,19 +54,20 @@ typedef struct {
 	bool integrated;
 } function_expr_t;
 	
-extern char *scenario_expr_counter_names[TE_MAX];
-extern char *scenario_expr_vars[TE_MAX];
-extern function_expr_t scenario_expr_formulas[TE_MAX];
-extern hwc_format_t scenario_expr_format[TE_MAX];
+extern char *vftr_scenario_expr_counter_names[TE_MAX];
+extern char *vftr_scenario_expr_vars[TE_MAX];
+extern function_expr_t vftr_scenario_expr_formulas[TE_MAX];
+extern hwc_format_t vftr_scenario_expr_format[TE_MAX];
 
-extern int scenario_expr_n_vars;
-extern int scenario_expr_n_formulas;
+extern int vftr_scenario_expr_n_vars;
+extern int vftr_scenario_expr_n_formulas;
 
-extern double *scenario_expr_counter_values;
-extern double scenario_expr_runtime;
-extern double scenario_expr_cycles;
-extern double scenario_expr_cycletime;
+extern double *vftr_scenario_expr_counter_values;
+extern double vftr_scenario_expr_runtime;
+extern double vftr_scenario_expr_cycles;
+extern double vftr_scenario_expr_cycletime;
 
+void vftr_init_scenario_formats ();
 int vftr_read_scenario_file (char *filename, FILE *fp_ext);
 void vftr_scenario_expr_evaluate (int i_scenario, double runtime, unsigned long long cycles);
 void vftr_scenario_expr_evaluate_all (double runtime, unsigned long long cycles);

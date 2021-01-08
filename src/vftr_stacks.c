@@ -73,7 +73,8 @@ void vftr_initialize_stacks() {
    function_t *func = vftr_new_function (NULL, strdup (s), NULL, 0, true);
    func->next_in_level = func; /* Close circular linked list to itself */
    vftr_fstack = func;
-   vftr_samplecount = 0;
+   vftr_function_samplecount = 0;
+   vftr_message_samplecount = 0;
    vftr_maxtime = 0;
    vftr_froots = func;
 }
@@ -81,7 +82,7 @@ void vftr_initialize_stacks() {
 /**********************************************************************/
 
 // synchronise the global stack IDs among different processes
-int vftr_normalize_stacks() {
+void vftr_normalize_stacks() {
     // fill the local hashtable for stacks
     vftr_gStackscount = vftr_stackscount;
     uint64_t *stackhashtable = (uint64_t*) malloc(vftr_stackscount*sizeof(uint64_t));
@@ -107,8 +108,8 @@ int vftr_normalize_stacks() {
     // the global ID is the index in the hash table
     // fill the looup tables
     // TODO: implement binary search to speed up globalID assignment
-    for (int istack=0; istack<vftr_stackscount; istack++) {
-       for (int ihash =0; ihash<vftr_gStackscount; ihash++) {
+    for (int istack = 0; istack < vftr_stackscount; istack++) {
+       for (int ihash = 0; ihash < vftr_gStackscount; ihash++) {
           if (vftr_func_table[istack]->stackHash == stackhashtable[ihash]) {
              vftr_func_table[istack]->gid = ihash;
              int globID = vftr_func_table[istack]->gid;
@@ -128,7 +129,7 @@ int vftr_normalize_stacks() {
     if (vftr_mpirank == 0) {
        vftr_gStackinfo = (gstackinfo_t*) malloc(vftr_gStackscount*sizeof(gstackinfo_t));
        // init the global stack info
-       for (int istack=0; istack<vftr_gStackscount; istack++) {
+       for (int istack = 0; istack < vftr_gStackscount; istack++) {
           vftr_gStackinfo[istack].ret = -2;
           vftr_gStackinfo[istack].name = NULL;
           vftr_gStackinfo[istack].locID = -1;
@@ -167,7 +168,7 @@ int vftr_normalize_stacks() {
        int *missingStacks = (int*) malloc(nmissing*sizeof(int));
 
        // loop over all other ranks and collect the missing information
-       for (int irank=1; irank<vftr_mpisize; irank++) {
+       for (int irank = 1; irank < vftr_mpisize; irank++) {
           // count how many are still missing
           int nmissing= 0;
           for (int istack=0; istack<vftr_gStackscount; istack++) {
@@ -214,11 +215,11 @@ int vftr_normalize_stacks() {
 
                 // Receive the concatenated String
                 PMPI_Recv(concatNames, sumlength, MPI_CHAR,
-                      irank, 0, MPI_COMM_WORLD, &mystat);
+                          irank, 0, MPI_COMM_WORLD, &mystat);
 
                 // Write all the gathered info to the global stackinfo
                 char *tmpstrptr = concatNames;
-                for (int istack=0; istack<hasnmissing; istack++) {
+                for (int istack = 0; istack < hasnmissing; istack++) {
                    int globID = missingStackInfo[3*istack+0];
                    vftr_gStackinfo[globID].ret = missingStackInfo[3*istack+1];
                    vftr_gStackinfo[globID].name = strdup(tmpstrptr);
@@ -265,17 +266,14 @@ int vftr_normalize_stacks() {
              int *missingStackInfo = (int*) malloc(3*hasnmissing*sizeof(int));
              // Go through the stacks and record the needed information
              int imatch = 0;
-             for (int istack=0; istack<nmissing; istack++) {
+             for (int istack = 0; istack<nmissing; istack++) {
                 int globID = missingStacks[istack];
                 int locID = global2local_ID[globID];
                 if (locID >= 0) {
-                   missingStackInfo[3*imatch+0] =
-                      globID;
-                   missingStackInfo[3*imatch+1] =
-                      vftr_func_table[locID]->return_to->gid;
+                   missingStackInfo[3 * imatch + 0] = globID;
+                   missingStackInfo[3 * imatch + 1] = vftr_func_table[locID]->return_to->gid;
                    // add one to length due to null terminator
-                   missingStackInfo[3*imatch+2] =
-                      strlen(vftr_func_table[locID]->name)+1;
+                   missingStackInfo[3 * imatch + 2] = strlen(vftr_func_table[locID]->name) + 1;
                    imatch++;
                 }
              }
@@ -289,7 +287,7 @@ int vftr_normalize_stacks() {
              char *concatNames = (char*) malloc(sumlength*sizeof(char));
              // concatenate the names into one string
              char *tmpstrptr = concatNames;
-             for (int istack=0; istack<hasnmissing; istack++) {
+             for (int istack = 0; istack < hasnmissing; istack++) {
                 int globID = missingStackInfo[3*istack+0];
                 int locID = global2local_ID[globID];
                 strcpy(tmpstrptr, vftr_func_table[locID]->name);
@@ -431,7 +429,6 @@ int vftr_normalize_stacks() {
     free(local2global_ID);
     free(global2local_ID);
 
-    return 0;
 }
 
 /**********************************************************************/
@@ -637,16 +634,18 @@ void vftr_print_global_stacklist (FILE *pout) {
 
    /* Print table */
 
-   for(int istack=0; istack<vftr_gStackscount; istack++) {
-      int jstack = istack;
-      fprintf( pout, fmtFid, istack);
-      while (vftr_gStackinfo[jstack].locID && vftr_gStackinfo[jstack].ret >= 0) {
+   for (int istack = 0; istack < vftr_gStackscount; istack++) {
+      if (vftr_gStackinfo[istack].locID >= 0) {
+         int jstack = istack;
+         fprintf (pout, fmtFid, istack);
+         while (vftr_gStackinfo[jstack].locID >= 0 && vftr_gStackinfo[jstack].ret >= 0) {
+            fprintf(pout, "%s", vftr_gStackinfo[jstack].name);
+            fprintf(pout, "<");
+            jstack = vftr_gStackinfo[jstack].ret;
+         }
          fprintf(pout, "%s", vftr_gStackinfo[jstack].name);
-         fprintf(pout, "<");
-         jstack = vftr_gStackinfo[jstack].ret;
+         fprintf(pout, "\n");
       }
-      fprintf(pout, "%s", vftr_gStackinfo[jstack].name);
-      fprintf(pout, "\n");
    }
 
    OUTPUT_DASHES_NL( tableWidth, pout )
@@ -746,7 +745,7 @@ void vftr_scan_for_final_values (stack_leaf_t *leaf, int this_n_spaces, double *
 		   int this_n_chars = leaf->func_id > 0 ? strlen(vftr_func_table[leaf->func_id]->name) : strlen("[not on this rank]");
 		   if (this_n_chars > *n_chars_max) *n_chars_max = this_n_chars;
 		if (leaf->func_id > 0) {
-		   double this_t = (double)vftr_func_table[leaf->func_id]->prof_current.timeIncl * 1e-6;
+		   double this_t = (double)vftr_func_table[leaf->func_id]->prof_current.time_incl * 1e-6;
 		   (*t_final)[*n_final] = this_t;
 		   int this_n_calls = vftr_func_table[leaf->func_id]->prof_current.calls;
 		   (*n_calls_final)[*n_final] = this_n_calls;
@@ -778,19 +777,20 @@ void vftr_stacktree_assign_positions (stack_leaf_t *leaf, int *pos, int *indices
 /**********************************************************************/
 
 void vftr_print_stacktree_header (FILE *fp, int n_stacks, char *func_name,
-				  int n_spaces_max, int fmt_calls, int fmt_t, int fmt_imba,
-				  int fmt_send_bytes, int fmt_recv_bytes, int fmt_stackid) {
+				  int *n_spaces_max, int fmt_calls, int fmt_t, int fmt_imba,
+				  int fmt_send_bytes, int fmt_recv_bytes, int fmt_stackid,
+				  int *n_char_tot) {
 	int fmt_position = strlen("position");
-	int n_char_tot = n_spaces_max + fmt_calls + fmt_t + fmt_imba + fmt_send_bytes + fmt_recv_bytes + fmt_stackid + fmt_position + 21;
-	char title[64];
+	char title[128];
 	sprintf (title, "Function stacks leading to %s: %d", func_name, n_stacks);
 	fprintf (fp, "%s", title);
-	for (int i = 0; i < n_spaces_max - strlen(title); i++) fprintf (fp, " ");
+	if (*n_spaces_max < strlen(title)) *n_spaces_max = strlen(title);
+	*n_char_tot = *n_spaces_max + fmt_calls + fmt_t + fmt_imba + fmt_send_bytes + fmt_recv_bytes + fmt_stackid + fmt_position + 21;
+	for (int i = 0; i < *n_spaces_max - strlen(title); i++) fprintf (fp, " ");
 	fprintf (fp, "   %*s   %*s   %*s   %*s   %*s   %*s   %*s\n", fmt_t, vftr_stacktree_headers[TIME],
 		 fmt_calls, vftr_stacktree_headers[CALLS], fmt_imba, vftr_stacktree_headers[IMBA],
 		 fmt_send_bytes, vftr_stacktree_headers[SEND_BYTES], fmt_recv_bytes, vftr_stacktree_headers[RECV_BYTES],
 		 fmt_stackid, vftr_stacktree_headers[STACK_ID], (int)strlen("position"), "position");
-	vftr_print_dashes (fp, n_char_tot);
 }
 
 /**********************************************************************/
@@ -821,7 +821,7 @@ void vftr_print_stacktree (FILE *fp, stack_leaf_t *leaf, int n_spaces, double *i
 			vftr_memory_unit (&mpi_tot_send_bytes, &send_unit_str);	
 			vftr_memory_unit (&mpi_tot_recv_bytes, &recv_unit_str);	
 			fprintf (fp, "   %*.6f   %*lld   %*.2f   %*.lf %s   %*.lf %s   %*d   %*d\n",
-				 fmt_t, (double)vftr_func_table[leaf->func_id]->prof_current.timeIncl * 1e-6,
+				 fmt_t, (double)vftr_func_table[leaf->func_id]->prof_current.time_incl * 1e-6,
 				 fmt_calls, vftr_func_table[leaf->func_id]->prof_current.calls,
 				 fmt_imba, imbalances[leaf->func_id],
 			 	 fmt_send_bytes - 4, mpi_tot_send_bytes, send_unit_str,
@@ -857,22 +857,22 @@ void vftr_create_stacktree (stack_leaf_t **stack_tree, int n_final_stack_ids, in
 
 /**********************************************************************/
 
-void vftr_stack_compute_imbalances (double **imbalances, int n_final_stack_ids, int *final_stack_ids) {
+void vftr_stack_compute_imbalances (double *imbalances, int n_final_stack_ids, int *final_stack_ids) {
 #ifdef _MPI
 	long long all_times [vftr_mpisize];
 	for (int fsid = 0; fsid < n_final_stack_ids; fsid++) {
 		int function_idx = vftr_gStackinfo[final_stack_ids[fsid]].locID;
-		long long t = function_idx >= 0 ? vftr_func_table[function_idx]->prof_current.timeIncl : -1.0;
+		long long t = function_idx >= 0 ? vftr_func_table[function_idx]->prof_current.time_incl : -1.0;
 		PMPI_Allgather (&t, 1, MPI_LONG_LONG_INT,
 				all_times, 1, MPI_LONG_LONG_INT, MPI_COMM_WORLD);
 
 		if (function_idx >= 0) {
-			(*imbalances)[function_idx] = vftr_compute_mpi_imbalance (all_times, -1.0);
+			imbalances[function_idx] = vftr_compute_mpi_imbalance (all_times, -1.0);
 		}
 	}
 #else
 	for (int i  = 0; i < vftr_func_table_size; i++) {
-		(*imbalances)[i] = 0;
+		imbalances[i] = 0;
 	}
 #endif
 
@@ -886,7 +886,7 @@ void vftr_stack_get_total_time (stack_leaf_t *leaf, long long *total_time) {
 	vftr_stack_get_total_time (leaf->callee, total_time);  
    } else {
 	if (leaf->func_id >= 0) {
-	   *total_time += vftr_func_table[leaf->func_id]->prof_current.timeIncl;
+	   *total_time += vftr_func_table[leaf->func_id]->prof_current.time_incl;
 	}
    }
    if (leaf->next_in_level) vftr_stack_get_total_time (leaf->next_in_level, total_time);
@@ -958,10 +958,13 @@ void vftr_print_function_stack (FILE *fp, char *func_name, int n_final_stack_ids
 			 vftr_count_digits_int(vftr_gStackscount) : strlen(vftr_stacktree_headers[STACK_ID]);
 	int fmt_mpi_send = strlen (vftr_stacktree_headers[SEND_BYTES]);
 	int fmt_mpi_recv = strlen (vftr_stacktree_headers[RECV_BYTES]);
-	vftr_print_stacktree_header (fp, n_final_stack_ids, func_name, n_spaces_max, fmt_calls,
-				     fmt_t, fmt_imba, fmt_mpi_send, fmt_mpi_recv, fmt_stackid);
+        int n_char_tot;
+	vftr_print_stacktree_header (fp, n_final_stack_ids, func_name, &n_spaces_max, fmt_calls,
+				     fmt_t, fmt_imba, fmt_mpi_send, fmt_mpi_recv, fmt_stackid, &n_char_tot);
+	vftr_print_dashes (fp, n_char_tot);
 	vftr_print_stacktree (fp, stack_tree->origin, 0, imbalances,
 			      n_spaces_max, fmt_calls, fmt_t, fmt_imba, fmt_mpi_send, fmt_mpi_recv, fmt_stackid);
+	vftr_print_dashes (fp, n_char_tot);
 	fprintf (fp, "Total(%s): %lf sec. \n", func_name, (double)total_time * 1e-6);
 }
 

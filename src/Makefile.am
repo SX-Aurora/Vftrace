@@ -38,12 +38,10 @@ libvftrace_la_SOURCES = demangle.cpp \
 		       vftr_regex.c \
 	 	       vftr_environment.c \
 		       vftr_signals.c \
-		       vftr_loadbalance.c \
 		       vftr_browse.c
 #if ENABLE_FORTRAN
 libvftrace_la_SOURCES += vftrace_mod.F90
 #endif
-
 
 libvftrace_la_CFLAGS =
 libvftrace_la_CXXFLAGS =

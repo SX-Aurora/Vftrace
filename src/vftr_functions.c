@@ -60,6 +60,24 @@ char *vftr_precise_functions[] = {
    NULL // Null pointer to terminate the list
 };
 
+int *print_stackid_list;
+int n_print_stackids;
+int stackid_list_size;
+
+void vftr_init_profdata (profdata_t *prof) {
+  prof->calls = 0;
+  prof->cycles = 0;
+  prof->time_excl = 0;
+  prof->time_incl = 0;
+  prof->event_count = NULL; 
+  prof->events[0] = NULL;
+  prof->events[1] = NULL;
+  prof->ic = 0;
+  prof->mpi_tot_send_bytes = 0;
+  prof->mpi_tot_recv_bytes = 0;
+  
+}
+
 // add a new function to the stack tables
 function_t *vftr_new_function(void *arg, const char *function_name,
                               function_t *caller, int line, bool is_precise) {
@@ -152,8 +170,8 @@ function_t *vftr_new_function(void *arg, const char *function_name,
    }
 
    // preparing the function specific profiling data
-   memset(&(func->prof_current), 0, sizeof(profdata_t));
-   memset(&(func->prof_previous), 0, sizeof(profdata_t));
+   vftr_init_profdata (&func->prof_current);
+   vftr_init_profdata (&func->prof_previous);
 
    if (vftr_n_hw_obs > 0) {
       func->prof_current.event_count = (long long*) malloc(vftr_n_hw_obs * sizeof(long long));
@@ -164,14 +182,6 @@ function_t *vftr_new_function(void *arg, const char *function_name,
 
    // Determine if this function should be profiled
    func->profile_this = vftr_pattern_match(vftr_environment.runtime_profile_funcs->value, func->name);
-
-   if (!func->exclude_this) {
-      if (vftr_environment.include_only_regex->set) {
-         func->exclude_this = !vftr_pattern_match(vftr_environment.include_only_regex->value, func->name);
-      } else if (vftr_environment.exclude_functions_regex->set) {
-         func->exclude_this = vftr_pattern_match(vftr_environment.exclude_functions_regex->value, func->name);
-      }
-   }
 
    // Is this function a branch or the root of the calltree?
    if (caller != NULL) {
@@ -213,15 +223,17 @@ void vftr_reset_counts (function_t *func) {
    int i, n;
    int m = vftr_n_hw_obs * sizeof(long long);
 
-   if( func == NULL ) return;
+   if (func == NULL) return;
 
-   memset (func->prof_current.event_count,  0, m );
-   memset (func->prof_previous.event_count, 0, m );
-   func->prof_current.calls   = 0;
+   if (func->prof_current.event_count) {
+     memset (func->prof_current.event_count,  0, m );
+   }
+   if (func->prof_previous.event_count) {
+     memset (func->prof_previous.event_count, 0, m );
+   }
    func->prof_current.cycles  = 0;
-   func->prof_current.timeExcl = 0;
-   func->prof_current.timeIncl = 0;
-   func->prof_current.flops   = 0;
+   func->prof_current.time_excl = 0;
+   func->prof_current.time_incl = 0;
    n = func->levels;
 
    /* Recursive scan of callees */
@@ -267,8 +279,7 @@ void vftr_find_function_in_table (char *func_name, int **indices, int *n_indices
 
 /**********************************************************************/
 
-void vftr_find_function_in_stack (char *func_name, int **indices, int *n_indices,
-				  bool to_lower_case) {
+void vftr_find_function_in_stack (char *func_name, int **indices, int *n_indices, bool to_lower_case) {
 	*n_indices = 0;
 	char *s_compare;
 	int n_count;
@@ -365,9 +376,41 @@ void vftr_write_function (FILE *fp, function_t *func) {
 	fprintf (fp, "\tGroup ID: %d\n", func->gid);
 	fprintf (fp, "\tRecursion depth: %d\n", func->recursion_depth);
 	fprintf (fp, "\tStackHash: %lu\n", func->stackHash);
-	fprintf (fp, "\tExclude: %d\n", func->exclude_this);
 }
 		
+/**********************************************************************/
+
+void vftr_stackid_list_init () {
+   n_print_stackids = 0;
+   stackid_list_size = STACKID_LIST_INC;
+   print_stackid_list = (int*)malloc(STACKID_LIST_INC * sizeof(int));
+}
+
+/**********************************************************************/
+
+void vftr_stackid_list_add (int stack_id) {
+   if (n_print_stackids + 1 > stackid_list_size) {
+      stackid_list_size += STACKID_LIST_INC;
+      print_stackid_list = (int*)realloc (print_stackid_list, stackid_list_size * sizeof(int));
+   }
+   print_stackid_list[n_print_stackids++] = stack_id;
+}
+
+/**********************************************************************/
+
+void vftr_stackid_list_print (FILE *fp) {
+   for (int i = 0; i < n_print_stackids; i++) {
+      fprintf (fp, "%d ", print_stackid_list[i]);
+   }
+   fprintf (fp, "\n");
+}
+
+/**********************************************************************/
+
+void vftr_stackid_list_finalize () {
+   free (print_stackid_list);
+}
+
 /**********************************************************************/
 
 void vftr_strip_all_module_names () {

@@ -2,22 +2,17 @@ MPI size              1
 Total runtime:            0.28 seconds
 Application time:         0.28 seconds
 Overhead:                 0.00 seconds (0.00%)
-
-Raw counter totals
-------------------------------------------------------------
-Time Stamp Counter                    :                    0
 ------------------------------------------------------------
 
-Runtime profile (truncated)
----------------------------
-     Time[s]____ 
- Cal Excl  Incl  %abs %cum Funct Caller ID 
- ---------------------------
-   7 0.070 0.140 25.0 25.0 func4 func6   6
-   6 0.060 0.120 21.4 46.4 func6 func2   5
-   5 0.050 0.100 17.9 64.3 func5 func2   4
-   4 0.040 0.080 14.3 78.6 func4 func3   3
-   3 0.030 0.060 10.7 89.3 func3 init    2
-   2 0.020 0.040  7.1 96.4 func2 init    1
----------------------------
+Runtime profile (truncated to  98%):
+
+  Calls  t_excl[s]  t_incl[s]  %abs  %cum  Function  Caller  ID 
+-------------------------------------------------------------------------
+      7      0.070      0.140  25.0  25.0     func4   func6   6 
+      6      0.060      0.120  21.4  46.4     func6   func2   5 
+      5      0.050      0.100  17.9  64.3     func5   func2   4 
+      4      0.040      0.080  14.3  78.6     func4   func3   3 
+      3      0.030      0.060  10.7  89.3     func3    init   2 
+      2      0.020      0.040   7.1  96.4     func2    init   1 
+-------------------------------------------------------------------------
 

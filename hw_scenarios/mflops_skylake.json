@@ -1,19 +1,19 @@
 {
   "counters": [
     {
-      "papi_name": "FP_ARITH:SCALAR_SINGLE",
+      "hwc_name": "FP_ARITH:SCALAR_SINGLE",
       "symbol": "f1"
     },
     {
-      "papi_name": "FP_ARITH:512B_PACKED_SINGLE",
+      "hwc_name": "FP_ARITH:512B_PACKED_SINGLE",
       "symbol": "f2"
     },
     {
-      "papi_name": "FP_ARITH:SCALAR_DOUBLE",
+      "hwc_name": "FP_ARITH:SCALAR_DOUBLE",
       "symbol": "f3"
     },
     {
-      "papi_name": "FP_ARITH:512B_PACKED_DOUBLE",
+      "hwc_name": "FP_ARITH:512B_PACKED_DOUBLE",
       "symbol": "f4"
     }
   ],
@@ -24,11 +24,9 @@
       "protected": "runtime",
       "default": "0",
       "format": [{
-		"unit": "MFLOPS sustained",
-		"spec": "*.0",
-		"group": "MFLOPS_______",
-		"column1": "Single",
-		"column2": "Scalar"}]
+		"header": "Scalar Single",
+		"unit": "MFLOPS",
+		"decimal_places": "1"}]
     },
     {
       "name": "Vector single",
@@ -36,11 +34,9 @@
       "protected": "runtime",
       "default": "0",
       "format": [{
-		"unit": "MFLOPS sustained",
-		"spec": "*.0",
-		"group": "MFLOPS_______",
-		"column1": "Single",
-		"column2": "Vector"}]
+		"header": "Vector Single",
+		"unit": "MFLOPS",
+		"decimal_places": "1"}]
     },
     {
       "name": "Scalar double",
@@ -48,11 +44,9 @@
       "protected": "runtime",
       "default": "0",
       "format": [{
-		"unit": "MFLOPS sustained",
-		"spec": "*.0",
-		"group": "MFLOPS_______",
-		"column1": "Double",
-		"column2": "Scalar"}]
+		"header": "Scalar Double",
+		"unit": "MFLOPS",
+		"decimal_places": "1"}]
     },
     {
       "name": "Vector double",
@@ -60,11 +54,9 @@
       "protected": "runtime",
       "default": "0",
       "format": [{
-		"unit": "MFLOPS sustained",
-		"spec": "*.0",
-		"group": "MFLOPS_______",
-		"column1": "Double",
-		"column2": "Vector"}]
+		"header": "Vector Double",
+		"unit": "MFLOPS",
+		"decimal_places": "2"}]
     }
   ]
 }

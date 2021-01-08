@@ -49,7 +49,6 @@ int papi_event_set;
 long long vftr_echwc[MAX_HWC_EVENTS];
 
 // As each hardware observable is registered, this counter is incremented. 
-int hwc_event_num = 0;
 
 void vftr_new_counter (char *name, int id, int rank) {
     evtcounter_t *evc;
@@ -60,12 +59,11 @@ void vftr_new_counter (char *name, int id, int rank) {
     evc->next = NULL;
     evc->decipl  = 1;
     evc->id = id;
-    evc->rank = rank;
 
     if (!first_counter) {
-	first_counter = next_counter = evc;
+        first_counter = next_counter = evc;
     } else {
-	next_counter = next_counter->next = evc;
+        next_counter = next_counter->next = evc;
     }
 
     vftr_n_hw_obs++;
@@ -75,13 +73,13 @@ void vftr_new_counter (char *name, int id, int rank) {
 
 void vftr_papi_counter (char *name) {
     int id   = err_no_hwc_support ? -1 : vftr_find_event_number (name);
-    vftr_new_counter (name, id, hwc_event_num++);
+    vftr_new_counter (name, id, 0);
 }
 
 /**********************************************************************/
 
 void vftr_sx_counter (char *name, int id) {
-    vftr_new_counter( name, id, hwc_event_num++);
+    vftr_new_counter( name, id, 0);
 }
 
 /**********************************************************************/
@@ -154,6 +152,7 @@ int vftr_init_hwc (char *scenario_file) {
 #endif
 
     vftr_n_hw_obs = 0;
+    vftr_init_scenario_formats ();
     if (vftr_read_scenario_file (scenario_file, NULL)) {
 	return -1;
     }
@@ -170,9 +169,9 @@ int vftr_init_hwc (char *scenario_file) {
 #endif
 
 #if defined(HAS_SXHWC)
-    scenario_expr_add_sx_counters ();
+    vftr_scenario_expr_add_sx_counters ();
 #elif defined(HAS_PAPI)
-    scenario_expr_add_papi_counters ();
+    vftr_scenario_expr_add_papi_counters ();
 #endif
 
 #if defined(HAS_PAPI)
@@ -231,13 +230,13 @@ void vftr_read_counters_sx (long long *event) {
     evtcounter_t *evc;
     if (event == NULL) return;
     vftr_read_sxhwc_registers (vftr_echwc);
-    memset (scenario_expr_counter_values, 0., sizeof(double) * scenario_expr_n_vars);
+    memset (vftr_scenario_expr_counter_values, 0., sizeof(double) * vftr_scenario_expr_n_vars);
     /* Mask overflow bit and undefined bits */
     vftr_echwc[0] &= 0x000fffffffffffff; /* 52bit counter */
     vftr_echwc[1] &= 0x000fffffffffffff; /* 52bit counter */
     for (i = 2; i < 16; i++) vftr_echwc[i] &= 0x00ffffffffffffff; /* 56bit counter */
-    for (int i = 0; i < scenario_expr_n_vars; i++) {
-	scenario_expr_counter_values[i] = vftr_echwc[i];
+    for (int i = 0; i < vftr_scenario_expr_n_vars; i++) {
+	vftr_scenario_expr_counter_values[i] = vftr_echwc[i];
     }
     for (i = j  = 0, evc = first_counter; evc; i++, evc = evc->next) {
         evc->count = vftr_echwc[j++];

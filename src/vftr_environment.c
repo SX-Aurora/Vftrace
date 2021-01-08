@@ -243,13 +243,13 @@ void vftr_read_environment () {
     vftr_environment.stoptime = vftr_read_env_long_long ("VFTR_STOPTIME", 7ll*24ll*60ll*60ll);
     vftr_environment.accurate_profile = vftr_read_env_bool ("VFTR_ACCURATE_PROFILE", false);
     vftr_environment.prof_truncate = vftr_read_env_bool ("VFTR_PROF_TRUNCATE", true);
+    vftr_environment.prof_truncate_cutoff = vftr_read_env_double ("VFTR_PROF_TRUNCATE_CUTOFF", 98.0);
     vftr_environment.mpi_log = vftr_read_env_bool ("VFTR_MPI_LOG", false);
     vftr_environment.mpi_show_sync_time = vftr_read_env_bool ("VFTR_MPI_SHOW_SYNC_TIME", false);
     vftr_environment.signals_off = vftr_read_env_bool ("VFTR_SIGNALS_OFF", true);
     vftr_environment.bufsize = vftr_read_env_int ("VFTR_BUFSIZE", 8); 
     vftr_environment.runtime_profile_funcs = vftr_read_env_regex ("VFTR_RUNTIME_PROFILE_FUNCS", NULL);
     vftr_environment.include_only_regex = vftr_read_env_regex ("VFTR_INCLUDE_ONLY", NULL);
-    vftr_environment.exclude_functions_regex = vftr_read_env_regex ("VFTR_EXCLUDE", NULL);
     vftr_environment.detail_until_cum_cycles = vftr_read_env_double ("VFTR_DETAIL_UNTIL_CUM_CYCLES", 90.0);
     vftr_environment.scenario_file = vftr_read_env_string ("VFTR_SCENARIO_FILE", NULL);
     vftr_environment.preciseregex = vftr_read_env_regex ("VFTR_PRECISE", NULL);
@@ -267,9 +267,6 @@ void vftr_read_environment () {
 
 void vftr_assert_environment () {
 	assert (vftr_environment.bufsize->value > 0);
-	if (vftr_environment.include_only_regex->set && vftr_environment.exclude_functions_regex->set) {
-		vftr_environment.exclude_functions_regex->set = false;
-	}
 
 	if (vftr_environment.scenario_file->set) {
 		FILE *fp;
@@ -341,6 +338,10 @@ void vftr_assert_environment () {
 	       vftr_environment.sort_profile_table->value = SORT_EXCL_TIME;
 	   }
         } 
+
+	if (vftr_environment.prof_truncate_cutoff->set && !vftr_environment.prof_truncate->value) {
+    	   printf ("Warning: Profile cutoff is given but VFTR_PROF_TRUNCATE is not set. Ignore!\n");
+        } 
 }
 
 /**********************************************************************/
@@ -379,7 +380,6 @@ void vftr_free_environment () {
 	free (vftr_environment.bufsize);
 	free (vftr_environment.runtime_profile_funcs);
 	free (vftr_environment.include_only_regex);
-	free (vftr_environment.exclude_functions_regex);
 	free (vftr_environment.detail_until_cum_cycles);
 	free (vftr_environment.scenario_file);
 	free (vftr_environment.preciseregex);

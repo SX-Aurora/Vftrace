@@ -24,6 +24,7 @@
 #include <time.h>
 #include <byteswap.h>
 #include "vftr_filewrite.h"
+#include "vftr_fileutils.h"
 #include "vftr_mpi_utils.h"
 
 #include "vftr_vfd_utils.h"
@@ -91,14 +92,19 @@ int main (int argc, char **argv) {
 	     sizeof(struct FileHeader), ftell(fp));
     print_fileheader (fp_out, vfd_header);
 
+    fread (&(vfd_header.n_formulas), sizeof(int), 1, fp);
     fread (&(vfd_header.n_hw_obs), sizeof(int), 1, fp);
     fprintf (fp_out, "n_hw_obs: %d\n", vfd_header.n_hw_obs);
     double *hw_values = NULL;
     if (vfd_header.n_hw_obs > 0) {
-	init_hw_observables (fp, vfd_header.n_hw_obs, &hw_values);
+        hw_values = (double*)malloc (vfd_header.n_hw_obs * sizeof(double));
+        for (int i = 0; i < vfd_header.n_hw_obs; i++) {
+          hw_values[i] = 0.0;
+        }
+	read_scenario_header (fp, vfd_header.n_hw_obs, vfd_header.n_formulas, true);
     }
     
-    fprintf (fp_out, "Unique stacks:   %d\n",                 vfd_header.stackscount  );
+    fprintf (fp_out, "Unique stacks: %d\n", vfd_header.stackscount);
     fprintf (fp_out, "Stacks list:\n");
     int n_precise_functions = 0;
     read_stacks (fp, &stacks, &precise_functions,
@@ -124,10 +130,12 @@ int main (int argc, char **argv) {
 	    int direction, rank, tag, count;
 	    int type_size, type_index;
 	    double dt_start, dt_stop, rate;
+            int callingStackID_loc;
 	    read_mpi_message_sample (fp, &direction, &rank, &type_index, &type_size,
-				     &count, &tag, &dt_start, &dt_stop, &rate);
+				     &count, &tag, &dt_start, &dt_stop, &rate,
+                                     &callingStackID_loc);
 					
-            fprintf (fp_out, "%16.6f %s\n", dt_start, direction ? "recv" : "send");
+            fprintf (fp_out, "%16.6f %s in stackID %d\n", dt_start, direction ? "recv" : "send", callingStackID_loc);
             fprintf (fp_out, "%16s count=%d type=%s(%iBytes) rate= %8.4lf MiB/s peer=%d tag=%d\n",
                     "", count, vftr_get_mpitype_string_from_idx(type_index), 
                     type_size, rate, rank, tag);
@@ -135,7 +143,13 @@ int main (int argc, char **argv) {
         } else if (sample_id == SID_ENTRY || sample_id == SID_EXIT) {
 	    int stack_id;
 	    long long sample_time;
-	    read_stack_sample (fp, vfd_header.n_hw_obs, &stack_id, &sample_time, &hw_values);
+	    read_stack_sample (fp, vfd_header.n_hw_obs, &stack_id, &sample_time, hw_values);
+            if (vfd_header.n_hw_obs > 0) {
+              for (int i = 0; i < vfd_header.n_hw_obs; i++) {
+                 printf ("%*.2f, ", vftr_count_digits_double(hw_values[i]), hw_values[i]);
+              }
+              printf ("\n");
+            }
             double sample_time_s = (double)sample_time * 1.0e-6;
 
             if (stacks[stack_id].fun != -1) {

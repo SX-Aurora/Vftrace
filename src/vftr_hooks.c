@@ -22,6 +22,7 @@
 #include <string.h>
 #include <signal.h>
 
+#include <stdbool.h>
 #include "vftr_symbols.h"
 #include "vftr_hwcounters.h"
 #include "vftr_setup.h"
@@ -38,9 +39,6 @@
 
 bool vftr_profile_wanted = false;
 
-void *current_exclude_addr = NULL;
-excl_fun_t *exclude_addr = NULL;
-
 void vftr_save_old_state () {
     int i,j;
 
@@ -48,7 +46,7 @@ void vftr_save_old_state () {
         function_t *func = vftr_func_table[j];
         func->prof_previous.calls  = func->prof_current.calls;
         func->prof_previous.cycles = func->prof_current.cycles;
-        func->prof_previous.timeExcl = func->prof_current.timeExcl;
+        func->prof_previous.time_excl = func->prof_current.time_excl;
         for (i = 0; i < vftr_n_hw_obs; i++) {
             func->prof_previous.event_count[i] = func->prof_current.event_count[i];
 	}
@@ -72,22 +70,6 @@ void vftr_function_entry (const char *s, void *addr, int line, bool isPrecise) {
 	vftr_init = 0;
     }
     if (vftr_off() || vftr_paused) return;
-
-    // Did we already find functions to exclude?
-    if (current_exclude_addr != NULL) {
-       // If the current exclude address matches the address of this function, we
-       // return from Vftrace. Otherwise, we search the list of registered exclude
-       // addresses for matches and return, if necessary.
-       if (current_exclude_addr == addr) {
-	  return;
-       } else {
-	  excl_fun_t *this_addr = exclude_addr;
-	  while (this_addr) {
-             if (this_addr->addr == addr) return;
-	     this_addr = this_addr->next;
-	  }
-       }
-    }
 
     long long func_entry_time = vftr_get_runtime_usec();
     // log function entry and exit time to estimate the overhead time
@@ -150,27 +132,9 @@ void vftr_function_entry (const char *s, void *addr, int line, bool isPrecise) {
         }
     }
     caller->callee = func; // Faster lookup next time around
-
     vftr_fstack = func; /* Here's where we are now */
+    func->open = true;
 
-    // All known exclude functions have been treated above, so this one is new.
-    if (func->exclude_this) {
-       // The first exclude address.
-       if (current_exclude_addr == NULL) {
-          exclude_addr = (excl_fun_t *) malloc (sizeof(excl_fun_t)); 
-          exclude_addr->addr = addr;
- 	  exclude_addr->next = NULL;
-       } else {
-	  excl_fun_t *this_addr = exclude_addr;
-          while (this_addr->next) this_addr = this_addr->next;
-	  this_addr->next = (excl_fun_t *) malloc (sizeof(excl_fun_t));
-	  this_addr->next->addr = addr;
-	  this_addr->next->next = NULL;
-       }
-       // In any case, return.
-       current_exclude_addr = addr;
-       return;
-    }
     if (line > 0) assert (func->line_beg == line);
 
     if (func->profile_this) {
@@ -178,7 +142,7 @@ void vftr_function_entry (const char *s, void *addr, int line, bool isPrecise) {
         vftr_write_stack_ascii (vftr_log, wtime, func, "profile before call to", 0);
         vftr_profile_wanted = true;
         int ntop;
-        vftr_print_profile (vftr_log, &ntop, timer);
+        vftr_print_profile (vftr_log, NULL, 0, &ntop, timer);
         vftr_print_local_stacklist (vftr_func_table, vftr_log, ntop);
 	vftr_save_old_state ();
     }
@@ -191,8 +155,31 @@ void vftr_function_entry (const char *s, void *addr, int line, bool isPrecise) {
 		    vftr_events_enabled && 
                     (time_to_sample || vftr_environment.accurate_profile->value);
 
+    if (func->return_to) {
+        prof_return = &func->return_to->prof_current;
+        if (read_counters) {
+           int ic = vftr_prof_data.ic;
+           vftr_read_counters (vftr_prof_data.events[ic]);
+           if (prof_return->event_count && func->return_to->detail) {
+               for (e = 0; e < vftr_n_hw_obs; e++) {
+                   long long delta = vftr_prof_data.events[ic][e] - vftr_prof_data.events[1-ic][e];
+#ifdef __ve__
+                   if (delta < 0) /* Handle counter overflow */
+                       delta += e < 2 ? (long long) 0x000fffffffffffff
+                                      : (long long) 0x00ffffffffffffff;
+#endif
+    	           prof_return->event_count[e] += delta;
+               }
+           }
+           vftr_prof_data.ic = 1 - ic;
+       }
+    }
+
+
     if (time_to_sample && vftr_env_do_sampling ()) {
-        vftr_write_to_vfd (func_entry_time, vftr_prog_cycles, func->id, SID_ENTRY);
+        profdata_t *prof_current = &func->prof_current;
+        profdata_t *prof_previous = &func->prof_previous;
+        vftr_write_to_vfd (func_entry_time, prof_current, prof_previous, func->id, SID_ENTRY);
 #ifdef _MPI
         int mpi_isinit;
         PMPI_Initialized(&mpi_isinit);
@@ -211,28 +198,11 @@ void vftr_function_entry (const char *s, void *addr, int line, bool isPrecise) {
     // Maintain profile
 
     if (func->return_to) {
-        prof_return = &func->return_to->prof_current;
         delta = cycles0 - vftr_prof_data.cycles;
 	prof_return->cycles += delta;
-        prof_return->timeExcl += func_entry_time - vftr_prof_data.timeExcl;
+        prof_return->time_excl += func_entry_time - vftr_prof_data.time_excl;
         vftr_prog_cycles += delta;
-        func->prof_current.timeIncl -= func_entry_time;
-	if (read_counters) {
-            int ic = vftr_prof_data.ic;
-            vftr_read_counters (vftr_prof_data.events[ic]);
-            if (prof_return->event_count && func->return_to->detail) {
-                for (e = 0; e < vftr_n_hw_obs; e++) {
-                    long long delta = vftr_prof_data.events[ic][e] - vftr_prof_data.events[1-ic][e];
-#ifdef __ve__
-                    if (delta < 0) /* Handle counter overflow */
-                        delta += e < 2 ? (long long) 0x000fffffffffffff
-                                       : (long long) 0x00ffffffffffffff;
-#endif
-		    prof_return->event_count[e] += delta;
-                }
-            }
-	    vftr_prof_data.ic = 1 - ic;
-	}
+        func->prof_current.time_incl -= func_entry_time;
     }
 
     /* Compensate overhead */
@@ -240,7 +210,7 @@ void vftr_function_entry (const char *s, void *addr, int line, bool isPrecise) {
     // the global cycle count and time value.
     vftr_prof_data.cycles = vftr_get_cycles() - vftr_initcycles;
     long long overhead_time_end = vftr_get_runtime_usec();
-    vftr_prof_data.timeExcl = overhead_time_end;
+    vftr_prof_data.time_excl = overhead_time_end;
     vftr_overhead_usec += overhead_time_end - overhead_time_start;
     func->overhead += overhead_time_end - overhead_time_start;
 }
@@ -271,10 +241,6 @@ void vftr_function_exit(int line) {
     timer = vftr_get_runtime_usec ();
     cycles0 = vftr_get_cycles() - vftr_initcycles;
     func  = vftr_fstack;
-    if (func->exclude_this) {
-      vftr_fstack = func->return_to;
-      return;
-    }
 
     if (line > 0) {
         if (func->line_end) {
@@ -288,7 +254,7 @@ void vftr_function_exit(int line) {
     }
 
     prof_current = &func->prof_current;
-    prof_current->timeIncl += func_exit_time;   /* Inclusive time */
+    prof_current->time_incl += func_exit_time;   /* Inclusive time */
     
     vftr_fstack = func->return_to;
 
@@ -300,36 +266,10 @@ void vftr_function_exit(int line) {
     read_counters = (func->return_to->detail || func->detail) &&
 	  	    vftr_events_enabled && 
                     (timeToSample || vftr_environment.accurate_profile->value);
-    if (timeToSample && vftr_env_do_sampling ()) {
-        vftr_write_to_vfd(func_exit_time, prof_current->cycles, func->id, SID_EXIT);
-#ifdef _MPI
-        int mpi_isinit;
-        PMPI_Initialized(&mpi_isinit);
-        if (mpi_isinit) {
-           int mpi_isfinal;
-           PMPI_Finalized(&mpi_isfinal);
-           if (!mpi_isfinal) {
-              vftr_clear_completed_requests();
-           }
-        }
-#endif
-    }
-
-    /* Maintain profile info */
-
-    prof_current->cycles += cycles0;
-    prof_current->timeExcl += func_exit_time;
-    vftr_prog_cycles += cycles0;
-    if (func->return_to) {
-        prof_current->cycles -= vftr_prof_data.cycles;
-        prof_current->timeExcl -= vftr_prof_data.timeExcl;
-        vftr_prog_cycles -= vftr_prof_data.cycles;
-    }
 
     if (read_counters) {
         int ic = vftr_prof_data.ic;
         vftr_read_counters (vftr_prof_data.events[ic]);
-        prof_current->ecreads++; /* Only at exit */
         if (prof_current->event_count && func->detail) {
             for (e = 0; e < vftr_n_hw_obs; e++) {
                 long long delta = vftr_prof_data.events[ic][e] - vftr_prof_data.events[1-ic][e];
@@ -346,13 +286,40 @@ void vftr_function_exit(int line) {
         vftr_prof_data.ic = 1 - ic;
     }
 
+    if (timeToSample && vftr_env_do_sampling ()) {
+        profdata_t *prof_previous = &func->prof_previous;
+        vftr_write_to_vfd(func_exit_time, prof_current, prof_previous, func->id, SID_EXIT);
+#ifdef _MPI
+        int mpi_isinit;
+        PMPI_Initialized(&mpi_isinit);
+        if (mpi_isinit) {
+           int mpi_isfinal;
+           PMPI_Finalized(&mpi_isfinal);
+           if (!mpi_isfinal) {
+              vftr_clear_completed_requests();
+           }
+        }
+#endif
+    }
+
+    /* Maintain profile info */
+
+    prof_current->cycles += cycles0;
+    prof_current->time_excl += func_exit_time;
+    vftr_prog_cycles += cycles0;
+    if (func->return_to) {
+        prof_current->cycles -= vftr_prof_data.cycles;
+        prof_current->time_excl -= vftr_prof_data.time_excl;
+        vftr_prog_cycles -= vftr_prof_data.cycles;
+    }
+
     wtime = (vftr_get_runtime_usec() - vftr_overhead_usec) * 1.0e-6;
 
     if (func->profile_this)  {
         vftr_write_stack_ascii (vftr_log, wtime, func, "profile at exit from", timeToSample);
         vftr_profile_wanted = true;
         int ntop;
-        vftr_print_profile (stdout, &ntop, timer);
+        vftr_print_profile (stdout, NULL, 0, &ntop, timer);
         vftr_print_local_stacklist( vftr_func_table, stdout, ntop );
     }
 
@@ -391,7 +358,7 @@ void vftr_function_exit(int line) {
     // the global cycle count and time value.
     vftr_prof_data.cycles = vftr_get_cycles() - vftr_initcycles;
     long long overhead_time_end = vftr_get_runtime_usec();
-    vftr_prof_data.timeExcl = overhead_time_end;
+    vftr_prof_data.time_excl = overhead_time_end;
     vftr_overhead_usec += overhead_time_end - overhead_time_start;
     func->overhead += overhead_time_end - overhead_time_start;
     
@@ -409,6 +376,7 @@ void vftr_function_exit(int line) {
     // measured. Therefore, there is a theoretical, but miniscule, discrepancy
     // the user time and the time measured by Vftrace.
     if (!vftr_fstack->return_to) vftr_finalize();
+    func->open = false;
 }
 
 // These are the actual Cygnus function hooks. 

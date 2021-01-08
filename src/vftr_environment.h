@@ -74,13 +74,13 @@ typedef struct vftr_envs {
 	env_var_long_long_t *stoptime;
 	env_var_bool_t *accurate_profile;	
 	env_var_bool_t *prof_truncate;
+        env_var_double_t *prof_truncate_cutoff;
 	env_var_bool_t *mpi_log;	
         env_var_bool_t *mpi_show_sync_time;
 	env_var_bool_t *signals_off;
 	env_var_int_t *bufsize;
 	env_var_regex_t *runtime_profile_funcs;
 	env_var_regex_t *include_only_regex;
-	env_var_regex_t *exclude_functions_regex;
 	env_var_double_t *detail_until_cum_cycles;
 	env_var_string_t *scenario_file;
 	env_var_regex_t *preciseregex;
