@@ -28,8 +28,7 @@ def do_prediction():
     for key, p in global_dict.items():  
       if key == "total" or key == "mpi_overhead": continue
       t_predict += p.extrapolate_function(x_predict)
-    print ("Predict: ", t_predict)
-    prediction_result["text"] = str(t_predict) + " seconds"
+    prediction_result["text"] = str("%.2f"%t_predict) + " seconds"
 
     with open("extrapolate.out", "w") as f:
       for p in global_dict.values():
