@@ -130,15 +130,15 @@ struct vftr_mpi_type_t all_mpi_types[NVFTR_TYPES] = {
 #ifdef _MPI
 // Adjust vftrace to the just initialized MPI-environment
 void vftr_after_mpi_init() {
-   if (vftr_off() || !vftr_env_do_sampling ()) return;
+   if (vftr_off()) return;
+   vftr_reset_counts (vftr_froots);
+   if (!vftr_env_do_sampling ()) return;
 
    vftr_prevsampletime = 0;
    vftr_nextsampletime = 0ll;
    vftr_function_samplecount = 0;
    vftr_message_samplecount = 0;
    vftr_prog_cycles = 0ll;
-
-   vftr_reset_counts (vftr_froots);
 
    fseek (vftr_vfd_file, vftr_samples_offset, SEEK_SET);
 }

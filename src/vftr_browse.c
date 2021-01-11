@@ -363,7 +363,7 @@ void vftr_browse_print_index_html (display_function_t **display_functions, int n
 void vftr_browse_print_tree_element (FILE *fp, int final_id, int stack_id, int func_id, int n_spaces, double total_time) {
 	vftr_browse_make_html_indent (fp, n_spaces, 0);
 	if (final_id > 0) {
-	   double this_t = func_id >= 0 ? vftr_func_table[func_id]->prof_current.timeIncl * 1e-6 : 0.0;
+	   double this_t = func_id >= 0 ? vftr_func_table[func_id]->prof_current.time_incl * 1e-6 : 0.0;
 	   int x = total_time > 0 ? (int)(floor (510 * this_t / total_time)) : 0;
 	   int rvalue = x > 255 ? 255 : 255 - x;
 	   int gvalue = x > 255 ? 510 - x : 255;
@@ -413,7 +413,7 @@ void vftr_browse_print_stacktree (FILE *fp, stack_leaf_t *leaf, int n_spaces, do
 	          vftr_browse_make_html_indent (fp, n_spaces, 0);
 		  fprintf (fp, "Calls: %lld<br>\n", vftr_func_table[leaf->func_id]->prof_current.calls);
 	          vftr_browse_make_html_indent (fp, n_spaces, 0);
-		  double t = vftr_func_table[leaf->func_id]->prof_current.timeIncl * 1e-6;
+		  double t = vftr_func_table[leaf->func_id]->prof_current.time_incl * 1e-6;
 		  char *t_unit;
 		  vftr_time_unit (&t, &t_unit, true); 
 		  fprintf (fp, "Time %6.2f %s<br>\n", t, t_unit);

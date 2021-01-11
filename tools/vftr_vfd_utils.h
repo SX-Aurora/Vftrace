@@ -14,6 +14,7 @@ typedef struct FileHeader {
     unsigned int stackscount;
     long sampleoffset, stacksoffset;
     int n_hw_obs;
+    int n_formulas;
 } vfd_header_t;
 
 typedef struct FunctionEntry {
@@ -45,10 +46,10 @@ void read_mpi_message_sample (FILE *fp, int *direction, int *rank, int *type_ind
                               int *callingStackID);
 void skip_mpi_message_sample (FILE *fp);
 
-void init_hw_observables (FILE *fp, int n_hw_obs, double **hw_values);
+void read_scenario_header (FILE *fp, int n_hw_obs, int n_formulas, bool verbose);
 void skip_hw_observables (FILE *fp, int n_hw_obs);
 
 void read_stack_sample (FILE *fp, int n_hw_obs, int *stack_id,
-			long long *sample_time, double **hw_values);
+			long long *sample_time, double *hw_values);
 void skip_stack_sample (FILE *fp);
 #endif

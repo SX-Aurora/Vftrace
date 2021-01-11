@@ -21,39 +21,19 @@
 
 #include <stdio.h>
 #include <stdbool.h>
-
-#define SCENARIO_NAME_LEN 32
+#include "vftr_functions.h"
 
 typedef struct EventCounter {
-    int                 rank, id, namelen, decipl;
+    int                 id, namelen, decipl;
     long long           count;
-    char                *name, fmt[10];
+    char *name;
     struct EventCounter *next;
 } evtcounter_t;
 
 evtcounter_t  *vftr_get_counters ( void );
 
-enum ve_counters {
-	EX, // 0
-	VX,
-	FPEC, // 2
-	VE,
-	VECC, // 4
-	L1MCC,
-	VE2, // 6
-	VAREC,
-	VLDEC, // 8
-	PCCC,
-	VLDCC, // 10
-	VLEC,
-	VLECME, // 12
-	FMAEC,
-	PTCC, // 14
-	TTCC
-};	
-
 void vftr_write_scenario_header_to_vfd (FILE *fp);
-void vftr_write_observables_to_vfd (unsigned long long cycles, FILE *fp);
+void vftr_write_observables_to_vfd (profdata_t *prof_current, profdata_t *prof_previous, FILE *fp);
 
 #define TE_MAX 50
 #define SCENARIO_EXPR_BUF_SIZE 200

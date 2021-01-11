@@ -144,6 +144,6 @@ void vftr_sigalarm (int sig) {
    // get the time to estimate vftrace overhead
    long long overhead_time_end = vftr_get_runtime_usec();
    long long overhead = overhead_time_end - overhead_time_start;
-   vftr_prof_data.timeExcl += overhead;
+   vftr_prof_data.time_excl += overhead;
    vftr_overhead_usec += overhead;
 }

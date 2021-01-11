@@ -49,7 +49,6 @@ int papi_event_set;
 long long vftr_echwc[MAX_HWC_EVENTS];
 
 // As each hardware observable is registered, this counter is incremented. 
-int hwc_event_num = 0;
 
 void vftr_new_counter (char *name, int id, int rank) {
     evtcounter_t *evc;
@@ -60,12 +59,11 @@ void vftr_new_counter (char *name, int id, int rank) {
     evc->next = NULL;
     evc->decipl  = 1;
     evc->id = id;
-    evc->rank = rank;
 
     if (!first_counter) {
-	first_counter = next_counter = evc;
+        first_counter = next_counter = evc;
     } else {
-	next_counter = next_counter->next = evc;
+        next_counter = next_counter->next = evc;
     }
 
     vftr_n_hw_obs++;
@@ -75,13 +73,13 @@ void vftr_new_counter (char *name, int id, int rank) {
 
 void vftr_papi_counter (char *name) {
     int id   = err_no_hwc_support ? -1 : vftr_find_event_number (name);
-    vftr_new_counter (name, id, hwc_event_num++);
+    vftr_new_counter (name, id, 0);
 }
 
 /**********************************************************************/
 
 void vftr_sx_counter (char *name, int id) {
-    vftr_new_counter( name, id, hwc_event_num++);
+    vftr_new_counter( name, id, 0);
 }
 
 /**********************************************************************/

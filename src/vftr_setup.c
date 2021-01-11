@@ -313,7 +313,7 @@ void vftr_finalize() {
 
     // Mark end of non-parallel interval
     if (vftr_env_do_sampling()) {
-        vftr_write_to_vfd (finalize_time, vftr_prog_cycles, 0, SID_EXIT);
+        vftr_write_to_vfd (finalize_time, NULL, NULL, 0, SID_EXIT);
     }
 
     if (vftr_environment.strip_module_names->value) {
