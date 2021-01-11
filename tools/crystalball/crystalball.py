@@ -179,7 +179,6 @@ file_menu.add_command(label="Save plot", command = save_plot)
 file_menu.add_separator()
 file_menu.add_command(label="Exit", command = window.quit)
 menubar.add_cascade(label="Actions", menu=file_menu)
-menubar.add_command (label="Filter", command = filter_functions)
 
 display_menu = tk.Menu(menubar, tearoff=0)
 display_menu.add_checkbutton(label="Show n_calls", variable = var_calls_checked, onvalue = 1, offvalue = 0, command = switch_button)
@@ -188,7 +187,8 @@ display_menu.add_checkbutton(label="Show sampling overhead", variable = var_samp
 display_menu.add_checkbutton(label="Show MPI overhead", variable = var_mpi_checked, onvalue = 1, offvalue = 0, command = switch_button)
 display_menu.add_checkbutton(label="Normalize", variable = var_normal_checked, onvalue = 1, offvalue = 0, command = switch_button)
 display_menu.add_checkbutton(label="Show stack IDs", variable = var_stackid_checked, onvalue = 1, offvalue = 0, command = switch_button)                  
-
+display_menu.add_separator()
+display_menu.add_command(label="Filter", command = filter_functions)
 
 menubar.add_cascade(label="Display", menu=display_menu)
 window.config(menu=menubar)
