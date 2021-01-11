@@ -1,4 +1,8 @@
 #!/usr/bin/env python
+
+# Crystalball visualizes Vftrace log files and allows for the extrapolation
+# of total runtimes using the progression of the runtimes of the individual functions.
+# 
 import sys
 from collections import OrderedDict
 
@@ -107,7 +111,10 @@ def update_crystalball(wcontrol, wfilter):
         plot_function(plot_data[i_plot], ee.x, ee.n_calls, normal_value)
       else:
         plot_function(plot_data[i_plot], ee.x, ee.t, normal_value)
-      func_names.append(ee.func_name)
+      if ee.stack_id >= 0:
+        func_names.append(ee.func_name + " [" + str(ee.stack_id) + "]")
+      else:
+        func_names.append(ee.func_name)
     else:
       plot_data[i_plot].set_xdata([])
       plot_data[i_plot].set_ydata([])

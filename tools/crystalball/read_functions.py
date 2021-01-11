@@ -146,7 +146,7 @@ def synchronize_dictionaries (global_x, overviews, dictos):
       if fe.hash in global_dict:
         global_dict[fe.hash].append(global_x[i_dict], fe.n_calls, fe.t_excl)
       else:
-        global_dict[fe.hash] = extrapolate.extrapolation_entry(fe.function_name, global_x[i_dict], fe.n_calls, fe.t_excl)
+        global_dict[fe.hash] = extrapolate.extrapolation_entry(fe.function_name, global_x[i_dict], fe.n_calls, fe.t_excl, stack_id = int(stack_id))
   global_dict = OrderedDict(sorted(global_dict.items(), key = lambda x: x[1].total_time, reverse = True))
   for i, overview in enumerate(overviews):
     if i == 0:

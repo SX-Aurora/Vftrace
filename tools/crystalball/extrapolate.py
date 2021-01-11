@@ -16,8 +16,9 @@ def test_log(x, a, b):
 
 class extrapolation_entry:
 
-  def __init__(self, func_name, this_x, this_n_calls, this_t):
+  def __init__(self, func_name, this_x, this_n_calls, this_t, stack_id=-1):
     self.func_name = func_name
+    self.stack_id = stack_id
     self.x = [float(this_x)]
     self.n_calls = [int(this_n_calls)]
     self.t = [float(this_t)] 
