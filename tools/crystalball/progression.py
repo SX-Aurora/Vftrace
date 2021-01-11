@@ -79,7 +79,7 @@ class progression_entry:
       for x, y in zip(self.x, self.t):
         residuals[0] += (test_linear(x, a[0], b[0]) - y)**2
     popt, _ = scipy.optimize.curve_fit(test_constant, self.x, self.t)
-    a[1] = popt
+    a[1] = popt[0] # Why?
     for x, y in zip(self.x, self.t):
       residuals[1] += (test_constant(x, a[1]) - y)**2
     if len(self.x) > 1:

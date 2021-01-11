@@ -18,7 +18,7 @@ import progression
 
 def do_prediction():
 
-  global prediction_entry
+  global prediction_entry, prediction_result
   if global_dict_created:
     for p in global_dict.values():
       p.test_models ()
@@ -29,6 +29,7 @@ def do_prediction():
       if key == "total" or key == "mpi_overhead": continue
       t_predict += p.extrapolate_function(x_predict)
     print ("Predict: ", t_predict)
+    prediction_result["text"] = str(t_predict) + " seconds"
 
     with open("extrapolate.out", "w") as f:
       for p in global_dict.values():
@@ -228,6 +229,8 @@ prediction_frame = tk.Frame(frame_plot)
 prediction_button = tk.Button (prediction_frame, text = "Predict for x = ", command = do_prediction).grid(row=0, column=0)
 prediction_entry = tk.Entry (prediction_frame, width=3)
 prediction_entry.grid(row=0, column=1) # If gridded above, prediction_entry will be None-type...
+prediction_result = tk.Label (prediction_frame, text = "")
+prediction_result.grid(row=0, column=2)
 prediction_frame.pack()
 
 
