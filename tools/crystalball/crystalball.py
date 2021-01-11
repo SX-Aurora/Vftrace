@@ -49,11 +49,11 @@ def plot_function(plot_data, x, y, normal_value=None):
 def update_crystalball(wcontrol, wfilter):
   global global_dict_created
   global global_dict
-  global n_calls_checked
-  global n_total_checked
-  global n_normal_checked
-  global n_sampling_checked
-  global n_mpi_checked
+  global var_calls_checked
+  global var_total_checked
+  global var_normal_checked
+  global var_sampling_checked
+  global var_mpi_checked
   global plot_data
   global n_current_plots
   global n_max_plots
@@ -81,13 +81,13 @@ def update_crystalball(wcontrol, wfilter):
     plot_this = True
     if i_plot == n_max_plots:
       ee = global_dict["total"]
-      plot_this = n_total_checked.get()
+      plot_this = var_total_checked.get()
     elif i_plot == n_max_plots + 1:
       ee = global_dict["sampling_overhead"]
-      plot_this = n_sampling_checked.get()
+      plot_this = var_sampling_checked.get()
     elif i_plot == n_max_plots + 2:
       ee = global_dict["mpi_overhead"]
-      plot_this = n_mpi_checked.get()
+      plot_this = var_mpi_checked.get()
     elif i_plot > n_max_plots + 2 and i_plot < n_previous_plots:
       plot_this = False
     elif i_plot < n_max_plots:
@@ -96,8 +96,8 @@ def update_crystalball(wcontrol, wfilter):
       break
 
     normal_value = None
-    if n_normal_checked.get():
-      if n_calls_checked.get():
+    if var_normal_checked.get():
+      if var_calls_checked.get():
         normal_value = global_dict["total"].n_calls
       else:
         normal_value = global_dict["total"].t
@@ -107,11 +107,11 @@ def update_crystalball(wcontrol, wfilter):
       plot_data.append(p)
     if plot_this:
       n_current_plots += 1
-      if n_calls_checked.get():
+      if var_calls_checked.get():
         plot_function(plot_data[i_plot], ee.x, ee.n_calls, normal_value)
       else:
         plot_function(plot_data[i_plot], ee.x, ee.t, normal_value)
-      if ee.stack_id >= 0:
+      if var_stackid_checked.get() and ee.stack_id >= 0:
         func_names.append(ee.func_name + " [" + str(ee.stack_id) + "]")
       else:
         func_names.append(ee.func_name)
@@ -125,13 +125,13 @@ def update_crystalball(wcontrol, wfilter):
   ax.set_xlabel (wcontrol.xlabel)
   if wcontrol.ylabel != '':
     ax.set_ylabel (wcnotrol.ylabel)
-  elif n_calls_checked.get():
-    if n_normal_checked.get():
+  elif var_calls_checked.get():
+    if var_normal_checked.get():
       ax.set_ylabel("%Calls")
     else:
       ax.set_ylabel ("#Calls")
   else:
-    if n_normal_checked.get():
+    if var_normal_checked.get():
       ax.set_ylabel ("%t")
     else:
       ax.set_ylabel ("t[s]")
@@ -139,7 +139,7 @@ def update_crystalball(wcontrol, wfilter):
   plot_canvas.flush_events()
 
 def switch_button():
-  if wcontrol.valid: update_crystalball(wcontrol)
+  if wcontrol.valid: update_crystalball(wcontrol, wfilter)
     
 def create_sample():
   wcontrol.open_window()
@@ -163,6 +163,13 @@ window.wm_title ("The crystal ball performance predictor")
 global_dict_created = False
 global_dict = OrderedDict()
 
+var_calls_checked = tk.IntVar(value=0)
+var_total_checked = tk.IntVar(value=0)
+var_normal_checked = tk.IntVar(value=0)
+var_sampling_checked = tk.IntVar(value=0)
+var_mpi_checked = tk.IntVar(value=0)
+var_stackid_checked = tk.IntVar(value=1)
+
 wcontrol = control_window.control_window(window)
 wfilter = filter_window.filter_window(window)
 menubar = tk.Menu(window)
@@ -173,6 +180,17 @@ file_menu.add_separator()
 file_menu.add_command(label="Exit", command = window.quit)
 menubar.add_cascade(label="Actions", menu=file_menu)
 menubar.add_command (label="Filter", command = filter_functions)
+
+display_menu = tk.Menu(menubar, tearoff=0)
+display_menu.add_checkbutton(label="Show n_calls", variable = var_calls_checked, onvalue = 1, offvalue = 0, command = switch_button)
+display_menu.add_checkbutton(label="Show total", variable = var_total_checked, onvalue = 1, offvalue = 0, command = switch_button)
+display_menu.add_checkbutton(label="Show sampling overhead", variable = var_sampling_checked, onvalue = 1, offvalue = 0, command = switch_button)
+display_menu.add_checkbutton(label="Show MPI overhead", variable = var_mpi_checked, onvalue = 1, offvalue = 0, command = switch_button)
+display_menu.add_checkbutton(label="Normalize", variable = var_normal_checked, onvalue = 1, offvalue = 0, command = switch_button)
+display_menu.add_checkbutton(label="Show stack IDs", variable = var_stackid_checked, onvalue = 1, offvalue = 0, command = switch_button)                  
+
+
+menubar.add_cascade(label="Display", menu=display_menu)
 window.config(menu=menubar)
 
 list_frame = tk.Frame (master = window)
@@ -212,33 +230,11 @@ plot_canvas.draw()
 plot_canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=1)
 
 checkbox_frame = tk.Frame(frame_plot)
-n_calls_checked = tk.IntVar()
-n_total_checked = tk.IntVar()
-n_normal_checked = tk.IntVar()
-n_sampling_checked = tk.IntVar()
-n_mpi_checked = tk.IntVar()
 n_functions_button = tk.Button (checkbox_frame, text = "Set n_functions: ",
                                 command = switch_button).grid(row=0, column=0)
 n_functions_entry = tk.Entry (checkbox_frame, width=2)
 n_functions_entry.insert(tk.END, n_max_plots)
 n_functions_entry.grid(row=0, column=1)
-check_calls_box = tk.Checkbutton(checkbox_frame, text = "Show n_calls",
-                                 variable = n_calls_checked, onvalue = 1, offvalue = 0,
-                                 command = switch_button).grid(row=0, column=2)
-check_total_box = tk.Checkbutton(checkbox_frame, text = "Show total",
-                                 variable = n_total_checked, onvalue = 1, offvalue = 0,
-                                 command = switch_button).grid(row=0, column=3)
-check_sampling_box = tk.Checkbutton(checkbox_frame, text = "Show sampling ovhd",
-                                    variable = n_sampling_checked, onvalue = 1, offvalue = 0,
-                                    command = switch_button).grid(row=0, column=4)
-check_mpi_box = tk.Checkbutton(checkbox_frame, text = "Show mpi ovhd",
-                               variable = n_mpi_checked, onvalue = 1, offvalue = 0,
-                               command = switch_button).grid(row=0, column=5)
-check_normal_box = tk.Checkbutton(checkbox_frame, text = "Normalize",
-                                  variable = n_normal_checked, onvalue = 1, offvalue = 0,
-                                  command = switch_button).grid(row=0, column=6)
-
-
 checkbox_frame.pack()
 prediction_frame = tk.Frame(frame_plot)
 prediction_button = tk.Button (prediction_frame, text = "Extrapolate for x = ", command = do_prediction).grid(row=0, column=0)
