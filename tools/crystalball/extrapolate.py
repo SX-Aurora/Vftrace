@@ -2,6 +2,9 @@ from scipy import optimize
 import numpy as np
 import scipy
 
+# This module uses Scipy to fit functions to data. There functions below as used
+# as an input to the optimize function.
+
 def test_linear(x, a, b):
   return a * x + b
 
@@ -14,6 +17,7 @@ def test_amdahl(x, a, b):
 def test_log(x, a, b):
   return a * x * np.log(x) + b
 
+# A list of these objects is used to make extrapolations using the global_dict in the main routine.
 class extrapolation_entry:
 
   def __init__(self, func_name, this_x, this_n_calls, this_t, stack_id=-1):
@@ -24,9 +28,13 @@ class extrapolation_entry:
     self.t = [float(this_t)] 
     self.total_time = float(this_t)
     self.extrapolate_type = ""
+    # Will be set to a concrete function once the extrapolation type is determined.
+    # This function returns the predicted run time.
     self.extrapolate_function = None
+    # Fitting functions can have up to two parameters.
     self.a = None
     self.b = None
+    # Stores the extrapolated value.
     self.extrapolation = -1.0
 
   def __str__(self):
@@ -43,12 +51,16 @@ class extrapolation_entry:
     s += "\n"
     return s
 
+  def __repr__(self):
+    return __str__(self)
+
   def append(self, this_x, this_n_calls, this_t):
     self.x.append(float(this_x))
     self.n_calls.append(int(this_n_calls))
     self.t.append(float(this_t))
     self.total_time += float(this_t)
 
+  # The possible targets for self.extrapolate_function
   def extrapolate_constant(self, x):
     self.extrapolation = self.a
     return self.extrapolation
@@ -65,6 +77,9 @@ class extrapolation_entry:
     self.extrapolation =  self.a / x + self.b
     return self.extrapolation
 
+  # Go through all the test functions and fit them to the data.
+  # For each, we compute the quadratic deviation of the data points to the model (residuals).
+  # In the end, we choose the model with the smallest residual as extrapolation.
   def test_models(self):
     extrapolate_functions = [self.extrapolate_linear, self.extrapolate_constant, self.extrapolate_amdahl, self.extrapolate_log]
     extrapolate_types = ["linear", "constant", "amdahl", "log"]
@@ -95,34 +110,3 @@ class extrapolation_entry:
     self.a = a[min_res]
     self.b = b[min_res]
      
-
-class extrapolate_linear:
-  def __init__(self, m, n):
-    self.m = m
-    self.n = n
-    pass
-
-  def __str__(self):
-    return "PROG: Linear (" + str(self.m) + "," + str(self.n) + ")"
-
-  def predict(self, x):
-    return self.m * x + self.n
-
-class extrapolate_constant:
-  def __init__(self, value):
-    self.value = value
-    pass
-
-  def __str__(self):
-    return "PROG: Constant (" + str(self.value) + ")"
-
-  def predict(self, x):
-    return self.value
-
-class extrapolate_undefined:
-  def __init__(self):
-    pass
-
-  def __str__(self):
-    return "PROG: Undefined"
-

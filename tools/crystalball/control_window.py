@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import filedialog
 
+# The window which allows to choose the input files.
 class control_window:
 
   def __init__(self, root):

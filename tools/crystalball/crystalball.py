@@ -24,19 +24,27 @@ def do_prediction():
 
   global prediction_entry, prediction_result
   if global_dict_created:
+    # For each list of runtimes, we fit various models. Out of these, the best fit is chosen.
     for p in global_dict.values():
       p.test_models ()
 
+    # User-defined target value given in the input field.
     x_predict = float(prediction_entry.get())
     t_predict = 0.0
+    # Loop over all function entries and add up the predicted time.
     for key, p in global_dict.items():  
+      # There are the additional entries for total runtime, sampling overhead and MPI overhead.
+      # We add the prediction for the sampling overhead, but not the MPI overhead, as it is already included in the individual MPI functions.
       if key == "total" or key == "mpi_overhead": continue
       t_predict += p.extrapolate_function(x_predict)
     prediction_result["text"] = str("%.2f"%t_predict) + " seconds"
 
+    # Detailed information about the extrapolation of each function is written to this file.
     with open("extrapolate.out", "w") as f:
       for p in global_dict.values():
         f.write(str(p))  
+  else:
+    prediction_result["text"] = "No input fives given!"
 
 def plot_function(plot_data, x, y, normal_value=None):
   plot_data.set_xdata(x)
@@ -138,7 +146,7 @@ def update_crystalball(wcontrol, wfilter):
   plot_canvas.draw()
   plot_canvas.flush_events()
 
-def switch_button():
+def update_if_valid():
   if wcontrol.valid: update_crystalball(wcontrol, wfilter)
     
 def create_sample():
@@ -156,22 +164,31 @@ def save_plot():
                                           filetypes = (("jpeg", "*.jpg"),("png", "*.png"),("all files", "*")))
   fig.savefig(filename)
 
+# Create the main window
 window = tk.Tk()
 window.protocol ("WM_DELETE_WINDOW", window.destroy)
 window.wm_title ("The crystal ball performance predictor")
 
 global_dict_created = False
+# For each input file, a dictionary is created. Its keys are the stack IDs and its values
+# are objects containing the other information found in a line of the Vftrace profile
+# (e.g. n_calls, exclusive time, the function name). all_dicts is a list of these dictionaries.
+all_dicts = []
+# All "local" dictionaries are merged into a global dictionary. The keys are hashes of the
+# function stack strings, the values are lists of objects containing runtime data (extrapolation entries).
+# On these lists, extrapolations can be made.
+# We use an OrderedDict, where the items keep their original position.
+# More importantly, this dictionary type allows for sorting. This is required
+# to sort the global dictionary with respect to the total time spent on a function entry.
 global_dict = OrderedDict()
 
-var_calls_checked = tk.IntVar(value=0)
-var_total_checked = tk.IntVar(value=0)
-var_normal_checked = tk.IntVar(value=0)
-var_sampling_checked = tk.IntVar(value=0)
-var_mpi_checked = tk.IntVar(value=0)
-var_stackid_checked = tk.IntVar(value=1)
-
+# These windows open when the corresponding button is clicked. We already create empty
+# objects for them here.
 wcontrol = control_window.control_window(window)
 wfilter = filter_window.filter_window(window)
+
+# We create the menubar. It consists of the tab "Action", which allows to control the in- and output,
+# and the tab "Display", which controls details of the plot.
 menubar = tk.Menu(window)
 file_menu = tk.Menu(menubar, tearoff=0)
 file_menu.add_command(label="Create Sample", command = create_sample)
@@ -180,19 +197,33 @@ file_menu.add_separator()
 file_menu.add_command(label="Exit", command = window.quit)
 menubar.add_cascade(label="Actions", menu=file_menu)
 
+# The "Display" tab contains check boxes for plot options. These require global variables which
+# are defined below. Each option is disabled at startup (value=0), except for var_stackid_checked,
+# which triggers the display of stack ids in the plot legend.
+var_calls_checked = tk.IntVar(value=0)
+var_total_checked = tk.IntVar(value=0)
+var_normal_checked = tk.IntVar(value=0)
+var_sampling_checked = tk.IntVar(value=0)
+var_mpi_checked = tk.IntVar(value=0)
+var_stackid_checked = tk.IntVar(value=1)
+
 display_menu = tk.Menu(menubar, tearoff=0)
-display_menu.add_checkbutton(label="Show n_calls", variable = var_calls_checked, onvalue = 1, offvalue = 0, command = switch_button)
-display_menu.add_checkbutton(label="Show total", variable = var_total_checked, onvalue = 1, offvalue = 0, command = switch_button)
-display_menu.add_checkbutton(label="Show sampling overhead", variable = var_sampling_checked, onvalue = 1, offvalue = 0, command = switch_button)
-display_menu.add_checkbutton(label="Show MPI overhead", variable = var_mpi_checked, onvalue = 1, offvalue = 0, command = switch_button)
-display_menu.add_checkbutton(label="Normalize", variable = var_normal_checked, onvalue = 1, offvalue = 0, command = switch_button)
-display_menu.add_checkbutton(label="Show stack IDs", variable = var_stackid_checked, onvalue = 1, offvalue = 0, command = switch_button)                  
+# All buttons update the plot if clicked.
+display_menu.add_checkbutton(label="Show n_calls", variable = var_calls_checked, onvalue = 1, offvalue = 0, command = update_if_valid)
+display_menu.add_checkbutton(label="Show total", variable = var_total_checked, onvalue = 1, offvalue = 0, command = update_if_valid)
+display_menu.add_checkbutton(label="Show sampling overhead", variable = var_sampling_checked, onvalue = 1, offvalue = 0, command = update_if_valid)
+display_menu.add_checkbutton(label="Show MPI overhead", variable = var_mpi_checked, onvalue = 1, offvalue = 0, command = update_if_valid)
+display_menu.add_checkbutton(label="Normalize", variable = var_normal_checked, onvalue = 1, offvalue = 0, command = update_if_valid)
+display_menu.add_checkbutton(label="Show stack IDs", variable = var_stackid_checked, onvalue = 1, offvalue = 0, command = update_if_valid)                  
 display_menu.add_separator()
+# Open the window which allows to filter functions with regular expressions.
 display_menu.add_command(label="Filter", command = filter_functions)
 
 menubar.add_cascade(label="Display", menu=display_menu)
 window.config(menu=menubar)
 
+# The left half of the window is reserved for a list of the open files with the corresponding overview info.
+# It has a scrollbar, for which the below container is required.
 list_frame = tk.Frame (master = window)
 list_header = tk.Label (list_frame, text = "Open files: ")
 list_header.pack()
@@ -211,31 +242,29 @@ scrollbar.pack(side="right", fill="y")
 
 list_frame.grid(row=0, column=0)
 
-all_dicts = []
-
+# The right half of the window contains the plot, as well as a few buttons.
 frame_plot = tk.Frame (master = window)
 frame_plot.grid(row=0, column=1)
 
 fig, ax = plt.subplots()
 plot_data = []
 n_current_plots = 0
+# The maximum number of plots to be shown. A global variable, whose value is determined by the niput of n_functions_entry.
 n_max_plots = 5
-
-axes = []
-func_names = []
-
 
 plot_canvas = FigureCanvasTkAgg(fig, master = frame_plot)
 plot_canvas.draw()
 plot_canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=1)
 
 checkbox_frame = tk.Frame(frame_plot)
+# Input the number of functions you wish to display
 n_functions_button = tk.Button (checkbox_frame, text = "Set n_functions: ",
-                                command = switch_button).grid(row=0, column=0)
+                                command = update_if_valid).grid(row=0, column=0)
 n_functions_entry = tk.Entry (checkbox_frame, width=2)
 n_functions_entry.insert(tk.END, n_max_plots)
 n_functions_entry.grid(row=0, column=1)
 checkbox_frame.pack()
+# Do an extrapolation
 prediction_frame = tk.Frame(frame_plot)
 prediction_button = tk.Button (prediction_frame, text = "Extrapolate for x = ", command = do_prediction).grid(row=0, column=0)
 prediction_entry = tk.Entry (prediction_frame, width=3)

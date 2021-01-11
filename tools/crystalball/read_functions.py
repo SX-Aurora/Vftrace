@@ -2,6 +2,7 @@ from collections import OrderedDict
 
 import extrapolate
 
+# The data given in the Vftrace logfile header.
 class vftrace_overview:
   def __init__(self):
     self.mpi_size = 0
@@ -14,6 +15,7 @@ class vftrace_overview:
     self.n_recorded_functions = 0
     self.n_recorded_calls = 0
     self.profile_truncated = False
+    # Cumulative time where the profile is truncated.
     self.truncated_at = 0.0
 
   def __str__(self):
@@ -37,6 +39,7 @@ class vftrace_overview:
   def __repr__(self):
     return self.__str__()
 
+# A line in the profile table plus the stack string corresponding to the stack id.
 class function_entry:
   def __init__(self, n_calls, t_excl, t_incl, percent_abs, percent_cum, function_name, caller_name, stack_string):
     self.n_calls = n_calls
@@ -68,6 +71,7 @@ def check_if_stack_line_is_consistent (stack_line):
   elif funcs[-1] != "init":
     print ("Warning: There is a stack which does not end in init")
 
+# Read the logfile, go through all the lines and fill the data structures.
 def create_dictionary (filename):
   f = open(filename, "r")
   lines = f.readlines()
@@ -78,6 +82,7 @@ def create_dictionary (filename):
   functions = []
   function_stacks = {}
   for line in lines:
+    # First check for the header entries
     if "MPI size" in line:
       overview.mpi_size = int(line.split()[2])
     if "Total runtime" in line:
@@ -90,22 +95,26 @@ def create_dictionary (filename):
       overview.sampling_overhead = float(line.split()[2])
     if "MPI overhead" in line:
       overview.mpi_overhead = float(line.split()[2])
+    # Indicates the start of the profile table. There are three more redundant lines after that (thus countdown = 3).
     if "Runtime profile for rank" in line:
       overview.is_truncated = "truncated" in line
       countdown_profile = 3
     elif countdown_profile > 0:
-      countdown_profile -= 1
+      countdown_profile -= 1 # Redundant line
     elif countdown_profile == 0:  
+      # A string of dashes indicates the end of the profile table. If it is encountered, we reset the countdown.
       if not "-----------" in line:
         functions.append(line) 
       else:
         countdown_profile = -1
 
+    # Indicates the start of the stack table. There is one redundant line after that (countdown = 1).
     if "Function call stack" in line:
        countdown_stacks = 1
     elif countdown_stacks > 0: 
        countdown_stacks -=1
     elif countdown_stacks == 0:
+      # A string of dashes indicates the end of the stack table.
       if not "-----------" in line:
         tmp = line.split()
         check_if_stack_line_is_consistent(tmp[1])
@@ -113,14 +122,17 @@ def create_dictionary (filename):
       else:
         countdown_stacks = -1
     
-  
-  func_dict = OrderedDict()
-  
-  # A dictionary keeps its order, so the elements are automatically sorted in the same way as Vftrace has sorted them. 
   overview.n_recorded_functions = len(functions)
+  # The cumulative time the profile is truncated at. It's the %cum entry of the last function.
   overview.truncated_at = functions[-1].split()[4]
   
-  top_5_stackids = []
+  # We use an OrderedDict, where the items keep their original position.
+  # More importantly, this dictionary type allows for sorting. This is required
+  # to sort the global dictionary with respect to the total time spent on a function entry.
+  func_dict = OrderedDict()
+  
+  # Process each function line
+  # We do not deal with optional additional entries yet, such as overhead or hardware counter.
   for i, function in enumerate(functions):
     tmp = function.split()
     n_calls = tmp[0]
@@ -143,12 +155,15 @@ def synchronize_dictionaries (global_x, overviews, dictos):
   global_dict = OrderedDict()
   for i_dict, dicto in enumerate(dictos):
     for stack_id, fe in dicto.items():
+      # Check if the given hash value is already in the dictionary
       if fe.hash in global_dict:
         global_dict[fe.hash].append(global_x[i_dict], fe.n_calls, fe.t_excl)
       else:
         global_dict[fe.hash] = extrapolate.extrapolation_entry(fe.function_name, global_x[i_dict], fe.n_calls, fe.t_excl, stack_id = int(stack_id))
+  # Sort by the total time spent in each extrapolation entry.
   global_dict = OrderedDict(sorted(global_dict.items(), key = lambda x: x[1].total_time, reverse = True))
   for i, overview in enumerate(overviews):
+    # There are three additional entries: Total runtime, sampling overhead and MPI overhead.
     if i == 0:
       global_dict["total"] = extrapolate.extrapolation_entry("total", global_x[i], overview.n_recorded_calls, overview.recorded_time)
       global_dict["sampling_overhead"] = extrapolate.extrapolation_entry("sampling_overhead", global_x[i], overview.n_recorded_calls, overview.sampling_overhead)
