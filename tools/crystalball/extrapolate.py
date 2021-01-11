@@ -3,9 +3,6 @@ import numpy as np
 import scipy
 
 def test_linear(x, a, b):
-  #print ("type(a): ", type(a))
-  #print ("type(b): ", type(b))
-  #print ("type(x): ", type(x))
   return a * x + b
 
 def test_constant(x, a):
@@ -17,7 +14,7 @@ def test_amdahl(x, a, b):
 def test_log(x, a, b):
   return a * x * np.log(x) + b
 
-class progression_entry:
+class extrapolation_entry:
 
   def __init__(self, func_name, this_x, this_n_calls, this_t):
     self.func_name = func_name
@@ -98,7 +95,7 @@ class progression_entry:
     self.b = b[min_res]
      
 
-class prog_linear:
+class extrapolate_linear:
   def __init__(self, m, n):
     self.m = m
     self.n = n
@@ -110,7 +107,7 @@ class prog_linear:
   def predict(self, x):
     return self.m * x + self.n
 
-class prog_constant:
+class extrapolate_constant:
   def __init__(self, value):
     self.value = value
     pass
@@ -121,29 +118,10 @@ class prog_constant:
   def predict(self, x):
     return self.value
 
-class prog_undefined:
+class extrapolate_undefined:
   def __init__(self):
     pass
 
   def __str__(self):
     return "PROG: Undefined"
 
-def determine_progression_type (prog_entry, n_require):
-  n = len(prog_entry.x)
-  if n == n_require:
-    delta_x = [prog_entry.x[i+1] - prog_entry.x[i] for i in range(n-1)]
-    delta_calls = [prog_entry.n_calls[i+1] - prog_entry.n_calls[i] for i in range(n-1)] 
-    if all(tmp == 0 for tmp in delta_calls):
-      prog_entry.progression_type = prog_constant(prog_entry.t[0])
-    else:
-      m = (prog_entry.t[-1] - prog_entry.t[0]) / (prog_entry.x[-1] - prog_entry.x[0])
-      n = prog_entry.t[-1] - m * prog_entry.x[-1]
-      prog_entry.progression_type = prog_linear(m, n)
-  else:
-    prog_entry.progression_type = prog_undefined()
-  params, params_covariance = optimize.curve_fit(test_linear, prog_entry.x, prog_entry.t)
-  if np.all(params_covariance.all != None):
-    pass
-    #print ("progtype: ", prog_entry.progression_type, ", stderr: ", np.sqrt(np.diag(params_covariance))) 
-
-    

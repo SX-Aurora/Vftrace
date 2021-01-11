@@ -23,13 +23,13 @@ class filter_window:
     self.window.quit()
     self.window.destroy()
 
-  def evaluate_filter(self, prog_entries):
+  def evaluate_filter(self, extr_entries):
     self.filter_tmp = []
     expr = self.filter_entry.get() 
-    for pe in prog_entries:
-      m = re.search(expr, pe.func_name) 
+    for ee in extr_entries:
+      m = re.search(expr, ee.func_name) 
       if m is not None:
-        if not pe.func_name in self.filter_functions: self.filter_tmp.append(pe.func_name)
+        if not ee.func_name in self.filter_functions: self.filter_tmp.append(ee.func_name)
     s = "Functions: "
     for i, f in enumerate(self.filter_tmp):
       s += f

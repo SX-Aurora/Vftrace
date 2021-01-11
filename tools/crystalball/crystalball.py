@@ -15,7 +15,6 @@ import numpy as np
 import control_window
 import filter_window
 import read_functions
-import progression
 
 def do_prediction():
 
@@ -73,22 +72,22 @@ def update_crystalball(wcontrol, wfilter):
   func_names = []
   n_previous_plots = n_current_plots
   i_plot = 0
-  for i, prog_entry in enumerate(global_dict.values()):
-    if wfilter.skip(prog_entry.func_name): continue
+  for i, extr_entry in enumerate(global_dict.values()):
+    if wfilter.skip(extr_entry.func_name): continue
     plot_this = True
     if i_plot == n_max_plots:
-      pp = global_dict["total"]
+      ee = global_dict["total"]
       plot_this = n_total_checked.get()
     elif i_plot == n_max_plots + 1:
-      pp = global_dict["sampling_overhead"]
+      ee = global_dict["sampling_overhead"]
       plot_this = n_sampling_checked.get()
     elif i_plot == n_max_plots + 2:
-      pp = global_dict["mpi_overhead"]
+      ee = global_dict["mpi_overhead"]
       plot_this = n_mpi_checked.get()
     elif i_plot > n_max_plots + 2 and i_plot < n_previous_plots:
       plot_this = False
     elif i_plot < n_max_plots:
-      pp = prog_entry
+      ee = extr_entry
     else:
       break
 
@@ -105,10 +104,10 @@ def update_crystalball(wcontrol, wfilter):
     if plot_this:
       n_current_plots += 1
       if n_calls_checked.get():
-        plot_function(plot_data[i_plot], pp.x, pp.n_calls, normal_value)
+        plot_function(plot_data[i_plot], ee.x, ee.n_calls, normal_value)
       else:
-        plot_function(plot_data[i_plot], pp.x, pp.t, normal_value)
-      func_names.append(pp.func_name)
+        plot_function(plot_data[i_plot], ee.x, ee.t, normal_value)
+      func_names.append(ee.func_name)
     else:
       plot_data[i_plot].set_xdata([])
       plot_data[i_plot].set_ydata([])
