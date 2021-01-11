@@ -29,11 +29,11 @@ class filter_window:
     for ee in extr_entries:
       m = re.search(expr, ee.func_name) 
       if m is not None:
-        if not ee.func_name in self.filter_functions: self.filter_tmp.append(ee.func_name)
+        if not ee.func_name in self.filter_tmp: self.filter_tmp.append(ee.func_name)
     s = "Functions: "
     for i, f in enumerate(self.filter_tmp):
-      s += f
       if i > 0: s += ", "
+      s += f
     self.filter_show["text"] = s
 
   def accept(self):
