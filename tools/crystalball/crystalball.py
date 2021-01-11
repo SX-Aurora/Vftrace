@@ -13,6 +13,7 @@ from tkinter import ttk
 import numpy as np
 
 import control_window
+import filter_window
 import read_functions
 import progression
 
@@ -42,7 +43,7 @@ def plot_function(plot_data, x, y, normal_value=None):
     plot_data.set_ydata(y)
   plot_data.set_linestyle("-")
 
-def update_crystalball(wcontrol):
+def update_crystalball(wcontrol, wfilter):
   global global_dict_created
   global global_dict
   global n_calls_checked
@@ -71,20 +72,22 @@ def update_crystalball(wcontrol):
   axes = []
   func_names = []
   n_previous_plots = n_current_plots
+  i_plot = 0
   for i, prog_entry in enumerate(global_dict.values()):
+    if wfilter.skip(prog_entry.func_name): continue
     plot_this = True
-    if i == n_max_plots:
+    if i_plot == n_max_plots:
       pp = global_dict["total"]
       plot_this = n_total_checked.get()
-    elif i == n_max_plots + 1:
+    elif i_plot == n_max_plots + 1:
       pp = global_dict["sampling_overhead"]
       plot_this = n_sampling_checked.get()
-    elif i == n_max_plots + 2:
+    elif i_plot == n_max_plots + 2:
       pp = global_dict["mpi_overhead"]
       plot_this = n_mpi_checked.get()
-    elif i > n_max_plots + 2 and i < n_previous_plots:
+    elif i_plot > n_max_plots + 2 and i_plot < n_previous_plots:
       plot_this = False
-    elif i < n_max_plots:
+    elif i_plot < n_max_plots:
       pp = prog_entry
     else:
       break
@@ -96,19 +99,20 @@ def update_crystalball(wcontrol):
       else:
         normal_value = global_dict["total"].t
 
-    if i == len(plot_data):
+    if i_plot == len(plot_data):
       p, = ax.plot([],[], "o")
       plot_data.append(p)
     if plot_this:
       n_current_plots += 1
       if n_calls_checked.get():
-        plot_function(plot_data[i], pp.x, pp.n_calls, normal_value)
+        plot_function(plot_data[i_plot], pp.x, pp.n_calls, normal_value)
       else:
-        plot_function(plot_data[i], pp.x, pp.t, normal_value)
+        plot_function(plot_data[i_plot], pp.x, pp.t, normal_value)
       func_names.append(pp.func_name)
     else:
-      plot_data[i].set_xdata([])
-      plot_data[i].set_ydata([])
+      plot_data[i_plot].set_xdata([])
+      plot_data[i_plot].set_ydata([])
+    i_plot += 1
   ax.relim()
   ax.autoscale_view()
   ax.legend(plot_data, func_names)
@@ -134,7 +138,11 @@ def switch_button():
 def create_sample():
   wcontrol.open_window()
   if wcontrol.valid:
-    update_crystalball(wcontrol)
+    update_crystalball(wcontrol, wfilter)
+
+def filter_functions():
+  wfilter.open_window(global_dict)
+  if wfilter.needs_update: update_crystalball(wcontrol, wfilter) 
 
 def save_plot():
   global fig
@@ -150,6 +158,7 @@ global_dict_created = False
 global_dict = OrderedDict()
 
 wcontrol = control_window.control_window(window)
+wfilter = filter_window.filter_window(window)
 menubar = tk.Menu(window)
 file_menu = tk.Menu(menubar, tearoff=0)
 file_menu.add_command(label="Create Sample", command = create_sample)
@@ -157,6 +166,7 @@ file_menu.add_command(label="Save plot", command = save_plot)
 file_menu.add_separator()
 file_menu.add_command(label="Exit", command = window.quit)
 menubar.add_cascade(label="Actions", menu=file_menu)
+menubar.add_command (label="Filter", command = filter_functions)
 window.config(menu=menubar)
 
 list_frame = tk.Frame (master = window)
