@@ -599,7 +599,7 @@ void vftr_print_global_stacklist (FILE *pout) {
    // Compute column and table widths
    // loop over all stacks to find the longest one
    int maxstrlen = 0;
-   for (int istack=0; istack<vftr_gStackscount; istack++) {
+   for (int istack = 0; istack < vftr_gStackscount; istack++) {
       int jstack = istack;
       // follow the functions until they reach the bottom of the stack
       int stackstrlength = 0;
@@ -615,12 +615,12 @@ void vftr_print_global_stacklist (FILE *pout) {
    maxstrlen--; // Chop trailing space
    char *fmtFid;
    int fidp;
-   COMPUTE_COLWIDTH( maxID, fidp, 2, fmtFid, " %%%dd "  )
-   int tableWidth = 1 + fidp+1 + maxstrlen;
+   COMPUTE_COLWIDTH (maxID, fidp, 2, fmtFid, " %%%dd ")
+   int tableWidth = 1 + fidp + 1 + maxstrlen;
 
    /* Print headers */
 
-   fputs( "Call stacks\n", pout );
+   fputs ("Call stacks\n", pout);
 
    OUTPUT_DASHES_NL( tableWidth, pout )
 
@@ -997,6 +997,9 @@ int vftr_stacks_test_1 (FILE *fp_in, FILE *fp_out) {
 
 int vftr_stacks_test_2 (FILE *fp_in, FILE *fp_out) {
 #ifdef _MPI
+        // This test creates four artificial local stack trees on each rank, which are merged
+        // using vftr_normalize_stacks. We print out each local stack and the corresponding global stack list.
+        // NOTE: vftr_print_global_stacklist only prints the stack IDs which are present on the given rank.
 	unsigned long long addrs[6];
 	function_t *func0 = vftr_new_function (NULL, "init", NULL, 0, false);	
 	if (vftr_mpirank == 0) {
@@ -1022,6 +1025,7 @@ int vftr_stacks_test_2 (FILE *fp_in, FILE *fp_out) {
 		return -1;
 	}
 
+        vftr_environment.logfile_all_ranks->value = true;
 	vftr_normalize_stacks();
 
 	// Needs to be set for printing the local stacklist
@@ -1032,14 +1036,10 @@ int vftr_stacks_test_2 (FILE *fp_in, FILE *fp_out) {
 			// There is "init" + the four (rank 0 - 2) or two (rank 3) additional functions.
 			int n_functions = vftr_mpirank == 3 ? 3 : 5;
 			vftr_print_local_stacklist (vftr_func_table, fp_out, n_functions);
+		        fprintf (fp_out, "Global stacklist: \n");
+		        vftr_print_global_stacklist (fp_out);
 		}
 		PMPI_Barrier (MPI_COMM_WORLD);
-	}
-
-
-	if (vftr_mpirank == 0) {
-		fprintf (fp_out, "Global stacklist: \n");
-		vftr_print_global_stacklist (fp_out);
 	}
 #endif
 	return 0;
