@@ -342,6 +342,14 @@ void vftr_assert_environment () {
 	if (vftr_environment.prof_truncate_cutoff->set && !vftr_environment.prof_truncate->value) {
     	   printf ("Warning: Profile cutoff is given but VFTR_PROF_TRUNCATE is not set. Ignore!\n");
         } 
+
+#ifndef _MPI
+        if (vftr_environment.mpi_show_sync_time->set) {
+            printf ("Warning: This is a serial Vftrace build (no MPI support)\n");
+            printf ("VFTR_MPI_SHOW_SYNC_TIME is only supported with MPI. Switched off.\n");
+            vftr_environment.mpi_show_sync_time->value = false;
+        }
+#endif
 }
 
 /**********************************************************************/

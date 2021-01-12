@@ -854,6 +854,7 @@ double vftr_compute_mpi_imbalance (long long *all_times, double t_avg) {
 }
 
 /**********************************************************************/
+#endif
 
 void vftr_evaluate_display_function (char *func_name, display_function_t **display_func,
 				     bool display_sync_time) {
@@ -909,12 +910,16 @@ void vftr_evaluate_display_function (char *func_name, display_function_t **displ
     }
     if (!(*display_func)->properly_terminated) return;
     long long all_times [vftr_mpisize], all_times_sync [vftr_mpisize];
+#if defined(_MPI)
     PMPI_Allgather (&(*display_func)->this_mpi_time, 1, MPI_LONG_LONG_INT, all_times,
 		 1, MPI_LONG_LONG_INT, MPI_COMM_WORLD);
     if (display_sync_time) {
 	    PMPI_Allgather (&(*display_func)->this_sync_time, 1, MPI_LONG_LONG_INT, all_times_sync,
 			 1, MPI_LONG_LONG_INT, MPI_COMM_WORLD);
     }
+#else
+    all_times[0] = (*display_func)->this_mpi_time;
+#endif
     (*display_func)->t_max = 0;
     (*display_func)->t_sync_max = 0;
     (*display_func)->t_min = LLONG_MAX;
@@ -937,7 +942,9 @@ void vftr_evaluate_display_function (char *func_name, display_function_t **displ
     if (n_count > 0) {
        (*display_func)->t_avg = (double)sum_times / n_count;
        if (n_func_indices_sync > 0) (*display_func)->t_sync_avg = (double)sum_times_sync / n_count;
+#ifdef _MPI
        (*display_func)->imbalance = vftr_compute_mpi_imbalance (all_times, (*display_func)->t_avg);
+#endif
        for (int i = 0; i < vftr_mpisize; i++) {	
        	  if (all_times[i] > 0) {
        		if (all_times[i] < (*display_func)->t_min) {
@@ -1162,10 +1169,6 @@ void vftr_print_function_statistics (FILE *fp_log, display_function_t **display_
 
   free (display_functions);
 }
-
-/**********************************************************************/
-
-#endif
 
 /**********************************************************************/
 
