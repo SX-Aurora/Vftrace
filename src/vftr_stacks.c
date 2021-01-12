@@ -33,8 +33,6 @@
 #include "vftr_fileutils.h"
 #include "vftr_sorting.h"
 
-//#include "vftr_output_macros.h"
-
 // Maximum time in a call tree, searched for in vftr_finalize
 long long vftr_maxtime;
 
