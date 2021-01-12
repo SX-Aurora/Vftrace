@@ -97,3 +97,12 @@ void vftr_print_dashes (FILE *fp, int n) {
 }
 
 /**********************************************************************/
+
+char *vftr_to_lowercase (char *s_orig) {
+   char *s_lower = strdup(s_orig);
+   for (int i = 0; i < strlen(s_orig); i++) {
+      s_lower[i] = tolower(s_orig[i]); 
+   }
+   return s_lower;
+}
+/**********************************************************************/

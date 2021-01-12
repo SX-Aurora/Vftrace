@@ -237,8 +237,7 @@ void vftr_initialize() {
 	vftr_init_vfd_file ();
     }
     
-    vftr_profile_wanted = (vftr_environment.logfile_all_ranks->value) ||
-                          (vftr_mpirank == 0);
+    vftr_profile_wanted = (vftr_environment.logfile_all_ranks->value) || (vftr_mpirank == 0);
 
     if (vftr_environment.print_stacks_for->set) {
         char *vftr_print_groups = vftr_environment.print_stacks_for->value;
@@ -331,7 +330,7 @@ void vftr_finalize() {
 
     vftr_print_profile (vftr_log, display_functions, n_display_functions, &ntop, vftr_get_runtime_usec());
 #ifdef _MPI
-    if (vftr_environment.print_stack_profile->value) {
+    if (vftr_environment.print_stack_profile->value && vftr_profile_wanted) {
        vftr_print_function_statistics (vftr_log, display_functions, n_display_functions);
     }
 #endif

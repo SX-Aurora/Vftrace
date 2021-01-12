@@ -130,10 +130,11 @@ bool vftr_is_collective_mpi_function (char *func_name) {
 
 void vftr_is_traceable_mpi_function (char *func_name, bool *is_mpi) {
    *is_mpi = false;
-   if (!strncmp (func_name, "mpi_", 4)) {
+   char *func_name_low = vftr_to_lowercase(func_name);
+   if (!strncmp (func_name_low, "mpi_", 4)) {
       for (int i = 0; i < vftr_n_supported_mpi_functions; i++) {
-         if (!strcmp (func_name, vftr_supported_mpi_function_names[i])) {
-            *is_mpi = strcmp(func_name, "mpi_finalize");
+         if (!strcmp (func_name_low, vftr_supported_mpi_function_names[i])) {
+            *is_mpi = strcmp(func_name_low, "mpi_finalize");
 	    break;
          }
       }
@@ -1302,7 +1303,7 @@ void vftr_print_profile (FILE *fp_log, display_function_t **display_functions, i
     FILE *f_html;
 
     if (!vftr_stackscount) return;
-    if (!vftr_profile_wanted)  return;
+    if (!vftr_profile_wanted) return;
 
     if (vftr_environment.create_html->value) {
        vftr_browse_create_directory ();
