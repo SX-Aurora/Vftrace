@@ -483,60 +483,53 @@ void vftr_write_stacks_vfd (FILE *fp, int level, function_t *func) {
 
 /**********************************************************************/
 
-void vftr_print_local_stacklist (function_t **funcTable, FILE *pout, int ntop) {
-    char *fmtFid;
-    int  fidp, tableWidth;
-    int  useGid = (pout != stdout && (vftr_mpisize > 1));
+void vftr_print_local_stacklist (function_t **funcTable, FILE *fp, int n_ids) {
+    bool use_gid = (fp != stdout && (vftr_mpisize > 1));
     
     if (!vftr_profile_wanted) return;
 
-    /* Compute column and table widths */
-    int namep = 0;
-    int maxID = 0;
-    for (int i = 0; i < ntop; i++) {
+    // Compute column and table widths
+    int max_width = 0;
+    int max_id = 0;
+    for (int i = 0; i < n_ids; i++) {
         function_t *func = funcTable[i];
         if (func == NULL || !func->return_to) continue;
         int width, id;
-        id = useGid ? func->gid : func->id;
+        id = use_gid ? func->gid : func->id;
         for (width = 0; func; func = func->return_to) {
             width += strlen (func->name) + 1;
 	}
-        if (namep < width) namep = width;
-        if (maxID < id) maxID = id;
+        if (max_width < width) max_width = width;
+        if (max_id < id) max_id = id;
     }
 
-    COMPUTE_COLWIDTH( maxID, fidp, 2, fmtFid, " %%%dd "  )
-    tableWidth = 1 + fidp+1 + namep;
+    if (strlen("Function call stack") > max_width) max_width = strlen("Function call stack");
+    int max_id_length = strlen("ID") > vftr_count_digits_int(max_id) ? strlen("ID") : vftr_count_digits_int(max_id);
+    int table_width = 1 + max_id_length + 1 + max_width;
 
-    /* Print headers */
+    // Print headers
 
-    fputs( "Call stacks\n", pout );
+    fprintf (fp, "Call stacks\n");
 
-    OUTPUT_DASHES_NL( tableWidth, pout )
+    vftr_print_dashes (fp, table_width);
+    fprintf (fp, " %*s %*s\n", max_id_length, "ID", max_width, "Function call stack");
+    vftr_print_dashes (fp, table_width);
 
-    fputs( " ", pout );
-    OUTPUT_HEADER( "ID", fidp, pout )
-    fputs( "Function call stack\n", pout );
+    // Print table
 
-    fputs( " ", pout );
-    OUTPUT_DASHES_SP_2( fidp, namep, pout )
-    fputs( "\n", pout );
-
-    /* Print table */
-
-    for (int i = 0; i < ntop; i++) {
+    for (int i = 0; i < n_ids; i++) {
         char *sep; 
         int  id;
         function_t *func = funcTable[i];
-        if (func == NULL || !func->return_to) continue; /* If not defined or no caller */
-	id = useGid ? func->gid : func->id;
-        fprintf( pout, fmtFid, id );
-        for( sep=""; func; func=func->return_to, sep="<")
-            fprintf( pout, "%s%s", sep, func->name  );
-        fprintf( pout, "\n" );
+        if (func == NULL || !func->return_to) continue; // If not defined or no caller
+	id = use_gid ? func->gid : func->id;
+        fprintf (fp, " %*d ", max_id_length, id); 
+        for (sep=""; func; func = func->return_to, sep="<") {
+           fprintf (fp, "%s%s", sep, func->name);
+        }
+        fprintf (fp, "\n");
     }
-    OUTPUT_DASHES_NL( tableWidth, pout )
-    fputs( "\n", pout );
+    vftr_print_dashes (fp, table_width);
 }
 
 /**********************************************************************/
@@ -594,7 +587,7 @@ void vftr_print_local_demangled (function_t **funcTable, FILE *pout, int ntop) {
 
 /**********************************************************************/
 
-void vftr_print_global_stacklist (FILE *pout) {
+void vftr_print_global_stacklist (FILE *fp) {
 
    // Compute column and table widths
    // loop over all stacks to find the longest one
@@ -620,36 +613,36 @@ void vftr_print_global_stacklist (FILE *pout) {
 
    /* Print headers */
 
-   fputs ("Call stacks\n", pout);
+   fputs ("Call stacks\n", fp);
 
-   OUTPUT_DASHES_NL( tableWidth, pout )
+   OUTPUT_DASHES_NL( tableWidth, fp )
 
-   fputs( " ", pout );
-   OUTPUT_HEADER( "ID", fidp, pout )
-   fputs( "Function call stack\n", pout );
+   fputs( " ", fp );
+   OUTPUT_HEADER( "ID", fidp, fp )
+   fputs( "Function call stack\n", fp );
 
-   fputs( " ", pout );
-   OUTPUT_DASHES_SP_2( fidp, maxstrlen, pout )
-   fputs( "\n", pout );
+   fputs( " ", fp );
+   OUTPUT_DASHES_SP_2( fidp, maxstrlen, fp )
+   fputs( "\n", fp );
 
    /* Print table */
 
    for (int istack = 0; istack < vftr_gStackscount; istack++) {
       if (vftr_gStackinfo[istack].locID >= 0) {
          int jstack = istack;
-         fprintf (pout, fmtFid, istack);
+         fprintf (fp, fmtFid, istack);
          while (vftr_gStackinfo[jstack].locID >= 0 && vftr_gStackinfo[jstack].ret >= 0) {
-            fprintf(pout, "%s", vftr_gStackinfo[jstack].name);
-            fprintf(pout, "<");
+            fprintf(fp, "%s", vftr_gStackinfo[jstack].name);
+            fprintf(fp, "<");
             jstack = vftr_gStackinfo[jstack].ret;
          }
-         fprintf(pout, "%s", vftr_gStackinfo[jstack].name);
-         fprintf(pout, "\n");
+         fprintf(fp, "%s", vftr_gStackinfo[jstack].name);
+         fprintf(fp, "\n");
       }
    }
 
-   OUTPUT_DASHES_NL( tableWidth, pout )
-   fputs( "\n", pout );
+   OUTPUT_DASHES_NL( tableWidth, fp )
+   fputs( "\n", fp );
 }
 
 /**********************************************************************/
