@@ -90,7 +90,7 @@ void vftr_write_scenario_header_to_vfd (FILE *fp) {
 		slength = strlen(vftr_scenario_expr_formulas[i].formula) + 1;
 		fwrite (&slength, sizeof(int), 1, fp);
  		fwrite (vftr_scenario_expr_formulas[i].formula, sizeof(char), slength, fp);
-		fwrite (&vftr_scenario_expr_formulas[i].integrated, sizeof(int), 1, fp);
+		fwrite (&vftr_scenario_expr_formulas[i].integrated, sizeof(bool), 1, fp);
 	}
 #endif
 }
