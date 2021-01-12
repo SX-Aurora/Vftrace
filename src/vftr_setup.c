@@ -340,7 +340,6 @@ void vftr_finalize() {
 
     if (vftr_profile_wanted) {
         vftr_print_global_stacklist(vftr_log);
-        vftr_print_local_demangled( vftr_func_table, vftr_log, ntop );
     }
 
     vftr_finalize_vfd_file (finalize_time, vftr_signal_number);

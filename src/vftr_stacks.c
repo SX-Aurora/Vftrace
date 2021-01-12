@@ -33,7 +33,7 @@
 #include "vftr_fileutils.h"
 #include "vftr_sorting.h"
 
-#include "vftr_output_macros.h"
+//#include "vftr_output_macros.h"
 
 // Maximum time in a call tree, searched for in vftr_finalize
 long long vftr_maxtime;
@@ -529,59 +529,6 @@ void vftr_print_local_stacklist (function_t **funcTable, FILE *fp, int n_ids) {
         fprintf (fp, "\n");
     }
     vftr_print_dashes (fp, table_width);
-}
-
-/**********************************************************************/
-
-void vftr_print_local_demangled (function_t **funcTable, FILE *pout, int ntop) {
-    char *fmtFid;
-    int  i, fidp, namep, tableWidth, maxID;
-    int  useGid = pout!=stdout && ( vftr_mpisize > 1 );
-    
-    if (!vftr_profile_wanted) return;
-
-    /* Compute column and table widths */
-
-    for( i=0,namep=0,maxID=0; i<ntop; i++ ) {
-        function_t *func = funcTable[i];
-        int        width, id;
-        if( func == NULL || !func->return_to ||              /* If not defined or no caller */
-            func->full == NULL            ) continue;  /* or no full demangled name */
-        id = useGid ? func->gid : func->id;
-        width = strlen(func->full);
-        if( namep < width ) namep = width;
-        if( maxID < id    ) maxID = id;
-    }
-    if( namep == 0 ) return; /* If no demangled names */
-
-    COMPUTE_COLWIDTH( maxID, fidp, 2, fmtFid, " %%%dd "  )
-    tableWidth = 1 + fidp+1 + namep;
-
-    /* Print headers */
-
-    OUTPUT_DASHES_NL( tableWidth, pout )
-
-    fputs( " ", pout );
-    OUTPUT_HEADER( "ID", fidp, pout )
-    fputs( "Full demangled name\n", pout );
-
-    fputs( " ", pout );
-    OUTPUT_DASHES_SP_2( fidp, namep, pout )
-    fputs( "\n", pout );
-
-    /* Print table */
-
-    for( i=0; i<ntop; i++ ) {
-        int  id;
-        function_t *func = funcTable[i];
-        if( func == NULL || !func->return_to ||              /* If not defined or no caller */
-            func->full == NULL            ) continue;  /* or no full demangled name */
-	id = useGid ? func->gid : func->id;
-        fprintf( pout, fmtFid, id );
-        fprintf( pout, "%s\n", func->full  );
-    }
-    OUTPUT_DASHES_NL( tableWidth, pout )
-    fputs( "\n", pout );
 }
 
 /**********************************************************************/
