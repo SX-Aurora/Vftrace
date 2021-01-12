@@ -556,7 +556,7 @@ void vftr_print_global_stacklist (FILE *fp) {
 
    // Print headers
 
-   fprintf (fp, "Global call stacks\n");
+   fprintf (fp, "Global call stacks:\n");
    vftr_print_dashes (fp, table_width);
    fprintf (fp, " %*s %*s\n", max_id_length, "ID", maxstrlen, "Functions");
    vftr_print_dashes (fp, table_width);
@@ -964,7 +964,7 @@ int vftr_stacks_test_2 (FILE *fp_in, FILE *fp_out) {
 			// There is "init" + the four (rank 0 - 2) or two (rank 3) additional functions.
 			int n_functions = vftr_mpirank == 3 ? 3 : 5;
 			vftr_print_local_stacklist (vftr_func_table, fp_out, n_functions);
-		        fprintf (fp_out, "Global stacklist: \n");
+		        fprintf (fp_out, "Global stacklis for rank %d: \n", i);
 		        vftr_print_global_stacklist (fp_out);
 		}
 		PMPI_Barrier (MPI_COMM_WORLD);
