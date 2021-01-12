@@ -503,16 +503,15 @@ void vftr_print_local_stacklist (function_t **funcTable, FILE *fp, int n_ids) {
         if (max_id < id) max_id = id;
     }
 
-    if (strlen("Function call stack") > max_width) max_width = strlen("Function call stack");
+    if (strlen("Functions") > max_width) max_width = strlen("Functions");
     int max_id_length = strlen("ID") > vftr_count_digits_int(max_id) ? strlen("ID") : vftr_count_digits_int(max_id);
     int table_width = 1 + max_id_length + 1 + max_width;
 
     // Print headers
 
-    fprintf (fp, "Call stacks\n");
-
+    fprintf (fp, "Local call stacks:\n");
     vftr_print_dashes (fp, table_width);
-    fprintf (fp, " %*s %*s\n", max_id_length, "ID", max_width, "Function call stack");
+    fprintf (fp, " %*s %*s\n", max_id_length, "ID", max_width, "Functions");
     vftr_print_dashes (fp, table_width);
 
     // Print table
@@ -604,33 +603,25 @@ void vftr_print_global_stacklist (FILE *fp) {
       stackstrlength += strlen(vftr_gStackinfo[jstack].name);
       if (stackstrlength > maxstrlen) maxstrlen = stackstrlength;
    }
-   int maxID = vftr_gStackscount;
    maxstrlen--; // Chop trailing space
-   char *fmtFid;
-   int fidp;
-   COMPUTE_COLWIDTH (maxID, fidp, 2, fmtFid, " %%%dd ")
-   int tableWidth = 1 + fidp + 1 + maxstrlen;
+   if (strlen("Functions") > maxstrlen) maxstrlen = strlen("Functions");
+   int max_id = vftr_gStackscount;
+   int max_id_length = strlen("ID") > vftr_count_digits_int(max_id) ? strlen("ID") : vftr_count_digits_int(max_id);
+   int table_width = 1 + max_id_length + 1 + maxstrlen;
 
-   /* Print headers */
+   // Print headers
 
-   fputs ("Call stacks\n", fp);
+   fprintf (fp, "Global call stacks\n");
+   vftr_print_dashes (fp, table_width);
+   fprintf (fp, " %*s %*s\n", max_id_length, "ID", maxstrlen, "Functions");
+   vftr_print_dashes (fp, table_width);
 
-   OUTPUT_DASHES_NL( tableWidth, fp )
-
-   fputs( " ", fp );
-   OUTPUT_HEADER( "ID", fidp, fp )
-   fputs( "Function call stack\n", fp );
-
-   fputs( " ", fp );
-   OUTPUT_DASHES_SP_2( fidp, maxstrlen, fp )
-   fputs( "\n", fp );
-
-   /* Print table */
+   // Print table
 
    for (int istack = 0; istack < vftr_gStackscount; istack++) {
       if (vftr_gStackinfo[istack].locID >= 0) {
          int jstack = istack;
-         fprintf (fp, fmtFid, istack);
+         fprintf (fp, "%*d ", max_id_length, istack);
          while (vftr_gStackinfo[jstack].locID >= 0 && vftr_gStackinfo[jstack].ret >= 0) {
             fprintf(fp, "%s", vftr_gStackinfo[jstack].name);
             fprintf(fp, "<");
@@ -641,8 +632,7 @@ void vftr_print_global_stacklist (FILE *fp) {
       }
    }
 
-   OUTPUT_DASHES_NL( tableWidth, fp )
-   fputs( "\n", fp );
+   vftr_print_dashes (fp, table_width);
 }
 
 /**********************************************************************/
