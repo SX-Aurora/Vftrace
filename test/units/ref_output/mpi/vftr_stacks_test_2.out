@@ -16,15 +16,9 @@ Call stacks
  -- --------------------------- 
   0 init
   1 func4<func3<func2<func1<init
-  2 func2<func2<func1<init
-  3 func3<func1<init
-  4 func2<func3<func1<init
-  5 func2<func2<func2<func1<init
   6 func3<func2<func1<init
   7 func2<func1<init
-  8 func4<func2<func3<func1<init
   9 func1<init
- 10 func4<func1<init
 -------------------------------
 
 Local stacklist for rank 1: 
@@ -38,6 +32,18 @@ Call stacks
   8 func4<func2<func3<func1<init
 ---------------------------------
 
+Global stacklist: 
+Call stacks
+-------------------------------
+ ID Function call stack
+ -- --------------------------- 
+  0 init
+  3 func3<func1<init
+  4 func2<func3<func1<init
+  8 func4<func2<func3<func1<init
+  9 func1<init
+-------------------------------
+
 Local stacklist for rank 2: 
 Call stacks
 ---------------------------------
@@ -49,6 +55,18 @@ Call stacks
   5 func2<func2<func2<func1<init
 ---------------------------------
 
+Global stacklist: 
+Call stacks
+-------------------------------
+ ID Function call stack
+ -- --------------------------- 
+  0 init
+  2 func2<func2<func1<init
+  5 func2<func2<func2<func1<init
+  7 func2<func1<init
+  9 func1<init
+-------------------------------
+
 Local stacklist for rank 3: 
 Call stacks
 ---------------------
@@ -57,4 +75,14 @@ Call stacks
   9 func1<init
  10 func4<func1<init
 ---------------------
+
+Global stacklist: 
+Call stacks
+-------------------------------
+ ID Function call stack
+ -- --------------------------- 
+  0 init
+  9 func1<init
+ 10 func4<func1<init
+-------------------------------
 
