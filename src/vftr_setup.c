@@ -330,8 +330,11 @@ void vftr_finalize() {
 
     vftr_print_profile (vftr_log, display_functions, n_display_functions, &ntop, vftr_get_runtime_usec());
 #ifdef _MPI
-    if (vftr_environment.print_stack_profile->value && vftr_profile_wanted) {
-       vftr_print_function_statistics (vftr_log, display_functions, n_display_functions);
+    if (vftr_environment.print_stack_profile->value) {
+       // Inside of vftr_print_function_statistics, we use an MPI_Allgather to compute MPI imbalances. Therefore,
+       // we need to call this function for every rank, but give it the information of vftr_profile_wanted
+       // to avoid unrequired output.
+       vftr_print_function_statistics (vftr_log, display_functions, n_display_functions, vftr_profile_wanted);
     }
 #endif
  

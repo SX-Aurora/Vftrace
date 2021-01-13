@@ -786,7 +786,7 @@ void vftr_create_stacktree (stack_leaf_t **stack_tree, int n_final_stack_ids, in
 /**********************************************************************/
 
 void vftr_stack_compute_imbalances (double *imbalances, int n_final_stack_ids, int *final_stack_ids) {
-#ifdef _MPI
+#if defined(_MPI)
 	long long all_times [vftr_mpisize];
 	for (int fsid = 0; fsid < n_final_stack_ids; fsid++) {
 		int function_idx = vftr_gStackinfo[final_stack_ids[fsid]].locID;
