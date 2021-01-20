@@ -108,9 +108,9 @@ def create_dictionary (filename):
       else:
         countdown_profile = -1
 
-    # Indicates the start of the stack table. There is one redundant line after that (countdown = 1).
-    if "Function call stack" in line:
-       countdown_stacks = 1
+    # Indicates the start of the stack table. There are three redundant lines after that (countdown = 1).
+    if "Global call stack" in line:
+       countdown_stacks = 3
     elif countdown_stacks > 0: 
        countdown_stacks -=1
     elif countdown_stacks == 0:
