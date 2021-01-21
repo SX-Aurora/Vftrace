@@ -32,6 +32,7 @@
 #include "vftr_functions.h"
 #include "vftr_fileutils.h"
 #include "vftr_hwcounters.h"
+#include "vftr_mallinfo.h"
 
 
 char *vftr_precise_functions[] = {
@@ -172,12 +173,21 @@ function_t *vftr_new_function(void *arg, const char *function_name,
    // preparing the function specific profiling data
    vftr_init_profdata (&func->prof_current);
    vftr_init_profdata (&func->prof_previous);
+   
+   int n_alloc_hw_obs = vftr_n_hw_obs;
+   if (vftr_memtrace) n_alloc_hw_obs++;
+   printf ("CHECK N_HW: %d\n", n_alloc_hw_obs);
 
-   if (vftr_n_hw_obs > 0) {
-      func->prof_current.event_count = (long long*) malloc(vftr_n_hw_obs * sizeof(long long));
-      func->prof_previous.event_count = (long long*) malloc(vftr_n_hw_obs * sizeof(long long));
-      memset (func->prof_current.event_count, 0, vftr_n_hw_obs * sizeof(long long));
-      memset (func->prof_previous.event_count, 0, vftr_n_hw_obs * sizeof(long long));
+   //if (vftr_n_hw_obs > 0) {
+   if (n_alloc_hw_obs > 0)  {
+      //func->prof_current.event_count = (long long*) malloc(vftr_n_hw_obs * sizeof(long long));
+      //func->prof_previous.event_count = (long long*) malloc(vftr_n_hw_obs * sizeof(long long));
+      //memset (func->prof_current.event_count, 0, vftr_n_hw_obs * sizeof(long long));
+      //memset (func->prof_previous.event_count, 0, vftr_n_hw_obs * sizeof(long long));
+      func->prof_current.event_count = (long long*) malloc(n_alloc_hw_obs * sizeof(long long));
+      func->prof_previous.event_count = (long long*) malloc(n_alloc_hw_obs * sizeof(long long));
+      memset (func->prof_current.event_count, 0, n_alloc_hw_obs * sizeof(long long));
+      memset (func->prof_previous.event_count, 0, n_alloc_hw_obs * sizeof(long long));
    }
 
    // Determine if this function should be profiled
@@ -222,6 +232,7 @@ void vftr_reset_counts (function_t *func) {
    function_t *f;
    int i, n;
    int m = vftr_n_hw_obs * sizeof(long long);
+   if (vftr_memtrace) m += sizeof(long long);
 
    if (func == NULL) return;
 

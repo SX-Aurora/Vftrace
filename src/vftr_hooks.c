@@ -36,18 +36,22 @@
 #include "vftr_stacks.h"
 #include "vftr_clear_requests.h"
 #include "vftr_sorting.h"
+#include "vftr_mallinfo.h"
 
 bool vftr_profile_wanted = false;
 
 void vftr_save_old_state () {
     int i,j;
 
+    int n_hw_obs = vftr_n_hw_obs;
+    if (vftr_memtrace) n_hw_obs++;
     for (j = 0; j < vftr_stackscount; j++) {
         function_t *func = vftr_func_table[j];
         func->prof_previous.calls  = func->prof_current.calls;
         func->prof_previous.cycles = func->prof_current.cycles;
         func->prof_previous.time_excl = func->prof_current.time_excl;
-        for (i = 0; i < vftr_n_hw_obs; i++) {
+        //for (i = 0; i < vftr_n_hw_obs; i++) {
+        for (i = 0; i < n_hw_obs; i++) {
             func->prof_previous.event_count[i] = func->prof_current.event_count[i];
 	}
     }
@@ -170,10 +174,15 @@ void vftr_function_entry (const char *s, void *addr, int line, bool isPrecise) {
 #endif
     	           prof_return->event_count[e] += delta;
                }
+	       if (vftr_memtrace) {
+                  vftr_get_mallinfo();
+                  prof_return->event_count[vftr_n_hw_obs] += vftr_current_mallinfo.mmap_size;
+               }
            }
            vftr_prof_data.ic = 1 - ic;
        }
     }
+    vftr_get_mallinfo();
 
 
     if (time_to_sample && vftr_env_do_sampling ()) {
@@ -282,9 +291,14 @@ void vftr_function_exit(int line) {
 #endif
 		prof_current->event_count[e] += delta;
             }
+            if (vftr_memtrace) {
+               vftr_get_mallinfo();
+               prof_current->event_count[vftr_n_hw_obs] += vftr_current_mallinfo.mmap_size;
+            }
         }
         vftr_prof_data.ic = 1 - ic;
     }
+  
 
     if (timeToSample && vftr_env_do_sampling ()) {
         profdata_t *prof_previous = &func->prof_previous;

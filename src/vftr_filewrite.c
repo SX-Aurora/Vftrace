@@ -38,6 +38,7 @@
 #include "vftr_stacks.h"
 #include "vftr_browse.h"
 #include "vftr_sorting.h"
+#include "vftr_mallinfo.h"
 
 // File pointer of the log file
 FILE *vftr_log = NULL;
@@ -358,6 +359,9 @@ void vftr_write_profile () {
             for (int j = 0; j < vftr_n_hw_obs; j++) {
                 ec[j] += prof_current->event_count[j];
 	    }
+            if (vftr_memtrace) {
+               ec[vftr_n_hw_obs] += prof_current->event_count[vftr_n_hw_obs];
+            }
 	}
     }
     rtime  = vftr_get_runtime_usec() * 1.0e-6;
@@ -1209,6 +1213,11 @@ void vftr_print_profile_summary (FILE *fp_log, function_t **func_table, double t
             mpi_overhead_time, 100.0*mpi_overhead_time/total_runtime);
 #endif
 
+    for (int i = 0; i < vftr_stackscount; i++) {
+       profdata_t *prof_current  = &func_table[i]->prof_current;
+       profdata_t *prof_previous = &func_table[i]->prof_previous;
+       printf ("TEST: %ld\n", prof_current->event_count[vftr_n_hw_obs] - prof_previous->event_count[vftr_n_hw_obs]);
+    }
     if (vftr_events_enabled) {
 	unsigned long long total_cycles = 0;
 

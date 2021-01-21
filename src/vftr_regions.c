@@ -379,4 +379,5 @@ void vftr_region_exit(){
     // measured. Therefore, there is a theoretical, but miniscule, discrepancy
     // the user time and the time measured by Vftrace.
     if (!vftr_fstack->return_to) vftr_finalize();
+    PMPI_Barrier(MPI_COMM_WORLD);
 }
