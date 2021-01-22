@@ -28,5 +28,6 @@ int vftr_count_digits_double (double value);
 char *vftr_bool_to_string (bool value);
 void vftr_print_dashes (FILE *fp, int n);
 char *vftr_to_lowercase(char *s_orig);
+void vftr_logfile_warning (FILE *fp, char *message);
 
 #endif
