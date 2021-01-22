@@ -174,15 +174,15 @@ void vftr_function_entry (const char *s, void *addr, int line, bool isPrecise) {
 #endif
     	           prof_return->event_count[e] += delta;
                }
-	       if (vftr_memtrace) {
-                  vftr_get_mallinfo();
-                  prof_return->event_count[vftr_n_hw_obs] += vftr_current_mallinfo.mmap_size;
-               }
            }
            vftr_prof_data.ic = 1 - ic;
        }
+       if (vftr_memtrace) {
+          vftr_get_memtrace();
+          //if (vftr_mpirank == 0) printf ("HUHU: %ld\n", vftr_current_mallinfo.mmap_size);
+          prof_return->event_count[vftr_n_hw_obs] += vftr_current_mallinfo.mmap_size;
+       }
     }
-    vftr_get_mallinfo();
 
 
     if (time_to_sample && vftr_env_do_sampling ()) {
@@ -291,13 +291,14 @@ void vftr_function_exit(int line) {
 #endif
 		prof_current->event_count[e] += delta;
             }
-            if (vftr_memtrace) {
-               vftr_get_mallinfo();
-               prof_current->event_count[vftr_n_hw_obs] += vftr_current_mallinfo.mmap_size;
-            }
         }
         vftr_prof_data.ic = 1 - ic;
     }
+    if (vftr_memtrace) {
+       vftr_get_memtrace();
+       prof_current->event_count[vftr_n_hw_obs] += vftr_current_mallinfo.mmap_size;
+    }
+
   
 
     if (timeToSample && vftr_env_do_sampling ()) {

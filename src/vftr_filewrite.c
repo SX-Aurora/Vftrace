@@ -758,6 +758,8 @@ void vftr_summary_print_header (FILE *fp, column_t *columns, int table_width, bo
    }
    for (int i = 0; i < table_width; i++) fprintf (fp, "-");
    fprintf (fp, "\n");
+   fprintf (fp, "malloc_info overhead: %lf\n", (double)vftr_mallinfo_ovhd * 1e-6);
+   fprintf (fp, "malloc_info parsing overhead: %lf\n", (double)vftr_mallinfo_post_ovhd * 1e-6);
 }
 
 /**********************************************************************/
@@ -1216,7 +1218,8 @@ void vftr_print_profile_summary (FILE *fp_log, function_t **func_table, double t
     for (int i = 0; i < vftr_stackscount; i++) {
        profdata_t *prof_current  = &func_table[i]->prof_current;
        profdata_t *prof_previous = &func_table[i]->prof_previous;
-       printf ("TEST: %ld\n", prof_current->event_count[vftr_n_hw_obs] - prof_previous->event_count[vftr_n_hw_obs]);
+       printf ("TEST: %ld %lf\n", prof_current->event_count[vftr_n_hw_obs] - prof_previous->event_count[vftr_n_hw_obs],
+		(double)(prof_current->event_count[vftr_n_hw_obs] - prof_previous->event_count[vftr_n_hw_obs]) / (prof_current->calls - prof_previous->calls));
     }
     if (vftr_events_enabled) {
 	unsigned long long total_cycles = 0;

@@ -261,6 +261,7 @@ void vftr_read_environment () {
     vftr_environment.create_html = vftr_read_env_bool ("VFTR_CREATE_HTML", false);
     vftr_environment.sort_profile_table = vftr_read_env_string ("VFTR_SORT_PROFILE_TABLE", "EXCL_TIME");
     vftr_environment.show_overhead = vftr_read_env_bool ("VFTR_SHOW_FUNCTION_OVERHEAD", false);
+    vftr_environment.meminfo_method = vftr_read_env_string ("VFTR_MEMINFO_METHOD", "");
 }
 
 /**********************************************************************/
@@ -398,6 +399,7 @@ void vftr_free_environment () {
 	free (vftr_environment.create_html);
         free (vftr_environment.sort_profile_table);
 	free (vftr_environment.show_overhead);
+        free (vftr_environment.meminfo_method);
 }
 
 /**********************************************************************/

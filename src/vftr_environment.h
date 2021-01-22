@@ -92,6 +92,7 @@ typedef struct vftr_envs {
 	env_var_bool_t *create_html;
 	env_var_string_t *sort_profile_table;
 	env_var_bool_t *show_overhead;
+        env_var_string_t *meminfo_method;
 } vftr_envs_t;
 
 // The global container for environment variables.

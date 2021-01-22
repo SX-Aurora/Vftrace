@@ -201,6 +201,7 @@ void vftr_initialize() {
 
     vftr_memtrace = false;
     vftr_init_mallinfo();
+    //printf ("MEMTRACE: %d\n", vftr_memtrace);
     // initialize the stack variables and tables
     vftr_initialize_stacks();
 
@@ -320,6 +321,11 @@ void vftr_finalize() {
 
     if (vftr_environment.strip_module_names->value) {
 	vftr_strip_all_module_names ();
+    }
+
+    if (vftr_memtrace) {
+      free (vftr_fp_selfstat);
+      vftr_memtrace = false;
     }
     
     vftr_normalize_stacks();
