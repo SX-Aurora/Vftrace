@@ -199,6 +199,8 @@ void vftr_initialize() {
 
     memset (&vftr_prof_data, 0, sizeof(profdata_t));
 
+    vftr_memtrace = false;
+    vftr_init_mallinfo();
     // initialize the stack variables and tables
     vftr_initialize_stacks();
 
@@ -223,8 +225,6 @@ void vftr_initialize() {
        memset (vftr_prof_data.events[0], 0, vftr_n_hw_obs * sizeof(long long));
        memset (vftr_prof_data.events[1], 0, vftr_n_hw_obs * sizeof(long long));
     }
-    vftr_memtrace = false;
-    vftr_init_mallinfo();
 
     vftr_initcycles = vftr_get_cycles();
     // convert the sampletime and timelimit to microseconds

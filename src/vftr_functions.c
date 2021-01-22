@@ -176,7 +176,7 @@ function_t *vftr_new_function(void *arg, const char *function_name,
    
    int n_alloc_hw_obs = vftr_n_hw_obs;
    if (vftr_memtrace) n_alloc_hw_obs++;
-   printf ("CHECK N_HW: %d\n", n_alloc_hw_obs);
+   //printf ("CHECK N_HW: %d %d %d\n", vftr_mpirank, vftr_memtrace, n_alloc_hw_obs);
 
    //if (vftr_n_hw_obs > 0) {
    if (n_alloc_hw_obs > 0)  {

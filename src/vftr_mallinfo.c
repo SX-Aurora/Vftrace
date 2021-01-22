@@ -59,12 +59,16 @@ void vftr_get_mallinfo () {
    malloc_info (0, fp);
    fclose(fp);
  
-   char *lines[VFTR_XML_STRING_LENGTH];
    char *token = strtok(buf, "\n"); 
    int i = 0;
    while (token != NULL) {
       //if (vftr_mpirank == 0) printf ("i: %d, token: %s\n", i, token);
-      lines[i++] = token; 
+      if (strstr(token, "type=\"mmap\"") != NULL) {
+         //if (vftr_mpirank == 0) printf ("FOUND\n");
+         vftr_process_mallinfo_line (token, &(vftr_current_mallinfo.mmap_count), &(vftr_current_mallinfo.mmap_size));
+         break;
+      }
+      //lines[i++] = token; 
       token = strtok(NULL, "\n");
    }
    //for (int rank = 0; i < vftr_mpisize; i++) {
@@ -73,7 +77,7 @@ void vftr_get_mallinfo () {
    //}
    //PMPI_Barrier(MPI_COMM_WORLD);
    //}
-   vftr_process_mallinfo_line (lines[MEM_MMAP], &(vftr_current_mallinfo.mmap_count), &(vftr_current_mallinfo.mmap_size));
+   ////vftr_process_mallinfo_line (lines[vftr_mmap_xml_index], &(vftr_current_mallinfo.mmap_count), &(vftr_current_mallinfo.mmap_size));
    //if (vftr_mpirank == 0) printf ("Check: %ld %ld\n", vftr_current_mallinfo.mmap_count, vftr_current_mallinfo.mmap_size);
    free(buf);
    //first = 0;
