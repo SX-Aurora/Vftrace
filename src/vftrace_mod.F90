@@ -34,6 +34,7 @@ module vftrace
 
    public :: vftrace_region_begin, &
              vftrace_region_end
+   public :: vftrace_allocate_1
    public :: vftrace_get_stack
    public :: vftrace_pause, &
              vftrace_resume
@@ -85,6 +86,15 @@ module vftrace
          implicit none
          character(c_char), intent(in) :: name(*)
       end subroutine vftrace_region_end_C
+
+      subroutine vftrace_allocate_1_C (name, dims, n_dims) &
+         bind(c, name="vftrace_allocate_1")
+         use iso_c_binding, only: c_char, c_int
+         implicit none
+         character(c_char), intent(in) :: name(*)
+         integer(c_int), intent(in), dimension(:) :: dims
+         integer(c_int), intent(in) :: n_dims
+      end subroutine vftrace_allocate_1_C
    end interface
 
    ! interface for non public stack routines
@@ -160,4 +170,29 @@ contains
       end do
    end function vftrace_get_stack
 
+   subroutine vftrace_allocate_1 (name, n1)
+     use iso_c_binding, only: c_char, c_null_char, c_int
+     implicit none
+     character(len=*), intent(in) :: name
+     integer, intent(in), dimension(:) :: n1
+     integer :: name_len, index_len
+     character(kind=c_char,len=:), allocatable :: c_name
+     integer(kind=c_int), dimension(:), allocatable :: n1_C
+     integer :: i
+     name_len = len(adjustl(trim(name))) + 1
+     allocate (character(len=name_len) :: c_name)
+     c_name(:) = adjustl(trim(name))
+     c_name(name_len:name_len+1) = c_null_char
+     index_len = size(n1)
+     print *, 'n1: ', n1, size(n1)
+     allocate (n1_C (index_len))
+     do i = 1, index_len
+       n1_C(i) = int(n1(i), c_int)
+     end do
+     !!!n1_C = int(n1, c_int) 
+     call vftrace_allocate_1_C (c_name, n1_C, index_len)
+     !!!call vftrace_allocate_1_C (c_name)
+     deallocate (c_name)
+     deallocate (n1_C)
+   end subroutine vftrace_allocate_1
 end module vftrace

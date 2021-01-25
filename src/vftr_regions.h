@@ -29,4 +29,7 @@ void vftr_region_exit();
 void vftr_internal_region_begin(const char *s);
 void vftr_internal_region_end(const char *s);
 
+void vftrace_allocate_1 (const char *s, const int *dims[], const int *n);
+//void vftrace_allocate_1 (const char *s);
+
 #endif
