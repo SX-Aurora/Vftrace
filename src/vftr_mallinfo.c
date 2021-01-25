@@ -40,6 +40,7 @@ FILE *vftr_fp_selfstat;
 
 void vftr_init_mallinfo () {
    //printf ("CHECK ENVI: %s\n", vftr_environment.meminfo_method->value);
+   vftr_fp_selfstat = NULL;
    if (vftr_environment.meminfo_method->set) {
      memset (&vftr_current_mallinfo, 0, sizeof(vftr_mallinfo_t));
      vftr_mallinfo_ovhd = 0;
@@ -78,6 +79,12 @@ void vftr_init_mallinfo () {
    //  vftr_memtrace = true;
    //}
    //if (vftr_mpirank == 0) printf ("---------------------------------------------------\n");
+}
+
+void vftr_finalize_mallinfo() {
+   if (vftr_fp_selfstat != NULL) fclose (vftr_fp_selfstat);
+   vftr_fp_selfstat = NULL;
+   vftr_memtrace = false;
 }
 
 void vftr_process_mallinfo_line(char *line, long *count, long *size) {

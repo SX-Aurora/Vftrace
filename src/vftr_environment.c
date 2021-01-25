@@ -431,6 +431,7 @@ void vftr_print_environment (FILE *fp) {
 	vftr_print_env_bool (fp, "VFTR_CREATE_HTML", vftr_environment.create_html);
 	vftr_print_env_string (fp, "VFTR_SORT_PROFILE_TABLE", vftr_environment.sort_profile_table);
         vftr_print_env_bool (fp, "VFTR_SHOW_FUNCTION_OVERHEAD", vftr_environment.show_overhead);
+        vftr_print_env_string (fp, "VFTR_MEMINFO_METHOD", vftr_environment.meminfo_method);
 }
 
 /**********************************************************************/

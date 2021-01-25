@@ -323,10 +323,6 @@ void vftr_finalize() {
 	vftr_strip_all_module_names ();
     }
 
-    if (vftr_memtrace) {
-      free (vftr_fp_selfstat);
-      vftr_memtrace = false;
-    }
     
     vftr_normalize_stacks();
     vftr_calc_tree_format (vftr_froots);
@@ -357,6 +353,8 @@ void vftr_finalize() {
     if (vftr_events_enabled && vftr_stop_hwc() < 0) {
 	fprintf(vftr_log, "error stopping H/W counters, ignored\n");
     }
+
+    vftr_finalize_mallinfo();
     
     if (vftr_log) {
     	bool is_empty = (ftello (vftr_log) == (off_t)0);
