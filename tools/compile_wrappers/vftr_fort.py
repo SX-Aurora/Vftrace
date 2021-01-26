@@ -15,7 +15,7 @@ def split_line (tot_string, is_alloc, is_dealloc):
    tot_string = re.sub(r"\s+", "", tot_string) # This also removes intermediate newlines, for some reason
    tot_string = re.sub(r"&+", "", tot_string)
    # Get everything in between the outer brackets (...)
-   tot_string = tot_string[tot_string.find("(")+1:-2]
+   tot_string = tot_string[tot_string.find("(")+1:-1]
    # Get all the fields
    if is_alloc:
      fields = tot_string.split("),")
@@ -50,6 +50,10 @@ def construct_vftrace_deallocate_call (field):
   # The input is simply the field name.
   return "call vftrace_deallocate(" + field + ")\n"
 
+def line_to_be_continued(line):
+  line_wo_spaces = re.sub(r"\s+", "", line)  
+  return line_wo_spaces[-1] == "&"
+
 
 with open(filename_in, "r") as f_in, open(filename_out, "w") as f_out:
   all_lines = f_in.readlines()
@@ -62,7 +66,8 @@ with open(filename_in, "r") as f_in, open(filename_out, "w") as f_out:
     # Put "use vftrace" after every subroutine or function definition, regardless if it is actually used.
     is_subroutine = subroutine_pattern.match(line)
     is_function = function_pattern.match(line)
-    # We need to find out, when the function definition has been written completely in the previous iteration.
+
+    # We need to find out when the function definition has been written completely in the previous iteration.
     # On flag indicates that the subroutine definition has been started. If it is set, we check if it is finished.
     # If the latter one is set before all the other ones, it's time to insert the use statement.
     if subroutine_end:
@@ -75,12 +80,14 @@ with open(filename_in, "r") as f_in, open(filename_out, "w") as f_out:
        if (tmp[-1] != "&"):
          subroutine_end = True
          subroutine_start = False
+
+    # Register allocate and deallocate calls.
     if is_alloc or is_dealloc:
-      # Concatenate line breaks indicated by ampersands "&"
       tot_string = line
+      # Concatenate line breaks indicated by ampersands "&"
       line_tmp = line
       i = i_line
-      while "&" in line_tmp: 
+      while line_to_be_continued(line_tmp):
         i = i + 1
         if i < n_lines:
           line_tmp = all_lines[i]
