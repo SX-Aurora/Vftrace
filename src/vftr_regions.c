@@ -75,15 +75,6 @@ void vftr_internal_region_end(const char *s) {
 
 #undef VFTR_GET_REGION_ADDRESS
 
-void vftrace_allocate_1 (const char *s, const int *dims[], const int *n) {
-//void vftrace_allocate_1 (const char *s) {
-   printf ("REGISTER: %s %d %d\n", s, *n, *dims[0], *dims[2]);
-   //for (int i = 0; i < *n; i++) {
-   //  printf ("Value: %d %d\n", i, *dims[i]);
-   //}
-   //printf ("REGISTER: %s\n", s);
-}
-
 /**********************************************************************/
 
 void vftr_region_entry (const char *s, void *addr, bool isPrecise){

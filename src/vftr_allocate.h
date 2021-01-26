@@ -16,20 +16,9 @@
    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-#ifndef VFTR_REGIONS_H
-#define VFTR_REGIONS_H
-
-#include <stdbool.h>
-
-void vftr_region_entry (const char *s, void *addr, bool isPrecise);
-void vftr_region_exit();
-
-// These regions are for vftrace internal usage only.
-// They are always precise.
-void vftr_internal_region_begin(const char *s);
-void vftr_internal_region_end(const char *s);
+#ifndef VFTR_ALLOCATE_H
+#define VFTR_ALLOCATE_H
 
 void vftrace_allocate (const char *s, const int *dims, const int *n);
-//void vftrace_allocate_1 (const char *s);
 
 #endif
