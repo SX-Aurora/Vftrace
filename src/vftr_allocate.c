@@ -75,7 +75,8 @@ void vftr_allocate_set_open_state (int index) {
    }
 }
 
-void vftrace_allocate (const char *s, const int *dims, const int *n, const int *element_size) {
+//void vftrace_allocate (const char *s, const int *dims, const int *n, const int *element_size) {
+void vftrace_allocate (const char *s, const int *n_elements, const int *element_size) {
    //if (vftr_mpirank == 0) {
    //   printf ("REGISTER ALLOCATE: %s ", s);
    //   for (int i = 0; i < *n; i++) {
@@ -92,10 +93,10 @@ void vftrace_allocate (const char *s, const int *dims, const int *n, const int *
    } else {
       vftr_allocate_set_open_state (index);
    }
-   long long this_alloc = (long long)(*element_size);
-   for (int i = 0; i < *n; i++) {
-     this_alloc *= dims[i];
-   }
+   long long this_alloc = (long long)((*element_size) * (*n_elements));
+   //for (int i = 0; i < *n; i++) {
+   //  this_alloc *= dims[i];
+   //}
    vftr_allocate_count (index, this_alloc);
    vftr_n_allocated_fields++; 
    
