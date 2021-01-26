@@ -69,11 +69,9 @@ with open(filename_in, "r") as f_in, open(filename_out, "w") as f_out:
        f_out.write ("use vftrace")
        subroutine_end = False
     if is_subroutine or is_function:
-       print ("LINE: ", line)
        subroutine_start = True
     if subroutine_start:
        tmp = re.sub(r"\s+", "", line)
-       print ("tmp: ", tmp)
        if (tmp[-1] != "&"):
          subroutine_end = True
          subroutine_start = False
