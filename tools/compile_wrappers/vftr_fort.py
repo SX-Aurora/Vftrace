@@ -71,7 +71,7 @@ with open(filename_in, "r") as f_in, open(filename_out, "w") as f_out:
     # On flag indicates that the subroutine definition has been started. If it is set, we check if it is finished.
     # If the latter one is set before all the other ones, it's time to insert the use statement.
     if subroutine_end:
-       f_out.write ("use vftrace")
+       f_out.write ("use vftrace\n")
        subroutine_end = False
     if is_subroutine or is_function:
        subroutine_start = True
