@@ -44,11 +44,11 @@ def construct_vftrace_allocate_call (field):
       dim_string += dim
     if i + 1 < len(dims):
       dim_string += "*"
-  return "call vftrace_allocate(" + name + ", " + dim_string + ", storage_size(" + name + ")/8)\n"
+  return "call vftrace_allocate(\"" + name + "\", " + dim_string + ", storage_size(" + name + ")/8)\n"
 
 def construct_vftrace_deallocate_call (field):
   # The input is simply the field name.
-  return "call vftrace_deallocate(" + field + ")\n"
+  return "call vftrace_deallocate(\"" + field + "\")\n"
 
 def line_to_be_continued(line):
   line_wo_spaces = re.sub(r"\s+", "", line)  
