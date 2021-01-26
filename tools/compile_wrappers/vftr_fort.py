@@ -7,6 +7,8 @@ filename_in = sys.argv[1]
 filename_out = filename_in + ".vftr"
 allocate_pattern = re.compile("^[ ]*allocate[\ ,\(]", re.IGNORECASE)
 deallocate_pattern = re.compile("^[ ]*deallocate[\ ,\(]", re.IGNORECASE)
+subroutine_pattern = re.compile("^[ ]*subroutine[\ ,\(]", re.IGNORECASE)
+function_pattern = re.compile("^[ ]*function[\ ,\(]", re.IGNORECASE)
 
 def split_line (tot_string, is_alloc, is_dealloc):
    # Remove white spaces and ampersands (&)
@@ -52,9 +54,29 @@ def construct_vftrace_deallocate_call (field):
 with open(filename_in, "r") as f_in, open(filename_out, "w") as f_out:
   all_lines = f_in.readlines()
   n_lines = len(all_lines)
+  subroutine_start = False
+  subroutine_end = False
   for i_line, line in enumerate(all_lines):
     is_alloc = allocate_pattern.match(line)
     is_dealloc = deallocate_pattern.match(line)
+    # Put "use vftrace" after every subroutine or function definition, regardless if it is actually used.
+    is_subroutine = subroutine_pattern.match(line)
+    is_function = function_pattern.match(line)
+    # We need to find out, when the function definition has been written completely in the previous iteration.
+    # On flag indicates that the subroutine definition has been started. If it is set, we check if it is finished.
+    # If the latter one is set before all the other ones, it's time to insert the use statement.
+    if subroutine_end:
+       f_out.write ("use vftrace")
+       subroutine_end = False
+    if is_subroutine or is_function:
+       print ("LINE: ", line)
+       subroutine_start = True
+    if subroutine_start:
+       tmp = re.sub(r"\s+", "", line)
+       print ("tmp: ", tmp)
+       if (tmp[-1] != "&"):
+         subroutine_end = True
+         subroutine_start = False
     if is_alloc or is_dealloc:
       # Concatenate line breaks indicated by ampersands "&"
       tot_string = line
