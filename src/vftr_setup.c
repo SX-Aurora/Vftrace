@@ -40,6 +40,7 @@
 #include "vftr_hooks.h"
 #include "vftr_timer.h"
 #include "vftr_functions.h"
+#include "vftr_allocate.h"
 
 bool vftr_timer_end;
 
@@ -355,6 +356,7 @@ void vftr_finalize() {
 
     	fclose (vftr_log);
     }
+    vftr_allocate_finalize();
     vftr_switch_off();
 }
 

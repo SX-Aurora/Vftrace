@@ -19,6 +19,9 @@
 #ifndef VFTR_ALLOCATE_H
 #define VFTR_ALLOCATE_H
 
-void vftrace_allocate (const char *s, const int *dims, const int *n);
+void vftrace_allocate (const char *s, const int *dims, const int *n, const int *element_size);
+void vftrace_deallocate (const char *s);
+
+void vftr_allocate_finalize();
 
 #endif
