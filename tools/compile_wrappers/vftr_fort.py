@@ -106,23 +106,26 @@ def construct_vftrace_deallocate_call (field):
   # The input is simply the field name.
   return "call vftrace_deallocate(\"" + field + "\")\n"
 
-def line_to_be_continued(line):
-  if line.isspace():
-    return True
-  else:
-    line_wo_spaces = re.sub(r"\s+", "", line)  
-    if line_wo_spaces != "":
-      last_ampersand = line_wo_spaces[-1] == "&"
-    else:
-      last_ampersand = False
-    return (last_ampersand or "#" in line_wo_spaces or "!" in line_wo_spaces)
-
 def remove_trailing_comment(line):
   i = line.find("!")
   if i >= 0: 
     return line[0:i]
   else:
     return line
+
+def line_to_be_continued(line):
+  if line.isspace():
+    return True
+  else:
+    line_wo_spaces = re.sub(r"\s+", "", line)  
+    if line_wo_spaces != "":
+      tmp = remove_trailing_comment(line_wo_spaces)
+      last_ampersand = tmp[-1] == "&"
+    else:
+      last_ampersand = False
+    has_leading_comment = re.match("^!", line_wo_spaces)
+    has_leading_preprocessor = re.match("^#", line_wo_spaces)
+    return (last_ampersand or has_leading_comment or has_leading_preprocessor)
 
 with open(filename_in, "r") as f_in, open(filename_out, "w") as f_out:
   all_lines = f_in.readlines()
@@ -144,7 +147,6 @@ with open(filename_in, "r") as f_in, open(filename_out, "w") as f_out:
        f_out.write ("use vftrace\n")
        subroutine_end = False
     if is_subroutine or is_function:
-       print ("is_subroutine: ", repr(line))
        if re.search("pure ", line, re.IGNORECASE) or re.search("elemental ", line, re.IGNORECASE):
          skip_subroutine = True
        else:
