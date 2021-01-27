@@ -11,21 +11,26 @@ subroutine_pattern = re.compile("^[ ]*subroutine[\ ,\(]", re.IGNORECASE)
 function_pattern = re.compile("^[ ]*function[\ ,\(]", re.IGNORECASE)
 
 def split_alloc_argument (arg):
-  open_bracket = False
+  #open_bracket = False
+  bracket_state = 0
   all_args = []
   tmp = ""
   #print ("split argument: ", arg)
   for char in arg:
-    if not open_bracket and char == ",":
+    #if not open_bracket and char == ",":
+    if bracket_state == 2 and char == ",":
       all_args.append(tmp)
       tmp = ""
+      bracket_state = 0
     else: 
       if char == "(":
-        open_bracket = True
+        #open_bracket = True
+        bracket_state += 1
       elif char == ")":
-        open_bracket = False
+        bracket_state += 1 
+        #open_bracket = False
       tmp += char
-  all_args.append (tmp)
+  if bracket_state == 2: all_args.append (tmp)
   return all_args
 
 def split_line (tot_string, is_alloc, is_dealloc):
@@ -44,8 +49,8 @@ def split_line (tot_string, is_alloc, is_dealloc):
    #  fields = tot_string.split(",")
    #print ("After splitting: ", fields)
    # Check if there is a "STAT" argument in the last element of the list. If so, we return the list reduced by one element.
-   if re.search ("STAT", fields[-1], re.IGNORECASE):
-     fields.pop()
+   #if re.search ("STAT", fields[-1], re.IGNORECASE):
+   #  fields.pop()
    return fields
 
 def construct_vftrace_allocate_call (field):
