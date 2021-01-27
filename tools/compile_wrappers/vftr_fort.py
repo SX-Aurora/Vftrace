@@ -10,26 +10,11 @@ deallocate_pattern = re.compile("^[ ]*deallocate[\ ,\(]", re.IGNORECASE)
 subroutine_pattern = re.compile("^[ ]*subroutine[\ ,\(]", re.IGNORECASE)
 function_pattern = re.compile("^[ ]*function[\ ,\(]", re.IGNORECASE)
 
-def split_line (tot_string, is_alloc, is_dealloc):
-   # Remove white spaces and ampersands (&)
-   tot_string = re.sub(r"\s+", "", tot_string) # This also removes intermediate newlines, for some reason
-   tot_string = re.sub(r"&+", "", tot_string)
-   # Get everything in between the outer brackets (...)
-   tot_string = tot_string[tot_string.find("(")+1:-1]
-   # Get all the fields
-   if is_alloc:
-     fields = tot_string.split("),")
-   elif is_dealloc:
-     fields = tot_string.split(",")
-   # Check if there is a "STAT" argument in the last element of the list. If so, we return the list reduced by one element.
-   if re.search ("STAT", fields[-1], re.IGNORECASE):
-     fields.pop()
-   return fields
-
 def split_alloc_argument (arg):
   open_bracket = False
   all_args = []
   tmp = ""
+  #print ("split argument: ", arg)
   for char in arg:
     if not open_bracket and char == ",":
       all_args.append(tmp)
@@ -42,7 +27,26 @@ def split_alloc_argument (arg):
       tmp += char
   all_args.append (tmp)
   return all_args
-     
+
+def split_line (tot_string, is_alloc, is_dealloc):
+   # Remove white spaces and ampersands (&)
+   tot_string = re.sub(r"\s+", "", tot_string) # This also removes intermediate newlines, for some reason
+   tot_string = re.sub(r"&+", "", tot_string)
+   # Get everything in between the outer brackets (...)
+   tot_string = tot_string[tot_string.find("(")+1:-1]
+   # Get all the fields
+   #print ("Before splitting: ", tot_string)
+   fields = split_alloc_argument (tot_string)
+
+   #if is_alloc:
+   #  fields = tot_string.split(",")
+   #elif is_dealloc:
+   #  fields = tot_string.split(",")
+   #print ("After splitting: ", fields)
+   # Check if there is a "STAT" argument in the last element of the list. If so, we return the list reduced by one element.
+   if re.search ("STAT", fields[-1], re.IGNORECASE):
+     fields.pop()
+   return fields
 
 def construct_vftrace_allocate_call (field):
   # Input: name(n1,n2,... 
@@ -51,10 +55,13 @@ def construct_vftrace_allocate_call (field):
   # Therefore, it is important to only match the first bracket, not proceeding ones, which would be
   # done with a call to "split". 
   bracket_index = field.find("(") 
+  #print ("FIELD:", field)
   name = field[0:bracket_index]
   rest = field[bracket_index+1:-1]
+  #print ("NAME: ", name, "REST: ", rest)
   # Split at the commas. The first element is "<name>(<first_dim>", so we split again at the bracket.
   dims = split_alloc_argument (rest)
+  #print ("dims: ", dims)
   # Create the string which computes the total number of elements in the field by multiplying the individual dimensions.
   dim_string = ""
   for i, dim in enumerate(dims):
@@ -62,6 +69,7 @@ def construct_vftrace_allocate_call (field):
     # Otherwise, the dimension bounds start at 1, and the size is dim.
     if ":" in dim:
       tmp = dim.split(":")
+      #print ("tmp: ", tmp)
       dim_string += "(" + tmp[1] + "-" + tmp[0] + "+1)"
     else:
       dim_string += dim
