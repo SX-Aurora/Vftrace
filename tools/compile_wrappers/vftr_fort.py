@@ -106,7 +106,19 @@ def construct_vftrace_deallocate_call (field):
 
 def line_to_be_continued(line):
   line_wo_spaces = re.sub(r"\s+", "", line)  
-  return (line_wo_spaces[-1] == "&" or "#" in line_wo_spaces or "!" in line_wo_spaces)
+  print ("line_wo_spaces: ", line_wo_spaces)
+  if line_wo_spaces != "":
+    last_ampersand = line_wo_spaces[-1] == "&"
+  else:
+    last_ampersand = False
+  return (last_ampersand or "#" in line_wo_spaces or "!" in line_wo_spaces)
+
+def remove_trailing_comment(line):
+  i = line.find("!")
+  if i >= 0: 
+    return line[0:i]
+  else:
+    return line
 
 
 with open(filename_in, "r") as f_in, open(filename_out, "w") as f_out:
@@ -144,12 +156,12 @@ with open(filename_in, "r") as f_in, open(filename_out, "w") as f_out:
     if not skip_subroutine and (is_alloc or is_dealloc):
       tot_string = line
       # Concatenate line breaks indicated by ampersands "&"
-      line_tmp = line
+      line_tmp = remove_trailing_comment(line)
       i = i_line
       while line_to_be_continued(line_tmp):
         i = i + 1
         if i < n_lines:
-          line_tmp = all_lines[i]
+          line_tmp = remove_trailing_comment(all_lines[i])
         else:
           break
         tot_string += line_tmp
