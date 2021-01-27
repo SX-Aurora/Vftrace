@@ -49,7 +49,7 @@ def split_line (tot_string, is_alloc, is_dealloc):
    #print ("Original: ", tot_string)
    # Get all the fields
    #print ("Before splitting: ", tot_string)
-   print ("tot_string: ", tot_string)
+   #print ("tot_string: ", tot_string)
    fields = split_alloc_argument (tot_string)
    print ("Fields: ", fields)
 
@@ -108,7 +108,7 @@ def construct_vftrace_deallocate_call (field):
   return "call vftrace_deallocate(\"" + field + "\")\n"
 
 def line_to_be_continued(line):
-  if not re.match("\S+", line):
+  if line.isspace():
     return True
   else:
     line_wo_spaces = re.sub(r"\s+", "", line)  
