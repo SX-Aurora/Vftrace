@@ -73,13 +73,12 @@ def construct_vftrace_allocate_call (field):
   bracket_indices = [i for i, this_char in enumerate(field) if this_char == "("]
   print ("percent_indices: ", percent_indices)
   print ("bracket_indices: ", bracket_indices)
+  first_significant_bracket = bracket_indices[0]
   if n_percent > 0:
     for br_index in bracket_indices:
       if br_index > percent_indices[0]:  
         first_significant_bracket = br_index
         break
-  else:
-    first_significant_bracket = bracket_indices[0]
   name = field[0:first_significant_bracket]
   rest = field[first_significant_bracket+1:-1]
   print ("NAME: ", name, "REST: ", rest)
