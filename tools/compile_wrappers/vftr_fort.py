@@ -20,6 +20,7 @@ def split_alloc_argument (arg, check_any_bracket=False):
   for char in arg:
     if char == "%":
       n_percent -= 1
+      tmp += char
     elif not open_bracket and any_full_bracket and char == ",":
       all_args.append(tmp)
       tmp = ""
