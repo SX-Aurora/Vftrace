@@ -93,6 +93,7 @@ with open(filename_in, "r") as f_in, open(filename_out, "w") as f_out:
   n_lines = len(all_lines)
   subroutine_start = False
   subroutine_end = False
+  skip_subroutine = False
   for i_line, line in enumerate(all_lines):
     is_alloc = allocate_pattern.match(line)
     is_dealloc = deallocate_pattern.match(line)
@@ -103,11 +104,15 @@ with open(filename_in, "r") as f_in, open(filename_out, "w") as f_out:
     # We need to find out when the function definition has been written completely in the previous iteration.
     # On flag indicates that the subroutine definition has been started. If it is set, we check if it is finished.
     # If the latter one is set before all the other ones, it's time to insert the use statement.
-    if subroutine_end:
+    if subroutine_end and not skip_subroutine:
        f_out.write ("use vftrace\n")
        subroutine_end = False
     if is_subroutine or is_function:
-       subroutine_start = True
+       if re.search("pure ", line, re.IGNORECASE) or re.search("elemental ", line, re.IGNORECASE):
+         skip_subroutine = True
+       else:
+         skip_subroutine = False
+         subroutine_start = True
     if subroutine_start:
        tmp = re.sub(r"\s+", "", line)
        if (tmp[-1] != "&"):
@@ -115,7 +120,7 @@ with open(filename_in, "r") as f_in, open(filename_out, "w") as f_out:
          subroutine_start = False
 
     # Register allocate and deallocate calls.
-    if is_alloc or is_dealloc:
+    if not skip_subroutine and (is_alloc or is_dealloc):
       tot_string = line
       # Concatenate line breaks indicated by ampersands "&"
       line_tmp = line
