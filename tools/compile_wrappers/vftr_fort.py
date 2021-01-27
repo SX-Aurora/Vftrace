@@ -10,27 +10,24 @@ deallocate_pattern = re.compile("^[ ]*deallocate[\ ,\(]", re.IGNORECASE)
 subroutine_pattern = re.compile("^[ ]*subroutine[\ ,\(]", re.IGNORECASE)
 function_pattern = re.compile("^[ ]*function[\ ,\(]", re.IGNORECASE)
 
-def split_alloc_argument (arg):
-  #open_bracket = False
-  bracket_state = 0
+def split_alloc_argument (arg, check_any_bracket=False):
+  open_bracket = False
+  any_full_bracket = not check_any_bracket
   all_args = []
   tmp = ""
-  #print ("split argument: ", arg)
   for char in arg:
-    #if not open_bracket and char == ",":
-    if bracket_state == 2 and char == ",":
+    if not open_bracket and any_full_bracket and char == ",":
       all_args.append(tmp)
       tmp = ""
-      bracket_state = 0
+      any_full_bracket = not check_any_bracket
     else: 
       if char == "(":
-        #open_bracket = True
-        bracket_state += 1
+        open_bracket = True
       elif char == ")":
-        bracket_state += 1 
-        #open_bracket = False
+        if open_bracket: any_full_bracket = True
+        open_bracket = False
       tmp += char
-  if bracket_state == 2: all_args.append (tmp)
+  if any_full_bracket: all_args.append (tmp)
   return all_args
 
 def split_line (tot_string, is_alloc, is_dealloc):
@@ -41,7 +38,7 @@ def split_line (tot_string, is_alloc, is_dealloc):
    tot_string = tot_string[tot_string.find("(")+1:-1]
    # Get all the fields
    #print ("Before splitting: ", tot_string)
-   fields = split_alloc_argument (tot_string)
+   fields = split_alloc_argument (tot_string, check_any_bracket=True)
 
    #if is_alloc:
    #  fields = tot_string.split(",")
