@@ -56,15 +56,23 @@ def construct_vftrace_allocate_call (field):
   # The array dimensions can be given by functions, e.g. ALLOCATE (arr(f(x))). 
   # Therefore, it is important to only match the first bracket, not proceeding ones, which would be
   # done with a call to "split". 
-  n_percents = len([i for i, this_char in enumerate(field) if this_char == "%"])
+  percent_indices = [i for i, this_char in enumerate(field) if this_char == "%"]
+  n_percent = len(percent_indices)
   bracket_indices = [i for i, this_char in enumerate(field) if this_char == "("]
+  if n_percent > 0:
+    for br_index in bracket_indices:
+      if br_index > percent_indices[0]:  
+        first_significant_bracket = br_index
+        break
+  else:
+    first_significant_bracket = bracket_indices[0]
   #print ("field: ", field)
   #print ("bracket_indices: ", bracket_indices)
-  first_significant_bracket = bracket_indices[n_percents] 
+  #first_significant_bracket = bracket_indices[n_percents] 
   #print ("FIELD:", field)
   name = field[0:first_significant_bracket]
   rest = field[first_significant_bracket+1:-1]
-  #print ("NAME: ", name, "REST: ", rest)
+  print ("NAME: ", name, "REST: ", rest)
   # Split at the commas. The first element is "<name>(<first_dim>", so we split again at the bracket.
   dims = split_alloc_argument (rest)
   #print ("dims: ", dims)
