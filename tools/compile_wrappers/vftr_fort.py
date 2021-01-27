@@ -10,29 +10,34 @@ deallocate_pattern = re.compile("^[ ]*deallocate[\ ,\(]", re.IGNORECASE)
 subroutine_pattern = re.compile(r"^[ ]*(pure)?(elemental)?[ ]*subroutine[\s]+[\S]", re.IGNORECASE)
 function_pattern = re.compile(r"^[ ]*(pure)?(elemental)?[ ]*function[\s]+[\S]", re.IGNORECASE)
 
-def split_alloc_argument (arg, check_any_bracket=False):
-  open_bracket = False
+#def split_alloc_argument (arg, check_any_bracket=False):
+def split_alloc_argument (arg):
+  #open_bracket = False
+  n_open_brackets = 0
   # If there are % in the string, Ignore any bracket information until each has been encountered.
   n_percent = arg.count("%")
-  any_full_bracket = not check_any_bracket
+  #any_full_bracket = not check_any_bracket
   all_args = []
   tmp = ""
   for char in arg:
     if char == "%":
       n_percent -= 1
       tmp += char
-    elif not open_bracket and any_full_bracket and char == ",":
+    #elif not open_bracket and any_full_bracket and char == ",":
+    elif n_percent == 0 and n_open_brackets == 0 and char == ",":
       all_args.append(tmp)
       tmp = ""
-      any_full_bracket = n_percent == 0 and not check_any_bracket
+      #any_full_bracket = n_percent == 0 and not check_any_bracket
     else: 
       if char == "(":
-        open_bracket = True
+        n_open_brackets += 1
       elif char == ")":
-        if open_bracket: any_full_bracket = n_percent == 0
-        open_bracket = False
+        #if open_bracket: any_full_bracket = n_percent == 0
+        n_open_brackets -= 1 
+        #open_bracket = False
       tmp += char
-  if any_full_bracket: all_args.append (tmp)
+  #if any_full_bracket: all_args.append (tmp)
+  all_args.append(tmp)
   return all_args
 
 def split_line (tot_string, is_alloc, is_dealloc):
@@ -41,9 +46,10 @@ def split_line (tot_string, is_alloc, is_dealloc):
    tot_string = re.sub(r"&+", "", tot_string)
    # Get everything in between the outer brackets (...)
    tot_string = tot_string[tot_string.find("(")+1:-1]
+   #print ("Original: ", tot_string)
    # Get all the fields
    #print ("Before splitting: ", tot_string)
-   fields = split_alloc_argument (tot_string, check_any_bracket=True)
+   fields = split_alloc_argument (tot_string)
 
    #if is_alloc:
    #  fields = tot_string.split(",")
@@ -51,8 +57,6 @@ def split_line (tot_string, is_alloc, is_dealloc):
    #  fields = tot_string.split(",")
    #print ("After splitting: ", fields)
    # Check if there is a "STAT" argument in the last element of the list. If so, we return the list reduced by one element.
-   #if re.search ("STAT", fields[-1], re.IGNORECASE):
-   #  fields.pop()
    return fields
 
 def construct_vftrace_allocate_call (field):
@@ -150,7 +154,11 @@ with open(filename_in, "r") as f_in, open(filename_out, "w") as f_out:
           break
         tot_string += line_tmp
       fields = split_line(tot_string, is_alloc, is_dealloc)
-      for field in fields:
+      fields_clear = []
+      for f in fields:
+        if f[-1] == ")":
+          fields_clear.append(f)
+      for field in fields_clear:
         if is_alloc:
           f_out.write (construct_vftrace_allocate_call(field))
         elif is_dealloc:
