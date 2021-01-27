@@ -26,18 +26,35 @@ def split_line (tot_string, is_alloc, is_dealloc):
      fields.pop()
    return fields
 
+def split_alloc_argument (arg):
+  open_bracket = False
+  all_args = []
+  tmp = ""
+  for char in arg:
+    if not open_bracket and char == ",":
+      all_args.append(tmp)
+      tmp = ""
+    else: 
+      if char == "(":
+        open_bracket = True
+      elif char == ")":
+        open_bracket = False
+      tmp += char
+  all_args.append (tmp)
+  return all_args
+     
+
 def construct_vftrace_allocate_call (field):
   # Input: name(n1,n2,... 
-  # Split at the commas. The first element is "<name>(<first_dim>", so we split again at the bracket.
-  tmp = field.split(",")
   # We obtain the field name by taking everything before the first opening bracket.
   # The array dimensions can be given by functions, e.g. ALLOCATE (arr(f(x))). 
   # Therefore, it is important to only match the first bracket, not proceeding ones, which would be
   # done with a call to "split". 
-  bracket_index  = tmp[0].find("(")
-  name = tmp[0][0:bracket_index]
-  dim1 = tmp[0][bracket_index+1:]
-  dims = [dim1] + tmp[1:] #Concatenate all array dimensions
+  bracket_index = field.find("(") 
+  name = field[0:bracket_index]
+  rest = field[bracket_index+1:-1]
+  # Split at the commas. The first element is "<name>(<first_dim>", so we split again at the bracket.
+  dims = split_alloc_argument (rest)
   # Create the string which computes the total number of elements in the field by multiplying the individual dimensions.
   dim_string = ""
   for i, dim in enumerate(dims):
