@@ -12,19 +12,23 @@ function_pattern = re.compile(r"^[ ]*(pure)?(elemental)?[ ]*function[\s]+[\S]", 
 
 def split_alloc_argument (arg, check_any_bracket=False):
   open_bracket = False
+  # If there are % in the string, Ignore any bracket information until each has been encountered.
+  n_percent = arg.count("%")
   any_full_bracket = not check_any_bracket
   all_args = []
   tmp = ""
   for char in arg:
-    if not open_bracket and any_full_bracket and char == ",":
+    if char == "%":
+      n_percent -= 1
+    elif not open_bracket and any_full_bracket and char == ",":
       all_args.append(tmp)
       tmp = ""
-      any_full_bracket = not check_any_bracket
+      any_full_bracket = n_percent == 0 and not check_any_bracket
     else: 
       if char == "(":
         open_bracket = True
       elif char == ")":
-        if open_bracket: any_full_bracket = True
+        if open_bracket: any_full_bracket = n_percent == 0
         open_bracket = False
       tmp += char
   if any_full_bracket: all_args.append (tmp)
