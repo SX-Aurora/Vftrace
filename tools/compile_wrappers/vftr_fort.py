@@ -30,13 +30,19 @@ def construct_vftrace_allocate_call (field):
   # Input: name(n1,n2,... 
   # Split at the commas. The first element is "<name>(<first_dim>", so we split again at the bracket.
   tmp = field.split(",")
-  tmp2 = tmp[0].split("(")
-  name = tmp2[0]
-  dims = [tmp2[1]] + tmp[1:]
+  # We obtain the field name by taking everything before the first opening bracket.
+  # The array dimensions can be given by functions, e.g. ALLOCATE (arr(f(x))). 
+  # Therefore, it is important to only match the first bracket, not proceeding ones, which would be
+  # done with a call to "split". 
+  bracket_index  = tmp[0].find("(")
+  name = tmp[0][0:bracket_index]
+  dim1 = tmp[0][bracket_index+1:]
+  dims = [dim1] + tmp[1:] #Concatenate all array dimensions
+  # Create the string which computes the total number of elements in the field by multiplying the individual dimensions.
   dim_string = ""
   for i, dim in enumerate(dims):
     # If there is a colon ("x1:x2") in the string, the dimension size is x2 - x1 + 1.
-    #Otherwise, the dimension bounds start at 1, and the size is dim.
+    # Otherwise, the dimension bounds start at 1, and the size is dim.
     if ":" in dim:
       tmp = dim.split(":")
       dim_string += "(" + tmp[1] + "-" + tmp[0] + "+1)"
