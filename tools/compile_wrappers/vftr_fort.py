@@ -80,10 +80,6 @@ def construct_vftrace_allocate_call (field):
         break
   else:
     first_significant_bracket = bracket_indices[0]
-  #print ("field: ", field)
-  #print ("bracket_indices: ", bracket_indices)
-  #first_significant_bracket = bracket_indices[n_percents] 
-  #print ("FIELD:", field)
   name = field[0:first_significant_bracket]
   rest = field[first_significant_bracket+1:-1]
   print ("NAME: ", name, "REST: ", rest)
@@ -99,6 +95,8 @@ def construct_vftrace_allocate_call (field):
       tmp = dim.split(":")
       #print ("tmp: ", tmp)
       dim_string += "(" + tmp[1] + "-" + tmp[0] + "+1)"
+    elif "+" in dim or "-" in dim:
+      dim_string += "(" + dim + ")"
     else:
       dim_string += dim
     if i + 1 < len(dims):
