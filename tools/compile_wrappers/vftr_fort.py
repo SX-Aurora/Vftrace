@@ -49,7 +49,9 @@ def split_line (tot_string, is_alloc, is_dealloc):
    #print ("Original: ", tot_string)
    # Get all the fields
    #print ("Before splitting: ", tot_string)
+   print ("tot_string: ", tot_string)
    fields = split_alloc_argument (tot_string)
+   print ("Fields: ", fields)
 
    #if is_alloc:
    #  fields = tot_string.split(",")
@@ -65,9 +67,12 @@ def construct_vftrace_allocate_call (field):
   # The array dimensions can be given by functions, e.g. ALLOCATE (arr(f(x))). 
   # Therefore, it is important to only match the first bracket, not proceeding ones, which would be
   # done with a call to "split". 
+  print ("FIELD: ", field)
   percent_indices = [i for i, this_char in enumerate(field) if this_char == "%"]
   n_percent = len(percent_indices)
   bracket_indices = [i for i, this_char in enumerate(field) if this_char == "("]
+  print ("percent_indices: ", percent_indices)
+  print ("bracket_indices: ", bracket_indices)
   if n_percent > 0:
     for br_index in bracket_indices:
       if br_index > percent_indices[0]:  
@@ -120,7 +125,6 @@ def remove_trailing_comment(line):
   else:
     return line
 
-
 with open(filename_in, "r") as f_in, open(filename_out, "w") as f_out:
   all_lines = f_in.readlines()
   n_lines = len(all_lines)
@@ -154,12 +158,14 @@ with open(filename_in, "r") as f_in, open(filename_out, "w") as f_out:
 
     # Register allocate and deallocate calls.
     if not skip_subroutine and (is_alloc or is_dealloc):
-      tot_string = line
       # Concatenate line breaks indicated by ampersands "&"
       line_tmp = remove_trailing_comment(line)
+      tot_string = line_tmp
       i = i_line
+      #while "&" in line_tmp: 
       while line_to_be_continued(line_tmp):
         i = i + 1
+
         if i < n_lines:
           line_tmp = remove_trailing_comment(all_lines[i])
         else:
@@ -170,6 +176,8 @@ with open(filename_in, "r") as f_in, open(filename_out, "w") as f_out:
       for f in fields:
         if f[-1] == ")":
           fields_clear.append(f)
+      print ("After dropping: ", fields_clear)
+      #print ("FIELDS: ", fields)
       for field in fields_clear:
         if is_alloc:
           f_out.write (construct_vftrace_allocate_call(field))
