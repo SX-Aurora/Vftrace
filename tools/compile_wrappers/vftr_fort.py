@@ -64,6 +64,20 @@ def split_line (tot_string, is_alloc, is_dealloc):
    # Check if there is a "STAT" argument in the last element of the list. If so, we return the list reduced by one element.
    return fields
 
+def extract_name (field):
+  n_open_brackets = 0
+  i_found = -1
+  for i, c in enumerate(reversed(field)):
+    if c == ")":
+      n_open_brackets += 1
+    elif c == "(":
+      n_open_brackets -= 1
+    if n_open_brackets == 0:
+      i_found = i
+      break
+  i_found = len(field) - i_found
+  return i_found
+
 def construct_vftrace_allocate_call (field):
   # Input: name(n1,n2,... 
   # We obtain the field name by taking everything before the first opening bracket.
@@ -71,19 +85,21 @@ def construct_vftrace_allocate_call (field):
   # Therefore, it is important to only match the first bracket, not proceeding ones, which would be
   # done with a call to "split". 
   print ("FIELD: ", field)
-  percent_indices = [i for i, this_char in enumerate(field) if this_char == "%"]
-  n_percent = len(percent_indices)
-  bracket_indices = [i for i, this_char in enumerate(field) if this_char == "("]
-  print ("percent_indices: ", percent_indices)
-  print ("bracket_indices: ", bracket_indices)
-  first_significant_bracket = bracket_indices[0]
-  if n_percent > 0:
-    for br_index in bracket_indices:
-      if br_index > percent_indices[0]:  
-        first_significant_bracket = br_index
-        break
-  name = field[0:first_significant_bracket]
-  rest = field[first_significant_bracket+1:-1]
+  first_significant_bracket = extract_name (field)
+  name = field[0:first_significant_bracket-1]
+  #percent_indices = [i for i, this_char in enumerate(field) if this_char == "%"]
+  #n_percent = len(percent_indices)
+  #bracket_indices = [i for i, this_char in enumerate(field) if this_char == "("]
+  #print ("percent_indices: ", percent_indices)
+  #print ("bracket_indices: ", bracket_indices)
+  #first_significant_bracket = bracket_indices[0]
+  #if n_percent > 0:
+  #  for br_index in bracket_indices:
+  #    if br_index > percent_indices[0]:  
+  #      first_significant_bracket = br_index
+  #      break
+  #name = field[0:first_significant_bracket]
+  rest = field[first_significant_bracket:-1]
   print ("NAME: ", name, "REST: ", rest)
   # Split at the commas. The first element is "<name>(<first_dim>", so we split again at the bracket.
   dims = split_alloc_argument (rest, ignore_percent=True)
