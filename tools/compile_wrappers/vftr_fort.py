@@ -11,16 +11,19 @@ subroutine_pattern = re.compile(r"^[ ]*(pure)?(elemental)?[ ]*subroutine[\s]+[\S
 function_pattern = re.compile(r"^[ ]*(pure)?(elemental)?[ ]*function[\s]+[\S]", re.IGNORECASE)
 
 #def split_alloc_argument (arg, check_any_bracket=False):
-def split_alloc_argument (arg):
+def split_alloc_argument (arg, ignore_percent=False):
   #open_bracket = False
   n_open_brackets = 0
   # If there are % in the string, Ignore any bracket information until each has been encountered.
-  n_percent = arg.count("%")
+  if not ignore_percent:
+    n_percent = arg.count("%")
+  else:
+    n_percent = 0
   #any_full_bracket = not check_any_bracket
   all_args = []
   tmp = ""
   for char in arg:
-    if char == "%":
+    if not ignore_percent and char == "%":
       n_percent -= 1
       tmp += char
     #elif not open_bracket and any_full_bracket and char == ",":
@@ -83,8 +86,8 @@ def construct_vftrace_allocate_call (field):
   rest = field[first_significant_bracket+1:-1]
   print ("NAME: ", name, "REST: ", rest)
   # Split at the commas. The first element is "<name>(<first_dim>", so we split again at the bracket.
-  dims = split_alloc_argument (rest)
-  #print ("dims: ", dims)
+  dims = split_alloc_argument (rest, ignore_percent=True)
+  print ("dims: ", dims)
   # Create the string which computes the total number of elements in the field by multiplying the individual dimensions.
   dim_string = ""
   for i, dim in enumerate(dims):
