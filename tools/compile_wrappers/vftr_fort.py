@@ -110,9 +110,10 @@ def construct_vftrace_deallocate_call (field):
   return "call vftrace_deallocate(\"" + field + "\")\n"
 
 def remove_trailing_comment(line):
-  i = line.find("!")
-  if i >= 0: 
-    return line[0:i]
+  first_1 = line.find("!")
+  first_2 = re.search(r"\S",line).start()
+  if first_1 > first_2:
+    return line[0:first_1]
   else:
     return line
 
