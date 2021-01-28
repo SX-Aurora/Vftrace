@@ -7,8 +7,38 @@ filename_in = sys.argv[1]
 filename_out = filename_in + ".vftr"
 allocate_pattern = re.compile("^[ ]*allocate[\ ,\(]", re.IGNORECASE)
 deallocate_pattern = re.compile("^[ ]*deallocate[\ ,\(]", re.IGNORECASE)
-subroutine_pattern = re.compile(r"^[\S\s]*(pure)?(elemental)?[\S\s]*subroutine[\s]+[\S]", re.IGNORECASE)
-function_pattern = re.compile(r"^[\S\s]*(pure)?(elemental)?[\S\s]*function[\s]+[\S]", re.IGNORECASE)
+subroutine_pattern = re.compile(r"^[\S\s]*(pure)?(elemental)?[\S\s]*subroutine[\s]+[\S]*[ ]*\(", re.IGNORECASE)
+function_pattern = re.compile(r"^[\S\s]*(pure)?(elemental)?[\S\s]*function[\s]+[\S]*[ ]*\(", re.IGNORECASE)
+
+def check_if_function_or_subroutine (line):
+  if subroutine_pattern.match(line) or function_pattern.match(line):
+    pos1 = line.find("!")
+    pos2 = line.lower().find("function")
+    pos3 = line.lower().find("subroutine")
+    if (pos1 >= 0): # There is a comment. Find out if it is behind the function definition.
+      value = (pos2 >= 0 and pos2 < pos1) or (pos3 >= 0 and pos3 < pos1)
+    else:
+      value = True
+  else:
+    value = False
+  if value: #The pattern can still appear as part of a string. Check this.
+    pos4 = [i for i, this_char in enumerate(line) if this_char == "\""]
+    pos5 = [i for i, this_char in enumerate(line) if this_char == "\'"]
+    # If it is a proper routine definition, there can be no " before the position of the patterns (pos2, pos3).
+    # We therefore only check if there is any pos4 or pos5 smaller than that.
+    if pos1 >= 0 and pos2 >= 0:
+      pos = pos1 if pos1 < pos2 else pos2
+    elif pos1 >= 0:
+      pos = pos1
+    elif pos2 >= 0:
+      pos = pos2
+    for p in pos4:
+      value = value and p > pos
+    for p in pos5:
+      value = value and p > pos
+      
+  return value
+  
 
 #def split_alloc_argument (arg, check_any_bracket=False):
 def split_alloc_argument (arg, ignore_percent=False):
@@ -166,11 +196,14 @@ with open(filename_in, "r") as f_in, open(filename_out, "w") as f_out:
   subroutine_end = False
   skip_subroutine = False
   for i_line, line in enumerate(all_lines):
+    has_leading_comment = re.match("^[ ]*!", line)
+    if has_leading_comment: continue
     is_alloc = allocate_pattern.match(line)
     is_dealloc = deallocate_pattern.match(line)
     # Put "use vftrace" after every subroutine or function definition, regardless if it is actually used.
-    is_subroutine = subroutine_pattern.match(line)
-    is_function = function_pattern.match(line)
+    is_function_or_subroutine = check_if_function_or_subroutine (line)
+    #is_subroutine = subroutine_pattern.match(line)
+    #is_function = function_pattern.match(line)
 
     # We need to find out when the function definition has been written completely in the previous iteration.
     # On flag indicates that the subroutine definition has been started. If it is set, we check if it is finished.
@@ -178,7 +211,7 @@ with open(filename_in, "r") as f_in, open(filename_out, "w") as f_out:
     if subroutine_end and not skip_subroutine:
        f_out.write ("use vftrace\n")
        subroutine_end = False
-    if is_subroutine or is_function:
+    if is_function_or_subroutine:
        if re.search("pure ", line, re.IGNORECASE) or re.search("elemental ", line, re.IGNORECASE):
          skip_subroutine = True
        else:
