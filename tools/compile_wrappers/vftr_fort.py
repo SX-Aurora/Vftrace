@@ -22,16 +22,17 @@ def check_if_function_or_subroutine (line):
   else:
     value = False
   if value: #The pattern can still appear as part of a string. Check this.
+    print ("pos1: ", pos1, "pos2: ", pos2)
     pos4 = [i for i, this_char in enumerate(line) if this_char == "\""]
     pos5 = [i for i, this_char in enumerate(line) if this_char == "\'"]
     # If it is a proper routine definition, there can be no " before the position of the patterns (pos2, pos3).
     # We therefore only check if there is any pos4 or pos5 smaller than that.
-    if pos1 >= 0 and pos2 >= 0:
-      pos = pos1 if pos1 < pos2 else pos2
-    elif pos1 >= 0:
-      pos = pos1
+    if pos2 >= 0 and pos3 >= 0:
+      pos = pos2 if pos2 < pos3 else pos3
     elif pos2 >= 0:
       pos = pos2
+    elif pos3 >= 0:
+      pos = pos3
     for p in pos4:
       value = value and p > pos
     for p in pos5:
