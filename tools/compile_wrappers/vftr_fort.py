@@ -117,6 +117,13 @@ def remove_trailing_comment(line):
   else:
     return line
 
+def remove_trailing_semicolon(line):
+  i = line.find(";")
+  if i >= 0:
+    return line[0:i]
+  else:
+    return line
+
 def line_to_be_continued(line):
   if line.isspace():
     return True
@@ -166,6 +173,7 @@ with open(filename_in, "r") as f_in, open(filename_out, "w") as f_out:
       # Concatenate line breaks indicated by ampersands "&"
       line_tmp = line
       tot_string = remove_trailing_comment(line_tmp)
+      tot_string = remove_trailing_semicolon(tot_string)
       i = i_line
       #while "&" in line_tmp: 
       while line_to_be_continued(line_tmp):
