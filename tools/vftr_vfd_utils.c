@@ -167,8 +167,8 @@ void read_scenario_header (FILE *fp, int n_hw_obs, int n_formulas, bool verbose)
            fread (&slength, sizeof(int), 1, fp);
            char *formula_expr = (char*) malloc (sizeof(char) * slength);
            fread (formula_expr, sizeof(char), slength, fp);
-           int is_integrated;
-           fread (&is_integrated, sizeof(int), 1, fp);
+           bool is_integrated;
+           fread (&is_integrated, sizeof(bool), 1, fp);
            if (verbose) printf ("%s: %s (%s)\n", formula_name, formula_expr, is_integrated ? "integrated" : "differential");
            free (formula_name);
            free (formula_expr);

@@ -84,13 +84,13 @@ void vftr_write_scenario_header_to_vfd (FILE *fp) {
           fwrite (te_vars[i].name, sizeof(char), slength, fp);
         }
 	for (int i = 0; i < vftr_scenario_expr_n_formulas; i++) {
-		slength = strlen(vftr_scenario_expr_formulas[i].name) + 1;
-	        fwrite (&slength, sizeof(int), 1, fp);
-		fwrite (vftr_scenario_expr_formulas[i].name, sizeof(char), slength, fp);
-		slength = strlen(vftr_scenario_expr_formulas[i].formula) + 1;
-		fwrite (&slength, sizeof(int), 1, fp);
- 		fwrite (vftr_scenario_expr_formulas[i].formula, sizeof(char), slength, fp);
-		fwrite (&vftr_scenario_expr_formulas[i].integrated, sizeof(bool), 1, fp);
+	  slength = strlen(vftr_scenario_expr_formulas[i].name) + 1;
+          fwrite (&slength, sizeof(int), 1, fp);
+	  fwrite (vftr_scenario_expr_formulas[i].name, sizeof(char), slength, fp);
+	  slength = strlen(vftr_scenario_expr_formulas[i].formula) + 1;
+	  fwrite (&slength, sizeof(int), 1, fp);
+ 	  fwrite (vftr_scenario_expr_formulas[i].formula, sizeof(char), slength, fp);
+	  fwrite (&vftr_scenario_expr_formulas[i].integrated, sizeof(bool), 1, fp);
 	}
 #endif
 }
