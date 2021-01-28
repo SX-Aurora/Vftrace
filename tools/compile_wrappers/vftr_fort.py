@@ -203,7 +203,7 @@ with open(filename_in, "r") as f_in, open(filename_out, "w") as f_out:
       fields = split_line(tot_string, is_alloc, is_dealloc)
       fields_clear = []
       for f in fields:
-        if f[-1] == ")":
+        if f[-1] == ")" and not "stat=" in f:
           fields_clear.append(f)
       print ("After dropping: ", fields_clear)
       #print ("FIELDS: ", fields)
