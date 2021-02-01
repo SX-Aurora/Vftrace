@@ -95,11 +95,11 @@ int main (int argc, char **argv) {
     fread (&(vfd_header.n_formulas), sizeof(int), 1, fp);
     fread (&(vfd_header.n_hw_obs), sizeof(int), 1, fp);
     fprintf (fp_out, "n_hw_obs: %d\n", vfd_header.n_hw_obs);
-    double *hw_values = NULL;
+    long long *hw_values = NULL;
     if (vfd_header.n_hw_obs > 0) {
-        hw_values = (double*)malloc (vfd_header.n_hw_obs * sizeof(double));
+        hw_values = (long long*)malloc (vfd_header.n_hw_obs * sizeof(long long));
         for (int i = 0; i < vfd_header.n_hw_obs; i++) {
-          hw_values[i] = 0.0;
+          hw_values[i] = 0;
         }
 	read_scenario_header (fp, vfd_header.n_hw_obs, vfd_header.n_formulas, true);
     }
@@ -142,11 +142,11 @@ int main (int argc, char **argv) {
             fprintf (fp_out, "%16.6f %s end\n", dt_stop, direction ? "recv" : "send");
         } else if (sample_id == SID_ENTRY || sample_id == SID_EXIT) {
 	    int stack_id;
-	    long long sample_time;
-	    read_stack_sample (fp, vfd_header.n_hw_obs, &stack_id, &sample_time, hw_values);
+	    long long sample_time, cycle_time;
+	    read_stack_sample (fp, vfd_header.n_hw_obs, &stack_id, &sample_time, hw_values, &cycle_time);
             if (vfd_header.n_hw_obs > 0) {
               for (int i = 0; i < vfd_header.n_hw_obs; i++) {
-                 printf ("%*.2f, ", vftr_count_digits_double(hw_values[i]), hw_values[i]);
+                 printf ("%lld, ", hw_values[i]);
               }
               printf ("\n");
             }
@@ -161,6 +161,7 @@ int main (int argc, char **argv) {
             }
 
             fprintf (fp_out, "%16.6f %s ", sample_time_s, sample_id == SID_ENTRY ? "call" : "exit");
+            fprintf (fp_out, "%16.6f ", (double)cycle_time * 1.0e-6);
             for( ;; stack_id = stacks[stack_id].caller ) {
                fprintf (fp_out, "%s%s", stacks[stack_id].name, stack_id ? "<" : "" );
                if(stack_id == 0) break;
