@@ -4,6 +4,7 @@
 # of total runtimes using the progression of the runtimes of the individual functions.
 # 
 import sys
+import os
 from collections import OrderedDict
 
 import tkinter as tk
@@ -160,7 +161,7 @@ def filter_functions():
 
 def save_plot():
   global fig
-  filename = filedialog.asksaveasfilename(initialdir="/home/christian/Vftrace/tool/crystalball", title = "Save as",
+  filename = filedialog.asksaveasfilename(initialdir=os.getcwd(), title = "Save as",
                                           filetypes = (("jpeg", "*.jpg"),("png", "*.png"),("all files", "*")))
   fig.savefig(filename)
 

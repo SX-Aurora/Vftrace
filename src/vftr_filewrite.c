@@ -1081,7 +1081,7 @@ display_function_t **vftr_create_display_functions (bool display_sync_time, int 
 
 /**********************************************************************/
 
-void vftr_print_function_statistics (FILE *fp_log, display_function_t **display_functions, int n_display_funcs) {
+void vftr_print_function_statistics (FILE *fp_log, display_function_t **display_functions, int n_display_funcs, bool print_this_rank) {
 
     double total_time = 0;
     bool print_mpi_columns = false;
@@ -1092,22 +1092,25 @@ void vftr_print_function_statistics (FILE *fp_log, display_function_t **display_
       }
     }
 
-    fprintf (fp_log, "Total time spent in MPI for rank %d: %lf s\n", vftr_mpirank, total_time);
-    fprintf (fp_log, "Imbalance computed as: max (T - T_avg)\n");
+    int table_width;
+    if (print_this_rank) {
+       fprintf (fp_log, "Total time spent in MPI for rank %d: %lf s\n", vftr_mpirank, total_time);
+       fprintf (fp_log, "Imbalance computed as: max (T - T_avg)\n");
 
-    int n_columns = print_mpi_columns ? 10 : 7;
-    column_t *columns = (column_t*) malloc (n_columns * sizeof(column_t));
-    vftr_set_summary_column_formats (print_mpi_columns, n_display_funcs, display_functions, &columns, total_time);
+       int n_columns = print_mpi_columns ? 10 : 7;
+       column_t *columns = (column_t*) malloc (n_columns * sizeof(column_t));
+       vftr_set_summary_column_formats (print_mpi_columns, n_display_funcs, display_functions, &columns, total_time);
    
-    int table_width = vftr_get_tablewidth_from_columns (columns, n_columns, true); 
-    vftr_summary_print_header (fp_log, columns, table_width, print_mpi_columns);
+       table_width = vftr_get_tablewidth_from_columns (columns, n_columns, true); 
+       vftr_summary_print_header (fp_log, columns, table_width, print_mpi_columns);
 
-    // Print all the display functions, but omit those without any calls.
-    for (int i = 0; i < n_display_funcs; i++) {
-       if (display_functions[i]->n_calls > 0 && display_functions[i]->properly_terminated) {
-          vftr_summary_print_line (fp_log, display_functions[i], columns, total_time, print_mpi_columns);
+       // Print all the display functions, but omit those without any calls.
+       for (int i = 0; i < n_display_funcs; i++) {
+          if (display_functions[i]->n_calls > 0 && display_functions[i]->properly_terminated) {
+             vftr_summary_print_line (fp_log, display_functions[i], columns, total_time, print_mpi_columns);
+          }
        }
-     }
+    }
 
     //Print a final separator line.
     if (vftr_mpirank == 0) {
@@ -1143,25 +1146,27 @@ void vftr_print_function_statistics (FILE *fp_log, display_function_t **display_
 		   double *imbalances = (double*) malloc (vftr_func_table_size * sizeof (double));
 		   vftr_stack_compute_imbalances (imbalances, display_functions[i]->n_stack_indices,
 		   			       display_functions[i]->stack_indices);
-		   vftr_create_stacktree (&stack_tree, display_functions[i]->n_stack_indices, display_functions[i]->stack_indices);
-		   long long total_time = 0;
-		   vftr_stack_get_total_time (stack_tree->origin, &total_time);
+                   if (print_this_rank) {
+		      vftr_create_stacktree (&stack_tree, display_functions[i]->n_stack_indices, display_functions[i]->stack_indices);
+		      long long total_time = 0;
+		      vftr_stack_get_total_time (stack_tree->origin, &total_time);
 
-		   double t_max, imba_max;
-		   int n_calls_max, n_spaces_max, n_chars_max;
-		   vftr_scan_stacktree (stack_tree, display_functions[i]->n_stack_indices, imbalances,
-					&t_max, &n_calls_max, &imba_max, &n_spaces_max, &n_chars_max);
-  		   vftr_print_function_stack (fp_log, display_functions[i]->func_name, 
-		   		              display_functions[i]->n_stack_indices,
-		   		              imbalances, total_time,
-					      t_max, n_calls_max, imba_max, n_spaces_max,
-					      stack_tree);
-		   if (vftr_environment.create_html->value) {
-		      vftr_browse_print_stacktree_page (NULL, false, display_functions, i,
-						        n_display_funcs, stack_tree->origin,
-					                imbalances, (double)total_time * 1e-6, n_chars_max,
-						        display_functions[i]->n_stack_indices);
-		   }
+		      double t_max, imba_max;
+		      int n_calls_max, n_spaces_max, n_chars_max;
+		      vftr_scan_stacktree (stack_tree, display_functions[i]->n_stack_indices, imbalances,
+		           		&t_max, &n_calls_max, &imba_max, &n_spaces_max, &n_chars_max);
+  		      vftr_print_function_stack (fp_log, display_functions[i]->func_name, 
+		      		              display_functions[i]->n_stack_indices,
+		      		              imbalances, total_time,
+		           		      t_max, n_calls_max, imba_max, n_spaces_max,
+		           		      stack_tree);
+		      if (vftr_environment.create_html->value) {
+		         vftr_browse_print_stacktree_page (NULL, false, display_functions, i,
+		           			        n_display_funcs, stack_tree->origin,
+		           		                imbalances, (double)total_time * 1e-6, n_chars_max,
+		           			        display_functions[i]->n_stack_indices);
+		      }
+                   }
 		   free (stack_tree);
 		   free (imbalances);
 	       }

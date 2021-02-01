@@ -1,3 +1,5 @@
+import os
+
 import tkinter as tk
 from tkinter import filedialog
 
@@ -20,7 +22,7 @@ class control_window:
       self.open_files_list.append(tk.Label(self.open_files_frame, text = f).grid(row = i_row + 1, column=0))
 
   def open_file_dialog(self): 
-    for f in list(filedialog.askopenfilenames(initialdir="/home/christian/Vftrace/tools/crystalball", title = "Choose log files")):
+    for f in list(filedialog.askopenfilenames(initialdir=os.getcwd(), title = "Choose log files")):
       self.open_files.append(f)
     self.update()
 
