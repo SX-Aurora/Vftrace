@@ -51,21 +51,52 @@ symtab_t **vftr_symtab;
 // return the reduced string. Otherwise, we go on until the end of the function
 // name, given by the '\0' character, is reached. If no delimiter is found
 // the original string is returned.
+//
+#define N_MODULE_IDENTS 3
+#define MAX_IDENT_LEN 3
+char *module_idents[N_MODULE_IDENTS] = {"MP", "EP", "MOD"};
+int module_ident_lens[N_MODULE_IDENTS] = {2, 2, 3};
+
+bool compatible_with_idents (char buf[MAX_IDENT_LEN], int n) {
+  for (int i = 0; i < N_MODULE_IDENTS; i++) {
+    bool ret = true;
+    if (n > module_ident_lens[i]) continue;
+    for (int j = 0; j < module_ident_lens[i]; j++) {
+      ret &= buf[j] == module_idents[i][j];
+    }
+    if (ret) return ret;
+  }
+  return false;
+}
 
 char *vftr_strip_module_name (char *base_name) {
 	char *tmp = strdup (base_name);
 	char *func_name = tmp;
 	bool has_module_token = false;
+        bool check_char = false;
+        char buf[MAX_IDENT_LEN];
+        int nbuf;
 	while (*tmp != '\0') {
-		if (*tmp == '_') {
-			// First letter is E or M
-			has_module_token = (tmp[1] == 'M' || tmp[1] == 'E') && tmp[2] == 'P' && tmp[3] == '_';
-			if (has_module_token) {
-				func_name = tmp + 4;
-			}
-		}
-		tmp++;
-	}
+           if (check_char) {
+	      if (*tmp == '_') {
+                 if (has_module_token) break;
+                 nbuf = 0;
+	      }
+	      if (nbuf == MAX_IDENT_LEN) {
+                nbuf = 0;
+                check_char = false;
+              }
+              buf[nbuf++] = *tmp;
+              has_module_token = compatible_with_idents (buf, nbuf);
+           }
+	   if (*tmp == '_') {
+	      nbuf = 0;
+	      check_char = true; 
+           }
+           tmp++;
+        }
+	      // First letter is E or M
+        if (has_module_token) func_name = tmp + 1;
 	return func_name;
 }
 		
