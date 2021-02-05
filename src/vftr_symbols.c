@@ -35,28 +35,38 @@ symtab_t **vftr_symtab;
 
 /**********************************************************************/
 
-// Fortran symbols can be given in the form module-name_MP_function-name.
-// For example, in large stack trees, the module names can reduce its
-// readability and it can be convenient to leave them out. Of course, this
-// leads to information loss because identical function names in different
-// modules cannot be resolved. Therefore, below function should always be used
-// optionally. Moreover, there is no guarantee that the delimiter token is 
-// always "_MP_".
+// Fortran symbols can be composed of the function name and the name of the
+// module in which that function is contained, in the form of
+// <module_name>_DELIMITER_<function_name>. In the routine below,
+// we want to remove the first part, only keeping the function name. This
+// might lead to ambiguities, but the user should know what he does.
+// Moreover, contained subroutines might also be name-mangled like this,
+// e.g. with the identifier "_EP_". This situations are also removed here.
 //
-// Also, contained subroutines can be prefixed by "_EP_". We remove that too.
+// One problem comes from the fact that the DELIMITER is not well-defined.
+// Instead, each compiler, and even different versions of the same compiler,
+// can choose different ones. We keep a list of known delimiters, or identifiers,
+// in "module_indents". Each function name is checked against this list.
 //
-// We go through the function names until a '_' character is encountered.
-// If this is the case, we check if the succeeding three characters match
-// the delimiter pattern. When this is the case, we exit the function and
-// return the reduced string. Otherwise, we go on until the end of the function
-// name, given by the '\0' character, is reached. If no delimiter is found
-// the original string is returned.
+// Possible issues: Components of normal function names could be misidentified as
+// delimiters. We consider this as rare, especially since the delimiters are 
+// matched case-sensitve. Nevertheless, a warning is issued at the startup of Vftrace
+// to make the user aware of possible issues.
+//
+// Alternatives: Make the user provide the delimiter string.
 //
 #define N_MODULE_IDENTS 3
-#define MAX_IDENT_LEN 3
+#define MAX_IDENT_LEN 3 // Tells us how large the character buffer needs to be.
 char *module_idents[N_MODULE_IDENTS] = {"MP", "EP", "MOD"};
 int module_ident_lens[N_MODULE_IDENTS] = {2, 2, 3};
 
+/**********************************************************************/
+
+// Obtains a character buffer and the corresponding lenth n.
+// We check if the buffer, filled up to this point, is a substring 
+// of any of the "module_idents". This way, for example "M" returns true,
+// but "S" returns false. Many situations are already excluded immediately this way.
+//
 bool compatible_with_idents (char buf[MAX_IDENT_LEN], int n) {
   for (int i = 0; i < N_MODULE_IDENTS; i++) {
     bool ret = true;
@@ -69,17 +79,28 @@ bool compatible_with_idents (char buf[MAX_IDENT_LEN], int n) {
   return false;
 }
 
+/**********************************************************************/
+
 char *vftr_strip_module_name (char *base_name) {
 	char *tmp = strdup (base_name);
 	char *func_name = tmp;
-	bool has_module_token = false;
+	bool has_delimiter = false;
         bool check_char = false;
         char buf[MAX_IDENT_LEN];
         int nbuf;
+// The '_' character indicates the possible beginning of a module delimiter.
+// If one is found, we set the "check_char" flag to true, so that in the
+// subsequent iteration the buffer will be filled and compared to the 
+// identifier list.
+// If another '_' is found, we exit the loop if a "has_delimiter" has been set
+// to true before. Otherwise, the buffer is cleared.
+// If the buffer has reached its maximal length, and no '_' has been found, we are
+// dealing with a longer string than possible for a delimiter and set "check_char" to false.
+// Otherwise, the buffer is compared using "compatible_width_idents".
 	while (*tmp != '\0') {
            if (check_char) {
 	      if (*tmp == '_') {
-                 if (has_module_token) break;
+                 if (has_delimiter) break;
                  nbuf = 0;
 	      }
 	      if (nbuf == MAX_IDENT_LEN) {
@@ -87,7 +108,7 @@ char *vftr_strip_module_name (char *base_name) {
                 check_char = false;
               }
               buf[nbuf++] = *tmp;
-              has_module_token = compatible_with_idents (buf, nbuf);
+              has_delimiter = compatible_with_idents (buf, nbuf);
            }
 	   if (*tmp == '_') {
 	      nbuf = 0;
@@ -96,7 +117,7 @@ char *vftr_strip_module_name (char *base_name) {
            tmp++;
         }
 	      // First letter is E or M
-        if (has_module_token) func_name = tmp + 1;
+        if (has_delimiter) func_name = tmp + 1;
 	return func_name;
 }
 		
