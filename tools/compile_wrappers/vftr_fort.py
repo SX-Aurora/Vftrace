@@ -193,7 +193,7 @@ def line_to_be_continued(line):
       last_ampersand = False
     has_leading_comment = re.match("^!", line_wo_spaces)
     has_leading_preprocessor = re.match("^#", line_wo_spaces)
-    return (last_ampersand or has_leading_comment or has_leading_preprocessor)
+    return (last_ampersand or (has_leading_comment != None) or (has_leading_preprocessor != None))
 
 with open(filename_in, "r") as f_in, open(filename_out, "w") as f_out:
   all_lines = f_in.readlines()
