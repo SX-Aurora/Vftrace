@@ -7,8 +7,8 @@ filename_in = sys.argv[1]
 filename_out = filename_in + ".vftr"
 allocate_pattern = re.compile("^[ ]*allocate[\ ,\(]", re.IGNORECASE)
 deallocate_pattern = re.compile("^[ ]*deallocate[\ ,\(]", re.IGNORECASE)
-subroutine_pattern = re.compile(r"^[\S\s]*(pure)?(elemental)?[\S\s]*subroutine[\s]+[\S]*[ ]*\(", re.IGNORECASE)
-function_pattern = re.compile(r"^[\S\s]*(pure)?(elemental)?[\S\s]*function[\s]+[\S]*[ ]*\(", re.IGNORECASE)
+subroutine_pattern = re.compile(r"^[\S\s]*(pure)?(elemental)?[\S\s]*subroutine[\s]+[\S]*[ ]*(\()?", re.IGNORECASE)
+function_pattern = re.compile(r"^[\S\s]*(pure)?(elemental)?[\S\s]*function[\s]+[\S]*[ ]*(\()?", re.IGNORECASE)
 
 vftrace_wrapper_marker = "!!! VFTRACE 1.3 - Wrapper inserted malloc-trace calls\n"
 
