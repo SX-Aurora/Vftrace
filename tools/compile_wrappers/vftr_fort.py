@@ -10,6 +10,8 @@ deallocate_pattern = re.compile("^[ ]*deallocate[\ ,\(]", re.IGNORECASE)
 subroutine_pattern = re.compile(r"^[\S\s]*(pure)?(elemental)?[\S\s]*subroutine[\s]+[\S]*[ ]*\(", re.IGNORECASE)
 function_pattern = re.compile(r"^[\S\s]*(pure)?(elemental)?[\S\s]*function[\s]+[\S]*[ ]*\(", re.IGNORECASE)
 
+vftrace_wrapper_marker = "!!! VFTRACE 1.3 - Wrapper inserted malloc-trace calls\n"
+
 def check_if_function_or_subroutine (line):
   if subroutine_pattern.match(line) or function_pattern.match(line):
     pos1 = line.find("!")
@@ -197,6 +199,12 @@ with open(filename_in, "r") as f_in, open(filename_out, "w") as f_out:
   subroutine_end = False
   skip_subroutine = False
   for i_line, line in enumerate(all_lines):
+    if i_line == 0:
+      if line == vftrace_wrapper_marker:
+        break
+      else:
+        f_out.write (vftrace_wrapper_marker)
+
     has_leading_comment = re.match("^[ ]*!", line)
     if has_leading_comment: continue
     is_alloc = allocate_pattern.match(line)
