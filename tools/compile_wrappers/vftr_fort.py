@@ -209,7 +209,9 @@ with open(filename_in, "r") as f_in, open(filename_out, "w") as f_out:
         f_out.write (vftrace_wrapper_marker)
 
     has_leading_comment = re.match("^[ ]*!", line)
-    if has_leading_comment: continue
+    if has_leading_comment:
+       f_out.write (line)
+       continue
     is_alloc = allocate_pattern.match(line)
     is_dealloc = deallocate_pattern.match(line)
     # Put "use vftrace" after every subroutine or function definition, regardless if it is actually used.
