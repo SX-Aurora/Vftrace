@@ -14,9 +14,12 @@ vftrace_wrapper_marker = "!!! VFTRACE 1.3 - Wrapper inserted malloc-trace calls\
 
 def check_if_function_or_subroutine (line):
   if subroutine_pattern.match(line) or function_pattern.match(line):
-    pos1 = line.find("!")
-    pos2 = line.lower().find("function")
-    pos3 = line.lower().find("subroutine")
+    ll = line.lower()
+    if "end function" in ll or "end subroutine" in ll:
+      return False
+    pos1 = ll.find("!")
+    pos2 = ll.find("function")
+    pos3 = ll.find("subroutine")
     if (pos1 >= 0): # There is a comment. Find out if it is behind the function definition.
       value = (pos2 >= 0 and pos2 < pos1) or (pos3 >= 0 and pos3 < pos1)
     else:
