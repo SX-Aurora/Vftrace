@@ -197,15 +197,13 @@ with open(filename_in, "r") as f_in, open(filename_out, "w") as f_out:
   subroutine_start = False
   subroutine_end = False
   skip_subroutine = False
+  already_wrapped = all_lines[0] == vftrace_wrapper_marker
   for i_line, line in enumerate(all_lines):
-    if i_line == 0:
-      if line == vftrace_wrapper_marker:
-        break
-      else:
-        f_out.write (vftrace_wrapper_marker)
+    if i_line == 0 and not already_wrapped:
+      f_out.write (vftrace_wrapper_marker)
 
     has_leading_comment = re.match("^[ ]*!", line)
-    if has_leading_comment:
+    if has_leading_comment or already_wrapped:
        f_out.write (line)
        continue
     is_alloc = allocate_pattern.match(line)
