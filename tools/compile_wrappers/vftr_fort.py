@@ -9,13 +9,14 @@ allocate_pattern = re.compile("^[ ]*allocate[\ ,\(]", re.IGNORECASE)
 deallocate_pattern = re.compile("^[ ]*deallocate[\ ,\(]", re.IGNORECASE)
 subroutine_pattern = re.compile(r"^[\S\s]*(pure)?(elemental)?[\S\s]*subroutine[\s]+[\S]*[ ]*(\()?", re.IGNORECASE)
 function_pattern = re.compile(r"^[\S\s]*(pure)?(elemental)?[\S\s]*function[\s]+[\S]*[ ]*(\()?", re.IGNORECASE)
+end_routine_pattern = re.compile(r"[ ]*end[ ]*(function|subroutine)", re.IGNORECASE)
 
 vftrace_wrapper_marker = "!!! VFTRACE 1.3 - Wrapper inserted malloc-trace calls\n"
 
 def check_if_function_or_subroutine (line):
   if subroutine_pattern.match(line) or function_pattern.match(line):
     ll = line.lower()
-    if "end function" in ll or "end subroutine" in ll:
+    if end_routine_pattern.match(ll):
       return False
     pos1 = ll.find("!")
     pos2 = ll.find("function")
@@ -90,7 +91,6 @@ def split_line (tot_string, is_alloc, is_dealloc):
    #print ("Before splitting: ", tot_string)
    #print ("tot_string: ", tot_string)
    fields = split_alloc_argument (tot_string)
-   print ("Fields: ", fields)
 
    #if is_alloc:
    #  fields = tot_string.split(",")
@@ -120,7 +120,6 @@ def construct_vftrace_allocate_call (field):
   # The array dimensions can be given by functions, e.g. ALLOCATE (arr(f(x))). 
   # Therefore, it is important to only match the first bracket, not proceeding ones, which would be
   # done with a call to "split". 
-  print ("FIELD: ", field)
   first_significant_bracket = extract_name (field)
   name = field[0:first_significant_bracket-1]
   #percent_indices = [i for i, this_char in enumerate(field) if this_char == "%"]
@@ -136,10 +135,8 @@ def construct_vftrace_allocate_call (field):
   #      break
   #name = field[0:first_significant_bracket]
   rest = field[first_significant_bracket:-1]
-  print ("NAME: ", name, "REST: ", rest)
   # Split at the commas. The first element is "<name>(<first_dim>", so we split again at the bracket.
   dims = split_alloc_argument (rest, ignore_percent=True)
-  print ("dims: ", dims)
   # Create the string which computes the total number of elements in the field by multiplying the individual dimensions.
   dim_string = ""
   for i, dim in enumerate(dims):
@@ -147,7 +144,6 @@ def construct_vftrace_allocate_call (field):
     # Otherwise, the dimension bounds start at 1, and the size is dim.
     if ":" in dim:
       tmp = dim.split(":")
-      #print ("tmp: ", tmp)
       dim_string += "(" + tmp[1] + "-" + tmp[0] + "+1)"
     elif "+" in dim or "-" in dim:
       dim_string += "(" + dim + ")"
@@ -257,8 +253,6 @@ with open(filename_in, "r") as f_in, open(filename_out, "w") as f_out:
       for f in fields:
         if f[-1] == ")" and not "stat=" in f:
           fields_clear.append(f)
-      print ("After dropping: ", fields_clear)
-      #print ("FIELDS: ", fields)
       for field in fields_clear:
         if is_alloc:
           f_out.write (construct_vftrace_allocate_call(field))
