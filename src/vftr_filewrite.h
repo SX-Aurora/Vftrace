@@ -111,6 +111,8 @@ void vftr_memory_unit(double *value, char **unit);
 char *vftr_memory_unit_string (double value, int n_decimal_places);
 void vftr_time_unit (double *value, char **unit, bool for_html);
 
+void vftr_prof_column_init (const char *name, char *group_header, int n_decimal_places, int col_type, int sep_type, column_t *c);
+void vftr_prof_column_set_n_chars (void *value_1, void *value_2, column_t *c, int *stat);
 void vftr_prof_column_print (FILE *fp, column_t c, void *value_1, void *value_2);
 
 #endif

@@ -501,6 +501,8 @@ void vftr_prof_column_init (const char *name, char *group_header, int n_decimal_
    	c->separator_type = sep_type;
 }
 
+/**********************************************************************/
+
 void vftr_prof_column_set_n_chars (void *value_1, void *value_2, column_t *c, int *stat) {
 	int n;
 	int *i;
@@ -543,6 +545,8 @@ void vftr_prof_column_set_n_chars (void *value_1, void *value_2, column_t *c, in
 	if (n > c->n_chars) c->n_chars = n;
 	*stat = n;
 }
+
+/**********************************************************************/
 
 void vftr_prof_column_print (FILE *fp, column_t c, void *value_1, void *value_2) {
    if (c.separator_type == SEP_MID || c.separator_type == SEP_LAST) fprintf (fp, "|");
