@@ -36,10 +36,23 @@ typedef struct allocate_list {
    bool need_warning;
 } allocate_list_t;
 
-#define INIT_ALLOC_LIST 1000
+#define INIT_ALLOC_LIST 10000
 allocate_list_t *vftr_allocated_fields[INIT_ALLOC_LIST];
 int vftr_n_allocated_fields = 0;
 int vftr_max_allocated_fields = 0;
+
+/**********************************************************************/
+
+int vftr_compare_allocated_memory (const void *a1, const void *a2) {
+  allocate_list_t *l1 = *(allocate_list_t **)a1;
+  allocate_list_t *l2 = *(allocate_list_t **)a2;
+  if (!l1) return -1;
+  if (!l2) return 1;
+  long long diff = l2->allocated_memory - l1->allocated_memory;
+  if (diff > 0) return 1;
+  if (diff < 0) return -1;
+  return 0;
+}
 
 /**********************************************************************/
 
@@ -50,11 +63,9 @@ void vftr_allocate_new_field (const char *name, const char *caller_function) {
    new_field->caller = strdup(caller_function);
    new_field->n_calls = 0;
    new_field->allocated_memory = 0;
-   char name_and_caller[strlen(name) + strlen(caller_function)];
-   snprintf (name_and_caller, sizeof(name_and_caller), "%s%s", name, caller_function);
-   //new_field->id = vftr_jenkins_murmur_64_hash (strlen(name), (uint8_t*)name);
+   char name_and_caller[strlen(name) + strlen(caller_function) + 1];
+   snprintf (name_and_caller, strlen(name) + strlen(caller_function) + 1, "%s%s", name, caller_function);
    new_field->id = vftr_jenkins_murmur_64_hash (strlen(name_and_caller), (uint8_t*)name_and_caller);
-   //if (vftr_mpirank == 0) printf ("THIS ID: %lld\n", new_field->id);
    new_field->open = true;
    vftr_allocated_fields[vftr_max_allocated_fields++] = new_field;
 }
@@ -117,6 +128,8 @@ void vftrace_deallocate (const char *s) {
 
 void vftr_allocate_finalize () {
    if (vftr_mpirank == 0) {
+      qsort ((void*)vftr_allocated_fields, (size_t)vftr_max_allocated_fields,
+             sizeof(allocate_list_t *), vftr_compare_allocated_memory); 
       printf ("Vftrace memory allocation report:\n");
       printf ("Registered fields: %d\n", vftr_max_allocated_fields);
       printf ("Unresolved allocations: %d\n", vftr_n_allocated_fields);
