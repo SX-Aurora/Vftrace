@@ -73,7 +73,7 @@ void vftr_allocate_new_field (const char *name, const char *caller_function) {
    new_field->open = true;
    if (vftr_max_allocated_fields + 1 > vftr_allocate_list_size) {
       vftr_allocate_list_size += ALLOC_LIST_INC;
-      vftr_allocated_fields = (allocate_list_t**)malloc (ALLOC_LIST_INC * sizeof(allocate_list_t*));
+      vftr_allocated_fields = (allocate_list_t**)realloc (vftr_allocated_fields, ALLOC_LIST_INC * sizeof(allocate_list_t*));
    }
    vftr_allocated_fields[vftr_max_allocated_fields++] = new_field;
 }
