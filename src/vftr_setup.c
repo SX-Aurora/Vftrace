@@ -349,6 +349,8 @@ void vftr_finalize() {
     if (vftr_events_enabled && vftr_stop_hwc() < 0) {
 	fprintf(vftr_log, "error stopping H/W counters, ignored\n");
     }
+
+    if (vftr_max_allocated_fields > 0) vftr_allocate_finalize(vftr_log);
     
     if (vftr_log) {
     	bool is_empty = (ftello (vftr_log) == (off_t)0);
@@ -356,7 +358,6 @@ void vftr_finalize() {
 
     	fclose (vftr_log);
     }
-    vftr_allocate_finalize();
     vftr_switch_off();
 }
 

@@ -27,6 +27,7 @@
 #include "vftr_filewrite.h"
 #include "vftr_stacks.h"
 #include "vftr_pause.h"
+#include "vftr_allocate.h"
 
 typedef struct allocate_list {
    char *name;
@@ -110,7 +111,6 @@ void vftr_allocate_set_open_state (int index) {
 
 /**********************************************************************/
 
-//void vftrace_allocate (const char *s, const int *dims, const int *n, const int *element_size) {
 void vftrace_allocate (const char *s, const int *n_elements, const int *element_size) {
    //printf ("Check if bounce: \n");
    if (vftr_off() || vftr_paused) {
@@ -131,7 +131,6 @@ void vftrace_allocate (const char *s, const int *n_elements, const int *element_
    long long this_alloc = (long long)((*element_size) * (*n_elements));
    vftr_allocate_count (index, this_alloc);
    vftr_n_allocated_fields++; 
-   
 }
 
 /**********************************************************************/
@@ -146,50 +145,48 @@ void vftrace_deallocate (const char *s) {
 
 /**********************************************************************/
 
-void vftr_allocate_finalize () {
-   if (vftr_mpirank == 0) {
-      qsort ((void*)vftr_allocated_fields, (size_t)vftr_max_allocated_fields,
-             sizeof(allocate_list_t **), vftr_compare_allocated_memory); 
-      column_t columns[5];
-      vftr_prof_column_init ("Field name", NULL, 0, COL_CHAR, SEP_MID, &columns[0]);
-      vftr_prof_column_init ("Called by", NULL, 0, COL_CHAR, SEP_MID, &columns[1]);
-      vftr_prof_column_init ("Total memory", NULL, 0, COL_MEM, SEP_MID, &columns[2]);
-      vftr_prof_column_init ("n_calls", NULL, 0, COL_INT, SEP_MID, &columns[3]);
-      vftr_prof_column_init ("Memory / call", NULL, 0, COL_MEM, SEP_LAST, &columns[4]);
-      for (int i = 0; i < vftr_max_allocated_fields; i++) {
-        //double mb = (double)vftr_allocated_fields[i]->allocated_memory / 1024 / 1024;
-        double mb = (double)vftr_allocated_fields[i]->allocated_memory;
-        double mb_per_call = mb / vftr_allocated_fields[i]->n_calls;
-        int stat;
-        vftr_prof_column_set_n_chars (vftr_allocated_fields[i]->name, NULL, &columns[0], &stat);
-        vftr_prof_column_set_n_chars (vftr_allocated_fields[i]->caller, NULL, &columns[1], &stat);
-        vftr_prof_column_set_n_chars (&mb, NULL, &columns[2], &stat);
-        vftr_prof_column_set_n_chars (&vftr_allocated_fields[i]->n_calls, NULL, &columns[3], &stat);
-        vftr_prof_column_set_n_chars (&mb_per_call, NULL, &columns[4], &stat);
-      }
-      fprintf (stdout, "Vftrace memory allocation report:\n");
-      fprintf (stdout, "Registered fields: %d\n", vftr_max_allocated_fields);
-      fprintf (stdout, "Unresolved allocations: %d\n", vftr_n_allocated_fields);
-      fprintf (stdout, "***************************************************\n");
-      fprintf (stdout, "| %*s | %*s | %*s | %*s | %*s |\n",
-               columns[0].n_chars, columns[0].header,
-               columns[1].n_chars, columns[1].header,
-               columns[2].n_chars, columns[2].header,
-               columns[3].n_chars, columns[3].header,
-               columns[4].n_chars, columns[4].header);
-      int table_width = vftr_get_tablewidth_from_columns (columns, 5, true);
-      for (int i = 0; i < table_width; i++) fprintf (stdout, "-");
-      fprintf (stdout, "\n");
-      for (int i = 0; i < vftr_max_allocated_fields; i++) {
-        double mb = (double)vftr_allocated_fields[i]->allocated_memory;
-        double mb_per_call = mb / vftr_allocated_fields[i]->n_calls;
-        vftr_prof_column_print (stdout, columns[0], vftr_allocated_fields[i]->name, NULL);
-        vftr_prof_column_print (stdout, columns[1], vftr_allocated_fields[i]->caller, NULL);
-        vftr_prof_column_print (stdout, columns[2], &mb, NULL);
-        vftr_prof_column_print (stdout, columns[3], &vftr_allocated_fields[i]->n_calls, NULL);
-        vftr_prof_column_print (stdout, columns[4], &mb_per_call, NULL);
-        fprintf (stdout, "\n");
-      }
+void vftr_allocate_finalize (FILE *fp) {
+   qsort ((void*)vftr_allocated_fields, (size_t)vftr_max_allocated_fields,
+          sizeof(allocate_list_t **), vftr_compare_allocated_memory); 
+   column_t columns[5];
+   vftr_prof_column_init ("Field name", NULL, 0, COL_CHAR, SEP_MID, &columns[0]);
+   vftr_prof_column_init ("Called by", NULL, 0, COL_CHAR, SEP_MID, &columns[1]);
+   vftr_prof_column_init ("Total memory", NULL, 0, COL_MEM, SEP_MID, &columns[2]);
+   vftr_prof_column_init ("n_calls", NULL, 0, COL_INT, SEP_MID, &columns[3]);
+   vftr_prof_column_init ("Memory / call", NULL, 0, COL_MEM, SEP_LAST, &columns[4]);
+   for (int i = 0; i < vftr_max_allocated_fields; i++) {
+     //double mb = (double)vftr_allocated_fields[i]->allocated_memory / 1024 / 1024;
+     double mb = (double)vftr_allocated_fields[i]->allocated_memory;
+     double mb_per_call = mb / vftr_allocated_fields[i]->n_calls;
+     int stat;
+     vftr_prof_column_set_n_chars (vftr_allocated_fields[i]->name, NULL, &columns[0], &stat);
+     vftr_prof_column_set_n_chars (vftr_allocated_fields[i]->caller, NULL, &columns[1], &stat);
+     vftr_prof_column_set_n_chars (&mb, NULL, &columns[2], &stat);
+     vftr_prof_column_set_n_chars (&vftr_allocated_fields[i]->n_calls, NULL, &columns[3], &stat);
+     vftr_prof_column_set_n_chars (&mb_per_call, NULL, &columns[4], &stat);
+   }
+   fprintf (fp, "Vftrace memory allocation report:\n");
+   fprintf (fp, "Registered fields: %d\n", vftr_max_allocated_fields);
+   fprintf (fp, "Unresolved allocations: %d\n", vftr_n_allocated_fields);
+   fprintf (fp, "***************************************************\n");
+   fprintf (fp, "| %*s | %*s | %*s | %*s | %*s |\n",
+            columns[0].n_chars, columns[0].header,
+            columns[1].n_chars, columns[1].header,
+            columns[2].n_chars, columns[2].header,
+            columns[3].n_chars, columns[3].header,
+            columns[4].n_chars, columns[4].header);
+   int table_width = vftr_get_tablewidth_from_columns (columns, 5, true);
+   for (int i = 0; i < table_width; i++) fprintf (fp, "-");
+   fprintf (fp, "\n");
+   for (int i = 0; i < vftr_max_allocated_fields; i++) {
+     double mb = (double)vftr_allocated_fields[i]->allocated_memory;
+     double mb_per_call = mb / vftr_allocated_fields[i]->n_calls;
+     vftr_prof_column_print (fp, columns[0], vftr_allocated_fields[i]->name, NULL);
+     vftr_prof_column_print (fp, columns[1], vftr_allocated_fields[i]->caller, NULL);
+     vftr_prof_column_print (fp, columns[2], &mb, NULL);
+     vftr_prof_column_print (fp, columns[3], &vftr_allocated_fields[i]->n_calls, NULL);
+     vftr_prof_column_print (fp, columns[4], &mb_per_call, NULL);
+     fprintf (fp, "\n");
    }
 }
 
