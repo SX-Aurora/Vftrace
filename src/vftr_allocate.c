@@ -26,6 +26,7 @@
 #include "vftr_setup.h"
 #include "vftr_filewrite.h"
 #include "vftr_stacks.h"
+#include "vftr_pause.h"
 
 typedef struct allocate_list {
    char *name;
@@ -111,6 +112,7 @@ void vftr_allocate_set_open_state (int index) {
 
 //void vftrace_allocate (const char *s, const int *dims, const int *n, const int *element_size) {
 void vftrace_allocate (const char *s, const int *n_elements, const int *element_size) {
+   if (vftr_off() || vftr_paused) return;
    if (vftr_allocate_list_size == 0) {
       vftr_allocate_list_size = INIT_ALLOC_LIST;
       vftr_allocated_fields = (allocate_list_t**)malloc (vftr_allocate_list_size * sizeof(allocate_list_t*));
@@ -132,6 +134,7 @@ void vftrace_allocate (const char *s, const int *n_elements, const int *element_
 
 void vftrace_deallocate (const char *s) {
    //if (vftr_mpirank == 0) printf ("CALL VFTRACE_DEALLOCATE: %s\n", s);
+   if (vftr_off() || vftr_paused) return;
    int index = vftr_allocate_find_field (s, vftr_fstack->name);
    vftr_allocated_fields[index]->open = false;
    vftr_n_allocated_fields--;
