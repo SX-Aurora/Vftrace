@@ -155,7 +155,7 @@ void vftr_allocate_finalize () {
       vftr_prof_column_init ("Called by", NULL, 0, COL_CHAR, SEP_MID, &columns[1]);
       vftr_prof_column_init ("Total memory", NULL, 0, COL_MEM, SEP_MID, &columns[2]);
       vftr_prof_column_init ("n_calls", NULL, 0, COL_INT, SEP_MID, &columns[3]);
-      vftr_prof_column_init ("Memory / call", NULL, 0, COL_MEM, SEP_MID, &columns[4]);
+      vftr_prof_column_init ("Memory / call", NULL, 0, COL_MEM, SEP_LAST, &columns[4]);
       for (int i = 0; i < vftr_max_allocated_fields; i++) {
         //double mb = (double)vftr_allocated_fields[i]->allocated_memory / 1024 / 1024;
         double mb = (double)vftr_allocated_fields[i]->allocated_memory;
@@ -171,9 +171,14 @@ void vftr_allocate_finalize () {
       fprintf (stdout, "Registered fields: %d\n", vftr_max_allocated_fields);
       fprintf (stdout, "Unresolved allocations: %d\n", vftr_n_allocated_fields);
       fprintf (stdout, "***************************************************\n");
-      for (int i = 0; i < 5; i++) {
-        fprintf (stdout, " %*s ", columns[i].n_chars, columns[i].header);
-      }
+      fprintf (stdout, "| %*s | %*s | %*s | %*s | %*s |\n",
+               columns[0].n_chars, columns[0].header,
+               columns[1].n_chars, columns[1].header,
+               columns[2].n_chars, columns[2].header,
+               columns[3].n_chars, columns[3].header,
+               columns[4].n_chars, columns[4].header);
+      int table_width = vftr_get_tablewidth_from_columns (columns, 5, true);
+      for (int i = 0; i < table_width; i++) fprintf (stdout, "-");
       fprintf (stdout, "\n");
       for (int i = 0; i < vftr_max_allocated_fields; i++) {
         double mb = (double)vftr_allocated_fields[i]->allocated_memory;
@@ -185,12 +190,6 @@ void vftr_allocate_finalize () {
         vftr_prof_column_print (stdout, columns[4], &mb_per_call, NULL);
         fprintf (stdout, "\n");
       }
-      //printf ("%s %s %s %s %s\n", "Field name", "Called by", "MB total", "calls", "MB / call");
-      //for (int i = 0; i < vftr_max_allocated_fields; i++) {
-      //  double mb = (double)vftr_allocated_fields[i]->allocated_memory / 1024 / 1024;
-      //  printf ("%s %s %lf %d %lf\n", vftr_allocated_fields[i]->name, vftr_allocated_fields[i]->caller, 
-      //          mb, vftr_allocated_fields[i]->n_calls, mb / vftr_allocated_fields[i]->n_calls);
-      //}
    }
 }
 
