@@ -112,7 +112,11 @@ void vftr_allocate_set_open_state (int index) {
 
 //void vftrace_allocate (const char *s, const int *dims, const int *n, const int *element_size) {
 void vftrace_allocate (const char *s, const int *n_elements, const int *element_size) {
-   if (vftr_off() || vftr_paused) return;
+   //printf ("Check if bounce: \n");
+   if (vftr_off() || vftr_paused) {
+      printf ("Return\n");
+      return;
+   }
    if (vftr_allocate_list_size == 0) {
       vftr_allocate_list_size = INIT_ALLOC_LIST;
       vftr_allocated_fields = (allocate_list_t**)malloc (vftr_allocate_list_size * sizeof(allocate_list_t*));

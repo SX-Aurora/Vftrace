@@ -88,15 +88,12 @@ module vftrace
          character(c_char), intent(in) :: name(*)
       end subroutine vftrace_region_end_C
 
-      !!!subroutine vftrace_allocate_C (name, dims, n_dims, element_size) &
       subroutine vftrace_allocate_C (name, n_elements, element_size) &
          bind(c, name="vftrace_allocate")
          use iso_c_binding, only: c_char, c_int
          implicit none
          character(c_char), intent(in) :: name(*)
-         !!!integer(c_int), intent(in) :: dims(*)
          integer(c_int), intent(in) :: n_elements
-         !!!integer(c_int), intent(in) :: n_dims
          integer(c_int), intent(in) :: element_size
       end subroutine vftrace_allocate_C
   
@@ -185,32 +182,17 @@ contains
      use iso_c_binding, only: c_char, c_null_char, c_int
      implicit none
      character(len=*), intent(in) :: name
-     !!!integer, intent(in), dimension(:) :: n1
      integer, intent(in) :: n_elements
      integer, intent(in) :: element_size
      integer :: name_len, index_len
      character(kind=c_char,len=:), allocatable :: c_name
-     !!!integer(kind=c_int), dimension(:), allocatable :: n1_C
-     !!!integer :: i, element_size
      integer :: i
      name_len = len(adjustl(trim(name))) + 1
      allocate (character(len=name_len) :: c_name)
      c_name(:) = adjustl(trim(name))
-     c_name(name_len:name_len+1) = c_null_char
-     !!!index_len = size(n1)
-     !!!print *, 'n1: ', n1, size(n1)
-     !!!element_size = storage_size(n1) / 8 
-     !!!allocate (n1_C (index_len))
-     !!!do i = 1, index_len
-     !!!  n1_C(i) = int(n1(i), c_int)
-     !!!end do
-     !!!n1_C = int(n1, c_int) 
-     !!!print *, 'location: ', loc(n1_C)
-     !!!call vftrace_allocate_C (c_name, n1_C, index_len, element_size)
+     c_name(name_len-1:name_len) = c_null_char
      call vftrace_allocate_C (c_name, int(n_elements, c_int), int(element_size, c_int))
-     !!!call vftrace_allocate_1_C (c_name)
      deallocate (c_name)
-     !!!deallocate (n1_C)
    end subroutine vftrace_allocate
 
    subroutine vftrace_deallocate (name)
