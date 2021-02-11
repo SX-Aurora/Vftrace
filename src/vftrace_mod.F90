@@ -189,7 +189,7 @@ contains
      name_len = len(adjustl(trim(name))) + 1
      allocate (character(len=name_len) :: c_name)
      c_name(:) = adjustl(trim(name))
-     c_name(name_len:name_len+1) = c_null_char
+     c_name(name_len:name_len) = c_null_char
      call vftrace_allocate_C (c_name, int(n_elements, c_int), int(element_size, c_int))
      deallocate (c_name)
    end subroutine vftrace_allocate
