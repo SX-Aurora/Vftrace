@@ -665,6 +665,8 @@ void vftr_set_proftab_column_formats (function_t **func_table,
 		} 
  	}
 
+        vftr_prof_column_init ("Max mem", NULL, 0, COL_INT, SEP_NONE, &(columns)[i_column++]);
+
         vftr_prof_column_init ("Function", NULL, 0, COL_CHAR, SEP_NONE, &(columns)[i_column++]);
         vftr_prof_column_init ("Caller", NULL, 0, COL_CHAR, SEP_NONE, &(columns)[i_column++]);
         vftr_prof_column_init ("ID", NULL, 0, COL_INT, SEP_NONE, &(columns)[i_column++]);
@@ -707,6 +709,9 @@ void vftr_set_proftab_column_formats (function_t **func_table,
 		   vftr_prof_column_set_n_chars (&tmp, NULL, &(columns)[i_column++], &stat);
 	   	}
 	    }
+
+            long long mem_max = vftr_allocate_get_max_memory_for_stackid (func_table[i_func]->id);
+	    vftr_prof_column_set_n_chars (&mem_max, NULL, &(columns)[i_column++], &stat);
 
             vftr_prof_column_set_n_chars (func_table[i_func]->name, NULL, &(columns)[i_column++], &stat);
             vftr_prof_column_set_n_chars (func_table[i_func]->return_to->name, NULL, &(columns)[i_column++], &stat);
@@ -1267,7 +1272,7 @@ void vftr_compute_line_content (function_t *this_func, int *n_calls, long long *
 
 /**********************************************************************/
 
-void vftr_print_profile_line (FILE *fp_log, int stack_id,
+void vftr_print_profile_line (FILE *fp_log, int local_stack_id, int global_stack_id,
 			      long long runtime_usec, double sampling_overhead_time,
 			      int n_calls, long long t_excl, long long t_incl, long long t_sum, double t_overhead,
 			      char *func_name, char *caller_name, column_t *prof_columns) {
@@ -1291,13 +1296,16 @@ void vftr_print_profile_line (FILE *fp_log, int stack_id,
    	   vftr_prof_column_print (fp_log, prof_columns[i_column++], &vftr_scenario_expr_formulas[i].value, NULL);
    	}
    }
+
+   long long mem_max = vftr_allocate_get_max_memory_for_stackid (local_stack_id);
+   vftr_prof_column_print (fp_log, prof_columns[i_column++], &mem_max, NULL);
    
    vftr_prof_column_print (fp_log, prof_columns[i_column++], func_name, NULL);
    if (caller_name) {
        vftr_prof_column_print (fp_log, prof_columns[i_column++], caller_name, NULL);
    }
    
-   vftr_prof_column_print (fp_log, prof_columns[i_column++], &stack_id, NULL);
+   vftr_prof_column_print (fp_log, prof_columns[i_column++], &global_stack_id, NULL);
    fprintf (fp_log, "\n");
 }
 
@@ -1388,7 +1396,7 @@ void vftr_print_profile (FILE *fp_log, display_function_t **display_functions, i
        double t_overhead;
        vftr_compute_line_content (func_table[i_func], &n_calls, &t_excl, &t_incl, &t_overhead);
        cumulative_time += t_excl;
-       vftr_print_profile_line (fp_log, func_table[i_func]->gid,
+       vftr_print_profile_line (fp_log, func_table[i_func]->gid, func_table[i_func]->id, 
 			        function_time, sampling_overhead_time_usec * 1e-6,
 			        n_calls, t_excl, t_incl, cumulative_time, t_overhead,
 				func_table[i_func]->name, func_table[i_func]->return_to->name, prof_columns);

@@ -33,6 +33,8 @@ typedef struct allocate_list {
    char *name;
    char *caller;
    int n_calls;
+   int stack_id;
+   long long max_memory;
    long long allocated_memory;
    uint64_t id;
    bool open;
@@ -62,12 +64,14 @@ int vftr_compare_allocated_memory (const void *a1, const void *a2) {
 
 /**********************************************************************/
 
-void vftr_allocate_new_field (const char *name, const char *caller_function) {
+void vftr_allocate_new_field (const char *name, const char *caller_function, int stack_id) {
    allocate_list_t *new_field = (allocate_list_t*) malloc (sizeof(allocate_list_t));
    new_field->name = strdup(name);
    new_field->caller = strdup(caller_function);
    new_field->n_calls = 0;
+   new_field->stack_id = stack_id;
    new_field->allocated_memory = 0;
+   new_field->max_memory = 0;
    char name_and_caller[strlen(name) + strlen(caller_function) + 1];
    snprintf (name_and_caller, strlen(name) + strlen(caller_function) + 1, "%s%s", name, caller_function);
    new_field->id = vftr_jenkins_murmur_64_hash (strlen(name_and_caller), (uint8_t*)name_and_caller);
@@ -97,9 +101,20 @@ int vftr_allocate_find_field (const char *name, const char *caller_function) {
 void vftr_allocate_count (int index, long long alloc_size) {
    vftr_allocated_fields[index]->n_calls++;
    vftr_allocated_fields[index]->allocated_memory += alloc_size;
+   if (alloc_size > vftr_allocated_fields[index]->max_memory) vftr_allocated_fields[index]->max_memory = alloc_size;
 }
 
 /**********************************************************************/
+
+long long vftr_allocate_get_max_memory_for_stackid (int stack_id) {
+   long long mem_out = 0; 
+   for (int i = 0; i < vftr_max_allocated_fields; i++) {
+      if (vftr_allocated_fields[i]->stack_id == stack_id) {
+        if (vftr_allocated_fields[i]->max_memory > mem_out) mem_out = vftr_allocated_fields[i]->max_memory;
+      }
+   }
+   return mem_out;
+}
 
 void vftr_allocate_set_open_state (int index) {
    if (vftr_allocated_fields[index]->open) {
@@ -112,7 +127,6 @@ void vftr_allocate_set_open_state (int index) {
 /**********************************************************************/
 
 void vftrace_allocate (const char *s, const int *n_elements, const int *element_size) {
-   //printf ("Check if bounce: \n");
    if (vftr_off() || vftr_paused) {
       printf ("Return\n");
       return;
@@ -123,7 +137,7 @@ void vftrace_allocate (const char *s, const int *n_elements, const int *element_
    }
    int index = vftr_allocate_find_field (s, vftr_fstack->name);
    if (index < 0) {
-      vftr_allocate_new_field (s, vftr_fstack->name);
+      vftr_allocate_new_field (s, vftr_fstack->name, vftr_fstack->id);
       index = vftr_max_allocated_fields - 1;
    } else {
       vftr_allocate_set_open_state (index);
@@ -151,9 +165,9 @@ void vftr_allocate_finalize (FILE *fp) {
    column_t columns[5];
    vftr_prof_column_init ("Field name", NULL, 0, COL_CHAR, SEP_MID, &columns[0]);
    vftr_prof_column_init ("Called by", NULL, 0, COL_CHAR, SEP_MID, &columns[1]);
-   vftr_prof_column_init ("Total memory", NULL, 0, COL_MEM, SEP_MID, &columns[2]);
+   vftr_prof_column_init ("Total memory", NULL, 2, COL_MEM, SEP_MID, &columns[2]);
    vftr_prof_column_init ("n_calls", NULL, 0, COL_INT, SEP_MID, &columns[3]);
-   vftr_prof_column_init ("Memory / call", NULL, 0, COL_MEM, SEP_LAST, &columns[4]);
+   vftr_prof_column_init ("Memory / call", NULL, 2, COL_MEM, SEP_LAST, &columns[4]);
    for (int i = 0; i < vftr_max_allocated_fields; i++) {
      //double mb = (double)vftr_allocated_fields[i]->allocated_memory / 1024 / 1024;
      double mb = (double)vftr_allocated_fields[i]->allocated_memory;
