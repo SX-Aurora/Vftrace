@@ -226,7 +226,6 @@ void vftr_allocate_finalize (FILE *fp) {
    for (int i = 0; i < vftr_mpisize; i++) {
       total_allocated += all_n_allocated[i];
    }
-   //uint64_t *global_hashes = (uint64_t*)malloc (total_allocated * sizeof(uint64_t));
    uint64_t *global_hashes;
    long long *global_max;
    int n_unique_hashes;
@@ -287,14 +286,28 @@ void vftr_allocate_finalize (FILE *fp) {
       PMPI_Recv (global_hashes, n_unique_hashes, MPI_UINT64_T, 0, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
       PMPI_Recv (global_max, n_unique_hashes, MPI_LONG_LONG, 0, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
    }
+
+   long long *this_global_max = (long long*)malloc(vftr_max_allocated_fields * sizeof(long long));
+   for (int i = 0; i < vftr_max_allocated_fields; i++) {
+     uint64_t this_hash = vftr_allocated_fields[i]->id;
+     for (int j = 0; j < n_unique_hashes; j++) {
+       if (this_hash == global_hashes[j]) {
+         this_global_max[i] = global_max[j]; 
+         if (vftr_mpirank == 0) printf ("FOUND: %d %d %lld %lld\n", i, j, global_max[j], this_global_max[i]);
+         break;
+       }
+     }
+   }
+     
  
-   column_t columns[6];
+   column_t columns[7];
    vftr_prof_column_init ("Field name", NULL, 0, COL_CHAR, SEP_MID, &columns[0]);
    vftr_prof_column_init ("Called by", NULL, 0, COL_CHAR, SEP_MID, &columns[1]);
    vftr_prof_column_init ("Total memory", NULL, 2, COL_MEM, SEP_MID, &columns[2]);
    vftr_prof_column_init ("n_calls", NULL, 0, COL_INT, SEP_MID, &columns[3]);
    vftr_prof_column_init ("Memory / call", NULL, 2, COL_MEM, SEP_MID, &columns[4]);
-   vftr_prof_column_init ("ID", NULL, 0, COL_INT, SEP_LAST, &columns[5]);
+   vftr_prof_column_init ("Global Max", NULL, 2, COL_MEM, SEP_MID, &columns[5]);
+   vftr_prof_column_init ("ID", NULL, 0, COL_INT, SEP_LAST, &columns[6]);
    for (int i = 0; i < vftr_max_allocated_fields; i++) {
      double mb = (double)vftr_allocated_fields[i]->allocated_memory;
      double mb_per_call = mb / vftr_allocated_fields[i]->n_calls;
@@ -305,19 +318,22 @@ void vftr_allocate_finalize (FILE *fp) {
      vftr_prof_column_set_n_chars (&mb, NULL, &columns[2], &stat);
      vftr_prof_column_set_n_chars (&vftr_allocated_fields[i]->n_calls, NULL, &columns[3], &stat);
      vftr_prof_column_set_n_chars (&mb_per_call, NULL, &columns[4], &stat);
-     vftr_prof_column_set_n_chars (&id, NULL, &columns[5], &stat);
+     double foo = (double)this_global_max[i];
+     vftr_prof_column_set_n_chars (&foo, NULL, &columns[5], &stat);
+     vftr_prof_column_set_n_chars (&id, NULL, &columns[6], &stat);
    }
    fprintf (fp, "Vftrace memory allocation report:\n");
    fprintf (fp, "Registered fields: %d\n", vftr_max_allocated_fields);
    fprintf (fp, "Unresolved allocations: %d\n", vftr_n_allocated_fields);
    fprintf (fp, "***************************************************\n");
-   fprintf (fp, "| %*s | %*s | %*s | %*s | %*s | %*s |\n",
+   fprintf (fp, "| %*s | %*s | %*s | %*s | %*s | %*s | %*s |\n",
             columns[0].n_chars, columns[0].header,
             columns[1].n_chars, columns[1].header,
             columns[2].n_chars, columns[2].header,
             columns[3].n_chars, columns[3].header,
             columns[4].n_chars, columns[4].header,
-            columns[5].n_chars, columns[5].header);
+            columns[5].n_chars, columns[5].header,
+            columns[6].n_chars, columns[6].header);
    int table_width = vftr_get_tablewidth_from_columns (columns, 6, true);
    for (int i = 0; i < table_width; i++) fprintf (fp, "-");
    fprintf (fp, "\n");
@@ -329,10 +345,14 @@ void vftr_allocate_finalize (FILE *fp) {
      vftr_prof_column_print (fp, columns[2], &mb, NULL);
      vftr_prof_column_print (fp, columns[3], &vftr_allocated_fields[i]->n_calls, NULL);
      vftr_prof_column_print (fp, columns[4], &mb_per_call, NULL);
+     double foo = (double)this_global_max[i];
+     if (vftr_mpirank == 0) printf ("foo: %d %lf\n", i, foo);
+     vftr_prof_column_print (fp, columns[5], &foo, NULL);
      int id = vftr_func_table[vftr_allocated_fields[i]->stack_id]->gid;
-     vftr_prof_column_print (fp, columns[5], &id, NULL);
+     vftr_prof_column_print (fp, columns[6], &id, NULL);
      fprintf (fp, "\n");
    }
+ 
 }
 
 /**********************************************************************/
