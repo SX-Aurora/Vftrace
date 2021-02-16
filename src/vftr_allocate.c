@@ -150,7 +150,6 @@ void vftrace_allocate (const char *s, const int *n_elements, const int *element_
 /**********************************************************************/
 
 void vftrace_deallocate (const char *s) {
-   //if (vftr_mpirank == 0) printf ("CALL VFTRACE_DEALLOCATE: %s\n", s);
    if (vftr_off() || vftr_paused) return;
    int index = vftr_allocate_find_field (s, vftr_fstack->name);
    vftr_allocated_fields[index]->open = false;
@@ -176,13 +175,6 @@ void vftr_allocate_finalize (FILE *fp) {
          PMPI_Recv(&tmp, 1, MPI_INT, i, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
          all_n_allocated[i] = tmp;
       }
-   }
-   if (vftr_mpirank == 0) {
-     printf ("All n_allocated: ");
-     for (int i = 0; i < vftr_mpisize; i++) {
-        printf ("%d ", all_n_allocated[i]);
-     }
-     printf ("\n");
    }
    uint64_t *all_hashes[vftr_mpisize];
    if (vftr_mpirank == 0) {
@@ -293,7 +285,6 @@ void vftr_allocate_finalize (FILE *fp) {
      for (int j = 0; j < n_unique_hashes; j++) {
        if (this_hash == global_hashes[j]) {
          this_global_max[i] = global_max[j]; 
-         if (vftr_mpirank == 0) printf ("FOUND: %d %d %lld %lld\n", i, j, global_max[j], this_global_max[i]);
          break;
        }
      }
@@ -346,7 +337,6 @@ void vftr_allocate_finalize (FILE *fp) {
      vftr_prof_column_print (fp, columns[3], &vftr_allocated_fields[i]->n_calls, NULL);
      vftr_prof_column_print (fp, columns[4], &mb_per_call, NULL);
      double foo = (double)this_global_max[i];
-     if (vftr_mpirank == 0) printf ("foo: %d %lf\n", i, foo);
      vftr_prof_column_print (fp, columns[5], &foo, NULL);
      int id = vftr_func_table[vftr_allocated_fields[i]->stack_id]->gid;
      vftr_prof_column_print (fp, columns[6], &id, NULL);

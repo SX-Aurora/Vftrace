@@ -47,36 +47,28 @@ def check_if_function_or_subroutine (line):
   return value
   
 
-#def split_alloc_argument (arg, check_any_bracket=False):
 def split_alloc_argument (arg, ignore_percent=False):
-  #open_bracket = False
   n_open_brackets = 0
   # If there are % in the string, Ignore any bracket information until each has been encountered.
   if not ignore_percent:
     n_percent = arg.count("%")
   else:
     n_percent = 0
-  #any_full_bracket = not check_any_bracket
   all_args = []
   tmp = ""
   for char in arg:
     if not ignore_percent and char == "%":
       n_percent -= 1
       tmp += char
-    #elif not open_bracket and any_full_bracket and char == ",":
     elif n_percent == 0 and n_open_brackets == 0 and char == ",":
       all_args.append(tmp)
       tmp = ""
-      #any_full_bracket = n_percent == 0 and not check_any_bracket
     else: 
       if char == "(":
         n_open_brackets += 1
       elif char == ")":
-        #if open_bracket: any_full_bracket = n_percent == 0
         n_open_brackets -= 1 
-        #open_bracket = False
       tmp += char
-  #if any_full_bracket: all_args.append (tmp)
   all_args.append(tmp)
   return all_args
 
@@ -86,18 +78,8 @@ def split_line (tot_string, is_alloc, is_dealloc):
    tot_string = re.sub(r"&+", "", tot_string)
    # Get everything in between the outer brackets (...)
    tot_string = tot_string[tot_string.find("(")+1:-1]
-   #print ("Original: ", tot_string)
    # Get all the fields
-   #print ("Before splitting: ", tot_string)
-   #print ("tot_string: ", tot_string)
    fields = split_alloc_argument (tot_string)
-
-   #if is_alloc:
-   #  fields = tot_string.split(",")
-   #elif is_dealloc:
-   #  fields = tot_string.split(",")
-   #print ("After splitting: ", fields)
-   # Check if there is a "STAT" argument in the last element of the list. If so, we return the list reduced by one element.
    return fields
 
 def extract_name (field):
@@ -122,18 +104,6 @@ def construct_vftrace_allocate_call (field):
   # done with a call to "split". 
   first_significant_bracket = extract_name (field)
   name = field[0:first_significant_bracket-1]
-  #percent_indices = [i for i, this_char in enumerate(field) if this_char == "%"]
-  #n_percent = len(percent_indices)
-  #bracket_indices = [i for i, this_char in enumerate(field) if this_char == "("]
-  #print ("percent_indices: ", percent_indices)
-  #print ("bracket_indices: ", bracket_indices)
-  #first_significant_bracket = bracket_indices[0]
-  #if n_percent > 0:
-  #  for br_index in bracket_indices:
-  #    if br_index > percent_indices[0]:  
-  #      first_significant_bracket = br_index
-  #      break
-  #name = field[0:first_significant_bracket]
   rest = field[first_significant_bracket:-1]
   # Split at the commas. The first element is "<name>(<first_dim>", so we split again at the bracket.
   dims = split_alloc_argument (rest, ignore_percent=True)
@@ -164,7 +134,6 @@ def remove_trailing_comment(line):
     first_2 = p.start()
   else:
     first_2 = 0
-  #first_2 = re.search(r"\S",line).start()
   if first_1 > first_2:
     return line[0:first_1]
   else:
@@ -210,8 +179,6 @@ with open(filename_in, "r") as f_in, open(filename_out, "w") as f_out:
     is_dealloc = deallocate_pattern.match(line)
     # Put "use vftrace" after every subroutine or function definition, regardless if it is actually used.
     is_function_or_subroutine = check_if_function_or_subroutine (line)
-    #is_subroutine = subroutine_pattern.match(line)
-    #is_function = function_pattern.match(line)
 
     # We need to find out when the function definition has been written completely in the previous iteration.
     # On flag indicates that the subroutine definition has been started. If it is set, we check if it is finished.
@@ -237,7 +204,6 @@ with open(filename_in, "r") as f_in, open(filename_out, "w") as f_out:
       tot_string = remove_trailing_comment(line_tmp)
       tot_string = remove_trailing_semicolon(tot_string)
       i = i_line
-      #while "&" in line_tmp: 
       while line_to_be_continued(line_tmp):
         i = i + 1
 

@@ -665,7 +665,7 @@ void vftr_set_proftab_column_formats (function_t **func_table,
 		} 
  	}
 
-        vftr_prof_column_init ("Max mem", NULL, 2, COL_MEM, SEP_NONE, &(columns)[i_column++]);
+        if (vftr_max_mpirank > 0) vftr_prof_column_init ("Max mem", NULL, 2, COL_MEM, SEP_NONE, &(columns)[i_column++]);
 
         vftr_prof_column_init ("Function", NULL, 0, COL_CHAR, SEP_NONE, &(columns)[i_column++]);
         vftr_prof_column_init ("Caller", NULL, 0, COL_CHAR, SEP_NONE, &(columns)[i_column++]);
@@ -710,8 +710,10 @@ void vftr_set_proftab_column_formats (function_t **func_table,
 	   	}
 	    }
 
-            double mem_max = (double)vftr_allocate_get_max_memory_for_stackid (func_table[i_func]->id);
-	    vftr_prof_column_set_n_chars (&mem_max, NULL, &(columns)[i_column++], &stat);
+            if (vftr_max_mpirank > 0) {
+               double mem_max = (double)vftr_allocate_get_max_memory_for_stackid (func_table[i_func]->id);
+	       vftr_prof_column_set_n_chars (&mem_max, NULL, &(columns)[i_column++], &stat);
+            }
 
             vftr_prof_column_set_n_chars (func_table[i_func]->name, NULL, &(columns)[i_column++], &stat);
             vftr_prof_column_set_n_chars (func_table[i_func]->return_to->name, NULL, &(columns)[i_column++], &stat);
@@ -1297,8 +1299,10 @@ void vftr_print_profile_line (FILE *fp_log, int local_stack_id, int global_stack
    	}
    }
 
-   double mem_max = (double)vftr_allocate_get_max_memory_for_stackid (local_stack_id);
-   vftr_prof_column_print (fp_log, prof_columns[i_column++], &mem_max, NULL);
+   if (vftr_mpirank > 0) {
+      double mem_max = (double)vftr_allocate_get_max_memory_for_stackid (local_stack_id);
+      vftr_prof_column_print (fp_log, prof_columns[i_column++], &mem_max, NULL);
+   }
    
    vftr_prof_column_print (fp_log, prof_columns[i_column++], func_name, NULL);
    if (caller_name) {
