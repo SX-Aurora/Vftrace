@@ -38,6 +38,7 @@
 #include "vftr_stacks.h"
 #include "vftr_browse.h"
 #include "vftr_sorting.h"
+#include "vftr_allocate.h"
 
 // File pointer of the log file
 FILE *vftr_log = NULL;
@@ -665,7 +666,7 @@ void vftr_set_proftab_column_formats (function_t **func_table,
 		} 
  	}
 
-        if (vftr_max_mpirank > 0) vftr_prof_column_init ("Max mem", NULL, 2, COL_MEM, SEP_NONE, &(columns)[i_column++]);
+        if (vftr_max_allocated_fields > 0) vftr_prof_column_init ("Max mem", NULL, 2, COL_MEM, SEP_NONE, &(columns)[i_column++]);
 
         vftr_prof_column_init ("Function", NULL, 0, COL_CHAR, SEP_NONE, &(columns)[i_column++]);
         vftr_prof_column_init ("Caller", NULL, 0, COL_CHAR, SEP_NONE, &(columns)[i_column++]);
@@ -710,7 +711,7 @@ void vftr_set_proftab_column_formats (function_t **func_table,
 	   	}
 	    }
 
-            if (vftr_max_mpirank > 0) {
+            if (vftr_max_allocated_fields > 0) {
                double mem_max = (double)vftr_allocate_get_max_memory_for_stackid (func_table[i_func]->id);
 	       vftr_prof_column_set_n_chars (&mem_max, NULL, &(columns)[i_column++], &stat);
             }
