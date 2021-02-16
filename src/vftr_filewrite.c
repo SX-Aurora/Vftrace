@@ -140,7 +140,6 @@ void vftr_is_traceable_mpi_function (char *func_name, bool *is_mpi) {
          }
       }
    }
-   return;
 }
 
 /**********************************************************************/
@@ -566,8 +565,8 @@ void vftr_prof_column_print (FILE *fp, column_t c, void *value_1, void *value_2)
 	 break;
       case COL_SYNC:
          if (value_2 != NULL && c.n_chars_extra > 0 && *(double*)value_2 > 0.0) {
-            fprintf (fp, " %*.*f(%*.2f) ", c.n_chars - c.n_chars_extra - 3, c.n_decimal_places, c.n_chars_extra,
-		     *(double*)value_1, *(double*)value_2 / *(double*)value_1 * 100.0);
+            fprintf (fp, " %*.*f(%*.2f) ", c.n_chars - c.n_chars_extra - 3, c.n_decimal_places,
+		     *(double*)value_1, c.n_chars_extra, *(double*)value_2 / *(double*)value_1 * 100.0);
 	 } else {
             fprintf (fp, " %*.*f ", c.n_chars, c.n_decimal_places, *(double*)value_1);
 	 }
@@ -1300,7 +1299,7 @@ void vftr_print_profile_line (FILE *fp_log, int local_stack_id, int global_stack
    	}
    }
 
-   if (vftr_mpirank > 0) {
+   if (vftr_max_allocated_fields > 0) {
       double mem_max = (double)vftr_allocate_get_max_memory_for_stackid (local_stack_id);
       vftr_prof_column_print (fp_log, prof_columns[i_column++], &mem_max, NULL);
    }
