@@ -351,6 +351,8 @@ void vftr_finalize() {
     }
 
     if (vftr_max_allocated_fields > 0) vftr_allocate_finalize(vftr_log);
+
+    if (vftr_environment.print_env->value) vftr_print_environment(vftr_log);
     
     if (vftr_log) {
     	bool is_empty = (ftello (vftr_log) == (off_t)0);

@@ -261,6 +261,7 @@ void vftr_read_environment () {
     vftr_environment.create_html = vftr_read_env_bool ("VFTR_CREATE_HTML", false);
     vftr_environment.sort_profile_table = vftr_read_env_string ("VFTR_SORT_PROFILE_TABLE", "EXCL_TIME");
     vftr_environment.show_overhead = vftr_read_env_bool ("VFTR_SHOW_FUNCTION_OVERHEAD", false);
+    vftr_environment.print_env = vftr_read_env_bool ("VFTR_PRINT_ENVIRONMENT", false);
 }
 
 /**********************************************************************/
@@ -398,6 +399,7 @@ void vftr_free_environment () {
 	free (vftr_environment.create_html);
         free (vftr_environment.sort_profile_table);
 	free (vftr_environment.show_overhead);
+        free (vftr_environment.print_env);
 }
 
 /**********************************************************************/
@@ -429,6 +431,7 @@ void vftr_print_environment (FILE *fp) {
 	vftr_print_env_bool (fp, "VFTR_CREATE_HTML", vftr_environment.create_html);
 	vftr_print_env_string (fp, "VFTR_SORT_PROFILE_TABLE", vftr_environment.sort_profile_table);
         vftr_print_env_bool (fp, "VFTR_SHOW_FUNCTION_OVERHEAD", vftr_environment.show_overhead);
+        vftr_print_env_bool (fp, "VFTR_PRINT_ENVIRONMENT", vftr_environment.print_env);
 }
 
 /**********************************************************************/
