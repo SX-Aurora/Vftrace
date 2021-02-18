@@ -44,7 +44,6 @@ def check_if_function_or_subroutine (line):
       value = value and p > pos
       
   return value
-  
 
 def split_alloc_argument (arg, ignore_percent=False):
   n_open_brackets = 0
@@ -106,9 +105,25 @@ def construct_vftrace_allocate_call (field):
   for i, dim in enumerate(dims):
     # If there is a colon ("x1:x2") in the string, the dimension size is x2 - x1 + 1.
     # Otherwise, the dimension bounds start at 1, and the size is dim.
-    if ":" in dim:
-      tmp = dim.split(":")
-      dim_string += "(" + tmp[1] + "-" + tmp[0] + "+1)"
+    pos1 = dim.find(":")
+    if pos1 >= 0:
+      # Check if the colon is enclosed by brackets
+      pos2 = -1
+      pos3 = -1
+      for c in range(pos1, 0, -1):
+        if dim[c] == "(":
+          pos2 = c
+          break
+      for c in range(pos1, len(dim)):
+        if dim[c] == ")":
+          pos3 = c
+          break
+      enclosed = pos2 >= 0 and pos3 >= 0 and pos2 < pos1 and pos1 < pos3
+      if not enclosed:
+        tmp = dim.split(":")
+        dim_string += "(" + tmp[1] + "-" + tmp[0] + "+1)"
+      else:
+        dim_string += dim
     elif "+" in dim or "-" in dim:
       dim_string += "(" + dim + ")"
     else:
