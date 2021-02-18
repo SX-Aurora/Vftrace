@@ -28,7 +28,6 @@ def check_if_function_or_subroutine (line):
   else:
     value = False
   if value: #The pattern can still appear as part of a string. Check this.
-    print ("pos1: ", pos1, "pos2: ", pos2)
     pos4 = [i for i, this_char in enumerate(line) if this_char == "\""]
     pos5 = [i for i, this_char in enumerate(line) if this_char == "\'"]
     # If it is a proper routine definition, there can be no " before the position of the patterns (pos2, pos3).
@@ -121,7 +120,8 @@ def construct_vftrace_allocate_call (field):
       dim_string += dim
     if i + 1 < len(dims):
       dim_string += "*"
-  return "call vftrace_allocate(\"" + name + "\", " + dim_string + ", storage_size(" + name + ")/8)\n"
+#  return "call vftrace_allocate(\"" + name + "\", " + dim_string + ", storage_size(" + name + ")/8)\n"
+  return "call vftrace_allocate(\"" + name + "\", int(" + dim_string + ",int64), storage_size(" + name + ")/8)\n"
 
 def construct_vftrace_deallocate_call (field):
   # The input is simply the field name.
@@ -185,6 +185,7 @@ with open(filename_in, "r") as f_in, open(filename_out, "w") as f_out:
     # If the latter one is set before all the other ones, it's time to insert the use statement.
     if subroutine_end and not skip_subroutine:
        f_out.write ("use vftrace\n")
+       f_out.write ("use iso_fortran_env, only: int64\n")
        subroutine_end = False
     if is_function_or_subroutine:
        if re.search("pure ", line, re.IGNORECASE) or re.search("elemental ", line, re.IGNORECASE):
