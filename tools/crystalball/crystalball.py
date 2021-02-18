@@ -133,7 +133,7 @@ def update_crystalball(wcontrol, wfilter):
   ax.legend(plot_data, func_names)
   ax.set_xlabel (wcontrol.xlabel)
   if wcontrol.ylabel != '':
-    ax.set_ylabel (wcnotrol.ylabel)
+    ax.set_ylabel (wcontrol.ylabel)
   elif var_calls_checked.get():
     if var_normal_checked.get():
       ax.set_ylabel("%Calls")
