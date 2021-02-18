@@ -49,17 +49,12 @@ def check_if_function_or_subroutine (line):
 def split_alloc_argument (arg, ignore_percent=False):
   n_open_brackets = 0
   # If there are % in the string, Ignore any bracket information until each has been encountered.
-  if not ignore_percent:
-    n_percent = arg.count("%")
-  else:
-    n_percent = 0
   all_args = []
   tmp = ""
   for char in arg:
     if not ignore_percent and char == "%":
-      n_percent -= 1
       tmp += char
-    elif n_percent == 0 and n_open_brackets == 0 and char == ",":
+    elif n_open_brackets == 0 and char == ",":
       all_args.append(tmp)
       tmp = ""
     else: 
