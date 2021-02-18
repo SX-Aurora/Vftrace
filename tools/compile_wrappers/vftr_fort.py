@@ -106,9 +106,15 @@ def construct_vftrace_allocate_call (field):
   for i, dim in enumerate(dims):
     # If there is a colon ("x1:x2") in the string, the dimension size is x2 - x1 + 1.
     # Otherwise, the dimension bounds start at 1, and the size is dim.
-    if ":" in dim:
-      tmp = dim.split(":")
-      dim_string += "(" + tmp[1] + "-" + tmp[0] + "+1)"
+    pos1 = dim.find(":")                                                                                                                     
+    if pos1 >= 0:
+      # Check if the colon is enclosed by brackets                                                                                           
+      pos2 = dim.find("(")                                                                                                                   
+      pos3 = dim.find(")") 
+      enclosed = pos2 >= 0 and pos3 >= 0 and pos2 < pos1 and pos1 < pos3                                                                     
+      if not enclosed:
+        tmp = dim.split(":")
+        dim_string += "(" + tmp[1] + "-" + tmp[0] + "+1)" 
     elif "+" in dim or "-" in dim:
       dim_string += "(" + dim + ")"
     else:
@@ -207,7 +213,8 @@ with open(filename_in, "r") as f_in, open(filename_out, "w") as f_out:
           line_tmp = all_lines[i]
         else:
           break
-        tot_string += remove_trailing_comment(line_tmp)
+        if not re.match("^[ ]*!", line_tmp): # Not an entire comment line
+          tot_string += remove_trailing_comment(line_tmp)
       fields = split_line(tot_string, is_alloc, is_dealloc)
       fields_clear = []
       for f in fields:
