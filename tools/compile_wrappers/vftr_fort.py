@@ -7,8 +7,10 @@ filename_in = sys.argv[1]
 filename_out = filename_in + ".vftr"
 allocate_pattern = re.compile("^[ ]*allocate[\ ,\(]", re.IGNORECASE)
 deallocate_pattern = re.compile("^[ ]*deallocate[\ ,\(]", re.IGNORECASE)
-subroutine_pattern = re.compile(r"^[\S\s]*(pure)?(elemental)?[\S\s]*subroutine[\s]+[\S]*[ ]*(\()?", re.IGNORECASE)
-function_pattern = re.compile(r"^[\S\s]*(pure)?(elemental)?[\S\s]*function[\s]+[\S]*[ ]*(\()?", re.IGNORECASE)
+#subroutine_pattern = re.compile(r"^[\S\s]*(pure)?(elemental)?[\S\s]*subroutine[\s]+[\S]*[ ]*(\()?", re.IGNORECASE)
+subroutine_pattern = re.compile(r"^[\S\s]*(pure[\s]+)?(elemental[\s]+)?subroutine[\s]+[\S]*[ ]*(\()?", re.IGNORECASE)
+#function_pattern = re.compile(r"^[\S\s]*(pure)?(elemental)?[\S\s]*function[\s]+[\S]*[ ]*(\()?", re.IGNORECASE)
+function_pattern = re.compile(r"^[\S\s]*(pure[\s]+)?(elemental[\s]+)?function[\s]+[\S]*[ ]*(\()?", re.IGNORECASE)
 end_routine_pattern = re.compile(r"[ ]*end[ ]*(function|subroutine)", re.IGNORECASE)
 
 vftrace_wrapper_marker = "!!! VFTRACE 1.3 - Wrapper inserted malloc-trace calls\n"
@@ -27,7 +29,8 @@ def check_if_function_or_subroutine (line):
       value = True
   else:
     value = False
-  if value: #The pattern can still appear as part of a string. Check this.
+  # Check if the pattern appears as part of a string.
+  if value:
     pos4 = [i for i, this_char in enumerate(line) if this_char == "\""]
     pos5 = [i for i, this_char in enumerate(line) if this_char == "\'"]
     # If it is a proper routine definition, there can be no " before the position of the patterns (pos2, pos3).
@@ -42,7 +45,16 @@ def check_if_function_or_subroutine (line):
       value = value and p > pos
     for p in pos5:
       value = value and p > pos
-      
+  # Check if the pattern appears in a "public" or "private" declaration.                                         
+  if value:
+    if re.match ("^[ ]*(public|private)[\s\S]+(function|subroutine)", line, re.IGNORECASE):                                                  
+      value = False 
+  
+  # "function" can be part of a subroutine name which is called, e.g. "call foo_function".
+  if value:
+    if re.match ("^[ ]*call[\s\S]*function", line, re.IGNORECASE):
+      value = False
+    
   return value
 
 def split_alloc_argument (arg, ignore_percent=False):
@@ -111,17 +123,22 @@ def construct_vftrace_allocate_call (field):
       pos2 = -1
       pos3 = -1
       for c in range(pos1, 0, -1):
-        if dim[c] == "(":
+        if dim[c] == ")":
+          break
+        elif dim[c] == "(":
           pos2 = c
           break
       for c in range(pos1, len(dim)):
-        if dim[c] == ")":
+        if dim[c] == "(":
+          break
+        elif dim[c] == ")":
           pos3 = c
           break
       enclosed = pos2 >= 0 and pos3 >= 0 and pos2 < pos1 and pos1 < pos3
       if not enclosed:
         tmp = dim.split(":")
-        dim_string += "(" + tmp[1] + "-" + tmp[0] + "+1)"
+        # Add extra brackets around the second summand to keep correct sign of the expression in there.
+        dim_string += "(" + tmp[1] + "-(" + tmp[0] + ")+1)"
       else:
         dim_string += dim
     elif "+" in dim or "-" in dim:
