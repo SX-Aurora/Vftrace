@@ -222,7 +222,8 @@ with open(filename_in, "r") as f_in, open(filename_out, "w") as f_out:
           line_tmp = all_lines[i]
         else:
           break
-        tot_string += remove_trailing_comment(line_tmp)
+        if not re.match("^[ ]*!", line_tmp): # Not an entire comment line
+          tot_string += remove_trailing_comment(line_tmp)
       fields = split_line(tot_string, is_alloc, is_dealloc)
       fields_clear = []
       for f in fields:
