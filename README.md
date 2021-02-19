@@ -68,6 +68,9 @@ In these `vftr_MPI`-functions the communication is executed by calling the corre
 ```
 The `PMPI_` symbols do the same as their `MPI_` counterpart. This way, the MPI functions as used by the application are instrumented. The functionality inside the wrapper enables in-depth MPI sampling. The vftrace MPI-wrapper record which ranks are communicating (who sends, who receives), the message size, message type, and communication time.
 Non blocking communication is sampled by registering the non blocking call's request and checking for completion from time to time in the background.
+Persistent requests are registered and handled like normal non blocking calls upon calling `MPI_Start` or `MPI_Startall`.
+For collective communications inter- and intra-communicators are distinguished and handled to reflect their unique communication patterns.
+Special buffers like `MPI_IN_PLACE` are taken care of and handled accordingly.
 
 ## Hardware Observables
 
