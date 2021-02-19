@@ -24,10 +24,12 @@
 #include <string.h>
 
 #include "vftr_setup.h"
+#include "vftr_environment.h"
 #include "vftr_filewrite.h"
 #include "vftr_stacks.h"
 #include "vftr_pause.h"
 #include "vftr_allocate.h"
+#include "vftr_hashing.h"
 
 typedef struct allocate_list {
    char *name;
@@ -78,7 +80,7 @@ void vftr_allocate_new_field (const char *name, const char *caller_function, int
    new_field->open = true;
    if (vftr_max_allocated_fields + 1 > vftr_allocate_list_size) {
       vftr_allocate_list_size += ALLOC_LIST_INC;
-      vftr_allocated_fields = (allocate_list_t**)realloc (vftr_allocated_fields, ALLOC_LIST_INC * sizeof(allocate_list_t*));
+      vftr_allocated_fields = (allocate_list_t**)realloc (vftr_allocated_fields, vftr_allocate_list_size * sizeof(allocate_list_t*));
    }
    vftr_allocated_fields[vftr_max_allocated_fields++] = new_field;
 }
@@ -315,7 +317,6 @@ void vftr_allocate_finalize (FILE *fp) {
    }
    fprintf (fp, "Vftrace memory allocation report:\n");
    fprintf (fp, "Registered fields: %d\n", vftr_max_allocated_fields);
-   fprintf (fp, "Unresolved allocations: %d\n", vftr_n_allocated_fields);
    fprintf (fp, "***************************************************\n");
    fprintf (fp, "| %*s | %*s | %*s | %*s | %*s | %*s | %*s |\n",
             columns[0].n_chars, columns[0].header,
@@ -342,7 +343,8 @@ void vftr_allocate_finalize (FILE *fp) {
      vftr_prof_column_print (fp, columns[6], &id, NULL);
      fprintf (fp, "\n");
    }
- 
+   for (int i = 0; i < table_width; i++) fprintf (fp, "-");
+   fprintf (fp, "\n");
 }
 
 /**********************************************************************/
