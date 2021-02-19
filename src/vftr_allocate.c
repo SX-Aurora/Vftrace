@@ -37,6 +37,7 @@ typedef struct allocate_list {
    int n_calls;
    int stack_id;
    long long max_memory;
+   long long global_max;
    long long allocated_memory;
    uint64_t id;
    bool open;
@@ -64,6 +65,17 @@ int vftr_compare_allocated_memory (const void *a1, const void *a2) {
   return 0;
 }
 
+int vftr_compare_max_memory (const void *a1, const void *a2) {
+  allocate_list_t *l1 = *(allocate_list_t **)a1;
+  allocate_list_t *l2 = *(allocate_list_t **)a2;
+  if (!l1) return -1;
+  if (!l2) return 1;
+  long long diff = l2->global_max - l1->global_max;
+  if (diff > 0) return 1;
+  if (diff < 0) return -1;
+  return 0;
+}
+
 /**********************************************************************/
 
 void vftr_allocate_new_field (const char *name, const char *caller_function, int stack_id) {
@@ -74,6 +86,7 @@ void vftr_allocate_new_field (const char *name, const char *caller_function, int
    new_field->stack_id = stack_id;
    new_field->allocated_memory = 0;
    new_field->max_memory = 0;
+   new_field->global_max = 0;
    char name_and_caller[strlen(name) + strlen(caller_function) + 1];
    snprintf (name_and_caller, strlen(name) + strlen(caller_function) + 1, "%s%s", name, caller_function);
    new_field->id = vftr_jenkins_murmur_64_hash (strlen(name_and_caller), (uint8_t*)name_and_caller);
@@ -161,9 +174,6 @@ void vftrace_deallocate (const char *s) {
 /**********************************************************************/
 
 void vftr_allocate_finalize (FILE *fp) {
-   // First, sort everything
-   qsort ((void*)vftr_allocated_fields, (size_t)vftr_max_allocated_fields,
-          sizeof(allocate_list_t **), vftr_compare_allocated_memory); 
 
    // Search all the ranks for global maximal values.  
    PMPI_Barrier (MPI_COMM_WORLD);
@@ -281,17 +291,18 @@ void vftr_allocate_finalize (FILE *fp) {
       PMPI_Recv (global_max, n_unique_hashes, MPI_LONG_LONG, 0, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
    }
 
-   long long *this_global_max = (long long*)malloc(vftr_max_allocated_fields * sizeof(long long));
    for (int i = 0; i < vftr_max_allocated_fields; i++) {
      uint64_t this_hash = vftr_allocated_fields[i]->id;
      for (int j = 0; j < n_unique_hashes; j++) {
        if (this_hash == global_hashes[j]) {
-         this_global_max[i] = global_max[j]; 
+         vftr_allocated_fields[i]->global_max = global_max[j];
          break;
        }
      }
    }
-     
+
+   qsort ((void*)vftr_allocated_fields, (size_t)vftr_max_allocated_fields,
+          sizeof(allocate_list_t **), vftr_compare_max_memory); 
  
    column_t columns[7];
    vftr_prof_column_init ("Field name", NULL, 0, COL_CHAR, SEP_MID, &columns[0]);
@@ -311,8 +322,8 @@ void vftr_allocate_finalize (FILE *fp) {
      vftr_prof_column_set_n_chars (&mb, NULL, &columns[2], &stat);
      vftr_prof_column_set_n_chars (&vftr_allocated_fields[i]->n_calls, NULL, &columns[3], &stat);
      vftr_prof_column_set_n_chars (&mb_per_call, NULL, &columns[4], &stat);
-     double foo = (double)this_global_max[i];
-     vftr_prof_column_set_n_chars (&foo, NULL, &columns[5], &stat);
+     double gm = (double)vftr_allocated_fields[i]->global_max;
+     vftr_prof_column_set_n_chars (&gm, NULL, &columns[5], &stat);
      vftr_prof_column_set_n_chars (&id, NULL, &columns[6], &stat);
    }
    fprintf (fp, "Vftrace memory allocation report:\n");
@@ -337,8 +348,8 @@ void vftr_allocate_finalize (FILE *fp) {
      vftr_prof_column_print (fp, columns[2], &mb, NULL);
      vftr_prof_column_print (fp, columns[3], &vftr_allocated_fields[i]->n_calls, NULL);
      vftr_prof_column_print (fp, columns[4], &mb_per_call, NULL);
-     double foo = (double)this_global_max[i];
-     vftr_prof_column_print (fp, columns[5], &foo, NULL);
+     double gm = (double)vftr_allocated_fields[i]->global_max;
+     vftr_prof_column_print (fp, columns[5], &gm, NULL);
      int id = vftr_func_table[vftr_allocated_fields[i]->stack_id]->gid;
      vftr_prof_column_print (fp, columns[6], &id, NULL);
      fprintf (fp, "\n");
