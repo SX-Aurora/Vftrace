@@ -142,10 +142,7 @@ void vftr_allocate_set_open_state (int index) {
 /**********************************************************************/
 
 void vftrace_allocate (const char *s, const int *n_elements, const int *element_size) {
-   if (vftr_off() || vftr_paused) {
-      printf ("Return\n");
-      return;
-   }
+   if (vftr_off() || vftr_paused || vftr_env_no_memtrace()) return;
    if (vftr_allocate_list_size == 0) {
       vftr_allocate_list_size = INIT_ALLOC_LIST;
       vftr_allocated_fields = (allocate_list_t**)malloc (vftr_allocate_list_size * sizeof(allocate_list_t*));
@@ -165,7 +162,7 @@ void vftrace_allocate (const char *s, const int *n_elements, const int *element_
 /**********************************************************************/
 
 void vftrace_deallocate (const char *s) {
-   if (vftr_off() || vftr_paused) return;
+   if (vftr_off() || vftr_paused || vftr_env_no_memtrace()) return;
    int index = vftr_allocate_find_field (s, vftr_fstack->name);
    vftr_allocated_fields[index]->open = false;
    vftr_n_allocated_fields--;
