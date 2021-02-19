@@ -7,9 +7,7 @@ filename_in = sys.argv[1]
 filename_out = filename_in + ".vftr"
 allocate_pattern = re.compile("^[ ]*allocate[\ ,\(]", re.IGNORECASE)
 deallocate_pattern = re.compile("^[ ]*deallocate[\ ,\(]", re.IGNORECASE)
-#subroutine_pattern = re.compile(r"^[\S\s]*(pure)?(elemental)?[\S\s]*subroutine[\s]+[\S]*[ ]*(\()?", re.IGNORECASE)
 subroutine_pattern = re.compile(r"^[\S\s]*(pure[\s]+)?(elemental[\s]+)?subroutine[\s]+[\S]+[ ]*(\()?", re.IGNORECASE)
-#function_pattern = re.compile(r"^[\S\s]*(pure)?(elemental)?[\S\s]*function[\s]+[\S]*[ ]*(\()?", re.IGNORECASE)
 function_pattern = re.compile(r"^[\S\s]*(pure[\s]+)?(elemental[\s]+)?function[\s]+[\S]+[ ]*(\()?", re.IGNORECASE)
 program_pattern = re.compile(r"^[\S\s]*program[\s]+[\S]*", re.IGNORECASE)
 end_routine_pattern = re.compile(r"[ ]*end[ ]*(function|subroutine|program)", re.IGNORECASE)
@@ -151,7 +149,6 @@ def construct_vftrace_allocate_call (field):
       dim_string += dim
     if i + 1 < len(dims):
       dim_string += "*"
-#  return "call vftrace_allocate(\"" + name + "\", " + dim_string + ", storage_size(" + name + ")/8)\n"
   return "call vftrace_allocate(\"" + name + "\", int(" + dim_string + ",int64), storage_size(" + name + ")/8)\n"
 
 def construct_vftrace_deallocate_call (field):
