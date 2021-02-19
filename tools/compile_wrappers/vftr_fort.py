@@ -8,31 +8,33 @@ filename_out = filename_in + ".vftr"
 allocate_pattern = re.compile("^[ ]*allocate[\ ,\(]", re.IGNORECASE)
 deallocate_pattern = re.compile("^[ ]*deallocate[\ ,\(]", re.IGNORECASE)
 #subroutine_pattern = re.compile(r"^[\S\s]*(pure)?(elemental)?[\S\s]*subroutine[\s]+[\S]*[ ]*(\()?", re.IGNORECASE)
-subroutine_pattern = re.compile(r"^[\S\s]*(pure[\s]+)?(elemental[\s]+)?subroutine[\s]+[\S]*[ ]*(\()?", re.IGNORECASE)
+subroutine_pattern = re.compile(r"^[\S\s]*(pure[\s]+)?(elemental[\s]+)?subroutine[\s]+[\S]+[ ]*(\()?", re.IGNORECASE)
 #function_pattern = re.compile(r"^[\S\s]*(pure)?(elemental)?[\S\s]*function[\s]+[\S]*[ ]*(\()?", re.IGNORECASE)
-function_pattern = re.compile(r"^[\S\s]*(pure[\s]+)?(elemental[\s]+)?function[\s]+[\S]*[ ]*(\()?", re.IGNORECASE)
-end_routine_pattern = re.compile(r"[ ]*end[ ]*(function|subroutine)", re.IGNORECASE)
+function_pattern = re.compile(r"^[\S\s]*(pure[\s]+)?(elemental[\s]+)?function[\s]+[\S]+[ ]*(\()?", re.IGNORECASE)
+program_pattern = re.compile(r"^[\S\s]*program[\s]+[\S]*", re.IGNORECASE)
+end_routine_pattern = re.compile(r"[ ]*end[ ]*(function|subroutine|program)", re.IGNORECASE)
 
 vftrace_wrapper_marker = "!!! VFTRACE 1.3 - Wrapper inserted malloc-trace calls\n"
 
 def check_if_function_or_subroutine (line):
-  if subroutine_pattern.match(line) or function_pattern.match(line):
+  if subroutine_pattern.match(line) or function_pattern.match(line) or program_pattern.match(line):
     ll = line.lower()
     if end_routine_pattern.match(ll):
       return False
     pos1 = ll.find("!")
     pos2 = ll.find("function")
     pos3 = ll.find("subroutine")
+    pos4 = ll.find("program")
     if (pos1 >= 0): # There is a comment. Find out if it is behind the function definition.
-      value = (pos2 >= 0 and pos2 < pos1) or (pos3 >= 0 and pos3 < pos1)
+      value = (pos2 >= 0 and pos2 < pos1) or (pos3 >= 0 and pos3 < pos1) or (pos4 >= 0 and pos4 < pos1)
     else:
       value = True
   else:
     value = False
   # Check if the pattern appears as part of a string.
   if value:
-    pos4 = [i for i, this_char in enumerate(line) if this_char == "\""]
-    pos5 = [i for i, this_char in enumerate(line) if this_char == "\'"]
+    pos5 = [i for i, this_char in enumerate(line) if this_char == "\""]
+    pos6 = [i for i, this_char in enumerate(line) if this_char == "\'"]
     # If it is a proper routine definition, there can be no " before the position of the patterns (pos2, pos3).
     # We therefore only check if there is any pos4 or pos5 smaller than that.
     if pos2 >= 0 and pos3 >= 0:
@@ -41,9 +43,11 @@ def check_if_function_or_subroutine (line):
       pos = pos2
     elif pos3 >= 0:
       pos = pos3
-    for p in pos4:
-      value = value and p > pos
+    elif pos4 >= 0:
+      pos = pos4
     for p in pos5:
+      value = value and p > pos
+    for p in pos6:
       value = value and p > pos
   # Check if the pattern appears in a "public" or "private" declaration.                                         
   if value:
