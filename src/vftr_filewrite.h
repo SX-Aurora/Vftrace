@@ -92,6 +92,13 @@ double vftr_compute_mpi_imbalance (long long *all_times, double t_avg);
 #endif
 bool vftr_is_collective_mpi_function (char *func_name);
 
+#ifdef _MPI
+// store some message information for use in the log file
+void vftr_log_message_info(vftr_direction dir, int count, int type_idx,
+                           int type_size, int rank, int tag,
+                           long long tstart, long long tend);
+#endif
+
 void vftr_store_message_info(vftr_direction dir, int count, int type_idx,
                              int type_size, int rank, int tag,
                              long long tstart, long long tend,
