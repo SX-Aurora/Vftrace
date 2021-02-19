@@ -172,131 +172,137 @@ void vftrace_deallocate (const char *s) {
 
 void vftr_allocate_finalize (FILE *fp) {
 
-   // Search all the ranks for global maximal values.  
-   PMPI_Barrier (MPI_COMM_WORLD);
-   int all_n_allocated[vftr_mpisize];
-   if (vftr_mpirank > 0) {
-      PMPI_Send (&vftr_max_allocated_fields, 1, MPI_INT, 0, 0, MPI_COMM_WORLD);
-   } else {
-      all_n_allocated[0] = vftr_max_allocated_fields;
-      for (int i = 1; i < vftr_mpisize; i++) {
-         int tmp;
-         PMPI_Recv(&tmp, 1, MPI_INT, i, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
-         all_n_allocated[i] = tmp;
-      }
-   }
-   uint64_t *all_hashes[vftr_mpisize];
-   if (vftr_mpirank == 0) {
-      for (int i = 0; i < vftr_mpisize; i++) {
-         all_hashes[i] = (uint64_t*)malloc (all_n_allocated[i] * sizeof(uint64_t));
-      }
-   }
-   uint64_t *my_hashes = (uint64_t*)malloc (vftr_max_allocated_fields * sizeof(uint64_t));
-   for (int i = 0; i < vftr_max_allocated_fields; i++) {
-     my_hashes[i] = vftr_allocated_fields[i]->id;
-     if (vftr_mpirank == 0) all_hashes[0][i] = my_hashes[i];
-   }
-   if (vftr_mpirank > 0) {
-     PMPI_Send (my_hashes, vftr_max_allocated_fields, MPI_UINT64_T, 0, 0, MPI_COMM_WORLD);
-   } else {
-     for (int i = 1; i < vftr_mpisize; i++) {
-        PMPI_Recv(all_hashes[i], all_n_allocated[i], MPI_UINT64_T, i, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+   if (vftr_mpirank > 1) {
+#ifdef _MPI
+     // Search all the ranks for global maximal values.  
+     PMPI_Barrier (MPI_COMM_WORLD);
+     int all_n_allocated[vftr_mpisize];
+     if (vftr_mpirank > 0) {
+        PMPI_Send (&vftr_max_allocated_fields, 1, MPI_INT, 0, 0, MPI_COMM_WORLD);
+     } else {
+        all_n_allocated[0] = vftr_max_allocated_fields;
+        for (int i = 1; i < vftr_mpisize; i++) {
+           int tmp;
+           PMPI_Recv(&tmp, 1, MPI_INT, i, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+           all_n_allocated[i] = tmp;
+        }
      }
-   }
-
-   long long *all_max_memories[vftr_mpisize];
-   if (vftr_mpirank == 0) {
-     for (int i = 0; i < vftr_mpisize; i++) {
-        all_max_memories[i] = (long long *)malloc (all_n_allocated[i] * sizeof(long long));
+     uint64_t *all_hashes[vftr_mpisize];
+     if (vftr_mpirank == 0) {
+        for (int i = 0; i < vftr_mpisize; i++) {
+           all_hashes[i] = (uint64_t*)malloc (all_n_allocated[i] * sizeof(uint64_t));
+        }
      }
-   }
-   long long *my_max_mem = (long long*)malloc (vftr_max_allocated_fields * sizeof(long long));
-   for (int i = 0; i < vftr_max_allocated_fields; i++) {
-      my_max_mem[i] = vftr_allocated_fields[i]->max_memory;
-      if (vftr_mpirank == 0) all_max_memories[0][i] = my_max_mem[i];
-   }
-   if (vftr_mpirank > 0) {
-      PMPI_Send (my_max_mem, vftr_max_allocated_fields, MPI_LONG_LONG, 0, 0, MPI_COMM_WORLD);
-   } else {
-     for (int i = 1; i < vftr_mpisize; i++) {
-        PMPI_Recv(all_max_memories[i], all_n_allocated[i], MPI_LONG_LONG, i, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+     uint64_t *my_hashes = (uint64_t*)malloc (vftr_max_allocated_fields * sizeof(uint64_t));
+     for (int i = 0; i < vftr_max_allocated_fields; i++) {
+       my_hashes[i] = vftr_allocated_fields[i]->id;
+       if (vftr_mpirank == 0) all_hashes[0][i] = my_hashes[i];
      }
-   }
-
-   int total_allocated = 0;
-   for (int i = 0; i < vftr_mpisize; i++) {
-      total_allocated += all_n_allocated[i];
-   }
-   uint64_t *global_hashes;
-   long long *global_max;
-   int n_unique_hashes;
-
-   if (vftr_mpirank == 0) {
-      bool already_there;
-      n_unique_hashes = 0;
-      uint64_t *tmp_hashes = (uint64_t*)malloc (total_allocated * sizeof(uint64_t));
-      for (int rank = 0; rank < vftr_mpisize; rank++) {
-         for (int i = 0; i < all_n_allocated[rank]; i++) { 
-            already_there = false;
-            for (int j = 0; j < n_unique_hashes; j++) {
-               if (tmp_hashes[j] == all_hashes[rank][i]) {
-                  already_there = true;
-                  break;
-               }
-            }
-            if (!already_there) {
-                tmp_hashes[n_unique_hashes++] = all_hashes[rank][i];
-            }
-         }
-      } 
-      global_hashes = (uint64_t*)malloc (n_unique_hashes * sizeof(uint64_t));
-
-      int has_hash[n_unique_hashes][vftr_mpisize];
-      for (int i = 0; i < n_unique_hashes; i++) {
-        global_hashes[i] = tmp_hashes[i];
-        for (int rank = 0; rank < vftr_mpisize; rank++) {
-           has_hash[i][rank] = -1;
-           for (int i_local = 0; i_local < all_n_allocated[rank]; i_local++) {
-              if (all_hashes[rank][i_local] == global_hashes[i]) {
-                has_hash[i][rank] = i_local;
-                break;
-              }
-           }
-         }
-      }
-      global_max = (long long*) malloc (n_unique_hashes * sizeof(long long));
-      for (int i = 0; i < n_unique_hashes; i++) {
-         global_max[i] = 0;
-         for (int rank = 0; rank < vftr_mpisize; rank++) {
-            int i_local = has_hash[i][rank];
-            if (i_local > -1) {
-              if (all_max_memories[rank][i_local] > global_max[i]) global_max[i] = all_max_memories[rank][i_local];
-            }
-         }
-      }
-      for (int i = 1; i < vftr_mpisize; i++) {
-         PMPI_Send (&n_unique_hashes, 1, MPI_INT, i, 0, MPI_COMM_WORLD);
-         PMPI_Send (global_hashes, n_unique_hashes, MPI_UINT64_T, i, 0, MPI_COMM_WORLD);
-         PMPI_Send (global_max, n_unique_hashes, MPI_LONG_LONG, i, 0, MPI_COMM_WORLD);
-      }
-      free(tmp_hashes);
-   } else {
-      PMPI_Recv (&n_unique_hashes, 1, MPI_INT, 0, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
-      global_hashes = (uint64_t*)malloc(n_unique_hashes * sizeof(uint64_t));
-      global_max = (long long*)malloc(n_unique_hashes * sizeof(long long));
-      PMPI_Recv (global_hashes, n_unique_hashes, MPI_UINT64_T, 0, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
-      PMPI_Recv (global_max, n_unique_hashes, MPI_LONG_LONG, 0, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
-   }
-
-   for (int i = 0; i < vftr_max_allocated_fields; i++) {
-     uint64_t this_hash = vftr_allocated_fields[i]->id;
-     for (int j = 0; j < n_unique_hashes; j++) {
-       if (this_hash == global_hashes[j]) {
-         vftr_allocated_fields[i]->global_max = global_max[j];
-         break;
+     if (vftr_mpirank > 0) {
+       PMPI_Send (my_hashes, vftr_max_allocated_fields, MPI_UINT64_T, 0, 0, MPI_COMM_WORLD);
+     } else {
+       for (int i = 1; i < vftr_mpisize; i++) {
+          PMPI_Recv(all_hashes[i], all_n_allocated[i], MPI_UINT64_T, i, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
        }
      }
-   }
+  
+     long long *all_max_memories[vftr_mpisize];
+     if (vftr_mpirank == 0) {
+       for (int i = 0; i < vftr_mpisize; i++) {
+          all_max_memories[i] = (long long *)malloc (all_n_allocated[i] * sizeof(long long));
+       }
+     }
+     long long *my_max_mem = (long long*)malloc (vftr_max_allocated_fields * sizeof(long long));
+     for (int i = 0; i < vftr_max_allocated_fields; i++) {
+        my_max_mem[i] = vftr_allocated_fields[i]->max_memory;
+        if (vftr_mpirank == 0) all_max_memories[0][i] = my_max_mem[i];
+     }
+     if (vftr_mpirank > 0) {
+        PMPI_Send (my_max_mem, vftr_max_allocated_fields, MPI_LONG_LONG, 0, 0, MPI_COMM_WORLD);
+     } else {
+       for (int i = 1; i < vftr_mpisize; i++) {
+          PMPI_Recv(all_max_memories[i], all_n_allocated[i], MPI_LONG_LONG, i, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+       }
+     }
+  
+     int total_allocated = 0;
+     for (int i = 0; i < vftr_mpisize; i++) {
+        total_allocated += all_n_allocated[i];
+     }
+     uint64_t *global_hashes;
+     long long *global_max;
+     int n_unique_hashes;
+  
+     if (vftr_mpirank == 0) {
+        bool already_there;
+        n_unique_hashes = 0;
+        uint64_t *tmp_hashes = (uint64_t*)malloc (total_allocated * sizeof(uint64_t));
+        for (int rank = 0; rank < vftr_mpisize; rank++) {
+           for (int i = 0; i < all_n_allocated[rank]; i++) { 
+              already_there = false;
+              for (int j = 0; j < n_unique_hashes; j++) {
+                 if (tmp_hashes[j] == all_hashes[rank][i]) {
+                    already_there = true;
+                    break;
+                 }
+              }
+              if (!already_there) {
+                  tmp_hashes[n_unique_hashes++] = all_hashes[rank][i];
+              }
+           }
+        } 
+        global_hashes = (uint64_t*)malloc (n_unique_hashes * sizeof(uint64_t));
+  
+        int has_hash[n_unique_hashes][vftr_mpisize];
+        for (int i = 0; i < n_unique_hashes; i++) {
+          global_hashes[i] = tmp_hashes[i];
+          for (int rank = 0; rank < vftr_mpisize; rank++) {
+             has_hash[i][rank] = -1;
+             for (int i_local = 0; i_local < all_n_allocated[rank]; i_local++) {
+                if (all_hashes[rank][i_local] == global_hashes[i]) {
+                  has_hash[i][rank] = i_local;
+                  break;
+                }
+             }
+           }
+        }
+        global_max = (long long*) malloc (n_unique_hashes * sizeof(long long));
+        for (int i = 0; i < n_unique_hashes; i++) {
+           global_max[i] = 0;
+           for (int rank = 0; rank < vftr_mpisize; rank++) {
+              int i_local = has_hash[i][rank];
+              if (i_local > -1) {
+                if (all_max_memories[rank][i_local] > global_max[i]) global_max[i] = all_max_memories[rank][i_local];
+              }
+           }
+        }
+        for (int i = 1; i < vftr_mpisize; i++) {
+           PMPI_Send (&n_unique_hashes, 1, MPI_INT, i, 0, MPI_COMM_WORLD);
+           PMPI_Send (global_hashes, n_unique_hashes, MPI_UINT64_T, i, 0, MPI_COMM_WORLD);
+           PMPI_Send (global_max, n_unique_hashes, MPI_LONG_LONG, i, 0, MPI_COMM_WORLD);
+        }
+        free(tmp_hashes);
+     } else {
+        PMPI_Recv (&n_unique_hashes, 1, MPI_INT, 0, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+        global_hashes = (uint64_t*)malloc(n_unique_hashes * sizeof(uint64_t));
+        global_max = (long long*)malloc(n_unique_hashes * sizeof(long long));
+        PMPI_Recv (global_hashes, n_unique_hashes, MPI_UINT64_T, 0, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+        PMPI_Recv (global_max, n_unique_hashes, MPI_LONG_LONG, 0, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+     }
+  
+     for (int i = 0; i < vftr_max_allocated_fields; i++) {
+       uint64_t this_hash = vftr_allocated_fields[i]->id;
+       for (int j = 0; j < n_unique_hashes; j++) {
+         if (this_hash == global_hashes[j]) {
+           vftr_allocated_fields[i]->global_max = global_max[j];
+           break;
+         }
+       }
+     }
+#endif
+  } else {
+    vftr_allocated_fields[0]->global_max = vftr_allocated_fields[0]->max_memory;   
+  }
 
    qsort ((void*)vftr_allocated_fields, (size_t)vftr_max_allocated_fields,
           sizeof(allocate_list_t **), vftr_compare_max_memory); 
