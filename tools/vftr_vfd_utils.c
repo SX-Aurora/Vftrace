@@ -221,10 +221,12 @@ void read_stack_sample (FILE *fp, int n_hw_obs, int *stack_id,
 			long long *sample_time, long long *hw_values, long long *cycle_time) {
 	fread (stack_id, sizeof(int), 1, fp);
 	fread (sample_time, sizeof(long long), 1, fp);
-	for (int i = 0; i < n_hw_obs; i++) {
-           fread (&(hw_values[i]), sizeof(long long), 1, fp);
-	}
-        fread (&cycle_time, sizeof(long long), 1, fp);
+        if (n_hw_obs > 0) {
+	   for (int i = 0; i < n_hw_obs; i++) {
+              fread (&(hw_values[i]), sizeof(long long), 1, fp);
+	   }
+           fread (&cycle_time, sizeof(long long), 1, fp);
+        }
 }
 
 /**********************************************************************/

@@ -161,7 +161,9 @@ int main (int argc, char **argv) {
             }
 
             fprintf (fp_out, "%16.6f %s ", sample_time_s, sample_id == SID_ENTRY ? "call" : "exit");
-            fprintf (fp_out, "%16.6f ", (double)cycle_time * 1.0e-6);
+            if (vfd_header.n_hw_obs > 0) {
+               fprintf (fp_out, "%16.6f ", (double)cycle_time * 1.0e-6);
+            }
             for( ;; stack_id = stacks[stack_id].caller ) {
                fprintf (fp_out, "%s%s", stacks[stack_id].name, stack_id ? "<" : "" );
                if(stack_id == 0) break;
