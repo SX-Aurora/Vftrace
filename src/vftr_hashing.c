@@ -220,7 +220,7 @@ void vftr_synchronise_hashes(int *nptr, uint64_t **hashlistptr) {
 
    // free the local resources
    // The custom MPI-type
-   MPI_Type_free(&mpi_uint64);
+   PMPI_Type_free(&mpi_uint64);
 
    // The rank 0 exclusive arrays for the MPI-communication
    if (vftr_mpirank == 0) {
