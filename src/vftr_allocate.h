@@ -15,19 +15,17 @@
    with this program; if not, write to the Free Software Foundation, Inc.,
    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-#ifndef VFTR_FILEUTILS_H
-#define VFTR_FILEUTILS_H
 
-#include <stdbool.h>
+#ifndef VFTR_ALLOCATE_H
+#define VFTR_ALLOCATE_H
 
-char *vftr_get_application_name ();
+extern int vftr_max_allocated_fields;
 
-int vftr_count_digits_long  (long long value);
-int vftr_count_digits_int (int value);
-int vftr_count_digits_double (double value);
-char *vftr_bool_to_string (bool value);
-void vftr_print_dashes (FILE *fp, int n);
-char *vftr_to_lowercase(char *s_orig);
-void vftr_logfile_warning (FILE *fp, char *message);
+long long vftr_allocate_get_max_memory_for_stackid (int stack_id);
+
+void vftrace_allocate (const char *s, const int *n_elements, const int *element_size);
+void vftrace_deallocate (const char *s);
+
+void vftr_allocate_finalize(FILE *fp);
 
 #endif

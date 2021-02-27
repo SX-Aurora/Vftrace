@@ -92,6 +92,7 @@ typedef struct vftr_envs {
 	env_var_bool_t *create_html;
 	env_var_string_t *sort_profile_table;
 	env_var_bool_t *show_overhead;
+        env_var_bool_t *print_env;
 } vftr_envs_t;
 
 // The global container for environment variables.
@@ -107,6 +108,7 @@ bool vftr_off();
 void vftr_switch_off();
 bool vftr_env_do_sampling();
 int vftr_profile_sorting_method();
+void vftr_print_environment (FILE *fp);
 
 int vftr_environment_test_1 (FILE *fp);
 

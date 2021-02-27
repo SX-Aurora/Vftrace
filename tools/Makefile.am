@@ -30,4 +30,5 @@ if USES_NEC_MPI
   vftrace_vfd_dump_LDFLAGS += -mpiprof
   vftrace_show_function_stacks_LDFLAGS += -mpiprof
   vftrace_filter_stacks_LDFLAGS += -mpiprof
+  vftrace_diff_profiles_LDFLAGS += -mpiprof
 endif

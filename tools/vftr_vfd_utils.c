@@ -167,8 +167,8 @@ void read_scenario_header (FILE *fp, int n_hw_obs, int n_formulas, bool verbose)
            fread (&slength, sizeof(int), 1, fp);
            char *formula_expr = (char*) malloc (sizeof(char) * slength);
            fread (formula_expr, sizeof(char), slength, fp);
-           int is_integrated;
-           fread (&is_integrated, sizeof(int), 1, fp);
+           bool is_integrated;
+           fread (&is_integrated, sizeof(bool), 1, fp);
            if (verbose) printf ("%s: %s (%s)\n", formula_name, formula_expr, is_integrated ? "integrated" : "differential");
            free (formula_name);
            free (formula_expr);
@@ -218,12 +218,15 @@ void skip_mpi_message_sample (FILE *fp) {
 // Read the stack ID, which indicates from which path the function has been called.
 // Read the time spent in this part of the program.
 void read_stack_sample (FILE *fp, int n_hw_obs, int *stack_id,
-			long long *sample_time, double *hw_values) {
+			long long *sample_time, long long *hw_values, long long *cycle_time) {
 	fread (stack_id, sizeof(int), 1, fp);
 	fread (sample_time, sizeof(long long), 1, fp);
-	for (int i = 0; i < n_hw_obs; i++) {
-           fread (&(hw_values[i]), sizeof(double), 1, fp);
-	}
+        if (n_hw_obs > 0) {
+	   for (int i = 0; i < n_hw_obs; i++) {
+              fread (&(hw_values[i]), sizeof(long long), 1, fp);
+	   }
+           fread (&cycle_time, sizeof(long long), 1, fp);
+        }
 }
 
 /**********************************************************************/

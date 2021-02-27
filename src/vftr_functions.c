@@ -244,35 +244,27 @@ void vftr_reset_counts (function_t *func) {
 
 /**********************************************************************/
 
-void vftr_find_function_in_table (char *func_name, int **indices, int *n_indices,
-				  bool to_lower_case) {
+void vftr_find_function_in_table (char *func_name, int **indices, int *n_indices, bool to_lower_case) {
 	*n_indices = 0;
-	char *s_compare;
-	int n_count;
+        bool equal;
 	for (int i = 0; i < vftr_stackscount; i++) {
-		s_compare = strdup (vftr_func_table[i]->name);
 		if (to_lower_case) {
-			for (int i = 0; i < strlen(s_compare); i++) {
-				s_compare[i] = tolower(s_compare[i]);
-			}
-		}
-		if (!strcmp (s_compare, func_name)) {
-			(*n_indices)++;
-		}
+		   equal = !strcmp(vftr_to_lowercase(vftr_func_table[i]->name), vftr_to_lowercase(func_name));
+		} else {
+                   equal = !strcmp(vftr_func_table[i]->name, func_name);
+                }
+		if (equal) (*n_indices)++;
 	}
 	if (*n_indices > 0) {
 		*indices = (int*)malloc(*n_indices * sizeof(int));
 		int idx = 0;
 		for (int i = 0; i < vftr_stackscount; i++) {
-		   s_compare = strdup (vftr_func_table[i]->name);
 		   if (to_lower_case) {
-		   	for (int i = 0; i < strlen(s_compare); i++) {
-		   		s_compare[i] = tolower(s_compare[i]);
-		   	}
-		   }
-		   if (!strcmp (s_compare, func_name)) {
-		   	(*indices)[idx++] = i;
-		   }
+         	      equal = !strcmp(vftr_to_lowercase(vftr_func_table[i]->name), vftr_to_lowercase(func_name));
+                   } else {
+                      equal = !strcmp(vftr_func_table[i]->name, func_name);
+                   }
+		   if (equal) (*indices)[idx++] = i;
 		}
 	}
 }

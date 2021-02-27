@@ -27,6 +27,10 @@
 #include <fcntl.h>
 #include <string.h>
 #include <math.h>
+#include <ctype.h>
+
+#include "vftr_environment.h"
+#include "vftr_setup.h"
 
 #define MAX_CMDLINE 1024
 char *vftr_get_application_name () {
@@ -97,3 +101,24 @@ void vftr_print_dashes (FILE *fp, int n) {
 }
 
 /**********************************************************************/
+
+char *vftr_to_lowercase (char *s_orig) {
+   char *s_lower = strdup(s_orig);
+   for (int i = 0; i < strlen(s_orig); i++) {
+      s_lower[i] = tolower(s_orig[i]); 
+   }
+   return s_lower;
+}
+
+/**********************************************************************/
+
+// Output an error message to the log files, but only write to rank 0 VFTR_LOGFILE_ALL_RANKS
+// is not set. Otherwise, i.e. if only an fprintf is used, there might be a multitude of unwanted
+// log files containing only this message.
+void vftr_logfile_warning (FILE *fp, char *message) {
+  if (!vftr_environment.logfile_all_ranks->value) {
+    if (vftr_mpirank == 0) fprintf (fp, message);
+  } else {
+    fprintf (fp, message);
+  }
+} 

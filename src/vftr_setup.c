@@ -40,6 +40,7 @@
 #include "vftr_hooks.h"
 #include "vftr_timer.h"
 #include "vftr_functions.h"
+#include "vftr_allocate.h"
 
 bool vftr_timer_end;
 
@@ -237,8 +238,7 @@ void vftr_initialize() {
 	vftr_init_vfd_file ();
     }
     
-    vftr_profile_wanted = (vftr_environment.logfile_all_ranks->value) ||
-                          (vftr_mpirank == 0);
+    vftr_profile_wanted = (vftr_environment.logfile_all_ranks->value) || (vftr_mpirank == 0);
 
     if (vftr_environment.print_stacks_for->set) {
         char *vftr_print_groups = vftr_environment.print_stacks_for->value;
@@ -332,7 +332,10 @@ void vftr_finalize() {
     vftr_print_profile (vftr_log, display_functions, n_display_functions, &ntop, vftr_get_runtime_usec());
 #ifdef _MPI
     if (vftr_environment.print_stack_profile->value) {
-       vftr_print_function_statistics (vftr_log, display_functions, n_display_functions);
+       // Inside of vftr_print_function_statistics, we use an MPI_Allgather to compute MPI imbalances. Therefore,
+       // we need to call this function for every rank, but give it the information of vftr_profile_wanted
+       // to avoid unrequired output.
+       vftr_print_function_statistics (vftr_log, display_functions, n_display_functions, vftr_profile_wanted);
     }
 #endif
  
@@ -340,13 +343,16 @@ void vftr_finalize() {
 
     if (vftr_profile_wanted) {
         vftr_print_global_stacklist(vftr_log);
-        vftr_print_local_demangled( vftr_func_table, vftr_log, ntop );
     }
 
     vftr_finalize_vfd_file (finalize_time, vftr_signal_number);
     if (vftr_events_enabled && vftr_stop_hwc() < 0) {
 	fprintf(vftr_log, "error stopping H/W counters, ignored\n");
     }
+
+    if (vftr_max_allocated_fields > 0) vftr_allocate_finalize(vftr_log);
+
+    if (vftr_environment.print_env->value) vftr_print_environment(vftr_log);
     
     if (vftr_log) {
     	bool is_empty = (ftello (vftr_log) == (off_t)0);

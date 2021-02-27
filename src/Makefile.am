@@ -33,6 +33,7 @@ libvftrace_la_SOURCES = demangle.cpp \
 		       vftr_user_stack.c \
 		       vftr_functions.c \
 		       vftr_regions.c \
+                       vftr_allocate.c \
  		       vftr_timer.c \
 		       tinyexpr.c \
 		       vftr_regex.c \

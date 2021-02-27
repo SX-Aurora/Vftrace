@@ -5,6 +5,8 @@
 #define VFD_VERSION 2
 
 #include <stdio.h>
+#include <stdbool.h>
+
 #include "vftr_functions.h"
 #include "vftr_mpi_utils.h"
 
@@ -90,6 +92,13 @@ double vftr_compute_mpi_imbalance (long long *all_times, double t_avg);
 #endif
 bool vftr_is_collective_mpi_function (char *func_name);
 
+#ifdef _MPI
+// store some message information for use in the log file
+void vftr_log_message_info(vftr_direction dir, int count, int type_idx,
+                           int type_size, int rank, int tag,
+                           long long tstart, long long tend);
+#endif
+
 void vftr_store_message_info(vftr_direction dir, int count, int type_idx,
                              int type_size, int rank, int tag,
                              long long tstart, long long tend,
@@ -105,12 +114,15 @@ char *vftr_create_logfile_name (int mpi_rank, int mpi_size, char *suffix);
 int vftr_filewrite_test_1 (FILE *fp_in, FILE *fp_out);
 int vftr_filewrite_test_2 (FILE *fp_in, FILE *fp_out);
 
-void vftr_print_function_statistics (FILE *fp_log, display_function_t **display_functions, int n_display_functions);
+void vftr_print_function_statistics (FILE *fp_log, display_function_t **display_functions, int n_display_functions, bool print_this_rank);
 
 void vftr_memory_unit(double *value, char **unit);
 char *vftr_memory_unit_string (double value, int n_decimal_places);
 void vftr_time_unit (double *value, char **unit, bool for_html);
 
+void vftr_prof_column_init (const char *name, char *group_header, int n_decimal_places, int col_type, int sep_type, column_t *c);
+void vftr_prof_column_set_n_chars (void *value_1, void *value_2, column_t *c, int *stat);
 void vftr_prof_column_print (FILE *fp, column_t c, void *value_1, void *value_2);
+int vftr_get_tablewidth_from_columns (column_t *columns, int n_columns, bool use_separators);
 
 #endif
