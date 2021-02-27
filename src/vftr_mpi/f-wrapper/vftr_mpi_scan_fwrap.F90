@@ -18,7 +18,7 @@
 
 SUBROUTINE MPI_SCAN(SENDBUF, RECVBUF, COUNT, DATATYPE, &
                     OP, COMM, ERROR)
-   USE vftr_mpi_scan_c2f, &
+   USE vftr_mpi_scan_f2c, &
       ONLY : vftr_MPI_Scan_F
    IMPLICIT NONE
    INTEGER SENDBUF

@@ -18,7 +18,7 @@
 
 SUBROUTINE MPI_Waitsome(INCOUNT, ARRAY_OREQUESTS, OUTCOUNT, &
                         ARRAY_OINDICES, ARRAY_OSTATUSES, ERROR)
-   USE vftr_mpi_waitsome_c2f, &
+   USE vftr_mpi_waitsome_f2c, &
       ONLY : vftr_MPI_Waitsome_F
    USE mpi, ONLY: MPI_STATUS_SIZE
    IMPLICIT NONE

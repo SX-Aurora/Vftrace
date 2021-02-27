@@ -18,7 +18,7 @@
 
 SUBROUTINE MPI_EXSCAN(SENDBUF, RECVBUF, COUNT, DATATYPE, &
                       OP, COMM, ERROR)
-   USE vftr_mpi_exscan_c2f, &
+   USE vftr_mpi_exscan_f2c, &
       ONLY : vftr_MPI_Exscan_F
    IMPLICIT NONE
    INTEGER SENDBUF

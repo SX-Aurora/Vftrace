@@ -19,7 +19,7 @@
 SUBROUTINE MPI_Compare_and_swap_f08(origin_addr, compare_addr, result_addr, &
                                     datatype, target_rank, target_disp, &
                                     win, error)
-   USE vftr_mpi_compare_and_swap_c2f, &
+   USE vftr_mpi_compare_and_swap_f2c, &
       ONLY : vftr_MPI_Compare_and_swap_F
    USE mpi_f08, ONLY : MPI_Datatype, &
                        MPI_Win, &

@@ -17,7 +17,7 @@
 #ifdef _MPI
 
 SUBROUTINE MPI_Waitany(COUNT, ARRAY_OREQUESTS, INDEX, STATUS, ERROR)
-   USE vftr_mpi_waitany_c2f, &
+   USE vftr_mpi_waitany_f2c, &
       ONLY : vftr_MPI_Waitany_F
    USE mpi, ONLY: MPI_STATUS_SIZE
    IMPLICIT NONE

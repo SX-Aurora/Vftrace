@@ -18,7 +18,7 @@
 
 SUBROUTINE MPI_Reduce_f08(sendbuf, recvbuf, count, datatype, &
                       op, root, comm, error)
-   USE vftr_mpi_reduce_c2f, &
+   USE vftr_mpi_reduce_f2c, &
       ONLY : vftr_MPI_Reduce_F
    USE mpi_f08, ONLY : MPI_Datatype, &
                        MPI_Comm, &

@@ -17,7 +17,7 @@
 #ifdef _MPI
 
 SUBROUTINE MPI_Test(REQUEST, FLAG, STATUS, ERROR)
-   USE vftr_mpi_test_c2f, &
+   USE vftr_mpi_test_f2c, &
       ONLY : vftr_MPI_Test_F
    USE mpi, ONLY: MPI_STATUS_SIZE
    IMPLICIT NONE

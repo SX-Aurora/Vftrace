@@ -19,7 +19,7 @@
 SUBROUTINE MPI_RGET(ORIGIN_ADDR, ORIGIN_COUNT, ORIGIN_DATATYPE, &
                     TARGET_RANK, TARGET_DISP, TARGET_COUNT, &
                     TARGET_DATATYPE, WIN, REQUEST, ERROR)
-   USE vftr_mpi_rget_c2f, &
+   USE vftr_mpi_rget_f2c, &
       ONLY : vftr_MPI_Rget_F
    USE mpi, ONLY : MPI_ADDRESS_KIND
    IMPLICIT NONE

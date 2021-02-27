@@ -17,7 +17,7 @@
 #ifdef _MPI
 
 SUBROUTINE MPI_Send_f08(buf, count, datatype, dest, tag, comm, error)
-   USE vftr_mpi_send_c2f, &
+   USE vftr_mpi_send_f2c, &
       ONLY : vftr_MPI_Send_F
    USE mpi_f08, ONLY : MPI_Datatype, &
                        MPI_Comm

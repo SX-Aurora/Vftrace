@@ -19,7 +19,7 @@
 SUBROUTINE MPI_RACCUMULATE(ORIGIN_ADDR, ORIGIN_COUNT, ORIGIN_DATATYPE, &
                            TARGET_RANK, TARGET_DISP, TARGET_COUNT, &
                            TARGET_DATATYPE, OP, WIN, REQUEST, ERROR)
-   USE vftr_mpi_raccumulate_c2f, &
+   USE vftr_mpi_raccumulate_f2c, &
       ONLY : vftr_MPI_Raccumulate_F
    USE mpi, ONLY: MPI_ADDRESS_KIND
    IMPLICIT NONE

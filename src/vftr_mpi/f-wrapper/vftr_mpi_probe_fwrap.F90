@@ -17,7 +17,7 @@
 #ifdef _MPI
 
 SUBROUTINE MPI_PROBE(SOURCE, TAG, COMM, STATUS, ERROR)
-   USE vftr_mpi_probe_c2f, &
+   USE vftr_mpi_probe_f2c, &
       ONLY : vftr_MPI_Probe_F
    USE mpi, ONLY : MPI_STATUS_SIZE
    IMPLICIT NONE

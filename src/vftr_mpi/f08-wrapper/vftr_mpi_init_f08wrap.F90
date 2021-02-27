@@ -17,7 +17,7 @@
 #ifdef _MPI
 
 SUBROUTINE MPI_Init_f08(ierror)
-   USE vftr_after_mpi_init_c2f08, &
+   USE vftr_after_mpi_init_f082c, &
       ONLY : vftr_after_mpi_init_F08
    USE mpi_f08, ONLY : PMPI_Init
 

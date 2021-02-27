@@ -18,7 +18,7 @@
 
 SUBROUTINE MPI_Bcast_f08(buffer, count, datatype, &
                          root, comm, error)
-   USE vftr_mpi_bcast_c2f, &
+   USE vftr_mpi_bcast_f2c, &
       ONLY : vftr_MPI_Bcast_F
    USE mpi_f08, ONLY : MPI_Datatype, &
                        MPI_Comm

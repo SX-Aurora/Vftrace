@@ -19,7 +19,7 @@
 SUBROUTINE MPI_Allgather_f08(sendbuf, sendcount, sendtype, &
                              recvbuf, recvcount, recvtype, &
                              comm, error)
-   USE vftr_mpi_allgather_c2f, &
+   USE vftr_mpi_allgather_f2c, &
       ONLY : vftr_MPI_Allgather_F
    USE mpi_f08, ONLY : MPI_Datatype, &
                        MPI_Comm

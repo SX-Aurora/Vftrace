@@ -17,7 +17,7 @@
 #ifdef _MPI
 
 SUBROUTINE MPI_IRECV(BUF, COUNT, DATATYPE, SOURCE, TAG, COMM, REQUEST, ERROR)
-   USE vftr_mpi_irecv_c2f, &
+   USE vftr_mpi_irecv_f2c, &
       ONLY : vftr_MPI_Irecv_F
    IMPLICIT NONE
    INTEGER BUF

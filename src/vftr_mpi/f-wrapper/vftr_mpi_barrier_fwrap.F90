@@ -17,7 +17,7 @@
 #ifdef _MPI
 
 SUBROUTINE MPI_Barrier(COMM, ERROR)
-   USE vftr_mpi_barrier_c2f, &
+   USE vftr_mpi_barrier_f2c, &
       ONLY : vftr_MPI_Barrier_F
    IMPLICIT NONE
    INTEGER COMM

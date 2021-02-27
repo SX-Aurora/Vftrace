@@ -19,7 +19,7 @@
 SUBROUTINE MPI_Reduce_scatter_block_f08(sendbuf, recvbuf, recvcount, &
                                         datatype, op, comm, &
                                         error)
-   USE vftr_mpi_reduce_scatter_block_c2f, &
+   USE vftr_mpi_reduce_scatter_block_f2c, &
       ONLY : vftr_MPI_Reduce_scatter_block_F
    USE mpi_f08, ONLY : MPI_Datatype, &
                        MPI_Comm, &

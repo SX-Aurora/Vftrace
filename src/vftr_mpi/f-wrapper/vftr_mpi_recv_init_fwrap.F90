@@ -17,7 +17,7 @@
 #ifdef _MPI
 
 SUBROUTINE MPI_RECV_INIT(BUF, COUNT, DATATYPE, SOURCE, TAG, COMM, REQUEST, ERROR)
-   USE vftr_mpi_recv_init_c2f, &
+   USE vftr_mpi_recv_init_f2c, &
       ONLY : vftr_MPI_Recv_init_F
    IMPLICIT NONE
    INTEGER BUF

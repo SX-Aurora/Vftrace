@@ -18,7 +18,7 @@
 
 SUBROUTINE MPI_IREDUCE(SENDBUF, RECVBUF, COUNT, DATATYPE, &
                        OP, ROOT, COMM, REQUEST, ERROR)
-   USE vftr_mpi_ireduce_c2f, &
+   USE vftr_mpi_ireduce_f2c, &
       ONLY : vftr_MPI_Ireduce_F
    IMPLICIT NONE
    INTEGER SENDBUF

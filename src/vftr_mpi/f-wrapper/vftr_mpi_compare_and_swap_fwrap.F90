@@ -19,7 +19,7 @@
 SUBROUTINE MPI_COMPARE_AND_SWAP(ORIGIN_ADDR, COMPARE_ADDR, RESULT_ADDR, &
                                 DATATYPE, TARGET_RANK, TARGET_DISP, &
                                 WIN, ERROR)
-   USE vftr_mpi_compare_and_swap_c2f, &
+   USE vftr_mpi_compare_and_swap_f2c, &
       ONLY : vftr_MPI_Compare_and_swap_F
    USE mpi, ONLY : MPI_ADDRESS_KIND
    IMPLICIT NONE

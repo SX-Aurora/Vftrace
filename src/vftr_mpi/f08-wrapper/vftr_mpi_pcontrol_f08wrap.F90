@@ -17,7 +17,7 @@
 #ifdef _MPI
 
 SUBROUTINE MPI_Pcontrol_f08(level)
-   USE vftr_mpi_pcontrol_c2f08, &
+   USE vftr_mpi_pcontrol_f082c, &
       ONLY : vftr_MPI_Pcontrol_F08
    
    IMPLICIT NONE

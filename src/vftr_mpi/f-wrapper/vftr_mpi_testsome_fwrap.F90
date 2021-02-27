@@ -18,7 +18,7 @@
 
 SUBROUTINE MPI_Testsome(INCOUNT, ARRAY_OREQUESTS, OUTCOUNT, &
                         ARRAY_OINDICES, ARRAY_OSTATUSES, ERROR)
-   USE vftr_mpi_testsome_c2f, &
+   USE vftr_mpi_testsome_f2c, &
       ONLY : vftr_MPI_Testsome_F
    USE mpi, ONLY: MPI_STATUS_SIZE
    IMPLICIT NONE

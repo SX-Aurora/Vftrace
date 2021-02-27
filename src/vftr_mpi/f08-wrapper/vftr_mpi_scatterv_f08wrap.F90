@@ -20,7 +20,7 @@ SUBROUTINE MPI_Scatterv_f08(sendbuf, sendcounts, displs, &
                             sendtype, recvbuf, recvcount, &
                             recvtype, root, comm, &
                             error)
-   USE vftr_mpi_scatterv_c2f, &
+   USE vftr_mpi_scatterv_f2c, &
       ONLY : vftr_MPI_Scatterv_F
    USE mpi_f08, ONLY : MPI_Datatype, &
                        MPI_Comm

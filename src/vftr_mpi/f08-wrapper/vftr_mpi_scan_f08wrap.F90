@@ -18,7 +18,7 @@
 
 SUBROUTINE MPI_Scan_f08(sendbuf, recvbuf, count, &
                         datatype, op, comm, error)
-   USE vftr_mpi_scan_c2f, &
+   USE vftr_mpi_scan_f2c, &
       ONLY : vftr_MPI_Scan_F
    USE mpi_f08, ONLY : MPI_Datatype, &
                        MPI_Op, &

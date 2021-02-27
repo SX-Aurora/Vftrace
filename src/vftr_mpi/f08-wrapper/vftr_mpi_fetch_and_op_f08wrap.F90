@@ -19,7 +19,7 @@
 SUBROUTINE MPI_Fetch_and_op_f08(origin_addr, result_addr, datatype, &
                                 target_rank, target_disp, op, win, &
                                 error)
-   USE vftr_mpi_fetch_and_op_c2f, &
+   USE vftr_mpi_fetch_and_op_f2c, &
       ONLY : vftr_MPI_Fetch_and_op_F
    USE mpi_f08, ONLY : MPI_Datatype, &
                        MPI_Op, &

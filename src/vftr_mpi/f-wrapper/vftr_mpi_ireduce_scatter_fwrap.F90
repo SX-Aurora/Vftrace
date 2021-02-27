@@ -19,7 +19,7 @@
 SUBROUTINE MPI_IREDUCE_SCATTER(SENDBUF, RECVBUF, RECVCOUNTS, &
                                DATATYPE, OP, COMM, &
                                REQUEST, ERROR)
-   USE vftr_mpi_ireduce_scatter_c2f, &
+   USE vftr_mpi_ireduce_scatter_f2c, &
       ONLY : vftr_MPI_Ireduce_scatter_F
    IMPLICIT NONE
    INTEGER SENDBUF

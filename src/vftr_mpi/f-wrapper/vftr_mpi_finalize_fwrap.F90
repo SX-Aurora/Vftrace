@@ -17,7 +17,7 @@
 #ifdef _MPI
 
 SUBROUTINE MPI_FINALIZE(IERROR)
-   USE vftr_finalize_c2F, &
+   USE vftr_finalize_f2c, &
       ONLY : vftr_finalize_F
    USE PMPI_MODULE, ONLY : PMPI_FINALIZE
 

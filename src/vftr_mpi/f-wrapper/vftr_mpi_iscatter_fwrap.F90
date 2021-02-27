@@ -19,7 +19,7 @@
 SUBROUTINE MPI_ISCATTER(SENDBUF, SENDCOUNT, SENDTYPE, &
                         RECVBUF, RECVCOUNT, RECVTYPE, &
                         ROOT, COMM, REQUEST, ERROR)
-   USE vftr_mpi_iscatter_c2f, &
+   USE vftr_mpi_iscatter_f2c, &
       ONLY : vftr_MPI_Iscatter_F
    IMPLICIT NONE
    INTEGER SENDBUF

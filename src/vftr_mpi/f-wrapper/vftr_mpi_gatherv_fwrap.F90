@@ -20,7 +20,7 @@ SUBROUTINE MPI_GATHERV(SENDBUF, SENDCOUNT, SENDTYPE, &
                        RECVBUF, RECVCOUNTS, DISPLS, &
                        RECVTYPE, ROOT, COMM, &
                        ERROR)
-   USE vftr_mpi_gatherv_c2f, &
+   USE vftr_mpi_gatherv_f2c, &
       ONLY : vftr_MPI_Gatherv_F
    IMPLICIT NONE
    INTEGER SENDBUF

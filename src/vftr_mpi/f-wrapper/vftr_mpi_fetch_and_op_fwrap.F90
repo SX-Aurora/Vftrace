@@ -19,7 +19,7 @@
 SUBROUTINE MPI_FETCH_AND_OP(ORIGIN_ADDR, RESULT_ADDR, DATATYPE, &
                             TARGET_RANK, TARGET_DISP, OP, WIN, &
                             ERROR)
-   USE vftr_mpi_fetch_and_op_c2f, &
+   USE vftr_mpi_fetch_and_op_f2c, &
       ONLY : vftr_MPI_Fetch_and_op_F
    USE mpi, ONLY : MPI_ADDRESS_KIND
    IMPLICIT NONE
