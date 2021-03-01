@@ -9,9 +9,11 @@ SUBDIRS = vftr_mpi
 libvftrace_la_LIBADD = libvftr_pause.la \
 		       vftr_mpi/libvftr_mpi.la
 if WITH_MPI
-libvftrace_la_LIBADD += vftr_mpi/c-wrapper/libvftr_cmpiwrap.la \
-		        vftr_mpi/f-wrapper/libvftr_fmpiwrap.la \
+libvftrace_la_LIBADD += vftr_mpi/c-wrapper/libvftr_cmpiwrap.la
+if ENABLE_FORTRAN
+libvftrace_la_LIBADD += vftr_mpi/f-wrapper/libvftr_fmpiwrap.la \
 		        vftr_mpi/f08-wrapper/libvftr_f08mpiwrap.la
+endif
 endif
 
 libvftr_pause_la_SOURCES = vftr_pause.c
@@ -37,9 +39,10 @@ libvftrace_la_SOURCES = demangle.cpp \
 		       vftr_regex.c \
 	 	       vftr_environment.c \
 		       vftr_signals.c \
-		       vftr_browse.c \
-		       vftrace_mod.F90
-
+		       vftr_browse.c
+if ENABLE_FORTRAN
+libvftrace_la_SOURCES += vftrace_mod.F90
+endif
 
 libvftrace_la_CFLAGS =
 libvftrace_la_CXXFLAGS =
@@ -79,8 +82,9 @@ endif
 
 libvftr_dlopen_la_SOURCES = vftr_dlopen.c
 
-nodist_include_HEADERS = vftrace.mod
-vftrace.mod: vftrace_mod.F90
+if ENABLE_FORTRAN
+include_HEADERS += vftrace.mod
+endif
 
 clean-local:
 	rm -f *.mod

@@ -18,15 +18,18 @@ AC_CONFIG_LINKS(test/user_functions/cregions1.sh:test/user_functions/cregions1.s
                 test/user_functions/cregions2.sh:test/user_functions/cregions2.sh
                 test/user_functions/cregions3.sh:test/user_functions/cregions3.sh
                 test/user_functions/cregions4.sh:test/user_functions/cregions4.sh
+               )
+AM_COND_IF([ENABLE_FORTRAN],
+[AC_CONFIG_LINKS(
                 test/user_functions/fregions1.sh:test/user_functions/fregions1.sh
                 test/user_functions/fregions2.sh:test/user_functions/fregions2.sh
                 test/user_functions/fregions3.sh:test/user_functions/fregions3.sh
                 test/user_functions/fregions4.sh:test/user_functions/fregions4.sh
-               )
-AC_CONFIG_LINKS(test/user_functions/cget_stack.sh:test/user_functions/cget_stack.sh
-                test/user_functions/fget_stack.sh:test/user_functions/fget_stack.sh
-               )
-AC_CONFIG_LINKS(test/user_functions/cpause_resume.sh:test/user_functions/cpause_resume.sh
-                test/user_functions/fpause_resume.sh:test/user_functions/fpause_resume.sh
-               )
+               )])
+AC_CONFIG_LINKS(test/user_functions/cget_stack.sh:test/user_functions/cget_stack.sh)
+AM_COND_IF([ENABLE_FORTRAN], [
+AC_CONFIG_LINKS(test/user_functions/fget_stack.sh:test/user_functions/fget_stack.sh)])
+AC_CONFIG_LINKS(test/user_functions/cpause_resume.sh:test/user_functions/cpause_resume.sh)
+AM_COND_IF([ENABLE_FORTRAN], [
+AC_CONFIG_LINKS(test/user_functions/fpause_resume.sh:test/user_functions/fpause_resume.sh)])
 ])

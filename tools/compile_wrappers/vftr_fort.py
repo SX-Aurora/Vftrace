@@ -7,30 +7,32 @@ filename_in = sys.argv[1]
 filename_out = filename_in + ".vftr"
 allocate_pattern = re.compile("^[ ]*allocate[\ ,\(]", re.IGNORECASE)
 deallocate_pattern = re.compile("^[ ]*deallocate[\ ,\(]", re.IGNORECASE)
-subroutine_pattern = re.compile(r"^[\S\s]*(pure)?(elemental)?[\S\s]*subroutine[\s]+[\S]*[ ]*(\()?", re.IGNORECASE)
-function_pattern = re.compile(r"^[\S\s]*(pure)?(elemental)?[\S\s]*function[\s]+[\S]*[ ]*(\()?", re.IGNORECASE)
-end_routine_pattern = re.compile(r"[ ]*end[ ]*(function|subroutine)", re.IGNORECASE)
+subroutine_pattern = re.compile(r"^[\S\s]*(pure[\s]+)?(elemental[\s]+)?subroutine[\s]+[\S]+[ ]*(\()?", re.IGNORECASE)
+function_pattern = re.compile(r"^[\S\s]*(pure[\s]+)?(elemental[\s]+)?function[\s]+[\S]+[ ]*(\()?", re.IGNORECASE)
+program_pattern = re.compile(r"^[\S\s]*program[\s]+[\S]*", re.IGNORECASE)
+end_routine_pattern = re.compile(r"[ ]*end[ ]*(function|subroutine|program)", re.IGNORECASE)
 
 vftrace_wrapper_marker = "!!! VFTRACE 1.3 - Wrapper inserted malloc-trace calls\n"
 
 def check_if_function_or_subroutine (line):
-  if subroutine_pattern.match(line) or function_pattern.match(line):
+  if subroutine_pattern.match(line) or function_pattern.match(line) or program_pattern.match(line):
     ll = line.lower()
     if end_routine_pattern.match(ll):
       return False
     pos1 = ll.find("!")
     pos2 = ll.find("function")
     pos3 = ll.find("subroutine")
+    pos4 = ll.find("program")
     if (pos1 >= 0): # There is a comment. Find out if it is behind the function definition.
-      value = (pos2 >= 0 and pos2 < pos1) or (pos3 >= 0 and pos3 < pos1)
+      value = (pos2 >= 0 and pos2 < pos1) or (pos3 >= 0 and pos3 < pos1) or (pos4 >= 0 and pos4 < pos1)
     else:
       value = True
   else:
     value = False
-  if value: #The pattern can still appear as part of a string. Check this.
-    print ("pos1: ", pos1, "pos2: ", pos2)
-    pos4 = [i for i, this_char in enumerate(line) if this_char == "\""]
-    pos5 = [i for i, this_char in enumerate(line) if this_char == "\'"]
+  # Check if the pattern appears as part of a string.
+  if value:
+    pos5 = [i for i, this_char in enumerate(line) if this_char == "\""]
+    pos6 = [i for i, this_char in enumerate(line) if this_char == "\'"]
     # If it is a proper routine definition, there can be no " before the position of the patterns (pos2, pos3).
     # We therefore only check if there is any pos4 or pos5 smaller than that.
     if pos2 >= 0 and pos3 >= 0:
@@ -39,28 +41,33 @@ def check_if_function_or_subroutine (line):
       pos = pos2
     elif pos3 >= 0:
       pos = pos3
-    for p in pos4:
-      value = value and p > pos
+    elif pos4 >= 0:
+      pos = pos4
     for p in pos5:
       value = value and p > pos
-      
-  return value
+    for p in pos6:
+      value = value and p > pos
+  # Check if the pattern appears in a "public" or "private" declaration.                                         
+  if value:
+    if re.match ("^[ ]*(public|private)[\s\S]+(function|subroutine)", line, re.IGNORECASE):                                                  
+      value = False 
   
+  # "function" can be part of a subroutine name which is called, e.g. "call foo_function".
+  if value:
+    if re.match ("^[ ]*call[\s\S]*function", line, re.IGNORECASE):
+      value = False
+    
+  return value
 
 def split_alloc_argument (arg, ignore_percent=False):
   n_open_brackets = 0
   # If there are % in the string, Ignore any bracket information until each has been encountered.
-  if not ignore_percent:
-    n_percent = arg.count("%")
-  else:
-    n_percent = 0
   all_args = []
   tmp = ""
   for char in arg:
     if not ignore_percent and char == "%":
-      n_percent -= 1
       tmp += char
-    elif n_percent == 0 and n_open_brackets == 0 and char == ",":
+    elif n_open_brackets == 0 and char == ",":
       all_args.append(tmp)
       tmp = ""
     else: 
@@ -112,16 +119,37 @@ def construct_vftrace_allocate_call (field):
   for i, dim in enumerate(dims):
     # If there is a colon ("x1:x2") in the string, the dimension size is x2 - x1 + 1.
     # Otherwise, the dimension bounds start at 1, and the size is dim.
-    if ":" in dim:
-      tmp = dim.split(":")
-      dim_string += "(" + tmp[1] + "-" + tmp[0] + "+1)"
+    pos1 = dim.find(":")
+    if pos1 >= 0:
+      # Check if the colon is enclosed by brackets
+      pos2 = -1
+      pos3 = -1
+      for c in range(pos1, 0, -1):
+        if dim[c] == ")":
+          break
+        elif dim[c] == "(":
+          pos2 = c
+          break
+      for c in range(pos1, len(dim)):
+        if dim[c] == "(":
+          break
+        elif dim[c] == ")":
+          pos3 = c
+          break
+      enclosed = pos2 >= 0 and pos3 >= 0 and pos2 < pos1 and pos1 < pos3
+      if not enclosed:
+        tmp = dim.split(":")
+        # Add extra brackets around the second summand to keep correct sign of the expression in there.
+        dim_string += "(" + tmp[1] + "-(" + tmp[0] + ")+1)"
+      else:
+        dim_string += dim
     elif "+" in dim or "-" in dim:
       dim_string += "(" + dim + ")"
     else:
       dim_string += dim
     if i + 1 < len(dims):
       dim_string += "*"
-  return "call vftrace_allocate(\"" + name + "\", " + dim_string + ", storage_size(" + name + ")/8)\n"
+  return "call vftrace_allocate(\"" + name + "\", int(" + dim_string + ",int64), storage_size(" + name + ")/8)\n"
 
 def construct_vftrace_deallocate_call (field):
   # The input is simply the field name.
@@ -185,6 +213,7 @@ with open(filename_in, "r") as f_in, open(filename_out, "w") as f_out:
     # If the latter one is set before all the other ones, it's time to insert the use statement.
     if subroutine_end and not skip_subroutine:
        f_out.write ("use vftrace\n")
+       f_out.write ("use iso_fortran_env, only: int64\n")
        subroutine_end = False
     if is_function_or_subroutine:
        if re.search("pure ", line, re.IGNORECASE) or re.search("elemental ", line, re.IGNORECASE):
@@ -211,7 +240,8 @@ with open(filename_in, "r") as f_in, open(filename_out, "w") as f_out:
           line_tmp = all_lines[i]
         else:
           break
-        tot_string += remove_trailing_comment(line_tmp)
+        if not re.match("^[ ]*!", line_tmp): # Not an entire comment line
+          tot_string += remove_trailing_comment(line_tmp)
       fields = split_line(tot_string, is_alloc, is_dealloc)
       fields_clear = []
       for f in fields:

@@ -24,8 +24,6 @@
 !
 !===============================================================================
 
-#define import(x) import x
-
 module vftrace
 
    implicit none
@@ -179,9 +177,10 @@ contains
 
    subroutine vftrace_allocate (name, n_elements, element_size)
      use iso_c_binding, only: c_char, c_null_char, c_int
+     use iso_fortran_env, only: int64
      implicit none
      character(len=*), intent(in) :: name
-     integer, intent(in) :: n_elements
+     integer(kind=int64), intent(in) :: n_elements
      integer, intent(in) :: element_size
      integer :: name_len, index_len
      character(kind=c_char,len=:), allocatable :: c_name
