@@ -24,8 +24,6 @@
 !
 !===============================================================================
 
-#define import(x) import x
-
 module vftrace
 
    implicit none
