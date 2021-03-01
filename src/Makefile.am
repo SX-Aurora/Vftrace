@@ -40,9 +40,9 @@ libvftrace_la_SOURCES = demangle.cpp \
 	 	       vftr_environment.c \
 		       vftr_signals.c \
 		       vftr_browse.c
-#if ENABLE_FORTRAN
+if ENABLE_FORTRAN
 libvftrace_la_SOURCES += vftrace_mod.F90
-#endif
+endif
 
 libvftrace_la_CFLAGS =
 libvftrace_la_CXXFLAGS =
@@ -82,10 +82,9 @@ endif
 
 libvftr_dlopen_la_SOURCES = vftr_dlopen.c
 
-#if ENABLE_FORTRAN
-nodist_include_HEADERS = vftrace.mod
-vftrace.mod: vftrace_mod.F90
-#endif
+if ENABLE_FORTRAN
+include_HEADERS += vftrace.mod
+endif
 
 clean-local:
 	rm -f *.mod
