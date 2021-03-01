@@ -262,6 +262,7 @@ void vftr_read_environment () {
     vftr_environment.sort_profile_table = vftr_read_env_string ("VFTR_SORT_PROFILE_TABLE", "EXCL_TIME");
     vftr_environment.show_overhead = vftr_read_env_bool ("VFTR_SHOW_FUNCTION_OVERHEAD", false);
     vftr_environment.print_env = vftr_read_env_bool ("VFTR_PRINT_ENVIRONMENT", false);
+    vftr_environment.no_memtrace = vftr_read_env_bool ("VFTR_NO_MEMTRACE", false);
 }
 
 /**********************************************************************/
@@ -359,15 +360,19 @@ void vftr_assert_environment () {
 // or by a call to vftr_switch off. We need to check if the evironment is initialized
 // beforehand, otherwise this yields a segfault in vftr_finalize, which is always called.
 bool vftr_off () {
-	return vftr_environment.vftrace_off->value;
+   return vftr_environment.vftrace_off->value;
 }
 
 void vftr_switch_off () {
-	vftr_environment.vftrace_off->value = true;
+   vftr_environment.vftrace_off->value = true;
 }
 
 bool vftr_env_do_sampling () {
-	return vftr_environment.do_sampling->value;
+   return vftr_environment.do_sampling->value;
+}
+
+bool vftr_env_no_memtrace () {
+   return vftr_environment.no_memtrace->value;
 }
 
 /**********************************************************************/
@@ -400,6 +405,7 @@ void vftr_free_environment () {
         free (vftr_environment.sort_profile_table);
 	free (vftr_environment.show_overhead);
         free (vftr_environment.print_env);
+	free (vftr_environment.no_memtrace);
 }
 
 /**********************************************************************/
@@ -432,6 +438,7 @@ void vftr_print_environment (FILE *fp) {
 	vftr_print_env_string (fp, "VFTR_SORT_PROFILE_TABLE", vftr_environment.sort_profile_table);
         vftr_print_env_bool (fp, "VFTR_SHOW_FUNCTION_OVERHEAD", vftr_environment.show_overhead);
         vftr_print_env_bool (fp, "VFTR_PRINT_ENVIRONMENT", vftr_environment.print_env);
+        vftr_print_env_bool (fp, "VFTR_NO_MEMTRACE", vftr_environment.no_memtrace);
 }
 
 /**********************************************************************/

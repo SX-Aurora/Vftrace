@@ -23,29 +23,4 @@ VFTR_CREATE_HTML(default): false
 VFTR_SORT_PROFILE_TABLE(default): EXCL_TIME
 VFTR_SHOW_FUNCTION_OVERHEAD(default): false
 VFTR_PRINT_ENVIRONMENT(default): false
-***************************
-VFTR_OFF: false
-VFTR_SAMPLING: true
-VFTR_REGIONS_PRECISE: false
-VFTR_OUT_DIRECTORY: "foo/bar"
-VFTR_LOGFILE_BASENAME(default): (null)
-VFTR_LOGFILE_ALL_RANKS(default): false
-VFTR_SAMPLETIME: 12.34
-VFTR_STOPTIME(default): 604800
-VFTR_ACCURATE_PROFILE(default): false
-VFTR_PROF_TRUNCATE(default): true
-VFTR_MPI_LOG: true
-VFTR_MPI_SHOW_SYNC_TIME(default): false
-VFTR_SIGNALS_OFF(default): true
-VFTR_BUFSIZE: 1234
-VFTR_ACCURATE_PROFILE(default): false
-VFTR_DETAIL_UNTIL_CUM_CYCLES(default): 90.00
-VFTR_SCENARIO_FILE(default): (null)
-VFTR_LICENSE_VERBOSE(default): false
-VFTR_PRINT_STACKS_FOR(default): (null)
-VFTR_PRINT_LOADINFO_FOR(default): (null)
-VFTR_STRIP_MODULE_NAMES(default): false
-VFTR_CREATE_HTML(default): false
-VFTR_SORT_PROFILE_TABLE(default): EXCL_TIME
-VFTR_SHOW_FUNCTION_OVERHEAD(default): false
-VFTR_PRINT_ENVIRONMENT(default): false
+
