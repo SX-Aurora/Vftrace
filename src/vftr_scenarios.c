@@ -108,12 +108,14 @@ void vftr_write_observables_to_vfd (profdata_t *prof_current, profdata_t *prof_p
                 }
         	fwrite (&value, sizeof(long long), 1, fp);
 	}
-        if (prof_current != NULL && prof_previous != NULL) {
-          value = prof_current->cycles - prof_previous->cycles;
-        } else {
-          value = 0;
+        if (vftr_n_hw_obs > 0) {
+           if (prof_current != NULL && prof_previous != NULL) {
+             value = prof_current->cycles - prof_previous->cycles;
+           } else {
+             value = 0;
+           }
+           fwrite (&value, sizeof(long long), 1, fp);
         }
-        fwrite (&value, sizeof(long long), 1, fp);
 #endif
 }
 
