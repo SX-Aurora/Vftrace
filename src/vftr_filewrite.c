@@ -1315,21 +1315,20 @@ void vftr_print_profile_line (FILE *fp_log, int local_stack_id, int global_stack
 
 /**********************************************************************/
 
-void vftr_print_profile (FILE *fp_log, display_function_t **display_functions, int n_display_functions,
-			 int *n_func_indices, long long time0) {
+//void vftr_print_profile (FILE *fp_log, display_function_t **display_functions, int n_display_functions,
+//			 int *n_func_indices, long long time0) {
+void vftr_print_profile (FILE *fp_log, FILE *f_html, int *n_func_indices, long long time0) {
     unsigned long long calls;
     
     int table_width;
 
-    FILE *f_html;
-
     if (!vftr_stackscount) return;
     if (!vftr_profile_wanted) return;
 
-    if (vftr_environment.create_html->value) {
-       vftr_browse_create_directory ();
-       f_html = vftr_browse_init_profile_table (display_functions, n_display_functions);
-    }
+    //if (vftr_environment.create_html->value) {
+    //   vftr_browse_create_directory ();
+    //   f_html = vftr_browse_init_profile_table (display_functions, n_display_functions);
+    //}
 
     function_t **func_table;
 
@@ -1381,7 +1380,8 @@ void vftr_print_profile (FILE *fp_log, display_function_t **display_functions, i
 
     table_width = vftr_get_tablewidth_from_columns (prof_columns, n_columns, false);
 
-    if (vftr_environment.create_html->value) {
+    //if (vftr_environment.create_html->value) {
+    if (f_html != NULL) {
        vftr_browse_create_profile_header (f_html);
     }
 
@@ -1405,7 +1405,8 @@ void vftr_print_profile (FILE *fp_log, display_function_t **display_functions, i
 			        n_calls, t_excl, t_incl, cumulative_time, t_overhead,
 				func_table[i_func]->name, func_table[i_func]->return_to->name, prof_columns);
 
-       if (vftr_environment.create_html->value) {
+       //if (vftr_environment.create_html->value) {
+       if (f_html != NULL) {
 	  vftr_browse_print_table_line (f_html, func_table[i_func]->gid,
 				        function_time, sampling_overhead_time_usec * 1e-6,
 					n_calls, t_excl, t_incl, cumulative_time, t_overhead,
@@ -1413,7 +1414,8 @@ void vftr_print_profile (FILE *fp_log, display_function_t **display_functions, i
        }
     }
 
-    if (vftr_environment.create_html->value) vftr_browse_finalize_table(f_html);
+    //if (vftr_environment.create_html->value) vftr_browse_finalize_table(f_html);
+    if (f_html != NULL) vftr_browse_finalize_table(f_html);
     
     vftr_print_dashes (fp_log, table_width);
     fprintf (fp_log, "\n");
@@ -1474,7 +1476,7 @@ int vftr_filewrite_test_2 (FILE *fp_in, FILE *fp_out) {
 #ifdef _MPI
         vftr_mpi_overhead_usec = 0;
 #endif
-	vftr_print_profile (fp_out, NULL, 0, &n, vftr_test_runtime);		
+	vftr_print_profile (fp_out, NULL, &n, vftr_test_runtime);		
 	return 0;
 }
 

@@ -107,7 +107,7 @@ void vftr_store_message_info(vftr_direction dir, int count, int type_idx,
 void vftr_get_application_times_usec (long long time0, long long  *total_runtime_usec,
 				 long long  *sampling_overhead_time_usec, long long *mpi_overhead_time_usec,
 			  	 long long  *total_overhead_time_usec, long long *application_time_usec);
-void vftr_print_profile (FILE *pout, display_function_t **display_functions, int n_display_functions, int *ntop, long long t0);
+void vftr_print_profile (FILE *fp_log, FILE *f_html, int *n_func_indices, long long t0);
 char *vftr_get_program_path ();
 char *vftr_create_logfile_name (int mpi_rank, int mpi_size, char *suffix);
 
