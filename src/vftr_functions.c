@@ -60,9 +60,9 @@ char *vftr_precise_functions[] = {
    NULL // Null pointer to terminate the list
 };
 
-int *print_stackid_list;
-int n_print_stackids;
-int stackid_list_size;
+int *vftr_print_stackid_list;
+int vftr_n_print_stackids;
+int vftr_stackid_list_size;
 
 void vftr_init_profdata (profdata_t *prof) {
   prof->calls = 0;
@@ -373,26 +373,26 @@ void vftr_write_function (FILE *fp, function_t *func) {
 /**********************************************************************/
 
 void vftr_stackid_list_init () {
-   n_print_stackids = 0;
-   stackid_list_size = STACKID_LIST_INC;
-   print_stackid_list = (int*)malloc(STACKID_LIST_INC * sizeof(int));
+   vftr_n_print_stackids = 0;
+   vftr_stackid_list_size = STACKID_LIST_INC;
+   vftr_print_stackid_list = (int*)malloc(STACKID_LIST_INC * sizeof(int));
 }
 
 /**********************************************************************/
 
 void vftr_stackid_list_add (int stack_id) {
-   if (n_print_stackids + 1 > stackid_list_size) {
-      stackid_list_size += STACKID_LIST_INC;
-      print_stackid_list = (int*)realloc (print_stackid_list, stackid_list_size * sizeof(int));
+   if (vftr_n_print_stackids + 1 > vftr_stackid_list_size) {
+      vftr_stackid_list_size += STACKID_LIST_INC;
+      vftr_print_stackid_list = (int*)realloc (vftr_print_stackid_list, vftr_stackid_list_size * sizeof(int));
    }
-   print_stackid_list[n_print_stackids++] = stack_id;
+   vftr_print_stackid_list[vftr_n_print_stackids++] = stack_id;
 }
 
 /**********************************************************************/
 
 void vftr_stackid_list_print (FILE *fp) {
-   for (int i = 0; i < n_print_stackids; i++) {
-      fprintf (fp, "%d ", print_stackid_list[i]);
+   for (int i = 0; i < vftr_n_print_stackids; i++) {
+      fprintf (fp, "%d ", vftr_print_stackid_list[i]);
    }
    fprintf (fp, "\n");
 }
@@ -400,7 +400,9 @@ void vftr_stackid_list_print (FILE *fp) {
 /**********************************************************************/
 
 void vftr_stackid_list_finalize () {
-   free (print_stackid_list);
+   free (vftr_print_stackid_list);
+   vftr_stackid_list_size = 0;
+   vftr_n_print_stackids = 0;
 }
 
 /**********************************************************************/

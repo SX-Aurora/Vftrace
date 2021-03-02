@@ -1059,12 +1059,12 @@ display_function_t **vftr_create_display_functions (bool display_sync_time, int 
        }
    }
 
-   display_function_t **displ_f = (display_function_t**) malloc (n_print_stackids * sizeof(display_function_t*));
+   display_function_t **displ_f = (display_function_t**) malloc (vftr_n_print_stackids * sizeof(display_function_t*));
 
     int i_disp_f = 0;
-    for (int i = 0; i < n_print_stackids; i++) {
+    for (int i = 0; i < vftr_n_print_stackids; i++) {
         bool name_already_there = false;
-	int i_func = print_stackid_list[i];
+	int i_func = vftr_print_stackid_list[i];
 	for (int j = 0; j < i_disp_f; j++) {
 	   if (!strcmp(displ_f[j]->func_name, vftr_gStackinfo[i_func].name)) {
 	     name_already_there = true;
