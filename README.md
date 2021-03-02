@@ -12,6 +12,13 @@ Vftrace requires that your application has instrumendet function calls. These ar
 After compiling, you must link your application against `libvftrace`, either statically or dynamically.
 The application can then be run in the usual way. In the default setting, a text file is created containing a run-time profile of the application.
 
+## Download
+You can clone the current version of the vftrace from github.
+The third party tools are included in the git repository as submodules, for your convinience.
+```bash
+git clone --recursive https://github.com/SX-Aurora/Vftrace.git
+```
+
 ## Prerequisites & Installation 
 
 Vftrace is written in C. For the Fortran interface, there is also some Fortran code.
