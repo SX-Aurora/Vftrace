@@ -573,16 +573,16 @@ void vftr_prof_column_print (FILE *fp, column_t c, void *value, void *opt_1, voi
 	 break;
       case COL_TIME:
          //if (opt_1 != NULL && c.n_chars_extra > 0 && *(double*)opt_1 > 0.0) {
-         if (c.n_chars_opt_1 > 0 && c.n_chars_opt_2 > 0) {
-            fprintf (fp, " %*.*f(%*.2f) (%*d)", c.n_chars - c.n_chars_opt_1 - c.n_chars_opt_2 - 3, c.n_decimal_places,
+         if (opt_1 != NULL && opt_2 != NULL && c.n_chars_opt_1 > 0 && c.n_chars_opt_2 > 0) {
+            fprintf (fp, " %*.*f(%*.2f) (%*d)", c.n_chars - c.n_chars_opt_1 - c.n_chars_opt_2 - 5, c.n_decimal_places,
 	   	     *(double*)value, c.n_chars_opt_1, *(double*)opt_1 / *(double*)value * 100.0,
-                     c.n_chars_opt_2, *(int*)opt_2);
-         } else if (c.n_chars_opt_1 > 0) {
+                     c.n_chars_opt_2 - 2, *(int*)opt_2);
+         } else if (opt_1 != NULL && c.n_chars_opt_1 > 0) {
             fprintf (fp, " %*.*f(%*.2f)", c.n_chars - c.n_chars_opt_1 - 3, c.n_decimal_places,
-	   	     *(double*)value, c.n_chars_opt_1, *(double*)opt_1 / *(double*)value * 100.0);
-	 } else if (c.n_chars_opt_2 > 0) {
-            fprintf (fp, " %*.*f(%*d)", c.n_chars - c.n_chars_opt_2 - 3, c.n_decimal_places, *(double*)value,
-                     c.n_chars_opt_2, *(int*)opt_2);
+	   	     *(double*)value, c.n_chars_opt_1 - 3, *(double*)opt_1 / *(double*)value * 100.0);
+	 } else if (opt_2 != NULL && c.n_chars_opt_2 > 0) {
+            fprintf (fp, " %*.*f(%*d)", c.n_chars - c.n_chars_opt_2 - 2, c.n_decimal_places, *(double*)value,
+                     c.n_chars_opt_2 - 2, *(int*)opt_2);
 	 } else {
             fprintf (fp, " %*.*f ", c.n_chars, c.n_decimal_places, *(double*)value);
 	 }
@@ -638,10 +638,12 @@ void vftr_set_summary_column_formats (bool print_mpi, int n_display_funcs, displ
        vftr_prof_column_set_n_chars (&t, has_sync ? &t2 : NULL, NULL, &(*columns)[i_column++], &stat);
        t = display_functions[i]->t_min * 1e-6;
        t2 = display_functions[i]->t_sync_min * 1e-6;
-       vftr_prof_column_set_n_chars (&t, has_sync ? &t2 : NULL, NULL, &(*columns)[i_column++], &stat);
+       int n = display_functions[i]->rank_min;
+       vftr_prof_column_set_n_chars (&t, has_sync ? &t2 : NULL, &n, &(*columns)[i_column++], &stat);
        t = display_functions[i]->t_max * 1e-6;
        t2 = display_functions[i]->t_sync_max * 1e-6;
-       vftr_prof_column_set_n_chars (&t, has_sync ? &t2 : NULL, NULL, &(*columns)[i_column++], &stat);
+       n = display_functions[i]->rank_max;
+       vftr_prof_column_set_n_chars (&t, has_sync ? &t2 : NULL, &n, &(*columns)[i_column++], &stat);
        vftr_prof_column_set_n_chars (&display_functions[i]->imbalance, NULL, NULL, &(*columns)[i_column++], &stat);
        t = display_functions[i]->this_mpi_time * 1e-6;
        t2 = display_functions[i]->this_sync_time * 1e-6;
@@ -970,7 +972,9 @@ void vftr_evaluate_display_function (char *func_name, display_function_t **displ
     (*display_func)->t_max = 0;
     (*display_func)->t_sync_max = 0;
     (*display_func)->t_min = LLONG_MAX;
+    (*display_func)->rank_min = -1;
     (*display_func)->t_sync_min = LLONG_MAX;
+    (*display_func)->rank_max = -1;
     (*display_func)->t_avg = 0.0;
     (*display_func)->t_sync_avg = 0.0;
     (*display_func)->imbalance = 0.0;
@@ -996,10 +1000,12 @@ void vftr_evaluate_display_function (char *func_name, display_function_t **displ
        	  if (all_times[i] > 0) {
        		if (all_times[i] < (*display_func)->t_min) {
 			(*display_func)->t_min = all_times[i];
+			(*display_func)->rank_min = i;
 			if (n_func_indices_sync > 0) (*display_func)->t_sync_min = all_times_sync[i];
 		}
        		if (all_times[i] > (*display_func)->t_max) {
 			(*display_func)->t_max = all_times[i];
+			(*display_func)->rank_max = i;
 			if (n_func_indices_sync > 0) (*display_func)->t_sync_max = all_times_sync[i];
 		}
        	  }

@@ -62,7 +62,9 @@ typedef struct display_function {
     int n_calls;
     double t_avg;
     long long t_min;
+    int rank_min;
     long long t_max;
+    int rank_max;
     double t_sync_avg;
     long long t_sync_min;
     long long t_sync_max;
