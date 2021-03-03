@@ -504,6 +504,39 @@ void vftr_prof_column_init (const char *name, char *group_header, int n_decimal_
 
 /**********************************************************************/
 
+void vftr_prof_column_print_status (FILE *fp, column_t c) {
+   fprintf (fp, "Column type: "); 
+   switch (c.col_type) {
+      case COL_INT:
+        fprintf (fp, "Integer\n");
+	break;
+      case COL_DOUBLE:
+        fprintf (fp, "Double\n");
+        break;
+      case COL_CHAR:
+        fprintf (fp, "String\n");
+        break;
+      case COL_MEM:
+        fprintf (fp, "Data Size\n");
+        break;
+      case COL_TIME:
+        fprintf (fp, "Time\n");
+	break;
+   }
+   fprintf (fp, "Title: %s\n", c.header);
+   fprintf (fp, "n_chars: %d\n", c.n_chars);
+   fprintf (fp, "n_chars_opt_1: %d\n", c.n_chars_opt_1);
+   fprintf (fp, "n_chars_opt_2: %d\n", c.n_chars_opt_2);
+   fprintf (fp, "n_decimal_placse: %d\n", c.n_decimal_places);
+   fprintf (fp, "Separator: ");
+   if (c.separator_type == SEP_LAST || c.separator_type == SEP_MID) {
+      fprintf (fp, "|\n");
+   } else {
+      fprintf (fp, " \n");
+   }
+}
+/**********************************************************************/
+
 //void vftr_prof_column_set_n_chars (void *value_1, void *value_2, column_t *c, int *stat) {
 void vftr_prof_column_set_n_chars (void *value, void *opt_1, void *opt_2, column_t *c, int *stat) {
 	int n;
@@ -535,17 +568,18 @@ void vftr_prof_column_set_n_chars (void *value, void *opt_1, void *opt_2, column
 	      if (opt_1) {
                  double *f2 = (double *)opt_1;
 	         if (*f2 > 0) {
-	            int n2 = vftr_count_digits_double (*f2 / *f * 100) + 3;
+	            int n2 = vftr_count_digits_double (*f2 / *f * 100) + 5; // Two decimal places, a comma and two brackets
 		    if (n2 > c->n_chars_opt_1) c->n_chars_opt_1 = n2;
 		    n += n2;
 	         }
               }
 	      if (opt_2) {
                  int *f3 = (int *)opt_2;
-                 int n3 = vftr_count_digits_int (*f3) + 2;
+                 int n3 = vftr_count_digits_int (*f3) + 2; // Two brackets
                  if (n3 > c->n_chars_opt_2) c->n_chars_opt_2 = n3;
                  n += n3;
               }
+              if (opt_1 != NULL && opt_2 != NULL) n++; // Add the space in between
 	      break;
            default:
               *stat = -1;
@@ -574,14 +608,14 @@ void vftr_prof_column_print (FILE *fp, column_t c, void *value, void *opt_1, voi
       case COL_TIME:
          //if (opt_1 != NULL && c.n_chars_extra > 0 && *(double*)opt_1 > 0.0) {
          if (opt_1 != NULL && opt_2 != NULL && c.n_chars_opt_1 > 0 && c.n_chars_opt_2 > 0) {
-            fprintf (fp, " %*.*f(%*.2f) (%*d)", c.n_chars - c.n_chars_opt_1 - c.n_chars_opt_2 - 5, c.n_decimal_places,
-	   	     *(double*)value, c.n_chars_opt_1, *(double*)opt_1 / *(double*)value * 100.0,
+            fprintf (fp, " %*.*f(%*.2f) (%*d) ", c.n_chars - c.n_chars_opt_1 - c.n_chars_opt_2 - 1, c.n_decimal_places,
+	   	     *(double*)value, c.n_chars_opt_1 - 2, *(double*)opt_1 / *(double*)value * 100.0,
                      c.n_chars_opt_2 - 2, *(int*)opt_2);
          } else if (opt_1 != NULL && c.n_chars_opt_1 > 0) {
-            fprintf (fp, " %*.*f(%*.2f)", c.n_chars - c.n_chars_opt_1 - 3, c.n_decimal_places,
-	   	     *(double*)value, c.n_chars_opt_1 - 3, *(double*)opt_1 / *(double*)value * 100.0);
+            fprintf (fp, " %*.*f(%*.2f) ", c.n_chars - c.n_chars_opt_1 - 1, c.n_decimal_places,
+	   	     *(double*)value, c.n_chars_opt_1 - 2, *(double*)opt_1 / *(double*)value * 100.0);
 	 } else if (opt_2 != NULL && c.n_chars_opt_2 > 0) {
-            fprintf (fp, " %*.*f(%*d)", c.n_chars - c.n_chars_opt_2 - 2, c.n_decimal_places, *(double*)value,
+            fprintf (fp, " %*.*f(%*d) ", c.n_chars - c.n_chars_opt_2 - 1, c.n_decimal_places, *(double*)value,
                      c.n_chars_opt_2 - 2, *(int*)opt_2);
 	 } else {
             fprintf (fp, " %*.*f ", c.n_chars, c.n_decimal_places, *(double*)value);
@@ -822,10 +856,12 @@ void vftr_summary_print_line (FILE *fp, display_function_t *displ_f, column_t *c
    vftr_prof_column_print (fp, columns[i_column++], &t, has_sync ? &t2 : NULL, NULL);
    t = displ_f->t_min * 1e-6;
    t2 = displ_f->t_sync_min * 1e-6;
-   vftr_prof_column_print (fp, columns[i_column++], &t, has_sync ? &t2 : NULL, NULL);
+   int n = displ_f->rank_min;
+   vftr_prof_column_print (fp, columns[i_column++], &t, has_sync ? &t2 : NULL, &n);
    t = displ_f->t_max * 1e-6;
    t2 = displ_f->t_sync_max * 1e-6;
-   vftr_prof_column_print (fp, columns[i_column++], &t, has_sync ? &t2 : NULL, NULL);
+   n = displ_f->rank_max;
+   vftr_prof_column_print (fp, columns[i_column++], &t, has_sync ? &t2 : NULL, &n);
    vftr_prof_column_print (fp, columns[i_column++], &displ_f->imbalance, NULL, NULL);
    t = displ_f->this_mpi_time * 1e-6;
    t2 = displ_f->this_sync_time * 1e-6;
