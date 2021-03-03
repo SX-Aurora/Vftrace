@@ -56,6 +56,7 @@ AM_CONDITIONAL([USES_INTEL_COMPILER], [test "$uses_intel_compiler" = "yes"])
 
 LT_INIT(dlopen)
 AC_CONFIG_FILES([Makefile])
+AC_CONFIG_FILES([external/Makefile])
 AC_CONFIG_FILES([src/Makefile])
 AC_CONFIG_FILES([src/vftr_mpi/Makefile])
 AC_CONFIG_FILES([src/vftr_mpi/c-wrapper/Makefile])

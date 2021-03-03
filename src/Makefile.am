@@ -5,9 +5,14 @@ include_HEADERS = vftrace.h
 
 SUBDIRS = vftr_mpi
 
+external_includes = -I$(top_srcdir)/external/tinyexpr/ \
+		    -I$(top_srcdir)/external/jsmn/
 
 libvftrace_la_LIBADD = libvftr_pause.la \
 		       vftr_mpi/libvftr_mpi.la
+# external libraries
+libvftrace_la_LIBADD += ${top_builddir}/external/libtinyexpr.la
+
 if WITH_MPI
 libvftrace_la_LIBADD += vftr_mpi/c-wrapper/libvftr_cmpiwrap.la
 if ENABLE_FORTRAN
@@ -35,7 +40,6 @@ libvftrace_la_SOURCES = demangle.cpp \
 		       vftr_regions.c \
                        vftr_allocate.c \
  		       vftr_timer.c \
-		       tinyexpr.c \
 		       vftr_regex.c \
 	 	       vftr_environment.c \
 		       vftr_signals.c \
@@ -49,7 +53,8 @@ libvftrace_la_CXXFLAGS =
 libvftrace_la_FCFLAGS =
 libvftrace_la_LDFLAGS =
 
-libvftrace_la_CFLAGS += -I${srcdir}/vftr_mpi/
+libvftrace_la_CFLAGS += -I${srcdir}/vftr_mpi/ \
+			${external_includes}
 
 if ENABLE_HWC
 libvftrace_la_CFLAGS += -DHAS_HWC
