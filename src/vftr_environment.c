@@ -263,6 +263,7 @@ void vftr_read_environment () {
     vftr_environment.show_overhead = vftr_read_env_bool ("VFTR_SHOW_FUNCTION_OVERHEAD", false);
     vftr_environment.print_env = vftr_read_env_bool ("VFTR_PRINT_ENVIRONMENT", false);
     vftr_environment.no_memtrace = vftr_read_env_bool ("VFTR_NO_MEMTRACE", false);
+    vftr_environment.all_mpi_summary = vftr_read_env_bool ("VFTR_COMPLETE_MPI_SUMMARY", false);
 }
 
 /**********************************************************************/
@@ -375,6 +376,10 @@ bool vftr_env_no_memtrace () {
    return vftr_environment.no_memtrace->value;
 }
 
+bool vftr_env_need_display_functions () {
+   return vftr_environment.print_stack_profile->value || vftr_environment.create_html->value || vftr_environment.all_mpi_summary->value;
+}
+
 /**********************************************************************/
 
 void vftr_free_environment () {
@@ -406,6 +411,7 @@ void vftr_free_environment () {
 	free (vftr_environment.show_overhead);
         free (vftr_environment.print_env);
 	free (vftr_environment.no_memtrace);
+        free (vftr_environment.all_mpi_summary);
 }
 
 /**********************************************************************/
@@ -439,6 +445,7 @@ void vftr_print_environment (FILE *fp) {
         vftr_print_env_bool (fp, "VFTR_SHOW_FUNCTION_OVERHEAD", vftr_environment.show_overhead);
         vftr_print_env_bool (fp, "VFTR_PRINT_ENVIRONMENT", vftr_environment.print_env);
         vftr_print_env_bool (fp, "VFTR_NO_MEMTRACE", vftr_environment.no_memtrace);
+        vftr_print_env_bool (fp, "VFTR_COMPLETE_MPI_SUMMARY", vftr_environment.all_mpi_summary);
 }
 
 /**********************************************************************/

@@ -326,9 +326,11 @@ void vftr_finalize() {
 
     display_function_t **display_functions;
     int n_display_functions;
-    //if (vftr_environment.print_stack_profile->value || vftr_environment.create_html->value) {
-       display_functions = vftr_create_display_functions (vftr_environment.mpi_show_sync_time->value, &n_display_functions, true); 
-    //}
+    //if (vftr_environment.print_stack_profile->value || vftr_environment.create_html->value || vftr_environment.all_mpi_summary->value) {
+    if (vftr_env_need_display_functions()) {
+       display_functions = vftr_create_display_functions (vftr_environment.mpi_show_sync_time->value,
+                                                          &n_display_functions, vftr_environment.all_mpi_summary->value); 
+    }
 
     FILE *f_html = NULL;
     if (vftr_environment.create_html->value) {
@@ -336,15 +338,14 @@ void vftr_finalize() {
        f_html = vftr_browse_init_profile_table (display_functions, n_display_functions);
     }
 
-    //vftr_print_profile (vftr_log, display_functions, n_display_functions, &ntop, vftr_get_runtime_usec());
     vftr_print_profile (vftr_log, f_html, &ntop, vftr_get_runtime_usec());
 #ifdef _MPI
-    ////if (vftr_environment.print_stack_profile->value) {
+    if (vftr_environment.print_stack_profile->value || vftr_environment.all_mpi_summary->value) {
        // Inside of vftr_print_function_statistics, we use an MPI_Allgather to compute MPI imbalances. Therefore,
        // we need to call this function for every rank, but give it the information of vftr_profile_wanted
        // to avoid unrequired output.
        vftr_print_function_statistics (vftr_log, display_functions, n_display_functions, vftr_profile_wanted);
-    ////}
+    }
 #endif
  
     funcTable = vftr_func_table;

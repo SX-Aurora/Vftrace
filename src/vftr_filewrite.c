@@ -1084,7 +1084,6 @@ display_function_t **vftr_create_display_functions (bool display_sync_time, int 
 
     for (int i = 0; i < *n_display_funcs; i++) {
        vftr_evaluate_display_function (displ_f[i]->func_name, &(displ_f[i]), display_sync_time);
-       //if (!displ_f[i]->properly_terminated) continue;
     }
 
     qsort ((void*)displ_f, (size_t)(*n_display_funcs),
