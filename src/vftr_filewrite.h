@@ -77,7 +77,8 @@ typedef struct display_function {
     bool properly_terminated;
 } display_function_t;
 
-display_function_t **vftr_create_display_functions (bool display_sync_time, int *n_display_funcs);
+//display_function_t **vftr_create_display_functions (bool display_sync_time, int *n_display_funcs);
+display_function_t **vftr_create_display_functions (bool display_sync_time, int *n_display_funcs, bool use_all);
 
 extern char *vftr_mpi_collective_function_names[];
 extern int vftr_n_collective_mpi_functions;

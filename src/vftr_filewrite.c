@@ -1050,11 +1050,11 @@ void vftr_get_display_width (display_function_t **display_functions,
 
 /**********************************************************************/
 
-display_function_t **vftr_create_display_functions (bool display_sync_time, int *n_display_funcs) {
+display_function_t **vftr_create_display_functions (bool display_sync_time, int *n_display_funcs, bool use_all) {
 
    vftr_stackid_list_init();
    for (int i = 0; i < vftr_gStackscount; i++) {
-       if (vftr_pattern_match (vftr_environment.print_stack_profile->value, vftr_gStackinfo[i].name)) {
+       if (use_all || vftr_pattern_match(vftr_environment.print_stack_profile->value, vftr_gStackinfo[i].name)) {
           vftr_stackid_list_add (i);
        }
    }
@@ -1063,15 +1063,17 @@ display_function_t **vftr_create_display_functions (bool display_sync_time, int 
 
     int i_disp_f = 0;
     for (int i = 0; i < vftr_n_print_stackids; i++) {
-        bool name_already_there = false;
 	int i_func = vftr_print_stackid_list[i];
-	for (int j = 0; j < i_disp_f; j++) {
-	   if (!strcmp(displ_f[j]->func_name, vftr_gStackinfo[i_func].name)) {
-	     name_already_there = true;
-	     break;
+        if (!use_all) {
+           bool name_already_there = false;
+	   for (int j = 0; j < i_disp_f; j++) {
+	      if (!strcmp(displ_f[j]->func_name, vftr_gStackinfo[i_func].name)) {
+	        name_already_there = true;
+	        break;
+              }
            }
+	   if (name_already_there) continue;
         }
-	if (name_already_there) continue;
 	displ_f[i_disp_f] = (display_function_t*) malloc (sizeof(display_function_t));
 	displ_f[i_disp_f]->func_name = strdup(vftr_gStackinfo[i_func].name);
 	vftr_is_traceable_mpi_function (displ_f[i_disp_f]->func_name, &(displ_f[i_disp_f]->is_mpi));
@@ -1082,7 +1084,7 @@ display_function_t **vftr_create_display_functions (bool display_sync_time, int 
 
     for (int i = 0; i < *n_display_funcs; i++) {
        vftr_evaluate_display_function (displ_f[i]->func_name, &(displ_f[i]), display_sync_time);
-       if (!displ_f[i]->properly_terminated) continue;
+       //if (!displ_f[i]->properly_terminated) continue;
     }
 
     qsort ((void*)displ_f, (size_t)(*n_display_funcs),
