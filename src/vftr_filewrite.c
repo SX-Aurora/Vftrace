@@ -577,14 +577,15 @@ void vftr_prof_column_print (FILE *fp, column_t c, void *value_1, void *value_2)
 /**********************************************************************/
 
 void vftr_set_summary_column_formats (bool print_mpi, int n_display_funcs, display_function_t **display_functions, column_t **columns, double total_time) {
-    const char *headers[10] = {"Function", "%MPI", "Calls",
+    const char *headers[11] = {"Function", "Stack ID", "%MPI", "Calls",
                               "Total send ", "Total recv.",
 			      "Avg. time [s]", "Min. time [s]", "Max. time [s]",
 			      "Imbalance [%]", "This rank [s]"};
-    enum column_ids {FUNC, MPI, CALLS, TOT_SEND_BYTES, TOT_RECV_BYTES, T_AVG, T_MIN, T_MAX, IMBA, THIS_T};
+    enum column_ids {FUNC, STACK_ID, MPI, CALLS, TOT_SEND_BYTES, TOT_RECV_BYTES, T_AVG, T_MIN, T_MAX, IMBA, THIS_T};
 
     int i_column = 0;
     vftr_prof_column_init (headers[FUNC], NULL, 0, COL_CHAR, SEP_MID, &(*columns)[i_column++]);
+    if (vftr_environment.all_mpi_summary->value) vftr_prof_column_init (headers[STACK_ID], NULL, 0, COL_INT, SEP_MID, &(*columns)[i_column++]);
     if (print_mpi) vftr_prof_column_init (headers[MPI], NULL, 2, COL_DOUBLE, SEP_MID, &(*columns)[i_column++]);
     vftr_prof_column_init (headers[CALLS], NULL, 0, COL_INT, SEP_MID, &(*columns)[i_column++]);
     if (print_mpi) {
@@ -602,6 +603,10 @@ void vftr_set_summary_column_formats (bool print_mpi, int n_display_funcs, displ
        if (!display_functions[i]->properly_terminated) continue;       
        i_column = 0;
        vftr_prof_column_set_n_chars (display_functions[i]->func_name, NULL, &(*columns)[i_column++], &stat);
+       if (vftr_environment.all_mpi_summary->value) {
+          int stack_id = display_functions[i]->stack_id;
+          vftr_prof_column_set_n_chars (&stack_id, NULL, &(*columns)[i_column++], &stat);
+       }
        if (print_mpi) {
           double tmp = display_functions[i]->this_mpi_time * 1e-6 / total_time * 100;
 	  vftr_prof_column_set_n_chars (&tmp, NULL, &(*columns)[i_column++], &stat);
@@ -753,6 +758,26 @@ void vftr_summary_print_header (FILE *fp, column_t *columns, int table_width, bo
 	       columns[7].n_chars, columns[7].header,
 	       columns[8].n_chars, columns[8].header,
 	       columns[9].n_chars, columns[9].header);
+   } else if (vftr_environment.all_mpi_summary->value) {
+	       columns[0].n_chars, columns[0].header,
+	       columns[1].n_chars, columns[1].header,
+	       columns[2].n_chars, columns[2].header,
+	       columns[3].n_chars, columns[3].header,
+	       columns[4].n_chars, columns[4].header,
+	       columns[5].n_chars, columns[5].header,
+	       columns[6].n_chars, columns[6].header,
+	       columns[7].n_chars, columns[7].header);
+
+               
+      fprintf (fp, "| %*s | %*s | %*s | %*s | %*s | %*s | %*s | %*s |\n",
+	       columns[0].n_chars, columns[0].header,
+	       columns[1].n_chars, columns[1].header,
+	       columns[2].n_chars, columns[2].header,
+	       columns[3].n_chars, columns[3].header,
+	       columns[4].n_chars, columns[4].header,
+	       columns[5].n_chars, columns[5].header,
+	       columns[6].n_chars, columns[6].header,
+	       columns[7].n_chars, columns[7].header);
    } else {
       fprintf (fp, "| %*s | %*s | %*s | %*s | %*s | %*s | %*s |\n",
 	       columns[0].n_chars, columns[0].header,
@@ -772,6 +797,7 @@ void vftr_summary_print_header (FILE *fp, column_t *columns, int table_width, bo
 void vftr_summary_print_line (FILE *fp, display_function_t *displ_f, column_t *columns, double total_time, bool print_mpi) {
    int i_column = 0;
    vftr_prof_column_print (fp, columns[i_column++], displ_f->func_name, NULL);
+   if (vftr_environment.all_mpi_summary->value) vftr_prof_column_print (fp, columns[i_column++], &displ_f->stack_id, NULL);
    double t, t2;
    if (print_mpi) {
       t = displ_f->this_mpi_time * 1e-6 / total_time * 100;
@@ -920,7 +946,10 @@ void vftr_evaluate_display_function (char *func_name, display_function_t **displ
 	(*display_func)->mpi_tot_recv_bytes += vftr_func_table[func_indices[i]]->prof_current.mpi_tot_recv_bytes;
 	(*display_func)->properly_terminated &= !vftr_func_table[func_indices[i]]->open;
     }
-    if (!(*display_func)->properly_terminated) return;
+    if (!(*display_func)->properly_terminated) {
+        printf ("Not terminated: %d %s\n", vftr_mpirank, func_name);
+        return;
+    }
     long long all_times [vftr_mpisize], all_times_sync [vftr_mpisize];
 #if defined(_MPI)
     PMPI_Allgather (&(*display_func)->this_mpi_time, 1, MPI_LONG_LONG_INT, all_times,
@@ -1078,6 +1107,13 @@ display_function_t **vftr_create_display_functions (bool display_sync_time, int 
 	displ_f[i_disp_f]->func_name = strdup(vftr_gStackinfo[i_func].name);
 	vftr_is_traceable_mpi_function (displ_f[i_disp_f]->func_name, &(displ_f[i_disp_f]->is_mpi));
         displ_f[i_disp_f]->i_orig = i_disp_f;
+        // Associating a stack ID with the display function only makes sense when we are in the complete_summary mode.
+        // Otherwise all stacks with the same final function are added up. In that case, we set a negative dummy value.
+        if (use_all) {
+          displ_f[i_disp_f]->stack_id = i_func;
+        } else {
+          displ_f[i_disp_f]->stack_id = -1;
+        }
 	i_disp_f++;
     }
     *n_display_funcs = i_disp_f;
@@ -1097,11 +1133,13 @@ void vftr_print_function_statistics (FILE *fp_log, display_function_t **display_
 
     double total_time = 0;
     bool print_mpi_columns = false;
-    for (int i = 0; i < n_display_funcs; i++) {
-      if (display_functions[i]->properly_terminated) {
-	total_time += display_functions[i]->this_mpi_time * 1e-6;
-	print_mpi_columns |= display_functions[i]->is_mpi;
-      }
+    if (!vftr_environment.all_mpi_summary->value) {
+       for (int i = 0; i < n_display_funcs; i++) {
+         if (display_functions[i]->properly_terminated) {
+           total_time += display_functions[i]->this_mpi_time * 1e-6;
+           print_mpi_columns |= display_functions[i]->is_mpi;
+         }
+       }
     }
 
     int table_width;
@@ -1109,7 +1147,24 @@ void vftr_print_function_statistics (FILE *fp_log, display_function_t **display_
        fprintf (fp_log, "Total time spent in MPI for rank %d: %lf s\n", vftr_mpirank, total_time);
        fprintf (fp_log, "Imbalance computed as: max (T - T_avg)\n");
 
-       int n_columns = print_mpi_columns ? 10 : 7;
+       //int n_columns = print_mpi_columns ? 10 : 7;
+       // Per default, there are seven columns:
+       //   - The function name
+       //   - Number of calls
+       //   - Average, mininum and maximum time
+       //   - Imbalance
+       //   - Time on this rank
+       int n_columns = 7;
+       // There are 3 more columns for MPI overviews:
+       //   - Percentage of the total MPI time
+       //   - Data size sent and received
+       if (print_mpi_columns) {
+          n_columns += 3;
+       // If the complete overview is printed, add one column for global stack ID (or entire stack).
+       } else if (vftr_environment.all_mpi_summary->value) {
+          n_columns += 1;
+       }
+         
        column_t *columns = (column_t*) malloc (n_columns * sizeof(column_t));
        vftr_set_summary_column_formats (print_mpi_columns, n_display_funcs, display_functions, &columns, total_time);
    
