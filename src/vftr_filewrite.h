@@ -30,7 +30,7 @@ extern FILE *vftr_vfd_file;
 extern long vftr_admin_offset;
 extern long vftr_samples_offset;
 
-enum column_data_type {COL_INT, COL_DOUBLE, COL_CHAR, COL_MEM, COL_SYNC};
+enum column_data_type {COL_INT, COL_DOUBLE, COL_CHAR, COL_MEM, COL_TIME};
 enum separator_t {SEP_NONE, SEP_MID, SEP_LAST};
 
 typedef struct column {
@@ -38,7 +38,8 @@ typedef struct column {
 	char *header;
    	char *group_header;
 	int n_chars;
-	int n_chars_extra;
+	int n_chars_opt_1;
+	int n_chars_opt_2;
 	int n_decimal_places;
 	int separator_type;
 } column_t;
@@ -123,8 +124,8 @@ char *vftr_memory_unit_string (double value, int n_decimal_places);
 void vftr_time_unit (double *value, char **unit, bool for_html);
 
 void vftr_prof_column_init (const char *name, char *group_header, int n_decimal_places, int col_type, int sep_type, column_t *c);
-void vftr_prof_column_set_n_chars (void *value_1, void *value_2, column_t *c, int *stat);
-void vftr_prof_column_print (FILE *fp, column_t c, void *value_1, void *value_2);
+void vftr_prof_column_set_n_chars (void *value, void *opt_1, void *opt_2, column_t *c, int *stat);
+void vftr_prof_column_print (FILE *fp, column_t c, void *value, void *opt_1, void *opt_2);
 int vftr_get_tablewidth_from_columns (column_t *columns, int n_columns, bool use_separators);
 
 #endif
