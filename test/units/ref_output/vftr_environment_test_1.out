@@ -24,6 +24,7 @@ VFTR_SORT_PROFILE_TABLE(default): EXCL_TIME
 VFTR_SHOW_FUNCTION_OVERHEAD(default): false
 VFTR_PRINT_ENVIRONMENT(default): false
 VFTR_NO_MEMTRACE(default): false
+VFTR_COMPLETE_MPI_SUMMARY(default): false
 ***************************
 VFTR_OFF: false
 VFTR_SAMPLING: true
@@ -51,3 +52,4 @@ VFTR_SORT_PROFILE_TABLE(default): EXCL_TIME
 VFTR_SHOW_FUNCTION_OVERHEAD(default): false
 VFTR_PRINT_ENVIRONMENT(default): false
 VFTR_NO_MEMTRACE(default): false
+VFTR_COMPLETE_MPI_SUMMARY(default): false
