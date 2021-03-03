@@ -353,6 +353,21 @@ void vftr_assert_environment () {
             vftr_environment.mpi_show_sync_time->value = false;
         }
 #endif
+
+        if (vftr_environment.all_mpi_summary->value) {
+           bool veto = vftr_environment.mpi_show_sync_time->value || vftr_environment.print_stack_profile->value;
+           if (veto) {
+              printf ("Warning: ");
+              if (vftr_environment.mpi_show_sync_time->value) {
+                 printf ("VFTR_MPI_SHOW_SYNC_TIME ");
+              } else {
+                 printf ("VFTR_PRINT_STACK_PROFILE ");
+              }
+	      printf ("is incompatible with VFTR_COMPLETE_MPI_SUMMARY.\n");
+              printf ("DISABLED: VFTR_COMPLETE_MPI_SUMMARY.\n");
+              vftr_environment.all_mpi_summary->value = false;
+	   }
+        }
 }
 
 /**********************************************************************/
