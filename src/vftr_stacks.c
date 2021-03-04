@@ -551,7 +551,10 @@ void vftr_print_global_stacklist (FILE *fp) {
    maxstrlen--; // Chop trailing space
    if (strlen("Functions") > maxstrlen) maxstrlen = strlen("Functions");
    int max_id = vftr_gStackscount;
-   int max_id_length = strlen("ID") > vftr_count_digits_int(max_id) ? strlen("ID") : vftr_count_digits_int(max_id);
+   // Each stack ID in this list is prefixed with "STID" to allow for an easier search of that line.
+   // This has always more characters than the header "ID". Therefore, max_id_length is just
+   // the length of "STID" (4) plus the length of the maximal ID.
+   int max_id_length = 4 + vftr_count_digits_int(max_id);
    int table_width = 1 + max_id_length + 1 + maxstrlen;
 
    // Print headers
@@ -566,7 +569,9 @@ void vftr_print_global_stacklist (FILE *fp) {
    for (int istack = 0; istack < vftr_gStackscount; istack++) {
       if (vftr_gStackinfo[istack].locID >= 0) {
          int jstack = istack;
-         fprintf (fp, "%*d ", max_id_length, istack);
+         char sid[max_id_length];
+	 snprintf (sid, max_id_length, "STID%d", istack);
+         fprintf (fp, "%*s ", max_id_length, sid);
          while (vftr_gStackinfo[jstack].locID >= 0 && vftr_gStackinfo[jstack].ret >= 0) {
             fprintf(fp, "%s", vftr_gStackinfo[jstack].name);
             fprintf(fp, "<");
