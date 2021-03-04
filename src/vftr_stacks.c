@@ -58,6 +58,8 @@ profdata_t vftr_prof_data;
 
 const char *vftr_stacktree_headers[6] = {"T[s]", "Calls", "Imbalance[%]", "Total send", "Total recv.", "Stack ID"};
 
+stack_string_t *vftr_global_stack_strings;
+
 /**********************************************************************/
 
 // initialize stacks only called from vftr_initialize
@@ -531,28 +533,50 @@ void vftr_print_local_stacklist (function_t **funcTable, FILE *fp, int n_ids) {
 
 /**********************************************************************/
 
-char *vftr_create_stack_string (int i_stack) {
-   if (vftr_mpirank == 0) printf ("CREATE STACK STRING!\n");
+void vftr_create_global_stack_strings () {
+   vftr_global_stack_strings = (stack_string_t*) malloc (vftr_gStackscount * sizeof(stack_string_t));
+   int i_stack = 0;
+   for (int i = 0; i < vftr_gStackscount; i++) {
+      if (vftr_gStackinfo[i].locID >= 0) {
+        char *name;
+        int len;
+        int depth;
+        vftr_create_stack_string (i, &name, &len, &depth);
+	vftr_global_stack_strings[i_stack].s = strdup(name);
+        vftr_global_stack_strings[i_stack].len = len;
+        vftr_global_stack_strings[i_stack].id = i;
+        vftr_global_stack_strings[i_stack].depth = depth;
+        i_stack++;
+        //free(name);
+      } else {
+        vftr_global_stack_strings[i_stack++].id = -1;
+      }
+   }
+}
+
+/**********************************************************************/
+
+//char *vftr_create_stack_string (int i_stack) {
+void vftr_create_stack_string (int i_stack, char **name, int *len, int *depth) {
    // First, count how long the string will be.
-   int nc = 0;
+   *len = 0;
+   *depth = 0;
    int j_stack = i_stack;
    while (vftr_gStackinfo[j_stack].locID >= 0 && vftr_gStackinfo[j_stack].ret >= 0) {
       // There is a terminating character included in strlen, which we will remove below.
       // In the final string, there will be an additional "<" character. Thus, we have an additional -1 + 1 = 0.
-      nc += strlen(vftr_gStackinfo[j_stack].name) + 1; 
+      *len += strlen(vftr_gStackinfo[j_stack].name) + 1; 
       j_stack = vftr_gStackinfo[j_stack].ret;
+      *depth++;
    }
-   nc += strlen(vftr_gStackinfo[j_stack].name); 
-   if (vftr_mpirank == 0) printf ("nc: %d\n", nc);
-   char *stack_string = (char *) malloc (nc * sizeof(char));
-   char *s0 = stack_string;
+   *len += strlen(vftr_gStackinfo[j_stack].name); 
+   char *stack_string = (char *) malloc (*len * sizeof(char));
+   //char *s0 = stack_string;
+   *name = stack_string;
    j_stack = i_stack;
-   int ntot = 0;
    while (vftr_gStackinfo[j_stack].locID >= 0 && vftr_gStackinfo[j_stack].ret >= 0) {
       char *s = strdup(vftr_gStackinfo[j_stack].name);
       int n = strlen(s);
-      ntot += n;
-      if (vftr_mpirank == 0) printf ("ntot: %d\n", ntot);
       for (int i = 0; i < n; i++) {
         *stack_string = s[i];
         stack_string++;
@@ -563,16 +587,14 @@ char *vftr_create_stack_string (int i_stack) {
    }
    char *s = strdup(vftr_gStackinfo[j_stack].name);
    int n = strlen(s);
-   ntot += n;
-   if (vftr_mpirank == 0) printf ("ntot: %d\n", ntot);
    for (int i = 0; i < n; i++) {
       *stack_string = s[i];
       stack_string++;
    }
    *stack_string = '\0';
-   if (vftr_mpirank == 0) printf ("FOO: %s\n", s0);
+   //if (vftr_mpirank == 0) printf ("Check name: %s\n", *name);
    //return stack_string; 
-   return s0;
+   //return s0;
 }
 
 /**********************************************************************/
@@ -612,14 +634,24 @@ void vftr_print_global_stacklist (FILE *fp) {
 
    // Print table
 
+   for (int i_stack = 0; i_stack < vftr_gStackscount; i_stack++) {
+      if (vftr_global_stack_strings[i_stack].id >= 0) {
+         char sid[max_id_length];
+         snprintf (sid, max_id_length, "STID%d", vftr_global_stack_strings[i_stack].id);
+         fprintf (fp, "%*s %s\n", max_id_length, sid, vftr_global_stack_strings[i_stack].s);
+      }
+   }
    for (int istack = 0; istack < vftr_gStackscount; istack++) {
       if (vftr_gStackinfo[istack].locID >= 0) {
          int jstack = istack;
          char sid[max_id_length];
 	 snprintf (sid, max_id_length, "STID%d", istack);
          fprintf (fp, "%*s ", max_id_length, sid);
-         char *s = vftr_create_stack_string (istack);
-         fprintf (fp, "%s\n", s);
+         //char *s = vftr_create_stack_string (istack);
+         char *name;
+         int len, depth; 
+         vftr_create_stack_string (istack, &name, &len, &depth);
+         fprintf (fp, "%s\n", name);
          //while (vftr_gStackinfo[jstack].locID >= 0 && vftr_gStackinfo[jstack].ret >= 0) {
          //   fprintf(fp, "%s", vftr_gStackinfo[jstack].name);
          //   fprintf(fp, "<");

@@ -337,6 +337,8 @@ void vftr_finalize() {
        f_html = vftr_browse_init_profile_table (display_functions, n_display_functions);
     }
 
+    vftr_create_global_stack_strings ();
+
     vftr_print_profile (vftr_log, f_html, &ntop, vftr_get_runtime_usec());
 #ifdef _MPI
     if (vftr_environment.print_stack_profile->value || vftr_environment.all_mpi_summary->value) {
