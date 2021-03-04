@@ -133,7 +133,6 @@ typedef struct stack_string {
 
 extern stack_string_t *vftr_global_stack_strings;
 void vftr_create_global_stack_strings ();
-//char *vftr_create_stack_string (int i_stack);
 void vftr_create_stack_string (int i_stack, char **name, int *len, int *depth);
 
 // test functions

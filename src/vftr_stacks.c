@@ -547,7 +547,6 @@ void vftr_create_global_stack_strings () {
         vftr_global_stack_strings[i_stack].id = i;
         vftr_global_stack_strings[i_stack].depth = depth;
         i_stack++;
-        //free(name);
       } else {
         vftr_global_stack_strings[i_stack++].id = -1;
       }
@@ -556,22 +555,19 @@ void vftr_create_global_stack_strings () {
 
 /**********************************************************************/
 
-//char *vftr_create_stack_string (int i_stack) {
 void vftr_create_stack_string (int i_stack, char **name, int *len, int *depth) {
    // First, count how long the string will be.
    *len = 0;
    *depth = 0;
    int j_stack = i_stack;
    while (vftr_gStackinfo[j_stack].locID >= 0 && vftr_gStackinfo[j_stack].ret >= 0) {
-      // There is a terminating character included in strlen, which we will remove below.
-      // In the final string, there will be an additional "<" character. Thus, we have an additional -1 + 1 = 0.
+      // In the final string, there will be an additional "<" character. Therefore, add 1.
       *len += strlen(vftr_gStackinfo[j_stack].name) + 1; 
       j_stack = vftr_gStackinfo[j_stack].ret;
       *depth++;
    }
    *len += strlen(vftr_gStackinfo[j_stack].name); 
    char *stack_string = (char *) malloc (*len * sizeof(char));
-   //char *s0 = stack_string;
    *name = stack_string;
    j_stack = i_stack;
    while (vftr_gStackinfo[j_stack].locID >= 0 && vftr_gStackinfo[j_stack].ret >= 0) {
@@ -592,9 +588,6 @@ void vftr_create_stack_string (int i_stack, char **name, int *len, int *depth) {
       stack_string++;
    }
    *stack_string = '\0';
-   //if (vftr_mpirank == 0) printf ("Check name: %s\n", *name);
-   //return stack_string; 
-   //return s0;
 }
 
 /**********************************************************************/
