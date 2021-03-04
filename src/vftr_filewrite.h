@@ -30,7 +30,7 @@ extern FILE *vftr_vfd_file;
 extern long vftr_admin_offset;
 extern long vftr_samples_offset;
 
-enum column_data_type {COL_INT, COL_DOUBLE, COL_CHAR, COL_MEM, COL_TIME};
+enum column_data_type {COL_INT, COL_DOUBLE, COL_CHAR_LEFT, COL_CHAR_RIGHT, COL_MEM, COL_TIME};
 enum separator_t {SEP_NONE, SEP_MID, SEP_LAST};
 
 typedef struct column {

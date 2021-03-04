@@ -513,8 +513,11 @@ void vftr_prof_column_print_status (FILE *fp, column_t c) {
       case COL_DOUBLE:
         fprintf (fp, "Double\n");
         break;
-      case COL_CHAR:
-        fprintf (fp, "String\n");
+      case COL_CHAR_RIGHT:
+        fprintf (fp, "Right-aligned String\n");
+        break;
+      case COL_CHAR_LEFT:
+        fprintf (fp, "Left-aligned String\n");
         break;
       case COL_MEM:
         fprintf (fp, "Data Size\n");
@@ -553,7 +556,8 @@ void vftr_prof_column_set_n_chars (void *value, void *opt_1, void *opt_2, column
 	      // For double values, we need to add the decimal places and the decimal point itself.
 	      n = vftr_count_digits_double (*f) + c->n_decimal_places + 1;
 	      break;
-	   case COL_CHAR:
+	   case COL_CHAR_RIGHT:
+           case COL_CHAR_LEFT:
 	      ch = (char*)value;
    	      n = strlen(ch);
 	      break;
@@ -599,8 +603,11 @@ void vftr_prof_column_print (FILE *fp, column_t c, void *value, void *opt_1, voi
       case COL_DOUBLE:
          fprintf (fp, " %*.*f ", c.n_chars, c.n_decimal_places, *(double*)value);
 	 break;
-      case COL_CHAR:
+      case COL_CHAR_RIGHT:
          fprintf (fp, " %*s ", c.n_chars, (char*)value);
+	 break;
+      case COL_CHAR_LEFT:
+         fprintf (fp, " %s ", (char*)value);
 	 break;
       case COL_MEM:
          fprintf (fp, " %*s ", c.n_chars, vftr_memory_unit_string (*(double*)value, c.n_decimal_places));
@@ -633,7 +640,7 @@ void vftr_set_summary_column_formats (bool print_mpi, int n_display_funcs, displ
     enum column_ids {FUNC, STACK_ID, MPI, CALLS, TOT_SEND_BYTES, TOT_RECV_BYTES, T_AVG, T_MIN, T_MAX, IMBA, THIS_T};
 
     int i_column = 0;
-    vftr_prof_column_init (headers[FUNC], NULL, 0, COL_CHAR, SEP_MID, &(*columns)[i_column++]);
+    vftr_prof_column_init (headers[FUNC], NULL, 0, COL_CHAR_RIGHT, SEP_MID, &(*columns)[i_column++]);
     if (vftr_environment.all_mpi_summary->value) vftr_prof_column_init (headers[STACK_ID], NULL, 0, COL_INT, SEP_MID, &(*columns)[i_column++]);
     if (print_mpi) vftr_prof_column_init (headers[MPI], NULL, 2, COL_DOUBLE, SEP_MID, &(*columns)[i_column++]);
     vftr_prof_column_init (headers[CALLS], NULL, 0, COL_INT, SEP_MID, &(*columns)[i_column++]);
@@ -723,9 +730,12 @@ void vftr_set_proftab_column_formats (function_t **func_table,
 
         if (vftr_max_allocated_fields > 0) vftr_prof_column_init ("Max mem", NULL, 2, COL_MEM, SEP_NONE, &(columns)[i_column++]);
 
-        vftr_prof_column_init ("Function", NULL, 0, COL_CHAR, SEP_NONE, &(columns)[i_column++]);
-        vftr_prof_column_init ("Caller", NULL, 0, COL_CHAR, SEP_NONE, &(columns)[i_column++]);
+        vftr_prof_column_init ("Function", NULL, 0, COL_CHAR_RIGHT, SEP_NONE, &(columns)[i_column++]);
+        vftr_prof_column_init ("Caller", NULL, 0, COL_CHAR_RIGHT, SEP_NONE, &(columns)[i_column++]);
         vftr_prof_column_init ("ID", NULL, 0, COL_INT, SEP_NONE, &(columns)[i_column++]);
+        if (vftr_environment.show_stacks_in_profile->value) {
+           vftr_prof_column_init ("Stack", NULL, 0, COL_CHAR_LEFT, SEP_NONE, &(columns)[i_column++]);
+        }
         int stat;
         long long t_sum = 0;
         for (int i = 0; i < n_funcs; i++) {
@@ -773,6 +783,9 @@ void vftr_set_proftab_column_formats (function_t **func_table,
 
             vftr_prof_column_set_n_chars (func_table[i_func]->name, NULL, NULL, &(columns)[i_column++], &stat);
             vftr_prof_column_set_n_chars (func_table[i_func]->return_to->name, NULL, NULL, &(columns)[i_column++], &stat);
+            int global_id = func_table[i_func]->gid;
+            vftr_prof_column_set_n_chars (&global_id, NULL, NULL, &(columns)[i_column++], &stat);
+            vftr_prof_column_set_n_chars (vftr_global_stack_strings[global_id].s, NULL, NULL, &(columns)[i_column++], &stat);
 	}
 	columns[0].n_chars++;
 }
@@ -901,6 +914,10 @@ void vftr_proftab_print_header (FILE *fp, column_t *columns) {
 	i++;
 	fprintf (fp, " %*s ", columns[i].n_chars, columns[i].header);
 	i++;
+        if (vftr_environment.show_stacks_in_profile) {
+          fprintf (fp, " %*s ", columns[i].n_chars, columns[i].header);
+	  i++;
+        }
 	fprintf (fp, "\n");
 }
 
@@ -1410,6 +1427,9 @@ void vftr_print_profile_line (FILE *fp_log, int local_stack_id, int global_stack
    }
    
    vftr_prof_column_print (fp_log, prof_columns[i_column++], &global_stack_id, NULL, NULL);
+   if (vftr_environment.show_stacks_in_profile->value) {
+      vftr_prof_column_print (fp_log, prof_columns[i_column++], vftr_global_stack_strings[global_stack_id].s, NULL, NULL);
+   }
    fprintf (fp_log, "\n");
 }
 
@@ -1465,6 +1485,7 @@ void vftr_print_profile (FILE *fp_log, FILE *f_html, int *n_func_indices, long l
     n_columns += vftr_scenario_expr_n_formulas;
     // If function overhead is displayed, add three more columns.
     if (vftr_environment.show_overhead->value) n_columns += 3;
+    if (vftr_environment.show_stacks_in_profile->value) n_columns++;
 
     int i_column = 0;
     column_t *prof_columns = (column_t*) malloc (n_columns * sizeof(column_t));

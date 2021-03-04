@@ -264,6 +264,7 @@ void vftr_read_environment () {
     vftr_environment.print_env = vftr_read_env_bool ("VFTR_PRINT_ENVIRONMENT", false);
     vftr_environment.no_memtrace = vftr_read_env_bool ("VFTR_NO_MEMTRACE", false);
     vftr_environment.all_mpi_summary = vftr_read_env_bool ("VFTR_COMPLETE_MPI_SUMMARY", false);
+    vftr_environment.show_stacks_in_profile = vftr_read_env_bool ("VFTR_SHOW_STACKS_IN_PROFILE", false);
 }
 
 /**********************************************************************/
@@ -427,6 +428,7 @@ void vftr_free_environment () {
         free (vftr_environment.print_env);
 	free (vftr_environment.no_memtrace);
         free (vftr_environment.all_mpi_summary);
+        free (vftr_environment.show_stacks_in_profile);
 }
 
 /**********************************************************************/
@@ -461,6 +463,7 @@ void vftr_print_environment (FILE *fp) {
         vftr_print_env_bool (fp, "VFTR_PRINT_ENVIRONMENT", vftr_environment.print_env);
         vftr_print_env_bool (fp, "VFTR_NO_MEMTRACE", vftr_environment.no_memtrace);
         vftr_print_env_bool (fp, "VFTR_COMPLETE_MPI_SUMMARY", vftr_environment.all_mpi_summary);
+        vftr_print_env_bool (fp, "VFTR_SHOW_STACKS_IN_PROFILE", vftr_environment.show_stacks_in_profile);
 }
 
 /**********************************************************************/
