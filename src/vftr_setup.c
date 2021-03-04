@@ -326,7 +326,6 @@ void vftr_finalize() {
 
     display_function_t **display_functions;
     int n_display_functions;
-    //if (vftr_environment.print_stack_profile->value || vftr_environment.create_html->value || vftr_environment.all_mpi_summary->value) {
     if (vftr_env_need_display_functions()) {
        display_functions = vftr_create_display_functions (vftr_environment.mpi_show_sync_time->value,
                                                           &n_display_functions, vftr_environment.all_mpi_summary->value); 

@@ -606,7 +606,6 @@ void vftr_prof_column_print (FILE *fp, column_t c, void *value, void *opt_1, voi
          fprintf (fp, " %*s ", c.n_chars, vftr_memory_unit_string (*(double*)value, c.n_decimal_places));
 	 break;
       case COL_TIME:
-         //if (opt_1 != NULL && c.n_chars_extra > 0 && *(double*)opt_1 > 0.0) {
          if (opt_1 != NULL && opt_2 != NULL && c.n_chars_opt_1 > 0 && c.n_chars_opt_2 > 0) {
             fprintf (fp, " %*.*f(%*.2f) (%*d) ", c.n_chars - c.n_chars_opt_1 - c.n_chars_opt_2 - 1, c.n_decimal_places,
 	   	     *(double*)value, c.n_chars_opt_1 - 2, *(double*)opt_1 / *(double*)value * 100.0,
@@ -990,10 +989,7 @@ void vftr_evaluate_display_function (char *func_name, display_function_t **displ
 	(*display_func)->mpi_tot_recv_bytes += vftr_func_table[func_indices[i]]->prof_current.mpi_tot_recv_bytes;
 	(*display_func)->properly_terminated &= !vftr_func_table[func_indices[i]]->open;
     }
-    if (!(*display_func)->properly_terminated) {
-        printf ("Not terminated: %d %s\n", vftr_mpirank, func_name);
-        return;
-    }
+    if (!(*display_func)->properly_terminated) return;
     long long all_times [vftr_mpisize], all_times_sync [vftr_mpisize];
 #if defined(_MPI)
     PMPI_Allgather (&(*display_func)->this_mpi_time, 1, MPI_LONG_LONG_INT, all_times,
@@ -1419,8 +1415,6 @@ void vftr_print_profile_line (FILE *fp_log, int local_stack_id, int global_stack
 
 /**********************************************************************/
 
-//void vftr_print_profile (FILE *fp_log, display_function_t **display_functions, int n_display_functions,
-//			 int *n_func_indices, long long time0) {
 void vftr_print_profile (FILE *fp_log, FILE *f_html, int *n_func_indices, long long time0) {
     unsigned long long calls;
     
@@ -1428,11 +1422,6 @@ void vftr_print_profile (FILE *fp_log, FILE *f_html, int *n_func_indices, long l
 
     if (!vftr_stackscount) return;
     if (!vftr_profile_wanted) return;
-
-    //if (vftr_environment.create_html->value) {
-    //   vftr_browse_create_directory ();
-    //   f_html = vftr_browse_init_profile_table (display_functions, n_display_functions);
-    //}
 
     function_t **func_table;
 
@@ -1484,7 +1473,6 @@ void vftr_print_profile (FILE *fp_log, FILE *f_html, int *n_func_indices, long l
 
     table_width = vftr_get_tablewidth_from_columns (prof_columns, n_columns, false);
 
-    //if (vftr_environment.create_html->value) {
     if (f_html != NULL) {
        vftr_browse_create_profile_header (f_html);
     }
@@ -1509,7 +1497,6 @@ void vftr_print_profile (FILE *fp_log, FILE *f_html, int *n_func_indices, long l
 			        n_calls, t_excl, t_incl, cumulative_time, t_overhead,
 				func_table[i_func]->name, func_table[i_func]->return_to->name, prof_columns);
 
-       //if (vftr_environment.create_html->value) {
        if (f_html != NULL) {
 	  vftr_browse_print_table_line (f_html, func_table[i_func]->gid,
 				        function_time, sampling_overhead_time_usec * 1e-6,
@@ -1518,7 +1505,6 @@ void vftr_print_profile (FILE *fp_log, FILE *f_html, int *n_func_indices, long l
        }
     }
 
-    //if (vftr_environment.create_html->value) vftr_browse_finalize_table(f_html);
     if (f_html != NULL) vftr_browse_finalize_table(f_html);
     
     vftr_print_dashes (fp_log, table_width);
