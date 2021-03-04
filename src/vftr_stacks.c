@@ -641,26 +641,6 @@ void vftr_print_global_stacklist (FILE *fp) {
          fprintf (fp, "%*s %s\n", max_id_length, sid, vftr_global_stack_strings[i_stack].s);
       }
    }
-   for (int istack = 0; istack < vftr_gStackscount; istack++) {
-      if (vftr_gStackinfo[istack].locID >= 0) {
-         int jstack = istack;
-         char sid[max_id_length];
-	 snprintf (sid, max_id_length, "STID%d", istack);
-         fprintf (fp, "%*s ", max_id_length, sid);
-         //char *s = vftr_create_stack_string (istack);
-         char *name;
-         int len, depth; 
-         vftr_create_stack_string (istack, &name, &len, &depth);
-         fprintf (fp, "%s\n", name);
-         //while (vftr_gStackinfo[jstack].locID >= 0 && vftr_gStackinfo[jstack].ret >= 0) {
-         //   fprintf(fp, "%s", vftr_gStackinfo[jstack].name);
-         //   fprintf(fp, "<");
-         //   jstack = vftr_gStackinfo[jstack].ret;
-         //}
-         //fprintf(fp, "%s", vftr_gStackinfo[jstack].name);
-         //fprintf(fp, "\n");
-      }
-   }
 
    vftr_print_dashes (fp, table_width);
 }
