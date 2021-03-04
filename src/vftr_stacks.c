@@ -604,17 +604,11 @@ void vftr_print_global_stacklist (FILE *fp) {
    // Compute column and table widths
    // loop over all stacks to find the longest one
    int maxstrlen = 0;
-   for (int istack = 0; istack < vftr_gStackscount; istack++) {
-      int jstack = istack;
-      // follow the functions until they reach the bottom of the stack
-      int stackstrlength = 0;
-      while (vftr_gStackinfo[jstack].locID && vftr_gStackinfo[jstack].ret >= 0) {
-         stackstrlength += strlen(vftr_gStackinfo[jstack].name);
-         stackstrlength ++;
-         jstack = vftr_gStackinfo[jstack].ret;
-      } 
-      stackstrlength += strlen(vftr_gStackinfo[jstack].name);
-      if (stackstrlength > maxstrlen) maxstrlen = stackstrlength;
+   for (int i_stack = 0; i_stack < vftr_gStackscount; i_stack++) {
+      if (vftr_global_stack_strings[i_stack].id >= 0) {
+         int this_length = vftr_global_stack_strings[i_stack].len;
+         if (this_length > maxstrlen) maxstrlen = this_length;
+      }
    }
    maxstrlen--; // Chop trailing space
    if (strlen("Functions") > maxstrlen) maxstrlen = strlen("Functions");
