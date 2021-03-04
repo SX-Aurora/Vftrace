@@ -531,6 +531,52 @@ void vftr_print_local_stacklist (function_t **funcTable, FILE *fp, int n_ids) {
 
 /**********************************************************************/
 
+char *vftr_create_stack_string (int i_stack) {
+   if (vftr_mpirank == 0) printf ("CREATE STACK STRING!\n");
+   // First, count how long the string will be.
+   int nc = 0;
+   int j_stack = i_stack;
+   while (vftr_gStackinfo[j_stack].locID >= 0 && vftr_gStackinfo[j_stack].ret >= 0) {
+      // There is a terminating character included in strlen, which we will remove below.
+      // In the final string, there will be an additional "<" character. Thus, we have an additional -1 + 1 = 0.
+      nc += strlen(vftr_gStackinfo[j_stack].name) + 1; 
+      j_stack = vftr_gStackinfo[j_stack].ret;
+   }
+   nc += strlen(vftr_gStackinfo[j_stack].name); 
+   if (vftr_mpirank == 0) printf ("nc: %d\n", nc);
+   char *stack_string = (char *) malloc (nc * sizeof(char));
+   char *s0 = stack_string;
+   j_stack = i_stack;
+   int ntot = 0;
+   while (vftr_gStackinfo[j_stack].locID >= 0 && vftr_gStackinfo[j_stack].ret >= 0) {
+      char *s = strdup(vftr_gStackinfo[j_stack].name);
+      int n = strlen(s);
+      ntot += n;
+      if (vftr_mpirank == 0) printf ("ntot: %d\n", ntot);
+      for (int i = 0; i < n; i++) {
+        *stack_string = s[i];
+        stack_string++;
+      }
+      *stack_string = '<';
+      stack_string++;
+      j_stack = vftr_gStackinfo[j_stack].ret;
+   }
+   char *s = strdup(vftr_gStackinfo[j_stack].name);
+   int n = strlen(s);
+   ntot += n;
+   if (vftr_mpirank == 0) printf ("ntot: %d\n", ntot);
+   for (int i = 0; i < n; i++) {
+      *stack_string = s[i];
+      stack_string++;
+   }
+   *stack_string = '\0';
+   if (vftr_mpirank == 0) printf ("FOO: %s\n", s0);
+   //return stack_string; 
+   return s0;
+}
+
+/**********************************************************************/
+
 void vftr_print_global_stacklist (FILE *fp) {
 
    // Compute column and table widths
@@ -554,7 +600,7 @@ void vftr_print_global_stacklist (FILE *fp) {
    // Each stack ID in this list is prefixed with "STID" to allow for an easier search of that line.
    // This has always more characters than the header "ID". Therefore, max_id_length is just
    // the length of "STID" (4) plus the length of the maximal ID.
-   int max_id_length = 4 + vftr_count_digits_int(max_id);
+   int max_id_length = 4 + vftr_count_digits_int(max_id) + 1;
    int table_width = 1 + max_id_length + 1 + maxstrlen;
 
    // Print headers
@@ -572,13 +618,15 @@ void vftr_print_global_stacklist (FILE *fp) {
          char sid[max_id_length];
 	 snprintf (sid, max_id_length, "STID%d", istack);
          fprintf (fp, "%*s ", max_id_length, sid);
-         while (vftr_gStackinfo[jstack].locID >= 0 && vftr_gStackinfo[jstack].ret >= 0) {
-            fprintf(fp, "%s", vftr_gStackinfo[jstack].name);
-            fprintf(fp, "<");
-            jstack = vftr_gStackinfo[jstack].ret;
-         }
-         fprintf(fp, "%s", vftr_gStackinfo[jstack].name);
-         fprintf(fp, "\n");
+         char *s = vftr_create_stack_string (istack);
+         fprintf (fp, "%s\n", s);
+         //while (vftr_gStackinfo[jstack].locID >= 0 && vftr_gStackinfo[jstack].ret >= 0) {
+         //   fprintf(fp, "%s", vftr_gStackinfo[jstack].name);
+         //   fprintf(fp, "<");
+         //   jstack = vftr_gStackinfo[jstack].ret;
+         //}
+         //fprintf(fp, "%s", vftr_gStackinfo[jstack].name);
+         //fprintf(fp, "\n");
       }
    }
 
