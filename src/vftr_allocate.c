@@ -320,14 +320,14 @@ void vftr_allocate_finalize (FILE *fp) {
      double mb_per_call = mb / vftr_allocated_fields[i]->n_calls;
      int id = vftr_func_table[vftr_allocated_fields[i]->stack_id]->gid;
      int stat;
-     vftr_prof_column_set_n_chars (vftr_allocated_fields[i]->name, NULL, &columns[0], &stat);
-     vftr_prof_column_set_n_chars (vftr_allocated_fields[i]->caller, NULL, &columns[1], &stat);
-     vftr_prof_column_set_n_chars (&mb, NULL, &columns[2], &stat);
-     vftr_prof_column_set_n_chars (&vftr_allocated_fields[i]->n_calls, NULL, &columns[3], &stat);
-     vftr_prof_column_set_n_chars (&mb_per_call, NULL, &columns[4], &stat);
+     vftr_prof_column_set_n_chars (vftr_allocated_fields[i]->name, NULL, NULL, &columns[0], &stat);
+     vftr_prof_column_set_n_chars (vftr_allocated_fields[i]->caller, NULL, NULL, &columns[1], &stat);
+     vftr_prof_column_set_n_chars (&mb, NULL, NULL, &columns[2], &stat);
+     vftr_prof_column_set_n_chars (&vftr_allocated_fields[i]->n_calls, NULL, NULL, &columns[3], &stat);
+     vftr_prof_column_set_n_chars (&mb_per_call, NULL, NULL, &columns[4], &stat);
      double gm = (double)vftr_allocated_fields[i]->global_max;
-     vftr_prof_column_set_n_chars (&gm, NULL, &columns[5], &stat);
-     vftr_prof_column_set_n_chars (&id, NULL, &columns[6], &stat);
+     vftr_prof_column_set_n_chars (&gm, NULL, NULL, &columns[5], &stat);
+     vftr_prof_column_set_n_chars (&id, NULL, NULL, &columns[6], &stat);
    }
    fprintf (fp, "Vftrace memory allocation report:\n");
    fprintf (fp, "Registered fields: %d\n", vftr_max_allocated_fields);
@@ -346,15 +346,15 @@ void vftr_allocate_finalize (FILE *fp) {
    for (int i = 0; i < vftr_max_allocated_fields; i++) {
      double mb = (double)vftr_allocated_fields[i]->allocated_memory;
      double mb_per_call = mb / vftr_allocated_fields[i]->n_calls;
-     vftr_prof_column_print (fp, columns[0], vftr_allocated_fields[i]->name, NULL);
-     vftr_prof_column_print (fp, columns[1], vftr_allocated_fields[i]->caller, NULL);
-     vftr_prof_column_print (fp, columns[2], &mb, NULL);
-     vftr_prof_column_print (fp, columns[3], &vftr_allocated_fields[i]->n_calls, NULL);
-     vftr_prof_column_print (fp, columns[4], &mb_per_call, NULL);
+     vftr_prof_column_print (fp, columns[0], vftr_allocated_fields[i]->name, NULL, NULL);
+     vftr_prof_column_print (fp, columns[1], vftr_allocated_fields[i]->caller, NULL, NULL);
+     vftr_prof_column_print (fp, columns[2], &mb, NULL, NULL);
+     vftr_prof_column_print (fp, columns[3], &vftr_allocated_fields[i]->n_calls, NULL, NULL);
+     vftr_prof_column_print (fp, columns[4], &mb_per_call, NULL, NULL);
      double gm = (double)vftr_allocated_fields[i]->global_max;
-     vftr_prof_column_print (fp, columns[5], &gm, NULL);
+     vftr_prof_column_print (fp, columns[5], &gm, NULL, NULL);
      int id = vftr_func_table[vftr_allocated_fields[i]->stack_id]->gid;
-     vftr_prof_column_print (fp, columns[6], &id, NULL);
+     vftr_prof_column_print (fp, columns[6], &id, NULL, NULL);
      fprintf (fp, "\n");
    }
    for (int i = 0; i < table_width; i++) fprintf (fp, "-");
