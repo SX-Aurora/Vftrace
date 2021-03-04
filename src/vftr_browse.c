@@ -575,7 +575,7 @@ void vftr_browse_table_cell_print (FILE *fp, column_t c, void *value_1, void *va
       case COL_DOUBLE:
          fprintf (fp, "<td> %*.*f </td>\n", c.n_chars, c.n_decimal_places, *(double*)value_1);
   	 break;
-      case COL_CHAR:
+      case COL_CHAR_RIGHT:
          fprintf (fp, "<td> %*.s </td>\n", c.n_chars, (char*)value_1);
 	 break;
    }

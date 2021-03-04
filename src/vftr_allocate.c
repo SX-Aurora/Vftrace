@@ -308,8 +308,8 @@ void vftr_allocate_finalize (FILE *fp) {
           sizeof(allocate_list_t **), vftr_compare_max_memory); 
  
    column_t columns[7];
-   vftr_prof_column_init ("Field name", NULL, 0, COL_CHAR, SEP_MID, &columns[0]);
-   vftr_prof_column_init ("Called by", NULL, 0, COL_CHAR, SEP_MID, &columns[1]);
+   vftr_prof_column_init ("Field name", NULL, 0, COL_CHAR_RIGHT, SEP_MID, &columns[0]);
+   vftr_prof_column_init ("Called by", NULL, 0, COL_CHAR_RIGHT, SEP_MID, &columns[1]);
    vftr_prof_column_init ("Total memory", NULL, 2, COL_MEM, SEP_MID, &columns[2]);
    vftr_prof_column_init ("n_calls", NULL, 0, COL_INT, SEP_MID, &columns[3]);
    vftr_prof_column_init ("Memory / call", NULL, 2, COL_MEM, SEP_MID, &columns[4]);
