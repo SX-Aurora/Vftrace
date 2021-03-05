@@ -317,7 +317,7 @@ void vftr_normalize_stacks() {
     // We also need to communicate if stack profiles with imbalances are to be printed,
     // because identical function stacks can be located at different positions in the
     // function table or not be present at all. 
-    if (vftr_environment.logfile_all_ranks->value || vftr_environment.print_stack_profile->value) {
+    if (vftr_env_distribute_gStack()) {
        // The amount of unique stacks is know due to the hash synchronisation earlier
        // allocate memory on all but 0th rank
        if (vftr_mpirank != 0) {

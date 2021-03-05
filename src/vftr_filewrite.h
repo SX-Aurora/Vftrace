@@ -59,6 +59,7 @@ typedef struct display_function {
     char *func_name;
     int i_orig; // The original index of the display function. Used to undo sortings by various other field values, e.g. t_avg.
     int stack_id;
+    int func_id;
     int n_calls;
     double t_avg;
     long long t_min;

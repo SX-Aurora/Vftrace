@@ -62,13 +62,20 @@ function_t *vftr_new_function(void *arg, const char *function_name,
 // Reset all function internal counters
 void vftr_reset_counts (function_t *func);
 
-extern int *vftr_print_stackid_list;
+struct loc_glob_id {
+   int loc;
+   int glob;
+};
+
+//extern int *vftr_print_stackid_list;
+extern struct loc_glob_id *vftr_print_stackid_list;
 extern int vftr_n_print_stackids;
 extern int vftr_stackid_list_size; 
 #define STACKID_LIST_INC 50
 
 void vftr_stackid_list_init ();
-void vftr_stackid_list_add (int stack_id);
+//void vftr_stackid_list_add (int stack_id);
+void vftr_stackid_list_add (int local_stack_id, int global_stack_id);
 void vftr_stackid_list_print (FILE *fp);
 void vftr_stackid_list_finalize ();
 

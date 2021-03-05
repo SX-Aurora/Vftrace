@@ -962,13 +962,22 @@ void vftr_evaluate_display_function (char *func_name, display_function_t **displ
     int n_func_indices_sync, n_stack_indices_sync;
     int *func_indices_sync = NULL, *stack_indices_sync = NULL;
 
-    vftr_find_function_in_table (func_name, &func_indices, &n_func_indices, true);
+    if ((*display_func)->stack_id >= 0) {
+       n_func_indices = 1;
+       n_stack_indices = 1;
+       func_indices = (int*) malloc (1 * sizeof(int));
+       stack_indices = (int*) malloc (1 * sizeof(int));
+       func_indices[0] = (*display_func)->func_id;
+       stack_indices[0] = (*display_func)->stack_id;
+    } else {
+       vftr_find_function_in_table (func_name, &func_indices, &n_func_indices, true);
+       vftr_find_function_in_stack (func_name, &stack_indices, &n_stack_indices, true);
+    }
     (*display_func)->n_func_indices = n_func_indices;
     (*display_func)->func_indices = (int*)malloc (n_func_indices * sizeof(int));
     memcpy ((*display_func)->func_indices, func_indices, n_func_indices * sizeof(int));
 
 
-    vftr_find_function_in_stack (func_name, &stack_indices, &n_stack_indices, true);
     (*display_func)->n_stack_indices = n_stack_indices;
     (*display_func)->stack_indices = (int*)malloc (n_stack_indices * sizeof(int));
     memcpy ((*display_func)->stack_indices, stack_indices, n_stack_indices * sizeof(int));
@@ -976,20 +985,20 @@ void vftr_evaluate_display_function (char *func_name, display_function_t **displ
     if (display_sync_time) {
     	strcpy (func_name_sync, func_name);
     	strcat (func_name_sync, "_sync");
-	vftr_find_function_in_table (func_name_sync, &func_indices_sync, &n_func_indices_sync, true);
+        vftr_find_function_in_table (func_name_sync, &func_indices_sync, &n_func_indices_sync, true);
     	if (n_func_indices_sync > 0 && n_func_indices != n_func_indices_sync) {
     	    printf ("Error: Number of synchronize regions does not match total number of regions: %d %d\n",
     	    	n_func_indices, n_func_indices_sync);
     	}
-	vftr_find_function_in_stack (func_name_sync, &stack_indices_sync, &n_stack_indices_sync, true);
+        vftr_find_function_in_stack (func_name_sync, &stack_indices_sync, &n_stack_indices_sync, true);
     	if (n_stack_indices_sync > 0 && n_stack_indices != n_stack_indices_sync) {
     	    printf ("Error: Number of synchronize regions does not match total number of regions: %d %d\n",
     	    	n_stack_indices, n_stack_indices_sync);
     	}
 
     } else {
-	n_func_indices_sync = 0;
-	n_stack_indices_sync = 0;
+        n_func_indices_sync = 0;
+        n_stack_indices_sync = 0;
     }
 
     (*display_func)->this_mpi_time = 0;
@@ -999,6 +1008,7 @@ void vftr_evaluate_display_function (char *func_name, display_function_t **displ
     (*display_func)->mpi_tot_recv_bytes = 0;
     (*display_func)->properly_terminated = true;
     for (int i = 0; i < n_func_indices; i++) {
+        if (func_indices[i] < 0) break;
 	(*display_func)->this_mpi_time += vftr_func_table[func_indices[i]]->prof_current.time_incl;
 	if (n_func_indices_sync > 0) (*display_func)->this_sync_time += vftr_func_table[func_indices_sync[i]]->prof_current.time_incl;
 	(*display_func)->n_calls += vftr_func_table[func_indices[i]]->prof_current.calls;
@@ -1028,10 +1038,12 @@ void vftr_evaluate_display_function (char *func_name, display_function_t **displ
     (*display_func)->t_sync_avg = 0.0;
     (*display_func)->imbalance = 0.0;
 
+    if ((*display_func)->n_calls == 0) return;
+
     long long sum_times = 0;
     long long sum_times_sync = 0;
     int n_count = 0;
-    if ((*display_func)->n_calls == 0) return;
+
     for (int i = 0; i < vftr_mpisize; i++) {
     	if (all_times[i] > 0) {
     		sum_times += all_times[i];
@@ -1145,47 +1157,52 @@ display_function_t **vftr_create_display_functions (bool display_sync_time, int 
    vftr_stackid_list_init();
    for (int i = 0; i < vftr_gStackscount; i++) {
        if (use_all || vftr_pattern_match(vftr_environment.print_stack_profile->value, vftr_gStackinfo[i].name)) {
-          vftr_stackid_list_add (i);
+          vftr_stackid_list_add (vftr_gStackinfo[i].locID, i);
        }
    }
 
    display_function_t **displ_f = (display_function_t**) malloc (vftr_n_print_stackids * sizeof(display_function_t*));
 
-    int i_disp_f = 0;
-    for (int i = 0; i < vftr_n_print_stackids; i++) {
-	int i_func = vftr_print_stackid_list[i];
-        if (!use_all) {
-           bool name_already_there = false;
-	   for (int j = 0; j < i_disp_f; j++) {
-	      if (!strcmp(displ_f[j]->func_name, vftr_gStackinfo[i_func].name)) {
-	        name_already_there = true;
-	        break;
-              }
-           }
-	   if (name_already_there) continue;
-        }
-	displ_f[i_disp_f] = (display_function_t*) malloc (sizeof(display_function_t));
-	displ_f[i_disp_f]->func_name = strdup(vftr_gStackinfo[i_func].name);
-	vftr_is_traceable_mpi_function (displ_f[i_disp_f]->func_name, &(displ_f[i_disp_f]->is_mpi));
-        displ_f[i_disp_f]->i_orig = i_disp_f;
-        // Associating a stack ID with the display function only makes sense when we are in the complete_summary mode.
-        // Otherwise all stacks with the same final function are added up. In that case, we set a negative dummy value.
-        if (use_all) {
-          displ_f[i_disp_f]->stack_id = i_func;
-        } else {
-          displ_f[i_disp_f]->stack_id = -1;
-        }
-	i_disp_f++;
-    }
-    *n_display_funcs = i_disp_f;
+   int i_disp_f = 0;
+   for (int i = 0; i < vftr_n_print_stackids; i++) {
+       //int i_func = vftr_print_stackid_list[i];
+       int i_stack = vftr_print_stackid_list[i].glob;
+       int i_func = vftr_print_stackid_list[i].loc;
+       if (!use_all) {
+          bool name_already_there = false;
+          for (int j = 0; j < i_disp_f; j++) {
+             //if (!strcmp(displ_f[j]->func_name, vftr_gStackinfo[i_func].name)) {
+             if (!strcmp(displ_f[j]->func_name, vftr_gStackinfo[i_stack].name)) {
+               name_already_there = true;
+               break;
+             }
+          }
+          if (name_already_there) continue;
+       }
+       displ_f[i_disp_f] = (display_function_t*) malloc (sizeof(display_function_t));
+       displ_f[i_disp_f]->func_name = strdup(vftr_gStackinfo[i_stack].name);
+       vftr_is_traceable_mpi_function (displ_f[i_disp_f]->func_name, &(displ_f[i_disp_f]->is_mpi));
+       displ_f[i_disp_f]->i_orig = i_disp_f;
+       // Associating a stack ID with the display function only makes sense when we are in the complete_summary mode.
+       // Otherwise all stacks with the same final function are added up. In that case, we set a negative dummy value.
+       if (use_all) {
+         displ_f[i_disp_f]->stack_id = i_stack;
+         displ_f[i_disp_f]->func_id = i_func;
 
-    for (int i = 0; i < *n_display_funcs; i++) {
-       vftr_evaluate_display_function (displ_f[i]->func_name, &(displ_f[i]), display_sync_time);
-    }
+       } else {
+         displ_f[i_disp_f]->stack_id = -1;
+       }
+       i_disp_f++;
+   }
+   *n_display_funcs = i_disp_f;
 
-    qsort ((void*)displ_f, (size_t)(*n_display_funcs),
-	    sizeof (display_function_t *), vftr_compare_display_functions_tavg);
-    return displ_f;
+   for (int i = 0; i < *n_display_funcs; i++) {
+      vftr_evaluate_display_function (displ_f[i]->func_name, &(displ_f[i]), display_sync_time);
+   }
+
+   qsort ((void*)displ_f, (size_t)(*n_display_funcs),
+           sizeof (display_function_t *), vftr_compare_display_functions_tavg);
+   return displ_f;
 }
 
 /**********************************************************************/
