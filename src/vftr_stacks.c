@@ -969,6 +969,7 @@ int vftr_stacks_test_1 (FILE *fp_in, FILE *fp_out) {
 	fprintf (fp_out, "%s: %d %d\n", func6->name, func6->id, func6->gid);
 	fprintf (fp_out, "%s: %d %d\n", func7->name, func7->id, func7->gid);
 	fprintf (fp_out, "Global stacklist: \n");
+        vftr_create_global_stack_strings();
 	vftr_print_global_stacklist (fp_out);
 	return 0;
 }
@@ -1007,6 +1008,7 @@ int vftr_stacks_test_2 (FILE *fp_in, FILE *fp_out) {
 
         vftr_environment.logfile_all_ranks->value = true;
 	vftr_normalize_stacks();
+        vftr_create_global_stack_strings();
 
 	// Needs to be set for printing the local stacklist
 	vftr_profile_wanted = true;
