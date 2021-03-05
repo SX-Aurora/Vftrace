@@ -395,6 +395,12 @@ bool vftr_env_need_display_functions () {
    return vftr_environment.print_stack_profile->value || vftr_environment.create_html->value || vftr_environment.all_mpi_summary->value;
 }
 
+bool vftr_env_distribute_gStack () {
+   return vftr_environment.logfile_all_ranks->value ||
+          vftr_environment.print_stack_profile->value ||
+          vftr_environment.all_mpi_summary->value; 
+}
+
 /**********************************************************************/
 
 void vftr_free_environment () {

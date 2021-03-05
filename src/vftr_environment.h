@@ -111,6 +111,8 @@ void vftr_switch_off();
 bool vftr_env_do_sampling();
 bool vftr_env_no_memtrace();
 bool vftr_env_need_display_functions();
+bool vftr_env_distribute_gStack();
+
 int vftr_profile_sorting_method();
 void vftr_print_environment (FILE *fp);
 
