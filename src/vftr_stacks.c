@@ -33,13 +33,10 @@
 #include "vftr_fileutils.h"
 #include "vftr_sorting.h"
 
-// Maximum time in a call tree, searched for in vftr_finalize
-long long vftr_maxtime;
-
 // number of locally unique stacks
-int   vftr_stackscount = 0;
+int vftr_stackscount = 0;
 // number of globally unique stacks
-int   vftr_gStackscount = 0;
+int vftr_gStackscount = 0;
 
 // Collective information about all stacks across processes
 gstackinfo_t  *vftr_gStackinfo = NULL;
@@ -75,7 +72,6 @@ void vftr_initialize_stacks() {
    vftr_fstack = func;
    vftr_function_samplecount = 0;
    vftr_message_samplecount = 0;
-   vftr_maxtime = 0;
    vftr_froots = func;
 }
 

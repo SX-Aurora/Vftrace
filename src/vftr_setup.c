@@ -279,27 +279,6 @@ void vftr_initialize() {
 
 /**********************************************************************/
 
-void vftr_calc_tree_format (function_t *func) {
-    long long   fcalls, ftime;
-
-    if (func == NULL) return;
-
-    fcalls = func->prof_current.calls;
-    ftime  = func->prof_current.cycles;
-    if (vftr_maxtime < ftime) vftr_maxtime = ftime;
-
-    int n = func->levels;
-
-    /* Recursive search of callees */
-    int i;
-    function_t *f;
-    for (i = 0, f = func->first_in_level; i < n; i++,f = f->next_in_level) {
-        vftr_calc_tree_format (f);
-    }
-}
-
-/**********************************************************************/
-
 void vftr_finalize() {
     int ntop = 0;
     function_t **funcTable;
@@ -322,7 +301,6 @@ void vftr_finalize() {
     }
     
     vftr_normalize_stacks();
-    vftr_calc_tree_format (vftr_froots);
 
     display_function_t **display_functions;
     int n_display_functions;
