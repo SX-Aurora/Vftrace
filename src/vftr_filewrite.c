@@ -991,10 +991,7 @@ void vftr_evaluate_display_function (char *func_name, display_function_t **displ
     (*display_func)->mpi_tot_recv_bytes = 0;
     (*display_func)->properly_terminated = true;
     for (int i = 0; i < n_func_indices; i++) {
-        if (func_indices[i] < 0) {
-           //(*display_func)->on_this_rank = false;
-           break;
-        }
+        if (func_indices[i] < 0) break;
 	(*display_func)->this_mpi_time += vftr_func_table[func_indices[i]]->prof_current.time_incl;
 	if (n_func_indices_sync > 0) (*display_func)->this_sync_time += vftr_func_table[func_indices_sync[i]]->prof_current.time_incl;
 	(*display_func)->n_calls += vftr_func_table[func_indices[i]]->prof_current.calls;
@@ -1024,7 +1021,6 @@ void vftr_evaluate_display_function (char *func_name, display_function_t **displ
     (*display_func)->t_sync_avg = 0.0;
     (*display_func)->imbalance = 0.0;
 
-    //if ((*display_func)->n_calls == 0 || !(*display_func)->on_this_rank) return;
     if ((*display_func)->n_calls == 0) return;
 
     long long sum_times = 0;

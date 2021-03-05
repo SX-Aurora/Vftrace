@@ -80,7 +80,6 @@ typedef struct display_function {
     double mpi_tot_send_bytes;
     double mpi_tot_recv_bytes;
     bool properly_terminated;
-    bool on_this_rank;
 } display_function_t;
 
 display_function_t **vftr_create_display_functions (bool display_sync_time, int *n_display_funcs, bool use_all);
