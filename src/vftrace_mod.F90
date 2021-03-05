@@ -134,7 +134,7 @@ contains
       name_len = name_len + 1
       allocate(character(len=name_len) :: c_name)
       c_name(:) = adjustl(trim(name))
-      c_name(name_len:name_len+1) = c_null_char
+      c_name(name_len:name_len) = c_null_char
       call vftrace_region_begin_C(c_name)
       deallocate(c_name)
    end subroutine vftrace_region_begin
@@ -150,7 +150,7 @@ contains
       name_len = name_len + 1
       allocate(character(len=name_len) :: c_name)
       c_name(:) = adjustl(trim(name))
-      c_name(name_len:name_len+1) = c_null_char
+      c_name(name_len:name_len) = c_null_char
       call vftrace_region_end_C(c_name)
       deallocate(c_name)
    end subroutine vftrace_region_end
@@ -171,7 +171,7 @@ contains
 
       ALLOCATE(character(len=stringlength) :: vftrace_get_stack)
       do i = 1, stringlength
-         vftrace_get_stack(i:i+1) = tmpstring(i)
+         vftrace_get_stack(i:i) = tmpstring(i)
       end do
    end function vftrace_get_stack
 
@@ -202,7 +202,7 @@ contains
      name_len = len(adjustl(trim(name))) + 1
      allocate (character(len=name_len) :: c_name)
      c_name(:) = adjustl(trim(name))
-     c_name(name_len:name_len+1) = c_null_char
+     c_name(name_len:name_len) = c_null_char
      call vftrace_deallocate_C (c_name)
      deallocate (c_name)
    end subroutine
