@@ -785,7 +785,9 @@ void vftr_set_proftab_column_formats (function_t **func_table,
             vftr_prof_column_set_n_chars (func_table[i_func]->return_to->name, NULL, NULL, &(columns)[i_column++], &stat);
             int global_id = func_table[i_func]->gid;
             vftr_prof_column_set_n_chars (&global_id, NULL, NULL, &(columns)[i_column++], &stat);
-            vftr_prof_column_set_n_chars (vftr_global_stack_strings[global_id].s, NULL, NULL, &(columns)[i_column++], &stat);
+            if (vftr_environment.show_stacks_in_profile->value) {
+               vftr_prof_column_set_n_chars (vftr_global_stack_strings[global_id].s, NULL, NULL, &(columns)[i_column++], &stat);
+	    }
 	}
 	columns[0].n_chars++;
 }
@@ -914,7 +916,7 @@ void vftr_proftab_print_header (FILE *fp, column_t *columns) {
 	i++;
 	fprintf (fp, " %*s ", columns[i].n_chars, columns[i].header);
 	i++;
-        if (vftr_environment.show_stacks_in_profile) {
+        if (vftr_environment.show_stacks_in_profile->value) {
           fprintf (fp, " %*s ", columns[i].n_chars, columns[i].header);
 	  i++;
         }
