@@ -59,6 +59,7 @@ typedef struct display_function {
     char *func_name;
     int i_orig; // The original index of the display function. Used to undo sortings by various other field values, e.g. t_avg.
     int stack_id;
+    int func_id;
     int n_calls;
     double t_avg;
     long long t_min;
@@ -79,6 +80,7 @@ typedef struct display_function {
     double mpi_tot_send_bytes;
     double mpi_tot_recv_bytes;
     bool properly_terminated;
+    bool on_this_rank;
 } display_function_t;
 
 display_function_t **vftr_create_display_functions (bool display_sync_time, int *n_display_funcs, bool use_all);
