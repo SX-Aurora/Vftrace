@@ -1460,7 +1460,6 @@ void vftr_print_profile (FILE *fp_log, FILE *f_html, int *n_func_indices, long l
     int table_width;
 
     if (!vftr_stackscount) return;
-    if (!vftr_profile_wanted) return;
 
     function_t **func_table;
 

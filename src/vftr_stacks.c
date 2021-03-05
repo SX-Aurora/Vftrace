@@ -567,11 +567,12 @@ void vftr_create_stack_string (int i_stack, char **name, int *len, int *depth) {
       *depth++;
    }
    *len += strlen(vftr_gStackinfo[j_stack].name); 
-   char *stack_string = (char *) malloc (*len * sizeof(char));
+   // extra char for null terminator
+   char *stack_string = (char *) malloc ((*len + 1)* sizeof(char));
    *name = stack_string;
    j_stack = i_stack;
    while (vftr_gStackinfo[j_stack].locID >= 0 && vftr_gStackinfo[j_stack].ret >= 0) {
-      char *s = strdup(vftr_gStackinfo[j_stack].name);
+      char *s = vftr_gStackinfo[j_stack].name;
       int n = strlen(s);
       for (int i = 0; i < n; i++) {
         *stack_string = s[i];
@@ -581,7 +582,7 @@ void vftr_create_stack_string (int i_stack, char **name, int *len, int *depth) {
       stack_string++;
       j_stack = vftr_gStackinfo[j_stack].ret;
    }
-   char *s = strdup(vftr_gStackinfo[j_stack].name);
+   char *s = vftr_gStackinfo[j_stack].name;
    int n = strlen(s);
    for (int i = 0; i < n; i++) {
       *stack_string = s[i];
