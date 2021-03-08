@@ -18,6 +18,10 @@ The third party tools are included in the git repository as submodules, for your
 ```bash
 git clone --recursive https://github.com/SX-Aurora/Vftrace.git
 ```
+If you already cloned the repository without the `--recursive` flag you can get the submodules with
+```bash
+git submodule update --init
+```
 
 ## Prerequisites & Installation 
 
