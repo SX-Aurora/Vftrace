@@ -86,7 +86,7 @@ module vftrace
          character(c_char), intent(in) :: name(*)
       end subroutine vftrace_region_end_C
 
-      subroutine vftrace_allocate_C (name, n_elements, element_size) &
+      pure subroutine vftrace_allocate_C (name, n_elements, element_size) &
          bind(c, name="vftrace_allocate")
          use iso_c_binding, only: c_char, c_int
          implicit none
@@ -95,7 +95,7 @@ module vftrace
          integer(c_int), intent(in) :: element_size
       end subroutine vftrace_allocate_C
   
-      subroutine vftrace_deallocate_C (name) bind(c, name="vftrace_deallocate")
+      pure subroutine vftrace_deallocate_C (name) bind(c, name="vftrace_deallocate")
          use iso_c_binding, only: c_char
          implicit none
          character(c_char), intent(in) :: name(*)
@@ -175,7 +175,7 @@ contains
       end do
    end function vftrace_get_stack
 
-   subroutine vftrace_allocate (name, n_elements, element_size)
+   pure subroutine vftrace_allocate (name, n_elements, element_size)
      use iso_c_binding, only: c_char, c_null_char, c_int
      use iso_fortran_env, only: int64
      implicit none
@@ -193,7 +193,7 @@ contains
      deallocate (c_name)
    end subroutine vftrace_allocate
 
-   subroutine vftrace_deallocate (name)
+   pure subroutine vftrace_deallocate (name)
      use iso_c_binding, only: c_char, c_null_char
      implicit none
      character(len=*), intent(in) :: name
