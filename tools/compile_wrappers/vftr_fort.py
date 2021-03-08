@@ -7,12 +7,28 @@ filename_in = sys.argv[1]
 filename_out = filename_in + ".vftr"
 allocate_pattern = re.compile("^[ ]*allocate[\ ,\(]", re.IGNORECASE)
 deallocate_pattern = re.compile("^[ ]*deallocate[\ ,\(]", re.IGNORECASE)
-subroutine_pattern = re.compile(r"^[\S\s]*(pure[\s]+)?(elemental[\s]+)?subroutine[\s]+[\S]+[ ]*(\()?", re.IGNORECASE)
-function_pattern = re.compile(r"^[\S\s]*(pure[\s]+)?(elemental[\s]+)?function[\s]+[\S]+[ ]*(\()?", re.IGNORECASE)
-program_pattern = re.compile(r"^[\S\s]*program[\s]+[\S]*", re.IGNORECASE)
-end_routine_pattern = re.compile(r"[ ]*end[ ]*(function|subroutine|program)", re.IGNORECASE)
+#subroutine_pattern = re.compile(r"^[\S\s]*(pure)?(elemental)?[\S\s]*subroutine[\s]+[\S]*[ ]*(\()?", re.IGNORECASE)
+subroutine_pattern = re.compile(r"^[\S\s]*(pure[\s]+)?(elemental[\s]+)?subroutine[\s]+[\S]*[ ]*(\()?", re.IGNORECASE)
+#function_pattern = re.compile(r"^[\S\s]*(pure)?(elemental)?[\S\s]*function[\s]+[\S]*[ ]*(\()?", re.IGNORECASE)
+function_pattern = re.compile(r"^[\S\s]*(pure[\s]+)?(elemental[\s]+)?function[\s]+[\S]*[ ]*(\()?", re.IGNORECASE)
+end_routine_pattern = re.compile(r"[ ]*end[ ]*(function|subroutine)", re.IGNORECASE)
+if_pattern = re.compile(r"^[ ]*if([\S\s]*)[\S\s]*", re.IGNORECASE)
 
 vftrace_wrapper_marker = "!!! VFTRACE 1.3 - Wrapper inserted malloc-trace calls\n"
+
+def check_if_if_statement (line):
+  if if_pattern.match(line):
+    # Remove white spaces and check if the last character is an ampersand.
+    s = re.sub(r"\s+", "", line)
+    if s[-1] == "&":
+      return 2
+    else:
+      return 0 
+  else:
+    return 0
+
+#def append_if_then (line):
+#  return re.sub(r"&", " then", line)
 
 def check_if_function_or_subroutine (line):
   if subroutine_pattern.match(line) or function_pattern.match(line) or program_pattern.match(line):
@@ -195,6 +211,7 @@ with open(filename_in, "r") as f_in, open(filename_out, "w") as f_out:
   subroutine_end = False
   skip_subroutine = False
   already_wrapped = all_lines[0] == vftrace_wrapper_marker
+  is_open_if_statement = 0
   for i_line, line in enumerate(all_lines):
     if i_line == 0 and not already_wrapped:
       f_out.write (vftrace_wrapper_marker)
@@ -207,6 +224,8 @@ with open(filename_in, "r") as f_in, open(filename_out, "w") as f_out:
     is_dealloc = deallocate_pattern.match(line)
     # Put "use vftrace" after every subroutine or function definition, regardless if it is actually used.
     is_function_or_subroutine = check_if_function_or_subroutine (line)
+    if is_open_if_statement == 0:
+       is_open_if_statement = check_if_if_statement (line)
 
     # We need to find out when the function definition has been written completely in the previous iteration.
     # On flag indicates that the subroutine definition has been started. If it is set, we check if it is finished.
@@ -216,11 +235,13 @@ with open(filename_in, "r") as f_in, open(filename_out, "w") as f_out:
        f_out.write ("use iso_fortran_env, only: int64\n")
        subroutine_end = False
     if is_function_or_subroutine:
-       if re.search("pure ", line, re.IGNORECASE) or re.search("elemental ", line, re.IGNORECASE):
-         skip_subroutine = True
-       else:
-         skip_subroutine = False
-         subroutine_start = True
+       #if re.search("pure ", line, re.IGNORECASE) or re.search("elemental ", line, re.IGNORECASE):
+       #  skip_subroutine = True
+       #else:
+       #  skip_subroutine = False
+       #  subroutine_start = True
+       skip_subroutine = False
+       subroutine_start = True
     if subroutine_start:
        if not line_to_be_continued(line):
          subroutine_end = True
@@ -252,5 +273,12 @@ with open(filename_in, "r") as f_in, open(filename_out, "w") as f_out:
           f_out.write (construct_vftrace_allocate_call(field))
         elif is_dealloc:
           f_out.write (construct_vftrace_deallocate_call(field))
+    elif is_open_if_statement == 2:
+      #line = append_if_then(re.sub(r"&", " then", line))
+      re.sub(r"&", " then", line)
+      is_open_if_statement -= 1
+    elif is_open_if_statement == 1:
+      f_out.write("end if")
+      is_open_if_statement -= 1
 
     f_out.write (line)
