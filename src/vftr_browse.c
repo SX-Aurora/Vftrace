@@ -47,7 +47,6 @@ void vftr_browse_print_css_header (FILE *fp, int n_chars_max, int n_final) {
    fprintf (fp, "}\n");
    fprintf (fp, "\n");
    fprintf (fp, "* {\n");
-   fprintf (fp, "  position: relative;\n");
    fprintf (fp, "  margin: 0;\n");
    fprintf (fp, "  padding: 0;\n");
    fprintf (fp, "\n"); 
