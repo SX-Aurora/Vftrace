@@ -272,7 +272,6 @@ void vftr_find_function_in_table (char *func_name, int **indices, int *n_indices
 void vftr_find_function_in_stack (char *func_name, int **indices, int *n_indices, bool to_lower_case) {
 	*n_indices = 0;
 	char *s_compare;
-	int n_count;
 	for (int i = 0; i < vftr_gStackscount; i++) {
 		s_compare = strdup (vftr_gStackinfo[i].name);
 		if (to_lower_case) {

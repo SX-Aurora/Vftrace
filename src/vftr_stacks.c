@@ -554,13 +554,11 @@ void vftr_create_global_stack_strings () {
 void vftr_create_stack_string (int i_stack, char **name, int *len, int *depth) {
    // First, count how long the string will be.
    *len = 0;
-   *depth = 0;
    int j_stack = i_stack;
    while (vftr_gStackinfo[j_stack].locID >= 0 && vftr_gStackinfo[j_stack].ret >= 0) {
       // In the final string, there will be an additional "<" character. Therefore, add 1.
       *len += strlen(vftr_gStackinfo[j_stack].name) + 1; 
       j_stack = vftr_gStackinfo[j_stack].ret;
-      *depth++;
    }
    *len += strlen(vftr_gStackinfo[j_stack].name); 
    // extra char for null terminator

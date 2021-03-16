@@ -155,7 +155,7 @@ char *vftr_get_program_path () {
 		char *s;
 		if (program_path) {
 		  // rindex returns a pointer to the last occurence of '/'
-		  if (s = rindex (program_path, '/')) {
+		  if ((s = rindex (program_path, '/'))) {
 		  	// The basename is everything after the last '/'
 		  	basename = strdup (s + 1);
 		  } else {
@@ -176,7 +176,6 @@ char *vftr_get_program_path () {
 // obtained beforehand by a call to vftr_get_program_path to avoid a race condition.
 // Suffix is ".log" for ASCII log files and ".vfd" for viewer files.
 char *vftr_create_logfile_name (int mpi_rank, int mpi_size, char *suffix) {
-	bool read_from_env = false;
 	// The user can also define a different output directory
 	char *out_directory;
 	if (vftr_environment.output_directory->set) {
@@ -254,12 +253,7 @@ void vftr_finalize_vfd_file (long long finalize_time, int signal_number) {
         long stackstable_offset = ftell (vftr_vfd_file);
         vftr_write_stacks_vfd (vftr_vfd_file, 0, vftr_froots);
 
-        // It is unused ?
-        long profile_offset = 0;
-
         double runtime = finalize_time * 1.0e-6;
-        double zerodouble[] = { 0., 0. };
-    	long long zerolong[] = {0};
 
         // Update trace info in header and close
         fseek (vftr_vfd_file, vftr_admin_offset, SEEK_SET);
@@ -1455,8 +1449,6 @@ void vftr_print_profile_line (FILE *fp_log, int local_stack_id, int global_stack
 /**********************************************************************/
 
 void vftr_print_profile (FILE *fp_log, FILE *f_html, int *n_func_indices, long long time0) {
-    unsigned long long calls;
-    
     int table_width;
 
     if (!vftr_stackscount) return;
@@ -1505,7 +1497,6 @@ void vftr_print_profile (FILE *fp_log, FILE *f_html, int *n_func_indices, long l
     if (vftr_environment.show_overhead->value) n_columns += 3;
     if (vftr_environment.show_stacks_in_profile->value) n_columns++;
 
-    int i_column = 0;
     column_t *prof_columns = (column_t*) malloc (n_columns * sizeof(column_t));
     vftr_set_proftab_column_formats (func_table, function_time, sampling_overhead_time_usec * 1e-6,
 				     *n_func_indices, func_indices, prof_columns);

@@ -318,7 +318,7 @@ void vftr_function_exit () {
     /* Sort profile if it is time */
     
     if (wtime >= vftr_sorttime)  {
-        int i, top;
+        int i;
         double tsum = 0.;
         double scale = 100. / (double)vftr_prog_cycles;
 
@@ -332,9 +332,8 @@ void vftr_function_exit () {
             if ((tsum * scale) > cutoff) break;
             f->detail = true;
         }
-        top = i;
         /* Clear function detail flags for all others */
-        for(; i<vftr_stackscount; i++) 
+        for(; i < vftr_stackscount; i++) 
             vftr_func_table[i]->detail = false;
 
         vftr_sorttime *= vftr_sorttime_growth;

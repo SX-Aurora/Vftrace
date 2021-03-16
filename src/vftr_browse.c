@@ -680,7 +680,6 @@ int vftr_browse_test_1 (FILE *fp_in, FILE *fp_out) {
 		vftr_fill_into_stack_tree (&stack_tree, n_functions_in_stack, stack_ids, function_id);
 		free (stack_ids);
 	}
-	long long dummy_l;
 	double dummy_d;
 	int dummy_i;
  	vftr_scan_stacktree (stack_tree->origin, 2, NULL, &dummy_d, &dummy_i, &dummy_d, &dummy_i, &dummy_i);

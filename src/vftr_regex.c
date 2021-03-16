@@ -29,7 +29,7 @@ regex_t *vftr_compile_regexp(char *pattern) {
     int err;
     regex_t *r;
     r = (regex_t*) malloc(sizeof(regex_t));
-    if (err = regcomp (r, pattern, REG_NOSUB|REG_EXTENDED)) {
+    if ((err = regcomp (r, pattern, REG_NOSUB|REG_EXTENDED))) {
         char msg[256];
         size_t msglen;
         msglen = regerror(err, r, msg, 256);

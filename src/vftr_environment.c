@@ -32,7 +32,7 @@ env_var_int_t *vftr_read_env_int (char *env_name, int val_default) {
     char *s;
     env_var_int_t *var;
     var = (env_var_int_t*)malloc (sizeof (env_var_int_t));
-    if (s = getenv (env_name)) {
+    if ((s = getenv (env_name))) {
 	var->value = atoi(s);
  	var->set = true;
     } else {
@@ -58,7 +58,7 @@ env_var_long_t *vftr_read_env_long (char *env_name, long val_default) {
     char *s;
     env_var_long_t *var;
     var = (env_var_long_t*)malloc (sizeof (env_var_long_t));
-    if (s = getenv (env_name)) {
+    if ((s = getenv (env_name))) {
 	var->value = atol(s);
  	var->set = true;
     } else {
@@ -80,7 +80,7 @@ env_var_long_long_t *vftr_read_env_long_long (char *env_name, long long val_defa
     char *s;
     env_var_long_long_t *var;
     var = (env_var_long_long_t*)malloc (sizeof (env_var_long_long_t));
-    if (s = getenv (env_name)) {
+    if ((s = getenv (env_name))) {
 	var->value = atoll(s);
  	var->set = true;
     } else {
@@ -106,7 +106,7 @@ env_var_bool_t *vftr_read_env_bool (char *env_name, bool val_default) {
     env_var_bool_t *var;
     var = (env_var_bool_t*)malloc (sizeof (env_var_bool_t));
     char *s;
-    if (s = getenv (env_name)) {
+    if ((s = getenv (env_name))) {
         // convert string to only lowercase to ease comparison
         char *s_lower = strdup(s);
         for (int i = 0; i < strlen(s_lower); i++) {
@@ -147,7 +147,7 @@ env_var_double_t *vftr_read_env_double (char *env_name, double val_default) {
     char *s;
     env_var_double_t *var;
     var = (env_var_double_t*)malloc (sizeof (env_var_double_t));
-    if (s = getenv (env_name)) {
+    if ((s = getenv (env_name))) {
 	sscanf (s, "%lf", &var->value);
  	var->set = true;
     } else {
@@ -173,7 +173,7 @@ env_var_string_t *vftr_read_env_string (char *env_name, char *val_default) {
     char *s;
     env_var_string_t *var;
     var = (env_var_string_t*)malloc (sizeof (env_var_string_t));
-    if (s = getenv (env_name)) {
+    if ((s = getenv (env_name))) {
 	var->value = s;
  	var->set = true;
     } else {
@@ -199,7 +199,7 @@ env_var_regex_t *vftr_read_env_regex (char *env_name, regex_t *val_default) {
     char *s;
     env_var_regex_t *var;
     var = (env_var_regex_t*)malloc (sizeof (env_var_regex_t));
-    if (s = getenv (env_name)) {
+    if ((s = getenv (env_name))) {
 	var->value = vftr_compile_regexp (s);
  	var->set = true;
     } else {
@@ -335,7 +335,7 @@ void vftr_assert_environment () {
        	if (vftr_environment.sort_profile_table->set) {
       	   int method = vftr_profile_sorting_method(); 
 	   if (method == SORT_INVALID) {
-               printf ("Warning: The profile table sorting method \"%s\" is not defined. Defaulting to TIME_EXCL.\n");
+               printf ("Warning: The profile table sorting method \"%s\" is not defined. Defaulting to TIME_EXCL.\n", vftr_environment.sort_profile_table->value);
 	       vftr_environment.sort_profile_table->value = SORT_EXCL_TIME;
 	   } else if ((method == SORT_OVERHEAD || method == SORT_OVERHEAD_RELATIVE) && !vftr_environment.show_overhead->value) {
 	       printf ("Warning: You specified VFTR_SORT_PROFILE_TABLE=OVERHEAD(_RELATIVE), but overhead display is not enabled. Defaulting to TIME_EXLC.\n");
