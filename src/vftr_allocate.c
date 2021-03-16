@@ -172,7 +172,7 @@ void vftrace_deallocate (const char *s) {
 
 void vftr_allocate_finalize (FILE *fp) {
 
-   if (vftr_mpirank > 1) {
+   if (vftr_mpisize > 1) {
 #ifdef _MPI
      // Search all the ranks for global maximal values.  
      PMPI_Barrier (MPI_COMM_WORLD);
