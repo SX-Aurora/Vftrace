@@ -1577,13 +1577,13 @@ int vftr_filewrite_test_2 (FILE *fp_in, FILE *fp_out) {
 	int n;
 	unsigned long long addrs [6];
 	unsigned long long vftr_test_runtime = 0;
-	function_t *func1 = vftr_new_function (NULL, "init", NULL, 0, false);
-	function_t *func2 = vftr_new_function ((void*)addrs, "func2", func1, 0, false);
-	function_t *func3 = vftr_new_function ((void*)(addrs + 1), "func3", func1, 0, false);	
-	function_t *func4 = vftr_new_function ((void*)(addrs + 2), "func4", func3, 0, false);
-	function_t *func5 = vftr_new_function ((void*)(addrs + 3), "func5", func2, 0, false);
-	function_t *func6 = vftr_new_function ((void*)(addrs + 4), "func6", func2, 0, false);
-	function_t *func7 = vftr_new_function ((void*)(addrs + 5), "func4", func6, 0, false);
+	function_t *func1 = vftr_new_function (NULL, "init", NULL, false);
+	function_t *func2 = vftr_new_function ((void*)addrs, "func2", func1, false);
+	function_t *func3 = vftr_new_function ((void*)(addrs + 1), "func3", func1, false);	
+	function_t *func4 = vftr_new_function ((void*)(addrs + 2), "func4", func3, false);
+	function_t *func5 = vftr_new_function ((void*)(addrs + 3), "func5", func2, false);
+	function_t *func6 = vftr_new_function ((void*)(addrs + 4), "func6", func2, false);
+	function_t *func7 = vftr_new_function ((void*)(addrs + 5), "func4", func6, false);
 	vftr_normalize_stacks();
 	for (int i = 0; i < vftr_stackscount; i++) {
 		vftr_func_table[i]->prof_current.calls = i + 1;

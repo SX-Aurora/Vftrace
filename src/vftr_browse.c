@@ -648,12 +648,12 @@ void vftr_browse_finalize_table (FILE *fp) {
 
 int vftr_browse_test_1 (FILE *fp_in, FILE *fp_out) {
 	unsigned long long addrs[6];	
-	function_t *func1 = vftr_new_function (NULL, "init", NULL, 0, false);
-	function_t *func2 = vftr_new_function ((void*)addrs, "MAIN__", func1, 0, false);
-	function_t *func3 = vftr_new_function ((void*)(addrs + 1), "A", func1, 0, false);
-	function_t *func4 = vftr_new_function ((void*)(addrs + 2), "B", func1, 0, false);
-	function_t *func5 = vftr_new_function ((void*)(addrs + 3), "C", func3, 0, false);
-	function_t *func6 = vftr_new_function ((void*)(addrs + 4), "C", func4, 0, false);
+	function_t *func1 = vftr_new_function (NULL, "init", NULL, false);
+	function_t *func2 = vftr_new_function ((void*)addrs, "MAIN__", func1, false);
+	function_t *func3 = vftr_new_function ((void*)(addrs + 1), "A", func1, false);
+	function_t *func4 = vftr_new_function ((void*)(addrs + 2), "B", func1, false);
+	function_t *func5 = vftr_new_function ((void*)(addrs + 3), "C", func3, false);
+	function_t *func6 = vftr_new_function ((void*)(addrs + 4), "C", func4, false);
 	vftr_normalize_stacks();
 	for (int i = 0; i < vftr_stackscount; i++) {
 		vftr_func_table[i]->prof_current.calls = i + 1;

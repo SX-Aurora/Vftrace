@@ -55,7 +55,7 @@ void vftr_save_old_state () {
 
 /**********************************************************************/
 
-void vftr_function_entry (const char *s, void *addr, int line, bool isPrecise) {
+void vftr_function_entry (const char *s, void *addr, bool isPrecise) {
     int e, read_counters;
     unsigned long long timer, delta;
     unsigned long long cycles0;
@@ -114,7 +114,7 @@ void vftr_function_entry (const char *s, void *addr, int line, bool isPrecise) {
     
     if (callee == NULL) {
         // No calls at all yet: add new function
-        func = vftr_new_function(addr, s, caller, line, isPrecise);
+        func = vftr_new_function(addr, s, caller, isPrecise);
     } else {
 	// Search the function address in the function list
         func = callee;
@@ -127,15 +127,13 @@ void vftr_function_entry (const char *s, void *addr, int line, bool isPrecise) {
            }
            if (func == callee) {
                // No call from this callee yet: add new function
-               func = vftr_new_function(addr, s, caller, line, isPrecise);
+               func = vftr_new_function(addr, s, caller, isPrecise);
            }
         }
     }
     caller->callee = func; // Faster lookup next time around
     vftr_fstack = func; /* Here's where we are now */
     func->open = true;
-
-    if (line > 0) assert (func->line_beg == line);
 
     if (func->profile_this) {
         wtime = (vftr_get_runtime_usec() - vftr_overhead_usec) * 1.0e-6;
@@ -217,7 +215,7 @@ void vftr_function_entry (const char *s, void *addr, int line, bool isPrecise) {
 
 /**********************************************************************/
 
-void vftr_function_exit(int line) {
+void vftr_function_exit () {
     int           e, read_counters, timeToSample;
     long long     timer;
     unsigned long long cycles0;
@@ -241,17 +239,6 @@ void vftr_function_exit(int line) {
     timer = vftr_get_runtime_usec ();
     cycles0 = vftr_get_cycles() - vftr_initcycles;
     func  = vftr_fstack;
-
-    if (line > 0) {
-        if (func->line_end) {
-		assert (func->line_end == line);
-        } else {
-            /* Complete region name */
-            char *endline = index (func->name, '-'); // string.h's index function
-            snprintf (endline+1, 7, "%d", line);
-            func->line_end = line;
-        }
-    }
 
     prof_current = &func->prof_current;
     prof_current->time_incl += func_exit_time;   /* Inclusive time */
@@ -384,11 +371,11 @@ void vftr_function_exit(int line) {
 #if defined(__x86_64__) || defined(__ve__)
 
 void __cyg_profile_func_enter (void *func, void *caller) {
-    vftr_function_entry (NULL, func, -1, false);
+    vftr_function_entry (NULL, func, false);
 }
 
 void __cyg_profile_func_exit (void *func, void *caller) {
-    vftr_function_exit( -1 );
+    vftr_function_exit ();
 }
 
 #elif defined(__ia64__)
@@ -396,10 +383,10 @@ void __cyg_profile_func_exit (void *func, void *caller) {
 // The argument func is a pointer to a pointer instead of a pointer.
 
 void __cyg_profile_func_enter (void **func, void *caller) {
-    vftr_function_entry( NULL, *func, -1, false);
+    vftr_function_entry (NULL, *func, false);
 }
 
-void __cyg_profile_func_exit  (void **func, void *caller) {
-    vftr_function_exit( -1 );
+void __cyg_profile_func_exit (void **func, void *caller) {
+    vftr_function_exit ();
 }
 #endif

@@ -375,7 +375,7 @@ void vftr_parse_fmap_line (char *line, pathList_t **library, pathList_t **head) 
 	}
         *library = newlib;
         sscanf (base, "%lx", &(*library)->base);  /* Save library base */
-        (*library)->path = strdup( path );
+        (*library)->path = strdup (path);
         (*library)->next = NULL;
 #ifdef __VMAP_OFFSET
 	(*library)->offset = strtoul(offset, NULL, 16);
@@ -467,7 +467,7 @@ symtab_t **vftr_find_nearest(symtab_t **table, void *addr, int count) {
   }
 }
 
-char *vftr_find_symbol (void *addr, int line, char **full) {
+char *vftr_find_symbol (void *addr, char **full) {
     symtab_t **found;
     size_t offset;
     char *name, *newname;
@@ -478,19 +478,11 @@ char *vftr_find_symbol (void *addr, int line, char **full) {
       if ((*found)->demangled) *full = (*found)->full;
       name = (*found)->name;
       if (addr_found == addr) return name; /* Exact match (automatic instrumentation) */
-      if (line > 0) {
-        int len = strlen(name);
-        newname = (char *) malloc (sizeof(char) * (16 + len));
-        /* Chop Fortran trailing underscore */
-        if (name[len-1] == '_' && name[len-2] != '_') name[len-1] = 0;
-        sprintf (newname, "%s:%d-endline", name, line); /* "endline" is replaced later */
-      } else {
-        int len = 30 + strlen(name);
-        offset = (size_t)addr - (size_t) addr_found;
-        newname = (char *) malloc (sizeof(char) * len);
-        memset (newname, 0, len);
-        sprintf (newname, "%s+0x%lx", name, offset);
-      }
+      int len = 30 + strlen(name);
+      offset = (size_t)addr - (size_t) addr_found;
+      newname = (char *) malloc (sizeof(char) * len);
+      memset (newname, 0, len);
+      sprintf (newname, "%s+0x%lx", name, offset);
     } else {
       /* Address not in symbol table */
         newname = (char *) malloc (sizeof(char) * 24);

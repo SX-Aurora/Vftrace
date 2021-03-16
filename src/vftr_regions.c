@@ -134,7 +134,7 @@ void vftr_region_entry (const char *s, void *addr, bool isPrecise){
     
     if (callee == NULL) {
         // No calls at all yet: add new function
-        func = vftr_new_function(addr, s, caller, 0, isPrecise);
+        func = vftr_new_function(addr, s, caller, isPrecise);
     } else {
 	// Search the function address in the function list
         func = callee;
@@ -150,7 +150,7 @@ void vftr_region_entry (const char *s, void *addr, bool isPrecise){
            }
            if (func == callee) {
                // No call from this callee yet: add new function
-               func = vftr_new_function(addr, s, caller, 0, isPrecise);
+               func = vftr_new_function(addr, s, caller, isPrecise);
            }
         }
     }

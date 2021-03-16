@@ -80,8 +80,7 @@ void vftr_init_profdata (profdata_t *prof) {
 }
 
 // add a new function to the stack tables
-function_t *vftr_new_function(void *arg, const char *function_name,
-                              function_t *caller, int line, bool is_precise) {
+function_t *vftr_new_function(void *arg, const char *function_name, function_t *caller, bool is_precise) {
 
    // create and null new function
    function_t *func = (function_t *) malloc (sizeof(function_t));
@@ -91,7 +90,7 @@ function_t *vftr_new_function(void *arg, const char *function_name,
    if (function_name) {
       func->name = strdup(function_name);
    } else {
-      char *symbol = vftr_find_symbol (arg, line, &(func->full));
+      char *symbol = vftr_find_symbol (arg, &(func->full));
       if (symbol) {
          func->name = strdup(symbol);
          /* Chop Fortran trailing underscore */
@@ -151,8 +150,6 @@ function_t *vftr_new_function(void *arg, const char *function_name,
 
    // free the string;
    free(stackstr);
-
-   if (line > 0) func->line_beg = line;
 
    if (arg) { // Skip if address not defined (when function is "init")
       func->precise = is_precise || vftr_pattern_match (vftr_environment.preciseregex->value, func->name);
@@ -435,8 +432,8 @@ int vftr_functions_test_1 (FILE *fp_in, FILE *fp_out) {
    	for (int i = 0; i < i0; i++) {
 		vftr_write_function (fp_out, vftr_func_table[i]);
 	}
-	function_t *func1 = vftr_new_function (NULL, "init_vftr", NULL, 0, false);
-	function_t *func2 = vftr_new_function ((void*)addr, "test_1", func1, 0, true);
+	function_t *func1 = vftr_new_function (NULL, "init_vftr", NULL, false);
+	function_t *func2 = vftr_new_function ((void*)addr, "test_1", func1, true);
 	fprintf (fp_out, "Check test entries:\n");
 	for (int i = i0; i < vftr_stackscount; i++) {
 		vftr_write_function (fp_out, vftr_func_table[i]);
@@ -456,13 +453,13 @@ int vftr_functions_test_2 (FILE *fp_in, FILE *fp_out) {
 	}
 
 	unsigned long long addrs [6];
-	function_t *func1 = vftr_new_function (NULL, "init_vftr", NULL, 0, false);
-	function_t *func2 = vftr_new_function ((void*)addrs, "func2", func1, 0, false);
-	function_t *func3 = vftr_new_function ((void*)(addrs + 1), "func3", func1, 0, false);	
-	function_t *func4 = vftr_new_function ((void*)(addrs + 2), "func4", func3, 0, false);
-	function_t *func5 = vftr_new_function ((void*)(addrs + 3), "func5", func2, 0, false);
-	function_t *func6 = vftr_new_function ((void*)(addrs + 4), "func6", func2, 0, false);
-	function_t *func7 = vftr_new_function ((void*)(addrs + 5), "func4", func6, 0, false);
+	function_t *func1 = vftr_new_function (NULL, "init_vftr", NULL, false);
+	function_t *func2 = vftr_new_function ((void*)addrs, "func2", func1, false);
+	function_t *func3 = vftr_new_function ((void*)(addrs + 1), "func3", func1, false);	
+	function_t *func4 = vftr_new_function ((void*)(addrs + 2), "func4", func3, false);
+	function_t *func5 = vftr_new_function ((void*)(addrs + 3), "func5", func2, false);
+	function_t *func6 = vftr_new_function ((void*)(addrs + 4), "func6", func2, false);
+	function_t *func7 = vftr_new_function ((void*)(addrs + 5), "func4", func6, false);
 	fprintf (fp_out, "Check test entries:\n");
 	for (int i = i0; i < vftr_stackscount; i++) {
 		vftr_write_function(fp_out, vftr_func_table[i]);
@@ -483,13 +480,13 @@ int vftr_functions_test_2 (FILE *fp_in, FILE *fp_out) {
 
 int vftr_functions_test_3 (FILE *fp_in, FILE *fp_out) {
 	unsigned long long addrs [6];
-	function_t *func1 = vftr_new_function (NULL, "init", NULL, 0, false);
-	function_t *func2 = vftr_new_function ((void*)addrs, "func2", func1, 0, false);
-	function_t *func3 = vftr_new_function ((void*)(addrs + 1), "func3", func1, 0, false);	
-	function_t *func4 = vftr_new_function ((void*)(addrs + 2), "func4", func3, 0, false);
-	function_t *func5 = vftr_new_function ((void*)(addrs + 3), "func5", func2, 0, false);
-	function_t *func6 = vftr_new_function ((void*)(addrs + 4), "func6", func2, 0, false);
-	function_t *func7 = vftr_new_function ((void*)(addrs + 5), "func4", func6, 0, false);
+	function_t *func1 = vftr_new_function (NULL, "init", NULL, false);
+	function_t *func2 = vftr_new_function ((void*)addrs, "func2", func1, false);
+	function_t *func3 = vftr_new_function ((void*)(addrs + 1), "func3", func1, false);	
+	function_t *func4 = vftr_new_function ((void*)(addrs + 2), "func4", func3, false);
+	function_t *func5 = vftr_new_function ((void*)(addrs + 3), "func5", func2, false);
+	function_t *func6 = vftr_new_function ((void*)(addrs + 4), "func6", func2, false);
+	function_t *func7 = vftr_new_function ((void*)(addrs + 5), "func4", func6, false);
 	vftr_write_stack_ascii (fp_out, 0.0, func1, "", 0);
 	vftr_write_stack_ascii (fp_out, 0.0, func2, "", 0);
 	vftr_write_stack_ascii (fp_out, 0.0, func3, "", 0);
@@ -504,11 +501,11 @@ int vftr_functions_test_3 (FILE *fp_in, FILE *fp_out) {
 
 int vftr_functions_test_4 (FILE *fp_in, FILE *fp_out) {
 	unsigned long long addrs [6];
-	function_t *func1 = vftr_new_function (NULL, "init", NULL, 0, false);
-	function_t *func2 = vftr_new_function ((void*)addrs, "func2", func1, 0, false);
-	function_t *func3 = vftr_new_function ((void*)(addrs + 1), "func3", func1, 0, false);	
-	function_t *func4 = vftr_new_function ((void*)(addrs + 2), "func4", func3, 0, false);
-	function_t *func5 = vftr_new_function ((void*)(addrs + 3), "func2", func4, 0, false);
+	function_t *func1 = vftr_new_function (NULL, "init", NULL, false);
+	function_t *func2 = vftr_new_function ((void*)addrs, "func2", func1, false);
+	function_t *func3 = vftr_new_function ((void*)(addrs + 1), "func3", func1, false);	
+	function_t *func4 = vftr_new_function ((void*)(addrs + 2), "func4", func3, false);
+	function_t *func5 = vftr_new_function ((void*)(addrs + 3), "func2", func4, false);
 	vftr_write_function_indices (fp_out, "init", false);
 	vftr_write_function_indices (fp_out, "func2", false);
 	vftr_write_function_indices (fp_out, "func3", false);
@@ -520,11 +517,11 @@ int vftr_functions_test_4 (FILE *fp_in, FILE *fp_out) {
 
 int vftr_functions_test_5 (FILE *fp_in, FILE *fp_out) {
 	unsigned long long addrs [6];
-	function_t *func1 = vftr_new_function (NULL, "INIT", NULL, 0, false);
-	function_t *func2 = vftr_new_function ((void*)addrs, "fUnC2", func1, 0, false);
-	function_t *func3 = vftr_new_function ((void*)(addrs + 1), "FUnc3", func1, 0, false);	
-	function_t *func4 = vftr_new_function ((void*)(addrs + 2), "func4", func3, 0, false);
-	function_t *func5 = vftr_new_function ((void*)(addrs + 3), "fUNC2", func4, 0, false);
+	function_t *func1 = vftr_new_function (NULL, "INIT", NULL, false);
+	function_t *func2 = vftr_new_function ((void*)addrs, "fUnC2", func1, false);
+	function_t *func3 = vftr_new_function ((void*)(addrs + 1), "FUnc3", func1, false);	
+	function_t *func4 = vftr_new_function ((void*)(addrs + 2), "func4", func3, false);
+	function_t *func5 = vftr_new_function ((void*)(addrs + 3), "fUNC2", func4, false);
 	vftr_write_function_indices (fp_out, "init", true);
 	vftr_write_function_indices (fp_out, "func2", true);
 	vftr_write_function_indices (fp_out, "func3", true);
