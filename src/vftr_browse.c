@@ -301,7 +301,7 @@ void vftr_browse_print_navigation_bars (FILE *fp, display_function_t **display_f
    fprintf (fp, "</ul>\n");
    fprintf (fp, "\n");
    // Vertical navigation bar
-   fprintf (fp, "<ul style=\"float: left;list-style-type: none;margin: 0;padding: 0; width: 150px;background-color: #f1f1f1;\">\n");
+   fprintf (fp, "<ul style=\"float: left;list-style-type: none;margin: 0;padding: 0; width: 150px;height: 100%;background-color: #f1f1f1;\">\n");
    for (int i = 0; i < n_funcs; i++) {
       char *func_name = display_functions[i]->func_name;
       vftr_browse_make_html_indent (fp, 0, 1);
