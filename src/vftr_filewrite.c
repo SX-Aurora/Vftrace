@@ -114,21 +114,6 @@ char *vftr_supported_mpi_function_names[] = {"mpi_accumulate",
 
 int vftr_n_supported_mpi_functions = 70;
 
-char *vftr_mpi_collective_function_names[] = {"mpi_barrier", "mpi_bcast", "mpi_reduce",
-			     "mpi_allreduce", "mpi_gather", "mpi_gatherv",
-			     "mpi_allgather", "mpi_allgatherv",
-			     "mpi_scatter", "mpi_scatterv",
-			     "mpi_alltoall", "mpi_alltoallv", "mpi_alltoallw"};
-
-int vftr_n_collective_mpi_functions = 13;
-
-bool vftr_is_collective_mpi_function (char *func_name) {
-   for (int i = 0; i < vftr_n_collective_mpi_functions; i++) { 
-      if (!strcmp (func_name, vftr_mpi_collective_function_names[i])) return true;
-   }
-   return false;
-}
-
 void vftr_is_traceable_mpi_function (char *func_name, bool *is_mpi) {
    *is_mpi = false;
    char *func_name_low = vftr_to_lowercase(func_name);

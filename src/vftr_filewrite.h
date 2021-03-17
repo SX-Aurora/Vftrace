@@ -84,9 +84,6 @@ typedef struct display_function {
 
 display_function_t **vftr_create_display_functions (bool display_sync_time, int *n_display_funcs, bool use_all);
 
-extern char *vftr_mpi_collective_function_names[];
-extern int vftr_n_collective_mpi_functions;
-
 enum sample_id {SID_ENTRY, SID_EXIT, SID_MESSAGE};
 
 void vftr_init_vfd_file ();
@@ -95,7 +92,6 @@ void vftr_write_to_vfd (long long runtime, profdata_t *prof_current, profdata_t 
 #ifdef _MPI
 double vftr_compute_mpi_imbalance (long long *all_times, double t_avg);
 #endif
-bool vftr_is_collective_mpi_function (char *func_name);
 
 #ifdef _MPI
 // store some message information for use in the log file
