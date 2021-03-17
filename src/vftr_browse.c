@@ -287,8 +287,14 @@ void vftr_create_profile_dropdown (FILE *fp, enum origin_page op) {
 /**********************************************************************/
 
 void vftr_browse_print_navigation_bars (FILE *fp, display_function_t **display_functions, int i_func, int n_funcs, enum origin_page op) {
+   // First, we need to figure out the maximum length of the function names appearing in the left (vertical) navigation bar.
+   // This determines the width of the vertical bar and the margin of the horizontal one in terms of em units.
    // Horizontal navigation bar
-   fprintf (fp, "<ul style=\"list-style-type: none;margin-top: 0px;margin-left: 150px; background-color: #f1f1f1;\">\n");
+   int max_len = 0;
+   for (int i = 0; i < n_funcs; i++) {
+     if (strlen(display_functions[i]->func_name) > max_len) max_len = strlen(display_functions[i]->func_name);
+   }
+   fprintf (fp, "<ul style=\"list-style-type: none;margin-top: 0px;margin-left: %dch; background-color: #f1f1f1;\">\n", max_len);
    vftr_browse_make_html_indent (fp, 0, 1);
    if (op == HOME || op == PROFILE) {
       fprintf (fp, "<li style=\"display: inline;\"><a href=\"index.html\">HOME</a></li>\n");
@@ -300,7 +306,7 @@ void vftr_browse_print_navigation_bars (FILE *fp, display_function_t **display_f
    fprintf (fp, "</ul>\n");
    fprintf (fp, "\n");
    // Vertical navigation bar
-   fprintf (fp, "<ul style=\"float: left;list-style-type: none;margin: 0;padding: 0; width: 150px;height: 100%;background-color: #f1f1f1;\">\n");
+   fprintf (fp, "<ul style=\"float: left;list-style-type: none;margin: 0;padding: 0; width: %dch;height: 100%;background-color: #f1f1f1;\">\n", max_len);
    for (int i = 0; i < n_funcs; i++) {
       char *func_name = display_functions[i]->func_name;
       vftr_browse_make_html_indent (fp, 0, 1);
