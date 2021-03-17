@@ -21,7 +21,7 @@ void vftr_browse_create_profile_header (FILE *fp);
 void vftr_browse_print_table_line (FILE *fp, int stack_id,
 				   long long application_runtime_usec, double sampling_overhead_time,
 				   int n_calls, long long t_excl_usec, long long t_incl_usec, long long t_sum_usec, double t_overhead,
-				   char *func_name, char *caller_name, column_t *prof_columns);
+				   char *func_name, char *caller_name, column_t *prof_columns, bool mark_disp_f);
 void vftr_browse_finalize_table (FILE *fp);
 
 int vftr_browse_test_1 (FILE *fp_in, FILE *fp_out);

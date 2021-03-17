@@ -596,7 +596,7 @@ char *vftr_browse_table_cell_format_with_link (char *base_dir, char *func_name, 
 void vftr_browse_print_table_line (FILE *fp, int stack_id,
 				   long long application_runtime_usec, double sampling_overhead_time,
 				   int n_calls, long long t_excl_usec, long long t_incl_usec, long long t_sum_usec, double t_overhead,
-				   char *func_name, char *caller_name, column_t *prof_columns) {
+				   char *func_name, char *caller_name, column_t *prof_columns, bool mark_disp_f) {
 	   int i_column = 0;
 	   
 	   fprintf (fp, "<tr>\n");
@@ -627,7 +627,7 @@ void vftr_browse_print_table_line (FILE *fp, int stack_id,
 	      }
 	   }
 	   
-	   if (vftr_is_collective_mpi_function (func_name)) {
+	   if (mark_disp_f) {
 	      int n = strlen(func_name) + vftr_count_digits_int (vftr_mpirank) + 7;
 	      char target_fun[n];
 	      snprintf (target_fun, n, "%s_%d.html", func_name, vftr_mpirank);
