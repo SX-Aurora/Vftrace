@@ -97,7 +97,7 @@ void vftr_init_papi_counters () {
     }
     papi_event_set = PAPI_NULL;
     char errmsg[256];
-    if ((diag = PAPI_create_eventset(papi_event_set)) != PAPI_OK) {
+    if ((diag = PAPI_create_eventset(&papi_event_set)) != PAPI_OK) {
        PAPI_perror (errmsg);
        fprintf(vftr_log, "vftr_init_hwcounters - "
                "PAPI_create_eventset error: %s\n", errmsg);
@@ -253,17 +253,17 @@ void vftr_read_counters_papi (long long *event) {
     int i, j, diag;
     evtcounter_t *evc;
     if (event == NULL) return;
-    if (hwc_event_num > 0) {
+    if (vftr_scenario_expr_n_vars > 0) {
         if (papi_event_set != PAPI_NULL) {
             if ((diag = PAPI_read(papi_event_set, vftr_echwc)) != PAPI_OK) {
                 fprintf(vftr_log, "error: PAPI_read returned %d\n", diag);
     	}
         }
-        for (j = 0,evc = first_counter; evc; evc = evc->next) {
+        for (j = 0, evc = first_counter; evc; evc = evc->next) {
             evc->count = vftr_echwc[j++];
         }
     }
-    for (i = 0,evc = first_counter; evc; i++, evc = evc->next) {
+    for (i = 0, evc = first_counter; evc; i++, evc = evc->next) {
         event[i] = evc->count;
     }
 }
