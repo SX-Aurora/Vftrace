@@ -43,7 +43,7 @@ bool vftr_events_enabled;
 long long vftr_prog_cycles;
 bool err_no_hwc_support = false;
 #ifdef HAS_PAPI
-int papi_event_set;
+int vftr_papi_event_set;
 #endif
 
 long long vftr_echwc[MAX_HWC_EVENTS];
@@ -95,9 +95,9 @@ void vftr_init_papi_counters () {
         err_no_hwc_support = true;
         return;
     }
-    papi_event_set = PAPI_NULL;
+    vftr_papi_event_set = PAPI_NULL;
     char errmsg[256];
-    if ((diag = PAPI_create_eventset(&papi_event_set)) != PAPI_OK) {
+    if ((diag = PAPI_create_eventset(&vftr_papi_event_set)) != PAPI_OK) {
        PAPI_perror (errmsg);
        fprintf(vftr_log, "vftr_init_hwcounters - "
                "PAPI_create_eventset error: %s\n", errmsg);
@@ -109,7 +109,7 @@ void vftr_init_papi_counters () {
 
 #ifdef HAS_PAPI
 int eventset_is_filled () {
-	return papi_event_set != PAPI_NULL;
+	return vftr_papi_event_set != PAPI_NULL;
 }
 #endif
 
@@ -120,6 +120,7 @@ void vftr_start_hwcounters () {
     evtcounter_t *evc;
 
     if (err_no_hwc_support) return;
+    vftr_init_papi_counters();
 
     char errmsg[256];
     evtcounter_t *e;
@@ -127,7 +128,7 @@ void vftr_start_hwcounters () {
 
     e = first_counter;
     for (int i = 0; e; i++) {
-           if ((diag = PAPI_add_event(papi_event_set, e->id)) != PAPI_OK) {
+           if ((diag = PAPI_add_event(vftr_papi_event_set, e->id)) != PAPI_OK) {
 	       PAPI_perror (errmsg);
 	       fprintf(vftr_log, "vftr_start_hwcounters - "
                                  "PAPI_add_event error: %s when adding %s\n",
@@ -136,7 +137,7 @@ void vftr_start_hwcounters () {
            e = e->next;
     }
     if (eventset_is_filled()) {
-    	if ((diag = PAPI_start(papi_event_set)) != PAPI_OK) {
+    	if ((diag = PAPI_start(vftr_papi_event_set)) != PAPI_OK) {
     	    PAPI_perror( errmsg );
     	    fprintf(stdout, "vftr_start_hwcounters - PAPI_start error: %s\n", errmsg);
     	}
@@ -254,8 +255,8 @@ void vftr_read_counters_papi (long long *event) {
     evtcounter_t *evc;
     if (event == NULL) return;
     if (vftr_scenario_expr_n_vars > 0) {
-        if (papi_event_set != PAPI_NULL) {
-            if ((diag = PAPI_read(papi_event_set, vftr_echwc)) != PAPI_OK) {
+        if (vftr_papi_event_set != PAPI_NULL) {
+            if ((diag = PAPI_read(vftr_papi_event_set, vftr_echwc)) != PAPI_OK) {
                 fprintf(vftr_log, "error: PAPI_read returned %d\n", diag);
     	}
         }
@@ -281,7 +282,7 @@ int vftr_stop_hwc () {
     int diag = 0;
 #if defined(HAS_PAPI)
     long long ec[MAX_HWC_EVENTS];
-    if ((diag = PAPI_stop(papi_event_set, ec)) != PAPI_OK)
+    if ((diag = PAPI_stop(vftr_papi_event_set, ec)) != PAPI_OK)
     fprintf(vftr_log, "vftr_stop_hwc error: PAPI_stop returned %d\n", diag);
 #endif
     return diag;
