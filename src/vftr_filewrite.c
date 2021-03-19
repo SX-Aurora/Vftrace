@@ -990,8 +990,16 @@ void vftr_evaluate_display_function (char *func_name, display_function_t **displ
     (*display_func)->properly_terminated = true;
     for (int i = 0; i < n_func_indices; i++) {
         if (func_indices[i] < 0) break;
-	(*display_func)->this_mpi_time += vftr_func_table[func_indices[i]]->prof_current.time_incl;
-	if (n_func_indices_sync > 0) (*display_func)->this_sync_time += vftr_func_table[func_indices_sync[i]]->prof_current.time_incl;
+        // If synchronization times shall be displayed, only the inclusive time makes sense. For consistency,
+        // we then show the inclusive time for all entries, not just that which have a synchronization barrier within them.
+        // In the default case, we use the exclusive time.
+        if (display_sync_time) {
+	    (*display_func)->this_mpi_time += vftr_func_table[func_indices[i]]->prof_current.time_incl;
+            // Stack indices with n_func_indices_sync > 0 have a synchro entry.
+	    if (n_func_indices_sync > 0) (*display_func)->this_sync_time += vftr_func_table[func_indices_sync[i]]->prof_current.time_incl;
+        } else {
+	    (*display_func)->this_mpi_time += vftr_func_table[func_indices[i]]->prof_current.time_excl;
+        }
 	(*display_func)->n_calls += vftr_func_table[func_indices[i]]->prof_current.calls;
 	(*display_func)->mpi_tot_send_bytes += vftr_func_table[func_indices[i]]->prof_current.mpi_tot_send_bytes;
 	(*display_func)->mpi_tot_recv_bytes += vftr_func_table[func_indices[i]]->prof_current.mpi_tot_recv_bytes;
