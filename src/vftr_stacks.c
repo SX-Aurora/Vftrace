@@ -144,11 +144,10 @@ void vftr_normalize_stacks() {
           if (strcmp(vftr_gStackinfo[globID].name, "init")) {
              // not the init function
              vftr_gStackinfo[globID].ret = vftr_func_table[istack]->return_to->gid;
-             vftr_gStackinfo[globID].locID = istack;
           } else {
              vftr_gStackinfo[globID].ret = -1;
-             vftr_gStackinfo[globID].locID = 0;
           }
+          vftr_gStackinfo[globID].locID = istack;
 
        }
 #ifdef _MPI

@@ -420,7 +420,7 @@ void vftr_fill_func_indices_up_to_truncate (function_t **func_table, long long r
 		profdata_t prof_current = func_table[i]->prof_current;
 		profdata_t prof_previous = func_table[i]->prof_previous;
 		/* If function has a caller and has been called */
-		///if (!(func_table[i]->return_to && prof_current.calls)) continue;
+		if (!(func_table[i]->return_to && prof_current.calls)) continue;
 		indices[j++] = i;
 		vftr_get_stack_times (prof_current, prof_previous, &t_excl, &t_incl);
 		cumulative_time_usec += t_excl;
@@ -440,7 +440,7 @@ int vftr_count_func_indices_up_to_truncate (function_t **func_table, long long r
 		profdata_t prof_current = func_table[i]->prof_current;
 		profdata_t prof_previous = func_table[i]->prof_previous;
 		/* If function has a caller and has been called */
-		///if (!(func_table[i]->return_to && prof_current.calls)) continue;
+		if (!(func_table[i]->return_to && prof_current.calls)) continue;
 		
 		n_indices++;
 
@@ -1256,9 +1256,9 @@ void vftr_print_function_statistics (FILE *fp_log, display_function_t **display_
 
        // Print all the display functions, but omit those without any calls.
        for (int i = 0; i < n_display_funcs; i++) {
-          //if (display_functions[i]->n_calls > 0 && display_functions[i]->properly_terminated) {
+          if (display_functions[i]->n_calls > 0 && display_functions[i]->properly_terminated) {
              vftr_summary_print_line (fp_log, display_functions[i], columns, total_time, print_mpi_columns);
-          //}
+          }
        }
     }
 
