@@ -1256,9 +1256,9 @@ void vftr_print_function_statistics (FILE *fp_log, display_function_t **display_
 
        // Print all the display functions, but omit those without any calls.
        for (int i = 0; i < n_display_funcs; i++) {
-          if (display_functions[i]->n_calls > 0 && display_functions[i]->properly_terminated) {
+          //if (display_functions[i]->n_calls > 0 && display_functions[i]->properly_terminated) {
              vftr_summary_print_line (fp_log, display_functions[i], columns, total_time, print_mpi_columns);
-          }
+          //}
        }
     }
 
@@ -1285,7 +1285,7 @@ void vftr_print_function_statistics (FILE *fp_log, display_function_t **display_
         }
 
   	for (int i = 0; i < n_display_funcs; i++) {
-                if (!display_functions[i]->properly_terminated) continue;
+                //if (!display_functions[i]->properly_terminated) continue;
 		if (display_functions[i]->n_stack_indices == 0) {;
 	 	   if (vftr_environment.create_html->value) {
 		      vftr_browse_print_stacktree_page (NULL, true, display_functions, i,
