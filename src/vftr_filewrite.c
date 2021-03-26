@@ -420,7 +420,7 @@ void vftr_fill_func_indices_up_to_truncate (function_t **func_table, long long r
 		profdata_t prof_current = func_table[i]->prof_current;
 		profdata_t prof_previous = func_table[i]->prof_previous;
 		/* If function has a caller and has been called */
-		if (!(func_table[i]->return_to && prof_current.calls)) continue;
+		///if (!(func_table[i]->return_to && prof_current.calls)) continue;
 		indices[j++] = i;
 		vftr_get_stack_times (prof_current, prof_previous, &t_excl, &t_incl);
 		cumulative_time_usec += t_excl;
@@ -440,7 +440,7 @@ int vftr_count_func_indices_up_to_truncate (function_t **func_table, long long r
 		profdata_t prof_current = func_table[i]->prof_current;
 		profdata_t prof_previous = func_table[i]->prof_previous;
 		/* If function has a caller and has been called */
-		if (!(func_table[i]->return_to && prof_current.calls)) continue;
+		///if (!(func_table[i]->return_to && prof_current.calls)) continue;
 		
 		n_indices++;
 
@@ -761,7 +761,11 @@ void vftr_set_proftab_column_formats (function_t **func_table,
             }
 
             vftr_prof_column_set_n_chars (func_table[i_func]->name, NULL, NULL, &(columns)[i_column++], &stat);
-            vftr_prof_column_set_n_chars (func_table[i_func]->return_to->name, NULL, NULL, &(columns)[i_column++], &stat);
+            if (func_table[i_func]->return_to != NULL) {
+              vftr_prof_column_set_n_chars (func_table[i_func]->return_to->name, NULL, NULL, &(columns)[i_column++], &stat);
+            } else {
+              vftr_prof_column_set_n_chars ("-/-", NULL, NULL, &(columns)[i_column++], &stat);
+            }
             int global_id = func_table[i_func]->gid;
             vftr_prof_column_set_n_chars (&global_id, NULL, NULL, &(columns)[i_column++], &stat);
             if (vftr_environment.show_stacks_in_profile->value) {
@@ -993,13 +997,25 @@ void vftr_evaluate_display_function (char *func_name, display_function_t **displ
         // If synchronization times shall be displayed, only the inclusive time makes sense. For consistency,
         // we then show the inclusive time for all entries, not just that which have a synchronization barrier within them.
         // In the default case, we use the exclusive time.
+        long long t1, t2, t1_sync, t2_sync;
         if (display_sync_time) {
-	    (*display_func)->this_mpi_time += vftr_func_table[func_indices[i]]->prof_current.time_incl;
+            t1 = vftr_func_table[func_indices[i]]->prof_current.time_incl;
+            t2 = vftr_func_table[func_indices[i]]->prof_previous.time_incl;
+	    ///(*display_func)->this_mpi_time += vftr_func_table[func_indices[i]]->prof_current.time_incl;
             // Stack indices with n_func_indices_sync > 0 have a synchro entry.
-	    if (n_func_indices_sync > 0) (*display_func)->this_sync_time += vftr_func_table[func_indices_sync[i]]->prof_current.time_incl;
+	    ///if (n_func_indices_sync > 0) (*display_func)->this_sync_time += vftr_func_table[func_indices_sync[i]]->prof_current.time_incl;
+	    if (n_func_indices_sync > 0) {
+               t1_sync = vftr_func_table[func_indices_sync[i]]->prof_current.time_incl;
+               t1_sync = vftr_func_table[func_indices_sync[i]]->prof_previous.time_incl;
+            }
         } else {
-	    (*display_func)->this_mpi_time += vftr_func_table[func_indices[i]]->prof_current.time_excl;
+            //printf ("Check time: %d %lld\n", func_indices[i], vftr_func_table[func_indices[i]]->prof_current.time_excl);
+            t1 = vftr_func_table[func_indices[i]]->prof_current.time_excl;
+            t2 = vftr_func_table[func_indices[i]]->prof_previous.time_excl;
+	    ///(*display_func)->this_mpi_time += vftr_func_table[func_indices[i]]->prof_current.time_excl;
         }
+        (*display_func)->this_mpi_time += t1 - t2;
+        if (n_func_indices_sync > 0) (*display_func)->this_sync_time += t1_sync - t2_sync;
 	(*display_func)->n_calls += vftr_func_table[func_indices[i]]->prof_current.calls;
 	(*display_func)->mpi_tot_send_bytes += vftr_func_table[func_indices[i]]->prof_current.mpi_tot_send_bytes;
 	(*display_func)->mpi_tot_recv_bytes += vftr_func_table[func_indices[i]]->prof_current.mpi_tot_recv_bytes;
@@ -1430,6 +1446,8 @@ void vftr_print_profile_line (FILE *fp_log, int local_stack_id, int global_stack
    vftr_prof_column_print (fp_log, prof_columns[i_column++], func_name, NULL, NULL);
    if (caller_name) {
        vftr_prof_column_print (fp_log, prof_columns[i_column++], caller_name, NULL, NULL);
+   } else {
+       vftr_prof_column_print (fp_log, prof_columns[i_column++], "-/-", NULL, NULL);
    }
    
    vftr_prof_column_print (fp_log, prof_columns[i_column++], &global_stack_id, NULL, NULL);
@@ -1516,20 +1534,38 @@ void vftr_print_profile (FILE *fp_log, FILE *f_html, int *n_func_indices, long l
        double t_overhead;
        vftr_compute_line_content (func_table[i_func], &n_calls, &t_excl, &t_incl, &t_overhead);
        cumulative_time += t_excl;
-       vftr_print_profile_line (fp_log, func_table[i_func]->id, func_table[i_func]->gid, 
-			        function_time, sampling_overhead_time_usec * 1e-6,
-			        n_calls, t_excl, t_incl, cumulative_time, t_overhead,
-				func_table[i_func]->name, func_table[i_func]->return_to->name, prof_columns);
+       //printf ("Print line(%d): %s %d\n", vftr_mpirank, func_table[i_func]->name, func_table[i_func]->return_to == NULL);
+       if (func_table[i_func]->return_to != NULL) {
+          vftr_print_profile_line (fp_log, func_table[i_func]->id, func_table[i_func]->gid, 
+   			        function_time, sampling_overhead_time_usec * 1e-6,
+   			        n_calls, t_excl, t_incl, cumulative_time, t_overhead,
+   				func_table[i_func]->name, func_table[i_func]->return_to->name, prof_columns);
+
+       } else {
+          //printf ("Init in profile line: %d %lld\n", i_func, t_excl);
+          vftr_print_profile_line (fp_log, func_table[i_func]->id, func_table[i_func]->gid, 
+   			        function_time, sampling_overhead_time_usec * 1e-6,
+   			        n_calls, t_excl, t_incl, cumulative_time, t_overhead,
+   				func_table[i_func]->name, NULL, prof_columns);
+      }
+      //printf ("Line printed: %d\n", vftr_mpirank);
 
        if (f_html != NULL) {
           bool mark_disp_f = false;
           for (int i_disp = 0; i_disp < n_display_functions; i_disp++) {
              if ((mark_disp_f = !strcmp(func_table[i_func]->name, display_functions[i_disp]->func_name))) break;
           }
-	  vftr_browse_print_table_line (f_html, func_table[i_func]->gid,
-				        function_time, sampling_overhead_time_usec * 1e-6,
-					n_calls, t_excl, t_incl, cumulative_time, t_overhead,
-				        func_table[i_func]->name, func_table[i_func]->return_to->name, prof_columns, mark_disp_f);
+          if (func_table[i_func]->return_to != NULL) {
+	     vftr_browse_print_table_line (f_html, func_table[i_func]->gid,
+	   			        function_time, sampling_overhead_time_usec * 1e-6,
+	   				n_calls, t_excl, t_incl, cumulative_time, t_overhead,
+	   			        func_table[i_func]->name, func_table[i_func]->return_to->name, prof_columns, mark_disp_f);
+          } else {
+	     vftr_browse_print_table_line (f_html, func_table[i_func]->gid,
+	   			        function_time, sampling_overhead_time_usec * 1e-6,
+	   				n_calls, t_excl, t_incl, cumulative_time, t_overhead,
+	   			        func_table[i_func]->name, NULL, prof_columns, mark_disp_f);
+          }
        }
     }
 

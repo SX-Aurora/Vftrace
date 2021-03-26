@@ -636,7 +636,11 @@ void vftr_browse_print_table_line (FILE *fp, int stack_id,
 	      vftr_browse_table_cell_print (fp, prof_columns[i_column++], func_name, NULL);
            }
 
-	   vftr_browse_table_cell_print (fp, prof_columns[i_column++], caller_name, NULL);
+           if (caller_name != NULL) {
+	      vftr_browse_table_cell_print (fp, prof_columns[i_column++], caller_name, NULL);
+           } else {
+	      vftr_browse_table_cell_print (fp, prof_columns[i_column++], "-/-", NULL);
+           }
 	   vftr_browse_table_cell_print (fp, prof_columns[i_column++], &stack_id, NULL);
 
 	   fprintf (fp, "</tr>\n");
