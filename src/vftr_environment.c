@@ -225,6 +225,8 @@ int vftr_profile_sorting_method () {
      return SORT_OVERHEAD;
   } else if (!strcmp (s, "OVERHEAD_RELATIVE")) {
      return SORT_OVERHEAD_RELATIVE;
+  } else if (!strcmp (s, "NONE")) {
+     return SORT_NONE;
   } else {
      return SORT_INVALID;
   } 
