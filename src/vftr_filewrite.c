@@ -1491,9 +1491,10 @@ void vftr_print_profile (FILE *fp_log, FILE *f_html, int *n_func_indices, long l
         fprintf (fp_log, " for rank %d", vftr_mpirank);
     }
     if (vftr_environment.prof_truncate->value) {
-	fprintf (fp_log, " (truncated to %3.0f%%)", vftr_environment.prof_truncate_cutoff->value);
+	fprintf (fp_log, ", truncated to %3.0f%%", vftr_environment.prof_truncate_cutoff->value);
     }
-    fprintf (fp_log, ":\n\n");
+    fprintf (fp_log, ", %s", vftr_profile_sorting_method_string());
+    fprintf (fp_log, " :\n\n");
 
     long long function_time = total_runtime_usec - sampling_overhead_time_usec;
     *n_func_indices = vftr_count_func_indices_up_to_truncate (func_table, function_time);

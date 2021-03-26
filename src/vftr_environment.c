@@ -232,6 +232,25 @@ int vftr_profile_sorting_method () {
   } 
 }
 
+char *vftr_profile_sorting_method_string () {
+  switch (vftr_profile_sorting_method()) {
+    case SORT_EXCL_TIME:
+      return "sorted by exclusive time";
+    case SORT_INCL_TIME:
+      return "sorted by inclusive time";
+    case SORT_N_CALLS:
+      return "sorted by number of calls";
+    case SORT_STACK_ID:
+      return "sorted by stack ID";
+    case SORT_OVERHEAD:
+      return "sorted by overhead time";
+    case SORT_OVERHEAD_RELATIVE:
+      return "sorted by relative overhead time";
+    case SORT_NONE:
+      return "unsorted";
+  }
+}
+
 /**********************************************************************/
 
 void vftr_read_environment () {
