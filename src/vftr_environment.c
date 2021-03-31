@@ -28,43 +28,71 @@
 #include "vftr_filewrite.h"
 #include "vftr_fileutils.h"
 
-int **vftr_M;
+/**********************************************************************/
+// Recommender for unmatched environment variables:
+//
+// After the environment has been read, we loop over all environment variables
+// (also non-Vftrace ones) and pick out the ones starting with "VFTR_".
+// For these, we compute the Levenshtein distance (LD) w.r.t to all Vftrace environment
+// variables registered in vftr_env_variable_names. If LD is zero, this is a correct
+// environment variable. Otherwise, we pick the entry of vftr_env_variable_names with
+// the smallest LD and choose it as the recommendation for the (probably mis-typed)
+// environment variable. 
+// 
+// The list vftr_env_variable_names is created simultaneously with the registration of
+// the environment variables in vftr_read_environment, in the calls of vftr_read_env_<type>.
+// This way, we only need to maintain one passage in the code where there is an explicit list
+// of environment variable names. However, vftr_n_env_variables needs to be adapted by the
+// develooper when an environment variable as added or deleted.
+//
+// The computation of LD is recursive and the runtime of a naive implementation becomes unfeasible
+// very fast. For this reason, we maintain a table of computed LD values, vftr_ld_lookup, where the algorithm can
+// make look ups.
+//
+int vftr_n_env_variables;
+char **vftr_env_variable_names;
+int vftr_env_counter;
+int **vftr_ld_lookup;
 
-void vftr_init_M (int n1, int n2) {
-  vftr_M = (int **)malloc (n1 * sizeof(int*));
+// Create and free the Levenshtein lookup table
+void vftr_init_ld_lookup (int n1, int n2) {
+  vftr_ld_lookup = (int **)malloc (n1 * sizeof(int*));
   for (int i = 0; i < n1; i++) {
-    vftr_M[i] = (int*)malloc (n2 * sizeof(int));
+    vftr_ld_lookup[i] = (int*)malloc (n2 * sizeof(int));
   }
   for (int i = 0; i < n1; i++) {
     for (int j = 0; j < n2; j++) {
-      vftr_M[i][j] = -1;
+      vftr_ld_lookup[i][j] = -1;
     }
   }
 }
 
-void vftr_free_M (int n1) {
+void vftr_free_ld_lookup (int n1) {
   for (int i = 0; i < n1; i++) {
-    free(vftr_M[i]);
+    free(vftr_ld_lookup[i]);
   }
-  free(vftr_M);
+  free(vftr_ld_lookup);
 }
 
+/**********************************************************************/
+
+// Compute the Levenshtein distance. The description of the algorithm is common, see e.g. Wikipedia.
 int vftr_levenshtein_distance (char *a, char *b, int len_a, int len_b) {
   if (len_a == 0) {
     return len_b;
   } else if (len_b == 0) {
     return len_a;
   } else if (a[0] == b[0]) {
-    if (vftr_M[len_a - 1][len_b - 1] < 0) vftr_M[len_a - 1][len_b - 1] = vftr_levenshtein_distance (a + 1, b + 1, len_a - 1, len_b - 1);
-    return vftr_M[len_a - 1][len_b - 1]; 
+    if (vftr_ld_lookup[len_a - 1][len_b - 1] < 0) vftr_ld_lookup[len_a - 1][len_b - 1] = vftr_levenshtein_distance (a + 1, b + 1, len_a - 1, len_b - 1);
+    return vftr_ld_lookup[len_a - 1][len_b - 1]; 
   } else { 
     int min = INT_MAX;
-    if (vftr_M[len_a - 1][len_b] < 0) vftr_M[len_a - 1][len_b] = vftr_levenshtein_distance (a + 1, b, len_a - 1, len_b);
-    int lev_1 = vftr_M[len_a - 1][len_b];
-    if (vftr_M[len_a][len_b - 1] < 0) vftr_M[len_a][len_b - 1] = vftr_levenshtein_distance (a, b + 1, len_a, len_b - 1);
-    int lev_2 = vftr_M[len_a][len_b - 1];  
-    if (vftr_M[len_a - 1][len_b - 1] < 0) vftr_M[len_a - 1][len_b - 1] = vftr_levenshtein_distance (a + 1, b + 1, len_a - 1, len_b - 1);
-    int lev_3 = vftr_M[len_a - 1][len_b - 1];
+    if (vftr_ld_lookup[len_a - 1][len_b] < 0) vftr_ld_lookup[len_a - 1][len_b] = vftr_levenshtein_distance (a + 1, b, len_a - 1, len_b);
+    int lev_1 = vftr_ld_lookup[len_a - 1][len_b];
+    if (vftr_ld_lookup[len_a][len_b - 1] < 0) vftr_ld_lookup[len_a][len_b - 1] = vftr_levenshtein_distance (a, b + 1, len_a, len_b - 1);
+    int lev_2 = vftr_ld_lookup[len_a][len_b - 1];  
+    if (vftr_ld_lookup[len_a - 1][len_b - 1] < 0) vftr_ld_lookup[len_a - 1][len_b - 1] = vftr_levenshtein_distance (a + 1, b + 1, len_a - 1, len_b - 1);
+    int lev_3 = vftr_ld_lookup[len_a - 1][len_b - 1];
     min = lev_1 < lev_2 ? lev_1 : lev_2;
     min = min < lev_3 ? min : lev_3;
     return 1 + min;
@@ -73,9 +101,34 @@ int vftr_levenshtein_distance (char *a, char *b, int len_a, int len_b) {
 
 /**********************************************************************/
 
+// Loop over all Vftrace environment variables. When LD is zero, we have an exact match
+// and we exit the subroutine to save time. Also, note that the size of the lookup table
+// depends on the string length, so we need to allocate and free it for each iteration.
+void vftr_find_best_match (char *env_string, int *best_ld, int *best_i) {
+  *best_ld = INT_MAX;
+  *best_i = -1;
+  char *var_name = strtok (env_string, "=");
+  for (int i = 0; i < vftr_n_env_variables; i++) {
+    int len_1 = strlen(env_string);
+    int len_2 = strlen(vftr_env_variable_names[i]);
+    vftr_init_ld_lookup (len_1, len_2);
+    int ld = vftr_levenshtein_distance (env_string, vftr_env_variable_names[i], len_1, len_2);
+    vftr_free_ld_lookup (len_1);
+    if (ld < *best_ld) {
+      *best_ld = ld;
+      *best_i = i;
+    }
+    if (ld == 0) return;
+  }
+}
+
+/**********************************************************************/
+
 vftr_envs_t vftr_environment;
 
 env_var_int_t *vftr_read_env_int (char *env_name, int val_default) {
+    vftr_env_variable_names[vftr_env_counter] = (char*)malloc((strlen(env_name) + 1) * sizeof(char));
+    strcpy (vftr_env_variable_names[vftr_env_counter++], env_name);
     char *s;
     env_var_int_t *var;
     var = (env_var_int_t*)malloc (sizeof (env_var_int_t));
@@ -102,6 +155,8 @@ void vftr_print_env_int (FILE *fp, char *env_name, env_var_int_t *var) {
 /**********************************************************************/
 
 env_var_long_t *vftr_read_env_long (char *env_name, long val_default) {
+    vftr_env_variable_names[vftr_env_counter] = (char*)malloc((strlen(env_name) + 1) * sizeof(char));
+    strcpy (vftr_env_variable_names[vftr_env_counter++], env_name);
     char *s;
     env_var_long_t *var;
     var = (env_var_long_t*)malloc (sizeof (env_var_long_t));
@@ -124,6 +179,8 @@ void vftr_print_env_long (FILE *fp, char *env_name, env_var_long_t *var) {
 /**********************************************************************/
 
 env_var_long_long_t *vftr_read_env_long_long (char *env_name, long long val_default) {
+    vftr_env_variable_names[vftr_env_counter] = (char*)malloc((strlen(env_name) + 1) * sizeof(char));
+    strcpy (vftr_env_variable_names[vftr_env_counter++], env_name);
     char *s;
     env_var_long_long_t *var;
     var = (env_var_long_long_t*)malloc (sizeof (env_var_long_long_t));
@@ -150,6 +207,8 @@ void vftr_print_env_long_long (FILE *fp, char *env_name, env_var_long_long_t *va
 /**********************************************************************/
 
 env_var_bool_t *vftr_read_env_bool (char *env_name, bool val_default) {
+    vftr_env_variable_names[vftr_env_counter] = (char*)malloc((strlen(env_name) + 1) * sizeof(char));
+    strcpy (vftr_env_variable_names[vftr_env_counter++], env_name);
     env_var_bool_t *var;
     var = (env_var_bool_t*)malloc (sizeof (env_var_bool_t));
     char *s;
@@ -191,6 +250,8 @@ void vftr_print_env_bool (FILE *fp, char *env_name, env_var_bool_t *var) {
 /**********************************************************************/
 
 env_var_double_t *vftr_read_env_double (char *env_name, double val_default) {
+    vftr_env_variable_names[vftr_env_counter] = (char*)malloc((strlen(env_name) + 1) * sizeof(char));
+    strcpy (vftr_env_variable_names[vftr_env_counter++], env_name);
     char *s;
     env_var_double_t *var;
     var = (env_var_double_t*)malloc (sizeof (env_var_double_t));
@@ -217,6 +278,8 @@ void vftr_print_env_double (FILE *fp, char *env_name, env_var_double_t *var) {
 /**********************************************************************/
 
 env_var_string_t *vftr_read_env_string (char *env_name, char *val_default) {
+    vftr_env_variable_names[vftr_env_counter] = (char*)malloc((strlen(env_name) + 1) * sizeof(char));
+    strcpy (vftr_env_variable_names[vftr_env_counter++], env_name);
     char *s;
     env_var_string_t *var;
     var = (env_var_string_t*)malloc (sizeof (env_var_string_t));
@@ -243,6 +306,8 @@ void vftr_print_env_string (FILE *fp, char *env_name, env_var_string_t *var) {
 /**********************************************************************/
 
 env_var_regex_t *vftr_read_env_regex (char *env_name, regex_t *val_default) {
+    vftr_env_variable_names[vftr_env_counter] = (char*)malloc((strlen(env_name) + 1) * sizeof(char));
+    strcpy (vftr_env_variable_names[vftr_env_counter++], env_name);
     char *s;
     env_var_regex_t *var;
     var = (env_var_regex_t*)malloc (sizeof (env_var_regex_t));
@@ -300,70 +365,11 @@ char *vftr_profile_sorting_method_string () {
 
 /**********************************************************************/
 
-const int vftr_n_envs = 32;
-char *vftr_environment_variables[vftr_n_envs] = {"VFTR_OFF",
-                                                       "VFTR_SAMPLING",
-                                                       "VFTR_REGIONS_PRECISE",
-                                                       "VFTR_OUT_DIRECTORY",
-                                                       "VFTR_LOGFILE_BASENAME",
-                                                       "VFTR_LOGFILE_ALL_RANKS",
-                                                       "VFTR_SAMPLETIME",
-                                                       "VFTR_STOPTIME",
-                                                       "VFTR_ACCURATE_PROFILE",
-                                                       "VFTR_PROF_TRUNCATE",
-                                                       "VFTR_PROF_TRUNCATE_CUTOFF",
-                                                       "VFTR_MPI_LOG",
-                                                       "VFTR_MPI_SHOW_SYNC_TIME",
-                                                       "VFTR_SIGNALS_OFF",
-                                                       "VFTR_BUFSIZE",
-                                                       "VFTR_RUNTIME_PROFILE_FUNCS",
-                                                       "VFTR_INCLUDE_ONLY",
-                                                       "VFTR_DETAIL_UNTIL_CUM_CYCLES",
-                                                       "VFTR_SCENARIO_FILE",
-                                                       "VFTR_PRECISE",
-                                                       "VFTR_PRINT_STACK_PROFILE",
-                                                       "VFTR_LICENSE_VERBOSE",
-                                                       "VFTR_PRINT_STACKS_FOR",
-                                                       "VFTR_PRINT_LOADINFO_FOR",
-                                                       "VFTR_STRIP_MODULE_NAMES",
-                                                       "VFTR_CREATE_HTML",
-                                                       "VFTR_SORT_PROFILE_TABLE",
-                                                       "VFTR_SHOW_FUNCTION_OVERHEAD",
-                                                       "VFTR_PRINT_ENVIRONMENT",
-                                                       "VFTR_NO_MEMTRACE",
-                                                       "VFTR_COMPLETE_MPI_SUMMARY",
-                                                       "VFTR_SHOW_STACKS_IN_PROFILE"};
-
-void find_best_match (char *env_string, int *best_ld, int *best_i) {
-  *best_ld = INT_MAX;
-  *best_i = -1;
-  char *var_name = strtok (env_string, "=");
-  for (int i = 0; i < vftr_n_envs; i++) {
-    int len_1 = strlen(env_string);
-    int len_2 = strlen(vftr_environment_variables[i]);
-    vftr_init_M (len_1, len_2);
-    int ld = vftr_levenshtein_distance (env_string, vftr_environment_variables[i], len_1, len_2);
-    vftr_free_M (len_1);
-    if (ld < *best_ld) {
-      *best_ld = ld;
-      *best_i = i;
-    }
-  }
-}
-
 void vftr_read_environment () {
-    extern char **environ;
-    char **s = environ;
-    bool found = false;
-    for (; *s; s++) {
-      if (strstr(*s, "VFTR_")) {
-        int best_ld, best_i;
-        find_best_match (strdup(*s), &best_ld, &best_i);
-        if (best_ld > 0)  {
-          printf ("Vftrace environment variable %s not known. Do you mean %s?\n", *s, vftr_environment_variables[best_i]);
-        }
-      }
-    }
+    vftr_n_env_variables = 32;
+    vftr_env_variable_names = (char**)malloc(vftr_n_env_variables * sizeof(char*));
+    vftr_env_counter = 0;
+    
     vftr_environment.vftrace_off = vftr_read_env_bool ("VFTR_OFF", false);
     vftr_environment.do_sampling = vftr_read_env_bool ("VFTR_SAMPLING", false);
     vftr_environment.regions_precise = vftr_read_env_bool ("VFTR_REGIONS_PRECISE", true);
@@ -396,6 +402,20 @@ void vftr_read_environment () {
     vftr_environment.no_memtrace = vftr_read_env_bool ("VFTR_NO_MEMTRACE", false);
     vftr_environment.all_mpi_summary = vftr_read_env_bool ("VFTR_COMPLETE_MPI_SUMMARY", false);
     vftr_environment.show_stacks_in_profile = vftr_read_env_bool ("VFTR_SHOW_STACKS_IN_PROFILE", false);
+
+    extern char **environ;
+    char **s = environ;
+    bool found = false;
+    for (; *s; s++) {
+      if (strstr(*s, "VFTR_")) {
+        int best_ld, best_i;
+        vftr_find_best_match (strdup(*s), &best_ld, &best_i);
+        if (best_ld > 0)  {
+          printf ("Vftrace environment variable %s not known. Do you mean %s?\n", *s, vftr_env_variable_names[best_i]);
+        }
+      }
+    }
+
 }
 
 /**********************************************************************/
@@ -500,6 +520,10 @@ void vftr_assert_environment () {
               vftr_environment.all_mpi_summary->value = false;
 	   }
         }
+
+        if (vftr_n_env_variables != vftr_env_counter) {
+          printf ("Internal Vftrace warning: Registered nr. of environment variables does not match (%d %d)\n", vftr_n_env_variables, vftr_env_counter);
+        }
 }
 
 /**********************************************************************/
@@ -566,6 +590,11 @@ void vftr_free_environment () {
 	free (vftr_environment.no_memtrace);
         free (vftr_environment.all_mpi_summary);
         free (vftr_environment.show_stacks_in_profile);
+
+        for (int i = 0; i < vftr_n_env_variables; i++) {
+          free(vftr_env_variable_names[i]);
+        }
+        free(vftr_env_variable_names); 
 }
 
 /**********************************************************************/
