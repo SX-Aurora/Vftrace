@@ -28,29 +28,47 @@
 #include "vftr_filewrite.h"
 #include "vftr_fileutils.h"
 
+int **vftr_M;
 
-int levenshtein_distance (char *a, char *b) {
-  //if (atoi (getenv ("PMI_RANK")) == 0) {
-     printf ("HUHU: %s %s\n", a, b);
-     fflush(stdout);
-  //}
-  int len_a = a[0] == '\0' ? 0 : strlen(a) - 1;
-  int len_b = b[0] == '\0' ? 0 : strlen(b) - 1;
+void vftr_init_M (int n1, int n2) {
+  vftr_M = (int **)malloc (n1 * sizeof(int*));
+  for (int i = 0; i < n1; i++) {
+    vftr_M[i] = (int*)malloc (n2 * sizeof(int));
+  }
+  for (int i = 0; i < n1; i++) {
+    for (int j = 0; j < n2; j++) {
+      vftr_M[i][j] = -1;
+    }
+  }
+}
+
+void vftr_free_M (int n1) {
+  for (int i = 0; i < n1; i++) {
+    free(vftr_M[i]);
+  }
+  free(vftr_M);
+}
+
+int vftr_levenshtein_distance (char *a, char *b, int len_a, int len_b) {
   if (len_a == 0) {
     return len_b;
   } else if (len_b == 0) {
     return len_a;
   } else if (a[0] == b[0]) {
-    return levenshtein_distance (a + 1, b + 1);
-  } else {
+    if (vftr_M[len_a - 1][len_b - 1] < 0) vftr_M[len_a - 1][len_b - 1] = vftr_levenshtein_distance (a + 1, b + 1, len_a - 1, len_b - 1);
+    return vftr_M[len_a - 1][len_b - 1]; 
+  } else { 
     int min = INT_MAX;
-    int lev_1 = levenshtein_distance (a + 1, b);
-    int lev_2 = levenshtein_distance (a, b + 1);
-    int lev_3 = levenshtein_distance (a + 1, b + 1);
+    if (vftr_M[len_a - 1][len_b] < 0) vftr_M[len_a - 1][len_b] = vftr_levenshtein_distance (a + 1, b, len_a - 1, len_b);
+    int lev_1 = vftr_M[len_a - 1][len_b];
+    if (vftr_M[len_a][len_b - 1] < 0) vftr_M[len_a][len_b - 1] = vftr_levenshtein_distance (a, b + 1, len_a, len_b - 1);
+    int lev_2 = vftr_M[len_a][len_b - 1];  
+    if (vftr_M[len_a - 1][len_b - 1] < 0) vftr_M[len_a - 1][len_b - 1] = vftr_levenshtein_distance (a + 1, b + 1, len_a - 1, len_b - 1);
+    int lev_3 = vftr_M[len_a - 1][len_b - 1];
     min = lev_1 < lev_2 ? lev_1 : lev_2;
     min = min < lev_3 ? min : lev_3;
     return 1 + min;
-  }
+  }     
 }
 
 /**********************************************************************/
@@ -316,15 +334,18 @@ char *vftr_environment_variables[vftr_n_envs] = {"VFTR_OFF",
                                                        "VFTR_COMPLETE_MPI_SUMMARY",
                                                        "VFTR_SHOW_STACKS_IN_PROFILE"};
 
-void find_best_match (char *var_name, int *best_ld, int *best_i) {
+void find_best_match (char *env_string, int *best_ld, int *best_i) {
   *best_ld = INT_MAX;
   *best_i = -1;
+  //printf ("find best: %s\n", env_string);
+  char *var_name = strtok (env_string, "=");
+  //char *var_name = strdup(env_string);
   for (int i = 0; i < vftr_n_envs; i++) {
-    printf ("Find best: %s %s\n", var_name, vftr_environment_variables[i]); 
-          fflush(stdout);
-    int ld = levenshtein_distance (var_name, vftr_environment_variables[i]);
-    printf ("ld %d\n", ld);
-          fflush(stdout);
+    int len_1 = strlen(env_string);
+    int len_2 = strlen(vftr_environment_variables[i]);
+    vftr_init_M (len_1, len_2);
+    int ld = vftr_levenshtein_distance (env_string, vftr_environment_variables[i], len_1, len_2);
+    vftr_free_M (len_1);
     if (ld < *best_ld) {
       *best_ld = ld;
       *best_i = i;
@@ -335,28 +356,16 @@ void find_best_match (char *var_name, int *best_ld, int *best_i) {
 void vftr_read_environment () {
     extern char **environ;
     char **s = environ;
-    printf ("BEFORE\n");
-    fflush(stdout);
-    int foo = levenshtein_distance ("VFTR_SORT_PROFILE_TABLE=CALLS", "VFTR_REGIONS_PRECISE");
-    //int foo = levenshtein_distance ("VFTR_SORT_PROFILE_TABLE=CALLS", "VFTR_SORT_PROFILE_TABLE");
-    //int foo = levenshtein_distance ("FOOFOO", "FOUFRO");
-    printf ("FOO: %d\n", foo);
-    //if (vftr_mpirank == 0) { 
-    //  bool found = false;
-    //  for (; *s; s++) {
-    //    if (strstr(*s, "VFTR")) {
-    //      //printf ("Found: %s\n", *s);
-    //      //fflush(stdout);
-    //      int best_ld, best_i;
-    //      find_best_match (*s, &best_ld, &best_i);
-    //      if (best_ld == 0) { 
-    //        printf ("A Vftrace variable: %s\n", *s);
-    //      } else {
-    //        printf ("%s not known. Do you mean %s?\n", *s, vftr_environment_variables[best_i]);
-    //      }
-    //    }
-    //  }
-    //}
+    bool found = false;
+    for (; *s; s++) {
+      if (strstr(*s, "VFTR_")) {
+        int best_ld, best_i;
+        find_best_match (strdup(*s), &best_ld, &best_i);
+        if (best_ld > 0)  {
+          printf ("Vftrace environment variable %s not known. Do you mean %s?\n", *s, vftr_environment_variables[best_i]);
+        }
+      }
+    }
     vftr_environment.vftrace_off = vftr_read_env_bool ("VFTR_OFF", false);
     vftr_environment.do_sampling = vftr_read_env_bool ("VFTR_SAMPLING", false);
     vftr_environment.regions_precise = vftr_read_env_bool ("VFTR_REGIONS_PRECISE", true);
