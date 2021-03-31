@@ -337,9 +337,7 @@ char *vftr_environment_variables[vftr_n_envs] = {"VFTR_OFF",
 void find_best_match (char *env_string, int *best_ld, int *best_i) {
   *best_ld = INT_MAX;
   *best_i = -1;
-  //printf ("find best: %s\n", env_string);
   char *var_name = strtok (env_string, "=");
-  //char *var_name = strdup(env_string);
   for (int i = 0; i < vftr_n_envs; i++) {
     int len_1 = strlen(env_string);
     int len_2 = strlen(vftr_environment_variables[i]);
@@ -608,24 +606,39 @@ void vftr_print_environment (FILE *fp) {
 /**********************************************************************/
 
 int vftr_environment_test_1 (FILE *fp) {
-	putenv ("VFTR_OFF=yes");
-	vftr_read_environment ();
-	vftr_assert_environment ();
-	vftr_print_environment (fp);
-	vftr_free_environment ();
-		
-	fprintf (fp, "***************************\n");
-	putenv ("VFTR_OFF=no");
-	putenv ("VFTR_SAMPLING=YES");
-	putenv ("VFTR_REGIONS_PRECISE=0");
-	putenv ("VFTR_MPI_LOG=on");
-	putenv ("VFTR_OUT_DIRECTORY=\"foo/bar\"");
-	putenv ("VFTR_BUFSIZE=1234");
-	putenv ("VFTR_SAMPLETIME=12.34");
-	
-	vftr_read_environment ();
-	vftr_assert_environment ();
-	vftr_print_environment (fp);
-	vftr_free_environment ();
-	return 0;
+  putenv ("VFTR_OFF=yes");
+  vftr_read_environment ();
+  vftr_assert_environment ();
+  vftr_print_environment (fp);
+  vftr_free_environment ();
+  	
+  fprintf (fp, "***************************\n");
+  putenv ("VFTR_OFF=no");
+  putenv ("VFTR_SAMPLING=YES");
+  putenv ("VFTR_REGIONS_PRECISE=0");
+  putenv ("VFTR_MPI_LOG=on");
+  putenv ("VFTR_OUT_DIRECTORY=\"foo/bar\"");
+  putenv ("VFTR_BUFSIZE=1234");
+  putenv ("VFTR_SAMPLETIME=12.34");
+  
+  vftr_read_environment ();
+  vftr_assert_environment ();
+  vftr_print_environment (fp);
+  vftr_free_environment ();
+  return 0;
 }
+
+/**********************************************************************/
+
+int vftr_environment_test_2 (FILE *fp) {
+  // Check if the advisor works.
+  putenv ("VFTR_OF=yes"); // Should be VFTR_OFF
+  putenv ("VFTR_TRUNCATE=yes"); // Should be VFTR_PROF_TRUNCATE
+
+  vftr_read_environment ();
+  vftr_assert_environment ();
+  vftr_free_environment ();
+  return 0;
+}
+
+/**********************************************************************/
