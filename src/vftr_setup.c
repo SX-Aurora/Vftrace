@@ -152,10 +152,10 @@ void vftr_initialize() {
     if (vftr_off()) {
 	return;
     }
+    vftr_get_mpi_info (&vftr_mpirank, &vftr_mpisize);
     vftr_assert_environment ();
 	
     lib_opened = 0;
-
     vftr_timelimit = LONG_MAX;
 
     // No buffering for messages going directly to stdout
@@ -165,12 +165,9 @@ void vftr_initialize() {
 	(100 * MAJOR_VERSION + MINOR_VERSION) * 100 + REVISION);
 
     vftr_overhead_usec = 0ll;
-  
     vftr_prog_cycles = 0ll;
 
     vftr_program_path = vftr_get_program_path ();
-    vftr_get_mpi_info (&vftr_mpirank, &vftr_mpisize);
-
     vftr_logfile_name = vftr_create_logfile_name (vftr_mpirank, vftr_mpisize, "log");
 
     vftr_log = fopen (vftr_logfile_name, "w+");
