@@ -104,15 +104,14 @@ int vftr_levenshtein_distance (char *a, char *b, int len_a, int len_b) {
 // Loop over all Vftrace environment variables. When LD is zero, we have an exact match
 // and we exit the subroutine to save time. Also, note that the size of the lookup table
 // depends on the string length, so we need to allocate and free it for each iteration.
-void vftr_find_best_match (char *env_string, int *best_ld, int *best_i) {
+void vftr_find_best_match (char *var_name, int *best_ld, int *best_i) {
   *best_ld = INT_MAX;
   *best_i = -1;
-  char *var_name = strtok (env_string, "=");
   for (int i = 0; i < vftr_n_env_variables; i++) {
-    int len_1 = strlen(env_string);
+    int len_1 = strlen(var_name);
     int len_2 = strlen(vftr_env_variable_names[i]);
     vftr_init_ld_lookup (len_1, len_2);
-    int ld = vftr_levenshtein_distance (env_string, vftr_env_variable_names[i], len_1, len_2);
+    int ld = vftr_levenshtein_distance (var_name, vftr_env_variable_names[i], len_1, len_2);
     vftr_free_ld_lookup (len_1);
     if (ld < *best_ld) {
       *best_ld = ld;
@@ -409,9 +408,12 @@ void vftr_read_environment () {
     for (; *s; s++) {
       if (strstr(*s, "VFTR_")) {
         int best_ld, best_i;
-        vftr_find_best_match (strdup(*s), &best_ld, &best_i);
+        // There has to be strdup of s, because strtok modifies the first argument. This
+        // points to the external environ, which is better not touched!
+        char *var_name = strtok(strdup(*s), "=");
+        vftr_find_best_match (var_name, &best_ld, &best_i);
         if (best_ld > 0)  {
-          printf ("Vftrace environment variable %s not known. Do you mean %s?\n", *s, vftr_env_variable_names[best_i]);
+          printf ("Vftrace environment variable %s not known. Do you mean %s?\n", var_name, vftr_env_variable_names[best_i]);
         }
       }
     }
