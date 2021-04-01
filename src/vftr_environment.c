@@ -52,67 +52,18 @@
 int vftr_n_env_variables;
 char **vftr_env_variable_names;
 int vftr_env_counter;
-int **vftr_ld_lookup;
 
 // Create and free the Levenshtein lookup table
-void vftr_init_ld_lookup (int n1, int n2) {
-  vftr_ld_lookup = (int **)malloc (n1 * sizeof(int*));
-  for (int i = 0; i < n1; i++) {
-    vftr_ld_lookup[i] = (int*)malloc (n2 * sizeof(int));
-  }
-  for (int i = 0; i < n1; i++) {
-    for (int j = 0; j < n2; j++) {
-      vftr_ld_lookup[i][j] = -1;
-    }
-  }
-}
-
-void vftr_free_ld_lookup (int n1) {
-  for (int i = 0; i < n1; i++) {
-    free(vftr_ld_lookup[i]);
-  }
-  free(vftr_ld_lookup);
-}
-
-/**********************************************************************/
-
-// Compute the Levenshtein distance. The description of the algorithm is common, see e.g. Wikipedia.
-int vftr_levenshtein_distance (char *a, char *b, int len_a, int len_b) {
-  if (len_a == 0) {
-    return len_b;
-  } else if (len_b == 0) {
-    return len_a;
-  } else if (a[0] == b[0]) {
-    if (vftr_ld_lookup[len_a - 1][len_b - 1] < 0) vftr_ld_lookup[len_a - 1][len_b - 1] = vftr_levenshtein_distance (a + 1, b + 1, len_a - 1, len_b - 1);
-    return vftr_ld_lookup[len_a - 1][len_b - 1]; 
-  } else { 
-    int min = INT_MAX;
-    if (vftr_ld_lookup[len_a - 1][len_b] < 0) vftr_ld_lookup[len_a - 1][len_b] = vftr_levenshtein_distance (a + 1, b, len_a - 1, len_b);
-    int lev_1 = vftr_ld_lookup[len_a - 1][len_b];
-    if (vftr_ld_lookup[len_a][len_b - 1] < 0) vftr_ld_lookup[len_a][len_b - 1] = vftr_levenshtein_distance (a, b + 1, len_a, len_b - 1);
-    int lev_2 = vftr_ld_lookup[len_a][len_b - 1];  
-    if (vftr_ld_lookup[len_a - 1][len_b - 1] < 0) vftr_ld_lookup[len_a - 1][len_b - 1] = vftr_levenshtein_distance (a + 1, b + 1, len_a - 1, len_b - 1);
-    int lev_3 = vftr_ld_lookup[len_a - 1][len_b - 1];
-    min = lev_1 < lev_2 ? lev_1 : lev_2;
-    min = min < lev_3 ? min : lev_3;
-    return 1 + min;
-  }     
-}
 
 /**********************************************************************/
 
 // Loop over all Vftrace environment variables. When LD is zero, we have an exact match
-// and we exit the subroutine to save time. Also, note that the size of the lookup table
-// depends on the string length, so we need to allocate and free it for each iteration.
+// and we exit the subroutine to save time.
 void vftr_find_best_match (char *var_name, int *best_ld, int *best_i) {
   *best_ld = INT_MAX;
   *best_i = -1;
   for (int i = 0; i < vftr_n_env_variables; i++) {
-    int len_1 = strlen(var_name);
-    int len_2 = strlen(vftr_env_variable_names[i]);
-    vftr_init_ld_lookup (len_1, len_2);
-    int ld = vftr_levenshtein_distance (var_name, vftr_env_variable_names[i], len_1, len_2);
-    vftr_free_ld_lookup (len_1);
+    int ld = vftr_levenshtein_distance (var_name, vftr_env_variable_names[i]);
     if (ld < *best_ld) {
       *best_ld = ld;
       *best_i = i;

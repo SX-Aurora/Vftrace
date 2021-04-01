@@ -20,9 +20,72 @@
 
 #include <stdio.h>
 #include <stdarg.h>
+#include <limits.h>
 
 #include "vftr_setup.h"
 
 void vftr_rank0_printf (const char *fmt, ...) {
    if (vftr_mpirank == 0) printf (fmt);
 }
+
+/**********************************************************************/
+
+int **vftr_ld_lookup;
+
+// Create and free the Levenshtein lookup table
+void vftr_init_ld_lookup (int n1, int n2) {
+  vftr_ld_lookup = (int **)malloc (n1 * sizeof(int*));
+  for (int i = 0; i < n1; i++) {
+    vftr_ld_lookup[i] = (int*)malloc (n2 * sizeof(int));
+  }
+  for (int i = 0; i < n1; i++) {
+    for (int j = 0; j < n2; j++) {
+      vftr_ld_lookup[i][j] = -1;
+    }
+  }
+}
+
+void vftr_free_ld_lookup (int n1) {
+  for (int i = 0; i < n1; i++) {
+    free(vftr_ld_lookup[i]);
+  }
+  free(vftr_ld_lookup);
+}
+
+/**********************************************************************/
+
+// Compute the Levenshtein distance. The description of the algorithm is common, see e.g. Wikipedia.
+int vftr_ld_kernel (char *a, char *b, int len_a, int len_b) {
+  if (len_a == 0) {
+    return len_b;
+  } else if (len_b == 0) {
+    return len_a;
+  } else if (a[0] == b[0]) {
+    if (vftr_ld_lookup[len_a - 1][len_b - 1] < 0) vftr_ld_lookup[len_a - 1][len_b - 1] = vftr_ld_kernel (a + 1, b + 1, len_a - 1, len_b - 1);
+    return vftr_ld_lookup[len_a - 1][len_b - 1]; 
+  } else { 
+    int min = INT_MAX;
+    if (vftr_ld_lookup[len_a - 1][len_b] < 0) vftr_ld_lookup[len_a - 1][len_b] = vftr_ld_kernel (a + 1, b, len_a - 1, len_b);
+    int lev_1 = vftr_ld_lookup[len_a - 1][len_b];
+    if (vftr_ld_lookup[len_a][len_b - 1] < 0) vftr_ld_lookup[len_a][len_b - 1] = vftr_ld_kernel (a, b + 1, len_a, len_b - 1);
+    int lev_2 = vftr_ld_lookup[len_a][len_b - 1];  
+    if (vftr_ld_lookup[len_a - 1][len_b - 1] < 0) vftr_ld_lookup[len_a - 1][len_b - 1] = vftr_ld_kernel (a + 1, b + 1, len_a - 1, len_b - 1);
+    int lev_3 = vftr_ld_lookup[len_a - 1][len_b - 1];
+    min = lev_1 < lev_2 ? lev_1 : lev_2;
+    min = min < lev_3 ? min : lev_3;
+    return 1 + min;
+  }     
+}
+
+/**********************************************************************/
+
+int vftr_levenshtein_distance (char *a, char *b) {
+   int len_1 = strlen(a);
+   int len_2 = strlen(b);
+   vftr_init_ld_lookup (len_1, len_2);
+   int ld = vftr_ld_kernel (a, b, len_1, len_2);
+   vftr_free_ld_lookup (len_1);
+   return ld;
+}
+
+/**********************************************************************/

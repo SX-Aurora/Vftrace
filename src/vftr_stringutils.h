@@ -21,5 +21,6 @@
 #include <stdarg.h>
 
 void vftr_rank0_printf (const char *fmt, ...);
+int vftr_levenshtein_distance (char *a, char *b);
 
 #endif
