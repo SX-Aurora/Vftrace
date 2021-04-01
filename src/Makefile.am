@@ -32,6 +32,7 @@ libvftrace_la_SOURCES = demangle.cpp \
 		       vftr_setup.c \
 		       vftr_filewrite.c \
 		       vftr_fileutils.c \
+		       vftr_stringutils.c \
 		       vftr_hashing.c \
 		       vftr_sorting.c \
 		       vftr_stacks.c \

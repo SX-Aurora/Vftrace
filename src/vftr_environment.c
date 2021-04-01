@@ -425,8 +425,8 @@ void vftr_assert_environment () {
 
 	if (vftr_environment.detail_until_cum_cycles->value > 100.0 || 
 	    vftr_environment.detail_until_cum_cycles->value < 0.0) {
-		if (vftr_mpirank == 0) printf ("Warning: Invalid value for VFTR_DETAIL_UNTIL_CUM_CYLES (%lf). Set to default value of 90.0\n",
-			vftr_environment.detail_until_cum_cycles->value);
+		vftr_rank0_printf ("Warning: Invalid value for VFTR_DETAIL_UNTIL_CUM_CYLES (%lf). Set to default value of 90.0\n",
+			           vftr_environment.detail_until_cum_cycles->value);
 		vftr_environment.detail_until_cum_cycles->value = 90.0;
 	}
 
@@ -442,10 +442,8 @@ void vftr_assert_environment () {
 			switch (sscanf (vftr_print_groups, "%d:%d", &group_base, &group_size)) {
 			case 2:
 				if (group_size <= 0) {
-                                   if (vftr_mpirank == 0) {
-					printf ("Warning: The group size in the environment variable VFTR_PRINT_STACKS_FOR=<group_base>:<group_size>	has to be greater than zero.\n");
-					printf ("No additional stack info will be printed.\n");
-                                   }
+		                   vftr_rank0_printf ("Warning: The group size in the environment variable VFTR_PRINT_STACKS_FOR=<group_base>:<group_size>	has to be greater than zero.\n");
+		                   vftr_rank0_printf ("No additional stack info will be printed.\n");
 		                   vftr_environment.print_stacks_for->set = false;
 				}
 			}
@@ -462,10 +460,8 @@ void vftr_assert_environment () {
 			switch (sscanf (vftr_mpi_groups, "%d:%d", &group_base, &group_size)) {
 			case 2:
 				if (group_size <= 0) {
-                                   if (vftr_mpirank == 0) {
-					printf ("Warning: The group size in the environment variable VFTR_PRINT_LOADINFO_FOR=<group_base>:<group_size>	has to be greater than zero.\n");
-					printf ("No additional stack info will be printed.\n");
-                                   }
+				   vftr_rank0_printf ("Warning: The group size in the environment variable VFTR_PRINT_LOADINFO_FOR=<group_base>:<group_size>	has to be greater than zero.\n");
+			           vftr_rank0_printf ("No additional stack info will be printed.\n");
 		                   vftr_environment.print_loadinfo_for->set = false;
 				}
 			}
@@ -476,24 +472,22 @@ void vftr_assert_environment () {
        	if (vftr_environment.sort_profile_table->set) {
       	   int method = vftr_profile_sorting_method(); 
 	   if (method == SORT_INVALID) {
-               if (vftr_mpirank == 0) printf ("Warning: The profile table sorting method \"%s\" is not defined. Defaulting to TIME_EXCL.\n", vftr_environment.sort_profile_table->value);
+               vftr_rank0_printf ("Warning: The profile table sorting method \"%s\" is not defined. Defaulting to TIME_EXCL.\n", vftr_environment.sort_profile_table->value);
 	       vftr_environment.sort_profile_table->value = SORT_EXCL_TIME;
 	   } else if ((method == SORT_OVERHEAD || method == SORT_OVERHEAD_RELATIVE) && !vftr_environment.show_overhead->value) {
-	       if (vftr_mpirank == 0) printf ("Warning: You specified VFTR_SORT_PROFILE_TABLE=OVERHEAD(_RELATIVE), but overhead display is not enabled. Defaulting to TIME_EXLC.\n");
+	       vftr_rank0_printf ("Warning: You specified VFTR_SORT_PROFILE_TABLE=OVERHEAD(_RELATIVE), but overhead display is not enabled. Defaulting to TIME_EXLC.\n");
 	       vftr_environment.sort_profile_table->value = SORT_EXCL_TIME;
 	   }
         } 
 
 	if (vftr_environment.prof_truncate_cutoff->set && !vftr_environment.prof_truncate->value) {
-    	   if (vftr_mpirank == 0) printf ("Warning: Profile cutoff is given but VFTR_PROF_TRUNCATE is not set. Ignore!\n");
+    	   vftr_rank0_printf ("Warning: Profile cutoff is given but VFTR_PROF_TRUNCATE is not set. Ignore!\n");
         } 
 
 #ifndef _MPI
         if (vftr_environment.mpi_show_sync_time->set) {
-            if (vftr_mpirank == 0) {
-               printf ("Warning: This is a serial Vftrace build (no MPI support)\n");
-               printf ("VFTR_MPI_SHOW_SYNC_TIME is only supported with MPI. Switched off.\n");
-            }
+            vftr_rank0_printf ("Warning: This is a serial Vftrace build (no MPI support)\n");
+            vftr_rank0_printf ("VFTR_MPI_SHOW_SYNC_TIME is only supported with MPI. Switched off.\n");
             vftr_environment.mpi_show_sync_time->value = false;
         }
 #endif
@@ -515,10 +509,8 @@ void vftr_assert_environment () {
 	   }
         }
 
-        if (vftr_mpirank == 0) {
-           if (vftr_n_env_variables != vftr_env_counter) {
-             printf ("Internal Vftrace warning: Registered nr. of environment variables does not match (%d %d)\n", vftr_n_env_variables, vftr_env_counter);
-           }
+        if (vftr_n_env_variables != vftr_env_counter) {
+          vftr_rank0_printf ("Internal Vftrace warning: Registered nr. of environment variables does not match (%d %d)\n", vftr_n_env_variables, vftr_env_counter);
         }
 
         if (vftr_mpirank == 0) {
