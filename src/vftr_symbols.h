@@ -67,12 +67,12 @@ typedef struct library_list {
 
 char *vftr_strip_module_name (char *base_name);
 
-FILE *vftr_get_fmap (char *target);
+FILE *vftr_get_fmap ();
 
 // Returns 1 if the creation of the symbol table fails.
 // This can happen when symbol table offsets are found, but
 // not supported by the VMAP_OFFSET option.
-int vftr_create_symbol_table (int rank, char *target);
+int vftr_create_symbol_table (int rank);
 
 symtab_t **vftr_find_nearest(symtab_t **table, void *addr, int count);
 

@@ -297,29 +297,13 @@ void vftr_get_library_symtab (char *target, FILE *fp_ext, off_t base, int pass) 
 
 /**********************************************************************/
 
-FILE *vftr_get_fmap (char *target) {
+FILE *vftr_get_fmap () {
     char maps[80];
     FILE *fmap;
-    if (target) {
-      /* Standalone testing use: inspect executable or library */
-      if( !strstr( target, "/maps" ) ) {
-        /* Executable or library */
-        vftr_nsymbols = 0;
-        vftr_get_library_symtab (target, NULL, 0L, 0);
-        vftr_symtab = (symtab_t **) malloc( vftr_nsymbols * sizeof(symtab_t *) );
-        vftr_nsymbols = 0;
-        vftr_get_library_symtab (target, NULL, 0L, 1);
-        return NULL;
-      }
-      strcpy (maps, target);
-    } else {
-      /* Normal use: from vftr_initialize() */
-      strcpy (maps, "/proc/self/maps");
-    }
+    strcpy (maps, "/proc/self/maps");
 
-    if ((fmap = fopen (maps, "r")) == NULL) {
-        fprintf (vftr_log, "Opening %s", maps);
-	perror (" ");
+    if ((fmap = fopen ("/proc/self/maps", "r")) == NULL) {
+        perror ("Opening /proc/self/maps");
 	abort();
     }
     return fmap;
@@ -401,11 +385,11 @@ void vftr_parse_fmap_line (char *line, pathList_t **library, pathList_t **head) 
 ** symbol table is constructed for the current executable and all the shared
 ** libraries it uses.
 */
-int vftr_create_symbol_table (int rank, char *target) {
+int vftr_create_symbol_table (int rank) {
     char line[LINESIZE];
     pathList_t *head, *library, *next;
 
-    FILE *fmap = vftr_get_fmap (target);
+    FILE *fmap = vftr_get_fmap ();
     if (!fmap) return 1;
     /* Read the application libraries in the maps info */
     library = NULL;

@@ -101,7 +101,7 @@ void vftr_region_entry (const char *s, void *addr, bool isPrecise){
     //
     if (lib_opened) {
 	lib_opened = 0;
-    	vftr_create_symbol_table (vftr_mpirank, NULL);
+    	vftr_create_symbol_table (vftr_mpirank);
     }
 
     caller = vftr_fstack;

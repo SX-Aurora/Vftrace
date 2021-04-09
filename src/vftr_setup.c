@@ -183,7 +183,7 @@ void vftr_initialize() {
        }
     }
 
-    if (vftr_create_symbol_table (vftr_mpirank, NULL)) {
+    if (vftr_create_symbol_table (vftr_mpirank)) {
 	// No symbol table has been found. Switch of symbol table.
 	printf ("Vftrace could not find any parseable symbol tables associated with your executable\n");
 	printf ("It will not be active for this application run\n");
