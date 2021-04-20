@@ -1,10 +1,6 @@
 #ifndef VFTR_SIGNALS_H
 #define VFTR_SIGNALS_H
 
-extern int vftr_signal_number;
-
-void vftr_abort ();
-void vftr_define_signal_handlers ();
-void vftr_sigaction (int sig);
+void vftr_setup_signals();
 
 #endif

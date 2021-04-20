@@ -154,6 +154,8 @@ void vftr_initialize() {
     }
     vftr_get_mpi_info (&vftr_mpirank, &vftr_mpisize);
     vftr_assert_environment ();
+
+    vftr_setup_signals();
 	
     lib_opened = 0;
     vftr_timelimit = LONG_MAX;
@@ -262,9 +264,9 @@ void vftr_initialize() {
     }
 
     /* Define signal handlers */
-    if (!vftr_environment.signals_off->value) {
-	vftr_define_signal_handlers ();
-    }
+    //if (!vftr_environment.signals_off->value) {
+    //    vftr_define_signal_handlers ();
+    //}
 
     fflush (stdout);
     vftr_initcycles = vftr_get_cycles();
@@ -331,7 +333,7 @@ void vftr_finalize() {
         vftr_print_global_stacklist(vftr_log);
     }
 
-    vftr_finalize_vfd_file (finalize_time, vftr_signal_number);
+    vftr_finalize_vfd_file (finalize_time, 0);
     if (vftr_events_enabled && vftr_stop_hwc() < 0) {
 	fprintf(vftr_log, "error stopping H/W counters, ignored\n");
     }
