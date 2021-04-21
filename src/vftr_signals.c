@@ -51,12 +51,12 @@ struct sigaction vftr_sigint;
 void vftr_sigterm_handler (int signum) {
   printf ("Vftrace received SIGTERM on rank %d %d\n", vftr_mpirank, vftr_sigterm_called);
   if (!vftr_sigterm_called) {
+    vftr_sigterm_called = true;
     vftr_finalize();
     vftr_sigterm.sa_handler = SIG_DFL; 
     sigaction (SIGTERM, &vftr_sigterm, NULL);
     raise(SIGTERM);
     printf ("HUHU\n");
-    vftr_sigterm_called = true;
   }
 }
 
