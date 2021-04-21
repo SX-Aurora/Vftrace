@@ -24,6 +24,7 @@ AX_CHECK_C99_STD
 
 # Check if fortran is selected or not
 AX_ENABLE_FORTRAN
+AX_ENABLE_FORTRAN08
 
 # Check if elf-symbols align with function pointers
 AX_CHECK_VMAP_OFFSET

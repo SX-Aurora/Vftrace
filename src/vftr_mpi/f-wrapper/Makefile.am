@@ -196,7 +196,9 @@ libvftr_fmpiwrap_la_FCFLAGS += -D_MPI
 endif
 
 if USES_INTEL_MPI
+if ENABLE_FORTRAN08
 libvftr_fmpiwrap_la_FCFLAGS += -DPMPI_MODULE=pmpi_f08
+endif
 else
 libvftr_fmpiwrap_la_FCFLAGS += -DPMPI_MODULE=mpi
 endif
