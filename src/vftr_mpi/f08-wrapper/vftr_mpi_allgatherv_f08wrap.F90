@@ -37,7 +37,7 @@ SUBROUTINE MPI_Allgatherv_f08(sendbuf, sendcount, sendtype, &
 
    CALL vftr_MPI_Allgatherv_F(sendbuf, sendcount, sendtype%MPI_VAL, &
                               recvbuf, recvcounts, displs, &
-                              recvtype%MPI_VAL, comm%MPI_VAL, error)
+                              recvtype%MPI_VAL, comm%MPI_VAL, tmperror)
    IF (PRESENT(error)) error = tmperror
 
 END SUBROUTINE MPI_Allgatherv_f08

@@ -16,22 +16,21 @@
 
 #ifdef _MPI
 
-SUBROUTINE MPI_Init_f08(ierror)
+SUBROUTINE MPI_Init_f08(error)
    USE vftr_after_mpi_init_f082c, &
       ONLY : vftr_after_mpi_init_F08
    USE mpi_f08, ONLY : PMPI_Init
 
    IMPLICIT NONE
 
-   INTEGER, OPTIONAL, INTENT(OUT) :: ierror
+   INTEGER, OPTIONAL, INTENT(OUT) :: error
+   INTEGER :: tmperror
 
-   IF (PRESENT(ierror)) THEN
-      CALL PMPI_Init(ierror)
-   ELSE
-      CALL PMPI_Init()
-   END IF
+   CALL PMPI_Init(tmperror)
 
    CALL vftr_after_mpi_init_F08()
+
+   IF (PRESENT(error)) error = tmperror
 
 END SUBROUTINE MPI_Init_f08
 
