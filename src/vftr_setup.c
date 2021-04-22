@@ -263,11 +263,6 @@ void vftr_initialize() {
         }
     }
 
-    /* Define signal handlers */
-    //if (!vftr_environment.signals_off->value) {
-    //    vftr_define_signal_handlers ();
-    //}
-
     fflush (stdout);
     vftr_initcycles = vftr_get_cycles();
     

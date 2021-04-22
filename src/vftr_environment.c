@@ -333,7 +333,6 @@ void vftr_read_environment () {
     vftr_environment.prof_truncate_cutoff = vftr_read_env_double ("VFTR_PROF_TRUNCATE_CUTOFF", 98.0);
     vftr_environment.mpi_log = vftr_read_env_bool ("VFTR_MPI_LOG", false);
     vftr_environment.mpi_show_sync_time = vftr_read_env_bool ("VFTR_MPI_SHOW_SYNC_TIME", false);
-    vftr_environment.signals_off = vftr_read_env_bool ("VFTR_SIGNALS_OFF", true);
     vftr_environment.bufsize = vftr_read_env_int ("VFTR_BUFSIZE", 8); 
     vftr_environment.runtime_profile_funcs = vftr_read_env_regex ("VFTR_RUNTIME_PROFILE_FUNCS", NULL);
     vftr_environment.include_only_regex = vftr_read_env_regex ("VFTR_INCLUDE_ONLY", NULL);
@@ -532,7 +531,6 @@ void vftr_free_environment () {
 	free (vftr_environment.prof_truncate);
 	free (vftr_environment.mpi_log);
 	free (vftr_environment.mpi_show_sync_time);
-	free (vftr_environment.signals_off);
 	free (vftr_environment.bufsize);
 	free (vftr_environment.runtime_profile_funcs);
 	free (vftr_environment.include_only_regex);
@@ -574,7 +572,6 @@ void vftr_print_environment (FILE *fp) {
 	vftr_print_env_bool (fp, "VFTR_PROF_TRUNCATE", vftr_environment.prof_truncate);
 	vftr_print_env_bool (fp, "VFTR_MPI_LOG", vftr_environment.mpi_log);
 	vftr_print_env_bool (fp, "VFTR_MPI_SHOW_SYNC_TIME", vftr_environment.mpi_show_sync_time);
-	vftr_print_env_bool (fp, "VFTR_SIGNALS_OFF", vftr_environment.signals_off);
 	vftr_print_env_int (fp, "VFTR_BUFSIZE", vftr_environment.bufsize);
 	vftr_print_env_bool (fp, "VFTR_ACCURATE_PROFILE", vftr_environment.accurate_profile);
 	vftr_print_env_double (fp, "VFTR_DETAIL_UNTIL_CUM_CYCLES" , vftr_environment.detail_until_cum_cycles);

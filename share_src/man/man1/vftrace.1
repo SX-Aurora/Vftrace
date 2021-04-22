@@ -196,16 +196,6 @@ Enables the creation of .vfd runtime profiles.
 .IX Item "VFTR_SCENARIO_FILE"
 Path to the scenario file in JSON format that defines the hardware counters and event observables.
 .\"
-.IP "\fBVFTR_SIGNALS_OFF\fR"
-.IX Item "VFTR_SIGNALS_OFF"
-\fBDisable\fR(1,"YES","Yes","yes")
-.br
-\fBEnable\fR(0,"NO","No","no")
-.br
-(Inactive) This setting tells Vftrace if signal calls, such as SIGSEGV or SIGTERM, should be intercepted by Vftrace. In this case, Vftrace will try to wrap up any leftover tasks, such as the creation of vfd files.
-.br
-\fBDefault: "yes"
-.\"
 .IP "\fBVFTR_STOPTIME\fR"
 .IX Item "VFTR_STOPTIME"
 The Maximum runtime of the application in seconds. If exceeded, the profiled application is automatically aborted. This can prevent unintended large overhead or output files.

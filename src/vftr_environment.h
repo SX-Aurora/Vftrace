@@ -77,7 +77,6 @@ typedef struct vftr_envs {
         env_var_double_t *prof_truncate_cutoff;
 	env_var_bool_t *mpi_log;	
         env_var_bool_t *mpi_show_sync_time;
-	env_var_bool_t *signals_off;
 	env_var_int_t *bufsize;
 	env_var_regex_t *runtime_profile_funcs;
 	env_var_regex_t *include_only_regex;
