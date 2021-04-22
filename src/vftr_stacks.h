@@ -74,7 +74,6 @@ extern function_t **vftr_func_table;
 extern unsigned int  vftr_func_table_size;
 
 // Function call stack
-//extern function_t **vftr_fstack;
 extern function_t *vftr_fstack;
 // Function call stack roots
 extern function_t *vftr_froots;

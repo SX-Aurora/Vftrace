@@ -32,6 +32,8 @@
 
 #include "vftr_setup.h"
 #include "vftr_signals.h"
+#include "vftr_stacks.h"
+#include "vftr_filewrite.h"
 
 void vftr_abort (int errcode) {
 #ifdef _MPI
@@ -48,8 +50,13 @@ struct sigaction vftr_signals[NSIG];
 /**********************************************************************/
 
 void vftr_signal_handler (int signum) {
+  printf ("Caught signal: %s\n", strsignal(signum));
   if (vftr_signal_number < 0) {
     vftr_signal_number = signum;
+    fprintf (vftr_log, "**************************\n");
+    fprintf (vftr_log, "Application was cancelled: %s\n", strsignal(signum));
+    fprintf (vftr_log, "Head of function stack: %s\n", vftr_fstack->name);
+    fprintf (vftr_log, "**************************\n");
     vftr_finalize();
     vftr_signals[signum].sa_handler = SIG_DFL;
     sigaction (signum, &vftr_signals[signum], NULL);
@@ -75,6 +82,7 @@ void vftr_setup_signals () {
   vftr_setup_signal (SIGABRT);
   vftr_setup_signal (SIGFPE);
   vftr_setup_signal (SIGQUIT);
+  vftr_setup_signal (SIGSEGV);
 }
 
 /**********************************************************************/
