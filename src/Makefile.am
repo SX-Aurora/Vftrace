@@ -78,12 +78,6 @@ libvftrace_la_CFLAGS += -D_MPI
 libvftrace_la_FCFLAGS += -D_MPI
 endif 
 
-if USES_INTEL_MPI
-libvftrace_la_FCFLAGS += -DPMPI_MODULE=pmpi_f08
-else
-libvftrace_la_FCFLAGS += -DPMPI_MODULE=mpi
-endif
-
 if USES_INTEL_COMPILER
 libvftrace_la_LDFLAGS += -lifcore
 endif
