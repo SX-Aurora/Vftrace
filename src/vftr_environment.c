@@ -23,6 +23,7 @@
 #include <limits.h>
 
 #include "vftr_setup.h"
+#include "vftr_stringutils.h"
 #include "vftr_hwcounters.h"
 #include "vftr_environment.h"
 #include "vftr_filewrite.h"
