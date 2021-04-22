@@ -24,6 +24,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <unistd.h>
 #include <signal.h>
 #include <string.h>
 #include <stdbool.h>
@@ -40,8 +41,10 @@ void vftr_abort (int errcode) {
 #endif
 }
 
-bool vftr_sigterm_called;
-bool vftr_sigint_called;
+int vftr_signal_number;
+
+//bool vftr_sigterm_called;
+//bool vftr_sigint_called;
 
 struct sigaction vftr_sigterm; 
 struct sigaction vftr_sigint; 
@@ -49,33 +52,44 @@ struct sigaction vftr_sigint;
 /**********************************************************************/
 
 void vftr_sigterm_handler (int signum) {
-  printf ("Vftrace received SIGTERM on rank %d %d\n", vftr_mpirank, vftr_sigterm_called);
-  if (!vftr_sigterm_called) {
-    vftr_sigterm_called = true;
+  if (vftr_signal_number < 0) {
+    vftr_signal_number = SIGTERM;
     vftr_finalize();
     vftr_sigterm.sa_handler = SIG_DFL; 
     sigaction (SIGTERM, &vftr_sigterm, NULL);
     raise(SIGTERM);
-    printf ("HUHU\n");
   }
 }
 
 void vftr_sigint_handler (int signum) {
-  printf ("Vftrace received SIGINT on rank %d\n", vftr_mpirank);
-  if (!vftr_sigint_called) {
+  if (vftr_signal_number < 0) {
+    vftr_signal_number = SIGINT;
     vftr_finalize();
     vftr_sigint.sa_handler = SIG_DFL;
     sigaction (SIGINT, &vftr_sigint, NULL);
     raise(SIGINT);
-    vftr_sigint_called = true;
   }
+}
+
+/**********************************************************************/
+
+char *vftr_signal_name (int signum) {
+  switch (signum) {
+    case (-1):
+      return "No signal";
+    case (SIGTERM):
+      return "SIGTERM";
+    case (SIGINT):
+      return "SIGINT";
+  } 
 }
 
 /**********************************************************************/
 
 void vftr_setup_signals () {
 
-  printf ("Vftrace: Signals have been setup\n");
+  vftr_signal_number = -1;
+
   memset (&vftr_sigterm, 0, sizeof(vftr_sigterm));
   memset (&vftr_sigint, 0, sizeof(vftr_sigint));
   vftr_sigterm.sa_handler = vftr_sigterm_handler;
@@ -86,8 +100,8 @@ void vftr_setup_signals () {
   sigaction (SIGTERM, &vftr_sigterm, NULL);
   sigaction (SIGINT, &vftr_sigint, NULL);
 
-  vftr_sigterm_called = false;
-  vftr_sigint_called = false;
+  //vftr_sigterm_called = false;
+  //vftr_sigint_called = false;
 }
 
 /**********************************************************************/
