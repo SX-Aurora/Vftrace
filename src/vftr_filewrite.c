@@ -1351,7 +1351,7 @@ void vftr_print_profile_summary (FILE *fp_log, function_t **func_table, double t
     fprintf(fp_log, "MPI size              %d\n", vftr_mpisize);
     fprintf(fp_log, "Total runtime:        %8.2f seconds", total_runtime);
     if (vftr_signal_number >= 0) {
-      fprintf(fp_log, " (terminated by %s)", vftr_signal_name(vftr_signal_number));
+      fprintf(fp_log, " (Received Signal: %s)", strsignal(vftr_signal_number));
     }
     fprintf(fp_log, "\n");
     fprintf(fp_log, "Application time:     %8.2f seconds\n", application_runtime);
