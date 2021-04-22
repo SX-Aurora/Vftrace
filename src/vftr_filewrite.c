@@ -234,25 +234,22 @@ void vftr_init_vfd_file () {
 /**********************************************************************/
 
 void vftr_finalize_vfd_file (long long finalize_time, int signal_number) {
-    if (vftr_env_do_sampling () && signal_number != SIGUSR1) {
+  long stackstable_offset = ftell (vftr_vfd_file);
+  vftr_write_stacks_vfd (vftr_vfd_file, 0, vftr_froots);
 
-        long stackstable_offset = ftell (vftr_vfd_file);
-        vftr_write_stacks_vfd (vftr_vfd_file, 0, vftr_froots);
+  double runtime = finalize_time * 1.0e-6;
 
-        double runtime = finalize_time * 1.0e-6;
-
-        // Update trace info in header and close
-        fseek (vftr_vfd_file, vftr_admin_offset, SEEK_SET);
-        fwrite (&vftr_mpisize, sizeof(int), 1, vftr_vfd_file); 
-        fwrite (&vftr_mpirank, sizeof(int),1, vftr_vfd_file); 
-        fwrite (&runtime, sizeof(double), 1, vftr_vfd_file);
-        fwrite (&vftr_function_samplecount, sizeof(unsigned int), 1, vftr_vfd_file);
-        fwrite (&vftr_message_samplecount, sizeof(unsigned int), 1, vftr_vfd_file);
-        fwrite (&vftr_stackscount, sizeof(unsigned int), 1, vftr_vfd_file);
-        fwrite (&stackstable_offset, sizeof(long), 1, vftr_vfd_file);
-        fwrite (&vftr_samples_offset, sizeof(long), 1, vftr_vfd_file);
-        fclose (vftr_vfd_file);
-    }
+  // Update trace info in header and close
+  fseek (vftr_vfd_file, vftr_admin_offset, SEEK_SET);
+  fwrite (&vftr_mpisize, sizeof(int), 1, vftr_vfd_file); 
+  fwrite (&vftr_mpirank, sizeof(int),1, vftr_vfd_file); 
+  fwrite (&runtime, sizeof(double), 1, vftr_vfd_file);
+  fwrite (&vftr_function_samplecount, sizeof(unsigned int), 1, vftr_vfd_file);
+  fwrite (&vftr_message_samplecount, sizeof(unsigned int), 1, vftr_vfd_file);
+  fwrite (&vftr_stackscount, sizeof(unsigned int), 1, vftr_vfd_file);
+  fwrite (&stackstable_offset, sizeof(long), 1, vftr_vfd_file);
+  fwrite (&vftr_samples_offset, sizeof(long), 1, vftr_vfd_file);
+  fclose (vftr_vfd_file);
 }
 
 /**********************************************************************/

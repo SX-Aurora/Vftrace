@@ -333,7 +333,7 @@ void vftr_finalize() {
         vftr_print_global_stacklist(vftr_log);
     }
 
-    vftr_finalize_vfd_file (finalize_time, 0);
+    if (vftr_env_do_sampling()) vftr_finalize_vfd_file (finalize_time);
     if (vftr_events_enabled && vftr_stop_hwc() < 0) {
 	fprintf(vftr_log, "error stopping H/W counters, ignored\n");
     }
