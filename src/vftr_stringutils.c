@@ -19,8 +19,10 @@
 #define _GNU_SOURCE
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <stdarg.h>
 #include <limits.h>
+#include <string.h>
 
 #include "vftr_setup.h"
 
