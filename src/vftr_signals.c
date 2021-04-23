@@ -30,6 +30,7 @@
 #include <stdbool.h>
 #include <sys/time.h>
 
+#include "vftr_hooks.h"
 #include "vftr_setup.h"
 #include "vftr_signals.h"
 #include "vftr_stacks.h"
@@ -46,20 +47,19 @@ void vftr_abort (int errcode) {
 int vftr_signal_number;
 
 struct sigaction vftr_signals[NSIG];
-struct sigaction vftr_sigterm;
-struct sigaction vftr_sigsegv;
-//struct sigaction vftr_default_signals[NSIG];
 
 /**********************************************************************/
 
 void vftr_signal_handler (int signum) {
-  printf ("Caught signal: %d %d %s\n", vftr_mpirank, signum, strsignal(signum));
-  fprintf (vftr_log, "\n");
-  fprintf (vftr_log, "**************************\n");
-  fprintf (vftr_log, "Application was cancelled: %s\n", strsignal(signum));
-  fprintf (vftr_log, "Head of function stack: %s\n", vftr_fstack->name);
-  fprintf (vftr_log, "**************************\n");
-  fprintf (vftr_log, "\n");
+  if (vftr_profile_wanted) {
+    fprintf (vftr_log, "\n");
+    fprintf (vftr_log, "**************************\n");
+    fprintf (vftr_log, "Application was cancelled: %s\n", strsignal(signum));
+    fprintf (vftr_log, "Head of function stack: %s\n", vftr_fstack->name);
+    fprintf (vftr_log, "Note: Stacks not normalized\n");
+    fprintf (vftr_log, "**************************\n");
+    fprintf (vftr_log, "\n");
+  }
   vftr_finalize(false);
   vftr_signals[SIGTERM].sa_handler = SIG_DFL;
   sigaction (SIGTERM, &(vftr_signals[SIGTERM]), NULL);
