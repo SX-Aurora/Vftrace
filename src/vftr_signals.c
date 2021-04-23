@@ -46,22 +46,24 @@ void vftr_abort (int errcode) {
 int vftr_signal_number;
 
 struct sigaction vftr_signals[NSIG];
+struct sigaction vftr_sigterm;
+struct sigaction vftr_sigsegv;
+//struct sigaction vftr_default_signals[NSIG];
 
 /**********************************************************************/
 
 void vftr_signal_handler (int signum) {
   printf ("Caught signal: %d %d %s\n", vftr_mpirank, signum, strsignal(signum));
-  if (vftr_signal_number < 0) {
-    vftr_signal_number = signum;
-    fprintf (vftr_log, "**************************\n");
-    fprintf (vftr_log, "Application was cancelled: %s\n", strsignal(signum));
-    fprintf (vftr_log, "Head of function stack: %s\n", vftr_fstack->name);
-    fprintf (vftr_log, "**************************\n");
-    vftr_finalize(false);
-    vftr_signals[signum].sa_handler = SIG_DFL;
-    sigaction (signum, &vftr_signals[signum], NULL);
-    raise(signum);
-  }
+  fprintf (vftr_log, "\n");
+  fprintf (vftr_log, "**************************\n");
+  fprintf (vftr_log, "Application was cancelled: %s\n", strsignal(signum));
+  fprintf (vftr_log, "Head of function stack: %s\n", vftr_fstack->name);
+  fprintf (vftr_log, "**************************\n");
+  fprintf (vftr_log, "\n");
+  vftr_finalize(false);
+  vftr_signals[SIGTERM].sa_handler = SIG_DFL;
+  sigaction (SIGTERM, &(vftr_signals[SIGTERM]), NULL);
+  int ret = raise(signum);
 }
 
 /**********************************************************************/
@@ -70,7 +72,7 @@ void vftr_setup_signal (int signum) {
   memset (&vftr_signals[signum], 0, sizeof(vftr_signals[signum]));
   vftr_signals[signum].sa_handler = vftr_signal_handler;
   vftr_signals[signum].sa_flags = SA_SIGINFO;
-  sigaction (signum, &vftr_signals[signum], NULL);
+  sigaction (signum, &(vftr_signals[signum]), NULL);
 }
 
 void vftr_setup_signals () {
