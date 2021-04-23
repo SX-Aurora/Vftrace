@@ -295,27 +295,29 @@ void vftr_finalize(bool do_normalize_stacks) {
 	vftr_strip_all_module_names ();
     }
     
-    if (do_normalize_stacks) vftr_normalize_stacks();
-
-    display_function_t **display_functions;
-    int n_display_functions;
-    if (vftr_env_need_display_functions()) {
-       display_functions = vftr_create_display_functions (vftr_environment.mpi_show_sync_time->value,
-                                                          &n_display_functions, vftr_environment.all_mpi_summary->value); 
-    }
-
     FILE *f_html = NULL;
-    if (vftr_environment.create_html->value) {
-       vftr_browse_create_directory ();
-       f_html = vftr_browse_init_profile_table (display_functions, n_display_functions);
+    display_function_t **display_functions = NULL;
+    int n_display_functions = 0;
+    if (do_normalize_stacks) {
+       vftr_normalize_stacks();
+
+       if (vftr_env_need_display_functions()) {
+          display_functions = vftr_create_display_functions (vftr_environment.mpi_show_sync_time->value,
+                                                             &n_display_functions, vftr_environment.all_mpi_summary->value); 
+       }
+
+       if (vftr_environment.create_html->value) {
+          vftr_browse_create_directory ();
+          f_html = vftr_browse_init_profile_table (display_functions, n_display_functions);
+       }
     }
 
     if (vftr_profile_wanted) {
-       vftr_create_global_stack_strings ();
+       if (do_normalize_stacks) vftr_create_global_stack_strings ();
        vftr_print_profile (vftr_log, f_html, &ntop, vftr_get_runtime_usec(), n_display_functions, display_functions);
     }
 #ifdef _MPI
-    if (vftr_environment.print_stack_profile->value || vftr_environment.all_mpi_summary->value) {
+    if (do_normalize_stacks && (vftr_environment.print_stack_profile->value || vftr_environment.all_mpi_summary->value)) {
        // Inside of vftr_print_function_statistics, we use an MPI_Allgather to compute MPI imbalances. Therefore,
        // we need to call this function for every rank, but give it the information of vftr_profile_wanted
        // to avoid unrequired output.
@@ -325,7 +327,7 @@ void vftr_finalize(bool do_normalize_stacks) {
  
     funcTable = vftr_func_table;
 
-    if (vftr_profile_wanted) {
+    if (vftr_profile_wanted && do_normalize_stacks) {
         vftr_print_global_stacklist(vftr_log);
     }
 

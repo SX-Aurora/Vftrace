@@ -37,7 +37,7 @@
 
 void vftr_abort (int errcode) {
 #ifdef _MPI
-    (void) PMPI_Abort( MPI_COMM_WORLD, errcode );
+    PMPI_Abort (MPI_COMM_WORLD, errcode);
 #else
     abort();
 #endif
