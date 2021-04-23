@@ -15,6 +15,7 @@
    with this program; if not, write to the Free Software Foundation, Inc.,
    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+#include <stdbool.h>
 #ifdef _MPI
 #include <mpi.h>
 
@@ -25,7 +26,7 @@ int MPI_Finalize() {
 
    // it is neccessary to finalize vftrace here, in order to properly communicat stack ids
    // between processes. After MPI_Finalize communication between processes is prohibited
-   vftr_finalize();
+   vftr_finalize(true);
 
    return PMPI_Finalize();
 }

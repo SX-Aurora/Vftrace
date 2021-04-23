@@ -361,7 +361,7 @@ void vftr_function_exit () {
     // and the actual program termination as experienced by the user is not
     // measured. Therefore, there is a theoretical, but miniscule, discrepancy
     // the user time and the time measured by Vftrace.
-    if (!vftr_fstack->return_to) vftr_finalize();
+    if (!vftr_fstack->return_to) vftr_finalize(true);
     func->open = false;
 }
 

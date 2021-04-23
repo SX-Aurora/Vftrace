@@ -32,7 +32,7 @@ extern char *vftr_start_date;
 extern char *vftr_end_date;
 
 void vftr_initialize ();
-void vftr_finalize () ;
+void vftr_finalize (bool do_normalize_stacks) ;
 
 void vftr_get_mpi_info (int *rank, int *size);
 

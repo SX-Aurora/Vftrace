@@ -273,7 +273,7 @@ void vftr_initialize() {
 
 /**********************************************************************/
 
-void vftr_finalize() {
+void vftr_finalize(bool do_normalize_stacks) {
     int ntop = 0;
     function_t **funcTable;
 
@@ -289,12 +289,13 @@ void vftr_finalize() {
     if (vftr_env_do_sampling()) {
         vftr_write_to_vfd (finalize_time, NULL, NULL, 0, SID_EXIT);
     }
+    //if (vftr_mpirank == 0) printf ("Check 2\n");
 
     if (vftr_environment.strip_module_names->value) {
 	vftr_strip_all_module_names ();
     }
     
-    vftr_normalize_stacks();
+    if (do_normalize_stacks) vftr_normalize_stacks();
 
     display_function_t **display_functions;
     int n_display_functions;
@@ -350,8 +351,10 @@ void vftr_finalize() {
 
 // vftr_finalize has to be called in the wrapper of MPI_Finalize, both for C and Fortran.
 // This is the corresponding symbol for Fortran, with an added "_".
+// It always calls vftr_finalize with active stack normalization ("true" argument), since
+// this is the standard way to terminate.
 void vftr_finalize_() {
-	vftr_finalize();
+	vftr_finalize(true);
 #ifdef _MPI
 	PMPI_Barrier (MPI_COMM_WORLD);
 #endif

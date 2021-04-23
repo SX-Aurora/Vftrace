@@ -50,14 +50,14 @@ struct sigaction vftr_signals[NSIG];
 /**********************************************************************/
 
 void vftr_signal_handler (int signum) {
-  printf ("Caught signal: %s\n", strsignal(signum));
+  printf ("Caught signal: %d %d %s\n", vftr_mpirank, signum, strsignal(signum));
   if (vftr_signal_number < 0) {
     vftr_signal_number = signum;
     fprintf (vftr_log, "**************************\n");
     fprintf (vftr_log, "Application was cancelled: %s\n", strsignal(signum));
     fprintf (vftr_log, "Head of function stack: %s\n", vftr_fstack->name);
     fprintf (vftr_log, "**************************\n");
-    vftr_finalize();
+    vftr_finalize(false);
     vftr_signals[signum].sa_handler = SIG_DFL;
     sigaction (signum, &vftr_signals[signum], NULL);
     raise(signum);
