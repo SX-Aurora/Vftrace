@@ -56,4 +56,5 @@ void skip_hw_observables (FILE *fp, int n_hw_obs);
 void read_stack_sample (FILE *fp, int n_hw_obs, int *stack_id,
 			long long *sample_time, long long *hw_values, long long *cycle_time);
 void skip_stack_sample (FILE *fp);
+void cleanup_scenario_data (int n_hw_obs);
 #endif

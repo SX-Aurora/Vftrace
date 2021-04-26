@@ -200,6 +200,7 @@ int main (int argc, char **argv) {
         }
     }
 
+    if (vfd_header.n_hw_obs > 0) cleanup_scenario_data (vfd_header.n_hw_obs);
     if (hw_values) free (hw_values);
     free (stacks);
     free (precise_functions);
