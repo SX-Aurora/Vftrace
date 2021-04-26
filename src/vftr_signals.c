@@ -44,8 +44,6 @@ void vftr_abort (int errcode) {
 #endif
 }
 
-int vftr_signal_number;
-
 struct sigaction vftr_signals[NSIG];
 
 /**********************************************************************/
@@ -76,8 +74,6 @@ void vftr_setup_signal (int signum) {
 }
 
 void vftr_setup_signals () {
-
-  vftr_signal_number = -1;
 
   vftr_setup_signal (SIGTERM);
   vftr_setup_signal (SIGINT);

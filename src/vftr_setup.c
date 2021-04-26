@@ -280,7 +280,6 @@ void vftr_finalize(bool do_normalize_stacks) {
     if (vftr_off())  return;
     vftr_set_end_date();
 
-    // get the total runtime
     long long finalize_time = vftr_get_runtime_usec();
 
     vftr_timer_end = true;
@@ -289,7 +288,6 @@ void vftr_finalize(bool do_normalize_stacks) {
     if (vftr_env_do_sampling()) {
         vftr_write_to_vfd (finalize_time, NULL, NULL, 0, SID_EXIT);
     }
-    //if (vftr_mpirank == 0) printf ("Check 2\n");
 
     if (vftr_environment.strip_module_names->value) {
 	vftr_strip_all_module_names ();
