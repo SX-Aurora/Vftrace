@@ -145,20 +145,23 @@ void print_fileheader (FILE *fp, vfd_header_t vfd_header) {
 
 /**********************************************************************/
 
+char **vftr_hw_obs_name = NULL;
+char **vftr_variable_name = NULL;
+
 // Reads the observable names and checks if it is integrated.
 // Also, allocates the array which stores the hardware counter values.
 void read_scenario_header (FILE *fp, int n_hw_obs, int n_formulas, bool verbose) {
 	int slength;
+        vftr_hw_obs_name = (char**)malloc(n_hw_obs * sizeof(char*));
+        vftr_variable_name = (char**)malloc(n_hw_obs * sizeof(char*));
         for (int i = 0; i < n_hw_obs; i++) {
            fread (&slength, sizeof(int), 1, fp);
-           char *hw_obs_name = (char*)malloc(sizeof(char) * slength);
-           fread (hw_obs_name, sizeof(char), slength, fp);
+           vftr_hw_obs_name[i] = (char*)malloc(sizeof(char) * slength);
+           fread (vftr_hw_obs_name[i], sizeof(char), slength, fp);
            fread (&slength, sizeof(int), 1, fp);
-           char *variable_name = (char*)malloc(sizeof(char) * slength);
-           fread (variable_name, sizeof(char), slength, fp);
-           if (verbose) printf ("Hardware counter %d: %s, variable: %s\n", i, hw_obs_name, variable_name);
-           free (hw_obs_name);
-           free (variable_name);
+           vftr_variable_name[i] = (char*)malloc(sizeof(char) * slength);
+           fread (vftr_variable_name[i], sizeof(char), slength, fp);
+           if (verbose) printf ("Hardware counter %d: %s, variable: %s\n", i, vftr_hw_obs_name[i], vftr_variable_name[i]);
         }
         for (int i = 0; i < n_formulas; i++) {
            fread (&slength, sizeof(int), 1, fp);

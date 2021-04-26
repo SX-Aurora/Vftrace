@@ -145,10 +145,11 @@ int main (int argc, char **argv) {
 	    long long sample_time, cycle_time;
 	    read_stack_sample (fp, vfd_header.n_hw_obs, &stack_id, &sample_time, hw_values, &cycle_time);
             if (vfd_header.n_hw_obs > 0) {
+              fprintf (fp_out, "%16s: ", "HWC");
               for (int i = 0; i < vfd_header.n_hw_obs; i++) {
-                 printf ("%lld, ", hw_values[i]);
+                 fprintf (fp_out, "%lld(%s)%s ", hw_values[i], vftr_variable_name[i], i != vfd_header.n_hw_obs - 1 ? "," : "");
               }
-              printf ("\n");
+              fprintf (fp_out, "%16.6f (cycle time)\n", (double)cycle_time * 1e-6);
             }
             double sample_time_s = (double)sample_time * 1.0e-6;
 
@@ -161,9 +162,6 @@ int main (int argc, char **argv) {
             }
 
             fprintf (fp_out, "%16.6f %s ", sample_time_s, sample_id == SID_ENTRY ? "call" : "exit");
-            if (vfd_header.n_hw_obs > 0) {
-               fprintf (fp_out, "%16.6f ", (double)cycle_time * 1.0e-6);
-            }
             for( ;; stack_id = stacks[stack_id].caller ) {
                fprintf (fp_out, "%s%s", stacks[stack_id].name, stack_id ? "<" : "" );
                if(stack_id == 0) break;

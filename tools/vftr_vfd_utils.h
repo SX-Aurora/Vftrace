@@ -31,6 +31,10 @@ typedef struct StackEntry {
     bool precise;
 } stack_entry_t;
 
+extern char **vftr_hw_obs_name;
+extern char **vftr_variable_name;
+
+
 bool is_precise (char *s);
 char *strip_trailing_asterisk (char *s);
 
