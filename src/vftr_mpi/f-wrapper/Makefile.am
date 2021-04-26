@@ -195,11 +195,5 @@ if WITH_MPI
 libvftr_fmpiwrap_la_FCFLAGS += -D_MPI
 endif
 
-if USES_INTEL_MPI
-libvftr_fmpiwrap_la_FCFLAGS += -DPMPI_MODULE=pmpi_f08
-else
-libvftr_fmpiwrap_la_FCFLAGS += -DPMPI_MODULE=mpi
-endif
-
 clean-local:
 	rm -f *.mod

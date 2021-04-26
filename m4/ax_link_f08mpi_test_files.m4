@@ -14,7 +14,7 @@
 AC_DEFUN([AX_LINK_F08MPI_TEST_FILES], [
    AC_PREREQ(2.50)
    # F08-MPI testscripts
-AM_COND_IF([ENABLE_FORTRAN],
+AM_COND_IF([ENABLE_FORTRAN08],
 [AM_COND_IF([WITH_MPI],
            [AC_CONFIG_LINKS(test/mpi/f08-mpi/init_finalize-1.sh:test/mpi/testscripts/init_finalize-1.sh
                             test/mpi/f08-mpi/init_finalize-2.sh:test/mpi/testscripts/init_finalize-2.sh

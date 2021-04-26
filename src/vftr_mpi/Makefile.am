@@ -4,8 +4,10 @@ SUBDIRS =
 if WITH_MPI
 SUBDIRS += c-wrapper
 if ENABLE_FORTRAN
-SUBDIRS += f-wrapper \
-           f08-wrapper
+SUBDIRS += f-wrapper
+if ENABLE_FORTRAN08
+SUBDIRS += f08-wrapper
+endif
 endif
 endif
 
@@ -221,10 +223,11 @@ endif
 ############
 libvftr_mpi_la_SOURCES += vftr_mpi_pcontrol.c
 if ENABLE_FORTRAN
-libvftr_mpi_la_SOURCES += vftr_mpi_pcontrol_f08.c \
-			  vftr_mpi_pcontrol_f.c
+libvftr_mpi_la_SOURCES += vftr_mpi_pcontrol_f.c
+if ENABLE_FORTRAN08
+libvftr_mpi_la_SOURCES += vftr_mpi_pcontrol_f08.c
 endif
-
+endif
 endif
 
 libvftr_mpi_la_CFLAGS =
