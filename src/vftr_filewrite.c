@@ -1571,6 +1571,7 @@ void vftr_print_profile (FILE *fp_log, FILE *f_html, int *n_func_indices, long l
     
     vftr_print_dashes (fp_log, table_width);
     fprintf (fp_log, "\n");
+    fflush(fp_log);
     
     free (func_table);
 }
