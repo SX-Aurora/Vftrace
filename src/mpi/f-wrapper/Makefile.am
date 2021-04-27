@@ -2,198 +2,120 @@ noinst_LTLIBRARIES = libvftr_fmpiwrap.la
 
 libvftr_fmpiwrap_la_SOURCES =
 
-libvftr_fmpiwrap_la_SOURCES += vftr_after_mpi_init_f2c.F90 \
-			       vftr_finalize_f2c.F90
-libvftr_fmpiwrap_la_SOURCES += vftr_mpi_init_fwrap.F90 \
-			       vftr_mpi_finalize_fwrap.F90
+libvftr_fmpiwrap_la_SOURCES += init.F90 \
+			       finalize.F90
 
 ##################
 # point to point #
 ##################
-libvftr_fmpiwrap_la_SOURCES += vftr_mpi_send_f2c.F90 \
-			       vftr_mpi_isend_f2c.F90 \
-			       vftr_mpi_bsend_f2c.F90 \
-			       vftr_mpi_ibsend_f2c.F90 \
-			       vftr_mpi_ssend_f2c.F90 \
-			       vftr_mpi_issend_f2c.F90 \
-			       vftr_mpi_rsend_f2c.F90 \
-			       vftr_mpi_irsend_f2c.F90 \
-			       vftr_mpi_recv_f2c.F90 \
-                               vftr_mpi_irecv_f2c.F90 \
-			       vftr_mpi_sendrecv_f2c.F90 \
-			       vftr_mpi_sendrecv_replace_f2c.F90 \
-			       vftr_mpi_probe_f2c.F90 \
-			       vftr_mpi_iprobe_f2c.F90
-libvftr_fmpiwrap_la_SOURCES += vftr_mpi_send_fwrap.F90 \
-			       vftr_mpi_isend_fwrap.F90 \
-			       vftr_mpi_bsend_fwrap.F90 \
-			       vftr_mpi_ibsend_fwrap.F90 \
-			       vftr_mpi_ssend_fwrap.F90 \
-			       vftr_mpi_issend_fwrap.F90 \
-			       vftr_mpi_rsend_fwrap.F90 \
-			       vftr_mpi_irsend_fwrap.F90 \
-			       vftr_mpi_recv_fwrap.F90 \
-			       vftr_mpi_irecv_fwrap.F90 \
-			       vftr_mpi_sendrecv_fwrap.F90 \
-			       vftr_mpi_sendrecv_replace_fwrap.F90 \
-			       vftr_mpi_probe_fwrap.F90 \
-			       vftr_mpi_iprobe_fwrap.F90
+libvftr_fmpiwrap_la_SOURCES += send.F90 \
+			       isend.F90 \
+			       bsend.F90 \
+			       ibsend.F90 \
+			       ssend.F90 \
+			       issend.F90 \
+			       rsend.F90 \
+			       irsend.F90 \
+			       recv.F90 \
+			       irecv.F90 \
+			       sendrecv.F90 \
+			       sendrecv_replace.F90 \
+			       probe.F90 \
+			       iprobe.F90
 
 ##################
 # persistent p2p #
 ##################
-libvftr_fmpiwrap_la_SOURCES += vftr_mpi_start_f2c.F90 \
-			       vftr_mpi_startall_f2c.F90 \
-			       vftr_mpi_send_init_f2c.F90 \
-			       vftr_mpi_bsend_init_f2c.F90 \
-			       vftr_mpi_ssend_init_f2c.F90 \
-			       vftr_mpi_rsend_init_f2c.F90 \
-			       vftr_mpi_recv_init_f2c.F90
-libvftr_fmpiwrap_la_SOURCES += vftr_mpi_start_fwrap.F90 \
-			       vftr_mpi_startall_fwrap.F90 \
-			       vftr_mpi_send_init_fwrap.F90 \
-			       vftr_mpi_bsend_init_fwrap.F90 \
-			       vftr_mpi_ssend_init_fwrap.F90 \
-			       vftr_mpi_rsend_init_fwrap.F90 \
-			       vftr_mpi_recv_init_fwrap.F90
+libvftr_fmpiwrap_la_SOURCES += start.F90 \
+			       startall.F90 \
+			       send_init.F90 \
+			       bsend_init.F90 \
+			       ssend_init.F90 \
+			       rsend_init.F90 \
+			       recv_init.F90
 
 #########
 # tests #
 #########
-libvftr_fmpiwrap_la_SOURCES += vftr_mpi_test_f2c.F90 \
-			       vftr_mpi_testany_f2c.F90 \
-			       vftr_mpi_testsome_f2c.F90 \
-			       vftr_mpi_testall_f2c.F90
-libvftr_fmpiwrap_la_SOURCES += vftr_mpi_test_fwrap.F90 \
-			       vftr_mpi_testany_fwrap.F90 \
-			       vftr_mpi_testsome_fwrap.F90 \
-			       vftr_mpi_testall_fwrap.F90
+libvftr_fmpiwrap_la_SOURCES += test.F90 \
+			       testany.F90 \
+			       testsome.F90 \
+			       testall.F90
 
 ########
 # wait #
 ########
-libvftr_fmpiwrap_la_SOURCES += vftr_mpi_wait_f2c.F90 \
-			       vftr_mpi_waitany_f2c.F90 \
-			       vftr_mpi_waitsome_f2c.F90 \
-			       vftr_mpi_waitall_f2c.F90
-libvftr_fmpiwrap_la_SOURCES += vftr_mpi_wait_fwrap.F90 \
-			       vftr_mpi_waitany_fwrap.F90 \
-			       vftr_mpi_waitsome_fwrap.F90 \
-			       vftr_mpi_waitall_fwrap.F90
+libvftr_fmpiwrap_la_SOURCES += wait.F90 \
+			       waitany.F90 \
+			       waitsome.F90 \
+			       waitall.F90
 ########################
 # request deallocation #
 ########################
-libvftr_fmpiwrap_la_SOURCES += vftr_mpi_request_free_f2c.F90
-libvftr_fmpiwrap_la_SOURCES += vftr_mpi_request_free_fwrap.F90
+libvftr_fmpiwrap_la_SOURCES += request_free.F90
 
 ###############
 # collectives #
 ###############
-libvftr_fmpiwrap_la_SOURCES += vftr_mpi_barrier_f2c.F90 \
-			       vftr_mpi_bcast_f2c.F90 \
-			       vftr_mpi_ibcast_f2c.F90 \
-			       vftr_mpi_gather_f2c.F90 \
-			       vftr_mpi_igather_f2c.F90 \
-			       vftr_mpi_gatherv_f2c.F90 \
-			       vftr_mpi_igatherv_f2c.F90 \
-			       vftr_mpi_scatter_f2c.F90 \
-			       vftr_mpi_iscatter_f2c.F90 \
-			       vftr_mpi_scatterv_f2c.F90 \
-			       vftr_mpi_iscatterv_f2c.F90 \
-			       vftr_mpi_allgather_f2c.F90 \
-			       vftr_mpi_iallgather_f2c.F90 \
-			       vftr_mpi_allgatherv_f2c.F90 \
-			       vftr_mpi_iallgatherv_f2c.F90 \
-			       vftr_mpi_alltoall_f2c.F90 \
-			       vftr_mpi_ialltoall_f2c.F90 \
-			       vftr_mpi_alltoallv_f2c.F90 \
-			       vftr_mpi_ialltoallv_f2c.F90 \
-			       vftr_mpi_alltoallw_f2c.F90 \
-			       vftr_mpi_ialltoallw_f2c.F90
-libvftr_fmpiwrap_la_SOURCES += vftr_mpi_barrier_fwrap.F90 \
-			       vftr_mpi_bcast_fwrap.F90 \
-			       vftr_mpi_ibcast_fwrap.F90 \
-			       vftr_mpi_gather_fwrap.F90 \
-			       vftr_mpi_igather_fwrap.F90 \
-			       vftr_mpi_gatherv_fwrap.F90 \
-			       vftr_mpi_igatherv_fwrap.F90 \
-			       vftr_mpi_scatter_fwrap.F90 \
-			       vftr_mpi_iscatter_fwrap.F90 \
-			       vftr_mpi_scatterv_fwrap.F90 \
-			       vftr_mpi_iscatterv_fwrap.F90 \
-			       vftr_mpi_allgather_fwrap.F90 \
-			       vftr_mpi_iallgather_fwrap.F90 \
-			       vftr_mpi_allgatherv_fwrap.F90 \
-			       vftr_mpi_iallgatherv_fwrap.F90 \
-			       vftr_mpi_alltoall_fwrap.F90 \
-			       vftr_mpi_ialltoall_fwrap.F90 \
-			       vftr_mpi_alltoallv_fwrap.F90 \
-			       vftr_mpi_ialltoallv_fwrap.F90 \
-			       vftr_mpi_alltoallw_fwrap.F90 \
-			       vftr_mpi_ialltoallw_fwrap.F90
+libvftr_fmpiwrap_la_SOURCES += barrier.F90 \
+			       bcast.F90 \
+			       ibcast.F90 \
+			       gather.F90 \
+			       igather.F90 \
+			       gatherv.F90 \
+			       igatherv.F90 \
+			       scatter.F90 \
+			       iscatter.F90 \
+			       scatterv.F90 \
+			       iscatterv.F90 \
+			       allgather.F90 \
+			       iallgather.F90 \
+			       allgatherv.F90 \
+			       iallgatherv.F90 \
+			       alltoall.F90 \
+			       ialltoall.F90 \
+			       alltoallv.F90 \
+			       ialltoallv.F90 \
+			       alltoallw.F90 \
+			       ialltoallw.F90
 
 ####################
 # global reduction #
 ####################
-libvftr_fmpiwrap_la_SOURCES += vftr_mpi_allreduce_f2c.F90 \
-			       vftr_mpi_iallreduce_f2c.F90 \
-			       vftr_mpi_reduce_f2c.F90 \
-			       vftr_mpi_ireduce_f2c.F90 \
-			       vftr_mpi_reduce_scatter_block_f2c.F90 \
-			       vftr_mpi_ireduce_scatter_block_f2c.F90 \
-			       vftr_mpi_reduce_scatter_f2c.F90 \
-			       vftr_mpi_ireduce_scatter_f2c.F90 \
-			       vftr_mpi_scan_f2c.F90 \
-			       vftr_mpi_iscan_f2c.F90 \
-			       vftr_mpi_exscan_f2c.F90 \
-			       vftr_mpi_iexscan_f2c.F90
-libvftr_fmpiwrap_la_SOURCES += vftr_mpi_allreduce_fwrap.F90 \
-			       vftr_mpi_iallreduce_fwrap.F90 \
-			       vftr_mpi_reduce_fwrap.F90 \
-			       vftr_mpi_ireduce_fwrap.F90 \
-			       vftr_mpi_reduce_scatter_block_fwrap.F90 \
-			       vftr_mpi_ireduce_scatter_block_fwrap.F90 \
-			       vftr_mpi_reduce_scatter_fwrap.F90 \
-			       vftr_mpi_ireduce_scatter_fwrap.F90 \
-			       vftr_mpi_scan_fwrap.F90 \
-			       vftr_mpi_iscan_fwrap.F90 \
-			       vftr_mpi_exscan_fwrap.F90 \
-			       vftr_mpi_iexscan_fwrap.F90
+libvftr_fmpiwrap_la_SOURCES += allreduce.F90 \
+			       iallreduce.F90 \
+			       reduce.F90 \
+			       ireduce.F90 \
+			       reduce_scatter_block.F90 \
+			       ireduce_scatter_block.F90 \
+			       reduce_scatter.F90 \
+			       ireduce_scatter.F90 \
+			       scan.F90 \
+			       iscan.F90 \
+			       exscan.F90 \
+			       iexscan.F90
 
 #############
 # one sided #
 #############
-libvftr_fmpiwrap_la_SOURCES += vftr_mpi_put_f2c.F90 \
-			       vftr_mpi_rput_f2c.F90 \
-			       vftr_mpi_get_f2c.F90 \
-			       vftr_mpi_rget_f2c.F90 \
-			       vftr_mpi_accumulate_f2c.F90 \
-			       vftr_mpi_raccumulate_f2c.F90 \
-			       vftr_mpi_get_accumulate_f2c.F90 \
-			       vftr_mpi_rget_accumulate_f2c.F90 \
-			       vftr_mpi_fetch_and_op_f2c.F90 \
-			       vftr_mpi_compare_and_swap_f2c.F90
-libvftr_fmpiwrap_la_SOURCES += vftr_mpi_put_fwrap.F90 \
-			       vftr_mpi_rput_fwrap.F90 \
-			       vftr_mpi_get_fwrap.F90 \
-			       vftr_mpi_rget_fwrap.F90 \
-			       vftr_mpi_accumulate_fwrap.F90 \
-			       vftr_mpi_raccumulate_fwrap.F90 \
-			       vftr_mpi_get_accumulate_fwrap.F90 \
-			       vftr_mpi_rget_accumulate_fwrap.F90 \
-			       vftr_mpi_fetch_and_op_fwrap.F90 \
-			       vftr_mpi_compare_and_swap_fwrap.F90
+libvftr_fmpiwrap_la_SOURCES += put.F90 \
+			       rput.F90 \
+			       get.F90 \
+			       rget.F90 \
+			       accumulate.F90 \
+			       raccumulate.F90 \
+			       get_accumulate.F90 \
+			       rget_accumulate.F90 \
+			       fetch_and_op.F90 \
+			       compare_and_swap.F90
 
 ############
 # pcontrol #
 ############
-libvftr_fmpiwrap_la_SOURCES += vftr_mpi_pcontrol_f2c.F90
-libvftr_fmpiwrap_la_SOURCES += vftr_mpi_pcontrol_fwrap.F90
+libvftr_fmpiwrap_la_SOURCES += pcontrol.F90
 
 libvftr_fmpiwrap_la_FCFLAGS = -finstrument-functions
-if WITH_MPI
 libvftr_fmpiwrap_la_FCFLAGS += -D_MPI
-endif
 
 clean-local:
 	rm -f *.mod
