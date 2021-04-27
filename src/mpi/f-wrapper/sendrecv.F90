@@ -19,8 +19,8 @@
 SUBROUTINE MPI_SENDRECV(SENDBUF, SENDCOUNT, SENDTYPE, DEST, SENDTAG, &
                         RECVBUF, RECVCOUNT, RECVTYPE, SOURCE, RECVTAG, &
                         COMM, STATUS, ERROR)
-   USE vftr_mpi_sendrecv_f2c, &
-      ONLY : vftr_MPI_Sendrecv_F
+   USE vftr_mpi_sendrecv_f2c_finterface, &
+      ONLY : vftr_MPI_Sendrecv_f2c
    USE mpi, ONLY : MPI_STATUS_SIZE
    IMPLICIT NONE
    INTEGER SENDBUF
@@ -37,9 +37,9 @@ SUBROUTINE MPI_SENDRECV(SENDBUF, SENDCOUNT, SENDTYPE, DEST, SENDTAG, &
    INTEGER STATUS(MPI_STATUS_SIZE)
    INTEGER ERROR
 
-   CALL vftr_MPI_Sendrecv_F(SENDBUF, SENDCOUNT, SENDTYPE, DEST, SENDTAG, &
-                            RECVBUF, RECVCOUNT, RECVTYPE, SOURCE, RECVTAG, &
-                            COMM, STATUS, ERROR)
+   CALL vftr_MPI_Sendrecv_f2c(SENDBUF, SENDCOUNT, SENDTYPE, DEST, SENDTAG, &
+                              RECVBUF, RECVCOUNT, RECVTYPE, SOURCE, RECVTAG, &
+                              COMM, STATUS, ERROR)
 
 END SUBROUTINE MPI_SENDRECV
 

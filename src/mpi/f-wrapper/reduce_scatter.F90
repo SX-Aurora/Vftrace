@@ -19,8 +19,8 @@
 SUBROUTINE MPI_REDUCE_SCATTER(SENDBUF, RECVBUF, RECVCOUNTS, &
                               DATATYPE, OP, COMM, &
                               ERROR)
-   USE vftr_mpi_reduce_scatter_f2c, &
-      ONLY : vftr_MPI_Reduce_scatter_F
+   USE vftr_mpi_reduce_scatter_f2c_finterface, &
+      ONLY : vftr_MPI_Reduce_scatter_f2c
    IMPLICIT NONE
    INTEGER SENDBUF
    INTEGER RECVBUF
@@ -30,9 +30,9 @@ SUBROUTINE MPI_REDUCE_SCATTER(SENDBUF, RECVBUF, RECVCOUNTS, &
    INTEGER COMM
    INTEGER ERROR
 
-   CALL vftr_MPI_Reduce_scatter_F(SENDBUF, RECVBUF, RECVCOUNTS, &
-                                  DATATYPE, OP, COMM, &
-                                  ERROR)
+   CALL vftr_MPI_Reduce_scatter_f2c(SENDBUF, RECVBUF, RECVCOUNTS, &
+                                    DATATYPE, OP, COMM, &
+                                    ERROR)
 
 END SUBROUTINE MPI_REDUCE_SCATTER
 

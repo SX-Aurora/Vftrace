@@ -19,8 +19,8 @@
 SUBROUTINE MPI_IGATHER(SENDBUF, SENDCOUNT, SENDTYPE, &
                        RECVBUF, RECVCOUNT, RECVTYPE, &
                        ROOT, COMM, REQUEST, ERROR)
-   USE vftr_mpi_igather_f2c, &
-      ONLY : vftr_MPI_Igather_F
+   USE vftr_mpi_igather_f2c_finterface, &
+      ONLY : vftr_MPI_Igather_f2c
    IMPLICIT NONE
    INTEGER SENDBUF
    INTEGER SENDCOUNT
@@ -33,9 +33,9 @@ SUBROUTINE MPI_IGATHER(SENDBUF, SENDCOUNT, SENDTYPE, &
    INTEGER REQUEST
    INTEGER ERROR
 
-   CALL vftr_MPI_Igather_F(SENDBUF, SENDCOUNT, SENDTYPE, &
-                           RECVBUF, RECVCOUNT, RECVTYPE, &
-                           ROOT, COMM, REQUEST, ERROR)
+   CALL vftr_MPI_Igather_f2c(SENDBUF, SENDCOUNT, SENDTYPE, &
+                             RECVBUF, RECVCOUNT, RECVTYPE, &
+                             ROOT, COMM, REQUEST, ERROR)
 
 END SUBROUTINE MPI_IGATHER
 

@@ -17,15 +17,15 @@
 #ifdef _MPI
 
 SUBROUTINE MPI_Wait(REQUEST, STATUS, ERROR)
-   USE vftr_mpi_wait_f2c, &
-      ONLY : vftr_MPI_Wait_F
+   USE vftr_mpi_wait_f2c_finterface, &
+      ONLY : vftr_MPI_Wait_f2c
    USE mpi, ONLY: MPI_STATUS_SIZE
    IMPLICIT NONE
    INTEGER REQUEST
    INTEGER STATUS(MPI_STATUS_SIZE)
    INTEGER ERROR
 
-   CALL vftr_MPI_Wait_F(REQUEST, STATUS, ERROR)
+   CALL vftr_MPI_Wait_f2c(REQUEST, STATUS, ERROR)
 
 END SUBROUTINE MPI_Wait
 

@@ -17,13 +17,13 @@
 #ifdef _MPI
 
 SUBROUTINE MPI_Barrier(COMM, ERROR)
-   USE vftr_mpi_barrier_f2c, &
-      ONLY : vftr_MPI_Barrier_F
+   USE vftr_mpi_barrier_f2c_finterface, &
+      ONLY : vftr_MPI_Barrier_f2c
    IMPLICIT NONE
    INTEGER COMM
    INTEGER ERROR
 
-   CALL vftr_MPI_Barrier_F(COMM, ERROR)
+   CALL vftr_MPI_Barrier_f2c(COMM, ERROR)
 
 END SUBROUTINE MPI_Barrier
 

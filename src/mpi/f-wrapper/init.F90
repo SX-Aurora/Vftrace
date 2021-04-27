@@ -17,8 +17,8 @@
 #ifdef _MPI
 
 SUBROUTINE MPI_INIT(IERROR)
-   USE vftr_after_mpi_init_f2c, &
-      ONLY : vftr_after_mpi_init_F
+   USE vftr_after_mpi_init_f2c_finterface, &
+      ONLY : vftr_after_mpi_init_f2c
    USE mpi, ONLY : PMPI_INIT
 
    IMPLICIT NONE
@@ -27,7 +27,7 @@ SUBROUTINE MPI_INIT(IERROR)
 
    CALL PMPI_INIT(IERROR)
 
-   CALL vftr_after_mpi_init_F()
+   CALL vftr_after_mpi_init_f2c()
 
 END SUBROUTINE MPI_INIT
 

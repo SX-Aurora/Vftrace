@@ -19,8 +19,8 @@
 SUBROUTINE MPI_IREDUCE_SCATTER_BLOCK(SENDBUF, RECVBUF, RECVCOUNT, &
                                      DATATYPE, OP, COMM, &
                                      REQUEST, ERROR)
-   USE vftr_mpi_ireduce_scatter_block_f2c, &
-      ONLY : vftr_MPI_Ireduce_scatter_block_F
+   USE vftr_mpi_ireduce_scatter_block_f2c_finterface, &
+      ONLY : vftr_MPI_Ireduce_scatter_block_f2c
    IMPLICIT NONE
    INTEGER SENDBUF
    INTEGER RECVBUF
@@ -31,9 +31,9 @@ SUBROUTINE MPI_IREDUCE_SCATTER_BLOCK(SENDBUF, RECVBUF, RECVCOUNT, &
    INTEGER REQUEST
    INTEGER ERROR
 
-   CALL vftr_MPI_Ireduce_scatter_block_F(SENDBUF, RECVBUF, RECVCOUNT, &
-                                         DATATYPE, OP, COMM, &
-                                         REQUEST, ERROR)
+   CALL vftr_MPI_Ireduce_scatter_block_f2c(SENDBUF, RECVBUF, RECVCOUNT, &
+                                           DATATYPE, OP, COMM, &
+                                           REQUEST, ERROR)
 
 END SUBROUTINE MPI_IREDUCE_SCATTER_BLOCK
 

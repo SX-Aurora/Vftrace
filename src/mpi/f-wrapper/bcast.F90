@@ -18,8 +18,8 @@
 
 SUBROUTINE MPI_BCAST(BUFFER, COUNT, DATATYPE, &
                      ROOT, COMM, ERROR)
-   USE vftr_mpi_bcast_f2c, &
-      ONLY : vftr_MPI_Bcast_F
+   USE vftr_mpi_bcast_f2c_finterface, &
+      ONLY : vftr_MPI_Bcast_f2c
    IMPLICIT NONE
    INTEGER BUFFER
    INTEGER COUNT
@@ -28,8 +28,8 @@ SUBROUTINE MPI_BCAST(BUFFER, COUNT, DATATYPE, &
    INTEGER COMM
    INTEGER ERROR
 
-   CALL vftr_MPI_Bcast_F(BUFFER, COUNT, DATATYPE, &
-                         ROOT, COMM, ERROR)
+   CALL vftr_MPI_Bcast_f2c(BUFFER, COUNT, DATATYPE, &
+                           ROOT, COMM, ERROR)
 
 END SUBROUTINE MPI_BCAST
 

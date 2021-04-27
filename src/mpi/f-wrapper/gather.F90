@@ -19,8 +19,8 @@
 SUBROUTINE MPI_GATHER(SENDBUF, SENDCOUNT, SENDTYPE, &
                       RECVBUF, RECVCOUNT, RECVTYPE, &
                       ROOT, COMM, ERROR)
-   USE vftr_mpi_gather_f2c, &
-      ONLY : vftr_MPI_Gather_F
+   USE vftr_mpi_gather_f2c_finterface, &
+      ONLY : vftr_MPI_Gather_f2c
    IMPLICIT NONE
    INTEGER SENDBUF
    INTEGER SENDCOUNT
@@ -32,9 +32,9 @@ SUBROUTINE MPI_GATHER(SENDBUF, SENDCOUNT, SENDTYPE, &
    INTEGER COMM
    INTEGER ERROR
 
-   CALL vftr_MPI_Gather_F(SENDBUF, SENDCOUNT, SENDTYPE, &
-                          RECVBUF, RECVCOUNT, RECVTYPE, &
-                          ROOT, COMM, ERROR)
+   CALL vftr_MPI_Gather_f2c(SENDBUF, SENDCOUNT, SENDTYPE, &
+                            RECVBUF, RECVCOUNT, RECVTYPE, &
+                            ROOT, COMM, ERROR)
 
 END SUBROUTINE MPI_GATHER
 

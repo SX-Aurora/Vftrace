@@ -18,8 +18,8 @@
 
 SUBROUTINE MPI_IEXSCAN(SENDBUF, RECVBUF, COUNT, DATATYPE, &
                        OP, COMM, REQUEST, ERROR)
-   USE vftr_mpi_iexscan_f2c, &
-      ONLY : vftr_MPI_Iexscan_F
+   USE vftr_mpi_iexscan_f2c_finterface, &
+      ONLY : vftr_MPI_Iexscan_f2c
    IMPLICIT NONE
    INTEGER SENDBUF
    INTEGER RECVBUF
@@ -30,8 +30,8 @@ SUBROUTINE MPI_IEXSCAN(SENDBUF, RECVBUF, COUNT, DATATYPE, &
    INTEGER REQUEST
    INTEGER ERROR
 
-   CALL vftr_MPI_Iexscan_F(SENDBUF, RECVBUF, COUNT, DATATYPE, &
-                           OP, COMM, REQUEST, ERROR)
+   CALL vftr_MPI_Iexscan_f2c(SENDBUF, RECVBUF, COUNT, DATATYPE, &
+                             OP, COMM, REQUEST, ERROR)
 
 END SUBROUTINE MPI_IEXSCAN
 

@@ -19,8 +19,8 @@
 SUBROUTINE MPI_ALLTOALL(SENDBUF, SENDCOUNT, SENDTYPE, &
                         RECVBUF, RECVCOUNT, RECVTYPE, &
                         COMM, ERROR)
-   USE vftr_mpi_alltoall_f2c, &
-      ONLY : vftr_MPI_Alltoall_F
+   USE vftr_mpi_alltoall_f2c_finterface, &
+      ONLY : vftr_MPI_Alltoall_f2c
    IMPLICIT NONE
    INTEGER SENDBUF
    INTEGER SENDCOUNT
@@ -31,9 +31,9 @@ SUBROUTINE MPI_ALLTOALL(SENDBUF, SENDCOUNT, SENDTYPE, &
    INTEGER COMM
    INTEGER ERROR
 
-   CALL vftr_MPI_Alltoall_F(SENDBUF, SENDCOUNT, SENDTYPE, &
-                            RECVBUF, RECVCOUNT, RECVTYPE, &
-                            COMM, ERROR)
+   CALL vftr_MPI_Alltoall_f2c(SENDBUF, SENDCOUNT, SENDTYPE, &
+                              RECVBUF, RECVCOUNT, RECVTYPE, &
+                              COMM, ERROR)
 
 END SUBROUTINE MPI_ALLTOALL
 

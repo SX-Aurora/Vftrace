@@ -19,8 +19,8 @@
 SUBROUTINE MPI_ALLREDUCE(SENDBUF, RECVBUF, COUNT, &
                          DATATYPE, OP, COMM, &
                          ERROR)
-   USE vftr_mpi_allreduce_f2c, &
-      ONLY : vftr_MPI_Allreduce_F
+   USE vftr_mpi_allreduce_f2c_finterface, &
+      ONLY : vftr_MPI_Allreduce_f2c
    IMPLICIT NONE
    INTEGER SENDBUF
    INTEGER RECVBUF
@@ -30,9 +30,9 @@ SUBROUTINE MPI_ALLREDUCE(SENDBUF, RECVBUF, COUNT, &
    INTEGER COMM
    INTEGER ERROR
 
-   CALL vftr_MPI_Allreduce_F(SENDBUF, RECVBUF, COUNT, &
-                             DATATYPE, OP, COMM, &
-                             ERROR)
+   CALL vftr_MPI_Allreduce_f2c(SENDBUF, RECVBUF, COUNT, &
+                               DATATYPE, OP, COMM, &
+                               ERROR)
 
 END SUBROUTINE MPI_ALLREDUCE
 

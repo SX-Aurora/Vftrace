@@ -17,8 +17,8 @@
 #ifdef _MPI
 
 SUBROUTINE MPI_Test(REQUEST, FLAG, STATUS, ERROR)
-   USE vftr_mpi_test_f2c, &
-      ONLY : vftr_MPI_Test_F
+   USE vftr_mpi_test_f2c_finterface, &
+      ONLY : vftr_MPI_Test_f2c
    USE mpi, ONLY: MPI_STATUS_SIZE
    IMPLICIT NONE
    INTEGER REQUEST
@@ -26,7 +26,7 @@ SUBROUTINE MPI_Test(REQUEST, FLAG, STATUS, ERROR)
    INTEGER STATUS(MPI_STATUS_SIZE)
    INTEGER ERROR
 
-   CALL vftr_MPI_Test_F(REQUEST, FLAG, STATUS, ERROR)
+   CALL vftr_MPI_Test_f2c(REQUEST, FLAG, STATUS, ERROR)
 
 END SUBROUTINE MPI_Test
 

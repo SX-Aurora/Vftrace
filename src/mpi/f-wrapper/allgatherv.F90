@@ -19,8 +19,8 @@
 SUBROUTINE MPI_ALLGATHERV(SENDBUF, SENDCOUNT, SENDTYPE, &
                           RECVBUF, RECVCOUNTS, DISPLS, &
                           RECVTYPE, COMM, ERROR)
-   USE vftr_mpi_allgatherv_f2c, &
-      ONLY : vftr_MPI_Allgatherv_F
+   USE vftr_mpi_allgatherv_f2c_finterface, &
+      ONLY : vftr_MPI_Allgatherv_f2c
    IMPLICIT NONE
    INTEGER ::  SENDBUF
    INTEGER ::  SENDCOUNT
@@ -32,9 +32,9 @@ SUBROUTINE MPI_ALLGATHERV(SENDBUF, SENDCOUNT, SENDTYPE, &
    INTEGER ::  COMM
    INTEGER ::  ERROR
 
-   CALL vftr_MPI_Allgatherv_F(SENDBUF, SENDCOUNT, SENDTYPE, &
-                              RECVBUF, RECVCOUNTS, DISPLS, &
-                              RECVTYPE, COMM, ERROR)
+   CALL vftr_MPI_Allgatherv_f2c(SENDBUF, SENDCOUNT, SENDTYPE, &
+                                RECVBUF, RECVCOUNTS, DISPLS, &
+                                RECVTYPE, COMM, ERROR)
 
 END SUBROUTINE MPI_ALLGATHERV
 

@@ -17,14 +17,14 @@
 #ifdef _MPI
 
 SUBROUTINE MPI_Startall(COUNT, ARRAY_OREQUESTS, ERROR)
-   USE vftr_mpi_startall_f2c, &
-      ONLY : vftr_MPI_Startall_F
+   USE vftr_mpi_startall_f2c_finterface, &
+      ONLY : vftr_MPI_Startall_f2c
    IMPLICIT NONE
    INTEGER COUNT
    INTEGER ARRAY_OREQUESTS(*)
    INTEGER ERROR
 
-   CALL vftr_MPI_Startall_F(COUNT, ARRAY_OREQUESTS, ERROR)
+   CALL vftr_MPI_Startall_f2c(COUNT, ARRAY_OREQUESTS, ERROR)
 
 END SUBROUTINE MPI_Startall
 

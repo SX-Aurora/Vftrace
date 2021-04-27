@@ -20,8 +20,8 @@ SUBROUTINE MPI_IGATHERV(SENDBUF, SENDCOUNT, SENDTYPE, &
                         RECVBUF, RECVCOUNTS, DISPLS, &
                         RECVTYPE, ROOT, COMM, &
                         REQUEST, ERROR)
-   USE vftr_mpi_igatherv_f2c, &
-      ONLY : vftr_MPI_Igatherv_F
+   USE vftr_mpi_igatherv_f2c_finterface, &
+      ONLY : vftr_MPI_Igatherv_f2c
    IMPLICIT NONE
    INTEGER SENDBUF
    INTEGER SENDCOUNT
@@ -35,10 +35,10 @@ SUBROUTINE MPI_IGATHERV(SENDBUF, SENDCOUNT, SENDTYPE, &
    INTEGER REQUEST
    INTEGER ERROR
 
-   CALL vftr_MPI_Igatherv_F(SENDBUF, SENDCOUNT, SENDTYPE, &
-                            RECVBUF, RECVCOUNTS, DISPLS, &
-                            RECVTYPE, ROOT, COMM, &
-                            REQUEST, ERROR)
+   CALL vftr_MPI_Igatherv_f2c(SENDBUF, SENDCOUNT, SENDTYPE, &
+                              RECVBUF, RECVCOUNTS, DISPLS, &
+                              RECVTYPE, ROOT, COMM, &
+                              REQUEST, ERROR)
 
 END SUBROUTINE MPI_IGATHERV
 

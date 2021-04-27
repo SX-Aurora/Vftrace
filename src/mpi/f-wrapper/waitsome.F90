@@ -18,8 +18,8 @@
 
 SUBROUTINE MPI_Waitsome(INCOUNT, ARRAY_OREQUESTS, OUTCOUNT, &
                         ARRAY_OINDICES, ARRAY_OSTATUSES, ERROR)
-   USE vftr_mpi_waitsome_f2c, &
-      ONLY : vftr_MPI_Waitsome_F
+   USE vftr_mpi_waitsome_f2c_finterface, &
+      ONLY : vftr_MPI_Waitsome_f2c
    USE mpi, ONLY: MPI_STATUS_SIZE
    IMPLICIT NONE
    INTEGER INCOUNT
@@ -29,8 +29,8 @@ SUBROUTINE MPI_Waitsome(INCOUNT, ARRAY_OREQUESTS, OUTCOUNT, &
    INTEGER ARRAY_OSTATUSES(MPI_STATUS_SIZE,*)
    INTEGER ERROR
 
-   CALL vftr_MPI_Waitsome_F(INCOUNT, ARRAY_OREQUESTS, OUTCOUNT, &
-                            ARRAY_OINDICES, ARRAY_OSTATUSES, ERROR)
+   CALL vftr_MPI_Waitsome_f2c(INCOUNT, ARRAY_OREQUESTS, OUTCOUNT, &
+                              ARRAY_OINDICES, ARRAY_OSTATUSES, ERROR)
 
 END SUBROUTINE MPI_Waitsome
 

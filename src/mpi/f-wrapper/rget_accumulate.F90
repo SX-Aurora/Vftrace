@@ -20,8 +20,8 @@ SUBROUTINE MPI_RGET_ACCUMULATE(ORIGIN_ADDR, ORIGIN_COUNT, ORIGIN_DATATYPE, &
                                RESULT_ADDR, RESULT_COUNT, RESULT_DATATYPE, &
                                TARGET_RANK, TARGET_DISP, TARGET_COUNT, &
                                TARGET_DATATYPE, OP, WIN, REQUEST, ERROR)
-   USE vftr_mpi_rget_accumulate_f2c, &
-      ONLY : vftr_MPI_Rget_accumulate_F
+   USE vftr_mpi_rget_accumulate_f2c_finterface, &
+      ONLY : vftr_MPI_Rget_accumulate_f2c
    USE mpi, ONLY : MPI_ADDRESS_KIND
    IMPLICIT NONE
    INTEGER ORIGIN_ADDR
@@ -39,10 +39,10 @@ SUBROUTINE MPI_RGET_ACCUMULATE(ORIGIN_ADDR, ORIGIN_COUNT, ORIGIN_DATATYPE, &
    INTEGER REQUEST
    INTEGER ERROR
 
-   CALL vftr_MPI_Rget_accumulate_F(ORIGIN_ADDR, ORIGIN_COUNT, ORIGIN_DATATYPE, &
-                                   RESULT_ADDR, RESULT_COUNT, RESULT_DATATYPE, &
-                                   TARGET_RANK, TARGET_DISP, TARGET_COUNT, &
-                                   TARGET_DATATYPE, OP, WIN, REQUEST, ERROR)
+   CALL vftr_MPI_Rget_accumulate_f2c(ORIGIN_ADDR, ORIGIN_COUNT, ORIGIN_DATATYPE, &
+                                     RESULT_ADDR, RESULT_COUNT, RESULT_DATATYPE, &
+                                     TARGET_RANK, TARGET_DISP, TARGET_COUNT, &
+                                     TARGET_DATATYPE, OP, WIN, REQUEST, ERROR)
 
 END SUBROUTINE MPI_RGET_ACCUMULATE
 

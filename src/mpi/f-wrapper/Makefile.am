@@ -115,6 +115,7 @@ libvftr_fmpiwrap_la_SOURCES += put.F90 \
 libvftr_fmpiwrap_la_SOURCES += pcontrol.F90
 
 libvftr_fmpiwrap_la_FCFLAGS = -finstrument-functions
+libvftr_fmpiwrap_la_FCFLAGS += -I${builddir}/../f2c/
 libvftr_fmpiwrap_la_FCFLAGS += -D_MPI
 
 clean-local:

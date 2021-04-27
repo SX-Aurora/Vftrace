@@ -17,13 +17,13 @@
 #ifdef _MPI
 
 SUBROUTINE MPI_REQUEST_FREE(REQUEST, ERROR)
-   USE vftr_mpi_request_free_f2c, &
-      ONLY : vftr_MPI_Request_free_F
+   USE vftr_mpi_request_free_f2c_finterface, &
+      ONLY : vftr_MPI_Request_free_f2c
    IMPLICIT NONE
    INTEGER REQUEST
    INTEGER ERROR
 
-   CALL vftr_MPI_Request_free_F(REQUEST, ERROR)
+   CALL vftr_MPI_Request_free_f2c(REQUEST, ERROR)
 
 END SUBROUTINE MPI_REQUEST_FREE
 

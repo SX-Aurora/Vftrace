@@ -17,14 +17,14 @@
 #ifdef _MPI
 
 SUBROUTINE MPI_PCONTROL(LEVEL)
-   USE vftr_mpi_pcontrol_f2c, &
-      ONLY : vftr_MPI_Pcontrol_F
+   USE vftr_mpi_pcontrol_f2c_finterface, &
+      ONLY : vftr_MPI_Pcontrol_f2c
    
    IMPLICIT NONE
 
    INTEGER, INTENT(IN) :: LEVEL
 
-   CALL vftr_MPI_Pcontrol_F(LEVEL)
+   CALL vftr_MPI_Pcontrol_f2c(LEVEL)
 
 END SUBROUTINE MPI_PCONTROL
 
