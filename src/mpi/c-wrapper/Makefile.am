@@ -113,7 +113,7 @@ libvftr_cmpiwrap_la_SOURCES += vftr_mpi_put_cwrap.c \
 ############
 libvftr_cmpiwrap_la_SOURCES += vftr_mpi_pcontrol_cwrap.c
 
-libvftr_cmpiwrap_la_CFLAGS = -I${srcdir}/../
+libvftr_cmpiwrap_la_CFLAGS = -I${srcdir}/../vftr_mpi/
 libvftr_cmpiwrap_la_CFLAGS += -I${srcdir}/../../
 libvftr_cmpiwrap_la_CFLAGS += -finstrument-functions
 if WITH_MPI

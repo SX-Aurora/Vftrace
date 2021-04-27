@@ -10,8 +10,7 @@ libvftr_mpi_la_SOURCES += vftr_requests.c \
 			  vftr_onesided_requests.c \
 			  vftr_clear_requests.c \
 			  vftr_sync_messages.c \
-                          vftr_mpi_buf_addr_const.c \
-                          vftr_mpi_buf_addr_const_F.F90
+                          vftr_mpi_buf_addr_const.c
 
 ##################
 # point to point #
