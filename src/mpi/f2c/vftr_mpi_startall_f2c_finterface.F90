@@ -14,7 +14,7 @@
 ! with this program; if not, write to the Free Software Foundation, Inc.,
 ! 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-MODULE vftr_mpi_startall_f2c
+MODULE vftr_mpi_startall_f2c_finterface
 #ifdef _MPI
 
    USE, INTRINSIC :: ISO_FORTRAN_ENV
@@ -24,18 +24,18 @@ MODULE vftr_mpi_startall_f2c
 
    PRIVATE
 
-   PUBLIC :: vftr_MPI_Startall_F
+   PUBLIC :: vftr_MPI_Startall_f2c
 
    INTERFACE
 
-      SUBROUTINE vftr_MPI_Startall_F(F_COUNT, F_ARRAY_OF_REQUESTS, &
-                                     F_ERROR) &
-         BIND(C, name="vftr_MPI_Startall_F")
+      SUBROUTINE vftr_MPI_Startall_f2c(F_COUNT, F_ARRAY_OF_REQUESTS, &
+                                       F_ERROR) &
+         BIND(C, name="vftr_MPI_Startall_f2c")
          IMPLICIT NONE
          INTEGER F_COUNT
          INTEGER F_ARRAY_OF_REQUESTS(*)
          INTEGER F_ERROR
-      END SUBROUTINE vftr_MPI_Startall_F
+      END SUBROUTINE vftr_MPI_Startall_f2c
 
    END INTERFACE
 
@@ -43,4 +43,4 @@ MODULE vftr_mpi_startall_f2c
 
 CONTAINS
 
-END MODULE vftr_mpi_startall_f2c
+END MODULE vftr_mpi_startall_f2c_finterface

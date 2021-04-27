@@ -21,13 +21,13 @@
 
 #include <stdlib.h>
 
-#include "vftr_mpi_buf_addr_const.h"
-#include "vftr_mpi_alltoallw.h"
+#include <vftr_mpi_buf_addr_const.h>
+#include <vftr_mpi_alltoallw.h>
 
-void vftr_MPI_Alltoallw_F(void *sendbuf, MPI_Fint *f_sendcounts, MPI_Fint *f_sdispls,
-                          MPI_Fint *f_sendtypes, void *recvbuf, MPI_Fint *f_recvcounts,
-                          MPI_Fint *f_rdispls, MPI_Fint *f_recvtypes,
-                          MPI_Fint *f_comm, MPI_Fint *f_error) {
+void vftr_MPI_Alltoallw_f2c(void *sendbuf, MPI_Fint *f_sendcounts, MPI_Fint *f_sdispls,
+                            MPI_Fint *f_sendtypes, void *recvbuf, MPI_Fint *f_recvcounts,
+                            MPI_Fint *f_rdispls, MPI_Fint *f_recvtypes,
+                            MPI_Fint *f_comm, MPI_Fint *f_error) {
 
    MPI_Comm c_comm = PMPI_Comm_f2c(*f_comm);
 

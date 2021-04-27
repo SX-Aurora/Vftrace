@@ -21,11 +21,11 @@
 
 #include <stdlib.h>
 
-#include "vftr_mpi_testany.h"
+#include <vftr_mpi_testany.h>
   
-void vftr_MPI_Testany_F(MPI_Fint *f_count, MPI_Fint *f_array_of_requests,
-                        MPI_Fint *f_index, MPI_Fint *f_flag, MPI_Fint *f_status,
-                        MPI_Fint *f_error) {
+void vftr_MPI_Testany_f2c(MPI_Fint *f_count, MPI_Fint *f_array_of_requests,
+                          MPI_Fint *f_index, MPI_Fint *f_flag, MPI_Fint *f_status,
+                          MPI_Fint *f_error) {
 
    int c_count = (int)(*f_count);
    MPI_Request *c_array_of_requests = (MPI_Request*) malloc(c_count*sizeof(MPI_Request));

@@ -19,12 +19,12 @@
 #ifdef _MPI
 #include <mpi.h>
 
-#include "vftr_mpi_buf_addr_const.h"
-#include "vftr_mpi_ibcast.h"
+#include <vftr_mpi_buf_addr_const.h>
+#include <vftr_mpi_ibcast.h>
 
-void vftr_MPI_Ibcast_F(void *buffer, MPI_Fint *count, MPI_Fint *f_datatype, 
-                       MPI_Fint *root, MPI_Fint *f_comm, MPI_Fint *f_request,
-                       MPI_Fint *f_error) {
+void vftr_MPI_Ibcast_f2c(void *buffer, MPI_Fint *count, MPI_Fint *f_datatype, 
+                         MPI_Fint *root, MPI_Fint *f_comm, MPI_Fint *f_request,
+                         MPI_Fint *f_error) {
 
    MPI_Datatype c_datatype = PMPI_Type_f2c(*f_datatype);
    MPI_Comm c_comm = PMPI_Comm_f2c(*f_comm);

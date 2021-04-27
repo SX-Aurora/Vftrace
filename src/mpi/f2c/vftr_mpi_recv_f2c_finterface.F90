@@ -14,7 +14,7 @@
 ! with this program; if not, write to the Free Software Foundation, Inc.,
 ! 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-MODULE vftr_mpi_recv_f2c
+MODULE vftr_mpi_recv_f2c_finterface
 #ifdef _MPI
 
    USE, INTRINSIC :: ISO_FORTRAN_ENV
@@ -24,12 +24,13 @@ MODULE vftr_mpi_recv_f2c
 
    PRIVATE
 
-   PUBLIC :: vftr_MPI_Recv_F
+   PUBLIC :: vftr_MPI_Recv_f2c
 
    INTERFACE 
 
-      SUBROUTINE vftr_MPI_Recv_F(BUF, COUNT, F_DATATYPE, SOURCE, TAG, F_COMM, F_STATUS, F_ERROR) &
-         BIND(C, name="vftr_MPI_Recv_F")
+      SUBROUTINE vftr_MPI_Recv_f2c(BUF, COUNT, F_DATATYPE, SOURCE, TAG, &
+                                   F_COMM, F_STATUS, F_ERROR) &
+         BIND(C, name="vftr_MPI_Recv_f2c")
          USE mpi, ONLY : MPI_STATUS_SIZE
          IMPLICIT NONE
          INTEGER BUF
@@ -40,7 +41,7 @@ MODULE vftr_mpi_recv_f2c
          INTEGER F_COMM
          INTEGER F_STATUS(MPI_STATUS_SIZE)
          INTEGER F_ERROR
-      END SUBROUTINE vftr_MPI_Recv_F
+      END SUBROUTINE vftr_MPI_Recv_f2c
 
    END INTERFACE
 
@@ -48,5 +49,4 @@ MODULE vftr_mpi_recv_f2c
 
 CONTAINS
 
-END MODULE vftr_mpi_recv_f2c
-
+END MODULE vftr_mpi_recv_f2c_finterface

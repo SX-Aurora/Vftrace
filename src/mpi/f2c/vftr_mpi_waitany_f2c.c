@@ -21,10 +21,10 @@
 
 #include <stdlib.h>
 
-#include "vftr_mpi_waitany.h"
+#include <vftr_mpi_waitany.h>
   
-void vftr_MPI_Waitany_F(MPI_Fint *f_count, MPI_Fint *f_array_of_requests,
-                        MPI_Fint *f_index, MPI_Fint *f_status, MPI_Fint *f_error) {
+void vftr_MPI_Waitany_f2c(MPI_Fint *f_count, MPI_Fint *f_array_of_requests,
+                          MPI_Fint *f_index, MPI_Fint *f_status, MPI_Fint *f_error) {
 
    int c_count = (int)(*f_count);
    MPI_Request *c_array_of_requests = (MPI_Request*) malloc(c_count*sizeof(MPI_Request));

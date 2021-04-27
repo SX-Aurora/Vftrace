@@ -14,7 +14,7 @@
 ! with this program; if not, write to the Free Software Foundation, Inc.,
 ! 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-MODULE vftr_finalize_f2c
+MODULE vftr_finalize_f2c_finterface
 #ifdef _MPI
 
    USE, INTRINSIC :: ISO_FORTRAN_ENV
@@ -24,16 +24,16 @@ MODULE vftr_finalize_f2c
 
    PRIVATE
 
-   PUBLIC :: vftr_finalize_F
+   PUBLIC :: vftr_finalize_f2c
 
    INTERFACE
 
-      SUBROUTINE vftr_finalize_F(do_normalize_stacks) &
+      SUBROUTINE vftr_finalize_f2c(do_normalize_stacks) &
          BIND(c, NAME="vftr_finalize")
          USE ISO_C_BINDING, ONLY : c_bool
          IMPLICIT NONE
          LOGICAL(KIND=c_bool) :: do_normalize_stacks
-      END SUBROUTINE vftr_finalize_F
+      END SUBROUTINE vftr_finalize_f2c
 
    END INTERFACE
 
@@ -41,4 +41,4 @@ MODULE vftr_finalize_f2c
 
 CONTAINS
 
-END MODULE vftr_finalize_f2c
+END MODULE vftr_finalize_f2c_finterface

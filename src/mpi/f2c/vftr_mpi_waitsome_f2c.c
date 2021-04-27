@@ -21,11 +21,11 @@
 
 #include <stdlib.h>
 
-#include "vftr_mpi_waitsome.h"
+#include <vftr_mpi_waitsome.h>
   
-void vftr_MPI_Waitsome_F(MPI_Fint *f_incount, MPI_Fint *f_array_of_requests,
-                         MPI_Fint *f_outcount, MPI_Fint *f_array_of_indices,
-                         MPI_Fint *f_array_of_statuses, MPI_Fint *f_error) {
+void vftr_MPI_Waitsome_f2c(MPI_Fint *f_incount, MPI_Fint *f_array_of_requests,
+                           MPI_Fint *f_outcount, MPI_Fint *f_array_of_indices,
+                           MPI_Fint *f_array_of_statuses, MPI_Fint *f_error) {
 
    int c_incount = (int)(*f_incount);
    MPI_Request *c_array_of_requests = (MPI_Request*)

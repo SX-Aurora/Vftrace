@@ -21,10 +21,10 @@
 
 #include <stdlib.h>
 
-#include "vftr_mpi_probe.h"
+#include <vftr_mpi_probe.h>
   
-void vftr_MPI_Probe_F(MPI_Fint *source, MPI_Fint *tag, MPI_Fint *f_comm,
-                      MPI_Fint *f_status, MPI_Fint *f_error) {
+void vftr_MPI_Probe_f2c(MPI_Fint *source, MPI_Fint *tag, MPI_Fint *f_comm,
+                        MPI_Fint *f_status, MPI_Fint *f_error) {
 
    MPI_Comm c_comm = PMPI_Comm_f2c(*f_comm);
    MPI_Status c_status;

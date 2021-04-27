@@ -14,7 +14,7 @@
 ! with this program; if not, write to the Free Software Foundation, Inc.,
 ! 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-MODULE vftr_mpi_get_accumulate_f2c
+MODULE vftr_mpi_get_accumulate_f2c_finterface
 #ifdef _MPI
 
    USE, INTRINSIC :: ISO_FORTRAN_ENV
@@ -24,15 +24,15 @@ MODULE vftr_mpi_get_accumulate_f2c
 
    PRIVATE
 
-   PUBLIC :: vftr_MPI_Get_accumulate_F
+   PUBLIC :: vftr_MPI_Get_accumulate_f2c
 
    INTERFACE
 
-      SUBROUTINE vftr_MPI_Get_accumulate_F(ORIGIN_ADDR, ORIGIN_COUNT, F_ORIGIN_DATATYPE, &
-                                           RESULT_ADDR, RESULT_COUNT, F_RESULT_DATATYPE, &
-                                           TARGET_RANK, TARGET_DISP, TARGET_COUNT, &
-                                           F_TARGET_DATATYPE, F_OP, F_WIN, F_ERROR) &
-         BIND(C, name="vftr_MPI_Get_accumulate_F")
+      SUBROUTINE vftr_MPI_Get_accumulate_f2c(ORIGIN_ADDR, ORIGIN_COUNT, F_ORIGIN_DATATYPE, &
+                                             RESULT_ADDR, RESULT_COUNT, F_RESULT_DATATYPE, &
+                                             TARGET_RANK, TARGET_DISP, TARGET_COUNT, &
+                                             F_TARGET_DATATYPE, F_OP, F_WIN, F_ERROR) &
+         BIND(C, name="vftr_MPI_Get_accumulate_f2c")
          USE mpi, ONLY : MPI_ADDRESS_KIND
          IMPLICIT NONE
          INTEGER ORIGIN_ADDR
@@ -48,7 +48,7 @@ MODULE vftr_mpi_get_accumulate_f2c
          INTEGER F_WIN
          INTEGER F_OP
          INTEGER F_ERROR
-      END SUBROUTINE vftr_MPI_Get_accumulate_F
+      END SUBROUTINE vftr_MPI_Get_accumulate_f2c
 
    END INTERFACE
 
@@ -56,4 +56,4 @@ MODULE vftr_mpi_get_accumulate_f2c
 
 CONTAINS
 
-END MODULE vftr_mpi_get_accumulate_f2c
+END MODULE vftr_mpi_get_accumulate_f2c_finterface

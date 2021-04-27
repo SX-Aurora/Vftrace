@@ -21,10 +21,10 @@
 
 #include <stdlib.h>
 
-#include "vftr_mpi_waitall.h"
+#include <vftr_mpi_waitall.h>
   
-void vftr_MPI_Waitall_F(MPI_Fint *f_count, MPI_Fint *f_array_of_requests,
-                        MPI_Fint *f_array_of_statuses, MPI_Fint *f_error) {
+void vftr_MPI_Waitall_f2c(MPI_Fint *f_count, MPI_Fint *f_array_of_requests,
+                          MPI_Fint *f_array_of_statuses, MPI_Fint *f_error) {
 
    int c_count = (int)(*f_count);
    MPI_Request *c_array_of_requests = (MPI_Request*)

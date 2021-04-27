@@ -19,12 +19,12 @@
 #ifdef _MPI
 #include <mpi.h>
 
-#include "vftr_mpi_buf_addr_const.h"
-#include "vftr_mpi_scatter.h"
+#include <vftr_mpi_buf_addr_const.h>
+#include <vftr_mpi_scatter.h>
 
-void vftr_MPI_Scatter_F(void *sendbuf, MPI_Fint *sendcount, MPI_Fint *f_sendtype,
-                        void *recvbuf, MPI_Fint *recvcount, MPI_Fint *f_recvtype,
-                        MPI_Fint *root, MPI_Fint *f_comm, MPI_Fint *f_error) {
+void vftr_MPI_Scatter_f2c(void *sendbuf, MPI_Fint *sendcount, MPI_Fint *f_sendtype,
+                          void *recvbuf, MPI_Fint *recvcount, MPI_Fint *f_recvtype,
+                          MPI_Fint *root, MPI_Fint *f_comm, MPI_Fint *f_error) {
 
    MPI_Datatype c_sendtype = PMPI_Type_f2c(*f_sendtype);
    MPI_Datatype c_recvtype = PMPI_Type_f2c(*f_recvtype);

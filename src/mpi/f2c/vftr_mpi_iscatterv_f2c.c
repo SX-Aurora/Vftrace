@@ -21,13 +21,13 @@
 
 #include <stdlib.h>
 
-#include "vftr_mpi_buf_addr_const.h"
-#include "vftr_mpi_iscatterv.h"
+#include <vftr_mpi_buf_addr_const.h>
+#include <vftr_mpi_iscatterv.h>
 
-void vftr_MPI_Iscatterv_F(void *sendbuf, MPI_Fint *f_sendcounts, MPI_Fint *f_displs,
-                          MPI_Fint *f_sendtype, void *recvbuf, MPI_Fint *recvcount,
-                          MPI_Fint *f_recvtype, MPI_Fint *root, MPI_Fint *f_comm,
-                          MPI_Fint *f_request, MPI_Fint *f_error) {
+void vftr_MPI_Iscatterv_f2c(void *sendbuf, MPI_Fint *f_sendcounts, MPI_Fint *f_displs,
+                            MPI_Fint *f_sendtype, void *recvbuf, MPI_Fint *recvcount,
+                            MPI_Fint *f_recvtype, MPI_Fint *root, MPI_Fint *f_comm,
+                            MPI_Fint *f_request, MPI_Fint *f_error) {
 
 
    MPI_Comm c_comm = PMPI_Comm_f2c(*f_comm);

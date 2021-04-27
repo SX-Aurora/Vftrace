@@ -14,7 +14,7 @@
 ! with this program; if not, write to the Free Software Foundation, Inc.,
 ! 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-MODULE vftr_mpi_pcontrol_f2c
+MODULE vftr_mpi_pcontrol_f2c_finterface
 #ifdef _MPI
 
    USE, INTRINSIC :: ISO_FORTRAN_ENV
@@ -24,16 +24,16 @@ MODULE vftr_mpi_pcontrol_f2c
 
    PRIVATE
 
-   PUBLIC :: vftr_MPI_Pcontrol_F
+   PUBLIC :: vftr_MPI_Pcontrol_f2c
 
    INTERFACE
 
-      SUBROUTINE vftr_MPI_Pcontrol_F(level) &
-         BIND(c, NAME="vftr_MPI_Pcontrol_F")
+      SUBROUTINE vftr_MPI_Pcontrol_f2c(level) &
+         BIND(c, NAME="vftr_MPI_Pcontrol_f2c")
          IMPORT c_int
          IMPLICIT NONE
          INTEGER(KIND=c_int), VALUE, INTENT(IN) :: level
-      END SUBROUTINE vftr_MPI_Pcontrol_F
+      END SUBROUTINE vftr_MPI_Pcontrol_f2c
 
    END INTERFACE
 
@@ -41,4 +41,4 @@ MODULE vftr_mpi_pcontrol_f2c
 
 CONTAINS
 
-END MODULE vftr_mpi_pcontrol_f2c
+END MODULE vftr_mpi_pcontrol_f2c_finterface

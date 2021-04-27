@@ -14,7 +14,7 @@
 ! with this program; if not, write to the Free Software Foundation, Inc.,
 ! 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-MODULE vftr_after_mpi_init_f2c
+MODULE vftr_after_mpi_init_f2c_finterface
 #ifdef _MPI
 
    USE, INTRINSIC :: ISO_FORTRAN_ENV
@@ -24,14 +24,14 @@ MODULE vftr_after_mpi_init_f2c
 
    PRIVATE
 
-   PUBLIC :: vftr_after_mpi_init_F
+   PUBLIC :: vftr_after_mpi_init_f2c
 
    INTERFACE
 
-      SUBROUTINE vftr_after_mpi_init_F() &
+      SUBROUTINE vftr_after_mpi_init_f2c() &
          BIND(c, NAME="vftr_after_mpi_init")
          IMPLICIT NONE
-      END SUBROUTINE vftr_after_mpi_init_F
+      END SUBROUTINE vftr_after_mpi_init_f2c
 
    END INTERFACE
 
@@ -39,4 +39,4 @@ MODULE vftr_after_mpi_init_f2c
 
 CONTAINS
 
-END MODULE vftr_after_mpi_init_f2c
+END MODULE vftr_after_mpi_init_f2c_finterface

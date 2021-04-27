@@ -14,7 +14,7 @@
 ! with this program; if not, write to the Free Software Foundation, Inc.,
 ! 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-MODULE vftr_mpi_ireduce_scatter_block_f2c
+MODULE vftr_mpi_ireduce_scatter_block_f2c_finterface
 #ifdef _MPI
 
    USE, INTRINSIC :: ISO_FORTRAN_ENV
@@ -24,14 +24,14 @@ MODULE vftr_mpi_ireduce_scatter_block_f2c
 
    PRIVATE
 
-   PUBLIC :: vftr_MPI_Ireduce_scatter_block_F
+   PUBLIC :: vftr_MPI_Ireduce_scatter_block_f2c
 
    INTERFACE 
 
-      SUBROUTINE vftr_MPI_Ireduce_scatter_block_F(SENDBUF, RECVBUF, RECVCOUNT, &
-                                                  F_DATATYPE, F_OP, F_COMM, &
-                                                  F_REQUEST, F_ERROR) &
-         BIND(C, name="vftr_MPI_Ireduce_scatter_block_F")
+      SUBROUTINE vftr_MPI_Ireduce_scatter_block_f2c(SENDBUF, RECVBUF, RECVCOUNT, &
+                                                    F_DATATYPE, F_OP, F_COMM, &
+                                                    F_REQUEST, F_ERROR) &
+         BIND(C, name="vftr_MPI_Ireduce_scatter_block_f2c")
          IMPLICIT NONE
          INTEGER SENDBUF
          INTEGER RECVBUF
@@ -41,7 +41,7 @@ MODULE vftr_mpi_ireduce_scatter_block_f2c
          INTEGER F_COMM
          INTEGER F_REQUEST
          INTEGER F_ERROR
-      END SUBROUTINE vftr_MPI_Ireduce_scatter_block_F
+      END SUBROUTINE vftr_MPI_Ireduce_scatter_block_f2c
 
    END INTERFACE
 
@@ -49,4 +49,4 @@ MODULE vftr_mpi_ireduce_scatter_block_f2c
 
 CONTAINS
 
-END MODULE vftr_mpi_ireduce_scatter_block_f2c
+END MODULE vftr_mpi_ireduce_scatter_block_f2c_finterface
