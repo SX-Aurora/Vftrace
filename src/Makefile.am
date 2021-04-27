@@ -3,7 +3,7 @@ noinst_LTLIBRARIES = libvftr_pause.la
 
 include_HEADERS = vftrace.h
 
-SUBDIRS = vftr_mpi
+SUBDIRS = mpi
 
 external_includes = -I$(top_srcdir)/external/tinyexpr/ \
 		    -I$(top_srcdir)/external/jsmn/
