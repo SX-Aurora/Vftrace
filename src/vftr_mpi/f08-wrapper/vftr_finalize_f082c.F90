@@ -28,12 +28,15 @@ MODULE vftr_finalize_f082c
 
    INTERFACE
 
-      SUBROUTINE vftr_finalize_F08() &
+      SUBROUTINE vftr_finalize_F08(do_normalize_stacks) &
          BIND(c, NAME="vftr_finalize")
+         USE ISO_C_BINDING, ONLY : c_bool
          IMPLICIT NONE
+         LOGICAL(KIND=c_bool) :: do_normalize_stacks
       END SUBROUTINE vftr_finalize_F08
 
    END INTERFACE
+
 #endif
 
 CONTAINS

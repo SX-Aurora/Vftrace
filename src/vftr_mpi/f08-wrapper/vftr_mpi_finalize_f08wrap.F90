@@ -17,6 +17,7 @@
 #ifdef _MPI
 
 SUBROUTINE MPI_Finalize_f08(ierror)
+   USE ISO_C_BINDING, ONLY : c_bool
    USE vftr_finalize_f082c, &
       ONLY : vftr_finalize_F08
    USE mpi_f08, ONLY : PMPI_Finalize
@@ -27,7 +28,7 @@ SUBROUTINE MPI_Finalize_f08(ierror)
 
    ! it is neccessary to finalize vftrace here, in order to properly communicat stack ids
    ! between processes. After MPI_Finalize communication between processes is prohibited
-   CALL vftr_finalize_F08()
+   CALL vftr_finalize_F08(LOGICAL(.TRUE., c_bool))
 
    IF (PRESENT(ierror)) THEN
       CALL PMPI_Finalize(ierror)

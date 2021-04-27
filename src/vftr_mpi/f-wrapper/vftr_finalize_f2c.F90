@@ -28,9 +28,11 @@ MODULE vftr_finalize_f2c
 
    INTERFACE
 
-      SUBROUTINE vftr_finalize_F() &
+      SUBROUTINE vftr_finalize_F(do_normalize_stacks) &
          BIND(c, NAME="vftr_finalize")
+         USE ISO_C_BINDING, ONLY : c_bool
          IMPLICIT NONE
+         LOGICAL(KIND=c_bool) :: do_normalize_stacks
       END SUBROUTINE vftr_finalize_F
 
    END INTERFACE
