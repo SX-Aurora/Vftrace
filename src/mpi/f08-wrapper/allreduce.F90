@@ -16,31 +16,29 @@
 
 #ifdef _MPI
 
-SUBROUTINE MPI_Fetch_and_op_f08(origin_addr, result_addr, datatype, &
-                                target_rank, target_disp, op, win, &
-                                error)
-   USE vftr_mpi_fetch_and_op_f2c, &
-      ONLY : vftr_MPI_Fetch_and_op_F
+SUBROUTINE MPI_Allreduce_f08(sendbuf, recvbuf, count, &
+                             datatype, op, comm, &
+                             error)
+   USE vftr_mpi_allreduce_f082c_f08interface, &
+      ONLY : vftr_MPI_Allreduce_f082c
    USE mpi_f08, ONLY : MPI_Datatype, &
-                       MPI_Op, &
-                       MPI_Win, &
-                       MPI_ADDRESS_KIND
+                       MPI_Comm, &
+                       MPI_Op
    IMPLICIT NONE
-   INTEGER, INTENT(IN) :: origin_addr
-   INTEGER, INTENT(IN) :: result_addr
+   INTEGER, INTENT(IN) :: sendbuf
+   INTEGER :: recvbuf
+   INTEGER, INTENT(IN) :: count
    TYPE(MPI_Datatype), INTENT(IN) :: datatype
-   INTEGER target_rank
-   INTEGER(KIND=MPI_ADDRESS_KIND) target_disp
    TYPE(MPI_Op), INTENT(IN) :: op
-   TYPE(MPI_Win), INTENT(IN) :: win
+   TYPE(MPI_Comm), INTENT(IN) :: comm
    INTEGER, OPTIONAL, INTENT(OUT) :: error
    INTEGER :: tmperror
 
-   CALL vftr_MPI_Fetch_and_op_F(origin_addr, result_addr, datatype%MPI_VAL, &
-                                target_rank, target_disp, op%MPI_VAL, win%MPI_VAL, &
-                                tmperror)
+   CALL vftr_MPI_Allreduce_f082c(sendbuf, recvbuf, count, &
+                             datatype%MPI_VAL, op%MPI_VAL, comm%MPI_VAL, &
+                             tmperror)
    IF (PRESENT(error)) error = tmperror
 
-END SUBROUTINE MPI_Fetch_and_op_f08
+END SUBROUTINE MPI_Allreduce_f08
 
 #endif

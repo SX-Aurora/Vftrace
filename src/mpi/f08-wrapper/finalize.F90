@@ -14,30 +14,28 @@
 ! with this program; if not, write to the Free Software Foundation, Inc.,
 ! 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-MODULE vftr_mpi_pcontrol_f082c
 #ifdef _MPI
 
-   USE, INTRINSIC :: ISO_FORTRAN_ENV
-   USE, INTRINSIC :: ISO_C_BINDING
+SUBROUTINE MPI_Finalize_f08(ierror)
+   USE ISO_C_BINDING, ONLY : c_bool
+   USE vftr_finalize_f082c_f08interface, &
+      ONLY : vftr_finalize_f082c08
+   USE mpi_f08, ONLY : PMPI_f082cinalize
 
    IMPLICIT NONE
 
-   PRIVATE
+   INTEGER, OPTIONAL, INTENT(OUT) :: ierror
 
-   PUBLIC :: vftr_MPI_Pcontrol_F08
+   ! it is neccessary to finalize vftrace here, in order to properly communicat stack ids
+   ! between processes. After MPI_f082cinalize communication between processes is prohibited
+   CALL vftr_finalize_f082c08(LOGICAL(.TRUE., c_bool))
 
-   INTERFACE
+   IF (PRESENT(ierror)) THEN
+      CALL PMPI_Finalize(ierror)
+   ELSE
+      CALL PMPI_Finalize()
+   END IF
 
-      SUBROUTINE vftr_MPI_Pcontrol_F08(level) &
-         BIND(c, NAME="vftr_MPI_Pcontrol_F08")
-         IMPORT c_int
-         IMPLICIT NONE
-         INTEGER(KIND=c_int), VALUE, INTENT(IN) :: level
-      END SUBROUTINE vftr_MPI_Pcontrol_F08
+END SUBROUTINE MPI_Finalize_f08
 
-   END INTERFACE
 #endif
-
-CONTAINS
-
-END MODULE vftr_mpi_pcontrol_f082c

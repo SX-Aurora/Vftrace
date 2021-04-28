@@ -19,8 +19,8 @@
 SUBROUTINE MPI_Reduce_scatter_block_f08(sendbuf, recvbuf, recvcount, &
                                         datatype, op, comm, &
                                         error)
-   USE vftr_mpi_reduce_scatter_block_f2c, &
-      ONLY : vftr_MPI_Reduce_scatter_block_F
+   USE vftr_mpi_reduce_scatter_block_f082c_f08interface, &
+      ONLY : vftr_MPI_Reduce_scatter_block_f082c
    USE mpi_f08, ONLY : MPI_Datatype, &
                        MPI_Comm, &
                        MPI_Op
@@ -34,7 +34,7 @@ SUBROUTINE MPI_Reduce_scatter_block_f08(sendbuf, recvbuf, recvcount, &
    INTEGER, OPTIONAL, INTENT(OUT) :: error
    INTEGER :: tmperror
 
-   CALL vftr_MPI_Reduce_scatter_block_F(sendbuf, recvbuf, recvcount, &
+   CALL vftr_MPI_Reduce_scatter_block_f082c(sendbuf, recvbuf, recvcount, &
                                         datatype%MPI_VAL, op%MPI_VAL, comm%MPI_VAL, &
                                         tmperror)
    IF (PRESENT(error)) error = tmperror

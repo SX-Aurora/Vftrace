@@ -16,16 +16,18 @@
 
 #ifdef _MPI
 
-SUBROUTINE MPI_Pcontrol_f08(level)
-   USE vftr_mpi_pcontrol_f082c, &
-      ONLY : vftr_MPI_Pcontrol_F08
-   
+SUBROUTINE MPI_Barrier_f08(comm, error)
+   USE vftr_mpi_barrier_f082c_f08interface, &
+      ONLY : vftr_MPI_Barrier_f082c
+   USE mpi_f08, ONLY : MPI_Comm
    IMPLICIT NONE
+   TYPE(MPI_Comm), INTENT(IN) :: comm
+   INTEGER, OPTIONAL, INTENT(OUT) :: error
+   INTEGER :: tmperror
 
-   INTEGER, INTENT(IN) :: level
+   CALL vftr_MPI_Barrier_f082c(comm%MPI_VAL, tmperror)
+   IF (PRESENT(error)) error = tmperror
 
-   CALL vftr_MPI_Pcontrol_F08(level)
-
-END SUBROUTINE MPI_Pcontrol_f08
+END SUBROUTINE MPI_Barrier_f08
 
 #endif

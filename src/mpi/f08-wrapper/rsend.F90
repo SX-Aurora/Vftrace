@@ -16,33 +16,26 @@
 
 #ifdef _MPI
 
-SUBROUTINE MPI_Scatterv_f08(sendbuf, sendcounts, displs, &
-                            sendtype, recvbuf, recvcount, &
-                            recvtype, root, comm, &
-                            error)
-   USE vftr_mpi_scatterv_f2c, &
-      ONLY : vftr_MPI_Scatterv_F
+SUBROUTINE MPI_Rsend_f08(buf, count, datatype, dest, tag, comm, error)
+   USE vftr_mpi_rsend_f082c_f08interface, &
+      ONLY : vftr_MPI_Rsend_f082c
    USE mpi_f08, ONLY : MPI_Datatype, &
                        MPI_Comm
    IMPLICIT NONE
-   INTEGER, INTENT(IN) :: sendbuf
-   INTEGER, INTENT(IN) :: sendcounts(*)
-   INTEGER, INTENT(IN) :: displs(*)
-   TYPE(MPI_Datatype), INTENT(IN) :: sendtype
-   INTEGER :: recvbuf
-   INTEGER, INTENT(IN) :: recvcount
-   TYPE(MPI_Datatype), INTENT(IN) :: recvtype
-   INTEGER, INTENT(IN) :: root
+
+   INTEGER, INTENT(IN) :: buf
+   INTEGER, INTENT(IN) :: count
+   TYPE(MPI_Datatype), INTENT(IN) :: datatype
+   INTEGER, INTENT(IN) :: dest
+   INTEGER, INTENT(IN) :: tag
    TYPE(MPI_Comm), INTENT(IN) :: comm
    INTEGER, OPTIONAL, INTENT(OUT) :: error
    INTEGER :: tmperror
 
-   CALL vftr_MPI_Scatterv_F(sendbuf, sendcounts, displs, &
-                            sendtype%MPI_VAL, recvbuf, recvcount, &
-                            recvtype%MPI_VAL, root, comm%MPI_VAL, &
-                            tmperror)
+   CALL vftr_MPI_Rsend_f082c(buf, count, datatype%MPI_VAL, dest, tag, comm%MPI_VAL, tmperror)
+
    IF (PRESENT(error)) error = tmperror
 
-END SUBROUTINE MPI_Scatterv_f08
+END SUBROUTINE MPI_Rsend_f08
 
 #endif

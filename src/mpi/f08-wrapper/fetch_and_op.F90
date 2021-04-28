@@ -16,31 +16,31 @@
 
 #ifdef _MPI
 
-SUBROUTINE MPI_Alltoallv_f08(sendbuf, sendcounts, sdispls, sendtype, &
-                             recvbuf, recvcounts, rdispls, recvtype, &
-                             comm, error)
-   USE vftr_mpi_alltoallv_f2c, &
-      ONLY : vftr_MPI_Alltoallv_F
+SUBROUTINE MPI_f082cetch_and_op_f08(origin_addr, result_addr, datatype, &
+                                target_rank, target_disp, op, win, &
+                                error)
+   USE vftr_mpi_fetch_and_op_f082c_f08interface, &
+      ONLY : vftr_MPI_f082cetch_and_op_f082c
    USE mpi_f08, ONLY : MPI_Datatype, &
-                       MPI_Comm
+                       MPI_Op, &
+                       MPI_Win, &
+                       MPI_ADDRESS_KIND
    IMPLICIT NONE
-   INTEGER, INTENT(IN) :: sendbuf
-   INTEGER, INTENT(IN) :: sendcounts(*)
-   INTEGER, INTENT(IN) :: sdispls(*)
-   TYPE(MPI_Datatype), INTENT(IN) :: sendtype
-   INTEGER :: recvbuf
-   INTEGER, INTENT(IN) :: recvcounts(*)
-   INTEGER, INTENT(IN) :: rdispls(*)
-   TYPE(MPI_Datatype), INTENT(IN) :: recvtype
-   TYPE(MPI_Comm), INTENT(IN) :: comm
+   INTEGER, INTENT(IN) :: origin_addr
+   INTEGER, INTENT(IN) :: result_addr
+   TYPE(MPI_Datatype), INTENT(IN) :: datatype
+   INTEGER target_rank
+   INTEGER(KIND=MPI_ADDRESS_KIND) target_disp
+   TYPE(MPI_Op), INTENT(IN) :: op
+   TYPE(MPI_Win), INTENT(IN) :: win
    INTEGER, OPTIONAL, INTENT(OUT) :: error
    INTEGER :: tmperror
 
-   CALL vftr_MPI_Alltoallv_F(sendbuf, sendcounts, sdispls, sendtype%MPI_VAL, &
-                             recvbuf, recvcounts, rdispls, recvtype%MPI_VAL, &
-                             comm%MPI_VAL, tmperror)
+   CALL vftr_MPI_f082cetch_and_op_f082c(origin_addr, result_addr, datatype%MPI_VAL, &
+                                target_rank, target_disp, op%MPI_VAL, win%MPI_VAL, &
+                                tmperror)
    IF (PRESENT(error)) error = tmperror
 
-END SUBROUTINE MPI_Alltoallv_f08
+END SUBROUTINE MPI_f082cetch_and_op_f08
 
 #endif

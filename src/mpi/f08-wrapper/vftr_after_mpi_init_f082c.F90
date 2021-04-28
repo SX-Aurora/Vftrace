@@ -24,14 +24,14 @@ MODULE vftr_after_mpi_init_f082c
 
    PRIVATE
 
-   PUBLIC :: vftr_after_mpi_init_F08
+   PUBLIC :: vftr_after_mpi_init_f082c08
 
    INTERFACE
 
-      SUBROUTINE vftr_after_mpi_init_F08() &
+      SUBROUTINE vftr_after_mpi_init_f082c08() &
          BIND(c, NAME="vftr_after_mpi_init")
          IMPLICIT NONE
-      END SUBROUTINE vftr_after_mpi_init_F08
+      END SUBROUTINE vftr_after_mpi_init_f082c08
 
    END INTERFACE
 #endif

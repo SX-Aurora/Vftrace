@@ -19,8 +19,8 @@
 SUBROUTINE MPI_Put_f08(origin_addr, origin_count, origin_datatype, &
                        target_rank, target_disp, target_count, &
                        target_datatype, win, error)
-   USE vftr_mpi_put_f2c, &
-      ONLY : vftr_MPI_Put_F
+   USE vftr_mpi_put_f082c_f08interface, &
+      ONLY : vftr_MPI_Put_f082c
    USE mpi_f08, ONLY: MPI_Datatype, &
                       MPI_Win, &
                       MPI_ADDRESS_KIND
@@ -36,7 +36,7 @@ SUBROUTINE MPI_Put_f08(origin_addr, origin_count, origin_datatype, &
    INTEGER, OPTIONAL, INTENT(OUT) :: error
    INTEGER :: tmperror
 
-   CALL vftr_MPI_Put_F(origin_addr, origin_count, origin_datatype%MPI_VAL, &
+   CALL vftr_MPI_Put_f082c(origin_addr, origin_count, origin_datatype%MPI_VAL, &
                        target_rank, target_disp, target_count, &
                        target_datatype%MPI_VAL, win%MPI_VAL, tmperror)
    IF (PRESENT(error)) error = tmperror

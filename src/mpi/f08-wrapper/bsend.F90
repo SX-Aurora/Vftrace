@@ -16,26 +16,26 @@
 
 #ifdef _MPI
 
-SUBROUTINE MPI_Finalize_f08(ierror)
-   USE ISO_C_BINDING, ONLY : c_bool
-   USE vftr_finalize_f082c, &
-      ONLY : vftr_finalize_F08
-   USE mpi_f08, ONLY : PMPI_Finalize
-
+SUBROUTINE MPI_Bsend_f08(buf, count, datatype, dest, tag, comm, error)
+   USE vftr_mpi_bsend_f082c_f08interface, &
+      ONLY : vftr_MPI_Bsend_f082c
+   USE mpi_f08, ONLY : MPI_Datatype, &
+                       MPI_Comm
    IMPLICIT NONE
 
-   INTEGER, OPTIONAL, INTENT(OUT) :: ierror
+   INTEGER, INTENT(IN) :: buf
+   INTEGER, INTENT(IN) :: count
+   TYPE(MPI_Datatype), INTENT(IN) :: datatype
+   INTEGER, INTENT(IN) :: dest
+   INTEGER, INTENT(IN) :: tag
+   TYPE(MPI_Comm), INTENT(IN) :: comm
+   INTEGER, OPTIONAL, INTENT(OUT) :: error
+   INTEGER :: tmperror
 
-   ! it is neccessary to finalize vftrace here, in order to properly communicat stack ids
-   ! between processes. After MPI_Finalize communication between processes is prohibited
-   CALL vftr_finalize_F08(LOGICAL(.TRUE., c_bool))
+   CALL vftr_MPI_Bsend_f082c(buf, count, datatype%MPI_VAL, dest, tag, comm%MPI_VAL, tmperror)
 
-   IF (PRESENT(ierror)) THEN
-      CALL PMPI_Finalize(ierror)
-   ELSE
-      CALL PMPI_Finalize()
-   END IF
+   IF (PRESENT(error)) error = tmperror
 
-END SUBROUTINE MPI_Finalize_f08
+END SUBROUTINE MPI_Bsend_f08
 
 #endif

@@ -16,26 +16,28 @@
 
 #ifdef _MPI
 
-SUBROUTINE MPI_Ssend_f08(buf, count, datatype, dest, tag, comm, error)
-   USE vftr_mpi_ssend_f2c, &
-      ONLY : vftr_MPI_Ssend_F
+SUBROUTINE MPI_Scan_f08(sendbuf, recvbuf, count, &
+                        datatype, op, comm, error)
+   USE vftr_mpi_scan_f082c_f08interface, &
+      ONLY : vftr_MPI_Scan_f082c
    USE mpi_f08, ONLY : MPI_Datatype, &
+                       MPI_Op, &
                        MPI_Comm
    IMPLICIT NONE
-
-   INTEGER, INTENT(IN) :: buf
+   INTEGER, INTENT(IN) :: sendbuf
+   INTEGER :: recvbuf
    INTEGER, INTENT(IN) :: count
    TYPE(MPI_Datatype), INTENT(IN) :: datatype
-   INTEGER, INTENT(IN) :: dest
-   INTEGER, INTENT(IN) :: tag
+   TYPE(MPI_Op), INTENT(IN) :: op
    TYPE(MPI_Comm), INTENT(IN) :: comm
    INTEGER, OPTIONAL, INTENT(OUT) :: error
    INTEGER :: tmperror
 
-   CALL vftr_MPI_Ssend_F(buf, count, datatype%MPI_VAL, dest, tag, comm%MPI_VAL, tmperror)
-
+   CALL vftr_MPI_Scan_f082c(sendbuf, recvbuf, count, &
+                        datatype%MPI_VAL, op%MPI_VAL, &
+                        comm%MPI_VAL, tmperror)
    IF (PRESENT(error)) error = tmperror
 
-END SUBROUTINE MPI_Ssend_f08
+END SUBROUTINE MPI_Scan_f08
 
 #endif

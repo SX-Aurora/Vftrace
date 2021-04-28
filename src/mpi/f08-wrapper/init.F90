@@ -16,30 +16,22 @@
 
 #ifdef _MPI
 
-SUBROUTINE MPI_Scatter_f08(sendbuf, sendcount, sendtype, &
-                           recvbuf, recvcount, recvtype, &
-                           root, comm, error)
-   USE vftr_mpi_scatter_f2c, &
-      ONLY : vftr_MPI_Scatter_F
-   USE mpi_f08, ONLY : MPI_Datatype, &
-                       MPI_Comm
+SUBROUTINE MPI_Init_f08(error)
+   USE vftr_after_mpi_init_f082c_f08interface, &
+      ONLY : vftr_after_mpi_init_f082c08
+   USE mpi_f08, ONLY : PMPI_Init
+
    IMPLICIT NONE
-   INTEGER, INTENT(IN) :: sendbuf
-   INTEGER, INTENT(IN) :: sendcount
-   TYPE(MPI_Datatype), INTENT(IN) :: sendtype
-   INTEGER :: recvbuf
-   INTEGER, INTENT(IN) :: recvcount
-   TYPE(MPI_Datatype), INTENT(IN) :: recvtype
-   INTEGER, INTENT(IN) :: root
-   TYPE(MPI_Comm), INTENT(IN) :: comm
+
    INTEGER, OPTIONAL, INTENT(OUT) :: error
    INTEGER :: tmperror
 
-   CALL vftr_MPI_Scatter_F(sendbuf, sendcount, sendtype%MPI_VAL, &
-                           recvbuf, recvcount, recvtype%MPI_VAL, &
-                           root, comm%MPI_VAL, tmperror)
+   CALL PMPI_Init(tmperror)
+
+   CALL vftr_after_mpi_init_f082c08()
+
    IF (PRESENT(error)) error = tmperror
 
-END SUBROUTINE MPI_Scatter_f08
+END SUBROUTINE MPI_Init_f08
 
 #endif

@@ -4,16 +4,16 @@ libvftr_f08mpiwrap_la_SOURCES =
 
 libvftr_f08mpiwrap_la_SOURCES += vftr_after_mpi_init_f082c.F90 \
 				 vftr_finalize_f082c.F90
-libvftr_f08mpiwrap_la_SOURCES += vftr_mpi_init_f08wrap.F90 \
-				 vftr_mpi_finalize_f08wrap.F90
+libvftr_f08mpiwrap_la_SOURCES += init.F90 \
+				 finalize.F90
 
 ##################
 # point to point #
 ##################
-libvftr_f08mpiwrap_la_SOURCES += vftr_mpi_send_f08wrap.F90 \
-				 vftr_mpi_bsend_f08wrap.F90 \
-				 vftr_mpi_ssend_f08wrap.F90 \
-				 vftr_mpi_rsend_f08wrap.F90
+libvftr_f08mpiwrap_la_SOURCES += send.F90 \
+				 bsend.F90 \
+				 ssend.F90 \
+				 rsend.F90
 
 #########
 # tests #
@@ -28,43 +28,42 @@ libvftr_f08mpiwrap_la_SOURCES +=
 ###############
 # collectives #
 ###############
-libvftr_f08mpiwrap_la_SOURCES += vftr_mpi_barrier_f08wrap.F90 \
-				 vftr_mpi_bcast_f08wrap.F90 \
-				 vftr_mpi_gather_f08wrap.F90 \
-				 vftr_mpi_gatherv_f08wrap.F90 \
-				 vftr_mpi_scatter_f08wrap.F90 \
-				 vftr_mpi_scatterv_f08wrap.F90 \
-				 vftr_mpi_allgather_f08wrap.F90 \
-				 vftr_mpi_allgatherv_f08wrap.F90 \
-				 vftr_mpi_alltoall_f08wrap.F90 \
-				 vftr_mpi_alltoallv_f08wrap.F90 \
-				 vftr_mpi_alltoallw_f08wrap.F90
+libvftr_f08mpiwrap_la_SOURCES += barrier.F90 \
+				 bcast.F90 \
+				 gather.F90 \
+				 gatherv.F90 \
+				 scatter.F90 \
+				 scatterv.F90 \
+				 allgather.F90 \
+				 allgatherv.F90 \
+				 alltoall.F90 \
+				 alltoallv.F90 \
+				 alltoallw.F90
 
 ####################
 # global reduction #
 ####################
-libvftr_f08mpiwrap_la_SOURCES += vftr_mpi_reduce_f08wrap.F90 \
-				 vftr_mpi_allreduce_f08wrap.F90 \
-				 vftr_mpi_reduce_scatter_block_f08wrap.F90 \
-				 vftr_mpi_reduce_scatter_f08wrap.F90 \
-				 vftr_mpi_scan_f08wrap.F90 \
-				 vftr_mpi_exscan_f08wrap.F90
+libvftr_f08mpiwrap_la_SOURCES += reduce.F90 \
+				 allreduce.F90 \
+				 reduce_scatter_block.F90 \
+				 reduce_scatter.F90 \
+				 scan.F90 \
+				 exscan.F90
 
 #############
 # one sided #
 #############
-libvftr_f08mpiwrap_la_SOURCES += vftr_mpi_put_f08wrap.F90 \
-				 vftr_mpi_get_f08wrap.F90 \
-				 vftr_mpi_accumulate_f08wrap.F90 \
-				 vftr_mpi_get_accumulate_f08wrap.F90 \
-				 vftr_mpi_fetch_and_op_f08wrap.F90 \
-				 vftr_mpi_compare_and_swap_f08wrap.F90
+libvftr_f08mpiwrap_la_SOURCES += put.F90 \
+				 get.F90 \
+				 accumulate.F90 \
+				 get_accumulate.F90 \
+				 fetch_and_op.F90 \
+				 compare_and_swap.F90
 
 ############
 # pcontrol #
 ############
-libvftr_f08mpiwrap_la_SOURCES += vftr_mpi_pcontrol_f082c.F90
-libvftr_f08mpiwrap_la_SOURCES += vftr_mpi_pcontrol_f08wrap.F90
+libvftr_f08mpiwrap_la_SOURCES += pcontrol.F90
 
 libvftr_f08mpiwrap_la_FCFLAGS = -finstrument-functions
 libvftr_f08mpiwrap_la_FCFLAGS += -I${builddir}/../f-wrapper/

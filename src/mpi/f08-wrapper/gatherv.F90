@@ -16,18 +16,33 @@
 
 #ifdef _MPI
 
-SUBROUTINE MPI_Barrier_f08(comm, error)
-   USE vftr_mpi_barrier_f2c, &
-      ONLY : vftr_MPI_Barrier_F
-   USE mpi_f08, ONLY : MPI_Comm
+SUBROUTINE MPI_Gatherv_f08(sendbuf, sendcount, sendtype, &
+                           recvbuf, recvcounts, displs, &
+                           recvtype, root, comm, &
+                           error)
+   USE vftr_mpi_gatherv_f082c_f08interface, &
+      ONLY : vftr_MPI_Gatherv_f082c
+   USE mpi_f08, ONLY : MPI_Datatype, &
+                       MPI_Comm
    IMPLICIT NONE
+   INTEGER, INTENT(IN) :: sendbuf
+   INTEGER, INTENT(IN) :: sendcount
+   TYPE(MPI_Datatype), INTENT(IN) :: sendtype
+   INTEGER :: recvbuf
+   INTEGER, INTENT(IN) :: recvcounts(*)
+   INTEGER, INTENT(IN) :: displs(*)
+   TYPE(MPI_Datatype), INTENT(IN) :: recvtype
+   INTEGER, INTENT(IN) :: root
    TYPE(MPI_Comm), INTENT(IN) :: comm
    INTEGER, OPTIONAL, INTENT(OUT) :: error
    INTEGER :: tmperror
 
-   CALL vftr_MPI_Barrier_F(comm%MPI_VAL, tmperror)
+   CALL vftr_MPI_Gatherv_f082c(sendbuf, sendcount, sendtype%MPI_VAL, &
+                           recvbuf, recvcounts, displs, &
+                           recvtype%MPI_VAL, root, comm%MPI_VAL, &
+                           tmperror)
    IF (PRESENT(error)) error = tmperror
 
-END SUBROUTINE MPI_Barrier_f08
+END SUBROUTINE MPI_Gatherv_f08
 
 #endif

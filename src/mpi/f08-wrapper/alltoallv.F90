@@ -16,55 +16,31 @@
 
 #ifdef _MPI
 
-SUBROUTINE MPI_Alltoallw_f08(sendbuf, sendcounts, sdispls, sendtypes, &
-                             recvbuf, recvcounts, rdispls, recvtypes, &
+SUBROUTINE MPI_Alltoallv_f08(sendbuf, sendcounts, sdispls, sendtype, &
+                             recvbuf, recvcounts, rdispls, recvtype, &
                              comm, error)
-   USE vftr_mpi_alltoallw_f2c, &
-      ONLY : vftr_MPI_Alltoallw_F
+   USE vftr_mpi_alltoallv_f082c_f08interface, &
+      ONLY : vftr_MPI_Alltoallv_f082c
    USE mpi_f08, ONLY : MPI_Datatype, &
                        MPI_Comm
    IMPLICIT NONE
    INTEGER, INTENT(IN) :: sendbuf
    INTEGER, INTENT(IN) :: sendcounts(*)
    INTEGER, INTENT(IN) :: sdispls(*)
-   TYPE(MPI_Datatype), INTENT(IN) :: sendtypes(*)
+   TYPE(MPI_Datatype), INTENT(IN) :: sendtype
    INTEGER :: recvbuf
    INTEGER, INTENT(IN) :: recvcounts(*)
    INTEGER, INTENT(IN) :: rdispls(*)
-   TYPE(MPI_Datatype), INTENT(IN) :: recvtypes(*)
+   TYPE(MPI_Datatype), INTENT(IN) :: recvtype
    TYPE(MPI_Comm), INTENT(IN) :: comm
    INTEGER, OPTIONAL, INTENT(OUT) :: error
    INTEGER :: tmperror
 
-   INTEGER, DIMENSION(:), ALLOCATABLE :: tmpsendtypes
-   INTEGER, DIMENSION(:), ALLOCATABLE :: tmprecvtypes
-   INTEGER :: comm_size, i
-   LOGICAL :: isintercom
-
-   CALL PMPI_Comm_test_inter(comm, isintercom, tmperror)
-   IF (isintercom) THEN
-      CALL PMPI_Comm_remote_size(comm, comm_size, tmperror)
-   ELSE
-      CALL PMPI_Comm_size(comm, comm_size, tmperror)
-   END IF
-
-   ALLOCATE(tmpsendtypes(comm_size))
-   ALLOCATE(tmprecvtypes(comm_size))
-   DO i = 1, comm_size
-      tmpsendtypes(i) = sendtypes(i)%MPI_VAL
-   END DO
-   DO i = 1, comm_size
-      tmprecvtypes(i) = recvtypes(i)%MPI_VAL
-   END DO
-
-   CALL vftr_MPI_Alltoallw_F(sendbuf, sendcounts, sdispls, tmpsendtypes, &
-                             recvbuf, recvcounts, rdispls, tmprecvtypes, &
+   CALL vftr_MPI_Alltoallv_f082c(sendbuf, sendcounts, sdispls, sendtype%MPI_VAL, &
+                             recvbuf, recvcounts, rdispls, recvtype%MPI_VAL, &
                              comm%MPI_VAL, tmperror)
    IF (PRESENT(error)) error = tmperror
 
-   DEALLOCATE(tmpsendtypes)
-   DEALLOCATE(tmprecvtypes)
-
-END SUBROUTINE MPI_Alltoallw_f08
+END SUBROUTINE MPI_Alltoallv_f08
 
 #endif

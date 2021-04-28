@@ -16,30 +16,26 @@
 
 #ifdef _MPI
 
-SUBROUTINE MPI_Allgatherv_f08(sendbuf, sendcount, sendtype, &
-                              recvbuf, recvcounts, displs, &
-                              recvtype, comm, error)
-   USE vftr_mpi_allgatherv_f2c, &
-      ONLY : vftr_MPI_Allgatherv_F
+SUBROUTINE MPI_Ssend_f08(buf, count, datatype, dest, tag, comm, error)
+   USE vftr_mpi_ssend_f082c_f08interface, &
+      ONLY : vftr_MPI_Ssend_f082c
    USE mpi_f08, ONLY : MPI_Datatype, &
                        MPI_Comm
    IMPLICIT NONE
-   INTEGER, INTENT(IN) :: sendbuf
-   INTEGER, INTENT(IN) :: sendcount
-   TYPE(MPI_Datatype), INTENT(IN) :: sendtype
-   INTEGER :: recvbuf
-   INTEGER, INTENT(IN) :: recvcounts(*)
-   INTEGER, INTENT(IN) :: displs(*)
-   TYPE(MPI_Datatype), INTENT(IN) :: recvtype
+
+   INTEGER, INTENT(IN) :: buf
+   INTEGER, INTENT(IN) :: count
+   TYPE(MPI_Datatype), INTENT(IN) :: datatype
+   INTEGER, INTENT(IN) :: dest
+   INTEGER, INTENT(IN) :: tag
    TYPE(MPI_Comm), INTENT(IN) :: comm
    INTEGER, OPTIONAL, INTENT(OUT) :: error
    INTEGER :: tmperror
 
-   CALL vftr_MPI_Allgatherv_F(sendbuf, sendcount, sendtype%MPI_VAL, &
-                              recvbuf, recvcounts, displs, &
-                              recvtype%MPI_VAL, comm%MPI_VAL, tmperror)
+   CALL vftr_MPI_Ssend_f082c(buf, count, datatype%MPI_VAL, dest, tag, comm%MPI_VAL, tmperror)
+
    IF (PRESENT(error)) error = tmperror
 
-END SUBROUTINE MPI_Allgatherv_f08
+END SUBROUTINE MPI_Ssend_f08
 
 #endif

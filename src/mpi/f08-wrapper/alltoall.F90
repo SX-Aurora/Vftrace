@@ -19,8 +19,8 @@
 SUBROUTINE MPI_Alltoall_f08(sendbuf, sendcount, sendtype, &
                             recvbuf, recvcount, recvtype, &
                             comm, error)
-   USE vftr_mpi_alltoall_f2c, &
-      ONLY : vftr_MPI_Alltoall_F
+   USE vftr_mpi_alltoall_f082c_f08interface, &
+      ONLY : vftr_MPI_Alltoall_f082c
    USE mpi_f08, ONLY : MPI_Datatype, &
                        MPI_Comm
    IMPLICIT NONE
@@ -34,7 +34,7 @@ SUBROUTINE MPI_Alltoall_f08(sendbuf, sendcount, sendtype, &
    INTEGER, OPTIONAL, INTENT(OUT) :: error
    INTEGER :: tmperror
 
-   CALL vftr_MPI_Alltoall_F(sendbuf, sendcount, sendtype%MPI_VAL, &
+   CALL vftr_MPI_Alltoall_f082c(sendbuf, sendcount, sendtype%MPI_VAL, &
                             recvbuf, recvcount, recvtype%MPI_VAL, &
                             comm%MPI_VAL, tmperror)
    IF (PRESENT(error)) error = tmperror

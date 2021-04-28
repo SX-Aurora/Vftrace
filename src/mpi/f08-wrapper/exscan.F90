@@ -16,29 +16,28 @@
 
 #ifdef _MPI
 
-SUBROUTINE MPI_Allgather_f08(sendbuf, sendcount, sendtype, &
-                             recvbuf, recvcount, recvtype, &
-                             comm, error)
-   USE vftr_mpi_allgather_f2c, &
-      ONLY : vftr_MPI_Allgather_F
+SUBROUTINE MPI_Exscan_f08(sendbuf, recvbuf, count, &
+                          datatype, op, comm, error)
+   USE vftr_mpi_exscan_f082c_f08interface, &
+      ONLY : vftr_MPI_Exscan_f082c
    USE mpi_f08, ONLY : MPI_Datatype, &
+                       MPI_Op, &
                        MPI_Comm
    IMPLICIT NONE
    INTEGER, INTENT(IN) :: sendbuf
-   INTEGER, INTENT(IN) :: sendcount
-   TYPE(MPI_Datatype), INTENT(IN) :: sendtype
    INTEGER :: recvbuf
-   INTEGER, INTENT(IN) :: recvcount
-   TYPE(MPI_Datatype), INTENT(IN) :: recvtype
+   INTEGER, INTENT(IN) :: count
+   TYPE(MPI_Datatype), INTENT(IN) :: datatype
+   TYPE(MPI_Op), INTENT(IN) :: op
    TYPE(MPI_Comm), INTENT(IN) :: comm
    INTEGER, OPTIONAL, INTENT(OUT) :: error
    INTEGER :: tmperror
 
-   CALL vftr_MPI_Allgather_F(sendbuf, sendcount, sendtype%MPI_VAL, &
-                             recvbuf, recvcount, recvtype%MPI_VAL, &
-                             comm%MPI_VAL, tmperror)
+   CALL vftr_MPI_Exscan_f082c(sendbuf, recvbuf, count, &
+                          datatype%MPI_VAL, op%MPI_VAL, &
+                          comm%MPI_VAL, tmperror)
    IF (PRESENT(error)) error = tmperror
 
-END SUBROUTINE MPI_Allgather_f08
+END SUBROUTINE MPI_Exscan_f08
 
 #endif
