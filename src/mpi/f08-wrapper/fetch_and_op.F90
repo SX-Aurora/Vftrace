@@ -16,11 +16,11 @@
 
 #ifdef _MPI
 
-SUBROUTINE MPI_f082cetch_and_op_f08(origin_addr, result_addr, datatype, &
+SUBROUTINE MPI_Fetch_and_op_f08(origin_addr, result_addr, datatype, &
                                 target_rank, target_disp, op, win, &
                                 error)
    USE vftr_mpi_fetch_and_op_f082c_f08interface, &
-      ONLY : vftr_MPI_f082cetch_and_op_f082c
+      ONLY : vftr_MPI_Fetch_and_op_f082c
    USE mpi_f08, ONLY : MPI_Datatype, &
                        MPI_Op, &
                        MPI_Win, &
@@ -36,11 +36,11 @@ SUBROUTINE MPI_f082cetch_and_op_f08(origin_addr, result_addr, datatype, &
    INTEGER, OPTIONAL, INTENT(OUT) :: error
    INTEGER :: tmperror
 
-   CALL vftr_MPI_f082cetch_and_op_f082c(origin_addr, result_addr, datatype%MPI_VAL, &
-                                target_rank, target_disp, op%MPI_VAL, win%MPI_VAL, &
-                                tmperror)
+   CALL vftr_MPI_Fetch_and_op_f082c(origin_addr, result_addr, datatype%MPI_VAL, &
+                                    target_rank, target_disp, op%MPI_VAL, win%MPI_VAL, &
+                                    tmperror)
    IF (PRESENT(error)) error = tmperror
 
-END SUBROUTINE MPI_f082cetch_and_op_f08
+END SUBROUTINE MPI_Fetch_and_op_f08
 
 #endif

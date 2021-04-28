@@ -36,8 +36,8 @@ SUBROUTINE MPI_Compare_and_swap_f08(origin_addr, compare_addr, result_addr, &
    INTEGER :: tmperror
 
    CALL vftr_MPI_Compare_and_swap_f082c(origin_addr, compare_addr, result_addr, &
-                                    datatype%MPI_VAL, target_rank, target_disp, &
-                                    win%MPI_VAL, tmperror)
+                                        datatype%MPI_VAL, target_rank, target_disp, &
+                                        win%MPI_VAL, tmperror)
    IF (PRESENT(error)) error = tmperror
 
 END SUBROUTINE MPI_Compare_and_swap_f08

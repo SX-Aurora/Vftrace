@@ -37,8 +37,8 @@ SUBROUTINE MPI_Alltoallv_f08(sendbuf, sendcounts, sdispls, sendtype, &
    INTEGER :: tmperror
 
    CALL vftr_MPI_Alltoallv_f082c(sendbuf, sendcounts, sdispls, sendtype%MPI_VAL, &
-                             recvbuf, recvcounts, rdispls, recvtype%MPI_VAL, &
-                             comm%MPI_VAL, tmperror)
+                                 recvbuf, recvcounts, rdispls, recvtype%MPI_VAL, &
+                                 comm%MPI_VAL, tmperror)
    IF (PRESENT(error)) error = tmperror
 
 END SUBROUTINE MPI_Alltoallv_f08

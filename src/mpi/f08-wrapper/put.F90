@@ -37,8 +37,8 @@ SUBROUTINE MPI_Put_f08(origin_addr, origin_count, origin_datatype, &
    INTEGER :: tmperror
 
    CALL vftr_MPI_Put_f082c(origin_addr, origin_count, origin_datatype%MPI_VAL, &
-                       target_rank, target_disp, target_count, &
-                       target_datatype%MPI_VAL, win%MPI_VAL, tmperror)
+                           target_rank, target_disp, target_count, &
+                           target_datatype%MPI_VAL, win%MPI_VAL, tmperror)
    IF (PRESENT(error)) error = tmperror
 
 END SUBROUTINE MPI_Put_f08

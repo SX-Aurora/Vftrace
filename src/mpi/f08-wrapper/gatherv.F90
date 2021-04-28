@@ -38,9 +38,9 @@ SUBROUTINE MPI_Gatherv_f08(sendbuf, sendcount, sendtype, &
    INTEGER :: tmperror
 
    CALL vftr_MPI_Gatherv_f082c(sendbuf, sendcount, sendtype%MPI_VAL, &
-                           recvbuf, recvcounts, displs, &
-                           recvtype%MPI_VAL, root, comm%MPI_VAL, &
-                           tmperror)
+                               recvbuf, recvcounts, displs, &
+                               recvtype%MPI_VAL, root, comm%MPI_VAL, &
+                               tmperror)
    IF (PRESENT(error)) error = tmperror
 
 END SUBROUTINE MPI_Gatherv_f08

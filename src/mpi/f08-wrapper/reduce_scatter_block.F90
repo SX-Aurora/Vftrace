@@ -35,8 +35,8 @@ SUBROUTINE MPI_Reduce_scatter_block_f08(sendbuf, recvbuf, recvcount, &
    INTEGER :: tmperror
 
    CALL vftr_MPI_Reduce_scatter_block_f082c(sendbuf, recvbuf, recvcount, &
-                                        datatype%MPI_VAL, op%MPI_VAL, comm%MPI_VAL, &
-                                        tmperror)
+                                            datatype%MPI_VAL, op%MPI_VAL, comm%MPI_VAL, &
+                                            tmperror)
    IF (PRESENT(error)) error = tmperror
 
 END SUBROUTINE MPI_Reduce_scatter_block_f08

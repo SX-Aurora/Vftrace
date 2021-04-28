@@ -32,7 +32,7 @@ SUBROUTINE MPI_Bcast_f08(buffer, count, datatype, &
    INTEGER :: tmperror
 
    CALL vftr_MPI_Bcast_f082c(buffer, count, datatype%MPI_VAL, &
-                         root, comm%MPI_VAL, tmperror)
+                             root, comm%MPI_VAL, tmperror)
    IF (PRESENT(error)) error = tmperror
 
 END SUBROUTINE MPI_Bcast_f08

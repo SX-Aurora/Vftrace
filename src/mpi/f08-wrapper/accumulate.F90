@@ -30,7 +30,7 @@ SUBROUTINE MPI_Accumulate_f08(origin_addr, origin_count, origin_datatype, &
    INTEGER, INTENT(IN) :: origin_count
    TYPE(MPI_Datatype), INTENT(IN) :: origin_datatype
    INTEGER, INTENT(IN) :: target_rank
-   INTEGER(KIND=MPI_ADDRESS_KIND) target_disp
+   INTEGER(KIND=MPI_ADDRESS_KIND), INTENT(IN) :: target_disp
    INTEGER, INTENT(IN) :: target_count
    TYPE(MPI_Datatype), INTENT(IN) :: target_datatype
    TYPE(MPI_Op), INTENT(IN) :: op
@@ -39,8 +39,9 @@ SUBROUTINE MPI_Accumulate_f08(origin_addr, origin_count, origin_datatype, &
    INTEGER :: tmperror
 
    CALL vftr_MPI_Accumulate_f082c(origin_addr, origin_count, origin_datatype%MPI_VAL, &
-                              target_rank, target_disp, target_count, &
-                              target_datatype%MPI_VAL, op%MPI_VAL, win%MPI_VAL, tmperror)
+                                  target_rank, target_disp, target_count, &
+                                  target_datatype%MPI_VAL, op%MPI_VAL, win%MPI_VAL, &
+                                  tmperror)
    IF (PRESENT(error)) error = tmperror
 
 END SUBROUTINE MPI_Accumulate_f08

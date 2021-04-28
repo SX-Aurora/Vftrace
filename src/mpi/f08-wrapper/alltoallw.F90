@@ -58,8 +58,8 @@ SUBROUTINE MPI_Alltoallw_f08(sendbuf, sendcounts, sdispls, sendtypes, &
    END DO
 
    CALL vftr_MPI_Alltoallw_f082c(sendbuf, sendcounts, sdispls, tmpsendtypes, &
-                             recvbuf, recvcounts, rdispls, tmprecvtypes, &
-                             comm%MPI_VAL, tmperror)
+                                 recvbuf, recvcounts, rdispls, tmprecvtypes, &
+                                 comm%MPI_VAL, tmperror)
    IF (PRESENT(error)) error = tmperror
 
    DEALLOCATE(tmpsendtypes)

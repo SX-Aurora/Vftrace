@@ -43,10 +43,10 @@ SUBROUTINE MPI_Get_accumulate_f08(origin_addr, origin_count, origin_datatype, &
    INTEGER :: tmperror
 
    CALL vftr_MPI_Get_accumulate_f082c(origin_addr, origin_count, origin_datatype%MPI_VAL, &
-                                  result_addr, result_count, result_datatype%MPI_VAL, &
-                                  target_rank, target_disp, target_count, &
-                                  target_datatype%MPI_VAL, op%MPI_VAL, win%MPI_VAL, &
-                                  tmperror)
+                                      result_addr, result_count, result_datatype%MPI_VAL, &
+                                      target_rank, target_disp, target_count, &
+                                      target_datatype%MPI_VAL, op%MPI_VAL, win%MPI_VAL, &
+                                      tmperror)
    IF (PRESENT(error)) error = tmperror
 
 END SUBROUTINE MPI_Get_accumulate_f08

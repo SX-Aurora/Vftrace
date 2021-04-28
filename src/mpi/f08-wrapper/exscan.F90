@@ -34,8 +34,8 @@ SUBROUTINE MPI_Exscan_f08(sendbuf, recvbuf, count, &
    INTEGER :: tmperror
 
    CALL vftr_MPI_Exscan_f082c(sendbuf, recvbuf, count, &
-                          datatype%MPI_VAL, op%MPI_VAL, &
-                          comm%MPI_VAL, tmperror)
+                              datatype%MPI_VAL, op%MPI_VAL, &
+                              comm%MPI_VAL, tmperror)
    IF (PRESENT(error)) error = tmperror
 
 END SUBROUTINE MPI_Exscan_f08

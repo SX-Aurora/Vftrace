@@ -2,8 +2,6 @@ noinst_LTLIBRARIES = libvftr_f08mpiwrap.la
 
 libvftr_f08mpiwrap_la_SOURCES =
 
-libvftr_f08mpiwrap_la_SOURCES += vftr_after_mpi_init_f082c.F90 \
-				 vftr_finalize_f082c.F90
 libvftr_f08mpiwrap_la_SOURCES += init.F90 \
 				 finalize.F90
 
@@ -66,7 +64,7 @@ libvftr_f08mpiwrap_la_SOURCES += put.F90 \
 libvftr_f08mpiwrap_la_SOURCES += pcontrol.F90
 
 libvftr_f08mpiwrap_la_FCFLAGS = -finstrument-functions
-libvftr_f08mpiwrap_la_FCFLAGS += -I${builddir}/../f-wrapper/
+libvftr_f08mpiwrap_la_FCFLAGS += -I${builddir}/../f082c/
 if WITH_MPI
 libvftr_f08mpiwrap_la_FCFLAGS += -D_MPI
 endif

@@ -38,9 +38,9 @@ SUBROUTINE MPI_Scatterv_f08(sendbuf, sendcounts, displs, &
    INTEGER :: tmperror
 
    CALL vftr_MPI_Scatterv_f082c(sendbuf, sendcounts, displs, &
-                            sendtype%MPI_VAL, recvbuf, recvcount, &
-                            recvtype%MPI_VAL, root, comm%MPI_VAL, &
-                            tmperror)
+                                sendtype%MPI_VAL, recvbuf, recvcount, &
+                                recvtype%MPI_VAL, root, comm%MPI_VAL, &
+                                tmperror)
    IF (PRESENT(error)) error = tmperror
 
 END SUBROUTINE MPI_Scatterv_f08
