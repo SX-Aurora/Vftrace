@@ -28,7 +28,7 @@ SUBROUTINE MPI_Init_f08(error)
 
    CALL PMPI_Init(tmperror)
 
-   CALL vftr_after_mpi_init_f082c08()
+   CALL vftr_after_mpi_init_f082c()
 
    IF (PRESENT(error)) error = tmperror
 
