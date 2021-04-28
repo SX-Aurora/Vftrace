@@ -141,7 +141,6 @@ libvftr_mpi_f2c_la_SOURCES += vftr_mpi_reduce_f2c.c \
                               vftr_mpi_reduce_scatter_block_f2c.c \
                               vftr_mpi_ireduce_scatter_block_f2c.c \
                               vftr_mpi_reduce_scatter_f2c.c \
-                              vftr_mpi_reduce_scatter_f2c.c \
                               vftr_mpi_ireduce_scatter_f2c.c \
                               vftr_mpi_scan_f2c.c \
                               vftr_mpi_iscan_f2c.c \
@@ -153,7 +152,6 @@ libvftr_mpi_f2c_la_SOURCES += vftr_mpi_reduce_f2c_finterface.F90 \
                               vftr_mpi_iallreduce_f2c_finterface.F90 \
                               vftr_mpi_reduce_scatter_block_f2c_finterface.F90 \
                               vftr_mpi_ireduce_scatter_block_f2c_finterface.F90 \
-                              vftr_mpi_reduce_scatter_f2c_finterface.F90 \
                               vftr_mpi_reduce_scatter_f2c_finterface.F90 \
                               vftr_mpi_ireduce_scatter_f2c_finterface.F90 \
                               vftr_mpi_scan_f2c_finterface.F90 \
