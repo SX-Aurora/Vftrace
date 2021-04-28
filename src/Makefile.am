@@ -19,7 +19,8 @@ if ENABLE_FORTRAN
 libvftrace_la_LIBADD += mpi/f-wrapper/libvftr_fmpiwrap.la \
 			mpi/f2c/libvftr_mpi_f2c.la
 if ENABLE_FORTRAN08
-libvftrace_la_LIBADD += vftr_mpi/f08-wrapper/libvftr_f08mpiwrap.la
+libvftrace_la_LIBADD += mpi/f08-wrapper/libvftr_f08mpiwrap.la \
+			mpi/f2c/libvftr_mpi_f082c.la
 endif
 endif
 endif
