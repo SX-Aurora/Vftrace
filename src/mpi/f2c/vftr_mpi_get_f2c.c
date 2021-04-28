@@ -23,7 +23,7 @@
 
 void vftr_MPI_Get_f2c(void *origin_addr, MPI_Fint *origin_count,
                       MPI_Fint *f_origin_datatype, MPI_Fint *target_rank,
-                    MPI_Aint *target_disp, MPI_Fint *target_count,
+                      MPI_Aint *target_disp, MPI_Fint *target_count,
                       MPI_Fint *f_target_datatype, MPI_Fint *f_win,
                       MPI_Fint *f_error) {
 
