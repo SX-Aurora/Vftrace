@@ -152,6 +152,7 @@ void vftr_initialize() {
     if (vftr_off()) {
 	return;
     }
+    atexit (vftr_finalize);
     vftr_get_mpi_info (&vftr_mpirank, &vftr_mpisize);
     vftr_assert_environment ();
 
@@ -273,7 +274,8 @@ void vftr_initialize() {
 
 /**********************************************************************/
 
-void vftr_finalize(bool do_normalize_stacks) {
+void vftr_finalize() {
+    bool do_normalize_stacks = false;
     int ntop = 0;
     function_t **funcTable;
 
@@ -354,7 +356,7 @@ void vftr_finalize(bool do_normalize_stacks) {
 // It always calls vftr_finalize with active stack normalization ("true" argument), since
 // this is the standard way to terminate.
 void vftr_finalize_() {
-	vftr_finalize(true);
+	vftr_finalize();
 #ifdef _MPI
 	PMPI_Barrier (MPI_COMM_WORLD);
 #endif
