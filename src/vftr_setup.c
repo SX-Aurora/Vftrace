@@ -275,7 +275,7 @@ void vftr_initialize() {
 /**********************************************************************/
 
 void vftr_finalize() {
-    bool do_normalize_stacks = false;
+    bool do_normalize_stacks = true;
     int ntop = 0;
     function_t **funcTable;
 
