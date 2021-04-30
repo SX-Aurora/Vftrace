@@ -320,8 +320,9 @@ void vftr_write_function_indices (FILE *fp, char *func_name, bool to_lower_case)
 
 /**********************************************************************/
 
-void vftr_write_function (FILE *fp, function_t *func) {
+void vftr_write_function (FILE *fp, function_t *func, bool verbose) {
 	fprintf (fp, "Function: %s\n", func->name);
+        if (!verbose) return;
 	fprintf (fp, "\tAddress: ");
 	if (func->address) {
 		fprintf (fp, "%p\n", func->address);
@@ -429,13 +430,13 @@ int vftr_functions_test_1 (FILE *fp_in, FILE *fp_out) {
 	int i0 = vftr_stackscount;
 	if (i0 > 0) fprintf (fp_out, "Check additional MPI entries:\n");
    	for (int i = 0; i < i0; i++) {
-		vftr_write_function (fp_out, vftr_func_table[i]);
+		vftr_write_function (fp_out, vftr_func_table[i], true);
 	}
 	function_t *func1 = vftr_new_function (NULL, "init_vftr", NULL, false);
 	function_t *func2 = vftr_new_function ((void*)addr, "test_1", func1, true);
 	fprintf (fp_out, "Check test entries:\n");
 	for (int i = i0; i < vftr_stackscount; i++) {
-		vftr_write_function (fp_out, vftr_func_table[i]);
+		vftr_write_function (fp_out, vftr_func_table[i], true);
 	}
 	return 0;
 }
@@ -448,7 +449,7 @@ int vftr_functions_test_2 (FILE *fp_in, FILE *fp_out) {
 	int i0 = vftr_stackscount;
 	if (i0 > 0) fprintf (fp_out, "Check additional MPI entries:\n");
    	for (int i = 0; i < i0; i++) {
-		vftr_write_function (fp_out, vftr_func_table[i]);
+		vftr_write_function (fp_out, vftr_func_table[i], true);
 	}
 
 	unsigned long long addrs [6];
@@ -461,16 +462,16 @@ int vftr_functions_test_2 (FILE *fp_in, FILE *fp_out) {
 	function_t *func7 = vftr_new_function ((void*)(addrs + 5), "func4", func6, false);
 	fprintf (fp_out, "Check test entries:\n");
 	for (int i = i0; i < vftr_stackscount; i++) {
-		vftr_write_function(fp_out, vftr_func_table[i]);
+		vftr_write_function(fp_out, vftr_func_table[i], true);
 	}
 	fprintf (fp_out, "Test if callee pointer is changed properly\n");
 	func2->callee = func6;
-	vftr_write_function (fp_out, func2);
+	vftr_write_function (fp_out, func2, true);
 	fprintf (fp_out, "vftr_func_table_size: %d\n", vftr_func_table_size);
 	fprintf (fp_out, "vftr_stackscount: %d\n", vftr_stackscount);
 	fprintf (fp_out, "Check functions registered in function table: \n");
 	for (int i = i0; i < vftr_stackscount; i++) {
-		vftr_write_function(fp_out, vftr_func_table[i]);
+		vftr_write_function(fp_out, vftr_func_table[i], true);
 	}
 	return 0;
 }
