@@ -74,6 +74,8 @@ symtab_t **vftr_find_nearest(symtab_t **table, void *addr, int count);
 
 char *vftr_find_symbol (void *addr, char **full);
 
+char *vftr_demangle_cpp (char *m_name);
+
 int vftr_symbols_test_1 (FILE *fp_in, FILE *fp_out);
 
 #endif

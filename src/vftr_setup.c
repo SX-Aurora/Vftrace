@@ -296,6 +296,10 @@ void vftr_finalize() {
     if (vftr_environment.strip_module_names->value) {
 	vftr_strip_all_module_names ();
     }
+
+#ifdef _LIBERTY_AVAIL
+    vftr_demangle_all_func_names();
+#endif
     
     FILE *f_html = NULL;
     display_function_t **display_functions = NULL;
