@@ -142,6 +142,8 @@ void vftr_set_end_date () {
 
 void vftr_initialize() {
     // set the timer reference point for this process
+    printf ("Init vftrace!\n");
+    fflush(stdout);
     vftr_set_local_ref_time();
     vftr_set_start_date();
     
@@ -278,6 +280,8 @@ void vftr_finalize() {
     bool do_normalize_stacks = true;
     int ntop = 0;
     function_t **funcTable;
+    printf ("In vftr_finalize: %d %d\n", vftr_mpirank, vftr_off());
+    fflush(stdout);
 
     if (vftr_off())  return;
     vftr_set_end_date();
@@ -299,12 +303,15 @@ void vftr_finalize() {
     display_function_t **display_functions = NULL;
     int n_display_functions = 0;
     if (do_normalize_stacks) {
+       printf ("Normalize stacks: %d\n", vftr_mpirank);
        vftr_normalize_stacks();
+       printf ("Normalize stacks done: %d\n", vftr_mpirank);
 
        if (vftr_env_need_display_functions()) {
           display_functions = vftr_create_display_functions (vftr_environment.mpi_show_sync_time->value,
                                                              &n_display_functions, vftr_environment.all_mpi_summary->value); 
        }
+       printf ("Created display functions: %d\n", vftr_mpirank);
 
        if (vftr_environment.create_html->value) {
           vftr_browse_create_directory ();
@@ -314,21 +321,27 @@ void vftr_finalize() {
 
     if (vftr_profile_wanted) {
        if (do_normalize_stacks) vftr_create_global_stack_strings ();
+       printf ("Print profile: %d\n", vftr_mpirank);
        vftr_print_profile (vftr_log, f_html, &ntop, vftr_get_runtime_usec(), n_display_functions, display_functions);
+       printf ("Profile printed: %d\n", vftr_mpirank);
     }
 #ifdef _MPI
     if (do_normalize_stacks && (vftr_environment.print_stack_profile->value || vftr_environment.all_mpi_summary->value)) {
        // Inside of vftr_print_function_statistics, we use an MPI_Allgather to compute MPI imbalances. Therefore,
        // we need to call this function for every rank, but give it the information of vftr_profile_wanted
        // to avoid unrequired output.
+       printf ("Print stats: %d\n", vftr_mpirank);
        vftr_print_function_statistics (vftr_log, display_functions, n_display_functions, vftr_profile_wanted);
+       printf ("stats printed: %d\n", vftr_mpirank);
     }
 #endif
  
     funcTable = vftr_func_table;
 
     if (vftr_profile_wanted && do_normalize_stacks) {
+        printf ("Print global stacklist: %d\n", vftr_mpirank);
         vftr_print_global_stacklist(vftr_log);
+        printf ("Print global stacklist done: %d\n", vftr_mpirank);
     }
 
     if (vftr_env_do_sampling()) vftr_finalize_vfd_file (finalize_time);
@@ -346,7 +359,9 @@ void vftr_finalize() {
 
     	fclose (vftr_log);
     }
+    printf ("Switch off vftrace %d\n", vftr_mpirank);
     vftr_switch_off();
+    printf ("Switch off vftrace done %d\n", vftr_mpirank);
 }
 
 /**********************************************************************/

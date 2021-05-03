@@ -141,6 +141,7 @@ void vftr_synchronise_hashes(int *nptr, uint64_t **hashlistptr) {
    if (vftr_mpirank == 0) {
       lengths = (int*) malloc(vftr_mpisize*sizeof(int));
    }
+   printf ("Gather(1): %d\n", vftr_mpirank);
    PMPI_Gather(nptr, // send buffer
                1, // send count
                MPI_INT, // send type
@@ -149,6 +150,7 @@ void vftr_synchronise_hashes(int *nptr, uint64_t **hashlistptr) {
                MPI_INT, // receive type
                0, // root process
                MPI_COMM_WORLD); // communicator
+   printf ("Gather(1) DONE: %d\n", vftr_mpirank);
 
    // get the sum of all length
    int totallength = 0;
@@ -163,6 +165,7 @@ void vftr_synchronise_hashes(int *nptr, uint64_t **hashlistptr) {
    // and construct displacement vector
    uint64_t *totalhashlist = NULL;
    int *displs = NULL;
+   printf ("Create total hash list: %d\n", vftr_mpirank);
    if (vftr_mpirank == 0) {
       totalhashlist = (uint64_t*) malloc(totallength*sizeof(uint64_t));
       displs = (int*) malloc(vftr_mpisize*sizeof(int));
@@ -171,6 +174,7 @@ void vftr_synchronise_hashes(int *nptr, uint64_t **hashlistptr) {
          displs[irank] = displs[irank-1] + lengths[irank-1];
       }
    }
+   printf ("Create total hash list DONE: %d\n", vftr_mpirank);
 
    // Gather the list of hashes from every rank into one list
    PMPI_Gatherv(*hashlistptr, // send buffer
@@ -182,18 +186,21 @@ void vftr_synchronise_hashes(int *nptr, uint64_t **hashlistptr) {
                 mpi_uint64, // receive type
                 0, // root process
                 MPI_COMM_WORLD); // communicator
+   printf ("Gather(2) DONE: %d\n", vftr_mpirank);
 
    // clean hashlist of multiple entries
    if (vftr_mpirank == 0) {
       vftr_remove_multiple_hashes(&totallength, totalhashlist);
    }
 
+   printf ("Bcast(1): %d\n", vftr_mpirank);
    // distribute the new length to all ranks
    PMPI_Bcast(&totallength, // send/receive buffer
               1, // send/receive count
               MPI_INT, // send/receive type
               0, // root process
               MPI_COMM_WORLD); // communicator
+   printf ("Bcast(1) DONE: %d\n", vftr_mpirank);
 
    // If the length has changed reallocate the local hash-list size
    // (Hash list size can only grow)
@@ -211,12 +218,14 @@ void vftr_synchronise_hashes(int *nptr, uint64_t **hashlistptr) {
       }
    }
 
+   printf ("Bcast(2): %d\n", vftr_mpirank);
    // distribute the hashlist to all ranks
    PMPI_Bcast(*hashlistptr, // send/receive buffer
               totallength, // send/receive count
               mpi_uint64, // send/receive type
               0, // root process
               MPI_COMM_WORLD); // communicator
+   printf ("Bcast(2) DONE: %d\n", vftr_mpirank);
 
    // free the local resources
    // The custom MPI-type
