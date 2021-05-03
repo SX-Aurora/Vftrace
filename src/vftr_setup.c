@@ -50,6 +50,8 @@ int vftr_mpisize;
 unsigned int vftr_function_samplecount;
 unsigned int vftr_message_samplecount;
 
+bool vftr_do_stack_normalization;
+
 char *vftr_start_date;
 char *vftr_end_date;
 
@@ -158,6 +160,7 @@ void vftr_initialize() {
     vftr_get_mpi_info (&vftr_mpirank, &vftr_mpisize);
     vftr_assert_environment ();
 
+    vftr_do_stack_normalization = !vftr_environment.no_stack_normalization->value;
     vftr_setup_signals();
 	
     lib_opened = 0;
@@ -302,8 +305,7 @@ void vftr_finalize() {
     FILE *f_html = NULL;
     display_function_t **display_functions = NULL;
     int n_display_functions = 0;
-    if (do_normalize_stacks) {
-       printf ("Normalize stacks: %d\n", vftr_mpirank);
+    if (vftr_do_stack_normalization) {
        vftr_normalize_stacks();
        printf ("Normalize stacks done: %d\n", vftr_mpirank);
 
@@ -320,13 +322,12 @@ void vftr_finalize() {
     }
 
     if (vftr_profile_wanted) {
-       if (do_normalize_stacks) vftr_create_global_stack_strings ();
-       printf ("Print profile: %d\n", vftr_mpirank);
+       if (vftr_do_stack_normalization) vftr_create_global_stack_strings ();
        vftr_print_profile (vftr_log, f_html, &ntop, vftr_get_runtime_usec(), n_display_functions, display_functions);
        printf ("Profile printed: %d\n", vftr_mpirank);
     }
 #ifdef _MPI
-    if (do_normalize_stacks && (vftr_environment.print_stack_profile->value || vftr_environment.all_mpi_summary->value)) {
+    if (vftr_do_stack_normalization && (vftr_environment.print_stack_profile->value || vftr_environment.all_mpi_summary->value)) {
        // Inside of vftr_print_function_statistics, we use an MPI_Allgather to compute MPI imbalances. Therefore,
        // we need to call this function for every rank, but give it the information of vftr_profile_wanted
        // to avoid unrequired output.
@@ -338,8 +339,7 @@ void vftr_finalize() {
  
     funcTable = vftr_func_table;
 
-    if (vftr_profile_wanted && do_normalize_stacks) {
-        printf ("Print global stacklist: %d\n", vftr_mpirank);
+    if (vftr_profile_wanted && vftr_do_stack_normalization) {
         vftr_print_global_stacklist(vftr_log);
         printf ("Print global stacklist done: %d\n", vftr_mpirank);
     }
