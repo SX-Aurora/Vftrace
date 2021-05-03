@@ -26,6 +26,7 @@ VFTR_PRINT_ENVIRONMENT(default): false
 VFTR_NO_MEMTRACE(default): false
 VFTR_COMPLETE_MPI_SUMMARY(default): false
 VFTR_SHOW_STACKS_IN_PROFILE(default): false
+VFTR_NO_STACK_NORM(default): false
 ***************************
 VFTR_OFF: false
 VFTR_SAMPLING: true
@@ -55,3 +56,4 @@ VFTR_PRINT_ENVIRONMENT(default): false
 VFTR_NO_MEMTRACE(default): false
 VFTR_COMPLETE_MPI_SUMMARY(default): false
 VFTR_SHOW_STACKS_IN_PROFILE(default): false
+VFTR_NO_STACK_NORM(default): false
