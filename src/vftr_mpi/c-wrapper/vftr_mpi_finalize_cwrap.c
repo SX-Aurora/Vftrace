@@ -24,8 +24,6 @@
 
 int MPI_Finalize() {
 
-   printf ("IN VFTR_MPI_FINALIZE\n");
-   fflush(stdout);
    // it is neccessary to finalize vftrace here, in order to properly communicat stack ids
    // between processes. After MPI_Finalize communication between processes is prohibited
    vftr_finalize();

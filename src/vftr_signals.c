@@ -58,6 +58,7 @@ void vftr_signal_handler (int signum) {
     fprintf (vftr_log, "**************************\n");
     fprintf (vftr_log, "\n");
   }
+  vftr_do_stack_normalization = false;
   vftr_finalize();
   vftr_signals[SIGTERM].sa_handler = SIG_DFL;
   sigaction (SIGTERM, &(vftr_signals[SIGTERM]), NULL);
