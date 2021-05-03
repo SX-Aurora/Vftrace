@@ -81,16 +81,13 @@ void vftr_initialize_stacks() {
 void vftr_normalize_stacks() {
     // fill the local hashtable for stacks
     vftr_gStackscount = vftr_stackscount;
-    printf ("Nr. of stacks: %d %d\n", vftr_mpirank, vftr_stackscount);
     uint64_t *stackhashtable = (uint64_t*) malloc(vftr_stackscount*sizeof(uint64_t));
     for (int istack=0; istack<vftr_stackscount; istack++) {
        stackhashtable[istack] = vftr_func_table[istack]->stackHash;
     }
     // sort and synchronize the hashes 
     // thus every process has the exact same table of stack hashes
-    printf ("Synchronize hashes: %d\n", vftr_mpirank);
     vftr_synchronise_hashes(&vftr_gStackscount, &stackhashtable);
-    printf ("Synchronize hashes DONE: %d\n", vftr_mpirank);
 
     // Build a lookup table each to translate local2global and global2local
     int *local2global_ID = (int*) malloc(vftr_stackscount*sizeof(int));
@@ -107,7 +104,6 @@ void vftr_normalize_stacks() {
     // the global ID is the index in the hash table
     // fill the looup tables
     // TODO: implement binary search to speed up globalID assignment
-    printf ("Set IDS: %d %d %d\n", vftr_mpirank, vftr_stackscount, vftr_gStackscount); 
     for (int istack = 0; istack < vftr_stackscount; istack++) {
        for (int ihash = 0; ihash < vftr_gStackscount; ihash++) {
           if (vftr_func_table[istack]->stackHash == stackhashtable[ihash]) {
@@ -119,7 +115,6 @@ void vftr_normalize_stacks() {
           }
        }
     }
-    printf ("Set IDS DONE: %d\n", vftr_mpirank); 
 
     // the hashtable is nolonger needed
     free(stackhashtable);
@@ -185,9 +180,7 @@ void vftr_normalize_stacks() {
              }
           }
           // Send to the selected process how many entries are still missing
-          printf ("Rank0 send: %d\n", irank);
           PMPI_Send(&nmissing, 1, MPI_INT, irank, 0, MPI_COMM_WORLD);
-          printf ("Rank0 send DONE: %d\n", irank);
           // if at least one entry is missing proceed
           if (nmissing > 0) {
              // Send the missing IDs
@@ -233,7 +226,6 @@ void vftr_normalize_stacks() {
                 free(missingStackInfo);
              }
           }
-          printf ("Rank0: Processed nmissing: %d\n", nmissing);
        }
 
        free(missingStacks);
@@ -242,9 +234,7 @@ void vftr_normalize_stacks() {
        MPI_Status mystat;
        // receive how many entries process 0 is missing
        int nmissing;
-       printf ("Recv: %d\n", vftr_mpirank);
        PMPI_Recv(&nmissing, 1, MPI_INT, 0, 0, MPI_COMM_WORLD, &mystat);
-       printf ("Recv DONE: %d\n", vftr_mpirank);
        // if at least one entry is missing proceed
        if (nmissing > 0) {
           // allocate space to hold the missing ids
@@ -312,7 +302,6 @@ void vftr_normalize_stacks() {
           free(missingStacks);
           missingStacks = NULL;
        }
-       printf ("Processed nmissing: %d %d\n", vftr_mpirank, nmissing);
 
 #endif
     }
