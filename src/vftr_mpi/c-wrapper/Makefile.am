@@ -1,6 +1,7 @@
 noinst_LTLIBRARIES = libvftr_cmpiwrap.la
 
 libvftr_cmpiwrap_la_SOURCES = vftr_mpi_init_cwrap.c \
+                              vftr_mpi_init_thread_cwrap.c \
 			      vftr_mpi_finalize_cwrap.c
 
 ##################
