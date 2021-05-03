@@ -26,8 +26,7 @@ endif
 libvftr_pause_la_SOURCES = vftr_pause.c
 libvftr_pause_la_CFLAGS = -finstrument-functions
 
-libvftrace_la_SOURCES = demangle.cpp \
-		       vftr_scenarios.c \
+libvftrace_la_SOURCES = vftr_scenarios.c \
 		       vftr_symbols.c \
                        vftr_hwcounters.c \
 		       vftr_hooks.c \

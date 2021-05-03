@@ -25,10 +25,6 @@
 #include <string.h>
 #include <elf.h>
 
-#ifndef __ve__
-#include "demangle.h"
-#endif
-
 extern FILE *vftr_log;
 
 #define STRLEN 1000

@@ -22,10 +22,6 @@
 #include <string.h>
 #include <elf.h>
 
-#ifndef __ve__
-#include "demangle.h"
-#endif
-
 #include "vftr_filewrite.h"
 #include "vftr_fileutils.h"
 #include "vftr_symbols.h"
@@ -264,17 +260,17 @@ void vftr_get_library_symtab (char *target, FILE *fp_ext, off_t base, int pass) 
                 vftr_symtab[j]->addr = (void *)(base + s.st_value);
 #endif
                 /* Copy symbol name and demangle C++ generated names */
-#ifdef __cplusplus
-                vftr_symtab[j]->demangled =
-                       demangle (&symbolStringTable[s.st_name],
-                                 &(vftr_symtab[j]->name),
-                                 &(vftr_symtab[j]->full));
-#else
+//#ifdef __cplusplus
+//                vftr_symtab[j]->demangled =
+//                       demangle (&symbolStringTable[s.st_name],
+//                                 &(vftr_symtab[j]->name),
+//                                 &(vftr_symtab[j]->full));
+//#else
                 vftr_symtab[j]->demangled = 0;
                 vftr_symtab[j]->name = strdup(&symbolStringTable[s.st_name]);
                 vftr_symtab[j]->full = NULL;
                 vftr_symtab[j]->index = s.st_shndx;
-#endif
+//#endif
             }
             n++;
 	}
