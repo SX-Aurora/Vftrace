@@ -28,11 +28,12 @@ extern int vftr_mpisize;
 extern unsigned int vftr_function_samplecount;
 extern unsigned int vftr_message_samplecount;
 
+extern bool vftr_do_stack_normalization;
+
 extern char *vftr_start_date;
 extern char *vftr_end_date;
 
 void vftr_initialize ();
-//void vftr_finalize (bool do_normalize_stacks) ;
 void vftr_finalize () ;
 
 void vftr_get_mpi_info (int *rank, int *size);
