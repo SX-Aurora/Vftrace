@@ -17,12 +17,9 @@
 #ifdef _MPI
 
 SUBROUTINE MPI_INIT(IERROR)
-   USE vftr_after_mpi_init_c2f, &
+   USE vftr_after_mpi_init_f2c, &
       ONLY : vftr_after_mpi_init_F
-   ! Intel MPI locates the PMPI symbols in a different module (pmpi_f08) than
-   ! prescribed by the MPI standard (3.1). Configure checks which MPI is used
-   ! and sets the value of PMPI_MODULE accordingly.
-   USE PMPI_MODULE, ONLY : PMPI_INIT
+   USE mpi, ONLY : PMPI_INIT
 
    IMPLICIT NONE
 

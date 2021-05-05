@@ -4,7 +4,7 @@ Application time:         0.28 seconds
 Overhead:                 0.00 seconds (0.00%)
 ------------------------------------------------------------
 
-Runtime profile (truncated to  98%):
+Runtime profile, truncated to  98%, sorted by exclusive time :
 
   Calls  t_excl[s]  t_incl[s]  %abs  %cum  Function  Caller  ID 
 -------------------------------------------------------------------------

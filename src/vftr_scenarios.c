@@ -84,13 +84,13 @@ void vftr_write_scenario_header_to_vfd (FILE *fp) {
           fwrite (te_vars[i].name, sizeof(char), slength, fp);
         }
 	for (int i = 0; i < vftr_scenario_expr_n_formulas; i++) {
-		slength = strlen(vftr_scenario_expr_formulas[i].name) + 1;
-	        fwrite (&slength, sizeof(int), 1, fp);
-		fwrite (vftr_scenario_expr_formulas[i].name, sizeof(char), slength, fp);
-		slength = strlen(vftr_scenario_expr_formulas[i].formula) + 1;
-		fwrite (&slength, sizeof(int), 1, fp);
- 		fwrite (vftr_scenario_expr_formulas[i].formula, sizeof(char), slength, fp);
-		fwrite (&vftr_scenario_expr_formulas[i].integrated, sizeof(bool), 1, fp);
+	  slength = strlen(vftr_scenario_expr_formulas[i].name) + 1;
+          fwrite (&slength, sizeof(int), 1, fp);
+	  fwrite (vftr_scenario_expr_formulas[i].name, sizeof(char), slength, fp);
+	  slength = strlen(vftr_scenario_expr_formulas[i].formula) + 1;
+	  fwrite (&slength, sizeof(int), 1, fp);
+ 	  fwrite (vftr_scenario_expr_formulas[i].formula, sizeof(char), slength, fp);
+	  fwrite (&vftr_scenario_expr_formulas[i].integrated, sizeof(bool), 1, fp);
 	}
 #endif
 }
@@ -99,15 +99,23 @@ void vftr_write_scenario_header_to_vfd (FILE *fp) {
 
 void vftr_write_observables_to_vfd (profdata_t *prof_current, profdata_t *prof_previous, FILE *fp) {
 #if defined(HAS_SXHWC) || defined(HAS_PAPI)
+        long long value;
         for (int i = 0; i < vftr_n_hw_obs; i++) {
-        	double value;
         	if (prof_current != NULL && prof_previous != NULL) {
-                  value = (double)(prof_current->event_count[i] - prof_previous->event_count[i]);
+                  value = prof_current->event_count[i] - prof_previous->event_count[i];
         	} else { // Dummy entry, e.g. for vftr_finalize
-        	  value = 0.0;
+        	  value = 0;
                 }
-        	fwrite (&value, sizeof(double), 1, fp);
+        	fwrite (&value, sizeof(long long), 1, fp);
 	}
+        if (vftr_n_hw_obs > 0) {
+           if (prof_current != NULL && prof_previous != NULL) {
+             value = prof_current->cycles - prof_previous->cycles;
+           } else {
+             value = 0;
+           }
+           fwrite (&value, sizeof(long long), 1, fp);
+        }
 #endif
 }
 

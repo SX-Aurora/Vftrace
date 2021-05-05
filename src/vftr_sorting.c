@@ -222,6 +222,10 @@ int vftr_compare_function_stack_id (const void *a1, const void *a2) {
     return  0;
 }
 
+int vftr_compare_function_none (const void *a1, const void *a2) {
+  return 0;
+}
+
 /**********************************************************************/
 
 
@@ -239,6 +243,8 @@ int (*vftr_get_profile_compare_function()) (const void *, const void *) {
        return vftr_compare_function_overhead;
     case SORT_OVERHEAD_RELATIVE:
        return vftr_compare_function_overhead_relative;
+    case SORT_NONE:
+       return vftr_compare_function_none;
     default: 
        return vftr_compare_function_excl_time;
    }

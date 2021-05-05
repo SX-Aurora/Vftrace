@@ -18,7 +18,7 @@
 
 SUBROUTINE MPI_SENDRECV_REPLACE(BUF, COUNT, DATATYPE, DEST, SENDTAG, SOURCE, &
                                 RECVTAG, COMM, STATUS, ERROR)
-   USE vftr_mpi_sendrecv_replace_c2f, &
+   USE vftr_mpi_sendrecv_replace_f2c, &
       ONLY : vftr_MPI_Sendrecv_replace_F
    USE mpi, ONLY : MPI_STATUS_SIZE
    IMPLICIT NONE

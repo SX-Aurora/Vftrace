@@ -19,7 +19,7 @@
 SUBROUTINE MPI_RPUT(ORIGIN_ADDR, ORIGIN_COUNT, ORIGIN_DATATYPE, &
                     TARGET_RANK, TARGET_DISP, TARGET_COUNT, &
                     TARGET_DATATYPE, WIN, REQUEST, ERROR)
-   USE vftr_mpi_rput_c2f, &
+   USE vftr_mpi_rput_f2c, &
       ONLY : vftr_MPI_Rput_F
    USE mpi, ONLY: MPI_ADDRESS_KIND
    IMPLICIT NONE

@@ -8,14 +8,14 @@ func6: 5 4
 func4: 6 2
 Global stacklist: 
 Global call stacks:
--------------------------
- ID             Functions
--------------------------
- 0 func2<init
- 1 init
- 2 func4<func6<func2<init
- 3 func3<init
- 4 func6<func2<init
- 5 func4<func3<init
- 6 func5<func2<init
--------------------------
+-----------------------------
+     ID             Functions
+-----------------------------
+ STID0 func2<init
+ STID1 init
+ STID2 func4<func6<func2<init
+ STID3 func3<init
+ STID4 func6<func2<init
+ STID5 func4<func3<init
+ STID6 func5<func2<init
+-----------------------------

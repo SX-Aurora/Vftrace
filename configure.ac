@@ -11,6 +11,7 @@ AC_PROG_CC
 AC_PROG_CXX
 AC_PROG_FC
 AC_FC_SRCEXT(F90)
+AC_ENABLE_SHARED
 AM_PROG_AR
 # Enable per-target flags for C
 # According to the documentation, this should be obsolete
@@ -21,6 +22,9 @@ AM_PROG_CC_C_O
 ################################
 # Check if C-compiler supports c99 standard
 AX_CHECK_C99_STD
+
+# Check if fortran is selected or not
+AX_ENABLE_FORTRAN
 
 # Check if elf-symbols align with function pointers
 AX_CHECK_VMAP_OFFSET
@@ -53,6 +57,7 @@ AM_CONDITIONAL([USES_INTEL_COMPILER], [test "$uses_intel_compiler" = "yes"])
 
 LT_INIT(dlopen)
 AC_CONFIG_FILES([Makefile])
+AC_CONFIG_FILES([external/Makefile])
 AC_CONFIG_FILES([src/Makefile])
 AC_CONFIG_FILES([src/vftr_mpi/Makefile])
 AC_CONFIG_FILES([src/vftr_mpi/c-wrapper/Makefile])

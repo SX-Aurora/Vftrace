@@ -17,7 +17,7 @@
 #ifdef _MPI
 
 SUBROUTINE MPI_RECV(BUF, COUNT, DATATYPE, SOURCE, TAG, COMM, STATUS, ERROR)
-   USE vftr_mpi_recv_c2f, &
+   USE vftr_mpi_recv_f2c, &
       ONLY : vftr_MPI_Recv_F
    USE mpi, ONLY : MPI_STATUS_SIZE
    IMPLICIT NONE

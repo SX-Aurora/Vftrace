@@ -12,6 +12,17 @@ Vftrace requires that your application has instrumendet function calls. These ar
 After compiling, you must link your application against `libvftrace`, either statically or dynamically.
 The application can then be run in the usual way. In the default setting, a text file is created containing a run-time profile of the application.
 
+## Download
+You can clone the current version of the vftrace from github.
+The third party tools are included in the git repository as submodules, for your convinience.
+```bash
+git clone --recursive https://github.com/SX-Aurora/Vftrace.git
+```
+If you already cloned the repository without the `--recursive` flag you can get the submodules with
+```bash
+git submodule update --init
+```
+
 ## Prerequisites & Installation 
 
 Vftrace is written in C. For the Fortran interface, there is also some Fortran code.
@@ -68,6 +79,9 @@ In these `vftr_MPI`-functions the communication is executed by calling the corre
 ```
 The `PMPI_` symbols do the same as their `MPI_` counterpart. This way, the MPI functions as used by the application are instrumented. The functionality inside the wrapper enables in-depth MPI sampling. The vftrace MPI-wrapper record which ranks are communicating (who sends, who receives), the message size, message type, and communication time.
 Non blocking communication is sampled by registering the non blocking call's request and checking for completion from time to time in the background.
+Persistent requests are registered and handled like normal non blocking calls upon calling `MPI_Start` or `MPI_Startall`.
+For collective communications inter- and intra-communicators are distinguished and handled to reflect their unique communication patterns.
+Special buffers like `MPI_IN_PLACE` are taken care of and handled accordingly.
 
 ## Hardware Observables
 

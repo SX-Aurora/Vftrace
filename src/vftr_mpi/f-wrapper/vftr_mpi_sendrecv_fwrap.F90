@@ -19,7 +19,7 @@
 SUBROUTINE MPI_SENDRECV(SENDBUF, SENDCOUNT, SENDTYPE, DEST, SENDTAG, &
                         RECVBUF, RECVCOUNT, RECVTYPE, SOURCE, RECVTAG, &
                         COMM, STATUS, ERROR)
-   USE vftr_mpi_sendrecv_c2f, &
+   USE vftr_mpi_sendrecv_f2c, &
       ONLY : vftr_MPI_Sendrecv_F
    USE mpi, ONLY : MPI_STATUS_SIZE
    IMPLICIT NONE

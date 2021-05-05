@@ -39,6 +39,7 @@
 #include "vftr_browse.h"
 #include "vftr_sorting.h"
 #include "vftr_mallinfo.h"
+#include "vftr_allocate.h"
 
 // File pointer of the log file
 FILE *vftr_log = NULL;
@@ -114,21 +115,6 @@ char *vftr_supported_mpi_function_names[] = {"mpi_accumulate",
 
 int vftr_n_supported_mpi_functions = 70;
 
-char *vftr_mpi_collective_function_names[] = {"mpi_barrier", "mpi_bcast", "mpi_reduce",
-			     "mpi_allreduce", "mpi_gather", "mpi_gatherv",
-			     "mpi_allgather", "mpi_allgatherv",
-			     "mpi_scatter", "mpi_scatterv",
-			     "mpi_alltoall", "mpi_alltoallv", "mpi_alltoallw"};
-
-int vftr_n_collective_mpi_functions = 13;
-
-bool vftr_is_collective_mpi_function (char *func_name) {
-   for (int i = 0; i < vftr_n_collective_mpi_functions; i++) { 
-      if (!strcmp (func_name, vftr_mpi_collective_function_names[i])) return true;
-   }
-   return false;
-}
-
 void vftr_is_traceable_mpi_function (char *func_name, bool *is_mpi) {
    *is_mpi = false;
    char *func_name_low = vftr_to_lowercase(func_name);
@@ -140,7 +126,6 @@ void vftr_is_traceable_mpi_function (char *func_name, bool *is_mpi) {
          }
       }
    }
-   return;
 }
 
 /**********************************************************************/
@@ -156,7 +141,7 @@ char *vftr_get_program_path () {
 		char *s;
 		if (program_path) {
 		  // rindex returns a pointer to the last occurence of '/'
-		  if (s = rindex (program_path, '/')) {
+		  if ((s = rindex (program_path, '/'))) {
 		  	// The basename is everything after the last '/'
 		  	basename = strdup (s + 1);
 		  } else {
@@ -177,7 +162,6 @@ char *vftr_get_program_path () {
 // obtained beforehand by a call to vftr_get_program_path to avoid a race condition.
 // Suffix is ".log" for ASCII log files and ".vfd" for viewer files.
 char *vftr_create_logfile_name (int mpi_rank, int mpi_size, char *suffix) {
-	bool read_from_env = false;
 	// The user can also define a different output directory
 	char *out_directory;
 	if (vftr_environment.output_directory->set) {
@@ -249,31 +233,23 @@ void vftr_init_vfd_file () {
 
 /**********************************************************************/
 
-void vftr_finalize_vfd_file (long long finalize_time, int signal_number) {
-    if (vftr_env_do_sampling () && signal_number != SIGUSR1) {
+void vftr_finalize_vfd_file (long long finalize_time) {
+  long stackstable_offset = ftell (vftr_vfd_file);
+  vftr_write_stacks_vfd (vftr_vfd_file, 0, vftr_froots);
 
-        long stackstable_offset = ftell (vftr_vfd_file);
-        vftr_write_stacks_vfd (vftr_vfd_file, 0, vftr_froots);
+  double runtime = finalize_time * 1.0e-6;
 
-        // It is unused ?
-        long profile_offset = 0;
-
-        double runtime = finalize_time * 1.0e-6;
-        double zerodouble[] = { 0., 0. };
-    	long long zerolong[] = {0};
-
-        // Update trace info in header and close
-        fseek (vftr_vfd_file, vftr_admin_offset, SEEK_SET);
-        fwrite (&vftr_mpisize, sizeof(int), 1, vftr_vfd_file); 
-        fwrite (&vftr_mpirank, sizeof(int),1, vftr_vfd_file); 
-        fwrite (&runtime, sizeof(double), 1, vftr_vfd_file);
-        fwrite (&vftr_function_samplecount, sizeof(unsigned int), 1, vftr_vfd_file);
-        fwrite (&vftr_message_samplecount, sizeof(unsigned int), 1, vftr_vfd_file);
-        fwrite (&vftr_stackscount, sizeof(unsigned int), 1, vftr_vfd_file);
-        fwrite (&stackstable_offset, sizeof(long), 1, vftr_vfd_file);
-        fwrite (&vftr_samples_offset, sizeof(long), 1, vftr_vfd_file);
-        fclose (vftr_vfd_file);
-    }
+  // Update trace info in header and close
+  fseek (vftr_vfd_file, vftr_admin_offset, SEEK_SET);
+  fwrite (&vftr_mpisize, sizeof(int), 1, vftr_vfd_file); 
+  fwrite (&vftr_mpirank, sizeof(int),1, vftr_vfd_file); 
+  fwrite (&runtime, sizeof(double), 1, vftr_vfd_file);
+  fwrite (&vftr_function_samplecount, sizeof(unsigned int), 1, vftr_vfd_file);
+  fwrite (&vftr_message_samplecount, sizeof(unsigned int), 1, vftr_vfd_file);
+  fwrite (&vftr_stackscount, sizeof(unsigned int), 1, vftr_vfd_file);
+  fwrite (&stackstable_offset, sizeof(long), 1, vftr_vfd_file);
+  fwrite (&vftr_samples_offset, sizeof(long), 1, vftr_vfd_file);
+  fclose (vftr_vfd_file);
 }
 
 /**********************************************************************/
@@ -420,11 +396,11 @@ void vftr_output_column_header (char *header, int largest_column_length, FILE *f
 void vftr_print_stack_time (FILE *fp, int calls, double t_excl, double t_incl, double t_part, double t_cum, int *i_column, column_t *prof_columns) {
 
 	double stime = calls ? t_excl : 0;
-        vftr_prof_column_print (fp, prof_columns[(*i_column)++], &stime, NULL);
+        vftr_prof_column_print (fp, prof_columns[(*i_column)++], &stime, NULL, NULL);
 	stime  = calls ? t_incl : 0;
-        vftr_prof_column_print (fp, prof_columns[(*i_column)++], &stime, NULL);
-        vftr_prof_column_print (fp, prof_columns[(*i_column)++], &t_part, NULL);
-        vftr_prof_column_print (fp, prof_columns[(*i_column)++], &t_cum, NULL);
+        vftr_prof_column_print (fp, prof_columns[(*i_column)++], &stime, NULL, NULL);
+        vftr_prof_column_print (fp, prof_columns[(*i_column)++], &t_part, NULL, NULL);
+        vftr_prof_column_print (fp, prof_columns[(*i_column)++], &t_cum, NULL, NULL);
 }
 
 /**********************************************************************/
@@ -499,47 +475,95 @@ void vftr_prof_column_init (const char *name, char *group_header, int n_decimal_
 	c->header = strdup (name);
 	c->group_header = group_header != NULL ? strdup (group_header) : NULL;
 	c->n_chars = strlen(name);
-	c->n_chars_extra = 0;
+	c->n_chars_opt_1 = 0;
+	c->n_chars_opt_2 = 0;
 	c->n_decimal_places = n_decimal_places;
 	c->col_type = col_type;
    	c->separator_type = sep_type;
 }
 
-void vftr_prof_column_set_n_chars (void *value_1, void *value_2, column_t *c, int *stat) {
+/**********************************************************************/
+
+void vftr_prof_column_print_status (FILE *fp, column_t c) {
+   fprintf (fp, "Column type: "); 
+   switch (c.col_type) {
+      case COL_INT:
+        fprintf (fp, "Integer\n");
+	break;
+      case COL_DOUBLE:
+        fprintf (fp, "Double\n");
+        break;
+      case COL_CHAR_RIGHT:
+        fprintf (fp, "Right-aligned String\n");
+        break;
+      case COL_CHAR_LEFT:
+        fprintf (fp, "Left-aligned String\n");
+        break;
+      case COL_MEM:
+        fprintf (fp, "Data Size\n");
+        break;
+      case COL_TIME:
+        fprintf (fp, "Time\n");
+	break;
+   }
+   fprintf (fp, "Title: %s\n", c.header);
+   fprintf (fp, "n_chars: %d\n", c.n_chars);
+   fprintf (fp, "n_chars_opt_1: %d\n", c.n_chars_opt_1);
+   fprintf (fp, "n_chars_opt_2: %d\n", c.n_chars_opt_2);
+   fprintf (fp, "n_decimal_placse: %d\n", c.n_decimal_places);
+   fprintf (fp, "Separator: ");
+   if (c.separator_type == SEP_LAST || c.separator_type == SEP_MID) {
+      fprintf (fp, "|\n");
+   } else {
+      fprintf (fp, " \n");
+   }
+}
+/**********************************************************************/
+
+//void vftr_prof_column_set_n_chars (void *value_1, void *value_2, column_t *c, int *stat) {
+void vftr_prof_column_set_n_chars (void *value, void *opt_1, void *opt_2, column_t *c, int *stat) {
 	int n;
 	int *i;
 	double *f;
         char *ch;
 	switch (c->col_type) {
 	   case COL_INT:
-	      i = (int*)value_1;	
+	      i = (int*)value;
 	      n = vftr_count_digits_int (*i);
 	      break;
 	   case COL_DOUBLE:
-	      f = (double *)value_1;
+	      f = (double *)value;
 	      // For double values, we need to add the decimal places and the decimal point itself.
 	      n = vftr_count_digits_double (*f) + c->n_decimal_places + 1;
 	      break;
-	   case COL_CHAR:
-	      ch = (char*)value_1;
+	   case COL_CHAR_RIGHT:
+           case COL_CHAR_LEFT:
+	      ch = (char*)value;
    	      n = strlen(ch);
 	      break;
 	   case COL_MEM:
               // Floating-point value + memory unit
-              f = (double *)value_1;
-  	      n = strlen(vftr_memory_unit_string (*(double*)value_1, c->n_decimal_places));    
+              f = (double *)value;
+  	      n = strlen(vftr_memory_unit_string (*(double*)value, c->n_decimal_places));    
               break;
-           case COL_SYNC:
-              f = (double *)value_1;
+           case COL_TIME:
+              f = (double *)value;
 	      n = vftr_count_digits_double (*f) + c->n_decimal_places + 1;
-	      if (value_2) {
-                 double *f2 = (double *)value_2;
+	      if (opt_1) {
+                 double *f2 = (double *)opt_1;
 	         if (*f2 > 0) {
-	            int n2 = vftr_count_digits_double (*f2 / *f * 100) + 3;
-		    if (n2 > c->n_chars_extra) c->n_chars_extra = n2;
+	            int n2 = vftr_count_digits_double (*f2 / *f * 100) + 5; // Two decimal places, a comma and two brackets
+		    if (n2 > c->n_chars_opt_1) c->n_chars_opt_1 = n2;
 		    n += n2;
 	         }
               }
+	      if (opt_2) {
+                 int *f3 = (int *)opt_2;
+                 int n3 = vftr_count_digits_int (*f3) + 2; // Two brackets
+                 if (n3 > c->n_chars_opt_2) c->n_chars_opt_2 = n3;
+                 n += n3;
+              }
+              if (opt_1 != NULL && opt_2 != NULL) n++; // Add the space in between
 	      break;
            default:
               *stat = -1;
@@ -548,27 +572,39 @@ void vftr_prof_column_set_n_chars (void *value_1, void *value_2, column_t *c, in
 	*stat = n;
 }
 
-void vftr_prof_column_print (FILE *fp, column_t c, void *value_1, void *value_2) {
+/**********************************************************************/
+
+void vftr_prof_column_print (FILE *fp, column_t c, void *value, void *opt_1, void *opt_2) {
    if (c.separator_type == SEP_MID || c.separator_type == SEP_LAST) fprintf (fp, "|");
    switch (c.col_type) {
       case COL_INT:
-         fprintf (fp, " %*d ", c.n_chars, *(int*)value_1);
+         fprintf (fp, " %*d ", c.n_chars, *(int*)value);
          break;
       case COL_DOUBLE:
-         fprintf (fp, " %*.*f ", c.n_chars, c.n_decimal_places, *(double*)value_1);
+         fprintf (fp, " %*.*f ", c.n_chars, c.n_decimal_places, *(double*)value);
 	 break;
-      case COL_CHAR:
-         fprintf (fp, " %*s ", c.n_chars, (char*)value_1);
+      case COL_CHAR_RIGHT:
+         fprintf (fp, " %*s ", c.n_chars, (char*)value);
+	 break;
+      case COL_CHAR_LEFT:
+         fprintf (fp, " %s ", (char*)value);
 	 break;
       case COL_MEM:
-         fprintf (fp, " %*s ", c.n_chars, vftr_memory_unit_string (*(double*)value_1, c.n_decimal_places));
+         fprintf (fp, " %*s ", c.n_chars, vftr_memory_unit_string (*(double*)value, c.n_decimal_places));
 	 break;
-      case COL_SYNC:
-         if (value_2 != NULL && c.n_chars_extra > 0 && *(double*)value_2 > 0.0) {
-            fprintf (fp, " %*.*f(%*.2f) ", c.n_chars - c.n_chars_extra - 3, c.n_decimal_places, c.n_chars_extra,
-		     *(double*)value_1, *(double*)value_2 / *(double*)value_1 * 100.0);
+      case COL_TIME:
+         if (opt_1 != NULL && opt_2 != NULL && c.n_chars_opt_1 > 0 && c.n_chars_opt_2 > 0) {
+            fprintf (fp, " %*.*f(%*.2f) (%*d) ", c.n_chars - c.n_chars_opt_1 - c.n_chars_opt_2 - 1, c.n_decimal_places,
+	   	     *(double*)value, c.n_chars_opt_1 - 2, *(double*)opt_1 / *(double*)value * 100.0,
+                     c.n_chars_opt_2 - 2, *(int*)opt_2);
+         } else if (opt_1 != NULL && c.n_chars_opt_1 > 0) {
+            fprintf (fp, " %*.*f(%*.2f) ", c.n_chars - c.n_chars_opt_1 - 1, c.n_decimal_places,
+	   	     *(double*)value, c.n_chars_opt_1 - 2, *(double*)opt_1 / *(double*)value * 100.0);
+	 } else if (opt_2 != NULL && c.n_chars_opt_2 > 0) {
+            fprintf (fp, " %*.*f(%*d) ", c.n_chars - c.n_chars_opt_2 - 1, c.n_decimal_places, *(double*)value,
+                     c.n_chars_opt_2 - 2, *(int*)opt_2);
 	 } else {
-            fprintf (fp, " %*.*f ", c.n_chars, c.n_decimal_places, *(double*)value_1);
+            fprintf (fp, " %*.*f ", c.n_chars, c.n_decimal_places, *(double*)value);
 	 }
    }
    if (c.separator_type == SEP_LAST) fprintf (fp, "|");
@@ -577,54 +613,61 @@ void vftr_prof_column_print (FILE *fp, column_t c, void *value_1, void *value_2)
 /**********************************************************************/
 
 void vftr_set_summary_column_formats (bool print_mpi, int n_display_funcs, display_function_t **display_functions, column_t **columns, double total_time) {
-    const char *headers[10] = {"Function", "%MPI", "Calls",
+    const char *headers[11] = {"Function", "Stack ID", "%MPI", "Calls",
                               "Total send ", "Total recv.",
 			      "Avg. time [s]", "Min. time [s]", "Max. time [s]",
 			      "Imbalance [%]", "This rank [s]"};
-    enum column_ids {FUNC, MPI, CALLS, TOT_SEND_BYTES, TOT_RECV_BYTES, T_AVG, T_MIN, T_MAX, IMBA, THIS_T};
+    enum column_ids {FUNC, STACK_ID, MPI, CALLS, TOT_SEND_BYTES, TOT_RECV_BYTES, T_AVG, T_MIN, T_MAX, IMBA, THIS_T};
 
     int i_column = 0;
-    vftr_prof_column_init (headers[FUNC], NULL, 0, COL_CHAR, SEP_MID, &(*columns)[i_column++]);
+    vftr_prof_column_init (headers[FUNC], NULL, 0, COL_CHAR_RIGHT, SEP_MID, &(*columns)[i_column++]);
+    if (vftr_environment.all_mpi_summary->value) vftr_prof_column_init (headers[STACK_ID], NULL, 0, COL_INT, SEP_MID, &(*columns)[i_column++]);
     if (print_mpi) vftr_prof_column_init (headers[MPI], NULL, 2, COL_DOUBLE, SEP_MID, &(*columns)[i_column++]);
     vftr_prof_column_init (headers[CALLS], NULL, 0, COL_INT, SEP_MID, &(*columns)[i_column++]);
     if (print_mpi) {
        vftr_prof_column_init (headers[TOT_SEND_BYTES], NULL, 0, COL_MEM, SEP_MID, &(*columns)[i_column++]);
        vftr_prof_column_init (headers[TOT_RECV_BYTES], NULL, 0, COL_MEM, SEP_MID, &(*columns)[i_column++]);
     }
-    vftr_prof_column_init (headers[T_AVG], NULL, 2, COL_SYNC, SEP_MID, &(*columns)[i_column++]);
-    vftr_prof_column_init (headers[T_MIN], NULL, 2, COL_SYNC, SEP_MID, &(*columns)[i_column++]);
-    vftr_prof_column_init (headers[T_MAX], NULL, 2, COL_SYNC, SEP_MID, &(*columns)[i_column++]);
+    vftr_prof_column_init (headers[T_AVG], NULL, 2, COL_TIME, SEP_MID, &(*columns)[i_column++]);
+    vftr_prof_column_init (headers[T_MIN], NULL, 2, COL_TIME, SEP_MID, &(*columns)[i_column++]);
+    vftr_prof_column_init (headers[T_MAX], NULL, 2, COL_TIME, SEP_MID, &(*columns)[i_column++]);
     vftr_prof_column_init (headers[IMBA], NULL, 2, COL_DOUBLE, SEP_MID, &(*columns)[i_column++]);
-    vftr_prof_column_init (headers[THIS_T], NULL, 2, COL_SYNC, SEP_LAST, &(*columns)[i_column++]);
+    vftr_prof_column_init (headers[THIS_T], NULL, 2, COL_TIME, SEP_LAST, &(*columns)[i_column++]);
   
     int stat;
     for (int i = 0; i < n_display_funcs; i++) {
        if (!display_functions[i]->properly_terminated) continue;       
        i_column = 0;
-       vftr_prof_column_set_n_chars (display_functions[i]->func_name, NULL, &(*columns)[i_column++], &stat);
+       vftr_prof_column_set_n_chars (display_functions[i]->func_name, NULL, NULL, &(*columns)[i_column++], &stat);
+       if (vftr_environment.all_mpi_summary->value) {
+          int stack_id = display_functions[i]->stack_id;
+          vftr_prof_column_set_n_chars (&stack_id, NULL, NULL, &(*columns)[i_column++], &stat);
+       }
        if (print_mpi) {
           double tmp = display_functions[i]->this_mpi_time * 1e-6 / total_time * 100;
-	  vftr_prof_column_set_n_chars (&tmp, NULL, &(*columns)[i_column++], &stat);
+	  vftr_prof_column_set_n_chars (&tmp, NULL, NULL, &(*columns)[i_column++], &stat);
        }
-       vftr_prof_column_set_n_chars (&display_functions[i]->n_calls, NULL, &(*columns)[i_column++], &stat);
+       vftr_prof_column_set_n_chars (&display_functions[i]->n_calls, NULL, NULL, &(*columns)[i_column++], &stat);
        if (print_mpi) {
-	  vftr_prof_column_set_n_chars (&display_functions[i]->mpi_tot_send_bytes, NULL, &(*columns)[i_column++], &stat);  
-	  vftr_prof_column_set_n_chars (&display_functions[i]->mpi_tot_recv_bytes, NULL, &(*columns)[i_column++], &stat);
+	  vftr_prof_column_set_n_chars (&display_functions[i]->mpi_tot_send_bytes, NULL, NULL, &(*columns)[i_column++], &stat);  
+	  vftr_prof_column_set_n_chars (&display_functions[i]->mpi_tot_recv_bytes, NULL, NULL, &(*columns)[i_column++], &stat);
        } 
        double t = display_functions[i]->t_avg * 1e-6;
        double t2 = display_functions[i]->t_sync_avg * 1e-6;
        bool has_sync = t2 > 0;
-       vftr_prof_column_set_n_chars (&t, has_sync ? &t2 : NULL, &(*columns)[i_column++], &stat);
+       vftr_prof_column_set_n_chars (&t, has_sync ? &t2 : NULL, NULL, &(*columns)[i_column++], &stat);
        t = display_functions[i]->t_min * 1e-6;
        t2 = display_functions[i]->t_sync_min * 1e-6;
-       vftr_prof_column_set_n_chars (&t, has_sync ? &t2 : NULL, &(*columns)[i_column++], &stat);
+       int n = display_functions[i]->rank_min;
+       vftr_prof_column_set_n_chars (&t, has_sync ? &t2 : NULL, &n, &(*columns)[i_column++], &stat);
        t = display_functions[i]->t_max * 1e-6;
        t2 = display_functions[i]->t_sync_max * 1e-6;
-       vftr_prof_column_set_n_chars (&t, has_sync ? &t2 : NULL, &(*columns)[i_column++], &stat);
-       vftr_prof_column_set_n_chars (&display_functions[i]->imbalance, NULL, &(*columns)[i_column++], &stat);
+       n = display_functions[i]->rank_max;
+       vftr_prof_column_set_n_chars (&t, has_sync ? &t2 : NULL, &n, &(*columns)[i_column++], &stat);
+       vftr_prof_column_set_n_chars (&display_functions[i]->imbalance, NULL, NULL, &(*columns)[i_column++], &stat);
        t = display_functions[i]->this_mpi_time * 1e-6;
        t2 = display_functions[i]->this_sync_time * 1e-6;
-       vftr_prof_column_set_n_chars (&t, has_sync ? &t2 : NULL, &(*columns)[i_column++], &stat);
+       vftr_prof_column_set_n_chars (&t, has_sync ? &t2 : NULL, NULL, &(*columns)[i_column++], &stat);
     }
 }
 
@@ -665,9 +708,14 @@ void vftr_set_proftab_column_formats (function_t **func_table,
 		} 
  	}
 
-        vftr_prof_column_init ("Function", NULL, 0, COL_CHAR, SEP_NONE, &(columns)[i_column++]);
-        vftr_prof_column_init ("Caller", NULL, 0, COL_CHAR, SEP_NONE, &(columns)[i_column++]);
+        if (vftr_max_allocated_fields > 0) vftr_prof_column_init ("Max mem", NULL, 2, COL_MEM, SEP_NONE, &(columns)[i_column++]);
+
+        vftr_prof_column_init ("Function", NULL, 0, COL_CHAR_RIGHT, SEP_NONE, &(columns)[i_column++]);
+        vftr_prof_column_init ("Caller", NULL, 0, COL_CHAR_RIGHT, SEP_NONE, &(columns)[i_column++]);
         vftr_prof_column_init ("ID", NULL, 0, COL_INT, SEP_NONE, &(columns)[i_column++]);
+        if (vftr_environment.show_stacks_in_profile->value) {
+           vftr_prof_column_init ("Stack", NULL, 0, COL_CHAR_LEFT, SEP_NONE, &(columns)[i_column++]);
+        }
         int stat;
         long long t_sum = 0;
         for (int i = 0; i < n_funcs; i++) {
@@ -680,21 +728,21 @@ void vftr_set_proftab_column_formats (function_t **func_table,
      	    t_sum += t_excl;
             int n_calls = prof_current.calls - prof_previous.calls;
             i_column = 0;
-            vftr_prof_column_set_n_chars (&n_calls, NULL, &(columns)[i_column++], &stat);
-            vftr_prof_column_set_n_chars (&t_excl, NULL, &(columns)[i_column++], &stat);
-            vftr_prof_column_set_n_chars (&t_incl, NULL, &(columns)[i_column++], &stat);
+            vftr_prof_column_set_n_chars (&n_calls, NULL, NULL, &(columns)[i_column++], &stat);
+            vftr_prof_column_set_n_chars (&t_excl, NULL, NULL, &(columns)[i_column++], &stat);
+            vftr_prof_column_set_n_chars (&t_incl, NULL, NULL, &(columns)[i_column++], &stat);
 	    double t = (double)t_excl / (double)runtime_usec * 100;
-            vftr_prof_column_set_n_chars (&t, NULL, &(columns)[i_column++], &stat);
+            vftr_prof_column_set_n_chars (&t, NULL, NULL, &(columns)[i_column++], &stat);
 	    t = (double)t_sum / (double)runtime_usec * 100;
-            vftr_prof_column_set_n_chars (&t, NULL, &(columns)[i_column++], &stat);
+            vftr_prof_column_set_n_chars (&t, NULL, NULL, &(columns)[i_column++], &stat);
 
             if (vftr_environment.show_overhead->value) {
                 double t_overhead = func_table[i_func]->overhead * 1e-6;
-                vftr_prof_column_set_n_chars (&t_overhead, NULL, &(columns)[i_column++], &stat);
+                vftr_prof_column_set_n_chars (&t_overhead, NULL, NULL, &(columns)[i_column++], &stat);
                 double rel = sampling_overhead_time > 0.0 ? t_overhead / sampling_overhead_time * 99.99 : 0.0;
-                vftr_prof_column_set_n_chars (&rel, NULL, &(columns)[i_column++], &stat);
+                vftr_prof_column_set_n_chars (&rel, NULL, NULL, &(columns)[i_column++], &stat);
                 rel = t_excl > 0.0 ? t_overhead / t_excl : 0.0;
-                vftr_prof_column_set_n_chars (&rel, NULL, &(columns)[i_column++], &stat);
+                vftr_prof_column_set_n_chars (&rel, NULL, NULL, &(columns)[i_column++], &stat);
             }
 
 	    if (vftr_events_enabled) {
@@ -704,12 +752,26 @@ void vftr_set_proftab_column_formats (function_t **func_table,
 		vftr_scenario_expr_evaluate_all (t_excl * 1e-6, cycles);
 		for (int j = 0; j < vftr_scenario_expr_n_formulas; j++) {
 		   double tmp = vftr_scenario_expr_formulas[j].value;
-		   vftr_prof_column_set_n_chars (&tmp, NULL, &(columns)[i_column++], &stat);
+		   vftr_prof_column_set_n_chars (&tmp, NULL, NULL, &(columns)[i_column++], &stat);
 	   	}
 	    }
 
-            vftr_prof_column_set_n_chars (func_table[i_func]->name, NULL, &(columns)[i_column++], &stat);
-            vftr_prof_column_set_n_chars (func_table[i_func]->return_to->name, NULL, &(columns)[i_column++], &stat);
+            if (vftr_max_allocated_fields > 0) {
+               double mem_max = (double)vftr_allocate_get_max_memory_for_stackid (func_table[i_func]->id);
+	       vftr_prof_column_set_n_chars (&mem_max, NULL, NULL, &(columns)[i_column++], &stat);
+            }
+
+            vftr_prof_column_set_n_chars (func_table[i_func]->name, NULL, NULL, &(columns)[i_column++], &stat);
+            if (func_table[i_func]->return_to != NULL) {
+              vftr_prof_column_set_n_chars (func_table[i_func]->return_to->name, NULL, NULL, &(columns)[i_column++], &stat);
+            } else {
+              vftr_prof_column_set_n_chars ("-/-", NULL, NULL, &(columns)[i_column++], &stat);
+            }
+            int global_id = func_table[i_func]->gid;
+            vftr_prof_column_set_n_chars (&global_id, NULL, NULL, &(columns)[i_column++], &stat);
+            if (vftr_environment.show_stacks_in_profile->value) {
+               vftr_prof_column_set_n_chars (vftr_global_stack_strings[global_id].s, NULL, NULL, &(columns)[i_column++], &stat);
+	    }
 	}
 	columns[0].n_chars++;
 }
@@ -746,6 +808,16 @@ void vftr_summary_print_header (FILE *fp, column_t *columns, int table_width, bo
 	       columns[7].n_chars, columns[7].header,
 	       columns[8].n_chars, columns[8].header,
 	       columns[9].n_chars, columns[9].header);
+   } else if (vftr_environment.all_mpi_summary->value) {
+      fprintf (fp, "| %*s | %*s | %*s | %*s | %*s | %*s | %*s | %*s |\n",
+	       columns[0].n_chars, columns[0].header,
+	       columns[1].n_chars, columns[1].header,
+	       columns[2].n_chars, columns[2].header,
+	       columns[3].n_chars, columns[3].header,
+	       columns[4].n_chars, columns[4].header,
+	       columns[5].n_chars, columns[5].header,
+	       columns[6].n_chars, columns[6].header,
+	       columns[7].n_chars, columns[7].header);
    } else {
       fprintf (fp, "| %*s | %*s | %*s | %*s | %*s | %*s | %*s |\n",
 	       columns[0].n_chars, columns[0].header,
@@ -766,31 +838,34 @@ void vftr_summary_print_header (FILE *fp, column_t *columns, int table_width, bo
 
 void vftr_summary_print_line (FILE *fp, display_function_t *displ_f, column_t *columns, double total_time, bool print_mpi) {
    int i_column = 0;
-   vftr_prof_column_print (fp, columns[i_column++], displ_f->func_name, NULL);
+   vftr_prof_column_print (fp, columns[i_column++], displ_f->func_name, NULL, NULL);
+   if (vftr_environment.all_mpi_summary->value) vftr_prof_column_print (fp, columns[i_column++], &displ_f->stack_id, NULL, NULL);
    double t, t2;
    if (print_mpi) {
       t = displ_f->this_mpi_time * 1e-6 / total_time * 100;
-      vftr_prof_column_print (fp, columns[i_column++], &t, NULL);
+      vftr_prof_column_print (fp, columns[i_column++], &t, NULL, NULL);
    }
-   vftr_prof_column_print (fp, columns[i_column++], &displ_f->n_calls, NULL);
+   vftr_prof_column_print (fp, columns[i_column++], &displ_f->n_calls, NULL, NULL);
    if (print_mpi) {
-      vftr_prof_column_print (fp, columns[i_column++], &displ_f->mpi_tot_send_bytes, NULL);
-      vftr_prof_column_print (fp, columns[i_column++], &displ_f->mpi_tot_recv_bytes, NULL);
+      vftr_prof_column_print (fp, columns[i_column++], &displ_f->mpi_tot_send_bytes, NULL, NULL);
+      vftr_prof_column_print (fp, columns[i_column++], &displ_f->mpi_tot_recv_bytes, NULL, NULL);
    }
    t = displ_f->t_avg * 1e-6;
    t2 = displ_f->t_sync_avg * 1e-6;
    bool has_sync = t2 > 0;
-   vftr_prof_column_print (fp, columns[i_column++], &t, has_sync ? &t2 : NULL);
+   vftr_prof_column_print (fp, columns[i_column++], &t, has_sync ? &t2 : NULL, NULL);
    t = displ_f->t_min * 1e-6;
    t2 = displ_f->t_sync_min * 1e-6;
-   vftr_prof_column_print (fp, columns[i_column++], &t, has_sync ? &t2 : NULL);
+   int n = displ_f->rank_min;
+   vftr_prof_column_print (fp, columns[i_column++], &t, has_sync ? &t2 : NULL, &n);
    t = displ_f->t_max * 1e-6;
    t2 = displ_f->t_sync_max * 1e-6;
-   vftr_prof_column_print (fp, columns[i_column++], &t, has_sync ? &t2 : NULL);
-   vftr_prof_column_print (fp, columns[i_column++], &displ_f->imbalance, NULL);
+   n = displ_f->rank_max;
+   vftr_prof_column_print (fp, columns[i_column++], &t, has_sync ? &t2 : NULL, &n);
+   vftr_prof_column_print (fp, columns[i_column++], &displ_f->imbalance, NULL, NULL);
    t = displ_f->this_mpi_time * 1e-6;
    t2 = displ_f->this_sync_time * 1e-6;
-   vftr_prof_column_print (fp, columns[i_column++], &t, has_sync ? &t2 : NULL);
+   vftr_prof_column_print (fp, columns[i_column++], &t, has_sync ? &t2 : NULL, NULL);
    fprintf (fp, "\n");
 }
 
@@ -827,6 +902,10 @@ void vftr_proftab_print_header (FILE *fp, column_t *columns) {
 	i++;
 	fprintf (fp, " %*s ", columns[i].n_chars, columns[i].header);
 	i++;
+        if (vftr_environment.show_stacks_in_profile->value) {
+          fprintf (fp, " %*s ", columns[i].n_chars, columns[i].header);
+	  i++;
+        }
 	fprintf (fp, "\n");
 }
 
@@ -871,13 +950,22 @@ void vftr_evaluate_display_function (char *func_name, display_function_t **displ
     int n_func_indices_sync, n_stack_indices_sync;
     int *func_indices_sync = NULL, *stack_indices_sync = NULL;
 
-    vftr_find_function_in_table (func_name, &func_indices, &n_func_indices, true);
+    if ((*display_func)->stack_id >= 0) {
+       n_func_indices = 1;
+       n_stack_indices = 1;
+       func_indices = (int*) malloc (1 * sizeof(int));
+       stack_indices = (int*) malloc (1 * sizeof(int));
+       func_indices[0] = (*display_func)->func_id;
+       stack_indices[0] = (*display_func)->stack_id;
+    } else {
+       vftr_find_function_in_table (func_name, &func_indices, &n_func_indices, true);
+       vftr_find_function_in_stack (func_name, &stack_indices, &n_stack_indices, true);
+    }
     (*display_func)->n_func_indices = n_func_indices;
     (*display_func)->func_indices = (int*)malloc (n_func_indices * sizeof(int));
     memcpy ((*display_func)->func_indices, func_indices, n_func_indices * sizeof(int));
 
 
-    vftr_find_function_in_stack (func_name, &stack_indices, &n_stack_indices, true);
     (*display_func)->n_stack_indices = n_stack_indices;
     (*display_func)->stack_indices = (int*)malloc (n_stack_indices * sizeof(int));
     memcpy ((*display_func)->stack_indices, stack_indices, n_stack_indices * sizeof(int));
@@ -885,20 +973,20 @@ void vftr_evaluate_display_function (char *func_name, display_function_t **displ
     if (display_sync_time) {
     	strcpy (func_name_sync, func_name);
     	strcat (func_name_sync, "_sync");
-	vftr_find_function_in_table (func_name_sync, &func_indices_sync, &n_func_indices_sync, true);
+        vftr_find_function_in_table (func_name_sync, &func_indices_sync, &n_func_indices_sync, true);
     	if (n_func_indices_sync > 0 && n_func_indices != n_func_indices_sync) {
     	    printf ("Error: Number of synchronize regions does not match total number of regions: %d %d\n",
     	    	n_func_indices, n_func_indices_sync);
     	}
-	vftr_find_function_in_stack (func_name_sync, &stack_indices_sync, &n_stack_indices_sync, true);
+        vftr_find_function_in_stack (func_name_sync, &stack_indices_sync, &n_stack_indices_sync, true);
     	if (n_stack_indices_sync > 0 && n_stack_indices != n_stack_indices_sync) {
     	    printf ("Error: Number of synchronize regions does not match total number of regions: %d %d\n",
     	    	n_stack_indices, n_stack_indices_sync);
     	}
 
     } else {
-	n_func_indices_sync = 0;
-	n_stack_indices_sync = 0;
+        n_func_indices_sync = 0;
+        n_stack_indices_sync = 0;
     }
 
     (*display_func)->this_mpi_time = 0;
@@ -908,8 +996,29 @@ void vftr_evaluate_display_function (char *func_name, display_function_t **displ
     (*display_func)->mpi_tot_recv_bytes = 0;
     (*display_func)->properly_terminated = true;
     for (int i = 0; i < n_func_indices; i++) {
-	(*display_func)->this_mpi_time += vftr_func_table[func_indices[i]]->prof_current.time_incl;
-	if (n_func_indices_sync > 0) (*display_func)->this_sync_time += vftr_func_table[func_indices_sync[i]]->prof_current.time_incl;
+        if (func_indices[i] < 0) break;
+        // If synchronization times shall be displayed, only the inclusive time makes sense. For consistency,
+        // we then show the inclusive time for all entries, not just that which have a synchronization barrier within them.
+        // In the default case, we use the exclusive time.
+        long long t1, t2, t1_sync, t2_sync;
+        if (display_sync_time) {
+            t1 = vftr_func_table[func_indices[i]]->prof_current.time_incl;
+            t2 = vftr_func_table[func_indices[i]]->prof_previous.time_incl;
+	    ///(*display_func)->this_mpi_time += vftr_func_table[func_indices[i]]->prof_current.time_incl;
+            // Stack indices with n_func_indices_sync > 0 have a synchro entry.
+	    ///if (n_func_indices_sync > 0) (*display_func)->this_sync_time += vftr_func_table[func_indices_sync[i]]->prof_current.time_incl;
+	    if (n_func_indices_sync > 0) {
+               t1_sync = vftr_func_table[func_indices_sync[i]]->prof_current.time_incl;
+               t1_sync = vftr_func_table[func_indices_sync[i]]->prof_previous.time_incl;
+            }
+        } else {
+            //printf ("Check time: %d %lld\n", func_indices[i], vftr_func_table[func_indices[i]]->prof_current.time_excl);
+            t1 = vftr_func_table[func_indices[i]]->prof_current.time_excl;
+            t2 = vftr_func_table[func_indices[i]]->prof_previous.time_excl;
+	    ///(*display_func)->this_mpi_time += vftr_func_table[func_indices[i]]->prof_current.time_excl;
+        }
+        (*display_func)->this_mpi_time += t1 - t2;
+        if (n_func_indices_sync > 0) (*display_func)->this_sync_time += t1_sync - t2_sync;
 	(*display_func)->n_calls += vftr_func_table[func_indices[i]]->prof_current.calls;
 	(*display_func)->mpi_tot_send_bytes += vftr_func_table[func_indices[i]]->prof_current.mpi_tot_send_bytes;
 	(*display_func)->mpi_tot_recv_bytes += vftr_func_table[func_indices[i]]->prof_current.mpi_tot_recv_bytes;
@@ -930,15 +1039,19 @@ void vftr_evaluate_display_function (char *func_name, display_function_t **displ
     (*display_func)->t_max = 0;
     (*display_func)->t_sync_max = 0;
     (*display_func)->t_min = LLONG_MAX;
+    (*display_func)->rank_min = -1;
     (*display_func)->t_sync_min = LLONG_MAX;
+    (*display_func)->rank_max = -1;
     (*display_func)->t_avg = 0.0;
     (*display_func)->t_sync_avg = 0.0;
     (*display_func)->imbalance = 0.0;
 
+    if ((*display_func)->n_calls == 0) return;
+
     long long sum_times = 0;
     long long sum_times_sync = 0;
     int n_count = 0;
-    if ((*display_func)->n_calls == 0) return;
+
     for (int i = 0; i < vftr_mpisize; i++) {
     	if (all_times[i] > 0) {
     		sum_times += all_times[i];
@@ -956,10 +1069,12 @@ void vftr_evaluate_display_function (char *func_name, display_function_t **displ
        	  if (all_times[i] > 0) {
        		if (all_times[i] < (*display_func)->t_min) {
 			(*display_func)->t_min = all_times[i];
+			(*display_func)->rank_min = i;
 			if (n_func_indices_sync > 0) (*display_func)->t_sync_min = all_times_sync[i];
 		}
        		if (all_times[i] > (*display_func)->t_max) {
 			(*display_func)->t_max = all_times[i];
+			(*display_func)->rank_max = i;
 			if (n_func_indices_sync > 0) (*display_func)->t_sync_max = all_times_sync[i];
 		}
        	  }
@@ -1045,44 +1160,57 @@ void vftr_get_display_width (display_function_t **display_functions,
 
 /**********************************************************************/
 
-display_function_t **vftr_create_display_functions (bool display_sync_time, int *n_display_funcs) {
+display_function_t **vftr_create_display_functions (bool display_sync_time, int *n_display_funcs, bool use_all) {
 
    vftr_stackid_list_init();
    for (int i = 0; i < vftr_gStackscount; i++) {
-       if (vftr_pattern_match (vftr_environment.print_stack_profile->value, vftr_gStackinfo[i].name)) {
-          vftr_stackid_list_add (i);
+       if (use_all || vftr_pattern_match(vftr_environment.print_stack_profile->value, vftr_gStackinfo[i].name)) {
+          vftr_stackid_list_add (vftr_gStackinfo[i].locID, i);
        }
    }
 
-   display_function_t **displ_f = (display_function_t**) malloc (n_print_stackids * sizeof(display_function_t*));
+   display_function_t **displ_f = (display_function_t**) malloc (vftr_n_print_stackids * sizeof(display_function_t*));
 
-    int i_disp_f = 0;
-    for (int i = 0; i < n_print_stackids; i++) {
-        bool name_already_there = false;
-	int i_func = print_stackid_list[i];
-	for (int j = 0; j < i_disp_f; j++) {
-	   if (!strcmp(displ_f[j]->func_name, vftr_gStackinfo[i_func].name)) {
-	     name_already_there = true;
-	     break;
-           }
-        }
-	if (name_already_there) continue;
-	displ_f[i_disp_f] = (display_function_t*) malloc (sizeof(display_function_t));
-	displ_f[i_disp_f]->func_name = strdup(vftr_gStackinfo[i_func].name);
-	vftr_is_traceable_mpi_function (displ_f[i_disp_f]->func_name, &(displ_f[i_disp_f]->is_mpi));
-        displ_f[i_disp_f]->i_orig = i_disp_f;
-	i_disp_f++;
-    }
-    *n_display_funcs = i_disp_f;
+   int i_disp_f = 0;
+   for (int i = 0; i < vftr_n_print_stackids; i++) {
+       //int i_func = vftr_print_stackid_list[i];
+       int i_stack = vftr_print_stackid_list[i].glob;
+       int i_func = vftr_print_stackid_list[i].loc;
+       if (!use_all) {
+          bool name_already_there = false;
+          for (int j = 0; j < i_disp_f; j++) {
+             //if (!strcmp(displ_f[j]->func_name, vftr_gStackinfo[i_func].name)) {
+             if (!strcmp(displ_f[j]->func_name, vftr_gStackinfo[i_stack].name)) {
+               name_already_there = true;
+               break;
+             }
+          }
+          if (name_already_there) continue;
+       }
+       displ_f[i_disp_f] = (display_function_t*) malloc (sizeof(display_function_t));
+       displ_f[i_disp_f]->func_name = strdup(vftr_gStackinfo[i_stack].name);
+       vftr_is_traceable_mpi_function (displ_f[i_disp_f]->func_name, &(displ_f[i_disp_f]->is_mpi));
+       displ_f[i_disp_f]->i_orig = i_disp_f;
+       // Associating a stack ID with the display function only makes sense when we are in the complete_summary mode.
+       // Otherwise all stacks with the same final function are added up. In that case, we set a negative dummy value.
+       if (use_all) {
+         displ_f[i_disp_f]->stack_id = i_stack;
+         displ_f[i_disp_f]->func_id = i_func;
 
-    for (int i = 0; i < *n_display_funcs; i++) {
-       vftr_evaluate_display_function (displ_f[i]->func_name, &(displ_f[i]), display_sync_time);
-       if (!displ_f[i]->properly_terminated) continue;
-    }
+       } else {
+         displ_f[i_disp_f]->stack_id = -1;
+       }
+       i_disp_f++;
+   }
+   *n_display_funcs = i_disp_f;
 
-    qsort ((void*)displ_f, (size_t)(*n_display_funcs),
-	    sizeof (display_function_t *), vftr_compare_display_functions_tavg);
-    return displ_f;
+   for (int i = 0; i < *n_display_funcs; i++) {
+      vftr_evaluate_display_function (displ_f[i]->func_name, &(displ_f[i]), display_sync_time);
+   }
+
+   qsort ((void*)displ_f, (size_t)(*n_display_funcs),
+           sizeof (display_function_t *), vftr_compare_display_functions_tavg);
+   return displ_f;
 }
 
 /**********************************************************************/
@@ -1091,11 +1219,13 @@ void vftr_print_function_statistics (FILE *fp_log, display_function_t **display_
 
     double total_time = 0;
     bool print_mpi_columns = false;
-    for (int i = 0; i < n_display_funcs; i++) {
-      if (display_functions[i]->properly_terminated) {
-	total_time += display_functions[i]->this_mpi_time * 1e-6;
-	print_mpi_columns |= display_functions[i]->is_mpi;
-      }
+    if (!vftr_environment.all_mpi_summary->value) {
+       for (int i = 0; i < n_display_funcs; i++) {
+         if (display_functions[i]->properly_terminated) {
+           total_time += display_functions[i]->this_mpi_time * 1e-6;
+           print_mpi_columns |= display_functions[i]->is_mpi;
+         }
+       }
     }
 
     int table_width;
@@ -1103,7 +1233,24 @@ void vftr_print_function_statistics (FILE *fp_log, display_function_t **display_
        fprintf (fp_log, "Total time spent in MPI for rank %d: %lf s\n", vftr_mpirank, total_time);
        fprintf (fp_log, "Imbalance computed as: max (T - T_avg)\n");
 
-       int n_columns = print_mpi_columns ? 10 : 7;
+       //int n_columns = print_mpi_columns ? 10 : 7;
+       // Per default, there are seven columns:
+       //   - The function name
+       //   - Number of calls
+       //   - Average, mininum and maximum time
+       //   - Imbalance
+       //   - Time on this rank
+       int n_columns = 7;
+       // There are 3 more columns for MPI overviews:
+       //   - Percentage of the total MPI time
+       //   - Data size sent and received
+       if (print_mpi_columns) {
+          n_columns += 3;
+       // If the complete overview is printed, add one column for global stack ID (or entire stack).
+       } else if (vftr_environment.all_mpi_summary->value) {
+          n_columns += 1;
+       }
+         
        column_t *columns = (column_t*) malloc (n_columns * sizeof(column_t));
        vftr_set_summary_column_formats (print_mpi_columns, n_display_funcs, display_functions, &columns, total_time);
    
@@ -1141,7 +1288,7 @@ void vftr_print_function_statistics (FILE *fp_log, display_function_t **display_
         }
 
   	for (int i = 0; i < n_display_funcs; i++) {
-                if (!display_functions[i]->properly_terminated) continue;
+                //if (!display_functions[i]->properly_terminated) continue;
 		if (display_functions[i]->n_stack_indices == 0) {;
 	 	   if (vftr_environment.create_html->value) {
 		      vftr_browse_print_stacktree_page (NULL, true, display_functions, i,
@@ -1275,57 +1422,57 @@ void vftr_compute_line_content (function_t *this_func, int *n_calls, long long *
 
 /**********************************************************************/
 
-void vftr_print_profile_line (FILE *fp_log, int stack_id,
+void vftr_print_profile_line (FILE *fp_log, int local_stack_id, int global_stack_id,
 			      long long runtime_usec, double sampling_overhead_time,
 			      int n_calls, long long t_excl, long long t_incl, long long t_sum, double t_overhead,
 			      char *func_name, char *caller_name, column_t *prof_columns) {
    int i_column = 0;
-   vftr_prof_column_print (fp_log, prof_columns[i_column++], &n_calls, NULL);
+   vftr_prof_column_print (fp_log, prof_columns[i_column++], &n_calls, NULL, NULL);
    double t_part = (double)t_excl / (double)runtime_usec * 100;
    double t_cum = (double)t_sum / (double)runtime_usec * 100;
    vftr_print_stack_time (fp_log, n_calls, t_excl * 1e-6, t_incl * 1e-6, t_part, t_cum, &i_column, prof_columns);
 
    double t;
    if (vftr_environment.show_overhead->value) {
-      vftr_prof_column_print (fp_log, prof_columns[i_column++], &t_overhead, NULL); 
+      vftr_prof_column_print (fp_log, prof_columns[i_column++], &t_overhead, NULL, NULL); 
       t = t_overhead / sampling_overhead_time * 100.0;
-      vftr_prof_column_print (fp_log, prof_columns[i_column++], &t, NULL); 
+      vftr_prof_column_print (fp_log, prof_columns[i_column++], &t, NULL, NULL); 
       t = t_excl > 0 ? t_overhead / t_excl : 0.0;
-      vftr_prof_column_print (fp_log, prof_columns[i_column++], &t, NULL); 
+      vftr_prof_column_print (fp_log, prof_columns[i_column++], &t, NULL, NULL); 
    }
    
    if (vftr_events_enabled) {
        	for (int i = 0; i < vftr_scenario_expr_n_formulas; i++) {
-   	   vftr_prof_column_print (fp_log, prof_columns[i_column++], &vftr_scenario_expr_formulas[i].value, NULL);
+   	   vftr_prof_column_print (fp_log, prof_columns[i_column++], &vftr_scenario_expr_formulas[i].value, NULL, NULL);
    	}
    }
-   
-   vftr_prof_column_print (fp_log, prof_columns[i_column++], func_name, NULL);
-   if (caller_name) {
-       vftr_prof_column_print (fp_log, prof_columns[i_column++], caller_name, NULL);
+
+   if (vftr_max_allocated_fields > 0) {
+      double mem_max = (double)vftr_allocate_get_max_memory_for_stackid (local_stack_id);
+      vftr_prof_column_print (fp_log, prof_columns[i_column++], &mem_max, NULL, NULL);
    }
    
-   vftr_prof_column_print (fp_log, prof_columns[i_column++], &stack_id, NULL);
+   vftr_prof_column_print (fp_log, prof_columns[i_column++], func_name, NULL, NULL);
+   if (caller_name) {
+       vftr_prof_column_print (fp_log, prof_columns[i_column++], caller_name, NULL, NULL);
+   } else {
+       vftr_prof_column_print (fp_log, prof_columns[i_column++], "-/-", NULL, NULL);
+   }
+   
+   vftr_prof_column_print (fp_log, prof_columns[i_column++], &global_stack_id, NULL, NULL);
+   if (vftr_environment.show_stacks_in_profile->value) {
+      vftr_prof_column_print (fp_log, prof_columns[i_column++], vftr_global_stack_strings[global_stack_id].s, NULL, NULL);
+   }
    fprintf (fp_log, "\n");
 }
 
 /**********************************************************************/
 
-void vftr_print_profile (FILE *fp_log, display_function_t **display_functions, int n_display_functions,
-			 int *n_func_indices, long long time0) {
-    unsigned long long calls;
-    
+void vftr_print_profile (FILE *fp_log, FILE *f_html, int *n_func_indices, long long time0,
+                         int n_display_functions, display_function_t **display_functions) {
     int table_width;
 
-    FILE *f_html;
-
     if (!vftr_stackscount) return;
-    if (!vftr_profile_wanted) return;
-
-    if (vftr_environment.create_html->value) {
-       vftr_browse_create_directory ();
-       f_html = vftr_browse_init_profile_table (display_functions, n_display_functions);
-    }
 
     function_t **func_table;
 
@@ -1353,9 +1500,10 @@ void vftr_print_profile (FILE *fp_log, display_function_t **display_functions, i
         fprintf (fp_log, " for rank %d", vftr_mpirank);
     }
     if (vftr_environment.prof_truncate->value) {
-	fprintf (fp_log, " (truncated to %3.0f%%)", vftr_environment.prof_truncate_cutoff->value);
+	fprintf (fp_log, ", truncated to %3.0f%%", vftr_environment.prof_truncate_cutoff->value);
     }
-    fprintf (fp_log, ":\n\n");
+    fprintf (fp_log, ", %s", vftr_profile_sorting_method_string());
+    fprintf (fp_log, " :\n\n");
 
     long long function_time = total_runtime_usec - sampling_overhead_time_usec;
     *n_func_indices = vftr_count_func_indices_up_to_truncate (func_table, function_time);
@@ -1369,15 +1517,15 @@ void vftr_print_profile (FILE *fp_log, display_function_t **display_functions, i
     n_columns += vftr_scenario_expr_n_formulas;
     // If function overhead is displayed, add three more columns.
     if (vftr_environment.show_overhead->value) n_columns += 3;
+    if (vftr_environment.show_stacks_in_profile->value) n_columns++;
 
-    int i_column = 0;
     column_t *prof_columns = (column_t*) malloc (n_columns * sizeof(column_t));
     vftr_set_proftab_column_formats (func_table, function_time, sampling_overhead_time_usec * 1e-6,
 				     *n_func_indices, func_indices, prof_columns);
 
     table_width = vftr_get_tablewidth_from_columns (prof_columns, n_columns, false);
 
-    if (vftr_environment.create_html->value) {
+    if (f_html != NULL) {
        vftr_browse_create_profile_header (f_html);
     }
 
@@ -1396,23 +1544,46 @@ void vftr_print_profile (FILE *fp_log, display_function_t **display_functions, i
        double t_overhead;
        vftr_compute_line_content (func_table[i_func], &n_calls, &t_excl, &t_incl, &t_overhead);
        cumulative_time += t_excl;
-       vftr_print_profile_line (fp_log, func_table[i_func]->gid,
-			        function_time, sampling_overhead_time_usec * 1e-6,
-			        n_calls, t_excl, t_incl, cumulative_time, t_overhead,
-				func_table[i_func]->name, func_table[i_func]->return_to->name, prof_columns);
+       //printf ("Print line(%d): %s %d\n", vftr_mpirank, func_table[i_func]->name, func_table[i_func]->return_to == NULL);
+       if (func_table[i_func]->return_to != NULL) {
+          vftr_print_profile_line (fp_log, func_table[i_func]->id, func_table[i_func]->gid, 
+   			        function_time, sampling_overhead_time_usec * 1e-6,
+   			        n_calls, t_excl, t_incl, cumulative_time, t_overhead,
+   				func_table[i_func]->name, func_table[i_func]->return_to->name, prof_columns);
 
-       if (vftr_environment.create_html->value) {
-	  vftr_browse_print_table_line (f_html, func_table[i_func]->gid,
-				        function_time, sampling_overhead_time_usec * 1e-6,
-					n_calls, t_excl, t_incl, cumulative_time, t_overhead,
-				        func_table[i_func]->name, func_table[i_func]->return_to->name, prof_columns);
+       } else {
+          //printf ("Init in profile line: %d %lld\n", i_func, t_excl);
+          vftr_print_profile_line (fp_log, func_table[i_func]->id, func_table[i_func]->gid, 
+   			        function_time, sampling_overhead_time_usec * 1e-6,
+   			        n_calls, t_excl, t_incl, cumulative_time, t_overhead,
+   				func_table[i_func]->name, NULL, prof_columns);
+      }
+      //printf ("Line printed: %d\n", vftr_mpirank);
+
+       if (f_html != NULL) {
+          bool mark_disp_f = false;
+          for (int i_disp = 0; i_disp < n_display_functions; i_disp++) {
+             if ((mark_disp_f = !strcmp(func_table[i_func]->name, display_functions[i_disp]->func_name))) break;
+          }
+          if (func_table[i_func]->return_to != NULL) {
+	     vftr_browse_print_table_line (f_html, func_table[i_func]->gid,
+	   			        function_time, sampling_overhead_time_usec * 1e-6,
+	   				n_calls, t_excl, t_incl, cumulative_time, t_overhead,
+	   			        func_table[i_func]->name, func_table[i_func]->return_to->name, prof_columns, mark_disp_f);
+          } else {
+	     vftr_browse_print_table_line (f_html, func_table[i_func]->gid,
+	   			        function_time, sampling_overhead_time_usec * 1e-6,
+	   				n_calls, t_excl, t_incl, cumulative_time, t_overhead,
+	   			        func_table[i_func]->name, NULL, prof_columns, mark_disp_f);
+          }
        }
     }
 
-    if (vftr_environment.create_html->value) vftr_browse_finalize_table(f_html);
+    if (f_html != NULL) vftr_browse_finalize_table(f_html);
     
     vftr_print_dashes (fp_log, table_width);
     fprintf (fp_log, "\n");
+    fflush(fp_log);
     
     free (func_table);
 }
@@ -1442,13 +1613,13 @@ int vftr_filewrite_test_2 (FILE *fp_in, FILE *fp_out) {
 	int n;
 	unsigned long long addrs [6];
 	unsigned long long vftr_test_runtime = 0;
-	function_t *func1 = vftr_new_function (NULL, "init", NULL, 0, false);
-	function_t *func2 = vftr_new_function ((void*)addrs, "func2", func1, 0, false);
-	function_t *func3 = vftr_new_function ((void*)(addrs + 1), "func3", func1, 0, false);	
-	function_t *func4 = vftr_new_function ((void*)(addrs + 2), "func4", func3, 0, false);
-	function_t *func5 = vftr_new_function ((void*)(addrs + 3), "func5", func2, 0, false);
-	function_t *func6 = vftr_new_function ((void*)(addrs + 4), "func6", func2, 0, false);
-	function_t *func7 = vftr_new_function ((void*)(addrs + 5), "func4", func6, 0, false);
+	function_t *func1 = vftr_new_function (NULL, "init", NULL, false);
+	function_t *func2 = vftr_new_function ((void*)addrs, "func2", func1, false);
+	function_t *func3 = vftr_new_function ((void*)(addrs + 1), "func3", func1, false);	
+	function_t *func4 = vftr_new_function ((void*)(addrs + 2), "func4", func3, false);
+	function_t *func5 = vftr_new_function ((void*)(addrs + 3), "func5", func2, false);
+	function_t *func6 = vftr_new_function ((void*)(addrs + 4), "func6", func2, false);
+	function_t *func7 = vftr_new_function ((void*)(addrs + 5), "func4", func6, false);
 	vftr_normalize_stacks();
 	for (int i = 0; i < vftr_stackscount; i++) {
 		vftr_func_table[i]->prof_current.calls = i + 1;
@@ -1470,7 +1641,7 @@ int vftr_filewrite_test_2 (FILE *fp_in, FILE *fp_out) {
 #ifdef _MPI
         vftr_mpi_overhead_usec = 0;
 #endif
-	vftr_print_profile (fp_out, NULL, 0, &n, vftr_test_runtime);		
+	vftr_print_profile (fp_out, NULL, &n, vftr_test_runtime, 0, NULL);
 	return 0;
 }
 

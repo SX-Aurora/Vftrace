@@ -43,6 +43,13 @@ Buffer size for the buffered stream output of the profiling data files (.vfd) in
 .br
 \fBDefault: 8\fR
 .\"
+.IP "\fBVFTR_COMPLETE_MPI_SUMMARY\fR"
+.IX Item "VFTR_COMPLETE_MPI_SUMMARY"
+If this option is set, all functions in the profile table are displayed in the MPI imbalance overview. If VFTR_MPI_SHOW_SYNC_TIME or
+VFTR_PRINT_STACK_PROFILE are set, this option is ignored.
+.br
+\fBDefault: "no"
+.\"
 .IP "\fBVFTR_DETAIL_UNTIL_CUM_CYCLES\fR"
 .IX Item "VFTR_DETAIL_UNTIL_CUM_CYCLES"
 In regular intervals, the function table is sorted according to each function's exclusive time. When doing so, the total number of cycles spent is summed up (cumulative cycles). Each function up to the value of VFTR_DETAIL_UNTIL_CUM_CYCLES gets the detail attribute, i.e. it is sampled at sampling time. VFTR_DETAIL_UNTIL_CUM_CYCLES is a decimal value between 0.0 and 100.0, giving the percentage of cumulative cycles.  
@@ -241,7 +248,7 @@ or by accessing it remotely (given suitable network configurations).
 .IP "\fBVFTR_SORT_PROFILE_TABLE\fR"
 .IX Item "VFTR_SORT_PROFILE_TABLE\fR"
 Specifies how the profile table is sorted. Possible values are TIME_EXLC (exclusive time, default), 
-TIME_INCL (inclusive time), CALLS (number of calls), STACK_ID, OVERHEAD and OVERHEAD_RELATIVE.
+TIME_INCL (inclusive time), CALLS (number of calls), STACK_ID, OVERHEAD, OVERHEAD_RELATIVE and NONE.
 .\"
 .IP "\fBVFTR_SHOW_FUNCTION_OVERHEAD\fR"
 .IX Item "VFTR_SHOW_FUNCTION_OVERHEAD\R"

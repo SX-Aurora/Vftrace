@@ -19,7 +19,7 @@
 SUBROUTINE MPI_IALLGATHER(SENDBUF, SENDCOUNT, SENDTYPE, &
                           RECVBUF, RECVCOUNT, RECVTYPE, &
                           COMM, REQUEST, ERROR)
-   USE vftr_mpi_iallgather_c2f, &
+   USE vftr_mpi_iallgather_f2c, &
       ONLY : vftr_MPI_Iallgather_F
    IMPLICIT NONE
    INTEGER SENDBUF

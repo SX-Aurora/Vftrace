@@ -17,7 +17,7 @@
 #ifdef _MPI
 
 SUBROUTINE MPI_REQUEST_FREE(REQUEST, ERROR)
-   USE vftr_mpi_request_free_c2f, &
+   USE vftr_mpi_request_free_f2c, &
       ONLY : vftr_MPI_Request_free_F
    IMPLICIT NONE
    INTEGER REQUEST

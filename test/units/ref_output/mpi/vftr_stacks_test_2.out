@@ -10,15 +10,15 @@ Local call stacks:
 ---------------------------------
 Global stacklis for rank 0: 
 Global call stacks:
--------------------------------
- ID                   Functions
--------------------------------
- 0 init
- 1 func4<func3<func2<func1<init
- 6 func3<func2<func1<init
- 7 func2<func1<init
- 9 func1<init
--------------------------------
+------------------------------------
+      ID                   Functions
+------------------------------------
+  STID0 init
+  STID1 func4<func3<func2<func1<init
+  STID6 func3<func2<func1<init
+  STID7 func2<func1<init
+  STID9 func1<init
+------------------------------------
 Local stacklist for rank 1: 
 Local call stacks:
 ---------------------------------
@@ -31,15 +31,15 @@ Local call stacks:
 ---------------------------------
 Global stacklis for rank 1: 
 Global call stacks:
--------------------------------
- ID                   Functions
--------------------------------
- 0 init
- 3 func3<func1<init
- 4 func2<func3<func1<init
- 8 func4<func2<func3<func1<init
- 9 func1<init
--------------------------------
+------------------------------------
+      ID                   Functions
+------------------------------------
+  STID0 init
+  STID3 func3<func1<init
+  STID4 func2<func3<func1<init
+  STID8 func4<func2<func3<func1<init
+  STID9 func1<init
+------------------------------------
 Local stacklist for rank 2: 
 Local call stacks:
 ---------------------------------
@@ -52,15 +52,15 @@ Local call stacks:
 ---------------------------------
 Global stacklis for rank 2: 
 Global call stacks:
--------------------------------
- ID                   Functions
--------------------------------
- 0 init
- 2 func2<func2<func1<init
- 5 func2<func2<func2<func1<init
- 7 func2<func1<init
- 9 func1<init
--------------------------------
+------------------------------------
+      ID                   Functions
+------------------------------------
+  STID0 init
+  STID2 func2<func2<func1<init
+  STID5 func2<func2<func2<func1<init
+  STID7 func2<func1<init
+  STID9 func1<init
+------------------------------------
 Local stacklist for rank 3: 
 Local call stacks:
 ---------------------
@@ -71,10 +71,10 @@ Local call stacks:
 ---------------------
 Global stacklis for rank 3: 
 Global call stacks:
--------------------------------
- ID                   Functions
--------------------------------
- 0 init
- 9 func1<init
-10 func4<func1<init
--------------------------------
+------------------------
+      ID       Functions
+------------------------
+  STID0 init
+  STID9 func1<init
+ STID10 func4<func1<init
+------------------------

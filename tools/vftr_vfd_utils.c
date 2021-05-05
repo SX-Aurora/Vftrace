@@ -120,59 +120,62 @@ void read_stacks (FILE *fp, stack_entry_t **stacks, function_entry_t **precise_f
 /**********************************************************************/
 
 void print_fileheader (FILE *fp, vfd_header_t vfd_header) {
-    int i;
-    // We require a seperate datestring which is one element larger than
-    // the field in the vfd file to add a terminating null character. This
-    // is not necessary for the version string since it is written using sprintf
-    // in the main code.
-    char       datestring[25], record[RECORD_LENGTH], *s;
-    datestring[24] = 0;
-    strncpy (datestring, vfd_header.date, 24);
+  int i;
+  // We require a seperate datestring which is one element larger than
+  // the field in the vfd file to add a terminating null character. This
+  // is not necessary for the version string since it is written using sprintf
+  // in the main code.
+  char       datestring[25], record[RECORD_LENGTH], *s;
+  datestring[24] = 0;
+  strncpy (datestring, vfd_header.date, 24);
 
-    fprintf (fp, "Version ID: %s\n", vfd_header.fileid    );
-    fprintf (fp, "Date:       %s\n", datestring );
-    fprintf (fp, "MPI tasks:  rank=%d count=%d\n", vfd_header.task, vfd_header.tasks); 
-    fprintf (fp, "OpenMP threads:  thread=%d count=%d\n", vfd_header.thread, vfd_header.threads);
-    fprintf (fp, "Sample interval: %12.6le seconds\n", vfd_header.interval*1.0e-6);
-    fprintf (fp, "Job runtime:   %.3lf seconds\n", vfd_header.runtime);
-    fprintf (fp, "Samples:       %d\n", vfd_header.samplecount );
-    fprintf (fp, "   Function:   %d\n", vfd_header.function_samplecount );
-    fprintf (fp, "   Messages:   %d\n", vfd_header.message_samplecount );
-    fprintf (fp, "Unique stacks: %u\n", vfd_header.stackscount);
-    fprintf (fp, "Stacks offset: %ld\n", vfd_header.stacksoffset);
-    fprintf (fp, "Sample offset: %ld\n", vfd_header.sampleoffset);
+  fprintf (fp, "Version ID: %s\n", vfd_header.fileid    );
+  fprintf (fp, "Date:       %s\n", datestring );
+  fprintf (fp, "MPI tasks:  rank=%d count=%d\n", vfd_header.task, vfd_header.tasks); 
+  fprintf (fp, "OpenMP threads:  thread=%d count=%d\n", vfd_header.thread, vfd_header.threads);
+  fprintf (fp, "Sample interval: %12.6le seconds\n", vfd_header.interval*1.0e-6);
+  fprintf (fp, "Job runtime:   %.3lf seconds\n", vfd_header.runtime);
+  fprintf (fp, "Samples:       %d\n", vfd_header.samplecount );
+  fprintf (fp, "   Function:   %d\n", vfd_header.function_samplecount );
+  fprintf (fp, "   Messages:   %d\n", vfd_header.message_samplecount );
+  fprintf (fp, "Unique stacks: %u\n", vfd_header.stackscount);
+  fprintf (fp, "Stacks offset: %ld\n", vfd_header.stacksoffset);
+  fprintf (fp, "Sample offset: %ld\n", vfd_header.sampleoffset);
 }
 
 /**********************************************************************/
 
+char **vftr_hw_obs_name = NULL;
+char **vftr_variable_name = NULL;
+
 // Reads the observable names and checks if it is integrated.
 // Also, allocates the array which stores the hardware counter values.
 void read_scenario_header (FILE *fp, int n_hw_obs, int n_formulas, bool verbose) {
-	int slength;
-        for (int i = 0; i < n_hw_obs; i++) {
-           fread (&slength, sizeof(int), 1, fp);
-           char *hw_obs_name = (char*)malloc(sizeof(char) * slength);
-           fread (hw_obs_name, sizeof(char), slength, fp);
-           fread (&slength, sizeof(int), 1, fp);
-           char *variable_name = (char*)malloc(sizeof(char) * slength);
-           fread (variable_name, sizeof(char), slength, fp);
-           if (verbose) printf ("Hardware counter %d: %s, variable: %s\n", i, hw_obs_name, variable_name);
-           free (hw_obs_name);
-           free (variable_name);
-        }
-        for (int i = 0; i < n_formulas; i++) {
-           fread (&slength, sizeof(int), 1, fp);
-           char *formula_name = (char*) malloc (sizeof(char) * slength);
-           fread (formula_name, sizeof(char), slength, fp);
-           fread (&slength, sizeof(int), 1, fp);
-           char *formula_expr = (char*) malloc (sizeof(char) * slength);
-           fread (formula_expr, sizeof(char), slength, fp);
-           int is_integrated;
-           fread (&is_integrated, sizeof(int), 1, fp);
-           if (verbose) printf ("%s: %s (%s)\n", formula_name, formula_expr, is_integrated ? "integrated" : "differential");
-           free (formula_name);
-           free (formula_expr);
-        }
+  int slength;
+  vftr_hw_obs_name = (char**)malloc(n_hw_obs * sizeof(char*));
+  vftr_variable_name = (char**)malloc(n_hw_obs * sizeof(char*));
+  for (int i = 0; i < n_hw_obs; i++) {
+     fread (&slength, sizeof(int), 1, fp);
+     vftr_hw_obs_name[i] = (char*)malloc(sizeof(char) * slength);
+     fread (vftr_hw_obs_name[i], sizeof(char), slength, fp);
+     fread (&slength, sizeof(int), 1, fp);
+     vftr_variable_name[i] = (char*)malloc(sizeof(char) * slength);
+     fread (vftr_variable_name[i], sizeof(char), slength, fp);
+     if (verbose) printf ("Hardware counter %d: %s, variable: %s\n", i, vftr_hw_obs_name[i], vftr_variable_name[i]);
+  }
+  for (int i = 0; i < n_formulas; i++) {
+     fread (&slength, sizeof(int), 1, fp);
+     char *formula_name = (char*) malloc (sizeof(char) * slength);
+     fread (formula_name, sizeof(char), slength, fp);
+     fread (&slength, sizeof(int), 1, fp);
+     char *formula_expr = (char*) malloc (sizeof(char) * slength);
+     fread (formula_expr, sizeof(char), slength, fp);
+     bool is_integrated;
+     fread (&is_integrated, sizeof(bool), 1, fp);
+     if (verbose) printf ("%s: %s (%s)\n", formula_name, formula_expr, is_integrated ? "integrated" : "differential");
+     free (formula_name);
+     free (formula_expr);
+  }
 }
 
 /**********************************************************************/
@@ -218,12 +221,15 @@ void skip_mpi_message_sample (FILE *fp) {
 // Read the stack ID, which indicates from which path the function has been called.
 // Read the time spent in this part of the program.
 void read_stack_sample (FILE *fp, int n_hw_obs, int *stack_id,
-			long long *sample_time, double *hw_values) {
+			long long *sample_time, long long *hw_values, long long *cycle_time) {
 	fread (stack_id, sizeof(int), 1, fp);
 	fread (sample_time, sizeof(long long), 1, fp);
-	for (int i = 0; i < n_hw_obs; i++) {
-           fread (&(hw_values[i]), sizeof(double), 1, fp);
-	}
+        if (n_hw_obs > 0) {
+	   for (int i = 0; i < n_hw_obs; i++) {
+              fread (&(hw_values[i]), sizeof(long long), 1, fp);
+	   }
+           fread (&cycle_time, sizeof(long long), 1, fp);
+        }
 }
 
 /**********************************************************************/
@@ -238,6 +244,17 @@ void skip_stack_sample (FILE *fp) {
 	       }dummy;
 	fread (&dummy, N_STACK_SAMPLE_INT * sizeof(int) + N_STACK_SAMPLE_LONG * sizeof(long long),
 	       1, fp);	
+}
+
+/**********************************************************************/
+
+void cleanup_scenario_data (int n_hw_obs) {
+  for (int i = 0; i < n_hw_obs; i++) {
+    free (vftr_hw_obs_name[i]);
+    free (vftr_variable_name[i]);
+  }
+  free (vftr_hw_obs_name);
+  free (vftr_variable_name);
 }
 
 /**********************************************************************/

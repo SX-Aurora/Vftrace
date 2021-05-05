@@ -74,7 +74,6 @@ extern function_t **vftr_func_table;
 extern unsigned int  vftr_func_table_size;
 
 // Function call stack
-//extern function_t **vftr_fstack;
 extern function_t *vftr_fstack;
 // Function call stack roots
 extern function_t *vftr_froots;
@@ -123,6 +122,17 @@ void vftr_print_function_stack (FILE *fp, char *func_name, int n_final_stack_ids
 			        double *imbalances, long long total_time,
 			        double t_max, int n_calls_max, double imba_max, int n_spaces_max, 
 			        stack_leaf_t *stack_tree);
+
+typedef struct stack_string {
+   char *s;
+   int len; 
+   int id;
+   int depth;
+} stack_string_t;
+
+extern stack_string_t *vftr_global_stack_strings;
+void vftr_create_global_stack_strings ();
+void vftr_create_stack_string (int i_stack, char **name, int *len, int *depth);
 
 // test functions
 int vftr_stacks_test_1(FILE *fp_in, FILE *fp_out);

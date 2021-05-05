@@ -19,7 +19,7 @@
 SUBROUTINE MPI_ALLGATHERV(SENDBUF, SENDCOUNT, SENDTYPE, &
                           RECVBUF, RECVCOUNTS, DISPLS, &
                           RECVTYPE, COMM, ERROR)
-   USE vftr_mpi_allgatherv_c2f, &
+   USE vftr_mpi_allgatherv_f2c, &
       ONLY : vftr_MPI_Allgatherv_F
    IMPLICIT NONE
    INTEGER ::  SENDBUF

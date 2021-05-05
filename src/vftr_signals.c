@@ -24,126 +24,64 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <unistd.h>
 #include <signal.h>
 #include <string.h>
 #include <stdbool.h>
 #include <sys/time.h>
 
-#include "vftr_hwcounters.h"
-#include "vftr_signals.h"
+#include "vftr_hooks.h"
 #include "vftr_setup.h"
+#include "vftr_signals.h"
 #include "vftr_stacks.h"
 #include "vftr_filewrite.h"
-#include "vftr_timer.h"
-
-struct sigaction vftr_old_action[NSIG];
-struct sigaction vftr_usr_action[NSIG];
-
-int vftr_signal_number = 0;
-
-/**********************************************************************/
 
 void vftr_abort (int errcode) {
 #ifdef _MPI
-    (void) PMPI_Abort( MPI_COMM_WORLD, errcode );
+    PMPI_Abort (MPI_COMM_WORLD, errcode);
 #else
     abort();
 #endif
 }
 
-/**********************************************************************/
-
-void vftr_define_signal_handlers () {
-  vftr_sigaction (SIGSEGV);
-  vftr_sigaction (SIGBUS);
-  vftr_sigaction (SIGFPE);
-  vftr_sigaction (SIGTERM);
-  vftr_sigaction (SIGINT);
-  vftr_sigaction (SIGUSR1);
-}
+struct sigaction vftr_signals[NSIG];
 
 /**********************************************************************/
 
-void vftr_signal (int sig) {
-  vftr_signal_number = sig;
-
-  fprintf (vftr_log, "vftr_signal: %s [SIGNUM=%d] - "
-                   "closing trace file\n", strsignal(sig), sig);
-
-  vftr_finalize ();
-
-  if (sig == SIGUSR1) {
-      vftr_signal_number = 0;
-      return;
+void vftr_signal_handler (int signum) {
+  if (vftr_profile_wanted) {
+    fprintf (vftr_log, "\n");
+    fprintf (vftr_log, "**************************\n");
+    fprintf (vftr_log, "Application was cancelled: %s\n", strsignal(signum));
+    fprintf (vftr_log, "Head of function stack: %s\n", vftr_fstack->name);
+    fprintf (vftr_log, "Note: Stacks not normalized\n");
+    fprintf (vftr_log, "**************************\n");
+    fprintf (vftr_log, "\n");
   }
-
-  sigaction (sig, &vftr_old_action[sig], NULL); /* Restore old handler */
-#ifdef _MPI
-  if (vftr_mpisize > 1) {
-    fprintf (vftr_log, "vftr_signal: calling vftr_abort()\n");
-    vftr_abort( sig );
-  }
-#endif
-  fprintf (vftr_log, "vftr_signal: exiting\n");
-  exit (1);
+  vftr_do_stack_normalization = false;
+  vftr_finalize();
+  vftr_signals[SIGTERM].sa_handler = SIG_DFL;
+  sigaction (SIGTERM, &(vftr_signals[SIGTERM]), NULL);
+  int ret = raise(SIGTERM);
 }
 
 /**********************************************************************/
 
-/* Establish the signal handlers */
+void vftr_setup_signal (int signum) {
+  memset (&vftr_signals[signum], 0, sizeof(vftr_signals[signum]));
+  vftr_signals[signum].sa_handler = vftr_signal_handler;
+  vftr_signals[signum].sa_flags = SA_SIGINFO;
+  sigaction (signum, &(vftr_signals[signum]), NULL);
+}
 
-void vftr_sigaction (int sig) {
-  sigset_t mask;
-  
-  sigfillset (&mask);
-  vftr_usr_action[sig].sa_handler = vftr_signal;
-  vftr_usr_action[sig].sa_mask    = mask;
-  vftr_usr_action[sig].sa_flags   = 0;
-  
-  sigaction (sig, &vftr_usr_action[sig], &vftr_old_action[sig]);
+void vftr_setup_signals () {
+
+  vftr_setup_signal (SIGTERM);
+  vftr_setup_signal (SIGINT);
+  vftr_setup_signal (SIGABRT);
+  vftr_setup_signal (SIGFPE);
+  vftr_setup_signal (SIGQUIT);
+  vftr_setup_signal (SIGSEGV);
 }
 
 /**********************************************************************/
-
-/*
-** Interrupt service routine to read and reset the event counters
-** before these wrap around. This was a work around for a known
-** problem with the HPCM library (no longer supported).
-*/
-void vftr_sigalarm (int sig) {
-   long long time0  = vftr_get_runtime_usec ();
-   // get the time to estimate vftrace overhead
-   long long overhead_time_start = vftr_get_runtime_usec();
-
-   if (!vftr_timer_end) {
-	signal (SIGALRM, vftr_sigalarm);
-   }
-
-   int usec, sec;
-   if (sig == 0) {
-      double sampletime = 0.1;
-      usec = (int)(sampletime * 1000000.) % 1000000;
-      sec  = (int)(sampletime * 1000000.) / 1000000;
-   } else {
-      vftr_read_counters (NULL);
-   }
-
-   if (!vftr_timer_end) {
-      struct itimerval timerval;
-      timerval.it_interval.tv_sec = 0;
-      timerval.it_interval.tv_usec = 0;
-      timerval.it_value.tv_sec = sec;
-      timerval.it_value.tv_usec = usec;
-      setitimer( ITIMER_REAL, &timerval, 0 );
-   }
-
-   /* Compensate interrupt overhead in profile */
-   long long ohead = vftr_get_runtime_usec () - time0;
-   vftr_prof_data.cycles += ohead;
-
-   // get the time to estimate vftrace overhead
-   long long overhead_time_end = vftr_get_runtime_usec();
-   long long overhead = overhead_time_end - overhead_time_start;
-   vftr_prof_data.time_excl += overhead;
-   vftr_overhead_usec += overhead;
-}

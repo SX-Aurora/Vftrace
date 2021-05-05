@@ -33,13 +33,10 @@
 #include "vftr_fileutils.h"
 #include "vftr_sorting.h"
 
-// Maximum time in a call tree, searched for in vftr_finalize
-long long vftr_maxtime;
-
 // number of locally unique stacks
-int   vftr_stackscount = 0;
+int vftr_stackscount = 0;
 // number of globally unique stacks
-int   vftr_gStackscount = 0;
+int vftr_gStackscount = 0;
 
 // Collective information about all stacks across processes
 gstackinfo_t  *vftr_gStackinfo = NULL;
@@ -58,6 +55,8 @@ profdata_t vftr_prof_data;
 
 const char *vftr_stacktree_headers[6] = {"T[s]", "Calls", "Imbalance[%]", "Total send", "Total recv.", "Stack ID"};
 
+stack_string_t *vftr_global_stack_strings;
+
 /**********************************************************************/
 
 // initialize stacks only called from vftr_initialize
@@ -68,12 +67,11 @@ void vftr_initialize_stacks() {
 
    // Initialize stack tables 
    char *s = "init";
-   function_t *func = vftr_new_function (NULL, strdup (s), NULL, 0, true);
+   function_t *func = vftr_new_function (NULL, strdup (s), NULL, true);
    func->next_in_level = func; /* Close circular linked list to itself */
    vftr_fstack = func;
    vftr_function_samplecount = 0;
    vftr_message_samplecount = 0;
-   vftr_maxtime = 0;
    vftr_froots = func;
 }
 
@@ -146,11 +144,10 @@ void vftr_normalize_stacks() {
           if (strcmp(vftr_gStackinfo[globID].name, "init")) {
              // not the init function
              vftr_gStackinfo[globID].ret = vftr_func_table[istack]->return_to->gid;
-             vftr_gStackinfo[globID].locID = istack;
           } else {
              vftr_gStackinfo[globID].ret = -1;
-             vftr_gStackinfo[globID].locID = 0;
           }
+          vftr_gStackinfo[globID].locID = istack;
 
        }
 #ifdef _MPI
@@ -315,7 +312,7 @@ void vftr_normalize_stacks() {
     // We also need to communicate if stack profiles with imbalances are to be printed,
     // because identical function stacks can be located at different positions in the
     // function table or not be present at all. 
-    if (vftr_environment.logfile_all_ranks->value || vftr_environment.print_stack_profile->value) {
+    if (vftr_env_distribute_gStack()) {
        // The amount of unique stacks is know due to the hash synchronisation earlier
        // allocate memory on all but 0th rank
        if (vftr_mpirank != 0) {
@@ -531,27 +528,82 @@ void vftr_print_local_stacklist (function_t **funcTable, FILE *fp, int n_ids) {
 
 /**********************************************************************/
 
+void vftr_create_global_stack_strings () {
+   vftr_global_stack_strings = (stack_string_t*) malloc (vftr_gStackscount * sizeof(stack_string_t));
+   int i_stack = 0;
+   for (int i = 0; i < vftr_gStackscount; i++) {
+      if (vftr_gStackinfo[i].locID >= 0) {
+        char *name;
+        int len;
+        int depth;
+        vftr_create_stack_string (i, &name, &len, &depth);
+	vftr_global_stack_strings[i_stack].s = strdup(name);
+        vftr_global_stack_strings[i_stack].len = len;
+        vftr_global_stack_strings[i_stack].id = i;
+        vftr_global_stack_strings[i_stack].depth = depth;
+        i_stack++;
+      } else {
+        vftr_global_stack_strings[i_stack++].id = -1;
+      }
+   }
+}
+
+/**********************************************************************/
+
+void vftr_create_stack_string (int i_stack, char **name, int *len, int *depth) {
+   // First, count how long the string will be.
+   *len = 0;
+   int j_stack = i_stack;
+   while (vftr_gStackinfo[j_stack].locID >= 0 && vftr_gStackinfo[j_stack].ret >= 0) {
+      // In the final string, there will be an additional "<" character. Therefore, add 1.
+      *len += strlen(vftr_gStackinfo[j_stack].name) + 1; 
+      j_stack = vftr_gStackinfo[j_stack].ret;
+   }
+   *len += strlen(vftr_gStackinfo[j_stack].name); 
+   // extra char for null terminator
+   char *stack_string = (char *) malloc ((*len + 1)* sizeof(char));
+   *name = stack_string;
+   j_stack = i_stack;
+   while (vftr_gStackinfo[j_stack].locID >= 0 && vftr_gStackinfo[j_stack].ret >= 0) {
+      char *s = vftr_gStackinfo[j_stack].name;
+      int n = strlen(s);
+      for (int i = 0; i < n; i++) {
+        *stack_string = s[i];
+        stack_string++;
+      }
+      *stack_string = '<';
+      stack_string++;
+      j_stack = vftr_gStackinfo[j_stack].ret;
+   }
+   char *s = vftr_gStackinfo[j_stack].name;
+   int n = strlen(s);
+   for (int i = 0; i < n; i++) {
+      *stack_string = s[i];
+      stack_string++;
+   }
+   *stack_string = '\0';
+}
+
+/**********************************************************************/
+
 void vftr_print_global_stacklist (FILE *fp) {
 
    // Compute column and table widths
    // loop over all stacks to find the longest one
    int maxstrlen = 0;
-   for (int istack = 0; istack < vftr_gStackscount; istack++) {
-      int jstack = istack;
-      // follow the functions until they reach the bottom of the stack
-      int stackstrlength = 0;
-      while (vftr_gStackinfo[jstack].locID && vftr_gStackinfo[jstack].ret >= 0) {
-         stackstrlength += strlen(vftr_gStackinfo[jstack].name);
-         stackstrlength ++;
-         jstack = vftr_gStackinfo[jstack].ret;
-      } 
-      stackstrlength += strlen(vftr_gStackinfo[jstack].name);
-      if (stackstrlength > maxstrlen) maxstrlen = stackstrlength;
+   for (int i_stack = 0; i_stack < vftr_gStackscount; i_stack++) {
+      if (vftr_global_stack_strings[i_stack].id >= 0) {
+         int this_length = vftr_global_stack_strings[i_stack].len;
+         if (this_length > maxstrlen) maxstrlen = this_length;
+      }
    }
    maxstrlen--; // Chop trailing space
    if (strlen("Functions") > maxstrlen) maxstrlen = strlen("Functions");
    int max_id = vftr_gStackscount;
-   int max_id_length = strlen("ID") > vftr_count_digits_int(max_id) ? strlen("ID") : vftr_count_digits_int(max_id);
+   // Each stack ID in this list is prefixed with "STID" to allow for an easier search of that line.
+   // This has always more characters than the header "ID". Therefore, max_id_length is just
+   // the length of "STID" (4) plus the length of the maximal ID.
+   int max_id_length = 4 + vftr_count_digits_int(max_id) + 1;
    int table_width = 1 + max_id_length + 1 + maxstrlen;
 
    // Print headers
@@ -563,17 +615,11 @@ void vftr_print_global_stacklist (FILE *fp) {
 
    // Print table
 
-   for (int istack = 0; istack < vftr_gStackscount; istack++) {
-      if (vftr_gStackinfo[istack].locID >= 0) {
-         int jstack = istack;
-         fprintf (fp, "%*d ", max_id_length, istack);
-         while (vftr_gStackinfo[jstack].locID >= 0 && vftr_gStackinfo[jstack].ret >= 0) {
-            fprintf(fp, "%s", vftr_gStackinfo[jstack].name);
-            fprintf(fp, "<");
-            jstack = vftr_gStackinfo[jstack].ret;
-         }
-         fprintf(fp, "%s", vftr_gStackinfo[jstack].name);
-         fprintf(fp, "\n");
+   for (int i_stack = 0; i_stack < vftr_gStackscount; i_stack++) {
+      if (vftr_global_stack_strings[i_stack].id >= 0) {
+         char sid[max_id_length];
+         snprintf (sid, max_id_length, "STID%d", vftr_global_stack_strings[i_stack].id);
+         fprintf (fp, "%*s %s\n", max_id_length, sid, vftr_global_stack_strings[i_stack].s);
       }
    }
 
@@ -901,13 +947,13 @@ void vftr_print_function_stack (FILE *fp, char *func_name, int n_final_stack_ids
 int vftr_stacks_test_1 (FILE *fp_in, FILE *fp_out) {
 	unsigned long long addrs[6];
 	fprintf (fp_out, "Initial vftr_stackscount: %d\n", vftr_stackscount);
-	function_t *func1 = vftr_new_function (NULL, "init", NULL, 0, false);
-	function_t *func2 = vftr_new_function ((void*)addrs, "func2", func1, 0, false);
-	function_t *func3 = vftr_new_function ((void*)(addrs + 1), "func3", func1, 0, false);	
-	function_t *func4 = vftr_new_function ((void*)(addrs + 2), "func4", func3, 0, false);
-	function_t *func5 = vftr_new_function ((void*)(addrs + 3), "func5", func2, 0, false);
-	function_t *func6 = vftr_new_function ((void*)(addrs + 4), "func6", func2, 0, false);
-	function_t *func7 = vftr_new_function ((void*)(addrs + 5), "func4", func6, 0, false);
+	function_t *func1 = vftr_new_function (NULL, "init", NULL, false);
+	function_t *func2 = vftr_new_function ((void*)addrs, "func2", func1, false);
+	function_t *func3 = vftr_new_function ((void*)(addrs + 1), "func3", func1, false);	
+	function_t *func4 = vftr_new_function ((void*)(addrs + 2), "func4", func3, false);
+	function_t *func5 = vftr_new_function ((void*)(addrs + 3), "func5", func2, false);
+	function_t *func6 = vftr_new_function ((void*)(addrs + 4), "func6", func2, false);
+	function_t *func7 = vftr_new_function ((void*)(addrs + 5), "func4", func6, false);
 	vftr_normalize_stacks();			
 	fprintf (fp_out, "%s: %d %d\n", func1->name, func1->id, func1->gid);
 	fprintf (fp_out, "%s: %d %d\n", func2->name, func2->id, func2->gid);
@@ -917,6 +963,7 @@ int vftr_stacks_test_1 (FILE *fp_in, FILE *fp_out) {
 	fprintf (fp_out, "%s: %d %d\n", func6->name, func6->id, func6->gid);
 	fprintf (fp_out, "%s: %d %d\n", func7->name, func7->id, func7->gid);
 	fprintf (fp_out, "Global stacklist: \n");
+        vftr_create_global_stack_strings();
 	vftr_print_global_stacklist (fp_out);
 	return 0;
 }
@@ -929,25 +976,25 @@ int vftr_stacks_test_2 (FILE *fp_in, FILE *fp_out) {
         // using vftr_normalize_stacks. We print out each local stack and the corresponding global stack list.
         // NOTE: vftr_print_global_stacklist only prints the stack IDs which are present on the given rank.
 	unsigned long long addrs[6];
-	function_t *func0 = vftr_new_function (NULL, "init", NULL, 0, false);	
+	function_t *func0 = vftr_new_function (NULL, "init", NULL, false);	
 	if (vftr_mpirank == 0) {
-		function_t *func1 = vftr_new_function ((void*)addrs, "func1", func0, 0, false);
-		function_t *func2 = vftr_new_function ((void*)(addrs + 1), "func2", func1, 0, false);
-		function_t *func3 = vftr_new_function ((void*)(addrs + 2), "func3", func2, 0, false);
-		function_t *func4 = vftr_new_function ((void*)(addrs + 3), "func4", func3, 0, false);
+		function_t *func1 = vftr_new_function ((void*)addrs, "func1", func0, false);
+		function_t *func2 = vftr_new_function ((void*)(addrs + 1), "func2", func1, false);
+		function_t *func3 = vftr_new_function ((void*)(addrs + 2), "func3", func2, false);
+		function_t *func4 = vftr_new_function ((void*)(addrs + 3), "func4", func3, false);
 	} else if (vftr_mpirank == 1) {
-		function_t *func1 = vftr_new_function ((void*)addrs, "func1", func0, 0, false);
-		function_t *func2 = vftr_new_function ((void*)(addrs + 2), "func3", func1, 0, false);
-		function_t *func3 = vftr_new_function ((void*)(addrs + 1), "func2", func2, 0, false);
-		function_t *func4 = vftr_new_function ((void*)(addrs + 3), "func4", func3, 0, false);
+		function_t *func1 = vftr_new_function ((void*)addrs, "func1", func0, false);
+		function_t *func2 = vftr_new_function ((void*)(addrs + 2), "func3", func1, false);
+		function_t *func3 = vftr_new_function ((void*)(addrs + 1), "func2", func2, false);
+		function_t *func4 = vftr_new_function ((void*)(addrs + 3), "func4", func3, false);
 	} else if (vftr_mpirank == 2) {	
-		function_t *func1 = vftr_new_function ((void*)addrs, "func1", func0, 0, false);
-		function_t *func2 = vftr_new_function ((void*)(addrs + 1), "func2", func1, 0, false);
-		function_t *func3 = vftr_new_function ((void*)(addrs + 2), "func2", func2, 0, false);
-		function_t *func4 = vftr_new_function ((void*)(addrs + 3), "func2", func3, 0, false);
+		function_t *func1 = vftr_new_function ((void*)addrs, "func1", func0, false);
+		function_t *func2 = vftr_new_function ((void*)(addrs + 1), "func2", func1, false);
+		function_t *func3 = vftr_new_function ((void*)(addrs + 2), "func2", func2, false);
+		function_t *func4 = vftr_new_function ((void*)(addrs + 3), "func2", func3, false);
 	} else if (vftr_mpirank == 3) {
-		function_t *func1 = vftr_new_function ((void*)addrs, "func1", func0, 0, false);
-		function_t *func2 = vftr_new_function ((void*)(addrs + 3), "func4", func1, 0, false);
+		function_t *func1 = vftr_new_function ((void*)addrs, "func1", func0, false);
+		function_t *func2 = vftr_new_function ((void*)(addrs + 3), "func4", func1, false);
 	} else {
 		fprintf (fp_out, "Error: Invalid MPI rank (%d)!\n", vftr_mpirank);
 		return -1;
@@ -955,6 +1002,7 @@ int vftr_stacks_test_2 (FILE *fp_in, FILE *fp_out) {
 
         vftr_environment.logfile_all_ranks->value = true;
 	vftr_normalize_stacks();
+        vftr_create_global_stack_strings();
 
 	// Needs to be set for printing the local stacklist
 	vftr_profile_wanted = true;

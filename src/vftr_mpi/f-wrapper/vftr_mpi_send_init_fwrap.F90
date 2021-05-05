@@ -17,7 +17,7 @@
 #ifdef _MPI
 
 SUBROUTINE MPI_SEND_INIT(BUF, COUNT, DATATYPE, DEST, TAG, COMM, REQUEST, ERROR)
-   USE vftr_mpi_send_init_c2f, &
+   USE vftr_mpi_send_init_f2c, &
       ONLY : vftr_MPI_Send_init_F
    IMPLICIT NONE
    INTEGER BUF

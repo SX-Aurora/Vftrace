@@ -17,7 +17,7 @@
 #ifdef _MPI
 
 SUBROUTINE MPI_Waitall(COUNT, ARRAY_OREQUESTS, ARRAY_OF_STATUSES, ERROR)
-   USE vftr_mpi_waitall_c2f, &
+   USE vftr_mpi_waitall_f2c, &
       ONLY : vftr_MPI_Waitall_F
    USE mpi, ONLY: MPI_STATUS_SIZE
    IMPLICIT NONE

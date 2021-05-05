@@ -17,7 +17,7 @@
 #ifdef _MPI
 
 SUBROUTINE MPI_Wait(REQUEST, STATUS, ERROR)
-   USE vftr_mpi_wait_c2f, &
+   USE vftr_mpi_wait_f2c, &
       ONLY : vftr_MPI_Wait_F
    USE mpi, ONLY: MPI_STATUS_SIZE
    IMPLICIT NONE

@@ -17,7 +17,7 @@
 #ifdef _MPI
 
 SUBROUTINE MPI_Testany(COUNT, ARRAY_OREQUESTS, INDEX, FLAG, STATUS, ERROR)
-   USE vftr_mpi_testany_c2f, &
+   USE vftr_mpi_testany_f2c, &
       ONLY : vftr_MPI_Testany_F
    USE mpi, ONLY: MPI_STATUS_SIZE
    IMPLICIT NONE

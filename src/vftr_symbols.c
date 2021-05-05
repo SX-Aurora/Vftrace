@@ -35,37 +35,89 @@ symtab_t **vftr_symtab;
 
 /**********************************************************************/
 
-// Fortran symbols can be given in the form module-name_MP_function-name.
-// For example, in large stack trees, the module names can reduce its
-// readability and it can be convenient to leave them out. Of course, this
-// leads to information loss because identical function names in different
-// modules cannot be resolved. Therefore, below function should always be used
-// optionally. Moreover, there is no guarantee that the delimiter token is 
-// always "_MP_".
+// Fortran symbols can be composed of the function name and the name of the
+// module in which that function is contained, in the form of
+// <module_name>_DELIMITER_<function_name>. In the routine below,
+// we want to remove the first part, only keeping the function name. This
+// might lead to ambiguities, but the user should know what he does.
+// Moreover, contained subroutines might also be name-mangled like this,
+// e.g. with the identifier "_EP_". This situations are also removed here.
 //
-// Also, contained subroutines can be prefixed by "_EP_". We remove that too.
+// One problem comes from the fact that the DELIMITER is not well-defined.
+// Instead, each compiler, and even different versions of the same compiler,
+// can choose different ones. We keep a list of known delimiters, or identifiers,
+// in "module_indents". Each function name is checked against this list.
 //
-// We go through the function names until a '_' character is encountered.
-// If this is the case, we check if the succeeding three characters match
-// the delimiter pattern. When this is the case, we exit the function and
-// return the reduced string. Otherwise, we go on until the end of the function
-// name, given by the '\0' character, is reached. If no delimiter is found
-// the original string is returned.
+// Possible issues: Components of normal function names could be misidentified as
+// delimiters. We consider this as rare, especially since the delimiters are 
+// matched case-sensitve. Nevertheless, a warning is issued at the startup of Vftrace
+// to make the user aware of possible issues.
+//
+// Alternatives: Make the user provide the delimiter string.
+//
+#define N_MODULE_IDENTS 3
+#define MAX_IDENT_LEN 3 // Tells us how large the character buffer needs to be.
+char *module_idents[N_MODULE_IDENTS] = {"MP", "EP", "MOD"};
+int module_ident_lens[N_MODULE_IDENTS] = {2, 2, 3};
+
+/**********************************************************************/
+
+// Obtains a character buffer and the corresponding lenth n.
+// We check if the buffer, filled up to this point, is a substring 
+// of any of the "module_idents". This way, for example "M" returns true,
+// but "S" returns false. Many situations are already excluded immediately this way.
+//
+bool compatible_with_idents (char buf[MAX_IDENT_LEN], int n) {
+  for (int i = 0; i < N_MODULE_IDENTS; i++) {
+    bool ret = true;
+    if (n > module_ident_lens[i]) continue;
+    for (int j = 0; j < module_ident_lens[i]; j++) {
+      ret &= buf[j] == module_idents[i][j];
+    }
+    if (ret) return ret;
+  }
+  return false;
+}
+
+/**********************************************************************/
 
 char *vftr_strip_module_name (char *base_name) {
 	char *tmp = strdup (base_name);
 	char *func_name = tmp;
-	bool has_module_token = false;
+	bool has_delimiter = false;
+        bool check_char = false;
+        char buf[MAX_IDENT_LEN];
+        int nbuf;
+// The '_' character indicates the possible beginning of a module delimiter.
+// If one is found, we set the "check_char" flag to true, so that in the
+// subsequent iteration the buffer will be filled and compared to the 
+// identifier list.
+// If another '_' is found, we exit the loop if a "has_delimiter" has been set
+// to true before. Otherwise, the buffer is cleared.
+// If the buffer has reached its maximal length, and no '_' has been found, we are
+// dealing with a longer string than possible for a delimiter and set "check_char" to false.
+// Otherwise, the buffer is compared using "compatible_width_idents".
 	while (*tmp != '\0') {
-		if (*tmp == '_') {
-			// First letter is E or M
-			has_module_token = (tmp[1] == 'M' || tmp[1] == 'E') && tmp[2] == 'P' && tmp[3] == '_';
-			if (has_module_token) {
-				func_name = tmp + 4;
-			}
-		}
-		tmp++;
-	}
+           if (check_char) {
+	      if (*tmp == '_') {
+                 if (has_delimiter) break;
+                 nbuf = 0;
+	      }
+	      if (nbuf == MAX_IDENT_LEN) {
+                nbuf = 0;
+                check_char = false;
+              }
+              buf[nbuf++] = *tmp;
+              has_delimiter = compatible_with_idents (buf, nbuf);
+           }
+	   if (*tmp == '_') {
+	      nbuf = 0;
+	      check_char = true; 
+           }
+           tmp++;
+        }
+	      // First letter is E or M
+        if (has_delimiter) func_name = tmp + 1;
 	return func_name;
 }
 		
@@ -245,29 +297,13 @@ void vftr_get_library_symtab (char *target, FILE *fp_ext, off_t base, int pass) 
 
 /**********************************************************************/
 
-FILE *vftr_get_fmap (char *target) {
+FILE *vftr_get_fmap () {
     char maps[80];
     FILE *fmap;
-    if (target) {
-      /* Standalone testing use: inspect executable or library */
-      if( !strstr( target, "/maps" ) ) {
-        /* Executable or library */
-        vftr_nsymbols = 0;
-        vftr_get_library_symtab (target, NULL, 0L, 0);
-        vftr_symtab = (symtab_t **) malloc( vftr_nsymbols * sizeof(symtab_t *) );
-        vftr_nsymbols = 0;
-        vftr_get_library_symtab (target, NULL, 0L, 1);
-        return NULL;
-      }
-      strcpy (maps, target);
-    } else {
-      /* Normal use: from vftr_initialize() */
-      strcpy (maps, "/proc/self/maps");
-    }
+    strcpy (maps, "/proc/self/maps");
 
-    if ((fmap = fopen (maps, "r")) == NULL) {
-        fprintf (vftr_log, "Opening %s", maps);
-	perror (" ");
+    if ((fmap = fopen ("/proc/self/maps", "r")) == NULL) {
+        perror ("Opening /proc/self/maps");
 	abort();
     }
     return fmap;
@@ -323,7 +359,7 @@ void vftr_parse_fmap_line (char *line, pathList_t **library, pathList_t **head) 
 	}
         *library = newlib;
         sscanf (base, "%lx", &(*library)->base);  /* Save library base */
-        (*library)->path = strdup( path );
+        (*library)->path = strdup (path);
         (*library)->next = NULL;
 #ifdef __VMAP_OFFSET
 	(*library)->offset = strtoul(offset, NULL, 16);
@@ -349,11 +385,11 @@ void vftr_parse_fmap_line (char *line, pathList_t **library, pathList_t **head) 
 ** symbol table is constructed for the current executable and all the shared
 ** libraries it uses.
 */
-int vftr_create_symbol_table (int rank, char *target) {
+int vftr_create_symbol_table (int rank) {
     char line[LINESIZE];
     pathList_t *head, *library, *next;
 
-    FILE *fmap = vftr_get_fmap (target);
+    FILE *fmap = vftr_get_fmap ();
     if (!fmap) return 1;
     /* Read the application libraries in the maps info */
     library = NULL;
@@ -415,7 +451,7 @@ symtab_t **vftr_find_nearest(symtab_t **table, void *addr, int count) {
   }
 }
 
-char *vftr_find_symbol (void *addr, int line, char **full) {
+char *vftr_find_symbol (void *addr, char **full) {
     symtab_t **found;
     size_t offset;
     char *name, *newname;
@@ -426,19 +462,11 @@ char *vftr_find_symbol (void *addr, int line, char **full) {
       if ((*found)->demangled) *full = (*found)->full;
       name = (*found)->name;
       if (addr_found == addr) return name; /* Exact match (automatic instrumentation) */
-      if (line > 0) {
-        int len = strlen(name);
-        newname = (char *) malloc (sizeof(char) * (16 + len));
-        /* Chop Fortran trailing underscore */
-        if (name[len-1] == '_' && name[len-2] != '_') name[len-1] = 0;
-        sprintf (newname, "%s:%d-endline", name, line); /* "endline" is replaced later */
-      } else {
-        int len = 30 + strlen(name);
-        offset = (size_t)addr - (size_t) addr_found;
-        newname = (char *) malloc (sizeof(char) * len);
-        memset (newname, 0, len);
-        sprintf (newname, "%s+0x%lx", name, offset);
-      }
+      int len = 30 + strlen(name);
+      offset = (size_t)addr - (size_t) addr_found;
+      newname = (char *) malloc (sizeof(char) * len);
+      memset (newname, 0, len);
+      sprintf (newname, "%s+0x%lx", name, offset);
     } else {
       /* Address not in symbol table */
         newname = (char *) malloc (sizeof(char) * 24);

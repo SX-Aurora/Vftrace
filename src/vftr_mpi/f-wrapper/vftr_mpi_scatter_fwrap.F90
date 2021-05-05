@@ -19,7 +19,7 @@
 SUBROUTINE MPI_SCATTER(SENDBUF, SENDCOUNT, SENDTYPE, &
                        RECVBUF, RECVCOUNT, RECVTYPE, &
                        ROOT, COMM, ERROR)
-   USE vftr_mpi_scatter_c2f, &
+   USE vftr_mpi_scatter_f2c, &
       ONLY : vftr_MPI_Scatter_F
    IMPLICIT NONE
    INTEGER SENDBUF

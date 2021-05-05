@@ -19,7 +19,7 @@
 SUBROUTINE MPI_IALLTOALLV(SENDBUF, SENDCOUNTS, SDISPLS, SENDTYPE, &
                           RECVBUF, RECVCOUNTS, RDISPLS, RECVTYPE, &
                           COMM, REQUEST, ERROR)
-   USE vftr_mpi_ialltoallv_c2f, &
+   USE vftr_mpi_ialltoallv_f2c, &
       ONLY : vftr_MPI_Ialltoallv_F
    IMPLICIT NONE
    INTEGER SENDBUF

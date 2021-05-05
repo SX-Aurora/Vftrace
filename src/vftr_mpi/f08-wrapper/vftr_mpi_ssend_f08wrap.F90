@@ -17,7 +17,7 @@
 #ifdef _MPI
 
 SUBROUTINE MPI_Ssend_f08(buf, count, datatype, dest, tag, comm, error)
-   USE vftr_mpi_ssend_c2f, &
+   USE vftr_mpi_ssend_f2c, &
       ONLY : vftr_MPI_Ssend_F
    USE mpi_f08, ONLY : MPI_Datatype, &
                        MPI_Comm
@@ -32,7 +32,7 @@ SUBROUTINE MPI_Ssend_f08(buf, count, datatype, dest, tag, comm, error)
    INTEGER, OPTIONAL, INTENT(OUT) :: error
    INTEGER :: tmperror
 
-   CALL vftr_MPI_Ssend_F(buf, count, datatype%MPI_VAL, dest, tag, comm%MPI_VAL, error)
+   CALL vftr_MPI_Ssend_F(buf, count, datatype%MPI_VAL, dest, tag, comm%MPI_VAL, tmperror)
 
    IF (PRESENT(error)) error = tmperror
 

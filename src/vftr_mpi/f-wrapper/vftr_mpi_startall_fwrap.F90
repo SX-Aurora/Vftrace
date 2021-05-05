@@ -17,7 +17,7 @@
 #ifdef _MPI
 
 SUBROUTINE MPI_Startall(COUNT, ARRAY_OREQUESTS, ERROR)
-   USE vftr_mpi_startall_c2f, &
+   USE vftr_mpi_startall_f2c, &
       ONLY : vftr_MPI_Startall_F
    IMPLICIT NONE
    INTEGER COUNT

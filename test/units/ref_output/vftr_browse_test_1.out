@@ -8,7 +8,6 @@
 }
 
 * {
-  position: relative;
   margin: 0;
   padding: 0;
 
@@ -164,7 +163,7 @@ li.dropdown {
   display: inline-block;
 }
 </style>
-<ul style="list-style-type: none;margin-top: 0px;margin-left: 150px; background-color: #f1f1f1;">
+<ul style="list-style-type: none;margin-top: 0px;margin-left: 1ch; background-color: #f1f1f1;">
    <li style="display: inline;"><a href="../index.html">HOME</a></li>
    <li style="display: inline;" class="dropdown">
       <a href="javascript:void(0)" class="dropbtn">Call graphs</a>
@@ -177,7 +176,7 @@ li.dropdown {
    </li>
 </ul>
 
-<ul style="float: left;list-style-type: none;margin: 0;padding: 0; width: 150px;background-color: #f1f1f1;">
+<ul style="float: left;list-style-type: none;margin: 0;padding: 0; width: 1ch;height: 100%;background-color: #f1f1f1;">
    <li><a href="C_0.html">C</a></li>
 </ul>
 

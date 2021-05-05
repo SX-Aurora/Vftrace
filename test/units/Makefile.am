@@ -42,6 +42,7 @@ dist_check_SCRIPTS = this_passes.sh \
 		     this_fails.sh \
 		     vftr_symbols_test_1.sh \
 		     vftr_environment_test_1.sh \
+		     vftr_environment_test_2.sh \
 		     vftr_setup_test_1.sh \
 		     vftr_setup_test_2.sh \
 		     vftr_filewrite_test_1.sh \

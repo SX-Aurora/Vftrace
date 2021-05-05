@@ -20,19 +20,70 @@
 #include <assert.h>
 #include <string.h>
 #include <ctype.h>
+#include <limits.h>
 
+#include "vftr_setup.h"
+#include "vftr_stringutils.h"
 #include "vftr_hwcounters.h"
 #include "vftr_environment.h"
 #include "vftr_filewrite.h"
 #include "vftr_fileutils.h"
 
+/**********************************************************************/
+// Recommender for unmatched environment variables:
+//
+// After the environment has been read, we loop over all environment variables
+// (also non-Vftrace ones) and pick out the ones starting with "VFTR_".
+// For these, we compute the Levenshtein distance (LD) w.r.t to all Vftrace environment
+// variables registered in vftr_env_variable_names. If LD is zero, this is a correct
+// environment variable. Otherwise, we pick the entry of vftr_env_variable_names with
+// the smallest LD and choose it as the recommendation for the (probably mis-typed)
+// environment variable. 
+// 
+// The list vftr_env_variable_names is created simultaneously with the registration of
+// the environment variables in vftr_read_environment, in the calls of vftr_read_env_<type>.
+// This way, we only need to maintain one passage in the code where there is an explicit list
+// of environment variable names. However, vftr_n_env_variables needs to be adapted by the
+// develooper when an environment variable as added or deleted.
+//
+// The computation of LD is recursive and the runtime of a naive implementation becomes unfeasible
+// very fast. For this reason, we maintain a table of computed LD values, vftr_ld_lookup, where the algorithm can
+// make look ups.
+//
+int vftr_n_env_variables;
+char **vftr_env_variable_names;
+int vftr_env_counter;
+
+// Create and free the Levenshtein lookup table
+
+/**********************************************************************/
+
+// Loop over all Vftrace environment variables. When LD is zero, we have an exact match
+// and we exit the subroutine to save time.
+void vftr_find_best_match (char *var_name, int *best_ld, int *best_i) {
+  *best_ld = INT_MAX;
+  *best_i = -1;
+  for (int i = 0; i < vftr_n_env_variables; i++) {
+    int ld = vftr_levenshtein_distance (var_name, vftr_env_variable_names[i]);
+    if (ld < *best_ld) {
+      *best_ld = ld;
+      *best_i = i;
+    }
+    if (ld == 0) return;
+  }
+}
+
+/**********************************************************************/
+
 vftr_envs_t vftr_environment;
 
 env_var_int_t *vftr_read_env_int (char *env_name, int val_default) {
+    vftr_env_variable_names[vftr_env_counter] = (char*)malloc((strlen(env_name) + 1) * sizeof(char));
+    strcpy (vftr_env_variable_names[vftr_env_counter++], env_name);
     char *s;
     env_var_int_t *var;
     var = (env_var_int_t*)malloc (sizeof (env_var_int_t));
-    if (s = getenv (env_name)) {
+    if ((s = getenv (env_name))) {
 	var->value = atoi(s);
  	var->set = true;
     } else {
@@ -55,10 +106,12 @@ void vftr_print_env_int (FILE *fp, char *env_name, env_var_int_t *var) {
 /**********************************************************************/
 
 env_var_long_t *vftr_read_env_long (char *env_name, long val_default) {
+    vftr_env_variable_names[vftr_env_counter] = (char*)malloc((strlen(env_name) + 1) * sizeof(char));
+    strcpy (vftr_env_variable_names[vftr_env_counter++], env_name);
     char *s;
     env_var_long_t *var;
     var = (env_var_long_t*)malloc (sizeof (env_var_long_t));
-    if (s = getenv (env_name)) {
+    if ((s = getenv (env_name))) {
 	var->value = atol(s);
  	var->set = true;
     } else {
@@ -77,10 +130,12 @@ void vftr_print_env_long (FILE *fp, char *env_name, env_var_long_t *var) {
 /**********************************************************************/
 
 env_var_long_long_t *vftr_read_env_long_long (char *env_name, long long val_default) {
+    vftr_env_variable_names[vftr_env_counter] = (char*)malloc((strlen(env_name) + 1) * sizeof(char));
+    strcpy (vftr_env_variable_names[vftr_env_counter++], env_name);
     char *s;
     env_var_long_long_t *var;
     var = (env_var_long_long_t*)malloc (sizeof (env_var_long_long_t));
-    if (s = getenv (env_name)) {
+    if ((s = getenv (env_name))) {
 	var->value = atoll(s);
  	var->set = true;
     } else {
@@ -103,10 +158,12 @@ void vftr_print_env_long_long (FILE *fp, char *env_name, env_var_long_long_t *va
 /**********************************************************************/
 
 env_var_bool_t *vftr_read_env_bool (char *env_name, bool val_default) {
+    vftr_env_variable_names[vftr_env_counter] = (char*)malloc((strlen(env_name) + 1) * sizeof(char));
+    strcpy (vftr_env_variable_names[vftr_env_counter++], env_name);
     env_var_bool_t *var;
     var = (env_var_bool_t*)malloc (sizeof (env_var_bool_t));
     char *s;
-    if (s = getenv (env_name)) {
+    if ((s = getenv (env_name))) {
         // convert string to only lowercase to ease comparison
         char *s_lower = strdup(s);
         for (int i = 0; i < strlen(s_lower); i++) {
@@ -144,10 +201,12 @@ void vftr_print_env_bool (FILE *fp, char *env_name, env_var_bool_t *var) {
 /**********************************************************************/
 
 env_var_double_t *vftr_read_env_double (char *env_name, double val_default) {
+    vftr_env_variable_names[vftr_env_counter] = (char*)malloc((strlen(env_name) + 1) * sizeof(char));
+    strcpy (vftr_env_variable_names[vftr_env_counter++], env_name);
     char *s;
     env_var_double_t *var;
     var = (env_var_double_t*)malloc (sizeof (env_var_double_t));
-    if (s = getenv (env_name)) {
+    if ((s = getenv (env_name))) {
 	sscanf (s, "%lf", &var->value);
  	var->set = true;
     } else {
@@ -170,10 +229,12 @@ void vftr_print_env_double (FILE *fp, char *env_name, env_var_double_t *var) {
 /**********************************************************************/
 
 env_var_string_t *vftr_read_env_string (char *env_name, char *val_default) {
+    vftr_env_variable_names[vftr_env_counter] = (char*)malloc((strlen(env_name) + 1) * sizeof(char));
+    strcpy (vftr_env_variable_names[vftr_env_counter++], env_name);
     char *s;
     env_var_string_t *var;
     var = (env_var_string_t*)malloc (sizeof (env_var_string_t));
-    if (s = getenv (env_name)) {
+    if ((s = getenv (env_name))) {
 	var->value = s;
  	var->set = true;
     } else {
@@ -196,10 +257,12 @@ void vftr_print_env_string (FILE *fp, char *env_name, env_var_string_t *var) {
 /**********************************************************************/
 
 env_var_regex_t *vftr_read_env_regex (char *env_name, regex_t *val_default) {
+    vftr_env_variable_names[vftr_env_counter] = (char*)malloc((strlen(env_name) + 1) * sizeof(char));
+    strcpy (vftr_env_variable_names[vftr_env_counter++], env_name);
     char *s;
     env_var_regex_t *var;
     var = (env_var_regex_t*)malloc (sizeof (env_var_regex_t));
-    if (s = getenv (env_name)) {
+    if ((s = getenv (env_name))) {
 	var->value = vftr_compile_regexp (s);
  	var->set = true;
     } else {
@@ -225,14 +288,39 @@ int vftr_profile_sorting_method () {
      return SORT_OVERHEAD;
   } else if (!strcmp (s, "OVERHEAD_RELATIVE")) {
      return SORT_OVERHEAD_RELATIVE;
+  } else if (!strcmp (s, "NONE")) {
+     return SORT_NONE;
   } else {
      return SORT_INVALID;
   } 
 }
 
+char *vftr_profile_sorting_method_string () {
+  switch (vftr_profile_sorting_method()) {
+    case SORT_EXCL_TIME:
+      return "sorted by exclusive time";
+    case SORT_INCL_TIME:
+      return "sorted by inclusive time";
+    case SORT_N_CALLS:
+      return "sorted by number of calls";
+    case SORT_STACK_ID:
+      return "sorted by stack ID";
+    case SORT_OVERHEAD:
+      return "sorted by overhead time";
+    case SORT_OVERHEAD_RELATIVE:
+      return "sorted by relative overhead time";
+    case SORT_NONE:
+      return "unsorted";
+  }
+}
+
 /**********************************************************************/
 
 void vftr_read_environment () {
+    vftr_n_env_variables = 33;
+    vftr_env_variable_names = (char**)malloc(vftr_n_env_variables * sizeof(char*));
+    vftr_env_counter = 0;
+    
     vftr_environment.vftrace_off = vftr_read_env_bool ("VFTR_OFF", false);
     vftr_environment.do_sampling = vftr_read_env_bool ("VFTR_SAMPLING", false);
     vftr_environment.regions_precise = vftr_read_env_bool ("VFTR_REGIONS_PRECISE", true);
@@ -262,6 +350,12 @@ void vftr_read_environment () {
     vftr_environment.sort_profile_table = vftr_read_env_string ("VFTR_SORT_PROFILE_TABLE", "EXCL_TIME");
     vftr_environment.show_overhead = vftr_read_env_bool ("VFTR_SHOW_FUNCTION_OVERHEAD", false);
     vftr_environment.meminfo_method = vftr_read_env_string ("VFTR_MEMINFO_METHOD", "");
+    vftr_environment.print_env = vftr_read_env_bool ("VFTR_PRINT_ENVIRONMENT", false);
+    vftr_environment.no_memtrace = vftr_read_env_bool ("VFTR_NO_MEMTRACE", false);
+    vftr_environment.all_mpi_summary = vftr_read_env_bool ("VFTR_COMPLETE_MPI_SUMMARY", false);
+    vftr_environment.show_stacks_in_profile = vftr_read_env_bool ("VFTR_SHOW_STACKS_IN_PROFILE", false);
+    vftr_environment.no_stack_normalization = vftr_read_env_bool ("VFTR_NO_STACK_NORM", false);
+
 }
 
 /**********************************************************************/
@@ -285,8 +379,8 @@ void vftr_assert_environment () {
 
 	if (vftr_environment.detail_until_cum_cycles->value > 100.0 || 
 	    vftr_environment.detail_until_cum_cycles->value < 0.0) {
-		printf ("Warning: Invalid value for VFTR_DETAIL_UNTIL_CUM_CYLES (%lf). Set to default value of 90.0\n",
-			vftr_environment.detail_until_cum_cycles->value);
+		vftr_rank0_printf ("Warning: Invalid value for VFTR_DETAIL_UNTIL_CUM_CYLES (%lf). Set to default value of 90.0\n",
+			           vftr_environment.detail_until_cum_cycles->value);
 		vftr_environment.detail_until_cum_cycles->value = 90.0;
 	}
 
@@ -302,9 +396,9 @@ void vftr_assert_environment () {
 			switch (sscanf (vftr_print_groups, "%d:%d", &group_base, &group_size)) {
 			case 2:
 				if (group_size <= 0) {
-					printf ("Warning: The group size in the environment variable VFTR_PRINT_STACKS_FOR=<group_base>:<group_size>	has to be greater than zero.\n");
-					printf ("No additional stack info will be printed.\n");
-					vftr_environment.print_stacks_for->set = false;
+		                   vftr_rank0_printf ("Warning: The group size in the environment variable VFTR_PRINT_STACKS_FOR=<group_base>:<group_size>	has to be greater than zero.\n");
+		                   vftr_rank0_printf ("No additional stack info will be printed.\n");
+		                   vftr_environment.print_stacks_for->set = false;
 				}
 			}
 			vftr_print_groups = *p ? p + 1 : p;
@@ -320,9 +414,9 @@ void vftr_assert_environment () {
 			switch (sscanf (vftr_mpi_groups, "%d:%d", &group_base, &group_size)) {
 			case 2:
 				if (group_size <= 0) {
-					printf ("Warning: The group size in the environment variable VFTR_PRINT_LOADINFO_FOR=<group_base>:<group_size>	has to be greater than zero.\n");
-					printf ("No additional stack info will be printed.\n");
-					vftr_environment.print_loadinfo_for->set = false;
+				   vftr_rank0_printf ("Warning: The group size in the environment variable VFTR_PRINT_LOADINFO_FOR=<group_base>:<group_size>	has to be greater than zero.\n");
+			           vftr_rank0_printf ("No additional stack info will be printed.\n");
+		                   vftr_environment.print_loadinfo_for->set = false;
 				}
 			}
 			vftr_mpi_groups = *p ? p + 1 : p;
@@ -332,25 +426,67 @@ void vftr_assert_environment () {
        	if (vftr_environment.sort_profile_table->set) {
       	   int method = vftr_profile_sorting_method(); 
 	   if (method == SORT_INVALID) {
-               printf ("Warning: The profile table sorting method \"%s\" is not defined. Defaulting to TIME_EXCL.\n");
+               vftr_rank0_printf ("Warning: The profile table sorting method \"%s\" is not defined. Defaulting to TIME_EXCL.\n", vftr_environment.sort_profile_table->value);
 	       vftr_environment.sort_profile_table->value = SORT_EXCL_TIME;
 	   } else if ((method == SORT_OVERHEAD || method == SORT_OVERHEAD_RELATIVE) && !vftr_environment.show_overhead->value) {
-	       printf ("Warning: You specified VFTR_SORT_PROFILE_TABLE=OVERHEAD(_RELATIVE), but overhead display is not enabled. Defaulting to TIME_EXLC.\n");
+	       vftr_rank0_printf ("Warning: You specified VFTR_SORT_PROFILE_TABLE=OVERHEAD(_RELATIVE), but overhead display is not enabled. Defaulting to TIME_EXLC.\n");
 	       vftr_environment.sort_profile_table->value = SORT_EXCL_TIME;
 	   }
         } 
 
 	if (vftr_environment.prof_truncate_cutoff->set && !vftr_environment.prof_truncate->value) {
-    	   printf ("Warning: Profile cutoff is given but VFTR_PROF_TRUNCATE is not set. Ignore!\n");
+    	   vftr_rank0_printf ("Warning: Profile cutoff is given but VFTR_PROF_TRUNCATE is not set. Ignore!\n");
         } 
 
 #ifndef _MPI
         if (vftr_environment.mpi_show_sync_time->set) {
-            printf ("Warning: This is a serial Vftrace build (no MPI support)\n");
-            printf ("VFTR_MPI_SHOW_SYNC_TIME is only supported with MPI. Switched off.\n");
+            vftr_rank0_printf ("Warning: This is a serial Vftrace build (no MPI support)\n");
+            vftr_rank0_printf ("VFTR_MPI_SHOW_SYNC_TIME is only supported with MPI. Switched off.\n");
             vftr_environment.mpi_show_sync_time->value = false;
         }
 #endif
+
+        if (vftr_environment.all_mpi_summary->value) {
+           bool veto = vftr_environment.mpi_show_sync_time->value || vftr_environment.print_stack_profile->value;
+           if (veto) {
+              if (vftr_mpirank == 0) {
+                 printf ("Warning: ");
+                 if (vftr_environment.mpi_show_sync_time->value) {
+                    printf ("VFTR_MPI_SHOW_SYNC_TIME ");
+                 } else {
+                    printf ("VFTR_PRINT_STACK_PROFILE ");
+                 }
+	         printf ("is incompatible with VFTR_COMPLETE_MPI_SUMMARY.\n");
+                 printf ("DISABLED: VFTR_COMPLETE_MPI_SUMMARY.\n");
+              }
+              vftr_environment.all_mpi_summary->value = false;
+	   }
+        }
+
+        if (vftr_n_env_variables != vftr_env_counter) {
+          vftr_rank0_printf ("Internal Vftrace warning: Registered nr. of environment variables does not match (%d %d)\n", vftr_n_env_variables, vftr_env_counter);
+        }
+
+        if (vftr_mpirank == 0) {
+           // There might be mistyped Vftrace environment variables. Loop over all existing env variables,
+           // check if they match a Vftrace variable, and make an alternative suggestion if it is possibly mistyped.
+           extern char **environ;
+           char **s = environ;
+           bool found = false;
+           for (; *s; s++) {
+             if (strstr(*s, "VFTR_")) {
+               int best_ld, best_i;
+               // There has to be strdup of s, because strtok modifies the first argument. This
+               // points to the external environ, which is better not touched!
+               char *var_name = strtok(strdup(*s), "=");
+               vftr_find_best_match (var_name, &best_ld, &best_i);
+               // best_ld == 0 -> Exact match.
+               if (best_ld > 0)  {
+                 printf ("Vftrace environment variable %s not known. Do you mean %s?\n", var_name, vftr_env_variable_names[best_i]);
+               }
+             }
+           }
+         }
 }
 
 /**********************************************************************/
@@ -359,15 +495,29 @@ void vftr_assert_environment () {
 // or by a call to vftr_switch off. We need to check if the evironment is initialized
 // beforehand, otherwise this yields a segfault in vftr_finalize, which is always called.
 bool vftr_off () {
-	return vftr_environment.vftrace_off->value;
+   return vftr_environment.vftrace_off->value;
 }
 
 void vftr_switch_off () {
-	vftr_environment.vftrace_off->value = true;
+   vftr_environment.vftrace_off->value = true;
 }
 
 bool vftr_env_do_sampling () {
-	return vftr_environment.do_sampling->value;
+   return vftr_environment.do_sampling->value;
+}
+
+bool vftr_env_no_memtrace () {
+   return vftr_environment.no_memtrace->value;
+}
+
+bool vftr_env_need_display_functions () {
+   return vftr_environment.print_stack_profile->value || vftr_environment.create_html->value || vftr_environment.all_mpi_summary->value;
+}
+
+bool vftr_env_distribute_gStack () {
+   return vftr_environment.logfile_all_ranks->value ||
+          vftr_environment.print_stack_profile->value ||
+          vftr_environment.all_mpi_summary->value; 
 }
 
 /**********************************************************************/
@@ -400,6 +550,16 @@ void vftr_free_environment () {
         free (vftr_environment.sort_profile_table);
 	free (vftr_environment.show_overhead);
         free (vftr_environment.meminfo_method);
+        free (vftr_environment.print_env);
+	free (vftr_environment.no_memtrace);
+        free (vftr_environment.all_mpi_summary);
+        free (vftr_environment.show_stacks_in_profile);
+        free (vftr_environment.no_stack_normalization);
+
+        for (int i = 0; i < vftr_n_env_variables; i++) {
+          free(vftr_env_variable_names[i]);
+        }
+        free(vftr_env_variable_names); 
 }
 
 /**********************************************************************/
@@ -432,29 +592,49 @@ void vftr_print_environment (FILE *fp) {
 	vftr_print_env_string (fp, "VFTR_SORT_PROFILE_TABLE", vftr_environment.sort_profile_table);
         vftr_print_env_bool (fp, "VFTR_SHOW_FUNCTION_OVERHEAD", vftr_environment.show_overhead);
         vftr_print_env_string (fp, "VFTR_MEMINFO_METHOD", vftr_environment.meminfo_method);
+        vftr_print_env_bool (fp, "VFTR_PRINT_ENVIRONMENT", vftr_environment.print_env);
+        vftr_print_env_bool (fp, "VFTR_NO_MEMTRACE", vftr_environment.no_memtrace);
+        vftr_print_env_bool (fp, "VFTR_COMPLETE_MPI_SUMMARY", vftr_environment.all_mpi_summary);
+        vftr_print_env_bool (fp, "VFTR_SHOW_STACKS_IN_PROFILE", vftr_environment.show_stacks_in_profile);
+        vftr_print_env_bool (fp, "VFTR_NO_STACK_NORM", vftr_environment.no_stack_normalization);
 }
 
 /**********************************************************************/
 
 int vftr_environment_test_1 (FILE *fp) {
-	putenv ("VFTR_OFF=yes");
-	vftr_read_environment ();
-	vftr_assert_environment ();
-	vftr_print_environment (fp);
-	vftr_free_environment ();
-		
-	fprintf (fp, "***************************\n");
-	putenv ("VFTR_OFF=no");
-	putenv ("VFTR_SAMPLING=YES");
-	putenv ("VFTR_REGIONS_PRECISE=0");
-	putenv ("VFTR_MPI_LOG=on");
-	putenv ("VFTR_OUT_DIRECTORY=\"foo/bar\"");
-	putenv ("VFTR_BUFSIZE=1234");
-	putenv ("VFTR_SAMPLETIME=12.34");
-	
-	vftr_read_environment ();
-	vftr_assert_environment ();
-	vftr_print_environment (fp);
-	vftr_free_environment ();
-	return 0;
+  putenv ("VFTR_OFF=yes");
+  vftr_read_environment ();
+  vftr_assert_environment ();
+  vftr_print_environment (fp);
+  vftr_free_environment ();
+  	
+  fprintf (fp, "***************************\n");
+  putenv ("VFTR_OFF=no");
+  putenv ("VFTR_SAMPLING=YES");
+  putenv ("VFTR_REGIONS_PRECISE=0");
+  putenv ("VFTR_MPI_LOG=on");
+  putenv ("VFTR_OUT_DIRECTORY=\"foo/bar\"");
+  putenv ("VFTR_BUFSIZE=1234");
+  putenv ("VFTR_SAMPLETIME=12.34");
+  
+  vftr_read_environment ();
+  vftr_assert_environment ();
+  vftr_print_environment (fp);
+  vftr_free_environment ();
+  return 0;
 }
+
+/**********************************************************************/
+
+int vftr_environment_test_2 (FILE *fp) {
+  // Check if the advisor works.
+  putenv ("VFTR_OF=yes"); // Should be VFTR_OFF
+  putenv ("VFTR_TRUNCATE=yes"); // Should be VFTR_PROF_TRUNCATE
+
+  vftr_read_environment ();
+  vftr_assert_environment ();
+  vftr_free_environment ();
+  return 0;
+}
+
+/**********************************************************************/

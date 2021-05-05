@@ -17,7 +17,7 @@
 #ifdef _MPI
 
 SUBROUTINE MPI_SSEND(BUF, COUNT, DATATYPE, DEST, TAG, COMM, ERROR)
-   USE vftr_mpi_ssend_c2f, &
+   USE vftr_mpi_ssend_f2c, &
       ONLY : vftr_MPI_Ssend_F
    IMPLICIT NONE
    INTEGER BUF

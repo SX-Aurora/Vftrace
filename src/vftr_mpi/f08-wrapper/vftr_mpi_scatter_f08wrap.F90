@@ -19,7 +19,7 @@
 SUBROUTINE MPI_Scatter_f08(sendbuf, sendcount, sendtype, &
                            recvbuf, recvcount, recvtype, &
                            root, comm, error)
-   USE vftr_mpi_scatter_c2f, &
+   USE vftr_mpi_scatter_f2c, &
       ONLY : vftr_MPI_Scatter_F
    USE mpi_f08, ONLY : MPI_Datatype, &
                        MPI_Comm

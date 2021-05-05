@@ -17,7 +17,7 @@
 #ifdef _MPI
 
 SUBROUTINE MPI_Finalize_f08(ierror)
-   USE vftr_finalize_c2f08, &
+   USE vftr_finalize_f082c, &
       ONLY : vftr_finalize_F08
    USE mpi_f08, ONLY : PMPI_Finalize
 

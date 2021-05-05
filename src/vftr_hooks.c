@@ -59,7 +59,7 @@ void vftr_save_old_state () {
 
 /**********************************************************************/
 
-void vftr_function_entry (const char *s, void *addr, int line, bool isPrecise) {
+void vftr_function_entry (const char *s, void *addr, bool isPrecise) {
     int e, read_counters;
     unsigned long long timer, delta;
     unsigned long long cycles0;
@@ -88,7 +88,7 @@ void vftr_function_entry (const char *s, void *addr, int line, bool isPrecise) {
     //
     if (lib_opened) {
 	lib_opened = 0;
-    	vftr_create_symbol_table (vftr_mpirank, NULL);
+    	vftr_create_symbol_table (vftr_mpirank);
     }
 
     caller = vftr_fstack;
@@ -118,7 +118,7 @@ void vftr_function_entry (const char *s, void *addr, int line, bool isPrecise) {
     
     if (callee == NULL) {
         // No calls at all yet: add new function
-        func = vftr_new_function(addr, s, caller, line, isPrecise);
+        func = vftr_new_function(addr, s, caller, isPrecise);
     } else {
 	// Search the function address in the function list
         func = callee;
@@ -131,7 +131,7 @@ void vftr_function_entry (const char *s, void *addr, int line, bool isPrecise) {
            }
            if (func == callee) {
                // No call from this callee yet: add new function
-               func = vftr_new_function(addr, s, caller, line, isPrecise);
+               func = vftr_new_function(addr, s, caller, isPrecise);
            }
         }
     }
@@ -139,14 +139,12 @@ void vftr_function_entry (const char *s, void *addr, int line, bool isPrecise) {
     vftr_fstack = func; /* Here's where we are now */
     func->open = true;
 
-    if (line > 0) assert (func->line_beg == line);
-
     if (func->profile_this) {
         wtime = (vftr_get_runtime_usec() - vftr_overhead_usec) * 1.0e-6;
         vftr_write_stack_ascii (vftr_log, wtime, func, "profile before call to", 0);
         vftr_profile_wanted = true;
         int ntop;
-        vftr_print_profile (vftr_log, NULL, 0, &ntop, timer);
+        vftr_print_profile (vftr_log, NULL, &ntop, timer, 0, NULL);
         vftr_print_local_stacklist (vftr_func_table, vftr_log, ntop);
 	vftr_save_old_state ();
     }
@@ -226,7 +224,7 @@ void vftr_function_entry (const char *s, void *addr, int line, bool isPrecise) {
 
 /**********************************************************************/
 
-void vftr_function_exit(int line) {
+void vftr_function_exit () {
     int           e, read_counters, timeToSample;
     long long     timer;
     unsigned long long cycles0;
@@ -250,17 +248,6 @@ void vftr_function_exit(int line) {
     timer = vftr_get_runtime_usec ();
     cycles0 = vftr_get_cycles() - vftr_initcycles;
     func  = vftr_fstack;
-
-    if (line > 0) {
-        if (func->line_end) {
-		assert (func->line_end == line);
-        } else {
-            /* Complete region name */
-            char *endline = index (func->name, '-'); // string.h's index function
-            snprintf (endline+1, 7, "%d", line);
-            func->line_end = line;
-        }
-    }
 
     prof_current = &func->prof_current;
     prof_current->time_incl += func_exit_time;   /* Inclusive time */
@@ -334,7 +321,7 @@ void vftr_function_exit(int line) {
         vftr_write_stack_ascii (vftr_log, wtime, func, "profile at exit from", timeToSample);
         vftr_profile_wanted = true;
         int ntop;
-        vftr_print_profile (stdout, NULL, 0, &ntop, timer);
+        vftr_print_profile (stdout, NULL, &ntop, timer, 0, NULL);
         vftr_print_local_stacklist( vftr_func_table, stdout, ntop );
     }
 
@@ -346,11 +333,11 @@ void vftr_function_exit(int line) {
     /* Sort profile if it is time */
     
     if (wtime >= vftr_sorttime)  {
-        int i, top;
+        int i;
         double tsum = 0.;
         double scale = 100. / (double)vftr_prog_cycles;
 
-        qsort (vftr_func_table, (size_t)vftr_stackscount, sizeof( function_t *), vftr_get_profile_compare_function());
+        qsort ((void*)vftr_func_table, (size_t)vftr_stackscount, sizeof (function_t *), vftr_get_profile_compare_function());
 
         /* Set function detail flags while sum(time) < max */
         for (i = 0; i < vftr_stackscount; i++) {
@@ -360,9 +347,8 @@ void vftr_function_exit(int line) {
             if ((tsum * scale) > cutoff) break;
             f->detail = true;
         }
-        top = i;
         /* Clear function detail flags for all others */
-        for(; i<vftr_stackscount; i++) 
+        for(; i < vftr_stackscount; i++) 
             vftr_func_table[i]->detail = false;
 
         vftr_sorttime *= vftr_sorttime_growth;
@@ -376,21 +362,7 @@ void vftr_function_exit(int line) {
     vftr_prof_data.time_excl = overhead_time_end;
     vftr_overhead_usec += overhead_time_end - overhead_time_start;
     func->overhead += overhead_time_end - overhead_time_start;
-    
 
-    /* Terminate Vftrace if we are exiting the main routine */
-    // When exiting main, there is no return value.
-    // This approach is in contrast to previous implementations, where
-    // vftr_finalize was a destructor. It has been agreed upon that
-    // we do not want to have invisible side effects, wherefore this
-    // method is much more transparent. Also, unit tests do not have 
-    // to cope with possibly non-associated symbols when calling vftr_finalize
-    // and are also purer that way. 
-    // A downside is that everything between the exit from the main function
-    // and the actual program termination as experienced by the user is not
-    // measured. Therefore, there is a theoretical, but miniscule, discrepancy
-    // the user time and the time measured by Vftrace.
-    if (!vftr_fstack->return_to) vftr_finalize();
     func->open = false;
 }
 
@@ -399,11 +371,11 @@ void vftr_function_exit(int line) {
 #if defined(__x86_64__) || defined(__ve__)
 
 void __cyg_profile_func_enter (void *func, void *caller) {
-    vftr_function_entry (NULL, func, -1, false);
+    vftr_function_entry (NULL, func, false);
 }
 
 void __cyg_profile_func_exit (void *func, void *caller) {
-    vftr_function_exit( -1 );
+    vftr_function_exit ();
 }
 
 #elif defined(__ia64__)
@@ -411,10 +383,10 @@ void __cyg_profile_func_exit (void *func, void *caller) {
 // The argument func is a pointer to a pointer instead of a pointer.
 
 void __cyg_profile_func_enter (void **func, void *caller) {
-    vftr_function_entry( NULL, *func, -1, false);
+    vftr_function_entry (NULL, *func, false);
 }
 
-void __cyg_profile_func_exit  (void **func, void *caller) {
-    vftr_function_exit( -1 );
+void __cyg_profile_func_exit (void **func, void *caller) {
+    vftr_function_exit ();
 }
 #endif

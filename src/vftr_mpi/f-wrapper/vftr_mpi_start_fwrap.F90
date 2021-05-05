@@ -17,7 +17,7 @@
 #ifdef _MPI
 
 SUBROUTINE MPI_START(REQUEST, ERROR)
-   USE vftr_mpi_start_c2f, &
+   USE vftr_mpi_start_f2c, &
       ONLY : vftr_MPI_Start_F
    IMPLICIT NONE
    INTEGER REQUEST

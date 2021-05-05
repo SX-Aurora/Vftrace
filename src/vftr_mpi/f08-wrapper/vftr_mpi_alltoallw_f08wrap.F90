@@ -19,7 +19,7 @@
 SUBROUTINE MPI_Alltoallw_f08(sendbuf, sendcounts, sdispls, sendtypes, &
                              recvbuf, recvcounts, rdispls, recvtypes, &
                              comm, error)
-   USE vftr_mpi_alltoallw_c2f, &
+   USE vftr_mpi_alltoallw_f2c, &
       ONLY : vftr_MPI_Alltoallw_F
    USE mpi_f08, ONLY : MPI_Datatype, &
                        MPI_Comm

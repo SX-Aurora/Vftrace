@@ -31,6 +31,10 @@ typedef struct StackEntry {
     bool precise;
 } stack_entry_t;
 
+extern char **vftr_hw_obs_name;
+extern char **vftr_variable_name;
+
+
 bool is_precise (char *s);
 char *strip_trailing_asterisk (char *s);
 
@@ -50,6 +54,7 @@ void read_scenario_header (FILE *fp, int n_hw_obs, int n_formulas, bool verbose)
 void skip_hw_observables (FILE *fp, int n_hw_obs);
 
 void read_stack_sample (FILE *fp, int n_hw_obs, int *stack_id,
-			long long *sample_time, double *hw_values);
+			long long *sample_time, long long *hw_values, long long *cycle_time);
 void skip_stack_sample (FILE *fp);
+void cleanup_scenario_data (int n_hw_obs);
 #endif

@@ -17,7 +17,7 @@
 #ifdef _MPI
 
 SUBROUTINE MPI_Barrier_f08(comm, error)
-   USE vftr_mpi_barrier_c2f, &
+   USE vftr_mpi_barrier_f2c, &
       ONLY : vftr_MPI_Barrier_F
    USE mpi_f08, ONLY : MPI_Comm
    IMPLICIT NONE

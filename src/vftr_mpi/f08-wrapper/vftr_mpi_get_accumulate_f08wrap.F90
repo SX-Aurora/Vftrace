@@ -20,7 +20,7 @@ SUBROUTINE MPI_Get_accumulate_f08(origin_addr, origin_count, origin_datatype, &
                                   result_addr, result_count, result_datatype, &
                                   target_rank, target_disp, target_count, &
                                   target_datatype, op, win, error)
-   USE vftr_mpi_get_accumulate_c2f, &
+   USE vftr_mpi_get_accumulate_f2c, &
       ONLY : vftr_MPI_Get_accumulate_F
    USE mpi_f08, ONLY : MPI_Datatype, &
                        MPI_Op, &

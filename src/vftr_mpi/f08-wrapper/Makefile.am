@@ -2,8 +2,8 @@ noinst_LTLIBRARIES = libvftr_f08mpiwrap.la
 
 libvftr_f08mpiwrap_la_SOURCES =
 
-libvftr_f08mpiwrap_la_SOURCES += vftr_after_mpi_init_c2f08.F90 \
-				 vftr_finalize_c2f08.F90
+libvftr_f08mpiwrap_la_SOURCES += vftr_after_mpi_init_f082c.F90 \
+				 vftr_finalize_f082c.F90
 libvftr_f08mpiwrap_la_SOURCES += vftr_mpi_init_f08wrap.F90 \
 				 vftr_mpi_finalize_f08wrap.F90
 
@@ -63,19 +63,13 @@ libvftr_f08mpiwrap_la_SOURCES += vftr_mpi_put_f08wrap.F90 \
 ############
 # pcontrol #
 ############
-libvftr_f08mpiwrap_la_SOURCES += vftr_mpi_pcontrol_c2f08.F90
+libvftr_f08mpiwrap_la_SOURCES += vftr_mpi_pcontrol_f082c.F90
 libvftr_f08mpiwrap_la_SOURCES += vftr_mpi_pcontrol_f08wrap.F90
 
 libvftr_f08mpiwrap_la_FCFLAGS = -finstrument-functions
 libvftr_f08mpiwrap_la_FCFLAGS += -I${builddir}/../f-wrapper/
 if WITH_MPI
 libvftr_f08mpiwrap_la_FCFLAGS += -D_MPI
-endif
-
-if USES_INTEL_MPI
-libvftr_f08mpiwrap_la_FCFLAGS += -DPMPI_MODULE=pmpi_f08
-else
-libvftr_f08mpiwrap_la_FCFLAGS += -DPMPI_MODULE=mpi
 endif
 
 clean-local:

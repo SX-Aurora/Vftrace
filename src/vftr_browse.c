@@ -47,7 +47,6 @@ void vftr_browse_print_css_header (FILE *fp, int n_chars_max, int n_final) {
    fprintf (fp, "}\n");
    fprintf (fp, "\n");
    fprintf (fp, "* {\n");
-   fprintf (fp, "  position: relative;\n");
    fprintf (fp, "  margin: 0;\n");
    fprintf (fp, "  padding: 0;\n");
    fprintf (fp, "\n"); 
@@ -288,8 +287,14 @@ void vftr_create_profile_dropdown (FILE *fp, enum origin_page op) {
 /**********************************************************************/
 
 void vftr_browse_print_navigation_bars (FILE *fp, display_function_t **display_functions, int i_func, int n_funcs, enum origin_page op) {
+   // First, we need to figure out the maximum length of the function names appearing in the left (vertical) navigation bar.
+   // This determines the width of the vertical bar and the margin of the horizontal one in terms of em units.
    // Horizontal navigation bar
-   fprintf (fp, "<ul style=\"list-style-type: none;margin-top: 0px;margin-left: 150px; background-color: #f1f1f1;\">\n");
+   int max_len = 0;
+   for (int i = 0; i < n_funcs; i++) {
+     if (strlen(display_functions[i]->func_name) > max_len) max_len = strlen(display_functions[i]->func_name);
+   }
+   fprintf (fp, "<ul style=\"list-style-type: none;margin-top: 0px;margin-left: %dch; background-color: #f1f1f1;\">\n", max_len);
    vftr_browse_make_html_indent (fp, 0, 1);
    if (op == HOME || op == PROFILE) {
       fprintf (fp, "<li style=\"display: inline;\"><a href=\"index.html\">HOME</a></li>\n");
@@ -301,7 +306,7 @@ void vftr_browse_print_navigation_bars (FILE *fp, display_function_t **display_f
    fprintf (fp, "</ul>\n");
    fprintf (fp, "\n");
    // Vertical navigation bar
-   fprintf (fp, "<ul style=\"float: left;list-style-type: none;margin: 0;padding: 0; width: 150px;background-color: #f1f1f1;\">\n");
+   fprintf (fp, "<ul style=\"float: left;list-style-type: none;margin: 0;padding: 0; width: %dch;height: 100%;background-color: #f1f1f1;\">\n", max_len);
    for (int i = 0; i < n_funcs; i++) {
       char *func_name = display_functions[i]->func_name;
       vftr_browse_make_html_indent (fp, 0, 1);
@@ -575,8 +580,8 @@ void vftr_browse_table_cell_print (FILE *fp, column_t c, void *value_1, void *va
       case COL_DOUBLE:
          fprintf (fp, "<td> %*.*f </td>\n", c.n_chars, c.n_decimal_places, *(double*)value_1);
   	 break;
-      case COL_CHAR:
-         fprintf (fp, "<td> %*.s </td>\n", c.n_chars, (char*)value_1);
+      case COL_CHAR_RIGHT:
+         fprintf (fp, "<td> %*s </td>\n", c.n_chars, (char*)value_1);
 	 break;
    }
 }
@@ -591,7 +596,7 @@ char *vftr_browse_table_cell_format_with_link (char *base_dir, char *func_name, 
 void vftr_browse_print_table_line (FILE *fp, int stack_id,
 				   long long application_runtime_usec, double sampling_overhead_time,
 				   int n_calls, long long t_excl_usec, long long t_incl_usec, long long t_sum_usec, double t_overhead,
-				   char *func_name, char *caller_name, column_t *prof_columns) {
+				   char *func_name, char *caller_name, column_t *prof_columns, bool mark_disp_f) {
 	   int i_column = 0;
 	   
 	   fprintf (fp, "<tr>\n");
@@ -622,7 +627,7 @@ void vftr_browse_print_table_line (FILE *fp, int stack_id,
 	      }
 	   }
 	   
-	   if (vftr_is_collective_mpi_function (func_name)) {
+	   if (mark_disp_f) {
 	      int n = strlen(func_name) + vftr_count_digits_int (vftr_mpirank) + 7;
 	      char target_fun[n];
 	      snprintf (target_fun, n, "%s_%d.html", func_name, vftr_mpirank);
@@ -631,7 +636,11 @@ void vftr_browse_print_table_line (FILE *fp, int stack_id,
 	      vftr_browse_table_cell_print (fp, prof_columns[i_column++], func_name, NULL);
            }
 
-	   vftr_browse_table_cell_print (fp, prof_columns[i_column++], caller_name, NULL);
+           if (caller_name != NULL) {
+	      vftr_browse_table_cell_print (fp, prof_columns[i_column++], caller_name, NULL);
+           } else {
+	      vftr_browse_table_cell_print (fp, prof_columns[i_column++], "-/-", NULL);
+           }
 	   vftr_browse_table_cell_print (fp, prof_columns[i_column++], &stack_id, NULL);
 
 	   fprintf (fp, "</tr>\n");
@@ -648,12 +657,12 @@ void vftr_browse_finalize_table (FILE *fp) {
 
 int vftr_browse_test_1 (FILE *fp_in, FILE *fp_out) {
 	unsigned long long addrs[6];	
-	function_t *func1 = vftr_new_function (NULL, "init", NULL, 0, false);
-	function_t *func2 = vftr_new_function ((void*)addrs, "MAIN__", func1, 0, false);
-	function_t *func3 = vftr_new_function ((void*)(addrs + 1), "A", func1, 0, false);
-	function_t *func4 = vftr_new_function ((void*)(addrs + 2), "B", func1, 0, false);
-	function_t *func5 = vftr_new_function ((void*)(addrs + 3), "C", func3, 0, false);
-	function_t *func6 = vftr_new_function ((void*)(addrs + 4), "C", func4, 0, false);
+	function_t *func1 = vftr_new_function (NULL, "init", NULL, false);
+	function_t *func2 = vftr_new_function ((void*)addrs, "MAIN__", func1, false);
+	function_t *func3 = vftr_new_function ((void*)(addrs + 1), "A", func1, false);
+	function_t *func4 = vftr_new_function ((void*)(addrs + 2), "B", func1, false);
+	function_t *func5 = vftr_new_function ((void*)(addrs + 3), "C", func3, false);
+	function_t *func6 = vftr_new_function ((void*)(addrs + 4), "C", func4, false);
 	vftr_normalize_stacks();
 	for (int i = 0; i < vftr_stackscount; i++) {
 		vftr_func_table[i]->prof_current.calls = i + 1;
@@ -680,7 +689,6 @@ int vftr_browse_test_1 (FILE *fp_in, FILE *fp_out) {
 		vftr_fill_into_stack_tree (&stack_tree, n_functions_in_stack, stack_ids, function_id);
 		free (stack_ids);
 	}
-	long long dummy_l;
 	double dummy_d;
 	int dummy_i;
  	vftr_scan_stacktree (stack_tree->origin, 2, NULL, &dummy_d, &dummy_i, &dummy_d, &dummy_i, &dummy_i);

@@ -338,8 +338,8 @@ int main (int argc, char **argv) {
 		    skip_mpi_message_sample (fp);
 	        } else if (sample_id == SID_ENTRY || sample_id == SID_EXIT) {
 	            int stack_id;
-		    long long sample_time;
-		    read_stack_sample (fp, vfd_header.n_hw_obs, &stack_id, &sample_time, NULL);
+		    long long sample_time, cycle_time;
+		    read_stack_sample (fp, vfd_header.n_hw_obs, &stack_id, &sample_time, NULL, &cycle_time);
 		    double sample_time_s = (double)sample_time * 1e-6;
 	
 		    if (!strcmp (stacks[stack_id].name, search_func)) {
