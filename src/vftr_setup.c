@@ -282,6 +282,7 @@ void vftr_initialize() {
 /**********************************************************************/
 
 void vftr_finalize() {
+    printf ("VFTR FINALIZE CALLED\n");
     int ntop = 0;
     function_t **funcTable;
 
@@ -321,6 +322,7 @@ void vftr_finalize() {
 
     if (vftr_profile_wanted) {
        if (vftr_do_stack_normalization) vftr_create_global_stack_strings ();
+       printf ("Should print profile\n");
        vftr_print_profile (vftr_log, f_html, &ntop, vftr_get_runtime_usec(), n_display_functions, display_functions);
     }
 #ifdef _MPI

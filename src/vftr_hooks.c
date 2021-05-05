@@ -164,6 +164,7 @@ void vftr_function_entry (const char *s, void *addr, bool isPrecise) {
            vftr_read_counters (vftr_prof_data.events[ic]);
            if (prof_return->event_count && func->return_to->detail) {
                for (e = 0; e < vftr_n_hw_obs; e++) {
+                   if (func->id == 3) printf ("OH NO\n");
                    long long delta = vftr_prof_data.events[ic][e] - vftr_prof_data.events[1-ic][e];
 #ifdef __ve__
                    if (delta < 0) /* Handle counter overflow */
@@ -176,9 +177,10 @@ void vftr_function_entry (const char *s, void *addr, bool isPrecise) {
            vftr_prof_data.ic = 1 - ic;
        }
        if (vftr_memtrace) {
-          vftr_get_memtrace();
-          //if (vftr_mpirank == 0) printf ("HUHU: %ld\n", vftr_current_mallinfo.mmap_size);
+          vftr_get_memtrace(func->id == 3);
+          if (func->return_to->id == 3) printf ("MMAP_SIZE: %s %ld\n", func->return_to->name, vftr_current_mallinfo.mmap_size);
           prof_return->event_count[vftr_n_hw_obs] += vftr_current_mallinfo.mmap_size;
+          if (func->return_to->id == 3) printf ("eventCount: %ld\n", prof_return->event_count);
        }
     }
 
@@ -268,6 +270,7 @@ void vftr_function_exit () {
         vftr_read_counters (vftr_prof_data.events[ic]);
         if (prof_current->event_count && func->detail) {
             for (e = 0; e < vftr_n_hw_obs; e++) {
+                if (func->id == 3) printf ("OH NO\n");
                 long long delta = vftr_prof_data.events[ic][e] - vftr_prof_data.events[1-ic][e];
 #ifdef __ve__
 	        /* Handle counter overflow */
@@ -282,8 +285,10 @@ void vftr_function_exit () {
         vftr_prof_data.ic = 1 - ic;
     }
     if (vftr_memtrace) {
-       vftr_get_memtrace();
+       vftr_get_memtrace(func->id == 3);
+       if (func->id == 3) printf ("MMAP_SIZE: %s %ld\n", func->name, vftr_current_mallinfo.mmap_size);
        prof_current->event_count[vftr_n_hw_obs] += vftr_current_mallinfo.mmap_size;
+       if (func->id == 3) printf ("eventCount: %ld\n", prof_current->event_count);
     }
 
   

@@ -32,7 +32,7 @@ extern FILE *vftr_fp_selfstat;
 
 void vftr_init_mallinfo();
 void vftr_finalize_mallinfo();
-void vftr_get_memtrace();
+void vftr_get_memtrace(bool verbose);
 //void vftr_get_mallinfo();
 
 #endif
