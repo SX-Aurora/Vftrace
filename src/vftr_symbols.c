@@ -527,11 +527,13 @@ char *vftr_demangle_cpp (char *m_name) {
         memcpy (d_name2, d_name, n_write);
         d_name2 += n_write;
         memcpy (d_name2, brackets, 4);
+        d_name2 += 4;
         n_open++;  
+        n_write = 0;
       } else if (c == '>' && n_open == 1) {
         d_name = p + 1;
         n_open--;
-        n_write = -1;
+        n_write = 0;
       } else if (c == '<') {
         n_open++;
       } else if (c == '>') {
@@ -542,7 +544,7 @@ char *vftr_demangle_cpp (char *m_name) {
     }
     if (n_write > 0) memcpy (d_name2, d_name, n_write);
   } else {
-    strcpy (d_name2, d_name);
+    d_name2 = strdup(d_name);
   }
   return s_out;
 }
