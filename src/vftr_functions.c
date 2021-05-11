@@ -23,6 +23,7 @@
 #include <ctype.h>
 #include <stdbool.h>
 
+#include "vftr_stringutils.h"
 #include "vftr_setup.h"
 #include "vftr_symbols.h"
 #include "vftr_stacks.h"
@@ -102,6 +103,8 @@ function_t *vftr_new_function(void *arg, const char *function_name, function_t *
          func->name = strdup("unknown");
       }
    }
+   char *tmp = vftr_demangle_cpp(func->name);
+   func->name = strdup(tmp);
 
    // Function address
    func->address = arg;

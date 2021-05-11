@@ -298,7 +298,7 @@ void vftr_finalize() {
     }
 
 #ifdef _LIBERTY_AVAIL
-    vftr_demangle_all_func_names();
+    //vftr_demangle_all_func_names();
 #endif
     
     FILE *f_html = NULL;

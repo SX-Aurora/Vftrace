@@ -26,6 +26,7 @@
 #include <demangle.h>
 #endif
 
+#include "vftr_stringutils.h"
 #include "vftr_filewrite.h"
 #include "vftr_fileutils.h"
 #include "vftr_symbols.h"
@@ -486,6 +487,10 @@ char *vftr_demangle_cpp (char *m_name) {
   char *d_name = cplus_demangle(m_name, 0);
 
   if (d_name == NULL) return m_name;
+  int has_control_char;
+  vftr_has_control_character (d_name, &has_control_char, NULL);
+  if (has_control_char >= 0) return m_name; 
+  //return d_name;
 
   int n_brackets = 0;
   int n_dots = 0;
@@ -506,7 +511,9 @@ char *vftr_demangle_cpp (char *m_name) {
     p++;
   }
 
-  char *d_name2 = (char*)malloc((strlen(d_name) - n_dots + n_brackets * 4) * sizeof(char));
+  int ns2 = (strlen(d_name) - n_dots + n_brackets * 4) * sizeof(char);
+  //char *d_name2 = (char*)malloc((strlen(d_name) - n_dots + n_brackets * 4) * sizeof(char));
+  char *d_name2 = (char*)malloc(ns2);
   char *s_out = d_name2;
 
   if (n_dots > 0) {
