@@ -91,7 +91,7 @@ function_t *vftr_new_function(void *arg, const char *function_name, function_t *
    if (function_name) {
       func->name = strdup(function_name);
    } else {
-      char *symbol = vftr_find_symbol (arg, &(func->full));
+      char *symbol = vftr_find_symbol (arg);
       if (symbol) {
          func->name = strdup(symbol);
          /* Chop Fortran trailing underscore */
