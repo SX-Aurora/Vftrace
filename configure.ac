@@ -42,6 +42,9 @@ AX_ENABLE_HWC
 # Check for Papi library
 AX_PAPI_LIBRARY
 
+# Check of libiberty is available
+AX_LIBERTY
+
 # Check consistency of HWC, Architecture, and Papi
 AX_CHECK_HWC_CONSISTENCY
 

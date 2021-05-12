@@ -77,6 +77,11 @@ libvftrace_la_CFLAGS += -D_MPI
 libvftrace_la_FCFLAGS += -D_MPI
 endif 
 
+if HAS_LIBERTY
+libvftrace_la_CFLAGS += -D_LIBERTY_AVAIL
+libvftrace_la_LIBADD += -liberty
+endif
+
 if USES_INTEL_COMPILER
 libvftrace_la_LDFLAGS += -lifcore
 endif
