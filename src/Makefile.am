@@ -45,8 +45,7 @@ libvftrace_la_SOURCES = vftr_scenarios.c \
 		       vftr_regex.c \
 	 	       vftr_environment.c \
 		       vftr_signals.c \
-		       vftr_browse.c \
-                       foo.cpp
+		       vftr_browse.c
 if ENABLE_FORTRAN
 libvftrace_la_SOURCES += vftrace_mod.F90
 endif
