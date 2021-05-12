@@ -297,9 +297,11 @@ void vftr_finalize() {
 	vftr_strip_all_module_names ();
     }
 
+    if (vftr_environment.demangle_cpp->value) {
 #ifdef _LIBERTY_AVAIL
-    vftr_demangle_all_func_names();
+       vftr_demangle_all_func_names();
 #endif
+    }
     
     FILE *f_html = NULL;
     display_function_t **display_functions = NULL;

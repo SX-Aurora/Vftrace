@@ -483,7 +483,6 @@ char *vftr_find_symbol (void *addr, char **full) {
 
 #ifdef _LIBERTY_AVAIL
 char *vftr_demangle_cpp (char *m_name) {
-  vftr_current_demangle = m_name;
   char *d_name = cplus_demangle(m_name, 0);
 
   if (d_name == NULL) return m_name;
