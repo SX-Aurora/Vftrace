@@ -472,9 +472,67 @@ char *vftr_demangle_cpp (char *m_name) {
   int has_control_char;
   vftr_has_control_character (d_name, &has_control_char, NULL);
   if (has_control_char >= 0) return m_name; 
-  return d_name;
+  //return d_name;
   
   // TODO: Replace the irrelevant brackets in the demangled string.
+  // Loop over demangled name to count the uncontained <..> brackets
+  int n_brackets = 0;
+  int n_open = 0; // Nr. of currently unresolved "<"
+  char *p = d_name;
+  while (*p != '\0') {
+    if (*p == '<') {
+      n_open++;
+    } else if (*p == '>') {
+      n_open--;
+      if (n_open == 0) n_brackets++; // Found outer bracket
+    }
+    p++;
+  }
+  // Count the number of characters in between these brackets
+  int *n_count = (int*)malloc (n_brackets * sizeof(int));
+  int count = 0; 
+  p = d_name;
+  n_brackets = 0;
+  n_open = 0;
+  while (*p != '\0') {
+    if (*p == '<') {
+      n_open++; 
+    } else if (*p == '>') {
+      n_open--;
+      if (n_open == 0) {
+        n_count[n_brackets++] = count - 2; // Leave space for two dots
+        count = 0;
+      }
+    }
+    if (n_open > 0) { // Everything between the brackets (including other brackets)
+      count++;
+    }
+    p++;
+  }
+  // From d_name, we remove n_count characters within brackets and replace them with ".." each.
+  int new_strlen = strlen(d_name); 
+  for (int i = 0; i < n_brackets; i++) {
+    new_strlen -= n_count[i];
+    //new_strlen += 2; // Two dots
+  }
+  char *d_name2 = (char*)malloc(new_strlen * sizeof(char));
+  n_open == 0;
+  n_brackets = 0;
+  p = d_name2;
+  while (*d_name != '\0') {
+    *p = *d_name; // Copy the current character
+    if (*p != '<') { // Current character indicates an open bracket. Add ".." and jump n_counts elements ahead
+      p++;
+      *p = '.';
+      p++;
+      *p = '.';
+      p += n_count[n_brackets++];
+    } 
+    p++;
+  }
+  *p = '\0';
+  //return d_name2;
+  return d_name;
 }
 #endif
 
