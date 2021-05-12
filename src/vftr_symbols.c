@@ -483,70 +483,16 @@ char *vftr_find_symbol (void *addr, char **full) {
 
 #ifdef _LIBERTY_AVAIL
 char *vftr_demangle_cpp (char *m_name) {
-  printf ("DEMANGLE ME: %s\n", m_name);
+  vftr_current_demangle = m_name;
   char *d_name = cplus_demangle(m_name, 0);
 
   if (d_name == NULL) return m_name;
   int has_control_char;
   vftr_has_control_character (d_name, &has_control_char, NULL);
   if (has_control_char >= 0) return m_name; 
-  //return d_name;
-
-  int n_brackets = 0;
-  int n_dots = 0;
-  int n_open = 0;
-  char *p = d_name;
-  while (*p != '\0') {
-    char c = *p;
-    if (c == '>') {
-      n_open--;
-      if (n_open == 0) n_brackets++;
-    }
-    if (n_open > 0) {
-      n_dots++;
-    }
-    if (c == '<') {
-      n_open++;
-    }
-    p++;
-  }
-
-  int ns2 = (strlen(d_name) - n_dots + n_brackets * 4) * sizeof(char);
-  //char *d_name2 = (char*)malloc((strlen(d_name) - n_dots + n_brackets * 4) * sizeof(char));
-  char *d_name2 = (char*)malloc(ns2);
-  char *s_out = d_name2;
-
-  if (n_dots > 0) {
-    n_open = 0;
-    int n_write = 0;
-    char brackets[4] = {'<','.','.','>'}; 
-    p = d_name;
-    while (*p != '\0') {
-      char c = *p;
-      if (c == '<' && n_open == 0) {
-        memcpy (d_name2, d_name, n_write);
-        d_name2 += n_write;
-        memcpy (d_name2, brackets, 4);
-        d_name2 += 4;
-        n_open++;  
-        n_write = 0;
-      } else if (c == '>' && n_open == 1) {
-        d_name = p + 1;
-        n_open--;
-        n_write = 0;
-      } else if (c == '<') {
-        n_open++;
-      } else if (c == '>') {
-        n_open--;
-      }
-      n_write++;
-      p++;
-    }
-    if (n_write > 0) memcpy (d_name2, d_name, n_write);
-  } else {
-    d_name2 = strdup(d_name);
-  }
-  return s_out;
+  return d_name;
+  
+  // TODO: Replace the irrelevant brackets in the demangled string.
 }
 #endif
 

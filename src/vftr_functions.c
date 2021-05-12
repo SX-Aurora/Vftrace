@@ -103,8 +103,12 @@ function_t *vftr_new_function(void *arg, const char *function_name, function_t *
          func->name = strdup("unknown");
       }
    }
-   char *tmp = vftr_demangle_cpp(func->name);
-   func->name = strdup(tmp);
+   //func->name = strdup(vftr_demangle_cpp(func->name));
+   //char *tmp = vftr_demangle_cpp(func->name);
+   //char *tmp = "HUHU";
+   //int has_control_char;
+   //vftr_has_control_character (tmp, &has_control_char, NULL);
+   //func->name = strdup(tmp);
 
    // Function address
    func->address = arg;
