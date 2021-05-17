@@ -1384,8 +1384,10 @@ void vftr_print_profile_summary (FILE *fp_log, function_t **func_table, double t
     for (int i = 0; i < vftr_stackscount; i++) {
        profdata_t *prof_current  = &func_table[i]->prof_current;
        profdata_t *prof_previous = &func_table[i]->prof_previous;
-       double mem = (double)(prof_current->event_count[vftr_n_hw_obs] - prof_previous->event_count[vftr_n_hw_obs]) / 1024 / 1024 / 1024;
-       printf ("TEST: %s %d %lf %lf\n", func_table[i]->name, func_table[i]->id, mem, mem / (prof_current->calls - prof_previous->calls));
+       if (vftr_memtrace) {
+          double mem = (double)(prof_current->event_count[vftr_n_hw_obs] - prof_previous->event_count[vftr_n_hw_obs]) / 1024 / 1024 / 1024;
+          printf ("TEST: %s %d %lf %lf\n", func_table[i]->name, func_table[i]->id, mem, mem / (prof_current->calls - prof_previous->calls));
+       }
     }
     printf ("HUHU 4: %d\n", vftr_events_enabled);
     //vftr_events_enable = true;
@@ -1572,6 +1574,8 @@ void vftr_print_profile (FILE *fp_log, FILE *f_html, int *n_func_indices, long l
 
     long long cumulative_time = 0;
     for (int i = 0; i < *n_func_indices; i++) {
+       printf ("Print line: %d\n", i);
+       fflush(stdout);
        int i_func = func_indices[i];
        if (func_table[i_func]->open) continue;
        int n_calls;
@@ -1613,6 +1617,8 @@ void vftr_print_profile (FILE *fp_log, FILE *f_html, int *n_func_indices, long l
           }
        }
     }
+    printf ("All lines printed\n");
+    fflush(stdout);
 
     if (f_html != NULL) vftr_browse_finalize_table(f_html);
     

@@ -177,6 +177,7 @@ void vftr_initialize() {
     vftr_program_path = vftr_get_program_path ();
     vftr_logfile_name = vftr_create_logfile_name (vftr_mpirank, vftr_mpisize, "log");
 
+    printf ("OPENING: %s\n", vftr_logfile_name);
     vftr_log = fopen (vftr_logfile_name, "w+");
     assert (vftr_log);
     // Do not buffer when writing into the log file
