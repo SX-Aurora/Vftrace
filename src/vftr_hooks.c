@@ -177,10 +177,10 @@ void vftr_function_entry (const char *s, void *addr, bool isPrecise) {
            vftr_prof_data.ic = 1 - ic;
        }
        if (vftr_memtrace) {
-          vftr_get_memtrace(func->id == 3);
-          if (func->return_to->id == 3) printf ("MMAP_SIZE: %s %ld\n", func->return_to->name, vftr_current_mallinfo.mmap_size);
-          prof_return->event_count[vftr_n_hw_obs] += vftr_current_mallinfo.mmap_size;
-          if (func->return_to->id == 3) printf ("eventCount: %ld\n", prof_return->event_count);
+          vftr_get_memtrace(true);
+          //if (func->return_to->id == 3) printf ("MMAP_SIZE: %s %ld\n", func->return_to->name, vftr_current_mallinfo.mmap_size);
+          prof_return->event_count[vftr_n_hw_obs-1] += vftr_current_mallinfo.mmap_size;
+          //if (func->return_to->id == 3) printf ("eventCount: %ld\n", prof_return->event_count);
        }
     }
 
@@ -286,9 +286,9 @@ void vftr_function_exit () {
     }
     if (vftr_memtrace) {
        vftr_get_memtrace(func->id == 3);
-       if (func->id == 3) printf ("MMAP_SIZE: %s %ld\n", func->name, vftr_current_mallinfo.mmap_size);
-       prof_current->event_count[vftr_n_hw_obs] += vftr_current_mallinfo.mmap_size;
-       if (func->id == 3) printf ("eventCount: %ld\n", prof_current->event_count);
+       //if (func->id == 3) printf ("MMAP_SIZE: %s %ld\n", func->name, vftr_current_mallinfo.mmap_size);
+       prof_current->event_count[vftr_n_hw_obs-1] += vftr_current_mallinfo.mmap_size;
+       //if (func->id == 3) printf ("eventCount: %ld\n", prof_current->event_count);
     }
 
   

@@ -336,7 +336,7 @@ void vftr_write_profile () {
                 ec[j] += prof_current->event_count[j];
 	    }
             if (vftr_memtrace) {
-               ec[vftr_n_hw_obs] += prof_current->event_count[vftr_n_hw_obs];
+               ec[vftr_n_hw_obs-1] += prof_current->event_count[vftr_n_hw_obs-1];
             }
 	}
     }
@@ -456,7 +456,11 @@ int vftr_count_func_indices_up_to_truncate (function_t **func_table, long long r
 /**********************************************************************/
 
 void vftr_fill_scenario_counter_values (double *val, int n_vars, profdata_t prof_current, profdata_t prof_previous) {
+        printf ("FillSC 1: %d\n", vftr_scenario_expr_n_vars);
+        fflush (stdout);
 	memset (vftr_scenario_expr_counter_values, 0., sizeof (double) * vftr_scenario_expr_n_vars);
+        printf ("FillSC 2\n");
+        fflush (stdout);
 	//if (prof_current.event_count) {
 	//	for (int i = 0; i < n_vars; i++) {
 	//		val[i] += (double)prof_current.event_count[i];
@@ -468,8 +472,16 @@ void vftr_fill_scenario_counter_values (double *val, int n_vars, profdata_t prof
 	//	}
 	//}
 	//
-	if (prof_current.event_count) vftr_scenario_expr_counter_values[0] += (double)prof_current.event_count[vftr_n_hw_obs];
-	if (prof_previous.event_count) vftr_scenario_expr_counter_values[0] -= (double)prof_previous.event_count[vftr_n_hw_obs];
+	if (prof_current.event_count) {
+           printf ("FOO 2: %ld\n", prof_current.event_count[0]);       
+           fflush(stdout);
+           vftr_scenario_expr_counter_values[0] += (double)prof_current.event_count[vftr_n_hw_obs-1];
+        }
+        printf ("FillSC 3\n");
+        fflush (stdout);
+	if (prof_previous.event_count) vftr_scenario_expr_counter_values[0] -= (double)prof_previous.event_count[vftr_n_hw_obs-1];
+        printf ("FillSC 4\n");
+        fflush (stdout);
 }
 
 /**********************************************************************/
@@ -726,6 +738,8 @@ void vftr_set_proftab_column_formats (function_t **func_table,
         for (int i = 0; i < n_funcs; i++) {
             int i_func = func_indices[i];
 	    if (func_table[i_func]->open) continue;
+            printf ("FUNC NAME: %d %s\n", i_func, func_table[i_func]->name); 
+            fflush(stdout);
             profdata_t prof_current = func_table[i_func]->prof_current;
             profdata_t prof_previous = func_table[i_func]->prof_previous;
             long long t_excl, t_incl;
@@ -753,6 +767,7 @@ void vftr_set_proftab_column_formats (function_t **func_table,
 	    if (vftr_events_enabled) {
                 printf ("FILL VALUES!\n");
                 fflush(stdout);
+                printf ("FOO: %lld\n", prof_current.event_count[0]);
 		vftr_fill_scenario_counter_values (vftr_scenario_expr_counter_values,
 		          vftr_scenario_expr_n_vars, prof_current, prof_previous);
                 printf ("Values have been filled\n");
@@ -1385,11 +1400,15 @@ void vftr_print_profile_summary (FILE *fp_log, function_t **func_table, double t
        profdata_t *prof_current  = &func_table[i]->prof_current;
        profdata_t *prof_previous = &func_table[i]->prof_previous;
        if (vftr_memtrace) {
-          double mem = (double)(prof_current->event_count[vftr_n_hw_obs] - prof_previous->event_count[vftr_n_hw_obs]) / 1024 / 1024 / 1024;
+          double mem = (double)(prof_current->event_count[vftr_n_hw_obs-1] - prof_previous->event_count[vftr_n_hw_obs-1]) / 1024 / 1024 / 1024;
           printf ("TEST: %s %d %lf %lf\n", func_table[i]->name, func_table[i]->id, mem, mem / (prof_current->calls - prof_previous->calls));
        }
     }
     printf ("HUHU 4: %d\n", vftr_events_enabled);
+    fflush(stdout);
+    vftr_scenario_expr_n_vars = 1;
+    vftr_scenario_expr_n_formulas = 1;
+    vftr_scenario_expr_counter_values = (double*)malloc (1 * sizeof(double));
     //vftr_events_enable = true;
     if (vftr_events_enabled) {
 	unsigned long long total_cycles = 0;
@@ -1407,8 +1426,8 @@ void vftr_print_profile_summary (FILE *fp_log, function_t **func_table, double t
     	   }
         }
 
-	vftr_scenario_expr_evaluate_all (application_runtime, total_cycles);	
-	vftr_scenario_expr_print_summary (fp_log);
+	//vftr_scenario_expr_evaluate_all (application_runtime, total_cycles);	
+	//vftr_scenario_expr_print_summary (fp_log);
 
         fprintf (fp_log, "\nRaw counter totals\n"
             "------------------------------------------------------------\n"
@@ -1417,6 +1436,7 @@ void vftr_print_profile_summary (FILE *fp_log, function_t **func_table, double t
     	vftr_scenario_expr_print_raw_counters (fp_log);
 
     }
+    printf ("PROFILE SUMMARY DONE!\n");
     fflush(stdout);
     fprintf (fp_log, "------------------------------------------------------------\n\n");
     fflush(fp_log);
@@ -1468,6 +1488,8 @@ void vftr_print_profile_line (FILE *fp_log, int local_stack_id, int global_stack
    
    if (vftr_events_enabled) {
        	for (int i = 0; i < vftr_scenario_expr_n_formulas; i++) {
+           printf ("Print counter: %d %lf\n", i, vftr_scenario_expr_counter_values[i]);
+           fflush(stdout);
    	   //vftr_prof_column_print (fp_log, prof_columns[i_column++], &vftr_scenario_expr_formulas[i].value, NULL, NULL);
    	   vftr_prof_column_print (fp_log, prof_columns[i_column++], &vftr_scenario_expr_counter_values[i], NULL, NULL);
    	}
