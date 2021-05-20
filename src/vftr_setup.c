@@ -180,7 +180,6 @@ void vftr_initialize() {
     vftr_program_path = vftr_get_program_path ();
     vftr_logfile_name = vftr_create_logfile_name (vftr_mpirank, vftr_mpisize, "log");
 
-    printf ("OPENING: %s\n", vftr_logfile_name);
     vftr_log = fopen (vftr_logfile_name, "w+");
     assert (vftr_log);
     // Do not buffer when writing into the log file
@@ -208,10 +207,8 @@ void vftr_initialize() {
 
     memset (&vftr_prof_data, 0, sizeof(profdata_t));
 
-    vftr_memtrace = false;
-    //vftr_fp_selfstat = fopen ("/proc/self/status", "r");
     vftr_init_mallinfo();
-    //printf ("MEMTRACE: %d\n", vftr_memtrace);
+
     // initialize the stack variables and tables
     vftr_initialize_stacks();
 
@@ -225,13 +222,12 @@ void vftr_initialize() {
     } else {
 	vftr_events_enabled = false;
     }
-    vftr_n_hw_obs = 1;
     if (vftr_n_hw_obs < 0) {
         fprintf(vftr_log, "error initializing H/W counters\n");
         vftr_events_enabled = false;
     }
 
-    if (vftr_n_hw_obs  > 0) {
+    if (vftr_n_hw_obs > 0) {
        vftr_prof_data.events[0] = (long long *) malloc (vftr_n_hw_obs * sizeof(long long));
        vftr_prof_data.events[1] = (long long *) malloc (vftr_n_hw_obs * sizeof(long long));
        memset (vftr_prof_data.events[0], 0, vftr_n_hw_obs * sizeof(long long));
@@ -288,7 +284,6 @@ void vftr_initialize() {
 /**********************************************************************/
 
 void vftr_finalize() {
-    printf ("VFTR FINALIZE CALLED\n");
     in_vftr_finalize = true;
     int ntop = 0;
     function_t **funcTable;
@@ -329,7 +324,6 @@ void vftr_finalize() {
 
     if (vftr_profile_wanted) {
        if (vftr_do_stack_normalization) vftr_create_global_stack_strings ();
-       printf ("Should print profile\n");
        vftr_print_profile (vftr_log, f_html, &ntop, vftr_get_runtime_usec(), n_display_functions, display_functions);
     }
 #ifdef _MPI

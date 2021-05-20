@@ -176,14 +176,8 @@ function_t *vftr_new_function(void *arg, const char *function_name, function_t *
    
    int n_alloc_hw_obs = vftr_n_hw_obs;
    if (vftr_memtrace) n_alloc_hw_obs++;
-   //printf ("CHECK N_HW: %d %d %d\n", vftr_mpirank, vftr_memtrace, n_alloc_hw_obs);
 
-   //if (vftr_n_hw_obs > 0) {
    if (n_alloc_hw_obs > 0)  {
-      //func->prof_current.event_count = (long long*) malloc(vftr_n_hw_obs * sizeof(long long));
-      //func->prof_previous.event_count = (long long*) malloc(vftr_n_hw_obs * sizeof(long long));
-      //memset (func->prof_current.event_count, 0, vftr_n_hw_obs * sizeof(long long));
-      //memset (func->prof_previous.event_count, 0, vftr_n_hw_obs * sizeof(long long));
       func->prof_current.event_count = (long long*) malloc(n_alloc_hw_obs * sizeof(long long));
       func->prof_previous.event_count = (long long*) malloc(n_alloc_hw_obs * sizeof(long long));
       memset (func->prof_current.event_count, 0, n_alloc_hw_obs * sizeof(long long));
@@ -237,10 +231,10 @@ void vftr_reset_counts (function_t *func) {
    if (func == NULL) return;
 
    if (func->prof_current.event_count) {
-     memset (func->prof_current.event_count,  0, m );
+     memset (func->prof_current.event_count,  0, m);
    }
    if (func->prof_previous.event_count) {
-     memset (func->prof_previous.event_count, 0, m );
+     memset (func->prof_previous.event_count, 0, m);
    }
    func->prof_current.cycles  = 0;
    func->prof_current.time_excl = 0;

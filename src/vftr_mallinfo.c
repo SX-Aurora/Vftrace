@@ -90,26 +90,19 @@ void vftr_finalize_mallinfo() {
    vftr_memtrace = false;
 }
 
-void vftr_process_mallinfo_line(char *line, long *count, long long *size, bool verbose) {
+void vftr_process_mallinfo_line(char *line, long *count, long long *size) {
    //if (vftr_mpirank == 0) printf ("THIS LINE: %s\n", line);
    char *tmp = strtok(line, "=\"");
-   if (verbose) printf ("tmp: %s\n", tmp);
    tmp = strtok(NULL, "\"");
    //printf ("FIRST: %s\n", tmp);
-   if (verbose) printf ("tmp: %s\n", tmp);
    tmp = strtok(NULL, "=\"");
    //printf ("NEXT 1: %s\n", tmp);
-   if (verbose) printf ("tmp: %s\n", tmp);
    tmp = strtok(NULL, "\"");
    //printf ("NEXT 2: %s\n", tmp);
-   if (verbose) printf ("tmp: %s\n", tmp);
    *count = atol(tmp);
    tmp = strtok(NULL, "=\"");
-   if (verbose) printf ("tmp: %s\n", tmp);
    tmp = strtok(NULL, "\"");
-   if (verbose) printf ("tmp: %s\n", tmp);
    *size = atol(tmp);
-   if (verbose) printf ("SIZE: %ld\n", *size);
 }
 
 void vftr_get_selfstat() {
@@ -207,7 +200,7 @@ void vftr_get_selfstat() {
    //fclose(fp);
 }
 
-void vftr_get_mallinfo (bool verbose) {
+void vftr_get_mallinfo () {
    char *buf;
    size_t bufsize;
    vftr_mallinfo_ovhd -= vftr_get_runtime_usec();
@@ -222,21 +215,19 @@ void vftr_get_mallinfo (bool verbose) {
    int i = 0;
    while (token != NULL) {
       if (strstr(token, "type=\"mmap\"") != NULL) {
-         if (verbose) printf ("mallinfo: %s\n", token);
-         vftr_process_mallinfo_line (token, &(vftr_current_mallinfo.mmap_count), &(vftr_current_mallinfo.mmap_size), verbose);
+         vftr_process_mallinfo_line (token, &(vftr_current_mallinfo.mmap_count), &(vftr_current_mallinfo.mmap_size));
          break;
       }
       token = strtok(NULL, "\n");
    }
    free(buf);
-   if (verbose) printf ("Check current: %ld\n", vftr_current_mallinfo.mmap_size);
    vftr_mallinfo_post_ovhd += vftr_get_runtime_usec();
 }
 
-void vftr_get_memtrace(bool verbose) {
+void vftr_get_memtrace() {
    switch (vftr_meminfo_method) {
       case MEM_MALLOC_INFO:
-         vftr_get_mallinfo(verbose);
+         vftr_get_mallinfo();
          break;
       case MEM_SELFSTAT:
          vftr_get_selfstat();

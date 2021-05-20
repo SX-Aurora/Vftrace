@@ -161,7 +161,6 @@ void vftr_function_entry (const char *s, void *addr, bool isPrecise) {
            vftr_read_counters (vftr_prof_data.events[ic]);
            if (prof_return->event_count && func->return_to->detail) {
                for (e = 0; e < vftr_n_hw_obs; e++) {
-                   if (func->id == 3) printf ("OH NO\n");
                    long long delta = vftr_prof_data.events[ic][e] - vftr_prof_data.events[1-ic][e];
 #ifdef __ve__
                    if (delta < 0) /* Handle counter overflow */
@@ -175,7 +174,7 @@ void vftr_function_entry (const char *s, void *addr, bool isPrecise) {
        }
 
        if (vftr_memtrace) {
-          vftr_get_memtrace(true);
+          vftr_get_memtrace();
           prof_return->event_count[vftr_n_hw_obs-1] += vftr_current_mallinfo.mmap_size;
        }
     }
@@ -266,7 +265,6 @@ void vftr_function_exit () {
         vftr_read_counters (vftr_prof_data.events[ic]);
         if (prof_current->event_count && func->detail) {
             for (e = 0; e < vftr_n_hw_obs; e++) {
-                if (func->id == 3) printf ("OH NO\n");
                 long long delta = vftr_prof_data.events[ic][e] - vftr_prof_data.events[1-ic][e];
 #ifdef __ve__
 	        /* Handle counter overflow */
@@ -282,7 +280,7 @@ void vftr_function_exit () {
     }
 
     if (vftr_memtrace) {
-       vftr_get_memtrace(false);
+       vftr_get_memtrace();
        prof_current->event_count[vftr_n_hw_obs-1] += vftr_current_mallinfo.mmap_size;
     }
 

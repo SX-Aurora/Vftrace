@@ -335,9 +335,6 @@ void vftr_write_profile () {
             for (int j = 0; j < vftr_n_hw_obs; j++) {
                 ec[j] += prof_current->event_count[j];
 	    }
-            //if (vftr_memtrace) {
-            //   ec[vftr_n_hw_obs-1] += prof_current->event_count[vftr_n_hw_obs-1];
-            //}
 	}
     }
     rtime  = vftr_get_runtime_usec() * 1.0e-6;
@@ -455,24 +452,17 @@ int vftr_count_func_indices_up_to_truncate (function_t **func_table, long long r
 /**********************************************************************/
 
 void vftr_fill_scenario_counter_values (double *val, int n_vars, profdata_t prof_current, profdata_t prof_previous) {
-	memset (vftr_scenario_expr_counter_values, 0., sizeof (double) * vftr_scenario_expr_n_vars);
-	if (prof_current.event_count) {
-		for (int i = 0; i < n_vars; i++) {
-			val[i] += (double)prof_current.event_count[i];
-		}
-	}
-        if (prof_previous.event_count) {
-		for (int i = 0; i < n_vars; i++) {
-			val[i] -= (double)prof_previous.event_count[i];
-		}
-	}
-	
-	//if (prof_current.event_count) {
-        //   vftr_scenario_expr_counter_values[0] += (double)prof_current.event_count[vftr_n_hw_obs-1];
-        //}
-	//if (prof_previous.event_count) vftr_scenario_expr_counter_values[0] -= (double)prof_previous.event_count[vftr_n_hw_obs-1];
-        //vftr_scenario_expr_counter_values[0] = vftr_scenario_expr_counter_values[0] / prof_current.calls / 1024 / 1024;
-    
+   memset (vftr_scenario_expr_counter_values, 0., sizeof (double) * vftr_scenario_expr_n_vars);
+   if (prof_current.event_count) {
+      for (int i = 0; i < n_vars; i++) {
+      	 val[i] += (double)prof_current.event_count[i];
+      }
+   }
+   if (prof_previous.event_count) {
+      for (int i = 0; i < n_vars; i++) {
+         val[i] -= (double)prof_previous.event_count[i];
+      }
+   }
 }
 
 /**********************************************************************/
@@ -696,26 +686,26 @@ void vftr_set_proftab_column_formats (function_t **func_table,
         }
 
 	if (vftr_events_enabled) {
-		char header_with_unit[80];
-		for (int i = 0; i < vftr_scenario_expr_n_formulas; i++) {
-		   if (vftr_scenario_expr_format[i].header == NULL) {
-			sprintf (header_with_unit, "HWC N/A");
-		   } else {
-		      int n1 = strlen(vftr_scenario_expr_format[i].header);
-		      if (vftr_scenario_expr_format[i].unit) {
-		           int n2 = strlen(vftr_scenario_expr_format[i].unit); 
-		           snprintf (header_with_unit, n1 + n2 + 4, "%s [%s]", vftr_scenario_expr_format[i].header, vftr_scenario_expr_format[i].unit);
-		      } else {
-		           snprintf (header_with_unit, n1 + 1, "%s", vftr_scenario_expr_format[i].header);
-		      }
-		   }
-		   vftr_prof_column_init (header_with_unit, NULL, vftr_scenario_expr_format[i].decimal_places,
-		           		  COL_DOUBLE, SEP_NONE, &(columns)[i_column++]);
-		} 
+	   char header_with_unit[80];
+	   for (int i = 0; i < vftr_scenario_expr_n_formulas; i++) {
+	      if (vftr_scenario_expr_format[i].header == NULL) {
+	   	sprintf (header_with_unit, "HWC N/A");
+	      } else {
+	         int n1 = strlen(vftr_scenario_expr_format[i].header);
+	         if (vftr_scenario_expr_format[i].unit) {
+	              int n2 = strlen(vftr_scenario_expr_format[i].unit); 
+	              snprintf (header_with_unit, n1 + n2 + 4, "%s [%s]", vftr_scenario_expr_format[i].header, vftr_scenario_expr_format[i].unit);
+	         } else {
+	              snprintf (header_with_unit, n1 + 1, "%s", vftr_scenario_expr_format[i].header);
+	         }
+	      }
+	      vftr_prof_column_init (header_with_unit, NULL, vftr_scenario_expr_format[i].decimal_places,
+	              		  COL_DOUBLE, SEP_NONE, &(columns)[i_column++]);
+	   } 
  	}
            
         if (vftr_memtrace) {
-           vftr_prof_column_init ("VmRSS", NULL, 2, COL_DOUBLE, SEP_NONE, &(columns)[i_column++]);
+           vftr_prof_column_init ("VmRSS [kB]", NULL, 2, COL_DOUBLE, SEP_NONE, &(columns)[i_column++]);
         }
 
         if (vftr_max_allocated_fields > 0) vftr_prof_column_init ("Max mem", NULL, 2, COL_MEM, SEP_NONE, &(columns)[i_column++]);
@@ -760,17 +750,14 @@ void vftr_set_proftab_column_formats (function_t **func_table,
 		          vftr_scenario_expr_n_vars, prof_current, prof_previous);
 		unsigned long long cycles = prof_current.cycles - prof_previous.cycles;
 		vftr_scenario_expr_evaluate_all (t_excl * 1e-6, cycles);
-                //printf ("NFORMULAS: %d\n", vftr_scenario_expr_n_formulas);
 		for (int j = 0; j < vftr_scenario_expr_n_formulas; j++) {
 		   double tmp = vftr_scenario_expr_formulas[j].value;
 		   vftr_prof_column_set_n_chars (&tmp, NULL, NULL, &(columns)[i_column++], &stat);
-		   //vftr_prof_column_set_n_chars (&vftr_scenario_expr_counter_values, NULL, NULL, &(columns)[i_column++], &stat);
 	   	}
 	    }
 
             if (vftr_memtrace) {
                 double mem_per_call = vftr_mem_per_call (func_table[i_func]);
-                //printf ("THis mem per call: %lf\n", mem_per_call);
                 vftr_prof_column_set_n_chars (&mem_per_call, NULL, NULL, &(columns)[i_column++], &stat);
             }
 
@@ -909,7 +896,6 @@ void vftr_proftab_print_header (FILE *fp, column_t *columns) {
 
 	if (vftr_events_enabled) {
 	   for (int j = 0; j < vftr_scenario_expr_n_formulas; j++) {
-	   //for (int j = 0; j < vftr_n_hw_obs; j++) {
 	      fprintf (fp, " %*s ", columns[i].n_chars, columns[i].header);
 	      i++;
 	   }
@@ -1374,13 +1360,11 @@ void vftr_get_application_times_usec (long long time0, long long *total_runtime,
 void vftr_print_profile_summary (FILE *fp_log, function_t **func_table, double total_runtime, double application_runtime,
 				 double total_overhead_time, double sampling_overhead_time, double mpi_overhead_time) {
 
-    //printf ("HUHU 1\n");
     fprintf(fp_log, "MPI size              %d\n", vftr_mpisize);
     fprintf(fp_log, "Total runtime:        %8.2f seconds\n", total_runtime);
     fprintf(fp_log, "Application time:     %8.2f seconds\n", application_runtime);
     fprintf(fp_log, "Overhead:             %8.2f seconds (%.2f%%)\n",
             total_overhead_time, 100.0*total_overhead_time/total_runtime);
-    //printf ("HUHU 2\n");
 #ifdef _MPI
     fprintf(fp_log, "   Sampling overhead: %8.2f seconds (%.2f%%)\n",
             sampling_overhead_time, 100.0*sampling_overhead_time/total_runtime);
@@ -1388,21 +1372,6 @@ void vftr_print_profile_summary (FILE *fp_log, function_t **func_table, double t
             mpi_overhead_time, 100.0*mpi_overhead_time/total_runtime);
 #endif
 
-    //printf ("HUHU 3: %d\n", vftr_stackscount);
-    for (int i = 0; i < vftr_stackscount; i++) {
-       profdata_t *prof_current  = &func_table[i]->prof_current;
-       profdata_t *prof_previous = &func_table[i]->prof_previous;
-       if (vftr_memtrace) {
-          double mem = (double)(prof_current->event_count[vftr_n_hw_obs-1] - prof_previous->event_count[vftr_n_hw_obs-1]) / 1024 / 1024 / 1024;
-          //printf ("TEST: %s %d %lf %lf\n", func_table[i]->name, func_table[i]->id, mem, mem / (prof_current->calls - prof_previous->calls));
-       }
-    }
-    //printf ("HUHU 4: %d\n", vftr_events_enabled);
-    //fflush(stdout);
-    //vftr_scenario_expr_n_vars = 1;
-    //vftr_scenario_expr_n_formulas = 1;
-    //vftr_scenario_expr_counter_values = (double*)malloc (1 * sizeof(double));
-    //vftr_events_enable = true;
     if (vftr_events_enabled) {
 	unsigned long long total_cycles = 0;
 
@@ -1419,8 +1388,8 @@ void vftr_print_profile_summary (FILE *fp_log, function_t **func_table, double t
     	   }
         }
 
-	//vftr_scenario_expr_evaluate_all (application_runtime, total_cycles);	
-	//vftr_scenario_expr_print_summary (fp_log);
+	vftr_scenario_expr_evaluate_all (application_runtime, total_cycles);	
+	vftr_scenario_expr_print_summary (fp_log);
 
         fprintf (fp_log, "\nRaw counter totals\n"
             "------------------------------------------------------------\n"
@@ -1430,7 +1399,6 @@ void vftr_print_profile_summary (FILE *fp_log, function_t **func_table, double t
 
     }
     fprintf (fp_log, "------------------------------------------------------------\n\n");
-    fflush(fp_log);
 }
 
 /**********************************************************************/
@@ -1450,7 +1418,7 @@ void vftr_compute_line_content (function_t *this_func, int *n_calls, long long *
    if (vftr_events_enabled) {
    	vftr_fill_scenario_counter_values (vftr_scenario_expr_counter_values, vftr_scenario_expr_n_vars, 
    		prof_current, prof_previous);
-       	//vftr_scenario_expr_evaluate_all (*t_excl * 1e-6, prof_current.cycles - prof_previous.cycles);
+       	vftr_scenario_expr_evaluate_all (*t_excl * 1e-6, prof_current.cycles - prof_previous.cycles);
    }
   
    
@@ -1557,8 +1525,9 @@ void vftr_print_profile (FILE *fp_log, FILE *f_html, int *n_func_indices, long l
     // function & caller name and stack ID (i.e. 8 columns). 
     int n_columns = 8;
     // Add one column for each hardware counter.
-    //n_columns += vftr_scenario_expr_n_formulas;
-    n_columns += 1;
+    n_columns += vftr_scenario_expr_n_formulas;
+    // Add one column for self-traced memory consumption
+    if (vftr_memtrace) n_columns += 1;
     // If function overhead is displayed, add three more columns.
     if (vftr_environment.show_overhead->value) n_columns += 3;
     if (vftr_environment.show_stacks_in_profile->value) n_columns++;
