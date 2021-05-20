@@ -179,6 +179,7 @@ void vftr_function_entry (const char *s, void *addr, bool isPrecise) {
        if (vftr_memtrace) {
           vftr_get_memtrace(true);
           //if (func->return_to->id == 3) printf ("MMAP_SIZE: %s %ld\n", func->return_to->name, vftr_current_mallinfo.mmap_size);
+          //printf ("Set event count: %d %lld\n", vftr_n_hw_obs, vftr_current_mallinfo.mmap_size);
           prof_return->event_count[vftr_n_hw_obs-1] += vftr_current_mallinfo.mmap_size;
           //if (func->return_to->id == 3) printf ("eventCount: %ld\n", prof_return->event_count);
        }

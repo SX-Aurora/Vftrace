@@ -10,7 +10,7 @@ typedef struct vftr_mallinfo {
   	long rest_count;
  	long rest_size;
  	long mmap_count;
-	long mmap_size;
+	long long mmap_size;
 	long current_count;
 	long current_size;
 	long max_count;
@@ -30,6 +30,8 @@ extern long long vftr_mallinfo_ovhd;
 extern long long vftr_mallinfo_post_ovhd;
 extern FILE *vftr_fp_selfstat;
 
+
+void vftr_display_memory (long long t, char *in_or_out, char *func_name, char *caller_name);
 void vftr_init_mallinfo();
 void vftr_finalize_mallinfo();
 void vftr_get_memtrace(bool verbose);

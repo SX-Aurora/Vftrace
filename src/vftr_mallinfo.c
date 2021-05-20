@@ -52,7 +52,8 @@ void vftr_init_mallinfo () {
        vftr_memtrace = true;
      } else if (!strcmp (vftr_environment.meminfo_method->value, "SELFSTAT")) {
        vftr_meminfo_method = MEM_SELFSTAT;
-       vftr_fp_selfstat = fopen ("/proc/self/statm", "r");
+       //vftr_fp_selfstat = fopen ("/proc/self/statm", "r");
+       vftr_fp_selfstat = fopen ("/proc/self/status", "r");
        vftr_memtrace = true;
      } else {
        vftr_memtrace = false;
@@ -89,7 +90,7 @@ void vftr_finalize_mallinfo() {
    vftr_memtrace = false;
 }
 
-void vftr_process_mallinfo_line(char *line, long *count, long *size, bool verbose) {
+void vftr_process_mallinfo_line(char *line, long *count, long long *size, bool verbose) {
    //if (vftr_mpirank == 0) printf ("THIS LINE: %s\n", line);
    char *tmp = strtok(line, "=\"");
    if (verbose) printf ("tmp: %s\n", tmp);
@@ -183,11 +184,26 @@ void vftr_get_selfstat() {
    int data;
    int dt;
    //FILE *fp = fopen ("/proc/self/statm", "r");
-   fscanf (vftr_fp_selfstat, "%d %d %d %d %d %d %d", &size, &resident, &shared, &text, &lib, &data, &dt);
+   //fscanf (vftr_fp_selfstat, "%d %d %d %d %d %d %d", &size, &resident, &shared, &text, &lib, &data, &dt);
    //if (vftr_mpirank == 0) {
    //  printf ("%d %d %d %d %d %d %d\n", size, resident, shared, text, lib, data, dt);
    //}
-   vftr_current_mallinfo.mmap_size = resident;
+   //
+   long long vmrss = 0;
+   char line[1024];
+   while (fgets(line, 1024, vftr_fp_selfstat)) {
+      if (strstr(line, "VmRSS:") != NULL) {
+         char *tmp = strtok(line, "\t");
+         tmp = strtok (NULL, " ");
+         vmrss = atol(tmp);
+         rewind(vftr_fp_selfstat);
+         break;
+      }
+   }
+   
+   //FILE *fp = fopen ("/proc/self/status", "r");
+   
+   vftr_current_mallinfo.mmap_size = vmrss;
    //fclose(fp);
 }
 
@@ -228,4 +244,25 @@ void vftr_get_memtrace(bool verbose) {
    }
 }
 
+void vftr_display_memory (long long t, char *in_or_out, char *func_name, char *caller_name) {
+   //printf ("DISPLAY MEMORY!\n");
+   if ((t > next_mem_sample_time || t < 0)) {
+     long long vmrss = 0;
+     char line[1024];
+     vftr_fp_selfstat = fopen ("/proc/self/status", "r");
+     while (fgets(line, 1024, vftr_fp_selfstat)) {
+        if (strstr(line, "VmRSS:") != NULL) {
+           //printf ("line: %s\n", line);
+           char *tmp = strtok(line, "\t");
+           tmp = strtok (NULL, " ");
+           vmrss = atol(tmp);
+           rewind(vftr_fp_selfstat);
+           break;
+        }
+     }
+     fclose (vftr_fp_selfstat);
+     printf ("MEMORY (%s): %lld %s(%s) %lf\n", in_or_out, t, func_name, caller_name != NULL ? caller_name : "", (double)vmrss / 1024 / 1024);
+     next_mem_sample_time = t + mem_sample_interval;
+   }
+}
 

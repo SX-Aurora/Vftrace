@@ -152,7 +152,7 @@ int vftr_init_hwc (char *scenario_file) {
     const PAPI_hw_info_t        *hwinfo;
 #endif
 
-    vftr_n_hw_obs = 0;
+    vftr_n_hw_obs = 1;
     vftr_init_scenario_formats ();
     if (vftr_read_scenario_file (scenario_file, NULL)) {
 	return -1;

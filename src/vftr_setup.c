@@ -206,7 +206,8 @@ void vftr_initialize() {
     memset (&vftr_prof_data, 0, sizeof(profdata_t));
 
     vftr_memtrace = false;
-    vftr_init_mallinfo();
+    //vftr_fp_selfstat = fopen ("/proc/self/status", "r");
+    //vftr_init_mallinfo();
     //printf ("MEMTRACE: %d\n", vftr_memtrace);
     // initialize the stack variables and tables
     vftr_initialize_stacks();
@@ -221,6 +222,7 @@ void vftr_initialize() {
     } else {
 	vftr_events_enabled = false;
     }
+    vftr_n_hw_obs = 1;
     if (vftr_n_hw_obs < 0) {
         fprintf(vftr_log, "error initializing H/W counters\n");
         vftr_events_enabled = false;
@@ -346,7 +348,8 @@ void vftr_finalize() {
 	fprintf(vftr_log, "error stopping H/W counters, ignored\n");
     }
 
-    vftr_finalize_mallinfo();
+    vftr_display_memory (-1, "FINALIZE", "-/-", NULL);
+    //vftr_finalize_mallinfo();
     if (vftr_max_allocated_fields > 0) vftr_allocate_finalize(vftr_log);
 
     if (vftr_environment.print_env->value) vftr_print_environment(vftr_log);
