@@ -43,15 +43,12 @@ bool vftr_profile_wanted = false;
 void vftr_save_old_state () {
     int i,j;
 
-    int n_hw_obs = vftr_n_hw_obs;
-    if (vftr_memtrace) n_hw_obs++;
     for (j = 0; j < vftr_stackscount; j++) {
         function_t *func = vftr_func_table[j];
         func->prof_previous.calls  = func->prof_current.calls;
         func->prof_previous.cycles = func->prof_current.cycles;
         func->prof_previous.time_excl = func->prof_current.time_excl;
-        //for (i = 0; i < vftr_n_hw_obs; i++) {
-        for (i = 0; i < n_hw_obs; i++) {
+        for (i = 0; i < vftr_n_hw_obs; i++) {
             func->prof_previous.event_count[i] = func->prof_current.event_count[i];
 	}
     }
@@ -176,12 +173,10 @@ void vftr_function_entry (const char *s, void *addr, bool isPrecise) {
            }
            vftr_prof_data.ic = 1 - ic;
        }
+
        if (vftr_memtrace) {
           vftr_get_memtrace(true);
-          //if (func->return_to->id == 3) printf ("MMAP_SIZE: %s %ld\n", func->return_to->name, vftr_current_mallinfo.mmap_size);
-          //printf ("Set event count: %d %lld\n", vftr_n_hw_obs, vftr_current_mallinfo.mmap_size);
           prof_return->event_count[vftr_n_hw_obs-1] += vftr_current_mallinfo.mmap_size;
-          //if (func->return_to->id == 3) printf ("eventCount: %ld\n", prof_return->event_count);
        }
     }
 
@@ -285,14 +280,11 @@ void vftr_function_exit () {
         }
         vftr_prof_data.ic = 1 - ic;
     }
-    if (vftr_memtrace) {
-       vftr_get_memtrace(func->id == 3);
-       //if (func->id == 3) printf ("MMAP_SIZE: %s %ld\n", func->name, vftr_current_mallinfo.mmap_size);
-       prof_current->event_count[vftr_n_hw_obs-1] += vftr_current_mallinfo.mmap_size;
-       //if (func->id == 3) printf ("eventCount: %ld\n", prof_current->event_count);
-    }
 
-  
+    if (vftr_memtrace) {
+       vftr_get_memtrace(false);
+       prof_current->event_count[vftr_n_hw_obs-1] += vftr_current_mallinfo.mmap_size;
+    }
 
     if (timeToSample && vftr_env_do_sampling ()) {
         profdata_t *prof_previous = &func->prof_previous;

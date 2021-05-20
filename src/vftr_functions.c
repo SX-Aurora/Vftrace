@@ -80,6 +80,8 @@ void vftr_init_profdata (profdata_t *prof) {
   
 }
 
+/**********************************************************************/
+
 // add a new function to the stack tables
 function_t *vftr_new_function(void *arg, const char *function_name, function_t *caller, bool is_precise) {
 
@@ -431,6 +433,14 @@ void vftr_strip_all_module_names () {
 
 int vftrace_show_stacktree_size () {
    return vftr_stackscount;
+}
+
+/**********************************************************************/
+
+double vftr_mem_per_call (function_t *func) {
+  long long delta_mem = func->prof_current.event_count[vftr_n_hw_obs-1] - func->prof_previous.event_count[vftr_n_hw_obs-1];
+  long long delta_calls = func->prof_current.calls - func->prof_previous.calls;
+  return (double)delta_mem / delta_calls;
 }
 
 /**********************************************************************/

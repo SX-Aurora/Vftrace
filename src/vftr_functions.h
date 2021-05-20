@@ -80,6 +80,8 @@ void vftr_stackid_list_add (int local_stack_id, int global_stack_id);
 void vftr_stackid_list_print (FILE *fp);
 void vftr_stackid_list_finalize ();
 
+double vftr_mem_per_call (function_t *func);
+
 // test functions
 int vftr_functions_test_1 (FILE *fp_in, FILE *fp_out);
 int vftr_functions_test_2 (FILE *fp_in, FILE *fp_out);

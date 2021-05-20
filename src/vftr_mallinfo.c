@@ -246,7 +246,7 @@ void vftr_get_memtrace(bool verbose) {
 
 void vftr_display_memory (long long t, char *in_or_out, char *func_name, char *caller_name) {
    //printf ("DISPLAY MEMORY!\n");
-   if ((t > next_mem_sample_time || t < 0)) {
+   //if ((t > next_mem_sample_time || t < 0)) {
      long long vmrss = 0;
      char line[1024];
      vftr_fp_selfstat = fopen ("/proc/self/status", "r");
@@ -262,7 +262,7 @@ void vftr_display_memory (long long t, char *in_or_out, char *func_name, char *c
      }
      fclose (vftr_fp_selfstat);
      printf ("MEMORY (%s): %lld %s(%s) %lf\n", in_or_out, t, func_name, caller_name != NULL ? caller_name : "", (double)vmrss / 1024 / 1024);
-     next_mem_sample_time = t + mem_sample_interval;
-   }
+   //  next_mem_sample_time = t + mem_sample_interval;
+   //}
 }
 

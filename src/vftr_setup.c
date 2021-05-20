@@ -56,6 +56,8 @@ bool vftr_do_stack_normalization;
 char *vftr_start_date;
 char *vftr_end_date;
 
+bool in_vftr_finalize;
+
 void vftr_print_disclaimer_full (FILE *fp) {
     fprintf (fp, 
         "\nThis program is free software; you can redistribute it and/or modify\n"
@@ -144,6 +146,7 @@ void vftr_set_end_date () {
 /**********************************************************************/
 
 void vftr_initialize() {
+    in_vftr_finalize = false;
     // set the timer reference point for this process
     vftr_set_local_ref_time();
     vftr_set_start_date();
@@ -207,7 +210,7 @@ void vftr_initialize() {
 
     vftr_memtrace = false;
     //vftr_fp_selfstat = fopen ("/proc/self/status", "r");
-    //vftr_init_mallinfo();
+    vftr_init_mallinfo();
     //printf ("MEMTRACE: %d\n", vftr_memtrace);
     // initialize the stack variables and tables
     vftr_initialize_stacks();
@@ -286,6 +289,7 @@ void vftr_initialize() {
 
 void vftr_finalize() {
     printf ("VFTR FINALIZE CALLED\n");
+    in_vftr_finalize = true;
     int ntop = 0;
     function_t **funcTable;
 
@@ -348,8 +352,8 @@ void vftr_finalize() {
 	fprintf(vftr_log, "error stopping H/W counters, ignored\n");
     }
 
-    vftr_display_memory (-1, "FINALIZE", "-/-", NULL);
-    //vftr_finalize_mallinfo();
+    //vftr_display_memory (-1, "FINALIZE", "-/-", NULL);
+    vftr_finalize_mallinfo();
     if (vftr_max_allocated_fields > 0) vftr_allocate_finalize(vftr_log);
 
     if (vftr_environment.print_env->value) vftr_print_environment(vftr_log);
@@ -361,6 +365,7 @@ void vftr_finalize() {
     	fclose (vftr_log);
     }
     vftr_switch_off();
+    in_vftr_finalize = false;
 }
 
 /**********************************************************************/
