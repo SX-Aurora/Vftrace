@@ -210,7 +210,6 @@ void vftr_initialize() {
     vftr_init_mallinfo();
 
     // initialize the stack variables and tables
-    vftr_initialize_stacks();
 
     vftr_nextsampletime = 0ll;
     vftr_prevsampletime = 0;
@@ -230,6 +229,8 @@ void vftr_initialize() {
     if (vftr_memtrace) {
        vftr_init_hwc_memtrace();
     }
+
+    vftr_initialize_stacks();
 
     if (vftr_n_hw_obs > 0) {
        vftr_prof_data.events[0] = (long long *) malloc (vftr_n_hw_obs * sizeof(long long));
