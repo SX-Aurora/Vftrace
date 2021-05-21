@@ -227,6 +227,10 @@ void vftr_initialize() {
         vftr_events_enabled = false;
     }
 
+    if (vftr_memtrace) {
+       vftr_init_hwc_memtrace();
+    }
+
     if (vftr_n_hw_obs > 0) {
        vftr_prof_data.events[0] = (long long *) malloc (vftr_n_hw_obs * sizeof(long long));
        vftr_prof_data.events[1] = (long long *) malloc (vftr_n_hw_obs * sizeof(long long));

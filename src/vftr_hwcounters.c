@@ -184,14 +184,16 @@ int vftr_init_hwc (char *scenario_file) {
 #endif
     }
 
-    if (vftr_memtrace) {
-       vftr_internal_counter ("Memory", vftr_scenario_expr_n_vars);
-    }
-
 #if defined(HAS_PAPI)
     vftr_start_hwcounters();
 #endif
     return 0;
+}
+
+/**********************************************************************/
+
+void vftr_init_hwc_memtrace () {
+   vftr_internal_counter ("VmRSS", vftr_scenario_expr_n_vars);
 }
 
 /**********************************************************************/

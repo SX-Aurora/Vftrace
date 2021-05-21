@@ -43,6 +43,7 @@ extern long long vftr_prog_cycles;
 extern long long vftr_echwc[MAX_HWC_EVENTS];
 
 int vftr_init_hwc (char *scenario_file);
+void vftr_init_hwc_memtrace();
 int vftr_stop_hwc ();
 
 void vftr_read_counters (long long *event);
