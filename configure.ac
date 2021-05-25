@@ -61,6 +61,26 @@ fi
 AC_MSG_RESULT([$uses_intel_compiler])
 AM_CONDITIONAL([USES_INTEL_COMPILER], [test "$uses_intel_compiler" = "yes"])
 
+AC_MSG_CHECKING([if GNU compiler is used])
+check_if_gnu_compiler='$CC --version | grep GCC'
+if AC_TRY_EVAL(check_if_gnu_compiler); then
+  uses_gnu_compiler=yes
+else
+  uses_gnu_compiler=no
+fi
+AC_MSG_RESULT([$uses_gnu_compiler])
+AM_CONDITIONAL([USES_GNU_COMPILER], [test "$uses_gnu_compiler" = "yes"])
+
+AC_MSG_CHECKING([if NEC compiler is used])
+check_if_nec_compiler='$CC --version | grep NCC'
+if AC_TRY_EVAL(check_if_nec_compiler); then
+  uses_nec_compiler=yes
+else
+  uses_nec_compiler=no
+fi
+AC_MSG_RESULT([$uses_nec_compiler])
+AM_CONDITIONAL([USES_NEC_COMPILER], [test "$uses_nec_compiler" = "yes"])
+
 LT_INIT(dlopen)
 AC_CONFIG_FILES([Makefile])
 AC_CONFIG_FILES([external/Makefile])
