@@ -46,14 +46,14 @@ if USES_GNU_COMPILER
 vftrace_vfd_dump_CFLAGS += -fopenmp
 vftrace_show_function_stacks_CFLAGS += -fopenmp
 vftrace_filter_stacks_CFLAGS += -fopenmp
-vftrace_diff_profiles_CFLAGS += fopenmp
+vftrace_diff_profiles_CFLAGS += -fopenmp
 endif
 
 if USES_NEC_COMPILER
 vftrace_vfd_dump_CFLAGS += -fopenmp
 vftrace_show_function_stacks_CFLAGS += -fopenmp
 vftrace_filter_stacks_CFLAGS += -fopenmp
-vftrace_diff_profiles_CFLAGS += fopenmp
+vftrace_diff_profiles_CFLAGS += -fopenmp
 endif
 
 endif
