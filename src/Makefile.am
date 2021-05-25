@@ -86,6 +86,12 @@ if USES_INTEL_COMPILER
 libvftrace_la_LDFLAGS += -lifcore
 endif
 
+# TODO: different flag for Intel and NEC compilers
+if ENABLE_OPENMP
+libvftrace_la_CFLAGS += -fopenmp
+libvftrace_la_FCFLAGS += -fopenmp
+endif
+
 libvftr_dlopen_la_SOURCES = vftr_dlopen.c
 
 if ENABLE_FORTRAN
