@@ -32,3 +32,29 @@ if USES_NEC_MPI
   vftrace_filter_stacks_LDFLAGS += -mpiprof
   vftrace_diff_profiles_LDFLAGS += -mpiprof
 endif
+
+if ENABLE_OPENMP
+
+if USES_INTEL_COMPILER
+vftrace_vfd_dump_CFLAGS += -qopenmp
+vftrace_show_function_stacks_CFLAGS += -qopenmp
+vftrace_filter_stacks_CFLAGS += -qopenmp
+vftrace_diff_profiles_CFLAGS += -qopenmp
+endif
+
+if USES_GNU_COMPILER
+vftrace_vfd_dump_CFLAGS += -fopenmp
+vftrace_show_function_stacks_CFLAGS += -fopenmp
+vftrace_filter_stacks_CFLAGS += -fopenmp
+vftrace_diff_profiles_CFLAGS += fopenmp
+endif
+
+if USES_NEC_COMPILER
+vftrace_vfd_dump_CFLAGS += -fopenmp
+vftrace_show_function_stacks_CFLAGS += -fopenmp
+vftrace_filter_stacks_CFLAGS += -fopenmp
+vftrace_diff_profiles_CFLAGS += fopenmp
+endif
+
+endif
+
