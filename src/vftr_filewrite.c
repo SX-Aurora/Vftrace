@@ -705,7 +705,7 @@ void vftr_set_proftab_column_formats (function_t **func_table,
  	}
            
         if (vftr_memtrace) {
-           vftr_prof_column_init ("VmRSS [kB]", NULL, 2, COL_DOUBLE, SEP_NONE, &(columns)[i_column++]);
+           vftr_prof_column_init ("VmRSS", NULL, 2, COL_MEM, SEP_NONE, &(columns)[i_column++]);
         }
 
         if (vftr_max_allocated_fields > 0) vftr_prof_column_init ("Max mem", NULL, 2, COL_MEM, SEP_NONE, &(columns)[i_column++]);
