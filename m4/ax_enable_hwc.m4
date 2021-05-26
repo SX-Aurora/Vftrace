@@ -8,7 +8,7 @@
 #
 # DESCRIPTION
 #
-#   This macro check for hardware counters
+#   This macro checks for hardware counters
 #
 
 AC_DEFUN([AX_ENABLE_HWC], [

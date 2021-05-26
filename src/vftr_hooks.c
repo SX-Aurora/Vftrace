@@ -22,6 +22,10 @@
 #include <string.h>
 #include <signal.h>
 
+#ifdef _OPENMP
+#include <omp.h>
+#endif
+
 #include <stdbool.h>
 #include "vftr_symbols.h"
 #include "vftr_hwcounters.h"
@@ -71,6 +75,9 @@ void vftr_function_entry (const char *s, void *addr, bool isPrecise) {
 	vftr_init = 0;
     }
     if (vftr_off() || vftr_paused) return;
+#ifdef _OPENMP
+    if (omp_get_thread_num() > 0) return;
+#endif
 
     long long func_entry_time = vftr_get_runtime_usec();
     // log function entry and exit time to estimate the overhead time
@@ -230,6 +237,9 @@ void vftr_function_exit () {
     profdata_t *prof_current;
 
     if (vftr_off() || vftr_paused) return;
+#ifdef _OPENMP
+    if (omp_get_thread_num() > 0) return;
+#endif
 
     /* See at the beginning of vftr_function_entry: If
      * we are dealing with a recursive function call, exit.

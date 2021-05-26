@@ -55,6 +55,8 @@ void vftr_find_function_in_stack (char *func_name, int **indices, int *n_indices
 // the table, if necessary.
 void vftr_strip_all_module_names ();
 
+void vftr_demangle_all_func_names ();
+
 // add a new function to the stack tables
 function_t *vftr_new_function(void *arg, const char *function_name, function_t *caller, bool is_precise);
 

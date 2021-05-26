@@ -22,10 +22,11 @@
 #include <string.h>
 #include <elf.h>
 
-#ifndef __ve__
-#include "demangle.h"
+#ifdef _LIBERTY_AVAIL
+#include <demangle.h>
 #endif
 
+#include "vftr_stringutils.h"
 #include "vftr_filewrite.h"
 #include "vftr_fileutils.h"
 #include "vftr_symbols.h"
@@ -126,13 +127,12 @@ char *vftr_strip_module_name (char *base_name) {
 int vftr_cmpsym( const void *a, const void *b ) {
     symtab_t *s1 = *(symtab_t **) a;
     symtab_t *s2 = *(symtab_t **) b;
-    if( s1->addr  < s2->addr ) return -1;
-    if( s1->addr == s2->addr ) {
-        if( s1->demangled  > s2->demangled ) return -1;
-        if( s1->demangled  < s2->demangled ) return  1;
-        else                                 return  0;
-    } else
-        return 1;
+    if (s1->addr  < s2->addr) return -1;
+    if (s1->addr == s2->addr) {
+      return  0;
+    } else {
+      return 1;
+    }
 }
 
 /**********************************************************************/
@@ -140,13 +140,7 @@ int vftr_cmpsym( const void *a, const void *b ) {
 void vftr_print_symbol_table (FILE *fp) {
     fprintf (fp, "SYMBOL TABLE: %d\n", vftr_nsymbols);
     for (int i = 0; i < vftr_nsymbols; i++) {
-	fprintf (fp, "%5d %p %04x %d %s", 
-        i, vftr_symtab[i]->addr,
-           vftr_symtab[i]->index,
-           vftr_symtab[i]->demangled,  vftr_symtab[i]->name);
-	if (vftr_symtab[i]->demangled)
-	    fprintf (fp, " [%s]", vftr_symtab[i]->full);
-	fprintf (fp, "\n");
+	fprintf (fp, "%5d %p %04x %s\n", i, vftr_symtab[i]->addr, vftr_symtab[i]->index, vftr_symtab[i]->name);
     }
     fprintf (fp, "-----------------------------------------------------------------\n");
 }
@@ -264,17 +258,8 @@ void vftr_get_library_symtab (char *target, FILE *fp_ext, off_t base, int pass) 
                 vftr_symtab[j]->addr = (void *)(base + s.st_value);
 #endif
                 /* Copy symbol name and demangle C++ generated names */
-#ifdef __cplusplus
-                vftr_symtab[j]->demangled =
-                       demangle (&symbolStringTable[s.st_name],
-                                 &(vftr_symtab[j]->name),
-                                 &(vftr_symtab[j]->full));
-#else
-                vftr_symtab[j]->demangled = 0;
                 vftr_symtab[j]->name = strdup(&symbolStringTable[s.st_name]);
-                vftr_symtab[j]->full = NULL;
                 vftr_symtab[j]->index = s.st_shndx;
-#endif
             }
             n++;
 	}
@@ -451,7 +436,9 @@ symtab_t **vftr_find_nearest(symtab_t **table, void *addr, int count) {
   }
 }
 
-char *vftr_find_symbol (void *addr, char **full) {
+/**********************************************************************/
+
+char *vftr_find_symbol (void *addr) {
     symtab_t **found;
     size_t offset;
     char *name, *newname;
@@ -459,7 +446,6 @@ char *vftr_find_symbol (void *addr, char **full) {
     found = vftr_find_nearest (vftr_symtab, addr, vftr_nsymbols);
     if (found) {
       addr_found = (*found)->addr;
-      if ((*found)->demangled) *full = (*found)->full;
       name = (*found)->name;
       if (addr_found == addr) return name; /* Exact match (automatic instrumentation) */
       int len = 30 + strlen(name);
@@ -475,6 +461,22 @@ char *vftr_find_symbol (void *addr, char **full) {
     }
     return newname;
 }
+
+/**********************************************************************/
+
+#ifdef _LIBERTY_AVAIL
+char *vftr_demangle_cpp (char *m_name) {
+  char *d_name = cplus_demangle(m_name, 0);
+
+  if (d_name == NULL) return m_name;
+  int has_control_char;
+  vftr_has_control_character (d_name, &has_control_char, NULL);
+  if (has_control_char >= 0) return m_name; 
+  return d_name;
+  
+  // TODO: Replace the irrelevant brackets in the demangled string.
+}
+#endif
 
 /**********************************************************************/
 

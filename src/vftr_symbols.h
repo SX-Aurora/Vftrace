@@ -25,10 +25,6 @@
 #include <string.h>
 #include <elf.h>
 
-#ifndef __ve__
-#include "demangle.h"
-#endif
-
 extern FILE *vftr_log;
 
 #define STRLEN 1000
@@ -36,10 +32,8 @@ extern FILE *vftr_log;
 
 typedef struct {
     void *addr;
-    char *name; /* Possibly de-mangled function name */
-    char *full; /* Full interface name */
+    char *name; /* Not de-mangled function name */
     int index; /* Section index */
-    int demangled;
 } symtab_t;
 
 typedef struct PathList {
@@ -76,7 +70,9 @@ int vftr_create_symbol_table (int rank);
 
 symtab_t **vftr_find_nearest(symtab_t **table, void *addr, int count);
 
-char *vftr_find_symbol (void *addr, char **full);
+char *vftr_find_symbol (void *addr);
+
+char *vftr_demangle_cpp (char *m_name);
 
 int vftr_symbols_test_1 (FILE *fp_in, FILE *fp_out);
 

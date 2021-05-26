@@ -98,6 +98,7 @@ typedef struct vftr_envs {
 	env_var_bool_t *all_mpi_summary;
         env_var_bool_t *show_stacks_in_profile;
         env_var_bool_t *no_stack_normalization;
+        env_var_bool_t *demangle_cpp;
 } vftr_envs_t;
 
 // The global container for environment variables.

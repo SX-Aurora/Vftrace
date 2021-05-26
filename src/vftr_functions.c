@@ -23,6 +23,7 @@
 #include <ctype.h>
 #include <stdbool.h>
 
+#include "vftr_stringutils.h"
 #include "vftr_setup.h"
 #include "vftr_symbols.h"
 #include "vftr_stacks.h"
@@ -93,7 +94,7 @@ function_t *vftr_new_function(void *arg, const char *function_name, function_t *
    if (function_name) {
       func->name = strdup(function_name);
    } else {
-      char *symbol = vftr_find_symbol (arg, &(func->full));
+      char *symbol = vftr_find_symbol (arg);
       if (symbol) {
          func->name = strdup(symbol);
          /* Chop Fortran trailing underscore */
@@ -415,10 +416,20 @@ void vftr_stackid_list_finalize () {
 /**********************************************************************/
 
 void vftr_strip_all_module_names () {
-	for (int i = 0; i < vftr_stackscount; i++) {
-		vftr_func_table[i]->name = vftr_strip_module_name (vftr_func_table[i]->name);
-	}
+  for (int i = 0; i < vftr_stackscount; i++) {
+     vftr_func_table[i]->name = vftr_strip_module_name (vftr_func_table[i]->name);
+  }
 }
+
+/**********************************************************************/
+
+#ifdef _LIBERTY_AVAIL
+void vftr_demangle_all_func_names () {
+  for (int i = 0; i < vftr_stackscount; i++) {
+    vftr_func_table[i]->name = vftr_demangle_cpp (vftr_func_table[i]->name);
+  }
+}
+#endif
 
 /**********************************************************************/
 

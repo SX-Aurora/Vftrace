@@ -355,6 +355,7 @@ void vftr_read_environment () {
     vftr_environment.all_mpi_summary = vftr_read_env_bool ("VFTR_COMPLETE_MPI_SUMMARY", false);
     vftr_environment.show_stacks_in_profile = vftr_read_env_bool ("VFTR_SHOW_STACKS_IN_PROFILE", false);
     vftr_environment.no_stack_normalization = vftr_read_env_bool ("VFTR_NO_STACK_NORM", false);
+    vftr_environment.demangle_cpp = vftr_read_env_bool ("VFTR_DEMANGLE_CPP", false);
 
 }
 
@@ -555,6 +556,7 @@ void vftr_free_environment () {
         free (vftr_environment.all_mpi_summary);
         free (vftr_environment.show_stacks_in_profile);
         free (vftr_environment.no_stack_normalization);
+        free (vftr_environment.demangle_cpp);
 
         for (int i = 0; i < vftr_n_env_variables; i++) {
           free(vftr_env_variable_names[i]);
@@ -597,6 +599,7 @@ void vftr_print_environment (FILE *fp) {
         vftr_print_env_bool (fp, "VFTR_COMPLETE_MPI_SUMMARY", vftr_environment.all_mpi_summary);
         vftr_print_env_bool (fp, "VFTR_SHOW_STACKS_IN_PROFILE", vftr_environment.show_stacks_in_profile);
         vftr_print_env_bool (fp, "VFTR_NO_STACK_NORM", vftr_environment.no_stack_normalization);
+        vftr_print_env_bool (fp, "VFTR_DEMANGLE_CPP", vftr_environment.demangle_cpp);
 }
 
 /**********************************************************************/

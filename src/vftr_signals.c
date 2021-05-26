@@ -35,6 +35,7 @@
 #include "vftr_signals.h"
 #include "vftr_stacks.h"
 #include "vftr_filewrite.h"
+#include "vftr_symbols.h"
 
 void vftr_abort (int errcode) {
 #ifdef _MPI
