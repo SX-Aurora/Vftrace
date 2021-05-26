@@ -222,6 +222,22 @@ int vftr_compare_function_stack_id (const void *a1, const void *a2) {
     return  0;
 }
 
+/**********************************************************************/
+
+int vftr_compare_function_memtrace (const void *a1, const void *a2) {
+    function_t *f1 = *(function_t **)a1;
+    function_t *f2 = *(function_t **)a2;
+    if(!f2) return -1;
+    if(!f1) return  1;
+    double diff = vftr_mem_per_call(f1) - vftr_mem_per_call(f2);
+    // In contrast to the above sorting functions, we want to have stack IDs in ascending order.
+    if (diff > 0) return  -1;
+    if (diff < 0) return 1;
+    return  0;
+}
+
+/**********************************************************************/
+
 int vftr_compare_function_none (const void *a1, const void *a2) {
   return 0;
 }
@@ -243,6 +259,8 @@ int (*vftr_get_profile_compare_function()) (const void *, const void *) {
        return vftr_compare_function_overhead;
     case SORT_OVERHEAD_RELATIVE:
        return vftr_compare_function_overhead_relative;
+    case SORT_MEMTRACE:
+       return vftr_compare_function_memtrace;
     case SORT_NONE:
        return vftr_compare_function_none;
     default: 
