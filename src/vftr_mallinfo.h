@@ -30,12 +30,9 @@ extern long long vftr_mallinfo_ovhd;
 extern long long vftr_mallinfo_post_ovhd;
 extern FILE *vftr_fp_selfstat;
 
-
-void vftr_display_memory (long long t, char *in_or_out, char *func_name, char *caller_name);
 void vftr_init_mallinfo();
 void vftr_finalize_mallinfo();
 void vftr_get_memtrace();
-//void vftr_get_mallinfo();
 
 #endif
 

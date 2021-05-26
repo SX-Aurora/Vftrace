@@ -40,8 +40,9 @@ long long vftr_mallinfo_ovhd;
 long long vftr_mallinfo_post_ovhd;
 FILE *vftr_fp_selfstat;
 
+/**********************************************************************/
+
 void vftr_init_mallinfo () {
-   //printf ("CHECK ENVI: %s\n", vftr_environment.meminfo_method->value);
    vftr_fp_selfstat = NULL;
    if (vftr_environment.meminfo_method->set) {
      memset (&vftr_current_mallinfo, 0, sizeof(vftr_mallinfo_t));
@@ -52,7 +53,6 @@ void vftr_init_mallinfo () {
        vftr_memtrace = true;
      } else if (!strcmp (vftr_environment.meminfo_method->value, "SELFSTAT")) {
        vftr_meminfo_method = MEM_SELFSTAT;
-       //vftr_fp_selfstat = fopen ("/proc/self/statm", "r");
        vftr_fp_selfstat = fopen ("/proc/self/status", "r");
        vftr_memtrace = true;
      } else {
@@ -60,29 +60,9 @@ void vftr_init_mallinfo () {
      }
    }
 
-   // Make a dummy call to malloc_info to determine the number of lines in the XML string and the various indices.
-   //vftr_xml_string_length = 0;   
-   //char *buf;
-   //size_t bufsize;
-   //FILE *fp = open_memstream (&buf, &bufsize);
-   //malloc_info (0, fp);
-   //fclose(fp);
-   //
-   //vftr_mmap_xml_index = 0;
-   //char *token = strtok(buf, "\n");
-   //int i = 0;
-   //while (token != NULL) {
-   //   if (vftr_mpirank == 0) printf ("Init token: %d %s\n", i, token);
-   //   if (strstr(token, "type=\"mmap\"") != NULL) vftr_mmap_xml_index = i;
-   //   i++;
-   //   token = strtok(NULL, "\n");
-   //}
-   //if (vftr_mmap_xml_index > 0) {
-   //  vftr_xml_string_length = i;
-   //  vftr_memtrace = true;
-   //}
-   //if (vftr_mpirank == 0) printf ("---------------------------------------------------\n");
 }
+
+/**********************************************************************/
 
 void vftr_finalize_mallinfo() {
    if (vftr_fp_selfstat != NULL) fclose (vftr_fp_selfstat);
@@ -90,98 +70,22 @@ void vftr_finalize_mallinfo() {
    vftr_memtrace = false;
 }
 
+/**********************************************************************/
+
 void vftr_process_mallinfo_line(char *line, long *count, long long *size) {
-   //if (vftr_mpirank == 0) printf ("THIS LINE: %s\n", line);
    char *tmp = strtok(line, "=\"");
    tmp = strtok(NULL, "\"");
-   //printf ("FIRST: %s\n", tmp);
    tmp = strtok(NULL, "=\"");
-   //printf ("NEXT 1: %s\n", tmp);
    tmp = strtok(NULL, "\"");
-   //printf ("NEXT 2: %s\n", tmp);
    *count = atol(tmp);
    tmp = strtok(NULL, "=\"");
    tmp = strtok(NULL, "\"");
    *size = atol(tmp);
 }
 
+/**********************************************************************/
+
 void vftr_get_selfstat() {
-   //int pid;
-   //char *comm;
-   //char state;
-   //int ppid;
-   //int pgrp;
-   //int session;
-   //int tty_nr;
-   //int tpgid;
-   //unsigned int flags;
-   //unsigned long minflt;
-   //unsigned long cminflt;
-   //unsigned long majflt;
-   //unsigned long cmajflt;
-   //unsigned long utime;
-   //unsigned long stime;
-   //long cutime;
-   //long cstime;
-   //long priority;
-   //long nice;
-   //long num_threads;
-   //long itrealvalue;
-   //unsigned long long starttime;
-   //unsigned long vsize;
-   //long rss;
-   //unsigned long rsslim;
-   //unsigned long startcode;
-   //unsigned long encode;
-   //unsigned long startstack;
-   //unsigned long kstkesp;
-   //unsigned long kstkeip;
-   //unsigned long signal;
-   //unsigned long blocked;
-   //unsigned long sigignore;
-   //unsigned long sigcatch;
-   //unsigned long wchan;
-   //unsigned long nswap;
-   //unsigned long cnswap;
-   //int exit_signal;
-   //int processor;
-   //unsigned int rt_priority;
-   //unsigned int policy;
-   //unsigned long long delaycct_blkio_ticks;
-   //unsigned long guest_time;
-   //long cguest_time;
-   //unsigned long start_data;
-   //unsigned long end_data;
-   //unsigned long start_brk;
-   //unsigned long arg_start;
-   //unsigned long arg_end;
-   //unsigned long env_start;
-   //unsigned long env_end;
-   //int exit_code;
-   //FILE *fp = fopen ("/proc/self/stat", "r");
-   ////printf ("FILE OPENED\n");
-   //fscanf (fp, "%d %s %c %d %d %d %d %d %u %lu %lu %lu %lu %lu %lu %ld %ld %ld %ld %ld %ld %llu %lu %ld %lu %lu %lu %lu %lu %lu %lu %lu %lu %lu %lu %lu %lu %d %d %u %u %llu %lu %ld %ld %ld %ld %ld %ld %ld %ld %d",
-   //        &pid, &comm, &state, &ppid, &pgrp, &session, &tty_nr, &tpgid, &flags, &minflt, &cminflt, &majflt, &cmajflt,
-   //        &utime, &stime, &cutime, &cstime, &priority, &nice, &num_threads, &itrealvalue, &starttime, &vsize,
-   //        &rss, &rsslim, &startcode, &encode, &startstack, &kstkesp, &kstkeip, &signal, &blocked, &sigignore, &sigcatch,
-   //        &wchan, &nswap, &cnswap, &exit_signal, &processor, &rt_priority, &policy, &delaycct_blkio_ticks,
-   //        &guest_time, &cguest_time, &start_data, &end_data, &start_brk, &arg_start, &arg_end, &env_start, &env_end, &exit_code);
-   ////printf ("SCANNED FILE!\n");
-   //vftr_current_mallinfo.mmap_size = rss;
-   //
-   int size;
-   int resident;
-   int shared;
-   int text;
-   int lib;
-   int data;
-   int dt;
-   //FILE *fp = fopen ("/proc/self/statm", "r");
-   //fscanf (vftr_fp_selfstat, "%d %d %d %d %d %d %d", &size, &resident, &shared, &text, &lib, &data, &dt);
-   //if (vftr_mpirank == 0) {
-   //  printf ("%d %d %d %d %d %d %d\n", size, resident, shared, text, lib, data, dt);
-   //}
-   //
    long long vmrss = 0;
    char line[1024];
    while (fgets(line, 1024, vftr_fp_selfstat)) {
@@ -194,11 +98,10 @@ void vftr_get_selfstat() {
       }
    }
    
-   //FILE *fp = fopen ("/proc/self/status", "r");
-   
    vftr_current_mallinfo.mmap_size = vmrss;
-   //fclose(fp);
 }
+
+/**********************************************************************/
 
 void vftr_get_mallinfo () {
    char *buf;
@@ -224,6 +127,8 @@ void vftr_get_mallinfo () {
    vftr_mallinfo_post_ovhd += vftr_get_runtime_usec();
 }
 
+/**********************************************************************/
+
 void vftr_get_memtrace() {
    switch (vftr_meminfo_method) {
       case MEM_MALLOC_INFO:
@@ -235,25 +140,5 @@ void vftr_get_memtrace() {
    }
 }
 
-void vftr_display_memory (long long t, char *in_or_out, char *func_name, char *caller_name) {
-   //printf ("DISPLAY MEMORY!\n");
-   //if ((t > next_mem_sample_time || t < 0)) {
-     long long vmrss = 0;
-     char line[1024];
-     vftr_fp_selfstat = fopen ("/proc/self/status", "r");
-     while (fgets(line, 1024, vftr_fp_selfstat)) {
-        if (strstr(line, "VmRSS:") != NULL) {
-           //printf ("line: %s\n", line);
-           char *tmp = strtok(line, "\t");
-           tmp = strtok (NULL, " ");
-           vmrss = atol(tmp);
-           rewind(vftr_fp_selfstat);
-           break;
-        }
-     }
-     fclose (vftr_fp_selfstat);
-     printf ("MEMORY (%s): %lld %s(%s) %lf\n", in_or_out, t, func_name, caller_name != NULL ? caller_name : "", (double)vmrss / 1024 / 1024);
-   //  next_mem_sample_time = t + mem_sample_interval;
-   //}
-}
+/**********************************************************************/
 
