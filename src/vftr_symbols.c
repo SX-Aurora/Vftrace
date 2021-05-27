@@ -21,6 +21,7 @@
 #include <unistd.h>
 #include <string.h>
 #include <elf.h>
+#include <ctype.h>
 
 #ifdef _LIBERTY_AVAIL
 #include <demangle.h>
@@ -30,6 +31,7 @@
 #include "vftr_filewrite.h"
 #include "vftr_fileutils.h"
 #include "vftr_symbols.h"
+#include "vftr_setup.h"
 
 int vftr_nsymbols;
 symtab_t **vftr_symtab;
@@ -466,12 +468,16 @@ char *vftr_find_symbol (void *addr) {
 
 #ifdef _LIBERTY_AVAIL
 char *vftr_demangle_cpp (char *m_name) {
+  if (vftr_mpirank > 0) return m_name;
   char *d_name = cplus_demangle(m_name, 0);
 
   if (d_name == NULL) return m_name;
   int has_control_char;
   vftr_has_control_character (d_name, &has_control_char, NULL);
-  if (has_control_char >= 0) return m_name; 
+  if (has_control_char >= 0) {
+    printf ("HAS CONTROL CHAR: %s\n", d_name);
+    return m_name; 
+  }
   //return d_name;
   
   // TODO: Replace the irrelevant brackets in the demangled string.
@@ -500,7 +506,7 @@ char *vftr_demangle_cpp (char *m_name) {
     } else if (*p == '>') {
       n_open--;
       if (n_open == 0) {
-        n_count[n_brackets++] = count - 2; // Leave space for two dots
+        n_count[n_brackets++] = count + 1; // Leave space for two dots
         count = 0;
       }
     }
@@ -513,6 +519,7 @@ char *vftr_demangle_cpp (char *m_name) {
   int new_strlen = strlen(d_name); 
   for (int i = 0; i < n_brackets; i++) {
     new_strlen -= n_count[i];
+    new_strlen += 4;
     //new_strlen += 2; // Two dots
   }
   char *d_name2 = (char*)malloc(new_strlen * sizeof(char));
@@ -521,12 +528,16 @@ char *vftr_demangle_cpp (char *m_name) {
   p = d_name2;
   while (*d_name != '\0') {
     *p = *d_name; // Copy the current character
+    if (iscntrl(*d_name)) printf ("There are control characters left!\n");
     if (*p != '<') { // Current character indicates an open bracket. Add ".." and jump n_counts elements ahead
       p++;
       *p = '.';
       p++;
       *p = '.';
-      p += n_count[n_brackets++];
+      p++;
+      *p = '>';
+      p++;
+      d_name += n_count[n_brackets++];
     } 
     p++;
   }
