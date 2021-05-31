@@ -21,6 +21,10 @@ typedef struct ProfileData {
    int ic;
    long mpi_tot_send_bytes;
    long mpi_tot_recv_bytes;
+   long long mem_entry;
+   long long mem_exit;
+   long long mem_max;
+   long long next_memtrace;
 } profdata_t;
 
 typedef struct Function {

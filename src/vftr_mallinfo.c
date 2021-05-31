@@ -85,18 +85,24 @@ void vftr_process_mallinfo_line(char *line, long *count, long long *size) {
 
 /**********************************************************************/
 
-void vftr_get_selfstat() {
+void vftr_get_selfstat(bool verbose) {
    long long vmrss = 0;
    char line[1024];
+   //if (vftr_fp_selfstat == NULL) vftr_fp_selfstat = fopen  ("/proc/self/status", "r");
    while (fgets(line, 1024, vftr_fp_selfstat)) {
       if (strstr(line, "VmRSS:") != NULL) {
+         if (verbose) printf ("VFTRACE: %s\n", line);
          char *tmp = strtok(line, "\t");
          tmp = strtok (NULL, " ");
          vmrss = atol(tmp);
-         rewind(vftr_fp_selfstat);
-         break;
+         //break;
       }
    }
+   //if (vftr_fp_selfstat != NULL) {
+   //  fclose (vftr_fp_selfstat);
+   //  vftr_fp_selfstat = NULL;
+   //}
+   rewind(vftr_fp_selfstat);
    
    vftr_current_mallinfo.mmap_size = vmrss;
 }
@@ -129,13 +135,13 @@ void vftr_get_mallinfo () {
 
 /**********************************************************************/
 
-void vftr_get_memtrace() {
+void vftr_get_memtrace(bool verbose) {
    switch (vftr_meminfo_method) {
       case MEM_MALLOC_INFO:
          vftr_get_mallinfo();
          break;
       case MEM_SELFSTAT:
-         vftr_get_selfstat();
+         vftr_get_selfstat(verbose);
          break;
    }
 }

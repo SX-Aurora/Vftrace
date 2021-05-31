@@ -38,6 +38,7 @@
 #include "vftr_stacks.h"
 #include "vftr_clear_requests.h"
 #include "vftr_sorting.h"
+#include "vftr_mallinfo.h"
 
 void vftr_region_entry (const char *s, void *addr, bool isPrecise);
 void vftr_region_exit();
@@ -227,6 +228,27 @@ void vftr_region_entry (const char *s, void *addr, bool isPrecise){
             }
 	    vftr_prof_data.ic = 1 - ic;
 	}
+       profdata_t *prof_current = &func->prof_current;
+
+    if (vftr_memtrace) {
+       if (prof_current->calls <= 10) {
+             vftr_get_memtrace(true);
+             prof_current->mem_entry = vftr_current_mallinfo.mmap_size;
+          } else if (prof_current->calls >= prof_current->next_memtrace) {
+             vftr_get_memtrace (true);
+             if (llabs(prof_current->mem_exit - prof_current->mem_entry - vftr_current_mallinfo.mmap_size) < 100) {
+                prof_current->next_memtrace += 1000;
+             } else {
+                prof_current->mem_entry = vftr_current_mallinfo.mmap_size;
+             }
+          } else {
+             prof_current->mem_entry = 0;
+          }
+          //printf ("Region entry: %lld\n", prof_current->mem_entry);
+       }
+
+
+
     }
 
     /* Compensate overhead */
@@ -240,7 +262,7 @@ void vftr_region_entry (const char *s, void *addr, bool isPrecise){
 
 /**********************************************************************/
 
-void vftr_region_exit(){
+void vftr_region_exit() {
     int           e, read_counters, timeToSample;
     long long     timer;
     unsigned long long cycles0;
@@ -308,6 +330,8 @@ void vftr_region_exit(){
         prof_current->cycles -= vftr_prof_data.cycles;
         prof_current->time_excl -= vftr_prof_data.time_excl;
         vftr_prog_cycles -= vftr_prof_data.cycles;
+
+
     }
 
     if (read_counters) {
@@ -327,7 +351,33 @@ void vftr_region_exit(){
             }
         }
         vftr_prof_data.ic = 1 - ic;
+
     }
+
+       if (vftr_memtrace) {
+          if (prof_current->calls <= 10) {
+          vftr_get_memtrace(true);
+          prof_current->mem_exit = vftr_current_mallinfo.mmap_size;
+       } else if (prof_current->calls >= prof_current->next_memtrace) {
+          vftr_get_memtrace(true);
+          if (llabs(prof_current->mem_exit - prof_current->mem_entry) == 0 || llabs(prof_current->mem_exit - prof_current->mem_entry - vftr_current_mallinfo.mmap_size) < 100) {
+             prof_current->next_memtrace += 1000;
+          } else {
+             prof_current->mem_exit = vftr_current_mallinfo.mmap_size;
+          }
+       } else {
+           prof_current->mem_exit = 0;
+       }
+       //printf ("Region exit: %lld\n", prof_current->mem_exit);
+       //printf ("Diff: %lld\n", prof_current->mem_exit - prof_current->mem_entry);
+       //printf ("Current  max: %lld\n", prof_current->mem_max);
+       if (prof_current->mem_exit - prof_current->mem_entry > prof_current->mem_max) {
+          prof_current->mem_max = prof_current->mem_exit - prof_current->mem_entry;
+       }
+       //printf ("New  max: %lld\n", prof_current->mem_max);
+    }
+
+
 
     wtime = (vftr_get_runtime_usec() - vftr_overhead_usec) * 1.0e-6;
 

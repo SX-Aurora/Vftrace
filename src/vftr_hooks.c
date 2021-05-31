@@ -180,15 +180,44 @@ void vftr_function_entry (const char *s, void *addr, bool isPrecise) {
            vftr_prof_data.ic = 1 - ic;
        }
 
-       if (vftr_memtrace) {
-          vftr_get_memtrace();
-          prof_return->event_count[vftr_n_hw_obs-1] += vftr_current_mallinfo.mmap_size;
-       }
     }
+       profdata_t *prof_current = &func->prof_current;
+       if (vftr_memtrace) {
+          //if (prof_return->calls <= 10) {
+          //   prof_return->event_count[vftr_n_hw_obs-1] += vftr_current_mallinfo.mmap_size;
+          //} else if (prof_return->calls >= prof_return->next_memtrace) {
+          //   vftr_get_memtrace(false);
+          //   if (llabs(prof_return->event_count[vftr_n_hw_obs-1] - vftr_current_mallinfo.mmap_size) < 100) {
+          //      prof_return->next_memtrace += 1000;
+          //   } else {
+          //      prof_return->event_count[vftr_n_hw_obs-1] += vftr_current_mallinfo.mmap_size;
+          //   }
+          //}
+          //if (prof_return->calls <= 1) {
+          //   vftr_get_memtrace();
+          //   prof_return->event_count[vftr_n_hw_obs-1] += vftr_current_mallinfo.mmap_size;
+          //}
+          if (prof_current->calls <= 10) {
+             vftr_get_memtrace(false);
+             //printf ("Current mallinfo entry: %s %lld\n", func->name, vftr_current_mallinfo.mmap_size);
+             prof_current->mem_entry = vftr_current_mallinfo.mmap_size;
+          } else if (prof_current->calls >= prof_current->next_memtrace) {
+             vftr_get_memtrace (false);
+             if (llabs(prof_current->mem_exit - prof_current->mem_entry - vftr_current_mallinfo.mmap_size) < 100) {
+                prof_current->next_memtrace += 1000;
+             } else {
+                prof_current->mem_entry = vftr_current_mallinfo.mmap_size;
+             }
+          } else {
+             prof_current->mem_entry = 0;
+          }
+       }
+
+
 
 
     if (time_to_sample && vftr_env_do_sampling ()) {
-        profdata_t *prof_current = &func->prof_current;
+        //profdata_t *prof_current = &func->prof_current;
         profdata_t *prof_previous = &func->prof_previous;
         vftr_write_to_vfd (func_entry_time, prof_current, prof_previous, func->id, SID_ENTRY);
 #ifdef _MPI
@@ -290,8 +319,29 @@ void vftr_function_exit () {
     }
 
     if (vftr_memtrace) {
-       vftr_get_memtrace();
-       prof_current->event_count[vftr_n_hw_obs-1] += vftr_current_mallinfo.mmap_size;
+       //if (prof_current->calls <= 10 || prof_current->calls >= prof_current->next_memtrace) {
+       if (prof_current->calls <= 10) {
+          vftr_get_memtrace(false);
+          //prof_current->event_count[vftr_n_hw_obs-1] += vftr_current
+          prof_current->mem_exit = vftr_current_mallinfo.mmap_size;
+          //printf ("Current mallinfo exit: %s %lld\n", func->name, vftr_current_mallinfo.mmap_size);
+       } else if (prof_current->calls >= prof_current->next_memtrace) {
+          vftr_get_memtrace(false);
+          //prof_current->next_memtrace += 1000;
+          //printf ("HUHU: %s %lld %lld %lld\n", func->name, prof_current->mem_exit, prof_current->mem_entry, vftr_current_mallinfo.mmap_size);
+          if (llabs(prof_current->mem_exit - prof_current->mem_entry) == 0 || llabs(prof_current->mem_exit - prof_current->mem_entry - vftr_current_mallinfo.mmap_size) < 100) {
+             prof_current->next_memtrace += 1000;
+          } else {
+             //prof_current->event_count[vftr_n_hw_obs-1] += vftr_current_mallinfo.mmap_size;
+             prof_current->mem_exit = vftr_current_mallinfo.mmap_size;
+          }
+       } else {
+           prof_current->mem_exit = 0;
+       }
+       if (prof_current->mem_exit - prof_current->mem_entry > prof_current->mem_max) {
+          prof_current->mem_max = prof_current->mem_exit - prof_current->mem_entry;
+       }
+       //printf ("MEM MAX: %lld\n", prof_current->mem_max);
     }
 
     if (timeToSample && vftr_env_do_sampling ()) {

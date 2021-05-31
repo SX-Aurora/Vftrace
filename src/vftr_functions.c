@@ -78,7 +78,10 @@ void vftr_init_profdata (profdata_t *prof) {
   prof->ic = 0;
   prof->mpi_tot_send_bytes = 0;
   prof->mpi_tot_recv_bytes = 0;
-  
+  prof->next_memtrace = 0; 
+  prof->mem_entry = 0;
+  prof->mem_exit = 0;
+  prof->mem_max = 0;
 }
 
 /**********************************************************************/
@@ -441,9 +444,12 @@ int vftrace_show_stacktree_size () {
 
 double vftr_mem_per_call (function_t *func) {
   if (!vftr_memtrace) return 0.0;
-  long long delta_mem = func->prof_current.event_count[vftr_n_hw_obs-1] - func->prof_previous.event_count[vftr_n_hw_obs-1];
-  long long delta_calls = func->prof_current.calls - func->prof_previous.calls;
-  return (double)delta_mem / delta_calls;
+  //printf ("HUHU: %s %lld %lld\n", func->name, func->prof_current.event_count[vftr_n_hw_obs-1], func->prof_previous.event_count[vftr_n_hw_obs-1]);
+  //long long delta_mem = func->prof_current.event_count[vftr_n_hw_obs-1] - func->prof_previous.event_count[vftr_n_hw_obs-1];
+  //long long delta_calls = func->prof_current.calls - func->prof_previous.calls;
+  long long delta_calls = 1;
+  //return (double)delta_mem / delta_calls;
+  return (double)func->prof_current.mem_max * 1024;
 }
 
 /**********************************************************************/
