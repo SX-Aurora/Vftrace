@@ -757,8 +757,8 @@ void vftr_set_proftab_column_formats (function_t **func_table,
 	    }
 
             if (vftr_memtrace) {
-                double mem_per_call = vftr_mem_per_call (func_table[i_func]);
-                vftr_prof_column_set_n_chars (&mem_per_call, NULL, NULL, &(columns)[i_column++], &stat);
+                double m = vftr_get_max_memory (func_table[i_func]);
+                vftr_prof_column_set_n_chars (&m, NULL, NULL, &(columns)[i_column++], &stat);
             }
 
             if (vftr_max_allocated_fields > 0) {
@@ -1454,8 +1454,8 @@ void vftr_print_profile_line (FILE *fp_log, function_t *func, long long runtime_
    }
 
    if (vftr_memtrace) {
-      double mem_per_call = vftr_mem_per_call (func);
-      vftr_prof_column_print (fp_log, prof_columns[i_column++], &mem_per_call, NULL, NULL);
+      double m = vftr_get_max_memory (func);
+      vftr_prof_column_print (fp_log, prof_columns[i_column++], &m, NULL, NULL);
    }
 
    if (vftr_max_allocated_fields > 0) {

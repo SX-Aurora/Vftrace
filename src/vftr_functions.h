@@ -94,9 +94,9 @@ void vftr_stackid_list_print (FILE *fp);
 void vftr_stackid_list_finalize ();
 
 //void vftr_sample_vmrss (long long n_calls, mem_prof_t *mem_prof, bool is_entry, bool verbose);
+#define MEMPROF_INCREMENT 1000 
 void vftr_sample_vmrss (long long n_calls, bool is_entry, bool verbose, mem_prof_t *mem_prof);
-
-double vftr_mem_per_call (function_t *func);
+double vftr_get_max_memory (function_t *func);
 
 // test functions
 int vftr_functions_test_1 (FILE *fp_in, FILE *fp_out);

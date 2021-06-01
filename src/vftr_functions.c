@@ -477,13 +477,9 @@ void vftr_sample_vmrss (long long n_calls, bool is_entry, bool verbose, mem_prof
 
 /**********************************************************************/
 
-double vftr_mem_per_call (function_t *func) {
+double vftr_get_max_memory (function_t *func) {
   if (!vftr_memtrace) return 0.0;
-  //printf ("HUHU: %s %lld %lld\n", func->name, func->prof_current.event_count[vftr_n_hw_obs-1], func->prof_previous.event_count[vftr_n_hw_obs-1]);
-  //long long delta_mem = func->prof_current.event_count[vftr_n_hw_obs-1] - func->prof_previous.event_count[vftr_n_hw_obs-1];
-  //long long delta_calls = func->prof_current.calls - func->prof_previous.calls;
-  long long delta_calls = 1;
-  //return (double)delta_mem / delta_calls;
+  // Convert from kilobytes to bytes
   return (double)func->prof_current.mem_prof->mem_max * 1024;
 }
 
