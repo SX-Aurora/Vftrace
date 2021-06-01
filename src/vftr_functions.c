@@ -67,6 +67,17 @@ struct loc_glob_id *vftr_print_stackid_list;
 int vftr_n_print_stackids;
 int vftr_stackid_list_size;
 
+void vftr_init_mem_prof (mem_prof_t *mem_prof) {
+  mem_prof->next_memtrace_entry = 0;
+  mem_prof->next_memtrace_exit = 0;
+  mem_prof->mem_entry = 0;
+  mem_prof->mem_exit = 0;
+  mem_prof->mem_max = 0;
+  mem_prof->mem_increment = MEMPROF_INCREMENT;
+}
+
+/**********************************************************************/
+
 void vftr_init_profdata (profdata_t *prof) {
   prof->calls = 0;
   prof->cycles = 0;
@@ -79,12 +90,7 @@ void vftr_init_profdata (profdata_t *prof) {
   prof->mpi_tot_send_bytes = 0;
   prof->mpi_tot_recv_bytes = 0;
   prof->mem_prof = (mem_prof_t*)malloc (sizeof(mem_prof_t));
-  prof->mem_prof->next_memtrace_entry = 0; 
-  prof->mem_prof->next_memtrace_exit = 0; 
-  prof->mem_prof->mem_entry = 0;
-  prof->mem_prof->mem_exit = 0;
-  prof->mem_prof->mem_max = 0;
-  prof->mem_prof->mem_increment = 1000;
+  vftr_init_mem_prof (prof->mem_prof);
 }
 
 /**********************************************************************/
