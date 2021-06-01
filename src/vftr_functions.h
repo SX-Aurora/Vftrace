@@ -94,9 +94,7 @@ void vftr_stackid_list_print (FILE *fp);
 void vftr_stackid_list_finalize ();
 
 //void vftr_sample_vmrss (long long n_calls, mem_prof_t *mem_prof, bool is_entry, bool verbose);
-void vftr_sample_vmrss (long long n_calls, bool is_entry, bool verbose, long long *next_memtrace,
-                        long long mem_increment, long long mem_tolerance,
-                        long long *mem_entry, long long *mem_exit);
+void vftr_sample_vmrss (long long n_calls, bool is_entry, bool verbose, mem_prof_t *mem_prof);
 
 double vftr_mem_per_call (function_t *func);
 

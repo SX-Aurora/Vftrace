@@ -184,10 +184,7 @@ void vftr_function_entry (const char *s, void *addr, bool isPrecise) {
 
     profdata_t *prof_current = &func->prof_current;
     if (vftr_memtrace) {
-       mem_prof_t *foo = prof_current->mem_prof;
-       vftr_sample_vmrss (prof_current->calls, true, false, &(foo->next_memtrace_entry),
-                          1000, foo->mem_tolerance,
-                          &(foo->mem_entry), &(foo->mem_exit));
+       vftr_sample_vmrss (prof_current->calls, true, false, prof_current->mem_prof);
     }
 
     if (time_to_sample && vftr_env_do_sampling ()) {
@@ -292,13 +289,7 @@ void vftr_function_exit () {
     }
 
     if (vftr_memtrace) {
-       mem_prof_t *foo = prof_current->mem_prof;
-       vftr_sample_vmrss (prof_current->calls - 1, false, false, &(foo->next_memtrace_exit),
-                          1000, foo->mem_tolerance,
-                          &(foo->mem_entry), &(foo->mem_exit));
-       if (prof_current->mem_prof->mem_exit - prof_current->mem_prof->mem_entry > prof_current->mem_prof->mem_max) {
-          prof_current->mem_prof->mem_max = prof_current->mem_prof->mem_exit - prof_current->mem_prof->mem_entry;
-       }
+       vftr_sample_vmrss (prof_current->calls - 1, false, false, prof_current->mem_prof);
     }
 
     if (timeToSample && vftr_env_do_sampling ()) {

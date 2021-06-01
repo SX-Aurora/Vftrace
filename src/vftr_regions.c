@@ -233,10 +233,7 @@ void vftr_region_entry (const char *s, void *addr, bool isPrecise){
 
     if (vftr_memtrace) {
        profdata_t *prof_current = &func->prof_current;
-       mem_prof_t *foo = prof_current->mem_prof;
-       vftr_sample_vmrss (prof_current->calls, true, false, &(foo->next_memtrace_entry),
-                          1000, foo->mem_tolerance,
-                          &(foo->mem_entry), &(foo->mem_exit));
+       vftr_sample_vmrss (prof_current->calls, true, false, prof_current->mem_prof);
     }
 
     /* Compensate overhead */
@@ -344,10 +341,8 @@ void vftr_region_exit() {
 
     if (vftr_memtrace) {
        profdata_t *prof_current = &func->prof_current;
-       mem_prof_t *foo = prof_current->mem_prof;
-       vftr_sample_vmrss (prof_current->calls, true, false, &(foo->next_memtrace_entry),
-                          1000, foo->mem_tolerance,
-                          &(foo->mem_entry), &(foo->mem_exit));
+       vftr_sample_vmrss (prof_current->calls - 1, false, false, prof_current->mem_prof); 
+
     }
 
     wtime = (vftr_get_runtime_usec() - vftr_overhead_usec) * 1.0e-6;
