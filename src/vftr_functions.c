@@ -78,10 +78,12 @@ void vftr_init_profdata (profdata_t *prof) {
   prof->ic = 0;
   prof->mpi_tot_send_bytes = 0;
   prof->mpi_tot_recv_bytes = 0;
-  prof->next_memtrace = 0; 
-  prof->mem_entry = 0;
-  prof->mem_exit = 0;
-  prof->mem_max = 0;
+  prof->mem_prof = (mem_prof_t*)malloc (sizeof(mem_prof_t));
+  prof->mem_prof->next_memtrace_entry = 0; 
+  prof->mem_prof->next_memtrace_exit = 0; 
+  prof->mem_prof->mem_entry = 0;
+  prof->mem_prof->mem_exit = 0;
+  prof->mem_prof->mem_max = 0;
 }
 
 /**********************************************************************/
@@ -442,6 +444,25 @@ int vftrace_show_stacktree_size () {
 
 /**********************************************************************/
 
+void vftr_sample_vmrss (long long n_calls, bool is_entry, bool verbose, long long *next_memtrace,
+                        long long mem_increment, long long mem_tolerance,
+                        long long *mem_entry, long long *mem_exit) {
+   if (n_calls >= *next_memtrace) {
+      vftr_get_memtrace (verbose);
+      long long tmp = is_entry ? *mem_exit : *mem_entry;
+      bool needs_increment = n_calls > 0 &&
+          (llabs(tmp - vftr_current_mallinfo.mmap_size) == 0 || llabs(*mem_exit - *mem_entry - vftr_current_mallinfo.mmap_size) < mem_tolerance);
+      if (needs_increment) *next_memtrace += mem_increment;
+      if (is_entry) {
+         *mem_entry = vftr_current_mallinfo.mmap_size;
+      } else { // is_exit
+         *mem_exit = vftr_current_mallinfo.mmap_size;
+      }
+   }
+}
+
+/**********************************************************************/
+
 double vftr_mem_per_call (function_t *func) {
   if (!vftr_memtrace) return 0.0;
   //printf ("HUHU: %s %lld %lld\n", func->name, func->prof_current.event_count[vftr_n_hw_obs-1], func->prof_previous.event_count[vftr_n_hw_obs-1]);
@@ -449,7 +470,7 @@ double vftr_mem_per_call (function_t *func) {
   //long long delta_calls = func->prof_current.calls - func->prof_previous.calls;
   long long delta_calls = 1;
   //return (double)delta_mem / delta_calls;
-  return (double)func->prof_current.mem_max * 1024;
+  return (double)func->prof_current.mem_prof->mem_max * 1024;
 }
 
 /**********************************************************************/
