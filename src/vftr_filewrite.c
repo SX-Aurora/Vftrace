@@ -1398,6 +1398,10 @@ void vftr_print_profile_summary (FILE *fp_log, function_t **func_table, double t
     	vftr_scenario_expr_print_raw_counters (fp_log);
 
     }
+
+    if (vftr_memtrace) {
+       fprintf (fp_log, "\nVmRSS sampling is enabled. Overhead: %lf s\n", (double)vftr_mallinfo_ovhd * 1e-6);
+    }
     fprintf (fp_log, "------------------------------------------------------------\n\n");
 }
 

@@ -23,7 +23,6 @@ typedef struct vftr_mallinfo {
 
 extern int vftr_xml_string_length;
 extern int vftr_meminfo_method;
-extern vftr_mallinfo_t vftr_current_mallinfo;
 extern bool vftr_memtrace;
 extern int vftr_mmap_xml_index;
 extern long long vftr_mallinfo_ovhd;
@@ -33,6 +32,8 @@ extern FILE *vftr_fp_selfstat;
 void vftr_init_mallinfo();
 void vftr_finalize_mallinfo();
 void vftr_get_memtrace(bool verbose);
+
+long long vftr_get_vmrss (bool verbose);
 
 #endif
 

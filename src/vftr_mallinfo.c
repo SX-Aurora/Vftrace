@@ -30,6 +30,7 @@
 #include "vftr_environment.h"
 #include "vftr_timer.h"
 #include "vftr_mallinfo.h"
+#include "vftr_functions.h"
 
 int vftr_xml_string_length;
 int vftr_meminfo_method;
@@ -45,7 +46,6 @@ FILE *vftr_fp_selfstat;
 void vftr_init_mallinfo () {
    vftr_fp_selfstat = NULL;
    if (vftr_environment.meminfo_method->set) {
-     memset (&vftr_current_mallinfo, 0, sizeof(vftr_mallinfo_t));
      vftr_mallinfo_ovhd = 0;
      vftr_mallinfo_post_ovhd = 0;
      if (!strcmp (vftr_environment.meminfo_method->value, "MALLOC_INFO")) {
@@ -85,29 +85,51 @@ void vftr_process_mallinfo_line(char *line, long *count, long long *size) {
 
 /**********************************************************************/
 
-void vftr_get_selfstat(bool verbose) {
+long long vftr_get_vmrss(bool verbose) {
    long long vmrss = 0;
    char line[1024];
-   //if (vftr_fp_selfstat == NULL) vftr_fp_selfstat = fopen  ("/proc/self/status", "r");
    while (fgets(line, 1024, vftr_fp_selfstat)) {
       if (strstr(line, "VmRSS:") != NULL) {
          if (verbose) printf ("VFTRACE: %s\n", line);
          char *tmp = strtok(line, "\t");
          tmp = strtok (NULL, " ");
          vmrss = atol(tmp);
-         //break;
       }
    }
-   //if (vftr_fp_selfstat != NULL) {
-   //  fclose (vftr_fp_selfstat);
-   //  vftr_fp_selfstat = NULL;
-   //}
    rewind(vftr_fp_selfstat);
    
-   vftr_current_mallinfo.mmap_size = vmrss;
+   return vmrss;
 }
 
 /**********************************************************************/
+
+void vftr_sample_vmrss (long long n_calls, bool is_entry, bool verbose, mem_prof_t *mem_prof) {
+   vftr_mallinfo_ovhd -= vftr_get_runtime_usec();
+   long long next_memtrace = is_entry ? mem_prof->next_memtrace_entry : mem_prof->next_memtrace_exit;
+   if (n_calls >= next_memtrace) {
+      long long vmrss = vftr_get_vmrss (verbose);
+      long long tmp = is_entry ? mem_prof->mem_exit : mem_prof->mem_entry;
+      bool needs_increment = n_calls > 0 &&
+          (llabs(tmp - vmrss) == 0 || llabs(mem_prof->mem_exit - mem_prof->mem_entry - vmrss) < mem_prof->mem_tolerance);
+      if (needs_increment) {
+         if (is_entry) {
+            mem_prof->next_memtrace_entry += mem_prof->mem_increment;
+         } else {
+            mem_prof->next_memtrace_exit += mem_prof->mem_increment;
+         }
+      }
+      if (is_entry) {
+         mem_prof->mem_entry = vmrss;
+      } else { // is_exit
+         mem_prof->mem_exit = vmrss;
+         if (mem_prof->mem_exit - mem_prof->mem_entry > mem_prof->mem_max) mem_prof->mem_max = mem_prof->mem_exit - mem_prof->mem_entry;
+      }
+   }
+   vftr_mallinfo_ovhd += vftr_get_runtime_usec();
+}
+
+/**********************************************************************/
+
 
 void vftr_get_mallinfo () {
    char *buf;
@@ -119,9 +141,7 @@ void vftr_get_mallinfo () {
    vftr_mallinfo_ovhd += vftr_get_runtime_usec();
  
    vftr_mallinfo_post_ovhd -= vftr_get_runtime_usec();
-   char *lines[vftr_xml_string_length];
    char *token = strtok(buf, "\n"); 
-   int i = 0;
    while (token != NULL) {
       if (strstr(token, "type=\"mmap\"") != NULL) {
          vftr_process_mallinfo_line (token, &(vftr_current_mallinfo.mmap_count), &(vftr_current_mallinfo.mmap_size));
@@ -134,17 +154,3 @@ void vftr_get_mallinfo () {
 }
 
 /**********************************************************************/
-
-void vftr_get_memtrace(bool verbose) {
-   switch (vftr_meminfo_method) {
-      case MEM_MALLOC_INFO:
-         vftr_get_mallinfo();
-         break;
-      case MEM_SELFSTAT:
-         vftr_get_selfstat(verbose);
-         break;
-   }
-}
-
-/**********************************************************************/
-

@@ -451,32 +451,6 @@ int vftrace_show_stacktree_size () {
 
 /**********************************************************************/
 
-void vftr_sample_vmrss (long long n_calls, bool is_entry, bool verbose, mem_prof_t *mem_prof) {
-   long long next_memtrace = is_entry ? mem_prof->next_memtrace_entry : mem_prof->next_memtrace_exit;
-   if (n_calls >= next_memtrace) {
-      vftr_get_memtrace (verbose);
-      long long tmp = is_entry ? mem_prof->mem_exit : mem_prof->mem_entry;
-      bool needs_increment = n_calls > 0 &&
-          (llabs(tmp - vftr_current_mallinfo.mmap_size) == 0 || llabs(mem_prof->mem_exit - mem_prof->mem_entry - vftr_current_mallinfo.mmap_size) < mem_prof->mem_tolerance);
-      if (needs_increment) {
-         if (is_entry) {
-            mem_prof->next_memtrace_entry += mem_prof->mem_increment;
-         } else {
-            mem_prof->next_memtrace_exit += mem_prof->mem_increment;
-         }
-      }
-      if (is_entry) {
-         mem_prof->mem_entry = vftr_current_mallinfo.mmap_size;
-      } else { // is_exit
-         mem_prof->mem_exit = vftr_current_mallinfo.mmap_size;
-         if (mem_prof->mem_exit - mem_prof->mem_entry > mem_prof->mem_max) mem_prof->mem_max = mem_prof->mem_exit - mem_prof->mem_entry;
-      }
-   }
-}
-
-
-/**********************************************************************/
-
 double vftr_get_max_memory (function_t *func) {
   if (!vftr_memtrace) return 0.0;
   // Convert from kilobytes to bytes
