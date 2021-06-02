@@ -255,6 +255,31 @@ TIME_INCL (inclusive time), CALLS (number of calls), STACK_ID, OVERHEAD, OVERHEA
 Displays, for each function in the profile table, the overhead time, its relative part of the total
 overhead time, and the ratio of overhead to exclusive time. Can be sorted with
 VFTR_SORT_PROFILE_TABLE=OVERHEAD(_RELATIVE), where _RELATIVE refers to the ratio to the exclusive time.
+.\"
+.IP "\fBVFTR_MEMINFO_METHOD\fR"
+.IX Item "VFTR_MEMINFO_METHOD\fR"
+Switches on memory profiling. There are two methods:
+.br
+MALLOC_INFO: The gnu function malloc_info is used to obtain the currently allocated memory. It returns an 
+xml string which includes much more information and needs to be parsed. Thus, a significant overhead
+can be created.
+.br
+VMRSS: The file /proc/self/status is read and the line containing "VmRSS" is took out of it. The entire
+file needs to be read in for the file to be updated properly, also leading to an overhead for this method.
+.br
+If active, RAM occupation by the application is measured at function entry and exit, and the maximal difference
+between these values is registered. This way, it is possible to detect allocations of large fields in
+certain functions.
+.br
+As the overhead for both methods can become large when a function is called a large number of times,
+both memory tracing methods are not evoked upon every function entry and exit. Instead, it is checked
+if the memory values vary above a threshold for consecutive function calls. If not, the next evaluation
+will take place after a number of function calls given by VFTR_MEMINFO_STEPSIZE. Therefore,
+it is possible that allocations might be missed. 
+.\"
+.IP "\fBVFTR_MEMINFO_STEPSIZE\fB"
+.IX Item "VFTR_MEMINFO_STEPSIZE\fR"
+The stepsize for memory sampling. See above.
 .SS LIBRARY FUNCTIONS
 .IX Subsection "LIBRARY FUNCTIONS"
 Vftrace provides library functions which can be included in a C or Fortran application

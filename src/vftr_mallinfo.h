@@ -1,8 +1,7 @@
 #ifndef VFTR_MALLINFO_H
 #define VFTR_MALLINFO_H
 
-//enum vftr_mallinfo_indices {MEM_FAST=11, MEM_REST=12, MEM_MMAP=13, MEM_CURRENT=14, MEM_MAX=15, MEM_TOTAL=16, MEM_PROTECTED=17};
-enum vftr_mallinfo_method {MEM_MALLOC_INFO, MEM_SELFSTAT};
+enum vftr_mallinfo_method {MEM_MALLOC_INFO, MEM_VMRSS};
 
 typedef struct vftr_mallinfo {
 	long fast_count;
