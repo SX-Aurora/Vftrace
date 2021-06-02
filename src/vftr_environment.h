@@ -93,6 +93,7 @@ typedef struct vftr_envs {
 	env_var_string_t *sort_profile_table;
 	env_var_bool_t *show_overhead;
         env_var_string_t *meminfo_method;
+        env_var_int_t *meminfo_stepsize;
         env_var_bool_t *print_env;
         env_var_bool_t *no_memtrace;
 	env_var_bool_t *all_mpi_summary;

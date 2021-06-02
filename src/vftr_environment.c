@@ -354,6 +354,7 @@ void vftr_read_environment () {
     vftr_environment.sort_profile_table = vftr_read_env_string ("VFTR_SORT_PROFILE_TABLE", "EXCL_TIME");
     vftr_environment.show_overhead = vftr_read_env_bool ("VFTR_SHOW_FUNCTION_OVERHEAD", false);
     vftr_environment.meminfo_method = vftr_read_env_string ("VFTR_MEMINFO_METHOD", "");
+    vftr_environment.meminfo_stepsize = vftr_read_env_int ("VFTR_MEMINFO_STEPSIZE", 1000);
     vftr_environment.print_env = vftr_read_env_bool ("VFTR_PRINT_ENVIRONMENT", false);
     vftr_environment.no_memtrace = vftr_read_env_bool ("VFTR_NO_MEMTRACE", false);
     vftr_environment.all_mpi_summary = vftr_read_env_bool ("VFTR_COMPLETE_MPI_SUMMARY", false);
@@ -558,6 +559,7 @@ void vftr_free_environment () {
         free (vftr_environment.sort_profile_table);
 	free (vftr_environment.show_overhead);
         free (vftr_environment.meminfo_method);
+        free (vftr_environment.meminfo_stepsize);
         free (vftr_environment.print_env);
 	free (vftr_environment.no_memtrace);
         free (vftr_environment.all_mpi_summary);
@@ -601,6 +603,7 @@ void vftr_print_environment (FILE *fp) {
 	vftr_print_env_string (fp, "VFTR_SORT_PROFILE_TABLE", vftr_environment.sort_profile_table);
         vftr_print_env_bool (fp, "VFTR_SHOW_FUNCTION_OVERHEAD", vftr_environment.show_overhead);
         vftr_print_env_string (fp, "VFTR_MEMINFO_METHOD", vftr_environment.meminfo_method);
+        vftr_print_env_int (fp, "VFTR_MEMINFO_STEPSIZE", vftr_environment.meminfo_stepsize);
         vftr_print_env_bool (fp, "VFTR_PRINT_ENVIRONMENT", vftr_environment.print_env);
         vftr_print_env_bool (fp, "VFTR_NO_MEMTRACE", vftr_environment.no_memtrace);
         vftr_print_env_bool (fp, "VFTR_COMPLETE_MPI_SUMMARY", vftr_environment.all_mpi_summary);

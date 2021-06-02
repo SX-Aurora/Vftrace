@@ -356,7 +356,7 @@ void vftr_finalize() {
 	fprintf(vftr_log, "error stopping H/W counters, ignored\n");
     }
 
-    vftr_finalize_mallinfo();
+    if (vftr_memtrace) vftr_finalize_mallinfo();
     if (vftr_max_allocated_fields > 0) vftr_allocate_finalize(vftr_log);
 
     if (vftr_environment.print_env->value) vftr_print_environment(vftr_log);

@@ -73,7 +73,7 @@ void vftr_init_mem_prof (mem_prof_t *mem_prof) {
   mem_prof->mem_entry = 0;
   mem_prof->mem_exit = 0;
   mem_prof->mem_max = 0;
-  mem_prof->mem_increment = MEMPROF_INCREMENT;
+  mem_prof->mem_increment = vftr_environment.meminfo_stepsize->value;
 }
 
 /**********************************************************************/
