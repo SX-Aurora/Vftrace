@@ -266,6 +266,8 @@ can be created.
 .br
 VMRSS: The file /proc/self/status is read and the line containing "VmRSS" is took out of it. The entire
 file needs to be read in for the file to be updated properly, also leading to an overhead for this method.
+Note: On NEC vector engines, this method samples the resident set size on the Vector host, but the
+actual memory is allocated on the vector engine.
 .br
 If active, RAM occupation by the application is measured at function entry and exit, and the maximal difference
 between these values is registered. This way, it is possible to detect allocations of large fields in
