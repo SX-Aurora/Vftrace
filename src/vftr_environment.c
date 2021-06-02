@@ -321,7 +321,7 @@ char *vftr_profile_sorting_method_string () {
 /**********************************************************************/
 
 void vftr_read_environment () {
-    vftr_n_env_variables = 35;
+    vftr_n_env_variables = 36;
     vftr_env_variable_names = (char**)malloc(vftr_n_env_variables * sizeof(char*));
     vftr_env_counter = 0;
     
