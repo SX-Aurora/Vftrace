@@ -38,6 +38,7 @@
 #include "vftr_stacks.h"
 #include "vftr_browse.h"
 #include "vftr_sorting.h"
+#include "vftr_mallinfo.h"
 #include "vftr_allocate.h"
 
 // File pointer of the log file
@@ -348,8 +349,7 @@ void vftr_write_profile () {
         fwrite( &(evc->namelen), sizeof(int),       1, fp );  /* Event namelength */
         fwrite( &(evc->name),    sizeof(int),       8, fp );  /* Event name */
     }
-    fwrite(  ec,                 sizeof(long long), vftr_n_hw_obs, 
-                                                       fp );  /* Raw total event counts */
+    fwrite (ec, sizeof(long long), vftr_n_hw_obs, fp);  /* Raw total event counts */
 
     for (int i = 0; i < vftr_stackscount; i++) {
         if (!func_table[i]) continue;
@@ -452,30 +452,30 @@ int vftr_count_func_indices_up_to_truncate (function_t **func_table, long long r
 /**********************************************************************/
 
 void vftr_fill_scenario_counter_values (double *val, int n_vars, profdata_t prof_current, profdata_t prof_previous) {
-	memset (vftr_scenario_expr_counter_values, 0., sizeof (double) * vftr_scenario_expr_n_vars);
-	if (prof_current.event_count) {
-		for (int i = 0; i < n_vars; i++) {
-			val[i] += (double)prof_current.event_count[i];
-		}
-	}
-        if (prof_previous.event_count) {
-		for (int i = 0; i < n_vars; i++) {
-			val[i] -= (double)prof_previous.event_count[i];
-		}
-	}
+   memset (vftr_scenario_expr_counter_values, 0., sizeof (double) * vftr_scenario_expr_n_vars);
+   if (prof_current.event_count) {
+      for (int i = 0; i < n_vars; i++) {
+      	 val[i] += (double)prof_current.event_count[i];
+      }
+   }
+   if (prof_previous.event_count) {
+      for (int i = 0; i < n_vars; i++) {
+         val[i] -= (double)prof_previous.event_count[i];
+      }
+   }
 }
 
 /**********************************************************************/
 
 void vftr_prof_column_init (const char *name, char *group_header, int n_decimal_places, int col_type, int sep_type, column_t *c) {
-	c->header = strdup (name);
-	c->group_header = group_header != NULL ? strdup (group_header) : NULL;
-	c->n_chars = strlen(name);
-	c->n_chars_opt_1 = 0;
-	c->n_chars_opt_2 = 0;
-	c->n_decimal_places = n_decimal_places;
-	c->col_type = col_type;
-   	c->separator_type = sep_type;
+   c->header = strdup (name);
+   c->group_header = group_header != NULL ? strdup (group_header) : NULL;
+   c->n_chars = strlen(name);
+   c->n_chars_opt_1 = 0;
+   c->n_chars_opt_2 = 0;
+   c->n_decimal_places = n_decimal_places;
+   c->col_type = col_type;
+   c->separator_type = sep_type;
 }
 
 /**********************************************************************/
@@ -686,23 +686,27 @@ void vftr_set_proftab_column_formats (function_t **func_table,
         }
 
 	if (vftr_events_enabled) {
-		char header_with_unit[80];
-		for (int i = 0; i < vftr_scenario_expr_n_formulas; i++) {
-		   if (vftr_scenario_expr_format[i].header == NULL) {
-			sprintf (header_with_unit, "HWC N/A");
-		   } else {
-		      int n1 = strlen(vftr_scenario_expr_format[i].header);
-		      if (vftr_scenario_expr_format[i].unit) {
-		           int n2 = strlen(vftr_scenario_expr_format[i].unit); 
-		           snprintf (header_with_unit, n1 + n2 + 4, "%s [%s]", vftr_scenario_expr_format[i].header, vftr_scenario_expr_format[i].unit);
-		      } else {
-		           snprintf (header_with_unit, n1 + 1, "%s", vftr_scenario_expr_format[i].header);
-		      }
-		   }
-		   vftr_prof_column_init (header_with_unit, NULL, vftr_scenario_expr_format[i].decimal_places,
-		           		  COL_DOUBLE, SEP_NONE, &(columns)[i_column++]);
-		} 
+	   char header_with_unit[80];
+	   for (int i = 0; i < vftr_scenario_expr_n_formulas; i++) {
+	      if (vftr_scenario_expr_format[i].header == NULL) {
+	   	sprintf (header_with_unit, "HWC N/A");
+	      } else {
+	         int n1 = strlen(vftr_scenario_expr_format[i].header);
+	         if (vftr_scenario_expr_format[i].unit) {
+	              int n2 = strlen(vftr_scenario_expr_format[i].unit); 
+	              snprintf (header_with_unit, n1 + n2 + 4, "%s [%s]", vftr_scenario_expr_format[i].header, vftr_scenario_expr_format[i].unit);
+	         } else {
+	              snprintf (header_with_unit, n1 + 1, "%s", vftr_scenario_expr_format[i].header);
+	         }
+	      }
+	      vftr_prof_column_init (header_with_unit, NULL, vftr_scenario_expr_format[i].decimal_places,
+	              		  COL_DOUBLE, SEP_NONE, &(columns)[i_column++]);
+	   } 
  	}
+           
+        if (vftr_memtrace) {
+           vftr_prof_column_init ("VmRSS", NULL, 2, COL_MEM, SEP_NONE, &(columns)[i_column++]);
+        }
 
         if (vftr_max_allocated_fields > 0) vftr_prof_column_init ("Max mem", NULL, 2, COL_MEM, SEP_NONE, &(columns)[i_column++]);
 
@@ -751,6 +755,11 @@ void vftr_set_proftab_column_formats (function_t **func_table,
 		   vftr_prof_column_set_n_chars (&tmp, NULL, NULL, &(columns)[i_column++], &stat);
 	   	}
 	    }
+
+            if (vftr_memtrace) {
+                double m = vftr_get_max_memory (func_table[i_func]);
+                vftr_prof_column_set_n_chars (&m, NULL, NULL, &(columns)[i_column++], &stat);
+            }
 
             if (vftr_max_allocated_fields > 0) {
                double mem_max = (double)vftr_allocate_get_max_memory_for_stackid (func_table[i_func]->id);
@@ -826,6 +835,8 @@ void vftr_summary_print_header (FILE *fp, column_t *columns, int table_width, bo
    }
    for (int i = 0; i < table_width; i++) fprintf (fp, "-");
    fprintf (fp, "\n");
+   fprintf (fp, "malloc_info overhead: %lf\n", (double)vftr_mallinfo_ovhd * 1e-6);
+   fprintf (fp, "malloc_info parsing overhead: %lf\n", (double)vftr_mallinfo_post_ovhd * 1e-6);
 }
 
 /**********************************************************************/
@@ -889,7 +900,12 @@ void vftr_proftab_print_header (FILE *fp, column_t *columns) {
 	      i++;
 	   }
    	}
-			
+
+        if (vftr_memtrace) {
+           fprintf (fp, " %*s ", columns[i].n_chars, columns[i].header);
+           i++;
+        }
+
 	fprintf (fp, " %*s ", columns[i].n_chars, columns[i].header);
 	i++;
 	fprintf (fp, " %*s ", columns[i].n_chars, columns[i].header);
@@ -1382,6 +1398,10 @@ void vftr_print_profile_summary (FILE *fp_log, function_t **func_table, double t
     	vftr_scenario_expr_print_raw_counters (fp_log);
 
     }
+
+    if (vftr_memtrace) {
+       fprintf (fp_log, "\nVmRSS sampling is enabled. Overhead: %lf s\n", (double)vftr_mallinfo_ovhd * 1e-6);
+    }
     fprintf (fp_log, "------------------------------------------------------------\n\n");
 }
 
@@ -1410,10 +1430,12 @@ void vftr_compute_line_content (function_t *this_func, int *n_calls, long long *
 
 /**********************************************************************/
 
-void vftr_print_profile_line (FILE *fp_log, int local_stack_id, int global_stack_id,
-			      long long runtime_usec, double sampling_overhead_time,
-			      int n_calls, long long t_excl, long long t_incl, long long t_sum, double t_overhead,
-			      char *func_name, char *caller_name, column_t *prof_columns) {
+void vftr_print_profile_line (FILE *fp_log, function_t *func, long long runtime_usec, double sampling_overhead_time,
+                              int n_calls, long long t_excl, long long t_incl, long long t_sum,
+                              double t_overhead, column_t *prof_columns) {
+   int local_stack_id = func->id;
+   int global_stack_id = func->gid;
+
    int i_column = 0;
    vftr_prof_column_print (fp_log, prof_columns[i_column++], &n_calls, NULL, NULL);
    double t_part = (double)t_excl / (double)runtime_usec * 100;
@@ -1435,14 +1457,19 @@ void vftr_print_profile_line (FILE *fp_log, int local_stack_id, int global_stack
    	}
    }
 
+   if (vftr_memtrace) {
+      double m = vftr_get_max_memory (func);
+      vftr_prof_column_print (fp_log, prof_columns[i_column++], &m, NULL, NULL);
+   }
+
    if (vftr_max_allocated_fields > 0) {
       double mem_max = (double)vftr_allocate_get_max_memory_for_stackid (local_stack_id);
       vftr_prof_column_print (fp_log, prof_columns[i_column++], &mem_max, NULL, NULL);
    }
    
-   vftr_prof_column_print (fp_log, prof_columns[i_column++], func_name, NULL, NULL);
-   if (caller_name) {
-       vftr_prof_column_print (fp_log, prof_columns[i_column++], caller_name, NULL, NULL);
+   vftr_prof_column_print (fp_log, prof_columns[i_column++], func->name, NULL, NULL);
+   if (func->return_to != NULL) {
+       vftr_prof_column_print (fp_log, prof_columns[i_column++], func->return_to->name, NULL, NULL);
    } else {
        vftr_prof_column_print (fp_log, prof_columns[i_column++], "-/-", NULL, NULL);
    }
@@ -1503,6 +1530,8 @@ void vftr_print_profile (FILE *fp_log, FILE *f_html, int *n_func_indices, long l
     int n_columns = 8;
     // Add one column for each hardware counter.
     n_columns += vftr_scenario_expr_n_formulas;
+    // Add one column for self-traced memory consumption
+    if (vftr_memtrace) n_columns += 1;
     // If function overhead is displayed, add three more columns.
     if (vftr_environment.show_overhead->value) n_columns += 3;
     if (vftr_environment.show_stacks_in_profile->value) n_columns++;
@@ -1532,21 +1561,9 @@ void vftr_print_profile (FILE *fp_log, FILE *f_html, int *n_func_indices, long l
        double t_overhead;
        vftr_compute_line_content (func_table[i_func], &n_calls, &t_excl, &t_incl, &t_overhead);
        cumulative_time += t_excl;
-       //printf ("Print line(%d): %s %d\n", vftr_mpirank, func_table[i_func]->name, func_table[i_func]->return_to == NULL);
-       if (func_table[i_func]->return_to != NULL) {
-          vftr_print_profile_line (fp_log, func_table[i_func]->id, func_table[i_func]->gid, 
-   			        function_time, sampling_overhead_time_usec * 1e-6,
-   			        n_calls, t_excl, t_incl, cumulative_time, t_overhead,
-   				func_table[i_func]->name, func_table[i_func]->return_to->name, prof_columns);
 
-       } else {
-          //printf ("Init in profile line: %d %lld\n", i_func, t_excl);
-          vftr_print_profile_line (fp_log, func_table[i_func]->id, func_table[i_func]->gid, 
-   			        function_time, sampling_overhead_time_usec * 1e-6,
-   			        n_calls, t_excl, t_incl, cumulative_time, t_overhead,
-   				func_table[i_func]->name, NULL, prof_columns);
-      }
-      //printf ("Line printed: %d\n", vftr_mpirank);
+       vftr_print_profile_line (fp_log, func_table[i_func], function_time, sampling_overhead_time_usec * 1e-6,
+                                n_calls, t_excl, t_incl, cumulative_time, t_overhead, prof_columns);
 
        if (f_html != NULL) {
           bool mark_disp_f = false;

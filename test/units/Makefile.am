@@ -31,12 +31,23 @@ if USES_NEC_MPI
 endif
 endif
 
+if ENABLE_OPENMP
+if USES_INTEL_COMPILER
+  AM_CFLAGS += -qopenmp
+endif
+if USES_GNU_COMPILER
+  AM_CFLAGS += -fopenmp
+endif
+if USES_NEC_COMPILER
+  AM_CFLAGS += -fopenmp
+endif
+endif
+
 check_PROGRAMS = test_vftrace
 
 test_vftrace_SOURCES = $(srcdir)/test_vftrace.c
 test_vftrace_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
 test_vftrace_LDFLAGS = $(AM_LDFLAGS)
-
 
 dist_check_SCRIPTS = this_passes.sh \
 		     this_fails.sh \

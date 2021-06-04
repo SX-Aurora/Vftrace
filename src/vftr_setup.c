@@ -41,6 +41,7 @@
 #include "vftr_hooks.h"
 #include "vftr_timer.h"
 #include "vftr_functions.h"
+#include "vftr_mallinfo.h"
 #include "vftr_allocate.h"
 
 bool vftr_timer_end;
@@ -54,6 +55,8 @@ bool vftr_do_stack_normalization;
 
 char *vftr_start_date;
 char *vftr_end_date;
+
+bool in_vftr_finalize;
 
 void vftr_print_disclaimer_full (FILE *fp) {
     fprintf (fp, 
@@ -143,6 +146,7 @@ void vftr_set_end_date () {
 /**********************************************************************/
 
 void vftr_initialize() {
+    in_vftr_finalize = false;
     // set the timer reference point for this process
     vftr_set_local_ref_time();
     vftr_set_start_date();
@@ -203,8 +207,9 @@ void vftr_initialize() {
 
     memset (&vftr_prof_data, 0, sizeof(profdata_t));
 
+    vftr_init_mallinfo();
+
     // initialize the stack variables and tables
-    vftr_initialize_stacks();
 
     vftr_nextsampletime = 0ll;
     vftr_prevsampletime = 0;
@@ -221,7 +226,13 @@ void vftr_initialize() {
         vftr_events_enabled = false;
     }
 
-    if (vftr_n_hw_obs  > 0) {
+    if (vftr_memtrace) {
+       vftr_init_hwc_memtrace();
+    }
+
+    vftr_initialize_stacks();
+
+    if (vftr_n_hw_obs > 0) {
        vftr_prof_data.events[0] = (long long *) malloc (vftr_n_hw_obs * sizeof(long long));
        vftr_prof_data.events[1] = (long long *) malloc (vftr_n_hw_obs * sizeof(long long));
        memset (vftr_prof_data.events[0], 0, vftr_n_hw_obs * sizeof(long long));
@@ -278,6 +289,7 @@ void vftr_initialize() {
 /**********************************************************************/
 
 void vftr_finalize() {
+    in_vftr_finalize = true;
     int ntop = 0;
     function_t **funcTable;
 
@@ -344,6 +356,7 @@ void vftr_finalize() {
 	fprintf(vftr_log, "error stopping H/W counters, ignored\n");
     }
 
+    if (vftr_memtrace) vftr_finalize_mallinfo();
     if (vftr_max_allocated_fields > 0) vftr_allocate_finalize(vftr_log);
 
     if (vftr_environment.print_env->value) vftr_print_environment(vftr_log);
@@ -355,6 +368,7 @@ void vftr_finalize() {
     	fclose (vftr_log);
     }
     vftr_switch_off();
+    in_vftr_finalize = false;
 }
 
 /**********************************************************************/

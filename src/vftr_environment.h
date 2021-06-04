@@ -92,6 +92,8 @@ typedef struct vftr_envs {
 	env_var_bool_t *create_html;
 	env_var_string_t *sort_profile_table;
 	env_var_bool_t *show_overhead;
+        env_var_string_t *meminfo_method;
+        env_var_int_t *meminfo_stepsize;
         env_var_bool_t *print_env;
         env_var_bool_t *no_memtrace;
 	env_var_bool_t *all_mpi_summary;
@@ -105,7 +107,7 @@ extern vftr_envs_t vftr_environment;
 
 // These constants indicate how the final ASCII profile table is sorted.
 enum vftr_profile_sortings {SORT_EXCL_TIME, SORT_INCL_TIME, SORT_N_CALLS, SORT_STACK_ID,
-                            SORT_OVERHEAD, SORT_OVERHEAD_RELATIVE, SORT_NONE, SORT_INVALID}; 
+                            SORT_OVERHEAD, SORT_OVERHEAD_RELATIVE, SORT_MEMTRACE, SORT_NONE, SORT_INVALID}; 
 
 void vftr_read_environment();
 void vftr_assert_environment();

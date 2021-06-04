@@ -437,22 +437,6 @@ double vftr_scenario_expr_get_value (int i_scenario) {
 
 /**********************************************************************/
 
-void vftr_scenario_expr_add_sx_counters () {
-	for (int i = 0; i < vftr_scenario_expr_n_vars; i++) {
-		vftr_sx_counter (vftr_scenario_expr_counter_names[i], i);	
-	}
-}
-
-/**********************************************************************/
-
-void vftr_scenario_expr_add_papi_counters () {
-	for (int i = 0; i < vftr_scenario_expr_n_vars; i++) {
-		vftr_papi_counter (vftr_scenario_expr_counter_names[i]);
-	}
-}
-
-/**********************************************************************/
-
 int vftr_scenario_test_1 (FILE *fp_in, FILE *fp_out) {
 	vftr_read_scenario_file ("", fp_in);
 	fprintf (fp_out, "Registered variables: %d\n", vftr_scenario_expr_n_vars);

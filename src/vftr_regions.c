@@ -21,6 +21,10 @@
 #include <signal.h>
 #include <stdbool.h>
 
+#ifdef _OPENMP
+#include <omp.h>
+#endif
+
 #include "vftr_symbols.h"
 #include "vftr_hwcounters.h"
 #include "vftr_setup.h"
@@ -34,6 +38,7 @@
 #include "vftr_stacks.h"
 #include "vftr_clear_requests.h"
 #include "vftr_sorting.h"
+#include "vftr_mallinfo.h"
 
 void vftr_region_entry (const char *s, void *addr, bool isPrecise);
 void vftr_region_exit();
@@ -87,6 +92,10 @@ void vftr_region_entry (const char *s, void *addr, bool isPrecise){
     profdata_t *prof_return;
 
     if (vftr_off() || vftr_paused) return;
+#ifdef _OPENMP
+    if (omp_get_thread_num() > 0) return;
+#endif
+
 
     long long func_entry_time = vftr_get_runtime_usec();
     // log function entry and exit time to estimate the overhead time
@@ -219,6 +228,12 @@ void vftr_region_entry (const char *s, void *addr, bool isPrecise){
             }
 	    vftr_prof_data.ic = 1 - ic;
 	}
+       profdata_t *prof_current = &func->prof_current;
+    }
+
+    if (vftr_memtrace) {
+       profdata_t *prof_current = &func->prof_current;
+       vftr_sample_vmrss (prof_current->calls, true, false, prof_current->mem_prof);
     }
 
     /* Compensate overhead */
@@ -232,7 +247,7 @@ void vftr_region_entry (const char *s, void *addr, bool isPrecise){
 
 /**********************************************************************/
 
-void vftr_region_exit(){
+void vftr_region_exit() {
     int           e, read_counters, timeToSample;
     long long     timer;
     unsigned long long cycles0;
@@ -241,6 +256,10 @@ void vftr_region_exit(){
     profdata_t *prof_current;
 
     if (vftr_off() || vftr_paused) return;
+#ifdef _OPENMP
+    if (omp_get_thread_num() > 0) return;
+#endif
+
 
     /* See at the beginning of vftr_function_entry: If
      * we are dealing with a recursive function call, exit.
@@ -296,6 +315,8 @@ void vftr_region_exit(){
         prof_current->cycles -= vftr_prof_data.cycles;
         prof_current->time_excl -= vftr_prof_data.time_excl;
         vftr_prog_cycles -= vftr_prof_data.cycles;
+
+
     }
 
     if (read_counters) {
@@ -315,6 +336,13 @@ void vftr_region_exit(){
             }
         }
         vftr_prof_data.ic = 1 - ic;
+
+    }
+
+    if (vftr_memtrace) {
+       profdata_t *prof_current = &func->prof_current;
+       vftr_sample_vmrss (prof_current->calls - 1, false, false, prof_current->mem_prof); 
+
     }
 
     wtime = (vftr_get_runtime_usec() - vftr_overhead_usec) * 1.0e-6;

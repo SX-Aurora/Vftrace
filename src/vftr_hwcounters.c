@@ -32,6 +32,7 @@
 #include "vftr_scenarios.h"
 #include "vftr_stacks.h"
 #include "vftr_setup.h"
+#include "vftr_mallinfo.h"
 
 int vftr_find_event_number (char *);
 
@@ -79,7 +80,13 @@ void vftr_papi_counter (char *name) {
 /**********************************************************************/
 
 void vftr_sx_counter (char *name, int id) {
-    vftr_new_counter( name, id, 0);
+    vftr_new_counter (name, id, 0);
+}
+
+/**********************************************************************/
+
+void vftr_internal_counter (char *name, int id) {
+   vftr_new_counter (name, id, 0);
 }
 
 /**********************************************************************/
@@ -169,16 +176,24 @@ int vftr_init_hwc (char *scenario_file) {
     // TODO: Compare with cpu given in the model file
 #endif
 
+    for (int i = 0; i < vftr_scenario_expr_n_vars; i++) {
 #if defined(HAS_SXHWC)
-    vftr_scenario_expr_add_sx_counters ();
+       vftr_sx_counter (vftr_scenario_expr_counter_names[i], i);
 #elif defined(HAS_PAPI)
-    vftr_scenario_expr_add_papi_counters ();
+       vftr_papi_counter (vftr_scenario_expr_counter_names[i]);
 #endif
+    }
 
 #if defined(HAS_PAPI)
     vftr_start_hwcounters();
 #endif
     return 0;
+}
+
+/**********************************************************************/
+
+void vftr_init_hwc_memtrace () {
+   vftr_internal_counter ("VmRSS", vftr_scenario_expr_n_vars);
 }
 
 /**********************************************************************/

@@ -32,6 +32,7 @@ extern bool vftr_do_stack_normalization;
 
 extern char *vftr_start_date;
 extern char *vftr_end_date;
+extern bool in_vftr_finalize;
 
 void vftr_initialize ();
 void vftr_finalize () ;

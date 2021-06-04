@@ -6,6 +6,16 @@
 #include <stdint.h>
 #include <stdbool.h>
 
+typedef struct memProf {
+   long long mem_entry;
+   long long mem_exit;
+   long long mem_max;
+   long long next_memtrace_entry;
+   long long next_memtrace_exit;
+   int mem_tolerance;
+   int mem_increment;
+} mem_prof_t;
+
 typedef struct ProfileData {
    // amount of calls 
    long long calls;
@@ -21,6 +31,7 @@ typedef struct ProfileData {
    int ic;
    long mpi_tot_send_bytes;
    long mpi_tot_recv_bytes;
+   mem_prof_t *mem_prof;
 } profdata_t;
 
 typedef struct Function {
@@ -77,10 +88,12 @@ extern int vftr_stackid_list_size;
 #define STACKID_LIST_INC 50
 
 void vftr_stackid_list_init ();
-//void vftr_stackid_list_add (int stack_id);
 void vftr_stackid_list_add (int local_stack_id, int global_stack_id);
 void vftr_stackid_list_print (FILE *fp);
 void vftr_stackid_list_finalize ();
+
+void vftr_sample_vmrss (long long n_calls, bool is_entry, bool verbose, mem_prof_t *mem_prof);
+double vftr_get_max_memory (function_t *func);
 
 // test functions
 int vftr_functions_test_1 (FILE *fp_in, FILE *fp_out);

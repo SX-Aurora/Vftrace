@@ -33,6 +33,7 @@
 #include "vftr_functions.h"
 #include "vftr_fileutils.h"
 #include "vftr_hwcounters.h"
+#include "vftr_mallinfo.h"
 
 
 char *vftr_precise_functions[] = {
@@ -66,6 +67,17 @@ struct loc_glob_id *vftr_print_stackid_list;
 int vftr_n_print_stackids;
 int vftr_stackid_list_size;
 
+void vftr_init_mem_prof (mem_prof_t *mem_prof) {
+  mem_prof->next_memtrace_entry = 0;
+  mem_prof->next_memtrace_exit = 0;
+  mem_prof->mem_entry = 0;
+  mem_prof->mem_exit = 0;
+  mem_prof->mem_max = 0;
+  mem_prof->mem_increment = vftr_environment.meminfo_stepsize->value;
+}
+
+/**********************************************************************/
+
 void vftr_init_profdata (profdata_t *prof) {
   prof->calls = 0;
   prof->cycles = 0;
@@ -77,8 +89,11 @@ void vftr_init_profdata (profdata_t *prof) {
   prof->ic = 0;
   prof->mpi_tot_send_bytes = 0;
   prof->mpi_tot_recv_bytes = 0;
-  
+  prof->mem_prof = (mem_prof_t*)malloc (sizeof(mem_prof_t));
+  vftr_init_mem_prof (prof->mem_prof);
 }
+
+/**********************************************************************/
 
 // add a new function to the stack tables
 function_t *vftr_new_function(void *arg, const char *function_name, function_t *caller, bool is_precise) {
@@ -171,8 +186,8 @@ function_t *vftr_new_function(void *arg, const char *function_name, function_t *
    // preparing the function specific profiling data
    vftr_init_profdata (&func->prof_current);
    vftr_init_profdata (&func->prof_previous);
-
-   if (vftr_n_hw_obs > 0) {
+   
+   if (vftr_n_hw_obs > 0)  {
       func->prof_current.event_count = (long long*) malloc(vftr_n_hw_obs * sizeof(long long));
       func->prof_previous.event_count = (long long*) malloc(vftr_n_hw_obs * sizeof(long long));
       memset (func->prof_current.event_count, 0, vftr_n_hw_obs * sizeof(long long));
@@ -221,14 +236,15 @@ void vftr_reset_counts (function_t *func) {
    function_t *f;
    int i, n;
    int m = vftr_n_hw_obs * sizeof(long long);
+   if (vftr_memtrace) m += sizeof(long long);
 
    if (func == NULL) return;
 
    if (func->prof_current.event_count) {
-     memset (func->prof_current.event_count,  0, m );
+     memset (func->prof_current.event_count,  0, m);
    }
    if (func->prof_previous.event_count) {
-     memset (func->prof_previous.event_count, 0, m );
+     memset (func->prof_previous.event_count, 0, m);
    }
    func->prof_current.cycles  = 0;
    func->prof_current.time_excl = 0;
@@ -431,6 +447,14 @@ void vftr_demangle_all_func_names () {
 
 int vftrace_show_stacktree_size () {
    return vftr_stackscount;
+}
+
+/**********************************************************************/
+
+double vftr_get_max_memory (function_t *func) {
+  if (!vftr_memtrace) return 0.0;
+  // Convert from kilobytes to bytes
+  return (double)func->prof_current.mem_prof->mem_max * 1024;
 }
 
 /**********************************************************************/

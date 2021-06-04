@@ -288,6 +288,8 @@ int vftr_profile_sorting_method () {
      return SORT_OVERHEAD;
   } else if (!strcmp (s, "OVERHEAD_RELATIVE")) {
      return SORT_OVERHEAD_RELATIVE;
+  } else if (!strcmp (s, "MEMTRACE")) {
+     return SORT_MEMTRACE;
   } else if (!strcmp (s, "NONE")) {
      return SORT_NONE;
   } else {
@@ -309,6 +311,8 @@ char *vftr_profile_sorting_method_string () {
       return "sorted by overhead time";
     case SORT_OVERHEAD_RELATIVE:
       return "sorted by relative overhead time";
+    case SORT_MEMTRACE:
+      return "sorted by self-memory profile (VmRSS)";
     case SORT_NONE:
       return "unsorted";
   }
@@ -317,7 +321,7 @@ char *vftr_profile_sorting_method_string () {
 /**********************************************************************/
 
 void vftr_read_environment () {
-    vftr_n_env_variables = 34;
+    vftr_n_env_variables = 36;
     vftr_env_variable_names = (char**)malloc(vftr_n_env_variables * sizeof(char*));
     vftr_env_counter = 0;
     
@@ -349,6 +353,8 @@ void vftr_read_environment () {
     vftr_environment.create_html = vftr_read_env_bool ("VFTR_CREATE_HTML", false);
     vftr_environment.sort_profile_table = vftr_read_env_string ("VFTR_SORT_PROFILE_TABLE", "EXCL_TIME");
     vftr_environment.show_overhead = vftr_read_env_bool ("VFTR_SHOW_FUNCTION_OVERHEAD", false);
+    vftr_environment.meminfo_method = vftr_read_env_string ("VFTR_MEMINFO_METHOD", "");
+    vftr_environment.meminfo_stepsize = vftr_read_env_int ("VFTR_MEMINFO_STEPSIZE", 1000);
     vftr_environment.print_env = vftr_read_env_bool ("VFTR_PRINT_ENVIRONMENT", false);
     vftr_environment.no_memtrace = vftr_read_env_bool ("VFTR_NO_MEMTRACE", false);
     vftr_environment.all_mpi_summary = vftr_read_env_bool ("VFTR_COMPLETE_MPI_SUMMARY", false);
@@ -429,9 +435,12 @@ void vftr_assert_environment () {
                vftr_rank0_printf ("Warning: The profile table sorting method \"%s\" is not defined. Defaulting to TIME_EXCL.\n", vftr_environment.sort_profile_table->value);
 	       vftr_environment.sort_profile_table->value = SORT_EXCL_TIME;
 	   } else if ((method == SORT_OVERHEAD || method == SORT_OVERHEAD_RELATIVE) && !vftr_environment.show_overhead->value) {
-	       vftr_rank0_printf ("Warning: You specified VFTR_SORT_PROFILE_TABLE=OVERHEAD(_RELATIVE), but overhead display is not enabled. Defaulting to TIME_EXLC.\n");
+	       vftr_rank0_printf ("Warning: You specified VFTR_SORT_PROFILE_TABLE=OVERHEAD(_RELATIVE), but overhead display is not enabled. Defaulting to TIME_EXCL.\n");
 	       vftr_environment.sort_profile_table->value = SORT_EXCL_TIME;
-	   }
+	   } else if (method == SORT_MEMTRACE && !vftr_environment.meminfo_method->set) {
+               vftr_rank0_printf ("Warning: You specified VFTR_SORT_PROFILE_TABLE=MEMTRACE, but memtracing is not active. Defaulting to TIME_EXCL.\n");
+               vftr_environment.sort_profile_table->value = SORT_EXCL_TIME;
+           }
         } 
 
 	if (vftr_environment.prof_truncate_cutoff->set && !vftr_environment.prof_truncate->value) {
@@ -549,6 +558,8 @@ void vftr_free_environment () {
 	free (vftr_environment.create_html);
         free (vftr_environment.sort_profile_table);
 	free (vftr_environment.show_overhead);
+        free (vftr_environment.meminfo_method);
+        free (vftr_environment.meminfo_stepsize);
         free (vftr_environment.print_env);
 	free (vftr_environment.no_memtrace);
         free (vftr_environment.all_mpi_summary);
@@ -591,6 +602,8 @@ void vftr_print_environment (FILE *fp) {
 	vftr_print_env_bool (fp, "VFTR_CREATE_HTML", vftr_environment.create_html);
 	vftr_print_env_string (fp, "VFTR_SORT_PROFILE_TABLE", vftr_environment.sort_profile_table);
         vftr_print_env_bool (fp, "VFTR_SHOW_FUNCTION_OVERHEAD", vftr_environment.show_overhead);
+        vftr_print_env_string (fp, "VFTR_MEMINFO_METHOD", vftr_environment.meminfo_method);
+        vftr_print_env_int (fp, "VFTR_MEMINFO_STEPSIZE", vftr_environment.meminfo_stepsize);
         vftr_print_env_bool (fp, "VFTR_PRINT_ENVIRONMENT", vftr_environment.print_env);
         vftr_print_env_bool (fp, "VFTR_NO_MEMTRACE", vftr_environment.no_memtrace);
         vftr_print_env_bool (fp, "VFTR_COMPLETE_MPI_SUMMARY", vftr_environment.all_mpi_summary);

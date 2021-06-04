@@ -45,7 +45,9 @@ libvftrace_la_SOURCES = vftr_scenarios.c \
 		       vftr_regex.c \
 	 	       vftr_environment.c \
 		       vftr_signals.c \
-		       vftr_browse.c
+		       vftr_browse.c \
+                       vftr_mallinfo.c
+
 if ENABLE_FORTRAN
 libvftrace_la_SOURCES += vftrace_mod.F90
 endif
@@ -84,6 +86,25 @@ endif
 
 if USES_INTEL_COMPILER
 libvftrace_la_LDFLAGS += -lifcore
+endif
+
+if ENABLE_OPENMP
+
+if USES_INTEL_COMPILER
+libvftrace_la_CFLAGS += -qopenmp
+libvftrace_la_FCFLAGS += -qopenmp
+endif
+
+if USES_GNU_COMPILER
+libvftrace_la_CFLAGS += -fopenmp
+libvftrace_la_FCFLAGS += -fopenmp
+endif
+
+if USES_NEC_COMPILER
+libvftrace_la_CFLAGS += -fopenmp
+libvftrace_la_FCFLAGS += -fopenmp
+endif
+
 endif
 
 libvftr_dlopen_la_SOURCES = vftr_dlopen.c

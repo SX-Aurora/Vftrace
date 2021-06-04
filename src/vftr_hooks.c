@@ -22,6 +22,10 @@
 #include <string.h>
 #include <signal.h>
 
+#ifdef _OPENMP
+#include <omp.h>
+#endif
+
 #include <stdbool.h>
 #include "vftr_symbols.h"
 #include "vftr_hwcounters.h"
@@ -36,6 +40,7 @@
 #include "vftr_stacks.h"
 #include "vftr_clear_requests.h"
 #include "vftr_sorting.h"
+#include "vftr_mallinfo.h"
 
 bool vftr_profile_wanted = false;
 
@@ -70,6 +75,9 @@ void vftr_function_entry (const char *s, void *addr, bool isPrecise) {
 	vftr_init = 0;
     }
     if (vftr_off() || vftr_paused) return;
+#ifdef _OPENMP
+    if (omp_get_thread_num() > 0) return;
+#endif
 
     long long func_entry_time = vftr_get_runtime_usec();
     // log function entry and exit time to estimate the overhead time
@@ -171,11 +179,15 @@ void vftr_function_entry (const char *s, void *addr, bool isPrecise) {
            }
            vftr_prof_data.ic = 1 - ic;
        }
+
     }
 
+    profdata_t *prof_current = &func->prof_current;
+    if (vftr_memtrace) {
+       vftr_sample_vmrss (prof_current->calls, true, false, prof_current->mem_prof);
+    }
 
     if (time_to_sample && vftr_env_do_sampling ()) {
-        profdata_t *prof_current = &func->prof_current;
         profdata_t *prof_previous = &func->prof_previous;
         vftr_write_to_vfd (func_entry_time, prof_current, prof_previous, func->id, SID_ENTRY);
 #ifdef _MPI
@@ -224,6 +236,9 @@ void vftr_function_exit () {
     profdata_t *prof_current;
 
     if (vftr_off() || vftr_paused) return;
+#ifdef _OPENMP
+    if (omp_get_thread_num() > 0) return;
+#endif
 
     /* See at the beginning of vftr_function_entry: If
      * we are dealing with a recursive function call, exit.
@@ -271,6 +286,10 @@ void vftr_function_exit () {
             }
         }
         vftr_prof_data.ic = 1 - ic;
+    }
+
+    if (vftr_memtrace) {
+       vftr_sample_vmrss (prof_current->calls - 1, false, false, prof_current->mem_prof);
     }
 
     if (timeToSample && vftr_env_do_sampling ()) {
