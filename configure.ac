@@ -1,6 +1,5 @@
 AC_INIT([vftrace], [1.0], [felix.uhl@emea.nec.com,christian.weiss@emea.nec.com])
 : ${CFLAGS="-O2"}
-: ${CXXFLAGS="-O2"}
 : ${FCFLAGS="-O2"}
 
 # Will be generated
@@ -8,7 +7,6 @@ AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_MACRO_DIRS([m4])
 AM_INIT_AUTOMAKE([-Wall -Werror foreign no-dependencies subdir-objects])
 AC_PROG_CC
-AC_PROG_CXX
 AC_PROG_FC
 AC_FC_SRCEXT(F90)
 AC_ENABLE_SHARED
