@@ -486,27 +486,27 @@ char *vftr_demangle_cpp (char *m_name) {
   // Loop over demangled name to count the uncontained <..> brackets
   int n_brackets = 0;
   int n_open = 0; // Nr. of currently unresolved "<"
-  char *p = d_name;
-  while (*p != '\0') {
-    if (*p == '<') {
+  char *read_ptr = d_name;
+  while (*read_ptr != '\0') {
+    if (*read_ptr == '<') {
       n_open++;
-    } else if (*p == '>') {
+    } else if (*read_ptr == '>') {
       n_open--;
       if (n_open == 0) n_brackets++; // Found outer bracket
     }
-    p++;
+    read_ptr++;
   }
   if (n_brackets == 0) return d_name;
   // Count the number of characters in between these brackets
   int *n_count = (int*)malloc (n_brackets * sizeof(int));
   int count = 0; 
-  p = d_name;
+  read_ptr = d_name;
   n_brackets = 0;
   n_open = 0;
-  while (*p != '\0') {
-    if (*p == '<') {
+  while (*read_ptr != '\0') {
+    if (*read_ptr == '<') {
       n_open++; 
-    } else if (*p == '>') {
+    } else if (*read_ptr == '>') {
       n_open--;
       if (n_open == 0) {
         n_count[n_brackets++] = count - 1;
@@ -516,7 +516,7 @@ char *vftr_demangle_cpp (char *m_name) {
     if (n_open > 0) { // Everything between the brackets (including other brackets)
       count++;
     }
-    p++;
+    read_ptr++;
   }
   // From d_name, we remove n_count characters within brackets and replace them with ".." each.
   int new_strlen = strlen(d_name); 
@@ -527,33 +527,25 @@ char *vftr_demangle_cpp (char *m_name) {
   char *d_name2 = (char*)malloc((new_strlen + 1) * sizeof(char));
   n_open == 0;
   n_brackets = 0;
-  p = d_name2;
-  char *tmp = d_name;
-  //while (*d_name != '\0') {
-  while (*tmp != '\0') {
-    //*p = *d_name; // Copy the current character
-    *p = *tmp; // Copy the current character
-    //count_write++;
-    if (*p == '<') { // Current character indicates an open bracket. Add ".." and jump n_counts elements ahead
-      p++;
-      *p = '.';
-      p++;
-      *p = '.';
-      p++;
-      *p = '>';
-      //count_write += 3;
-      //d_name += n_count[n_brackets++];
-      tmp += (n_count[n_brackets++] + 1);
+  char *write_ptr = d_name2;
+  read_ptr = d_name;
+  while (*read_ptr != '\0') {
+    *write_ptr = *read_ptr; // Copy the current character
+    if (*write_ptr == '<') { // Current character indicates an open bracket. Add ".." and jump n_counts elements ahead
+      write_ptr++;
+      *write_ptr = '.';
+      write_ptr++;
+      *write_ptr = '.';
+      write_ptr++;
+      *write_ptr = '>';
+      read_ptr += (n_count[n_brackets++] + 1);
     } 
-    p++;
-    //d_name++;
-    tmp++;
+    write_ptr++;
+    read_ptr++;
   }
-  *p = '\0';
-  //count_write++;
-  //free(d_name);
+  *write_ptr = '\0';
+  free(d_name);
   return d_name2;
-  //return d_name;
 }
 #endif
 
