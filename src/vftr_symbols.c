@@ -468,7 +468,6 @@ char *vftr_find_symbol (void *addr) {
 
 #ifdef _LIBERTY_AVAIL
 char *vftr_demangle_cpp (char *m_name) {
-  if (vftr_mpirank > 0) return m_name;
   char *d_name = cplus_demangle(m_name, 0);
 
   if (d_name == NULL) {
@@ -476,14 +475,16 @@ char *vftr_demangle_cpp (char *m_name) {
     return m_name;
   }
 
+  // The output of cplus_demangle has been observed to sometimes include
+  // non-ASCII control characters. These can lead to problems later in Vftrace.
+  // Therefore, the demangled name is ignored.
   int has_control_char;
   vftr_has_control_character (d_name, &has_control_char, NULL);
   if (has_control_char >= 0) {
     return m_name; 
   }
   
-  // TODO: Replace the irrelevant brackets in the demangled string.
-  // Loop over demangled name to count the uncontained <..> brackets
+  // Loop over demangled name to count the external <..> brackets (i.e. these not included within other <..> brackets).
   int n_brackets = 0;
   int n_open = 0; // Nr. of currently unresolved "<"
   char *read_ptr = d_name;
@@ -497,6 +498,7 @@ char *vftr_demangle_cpp (char *m_name) {
     read_ptr++;
   }
   if (n_brackets == 0) return d_name;
+
   // Count the number of characters in between these brackets
   int *n_count = (int*)malloc (n_brackets * sizeof(int));
   int count = 0; 
@@ -509,11 +511,11 @@ char *vftr_demangle_cpp (char *m_name) {
     } else if (*read_ptr == '>') {
       n_open--;
       if (n_open == 0) {
-        n_count[n_brackets++] = count - 1;
+        n_count[n_brackets++] = count - 1; // Subtract 1 for the first '<'.
         count = 0;
       }
     }
-    if (n_open > 0) { // Everything between the brackets (including other brackets)
+    if (n_open > 0) { // Everything between the brackets (including other brackets), plus the first '<', which is subtracted above.
       count++;
     }
     read_ptr++;
@@ -545,6 +547,7 @@ char *vftr_demangle_cpp (char *m_name) {
   }
   *write_ptr = '\0';
   free(d_name);
+  free(n_count);
   return d_name2;
 }
 #endif
