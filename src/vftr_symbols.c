@@ -471,14 +471,16 @@ char *vftr_demangle_cpp (char *m_name) {
   if (vftr_mpirank > 0) return m_name;
   char *d_name = cplus_demangle(m_name, 0);
 
-  if (d_name == NULL) return m_name;
+  if (d_name == NULL) {
+    // Not a C++ symbol
+    return m_name;
+  }
+
   int has_control_char;
   vftr_has_control_character (d_name, &has_control_char, NULL);
   if (has_control_char >= 0) {
-    printf ("HAS CONTROL CHAR: %s\n", d_name);
     return m_name; 
   }
-  //return d_name;
   
   // TODO: Replace the irrelevant brackets in the demangled string.
   // Loop over demangled name to count the uncontained <..> brackets
@@ -494,6 +496,7 @@ char *vftr_demangle_cpp (char *m_name) {
     }
     p++;
   }
+  if (n_brackets == 0) return d_name;
   // Count the number of characters in between these brackets
   int *n_count = (int*)malloc (n_brackets * sizeof(int));
   int count = 0; 
@@ -506,7 +509,7 @@ char *vftr_demangle_cpp (char *m_name) {
     } else if (*p == '>') {
       n_open--;
       if (n_open == 0) {
-        n_count[n_brackets++] = count + 1; // Leave space for two dots
+        n_count[n_brackets++] = count - 1;
         count = 0;
       }
     }
@@ -519,31 +522,38 @@ char *vftr_demangle_cpp (char *m_name) {
   int new_strlen = strlen(d_name); 
   for (int i = 0; i < n_brackets; i++) {
     new_strlen -= n_count[i];
-    new_strlen += 4;
-    //new_strlen += 2; // Two dots
+    new_strlen += 2; // Two dots
   }
-  char *d_name2 = (char*)malloc(new_strlen * sizeof(char));
+  char *d_name2 = (char*)malloc((new_strlen + 1) * sizeof(char));
   n_open == 0;
   n_brackets = 0;
   p = d_name2;
-  while (*d_name != '\0') {
-    *p = *d_name; // Copy the current character
-    if (iscntrl(*d_name)) printf ("There are control characters left!\n");
-    if (*p != '<') { // Current character indicates an open bracket. Add ".." and jump n_counts elements ahead
+  char *tmp = d_name;
+  //while (*d_name != '\0') {
+  while (*tmp != '\0') {
+    //*p = *d_name; // Copy the current character
+    *p = *tmp; // Copy the current character
+    //count_write++;
+    if (*p == '<') { // Current character indicates an open bracket. Add ".." and jump n_counts elements ahead
       p++;
       *p = '.';
       p++;
       *p = '.';
       p++;
       *p = '>';
-      p++;
-      d_name += n_count[n_brackets++];
+      //count_write += 3;
+      //d_name += n_count[n_brackets++];
+      tmp += (n_count[n_brackets++] + 1);
     } 
     p++;
+    //d_name++;
+    tmp++;
   }
   *p = '\0';
-  //return d_name2;
-  return d_name;
+  //count_write++;
+  //free(d_name);
+  return d_name2;
+  //return d_name;
 }
 #endif
 
