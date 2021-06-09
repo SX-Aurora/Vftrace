@@ -165,9 +165,9 @@ char *vftr_create_logfile_name (int mpi_rank, int mpi_size, char *suffix) {
 	// The user can also define a different output directory
 	char *out_directory;
 	if (vftr_environment.output_directory->set) {
-		out_directory = vftr_environment.output_directory->value;
+	   out_directory = vftr_environment.output_directory->value;
 	} else {
-		out_directory = strdup (".");
+           out_directory = strdup (".");
 	}
 	
 	vftr_program_path = vftr_get_program_path ();	
@@ -1591,25 +1591,6 @@ void vftr_print_profile (FILE *fp_log, FILE *f_html, int *n_func_indices, long l
     fflush(fp_log);
     
     free (func_table);
-}
-
-/**********************************************************************/
-
-int vftr_filewrite_test_1 (FILE *fp_in, FILE *fp_out) {
-	fprintf (fp_out, "Check the creation of log and vfd file name\n");
-	int mpi_rank, mpi_size;
-	mpi_rank = 0;
-	mpi_size = 1;
-	fprintf (fp_out, "logfile_name(%d, %d): %s\n", mpi_rank, mpi_size,
-		 vftr_create_logfile_name(mpi_rank, mpi_size, "log"));
-	mpi_rank = 11;
-	mpi_size = 111;
-	fprintf (fp_out, "logfile_name(%d, %d): %s\n", mpi_rank, mpi_size,
-		 vftr_create_logfile_name(mpi_rank, mpi_size, "log"));
-	fprintf (fp_out, "logfile_name(%d, %d): %s\n", mpi_rank, mpi_size,
-		 vftr_create_logfile_name(mpi_rank, mpi_size, "vfd"));
-
-	return 0;
 }
 
 /**********************************************************************/

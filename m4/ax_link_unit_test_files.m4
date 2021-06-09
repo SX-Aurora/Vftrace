@@ -21,7 +21,7 @@ AC_CONFIG_LINKS(test/units/ref_input/vftr_scenario_test_1.json:test/units/ref_in
                )
 AC_CONFIG_LINKS(test/units/ref_output/environment_1.out:test/units/ref_output/environment_1.out
                 test/units/ref_output/environment_2.out:test/units/ref_output/environment_2.out
-                test/units/ref_output/vftr_filewrite_test_1.out:test/units/ref_output/vftr_filewrite_test_1.out
+                test/units/ref_output/filewrite_1.out:test/units/ref_output/filewrite_1.out
                 test/units/ref_output/vftr_scenario_test_1.out:test/units/ref_output/vftr_scenario_test_1.out
                 test/units/ref_output/vftr_scenario_test_2.out:test/units/ref_output/vftr_scenario_test_2.out
                 test/units/ref_output/setup_1.out:test/units/ref_output/setup_1.out
@@ -54,7 +54,7 @@ AC_CONFIG_LINKS(test/units/this_passes.sh:test/units/this_passes.sh
                 test/units/environment_2.sh:test/units/environment_2.sh
                 test/units/setup_1.sh:test/units/setup_1.sh
                 test/units/setup_2.sh:test/units/setup_2.sh
-                test/units/vftr_filewrite_test_1.sh:test/units/vftr_filewrite_test_1.sh
+                test/units/filewrite_1.sh:test/units/filewrite_1.sh
                 test/units/vftr_filewrite_test_2.sh:test/units/vftr_filewrite_test_2.sh
                 test/units/vftr_scenario_test_1.sh:test/units/vftr_scenario_test_1.sh
                 test/units/vftr_scenario_test_2.sh:test/units/vftr_scenario_test_2.sh
