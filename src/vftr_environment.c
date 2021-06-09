@@ -614,31 +614,6 @@ void vftr_print_environment (FILE *fp) {
 
 /**********************************************************************/
 
-int vftr_environment_test_1 (FILE *fp) {
-  putenv ("VFTR_OFF=yes");
-  vftr_read_environment ();
-  vftr_assert_environment ();
-  vftr_print_environment (fp);
-  vftr_free_environment ();
-  	
-  fprintf (fp, "***************************\n");
-  putenv ("VFTR_OFF=no");
-  putenv ("VFTR_SAMPLING=YES");
-  putenv ("VFTR_REGIONS_PRECISE=0");
-  putenv ("VFTR_MPI_LOG=on");
-  putenv ("VFTR_OUT_DIRECTORY=\"foo/bar\"");
-  putenv ("VFTR_BUFSIZE=1234");
-  putenv ("VFTR_SAMPLETIME=12.34");
-  
-  vftr_read_environment ();
-  vftr_assert_environment ();
-  vftr_print_environment (fp);
-  vftr_free_environment ();
-  return 0;
-}
-
-/**********************************************************************/
-
 int vftr_environment_test_2 (FILE *fp) {
   // Check if the advisor works.
   putenv ("VFTR_OF=yes"); // Should be VFTR_OFF

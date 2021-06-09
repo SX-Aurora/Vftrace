@@ -123,7 +123,6 @@ int vftr_profile_sorting_method();
 char *vftr_profile_sorting_method_string();
 void vftr_print_environment (FILE *fp);
 
-int vftr_environment_test_1 (FILE *fp);
 int vftr_environment_test_2 (FILE *fp);
 
 #endif

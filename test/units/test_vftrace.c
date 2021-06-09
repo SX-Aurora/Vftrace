@@ -6,7 +6,6 @@
 #include "vftr_functions.h"
 #include "vftr_scenarios.h"
 #include "vftr_stacks.h"
-#include "vftr_symbols.h"
 #include "vftr_environment.h"
 #include "vftr_hwcounters.h"
 #include "vftr_browse.h"
@@ -53,10 +52,6 @@ int main (int argc, char **argv) {
 		retval = this_fails();
 	} else if (!strcmp (argv[1], "this_passes")) {
 		retval = this_passes();
-	} else if (!strcmp (argv[1], "vftr_symbols_test_1")) {
-		retval = vftr_symbols_test_1 (fp_in, fp_out);
-	} else if (!strcmp (argv[1], "vftr_environment_test_1")) {
-		retval = vftr_environment_test_1 (fp_out);
 	} else if (!strcmp (argv[1], "vftr_environment_test_2")) {
 		retval = vftr_environment_test_2 (fp_out);
 	} else if (!strcmp (argv[1], "vftr_setup_test_1")) {
