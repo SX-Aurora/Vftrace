@@ -40,7 +40,6 @@ void vftr_finalize () ;
 void vftr_get_mpi_info (int *rank, int *size);
 
 // test functions
-int vftr_setup_test_1 (FILE *fp);
 int vftr_setup_test_2 (FILE *fp);
 
 #endif
