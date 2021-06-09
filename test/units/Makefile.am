@@ -51,7 +51,6 @@ test_vftrace_LDFLAGS = $(AM_LDFLAGS)
 
 dist_check_SCRIPTS = this_passes.sh \
 		     this_fails.sh \
-		     vftr_symbols_test_1.sh \
 		     vftr_environment_test_1.sh \
 		     vftr_environment_test_2.sh \
 		     vftr_setup_test_1.sh \
@@ -85,7 +84,8 @@ check_PROGRAMS += radixsort_uint64 \
 		  sort_double_ascending \
 		  sort_double_descending \
 		  sort_double_copy_ascending \
-		  sort_double_copy_descending
+		  sort_double_copy_descending \
+                  symbols_test_1
 
 radixsort_uint64_SOURCES = $(srcdir)/radixsort_uint64.c
 radixsort_uint64_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
@@ -115,13 +115,18 @@ sort_double_copy_descending_SOURCES = $(srcdir)/sort_double_copy_descending.c
 sort_double_copy_descending_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
 sort_double_copy_descending_LDFLAGS = $(AM_LDFLAGS)
 
+symbols_test_1_SOURCES = $(srcdir)/symbols_test_1.c
+symbols_test_1_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
+symbols_test_1_LDFLAGS = $(AM_LDFLAGS)
+
 dist_check_SCRIPTS += radixsort_uint64.sh \
 		      sort_integer_ascending.sh \
 		      sort_integer_descending.sh \
 		      sort_double_ascending.sh \
 		      sort_double_descending.sh \
 		      sort_double_copy_ascending.sh \
-		      sort_double_copy_descending.sh
+		      sort_double_copy_descending.sh \
+                      symbols_test_1.sh
 
 TEST_EXTENSIONS = .sh
 SH_LOG_COMPILER = $(SHELL)

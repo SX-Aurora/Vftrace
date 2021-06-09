@@ -23,6 +23,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
+#include <stdbool.h>
 #include <elf.h>
 
 extern FILE *vftr_log;
@@ -48,7 +49,7 @@ extern symtab_t **vftr_symtab;
 
 int vftr_cmpsym(const void *a, const void *b);
 
-void vftr_print_symbol_table (FILE *f);
+void vftr_print_symbol_table (FILE *f, bool include_addr);
 
 void vftr_get_library_symtab (char *target, FILE *fp, off_t base, int pass);
 

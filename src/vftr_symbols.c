@@ -139,10 +139,15 @@ int vftr_cmpsym( const void *a, const void *b ) {
 
 /**********************************************************************/
 
-void vftr_print_symbol_table (FILE *fp) {
+void vftr_print_symbol_table (FILE *fp, bool include_addr) {
     fprintf (fp, "SYMBOL TABLE: %d\n", vftr_nsymbols);
     for (int i = 0; i < vftr_nsymbols; i++) {
-	fprintf (fp, "%5d %p %04x %s\n", i, vftr_symtab[i]->addr, vftr_symtab[i]->index, vftr_symtab[i]->name);
+	if (include_addr) {
+           // What is the index argument for?
+           fprintf (fp, "%5d %p %04x %s\n", i, vftr_symtab[i]->addr, vftr_symtab[i]->index, vftr_symtab[i]->name);
+        } else {
+           fprintf (fp, "%5d %s\n", i, vftr_symtab[i]->name);
+        }
     }
     fprintf (fp, "-----------------------------------------------------------------\n");
 }
@@ -561,7 +566,7 @@ int vftr_symbols_test_1 (FILE *fp_in, FILE *fp_out) {
 	vftr_nsymbols = 0;
 	rewind (fp_in);
 	vftr_get_library_symtab ("", fp_in, 0L, 1);	
-	vftr_print_symbol_table (fp_out);
+	vftr_print_symbol_table (fp_out, false);
 	free (vftr_symtab);
 	return 0;
 }
