@@ -19,13 +19,26 @@ AC_DEFUN([AX_CHECK_MPI], [
             MPI is not used. Default: no])],
       [with_mpi=yes])
    AM_CONDITIONAL([WITH_MPI], [test "$with_mpi" = "yes"])
+
+   # NEC_MPI for x86 links mpi_mem and not mpi
+   # Check which one is required and use that one
+   # in further tests
+   AM_COND_IF(
+      [WITH_MPI],
+      [AC_LANG(C)
+       AC_CHECK_LIB(
+          [mpi_mem],
+          [MPI_Init],
+          [mpi_lib_name=mpi_mem],
+          [mpi_lib_name=mpi])]
+       AC_MSG_NOTICE([Using -l${mpi_lib_name} for further testing!]))
    
    # check if compiler supports C-MPI
    AM_COND_IF(
       [WITH_MPI],
       [AC_LANG(C)
        AC_CHECK_LIB(
-          [mpi],
+          [${mpi_lib_name}],
           [MPI_Init],
           [],
           [AC_MSG_FAILURE([unable to find C-MPI])])])
@@ -37,7 +50,7 @@ AC_DEFUN([AX_CHECK_MPI], [
          [WITH_MPI],
          [AC_LANG(Fortran)
           AC_CHECK_LIB(
-             [mpi],
+             [${mpi_lib_name}],
              [MPI_INIT],
              [],
              [AC_MSG_FAILURE([unable to find Fortran-MPI])])])])
