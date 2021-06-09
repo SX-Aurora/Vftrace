@@ -1,5 +1,5 @@
 {
-  "scenario_name": "vftr_scenario_test_1",
+  "scenario_name": "scenario_1",
   "counters": [
     {
       "papi_name": "C1",

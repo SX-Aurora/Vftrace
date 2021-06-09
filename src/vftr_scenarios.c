@@ -437,25 +437,6 @@ double vftr_scenario_expr_get_value (int i_scenario) {
 
 /**********************************************************************/
 
-int vftr_scenario_test_1 (FILE *fp_in, FILE *fp_out) {
-	vftr_read_scenario_file ("", fp_in);
-	fprintf (fp_out, "Registered variables: %d\n", vftr_scenario_expr_n_vars);
-	for (int i = 0; i < vftr_scenario_expr_n_vars; i++) {
-		fprintf (fp_out, "%d: name: %s\n", i, te_vars[i].name);		
-	}
-	fprintf (fp_out, "Check for the three additional entries: \n");
-	fprintf (fp_out, "%s\n", te_vars[vftr_scenario_expr_n_vars].name);
-	fprintf (fp_out, "%s\n", te_vars[vftr_scenario_expr_n_vars+1].name);
-	fprintf (fp_out, "%s\n", te_vars[vftr_scenario_expr_n_vars+2].name);
-	fprintf (fp_out, "Registered formulas: %d\n", vftr_scenario_expr_n_formulas);
-	for (int i = 0; i < vftr_scenario_expr_n_formulas; i++) {
-		vftr_scenario_print_formula (fp_out, vftr_scenario_expr_formulas[i]);
-	}
-	return 0;
-}
-
-/**********************************************************************/
-
 int vftr_scenario_test_2 (FILE *fp_in, FILE *fp_out) {
 	vftr_read_scenario_file ("", fp_in);
 	vftr_scenario_expr_counter_values[0] = 1.5; // c1
