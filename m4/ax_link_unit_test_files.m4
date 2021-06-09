@@ -40,7 +40,7 @@ AC_CONFIG_LINKS(test/units/ref_output/vftr_functions_test_1.out:test/units/ref_o
                 test/units/ref_output/vftr_functions_test_3.out:test/units/ref_output/$units_refdir/vftr_functions_test_3.out
                 test/units/ref_output/vftr_functions_test_4.out:test/units/ref_output/$units_refdir/vftr_functions_test_4.out
                 test/units/ref_output/vftr_functions_test_5.out:test/units/ref_output/$units_refdir/vftr_functions_test_5.out
-                test/units/ref_output/vftr_filewrite_test_2.out:test/units/ref_output/$units_refdir/vftr_filewrite_test_2.out
+                test/units/ref_output/filewrite_2.out:test/units/ref_output/$units_refdir/filewrite_2.out
                 test/units/ref_output/vftr_stacks_test_1.out:test/units/ref_output/$units_refdir/vftr_stacks_test_1.out)
 
 AM_COND_IF([WITH_MPI],
@@ -55,7 +55,7 @@ AC_CONFIG_LINKS(test/units/this_passes.sh:test/units/this_passes.sh
                 test/units/setup_1.sh:test/units/setup_1.sh
                 test/units/setup_2.sh:test/units/setup_2.sh
                 test/units/filewrite_1.sh:test/units/filewrite_1.sh
-                test/units/vftr_filewrite_test_2.sh:test/units/vftr_filewrite_test_2.sh
+                test/units/filewrite_2.sh:test/units/filewrite_2.sh
                 test/units/vftr_scenario_test_1.sh:test/units/vftr_scenario_test_1.sh
                 test/units/vftr_scenario_test_2.sh:test/units/vftr_scenario_test_2.sh
                 test/units/vftr_scenario_test_3.sh:test/units/vftr_scenario_test_3.sh

@@ -1595,44 +1595,6 @@ void vftr_print_profile (FILE *fp_log, FILE *f_html, int *n_func_indices, long l
 
 /**********************************************************************/
 
-int vftr_filewrite_test_2 (FILE *fp_in, FILE *fp_out) {
-	int n;
-	unsigned long long addrs [6];
-	unsigned long long vftr_test_runtime = 0;
-	function_t *func1 = vftr_new_function (NULL, "init", NULL, false);
-	function_t *func2 = vftr_new_function ((void*)addrs, "func2", func1, false);
-	function_t *func3 = vftr_new_function ((void*)(addrs + 1), "func3", func1, false);	
-	function_t *func4 = vftr_new_function ((void*)(addrs + 2), "func4", func3, false);
-	function_t *func5 = vftr_new_function ((void*)(addrs + 3), "func5", func2, false);
-	function_t *func6 = vftr_new_function ((void*)(addrs + 4), "func6", func2, false);
-	function_t *func7 = vftr_new_function ((void*)(addrs + 5), "func4", func6, false);
-	vftr_normalize_stacks();
-	for (int i = 0; i < vftr_stackscount; i++) {
-		vftr_func_table[i]->prof_current.calls = i + 1;
-		vftr_func_table[i]->prof_current.cycles = 0;
-		vftr_func_table[i]->prof_previous.cycles = 0;
-		vftr_func_table[i]->prof_current.time_excl = (long long)(i+1) * 100000;
-		vftr_func_table[i]->prof_previous.time_excl = (long long)(i+1) * 90000;
-		vftr_func_table[i]->prof_current.time_incl =
-			2 * vftr_func_table[i]->prof_current.time_excl;
-		vftr_func_table[i]->prof_previous.time_incl =
-			2 * vftr_func_table[i]->prof_previous.time_excl;
-		vftr_test_runtime += vftr_func_table[i]->prof_current.time_excl
-				   - vftr_func_table[i]->prof_previous.time_excl;
-	}
-
-	vftr_profile_wanted = true;
-	vftr_mpisize = 1;
-	vftr_overhead_usec = 0;
-#ifdef _MPI
-        vftr_mpi_overhead_usec = 0;
-#endif
-	vftr_print_profile (fp_out, NULL, &n, vftr_test_runtime, 0, NULL);
-	return 0;
-}
-
-/**********************************************************************/
-
 void vftr_memory_unit(double *value, char **unit) {
    int unit_idx = 0;
    while (*value > 1024.0) {

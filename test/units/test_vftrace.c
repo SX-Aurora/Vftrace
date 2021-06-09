@@ -52,8 +52,6 @@ int main (int argc, char **argv) {
 		retval = this_fails();
 	} else if (!strcmp (argv[1], "this_passes")) {
 		retval = this_passes();
-	} else if (!strcmp (argv[1], "vftr_filewrite_test_2")) {
-		retval = vftr_filewrite_test_2 (fp_in, fp_out);
 	} else if (!strcmp (argv[1], "vftr_scenario_test_1")) {
 		retval = vftr_scenario_test_1 (fp_in, fp_out);
 	} else if (!strcmp (argv[1], "vftr_scenario_test_2")) {
