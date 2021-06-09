@@ -77,13 +77,13 @@ void vftr_print_disclaimer_full (FILE *fp) {
 
 /**********************************************************************/
 
-void vftr_print_disclaimer (FILE *fp) {
+void vftr_print_disclaimer (FILE *fp, bool no_date) {
     int v_major = MAJOR_VERSION;
     int v_minor = MINOR_VERSION;
     int rev = REVISION;
     fprintf (fp, "Vftrace version %d.%d.%d\n", v_major, v_minor, rev);
     fprintf (fp, "Runtime profile for application: %s\n", "");
-    fprintf (fp, "Start Date: %s\n", vftr_start_date); 
+    if (!no_date) fprintf (fp, "Start Date: %s\n", vftr_start_date); 
     fprintf (fp, 
         "This is free software with ABSOLUTELY NO WARRANTY.\n"
         "For details: use vftrace with environment variable VFTR_LICENSE\n"
@@ -189,7 +189,7 @@ void vftr_initialize() {
        if (vftr_environment.license_verbose->value) {
 	  vftr_print_disclaimer_full (vftr_log);
        } else {
-	  vftr_print_disclaimer (vftr_log);
+	  vftr_print_disclaimer (vftr_log, false);
        }
     }
 
@@ -385,12 +385,3 @@ void vftr_finalize_() {
 }
 
 /**********************************************************************/
-
-int vftr_setup_test_2 (FILE *fp) {
-	fprintf (fp, "Check disclaimers\n");
-	vftr_print_disclaimer_full (fp);
-	fprintf (fp, "****************************************\n");
-	vftr_print_disclaimer (fp);
-	return 0;
-}
-
