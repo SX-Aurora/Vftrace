@@ -5,10 +5,10 @@ input_file=ref_input/$test_name.json
 ref_file=ref_output/$test_name.out
 output_file=$test_name.out
 
-rm -f $outfile
+rm -f $output_file
 
 if [ "x$HAS_MPI" == "xYES" ]; then
-   ${MPI_EXEC} ${MPI_OPTS} ${NP} ${nprocs} 1 ./$test_name $input_file > $output_file
+   ${MPI_EXEC} ${MPI_OPTS} ${NP} 1 ./$test_name $input_file > $output_file
 else
   ./$test_name $input_file > $output_file
 fi

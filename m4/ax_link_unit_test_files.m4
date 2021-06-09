@@ -16,7 +16,7 @@ AC_DEFUN([AX_LINK_UNIT_TEST_FILES], [
    # Test files and folders
 AC_CONFIG_LINKS(test/units/ref_input/scenario_1.json:test/units/ref_input/scenario_1.json
                 test/units/ref_input/scenario_2.json:test/units/ref_input/scenario_2.json
-                test/units/ref_input/vftr_scenario_test_3.json:test/units/ref_input/vftr_scenario_test_3.json
+                test/units/ref_input/scenario_3.json:test/units/ref_input/scenario_3.json
                 test/units/ref_input/symbols_test_1.x:test/units/ref_input/symbols_test_1.x
                )
 AC_CONFIG_LINKS(test/units/ref_output/environment_1.out:test/units/ref_output/environment_1.out
@@ -58,7 +58,7 @@ AC_CONFIG_LINKS(test/units/this_passes.sh:test/units/this_passes.sh
                 test/units/filewrite_2.sh:test/units/filewrite_2.sh
                 test/units/scenario_1.sh:test/units/scenario_1.sh
                 test/units/scenario_2.sh:test/units/scenario_2.sh
-                test/units/vftr_scenario_test_3.sh:test/units/vftr_scenario_test_3.sh
+                test/units/scenario_3.sh:test/units/scenario_3.sh
                 test/units/vftr_functions_test_1.sh:test/units/vftr_functions_test_1.sh
                 test/units/vftr_functions_test_2.sh:test/units/vftr_functions_test_2.sh
                 test/units/vftr_functions_test_3.sh:test/units/vftr_functions_test_3.sh
