@@ -437,43 +437,6 @@ double vftr_scenario_expr_get_value (int i_scenario) {
 
 /**********************************************************************/
 
-int vftr_scenario_test_2 (FILE *fp_in, FILE *fp_out) {
-	vftr_read_scenario_file ("", fp_in);
-	vftr_scenario_expr_counter_values[0] = 1.5; // c1
-	vftr_scenario_expr_counter_values[1] = 0.5; // c2
-	vftr_scenario_expr_counter_values[2] = -1.0; // c3
-	vftr_scenario_expr_evaluate_all (0.0, 0ll);
-// Test indices:
-// 0: sum
-// 1: difference
-// 2: product
-// 3: division
-// 4: abs
-// 5: exp
-// 6: log
-// 7: sqrt
-// 8: 1e3
-	fprintf (fp_out, "Check standard operations: \n");
-	fprintf (fp_out, "%s: %lf\n", vftr_scenario_expr_formulas[0].name, vftr_scenario_expr_formulas[0].value);
-	fprintf (fp_out, "%s: %lf\n", vftr_scenario_expr_formulas[1].name, vftr_scenario_expr_formulas[1].value);
-	fprintf (fp_out, "%s: %lf\n", vftr_scenario_expr_formulas[2].name, vftr_scenario_expr_formulas[2].value);
-	fprintf (fp_out, "%s: %lf\n", vftr_scenario_expr_formulas[3].name, vftr_scenario_expr_formulas[3].value);
-	fprintf (fp_out, "%s: %lf\n", vftr_scenario_expr_formulas[4].name, vftr_scenario_expr_formulas[4].value);
-	fprintf (fp_out, "%s: %lf\n", vftr_scenario_expr_formulas[5].name, vftr_scenario_expr_formulas[5].value);
-	fprintf (fp_out, "%s: %lf\n", vftr_scenario_expr_formulas[6].name, vftr_scenario_expr_formulas[6].value);
-	fprintf (fp_out, "%s: %lf\n", vftr_scenario_expr_formulas[7].name, vftr_scenario_expr_formulas[7].value);
-	fprintf (fp_out, "%s: %lf\n", vftr_scenario_expr_formulas[8].name, vftr_scenario_expr_formulas[8].value);
-	
-	fprintf (fp_out, "Check that division by zero is protected: \n");
-	vftr_scenario_expr_counter_values[1] = 0.0;
-	vftr_scenario_expr_evaluate (3, 0.0, 0ll);
-	fprintf (fp_out, "%s: %lf\n", vftr_scenario_expr_formulas[3].name, vftr_scenario_expr_formulas[3].value);
-	return 0;
-// Check that division by zero is protected
-}
-
-/**********************************************************************/
-
 // This test expects a scenario file with wrong syntax in the formulas .
 // It should be tagged as XFAIL.
 
