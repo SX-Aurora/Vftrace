@@ -558,17 +558,3 @@ char *vftr_demangle_cpp (char *m_name) {
 #endif
 
 /**********************************************************************/
-
-int vftr_symbols_test_1 (FILE *fp_in, FILE *fp_out) {
- 	vftr_nsymbols = 0;	
-	vftr_get_library_symtab ("", fp_in, 0L, 0);	
-	vftr_symtab = (symtab_t **) malloc (vftr_nsymbols * sizeof(symtab_t*));
-	vftr_nsymbols = 0;
-	rewind (fp_in);
-	vftr_get_library_symtab ("", fp_in, 0L, 1);	
-	vftr_print_symbol_table (fp_out, false);
-	free (vftr_symtab);
-	return 0;
-}
-
-/**********************************************************************/
