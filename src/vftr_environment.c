@@ -433,13 +433,13 @@ void vftr_assert_environment () {
       	   int method = vftr_profile_sorting_method(); 
 	   if (method == SORT_INVALID) {
                vftr_rank0_printf ("Warning: The profile table sorting method \"%s\" is not defined. Defaulting to TIME_EXCL.\n", vftr_environment.sort_profile_table->value);
-	       vftr_environment.sort_profile_table->value = SORT_EXCL_TIME;
+	       vftr_environment.sort_profile_table->value = "EXCL_TIME";
 	   } else if ((method == SORT_OVERHEAD || method == SORT_OVERHEAD_RELATIVE) && !vftr_environment.show_overhead->value) {
 	       vftr_rank0_printf ("Warning: You specified VFTR_SORT_PROFILE_TABLE=OVERHEAD(_RELATIVE), but overhead display is not enabled. Defaulting to TIME_EXCL.\n");
-	       vftr_environment.sort_profile_table->value = SORT_EXCL_TIME;
+	       vftr_environment.sort_profile_table->value = "EXCL_TIME";
 	   } else if (method == SORT_MEMTRACE && !vftr_environment.meminfo_method->set) {
                vftr_rank0_printf ("Warning: You specified VFTR_SORT_PROFILE_TABLE=MEMTRACE, but memtracing is not active. Defaulting to TIME_EXCL.\n");
-               vftr_environment.sort_profile_table->value = SORT_EXCL_TIME;
+               vftr_environment.sort_profile_table->value = "EXCL_TIME";
            }
         } 
 
