@@ -1,9 +1,8 @@
 #!/bin/bash
 set -x
-ref_out_dir=ref_output
-ref_in_dir=ref_input
-testname=vftr_environment_test_2
-outfile=$testname.out
+vftr_binary=environment_2
+outfile=environment_2.out
+ref_file=ref_output/$output_file
 
 rm -f $outfile
 
@@ -16,9 +15,9 @@ for v in ${vftr_variables[@]}; do
 done
 
 if [ "x$HAS_MPI" == "xYES" ]; then
-  ${MPI_EXEC} ${MPI_OPTS} ${NP} 1 ./test_vftrace $testname > $outfile
+  ${MPI_EXEC} ${MPI_OPTS} ${NP} 1 ./${vftr_binary} > $outfile
 else
-  ./test_vftrace $testname > $outfile
+  ./${vftr_binary} > $outfile
 fi
 
 last_success=$?
@@ -30,8 +29,7 @@ for v in ${vftr_variables[@]}; do
 done
 
 if [ $last_success == 0 ]; then
-  diff $ref_out_dir/$outfile $outfile
+  diff $ref_file $outfile
 else
   exit $last_success
 fi
-

@@ -613,16 +613,3 @@ void vftr_print_environment (FILE *fp) {
 }
 
 /**********************************************************************/
-
-int vftr_environment_test_2 (FILE *fp) {
-  // Check if the advisor works.
-  putenv ("VFTR_OF=yes"); // Should be VFTR_OFF
-  putenv ("VFTR_TRUNCATE=yes"); // Should be VFTR_PROF_TRUNCATE
-
-  vftr_read_environment ();
-  vftr_assert_environment ();
-  vftr_free_environment ();
-  return 0;
-}
-
-/**********************************************************************/
