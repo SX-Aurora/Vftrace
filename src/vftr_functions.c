@@ -459,25 +459,6 @@ double vftr_get_max_memory (function_t *func) {
 
 /**********************************************************************/
 
-int vftr_functions_test_1 (FILE *fp_in, FILE *fp_out) {
-	unsigned long long addr[1];
-	fprintf (fp_out, "Initial vftr_stackscount: %d\n", vftr_stackscount);
-	int i0 = vftr_stackscount;
-	if (i0 > 0) fprintf (fp_out, "Check additional MPI entries:\n");
-   	for (int i = 0; i < i0; i++) {
-		vftr_write_function (fp_out, vftr_func_table[i], true);
-	}
-	function_t *func1 = vftr_new_function (NULL, "init_vftr", NULL, false);
-	function_t *func2 = vftr_new_function ((void*)addr, "test_1", func1, true);
-	fprintf (fp_out, "Check test entries:\n");
-	for (int i = i0; i < vftr_stackscount; i++) {
-		vftr_write_function (fp_out, vftr_func_table[i], true);
-	}
-	return 0;
-}
-
-/**********************************************************************/
-
 int vftr_functions_test_2 (FILE *fp_in, FILE *fp_out) {
 	fprintf (fp_out, "Initial vftr_stackscount: %d\n", vftr_stackscount);
 
