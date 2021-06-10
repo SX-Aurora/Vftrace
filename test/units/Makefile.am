@@ -51,7 +51,6 @@ test_vftrace_LDFLAGS = $(AM_LDFLAGS)
 
 dist_check_SCRIPTS = this_passes.sh \
 		     this_fails.sh \
-		     vftr_stacks_test_1.sh \
 		     vftr_browse_test_1.sh
 
 if WITH_MPI
@@ -85,7 +84,8 @@ check_PROGRAMS += radixsort_uint64 \
                   functions_2 \
                   functions_3 \
                   functions_4 \
-                  functions_5
+                  functions_5 \
+                  stacks_1
 
 radixsort_uint64_SOURCES = $(srcdir)/radixsort_uint64.c
 radixsort_uint64_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
@@ -175,6 +175,11 @@ functions_5_SOURCES = $(srcdir)/functions_5.c
 functions_5_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
 functions_5_LDFLAGS = $(AM_LDFLAGS)
 
+stacks_1_SOURCES = $(srcdir)/stacks_1.c
+stacks_1_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
+stacks_1_LDFLAGS = $(AM_LDFLAGS)
+
+
 
 dist_check_SCRIPTS += radixsort_uint64.sh \
 		      sort_integer_ascending.sh \
@@ -197,7 +202,8 @@ dist_check_SCRIPTS += radixsort_uint64.sh \
                       functions_2.sh \
                       functions_3.sh \
                       functions_4.sh \
-                      functions_5.sh
+                      functions_5.sh \
+                      stacks_1.sh
 
 TEST_EXTENSIONS = .sh
 SH_LOG_COMPILER = $(SHELL)
