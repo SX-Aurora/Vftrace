@@ -35,6 +35,7 @@ extern char *vftr_end_date;
 extern bool in_vftr_finalize;
 
 void vftr_print_disclaimer (FILE *fp, bool no_date);
+void vftr_print_disclaimer_full (FILE *fp);
 
 void vftr_initialize ();
 void vftr_finalize () ;

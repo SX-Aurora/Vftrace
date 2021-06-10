@@ -90,6 +90,8 @@ void vftr_scenario_expr_print_subgroup (FILE *fp);
 void vftr_scenario_expr_add_papi_counters ();
 void vftr_scenario_expr_add_sx_counters ();
 
+void vftr_scenario_print_formula (FILE *fp, function_expr_t formula);
+
 // test functions
 int vftr_scenario_test_3 (FILE *fp_in, FILE *fp_out);
 

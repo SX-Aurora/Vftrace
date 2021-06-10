@@ -75,6 +75,7 @@ function_t *vftr_new_function(void *arg, const char *function_name, function_t *
 void vftr_reset_counts (function_t *func);
 
 void vftr_write_function (FILE *fp, function_t *func, bool verbose);
+void vftr_write_function_indices (FILE *fp, char *func_name, bool to_lower_case);
 
 struct loc_glob_id {
    int loc;

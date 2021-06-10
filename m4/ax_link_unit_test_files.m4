@@ -39,7 +39,7 @@ AC_CONFIG_LINKS(test/units/ref_output/functions_1.out:test/units/ref_output/$uni
                 test/units/ref_output/functions_2.out:test/units/ref_output/$units_refdir/functions_2.out
                 test/units/ref_output/functions_3.out:test/units/ref_output/$units_refdir/functions_3.out
                 test/units/ref_output/functions_4.out:test/units/ref_output/$units_refdir/functions_4.out
-                test/units/ref_output/vftr_functions_test_5.out:test/units/ref_output/$units_refdir/vftr_functions_test_5.out
+                test/units/ref_output/functions_5.out:test/units/ref_output/$units_refdir/functions_5.out
                 test/units/ref_output/filewrite_2.out:test/units/ref_output/$units_refdir/filewrite_2.out
                 test/units/ref_output/vftr_stacks_test_1.out:test/units/ref_output/$units_refdir/vftr_stacks_test_1.out)
 
@@ -63,7 +63,7 @@ AC_CONFIG_LINKS(test/units/this_passes.sh:test/units/this_passes.sh
                 test/units/functions_2.sh:test/units/functions_2.sh
                 test/units/functions_3.sh:test/units/functions_3.sh
                 test/units/functions_4.sh:test/units/functions_4.sh
-                test/units/vftr_functions_test_5.sh:test/units/vftr_functions_test_5.sh
+                test/units/functions_5.sh:test/units/functions_5.sh
                 test/units/vftr_stacks_test_1.sh:test/units/vftr_stacks_test_1.sh
                 test/units/vftr_sxhwc_test_1.sh:test/units/vftr_sxhwc_test_1.sh
                 test/units/vftr_browse_test_1.sh:test/units/vftr_browse_test_1.sh

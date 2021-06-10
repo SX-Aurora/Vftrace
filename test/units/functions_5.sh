@@ -1,6 +1,6 @@
 #!/bin/bash
 set -x
-test_name=functions_4
+test_name=functions_5
 output_file=$test_name.out
 ref_file=ref_output/$test_name.out
 

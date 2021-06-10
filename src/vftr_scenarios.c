@@ -436,13 +436,3 @@ double vftr_scenario_expr_get_value (int i_scenario) {
 }
 
 /**********************************************************************/
-
-// This test expects a scenario file with wrong syntax in the formulas .
-// It should be tagged as XFAIL.
-
-int vftr_scenario_test_3 (FILE *fp_in, FILE *fp_out) {
-	vftr_read_scenario_file ("", fp_in);
-	return 0;
-}
-
-/**********************************************************************/
