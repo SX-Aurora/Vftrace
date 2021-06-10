@@ -459,22 +459,6 @@ double vftr_get_max_memory (function_t *func) {
 
 /**********************************************************************/
 
-int vftr_functions_test_4 (FILE *fp_in, FILE *fp_out) {
-	unsigned long long addrs [6];
-	function_t *func1 = vftr_new_function (NULL, "init", NULL, false);
-	function_t *func2 = vftr_new_function ((void*)addrs, "func2", func1, false);
-	function_t *func3 = vftr_new_function ((void*)(addrs + 1), "func3", func1, false);	
-	function_t *func4 = vftr_new_function ((void*)(addrs + 2), "func4", func3, false);
-	function_t *func5 = vftr_new_function ((void*)(addrs + 3), "func2", func4, false);
-	vftr_write_function_indices (fp_out, "init", false);
-	vftr_write_function_indices (fp_out, "func2", false);
-	vftr_write_function_indices (fp_out, "func3", false);
-	vftr_write_function_indices (fp_out, "func4", false);
-	return 0;
-}
-
-/**********************************************************************/
-
 int vftr_functions_test_5 (FILE *fp_in, FILE *fp_out) {
 	unsigned long long addrs [6];
 	function_t *func1 = vftr_new_function (NULL, "INIT", NULL, false);
