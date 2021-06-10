@@ -115,9 +115,9 @@ sort_double_copy_descending_SOURCES = $(srcdir)/sort_double_copy_descending.c
 sort_double_copy_descending_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
 sort_double_copy_descending_LDFLAGS = $(AM_LDFLAGS)
 
-symbols_test_1_SOURCES = $(srcdir)/symbols_test_1.c
-symbols_test_1_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
-symbols_test_1_LDFLAGS = $(AM_LDFLAGS)
+symbols_1_SOURCES = $(srcdir)/symbols_1.c
+symbols_1_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
+symbols_1_LDFLAGS = $(AM_LDFLAGS)
 
 environment_1_SOURCES = $(srcdir)/environment_1.c
 environment_1_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
@@ -196,7 +196,7 @@ dist_check_SCRIPTS += radixsort_uint64.sh \
 		      sort_double_descending.sh \
 		      sort_double_copy_ascending.sh \
 		      sort_double_copy_descending.sh \
-                      symbols_test_1.sh \
+                      symbols_1.sh \
                       environment_1.sh \
                       environment_2.sh \
                       setup_1.sh \
