@@ -50,6 +50,8 @@ void vftr_read_counters (long long *event);
 void vftr_papi_counter (char *name);
 void vftr_sx_counter (char *name, int id);
 
-int vftr_sxhwc_test_1 (FILE *fp_in, FILE *fp_out);
+#if HAS_SXHWC
+void vftr_read_sxhwc_registers (long long hwc[MAX_HWC_EVENTS]);
+#endif
 
 #endif

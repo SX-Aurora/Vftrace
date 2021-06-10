@@ -52,12 +52,6 @@ test_vftrace_LDFLAGS = $(AM_LDFLAGS)
 dist_check_SCRIPTS = this_passes.sh \
 		     this_fails.sh
 
-if ENABLE_HWC
-if ON_VECTOR_ENGINE
-dist_check_SCRIPTS += vftr_sxhwc_test_1.sh
-endif
-endif
-
 check_PROGRAMS += radixsort_uint64 \
 		  sort_integer_ascending \
 		  sort_integer_descending \
@@ -85,6 +79,12 @@ check_PROGRAMS += radixsort_uint64 \
 
 if WITH_MPI
 check_PROGRAMS += stacks_2
+endif
+
+if ENABLE_HWC
+if ON_VECTOR_ENGINE
+check_PROGRAMS += sxhwc_1
+endif
 endif
 
 radixsort_uint64_SOURCES = $(srcdir)/radixsort_uint64.c
@@ -189,6 +189,14 @@ browse_1_SOURCES = $(srcdir)/browse_1.c
 browse_1_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
 browse_1_LDFLAGS = $(AM_LDFLAGS)
 
+if ENABLE_HWC
+if ON_VECTOR_ENGINE
+sxhwc_1_SOURCES = $(srcdir)/sxhwc_1.c
+sxhwc_1_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
+sxhwc_1_LDFLAGS = $(AM_LDFLAGS)
+endif
+endif
+
 dist_check_SCRIPTS += radixsort_uint64.sh \
 		      sort_integer_ascending.sh \
 		      sort_integer_descending.sh \
@@ -214,6 +222,12 @@ dist_check_SCRIPTS += radixsort_uint64.sh \
                       stacks_1.sh \
                       browse_1.sh
 
+if ENABLE_HWC
+if ON_VECTOR_ENGINE
+dist_check_SCRIPTS += sxhwc_1.sh
+endif
+endif
+
 if WITH_MPI
 dist_check_SCRIPTS += stacks_2.sh
 endif
@@ -224,3 +238,9 @@ SH_LOG_COMPILER = $(SHELL)
 TESTS = $(dist_check_SCRIPTS)
 XFAIL_TESTS = this_fails.sh \
 	      scenario_3.sh
+
+if ENABLE_HWC
+if ON_VECTOR_ENGINE
+XFAIL_TESTS += sxhwc_1.sh
+endif
+endif

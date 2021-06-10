@@ -27,7 +27,7 @@ AC_CONFIG_LINKS(test/units/ref_output/environment_1.out:test/units/ref_output/en
                 test/units/ref_output/setup_1.out:test/units/ref_output/setup_1.out
                 test/units/ref_output/setup_2.out:test/units/ref_output/setup_2.out
                 test/units/ref_output/symbols_1.out:test/units/ref_output/symbols_1.out
-                test/units/ref_output/vftr_sxhwc_test_1.out:test/units/ref_output/vftr_sxhwc_test_1.out
+                test/units/ref_output/sxhwc_1.out:test/units/ref_output/sxhwc_1.out
                )
 
 AM_COND_IF([WITH_MPI],
@@ -65,7 +65,7 @@ AC_CONFIG_LINKS(test/units/this_passes.sh:test/units/this_passes.sh
                 test/units/functions_4.sh:test/units/functions_4.sh
                 test/units/functions_5.sh:test/units/functions_5.sh
                 test/units/stacks_1.sh:test/units/stacks_1.sh
-                test/units/vftr_sxhwc_test_1.sh:test/units/vftr_sxhwc_test_1.sh
+                test/units/sxhwc_1.sh:test/units/sxhwc_1.sh
                 test/units/browse_1.sh:test/units/browse_1.sh
                )
 
