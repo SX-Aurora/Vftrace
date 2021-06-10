@@ -47,9 +47,7 @@ AM_COND_IF([WITH_MPI],
            [AC_CONFIG_LINKS(test/units/ref_output/stacks_2.out:test/units/ref_output/$units_refdir/stacks_2.out)]
           )
 
-AC_CONFIG_LINKS(test/units/this_passes.sh:test/units/this_passes.sh
-                test/units/this_fails.sh:test/units/this_fails.sh
-                test/units/symbols_1.sh:test/units/symbols_1.sh
+AC_CONFIG_LINKS(test/units/symbols_1.sh:test/units/symbols_1.sh
                 test/units/environment_1.sh:test/units/environment_1.sh
                 test/units/environment_2.sh:test/units/environment_2.sh
                 test/units/setup_1.sh:test/units/setup_1.sh

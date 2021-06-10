@@ -43,16 +43,7 @@ if USES_NEC_COMPILER
 endif
 endif
 
-check_PROGRAMS = test_vftrace
-
-test_vftrace_SOURCES = $(srcdir)/test_vftrace.c
-test_vftrace_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
-test_vftrace_LDFLAGS = $(AM_LDFLAGS)
-
-dist_check_SCRIPTS = this_passes.sh \
-		     this_fails.sh
-
-check_PROGRAMS += radixsort_uint64 \
+check_PROGRAMS = radixsort_uint64 \
 		  sort_integer_ascending \
 		  sort_integer_descending \
 		  sort_double_ascending \
@@ -197,7 +188,7 @@ sxhwc_1_LDFLAGS = $(AM_LDFLAGS)
 endif
 endif
 
-dist_check_SCRIPTS += radixsort_uint64.sh \
+dist_check_SCRIPTS = radixsort_uint64.sh \
 		      sort_integer_ascending.sh \
 		      sort_integer_descending.sh \
 		      sort_double_ascending.sh \
@@ -236,8 +227,7 @@ TEST_EXTENSIONS = .sh
 SH_LOG_COMPILER = $(SHELL)
 
 TESTS = $(dist_check_SCRIPTS)
-XFAIL_TESTS = this_fails.sh \
-	      scenario_3.sh
+XFAIL_TESTS = scenario_3.sh
 
 if ENABLE_HWC
 if ON_VECTOR_ENGINE
