@@ -36,7 +36,7 @@ AM_COND_IF([WITH_MPI],
            [units_refdir=serial])
 
 AC_CONFIG_LINKS(test/units/ref_output/functions_1.out:test/units/ref_output/$units_refdir/functions_1.out
-                test/units/ref_output/vftr_functions_test_2.out:test/units/ref_output/$units_refdir/vftr_functions_test_2.out
+                test/units/ref_output/functions_2.out:test/units/ref_output/$units_refdir/functions_2.out
                 test/units/ref_output/vftr_functions_test_3.out:test/units/ref_output/$units_refdir/vftr_functions_test_3.out
                 test/units/ref_output/vftr_functions_test_4.out:test/units/ref_output/$units_refdir/vftr_functions_test_4.out
                 test/units/ref_output/vftr_functions_test_5.out:test/units/ref_output/$units_refdir/vftr_functions_test_5.out
@@ -60,7 +60,7 @@ AC_CONFIG_LINKS(test/units/this_passes.sh:test/units/this_passes.sh
                 test/units/scenario_2.sh:test/units/scenario_2.sh
                 test/units/scenario_3.sh:test/units/scenario_3.sh
                 test/units/functions_1.sh:test/units/functions_1.sh
-                test/units/vftr_functions_test_2.sh:test/units/vftr_functions_test_2.sh
+                test/units/functions_2.sh:test/units/functions_2.sh
                 test/units/vftr_functions_test_3.sh:test/units/vftr_functions_test_3.sh
                 test/units/vftr_functions_test_4.sh:test/units/vftr_functions_test_4.sh
                 test/units/vftr_functions_test_5.sh:test/units/vftr_functions_test_5.sh

@@ -96,7 +96,6 @@ void vftr_sample_vmrss (long long n_calls, bool is_entry, bool verbose, mem_prof
 double vftr_get_max_memory (function_t *func);
 
 // test functions
-int vftr_functions_test_2 (FILE *fp_in, FILE *fp_out);
 int vftr_functions_test_3 (FILE *fp_in, FILE *fp_out);
 int vftr_functions_test_4 (FILE *fp_in, FILE *fp_out);
 int vftr_functions_test_5 (FILE *fp_in, FILE *fp_out);
