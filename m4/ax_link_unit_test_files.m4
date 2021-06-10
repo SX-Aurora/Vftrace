@@ -44,7 +44,7 @@ AC_CONFIG_LINKS(test/units/ref_output/functions_1.out:test/units/ref_output/$uni
                 test/units/ref_output/browse_1.out:test/units/ref_output/$units_refdir/browse_1.out)
 
 AM_COND_IF([WITH_MPI],
-           [AC_CONFIG_LINKS(test/units/ref_output/vftr_stacks_test_2.out:test/units/ref_output/$units_refdir/vftr_stacks_test_2.out)]
+           [AC_CONFIG_LINKS(test/units/ref_output/stacks_2.out:test/units/ref_output/$units_refdir/stacks_2.out)]
           )
 
 AC_CONFIG_LINKS(test/units/this_passes.sh:test/units/this_passes.sh
@@ -70,7 +70,7 @@ AC_CONFIG_LINKS(test/units/this_passes.sh:test/units/this_passes.sh
                )
 
 AM_COND_IF([WITH_MPI],
-           [AC_CONFIG_LINKS(test/units/vftr_stacks_test_2.sh:test/units/vftr_stacks_test_2.sh)]
+           [AC_CONFIG_LINKS(test/units/stacks_2.sh:test/units/stacks_2.sh)]
           )
 
 AC_CONFIG_LINKS(test/units/radixsort_uint64.sh:test/units/radixsort_uint64.sh

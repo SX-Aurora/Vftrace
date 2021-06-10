@@ -3,10 +3,10 @@ Local call stacks:
 ---------------------------------
  ID                     Functions
 ---------------------------------
-  9 func1<init
-  7 func2<func1<init
-  6 func3<func2<func1<init
-  1 func4<func3<func2<func1<init
+  1 func1<init
+  2 func2<func1<init
+  3 func3<func2<func1<init
+  4 func4<func3<func2<func1<init
 ---------------------------------
 Global stacklis for rank 0: 
 Global call stacks:
@@ -24,10 +24,10 @@ Local call stacks:
 ---------------------------------
  ID                     Functions
 ---------------------------------
-  9 func1<init
-  3 func3<func1<init
-  4 func2<func3<func1<init
-  8 func4<func2<func3<func1<init
+  1 func1<init
+  2 func3<func1<init
+  3 func2<func3<func1<init
+  4 func4<func2<func3<func1<init
 ---------------------------------
 Global stacklis for rank 1: 
 Global call stacks:
@@ -45,10 +45,10 @@ Local call stacks:
 ---------------------------------
  ID                     Functions
 ---------------------------------
-  9 func1<init
-  7 func2<func1<init
-  2 func2<func2<func1<init
-  5 func2<func2<func2<func1<init
+  1 func1<init
+  2 func2<func1<init
+  3 func2<func2<func1<init
+  4 func2<func2<func2<func1<init
 ---------------------------------
 Global stacklis for rank 2: 
 Global call stacks:
@@ -66,8 +66,8 @@ Local call stacks:
 ---------------------
  ID         Functions
 ---------------------
-  9 func1<init
- 10 func4<func1<init
+  1 func1<init
+  2 func4<func1<init
 ---------------------
 Global stacklis for rank 3: 
 Global call stacks:
