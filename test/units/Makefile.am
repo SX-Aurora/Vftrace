@@ -51,7 +51,6 @@ test_vftrace_LDFLAGS = $(AM_LDFLAGS)
 
 dist_check_SCRIPTS = this_passes.sh \
 		     this_fails.sh \
-	 	     vftr_functions_test_3.sh \
 	 	     vftr_functions_test_4.sh \
 	 	     vftr_functions_test_5.sh \
 		     vftr_stacks_test_1.sh \
@@ -85,7 +84,8 @@ check_PROGRAMS += radixsort_uint64 \
                   scenario_2 \
                   scenario_3 \
                   functions_1 \
-                  functions_2
+                  functions_2 \
+                  functions_3
 
 radixsort_uint64_SOURCES = $(srcdir)/radixsort_uint64.c
 radixsort_uint64_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
@@ -163,6 +163,10 @@ functions_2_SOURCES = $(srcdir)/functions_2.c
 functions_2_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
 functions_2_LDFLAGS = $(AM_LDFLAGS)
 
+functions_3_SOURCES = $(srcdir)/functions_3.c
+functions_3_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
+functions_3_LDFLAGS = $(AM_LDFLAGS)
+
 dist_check_SCRIPTS += radixsort_uint64.sh \
 		      sort_integer_ascending.sh \
 		      sort_integer_descending.sh \
@@ -181,7 +185,8 @@ dist_check_SCRIPTS += radixsort_uint64.sh \
                       scenario_2.sh \
                       scenario_3.sh \
                       functions_1.sh \
-                      functions_2.sh
+                      functions_2.sh \
+                      functions_3.sh
 
 TEST_EXTENSIONS = .sh
 SH_LOG_COMPILER = $(SHELL)

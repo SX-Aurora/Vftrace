@@ -459,27 +459,6 @@ double vftr_get_max_memory (function_t *func) {
 
 /**********************************************************************/
 
-int vftr_functions_test_3 (FILE *fp_in, FILE *fp_out) {
-	unsigned long long addrs [6];
-	function_t *func1 = vftr_new_function (NULL, "init", NULL, false);
-	function_t *func2 = vftr_new_function ((void*)addrs, "func2", func1, false);
-	function_t *func3 = vftr_new_function ((void*)(addrs + 1), "func3", func1, false);	
-	function_t *func4 = vftr_new_function ((void*)(addrs + 2), "func4", func3, false);
-	function_t *func5 = vftr_new_function ((void*)(addrs + 3), "func5", func2, false);
-	function_t *func6 = vftr_new_function ((void*)(addrs + 4), "func6", func2, false);
-	function_t *func7 = vftr_new_function ((void*)(addrs + 5), "func4", func6, false);
-	vftr_write_stack_ascii (fp_out, 0.0, func1, "", 0);
-	vftr_write_stack_ascii (fp_out, 0.0, func2, "", 0);
-	vftr_write_stack_ascii (fp_out, 0.0, func3, "", 0);
-	vftr_write_stack_ascii (fp_out, 0.0, func4, "", 0);
-	vftr_write_stack_ascii (fp_out, 0.0, func5, "", 0);
-	vftr_write_stack_ascii (fp_out, 0.0, func6, "", 0);
-	vftr_write_stack_ascii (fp_out, 0.0, func7, "", 0);
-	return 0;
-}
-
-/**********************************************************************/
-
 int vftr_functions_test_4 (FILE *fp_in, FILE *fp_out) {
 	unsigned long long addrs [6];
 	function_t *func1 = vftr_new_function (NULL, "init", NULL, false);
