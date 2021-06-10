@@ -65,7 +65,7 @@ check_PROGRAMS += radixsort_uint64 \
 		  sort_double_descending \
 		  sort_double_copy_ascending \
 		  sort_double_copy_descending \
-                  symbols_test_1 \
+                  symbols_1 \
                   environment_1 \
                   environment_2 \
                   setup_1 \

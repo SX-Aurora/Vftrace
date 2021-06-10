@@ -17,7 +17,7 @@ AC_DEFUN([AX_LINK_UNIT_TEST_FILES], [
 AC_CONFIG_LINKS(test/units/ref_input/scenario_1.json:test/units/ref_input/scenario_1.json
                 test/units/ref_input/scenario_2.json:test/units/ref_input/scenario_2.json
                 test/units/ref_input/scenario_3.json:test/units/ref_input/scenario_3.json
-                test/units/ref_input/symbols_test_1.x:test/units/ref_input/symbols_test_1.x
+                test/units/ref_input/symbols_1.x:test/units/ref_input/symbols_1.x
                )
 AC_CONFIG_LINKS(test/units/ref_output/environment_1.out:test/units/ref_output/environment_1.out
                 test/units/ref_output/environment_2.out:test/units/ref_output/environment_2.out
@@ -26,7 +26,7 @@ AC_CONFIG_LINKS(test/units/ref_output/environment_1.out:test/units/ref_output/en
                 test/units/ref_output/scenario_2.out:test/units/ref_output/scenario_2.out
                 test/units/ref_output/setup_1.out:test/units/ref_output/setup_1.out
                 test/units/ref_output/setup_2.out:test/units/ref_output/setup_2.out
-                test/units/ref_output/symbols_test_1.out:test/units/ref_output/symbols_test_1.out
+                test/units/ref_output/symbols_1.out:test/units/ref_output/symbols_1.out
                 test/units/ref_output/vftr_sxhwc_test_1.out:test/units/ref_output/vftr_sxhwc_test_1.out
                )
 
@@ -49,7 +49,7 @@ AM_COND_IF([WITH_MPI],
 
 AC_CONFIG_LINKS(test/units/this_passes.sh:test/units/this_passes.sh
                 test/units/this_fails.sh:test/units/this_fails.sh
-                test/units/symbols_test_1.sh:test/units/symbols_test_1.sh
+                test/units/symbols_1.sh:test/units/symbols_1.sh
                 test/units/environment_1.sh:test/units/environment_1.sh
                 test/units/environment_2.sh:test/units/environment_2.sh
                 test/units/setup_1.sh:test/units/setup_1.sh
