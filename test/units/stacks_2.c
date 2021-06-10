@@ -57,6 +57,7 @@ int main (int argc, char **argv) {
   	        fprintf (stdout, "Global stacklis for rank %d: \n", i);
                 // NOTE: vftr_print_global_stacklist only prints the stack IDs which are present on the given rank.
   	        vftr_print_global_stacklist (stdout);
+                fflush(stdout);
   	}
         // Barrier sorts output
   	PMPI_Barrier (MPI_COMM_WORLD);
