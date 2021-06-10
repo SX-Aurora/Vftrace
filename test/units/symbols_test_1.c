@@ -1,9 +1,17 @@
 #include "vftr_symbols.h"
+#include "vftr_setup.h"
+#ifdef _MPI
+#include <mpi.h>
+#endif
 
 int main (int argc, char **argv) {
 
-#ifdef _MPI
+#if defined(_MPI)
   PMPI_Init(&argc, &argv);
+  vftr_get_mpi_info (&vftr_mpirank, &vftr_mpisize);
+#else 
+  vftr_mpirank = 0;
+  vftr_mpisize = 1;
 #endif
 
   if (argc != 3) {

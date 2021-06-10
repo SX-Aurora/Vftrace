@@ -28,7 +28,6 @@ AC_CONFIG_LINKS(test/units/ref_output/environment_1.out:test/units/ref_output/en
                 test/units/ref_output/setup_2.out:test/units/ref_output/setup_2.out
                 test/units/ref_output/symbols_test_1.out:test/units/ref_output/symbols_test_1.out
                 test/units/ref_output/vftr_sxhwc_test_1.out:test/units/ref_output/vftr_sxhwc_test_1.out
-                test/units/ref_output/browse_1.out:test/units/ref_output/browse_1.out
                )
 
 AM_COND_IF([WITH_MPI],
@@ -41,7 +40,8 @@ AC_CONFIG_LINKS(test/units/ref_output/functions_1.out:test/units/ref_output/$uni
                 test/units/ref_output/functions_4.out:test/units/ref_output/$units_refdir/functions_4.out
                 test/units/ref_output/functions_5.out:test/units/ref_output/$units_refdir/functions_5.out
                 test/units/ref_output/filewrite_2.out:test/units/ref_output/$units_refdir/filewrite_2.out
-                test/units/ref_output/stacks_1.out:test/units/ref_output/$units_refdir/stacks_1.out)
+                test/units/ref_output/stacks_1.out:test/units/ref_output/$units_refdir/stacks_1.out
+                test/units/ref_output/browse_1.out:test/units/ref_output/$units_refdir/browse_1.out)
 
 AM_COND_IF([WITH_MPI],
            [AC_CONFIG_LINKS(test/units/ref_output/vftr_stacks_test_2.out:test/units/ref_output/$units_refdir/vftr_stacks_test_2.out)]

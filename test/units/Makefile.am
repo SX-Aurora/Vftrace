@@ -53,7 +53,7 @@ dist_check_SCRIPTS = this_passes.sh \
 		     this_fails.sh
 
 if WITH_MPI
-dist_check_SCRIPTS += vftr_stacks_test_2.sh
+#dist_check_SCRIPTS += vftr_stacks_test_2.sh
 endif
 
 if ENABLE_HWC
