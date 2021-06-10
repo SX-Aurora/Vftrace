@@ -1,6 +1,6 @@
 #!/bin/bash
 set -x
-test_name=stacks_1
+test_name=browse_1
 output_file=$test_name.out
 ref_file=ref_output/$test_name.out
 

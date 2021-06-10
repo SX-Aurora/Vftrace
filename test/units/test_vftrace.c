@@ -51,14 +51,8 @@ int main (int argc, char **argv) {
 		retval = this_fails();
 	} else if (!strcmp (argv[1], "this_passes")) {
 		retval = this_passes();
-	} else if (!strcmp (argv[1], "vftr_functions_test_5")) {
-		retval = vftr_functions_test_5 (fp_in, fp_out);
-	} else if (!strcmp (argv[1], "vftr_stacks_test_1")) {
-		retval = vftr_stacks_test_1 (fp_in, fp_out);
 	} else if (!strcmp (argv[1], "vftr_stacks_test_2")) {
 		retval = vftr_stacks_test_2 (fp_in, fp_out);
-	} else if (!strcmp (argv[1], "vftr_browse_test_1")) {
-		retval = vftr_browse_test_1 (fp_in, fp_out);
 	} else if (!strcmp (argv[1], "vftr_sxhwc_test_1")) {
 		retval = vftr_sxhwc_test_1 (fp_in, fp_out);
 	} else {

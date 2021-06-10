@@ -9,6 +9,7 @@ int main (int argc, char **argv) {
 #endif
 
   vftr_read_environment();
+
   unsigned long long addrs[6];
   fprintf (stdout, "Initial vftr_stackscount: %d\n", vftr_stackscount);
   function_t *func1 = vftr_new_function (NULL, "init", NULL, false);
