@@ -185,13 +185,10 @@ function_t *vftr_new_function(void *arg, const char *function_name, function_t *
 
    // preparing the function specific profiling data
    vftr_init_profdata (&func->prof_current);
-   vftr_init_profdata (&func->prof_previous);
    
    if (vftr_n_hw_obs > 0)  {
       func->prof_current.event_count = (long long*) malloc(vftr_n_hw_obs * sizeof(long long));
-      func->prof_previous.event_count = (long long*) malloc(vftr_n_hw_obs * sizeof(long long));
       memset (func->prof_current.event_count, 0, vftr_n_hw_obs * sizeof(long long));
-      memset (func->prof_previous.event_count, 0, vftr_n_hw_obs * sizeof(long long));
    }
 
    // Determine if this function should be profiled
@@ -242,9 +239,6 @@ void vftr_reset_counts (function_t *func) {
 
    if (func->prof_current.event_count) {
      memset (func->prof_current.event_count,  0, m);
-   }
-   if (func->prof_previous.event_count) {
-     memset (func->prof_previous.event_count, 0, m);
    }
    func->prof_current.cycles  = 0;
    func->prof_current.time_excl = 0;

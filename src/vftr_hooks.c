@@ -44,20 +44,6 @@
 
 bool vftr_profile_wanted = false;
 
-void vftr_save_old_state () {
-    int i,j;
-
-    for (j = 0; j < vftr_stackscount; j++) {
-        function_t *func = vftr_func_table[j];
-        func->prof_previous.calls  = func->prof_current.calls;
-        func->prof_previous.cycles = func->prof_current.cycles;
-        func->prof_previous.time_excl = func->prof_current.time_excl;
-        for (i = 0; i < vftr_n_hw_obs; i++) {
-            func->prof_previous.event_count[i] = func->prof_current.event_count[i];
-	}
-    }
-}
-
 /**********************************************************************/
 
 void vftr_function_entry (const char *s, void *addr, bool isPrecise) {
@@ -150,7 +136,6 @@ void vftr_function_entry (const char *s, void *addr, bool isPrecise) {
         int ntop;
         vftr_print_profile (vftr_log, NULL, &ntop, timer, 0, NULL);
         vftr_print_local_stacklist (vftr_func_table, vftr_log, ntop);
-	vftr_save_old_state ();
     }
 
 
@@ -188,8 +173,7 @@ void vftr_function_entry (const char *s, void *addr, bool isPrecise) {
     }
 
     if (time_to_sample && vftr_env_do_sampling ()) {
-        profdata_t *prof_previous = &func->prof_previous;
-        vftr_write_to_vfd (func_entry_time, prof_current, prof_previous, func->id, SID_ENTRY);
+        vftr_write_to_vfd (func_entry_time, prof_current, func->id, SID_ENTRY);
 #ifdef _MPI
         int mpi_isinit;
         PMPI_Initialized(&mpi_isinit);
@@ -293,8 +277,7 @@ void vftr_function_exit () {
     }
 
     if (timeToSample && vftr_env_do_sampling ()) {
-        profdata_t *prof_previous = &func->prof_previous;
-        vftr_write_to_vfd(func_exit_time, prof_current, prof_previous, func->id, SID_EXIT);
+        vftr_write_to_vfd(func_exit_time, prof_current, func->id, SID_EXIT);
 #ifdef _MPI
         int mpi_isinit;
         PMPI_Initialized(&mpi_isinit);

@@ -172,7 +172,6 @@ void vftr_region_entry (const char *s, void *addr, bool isPrecise){
         int ntop;
         vftr_print_profile (vftr_log, NULL, &ntop, timer, 0, NULL);
         vftr_print_local_stacklist (vftr_func_table, vftr_log, ntop);
-	vftr_save_old_state ();
     }
 
     vftr_fstack = func; /* Here's where we are now */
@@ -186,8 +185,7 @@ void vftr_region_entry (const char *s, void *addr, bool isPrecise){
 
     if (time_to_sample && vftr_env_do_sampling ()) {
         profdata_t *prof_current = &func->prof_current;
-	profdata_t *prof_previous = &func->prof_previous;
-        vftr_write_to_vfd (func_entry_time, prof_current, prof_previous, func->id, SID_ENTRY);
+        vftr_write_to_vfd (func_entry_time, prof_current, func->id, SID_ENTRY);
 #ifdef _MPI
         int mpi_isinit;
         PMPI_Initialized(&mpi_isinit);
@@ -291,8 +289,7 @@ void vftr_region_exit() {
                     (timeToSample || vftr_environment.accurate_profile->value);
     if (timeToSample && vftr_env_do_sampling ()) {
         profdata_t *prof_current = &func->prof_current;
-	profdata_t *prof_previous = &func->prof_previous;
-        vftr_write_to_vfd (func_exit_time, prof_current, prof_previous, func->id, SID_EXIT);
+        vftr_write_to_vfd (func_exit_time, prof_current, func->id, SID_EXIT);
 #ifdef _MPI
         int mpi_isinit;
         PMPI_Initialized(&mpi_isinit);

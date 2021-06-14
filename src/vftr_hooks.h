@@ -39,8 +39,4 @@ extern excl_fun_t *exclude_addr;
 void vftr_function_entry (const char *s, void *addr, bool isPrecise);
 void vftr_function_exit ();
 
-void vftr_save_old_state ();
-
-
-
 #endif

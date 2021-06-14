@@ -34,15 +34,10 @@ int main (int argc, char **argv) {
   for (int i = 0; i < vftr_stackscount; i++) {
   	vftr_func_table[i]->prof_current.calls = i + 1;
   	vftr_func_table[i]->prof_current.cycles = 0;
-  	vftr_func_table[i]->prof_previous.cycles = 0;
   	vftr_func_table[i]->prof_current.time_excl = (long long)(i+1) * 100000;
-  	vftr_func_table[i]->prof_previous.time_excl = (long long)(i+1) * 90000;
   	vftr_func_table[i]->prof_current.time_incl =
   		2 * vftr_func_table[i]->prof_current.time_excl;
-  	vftr_func_table[i]->prof_previous.time_incl =
-  		2 * vftr_func_table[i]->prof_previous.time_excl;
-  	vftr_test_runtime += vftr_func_table[i]->prof_current.time_excl
-  			   - vftr_func_table[i]->prof_previous.time_excl;
+  	vftr_test_runtime += vftr_func_table[i]->prof_current.time_excl;
   }
   
   vftr_profile_wanted = true;

@@ -88,7 +88,7 @@ enum sample_id {SID_ENTRY, SID_EXIT, SID_MESSAGE};
 
 void vftr_init_vfd_file ();
 void vftr_finalize_vfd_file (long long finalize_time);
-void vftr_write_to_vfd (long long runtime, profdata_t *prof_current, profdata_t *prof_previous, int stack_id, unsigned int sid);
+void vftr_write_to_vfd (long long runtime, profdata_t *prof_current, int stack_id, unsigned int sid);
 #ifdef _MPI
 double vftr_compute_mpi_imbalance (long long *all_times, double t_avg);
 #endif
