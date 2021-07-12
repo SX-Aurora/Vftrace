@@ -701,7 +701,10 @@ void vftr_set_proftab_column_formats (function_t **func_table,
            vftr_prof_column_init ("VmRSS", NULL, 2, COL_MEM, SEP_NONE, &(columns)[i_column++]);
         }
 
-        if (vftr_max_allocated_fields > 0) vftr_prof_column_init ("Max mem", NULL, 2, COL_MEM, SEP_NONE, &(columns)[i_column++]);
+        if (vftr_max_allocated_fields > 0) {
+           vftr_prof_column_init ("Max mem", NULL, 2, COL_MEM, SEP_NONE, &(columns)[i_column++]);
+           vftr_prof_column_init ("Tot mem", NULL, 2, COL_MEM, SEP_NONE, &(columns)[i_column++]);
+        }
 
         vftr_prof_column_init ("Function", NULL, 0, COL_CHAR_RIGHT, SEP_NONE, &(columns)[i_column++]);
         vftr_prof_column_init ("Caller", NULL, 0, COL_CHAR_RIGHT, SEP_NONE, &(columns)[i_column++]);
@@ -754,8 +757,14 @@ void vftr_set_proftab_column_formats (function_t **func_table,
             }
 
             if (vftr_max_allocated_fields > 0) {
-               double mem_max = (double)vftr_allocate_get_max_memory_for_stackid (func_table[i_func]->id);
-	       vftr_prof_column_set_n_chars (&mem_max, NULL, NULL, &(columns)[i_column++], &stat);
+               //double mem_max = (double)vftr_allocate_get_max_memory_for_stackid (func_table[i_func]->id);
+               long long mem_max, mem_tot;
+               vftr_allocate_get_memory_for_stackid (func_table[i_func]->id, &mem_tot, &mem_max);
+               double mem_max_d = (double)mem_max;
+               double mem_tot_d = (double)mem_tot;
+	       //vftr_prof_column_set_n_chars (&mem_max, NULL, NULL, &(columns)[i_column++], &stat);
+	       vftr_prof_column_set_n_chars (&mem_max_d, NULL, NULL, &(columns)[i_column++], &stat);
+	       vftr_prof_column_set_n_chars (&mem_tot_d, NULL, NULL, &(columns)[i_column++], &stat);
             }
 
             vftr_prof_column_set_n_chars (func_table[i_func]->name, NULL, NULL, &(columns)[i_column++], &stat);
@@ -1449,8 +1458,14 @@ void vftr_print_profile_line (FILE *fp_log, function_t *func, long long runtime_
    }
 
    if (vftr_max_allocated_fields > 0) {
-      double mem_max = (double)vftr_allocate_get_max_memory_for_stackid (local_stack_id);
-      vftr_prof_column_print (fp_log, prof_columns[i_column++], &mem_max, NULL, NULL);
+      //double mem_max = (double)vftr_allocate_get_max_memory_for_stackid (local_stack_id);
+      long long mem_max, mem_tot;
+      vftr_allocate_get_memory_for_stackid (local_stack_id, &mem_tot, &mem_max);
+      double mem_max_d = (double)mem_max;
+      double mem_tot_d = (double)mem_tot;
+      //vftr_prof_column_print (fp_log, prof_columns[i_column++], &mem_max, NULL, NULL);
+      vftr_prof_column_print (fp_log, prof_columns[i_column++], &mem_max_d, NULL, NULL);
+      vftr_prof_column_print (fp_log, prof_columns[i_column++], &mem_tot_d, NULL, NULL);
    }
    
    vftr_prof_column_print (fp_log, prof_columns[i_column++], func->name, NULL, NULL);

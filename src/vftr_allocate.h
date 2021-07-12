@@ -21,7 +21,8 @@
 
 extern int vftr_max_allocated_fields;
 
-long long vftr_allocate_get_max_memory_for_stackid (int stack_id);
+//long long vftr_allocate_get_max_memory_for_stackid (int stack_id);
+void vftr_allocate_get_memory_for_stackid (int stack_id, long long *mem_tot, long long *mem_max);
 
 void vftrace_allocate (const char *s, const int *n_elements, const int *element_size);
 void vftrace_deallocate (const char *s);
