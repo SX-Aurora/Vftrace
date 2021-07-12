@@ -907,6 +907,13 @@ void vftr_proftab_print_header (FILE *fp, column_t *columns) {
            i++;
         }
 
+        if (vftr_max_allocated_fields > 0) {
+           fprintf (fp, " %*s ", columns[i].n_chars, columns[i].header);
+           i++;
+           fprintf (fp, " %*s ", columns[i].n_chars, columns[i].header);
+           i++;
+        } 
+
 	fprintf (fp, " %*s ", columns[i].n_chars, columns[i].header);
 	i++;
 	fprintf (fp, " %*s ", columns[i].n_chars, columns[i].header);
@@ -1533,6 +1540,7 @@ void vftr_print_profile (FILE *fp_log, FILE *f_html, int *n_func_indices, long l
     n_columns += vftr_scenario_expr_n_formulas;
     // Add one column for self-traced memory consumption
     if (vftr_memtrace) n_columns += 1;
+    if (vftr_max_allocated_fields > 0) n_columns += 2;
     // If function overhead is displayed, add three more columns.
     if (vftr_environment.show_overhead->value) n_columns += 3;
     if (vftr_environment.show_stacks_in_profile->value) n_columns++;
