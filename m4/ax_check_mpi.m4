@@ -68,6 +68,10 @@ AC_DEFUN([AX_CHECK_MPI], [
    AM_CONDITIONAL([USES_OPEN_MPI],
                   [test "x$uses_open_mpi" = "xyes"])
    # Check the OpenMPI version to determine proper oversubscribe-flag
+   # With version 5 of OpenMPI a new flag was introduced
+   # and the old one deprecated.
+   # We need the flag as some mpi-tests require four processes
+   # which can be problematic on systems with few cores
    AM_COND_IF([USES_OPEN_MPI], [
       AC_MSG_CHECKING([OpenMPI version])
       ompi_version="$(mpirun --version 2> /dev/null | head -n 1 | awk '{print $NF}')"
