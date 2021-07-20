@@ -67,6 +67,16 @@ AC_DEFUN([AX_CHECK_MPI], [
       AC_MSG_RESULT([$uses_open_mpi])])
    AM_CONDITIONAL([USES_OPEN_MPI],
                   [test "x$uses_open_mpi" = "xyes"])
+   # Check the OpenMPI version to determine proper oversubscribe-flag
+   AM_COND_IF([USES_OPEN_MPI], [
+      AC_MSG_CHECKING([OpenMPI version])
+      ompi_version="$(mpirun --version 2> /dev/null | head -n 1 | awk '{print $NF}')"
+      AC_MSG_RESULT([${ompi_version}])
+      AX_COMPARE_VERSION([${ompi_version}], [lt], [5.0.0],
+         [ompi_version_lt5="yes"],
+         [ompi_version_lt5="no"])])
+   AM_CONDITIONAL([OMPI_VERSION_LT5],
+                  [test "x$ompi_version_lt5" = "xyes"])
 
    AM_COND_IF([WITH_MPI], [
       # NEC-MPI
