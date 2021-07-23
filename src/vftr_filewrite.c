@@ -133,69 +133,48 @@ void vftr_is_traceable_mpi_function (char *func_name, bool *is_mpi) {
 const int vftr_n_remarks = 2;
 bool vftr_has_remark[vftr_n_remarks];
 
-//int vftr_make_remark (function_t *this_func) {
+void vftr_add_remark (remarks_t **r, remarks_t **r_orig, int id) {
+   if (*r == NULL) {
+      *r = (remarks_t*) malloc (sizeof(remarks_t));
+      *r_orig = *r;
+   } else {
+      (*r)->r_next = (remarks_t*) malloc (sizeof(remarks_t));
+      *r = (*r)->r_next;
+   }
+   (*r)->id = id;
+   vftr_has_remark[id-1] = true;
+   (*r)->r_next = NULL;
+}
+
+/**********************************************************************/
+
 void vftr_make_remarks (function_t *this_func, remarks_t **remarks) {
-  //int remark = REMARK_NONE;
-  //remarks_t *r = NULL;
-  //remarks = r;
   double t_inc = (double)this_func->prof_current.time_incl * 1e-6;
   int n_calls = this_func->prof_current.calls;
   double t_overhead = (double)this_func->overhead * 1e-6;
   printf ("Check: %lf %lf %d\n", 0.5 * t_inc / n_calls, t_overhead, 0.5 * t_inc / n_calls > t_overhead);
   remarks_t *r_orig;
   if (0.5 * t_inc / n_calls > t_overhead) {
-    if (*remarks == NULL) {
-       //remarks = (remarks_t**) malloc (sizeof(remarks_t*));
-       *remarks = (remarks_t*) malloc (sizeof(remarks_t));
-       r_orig = *remarks;
-    } else {       
-       (*remarks)->r_next = (remarks_t*) malloc (sizeof(remarks_t));
-       *remarks = (*remarks)->r_next;
-    }
-    printf ("SET REMARK OVERHEAD\n");
-    (*remarks)->id = REMARK_OVERHEAD;
-    vftr_has_remark[REMARK_OVERHEAD-1] = true; 
-    (*remarks)->r_next = NULL;
+    vftr_add_remark (remarks, &r_orig, REMARK_OVERHEAD);
   }
-  if (*remarks == NULL) {
-       *remarks = (remarks_t*) malloc (sizeof(remarks_t));
-       r_orig = *remarks;
-    } else {       
-       printf ("SET NEXT\n");
-       (*remarks)->r_next = (remarks_t*) malloc (sizeof(remarks_t));
-       *remarks = (*remarks)->r_next;
-  }
-  printf ("SET REMARK DUMMY\n");
-  (*remarks)->id = REMARK_DUMMY;
-  vftr_has_remark[REMARK_DUMMY-1] = true;
-  (*remarks)->r_next = NULL;
+  ///vftr_add_remark (remarks, &r_orig, REMARK_DUMMY);
   *remarks = r_orig;
-
-  printf ("REMARKS NULL? %d\n", remarks == NULL);
-  //return remark;
 }
 
 /**********************************************************************/
 
-//char *vftr_print_remark (int remark) {
 char *vftr_get_remark_indices (remarks_t *remarks) {
-   printf ("REMARKS exist? %d\n", remarks != NULL);
-   //if (remarks != NULL) printf ("ID: %d\n", remarks->id);
    int n_remarks = 0; 
    remarks_t *r = remarks;
    while (r != NULL) {
      n_remarks++;
      r = r->r_next;
    }
-   printf ("N_REMARKs: %d\n", n_remarks);
-   //for (int i = 0; i < n_remarks; i++) {
-   //  printf ("r: %d\n", remarks->id);
-   //  remarks = remarks->r_next;
-   //}
+
    if (n_remarks == 0) return "";
+
    char s_out[2 * n_remarks + 1];
    char buf[3];
-   //char *s = (char*)malloc(2 * n_remarks + 1);
    r = remarks;
    int i = 0;
    while (r != NULL) { 
@@ -204,7 +183,6 @@ char *vftr_get_remark_indices (remarks_t *remarks) {
      r = r->r_next;
    }
    s_out[2 * n_remarks] = '\0';
-   printf ("FOO: %s\n", s_out);
    return strdup(s_out);
 
 }
@@ -215,7 +193,7 @@ void vftr_print_remark (FILE *fp, int remark_id) {
   switch (remark_id) {
     case (REMARK_OVERHEAD):
        fprintf (fp, "%d): This function has a large overhead compared to its runtime. It can significantly increase the runtime of the traced program and expand MPI imbalances further.\n", remark_id);
-       fprintf (fp, "   If the function is not of interest to you, consider putting __attribute__((no_instrument_function)) in front of its declaration to make it invisible to Vftrace.\n");
+       fprintf (fp, "    If the function is not of interest to you, consider putting __attribute__((no_instrument_function)) in front of its declaration to make it invisible to Vftrace.\n");
        break;
     case (REMARK_DUMMY):
        fprintf (fp, "%d): This is a dummy\n", remark_id);
@@ -1691,10 +1669,8 @@ void vftr_print_profile (FILE *fp_log, FILE *f_html, int *n_func_indices, long l
        long long t_excl, t_incl;
        double t_overhead;
        vftr_compute_line_content (func_table[i_func], &n_calls, &t_excl, &t_incl, &t_overhead);
-       //int remark = vftr_make_remark (func_table[i_func]);
        remarks_t *remarks = NULL;
        vftr_make_remarks (func_table[i_func], &remarks);
-       printf ("FOO: %d\n", remarks != NULL);
        cumulative_time += t_excl;
 
        vftr_print_profile_line (fp_log, func_table[i_func], function_time, sampling_overhead_time_usec * 1e-6,
