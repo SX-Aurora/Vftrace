@@ -174,6 +174,7 @@ char *vftr_get_remark_indices (remarks_t *remarks) {
    if (n_remarks == 0) return "";
 
    char s_out[2 * n_remarks + 1];
+   s_out[0] = '\0';
    char buf[3];
    r = remarks;
    int i = 0;
