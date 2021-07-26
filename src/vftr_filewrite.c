@@ -153,7 +153,7 @@ void vftr_make_remarks (function_t *this_func, remarks_t **remarks) {
   int n_calls = this_func->prof_current.calls;
   double t_overhead = (double)this_func->overhead * 1e-6;
   printf ("Check: %lf %lf %d\n", 0.5 * t_inc / n_calls, t_overhead, 0.5 * t_inc / n_calls > t_overhead);
-  remarks_t *r_orig;
+  remarks_t *r_orig = NULL;
   if (0.5 * t_inc / n_calls > t_overhead) {
     vftr_add_remark (remarks, &r_orig, REMARK_OVERHEAD);
   }
