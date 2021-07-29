@@ -130,8 +130,8 @@ void vftr_is_traceable_mpi_function (char *func_name, bool *is_mpi) {
 
 /**********************************************************************/
 
-const int vftr_n_remarks = 2;
-bool vftr_has_remark[vftr_n_remarks];
+#define VFTR_N_REMARKS 2
+bool vftr_has_remark[VFTR_N_REMARKS];
 
 void vftr_add_remark (remarks_t **r, remarks_t **r_orig, int id) {
    if (*r == NULL) {
@@ -206,13 +206,13 @@ void vftr_print_remark (FILE *fp, int remark_id) {
 
 void vftr_print_remark_list (FILE *fp) {
    bool has_remarks = false;
-   for (int i = 0; i < vftr_n_remarks; i++) {
+   for (int i = 0; i < VFTR_N_REMARKS; i++) {
       has_remarks |= vftr_has_remark[i];
    }
 
    if (has_remarks) {
       fprintf (fp, "\nRemarks: \n");
-      for (int i = 0; i < vftr_n_remarks; i++) {
+      for (int i = 0; i < VFTR_N_REMARKS; i++) {
          if (vftr_has_remark[i]) vftr_print_remark(fp, i+1);
       }
       fprintf (fp, "\n"); 
@@ -1598,7 +1598,7 @@ void vftr_print_profile (FILE *fp_log, FILE *f_html, int *n_func_indices, long l
        vftr_scenario_expr_counter_values[i] = 0.0;
     }
 
-    for (int i = 0; i < vftr_n_remarks; i++) {
+    for (int i = 0; i < VFTR_N_REMARKS; i++) {
        vftr_has_remark[i] = false; 
     }
 
