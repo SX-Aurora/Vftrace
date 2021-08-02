@@ -2,7 +2,11 @@
 set -x
 test_name=functions_5
 output_file=$test_name.out
-ref_file=ref_output/$test_name.out
+if [ "x$HAS_MPI" == "xYES" ]; then
+   ref_file=${srcdir}/ref_output/mpi/$test_name.out
+else
+   ref_file=${srcdir}/ref_output/serial/$test_name.out
+fi
 
 rm -f $output_file
 

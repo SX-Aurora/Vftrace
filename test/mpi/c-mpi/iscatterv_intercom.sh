@@ -1,0 +1,1 @@
+../testscripts/iscatterv_intercom.sh

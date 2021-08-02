@@ -1,0 +1,1 @@
+../testscripts/testall.sh

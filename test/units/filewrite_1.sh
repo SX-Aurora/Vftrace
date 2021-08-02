@@ -2,7 +2,7 @@
 set -x
 vftr_binary=filewrite_1
 outfile=filewrite_1.out
-ref_file=ref_output/$outfile
+ref_file=${srcdir}/ref_output/$outfile
 
 rm -f $outfile
 

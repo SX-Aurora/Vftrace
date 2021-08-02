@@ -2,8 +2,9 @@
 set -x
 test_name=stacks_2
 output_file=$test_name.out
-ref_file=ref_output/$test_name.out
-
+if [ "x$HAS_MPI" == "xYES" ]; then
+   ref_file=${srcdir}/ref_output/mpi/$test_name.out
+fi
 
 rm -f $output_file
 

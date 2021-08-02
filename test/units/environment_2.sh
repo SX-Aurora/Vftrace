@@ -2,7 +2,7 @@
 set -x
 vftr_binary=environment_2
 outfile=environment_2.out
-ref_file=ref_output/$output_file
+ref_file=${srcdir}/ref_output/$output_file
 
 rm -f $outfile
 

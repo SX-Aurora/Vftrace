@@ -96,6 +96,4 @@ AC_CONFIG_FILES([test/mpi/c-mpi/Makefile])
 AC_CONFIG_FILES([test/mpi/f-mpi/Makefile])
 AC_CONFIG_FILES([test/mpi/f08-mpi/Makefile])
 
-AX_LINK_TEST_FILES
-
 AC_OUTPUT

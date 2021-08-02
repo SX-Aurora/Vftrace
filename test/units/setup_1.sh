@@ -1,6 +1,6 @@
 #!/bin/bash
 set -x
-ref_out_dir=ref_output
+ref_out_dir=${srcdir}/ref_output
 vftr_binary=setup_1
 outfile=setup_1.out
 

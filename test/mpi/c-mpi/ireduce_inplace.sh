@@ -1,0 +1,1 @@
+../testscripts/ireduce_inplace.sh

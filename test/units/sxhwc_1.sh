@@ -2,7 +2,7 @@
 set -x
 test_name=sxhwc_1
 output_file=$test_name.out
-ref_file=ref_output/$output_file
+ref_file=${srcdir}/ref_output/$output_file
 
 rm -f $output_file
 

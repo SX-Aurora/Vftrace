@@ -1,0 +1,1 @@
+../testscripts/init_finalize-1.sh

@@ -1,0 +1,1 @@
+../testscripts/send_irecv.sh
