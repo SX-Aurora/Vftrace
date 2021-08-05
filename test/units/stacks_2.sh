@@ -13,7 +13,7 @@ if [ "x$HAS_MPI" == "xYES" ]; then
    ${MPI_EXEC} ${MPI_OPTS} ${NP} ${nprocs} ./${test_name}
    last_success=$?
 
-   if [ $last_success == 0]; then
+   if [ $last_success == 0 ]; then
       for irank in $(seq 0 1 $(bc <<< "${nprocs}-1"));
       do
          tmpoutfile=$(echo "stacks_2_rank${irank}_tmp.out")
