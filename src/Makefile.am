@@ -48,6 +48,7 @@ libvftrace_la_SOURCES = vftr_scenarios.c \
 	 	       vftr_environment.c \
 		       vftr_signals.c \
 		       vftr_browse.c \
+		       vftr_startup_message.c \
                        vftr_mallinfo.c
 
 if ENABLE_FORTRAN

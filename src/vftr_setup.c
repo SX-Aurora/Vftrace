@@ -43,6 +43,7 @@
 #include "vftr_functions.h"
 #include "vftr_mallinfo.h"
 #include "vftr_allocate.h"
+#include "vftr_startup_message.h"
 
 bool vftr_timer_end;
 
@@ -161,6 +162,10 @@ void vftr_initialize() {
     atexit (vftr_finalize);
     vftr_get_mpi_info (&vftr_mpirank, &vftr_mpisize);
     vftr_assert_environment ();
+
+    if (vftr_environment.show_startup->value) {
+       vftr_print_startup_message(stdout);
+    }
 
     vftr_do_stack_normalization = !vftr_environment.no_stack_normalization->value;
     vftr_setup_signals();
