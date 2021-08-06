@@ -1,0 +1,1 @@
+../testscripts/rsend_recv.sh

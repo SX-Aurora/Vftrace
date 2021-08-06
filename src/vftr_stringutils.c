@@ -23,6 +23,7 @@
 #include <stdarg.h>
 #include <limits.h>
 #include <string.h>
+#include <ctype.h>
 
 #include "vftr_setup.h"
 
@@ -91,3 +92,22 @@ int vftr_levenshtein_distance (char *a, char *b) {
 }
 
 /**********************************************************************/
+
+void vftr_has_control_character (char *s, int *pos, int *char_num) {
+  char *p = s;
+  *pos = -1;
+  if (char_num != NULL) *char_num = -1;
+  int count = 0; 
+  while (*p != '\0') {
+    if (iscntrl(*p) && *p != '\n') {
+      *pos = count;
+      if (char_num != NULL) *char_num = *p;
+      break;
+    }
+    count++;
+    p++;
+  }
+}
+
+/**********************************************************************/
+

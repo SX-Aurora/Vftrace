@@ -26,7 +26,7 @@ int MPI_Finalize() {
 
    // it is neccessary to finalize vftrace here, in order to properly communicat stack ids
    // between processes. After MPI_Finalize communication between processes is prohibited
-   vftr_finalize(true);
+   vftr_finalize();
 
    return PMPI_Finalize();
 }

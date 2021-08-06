@@ -24,16 +24,14 @@ MODULE vftr_finalize_f082c_f08interface
 
    PRIVATE
 
-   PUBLIC :: vftr_finalize_f082c
+   PUBLIC :: vftr_finalize_F08
 
    INTERFACE
 
-      SUBROUTINE vftr_finalize_f082c(do_normalize_stacks) &
+      SUBROUTINE vftr_finalize_F08() &
          BIND(c, NAME="vftr_finalize")
-         USE ISO_C_BINDING, ONLY : c_bool
          IMPLICIT NONE
-         LOGICAL(KIND=c_bool) :: do_normalize_stacks
-      END SUBROUTINE vftr_finalize_f082c
+      END SUBROUTINE vftr_finalize_F08
 
    END INTERFACE
 

@@ -1,0 +1,229 @@
+3 0 -1 
+1 0 -1 
+<style>
+*,
+*:before,
+*:after {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+
+  border: 0 none;
+
+  -webkit-transition: all ease .4s;
+  -moz-transition: all ease .4s;
+    transition: all ease .4s;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  background: white;
+  font-family: 'Fjalla One', sans-serif;
+  font-size: 18px;
+}
+
+h1 {
+  padding-top: 40px;
+  color: black;
+  text-align: center;
+  font-size: 1.8rem;
+}
+
+.nav {
+  margin: 100px auto;
+  width: 1010ch;
+  min-height: auto;
+}
+
+.nav ul {
+  position: relative;
+  padding-top: 20px;
+}
+
+.nav li {
+  position: relative;
+  padding: 20px 3px 0 3px;
+  float: left;
+
+  text-align: center;
+  list-style-type: none;
+}
+
+.nav li::before, .nav li::after{
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 50%;
+  width: 50%;
+  height: 20px;
+  border-top: 1px solid black;
+}
+
+.nav li::after{
+  left: 50%;
+  right: auto;
+
+  border-left: 1px solid black;
+}
+
+.nav li:only-child::after, .nav li:only-child::before {
+  content: '';
+  display: none;
+}
+
+.nav li:only-child{ padding-top: 0;}
+.nav li:first-child::before, .nav li:last-child::after{
+  border: 0 none;
+}
+
+.nav li:last-child::before{
+  border-right: 1px solid black;
+  border-radius: 0 5px 0 0;
+}
+
+.nav li:first-child::after{
+    border-radius: 5px 0 0 0;
+}
+.nav ul ul::before{
+  content: '';
+  position: absolute; top: 0; left: 50%;
+  border-left: 1px solid black;
+  width: 0;
+  height: 20px;
+}
+
+.nav li a{
+  display: inline-block;
+  padding: 5px 10px;
+  border-radius: 5px;
+  border: 1px solid black;
+  text-decoration: none;
+  text-transform: uppercase;
+  color: black;
+  font-family: arial, verdana, tahoma;
+  font-size: 11px;
+}
+
+/* This is the stack info box which appears when hovering over a function node */
+
+a .ttt {
+  visibility: hidden;
+  width: 100%;
+  background-color: black;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px; /* Rounded corners */
+  padding: 10px 0;
+  position: absolute;
+  z-index: 1; /* Precedence of this element - atop of the leaf. */
+}
+
+a:hover .ttt{
+  visibility: visible;
+}
+
+hr {
+  display: block;
+  height: 1px;
+  border: 0;
+  border-top: 1px solid black;
+  margin: 1em 0;
+  padding: 0;
+}
+
+li a, .dropbtn {
+  display: inline-block;
+  color: gray;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: #f9f9f9;
+  min-width: 160px;
+  z-index: 1;
+}
+
+.dropdown-content a:hover {
+  background-color: #f1f1f1;
+}
+
+.dropdown:hover .dropdown-content {
+  display: block;
+}
+
+li.dropdown {
+  display: inline-block;
+}
+</style>
+<ul style="list-style-type: none;margin-top: 0px;margin-left: 1ch; background-color: #f1f1f1;">
+   <li style="display: inline;"><a href="../index.html">HOME</a></li>
+   <li style="display: inline;" class="dropdown">
+      <a href="javascript:void(0)" class="dropbtn">Call graphs</a>
+      <div class="dropdown-content">
+         <a href="C_0.html">0</a>
+      </div>
+   </li>
+   <li style="display: inline;">
+      <a href="../profile_0.html">Profile tables</a>
+   </li>
+</ul>
+
+<ul style="float: left;list-style-type: none;margin: 0;padding: 0; width: 1ch;height: 100%;background-color: #f1f1f1;">
+   <li><a href="C_0.html">C</a></li>
+</ul>
+
+<div style="margin-left:150px; margin-top:0px; padding: 1px 16px">
+<h1>C, rank 0</h1>
+<nav class="nav"/>
+   <ul>
+      <li>
+         <a hfref="#" style="background-color: #edebeb">init
+         </a>
+         <ul>
+            <li>
+               <a hfref="#" style="background-color: #edebeb">A
+               </a>
+               <ul>
+                  <li>
+                     <a hfref="#" style="background-color: rgb(255,255,0)">C
+                     </a>
+                     <hr/>
+                     Position: 1<br>
+                     Calls: 5<br>
+                     Time   0.00 s<br>
+                                          Send: 0.00   B<br>
+                     Recv: 0.00   B<br>
+                  </li>
+               </ul>
+               <li>
+                  <a hfref="#" style="background-color: #edebeb">B
+                  </a>
+                  <ul>
+                     <li>
+                        <a hfref="#" style="background-color: rgb(255,255,0)">C
+                        </a>
+                        <hr/>
+                        Position: 1<br>
+                        Calls: 6<br>
+                        Time   0.00 s<br>
+                                                Send: 0.00   B<br>
+                        Recv: 0.00   B<br>
+                     </li>
+                  </ul>
+               </li>
+            </li>
+         </ul>
+      </li>
+   </ul>
+</nav>
+</div>

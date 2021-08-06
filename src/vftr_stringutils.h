@@ -23,4 +23,6 @@
 void vftr_rank0_printf (const char *fmt, ...);
 int vftr_levenshtein_distance (char *a, char *b);
 
+void vftr_has_control_character (char *s, int *pos, int *char_num);
+
 #endif

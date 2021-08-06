@@ -41,6 +41,7 @@
 #include "vftr_hooks.h"
 #include "vftr_timer.h"
 #include "vftr_functions.h"
+#include "vftr_mallinfo.h"
 #include "vftr_allocate.h"
 
 bool vftr_timer_end;
@@ -50,8 +51,12 @@ int vftr_mpisize;
 unsigned int vftr_function_samplecount;
 unsigned int vftr_message_samplecount;
 
+bool vftr_do_stack_normalization;
+
 char *vftr_start_date;
 char *vftr_end_date;
+
+bool in_vftr_finalize;
 
 void vftr_print_disclaimer_full (FILE *fp) {
     fprintf (fp, 
@@ -72,13 +77,13 @@ void vftr_print_disclaimer_full (FILE *fp) {
 
 /**********************************************************************/
 
-void vftr_print_disclaimer (FILE *fp) {
+void vftr_print_disclaimer (FILE *fp, bool no_date) {
     int v_major = MAJOR_VERSION;
     int v_minor = MINOR_VERSION;
     int rev = REVISION;
     fprintf (fp, "Vftrace version %d.%d.%d\n", v_major, v_minor, rev);
     fprintf (fp, "Runtime profile for application: %s\n", "");
-    fprintf (fp, "Start Date: %s\n", vftr_start_date); 
+    if (!no_date) fprintf (fp, "Start Date: %s\n", vftr_start_date); 
     fprintf (fp, 
         "This is free software with ABSOLUTELY NO WARRANTY.\n"
         "For details: use vftrace with environment variable VFTR_LICENSE\n"
@@ -141,6 +146,7 @@ void vftr_set_end_date () {
 /**********************************************************************/
 
 void vftr_initialize() {
+    in_vftr_finalize = false;
     // set the timer reference point for this process
     vftr_set_local_ref_time();
     vftr_set_start_date();
@@ -152,9 +158,11 @@ void vftr_initialize() {
     if (vftr_off()) {
 	return;
     }
+    atexit (vftr_finalize);
     vftr_get_mpi_info (&vftr_mpirank, &vftr_mpisize);
     vftr_assert_environment ();
 
+    vftr_do_stack_normalization = !vftr_environment.no_stack_normalization->value;
     vftr_setup_signals();
 	
     lib_opened = 0;
@@ -181,7 +189,7 @@ void vftr_initialize() {
        if (vftr_environment.license_verbose->value) {
 	  vftr_print_disclaimer_full (vftr_log);
        } else {
-	  vftr_print_disclaimer (vftr_log);
+	  vftr_print_disclaimer (vftr_log, false);
        }
     }
 
@@ -199,8 +207,9 @@ void vftr_initialize() {
 
     memset (&vftr_prof_data, 0, sizeof(profdata_t));
 
+    vftr_init_mallinfo();
+
     // initialize the stack variables and tables
-    vftr_initialize_stacks();
 
     vftr_nextsampletime = 0ll;
     vftr_prevsampletime = 0;
@@ -217,7 +226,13 @@ void vftr_initialize() {
         vftr_events_enabled = false;
     }
 
-    if (vftr_n_hw_obs  > 0) {
+    if (vftr_memtrace) {
+       vftr_init_hwc_memtrace();
+    }
+
+    vftr_initialize_stacks();
+
+    if (vftr_n_hw_obs > 0) {
        vftr_prof_data.events[0] = (long long *) malloc (vftr_n_hw_obs * sizeof(long long));
        vftr_prof_data.events[1] = (long long *) malloc (vftr_n_hw_obs * sizeof(long long));
        memset (vftr_prof_data.events[0], 0, vftr_n_hw_obs * sizeof(long long));
@@ -273,7 +288,8 @@ void vftr_initialize() {
 
 /**********************************************************************/
 
-void vftr_finalize(bool do_normalize_stacks) {
+void vftr_finalize() {
+    in_vftr_finalize = true;
     int ntop = 0;
     function_t **funcTable;
 
@@ -286,17 +302,23 @@ void vftr_finalize(bool do_normalize_stacks) {
 
     // Mark end of non-parallel interval
     if (vftr_env_do_sampling()) {
-        vftr_write_to_vfd (finalize_time, NULL, NULL, 0, SID_EXIT);
+        vftr_write_to_vfd (finalize_time, NULL, 0, SID_EXIT);
     }
 
     if (vftr_environment.strip_module_names->value) {
 	vftr_strip_all_module_names ();
     }
+
+    if (vftr_environment.demangle_cpp->value) {
+#ifdef _LIBERTY_AVAIL
+       vftr_demangle_all_func_names();
+#endif
+    }
     
     FILE *f_html = NULL;
     display_function_t **display_functions = NULL;
     int n_display_functions = 0;
-    if (do_normalize_stacks) {
+    if (vftr_do_stack_normalization) {
        vftr_normalize_stacks();
 
        if (vftr_env_need_display_functions()) {
@@ -311,11 +333,11 @@ void vftr_finalize(bool do_normalize_stacks) {
     }
 
     if (vftr_profile_wanted) {
-       if (do_normalize_stacks) vftr_create_global_stack_strings ();
+       if (vftr_do_stack_normalization) vftr_create_global_stack_strings ();
        vftr_print_profile (vftr_log, f_html, &ntop, vftr_get_runtime_usec(), n_display_functions, display_functions);
     }
 #ifdef _MPI
-    if (do_normalize_stacks && (vftr_environment.print_stack_profile->value || vftr_environment.all_mpi_summary->value)) {
+    if (vftr_do_stack_normalization && (vftr_environment.print_stack_profile->value || vftr_environment.all_mpi_summary->value)) {
        // Inside of vftr_print_function_statistics, we use an MPI_Allgather to compute MPI imbalances. Therefore,
        // we need to call this function for every rank, but give it the information of vftr_profile_wanted
        // to avoid unrequired output.
@@ -325,7 +347,7 @@ void vftr_finalize(bool do_normalize_stacks) {
  
     funcTable = vftr_func_table;
 
-    if (vftr_profile_wanted && do_normalize_stacks) {
+    if (vftr_profile_wanted && vftr_do_stack_normalization) {
         vftr_print_global_stacklist(vftr_log);
     }
 
@@ -334,6 +356,7 @@ void vftr_finalize(bool do_normalize_stacks) {
 	fprintf(vftr_log, "error stopping H/W counters, ignored\n");
     }
 
+    if (vftr_memtrace) vftr_finalize_mallinfo();
     if (vftr_max_allocated_fields > 0) vftr_allocate_finalize(vftr_log);
 
     if (vftr_environment.print_env->value) vftr_print_environment(vftr_log);
@@ -345,6 +368,7 @@ void vftr_finalize(bool do_normalize_stacks) {
     	fclose (vftr_log);
     }
     vftr_switch_off();
+    in_vftr_finalize = false;
 }
 
 /**********************************************************************/
@@ -354,30 +378,10 @@ void vftr_finalize(bool do_normalize_stacks) {
 // It always calls vftr_finalize with active stack normalization ("true" argument), since
 // this is the standard way to terminate.
 void vftr_finalize_() {
-	vftr_finalize(true);
+	vftr_finalize();
 #ifdef _MPI
 	PMPI_Barrier (MPI_COMM_WORLD);
 #endif
 }
 
 /**********************************************************************/
-
-int vftr_setup_test_1 (FILE *fp) {
-	fprintf (fp, "Check MPI rank and size received from environment variables\n");		
-	int mpi_rank, mpi_size;
-	vftr_get_mpi_info (&mpi_rank, &mpi_size);
-	fprintf (fp, "Rank: %d\n", mpi_rank);
-	fprintf (fp, "Size: %d\n", mpi_size);
-	return 0;
-}
-
-/**********************************************************************/
-
-int vftr_setup_test_2 (FILE *fp) {
-	fprintf (fp, "Check disclaimers\n");
-	vftr_print_disclaimer_full (fp);
-	fprintf (fp, "****************************************\n");
-	vftr_print_disclaimer (fp);
-	return 0;
-}
-

@@ -1,0 +1,1 @@
+../testscripts/bcast_intercom.sh

@@ -1,0 +1,4 @@
+Check the creation of log and vfd file name
+logfile_name(0, 1): ./filewrite_1_0.log
+logfile_name(11, 111): ./filewrite_1_011.log
+logfile_name(11, 111): ./filewrite_1_011.vfd

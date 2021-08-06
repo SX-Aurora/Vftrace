@@ -1,0 +1,1 @@
+../testscripts/reduce_intercom.sh

@@ -1,0 +1,17 @@
+MPI size              1
+Total runtime:            2.80 seconds
+Application time:         2.80 seconds
+Overhead:                 0.00 seconds (0.00%)
+------------------------------------------------------------
+
+Runtime profile, truncated to  98%, sorted by exclusive time :
+
+  Calls  t_excl[s]  t_incl[s]  %abs  %cum  Function  Caller  ID  Remarks 
+-----------------------------------------------------------------------------------
+      7      0.700      1.400  25.0  25.0     func4   func6   6          
+      6      0.600      1.200  21.4  46.4     func6   func2   5          
+      5      0.500      1.000  17.9  64.3     func5   func2   4          
+      4      0.400      0.800  14.3  78.6     func4   func3   3          
+      3      0.300      0.600  10.7  89.3     func3    init   2          
+      2      0.200      0.400   7.1  96.4     func2    init   1          
+-----------------------------------------------------------------------------------

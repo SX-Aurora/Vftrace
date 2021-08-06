@@ -1,0 +1,1 @@
+../testscripts/alltoall_intercom.sh

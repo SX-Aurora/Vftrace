@@ -121,15 +121,21 @@ void vftr_allocate_count (int index, long long alloc_size) {
 
 /**********************************************************************/
 
-long long vftr_allocate_get_max_memory_for_stackid (int stack_id) {
-   long long mem_out = 0; 
+void vftr_allocate_get_memory_for_stackid (int stack_id, long long *mem_tot, long long *mem_max) {
+//long long vftr_allocate_get_max_memory_for_stackid (int stack_id) {
+   //long long mem_out = 0; 
+   *mem_tot = 0;
+   *mem_max = 0;
    for (int i = 0; i < vftr_max_allocated_fields; i++) {
       if (vftr_allocated_fields[i]->stack_id == stack_id) {
-        if (vftr_allocated_fields[i]->max_memory > mem_out) mem_out = vftr_allocated_fields[i]->max_memory;
+        if (vftr_allocated_fields[i]->max_memory > *mem_max) *mem_max = vftr_allocated_fields[i]->max_memory;
+        *mem_tot += vftr_allocated_fields[i]->allocated_memory;
       }
    }
-   return mem_out;
+   //return mem_out;
 }
+
+/**********************************************************************/
 
 void vftr_allocate_set_open_state (int index) {
    if (vftr_allocated_fields[index]->open) {

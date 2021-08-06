@@ -1,0 +1,1 @@
+../testscripts/ssend_init.sh

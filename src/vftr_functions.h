@@ -6,6 +6,16 @@
 #include <stdint.h>
 #include <stdbool.h>
 
+typedef struct memProf {
+   long long mem_entry;
+   long long mem_exit;
+   long long mem_max;
+   long long next_memtrace_entry;
+   long long next_memtrace_exit;
+   int mem_tolerance;
+   int mem_increment;
+} mem_prof_t;
+
 typedef struct ProfileData {
    // amount of calls 
    long long calls;
@@ -21,6 +31,7 @@ typedef struct ProfileData {
    int ic;
    long mpi_tot_send_bytes;
    long mpi_tot_recv_bytes;
+   mem_prof_t *mem_prof;
 } profdata_t;
 
 typedef struct Function {
@@ -33,7 +44,7 @@ typedef struct Function {
    // string with the full callstack 
    char *full;
    // profiling data
-   profdata_t prof_current, prof_previous;
+   profdata_t prof_current;
    // is this function measured precisely?
    bool precise;
    // local and global stack-ID
@@ -55,11 +66,16 @@ void vftr_find_function_in_stack (char *func_name, int **indices, int *n_indices
 // the table, if necessary.
 void vftr_strip_all_module_names ();
 
+void vftr_demangle_all_func_names ();
+
 // add a new function to the stack tables
 function_t *vftr_new_function(void *arg, const char *function_name, function_t *caller, bool is_precise);
 
 // Reset all function internal counters
 void vftr_reset_counts (function_t *func);
+
+void vftr_write_function (FILE *fp, function_t *func, bool verbose);
+void vftr_write_function_indices (FILE *fp, char *func_name, bool to_lower_case);
 
 struct loc_glob_id {
    int loc;
@@ -73,14 +89,14 @@ extern int vftr_stackid_list_size;
 #define STACKID_LIST_INC 50
 
 void vftr_stackid_list_init ();
-//void vftr_stackid_list_add (int stack_id);
 void vftr_stackid_list_add (int local_stack_id, int global_stack_id);
 void vftr_stackid_list_print (FILE *fp);
 void vftr_stackid_list_finalize ();
 
+void vftr_sample_vmrss (long long n_calls, bool is_entry, bool verbose, mem_prof_t *mem_prof);
+double vftr_get_max_memory (function_t *func);
+
 // test functions
-int vftr_functions_test_1 (FILE *fp_in, FILE *fp_out);
-int vftr_functions_test_2 (FILE *fp_in, FILE *fp_out);
 int vftr_functions_test_3 (FILE *fp_in, FILE *fp_out);
 int vftr_functions_test_4 (FILE *fp_in, FILE *fp_out);
 int vftr_functions_test_5 (FILE *fp_in, FILE *fp_out);

@@ -1,4 +1,0 @@
-Check the creation of log and vfd file name
-logfile_name(0, 1): ./test_vftrace_0.log
-logfile_name(11, 111): ./test_vftrace_011.log
-logfile_name(11, 111): ./test_vftrace_011.vfd

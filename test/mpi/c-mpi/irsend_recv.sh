@@ -1,0 +1,1 @@
+../testscripts/irsend_recv.sh

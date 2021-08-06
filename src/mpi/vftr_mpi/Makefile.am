@@ -97,7 +97,6 @@ libvftr_mpi_la_SOURCES += vftr_mpi_reduce.c \
 			  vftr_mpi_reduce_scatter_block.c \
 			  vftr_mpi_ireduce_scatter_block.c \
 			  vftr_mpi_reduce_scatter.c \
-			  vftr_mpi_reduce_scatter.c \
 			  vftr_mpi_ireduce_scatter.c \
 			  vftr_mpi_scan.c \
 			  vftr_mpi_iscan.c \

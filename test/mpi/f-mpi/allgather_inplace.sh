@@ -1,0 +1,1 @@
+../testscripts/allgather_inplace.sh

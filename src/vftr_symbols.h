@@ -23,11 +23,8 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
+#include <stdbool.h>
 #include <elf.h>
-
-#ifndef __ve__
-#include "demangle.h"
-#endif
 
 extern FILE *vftr_log;
 
@@ -36,10 +33,8 @@ extern FILE *vftr_log;
 
 typedef struct {
     void *addr;
-    char *name; /* Possibly de-mangled function name */
-    char *full; /* Full interface name */
+    char *name; /* Not de-mangled function name */
     int index; /* Section index */
-    int demangled;
 } symtab_t;
 
 typedef struct PathList {
@@ -54,7 +49,7 @@ extern symtab_t **vftr_symtab;
 
 int vftr_cmpsym(const void *a, const void *b);
 
-void vftr_print_symbol_table (FILE *f);
+void vftr_print_symbol_table (FILE *f, bool include_addr);
 
 void vftr_get_library_symtab (char *target, FILE *fp, off_t base, int pass);
 
@@ -76,8 +71,8 @@ int vftr_create_symbol_table (int rank);
 
 symtab_t **vftr_find_nearest(symtab_t **table, void *addr, int count);
 
-char *vftr_find_symbol (void *addr, char **full);
+char *vftr_find_symbol (void *addr);
 
-int vftr_symbols_test_1 (FILE *fp_in, FILE *fp_out);
+char *vftr_demangle_cpp (char *m_name);
 
 #endif

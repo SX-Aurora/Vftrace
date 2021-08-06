@@ -21,7 +21,9 @@
 
 #include <stdio.h>
 #include <stdbool.h>
+
 #include "vftr_functions.h"
+#include "tinyexpr.h"
 
 typedef struct EventCounter {
     int                 id, namelen, decipl;
@@ -33,7 +35,7 @@ typedef struct EventCounter {
 evtcounter_t  *vftr_get_counters ( void );
 
 void vftr_write_scenario_header_to_vfd (FILE *fp);
-void vftr_write_observables_to_vfd (profdata_t *prof_current, profdata_t *prof_previous, FILE *fp);
+void vftr_write_observables_to_vfd (profdata_t *prof_current, FILE *fp);
 
 #define TE_MAX 50
 #define SCENARIO_EXPR_BUF_SIZE 200
@@ -67,6 +69,8 @@ extern double vftr_scenario_expr_runtime;
 extern double vftr_scenario_expr_cycles;
 extern double vftr_scenario_expr_cycletime;
 
+extern te_variable *te_vars;
+
 void vftr_init_scenario_formats ();
 int vftr_read_scenario_file (char *filename, FILE *fp_ext);
 void vftr_scenario_expr_evaluate (int i_scenario, double runtime, unsigned long long cycles);
@@ -86,9 +90,9 @@ void vftr_scenario_expr_print_subgroup (FILE *fp);
 void vftr_scenario_expr_add_papi_counters ();
 void vftr_scenario_expr_add_sx_counters ();
 
+void vftr_scenario_print_formula (FILE *fp, function_expr_t formula);
+
 // test functions
-int vftr_scenario_test_1 (FILE *fp_in, FILE *fp_out);
-int vftr_scenario_test_2 (FILE *fp_in, FILE *fp_out);
 int vftr_scenario_test_3 (FILE *fp_in, FILE *fp_out);
 
 #endif

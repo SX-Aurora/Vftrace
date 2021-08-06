@@ -479,7 +479,7 @@ void vftr_write_stacks_vfd (FILE *fp, int level, function_t *func) {
 /**********************************************************************/
 
 void vftr_print_local_stacklist (function_t **funcTable, FILE *fp, int n_ids) {
-    bool use_gid = (fp != stdout && (vftr_mpisize > 1));
+    bool use_gid = vftr_gStackinfo != NULL;
     
     if (!vftr_profile_wanted) return;
 
@@ -943,83 +943,3 @@ void vftr_print_function_stack (FILE *fp, char *func_name, int n_final_stack_ids
 }
 
 /**********************************************************************/
-
-int vftr_stacks_test_1 (FILE *fp_in, FILE *fp_out) {
-	unsigned long long addrs[6];
-	fprintf (fp_out, "Initial vftr_stackscount: %d\n", vftr_stackscount);
-	function_t *func1 = vftr_new_function (NULL, "init", NULL, false);
-	function_t *func2 = vftr_new_function ((void*)addrs, "func2", func1, false);
-	function_t *func3 = vftr_new_function ((void*)(addrs + 1), "func3", func1, false);	
-	function_t *func4 = vftr_new_function ((void*)(addrs + 2), "func4", func3, false);
-	function_t *func5 = vftr_new_function ((void*)(addrs + 3), "func5", func2, false);
-	function_t *func6 = vftr_new_function ((void*)(addrs + 4), "func6", func2, false);
-	function_t *func7 = vftr_new_function ((void*)(addrs + 5), "func4", func6, false);
-	vftr_normalize_stacks();			
-	fprintf (fp_out, "%s: %d %d\n", func1->name, func1->id, func1->gid);
-	fprintf (fp_out, "%s: %d %d\n", func2->name, func2->id, func2->gid);
-	fprintf (fp_out, "%s: %d %d\n", func3->name, func3->id, func3->gid);
-	fprintf (fp_out, "%s: %d %d\n", func4->name, func4->id, func4->gid);
-	fprintf (fp_out, "%s: %d %d\n", func5->name, func5->id, func5->gid);
-	fprintf (fp_out, "%s: %d %d\n", func6->name, func6->id, func6->gid);
-	fprintf (fp_out, "%s: %d %d\n", func7->name, func7->id, func7->gid);
-	fprintf (fp_out, "Global stacklist: \n");
-        vftr_create_global_stack_strings();
-	vftr_print_global_stacklist (fp_out);
-	return 0;
-}
-
-/**********************************************************************/
-
-int vftr_stacks_test_2 (FILE *fp_in, FILE *fp_out) {
-#ifdef _MPI
-        // This test creates four artificial local stack trees on each rank, which are merged
-        // using vftr_normalize_stacks. We print out each local stack and the corresponding global stack list.
-        // NOTE: vftr_print_global_stacklist only prints the stack IDs which are present on the given rank.
-	unsigned long long addrs[6];
-	function_t *func0 = vftr_new_function (NULL, "init", NULL, false);	
-	if (vftr_mpirank == 0) {
-		function_t *func1 = vftr_new_function ((void*)addrs, "func1", func0, false);
-		function_t *func2 = vftr_new_function ((void*)(addrs + 1), "func2", func1, false);
-		function_t *func3 = vftr_new_function ((void*)(addrs + 2), "func3", func2, false);
-		function_t *func4 = vftr_new_function ((void*)(addrs + 3), "func4", func3, false);
-	} else if (vftr_mpirank == 1) {
-		function_t *func1 = vftr_new_function ((void*)addrs, "func1", func0, false);
-		function_t *func2 = vftr_new_function ((void*)(addrs + 2), "func3", func1, false);
-		function_t *func3 = vftr_new_function ((void*)(addrs + 1), "func2", func2, false);
-		function_t *func4 = vftr_new_function ((void*)(addrs + 3), "func4", func3, false);
-	} else if (vftr_mpirank == 2) {	
-		function_t *func1 = vftr_new_function ((void*)addrs, "func1", func0, false);
-		function_t *func2 = vftr_new_function ((void*)(addrs + 1), "func2", func1, false);
-		function_t *func3 = vftr_new_function ((void*)(addrs + 2), "func2", func2, false);
-		function_t *func4 = vftr_new_function ((void*)(addrs + 3), "func2", func3, false);
-	} else if (vftr_mpirank == 3) {
-		function_t *func1 = vftr_new_function ((void*)addrs, "func1", func0, false);
-		function_t *func2 = vftr_new_function ((void*)(addrs + 3), "func4", func1, false);
-	} else {
-		fprintf (fp_out, "Error: Invalid MPI rank (%d)!\n", vftr_mpirank);
-		return -1;
-	}
-
-        vftr_environment.logfile_all_ranks->value = true;
-	vftr_normalize_stacks();
-        vftr_create_global_stack_strings();
-
-	// Needs to be set for printing the local stacklist
-	vftr_profile_wanted = true;
-	for (int i = 0; i < vftr_mpisize; i++) {
-		if (vftr_mpirank == i) {
-			fprintf (fp_out, "Local stacklist for rank %d: \n", i);
-			// There is "init" + the four (rank 0 - 2) or two (rank 3) additional functions.
-			int n_functions = vftr_mpirank == 3 ? 3 : 5;
-			vftr_print_local_stacklist (vftr_func_table, fp_out, n_functions);
-		        fprintf (fp_out, "Global stacklis for rank %d: \n", i);
-		        vftr_print_global_stacklist (fp_out);
-		}
-		PMPI_Barrier (MPI_COMM_WORLD);
-	}
-#endif
-	return 0;
-}
-
-/**********************************************************************/
-

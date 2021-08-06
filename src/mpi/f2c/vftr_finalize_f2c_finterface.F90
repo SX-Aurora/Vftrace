@@ -24,16 +24,14 @@ MODULE vftr_finalize_f2c_finterface
 
    PRIVATE
 
-   PUBLIC :: vftr_finalize_f2c
+   PUBLIC :: vftr_finalize_F
 
    INTERFACE
 
-      SUBROUTINE vftr_finalize_f2c(do_normalize_stacks) &
+      SUBROUTINE vftr_finalize_F() &
          BIND(c, NAME="vftr_finalize")
-         USE ISO_C_BINDING, ONLY : c_bool
          IMPLICIT NONE
-         LOGICAL(KIND=c_bool) :: do_normalize_stacks
-      END SUBROUTINE vftr_finalize_f2c
+      END SUBROUTINE vftr_finalize_F
 
    END INTERFACE
 

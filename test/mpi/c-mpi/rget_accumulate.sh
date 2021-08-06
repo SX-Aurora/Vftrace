@@ -1,0 +1,1 @@
+../testscripts/rget_accumulate.sh

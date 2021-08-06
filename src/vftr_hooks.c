@@ -22,6 +22,10 @@
 #include <string.h>
 #include <signal.h>
 
+#ifdef _OPENMP
+#include <omp.h>
+#endif
+
 #include <stdbool.h>
 #include "vftr_symbols.h"
 #include "vftr_hwcounters.h"
@@ -36,40 +40,29 @@
 #include "vftr_stacks.h"
 #include "vftr_clear_requests.h"
 #include "vftr_sorting.h"
+#include "vftr_mallinfo.h"
 
 bool vftr_profile_wanted = false;
-
-void vftr_save_old_state () {
-    int i,j;
-
-    for (j = 0; j < vftr_stackscount; j++) {
-        function_t *func = vftr_func_table[j];
-        func->prof_previous.calls  = func->prof_current.calls;
-        func->prof_previous.cycles = func->prof_current.cycles;
-        func->prof_previous.time_excl = func->prof_current.time_excl;
-        for (i = 0; i < vftr_n_hw_obs; i++) {
-            func->prof_previous.event_count[i] = func->prof_current.event_count[i];
-	}
-    }
-}
 
 /**********************************************************************/
 
 void vftr_function_entry (const char *s, void *addr, bool isPrecise) {
-    int e, read_counters;
+    bool time_to_sample, read_counters;
     unsigned long long timer, delta;
     unsigned long long cycles0;
-    double wtime;
-    static int vftr_init = 1;
-    bool time_to_sample = false;
+    double wall_time;
+    static bool vftr_needs_init = true;
     function_t *caller, *func, *callee;
     profdata_t *prof_return;
 
-    if (vftr_init) {
+    if (vftr_needs_init) {
 	vftr_initialize ();
-	vftr_init = 0;
+	vftr_needs_init = 0;
     }
     if (vftr_off() || vftr_paused) return;
+#ifdef _OPENMP
+    if (omp_get_thread_num() > 0) return;
+#endif
 
     long long func_entry_time = vftr_get_runtime_usec();
     // log function entry and exit time to estimate the overhead time
@@ -136,13 +129,12 @@ void vftr_function_entry (const char *s, void *addr, bool isPrecise) {
     func->open = true;
 
     if (func->profile_this) {
-        wtime = (vftr_get_runtime_usec() - vftr_overhead_usec) * 1.0e-6;
-        vftr_write_stack_ascii (vftr_log, wtime, func, "profile before call to", 0);
+        wall_time = (vftr_get_runtime_usec() - vftr_overhead_usec) * 1.0e-6;
+        vftr_write_stack_ascii (vftr_log, wall_time, func, "profile before call to", 0);
         vftr_profile_wanted = true;
         int ntop;
         vftr_print_profile (vftr_log, NULL, &ntop, timer, 0, NULL);
         vftr_print_local_stacklist (vftr_func_table, vftr_log, ntop);
-	vftr_save_old_state ();
     }
 
 
@@ -159,7 +151,7 @@ void vftr_function_entry (const char *s, void *addr, bool isPrecise) {
            int ic = vftr_prof_data.ic;
            vftr_read_counters (vftr_prof_data.events[ic]);
            if (prof_return->event_count && func->return_to->detail) {
-               for (e = 0; e < vftr_n_hw_obs; e++) {
+               for (int e = 0; e < vftr_n_hw_obs; e++) {
                    long long delta = vftr_prof_data.events[ic][e] - vftr_prof_data.events[1-ic][e];
 #ifdef __ve__
                    if (delta < 0) /* Handle counter overflow */
@@ -171,13 +163,16 @@ void vftr_function_entry (const char *s, void *addr, bool isPrecise) {
            }
            vftr_prof_data.ic = 1 - ic;
        }
+
     }
 
+    profdata_t *prof_current = &func->prof_current;
+    if (vftr_memtrace) {
+       vftr_sample_vmrss (prof_current->calls, true, false, prof_current->mem_prof);
+    }
 
     if (time_to_sample && vftr_env_do_sampling ()) {
-        profdata_t *prof_current = &func->prof_current;
-        profdata_t *prof_previous = &func->prof_previous;
-        vftr_write_to_vfd (func_entry_time, prof_current, prof_previous, func->id, SID_ENTRY);
+        vftr_write_to_vfd (func_entry_time, prof_current, func->id, SID_ENTRY);
 #ifdef _MPI
         int mpi_isinit;
         PMPI_Initialized(&mpi_isinit);
@@ -216,14 +211,18 @@ void vftr_function_entry (const char *s, void *addr, bool isPrecise) {
 /**********************************************************************/
 
 void vftr_function_exit () {
-    int           e, read_counters, timeToSample;
-    long long     timer;
+    int           e;
+    bool time_to_sample, read_counters;
+    long long timer;
     unsigned long long cycles0;
-    function_t    *func;
-    double        wtime;
+    function_t *func;
+    double wall_time;
     profdata_t *prof_current;
 
     if (vftr_off() || vftr_paused) return;
+#ifdef _OPENMP
+    if (omp_get_thread_num() > 0) return;
+#endif
 
     /* See at the beginning of vftr_function_entry: If
      * we are dealing with a recursive function call, exit.
@@ -247,12 +246,12 @@ void vftr_function_exit () {
 
     /* Is it time for the next sample? */
 
-    timeToSample = (func_exit_time > vftr_nextsampletime) || func->precise || 
+    time_to_sample = (func_exit_time > vftr_nextsampletime) || func->precise || 
                    (func->return_to && !func->return_to->id) /* Return from main program: end of execution */;
 
     read_counters = (func->return_to->detail || func->detail) &&
 	  	    vftr_events_enabled && 
-                    (timeToSample || vftr_environment.accurate_profile->value);
+                    (time_to_sample || vftr_environment.accurate_profile->value);
 
     if (read_counters) {
         int ic = vftr_prof_data.ic;
@@ -273,9 +272,12 @@ void vftr_function_exit () {
         vftr_prof_data.ic = 1 - ic;
     }
 
-    if (timeToSample && vftr_env_do_sampling ()) {
-        profdata_t *prof_previous = &func->prof_previous;
-        vftr_write_to_vfd(func_exit_time, prof_current, prof_previous, func->id, SID_EXIT);
+    if (vftr_memtrace) {
+       vftr_sample_vmrss (prof_current->calls - 1, false, false, prof_current->mem_prof);
+    }
+
+    if (time_to_sample && vftr_env_do_sampling ()) {
+        vftr_write_to_vfd(func_exit_time, prof_current, func->id, SID_EXIT);
 #ifdef _MPI
         int mpi_isinit;
         PMPI_Initialized(&mpi_isinit);
@@ -300,10 +302,10 @@ void vftr_function_exit () {
         vftr_prog_cycles -= vftr_prof_data.cycles;
     }
 
-    wtime = (vftr_get_runtime_usec() - vftr_overhead_usec) * 1.0e-6;
+    wall_time = (vftr_get_runtime_usec() - vftr_overhead_usec) * 1.0e-6;
 
     if (func->profile_this)  {
-        vftr_write_stack_ascii (vftr_log, wtime, func, "profile at exit from", timeToSample);
+        vftr_write_stack_ascii (vftr_log, wall_time, func, "profile at exit from", time_to_sample);
         vftr_profile_wanted = true;
         int ntop;
         vftr_print_profile (stdout, NULL, &ntop, timer, 0, NULL);
@@ -317,7 +319,7 @@ void vftr_function_exit () {
 
     /* Sort profile if it is time */
     
-    if (wtime >= vftr_sorttime)  {
+    if (wall_time >= vftr_sorttime)  {
         int i;
         double tsum = 0.;
         double scale = 100. / (double)vftr_prog_cycles;
@@ -347,21 +349,7 @@ void vftr_function_exit () {
     vftr_prof_data.time_excl = overhead_time_end;
     vftr_overhead_usec += overhead_time_end - overhead_time_start;
     func->overhead += overhead_time_end - overhead_time_start;
-    
 
-    /* Terminate Vftrace if we are exiting the main routine */
-    // When exiting main, there is no return value.
-    // This approach is in contrast to previous implementations, where
-    // vftr_finalize was a destructor. It has been agreed upon that
-    // we do not want to have invisible side effects, wherefore this
-    // method is much more transparent. Also, unit tests do not have 
-    // to cope with possibly non-associated symbols when calling vftr_finalize
-    // and are also purer that way. 
-    // A downside is that everything between the exit from the main function
-    // and the actual program termination as experienced by the user is not
-    // measured. Therefore, there is a theoretical, but miniscule, discrepancy
-    // the user time and the time measured by Vftrace.
-    if (!vftr_fstack->return_to) vftr_finalize(true);
     func->open = false;
 }
 

@@ -1,0 +1,1 @@
+../testscripts/ibcast_intercom.sh
