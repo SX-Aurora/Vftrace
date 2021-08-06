@@ -28,14 +28,14 @@ MODULE vftr_mpi_iprobe_f2c_finterface
 
    INTERFACE
 
-      SUBROUTINE vftr_MPI_Iprobe_f2c(SOURCE, TAG, F_COMM, F_f2cLAG, F_STATUS, F_ERROR) &
+      SUBROUTINE vftr_MPI_Iprobe_f2c(SOURCE, TAG, F_COMM, F_FLAG, F_STATUS, F_ERROR) &
          BIND(C, name="vftr_MPI_Iprobe_f2c")
          USE mpi, ONLY : MPI_STATUS_SIZE
          IMPLICIT NONE
          INTEGER SOURCE
          INTEGER TAG
          INTEGER F_COMM
-         LOGICAL F_f2cLAG
+         INTEGER F_FLAG
          INTEGER F_STATUS(MPI_STATUS_SIZE)
          INTEGER F_ERROR
       END SUBROUTINE vftr_MPI_Iprobe_f2c

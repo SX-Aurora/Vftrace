@@ -29,14 +29,14 @@ MODULE vftr_mpi_testall_f2c_finterface
    INTERFACE
 
       SUBROUTINE vftr_MPI_Testall_f2c(F_COUNT, F_ARRAY_OF_REQUESTS, &
-                                      F_f2cLAG, F_ARRAY_OF_STATUSES, &
+                                      F_FLAG, F_ARRAY_OF_STATUSES, &
                                       F_ERROR) &
          BIND(C, name="vftr_MPI_Testall_f2c")
          USE mpi, ONLY: MPI_STATUS_SIZE
          IMPLICIT NONE
          INTEGER F_COUNT
          INTEGER F_ARRAY_OF_REQUESTS(*)
-         LOGICAL F_f2cLAG
+         INTEGER F_FLAG
          INTEGER F_ARRAY_OF_STATUSES(MPI_STATUS_SIZE,*)
          INTEGER F_ERROR
       END SUBROUTINE vftr_MPI_Testall_f2c
