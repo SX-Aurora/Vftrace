@@ -1,8 +1,8 @@
 #!/bin/bash
 set -x
-test_name=scenario_1
-input_file=ref_input/$test_name.json
-ref_file=ref_output/$test_name.out
+test_name=scenario_2
+input_file=${srcdir}/ref_input/$test_name.json
+ref_file=${srcdir}/ref_output/$test_name.out
 output_file=$test_name.out
 
 rm -f $output_file

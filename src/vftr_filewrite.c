@@ -130,6 +130,97 @@ void vftr_is_traceable_mpi_function (char *func_name, bool *is_mpi) {
 
 /**********************************************************************/
 
+#define VFTR_N_REMARKS 2
+bool vftr_has_remark[VFTR_N_REMARKS];
+
+void vftr_add_remark (remarks_t **r, remarks_t **r_orig, int id) {
+   if (*r == NULL) {
+      *r = (remarks_t*) malloc (sizeof(remarks_t));
+      *r_orig = *r;
+   } else {
+      (*r)->r_next = (remarks_t*) malloc (sizeof(remarks_t));
+      *r = (*r)->r_next;
+   }
+   (*r)->id = id;
+   vftr_has_remark[id-1] = true;
+   (*r)->r_next = NULL;
+}
+
+/**********************************************************************/
+
+#define OVERHEAD_THRESHOLD 2
+void vftr_make_remarks (function_t *this_func, remarks_t **remarks) {
+  double t_excl = (double)this_func->prof_current.time_excl * 1e-6;
+  int n_calls = this_func->prof_current.calls;
+  double t_overhead = (double)this_func->overhead * 1e-6;
+  remarks_t *r_orig = NULL;
+  if (t_excl < OVERHEAD_THRESHOLD * t_overhead) {
+    vftr_add_remark (remarks, &r_orig, REMARK_OVERHEAD);
+  }
+  ///vftr_add_remark (remarks, &r_orig, REMARK_DUMMY);
+  *remarks = r_orig;
+}
+
+/**********************************************************************/
+
+char *vftr_get_remark_indices (remarks_t *remarks) {
+   int n_remarks = 0; 
+   remarks_t *r = remarks;
+   while (r != NULL) {
+     n_remarks++;
+     r = r->r_next;
+   }
+
+   if (n_remarks == 0) return "";
+
+   char s_out[2 * n_remarks + 1];
+   s_out[0] = '\0';
+   char buf[3];
+   r = remarks;
+   int i = 0;
+   while (r != NULL) { 
+     snprintf (buf, 3, "(%d", r->id);
+     strncat (s_out, buf, 2);
+     r = r->r_next;
+   }
+   s_out[2 * n_remarks] = '\0';
+   return strdup(s_out);
+
+}
+
+/**********************************************************************/
+
+void vftr_print_remark (FILE *fp, int remark_id) {
+  switch (remark_id) {
+    case (REMARK_OVERHEAD):
+       fprintf (fp, "%d): This function has a large overhead compared to its runtime. It can significantly increase the runtime of the traced program and expand MPI imbalances further.\n", remark_id);
+       fprintf (fp, "    If the function is not of interest to you, consider putting __attribute__((no_instrument_function)) in front of its declaration to make it invisible to Vftrace.\n");
+       break;
+    case (REMARK_DUMMY):
+       fprintf (fp, "%d): This is a dummy\n", remark_id);
+       break;
+  }
+}
+
+/**********************************************************************/
+
+void vftr_print_remark_list (FILE *fp) {
+   bool has_remarks = false;
+   for (int i = 0; i < VFTR_N_REMARKS; i++) {
+      has_remarks |= vftr_has_remark[i];
+   }
+
+   if (has_remarks) {
+      fprintf (fp, "\nRemarks: \n");
+      for (int i = 0; i < VFTR_N_REMARKS; i++) {
+         if (vftr_has_remark[i]) vftr_print_remark(fp, i+1);
+      }
+      fprintf (fp, "\n"); 
+   }
+}
+
+/**********************************************************************/
+
 char *vftr_get_program_path () {
 	char *basename;
 	// User-defined output file
@@ -712,6 +803,7 @@ void vftr_set_proftab_column_formats (function_t **func_table,
         if (vftr_environment.show_stacks_in_profile->value) {
            vftr_prof_column_init ("Stack", NULL, 0, COL_CHAR_LEFT, SEP_NONE, &(columns)[i_column++]);
         }
+        vftr_prof_column_init ("Remarks", NULL, 0, COL_CHAR_RIGHT, SEP_NONE, &(columns)[i_column++]);
         int stat;
         long long t_sum = 0;
         for (int i = 0; i < n_funcs; i++) {
@@ -924,6 +1016,8 @@ void vftr_proftab_print_header (FILE *fp, column_t *columns) {
           fprintf (fp, " %*s ", columns[i].n_chars, columns[i].header);
 	  i++;
         }
+        fprintf (fp, " %*s ", columns[i].n_chars, columns[i].header);
+        i++;
 	fprintf (fp, "\n");
 }
 
@@ -1434,7 +1528,7 @@ void vftr_compute_line_content (function_t *this_func, int *n_calls, long long *
 
 void vftr_print_profile_line (FILE *fp_log, function_t *func, long long runtime_usec, double sampling_overhead_time,
                               int n_calls, long long t_excl, long long t_incl, long long t_sum,
-                              double t_overhead, column_t *prof_columns) {
+                              double t_overhead, remarks_t *remarks, column_t *prof_columns) {
    int local_stack_id = func->id;
    int global_stack_id = func->gid;
 
@@ -1486,6 +1580,7 @@ void vftr_print_profile_line (FILE *fp_log, function_t *func, long long runtime_
    if (vftr_environment.show_stacks_in_profile->value) {
       vftr_prof_column_print (fp_log, prof_columns[i_column++], vftr_global_stack_strings[global_stack_id].s, NULL, NULL);
    }
+   vftr_prof_column_print (fp_log, prof_columns[i_column++], vftr_get_remark_indices (remarks), NULL, NULL);
    fprintf (fp_log, "\n");
 }
 
@@ -1500,7 +1595,11 @@ void vftr_print_profile (FILE *fp_log, FILE *f_html, int *n_func_indices, long l
     function_t **func_table;
 
     for (int i = 0; i < vftr_scenario_expr_n_vars; i++) {
-	vftr_scenario_expr_counter_values[i] = 0.0;
+       vftr_scenario_expr_counter_values[i] = 0.0;
+    }
+
+    for (int i = 0; i < VFTR_N_REMARKS; i++) {
+       vftr_has_remark[i] = false; 
     }
 
     func_table = (function_t**) malloc (vftr_func_table_size * sizeof(function_t*));
@@ -1543,7 +1642,9 @@ void vftr_print_profile (FILE *fp_log, FILE *f_html, int *n_func_indices, long l
     if (vftr_max_allocated_fields > 0) n_columns += 2;
     // If function overhead is displayed, add three more columns.
     if (vftr_environment.show_overhead->value) n_columns += 3;
-    if (vftr_environment.show_stacks_in_profile->value) n_columns++;
+    if (vftr_environment.show_stacks_in_profile->value) n_columns += 1;
+    // Add one more column for final remarks
+    n_columns += 1;
 
     column_t *prof_columns = (column_t*) malloc (n_columns * sizeof(column_t));
     vftr_set_proftab_column_formats (func_table, function_time, sampling_overhead_time_usec * 1e-6,
@@ -1569,10 +1670,12 @@ void vftr_print_profile (FILE *fp_log, FILE *f_html, int *n_func_indices, long l
        long long t_excl, t_incl;
        double t_overhead;
        vftr_compute_line_content (func_table[i_func], &n_calls, &t_excl, &t_incl, &t_overhead);
+       remarks_t *remarks = NULL;
+       vftr_make_remarks (func_table[i_func], &remarks);
        cumulative_time += t_excl;
 
        vftr_print_profile_line (fp_log, func_table[i_func], function_time, sampling_overhead_time_usec * 1e-6,
-                                n_calls, t_excl, t_incl, cumulative_time, t_overhead, prof_columns);
+                                n_calls, t_excl, t_incl, cumulative_time, t_overhead, remarks, prof_columns);
 
        if (f_html != NULL) {
           bool mark_disp_f = false;
@@ -1596,7 +1699,7 @@ void vftr_print_profile (FILE *fp_log, FILE *f_html, int *n_func_indices, long l
     if (f_html != NULL) vftr_browse_finalize_table(f_html);
     
     vftr_print_dashes (fp_log, table_width);
-    fprintf (fp_log, "\n");
+    vftr_print_remark_list (fp_log);
     fflush(fp_log);
     
     free (func_table);

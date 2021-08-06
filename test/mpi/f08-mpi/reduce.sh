@@ -1,0 +1,1 @@
+../testscripts/reduce.sh

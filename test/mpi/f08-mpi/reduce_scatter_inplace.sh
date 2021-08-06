@@ -1,0 +1,1 @@
+../testscripts/reduce_scatter_inplace.sh

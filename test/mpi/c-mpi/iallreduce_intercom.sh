@@ -1,0 +1,1 @@
+../testscripts/iallreduce_intercom.sh

@@ -1,0 +1,1 @@
+../testscripts/iscatter_intercom.sh
