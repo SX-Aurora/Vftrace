@@ -43,7 +43,6 @@
 #include "vftr_functions.h"
 #include "vftr_mallinfo.h"
 #include "vftr_allocate.h"
-#include "vftr_startup_message.h"
 
 bool vftr_timer_end;
 
@@ -91,6 +90,19 @@ void vftr_print_disclaimer (FILE *fp, bool no_date) {
         "set to 1, or run \"vfview -w\", or consult the COPYRIGHT file.\n" );
 }
 
+void vftr_print_startup_message(FILE *fp) {
+#define STRINGIFY_(x...) #x
+#define STRINGIFY(x) STRINGIFY_(x)
+   char *versionstr = STRINGIFY(_VERSION);
+   char *bugreportstr = STRINGIFY(_BUGREPORT);
+#undef STRINGIFY
+#undef STRINGIFY_
+
+   if (vftr_mpirank == 0) {
+      fprintf(fp, "This program is traced by vftrace %s\n", versionstr);
+      fprintf(fp, "Please report bugs to \n   %s\n", bugreportstr);
+   }
+}
 /**********************************************************************/
 
 void vftr_get_mpi_info (int *rank, int *size) {

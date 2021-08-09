@@ -48,13 +48,14 @@ libvftrace_la_SOURCES = vftr_scenarios.c \
 	 	       vftr_environment.c \
 		       vftr_signals.c \
 		       vftr_browse.c \
-		       vftr_startup_message.c \
                        vftr_mallinfo.c
 
 if ENABLE_FORTRAN
 libvftrace_la_SOURCES += vftrace_mod.F90
 endif
 
+libvftrace_la_CPPFLAGS = -D_VERSION=${PACKAGE_VERSION} \
+			 -D_BUGREPORT=${PACKAGE_BUGREPORT}
 libvftrace_la_CFLAGS =
 libvftrace_la_CXXFLAGS =
 libvftrace_la_FCFLAGS =
