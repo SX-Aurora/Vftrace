@@ -22,6 +22,14 @@ do
       ../../../tools/vftrace_vfd_dump ${vftr_binary}_${irank}.vfd
 
       if [[ ${irank} -eq "0" ]] ;then 
+         # check whether the call to MPI_Wait is present in the vfds
+         count=$(../../../tools/vftrace_vfd_dump ${vftr_binary}_${irank}.vfd | \
+                 grep -i "call MPI_Wait[_f08]*\*<" | \
+                 wc -l)
+         if [[ "${count}" -lt "1" ]] ; then
+            echo "Call to MPI_Wait was not found!"
+            exit 1;
+         fi
          for jrank in $(seq 1 1 $(bc <<< "${nprocs}-1"));
          do
             # Validate sending
