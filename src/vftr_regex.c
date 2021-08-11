@@ -33,7 +33,7 @@ regex_t *vftr_compile_regexp(char *pattern) {
         char msg[256];
         size_t msglen;
         msglen = regerror(err, r, msg, 256);
-        fprintf(stderr, "Invalid Regular Expression (%s): %s\n", pattern, msg);
+        fprintf(stderr, "Vftrace: Invalid Regular Expression (%s): %s\n", pattern, msg);
     }
     return err ? NULL : r;
 }
@@ -41,10 +41,10 @@ regex_t *vftr_compile_regexp(char *pattern) {
 /**********************************************************************/
 
 bool vftr_pattern_match(regex_t *r, char *s) {
-    if (!r) {return 0;}
-    int ret;
-    regmatch_t regmatch[8];
-    ret = regexec (r, s, 0, regmatch, 0);
-    return !ret;
-
+    if (r != NULL) {
+       regmatch_t regmatch[8];
+       return !regexec (r, s, 0, regmatch, 0);
+    } else {
+       return false;
+    }
 }
