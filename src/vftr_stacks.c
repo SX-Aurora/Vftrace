@@ -135,6 +135,7 @@ void vftr_normalize_stacks() {
        for (int istack=0; istack<vftr_stackscount; istack++) {
           int globID = local2global_ID[istack];
           vftr_gStackinfo[globID].name = strdup(vftr_func_table[istack]->name);
+          // TODO: is this used?
 	  if (vftr_environment.print_stack_profile->set) {
 		if (vftr_pattern_match (vftr_environment.print_stack_profile->value, 
 				        vftr_func_table[istack]->name)) { 
