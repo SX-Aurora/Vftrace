@@ -289,7 +289,6 @@ void vftr_find_function_in_table (char *func_name, int **indices, int *n_indices
 void vftr_find_function_in_stack (char *func_name, int **indices, int *n_indices, bool to_lower_case) {
 	*n_indices = 0;
 	char *s_compare_1, *s_compare_2;
-        //fprintf (stderr, "gStacksount: %d\n", vftr_gStackscount);
 	for (int i = 0; i < vftr_gStackscount; i++) {
 		s_compare_1 = strdup (vftr_gStackinfo[i].name);
                 s_compare_2 = strdup (func_name);
@@ -301,9 +300,7 @@ void vftr_find_function_in_stack (char *func_name, int **indices, int *n_indices
                       s_compare_2[i] = tolower(s_compare_2[i]);
                    }
 		}
-                if (vftr_mpirank == 0) fprintf (stderr, "VFTR s_compare: %s %s\n", s_compare_1, s_compare_2);
 		if (!strcmp (s_compare_1, s_compare_2)) {
-                        if (vftr_mpirank == 0) fprintf (stderr, "VFTR name FOUND: %s %s\n", s_compare_1, s_compare_2);
 			(*n_indices)++;
 		}
 	}
