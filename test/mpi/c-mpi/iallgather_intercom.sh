@@ -1,0 +1,1 @@
+../testscripts/iallgather_intercom.sh

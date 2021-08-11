@@ -2,7 +2,11 @@
 set -x
 vftr_binary=filewrite_2
 outfile=filewrite_2.out
-ref_file=ref_output/$outfile
+if [ "x${HAS_MPI}" == "xYES" ] ; then
+   ref_file=${srcdir}/ref_output/mpi/${outfile}
+else
+   ref_file=${srcdir}/ref_output/serial/$outfile
+fi
 
 rm -f $outfile
 

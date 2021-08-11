@@ -480,7 +480,7 @@ void vftr_write_stacks_vfd (FILE *fp, int level, function_t *func) {
 /**********************************************************************/
 
 void vftr_print_local_stacklist (function_t **funcTable, FILE *fp, int n_ids) {
-    bool use_gid = (fp != stdout && (vftr_mpisize > 1));
+    bool use_gid = vftr_gStackinfo != NULL;
     
     if (!vftr_profile_wanted) return;
 

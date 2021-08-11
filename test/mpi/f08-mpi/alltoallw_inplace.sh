@@ -1,0 +1,1 @@
+../testscripts/alltoallw_inplace.sh

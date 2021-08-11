@@ -1,0 +1,1 @@
+../testscripts/ialltoall.sh

@@ -29,7 +29,7 @@ int main (int argc, char **argv) {
   	function_t *func2 = vftr_new_function ((void*)(addrs + 2), "func3", func1, false);
   	function_t *func3 = vftr_new_function ((void*)(addrs + 1), "func2", func2, false);
   	function_t *func4 = vftr_new_function ((void*)(addrs + 3), "func4", func3, false);
-  } else if (vftr_mpirank == 2) {	
+  } else if (vftr_mpirank == 2) {
   	function_t *func1 = vftr_new_function ((void*)addrs, "func1", func0, false);
   	function_t *func2 = vftr_new_function ((void*)(addrs + 1), "func2", func1, false);
   	function_t *func3 = vftr_new_function ((void*)(addrs + 2), "func2", func2, false);
@@ -41,28 +41,31 @@ int main (int argc, char **argv) {
   	fprintf (stdout, "Error: Invalid MPI rank (%d)!\n", vftr_mpirank);
   	return -1;
   }
-  
+
   vftr_environment.logfile_all_ranks->value = true;
   vftr_normalize_stacks();
   vftr_create_global_stack_strings();
-  
+
   // Needs to be set for printing the local stacklist
   vftr_profile_wanted = true;
-  for (int i = 0; i < vftr_mpisize; i++) {
-  	if (vftr_mpirank == i) {
-  		fprintf (stdout, "Local stacklist for rank %d: \n", i);
-  		// There is "init" + the four (rank 0 - 2) or two (rank 3) additional functions.
-  		int n_functions = vftr_mpirank == 3 ? 3 : 5;
-  		vftr_print_local_stacklist (vftr_func_table, stdout, n_functions);
-  	        fprintf (stdout, "Global stacklis for rank %d: \n", i);
-                // NOTE: vftr_print_global_stacklist only prints the stack IDs which are present on the given rank.
-  	        vftr_print_global_stacklist (stdout);
-                fflush(stdout);
-  	}
-        // Barrier sorts output
-  	PMPI_Barrier (MPI_COMM_WORLD);
-  }
+  // Open a intermediate output file for each rank
+  // They will be concatenated by the test-script
+  // this guarantees the correct output order in the resulting file
+  int filenamelen = snprintf(NULL, 0, "stacks_2_rank%d_tmp.out", vftr_mpirank);
+  filenamelen++; // NULL terminator
+  char *filename = (char*) malloc(filenamelen*sizeof(char));
+  snprintf(filename, filenamelen, "stacks_2_rank%d_tmp.out", vftr_mpirank);
+  FILE *file = fopen(filename, "w");
 
+  fprintf (file, "Local stacklist for rank %d: \n", vftr_mpirank);
+  // There is "init" + the four (rank 0 - 2) or two (rank 3) additional functions.
+  int n_functions = vftr_mpirank == 3 ? 3 : 5;
+  vftr_print_local_stacklist (vftr_func_table, file, n_functions);
+  fprintf (file, "Global stacklis for rank %d: \n", vftr_mpirank);
+  // NOTE: vftr_print_global_stacklist only prints the stack IDs which are present on the given rank.
+  vftr_print_global_stacklist (file);
+  fclose(file);
+  free(filename);
 
   PMPI_Finalize();
 

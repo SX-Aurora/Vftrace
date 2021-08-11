@@ -30,6 +30,13 @@ extern FILE *vftr_vfd_file;
 extern long vftr_admin_offset;
 extern long vftr_samples_offset;
 
+enum vftr_remarks {REMARK_NONE, REMARK_OVERHEAD, REMARK_DUMMY};
+
+typedef struct remarks {
+  int id;
+  struct remarks *r_next;
+} remarks_t;
+
 enum column_data_type {COL_INT, COL_DOUBLE, COL_CHAR_LEFT, COL_CHAR_RIGHT, COL_MEM, COL_TIME};
 enum separator_t {SEP_NONE, SEP_MID, SEP_LAST};
 
@@ -88,7 +95,7 @@ enum sample_id {SID_ENTRY, SID_EXIT, SID_MESSAGE};
 
 void vftr_init_vfd_file ();
 void vftr_finalize_vfd_file (long long finalize_time);
-void vftr_write_to_vfd (long long runtime, profdata_t *prof_current, profdata_t *prof_previous, int stack_id, unsigned int sid);
+void vftr_write_to_vfd (long long runtime, profdata_t *prof_current, int stack_id, unsigned int sid);
 #ifdef _MPI
 double vftr_compute_mpi_imbalance (long long *all_times, double t_avg);
 #endif

@@ -20,7 +20,7 @@ else
    AM_TESTS_ENVIRONMENT=. $(top_srcdir)/test/environment/set_nompi.sh;
 endif
 
-AM_CFLAGS = -I$(top_srcdir)/src/ -I$(top_srcdir)/src/vftr_mpi
+AM_CFLAGS = -I$(top_srcdir)/src/ -I$(top_srcdir)/src/mpi/vftr_mpi
 
 AM_LDFLAGS = -L$(top_builddir)/src/.libs -lvftrace -lm
 
@@ -69,7 +69,8 @@ check_PROGRAMS = radixsort_uint64 \
                   browse_1
 
 if WITH_MPI
-check_PROGRAMS += stacks_2
+check_PROGRAMS += stacks_2 \
+		  stacks_3
 endif
 
 if ENABLE_HWC
@@ -174,6 +175,10 @@ if WITH_MPI
 stacks_2_SOURCES = $(srcdir)/stacks_2.c
 stacks_2_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
 stacks_2_LDFLAGS = $(AM_LDFLAGS)
+
+stacks_3_SOURCES = $(srcdir)/stacks_3.c
+stacks_3_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
+stacks_3_LDFLAGS = $(AM_LDFLAGS)
 endif
 
 browse_1_SOURCES = $(srcdir)/browse_1.c
@@ -220,7 +225,8 @@ endif
 endif
 
 if WITH_MPI
-dist_check_SCRIPTS += stacks_2.sh
+dist_check_SCRIPTS += stacks_2.sh \
+		      stacks_3.sh
 endif
 
 TEST_EXTENSIONS = .sh

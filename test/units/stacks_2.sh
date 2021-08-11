@@ -2,16 +2,32 @@
 set -x
 test_name=stacks_2
 output_file=$test_name.out
-ref_file=ref_output/$test_name.out
-
-
-rm -f $output_file
+nprocs=4
 
 if [ "x$HAS_MPI" == "xYES" ]; then
-   ${MPI_EXEC} ${MPI_OPTS} ${NP} 4 ./${test_name} > $output_file
+   ref_file=${srcdir}/ref_output/mpi/$test_name.out
 fi
 
-last_success=$?
+if [ "x$HAS_MPI" == "xYES" ]; then
+   > ${output_file}
+   ${MPI_EXEC} ${MPI_OPTS} ${NP} ${nprocs} ./${test_name}
+   last_success=$?
+
+   if [ $last_success == 0 ]; then
+      for irank in $(seq 0 1 $(bc <<< "${nprocs}-1"));
+      do
+         tmpoutfile=$(echo "stacks_2_rank${irank}_tmp.out")
+         if [ -e ${tmpoutfile} ]; then
+            cat ${tmpoutfile} >> ${output_file}
+            rm -f ${tmpoutfile}
+         else
+            echo "Output file of rank ${irank} missing! Aborting!"
+            exit 1
+         fi
+      done
+   fi
+fi
+
 if [ $last_success == 0 ]; then
   # There is one temporary output file for each rank.
   # We just put one after the other.

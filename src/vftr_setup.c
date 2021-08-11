@@ -90,6 +90,19 @@ void vftr_print_disclaimer (FILE *fp, bool no_date) {
         "set to 1, or run \"vfview -w\", or consult the COPYRIGHT file.\n" );
 }
 
+void vftr_print_startup_message(FILE *fp) {
+#define STRINGIFY_(x...) #x
+#define STRINGIFY(x) STRINGIFY_(x)
+   char *versionstr = STRINGIFY(_VERSION);
+   char *bugreportstr = STRINGIFY(_BUGREPORT);
+#undef STRINGIFY
+#undef STRINGIFY_
+
+   if (vftr_mpirank == 0) {
+      fprintf(fp, "This program is traced by vftrace %s\n", versionstr);
+      fprintf(fp, "Please report bugs to \n   %s\n", bugreportstr);
+   }
+}
 /**********************************************************************/
 
 void vftr_get_mpi_info (int *rank, int *size) {
@@ -161,6 +174,10 @@ void vftr_initialize() {
     atexit (vftr_finalize);
     vftr_get_mpi_info (&vftr_mpirank, &vftr_mpisize);
     vftr_assert_environment ();
+
+    if (vftr_environment.show_startup->value) {
+       vftr_print_startup_message(stdout);
+    }
 
     vftr_do_stack_normalization = !vftr_environment.no_stack_normalization->value;
     vftr_setup_signals();
@@ -302,7 +319,7 @@ void vftr_finalize() {
 
     // Mark end of non-parallel interval
     if (vftr_env_do_sampling()) {
-        vftr_write_to_vfd (finalize_time, NULL, NULL, 0, SID_EXIT);
+        vftr_write_to_vfd (finalize_time, NULL, 0, SID_EXIT);
     }
 
     if (vftr_environment.strip_module_names->value) {

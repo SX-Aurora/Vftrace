@@ -1,7 +1,7 @@
 #!/bin/bash
 set -x
 test_name=scenario_3
-input_file=ref_input/$test_name.json
+input_file=${srcdir}/ref_input/$test_name.json
 output_file=$test_name.out
 
 rm -f $output_file

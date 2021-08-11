@@ -1,0 +1,1 @@
+../testscripts/waitall.sh

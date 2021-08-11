@@ -1,0 +1,1 @@
+../testscripts/sendrecv_replace.sh

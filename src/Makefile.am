@@ -3,22 +3,24 @@ noinst_LTLIBRARIES = libvftr_pause.la
 
 include_HEADERS = vftrace.h
 
-SUBDIRS = vftr_mpi
+SUBDIRS = mpi
 
 external_includes = -I$(top_srcdir)/external/tinyexpr/ \
 		    -I$(top_srcdir)/external/jsmn/
 
 libvftrace_la_LIBADD = libvftr_pause.la \
-		       vftr_mpi/libvftr_mpi.la
+		       mpi/vftr_mpi/libvftr_mpi.la
 # external libraries
 libvftrace_la_LIBADD += ${top_builddir}/external/libtinyexpr.la
 
 if WITH_MPI
-libvftrace_la_LIBADD += vftr_mpi/c-wrapper/libvftr_cmpiwrap.la
+libvftrace_la_LIBADD += mpi/c-wrapper/libvftr_cmpiwrap.la
 if ENABLE_FORTRAN
-libvftrace_la_LIBADD += vftr_mpi/f-wrapper/libvftr_fmpiwrap.la
+libvftrace_la_LIBADD += mpi/f-wrapper/libvftr_fmpiwrap.la \
+			mpi/f2c/libvftr_mpi_f2c.la
 if ENABLE_FORTRAN08
-libvftrace_la_LIBADD += vftr_mpi/f08-wrapper/libvftr_f08mpiwrap.la
+libvftrace_la_LIBADD += mpi/f08-wrapper/libvftr_f08mpiwrap.la \
+			mpi/f082c/libvftr_mpi_f082c.la
 endif
 endif
 endif
@@ -52,12 +54,14 @@ if ENABLE_FORTRAN
 libvftrace_la_SOURCES += vftrace_mod.F90
 endif
 
+libvftrace_la_CPPFLAGS = -D_VERSION=${PACKAGE_VERSION} \
+			 -D_BUGREPORT=${PACKAGE_BUGREPORT}
 libvftrace_la_CFLAGS =
 libvftrace_la_CXXFLAGS =
 libvftrace_la_FCFLAGS =
 libvftrace_la_LDFLAGS =
 
-libvftrace_la_CFLAGS += -I${srcdir}/vftr_mpi/ \
+libvftrace_la_CFLAGS += -I${srcdir}/mpi/vftr_mpi/ \
 			${external_includes}
 
 if ENABLE_HWC

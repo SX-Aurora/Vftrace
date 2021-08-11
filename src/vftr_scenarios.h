@@ -35,7 +35,7 @@ typedef struct EventCounter {
 evtcounter_t  *vftr_get_counters ( void );
 
 void vftr_write_scenario_header_to_vfd (FILE *fp);
-void vftr_write_observables_to_vfd (profdata_t *prof_current, profdata_t *prof_previous, FILE *fp);
+void vftr_write_observables_to_vfd (profdata_t *prof_current, FILE *fp);
 
 #define TE_MAX 50
 #define SCENARIO_EXPR_BUF_SIZE 200
