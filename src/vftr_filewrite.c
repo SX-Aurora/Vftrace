@@ -1375,7 +1375,7 @@ void vftr_print_function_statistics (FILE *fp_log, display_function_t **display_
     }
 
     //Print a final separator line.
-    if (vftr_mpirank == 0) {
+    if (vftr_rank_needs_logfile()) {
        for (int i = 0; i < table_width; i++) fprintf (fp_log, "-");
        fprintf (fp_log, "\n");
     }

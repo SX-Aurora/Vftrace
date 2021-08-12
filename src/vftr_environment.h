@@ -67,7 +67,7 @@ typedef struct vftr_envs {
 	env_var_bool_t *regions_precise;
         env_var_string_t *output_directory;
 	env_var_string_t *logfile_basename;
-        env_var_bool_t *logfile_all_ranks;
+        env_var_string_t *logfile_for_ranks;
 // default sample time in s as a floating point number
 	env_var_double_t *sampletime;
 // maximum runtime in seconds (default: a week)
@@ -123,5 +123,8 @@ bool vftr_env_distribute_gStack();
 int vftr_profile_sorting_method();
 char *vftr_profile_sorting_method_string();
 void vftr_print_environment (FILE *fp);
+
+void vftr_set_logfile_ranks();
+bool vftr_rank_needs_logfile();
 
 #endif

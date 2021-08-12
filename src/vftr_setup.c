@@ -97,7 +97,7 @@ void vftr_print_startup_message(FILE *fp) {
 #undef STRINGIFY
 #undef STRINGIFY_
 
-   if (vftr_mpirank == 0) {
+   if (vftr_rank_needs_logfile()) {
       fprintf(fp, "This program is traced by vftrace %s\n", versionstr);
       fprintf(fp, "Please report bugs to \n   %s\n", bugreportstr);
    }
@@ -172,6 +172,7 @@ void vftr_initialize() {
     }
     atexit (vftr_finalize);
     vftr_get_mpi_info (&vftr_mpirank, &vftr_mpisize);
+    vftr_set_logfile_ranks();
     vftr_assert_environment ();
 
     if (vftr_environment.show_startup->value) {
@@ -201,7 +202,7 @@ void vftr_initialize() {
     // Do not buffer when writing into the log file
     setvbuf (vftr_log, NULL, _IOLBF, (size_t)0);
 
-    if (vftr_mpirank == 0) {
+    if (vftr_rank_needs_logfile()) {
        if (vftr_environment.license_verbose->value) {
 	  vftr_print_disclaimer_full (vftr_log);
        } else {
@@ -269,7 +270,8 @@ void vftr_initialize() {
 	vftr_init_vfd_file ();
     }
     
-    vftr_profile_wanted = (vftr_environment.logfile_all_ranks->value) || (vftr_mpirank == 0);
+    //vftr_profile_wanted = (vftr_environment.logfile_all_ranks->value) || (vftr_mpirank == 0);
+    vftr_profile_wanted = vftr_rank_needs_logfile();
 
     if (vftr_environment.print_stacks_for->set) {
         char *vftr_print_groups = vftr_environment.print_stacks_for->value;

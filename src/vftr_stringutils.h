@@ -19,10 +19,13 @@
 #define VFTR_STRINGUTILS_H
 
 #include <stdarg.h>
+#include <stdbool.h>
 
 void vftr_rank0_printf (const char *fmt, ...);
 int vftr_levenshtein_distance (char *a, char *b);
 
 void vftr_has_control_character (char *s, int *pos, int *char_num);
+
+bool vftr_string_is_number (char *s_check);
 
 #endif
