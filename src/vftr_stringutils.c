@@ -111,13 +111,15 @@ void vftr_has_control_character (char *s, int *pos, int *char_num) {
 
 /**********************************************************************/
 
-bool vftr_string_is_number (char *s_check) {
-  char *s = s_check;
+//bool vftr_string_is_number (char *s_check) {
+bool vftr_string_is_number (char *s) {
+  //char *s = strdup(s_check);
   bool is_number = true;
   while (*s != '\0') {
-     is_number &= isdigit(*s);
+     is_number = is_number && isdigit(*s);
      s++;
   }
+  return is_number;
 }
 /**********************************************************************/
 
