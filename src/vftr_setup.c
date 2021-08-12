@@ -86,8 +86,7 @@ void vftr_print_disclaimer (FILE *fp, bool no_date) {
     if (!no_date) fprintf (fp, "Start Date: %s\n", vftr_start_date); 
     fprintf (fp, 
         "This is free software with ABSOLUTELY NO WARRANTY.\n"
-        "For details: use vftrace with environment variable VFTR_LICENSE\n"
-        "set to 1, or run \"vfview -w\", or consult the COPYRIGHT file.\n" );
+        "For details: use vftrace with environment variable VFTR_LICENSE=yes\n");
 }
 
 void vftr_print_startup_message(FILE *fp) {
