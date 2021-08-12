@@ -54,6 +54,9 @@ int vftr_n_env_variables;
 char **vftr_env_variable_names;
 int vftr_env_counter;
 
+int vftr_rank_1;
+int vftr_rank_2;
+
 // Create and free the Levenshtein lookup table
 
 /**********************************************************************/
@@ -274,6 +277,51 @@ env_var_regex_t *vftr_read_env_regex (char *env_name, regex_t *val_default) {
 
 /**********************************************************************/
 
+// Determine for which ranks a logfile should be created
+
+void vftr_set_logfile_ranks () {
+   char *env_log = strdup(vftr_environment.logfile_for_ranks->value);
+   bool is_valid;
+   if (!strcmp(env_log, "all")) {
+      vftr_rank_1 = 0;
+      vftr_rank_2 = vftr_mpisize;
+      is_valid = true;
+   } else if (!strstr(env_log, "-")) {
+      char *s1 = strtok(env_log, "-");
+      char *s2 = strtok(NULL, " ");
+      if (vftr_string_is_number(s1) && vftr_string_is_number(s2)) {
+        vftr_rank_1 = atoi(s1);
+        vftr_rank_2 = atoi(s2);
+        is_valid = vftr_rank_1 <= vftr_rank_2;
+      } else {
+        is_valid = false;
+      }
+   } else if (vftr_string_is_number(env_log)) {
+      vftr_rank_1 = vftr_rank_2 = atoi(env_log);
+      is_valid = true;
+   } else {
+      is_valid = false;
+   }
+   if (!is_valid) {
+      fprintf (stderr, "Vftrace: The logfile rank range %s is invalid. A logfile is only created for rank 0.\n");
+      vftr_rank_1 = vftr_rank_2 = 0;
+   }
+}
+
+/**********************************************************************/
+
+bool vftr_rank_needs_logfile () {
+   return vftr_mpirank >= vftr_rank_1 && vftr_mpirank <= vftr_rank_2;
+}
+
+/**********************************************************************/
+
+int vftr_n_logfile_ranks () {
+   return vftr_rank_2 - vftr_rank_1 + 1;
+}
+
+/**********************************************************************/
+
 int vftr_profile_sorting_method () {
   char *s = vftr_environment.sort_profile_table->value;
   if (!strcmp (s, "EXCL_TIME")) {
@@ -330,7 +378,8 @@ void vftr_read_environment () {
     vftr_environment.regions_precise = vftr_read_env_bool ("VFTR_REGIONS_PRECISE", true);
     vftr_environment.output_directory = vftr_read_env_string ("VFTR_OUT_DIRECTORY", ".");
     vftr_environment.logfile_basename = vftr_read_env_string ("VFTR_LOGFILE_BASENAME", NULL);
-    vftr_environment.logfile_all_ranks = vftr_read_env_bool ("VFTR_LOGFILE_ALL_RANKS", false);
+    //vftr_environment.logfile_all_ranks = vftr_read_env_bool ("VFTR_LOGFILE_ALL_RANKS", false);
+    vftr_environment.logfile_for_ranks = vftr_read_env_string ("VFTR_LOGFILE_ALL_RANKS", "0");
     vftr_environment.sampletime = vftr_read_env_double ("VFTR_SAMPLETIME", 0.005);
     vftr_environment.stoptime = vftr_read_env_long_long ("VFTR_STOPTIME", 7ll*24ll*60ll*60ll);
     vftr_environment.accurate_profile = vftr_read_env_bool ("VFTR_ACCURATE_PROFILE", false);
@@ -481,7 +530,6 @@ void vftr_assert_environment () {
            // check if they match a Vftrace variable, and make an alternative suggestion if it is possibly mistyped.
            extern char **environ;
            char **s = environ;
-           bool found = false;
            for (; *s; s++) {
              if (strstr(*s, "VFTR_")) {
                int best_ld, best_i;
@@ -524,7 +572,7 @@ bool vftr_env_need_display_functions () {
 }
 
 bool vftr_env_distribute_gStack () {
-   return vftr_environment.logfile_all_ranks->value ||
+   return vftr_n_logfile_ranks () > 1 ||
           vftr_environment.print_stack_profile->value ||
           vftr_environment.all_mpi_summary->value; 
 }
@@ -537,7 +585,8 @@ void vftr_free_environment () {
 	free (vftr_environment.regions_precise);
 	free (vftr_environment.output_directory);
 	free (vftr_environment.logfile_basename);
-	free (vftr_environment.logfile_all_ranks);
+	//free (vftr_environment.logfile_all_ranks);
+	free (vftr_environment.logfile_for_ranks);
 	free (vftr_environment.sampletime);
 	free (vftr_environment.stoptime);
 	free (vftr_environment.accurate_profile);
@@ -584,7 +633,8 @@ void vftr_print_environment (FILE *fp) {
 	vftr_print_env_bool (fp, "VFTR_REGIONS_PRECISE", vftr_environment.regions_precise);
 	vftr_print_env_string (fp, "VFTR_OUT_DIRECTORY", vftr_environment.output_directory);
 	vftr_print_env_string (fp, "VFTR_LOGFILE_BASENAME", vftr_environment.logfile_basename);
-	vftr_print_env_bool (fp, "VFTR_LOGFILE_ALL_RANKS", vftr_environment.logfile_all_ranks);
+	//vftr_print_env_bool (fp, "VFTR_LOGFILE_ALL_RANKS", vftr_environment.logfile_all_ranks);
+	vftr_print_env_string (fp, "VFTR_LOGFILE_ALL_RANKS", vftr_environment.logfile_for_ranks);
 	vftr_print_env_double (fp, "VFTR_SAMPLETIME", vftr_environment.sampletime);
 	vftr_print_env_long_long (fp, "VFTR_STOPTIME", vftr_environment.stoptime);
 	vftr_print_env_bool (fp, "VFTR_ACCURATE_PROFILE", vftr_environment.accurate_profile);
