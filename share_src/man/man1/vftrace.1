@@ -77,16 +77,12 @@ A regular expression defining functions which should be profiled, while all othe
 .br
 \fBWarning:\fR This option cannot be used with \fBVFTR_EXCLUDE\fR. If both environment variables are set, only \fBVFTR_INCLUDE_ONLY\fR is used.
 .\"
-.IP "\fBVFTR_LOGFILE_ALL_RANKS\fR"
-.IX Item VFTR_LOGFILE_ALL_RANKS
-\fBEnable\fR(1,"YES","Yes","yes","ON","On","on")
+.IP "\fBVFTR_LOGFILE_FOR_RANKS\fR"
+.IX Item VFTR_LOGFILE_FOR_RANKS
+Specifies the ranks for which a logfile is created. It is a string value, so the content needs to be put in quotes (""). Possible values are
+"all" (logfiles for all ranks), "X-Y" (logfiles for all ranks between X and Y) and "X" (logfile only for rank X). 
 .br
-\fBDisable\fR(0,"NO","No","no","OFF","Off","off")
-.br
-If activated every rank writes its own logfile,
-containing rank exclusive performance information.
-.br
-\fBDefault: "off"\fR
+\fBDefault: "0" (logfile for the first rank only)\fR
 .\"
 .IP "\fBVFTR_LOGFILE_BASENAME\fR"
 .IX Item "VFTR_LOGFILE_BASENAME"
