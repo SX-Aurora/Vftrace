@@ -286,7 +286,7 @@ void vftr_set_logfile_ranks () {
       vftr_rank_1 = 0;
       vftr_rank_2 = vftr_mpisize;
       is_valid = true;
-   } else if (!strstr(env_log, "-")) {
+   } else if (strstr(env_log, "-")) {
       char *s1 = strtok(env_log, "-");
       char *s2 = strtok(NULL, " ");
       if (vftr_string_is_number(s1) && vftr_string_is_number(s2)) {
