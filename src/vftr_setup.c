@@ -270,7 +270,6 @@ void vftr_initialize() {
 	vftr_init_vfd_file ();
     }
     
-    //vftr_profile_wanted = (vftr_environment.logfile_all_ranks->value) || (vftr_mpirank == 0);
     vftr_profile_wanted = vftr_rank_needs_logfile();
 
     if (vftr_environment.print_stacks_for->set) {

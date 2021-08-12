@@ -283,20 +283,23 @@ void vftr_set_logfile_ranks () {
    char *env_log = strdup(vftr_environment.logfile_for_ranks->value);
    bool is_valid;
    if (!strcmp(env_log, "all")) {
+      // Create a logfile for all ranks
       vftr_rank_1 = 0;
       vftr_rank_2 = vftr_mpisize;
       is_valid = true;
-   } else if (strstr(env_log, "-")) {
+   } else if (strstr(env_log, "-")) { // A range is "x1-x2" is specified.
       char *s1 = strtok(env_log, "-");
       char *s2 = strtok(NULL, " ");
       if (vftr_string_is_number(s1) && vftr_string_is_number(s2)) {
         vftr_rank_1 = atoi(s1);
         vftr_rank_2 = atoi(s2);
+        // The first rank must be smaller than the second (or equal). Otherwise the option is rejected.
         is_valid = vftr_rank_1 <= vftr_rank_2;
       } else {
         is_valid = false;
       }
    } else if (vftr_string_is_number(env_log)) {
+      // There is no "-" in the environment string. Check if it is a single number.
       vftr_rank_1 = vftr_rank_2 = atoi(env_log);
       is_valid = true;
    } else {
@@ -584,7 +587,6 @@ void vftr_free_environment () {
 	free (vftr_environment.regions_precise);
 	free (vftr_environment.output_directory);
 	free (vftr_environment.logfile_basename);
-	//free (vftr_environment.logfile_all_ranks);
 	free (vftr_environment.logfile_for_ranks);
 	free (vftr_environment.sampletime);
 	free (vftr_environment.stoptime);
