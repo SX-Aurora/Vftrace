@@ -173,6 +173,7 @@ void vftr_initialize() {
     }
     atexit (vftr_finalize);
     vftr_get_mpi_info (&vftr_mpirank, &vftr_mpisize);
+    vftr_set_logfile_ranks();
     vftr_assert_environment ();
 
     if (vftr_environment.show_startup->value) {
