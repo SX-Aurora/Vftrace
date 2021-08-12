@@ -116,5 +116,5 @@ char *vftr_to_lowercase (char *s_orig) {
 // is not set. Otherwise, i.e. if only an fprintf is used, there might be a multitude of unwanted
 // log files containing only this message.
 void vftr_logfile_warning (FILE *fp, char *message) {
-  if (vftr_mpirank == 0) fprintf (fp, message);
+  if (vftr_rank_needs_logfile()) fprintf (fp, message);
 } 

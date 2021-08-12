@@ -98,7 +98,7 @@ void vftr_print_startup_message(FILE *fp) {
 #undef STRINGIFY
 #undef STRINGIFY_
 
-   if (vftr_mpirank == 0) {
+   if (vftr_rank_needs_logfile()) {
       fprintf(fp, "This program is traced by vftrace %s\n", versionstr);
       fprintf(fp, "Please report bugs to \n   %s\n", bugreportstr);
    }
@@ -202,7 +202,7 @@ void vftr_initialize() {
     // Do not buffer when writing into the log file
     setvbuf (vftr_log, NULL, _IOLBF, (size_t)0);
 
-    if (vftr_mpirank == 0) {
+    if (vftr_rank_needs_logfile()) {
        if (vftr_environment.license_verbose->value) {
 	  vftr_print_disclaimer_full (vftr_log);
        } else {

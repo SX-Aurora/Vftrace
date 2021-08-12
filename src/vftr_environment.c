@@ -507,7 +507,7 @@ void vftr_assert_environment () {
         if (vftr_environment.all_mpi_summary->value) {
            bool veto = vftr_environment.mpi_show_sync_time->value || vftr_environment.print_stack_profile->value;
            if (veto) {
-              if (vftr_mpirank == 0) {
+              if (vftr_rank_needs_logfile()) {
                  printf ("Warning: ");
                  if (vftr_environment.mpi_show_sync_time->value) {
                     printf ("VFTR_MPI_SHOW_SYNC_TIME ");
@@ -525,7 +525,7 @@ void vftr_assert_environment () {
           vftr_rank0_printf ("Internal Vftrace warning: Registered nr. of environment variables does not match (%d %d)\n", vftr_n_env_variables, vftr_env_counter);
         }
 
-        if (vftr_mpirank == 0) {
+        if (vftr_rank_needs_logfile()) {
            // There might be mistyped Vftrace environment variables. Loop over all existing env variables,
            // check if they match a Vftrace variable, and make an alternative suggestion if it is possibly mistyped.
            extern char **environ;
