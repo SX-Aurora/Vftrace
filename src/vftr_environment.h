@@ -67,7 +67,6 @@ typedef struct vftr_envs {
 	env_var_bool_t *regions_precise;
         env_var_string_t *output_directory;
 	env_var_string_t *logfile_basename;
-        //env_var_bool_t *logfile_all_ranks;
         env_var_string_t *logfile_for_ranks;
 // default sample time in s as a floating point number
 	env_var_double_t *sampletime;

@@ -112,9 +112,9 @@ char *vftr_to_lowercase (char *s_orig) {
 
 /**********************************************************************/
 
-// Output an error message to the log files, but only write to rank 0 VFTR_LOGFILE_ALL_RANKS
-// is not set. Otherwise, i.e. if only an fprintf is used, there might be a multitude of unwanted
-// log files containing only this message.
-void vftr_logfile_warning (FILE *fp, char *message) {
+// Output a message to the logfile, if it is active.
+// This function exists to reduce the number of calls to vftr_rank_needs_logfile
+// present in the code.
+void vftr_logfile_message (FILE *fp, char *message) {
   if (vftr_rank_needs_logfile()) fprintf (fp, message);
 } 

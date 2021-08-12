@@ -42,7 +42,8 @@ int main (int argc, char **argv) {
   	return -1;
   }
 
-  vftr_environment.logfile_all_ranks->value = true;
+  vftr_environment.logfile_for_ranks->value = "all";
+  vftr_set_logfile_ranks();
   vftr_normalize_stacks();
   vftr_create_global_stack_strings();
 

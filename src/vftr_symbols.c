@@ -222,7 +222,7 @@ void vftr_get_library_symtab (char *target, FILE *fp_ext, off_t base, int pass) 
     if (symstrIndex == -1) {
         char *message = (char*) malloc (sizeof(char) * (27 + strlen(target)));
         sprintf (message, "No symbol string table in %s\n", target);
-        vftr_logfile_warning(vftr_log, message);
+        vftr_logfile_message(vftr_log, message);
         free(message);
         return;
     } else {

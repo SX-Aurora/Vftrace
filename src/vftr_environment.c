@@ -378,8 +378,7 @@ void vftr_read_environment () {
     vftr_environment.regions_precise = vftr_read_env_bool ("VFTR_REGIONS_PRECISE", true);
     vftr_environment.output_directory = vftr_read_env_string ("VFTR_OUT_DIRECTORY", ".");
     vftr_environment.logfile_basename = vftr_read_env_string ("VFTR_LOGFILE_BASENAME", NULL);
-    //vftr_environment.logfile_all_ranks = vftr_read_env_bool ("VFTR_LOGFILE_ALL_RANKS", false);
-    vftr_environment.logfile_for_ranks = vftr_read_env_string ("VFTR_LOGFILE_ALL_RANKS", "0");
+    vftr_environment.logfile_for_ranks = vftr_read_env_string ("VFTR_LOGFILE_FOR_RANKS", "0");
     vftr_environment.sampletime = vftr_read_env_double ("VFTR_SAMPLETIME", 0.005);
     vftr_environment.stoptime = vftr_read_env_long_long ("VFTR_STOPTIME", 7ll*24ll*60ll*60ll);
     vftr_environment.accurate_profile = vftr_read_env_bool ("VFTR_ACCURATE_PROFILE", false);
@@ -633,8 +632,7 @@ void vftr_print_environment (FILE *fp) {
 	vftr_print_env_bool (fp, "VFTR_REGIONS_PRECISE", vftr_environment.regions_precise);
 	vftr_print_env_string (fp, "VFTR_OUT_DIRECTORY", vftr_environment.output_directory);
 	vftr_print_env_string (fp, "VFTR_LOGFILE_BASENAME", vftr_environment.logfile_basename);
-	//vftr_print_env_bool (fp, "VFTR_LOGFILE_ALL_RANKS", vftr_environment.logfile_all_ranks);
-	vftr_print_env_string (fp, "VFTR_LOGFILE_ALL_RANKS", vftr_environment.logfile_for_ranks);
+	vftr_print_env_string (fp, "VFTR_LOGFILE_FOR_RANKS", vftr_environment.logfile_for_ranks);
 	vftr_print_env_double (fp, "VFTR_SAMPLETIME", vftr_environment.sampletime);
 	vftr_print_env_long_long (fp, "VFTR_STOPTIME", vftr_environment.stoptime);
 	vftr_print_env_bool (fp, "VFTR_ACCURATE_PROFILE", vftr_environment.accurate_profile);
