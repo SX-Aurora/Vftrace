@@ -21,5 +21,4 @@ along with this program. If not, write to
 Vftrace version 1.4.0
 Runtime profile for application: 
 This is free software with ABSOLUTELY NO WARRANTY.
-For details: use vftrace with environment variable VFTR_LICENSE
-set to 1, or run "vfview -w", or consult the COPYRIGHT file.
+For details: use vftrace with environment variable VFTR_LICENSE=yes
