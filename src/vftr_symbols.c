@@ -473,6 +473,7 @@ char *vftr_find_symbol (void *addr) {
 
 #ifdef _LIBERTY_AVAIL
 char *vftr_demangle_cpp (char *m_name) {
+  fprintf (stderr, "VFTR: DEMANGLE CPP!\n");
   char *d_name = cplus_demangle(m_name, 0);
 
   if (d_name == NULL) {

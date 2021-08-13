@@ -527,25 +527,6 @@ void vftr_assert_environment () {
           vftr_rank0_printf ("Internal Vftrace warning: Registered nr. of environment variables does not match (%d %d)\n", vftr_n_env_variables, vftr_env_counter);
         }
 
-        if (vftr_rank_needs_logfile()) {
-           // There might be mistyped Vftrace environment variables. Loop over all existing env variables,
-           // check if they match a Vftrace variable, and make an alternative suggestion if it is possibly mistyped.
-           extern char **environ;
-           char **s = environ;
-           for (; *s; s++) {
-             if (strstr(*s, "VFTR_")) {
-               int best_ld, best_i;
-               // There has to be strdup of s, because strtok modifies the first argument. This
-               // points to the external environ, which is better not touched!
-               char *var_name = strtok(strdup(*s), "=");
-               vftr_find_best_match (var_name, &best_ld, &best_i);
-               // best_ld == 0 -> Exact match.
-               if (best_ld > 0)  {
-                 printf ("Vftrace environment variable %s not known. Do you mean %s?\n", var_name, vftr_env_variable_names[best_i]);
-               }
-             }
-           }
-         }
 }
 
 /**********************************************************************/
@@ -622,6 +603,27 @@ void vftr_free_environment () {
           free(vftr_env_variable_names[i]);
         }
         free(vftr_env_variable_names); 
+}
+
+// There might be mistyped Vftrace environment variables. Loop over all existing env variables,
+// check if they match a Vftrace variable, and make an alternative suggestion if it is possibly mistyped.
+void vftr_check_env_names (FILE *fp) {
+   extern char **environ;
+   char **s = environ;
+   for (; *s; s++) {
+     if (strstr(*s, "VFTR_")) {
+       int best_ld, best_i;
+       // There has to be strdup of s, because strtok modifies the first argument. This
+       // points to the external environ, which is better not touched!
+       char *var_name = strtok(strdup(*s), "=");
+       vftr_find_best_match (var_name, &best_ld, &best_i);
+       // best_ld == 0 -> Exact match.
+       if (best_ld > 0)  {
+         fprintf (vftr_log, "Vftrace environment variable %s not known. Do you mean %s?\n",
+                  var_name, vftr_env_variable_names[best_i]);
+       }
+     }
+   }
 }
 
 /**********************************************************************/

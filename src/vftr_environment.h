@@ -124,6 +124,7 @@ int vftr_profile_sorting_method();
 char *vftr_profile_sorting_method_string();
 void vftr_print_environment (FILE *fp);
 
+void vftr_check_env_names (FILE *fp);
 void vftr_set_logfile_ranks();
 bool vftr_rank_needs_logfile();
 

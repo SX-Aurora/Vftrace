@@ -209,6 +209,12 @@ void vftr_initialize() {
 	  vftr_print_disclaimer (vftr_log, false);
        }
     }
+        
+    printf ("HUHU BLUB\n");
+    if (vftr_rank_needs_logfile()) {
+       vftr_check_env_names (vftr_log);
+    }
+
 
     if (vftr_create_symbol_table (vftr_mpirank)) {
 	// No symbol table has been found. Switch of symbol table.
