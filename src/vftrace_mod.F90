@@ -38,6 +38,7 @@ module vftrace
    public :: vftrace_pause, &
              vftrace_resume
 
+   public :: vftrace_show_callstack
    public :: vftrace_get_stacktree_size
 
    interface
