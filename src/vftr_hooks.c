@@ -353,6 +353,8 @@ void vftr_function_exit () {
     func->open = false;
 }
 
+/**********************************************************************/
+
 // These are the actual Cygnus function hooks. 
 //
 #if defined(__x86_64__) || defined(__ve__)
@@ -377,3 +379,5 @@ void __cyg_profile_func_exit (void **func, void *caller) {
     vftr_function_exit ();
 }
 #endif
+
+/**********************************************************************/

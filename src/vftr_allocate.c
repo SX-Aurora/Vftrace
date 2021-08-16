@@ -46,7 +46,6 @@ typedef struct allocate_list {
 
 #define INIT_ALLOC_LIST 1000
 #define ALLOC_LIST_INC 500
-//allocate_list_t *vftr_allocated_fields[INIT_ALLOC_LIST];
 allocate_list_t **vftr_allocated_fields;
 int vftr_allocate_list_size = 0;
 int vftr_n_allocated_fields = 0;

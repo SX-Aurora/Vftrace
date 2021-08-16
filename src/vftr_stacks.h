@@ -134,6 +134,8 @@ extern stack_string_t *vftr_global_stack_strings;
 void vftr_create_global_stack_strings ();
 void vftr_create_stack_string (int i_stack, char **name, int *len, int *depth);
 
+void vftr_show_user_traced_stacktrees (FILE *fp);
+
 // test functions
 int vftr_stacks_test_1(FILE *fp_in, FILE *fp_out);
 int vftr_stacks_test_2(FILE *fp_in, FILE *fp_out);
