@@ -53,6 +53,11 @@ module vftrace
          implicit none
       end subroutine
 
+      subroutine vftrace_show_callstack () &
+         bind(c, name="vftrace_show_callstack")
+         implicit none
+      end subroutine 
+
    end interface
 
    interface 
@@ -101,9 +106,6 @@ module vftrace
          character(c_char), intent(in) :: name(*)
       end subroutine
 
-      subroutine vftrace_show_callstack_C () bind(c, name="vftrace_show_callstack")
-        implicit none
-      end subroutine 
    end interface
 
    ! interface for non public stack routines
@@ -211,8 +213,4 @@ contains
      deallocate (c_name)
    end subroutine
 
-   subroutine vftrace_show_callstack ()
-     implicit none
-     call vftrace_show_callstack_C ()
-   end subroutine 
 end module vftrace
