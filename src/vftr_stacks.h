@@ -50,6 +50,7 @@ typedef struct GStackInfo {
    // function name string of the current function
    char *name;
    bool print_profile;
+   uint64_t hash;
 } gstackinfo_t;
 
 // Profiling structs
@@ -134,7 +135,7 @@ extern stack_string_t *vftr_global_stack_strings;
 void vftr_create_global_stack_strings ();
 void vftr_create_stack_string (int i_stack, char **name, int *len, int *depth);
 
-void vftrace_show_callstacks();
+void vftrace_show_callstack();
 void vftr_show_user_traced_stacktrees (FILE *fp);
 
 // test functions

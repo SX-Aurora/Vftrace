@@ -130,6 +130,7 @@ void vftr_normalize_stacks() {
           vftr_gStackinfo[istack].name = NULL;
           vftr_gStackinfo[istack].locID = -1;
 	  vftr_gStackinfo[istack].print_profile = false;
+          vftr_gStackinfo[istack].hash = 0;
        }
        // fill in global info process 0 knows
        for (int istack=0; istack<vftr_stackscount; istack++) {
@@ -149,6 +150,7 @@ void vftr_normalize_stacks() {
              vftr_gStackinfo[globID].ret = -1;
           }
           vftr_gStackinfo[globID].locID = istack;
+          vftr_gStackinfo[globID].hash = vftr_func_table[istack]->stackHash;
 
        }
 #ifdef _MPI
@@ -945,9 +947,19 @@ void vftr_print_function_stack (FILE *fp, char *func_name, int n_final_stack_ids
 
 /**********************************************************************/
 
-int *vftr_show_stackids;
+int vftr_find_global_id (uint64_t this_hash) {
+   for (int i_global = 0; i_global < vftr_gStackscount; i_global++) {
+      if (vftr_gStackinfo[i_global].hash == this_hash) {
+        return i_global;
+      }
+   }
+   return -1;
+}
+
+/**********************************************************************/
+
 int vftr_n_show_stackids; 
-uint64_t *match_hashes;
+uint64_t *vftr_match_hashes;
 
 void vftrace_show_callstack () {
 #define LIST_INC 10
@@ -957,26 +969,23 @@ void vftrace_show_callstack () {
    if (first) {
       vftr_n_show_stackids = 0;
       current_list_size = LIST_INC;
-      vftr_show_stackids = (int*) malloc (current_list_size * sizeof(int));
-      match_hashes = (uint64_t*) malloc (current_list_size * sizeof(uint64_t));
+      vftr_match_hashes = (uint64_t*) malloc (current_list_size * sizeof(uint64_t));
       first = false; 
    }
 
    uint64_t this_hash = vftr_fstack->stackHash;
    for (int i = 0; i < vftr_n_show_stackids; i++) {
-      if (this_hash == match_hashes[i]) return;
+      if (this_hash == vftr_match_hashes[i]) return;
    }
 
    // New stack
 
    if (vftr_n_show_stackids + 1 > current_list_size) {
       current_list_size += LIST_INC;
-      vftr_show_stackids = (int*) realloc (vftr_show_stackids, current_list_size * sizeof(int));
-      match_hashes = (uint64_t*) realloc (match_hashes, current_list_size * sizeof(uint64_t));
+      vftr_match_hashes = (uint64_t*) realloc (vftr_match_hashes, current_list_size * sizeof(uint64_t));
    }
 
-   match_hashes[vftr_n_show_stackids] = this_hash;
-   vftr_show_stackids[vftr_n_show_stackids] = vftr_fstack->id;    
+   vftr_match_hashes[vftr_n_show_stackids] = this_hash;
    vftr_n_show_stackids++;
 }
 
@@ -986,10 +995,10 @@ void vftr_show_user_traced_stacktrees (FILE *fp) {
    if (vftr_n_show_stackids > 0) {
       fprintf (fp, "\nStack trees traced by user: %d \n", vftr_n_show_stackids);
       for (int i = 0; i < vftr_n_show_stackids; i++) {
-         fprintf (fp, "stackID: %d\n", vftr_show_stackids[vftr_func_table[i]->gid]);
+         int i_global = vftr_find_global_id (vftr_match_hashes[i]);
+         fprintf (fp, "%d: %s\n", i_global, vftr_global_stack_strings[i_global].s);
       }
-      free (match_hashes);
-      free (vftr_show_stackids);
+      free (vftr_match_hashes);
    }
 }
 
