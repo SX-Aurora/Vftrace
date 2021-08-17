@@ -1,6 +1,8 @@
 #!/bin/bash
+
 set -x
 vftr_binary=filewrite_1
+export VFTR_LOGFILE_BASENAME=$vftr_binary
 outfile=filewrite_1.out
 ref_file=${srcdir}/ref_output/$outfile
 
