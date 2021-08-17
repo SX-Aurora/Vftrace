@@ -21,6 +21,7 @@ int main (int argc, char **argv) {
 
   vftr_read_environment ();
   vftr_assert_environment ();
+  vftr_check_env_names (stdout);
   vftr_free_environment ();
 
 #ifdef _MPI
