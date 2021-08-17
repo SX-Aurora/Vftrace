@@ -210,7 +210,6 @@ void vftr_initialize() {
        }
     }
         
-    printf ("HUHU BLUB\n");
     if (vftr_rank_needs_logfile()) {
        vftr_check_env_names (vftr_log);
     }
