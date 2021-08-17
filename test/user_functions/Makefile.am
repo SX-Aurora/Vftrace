@@ -148,6 +148,14 @@ fpause_resume_LDFLAGS = $(AM_LDFLAGS)
 dist_noinst_SCRIPTS += fpause_resume.sh
 endif
 
+check_PROGRAMS += cshow_stack
+
+cshow_stack_SOURCES = $(srcdir)/cshow_stack.c
+cshow_stack_CFLAGS = $(AM_CFLAGS)
+cshow_stack_LDFLAGS = $(AM_LDFLAGS)
+
+dist_noinst_SCRIPTS += cshow_stack.sh
+
 TEST_EXTENSIONS = .sh
 SH_LOG_COMPILER = $(SHELL)
 
