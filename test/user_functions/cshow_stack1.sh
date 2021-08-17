@@ -1,6 +1,6 @@
 #!/bin/bash
 
-vftr_binary=cshow_stack
+vftr_binary=cshow_stack1
 nprocs=1
 
 if [ "x$HAS_MPI" == "xYES" ]; then
