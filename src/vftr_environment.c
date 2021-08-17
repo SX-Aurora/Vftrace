@@ -619,7 +619,7 @@ void vftr_check_env_names (FILE *fp) {
        vftr_find_best_match (var_name, &best_ld, &best_i);
        // best_ld == 0 -> Exact match.
        if (best_ld > 0)  {
-         fprintf (vftr_log, "Vftrace environment variable %s not known. Do you mean %s?\n",
+         fprintf (fp, "Vftrace environment variable %s not known. Do you mean %s?\n",
                   var_name, vftr_env_variable_names[best_i]);
        }
      }
