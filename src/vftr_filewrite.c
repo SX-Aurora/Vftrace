@@ -1459,6 +1459,7 @@ void vftr_get_application_times_usec (long long time0, long long *total_runtime,
 void vftr_print_profile_summary (FILE *fp_log, function_t **func_table, double total_runtime, double application_runtime,
 				 double total_overhead_time, double sampling_overhead_time, double mpi_overhead_time) {
 
+    fprintf (fp_log, "\n------------------------------------------------------------\n");
     fprintf(fp_log, "MPI size              %d\n", vftr_mpisize);
     fprintf(fp_log, "Total runtime:        %8.2f seconds\n", total_runtime);
     fprintf(fp_log, "Application time:     %8.2f seconds\n", application_runtime);
