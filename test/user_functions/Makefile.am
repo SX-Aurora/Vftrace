@@ -162,6 +162,18 @@ cshow_stack2_LDFLAGS = $(AM_LDFLAGS)
 dist_noinst_SCRIPTS += cshow_stack1.sh \
                        cshow_stack2.sh
 
+if ENABLE_FORTRAN
+check_PROGRAMS += fshow_stack1
+
+fshow_stack1_SOURCES = $(srcdir)/fshow_stack1.F90
+fshow_stack1_CFLAGS = $(AM_FCFLAGS)
+fshow_stack1_LDFLAGS = $(AM_LDFLAGS)
+
+dist_noinst_SCRIPTS += fshow_stack1.sh
+endif
+
+
+
 TEST_EXTENSIONS = .sh
 SH_LOG_COMPILER = $(SHELL)
 
