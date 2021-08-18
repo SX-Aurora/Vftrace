@@ -2,6 +2,8 @@
 
 vftr_binary=cshow_stack1
 nprocs=1
+export VFTR_LOGFILE_BASENAME=${vftr_binary}
+logfile=${vftr_binary}_0.log
 
 if [ "x$HAS_MPI" == "xYES" ]; then
    ${MPI_EXEC} ${MPI_OPTS} ${NP} ${nprocs} ./${vftr_binary} || exit 1
@@ -9,25 +11,25 @@ else
    ./${vftr_binary} || exit 1
 fi
 
-cat ${vftr_binary}_0.log
+cat $logfile
 echo "***********"
 
 grepfor="Stack trees traced by user: 2"
-grep -q "${grepfor}" ${vftr_binary}_0.log # Quiet option to avoid redundant output in the logfile.
+grep -q "${grepfor}" $logfile # Quiet option to avoid redundant output in the logfile.
 if [ $? -ne "0" ]; then
   echo "Fail: String $grepfor not found!"
   exit 1;
 fi
 
 grepfor="func2<func1<main<init"
-nfound=`grep "${grepfor}" ${vftr_binary}_0.log | wc -l`
+nfound=`grep "${grepfor}" $logfile | wc -l`
 if [ $nfound -ne "2" ]; then
   echo "Fail: String $grepfor not found two times but $nfound"
   exit 1;
 fi
 
 grepfor="func2<main<init"
-nfound=`grep "${grepfor}" ${vftr_binary}_0.log | wc -l`
+nfound=`grep "${grepfor}" $logfile | wc -l`
 if [ $nfound -ne "2" ]; then
   echo "Fail: String $grepfor not found two times but $nfound"
   exit 1;
