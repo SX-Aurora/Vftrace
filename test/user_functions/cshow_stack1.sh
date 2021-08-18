@@ -9,15 +9,26 @@ else
    ./${vftr_binary} || exit 1
 fi
 
-grep "Stack trees traced by user: 2" ${vftr_binary}_0.log
+cat ${vftr_binary}_0.log
+echo "***********"
+
+grepfor="Stack trees traced by user: 2"
+grep -q "${grepfor}" ${vftr_binary}_0.log # Quiet option to avoid redundant output in the logfile.
 if [ $? -ne "0" ]; then
+  echo "Fail: String $grepfor not found!"
   exit 1;
 fi
-grep "3: func2<func1<main<init" ${vftr_binary}_0.log
-if [ $? -ne "0" ]; then
+
+grepfor="func2<func1<main<init"
+nfound=`grep "${grepfor}" ${vftr_binary}_0.log | wc -l`
+if [ $nfound -ne "2" ]; then
+  echo "Fail: String $grepfor not found two times but $nfound"
   exit 1;
 fi
-grep "4: func2<main<init" ${vftr_binary}_0.log
-if [ $? -ne "0" ]; then
+
+grepfor="func2<main<init"
+nfound=`grep "${grepfor}" ${vftr_binary}_0.log | wc -l`
+if [ $nfound -ne "2" ]; then
+  echo "Fail: String $grepfor not found two times but $nfound"
   exit 1;
 fi
