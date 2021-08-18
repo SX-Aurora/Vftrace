@@ -14,3 +14,23 @@ fi
 cat $logfile
 echo "***********"
 
+grepfor="Stack trees traced by user: 2"
+grep -q "${grepfor}" $logfile # Quiet option to avoid redundant output in the logfile.
+if [ $? -ne "0" ]; then
+  echo "Fail: String $grepfor not found!"
+  exit 1;
+fi
+
+grepfor="func2<func1<main"
+nfound=`grep -i "${grepfor}" $logfile | wc -l`
+if [ $nfound -ne "2" ]; then
+  echo "Fail: String $grepfor not found two times but $nfound"
+  exit 1;
+fi
+
+grepfor="func2<main"
+nfound=`grep -i "${grepfor}" $logfile | wc -l`
+if [ $nfound -ne "2" ]; then
+  echo "Fail: String $grepfor not found two times but $nfound"
+  exit 1;
+fi
