@@ -1,6 +1,6 @@
 [submodule "external/tinyexpr"]
 	path = external/tinyexpr
-	url = https://github.com/codeplea/tinyexpr.git
+	url = ../../codeplea/tinyexpr.git
 [submodule "external/jsmn"]
 	path = external/jsmn
-	url = https://github.com/zserge/jsmn.git
+	url = ../../zserge/jsmn.git
