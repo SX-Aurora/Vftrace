@@ -10,9 +10,14 @@ else
    ./${test_name} || exit 1
 fi
 
-ncalls=$(grep not_instrumented_function ${test_name}_0.log | wc -l)
+ncalls=$(grep " not_instrumented_function" ${test_name}_0.log | wc -l)
 if [ "${ncalls}" -gt "0" ]; then
+   echo "The function `not_instrumented_function` should not appear in the profile"
    exit 1;
-else
-   exit 0
 fi
+ncalls=$(grep " instrumented_function" ${test_name}_0.log | wc -l)
+if [ "${ncalls}" -eq "0" ]; then
+   echo "The function `instrumented_function` should appear in the profile"
+   exit 1
+fi
+exit 0
