@@ -2,7 +2,7 @@
 set -x
 export VFTR_PROF_TRUNCATE=no
 
-test_name=no_instrument_attribute_C
+test_name=no_instrument_attribute
 
 if [ "x$HAS_MPI" == "xYES" ]; then
    ${MPI_EXEC} ${MPI_OPTS} ${NP} 1 ./${test_name} || exit 1
