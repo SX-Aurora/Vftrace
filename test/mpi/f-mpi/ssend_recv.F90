@@ -17,7 +17,7 @@ PROGRAM ssend_recv
 
    INTEGER :: recvstatus(MPI_STATUS_SIZE)
 
-   INTEGER :: sendrank, recvrank
+   INTEGER :: sendrank
 
    LOGICAL :: valid_data
 

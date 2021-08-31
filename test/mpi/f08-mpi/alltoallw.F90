@@ -23,7 +23,6 @@ PROGRAM alltoallw
    INTEGER, DIMENSION(:), ALLOCATABLE :: rdispls
    TYPE(MPI_Datatype), DIMENSION(:), ALLOCATABLE :: rtypes
 
-   INTEGER, PARAMETER :: rootrank = 0
    INTEGER :: irank, i
 
    LOGICAL :: valid_data
@@ -64,7 +63,7 @@ PROGRAM alltoallw
    nstot = 0
    DO irank = 0, comm_size - 1
       scounts(irank+1) = nints
-      sdispls(irank+1) = nstot*C_SIZEOF(dummyint)
+      sdispls(irank+1) = INT(nstot*C_SIZEOF(dummyint))
       stypes(irank+1) = MPI_INTEGER
       nstot = nstot + scounts(irank+1)
    END DO
@@ -78,7 +77,7 @@ PROGRAM alltoallw
    nrtot = 0
    DO irank = 0, comm_size - 1
       rcounts(irank+1) = nints - my_rank + irank
-      rdispls(irank+1) = nrtot*C_SIZEOF(dummyint)
+      rdispls(irank+1) = INT(nrtot*C_SIZEOF(dummyint))
       rtypes(irank+1) = MPI_INTEGER
       nrtot = nrtot + rcounts(irank+1)
    END DO

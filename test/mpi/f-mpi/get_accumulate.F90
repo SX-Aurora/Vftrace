@@ -18,12 +18,11 @@ PROGRAM get_accumulate
    INTEGER :: window
    INTEGER(KIND=MPI_ADDRESS_KIND) :: winsize
 
-   INTEGER :: targetrank
    INTEGER(KIND=MPI_ADDRESS_KIND) :: targetdisp
 
    LOGICAL :: valid_data
 
-   INTEGER :: i, irank
+   INTEGER :: irank
 
    INTEGER :: ierr
 

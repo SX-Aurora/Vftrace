@@ -58,7 +58,6 @@ int main(int argc, char** argv) {
    int *sdispls = (int*) malloc(sub_comm_remote_size*sizeof(int));
    int nstot = 0;
    for (int irank=0; irank<sub_comm_remote_size; irank++) {
-      int jrank = minpeerrank + irank;
       scounts[irank] = nints;
       sdispls[irank] = nstot;
       nstot += scounts[irank];

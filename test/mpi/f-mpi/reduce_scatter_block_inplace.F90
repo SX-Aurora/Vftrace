@@ -13,10 +13,6 @@ PROGRAM reduce_scatter_block_inplace
    INTEGER :: nints = 0
    INTEGER, DIMENSION(:), ALLOCATABLE :: rbuffer
 
-   INTEGER, PARAMETER :: rootrank = 0
-
-   INTEGER :: refresult
-
    LOGICAL :: valid_data
 
    INTEGER :: irank, i

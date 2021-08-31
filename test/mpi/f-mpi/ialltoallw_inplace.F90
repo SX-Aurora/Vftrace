@@ -22,7 +22,6 @@ PROGRAM ialltoallw_inplace
    INTEGER, DIMENSION(:), ALLOCATABLE :: rdispls
    INTEGER, DIMENSION(:), ALLOCATABLE :: rtypes
 
-   INTEGER, PARAMETER :: rootrank = 0
    INTEGER :: irank, i
 
    LOGICAL :: valid_data
@@ -70,7 +69,7 @@ PROGRAM ialltoallw_inplace
    nrtot = 0
    DO irank = 0, comm_size - 1
       rcounts(irank+1) = nints
-      rdispls(irank+1) = nrtot*C_SIZEOF(dummyint)
+      rdispls(irank+1) = INT(nrtot*C_SIZEOF(dummyint))
       rtypes(irank+1) = MPI_INTEGER
       nrtot = nrtot + rcounts(irank+1)
    END DO

@@ -16,7 +16,7 @@ PROGRAM send_recv
 
    INTEGER :: mystat(MPI_STATUS_SIZE)
    INTEGER, DIMENSION(:), ALLOCATABLE :: myrequest
-   INTEGER :: reqidx, ireq
+   INTEGER :: ireq
 
    INTEGER :: sendrank, recvrank
 

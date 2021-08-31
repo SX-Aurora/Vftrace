@@ -21,8 +21,6 @@ PROGRAM put
 
    LOGICAL :: valid_data
 
-   INTEGER :: i, ipeer
-
    INTEGER :: ierr
 
    CALL MPI_Init(ierr)
@@ -43,7 +41,7 @@ PROGRAM put
 
    ! require cmd-line argument
    IF (COMMAND_ARGUMENT_COUNT() < 1) THEN
-      WRITE(UNIT=OUTPUT_UNIT, FMT="(A)") "./get <msgsize in integers>"
+      WRITE(UNIT=OUTPUT_UNIT, FMT="(A)") "./put <msgsize in integers>"
       STOP 1
    END IF
 

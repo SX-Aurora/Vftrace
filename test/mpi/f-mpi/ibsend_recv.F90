@@ -19,7 +19,7 @@ PROGRAM ibsend_recv
 
    INTEGER :: recvstatus(MPI_STATUS_SIZE)
 
-   INTEGER :: sendrank, recvrank
+   INTEGER :: sendrank
 
    LOGICAL :: valid_data
 
@@ -60,7 +60,7 @@ PROGRAM ibsend_recv
 
    ! allocating and attatching MPI-buffered mode buffer
    ALLOCATE(buffer(nints+MPI_BSEND_OVERHEAD))
-   bufsize = nints*C_SIZEOF(buffer(1))+MPI_BSEND_OVERHEAD
+   bufsize = INT(nints*C_SIZEOF(buffer(1))+MPI_BSEND_OVERHEAD)
    CALL MPI_Buffer_attach(buffer, bufsize, ierr)
 
    ! Message cycle

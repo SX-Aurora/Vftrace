@@ -19,7 +19,6 @@ PROGRAM ialltoallv
    INTEGER, DIMENSION(:), ALLOCATABLE :: rcounts
    INTEGER, DIMENSION(:), ALLOCATABLE :: rdispls
 
-   INTEGER, PARAMETER :: rootrank = 0
    INTEGER :: irank, i
 
    LOGICAL :: valid_data

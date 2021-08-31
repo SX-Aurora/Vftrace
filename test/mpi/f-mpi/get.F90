@@ -22,7 +22,7 @@ PROGRAM get
 
    LOGICAL :: valid_data
 
-   INTEGER :: i, ipeer
+   INTEGER :: ipeer
 
    INTEGER :: ierr
 

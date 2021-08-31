@@ -21,8 +21,6 @@ PROGRAM put
 
    LOGICAL :: valid_data
 
-   INTEGER :: i, ipeer
-
    INTEGER :: ierr
 
    CALL MPI_Init(ierr)

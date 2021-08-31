@@ -14,10 +14,6 @@ PROGRAM ireduce_scatter_block
    INTEGER, DIMENSION(:), ALLOCATABLE :: sbuffer
    INTEGER, DIMENSION(:), ALLOCATABLE :: rbuffer
 
-   INTEGER, PARAMETER :: rootrank = 0
-
-   INTEGER :: refresult
-
    LOGICAL :: valid_data
 
    INTEGER :: myrequest

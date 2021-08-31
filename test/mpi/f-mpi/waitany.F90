@@ -15,7 +15,6 @@ PROGRAM waitany
 
    INTEGER :: mystat(MPI_STATUS_SIZE)
    INTEGER, DIMENSION(:), ALLOCATABLE :: requests
-   LOGICAL :: flag
    INTEGER :: idx, ireq
 
    INTEGER :: recvrank

@@ -15,8 +15,6 @@ PROGRAM ibcast
 
    INTEGER, PARAMETER :: sendrank = 0
 
-   INTEGER :: refresult
-
    LOGICAL :: valid_data
 
    INTEGER :: myrequest

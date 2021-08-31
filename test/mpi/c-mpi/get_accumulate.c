@@ -31,9 +31,9 @@ int main(int argc, char** argv) {
 
    // allocating send/recv buffer
    int nints = atoi(argv[1]);
-   int *originbuffer;
-   int *resultbuffer;
-   int *targetbuffer;
+   int *originbuffer = NULL;
+   int *resultbuffer = NULL;
+   int *targetbuffer = NULL;
    if (my_rank == 0) {
       originbuffer = (int*) malloc(nints*sizeof(int));
       for (int i=0; i<nints; i++) {originbuffer[i]=my_rank;}

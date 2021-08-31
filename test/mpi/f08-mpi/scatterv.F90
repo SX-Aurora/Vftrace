@@ -1,4 +1,4 @@
-PROGRAM scatter
+PROGRAM scatterv
 
    USE, INTRINSIC :: ISO_FORTRAN_ENV
    USE mpi_f08
@@ -43,7 +43,7 @@ PROGRAM scatter
 
    ! require cmd-line argument
    IF (COMMAND_ARGUMENT_COUNT() < 1) THEN
-      WRITE(UNIT=OUTPUT_UNIT, FMT="(A)") "./scatter <msgsize in integers>"
+      WRITE(UNIT=OUTPUT_UNIT, FMT="(A)") "./scatterv <msgsize in integers>"
       STOP 1
    END IF
 
@@ -68,6 +68,10 @@ PROGRAM scatter
             sbuffer(i+displs(irank+1)) = irank
          END DO
       END DO
+   ELSE
+      ALLOCATE(sendcounts(0))
+      ALLOCATE(displs(0))
+      ALLOCATE(sbuffer(0))
    END IF
 
    ! Messageing
@@ -88,10 +92,13 @@ PROGRAM scatter
       valid_data = .FALSE.
    END IF
 
+   DEALLOCATE(sendcounts)
+   DEALLOCATE(displs)
+
    DEALLOCATE(rbuffer)
-   IF (my_rank == rootrank) DEALLOCATE(sbuffer)
+   DEALLOCATE(sbuffer)
 
    CALL MPI_Finalize(ierr)
 
    IF (.NOT.valid_data) STOP 1
-END PROGRAM scatter
+END PROGRAM scatterv

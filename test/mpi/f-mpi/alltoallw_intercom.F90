@@ -93,7 +93,7 @@ PROGRAM alltoallw_intercom
    DO irank = 0, sub_comm_remote_size - 1
       jrank = minpeerrank + irank
       scounts(irank+1) = nints
-      sdispls(irank+1) = nstot*C_SIZEOF(dummyint)
+      sdispls(irank+1) = INT(nstot*C_SIZEOF(dummyint))
       stypes(irank+1) = MPI_INTEGER
       nstot = nstot + scounts(irank+1)
    END DO
@@ -108,7 +108,7 @@ PROGRAM alltoallw_intercom
    DO irank = 0, sub_comm_remote_size - 1
       jrank = minpeerrank + irank
       rcounts(irank+1) = nints - my_rank + jrank
-      rdispls(irank+1) = nrtot*C_SIZEOF(dummyint)
+      rdispls(irank+1) = INT(nrtot*C_SIZEOF(dummyint))
       rtypes(irank+1) = MPI_INTEGER
       nrtot = nrtot + rcounts(irank+1)
    END DO

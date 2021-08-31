@@ -26,7 +26,6 @@ PROGRAM iscatterv_intercom
    INTEGER :: local_leader, remote_leader
    INTEGER :: sub_comm_remote_size
 
-   INTEGER, PARAMETER :: rootrank = 0
    INTEGER :: root
 
    INTEGER :: irank, jrank, i
