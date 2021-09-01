@@ -49,6 +49,8 @@ int vftr_remote2global_rank(MPI_Comm comm, int remote_rank);
 // determine based on several criteria if
 // the communication should just be executed or also logged
 bool vftr_no_mpi_logging();
+// int version of above function for well defined fortran-interoperability
+int vftr_no_mpi_logging_int();
 
 #endif
 

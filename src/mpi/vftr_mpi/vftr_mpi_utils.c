@@ -177,6 +177,10 @@ bool vftr_no_mpi_logging() {
           !vftr_environment.mpi_log->value ||
           vftr_paused;
 }
+// int version of above function for well defined fortran-interoperability
+int vftr_no_mpi_logging_int() {
+   return vftr_no_mpi_logging() ? 1 : 0;
+}
 
 // Translate a rank from a local group to the global rank
 int vftr_local2global_rank(MPI_Comm comm, int local_rank) {
