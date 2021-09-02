@@ -19,11 +19,16 @@
 #ifdef _MPI
 #include <mpi.h>
 
+#include "vftr_mpi_utils.h"
 #include "vftr_mpi_reduce_scatter.h"
 
 int MPI_Reduce_scatter(const void *sendbuf, void *recvbuf, const int *recvcounts,
                        MPI_Datatype datatype, MPI_Op op, MPI_Comm comm) {
-   return vftr_MPI_Reduce_scatter(sendbuf, recvbuf, recvcounts, datatype, op, comm);
+   if (vftr_no_mpi_logging()) {
+      return PMPI_Reduce_scatter(sendbuf, recvbuf, recvcounts, datatype, op, comm);
+   } else {
+      return vftr_MPI_Reduce_scatter(sendbuf, recvbuf, recvcounts, datatype, op, comm);
+   }
 }
 
 #endif
