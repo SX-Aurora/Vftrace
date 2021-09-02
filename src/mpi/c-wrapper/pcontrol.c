@@ -18,6 +18,7 @@
 #ifdef _MPI
 #include <mpi.h>
 
+#include "vftr_mpi_utils.h"
 #include "vftr_mpi_pcontrol.h"
 
 int MPI_Pcontrol(const int level, ...) {
