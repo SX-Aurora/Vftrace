@@ -19,10 +19,15 @@
 #ifdef _MPI
 #include <mpi.h>
 
+#include "vftr_mpi_utils.h"
 #include "vftr_mpi_wait.h"
 
 int MPI_Wait(MPI_Request *request, MPI_Status *status) {
-   return vftr_MPI_Wait(request, status);
+   if (vftr_no_mpi_logging()) {
+      return PMPI_Wait(request, status);
+   } else {
+      return vftr_MPI_Wait(request, status);
+   }
 }
 
 #endif
