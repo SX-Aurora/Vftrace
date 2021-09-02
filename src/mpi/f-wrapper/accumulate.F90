@@ -21,6 +21,8 @@ SUBROUTINE MPI_ACCUMULATE(ORIGIN_ADDR, ORIGIN_COUNT, ORIGIN_DATATYPE, &
                           TARGET_DATATYPE, OP, WIN, ERROR)
    USE vftr_mpi_accumulate_f2c_finterface, &
       ONLY : vftr_MPI_Accumulate_f2c
+   USE vftr_mpi_logging_F, &
+      ONLY : vftr_no_mpi_logging_F
    USE mpi, ONLY: MPI_ADDRESS_KIND
    IMPLICIT NONE
    INTEGER ORIGIN_ADDR
@@ -34,9 +36,15 @@ SUBROUTINE MPI_ACCUMULATE(ORIGIN_ADDR, ORIGIN_COUNT, ORIGIN_DATATYPE, &
    INTEGER WIN
    INTEGER ERROR
 
-   CALL vftr_MPI_Accumulate_f2c(ORIGIN_ADDR, ORIGIN_COUNT, ORIGIN_DATATYPE, &
-                                TARGET_RANK, TARGET_DISP, TARGET_COUNT, &
-                                TARGET_DATATYPE, OP, WIN, ERROR)
+   IF (vftr_no_mpi_logging_F()) THEN
+      CALL PMPI_ACCUMULATE(ORIGIN_ADDR, ORIGIN_COUNT, ORIGIN_DATATYPE, &
+                           TARGET_RANK, TARGET_DISP, TARGET_COUNT, &
+                           TARGET_DATATYPE, OP, WIN, ERROR)
+   ELSE
+      CALL vftr_MPI_Accumulate_f2c(ORIGIN_ADDR, ORIGIN_COUNT, ORIGIN_DATATYPE, &
+                                   TARGET_RANK, TARGET_DISP, TARGET_COUNT, &
+                                   TARGET_DATATYPE, OP, WIN, ERROR)
+   END IF
 
 END SUBROUTINE MPI_ACCUMULATE
 
