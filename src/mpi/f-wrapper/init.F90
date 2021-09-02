@@ -19,10 +19,9 @@
 SUBROUTINE MPI_INIT(IERROR)
    USE vftr_after_mpi_init_f2c_finterface, &
       ONLY : vftr_after_mpi_init_f2c
-   USE mpi, ONLY : PMPI_INIT
-
+   USE mpi, &
+      ONLY : PMPI_INIT
    IMPLICIT NONE
-
    INTEGER, INTENT(OUT) :: IERROR
 
    CALL PMPI_INIT(IERROR)
