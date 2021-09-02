@@ -19,15 +19,22 @@
 #ifdef _MPI
 #include <mpi.h>
 
+#include "vftr_mpi_utils.h"
 #include "vftr_mpi_iscatterv.h"
 
 int MPI_Iscatterv(const void *sendbuf, const int *sendcounts,
                   const int *displs, MPI_Datatype sendtype,
                   void *recvbuf, int recvcount, MPI_Datatype recvtype,
                   int root, MPI_Comm comm, MPI_Request *request) {
-   return vftr_MPI_Iscatterv(sendbuf, sendcounts, displs, sendtype,
-                             recvbuf, recvcount, recvtype, root, comm,
-                             request);
+   if (vftr_no_mpi_logging()) {
+      return PMPI_Iscatterv(sendbuf, sendcounts, displs, sendtype,
+                            recvbuf, recvcount, recvtype, root, comm,
+                            request);
+   } else {
+      return vftr_MPI_Iscatterv(sendbuf, sendcounts, displs, sendtype,
+                                recvbuf, recvcount, recvtype, root, comm,
+                                request);
+   }
 }
 
 #endif
