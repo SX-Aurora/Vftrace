@@ -19,12 +19,20 @@
 SUBROUTINE MPI_Startall(COUNT, ARRAY_OREQUESTS, ERROR)
    USE vftr_mpi_startall_f2c_finterface, &
       ONLY : vftr_MPI_Startall_f2c
+   USE vftr_mpi_logging_F, &
+      ONLY : vftr_no_mpi_logging_F
+   USE mpi, &
+      ONLY : PMPI_STARTALL
    IMPLICIT NONE
    INTEGER COUNT
    INTEGER ARRAY_OREQUESTS(*)
    INTEGER ERROR
 
-   CALL vftr_MPI_Startall_f2c(COUNT, ARRAY_OREQUESTS, ERROR)
+   IF (vftr_no_mpi_logging_F()) THEN
+      CALL PMPI_Startall(COUNT, ARRAY_OREQUESTS, ERROR)
+   ELSE
+      CALL vftr_MPI_Startall_f2c(COUNT, ARRAY_OREQUESTS, ERROR)
+   END IF
 
 END SUBROUTINE MPI_Startall
 
