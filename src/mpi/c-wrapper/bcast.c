@@ -19,11 +19,16 @@
 #ifdef _MPI
 #include <mpi.h>
 
+#include "vftr_mpi_utils.h"
 #include "vftr_mpi_bcast.h"
 
 int MPI_Bcast(void *buffer, int count, MPI_Datatype datatype,
               int root, MPI_Comm comm) {
-   return vftr_MPI_Bcast(buffer, count, datatype, root, comm);
+   if (vftr_no_mpi_logging()) {
+      return PMPI_Bcast(buffer, count, datatype, root, comm);
+   } else {
+      return vftr_MPI_Bcast(buffer, count, datatype, root, comm);
+   }
 }
 
 #endif
