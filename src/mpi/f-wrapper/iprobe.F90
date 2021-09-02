@@ -19,7 +19,11 @@
 SUBROUTINE MPI_IPROBE(SOURCE, TAG, COMM, FLAG, STATUS, ERROR)
    USE vftr_mpi_iprobe_f2c_finterface, &
       ONLY : vftr_MPI_Iprobe_f2c
-   USE mpi, ONLY : MPI_STATUS_SIZE
+   USE vftr_mpi_logging_F, &
+      ONLY : vftr_no_mpi_logging_F
+   USE mpi, &
+      ONLY : PMPI_IPROBE, &
+             MPI_STATUS_SIZE
    IMPLICIT NONE
    INTEGER SOURCE
    INTEGER TAG
@@ -30,9 +34,12 @@ SUBROUTINE MPI_IPROBE(SOURCE, TAG, COMM, FLAG, STATUS, ERROR)
 
    INTEGER TMPFLAG
 
-   CALL vftr_MPI_Iprobe_f2c(SOURCE, TAG, COMM, TMPFLAG, STATUS, ERROR)
-
-   FLAG = (TMPFLAG /= 0)
+   IF (vftr_no_mpi_logging_F()) THEN
+      CALL PMPI_IPROBE(SOURCE, TAG, COMM, FLAG, STATUS, ERROR)
+   ELSE
+      CALL vftr_MPI_Iprobe_f2c(SOURCE, TAG, COMM, TMPFLAG, STATUS, ERROR)
+      FLAG = (TMPFLAG /= 0)
+   END IF
 
 END SUBROUTINE MPI_IPROBE
 
