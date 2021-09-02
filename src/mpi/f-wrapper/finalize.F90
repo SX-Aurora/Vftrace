@@ -19,7 +19,8 @@
 SUBROUTINE MPI_FINALIZE(IERROR)
    USE vftr_finalize_f2c_finterface, &
       ONLY : vftr_finalize_F
-   USE mpi, ONLY : PMPI_FINALIZE
+   USE mpi, &
+      ONLY : PMPI_FINALIZE
 
    IMPLICIT NONE
 
