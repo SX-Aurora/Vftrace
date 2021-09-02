@@ -19,15 +19,22 @@
 #ifdef _MPI
 #include <mpi.h>
 
+#include "vftr_mpi_utils.h"
 #include "vftr_mpi_igatherv.h"
 
 int MPI_Igatherv(const void *sendbuf, int sendcount, MPI_Datatype sendtype,
                  void *recvbuf, const int *recvcounts, const int *displs,
                  MPI_Datatype recvtype, int root, MPI_Comm comm,
                  MPI_Request *request) {
-   return vftr_MPI_Igatherv(sendbuf, sendcount, sendtype, recvbuf,
-                            recvcounts, displs, recvtype, root, comm,
-                            request);
+   if (vftr_no_mpi_logging()) {
+      return PMPI_Igatherv(sendbuf, sendcount, sendtype, recvbuf,
+                           recvcounts, displs, recvtype, root, comm,
+                           request);
+   } else {
+      return vftr_MPI_Igatherv(sendbuf, sendcount, sendtype, recvbuf,
+                               recvcounts, displs, recvtype, root, comm,
+                               request);
+   }
 }
 
 #endif
