@@ -21,6 +21,10 @@ SUBROUTINE MPI_SCATTER(SENDBUF, SENDCOUNT, SENDTYPE, &
                        ROOT, COMM, ERROR)
    USE vftr_mpi_scatter_f2c_finterface, &
       ONLY : vftr_MPI_Scatter_f2c
+   USE vftr_mpi_logging_F, &
+      ONLY : vftr_no_mpi_logging_F
+   USE mpi, &
+      ONLY : PMPI_SCATTER
    IMPLICIT NONE
    INTEGER SENDBUF
    INTEGER SENDCOUNT
@@ -32,9 +36,15 @@ SUBROUTINE MPI_SCATTER(SENDBUF, SENDCOUNT, SENDTYPE, &
    INTEGER COMM
    INTEGER ERROR
 
-   CALL vftr_MPI_Scatter_f2c(SENDBUF, SENDCOUNT, SENDTYPE, &
-                             RECVBUF, RECVCOUNT, RECVTYPE, &
-                             ROOT, COMM, ERROR)
+   IF (vftr_no_mpi_logging_F()) THEN
+      CALL PMPI_SCATTER(SENDBUF, SENDCOUNT, SENDTYPE, &
+                        RECVBUF, RECVCOUNT, RECVTYPE, &
+                        ROOT, COMM, ERROR)
+   ELSE
+      CALL vftr_MPI_Scatter_f2c(SENDBUF, SENDCOUNT, SENDTYPE, &
+                                RECVBUF, RECVCOUNT, RECVTYPE, &
+                                ROOT, COMM, ERROR)
+   END IF
 
 END SUBROUTINE MPI_SCATTER
 
