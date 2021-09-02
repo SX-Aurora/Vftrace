@@ -4,7 +4,7 @@ noinst_LTLIBRARIES = libvftr_mpi_f2c.la
 libvftr_mpi_f2c_la_SOURCES = vftr_after_mpi_init_f2c_finterface.F90 \
 			     vftr_finalize_f2c_finterface.F90 \
 			     vftr_mpi_buf_addr_const_F.F90 \
-			     vftr_no_mpi_logging_F.F90
+			     vftr_mpi_logging_F.F90
 
 ##################
 # point to point #

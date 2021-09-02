@@ -14,7 +14,7 @@
 ! with this program; if not, write to the Free Software Foundation, Inc.,
 ! 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-MODULE vftr_no_mpi_logging
+MODULE vftr_mpi_logging_F
 #ifdef _MPI
 
    USE, INTRINSIC :: ISO_FORTRAN_ENV
@@ -48,4 +48,4 @@ CONTAINS
    END FUNCTION vftr_no_mpi_logging_F
 #endif
 
-END MODULE vftr_no_mpi_logging
+END MODULE vftr_mpi_logging_F
