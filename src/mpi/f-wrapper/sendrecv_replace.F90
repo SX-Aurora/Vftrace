@@ -20,7 +20,11 @@ SUBROUTINE MPI_SENDRECV_REPLACE(BUF, COUNT, DATATYPE, DEST, SENDTAG, SOURCE, &
                                 RECVTAG, COMM, STATUS, ERROR)
    USE vftr_mpi_sendrecv_replace_f2c_finterface, &
       ONLY : vftr_MPI_Sendrecv_replace_f2c
-   USE mpi, ONLY : MPI_STATUS_SIZE
+   USE vftr_mpi_logging_F, &
+      ONLY : vftr_no_mpi_logging_F
+   USE mpi, &
+      ONLY : PMPI_SENDRECV_REPLACE, &
+             MPI_STATUS_SIZE
    IMPLICIT NONE
    INTEGER BUF
    INTEGER COUNT
@@ -33,8 +37,13 @@ SUBROUTINE MPI_SENDRECV_REPLACE(BUF, COUNT, DATATYPE, DEST, SENDTAG, SOURCE, &
    INTEGER STATUS(MPI_STATUS_SIZE)
    INTEGER ERROR
 
-   CALL vftr_MPI_Sendrecv_replace_f2c(BUF, COUNT, DATATYPE, DEST, SENDTAG, SOURCE, &
-                                      RECVTAG, COMM, STATUS, ERROR)
+   IF (vftr_no_mpi_logging_F()) THEN
+      CALL PMPI_SENDRECV_REPLACE(BUF, COUNT, DATATYPE, DEST, SENDTAG, SOURCE, &
+                                 RECVTAG, COMM, STATUS, ERROR)
+   ELSE
+      CALL vftr_MPI_Sendrecv_replace_f2c(BUF, COUNT, DATATYPE, DEST, SENDTAG, SOURCE, &
+                                         RECVTAG, COMM, STATUS, ERROR)
+   END IF
 
 END SUBROUTINE MPI_SENDRECV_REPLACE
 
