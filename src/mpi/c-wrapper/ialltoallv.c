@@ -19,6 +19,7 @@
 #ifdef _MPI
 #include <mpi.h>
 
+#include "vftr_mpi_utils.h"
 #include "vftr_mpi_ialltoallv.h"
 
 int MPI_Ialltoallv(const void *sendbuf, const int *sendcounts,
@@ -26,9 +27,15 @@ int MPI_Ialltoallv(const void *sendbuf, const int *sendcounts,
                    const int *recvcounts, const int *rdispls,
                    MPI_Datatype recvtype, MPI_Comm comm,
                    MPI_Request *request) {
-   return vftr_MPI_Ialltoallv(sendbuf, sendcounts, sdispls, sendtype,
-                              recvbuf, recvcounts, rdispls, recvtype, comm,
-                              request);
+   if (vftr_no_mpi_logging()) {
+      return PMPI_Ialltoallv(sendbuf, sendcounts, sdispls, sendtype,
+                             recvbuf, recvcounts, rdispls, recvtype, comm,
+                             request);
+   } else {
+      return vftr_MPI_Ialltoallv(sendbuf, sendcounts, sdispls, sendtype,
+                                 recvbuf, recvcounts, rdispls, recvtype, comm,
+                                 request);
+   }
 }
 
 #endif
