@@ -19,10 +19,15 @@
 #ifdef _MPI
 #include <mpi.h>
 
+#include "vftr_mpi_utils.h"
 #include "vftr_mpi_request_free.h"
 
 int MPI_Request_free(MPI_Request *request) {
-   return vftr_MPI_Request_free(request);
+   if (vftr_no_mpi_logging()) {
+      return PMPI_Request_free(request);
+   } else {
+      return vftr_MPI_Request_free(request);
+   }
 }
 
 #endif
