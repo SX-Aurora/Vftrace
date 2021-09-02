@@ -19,10 +19,15 @@
 #ifdef _MPI
 #include <mpi.h>
 
+#include "vftr_mpi_utils.h"
 #include "vftr_mpi_startall.h"
 
 int MPI_Startall(int count, MPI_Request *array_of_requests) {
-   return vftr_MPI_Startall(count, array_of_requests);
+   if (vftr_no_mpi_logging()) {
+      return PMPI_Startall(count, array_of_requests);
+   } else {
+      return vftr_MPI_Startall(count, array_of_requests);
+   }
 }
 
 #endif
