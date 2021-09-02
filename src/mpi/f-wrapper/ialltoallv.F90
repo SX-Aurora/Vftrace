@@ -21,6 +21,8 @@ SUBROUTINE MPI_IALLTOALLV(SENDBUF, SENDCOUNTS, SDISPLS, SENDTYPE, &
                           COMM, REQUEST, ERROR)
    USE vftr_mpi_ialltoallv_f2c_finterface, &
       ONLY : vftr_MPI_Ialltoallv_f2c
+   USE vftr_mpi_logging_F, &
+      ONLY : vftr_no_mpi_logging_F
    IMPLICIT NONE
    INTEGER SENDBUF
    INTEGER SENDCOUNTS(*)
