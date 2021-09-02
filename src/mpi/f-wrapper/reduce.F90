@@ -20,6 +20,10 @@ SUBROUTINE MPI_REDUCE(SENDBUF, RECVBUF, COUNT, DATATYPE, &
                       OP, ROOT, COMM, ERROR)
    USE vftr_mpi_reduce_f2c_finterface, &
       ONLY : vftr_MPI_Reduce_f2c
+   USE vftr_mpi_logging_F, &
+      ONLY : vftr_no_mpi_logging_F
+   USE mpi, &
+      ONLY : PMPI_REDUCE
    IMPLICIT NONE
    INTEGER SENDBUF
    INTEGER RECVBUF
@@ -30,8 +34,13 @@ SUBROUTINE MPI_REDUCE(SENDBUF, RECVBUF, COUNT, DATATYPE, &
    INTEGER COMM
    INTEGER ERROR
 
-   CALL vftr_MPI_Reduce_f2c(SENDBUF, RECVBUF, COUNT, DATATYPE, &
-                            OP, ROOT, COMM, ERROR)
+   IF (vftr_no_mpi_logging_F()) THEN
+      CALL PMPI_REDUCE(SENDBUF, RECVBUF, COUNT, DATATYPE, &
+                       OP, ROOT, COMM, ERROR)
+   ELSE
+      CALL vftr_MPI_Reduce_f2c(SENDBUF, RECVBUF, COUNT, DATATYPE, &
+                               OP, ROOT, COMM, ERROR)
+   END IF
 
 END SUBROUTINE MPI_REDUCE
 
