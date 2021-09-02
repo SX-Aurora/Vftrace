@@ -19,11 +19,16 @@
 #ifdef _MPI
 #include <mpi.h>
 
+#include "vftr_mpi_utils.h"
 #include "vftr_mpi_waitall.h"
 
 int MPI_Waitall(int count, MPI_Request array_of_requests[],
                 MPI_Status array_of_statuses[]) {
-   return vftr_MPI_Waitall(count, array_of_requests, array_of_statuses);
+   if (vftr_no_mpi_logging()) {
+      return PMPI_Waitall(count, array_of_requests, array_of_statuses);
+   } else {
+      return vftr_MPI_Waitall(count, array_of_requests, array_of_statuses);
+   }
 }
 
 #endif
