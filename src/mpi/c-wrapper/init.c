@@ -19,6 +19,8 @@
 #include <mpi.h>
 
 #include "vftr_mpi_utils.h"
+#include "vftr_mpi_utils.h"
+#include "vftr_mpi_utils.h"
 #include "vftr_setup.h"
 
 int MPI_Init(int *argc, char ***argv) {
