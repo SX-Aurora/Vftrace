@@ -22,6 +22,10 @@ SUBROUTINE MPI_ISCATTERV(SENDBUF, SENDCOUNTS, DISPLS, &
                          REQUEST, ERROR)
    USE vftr_mpi_iscatterv_f2c_finterface, &
       ONLY : vftr_MPI_Iscatterv_f2c
+   USE vftr_mpi_logging_F, &
+      ONLY : vftr_no_mpi_logging_F
+   USE mpi, &
+      ONLY : PMPI_ISCATTERV
    IMPLICIT NONE
    INTEGER SENDBUF
    INTEGER SENDCOUNTS(*)
@@ -35,10 +39,17 @@ SUBROUTINE MPI_ISCATTERV(SENDBUF, SENDCOUNTS, DISPLS, &
    INTEGER REQUEST
    INTEGER ERROR
 
-   CALL vftr_MPI_Iscatterv_f2c(SENDBUF, SENDCOUNTS, DISPLS, &
-                               SENDTYPE, RECVBUF, RECVCOUNT, &
-                               RECVTYPE, ROOT, COMM, &
-                               REQUEST, ERROR)
+   IF (vftr_no_mpi_logging_F()) THEN
+      CALL PMPI_ISCATTERV(SENDBUF, SENDCOUNTS, DISPLS, &
+                          SENDTYPE, RECVBUF, RECVCOUNT, &
+                          RECVTYPE, ROOT, COMM, &
+                          REQUEST, ERROR)
+   ELSE
+      CALL vftr_MPI_Iscatterv_f2c(SENDBUF, SENDCOUNTS, DISPLS, &
+                                  SENDTYPE, RECVBUF, RECVCOUNT, &
+                                  RECVTYPE, ROOT, COMM, &
+                                  REQUEST, ERROR)
+   END IF
 
 END SUBROUTINE MPI_ISCATTERV
 
