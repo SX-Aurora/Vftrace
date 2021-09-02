@@ -19,12 +19,17 @@
 #ifdef _MPI
 #include <mpi.h>
 
+#include "vftr_mpi_utils.h"
 #include "vftr_mpi_iexscan.h"
 
 int MPI_Iexscan(const void *sendbuf, void *recvbuf, int count,
                 MPI_Datatype datatype, MPI_Op op, MPI_Comm comm,
                 MPI_Request *request) {
-   return vftr_MPI_Iexscan(sendbuf, recvbuf, count, datatype, op, comm, request);
+   if (vftr_no_mpi_logging()) {
+      return PMPI_Iexscan(sendbuf, recvbuf, count, datatype, op, comm, request);
+   } else {
+      return vftr_MPI_Iexscan(sendbuf, recvbuf, count, datatype, op, comm, request);
+   }
 }
 
 #endif
