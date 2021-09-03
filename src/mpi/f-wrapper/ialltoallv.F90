@@ -36,9 +36,15 @@ SUBROUTINE MPI_IALLTOALLV(SENDBUF, SENDCOUNTS, SDISPLS, SENDTYPE, &
    INTEGER REQUEST
    INTEGER ERROR
 
-   CALL vftr_MPI_Ialltoallv_f2c(SENDBUF, SENDCOUNTS, SDISPLS, SENDTYPE, &
-                                RECVBUF, RECVCOUNTS, RDISPLS, RECVTYPE, &
-                                COMM, REQUEST, ERROR)
+   IF (vftr_no_mpi_logging_F()) THEN
+      CALL PMPI_IALLTOALLV(SENDBUF, SENDCOUNTS, SDISPLS, SENDTYPE, &
+                           RECVBUF, RECVCOUNTS, RDISPLS, RECVTYPE, &
+                           COMM, REQUEST, ERROR)
+   ELSE
+      CALL vftr_MPI_Ialltoallv_f2c(SENDBUF, SENDCOUNTS, SDISPLS, SENDTYPE, &
+                                   RECVBUF, RECVCOUNTS, RDISPLS, RECVTYPE, &
+                                   COMM, REQUEST, ERROR)
+   END IF
 
 END SUBROUTINE MPI_IALLTOALLV
 
