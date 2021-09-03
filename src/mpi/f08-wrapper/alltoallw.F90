@@ -21,8 +21,12 @@ SUBROUTINE MPI_Alltoallw_f08(sendbuf, sendcounts, sdispls, sendtypes, &
                              comm, error)
    USE vftr_mpi_alltoallw_f082c_f08interface, &
       ONLY : vftr_MPI_Alltoallw_f082c
-   USE mpi_f08, ONLY : MPI_Datatype, &
-                       MPI_Comm
+   USE vftr_mpi_logging_f08, &
+      ONLY : vftr_no_mpi_logging_f08
+   USE mpi_f08, &
+      ONLY : PMPI_Alltoallw_f08, &
+             MPI_Datatype, &
+             MPI_Comm
    IMPLICIT NONE
    INTEGER, INTENT(IN) :: sendbuf
    INTEGER, INTENT(IN) :: sendcounts(*)
@@ -41,29 +45,35 @@ SUBROUTINE MPI_Alltoallw_f08(sendbuf, sendcounts, sdispls, sendtypes, &
    INTEGER :: comm_size, i
    LOGICAL :: isintercom
 
-   CALL PMPI_Comm_test_inter(comm, isintercom, tmperror)
-   IF (isintercom) THEN
-      CALL PMPI_Comm_remote_size(comm, comm_size, tmperror)
+   IF (vftr_no_mpi_logging_f08()) THEN
+      CALL PMPI_Alltoallw_f08(sendbuf, sendcounts, sdispls, sendtypes, &
+                              recvbuf, recvcounts, rdispls, recvtypes, &
+                              comm, tmperror)
    ELSE
-      CALL PMPI_Comm_size(comm, comm_size, tmperror)
+      CALL PMPI_Comm_test_inter(comm, isintercom, tmperror)
+      IF (isintercom) THEN
+         CALL PMPI_Comm_remote_size(comm, comm_size, tmperror)
+      ELSE
+         CALL PMPI_Comm_size(comm, comm_size, tmperror)
+      END IF
+   
+      ALLOCATE(tmpsendtypes(comm_size))
+      ALLOCATE(tmprecvtypes(comm_size))
+      DO i = 1, comm_size
+         tmpsendtypes(i) = sendtypes(i)%MPI_VAL
+      END DO
+      DO i = 1, comm_size
+         tmprecvtypes(i) = recvtypes(i)%MPI_VAL
+      END DO
+   
+      CALL vftr_MPI_Alltoallw_f082c(sendbuf, sendcounts, sdispls, tmpsendtypes, &
+                                    recvbuf, recvcounts, rdispls, tmprecvtypes, &
+                                    comm%MPI_VAL, tmperror)
+   
+      DEALLOCATE(tmpsendtypes)
+      DEALLOCATE(tmprecvtypes)
    END IF
-
-   ALLOCATE(tmpsendtypes(comm_size))
-   ALLOCATE(tmprecvtypes(comm_size))
-   DO i = 1, comm_size
-      tmpsendtypes(i) = sendtypes(i)%MPI_VAL
-   END DO
-   DO i = 1, comm_size
-      tmprecvtypes(i) = recvtypes(i)%MPI_VAL
-   END DO
-
-   CALL vftr_MPI_Alltoallw_f082c(sendbuf, sendcounts, sdispls, tmpsendtypes, &
-                                 recvbuf, recvcounts, rdispls, tmprecvtypes, &
-                                 comm%MPI_VAL, tmperror)
    IF (PRESENT(error)) error = tmperror
-
-   DEALLOCATE(tmpsendtypes)
-   DEALLOCATE(tmprecvtypes)
 
 END SUBROUTINE MPI_Alltoallw_f08
 
