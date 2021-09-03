@@ -23,29 +23,23 @@
 #include "vftr_clear_requests.h"
   
 int vftr_MPI_Test(MPI_Request *request, int *flag, MPI_Status *status) {
-
-   // disable profiling based on the Pcontrol level
-   if (vftrace_Pcontrol_level == 0) {
-      return PMPI_Test(request, flag, status);
-   } else {
-      // do not call MPI_Test immediately!
-      // If the communication is successfull MPI_Test destroys the Reqeust 
-      // Hence, no chance of properly clearing the communication
-      // from the open request list
-      // MPI_Request_get_status is a non destructive check. 
-      int retVal = PMPI_Request_get_status(*request, flag, status);
+   // do not call MPI_Test immediately!
+   // If the communication is successfull MPI_Test destroys the Reqeust 
+   // Hence, no chance of properly clearing the communication
+   // from the open request list
+   // MPI_Request_get_status is a non destructive check. 
+   int retVal = PMPI_Request_get_status(*request, flag, status);
    
-      if (*flag) {
-         // Communication is done.
-         // Clear finished communications from the open request list
-         vftr_clear_completed_requests();
-         // Now that the danger of deleating needed requests is banned
-         // actually call MPI_Test   
-         retVal = PMPI_Test(request, flag, status);
-      }
-   
-      return retVal;
+   if (*flag) {
+      // Communication is done.
+      // Clear finished communications from the open request list
+      vftr_clear_completed_requests();
+      // Now that the danger of deleating needed requests is banned
+      // actually call MPI_Test   
+      retVal = PMPI_Test(request, flag, status);
    }
+   
+   return retVal;
 }
 
 #endif
