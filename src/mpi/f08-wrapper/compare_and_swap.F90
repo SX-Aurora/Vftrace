@@ -21,9 +21,13 @@ SUBROUTINE MPI_Compare_and_swap_f08(origin_addr, compare_addr, result_addr, &
                                     win, error)
    USE vftr_mpi_compare_and_swap_f082c_f08interface, &
       ONLY : vftr_MPI_Compare_and_swap_f082c
-   USE mpi_f08, ONLY : MPI_Datatype, &
-                       MPI_Win, &
-                       MPI_ADDRESS_KIND
+   USE vftr_mpi_logging_f08, &
+      ONLY : vftr_no_mpi_logging_f08
+   USE mpi_f08, &
+      ONLY : PMPI_Compare_and_swap_f08, &
+             MPI_Datatype, &
+             MPI_Win, &
+             MPI_ADDRESS_KIND
    IMPLICIT NONE
    INTEGER, INTENT(IN) :: origin_addr
    INTEGER, INTENT(IN) :: compare_addr
@@ -35,9 +39,15 @@ SUBROUTINE MPI_Compare_and_swap_f08(origin_addr, compare_addr, result_addr, &
    INTEGER, OPTIONAL, INTENT(OUT) :: error
    INTEGER :: tmperror
 
-   CALL vftr_MPI_Compare_and_swap_f082c(origin_addr, compare_addr, result_addr, &
-                                        datatype%MPI_VAL, target_rank, target_disp, &
-                                        win%MPI_VAL, tmperror)
+   IF (vftr_no_mpi_logging_f08()) THEN
+      CALL PMPI_Compare_and_swap_f08(origin_addr, compare_addr, result_addr, &
+                                     datatype, target_rank, target_disp, &
+                                     win, tmperror)
+   ELSE
+      CALL vftr_MPI_Compare_and_swap_f082c(origin_addr, compare_addr, result_addr, &
+                                           datatype%MPI_VAL, target_rank, target_disp, &
+                                           win%MPI_VAL, tmperror)
+   END IF
    IF (PRESENT(error)) error = tmperror
 
 END SUBROUTINE MPI_Compare_and_swap_f08
