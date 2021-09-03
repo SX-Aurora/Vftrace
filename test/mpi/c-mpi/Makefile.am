@@ -91,16 +91,27 @@ dist_noinst_SCRIPTS = init_finalize-1.sh \
 # point to point tests #
 ########################
 check_PROGRAMS += send_recv \
+		  send_recv_nolog \
 		  isend_recv \
+		  isend_recv_nolog \
 		  bsend_recv \
+		  bsend_recv_nolog \
 		  ibsend_recv \
+		  ibsend_recv_nolog \
 		  ssend_recv \
+		  ssend_recv_nolog \
 		  issend_recv \
+		  issend_recv_nolog \
 		  rsend_recv \
+		  rsend_recv_nolog \
 		  irsend_recv \
+		  irsend_recv_nolog \
 		  send_irecv \
+		  send_irecv_nolog \
 		  sendrecv \
+		  sendrecv_nolog \
 		  sendrecv_replace \
+		  sendrecv_replace_nolog \
 		  probe \
 		  iprobe
 
@@ -108,45 +119,89 @@ send_recv_SOURCES = $(srcdir)/send_recv.c
 send_recv_CFLAGS  = $(AM_CFLAGS)
 send_recv_LDFLAGS = $(AM_LDFLAGS)
 
+send_recv_nolog_SOURCES = $(srcdir)/send_recv.c
+send_recv_nolog_CFLAGS  = $(AM_CFLAGS)
+send_recv_nolog_LDFLAGS = $(AM_LDFLAGS)
+
 isend_recv_SOURCES = $(srcdir)/isend_recv.c
 isend_recv_CFLAGS  = $(AM_CFLAGS)
 isend_recv_LDFLAGS = $(AM_LDFLAGS)
+
+isend_recv_nolog_SOURCES = $(srcdir)/isend_recv.c
+isend_recv_nolog_CFLAGS  = $(AM_CFLAGS)
+isend_recv_nolog_LDFLAGS = $(AM_LDFLAGS)
 
 bsend_recv_SOURCES = $(srcdir)/bsend_recv.c
 bsend_recv_CFLAGS  = $(AM_CFLAGS)
 bsend_recv_LDFLAGS = $(AM_LDFLAGS)
 
+bsend_recv_nolog_SOURCES = $(srcdir)/bsend_recv.c
+bsend_recv_nolog_CFLAGS  = $(AM_CFLAGS)
+bsend_recv_nolog_LDFLAGS = $(AM_LDFLAGS)
+
 ibsend_recv_SOURCES = $(srcdir)/ibsend_recv.c
 ibsend_recv_CFLAGS  = $(AM_CFLAGS)
 ibsend_recv_LDFLAGS = $(AM_LDFLAGS)
+
+ibsend_recv_nolog_SOURCES = $(srcdir)/ibsend_recv.c
+ibsend_recv_nolog_CFLAGS  = $(AM_CFLAGS)
+ibsend_recv_nolog_LDFLAGS = $(AM_LDFLAGS)
 
 ssend_recv_SOURCES = $(srcdir)/ssend_recv.c
 ssend_recv_CFLAGS  = $(AM_CFLAGS)
 ssend_recv_LDFLAGS = $(AM_LDFLAGS)
 
+ssend_recv_nolog_SOURCES = $(srcdir)/ssend_recv.c
+ssend_recv_nolog_CFLAGS  = $(AM_CFLAGS)
+ssend_recv_nolog_LDFLAGS = $(AM_LDFLAGS)
+
 issend_recv_SOURCES = $(srcdir)/issend_recv.c
 issend_recv_CFLAGS  = $(AM_CFLAGS)
 issend_recv_LDFLAGS = $(AM_LDFLAGS)
+
+issend_recv_nolog_SOURCES = $(srcdir)/issend_recv.c
+issend_recv_nolog_CFLAGS  = $(AM_CFLAGS)
+issend_recv_nolog_LDFLAGS = $(AM_LDFLAGS)
 
 rsend_recv_SOURCES = $(srcdir)/rsend_recv.c
 rsend_recv_CFLAGS  = $(AM_CFLAGS)
 rsend_recv_LDFLAGS = $(AM_LDFLAGS)
 
+rsend_recv_nolog_SOURCES = $(srcdir)/rsend_recv.c
+rsend_recv_nolog_CFLAGS  = $(AM_CFLAGS)
+rsend_recv_nolog_LDFLAGS = $(AM_LDFLAGS)
+
 irsend_recv_SOURCES = $(srcdir)/irsend_recv.c
 irsend_recv_CFLAGS  = $(AM_CFLAGS)
 irsend_recv_LDFLAGS = $(AM_LDFLAGS)
+
+irsend_recv_nolog_SOURCES = $(srcdir)/irsend_recv.c
+irsend_recv_nolog_CFLAGS  = $(AM_CFLAGS)
+irsend_recv_nolog_LDFLAGS = $(AM_LDFLAGS)
 
 send_irecv_SOURCES = $(srcdir)/send_irecv.c
 send_irecv_CFLAGS  = $(AM_CFLAGS)
 send_irecv_LDFLAGS = $(AM_LDFLAGS)
 
+send_irecv_nolog_SOURCES = $(srcdir)/send_irecv.c
+send_irecv_nolog_CFLAGS  = $(AM_CFLAGS)
+send_irecv_nolog_LDFLAGS = $(AM_LDFLAGS)
+
 sendrecv_SOURCES = $(srcdir)/sendrecv.c
 sendrecv_CFLAGS  = $(AM_CFLAGS)
 sendrecv_LDFLAGS = $(AM_LDFLAGS)
 
+sendrecv_nolog_SOURCES = $(srcdir)/sendrecv.c
+sendrecv_nolog_CFLAGS  = $(AM_CFLAGS)
+sendrecv_nolog_LDFLAGS = $(AM_LDFLAGS)
+
 sendrecv_replace_SOURCES = $(srcdir)/sendrecv_replace.c
 sendrecv_replace_CFLAGS  = $(AM_CFLAGS)
 sendrecv_replace_LDFLAGS = $(AM_LDFLAGS)
+
+sendrecv_replace_nolog_SOURCES = $(srcdir)/sendrecv_replace.c
+sendrecv_replace_nolog_CFLAGS  = $(AM_CFLAGS)
+sendrecv_replace_nolog_LDFLAGS = $(AM_LDFLAGS)
 
 probe_SOURCES = $(srcdir)/probe.c
 probe_CFLAGS  = $(AM_CFLAGS)
@@ -157,16 +212,27 @@ iprobe_CFLAGS  = $(AM_CFLAGS)
 iprobe_LDFLAGS = $(AM_LDFLAGS)
 
 dist_noinst_SCRIPTS += send_recv.sh \
+		       send_recv_nolog.sh \
 		       isend_recv.sh \
+		       isend_recv_nolog.sh \
 		       bsend_recv.sh \
+		       bsend_recv_nolog.sh \
 		       ibsend_recv.sh \
+		       ibsend_recv_nolog.sh \
 		       ssend_recv.sh \
+		       ssend_recv_nolog.sh \
 		       issend_recv.sh \
+		       issend_recv_nolog.sh \
 		       rsend_recv.sh \
+		       rsend_recv_nolog.sh \
 		       irsend_recv.sh \
+		       irsend_recv_nolog.sh \
 		       send_irecv.sh \
+		       send_irecv_nolog.sh \
 		       sendrecv.sh \
+		       sendrecv_nolog.sh \
 		       sendrecv_replace.sh \
+		       sendrecv_replace_nolog.sh \
 		       probe.sh \
 		       iprobe.sh
 
@@ -177,10 +243,15 @@ dist_noinst_SCRIPTS += send_recv.sh \
 check_PROGRAMS += start \
 		  startall \
 		  send_init \
+		  send_init_nolog \
 		  bsend_init \
+		  bsend_init_nolog \
 		  ssend_init \
+		  ssend_init_nolog \
 		  rsend_init \
-		  recv_init
+		  rsend_init_nolog \
+		  recv_init \
+		  recv_init_nolog
 
 start_SOURCES = $(srcdir)/start.c
 start_CFLAGS  = $(AM_CFLAGS)
@@ -194,29 +265,54 @@ send_init_SOURCES = $(srcdir)/send_init.c
 send_init_CFLAGS  = $(AM_CFLAGS)
 send_init_LDFLAGS = $(AM_LDFLAGS)
 
+send_init_nolog_SOURCES = $(srcdir)/send_init.c
+send_init_nolog_CFLAGS  = $(AM_CFLAGS)
+send_init_nolog_LDFLAGS = $(AM_LDFLAGS)
+
 bsend_init_SOURCES = $(srcdir)/bsend_init.c
 bsend_init_CFLAGS  = $(AM_CFLAGS)
 bsend_init_LDFLAGS = $(AM_LDFLAGS)
+
+bsend_init_nolog_SOURCES = $(srcdir)/bsend_init.c
+bsend_init_nolog_CFLAGS  = $(AM_CFLAGS)
+bsend_init_nolog_LDFLAGS = $(AM_LDFLAGS)
 
 ssend_init_SOURCES = $(srcdir)/ssend_init.c
 ssend_init_CFLAGS  = $(AM_CFLAGS)
 ssend_init_LDFLAGS = $(AM_LDFLAGS)
 
+ssend_init_nolog_SOURCES = $(srcdir)/ssend_init.c
+ssend_init_nolog_CFLAGS  = $(AM_CFLAGS)
+ssend_init_nolog_LDFLAGS = $(AM_LDFLAGS)
+
 rsend_init_SOURCES = $(srcdir)/rsend_init.c
 rsend_init_CFLAGS  = $(AM_CFLAGS)
 rsend_init_LDFLAGS = $(AM_LDFLAGS)
+
+rsend_init_nolog_SOURCES = $(srcdir)/rsend_init.c
+rsend_init_nolog_CFLAGS  = $(AM_CFLAGS)
+rsend_init_nolog_LDFLAGS = $(AM_LDFLAGS)
 
 recv_init_SOURCES = $(srcdir)/recv_init.c
 recv_init_CFLAGS  = $(AM_CFLAGS)
 recv_init_LDFLAGS = $(AM_LDFLAGS)
 
+recv_init_nolog_SOURCES = $(srcdir)/recv_init.c
+recv_init_nolog_CFLAGS  = $(AM_CFLAGS)
+recv_init_nolog_LDFLAGS = $(AM_LDFLAGS)
+
 dist_noinst_SCRIPTS += start.sh \
 		       startall.sh \
 		       send_init.sh \
+		       send_init_nolog.sh \
 		       bsend_init.sh \
+		       bsend_init_nolog.sh \
 		       ssend_init.sh \
+		       ssend_init_nolog.sh \
 		       rsend_init.sh \
-		       recv_init.sh
+		       rsend_init_nolog.sh \
+		       recv_init.sh \
+		       recv_init_nolog.sh
 
 ####################
 # Collective tests #
@@ -224,61 +320,81 @@ dist_noinst_SCRIPTS += start.sh \
 
 check_PROGRAMS += barrier \
 		  bcast \
+		  bcast_nolog \
 		  bcast_intercom \
 		  ibcast \
+		  ibcast_nolog \
 		  ibcast_intercom \
 		  gather \
+		  gather_nolog \
 		  gather_inplace \
 		  gather_intercom \
 		  igather \
+		  igather_nolog \
 		  igather_inplace \
 		  igather_intercom \
 		  gatherv \
+		  gatherv_nolog \
 		  gatherv_inplace \
 		  gatherv_intercom \
 		  igatherv \
+		  igatherv_nolog \
 		  igatherv_inplace \
 		  igatherv_intercom \
 		  scatter \
+		  scatter_nolog \
 		  scatter_inplace \
 		  scatter_intercom \
 		  iscatter \
+		  iscatter_nolog \
 		  iscatter_inplace \
 		  iscatter_intercom \
 		  scatterv \
+		  scatterv_nolog \
 		  scatterv_inplace \
 		  scatterv_intercom \
 		  iscatterv \
+		  iscatterv_nolog \
 		  iscatterv_inplace \
 		  iscatterv_intercom \
 		  allgather \
+		  allgather_nolog \
 		  allgather_inplace \
 		  allgather_intercom \
 		  iallgather \
+		  iallgather_nolog \
 		  iallgather_inplace \
 		  iallgather_intercom \
 		  allgatherv \
+		  allgatherv_nolog \
 		  allgatherv_inplace \
 		  allgatherv_intercom \
 		  iallgatherv \
+		  iallgatherv_nolog \
 		  iallgatherv_inplace \
 		  iallgatherv_intercom \
 		  alltoall \
+		  alltoall_nolog \
 		  alltoall_inplace \
 		  alltoall_intercom \
 		  ialltoall \
+		  ialltoall_nolog \
 		  ialltoall_inplace \
 		  ialltoall_intercom \
 		  alltoallv \
+		  alltoallv_nolog \
 		  alltoallv_inplace \
 		  alltoallv_intercom \
 		  ialltoallv \
+		  ialltoallv_nolog \
 		  ialltoallv_inplace \
 		  ialltoallv_intercom \
 		  alltoallw \
+		  alltoallw_nolog \
 		  alltoallw_inplace \
 		  alltoallw_intercom \
 		  ialltoallw \
+		  ialltoallw_nolog \
 		  ialltoallw_inplace \
 		  ialltoallw_intercom
 
@@ -290,6 +406,10 @@ bcast_SOURCES = $(srcdir)/bcast.c
 bcast_CFLAGS = $(AM_CFLAGS)
 bcast_LDFLAGS = $(AM_LDFLAGS)
 
+bcast_nolog_SOURCES = $(srcdir)/bcast.c
+bcast_nolog_CFLAGS = $(AM_CFLAGS)
+bcast_nolog_LDFLAGS = $(AM_LDFLAGS)
+
 bcast_intercom_SOURCES = $(srcdir)/bcast_intercom.c
 bcast_intercom_CFLAGS = $(AM_CFLAGS)
 bcast_intercom_LDFLAGS = $(AM_LDFLAGS)
@@ -298,6 +418,10 @@ ibcast_SOURCES = $(srcdir)/ibcast.c
 ibcast_CFLAGS = $(AM_CFLAGS)
 ibcast_LDFLAGS = $(AM_LDFLAGS)
 
+ibcast_nolog_SOURCES = $(srcdir)/ibcast.c
+ibcast_nolog_CFLAGS = $(AM_CFLAGS)
+ibcast_nolog_LDFLAGS = $(AM_LDFLAGS)
+
 ibcast_intercom_SOURCES = $(srcdir)/ibcast_intercom.c
 ibcast_intercom_CFLAGS = $(AM_CFLAGS)
 ibcast_intercom_LDFLAGS = $(AM_LDFLAGS)
@@ -305,6 +429,10 @@ ibcast_intercom_LDFLAGS = $(AM_LDFLAGS)
 gather_SOURCES = $(srcdir)/gather.c
 gather_CFLAGS = $(AM_CFLAGS)
 gather_LDFLAGS = $(AM_LDFLAGS)
+
+gather_nolog_SOURCES = $(srcdir)/gather.c
+gather_nolog_CFLAGS = $(AM_CFLAGS)
+gather_nolog_LDFLAGS = $(AM_LDFLAGS)
 
 gather_inplace_SOURCES = $(srcdir)/gather_inplace.c
 gather_inplace_CFLAGS = $(AM_CFLAGS)
@@ -318,6 +446,10 @@ igather_SOURCES = $(srcdir)/igather.c
 igather_CFLAGS = $(AM_CFLAGS)
 igather_LDFLAGS = $(AM_LDFLAGS)
 
+igather_nolog_SOURCES = $(srcdir)/igather.c
+igather_nolog_CFLAGS = $(AM_CFLAGS)
+igather_nolog_LDFLAGS = $(AM_LDFLAGS)
+
 igather_inplace_SOURCES = $(srcdir)/igather_inplace.c
 igather_inplace_CFLAGS = $(AM_CFLAGS)
 igather_inplace_LDFLAGS = $(AM_LDFLAGS)
@@ -329,6 +461,10 @@ igather_intercom_LDFLAGS = $(AM_LDFLAGS)
 gatherv_SOURCES = $(srcdir)/gatherv.c
 gatherv_CFLAGS = $(AM_CFLAGS)
 gatherv_LDFLAGS = $(AM_LDFLAGS)
+
+gatherv_nolog_SOURCES = $(srcdir)/gatherv.c
+gatherv_nolog_CFLAGS = $(AM_CFLAGS)
+gatherv_nolog_LDFLAGS = $(AM_LDFLAGS)
 
 gatherv_inplace_SOURCES = $(srcdir)/gatherv_inplace.c
 gatherv_inplace_CFLAGS = $(AM_CFLAGS)
@@ -342,6 +478,10 @@ igatherv_SOURCES = $(srcdir)/igatherv.c
 igatherv_CFLAGS = $(AM_CFLAGS)
 igatherv_LDFLAGS = $(AM_LDFLAGS)
 
+igatherv_nolog_SOURCES = $(srcdir)/igatherv.c
+igatherv_nolog_CFLAGS = $(AM_CFLAGS)
+igatherv_nolog_LDFLAGS = $(AM_LDFLAGS)
+
 igatherv_inplace_SOURCES = $(srcdir)/igatherv_inplace.c
 igatherv_inplace_CFLAGS = $(AM_CFLAGS)
 igatherv_inplace_LDFLAGS = $(AM_LDFLAGS)
@@ -353,6 +493,10 @@ igatherv_intercom_LDFLAGS = $(AM_LDFLAGS)
 scatter_SOURCES = $(srcdir)/scatter.c
 scatter_CFLAGS = $(AM_CFLAGS)
 scatter_LDFLAGS = $(AM_LDFLAGS)
+
+scatter_nolog_SOURCES = $(srcdir)/scatter.c
+scatter_nolog_CFLAGS = $(AM_CFLAGS)
+scatter_nolog_LDFLAGS = $(AM_LDFLAGS)
 
 scatter_inplace_SOURCES = $(srcdir)/scatter_inplace.c
 scatter_inplace_CFLAGS = $(AM_CFLAGS)
@@ -366,6 +510,10 @@ iscatter_SOURCES = $(srcdir)/iscatter.c
 iscatter_CFLAGS = $(AM_CFLAGS)
 iscatter_LDFLAGS = $(AM_LDFLAGS)
 
+iscatter_nolog_SOURCES = $(srcdir)/iscatter.c
+iscatter_nolog_CFLAGS = $(AM_CFLAGS)
+iscatter_nolog_LDFLAGS = $(AM_LDFLAGS)
+
 iscatter_inplace_SOURCES = $(srcdir)/iscatter_inplace.c
 iscatter_inplace_CFLAGS = $(AM_CFLAGS)
 iscatter_inplace_LDFLAGS = $(AM_LDFLAGS)
@@ -377,6 +525,10 @@ iscatter_intercom_LDFLAGS = $(AM_LDFLAGS)
 scatterv_SOURCES = $(srcdir)/scatterv.c
 scatterv_CFLAGS = $(AM_CFLAGS)
 scatterv_LDFLAGS = $(AM_LDFLAGS)
+
+scatterv_nolog_SOURCES = $(srcdir)/scatterv.c
+scatterv_nolog_CFLAGS = $(AM_CFLAGS)
+scatterv_nolog_LDFLAGS = $(AM_LDFLAGS)
 
 scatterv_inplace_SOURCES = $(srcdir)/scatterv_inplace.c
 scatterv_inplace_CFLAGS = $(AM_CFLAGS)
@@ -390,6 +542,10 @@ iscatterv_SOURCES = $(srcdir)/iscatterv.c
 iscatterv_CFLAGS = $(AM_CFLAGS)
 iscatterv_LDFLAGS = $(AM_LDFLAGS)
 
+iscatterv_nolog_SOURCES = $(srcdir)/iscatterv.c
+iscatterv_nolog_CFLAGS = $(AM_CFLAGS)
+iscatterv_nolog_LDFLAGS = $(AM_LDFLAGS)
+
 iscatterv_inplace_SOURCES = $(srcdir)/iscatterv_inplace.c
 iscatterv_inplace_CFLAGS = $(AM_CFLAGS)
 iscatterv_inplace_LDFLAGS = $(AM_LDFLAGS)
@@ -401,6 +557,10 @@ iscatterv_intercom_LDFLAGS = $(AM_LDFLAGS)
 allgather_SOURCES = $(srcdir)/allgather.c
 allgather_CFLAGS = $(AM_CFLAGS)
 allgather_LDFLAGS = $(AM_LDFLAGS)
+
+allgather_nolog_SOURCES = $(srcdir)/allgather.c
+allgather_nolog_CFLAGS = $(AM_CFLAGS)
+allgather_nolog_LDFLAGS = $(AM_LDFLAGS)
 
 allgather_inplace_SOURCES = $(srcdir)/allgather_inplace.c
 allgather_inplace_CFLAGS = $(AM_CFLAGS)
@@ -414,6 +574,10 @@ iallgather_SOURCES = $(srcdir)/iallgather.c
 iallgather_CFLAGS = $(AM_CFLAGS)
 iallgather_LDFLAGS = $(AM_LDFLAGS)
 
+iallgather_nolog_SOURCES = $(srcdir)/iallgather.c
+iallgather_nolog_CFLAGS = $(AM_CFLAGS)
+iallgather_nolog_LDFLAGS = $(AM_LDFLAGS)
+
 iallgather_inplace_SOURCES = $(srcdir)/iallgather_inplace.c
 iallgather_inplace_CFLAGS = $(AM_CFLAGS)
 iallgather_inplace_LDFLAGS = $(AM_LDFLAGS)
@@ -425,6 +589,10 @@ iallgather_intercom_LDFLAGS = $(AM_LDFLAGS)
 allgatherv_SOURCES = $(srcdir)/allgatherv.c
 allgatherv_CFLAGS = $(AM_CFLAGS)
 allgatherv_LDFLAGS = $(AM_LDFLAGS)
+
+allgatherv_nolog_SOURCES = $(srcdir)/allgatherv.c
+allgatherv_nolog_CFLAGS = $(AM_CFLAGS)
+allgatherv_nolog_LDFLAGS = $(AM_LDFLAGS)
 
 allgatherv_inplace_SOURCES = $(srcdir)/allgatherv_inplace.c
 allgatherv_inplace_CFLAGS = $(AM_CFLAGS)
@@ -438,6 +606,10 @@ iallgatherv_SOURCES = $(srcdir)/iallgatherv.c
 iallgatherv_CFLAGS = $(AM_CFLAGS)
 iallgatherv_LDFLAGS = $(AM_LDFLAGS)
 
+iallgatherv_nolog_SOURCES = $(srcdir)/iallgatherv.c
+iallgatherv_nolog_CFLAGS = $(AM_CFLAGS)
+iallgatherv_nolog_LDFLAGS = $(AM_LDFLAGS)
+
 iallgatherv_inplace_SOURCES = $(srcdir)/iallgatherv_inplace.c
 iallgatherv_inplace_CFLAGS = $(AM_CFLAGS)
 iallgatherv_inplace_LDFLAGS = $(AM_LDFLAGS)
@@ -449,6 +621,10 @@ iallgatherv_intercom_LDFLAGS = $(AM_LDFLAGS)
 alltoall_SOURCES = $(srcdir)/alltoall.c
 alltoall_CFLAGS = $(AM_CFLAGS)
 alltoall_LDFLAGS = $(AM_LDFLAGS)
+
+alltoall_nolog_SOURCES = $(srcdir)/alltoall.c
+alltoall_nolog_CFLAGS = $(AM_CFLAGS)
+alltoall_nolog_LDFLAGS = $(AM_LDFLAGS)
 
 alltoall_inplace_SOURCES = $(srcdir)/alltoall_inplace.c
 alltoall_inplace_CFLAGS = $(AM_CFLAGS)
@@ -462,6 +638,10 @@ ialltoall_SOURCES = $(srcdir)/ialltoall.c
 ialltoall_CFLAGS = $(AM_CFLAGS)
 ialltoall_LDFLAGS = $(AM_LDFLAGS)
 
+ialltoall_nolog_SOURCES = $(srcdir)/ialltoall.c
+ialltoall_nolog_CFLAGS = $(AM_CFLAGS)
+ialltoall_nolog_LDFLAGS = $(AM_LDFLAGS)
+
 ialltoall_inplace_SOURCES = $(srcdir)/ialltoall_inplace.c
 ialltoall_inplace_CFLAGS = $(AM_CFLAGS)
 ialltoall_inplace_LDFLAGS = $(AM_LDFLAGS)
@@ -473,6 +653,10 @@ ialltoall_intercom_LDFLAGS = $(AM_LDFLAGS)
 alltoallv_SOURCES = $(srcdir)/alltoallv.c
 alltoallv_CFLAGS = $(AM_CFLAGS)
 alltoallv_LDFLAGS = $(AM_LDFLAGS)
+
+alltoallv_nolog_SOURCES = $(srcdir)/alltoallv.c
+alltoallv_nolog_CFLAGS = $(AM_CFLAGS)
+alltoallv_nolog_LDFLAGS = $(AM_LDFLAGS)
 
 alltoallv_inplace_SOURCES = $(srcdir)/alltoallv_inplace.c
 alltoallv_inplace_CFLAGS = $(AM_CFLAGS)
@@ -486,6 +670,10 @@ ialltoallv_SOURCES = $(srcdir)/ialltoallv.c
 ialltoallv_CFLAGS = $(AM_CFLAGS)
 ialltoallv_LDFLAGS = $(AM_LDFLAGS)
 
+ialltoallv_nolog_SOURCES = $(srcdir)/ialltoallv.c
+ialltoallv_nolog_CFLAGS = $(AM_CFLAGS)
+ialltoallv_nolog_LDFLAGS = $(AM_LDFLAGS)
+
 ialltoallv_inplace_SOURCES = $(srcdir)/ialltoallv_inplace.c
 ialltoallv_inplace_CFLAGS = $(AM_CFLAGS)
 ialltoallv_inplace_LDFLAGS = $(AM_LDFLAGS)
@@ -497,6 +685,10 @@ ialltoallv_intercom_LDFLAGS = $(AM_LDFLAGS)
 alltoallw_SOURCES = $(srcdir)/alltoallw.c
 alltoallw_CFLAGS = $(AM_CFLAGS)
 alltoallw_LDFLAGS = $(AM_LDFLAGS)
+
+alltoallw_nolog_SOURCES = $(srcdir)/alltoallw.c
+alltoallw_nolog_CFLAGS = $(AM_CFLAGS)
+alltoallw_nolog_LDFLAGS = $(AM_LDFLAGS)
 
 alltoallw_inplace_SOURCES = $(srcdir)/alltoallw_inplace.c
 alltoallw_inplace_CFLAGS = $(AM_CFLAGS)
@@ -510,6 +702,10 @@ ialltoallw_SOURCES = $(srcdir)/ialltoallw.c
 ialltoallw_CFLAGS = $(AM_CFLAGS)
 ialltoallw_LDFLAGS = $(AM_LDFLAGS)
 
+ialltoallw_nolog_SOURCES = $(srcdir)/ialltoallw.c
+ialltoallw_nolog_CFLAGS = $(AM_CFLAGS)
+ialltoallw_nolog_LDFLAGS = $(AM_LDFLAGS)
+
 ialltoallw_inplace_SOURCES = $(srcdir)/ialltoallw_inplace.c
 ialltoallw_inplace_CFLAGS = $(AM_CFLAGS)
 ialltoallw_inplace_LDFLAGS = $(AM_LDFLAGS)
@@ -520,61 +716,81 @@ ialltoallw_intercom_LDFLAGS = $(AM_LDFLAGS)
 
 dist_noinst_SCRIPTS += barrier.sh \
 		       bcast.sh \
+		       bcast_nolog.sh \
 		       bcast_intercom.sh \
 		       ibcast.sh \
+		       ibcast_nolog.sh \
 		       ibcast_intercom.sh \
 		       gather.sh \
+		       gather_nolog.sh \
 		       gather_inplace.sh \
 		       gather_intercom.sh \
 		       igather.sh \
+		       igather_nolog.sh \
 		       igather_inplace.sh \
 		       igather_intercom.sh \
 		       gatherv.sh \
+		       gatherv_nolog.sh \
 		       gatherv_inplace.sh \
 		       gatherv_intercom.sh \
 		       igatherv.sh \
+		       igatherv_nolog.sh \
 		       igatherv_inplace.sh \
 		       igatherv_intercom.sh \
 		       scatter.sh \
+		       scatter_nolog.sh \
 		       scatter_inplace.sh \
 		       scatter_intercom.sh \
 		       iscatter.sh \
+		       iscatter_nolog.sh \
 		       iscatter_inplace.sh \
 		       iscatter_intercom.sh \
 		       scatterv.sh \
+		       scatterv_nolog.sh \
 		       scatterv_inplace.sh \
 		       scatterv_intercom.sh \
 		       iscatterv.sh \
+		       iscatterv_nolog.sh \
 		       iscatterv_inplace.sh \
 		       iscatterv_intercom.sh \
 		       allgather.sh \
+		       allgather_nolog.sh \
 		       allgather_inplace.sh \
 		       allgather_intercom.sh \
 		       iallgather.sh \
+		       iallgather_nolog.sh \
 		       iallgather_inplace.sh \
 		       iallgather_intercom.sh \
 		       allgatherv.sh \
+		       allgatherv_nolog.sh \
 		       allgatherv_inplace.sh \
 		       allgatherv_intercom.sh \
 		       iallgatherv.sh \
+		       iallgatherv_nolog.sh \
 		       iallgatherv_inplace.sh \
 		       iallgatherv_intercom.sh \
 		       alltoall.sh \
+		       alltoall_nolog.sh \
 		       alltoall_inplace.sh \
 		       alltoall_intercom.sh \
 		       ialltoall.sh \
+		       ialltoall_nolog.sh \
 		       ialltoall_inplace.sh \
 		       ialltoall_intercom.sh \
 		       alltoallv.sh \
+		       alltoallv_nolog.sh \
 		       alltoallv_inplace.sh \
 		       alltoallv_intercom.sh \
 		       ialltoallv.sh \
+		       ialltoallv_nolog.sh \
 		       ialltoallv_inplace.sh \
 		       ialltoallv_intercom.sh \
 		       alltoallw.sh \
+		       alltoallw_nolog.sh \
 		       alltoallw_inplace.sh \
 		       alltoallw_intercom.sh \
 		       ialltoallw.sh \
+		       ialltoallw_nolog.sh \
 		       ialltoallw_inplace.sh \
 		       ialltoallw_intercom.sh
 
@@ -583,41 +799,57 @@ dist_noinst_SCRIPTS += barrier.sh \
 #####################
 
 check_PROGRAMS += reduce \
+		  reduce_nolog \
 		  reduce_inplace \
 		  reduce_intercom \
 		  ireduce \
+		  ireduce_nolog \
 		  ireduce_inplace \
 		  ireduce_intercom \
 		  allreduce \
+		  allreduce_nolog \
 		  allreduce_inplace \
 		  allreduce_intercom \
 		  iallreduce \
+		  iallreduce_nolog \
 		  iallreduce_inplace \
 		  iallreduce_intercom \
 		  reduce_scatter_block \
+		  reduce_scatter_block_nolog \
 		  reduce_scatter_block_inplace \
 		  reduce_scatter_block_intercom \
 		  ireduce_scatter_block \
+		  ireduce_scatter_block_nolog \
 		  ireduce_scatter_block_inplace \
 		  ireduce_scatter_block_intercom \
 		  reduce_scatter \
+		  reduce_scatter_nolog \
 		  reduce_scatter_inplace \
 		  reduce_scatter_intercom \
 		  ireduce_scatter \
+		  ireduce_scatter_nolog \
 		  ireduce_scatter_inplace \
 		  ireduce_scatter_intercom \
 		  scan \
+		  scan_nolog \
 		  scan_inplace \
 		  iscan \
+		  iscan_nolog \
 		  iscan_inplace \
 		  exscan \
+		  exscan_nolog \
 		  exscan_inplace \
 		  iexscan \
+		  iexscan_nolog \
 		  iexscan_inplace
 
 reduce_SOURCES = $(srcdir)/reduce.c
 reduce_CFLAGS = $(AM_CFLAGS)
 reduce_LDFLAGS = $(AM_LDFLAGS)
+
+reduce_nolog_SOURCES = $(srcdir)/reduce.c
+reduce_nolog_CFLAGS = $(AM_CFLAGS)
+reduce_nolog_LDFLAGS = $(AM_LDFLAGS)
 
 reduce_inplace_SOURCES = $(srcdir)/reduce_inplace.c
 reduce_inplace_CFLAGS = $(AM_CFLAGS)
@@ -631,6 +863,10 @@ ireduce_SOURCES = $(srcdir)/ireduce.c
 ireduce_CFLAGS = $(AM_CFLAGS)
 ireduce_LDFLAGS = $(AM_LDFLAGS)
 
+ireduce_nolog_SOURCES = $(srcdir)/ireduce.c
+ireduce_nolog_CFLAGS = $(AM_CFLAGS)
+ireduce_nolog_LDFLAGS = $(AM_LDFLAGS)
+
 ireduce_inplace_SOURCES = $(srcdir)/ireduce_inplace.c
 ireduce_inplace_CFLAGS = $(AM_CFLAGS)
 ireduce_inplace_LDFLAGS = $(AM_LDFLAGS)
@@ -642,6 +878,10 @@ ireduce_intercom_LDFLAGS = $(AM_LDFLAGS)
 allreduce_SOURCES = $(srcdir)/allreduce.c
 allreduce_CFLAGS = $(AM_CFLAGS)
 allreduce_LDFLAGS = $(AM_LDFLAGS)
+
+allreduce_nolog_SOURCES = $(srcdir)/allreduce.c
+allreduce_nolog_CFLAGS = $(AM_CFLAGS)
+allreduce_nolog_LDFLAGS = $(AM_LDFLAGS)
 
 allreduce_inplace_SOURCES = $(srcdir)/allreduce_inplace.c
 allreduce_inplace_CFLAGS = $(AM_CFLAGS)
@@ -655,6 +895,10 @@ iallreduce_SOURCES = $(srcdir)/iallreduce.c
 iallreduce_CFLAGS = $(AM_CFLAGS)
 iallreduce_LDFLAGS = $(AM_LDFLAGS)
 
+iallreduce_nolog_SOURCES = $(srcdir)/iallreduce.c
+iallreduce_nolog_CFLAGS = $(AM_CFLAGS)
+iallreduce_nolog_LDFLAGS = $(AM_LDFLAGS)
+
 iallreduce_inplace_SOURCES = $(srcdir)/iallreduce_inplace.c
 iallreduce_inplace_CFLAGS = $(AM_CFLAGS)
 iallreduce_inplace_LDFLAGS = $(AM_LDFLAGS)
@@ -666,6 +910,10 @@ iallreduce_intercom_LDFLAGS = $(AM_LDFLAGS)
 reduce_scatter_block_SOURCES = $(srcdir)/reduce_scatter_block.c
 reduce_scatter_block_CFLAGS = $(AM_CFLAGS)
 reduce_scatter_block_LDFLAGS = $(AM_LDFLAGS)
+
+reduce_scatter_block_nolog_SOURCES = $(srcdir)/reduce_scatter_block.c
+reduce_scatter_block_nolog_CFLAGS = $(AM_CFLAGS)
+reduce_scatter_block_nolog_LDFLAGS = $(AM_LDFLAGS)
 
 reduce_scatter_block_inplace_SOURCES = $(srcdir)/reduce_scatter_block_inplace.c
 reduce_scatter_block_inplace_CFLAGS = $(AM_CFLAGS)
@@ -679,6 +927,10 @@ ireduce_scatter_block_SOURCES = $(srcdir)/ireduce_scatter_block.c
 ireduce_scatter_block_CFLAGS = $(AM_CFLAGS)
 ireduce_scatter_block_LDFLAGS = $(AM_LDFLAGS)
 
+ireduce_scatter_block_nolog_SOURCES = $(srcdir)/ireduce_scatter_block.c
+ireduce_scatter_block_nolog_CFLAGS = $(AM_CFLAGS)
+ireduce_scatter_block_nolog_LDFLAGS = $(AM_LDFLAGS)
+
 ireduce_scatter_block_inplace_SOURCES = $(srcdir)/ireduce_scatter_block_inplace.c
 ireduce_scatter_block_inplace_CFLAGS = $(AM_CFLAGS)
 ireduce_scatter_block_inplace_LDFLAGS = $(AM_LDFLAGS)
@@ -690,6 +942,10 @@ ireduce_scatter_block_intercom_LDFLAGS = $(AM_LDFLAGS)
 reduce_scatter_SOURCES = $(srcdir)/reduce_scatter.c
 reduce_scatter_CFLAGS = $(AM_CFLAGS)
 reduce_scatter_LDFLAGS = $(AM_LDFLAGS)
+
+reduce_scatter_nolog_SOURCES = $(srcdir)/reduce_scatter.c
+reduce_scatter_nolog_CFLAGS = $(AM_CFLAGS)
+reduce_scatter_nolog_LDFLAGS = $(AM_LDFLAGS)
 
 reduce_scatter_inplace_SOURCES = $(srcdir)/reduce_scatter_inplace.c
 reduce_scatter_inplace_CFLAGS = $(AM_CFLAGS)
@@ -703,6 +959,10 @@ ireduce_scatter_SOURCES = $(srcdir)/ireduce_scatter.c
 ireduce_scatter_CFLAGS = $(AM_CFLAGS)
 ireduce_scatter_LDFLAGS = $(AM_LDFLAGS)
 
+ireduce_scatter_nolog_SOURCES = $(srcdir)/ireduce_scatter.c
+ireduce_scatter_nolog_CFLAGS = $(AM_CFLAGS)
+ireduce_scatter_nolog_LDFLAGS = $(AM_LDFLAGS)
+
 ireduce_scatter_inplace_SOURCES = $(srcdir)/ireduce_scatter_inplace.c
 ireduce_scatter_inplace_CFLAGS = $(AM_CFLAGS)
 ireduce_scatter_inplace_LDFLAGS = $(AM_LDFLAGS)
@@ -715,6 +975,10 @@ scan_SOURCES = $(srcdir)/scan.c
 scan_CFLAGS = $(AM_CFLAGS)
 scan_LDFLAGS = $(AM_LDFLAGS)
 
+scan_nolog_SOURCES = $(srcdir)/scan.c
+scan_nolog_CFLAGS = $(AM_CFLAGS)
+scan_nolog_LDFLAGS = $(AM_LDFLAGS)
+
 scan_inplace_SOURCES = $(srcdir)/scan_inplace.c
 scan_inplace_CFLAGS = $(AM_CFLAGS)
 scan_inplace_LDFLAGS = $(AM_LDFLAGS)
@@ -722,6 +986,10 @@ scan_inplace_LDFLAGS = $(AM_LDFLAGS)
 iscan_SOURCES = $(srcdir)/iscan.c
 iscan_CFLAGS = $(AM_CFLAGS)
 iscan_LDFLAGS = $(AM_LDFLAGS)
+
+iscan_nolog_SOURCES = $(srcdir)/iscan.c
+iscan_nolog_CFLAGS = $(AM_CFLAGS)
+iscan_nolog_LDFLAGS = $(AM_LDFLAGS)
 
 iscan_inplace_SOURCES = $(srcdir)/iscan_inplace.c
 iscan_inplace_CFLAGS = $(AM_CFLAGS)
@@ -731,6 +999,10 @@ exscan_SOURCES = $(srcdir)/exscan.c
 exscan_CFLAGS = $(AM_CFLAGS)
 exscan_LDFLAGS = $(AM_LDFLAGS)
 
+exscan_nolog_SOURCES = $(srcdir)/exscan.c
+exscan_nolog_CFLAGS = $(AM_CFLAGS)
+exscan_nolog_LDFLAGS = $(AM_LDFLAGS)
+
 exscan_inplace_SOURCES = $(srcdir)/exscan_inplace.c
 exscan_inplace_CFLAGS = $(AM_CFLAGS)
 exscan_inplace_LDFLAGS = $(AM_LDFLAGS)
@@ -739,107 +1011,183 @@ iexscan_SOURCES = $(srcdir)/iexscan.c
 iexscan_CFLAGS = $(AM_CFLAGS)
 iexscan_LDFLAGS = $(AM_LDFLAGS)
 
+iexscan_nolog_SOURCES = $(srcdir)/iexscan.c
+iexscan_nolog_CFLAGS = $(AM_CFLAGS)
+iexscan_nolog_LDFLAGS = $(AM_LDFLAGS)
+
 iexscan_inplace_SOURCES = $(srcdir)/iexscan_inplace.c
 iexscan_inplace_CFLAGS = $(AM_CFLAGS)
 iexscan_inplace_LDFLAGS = $(AM_LDFLAGS)
 
 dist_noinst_SCRIPTS += reduce.sh \
+		       reduce_nolog.sh \
 		       reduce_inplace.sh \
 		       reduce_intercom.sh \
 		       ireduce.sh \
+		       ireduce_nolog.sh \
 		       ireduce_inplace.sh \
 		       ireduce_intercom.sh \
 		       allreduce.sh \
+		       allreduce_nolog.sh \
 		       allreduce_inplace.sh \
 		       allreduce_intercom.sh \
 		       iallreduce.sh \
+		       iallreduce_nolog.sh \
 		       iallreduce_inplace.sh \
 		       iallreduce_intercom.sh \
 		       reduce_scatter_block.sh \
+		       reduce_scatter_block_nolog.sh \
 		       reduce_scatter_block_inplace.sh \
 		       reduce_scatter_block_intercom.sh \
 		       ireduce_scatter_block.sh \
+		       ireduce_scatter_block_nolog.sh \
 		       ireduce_scatter_block_inplace.sh \
 		       ireduce_scatter_block_intercom.sh \
 		       reduce_scatter.sh \
+		       reduce_scatter_nolog.sh \
 		       reduce_scatter_inplace.sh \
 		       reduce_scatter_intercom.sh \
 		       ireduce_scatter.sh \
+		       ireduce_scatter_nolog.sh \
 		       ireduce_scatter_inplace.sh \
 		       ireduce_scatter_intercom.sh \
 		       scan.sh \
+		       scan_nolog.sh \
 		       scan_inplace.sh \
 		       iscan.sh \
+		       iscan_nolog.sh \
 		       iscan_inplace.sh \
 		       exscan.sh \
+		       exscan_nolog.sh \
 		       exscan_inplace.sh \
 		       iexscan.sh \
+		       iexscan_nolog.sh \
 		       iexscan_inplace.sh
 
 ###################
 # One sided tests #
 ###################
 check_PROGRAMS += put \
+		  put_nolog \
 		  rput \
+		  rput_nolog \
 		  get \
+		  get_nolog \
 		  rget \
+		  rget_nolog \
 		  accumulate \
+		  accumulate_nolog \
 		  raccumulate \
+		  raccumulate_nolog \
 		  get_accumulate \
+		  get_accumulate_nolog \
 		  rget_accumulate \
+		  rget_accumulate_nolog \
 		  fetch_and_op \
-		  compare_and_swap
+		  fetch_and_op_nolog \
+		  compare_and_swap \
+		  compare_and_swap_nolog
 
 put_SOURCES = $(srcdir)/put.c
 put_CFLAGS = $(AM_CFLAGS)
 put_LDFLAGS = $(AM_LDFLAGS)
 
+put_nolog_SOURCES = $(srcdir)/put.c
+put_nolog_CFLAGS = $(AM_CFLAGS)
+put_nolog_LDFLAGS = $(AM_LDFLAGS)
+
 rput_SOURCES = $(srcdir)/rput.c
 rput_CFLAGS = $(AM_CFLAGS)
 rput_LDFLAGS = $(AM_LDFLAGS)
+
+rput_nolog_SOURCES = $(srcdir)/rput.c
+rput_nolog_CFLAGS = $(AM_CFLAGS)
+rput_nolog_LDFLAGS = $(AM_LDFLAGS)
 
 get_SOURCES = $(srcdir)/get.c
 get_CFLAGS = $(AM_CFLAGS)
 get_LDFLAGS = $(AM_LDFLAGS)
 
+get_nolog_SOURCES = $(srcdir)/get.c
+get_nolog_CFLAGS = $(AM_CFLAGS)
+get_nolog_LDFLAGS = $(AM_LDFLAGS)
+
 rget_SOURCES = $(srcdir)/rget.c
 rget_CFLAGS = $(AM_CFLAGS)
 rget_LDFLAGS = $(AM_LDFLAGS)
+
+rget_nolog_SOURCES = $(srcdir)/rget.c
+rget_nolog_CFLAGS = $(AM_CFLAGS)
+rget_nolog_LDFLAGS = $(AM_LDFLAGS)
 
 accumulate_SOURCES = $(srcdir)/accumulate.c
 accumulate_CFLAGS = $(AM_CFLAGS)
 accumulate_LDFLAGS = $(AM_LDFLAGS)
 
+accumulate_nolog_SOURCES = $(srcdir)/accumulate.c
+accumulate_nolog_CFLAGS = $(AM_CFLAGS)
+accumulate_nolog_LDFLAGS = $(AM_LDFLAGS)
+
 raccumulate_SOURCES = $(srcdir)/raccumulate.c
 raccumulate_CFLAGS = $(AM_CFLAGS)
 raccumulate_LDFLAGS = $(AM_LDFLAGS)
+
+raccumulate_nolog_SOURCES = $(srcdir)/raccumulate.c
+raccumulate_nolog_CFLAGS = $(AM_CFLAGS)
+raccumulate_nolog_LDFLAGS = $(AM_LDFLAGS)
 
 get_accumulate_SOURCES = $(srcdir)/get_accumulate.c
 get_accumulate_CFLAGS = $(AM_CFLAGS)
 get_accumulate_LDFLAGS = $(AM_LDFLAGS)
 
+get_accumulate_nolog_SOURCES = $(srcdir)/get_accumulate.c
+get_accumulate_nolog_CFLAGS = $(AM_CFLAGS)
+get_accumulate_nolog_LDFLAGS = $(AM_LDFLAGS)
+
 rget_accumulate_SOURCES = $(srcdir)/rget_accumulate.c
 rget_accumulate_CFLAGS = $(AM_CFLAGS)
 rget_accumulate_LDFLAGS = $(AM_LDFLAGS)
+
+rget_accumulate_nolog_SOURCES = $(srcdir)/rget_accumulate.c
+rget_accumulate_nolog_CFLAGS = $(AM_CFLAGS)
+rget_accumulate_nolog_LDFLAGS = $(AM_LDFLAGS)
 
 fetch_and_op_SOURCES = $(srcdir)/fetch_and_op.c
 fetch_and_op_CFLAGS = $(AM_CFLAGS)
 fetch_and_op_LDFLAGS = $(AM_LDFLAGS)
 
+fetch_and_op_nolog_SOURCES = $(srcdir)/fetch_and_op.c
+fetch_and_op_nolog_CFLAGS = $(AM_CFLAGS)
+fetch_and_op_nolog_LDFLAGS = $(AM_LDFLAGS)
+
 compare_and_swap_SOURCES = $(srcdir)/compare_and_swap.c
 compare_and_swap_CFLAGS = $(AM_CFLAGS)
 compare_and_swap_LDFLAGS = $(AM_LDFLAGS)
 
+compare_and_swap_nolog_SOURCES = $(srcdir)/compare_and_swap.c
+compare_and_swap_nolog_CFLAGS = $(AM_CFLAGS)
+compare_and_swap_nolog_LDFLAGS = $(AM_LDFLAGS)
+
 dist_noinst_SCRIPTS += put.sh \
+		       put_nolog.sh \
 		       rput.sh \
+		       rput_nolog.sh \
 		       get.sh \
+		       get_nolog.sh \
 		       rget.sh \
+		       rget_nolog.sh \
 		       accumulate.sh \
+		       accumulate_nolog.sh \
 		       raccumulate.sh \
+		       raccumulate_nolog.sh \
 		       get_accumulate.sh \
+		       get_accumulate_nolog.sh \
 		       rget_accumulate.sh \
+		       rget_accumulate_nolog.sh \
 		       fetch_and_op.sh \
-		       compare_and_swap.sh
+		       fetch_and_op_nolog.sh \
+		       compare_and_swap.sh \
+		       compare_and_swap_nolog.sh
 
 ##############
 # Test tests #
