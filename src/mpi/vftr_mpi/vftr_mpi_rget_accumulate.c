@@ -29,46 +29,37 @@ int vftr_MPI_Rget_accumulate(const void *origin_addr, int origin_count,
                              int target_rank, MPI_Aint target_disp, int target_count,
                              MPI_Datatype target_datatype, MPI_Op op, MPI_Win win, 
                              MPI_Request *request) {
+   long long tstart = vftr_get_runtime_usec();
+   int retVal = PMPI_Rget_accumulate(origin_addr, origin_count, origin_datatype,
+                                     result_addr, result_count, result_datatype,
+                                     target_rank, target_disp, target_count,
+                                     target_datatype, op, win, request);
 
-   // disable profiling based on the Pcontrol level
-   if (vftr_no_mpi_logging()) {
-      return PMPI_Rget_accumulate(origin_addr, origin_count, origin_datatype,
-                                  result_addr, result_count, result_datatype,
-                                  target_rank, target_disp, target_count,
-                                  target_datatype, op, win, request);
-   } else {
-      long long tstart = vftr_get_runtime_usec();
-      int retVal = PMPI_Rget_accumulate(origin_addr, origin_count, origin_datatype,
-                                        result_addr, result_count, result_datatype,
-                                        target_rank, target_disp, target_count,
-                                        target_datatype, op, win, request);
+   long long t2start = vftr_get_runtime_usec();
+   // Need to figure out the partner rank in a known communicator to store info
+   MPI_Group local_group;
+   PMPI_Win_get_group(win, &local_group);
 
-      long long t2start = vftr_get_runtime_usec();
-      // Need to figure out the partner rank in a known communicator to store info
-      MPI_Group local_group;
-      PMPI_Win_get_group(win, &local_group);
+   MPI_Group global_group;
+   PMPI_Comm_group(MPI_COMM_WORLD, &global_group);
 
-      MPI_Group global_group;
-      PMPI_Comm_group(MPI_COMM_WORLD, &global_group);
+   int global_rank;
+   PMPI_Group_translate_ranks(local_group,
+                              1,
+                              &target_rank,
+                              global_group,
+                              &global_rank);
 
-      int global_rank;
-      PMPI_Group_translate_ranks(local_group,
-                                 1,
-                                 &target_rank,
-                                 global_group,
-                                 &global_rank);
+   vftr_register_onesided_request(recv, target_count, target_datatype,
+                                  global_rank, MPI_COMM_WORLD, *request, tstart);
+   vftr_register_onesided_request(send, origin_count, origin_datatype,
+                                  global_rank, MPI_COMM_WORLD, *request, tstart);
 
-      vftr_register_onesided_request(recv, target_count, target_datatype,
-                                     global_rank, MPI_COMM_WORLD, *request, tstart);
-      vftr_register_onesided_request(send, origin_count, origin_datatype,
-                                     global_rank, MPI_COMM_WORLD, *request, tstart);
+   long long t2end = vftr_get_runtime_usec();
 
-      long long t2end = vftr_get_runtime_usec();
+   vftr_mpi_overhead_usec += t2end - t2start;
 
-      vftr_mpi_overhead_usec += t2end - t2start;
-
-      return retVal;
-   }
+   return retVal;
 }
 
 #endif
