@@ -20,9 +20,13 @@ SUBROUTINE MPI_Exscan_f08(sendbuf, recvbuf, count, &
                           datatype, op, comm, error)
    USE vftr_mpi_exscan_f082c_f08interface, &
       ONLY : vftr_MPI_Exscan_f082c
-   USE mpi_f08, ONLY : MPI_Datatype, &
-                       MPI_Op, &
-                       MPI_Comm
+   USE vftr_mpi_logging_f08, &
+      ONLY : vftr_no_mpi_logging_f08
+   USE mpi_f08, &
+      ONLY : PMPI_Exscan, &
+             MPI_Datatype, &
+             MPI_Op, &
+             MPI_Comm
    IMPLICIT NONE
    INTEGER, INTENT(IN) :: sendbuf
    INTEGER :: recvbuf
@@ -33,9 +37,15 @@ SUBROUTINE MPI_Exscan_f08(sendbuf, recvbuf, count, &
    INTEGER, OPTIONAL, INTENT(OUT) :: error
    INTEGER :: tmperror
 
-   CALL vftr_MPI_Exscan_f082c(sendbuf, recvbuf, count, &
-                              datatype%MPI_VAL, op%MPI_VAL, &
-                              comm%MPI_VAL, tmperror)
+   IF (vftr_no_mpi_logging_f08()) THEN
+      CALL PMPI_Exscan_f08(sendbuf, recvbuf, count, &
+                           datatype, op, &
+                           comm, tmperror)
+   ELSE
+      CALL vftr_MPI_Exscan_f082c(sendbuf, recvbuf, count, &
+                                 datatype%MPI_VAL, op%MPI_VAL, &
+                                 comm%MPI_VAL, tmperror)
+   END IF
    IF (PRESENT(error)) error = tmperror
 
 END SUBROUTINE MPI_Exscan_f08
