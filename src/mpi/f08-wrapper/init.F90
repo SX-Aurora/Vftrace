@@ -19,10 +19,9 @@
 SUBROUTINE MPI_Init_f08(error)
    USE vftr_after_mpi_init_f082c_f08interface, &
       ONLY : vftr_after_mpi_init_f082c
-   USE mpi_f08, ONLY : PMPI_Init
-
+   USE mpi_f08, &
+      ONLY : PMPI_Init
    IMPLICIT NONE
-
    INTEGER, OPTIONAL, INTENT(OUT) :: error
    INTEGER :: tmperror
 
