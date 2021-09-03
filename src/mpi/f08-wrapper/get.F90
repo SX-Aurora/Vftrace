@@ -21,9 +21,13 @@ SUBROUTINE MPI_Get_f08(origin_addr, origin_count, origin_datatype, &
                        target_datatype, win, error)
    USE vftr_mpi_get_f082c_f08interface, &
       ONLY : vftr_MPI_Get_f082c
-   USE mpi_f08, ONLY : MPI_Datatype, &
-                       MPI_Win, &
-                       MPI_ADDRESS_KIND
+   USE vftr_mpi_logging_f08, &
+      ONLY : vftr_no_mpi_logging_f08
+   USE mpi_f08, &
+      ONLY : PMPI_Get_f08, &
+             MPI_Datatype, &
+             MPI_Win, &
+             MPI_ADDRESS_KIND
    IMPLICIT NONE
    INTEGER, INTENT(IN) :: origin_addr
    INTEGER, INTENT(IN) :: origin_count
@@ -36,9 +40,15 @@ SUBROUTINE MPI_Get_f08(origin_addr, origin_count, origin_datatype, &
    INTEGER, OPTIONAL, INTENT(OUT) :: error
    INTEGER :: tmperror
 
-   CALL vftr_MPI_Get_f082c(origin_addr, origin_count, origin_datatype%MPI_VAL, &
-                           target_rank, target_disp, target_count, &
-                           target_datatype%MPI_VAL, win%MPI_VAL, tmperror)
+   IF (vftr_no_mpi_logging_f08()) THEN
+      CALL PMPI_Get_f08(origin_addr, origin_count, origin_datatype, &
+                        target_rank, target_disp, target_count, &
+                        target_datatype, win, tmperror)
+   ELSE
+      CALL vftr_MPI_Get_f082c(origin_addr, origin_count, origin_datatype%MPI_VAL, &
+                              target_rank, target_disp, target_count, &
+                              target_datatype%MPI_VAL, win%MPI_VAL, tmperror)
+   END IF
    IF (PRESENT(error)) error = tmperror
 
 END SUBROUTINE MPI_Get_f08
