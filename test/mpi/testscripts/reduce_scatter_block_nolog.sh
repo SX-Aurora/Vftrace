@@ -1,6 +1,6 @@
 #!/bin/bash
 
-vftr_binary=reduce_scatter_block
+vftr_binary=reduce_scatter_block_nolog
 nprocs=4
 ntrials=1
 

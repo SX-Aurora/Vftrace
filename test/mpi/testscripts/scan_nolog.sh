@@ -1,6 +1,6 @@
 #!/bin/bash
 
-vftr_binary=scan
+vftr_binary=scan_nolog
 nprocs=4
 ntrials=1
 

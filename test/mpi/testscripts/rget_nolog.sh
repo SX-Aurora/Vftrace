@@ -1,6 +1,6 @@
 #!/bin/bash
 
-vftr_binary=rget
+vftr_binary=rget_nolog
 nprocs=4
 ntrials=1
 

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-vftr_binary=gatherv
+vftr_binary=gatherv_nolog
 nprocs=4
 ntrials=1
 

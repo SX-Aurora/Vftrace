@@ -1,6 +1,6 @@
 #!/bin/bash
 
-vftr_binary=rput
+vftr_binary=rput_nolog
 nprocs=4
 ntrials=1
 

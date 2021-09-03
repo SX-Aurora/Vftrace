@@ -1,6 +1,6 @@
 #!/bin/bash
 
-vftr_binary=sendrecv
+vftr_binary=sendrecv_nolog
 nprocs=4
 ntrials=1
 

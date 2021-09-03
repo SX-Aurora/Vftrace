@@ -1,6 +1,6 @@
 #!/bin/bash
 
-vftr_binary=ibsend_recv
+vftr_binary=ibsend_recv_nolog
 nprocs=4
 ntrials=1
 

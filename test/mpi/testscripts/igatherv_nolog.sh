@@ -1,6 +1,6 @@
 #!/bin/bash
 
-vftr_binary=igatherv
+vftr_binary=igatherv_nolog
 nprocs=4
 ntrials=1
 

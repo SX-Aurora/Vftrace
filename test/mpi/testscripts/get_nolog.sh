@@ -1,6 +1,6 @@
 #!/bin/bash
 
-vftr_binary=get
+vftr_binary=get_nolog
 nprocs=4
 ntrials=1
 

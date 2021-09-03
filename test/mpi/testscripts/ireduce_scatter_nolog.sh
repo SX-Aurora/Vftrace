@@ -1,6 +1,6 @@
 #!/bin/bash
 
-vftr_binary=ireduce_scatter
+vftr_binary=ireduce_scatter_nolog
 nprocs=4
 ntrials=1
 

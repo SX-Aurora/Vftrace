@@ -1,6 +1,6 @@
 #!/bin/bash
 
-vftr_binary=ireduce
+vftr_binary=ireduce_nolog
 nprocs=4
 ntrials=1
 

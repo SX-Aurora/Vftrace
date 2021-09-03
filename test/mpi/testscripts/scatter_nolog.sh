@@ -1,6 +1,6 @@
 #!/bin/bash
 
-vftr_binary=scatter
+vftr_binary=scatter_nolog
 nprocs=4
 ntrials=1
 

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-vftr_binary=iexscan
+vftr_binary=iexscan_nolog
 nprocs=4
 ntrials=1
 

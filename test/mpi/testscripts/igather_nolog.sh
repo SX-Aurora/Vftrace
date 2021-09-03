@@ -1,6 +1,6 @@
 #!/bin/bash
 
-vftr_binary=igather
+vftr_binary=igather_nolog
 nprocs=4
 ntrials=1
 

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-vftr_binary=accumulate
+vftr_binary=accumulate_nolog
 nprocs=4
 ntrials=1
 

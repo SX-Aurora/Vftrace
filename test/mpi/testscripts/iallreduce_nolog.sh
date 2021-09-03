@@ -1,6 +1,6 @@
 #!/bin/bash
 
-vftr_binary=iallreduce
+vftr_binary=iallreduce_nolog
 nprocs=4
 ntrials=1
 

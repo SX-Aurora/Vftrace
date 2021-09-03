@@ -1,6 +1,6 @@
 #!/bin/bash
 
-vftr_binary=exscan
+vftr_binary=exscan_nolog
 nprocs=4
 ntrials=1
 

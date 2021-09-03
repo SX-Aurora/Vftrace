@@ -1,6 +1,6 @@
 #!/bin/bash
 
-vftr_binary=fetch_and_op
+vftr_binary=fetch_and_op_nolog
 nprocs=4
 ntrials=1
 

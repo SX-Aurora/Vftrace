@@ -1,6 +1,6 @@
 #!/bin/bash
 
-vftr_binary=allgatherv
+vftr_binary=allgatherv_nolog
 nprocs=4
 ntrials=1
 

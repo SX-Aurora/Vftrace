@@ -1,6 +1,6 @@
 #!/bin/bash
 
-vftr_binary=compare_and_swap
+vftr_binary=compare_and_swap_nolog
 nprocs=4
 ntrials=1
 

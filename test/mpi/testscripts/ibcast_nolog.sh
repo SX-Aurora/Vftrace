@@ -1,6 +1,6 @@
 #!/bin/bash
 
-vftr_binary=ibcast
+vftr_binary=ibcast_nolog
 nprocs=4
 ntrials=1
 

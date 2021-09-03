@@ -1,6 +1,6 @@
 #!/bin/bash
 
-vftr_binary=rget_accumulate
+vftr_binary=rget_accumulate_nolog
 nprocs=4
 ntrials=1
 

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-vftr_binary=iscatterv
+vftr_binary=iscatterv_nolog
 nprocs=4
 ntrials=1
 

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-vftr_binary=bsend_init
+vftr_binary=bsend_init_nolog
 nprocs=4
 ntrials=1
 

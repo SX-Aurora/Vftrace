@@ -1,6 +1,6 @@
 #!/bin/bash
 
-vftr_binary=ialltoall
+vftr_binary=ialltoall_nolog
 nprocs=4
 ntrials=1
 
