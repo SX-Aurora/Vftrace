@@ -29,28 +29,23 @@
 
 int vftr_MPI_Request_free(MPI_Request *request) {
 
-   // disable profiling based on the Pcontrol level
-   if (vftr_no_mpi_logging()) {
-      return PMPI_Request_free(request);
-   } else {
-      long long t2start= vftr_get_runtime_usec();
-      vftr_request_t *matched_request = vftr_search_P2P_request(*request);
-      if (matched_request == NULL) {
-         matched_request = vftr_search_persistent_request(*request);
-      }
-      if (matched_request == NULL) {
-         PMPI_Request_free(request);
-      } else {
-         matched_request->marked_for_deallocation = true;
-      }
-
-      *request = MPI_REQUEST_NULL;
-      long long t2end = vftr_get_runtime_usec();
-
-      vftr_mpi_overhead_usec += t2end - t2start;
-
-      return 0;
+   long long t2start= vftr_get_runtime_usec();
+   vftr_request_t *matched_request = vftr_search_P2P_request(*request);
+   if (matched_request == NULL) {
+      matched_request = vftr_search_persistent_request(*request);
    }
+   if (matched_request == NULL) {
+      PMPI_Request_free(request);
+   } else {
+      matched_request->marked_for_deallocation = true;
+   }
+
+   *request = MPI_REQUEST_NULL;
+   long long t2end = vftr_get_runtime_usec();
+
+   vftr_mpi_overhead_usec += t2end - t2start;
+
+   return 0;
 }
 
 #endif
