@@ -26,22 +26,16 @@
 int vftr_MPI_Irsend(const void *buf, int count, MPI_Datatype datatype,
                     int dest, int tag, MPI_Comm comm,
                     MPI_Request *request) {
+   long long tstart = vftr_get_runtime_usec();
+   int retVal = PMPI_Irsend(buf, count, datatype, dest, tag, comm, request);
 
-   // disable profiling based on the Pcontrol level
-   if (vftr_no_mpi_logging()) {
-      return PMPI_Irsend(buf, count, datatype, dest, tag, comm, request);
-   } else {
-      long long tstart = vftr_get_runtime_usec();
-      int retVal = PMPI_Irsend(buf, count, datatype, dest, tag, comm, request);
+   long long t2start = vftr_get_runtime_usec();
+   vftr_register_P2P_request(send, count, datatype, dest, tag, comm, *request, tstart);
+   long long t2end = vftr_get_runtime_usec();
 
-      long long t2start = vftr_get_runtime_usec();
-      vftr_register_P2P_request(send, count, datatype, dest, tag, comm, *request, tstart);
-      long long t2end = vftr_get_runtime_usec();
+   vftr_mpi_overhead_usec += t2end - t2start;
 
-      vftr_mpi_overhead_usec += t2end - t2start;
-
-      return retVal;
-   }
+   return retVal;
 }
 
 #endif
