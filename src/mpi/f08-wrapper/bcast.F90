@@ -20,8 +20,12 @@ SUBROUTINE MPI_Bcast_f08(buffer, count, datatype, &
                          root, comm, error)
    USE vftr_mpi_bcast_f082c_f08interface, &
       ONLY : vftr_MPI_Bcast_f082c
-   USE mpi_f08, ONLY : MPI_Datatype, &
-                       MPI_Comm
+   USE vftr_mpi_logging_f08, &
+      ONLY : vftr_no_mpi_logging_f08
+   USE mpi_f08, &
+      ONLY : PMPI_Bcast_f08, &
+             MPI_Datatype, &
+             MPI_Comm
    IMPLICIT NONE
    INTEGER, INTENT(IN) :: buffer
    INTEGER, INTENT(IN) :: count
@@ -31,8 +35,13 @@ SUBROUTINE MPI_Bcast_f08(buffer, count, datatype, &
    INTEGER, OPTIONAL, INTENT(OUT) :: error
    INTEGER :: tmperror
 
-   CALL vftr_MPI_Bcast_f082c(buffer, count, datatype%MPI_VAL, &
-                             root, comm%MPI_VAL, tmperror)
+   IF (vftr_no_mpi_logging_f08()) THEN
+      CALL PMPI_Bcast_f08(buffer, count, datatype, &
+                          root, comm, tmperror)
+   ELSE
+      CALL vftr_MPI_Bcast_f082c(buffer, count, datatype%MPI_VAL, &
+                                root, comm%MPI_VAL, tmperror)
+   END IF
    IF (PRESENT(error)) error = tmperror
 
 END SUBROUTINE MPI_Bcast_f08
