@@ -19,9 +19,7 @@
 SUBROUTINE MPI_Pcontrol_f08(level)
    USE vftr_mpi_pcontrol_f082c_f08interface, &
       ONLY : vftr_MPI_Pcontrol_f082c
-   
    IMPLICIT NONE
-
    INTEGER, INTENT(IN) :: level
 
    CALL vftr_MPI_Pcontrol_f082c(level)
