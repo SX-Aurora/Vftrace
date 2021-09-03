@@ -37,7 +37,7 @@ SUBROUTINE MPI_ALLTOALLV(SENDBUF, SENDCOUNTS, SDISPLS, SENDTYPE, &
    INTEGER COMM
    INTEGER ERROR
 
-   IF (vftr_no_mpi_logging_F())  THEN
+   IF (vftr_no_mpi_logging_F()) THEN
       CALL PMPI_ALLTOALLV(SENDBUF, SENDCOUNTS, SDISPLS, SENDTYPE, &
                           RECVBUF, RECVCOUNTS, RDISPLS, RECVTYPE, &
                           COMM, ERROR)
