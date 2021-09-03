@@ -1,0 +1,1 @@
+../testscripts/scatterv_nolog.sh

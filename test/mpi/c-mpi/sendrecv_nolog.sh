@@ -1,0 +1,1 @@
+../testscripts/sendrecv_nolog.sh

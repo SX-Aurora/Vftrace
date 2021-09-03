@@ -1,0 +1,1 @@
+../testscripts/get_nolog.sh

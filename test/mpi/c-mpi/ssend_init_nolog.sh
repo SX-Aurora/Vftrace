@@ -1,0 +1,1 @@
+../testscripts/ssend_init_nolog.sh

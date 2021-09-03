@@ -1,0 +1,1 @@
+../testscripts/gather_nolog.sh

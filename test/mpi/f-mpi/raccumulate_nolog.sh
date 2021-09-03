@@ -1,0 +1,1 @@
+../testscripts/raccumulate_nolog.sh

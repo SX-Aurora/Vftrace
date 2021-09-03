@@ -1,0 +1,1 @@
+../testscripts/ibcast_nolog.sh

@@ -1,0 +1,1 @@
+../testscripts/allreduce_nolog.sh

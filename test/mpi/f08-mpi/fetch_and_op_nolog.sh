@@ -1,0 +1,1 @@
+../testscripts/fetch_and_op_nolog.sh

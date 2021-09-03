@@ -1,0 +1,1 @@
+../testscripts/recv_init_nolog.sh

@@ -1,0 +1,1 @@
+../testscripts/exscan_nolog.sh

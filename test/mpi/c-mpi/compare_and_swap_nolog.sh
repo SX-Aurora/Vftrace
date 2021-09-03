@@ -1,0 +1,1 @@
+../testscripts/compare_and_swap_nolog.sh

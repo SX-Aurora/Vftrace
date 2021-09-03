@@ -1,0 +1,1 @@
+../testscripts/rsend_recv_nolog.sh

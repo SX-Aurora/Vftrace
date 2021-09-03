@@ -1,0 +1,1 @@
+../testscripts/send_init_nolog.sh

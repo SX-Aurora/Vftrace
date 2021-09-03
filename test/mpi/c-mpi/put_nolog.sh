@@ -1,0 +1,1 @@
+../testscripts/put_nolog.sh

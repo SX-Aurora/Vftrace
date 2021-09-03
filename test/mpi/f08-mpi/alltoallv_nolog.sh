@@ -1,0 +1,1 @@
+../testscripts/alltoallv_nolog.sh

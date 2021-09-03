@@ -1,0 +1,1 @@
+../testscripts/iscan_nolog.sh

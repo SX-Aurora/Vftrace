@@ -1,0 +1,1 @@
+../testscripts/bsend_init_nolog.sh

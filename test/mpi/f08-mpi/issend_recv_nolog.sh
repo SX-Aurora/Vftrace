@@ -1,0 +1,1 @@
+../testscripts/issend_recv_nolog.sh
