@@ -21,9 +21,15 @@ SUBROUTINE MPI_Allreduce_f08(sendbuf, recvbuf, count, &
                              error)
    USE vftr_mpi_allreduce_f082c_f08interface, &
       ONLY : vftr_MPI_Allreduce_f082c
-   USE mpi_f08, ONLY : MPI_Datatype, &
-                       MPI_Comm, &
-                       MPI_Op
+   USE vftr_mpi_logging_f08, &
+      ONLY : vftr_no_mpi_logging_f08
+   USE vftr_mpi_logging_f08, &
+      ONLY : vftr_no_mpi_logging_f08
+   USE mpi_f08, &
+      ONLY : PMPI_Allreduce_f08, &
+             MPI_Datatype, &
+             MPI_Comm, &
+             MPI_Op
    IMPLICIT NONE
    INTEGER, INTENT(IN) :: sendbuf
    INTEGER :: recvbuf
@@ -34,9 +40,15 @@ SUBROUTINE MPI_Allreduce_f08(sendbuf, recvbuf, count, &
    INTEGER, OPTIONAL, INTENT(OUT) :: error
    INTEGER :: tmperror
 
-   CALL vftr_MPI_Allreduce_f082c(sendbuf, recvbuf, count, &
-                                 datatype%MPI_VAL, op%MPI_VAL, comm%MPI_VAL, &
-                                 tmperror)
+   IF (vftr_no_mpi_logging_f08()) THEN
+      CALL PMPI_Allreduce_f08(sendbuf, recvbuf, count, &
+                              datatype, op, comm, &
+                              tmperror)
+   ELSE
+      CALL vftr_MPI_Allreduce_f082c(sendbuf, recvbuf, count, &
+                                    datatype%MPI_VAL, op%MPI_VAL, comm%MPI_VAL, &
+                                    tmperror)
+   END IF
    IF (PRESENT(error)) error = tmperror
 
 END SUBROUTINE MPI_Allreduce_f08
