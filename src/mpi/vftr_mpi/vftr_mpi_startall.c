@@ -24,24 +24,18 @@
 #include "vftr_mpi_utils.h"
 
 int vftr_MPI_Startall(int count, MPI_Request *array_of_requests) {
+   long long tstart = vftr_get_runtime_usec();
+   int retVal = PMPI_Startall(count, array_of_requests);
 
-   // disable profiling based on the Pcontrol level
-   if (vftr_no_mpi_logging()) {
-      return PMPI_Startall(count, array_of_requests);
-   } else {
-      long long tstart = vftr_get_runtime_usec();
-      int retVal = PMPI_Startall(count, array_of_requests);
-
-      long long t2start = vftr_get_runtime_usec();
-      for (int ireq=0; ireq<count; ireq++) {
-         vftr_activate_persistent_request(array_of_requests[ireq], tstart) ;
-      }
-      long long t2end = vftr_get_runtime_usec();
-
-      vftr_mpi_overhead_usec += t2end - t2start;
-
-      return retVal;
+   long long t2start = vftr_get_runtime_usec();
+   for (int ireq=0; ireq<count; ireq++) {
+      vftr_activate_persistent_request(array_of_requests[ireq], tstart) ;
    }
+   long long t2end = vftr_get_runtime_usec();
+
+   vftr_mpi_overhead_usec += t2end - t2start;
+
+   return retVal;
 }
 
 #endif
