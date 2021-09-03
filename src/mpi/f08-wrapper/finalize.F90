@@ -19,10 +19,9 @@
 SUBROUTINE MPI_Finalize_f08(ierror)
    USE vftr_finalize_f082c_f08interface, &
       ONLY : vftr_finalize_F08
-   USE mpi_f08, ONLY : PMPI_Finalize
-
+   USE mpi_f08, &
+      ONLY : PMPI_Finalize
    IMPLICIT NONE
-
    INTEGER, OPTIONAL, INTENT(OUT) :: ierror
 
    ! it is neccessary to finalize vftrace here, in order to properly communicat stack ids
