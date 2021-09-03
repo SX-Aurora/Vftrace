@@ -15,7 +15,7 @@ do
    if [[ "${nb}" -lt "${nprocs}" ]] ; then nb=${nprocs} ; fi
    ${MPI_EXEC} ${MPI_OPTS} ${NP} ${nprocs} ./${vftr_binary} ${nb} || exit 1
 
-   for irank in $(seq 1 1 $(bc <<< "${nprocs}-1"));
+   for irank in $(seq 0 1 $(bc <<< "${nprocs}-1"));
    do  
       ../../../tools/vftrace_vfd_dump ${vftr_binary}_${irank}.vfd
       # Count the logs
