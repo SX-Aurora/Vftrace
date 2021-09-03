@@ -26,39 +26,32 @@
 int vftr_MPI_Sendrecv_replace(void *buf, int count, MPI_Datatype datatype,
                               int dest, int sendtag, int source, int recvtag,
                               MPI_Comm comm, MPI_Status *status) {
+   MPI_Status tmpstatus;
+   long long tstart = vftr_get_runtime_usec();
+   int retVal = PMPI_Sendrecv_replace(buf, count, datatype, dest, sendtag,
+                                      source, recvtag, comm, &tmpstatus);
+   long long tend = vftr_get_runtime_usec();
 
-   // disable profiling based on the Pcontrol level
-   if (vftr_no_mpi_logging()) {
-      return PMPI_Sendrecv_replace(buf, count, datatype, dest, sendtag,
-                                   source, recvtag, comm, status);
-   } else {
-      MPI_Status tmpstatus;
-      long long tstart = vftr_get_runtime_usec();
-      int retVal = PMPI_Sendrecv_replace(buf, count, datatype, dest, sendtag,
-                                         source, recvtag, comm, &tmpstatus);
-      long long tend = vftr_get_runtime_usec();
+   long long t2start = tend;
+   int rank;
+   PMPI_Comm_rank(comm, &rank);
+   vftr_store_sync_message_info(send, count, datatype, dest,
+                                sendtag, comm, tstart, tend);
+   vftr_store_sync_message_info(recv, count, datatype,
+                                tmpstatus.MPI_SOURCE, tmpstatus.MPI_TAG,
+                                comm, tstart, tend);
 
-      long long t2start = tend;
-      int rank;
-      PMPI_Comm_rank(comm, &rank);
-      vftr_store_sync_message_info(send, count, datatype, dest,
-                                   sendtag, comm, tstart, tend);
-      vftr_store_sync_message_info(recv, count, datatype,
-                                   tmpstatus.MPI_SOURCE, tmpstatus.MPI_TAG,
-                                   comm, tstart, tend);
-
-      // handle the special case of MPI_STATUS_IGNORE
-      if (status != MPI_STATUS_IGNORE) {
-         status->MPI_SOURCE = tmpstatus.MPI_SOURCE;
-         status->MPI_TAG = tmpstatus.MPI_TAG;
-         status->MPI_ERROR = tmpstatus.MPI_ERROR;
-      }
-      long long t2end = vftr_get_runtime_usec();
-
-      vftr_mpi_overhead_usec += t2end - t2start;
-
-      return retVal;
+   // handle the special case of MPI_STATUS_IGNORE
+   if (status != MPI_STATUS_IGNORE) {
+      status->MPI_SOURCE = tmpstatus.MPI_SOURCE;
+      status->MPI_TAG = tmpstatus.MPI_TAG;
+      status->MPI_ERROR = tmpstatus.MPI_ERROR;
    }
+   long long t2end = vftr_get_runtime_usec();
+
+   vftr_mpi_overhead_usec += t2end - t2start;
+
+   return retVal;
 }
 
 #endif
