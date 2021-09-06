@@ -66,7 +66,8 @@ check_PROGRAMS = radixsort_uint64 \
                   functions_4 \
                   functions_5 \
                   stacks_1 \
-                  browse_1
+                  browse_1 \
+		  no_instrument_attribute
 
 if WITH_MPI
 check_PROGRAMS += stacks_2 \
@@ -185,6 +186,10 @@ browse_1_SOURCES = $(srcdir)/browse_1.c
 browse_1_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
 browse_1_LDFLAGS = $(AM_LDFLAGS)
 
+no_instrument_attribute_SOURCES = $(srcdir)/no_instrument_attribute.c
+no_instrument_attribute_CFLAGS = $(AM_CFLAGS) -finstrument-functions
+no_instrument_attribute_LDFLAGS = $(AM_LDFLAGS)
+
 if ENABLE_HWC
 if ON_VECTOR_ENGINE
 sxhwc_1_SOURCES = $(srcdir)/sxhwc_1.c
@@ -216,7 +221,8 @@ dist_check_SCRIPTS = radixsort_uint64.sh \
                       functions_4.sh \
                       functions_5.sh \
                       stacks_1.sh \
-                      browse_1.sh
+                      browse_1.sh \
+		      no_instrument_attribute.sh
 
 if ENABLE_HWC
 if ON_VECTOR_ENGINE

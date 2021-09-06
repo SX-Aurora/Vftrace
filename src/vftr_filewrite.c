@@ -193,8 +193,14 @@ char *vftr_get_remark_indices (remarks_t *remarks) {
 void vftr_print_remark (FILE *fp, int remark_id) {
   switch (remark_id) {
     case (REMARK_OVERHEAD):
-       fprintf (fp, "%d): This function has a large overhead compared to its runtime. It can significantly increase the runtime of the traced program and expand MPI imbalances further.\n", remark_id);
-       fprintf (fp, "    If the function is not of interest to you, consider putting __attribute__((no_instrument_function)) in front of its declaration to make it invisible to Vftrace.\n");
+       fprintf (fp, "%d): This function has a large overhead compared to its runtime."
+                "It can significantly increase the runtime of the traced program and "
+                "expand MPI imbalances further.\n", remark_id);
+       fprintf (fp, "    If the function is not of interest to you, consider putting "
+                "\"__attribute__((no_instrument_function))\" (C/C++ only)-codes "
+                "in front of its declaration to make it invisible to Vftrace.\n"
+                "Alternatively consider compiling the entire sourcefile with the "
+                "\"-fno-instrument-functions\" flag.\n");
        break;
     case (REMARK_DUMMY):
        fprintf (fp, "%d): This is a dummy\n", remark_id);

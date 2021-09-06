@@ -15,9 +15,6 @@ PROGRAM test
 
    INTEGER :: mystatus(MPI_STATUS_SIZE)
    INTEGER :: request
-   INTEGER :: reqidx, ireq
-
-   INTEGER :: sendrank, recvrank
 
    LOGICAL :: flag
 

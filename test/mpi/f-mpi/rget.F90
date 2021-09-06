@@ -22,7 +22,7 @@ PROGRAM rget
 
    LOGICAL :: valid_data
 
-   INTEGER :: i, ipeer
+   INTEGER :: ipeer
 
    INTEGER, DIMENSION(:,:), ALLOCATABLE :: mystatuses
    INTEGER, DIMENSION(:), ALLOCATABLE :: myrequests

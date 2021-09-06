@@ -21,8 +21,6 @@ PROGRAM raccumulate
 
    LOGICAL :: valid_data
 
-   INTEGER :: i, ipeer
-
    INTEGER, DIMENSION(:,:), ALLOCATABLE :: mystatuses
    INTEGER, DIMENSION(:), ALLOCATABLE :: myrequests
 

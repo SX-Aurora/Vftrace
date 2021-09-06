@@ -16,7 +16,6 @@ PROGRAM iallgatherv_inplace
    INTEGER, DIMENSION(:), ALLOCATABLE :: recvcounts
    INTEGER, DIMENSION(:), ALLOCATABLE :: displs
 
-   INTEGER, PARAMETER :: rootrank = 0
    INTEGER :: irank, i
 
    LOGICAL :: valid_data

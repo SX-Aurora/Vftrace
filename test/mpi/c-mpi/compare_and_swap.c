@@ -32,10 +32,10 @@ int main(int argc, char** argv) {
    // allocating send/recv buffer
    int nints = atoi(argv[1]);
    nints = (nints < comm_size) ? comm_size : nints;
-   int *originbuffer;
-   int *resultbuffer;
-   int *comparebuffer;
-   int *targetbuffer;
+   int *originbuffer = NULL;
+   int *resultbuffer = NULL;
+   int *comparebuffer = NULL;
+   int *targetbuffer = NULL;
    if (my_rank == 0) {
       originbuffer = (int*) malloc(nints*sizeof(int));
       for (int i=0; i<nints; i++) {originbuffer[i]=my_rank;}
@@ -119,7 +119,6 @@ int main(int argc, char** argv) {
       comparebuffer=NULL;
    } else {
       // contents of target buffer should be the sum of all ranks up to this one
-      int refresult = (my_rank*(my_rank+1))/2;
       for (int i=0; i<nints; i++) {
          int refresult;
          if (i==0 && my_rank%2==0) {

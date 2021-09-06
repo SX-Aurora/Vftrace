@@ -51,6 +51,8 @@ PROGRAM gather
    IF (my_rank == rootrank) THEN
       ALLOCATE(rbuffer(nints,comm_size))
       rbuffer(:,:) = -1
+   ELSE
+      ALLOCATE(rbuffer(0,0))
    END IF
 
    ! Message cycle
@@ -73,9 +75,9 @@ PROGRAM gather
             valid_data = .FALSE.
          END IF
       END DO
-      DEALLOCATE(rbuffer)
    END IF
 
+   DEALLOCATE(rbuffer)
    DEALLOCATE(sbuffer)
 
    CALL MPI_Finalize(ierr)

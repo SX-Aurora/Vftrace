@@ -78,6 +78,8 @@ PROGRAM reduce_intercom
    IF (my_rank == 0) THEN
       ALLOCATE(rbuffer(nints))
       rbuffer(:) = -1
+   ELSE
+      ALLOCATE(rbuffer(0))
    END IF
 
    ! prepare the intercomm root assignment
@@ -115,12 +117,12 @@ PROGRAM reduce_intercom
             "Rank ", my_rank, " received faulty data"
          valid_data = .FALSE.
       END IF
-      DEALLOCATE(rbuffer)
    END IF
 
    CALL MPI_Comm_free(int_comm, ierr)
    CALL MPI_Comm_free(sub_comm, ierr)
 
+   DEALLOCATE(rbuffer)
    DEALLOCATE(sbuffer)
 
    CALL MPI_Finalize(ierr)

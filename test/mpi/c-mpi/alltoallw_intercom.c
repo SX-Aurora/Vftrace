@@ -59,7 +59,6 @@ int main(int argc, char** argv) {
    MPI_Datatype *stypes = (MPI_Datatype*) malloc(sub_comm_remote_size*sizeof(MPI_Datatype));
    int nstot = 0;
    for (int irank=0; irank<sub_comm_remote_size; irank++) {
-      int jrank = minpeerrank + irank;
       scounts[irank] = nints;
       sdispls[irank] = nstot*sizeof(int);
       stypes[irank] = MPI_INT;

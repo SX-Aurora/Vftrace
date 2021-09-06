@@ -15,10 +15,6 @@ PROGRAM reduce_scatter_inplace
    INTEGER, DIMENSION(:), ALLOCATABLE :: rbuffer
    INTEGER, DIMENSION(:), ALLOCATABLE :: recvcounts
 
-   INTEGER, PARAMETER :: rootrank = 0
-
-   INTEGER :: refresult
-
    LOGICAL :: valid_data
 
    INTEGER :: irank, i, idx

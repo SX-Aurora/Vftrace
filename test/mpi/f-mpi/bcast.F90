@@ -15,8 +15,6 @@ PROGRAM bcast
 
    INTEGER, PARAMETER :: sendrank = 0
 
-   INTEGER :: refresult
-
    LOGICAL :: valid_data
 
    INTEGER :: ierr

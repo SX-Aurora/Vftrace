@@ -20,7 +20,6 @@ int main(int argc, char** argv) {
       return 1;
    }
 
-   int rootrank = 0;
    // allocating send/recv buffer
    int nints = atoi(argv[1]);
    int *sbuffer = MPI_IN_PLACE;
