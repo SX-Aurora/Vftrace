@@ -41,7 +41,7 @@ void vftr_register_persistent_request(vftr_direction dir, int count,
    // with no effect on communication at all
    if (peer_rank == MPI_PROC_NULL) {return;}
 
-   vftr_request_t *new_request = vftr_new_request(dir, 1, &count, &type, tag, comm, request, 0ll);
+   vftr_request_t *new_request = vftr_new_request(dir, 1, &count, &type, tag, comm, request, 0, NULL, 0ll);
    new_request->rank[0] = peer_rank;
 
    vftr_request_prepend(&vftr_open_persistent_request_list, new_request);
@@ -57,6 +57,8 @@ void vftr_activate_persistent_request(MPI_Request request, long long tstart) {
                                                      matching_persistent_request->tag,
                                                      matching_persistent_request->comm,
                                                      matching_persistent_request->request,
+                                                     0,
+                                                     NULL,
                                                      tstart);
       new_request->rank[0] = matching_persistent_request->rank[0];
       vftr_request_prepend(&vftr_active_persistent_request_list, new_request);

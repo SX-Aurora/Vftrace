@@ -35,7 +35,6 @@ int vftr_MPI_Waitall(int count, MPI_Request array_of_requests[],
    for (int ireq=0; ireq<count; ireq++) {
       req_completed[ireq] = false;
    }
-   int retVal;
    int tmpflag;
    bool all_completed = false;
    while (!all_completed) {

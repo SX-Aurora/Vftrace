@@ -60,7 +60,7 @@ int vftr_MPI_Iscatter(const void *sendbuf, int sendcount, MPI_Datatype sendtype,
          // to prevent additional (and thus faulty rank translation)
          vftr_register_collective_request(send, size, tmpsendcount, tmpsendtype,
                                           tmppeer_ranks, MPI_COMM_WORLD,
-                                          *request, tstart);
+                                          *request, 0, NULL, tstart);
          // cleanup temporary arrays
          free(tmpsendcount);
          tmpsendcount = NULL;
@@ -77,7 +77,7 @@ int vftr_MPI_Iscatter(const void *sendbuf, int sendcount, MPI_Datatype sendtype,
          // root is the rank-id in group A Therefore no problems with
          // rank translation should arise
          vftr_register_collective_request(recv, 1, &recvcount, &recvtype, &root,
-                                          comm, *request, tstart);
+                                          comm, *request, 0, NULL, tstart);
       }
    } else {
       // in intracommunicators the expected behaviour is to
@@ -114,7 +114,8 @@ int vftr_MPI_Iscatter(const void *sendbuf, int sendcount, MPI_Datatype sendtype,
                   idx++;
                }
                vftr_register_collective_request(send, size-1, tmpsendcount, tmpsendtype,
-                                                tmppeer_ranks, comm, *request, tstart);
+                                                tmppeer_ranks, comm, *request,
+                                                0, NULL, tstart);
                // cleanup temporary arrays
                free(tmpsendcount);
                tmpsendcount = NULL;
@@ -136,7 +137,8 @@ int vftr_MPI_Iscatter(const void *sendbuf, int sendcount, MPI_Datatype sendtype,
                tmppeer_ranks[i] = i;
             }
             vftr_register_collective_request(send, size, tmpsendcount, tmpsendtype,
-                                             tmppeer_ranks, comm, *request, tstart);
+                                             tmppeer_ranks, comm, *request,
+                                             0, NULL, tstart);
             // cleanup temporary arrays
             free(tmpsendcount);
             tmpsendcount = NULL;
@@ -147,11 +149,11 @@ int vftr_MPI_Iscatter(const void *sendbuf, int sendcount, MPI_Datatype sendtype,
    
             // self communication of root process
             vftr_register_collective_request(recv, 1, &recvcount, &recvtype, &root,
-                                             comm, *request, tstart);
+                                             comm, *request, 0, NULL, tstart);
          }
       } else {
          vftr_register_collective_request(recv, 1, &recvcount, &recvtype, &root,
-                                          comm, *request, tstart);
+                                          comm, *request, 0, NULL, tstart);
       }
    }
    long long t2end = vftr_get_runtime_usec();

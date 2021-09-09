@@ -58,7 +58,7 @@ int vftr_MPI_Ireduce(const void *sendbuf, void *recvbuf, int count,
          // Register request with MPI_COMM_WORLD as communicator
          // to prevent additional (and thus faulty rank translation)
          vftr_register_collective_request(recv, size, tmpcount, tmptype, peer_ranks,
-                                          MPI_COMM_WORLD, *request, tstart);
+                                          MPI_COMM_WORLD, *request, 0, NULL, tstart);
          free(tmpcount);
          tmpcount = NULL;
          free(tmptype);
@@ -74,7 +74,7 @@ int vftr_MPI_Ireduce(const void *sendbuf, void *recvbuf, int count,
          // root is the rank-id in group A Therefore no problems with 
          // rank translation should arise
          vftr_register_collective_request(send, 1, &count, &datatype, &root,
-                                          comm, *request, tstart);
+                                          comm, *request, 0, NULL, tstart);
       }
    } else {
       // in intracommunicators the expected behaviour is to
@@ -109,7 +109,7 @@ int vftr_MPI_Ireduce(const void *sendbuf, void *recvbuf, int count,
                   idx++;
                }
                vftr_register_collective_request(recv, size-1, tmpcount, tmptype, peer_ranks,
-                                                comm, *request, tstart);
+                                                comm, *request, 0, NULL, tstart);
                free(tmpcount);
                tmpcount = NULL;
                free(tmptype);
@@ -120,7 +120,7 @@ int vftr_MPI_Ireduce(const void *sendbuf, void *recvbuf, int count,
          } else {
             // self communication
             vftr_register_collective_request(send, 1, &count, &datatype, &root,
-                                             comm, *request, tstart);
+                                             comm, *request, 0, NULL, tstart);
             // allocate memory for the temporary arrays
             // to register communication request
             int *tmpcount = (int*) malloc(sizeof(int)*size);
@@ -133,7 +133,7 @@ int vftr_MPI_Ireduce(const void *sendbuf, void *recvbuf, int count,
                peer_ranks[i] = i;
             }
             vftr_register_collective_request(recv, size, tmpcount, tmptype, peer_ranks,
-                                             comm, *request, tstart);
+                                             comm, *request, 0, NULL, tstart);
             free(tmpcount);
             tmpcount = NULL;
             free(tmptype);
@@ -143,7 +143,7 @@ int vftr_MPI_Ireduce(const void *sendbuf, void *recvbuf, int count,
          }
       } else {
          vftr_register_collective_request(send, 1, &count, &datatype, &root,
-                                          comm, *request, tstart);
+                                          comm, *request, 0, NULL, tstart);
       }
    }
    long long t2end = vftr_get_runtime_usec();

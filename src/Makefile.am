@@ -17,10 +17,10 @@ if WITH_MPI
 libvftrace_la_LIBADD += mpi/c-wrapper/libvftr_cmpiwrap.la
 if ENABLE_FORTRAN
 libvftrace_la_LIBADD += mpi/f-wrapper/libvftr_fmpiwrap.la \
-			mpi/f2c/libvftr_mpi_f2c.la
+			mpi/f2vftr/libvftr_mpi_f2vftr.la
 if ENABLE_FORTRAN08
 libvftrace_la_LIBADD += mpi/f08-wrapper/libvftr_f08mpiwrap.la \
-			mpi/f082c/libvftr_mpi_f082c.la
+			mpi/f082vftr/libvftr_mpi_f082vftr.la
 endif
 endif
 endif

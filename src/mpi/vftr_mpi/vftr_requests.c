@@ -32,6 +32,7 @@
 vftr_request_t* vftr_new_request(vftr_direction dir, int nmsg, int *count,
                                  MPI_Datatype *type, int tag,
                                  MPI_Comm comm, MPI_Request request,
+                                 int n_tmp_ptr, void **tmp_ptrs,
                                  long long tstart) {
 
    vftr_request_t *new_open_request = (vftr_request_t*) 
@@ -73,6 +74,10 @@ vftr_request_t* vftr_new_request(vftr_direction dir, int nmsg, int *count,
    new_open_request->rank = (int*) malloc(sizeof(int)*nmsg);
    new_open_request->callingstackID = vftr_fstack->id;
 
+   // store temporary pointers used for mpi-communication
+   new_open_request->n_tmp_ptr = n_tmp_ptr;
+   new_open_request->tmp_ptrs = tmp_ptrs;
+
    return new_open_request;
 }
 
@@ -91,6 +96,14 @@ void vftr_free_request(vftr_request_t **request_ptr) {
    request->type_size = NULL;
    free(request->rank);
    request->rank = NULL;
+
+   // free temporary pointers
+   for (int ireq=0; ireq<request->n_tmp_ptr; ireq++) {
+      free(*(request->tmp_ptrs+ireq));
+      *(request->tmp_ptrs+ireq) = NULL;
+   }
+   free(request->tmp_ptrs);
+   request->tmp_ptrs = NULL;
 
    free(*request_ptr);
    *request_ptr = NULL;

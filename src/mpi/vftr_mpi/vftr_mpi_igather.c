@@ -61,7 +61,7 @@ int vftr_MPI_Igather(const void *sendbuf, int sendcount,
          // to prevent additional (and thus faulty rank translation)
          vftr_register_collective_request(recv, size, tmprecvcount, tmprecvtype,
                                           tmppeer_ranks, MPI_COMM_WORLD,
-                                          *request, tstart);
+                                          *request, 0, NULL, tstart);
          // cleanup temporary arrays
          free(tmprecvcount);
          tmprecvcount = NULL;
@@ -78,7 +78,7 @@ int vftr_MPI_Igather(const void *sendbuf, int sendcount,
          // root is the rank-id in group A Therefore no problems with
          // rank translation should arise
          vftr_register_collective_request(send, 1, &sendcount, &sendtype, &root,
-                                          comm, *request, tstart);
+                                          comm, *request, 0, NULL, tstart);
       }
    } else {
       // in intracommunicators the expected behaviour is to
@@ -114,7 +114,8 @@ int vftr_MPI_Igather(const void *sendbuf, int sendcount,
                   idx++;
                }
                vftr_register_collective_request(recv, size-1, tmprecvcount, tmprecvtype,
-                                                tmppeer_ranks, comm, *request, tstart);
+                                                tmppeer_ranks, comm, *request,
+                                                0, NULL, tstart);
                // cleanup temporary arrays
                free(tmprecvcount);
                tmprecvcount = NULL;
@@ -126,7 +127,7 @@ int vftr_MPI_Igather(const void *sendbuf, int sendcount,
          } else {
             // self communication of root process
             vftr_register_collective_request(send, 1, &sendcount, &sendtype, &root,
-                                             comm, *request, tstart);
+                                             comm, *request, 0, NULL, tstart);
             // allocate memory for the temporary arrays
             // to register communication request
             int *tmprecvcount = (int*) malloc(sizeof(int)*size);
@@ -139,7 +140,8 @@ int vftr_MPI_Igather(const void *sendbuf, int sendcount,
                tmppeer_ranks[i] = i;
             }
             vftr_register_collective_request(recv, size, tmprecvcount, tmprecvtype,
-                                             tmppeer_ranks, comm, *request, tstart);
+                                             tmppeer_ranks, comm, *request,
+                                             0, NULL, tstart);
             // cleanup temporary arrays
             free(tmprecvcount);
             tmprecvcount = NULL;
@@ -150,7 +152,7 @@ int vftr_MPI_Igather(const void *sendbuf, int sendcount,
          }
       } else {
          vftr_register_collective_request(send, 1, &sendcount, &sendtype, &root,
-                                          comm, *request, tstart);
+                                          comm, *request, 0, NULL, tstart);
       }
    }
    long long t2end = vftr_get_runtime_usec();

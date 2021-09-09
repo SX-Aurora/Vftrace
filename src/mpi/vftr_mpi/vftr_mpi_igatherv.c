@@ -57,11 +57,16 @@ int vftr_MPI_Igatherv(const void *sendbuf, int sendcount, MPI_Datatype sendtype,
             // translate the i-th rank in group B to the global rank
             tmppeer_ranks[i] = vftr_remote2global_rank(comm, i);
          }
+         // Store tmp-pointers for delayed deallocation
+         int n_tmp_ptr = 2;
+         void **tmp_ptrs = (void**) malloc(n_tmp_ptr*sizeof(void*));
+         tmp_ptrs[0] = (void*) recvcounts;
+         tmp_ptrs[1] = (void*) displs;
          // Register request with MPI_COMM_WORLD as communicator
          // to prevent additional (and thus faulty rank translation)
          vftr_register_collective_request(recv, size, tmprecvcounts, tmprecvtype,
                                           tmppeer_ranks, MPI_COMM_WORLD,
-                                          *request, tstart);
+                                          *request, n_tmp_ptr, tmp_ptrs, tstart);
          // cleanup temporary arrays
          free(tmprecvcounts);
          tmprecvcounts = NULL;
@@ -78,7 +83,7 @@ int vftr_MPI_Igatherv(const void *sendbuf, int sendcount, MPI_Datatype sendtype,
          // root is the rank-id in group A Therefore no problems with
          // rank translation should arise
          vftr_register_collective_request(send, 1, &sendcount, &sendtype, &root,
-                                          comm, *request, tstart);
+                                          comm, *request, 0, NULL, tstart);
       }
    } else {
       // in intracommunicators the expected behaviour is to
@@ -113,8 +118,14 @@ int vftr_MPI_Igatherv(const void *sendbuf, int sendcount, MPI_Datatype sendtype,
                   tmppeer_ranks[idx] = i;
                   idx++;
                }
+               // Store tmp-pointers for delayed deallocation
+               int n_tmp_ptr = 2;
+               void **tmp_ptrs = (void**) malloc(n_tmp_ptr*sizeof(void*));
+               tmp_ptrs[0] = (void*) recvcounts;
+               tmp_ptrs[1] = (void*) displs;
                vftr_register_collective_request(recv, size-1, tmprecvcounts, tmprecvtype,
-                                                tmppeer_ranks, comm, *request, tstart);
+                                                tmppeer_ranks, comm, *request,
+                                                n_tmp_ptr, tmp_ptrs, tstart);
                // cleanup temporary arrays
                free(tmprecvcounts);
                tmprecvcounts = NULL;
@@ -124,9 +135,15 @@ int vftr_MPI_Igatherv(const void *sendbuf, int sendcount, MPI_Datatype sendtype,
                tmppeer_ranks = NULL;
             }
          } else {
+            // Store tmp-pointers for delayed deallocation
+            int n_tmp_ptr = 2;
+            void **tmp_ptrs = (void**) malloc(n_tmp_ptr*sizeof(void*));
+            tmp_ptrs[0] = (void*) recvcounts;
+            tmp_ptrs[1] = (void*) displs;
             // self communication of root process
             vftr_register_collective_request(send, 1, &sendcount, &sendtype, &root,
-                                             comm, *request, tstart);
+                                             comm, *request, n_tmp_ptr,
+                                             tmp_ptrs, tstart);
    
             // allocate memory for the temporary arrays
             // to register communication request
@@ -140,7 +157,8 @@ int vftr_MPI_Igatherv(const void *sendbuf, int sendcount, MPI_Datatype sendtype,
                tmppeer_ranks[i] = i;
             }
             vftr_register_collective_request(recv, size, tmprecvcounts, tmprecvtype,
-                                             tmppeer_ranks, comm, *request, tstart);
+                                             tmppeer_ranks, comm, *request,
+                                             0, NULL, tstart);
             // cleanup temporary arrays
             free(tmprecvcounts);
             tmprecvcounts = NULL;
@@ -151,7 +169,7 @@ int vftr_MPI_Igatherv(const void *sendbuf, int sendcount, MPI_Datatype sendtype,
          }
       } else {
          vftr_register_collective_request(send, 1, &sendcount, &sendtype, &root,
-                                          comm, *request, tstart);
+                                          comm, *request, 0, NULL, tstart);
       }
    }
    long long t2end = vftr_get_runtime_usec();

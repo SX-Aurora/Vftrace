@@ -58,7 +58,7 @@ int vftr_MPI_Iallreduce(const void *sendbuf, void *recvbuf, int count,
       // Register request with MPI_COMM_WORLD as communicator
       // to prevent additional (and thus faulty rank translation)
       vftr_register_collective_request(send, size, tmpcount, tmptype, peer_ranks,
-                                       MPI_COMM_WORLD, *request, tstart);
+                                       MPI_COMM_WORLD, *request, 0, NULL, tstart);
       // messages to be received
       for (int i=0; i<size; i++) {
          tmpcount[i] = count;
@@ -81,7 +81,7 @@ int vftr_MPI_Iallreduce(const void *sendbuf, void *recvbuf, int count,
       // Register request with MPI_COMM_WORLD as communicator
       // to prevent additional (and thus faulty rank translation)
       vftr_register_collective_request(recv, size, tmpcount, tmptype, peer_ranks,
-                                       MPI_COMM_WORLD, *request, tstart);
+                                       MPI_COMM_WORLD, *request, 0, NULL, tstart);
       // cleanup temporary arrays
       free(tmpcount);
       tmpcount = NULL;
@@ -120,7 +120,7 @@ int vftr_MPI_Iallreduce(const void *sendbuf, void *recvbuf, int count,
                idx++;
             }
             vftr_register_collective_request(send, size-1, tmpcount, tmptype, peer_ranks,
-                                             comm, *request, tstart);
+                                             comm, *request, 0, NULL, tstart);
             // The receive is not strictly true as every process receives only one 
             // data package, but due to the nature of a remote reduce
             // it is not possible to destinguish from whom.
@@ -132,7 +132,7 @@ int vftr_MPI_Iallreduce(const void *sendbuf, void *recvbuf, int count,
             // We selected number 2, because option 3 might not result
             // in an integer abmount of received data.
             vftr_register_collective_request(recv, size-1, tmpcount, tmptype, peer_ranks,
-                                             comm, *request, tstart);
+                                             comm, *request, 0, NULL, tstart);
             // cleanup temporary arrays
             free(tmpcount);
             tmpcount = NULL;
@@ -154,7 +154,7 @@ int vftr_MPI_Iallreduce(const void *sendbuf, void *recvbuf, int count,
             peer_ranks[i] = i;
          }
          vftr_register_collective_request(send, size, tmpcount, tmptype, peer_ranks,
-                                          comm, *request, tstart);
+                                          comm, *request, 0, NULL, tstart);
          // The receive is not strictly true as every process receives only one 
          // data package, but due to the nature of a remote reduce
          // it is not possible to destinguish from whom.
@@ -166,7 +166,7 @@ int vftr_MPI_Iallreduce(const void *sendbuf, void *recvbuf, int count,
          // We selected number 2, because option 3 might not result
          // in an integer abmount of received data.
          vftr_register_collective_request(recv, size, tmpcount, tmptype, peer_ranks,
-                                          comm, *request, tstart);
+                                          comm, *request, 0, NULL, tstart);
          // cleanup temporary arrays
          free(tmpcount);
          tmpcount = NULL;

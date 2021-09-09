@@ -81,8 +81,9 @@ int vftr_MPI_Ireduce_scatter_block(const void *sendbuf, void *recvbuf, int recvc
          // Register message info with MPI_COMM_WORLD as communicator
          // to prevent additional (and thus faulty rank translation)
          peer_ranks[remotesize] = local_root_rank;
-         vftr_register_collective_request(recv, remotesize+1, tmpcount, tmptype, peer_ranks,
-                                          MPI_COMM_WORLD, *request, tstart);
+         vftr_register_collective_request(recv, remotesize+1, tmpcount, tmptype,
+                                          peer_ranks, MPI_COMM_WORLD, *request,
+                                          0, NULL, tstart);
          if (size != remotesize) {
             // only reallocate if the two groups are of different size
             free(tmpcount);
@@ -114,7 +115,7 @@ int vftr_MPI_Ireduce_scatter_block(const void *sendbuf, void *recvbuf, int recvc
          // to prevent additional (and thus faulty rank translation)
          peer_ranks[size] = remote_root_rank;
          vftr_register_collective_request(send, size+1, tmpcount, tmptype, peer_ranks,
-                                          MPI_COMM_WORLD, *request, tstart);
+                                          MPI_COMM_WORLD, *request, 0, NULL, tstart);
          free(tmpcount);
          tmpcount = NULL;
          free(tmptype);
@@ -126,14 +127,14 @@ int vftr_MPI_Ireduce_scatter_block(const void *sendbuf, void *recvbuf, int recvc
          // Register message info with MPI_COMM_WORLD as communicator
          // to prevent additional (and thus faulty rank translation)
          vftr_register_collective_request(send, 1, &count, &datatype,
-                                          &remote_root_rank,
-                                          MPI_COMM_WORLD, *request, tstart);
+                                          &remote_root_rank, MPI_COMM_WORLD, *request,
+                                          0, NULL, tstart);
          // receive scattered reduction result from process 0 of own group
          // Register message info with MPI_COMM_WORLD as communicator
          // to prevent additional (and thus faulty rank translation)
          vftr_register_collective_request(recv, 1, &recvcount, &datatype,
-                                          &local_root_rank,
-                                          MPI_COMM_WORLD, *request, tstart);
+                                          &local_root_rank, MPI_COMM_WORLD, *request,
+                                          0, NULL, tstart);
       }
    } else {
       int size;
@@ -167,16 +168,18 @@ int vftr_MPI_Ireduce_scatter_block(const void *sendbuf, void *recvbuf, int recvc
                   tmptype[i-1] = datatype;
                   peer_ranks[i-1] = i;
                }
-               vftr_register_collective_request(recv, size-1, tmpcount, tmptype, peer_ranks,
-                                                comm, *request, tstart);
+               vftr_register_collective_request(recv, size-1, tmpcount, tmptype,
+                                                peer_ranks, comm, *request,
+                                                0, NULL, tstart);
                // messages to be scatterd after reduction
                for (int i=1; i<size; i++) {
                   // only need to adjust tmpcount to recvcount
                   // tmptype and peer_ranks are already correct
                   tmpcount[i-1] = recvcount;
                }
-               vftr_register_collective_request(send, size-1, tmpcount, tmptype, peer_ranks,
-                                                comm, *request, tstart);
+               vftr_register_collective_request(send, size-1, tmpcount, tmptype,
+                                                peer_ranks, comm, *request,
+                                                0, NULL, tstart);
                free(tmpcount);
                tmpcount = NULL;
                free(tmptype);
@@ -187,10 +190,10 @@ int vftr_MPI_Ireduce_scatter_block(const void *sendbuf, void *recvbuf, int recvc
                int root = 0;
                // send to root process for reduction
                vftr_register_collective_request(send, 1, &count, &datatype, &root,
-                                                comm, *request, tstart);
+                                                comm, *request, 0, NULL, tstart);
                // receive result of redcution scattered to every process
                vftr_register_collective_request(recv, 1, &recvcount, &datatype, &root,
-                                                comm, *request, tstart);
+                                                comm, *request, 0, NULL, tstart);
             }
          }
       } else {
@@ -223,7 +226,7 @@ int vftr_MPI_Ireduce_scatter_block(const void *sendbuf, void *recvbuf, int recvc
             tmptype[size] = datatype;
             peer_ranks[size] = rank;
             vftr_register_collective_request(recv, size+1, tmpcount, tmptype, peer_ranks,
-                                             comm, *request, tstart);
+                                             comm, *request, 0, NULL, tstart);
             // messages to be scatterd after reduction
             for (int i=0; i<size; i++) {
                // only need to adjust tmpcount to recvcount
@@ -233,7 +236,7 @@ int vftr_MPI_Ireduce_scatter_block(const void *sendbuf, void *recvbuf, int recvc
             // message send to itself process for reduction
             tmpcount[size] = count;
             vftr_register_collective_request(send, size+1, tmpcount, tmptype, peer_ranks,
-                                             comm, *request, tstart);
+                                             comm, *request, 0, NULL, tstart);
             free(tmpcount);
             tmpcount = NULL;
             free(tmptype);
@@ -244,10 +247,10 @@ int vftr_MPI_Ireduce_scatter_block(const void *sendbuf, void *recvbuf, int recvc
             int root = 0;
             // send to root process for reduction
             vftr_register_collective_request(send, 1, &count, &datatype, &root,
-                                             comm, *request, tstart);
+                                             comm, *request, 0, NULL, tstart);
             // receive result of redcution scattered to every process
             vftr_register_collective_request(recv, 1, &recvcount, &datatype, &root,
-                                             comm, *request, tstart);
+                                             comm, *request, 0, NULL, tstart);
          }
       }
    }

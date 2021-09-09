@@ -59,7 +59,7 @@ int vftr_MPI_Ialltoall(const void *sendbuf, int sendcount,
       // Register request with MPI_COMM_WORLD as communicator
       // to prevent additional (and thus faulty rank translation)
       vftr_register_collective_request(send, size, tmpcount, tmptype, peer_ranks,
-                                       MPI_COMM_WORLD, *request, tstart);
+                                       MPI_COMM_WORLD, *request, 0, NULL, tstart);
       // messages to be received
       for (int i=0; i<size; i++) {
          tmpcount[i] = recvcount;
@@ -70,7 +70,7 @@ int vftr_MPI_Ialltoall(const void *sendbuf, int sendcount,
       // Register request with MPI_COMM_WORLD as communicator
       // to prevent additional (and thus faulty rank translation)
       vftr_register_collective_request(recv, size, tmpcount, tmptype, peer_ranks,
-                                       MPI_COMM_WORLD, *request, tstart);
+                                       MPI_COMM_WORLD, *request, 0, NULL, tstart);
       // cleanup temporary arrays
       free(tmpcount);
       tmpcount = NULL;
@@ -110,9 +110,9 @@ int vftr_MPI_Ialltoall(const void *sendbuf, int sendcount,
                idx++;
             }
             vftr_register_collective_request(send, size-1, tmpcount, tmptype, peer_ranks,
-                                             comm, *request, tstart);
+                                             comm, *request, 0, NULL, tstart);
             vftr_register_collective_request(recv, size-1, tmpcount, tmptype, peer_ranks,
-                                             comm, *request, tstart);
+                                             comm, *request, 0, NULL, tstart);
             // cleanup temporary arrays
             free(tmpcount);
             tmpcount = NULL;
@@ -134,7 +134,7 @@ int vftr_MPI_Ialltoall(const void *sendbuf, int sendcount,
             peer_ranks[i] = i;
          }
          vftr_register_collective_request(send, size, tmpcount, tmptype, peer_ranks,
-                                          comm, *request, tstart);
+                                          comm, *request, 0, NULL, tstart);
          // messages to be received
          for (int i=0; i<size; i++) {
             tmpcount[i] = recvcount;
@@ -142,7 +142,7 @@ int vftr_MPI_Ialltoall(const void *sendbuf, int sendcount,
             peer_ranks[i] = i;
          }
          vftr_register_collective_request(recv, size, tmpcount, tmptype, peer_ranks,
-                                          comm, *request, tstart);
+                                          comm, *request, 0, NULL, tstart);
          // cleanup temporary arrays
          free(tmpcount);
          tmpcount = NULL;

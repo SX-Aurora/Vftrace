@@ -80,11 +80,6 @@ void vftr_MPI_Igatherv_f2c(void *sendbuf, MPI_Fint *sendcount, MPI_Fint *f_sendt
                                    c_comm,
                                    &c_request);
 
-   if (isroot) {
-      free(c_recvcounts);
-      free(c_displs);
-   }
-
    *f_error = (MPI_Fint) (c_error);
    *f_request = PMPI_Request_c2f(c_request);
 }

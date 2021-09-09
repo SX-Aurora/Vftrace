@@ -53,8 +53,6 @@ void vftr_MPI_Ireduce_scatter_f2c(void *sendbuf, void *recvbuf, MPI_Fint *f_recv
                                           c_op,
                                           c_comm,
                                           &c_request);
-           
-   free(c_recvcounts);
 
    *f_error = (MPI_Fint) (c_error);
    *f_request = PMPI_Request_c2f(c_request);

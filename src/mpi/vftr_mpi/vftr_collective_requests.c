@@ -32,9 +32,10 @@ vftr_request_t *vftr_open_collective_request_list = NULL;
 void vftr_register_collective_request(vftr_direction dir, int nmsg, int *count,
                                       MPI_Datatype *type, int *peer_rank,
                                       MPI_Comm comm, MPI_Request request,
+                                      int n_tmp_ptr, void **tmp_ptrs,
                                       long long tstart) {
 
-   vftr_request_t *new_request = vftr_new_request(dir, nmsg, count, type, -1, comm, request, tstart);
+   vftr_request_t *new_request = vftr_new_request(dir, nmsg, count, type, -1, comm, request, n_tmp_ptr, tmp_ptrs, tstart);
    int isintercom;
    PMPI_Comm_test_inter(comm, &isintercom);
    if (isintercom) {

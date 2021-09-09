@@ -32,8 +32,25 @@ int MPI_Iallgatherv(const void *sendbuf, int sendcount,
                               recvcounts, displs, recvtype, comm,
                               request);
    } else {
+      int size;
+      int isintercom;
+      PMPI_Comm_test_inter(comm, &isintercom);
+      if (isintercom) {
+         PMPI_Comm_remote_size(comm, &size);
+      } else {
+         PMPI_Comm_size(comm, &size);
+      }
+      int *tmp_recvcounts = (int*) malloc(size*sizeof(int));
+      for (int i=0; i<size; i++) {
+         tmp_recvcounts[i] = recvcounts[i];
+      }
+      int *tmp_displs = (int*) malloc(size*sizeof(int));
+      for (int i=0; i<size; i++) {
+         tmp_displs[i] = displs[i];
+      }
+
       return vftr_MPI_Iallgatherv(sendbuf, sendcount, sendtype, recvbuf,
-                                  recvcounts, displs, recvtype, comm,
+                                  tmp_recvcounts, tmp_displs, recvtype, comm,
                                   request);
    }
 }

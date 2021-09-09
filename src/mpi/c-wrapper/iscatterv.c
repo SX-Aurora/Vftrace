@@ -31,7 +31,37 @@ int MPI_Iscatterv(const void *sendbuf, const int *sendcounts,
                             recvbuf, recvcount, recvtype, root, comm,
                             request);
    } else {
-      return vftr_MPI_Iscatterv(sendbuf, sendcounts, displs, sendtype,
+      int isroot;
+      int size;
+      int isintercom;
+      PMPI_Comm_test_inter(comm, &isintercom);
+      if (isintercom) {
+         isroot = MPI_ROOT == root;
+      } else {
+         int myrank;
+         PMPI_Comm_rank(comm, &myrank);
+         isroot = myrank == root;
+      }
+  
+      int *tmp_sendcounts = NULL;
+      int *tmp_displs = NULL;
+      if (isroot) {
+         if (isintercom) {
+            PMPI_Comm_remote_size(comm, &size);
+         } else {
+            PMPI_Comm_size(comm, &size);
+         }
+         tmp_sendcounts = (int*) malloc(size*sizeof(int));
+         for (int i=0; i<size; i++) {
+            tmp_sendcounts[i] = sendcounts[i];
+         }
+         tmp_displs = (int*) malloc(size*sizeof(int));
+         for (int i=0; i<size; i++) {
+            tmp_displs[i] = displs[i];
+         }
+      }
+
+      return vftr_MPI_Iscatterv(sendbuf, tmp_sendcounts, tmp_displs, sendtype,
                                 recvbuf, recvcount, recvtype, root, comm,
                                 request);
    }

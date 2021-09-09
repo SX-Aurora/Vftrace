@@ -59,10 +59,17 @@ int vftr_MPI_Ialltoallw(const void *sendbuf, const int *sendcounts,
          // translate the i-th rank in the remote group to the global rank
          peer_ranks[i] = vftr_remote2global_rank(comm, i);
       }
+      // Store tmp-pointers for delayed deallocation
+      int n_tmp_ptr = 3;
+      void **tmp_ptrs = (void**) malloc(n_tmp_ptr*sizeof(void*));
+      tmp_ptrs[0] = (void*) sendcounts;
+      tmp_ptrs[1] = (void*) sdispls;
+      tmp_ptrs[2] = (void*) sendtypes;
       // Register request with MPI_COMM_WORLD as communicator
       // to prevent additional (and thus faulty rank translation)
       vftr_register_collective_request(send, size, tmpcount, tmptype, peer_ranks,
-                                       MPI_COMM_WORLD, *request, tstart);
+                                       MPI_COMM_WORLD, *request,
+                                       n_tmp_ptr, tmp_ptrs, tstart);
       // messages to be received
       for (int i=0; i<size; i++) {
          tmpcount[i] = recvcounts[i];
@@ -70,10 +77,16 @@ int vftr_MPI_Ialltoallw(const void *sendbuf, const int *sendcounts,
          // translate the i-th rank in the remote group to the global rank
          peer_ranks[i] = vftr_remote2global_rank(comm, i);
       }
+      // Store tmp-pointers for delayed deallocation
+      tmp_ptrs = (void**) malloc(n_tmp_ptr*sizeof(void*));
+      tmp_ptrs[0] = (void*) recvcounts;
+      tmp_ptrs[1] = (void*) rdispls;
+      tmp_ptrs[2] = (void*) recvtypes;
       // Register request with MPI_COMM_WORLD as communicator
       // to prevent additional (and thus faulty rank translation)
       vftr_register_collective_request(recv, size, tmpcount, tmptype, peer_ranks,
-                                       MPI_COMM_WORLD, *request, tstart);
+                                       MPI_COMM_WORLD, *request,
+                                       n_tmp_ptr, tmp_ptrs, tstart);
       // cleanup temporary arrays
       free(tmpcount);
       tmpcount = NULL;
@@ -113,10 +126,20 @@ int vftr_MPI_Ialltoallw(const void *sendbuf, const int *sendcounts,
                peer_ranks[idx] = i;
                idx++;
             }
+            // Store tmp-pointers for delayed deallocation
+            int n_tmp_ptr = 3;
+            void **tmp_ptrs = (void**) malloc(n_tmp_ptr*sizeof(void*));
+            tmp_ptrs[0] = (void*) sendcounts;
+            tmp_ptrs[1] = (void*) sdispls;
+            tmp_ptrs[2] = (void*) sendtypes;
             vftr_register_collective_request(send, size-1, tmpcount, tmptype, peer_ranks,
-                                             comm, *request, tstart);
+                                             comm, *request, n_tmp_ptr, tmp_ptrs, tstart);
+            tmp_ptrs = (void**) malloc(n_tmp_ptr*sizeof(void*));
+            tmp_ptrs[0] = (void*) recvcounts;
+            tmp_ptrs[1] = (void*) rdispls;
+            tmp_ptrs[2] = (void*) recvtypes;
             vftr_register_collective_request(recv, size-1, tmpcount, tmptype, peer_ranks,
-                                             comm, *request, tstart);
+                                             comm, *request, n_tmp_ptr, tmp_ptrs, tstart);
             // cleanup temporary arrays
             free(tmpcount);
             tmpcount = NULL;
@@ -137,16 +160,25 @@ int vftr_MPI_Ialltoallw(const void *sendbuf, const int *sendcounts,
             tmptype[i] = sendtypes[i];
             peer_ranks[i] = i;
          }
+         int n_tmp_ptr = 3;
+         void **tmp_ptrs = (void**) malloc(n_tmp_ptr*sizeof(void*));
+         tmp_ptrs[0] = (void*) sendcounts;
+         tmp_ptrs[1] = (void*) sdispls;
+         tmp_ptrs[2] = (void*) sendtypes;
          vftr_register_collective_request(send, size, tmpcount, tmptype, peer_ranks,
-                                          comm, *request, tstart);
+                                          comm, *request, n_tmp_ptr, tmp_ptrs, tstart);
          // messages to be received
          for (int i=0; i<size; i++) {
             tmpcount[i] = recvcounts[i];
             tmptype[i] = recvtypes[i];
             peer_ranks[i] = i;
          }
+         tmp_ptrs = (void**) malloc(n_tmp_ptr*sizeof(void*));
+         tmp_ptrs[0] = (void*) recvcounts;
+         tmp_ptrs[1] = (void*) rdispls;
+         tmp_ptrs[2] = (void*) recvtypes;
          vftr_register_collective_request(recv, size, tmpcount, tmptype, peer_ranks,
-                                          comm, *request, tstart);
+                                          comm, *request, n_tmp_ptr, tmp_ptrs, tstart);
          // cleanup temporary arrays
          free(tmpcount);
          tmpcount = NULL;
@@ -161,7 +193,6 @@ int vftr_MPI_Ialltoallw(const void *sendbuf, const int *sendcounts,
    vftr_mpi_overhead_usec += t2end - t2start;
 
    return retVal;
-   
 }
 
 #endif

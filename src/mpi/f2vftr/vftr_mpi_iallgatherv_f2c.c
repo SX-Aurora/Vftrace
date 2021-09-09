@@ -66,9 +66,6 @@ void vftr_MPI_Iallgatherv_f2c(void *sendbuf, MPI_Fint *sendcount, MPI_Fint *f_se
                                       c_comm,
                                       &c_request);
 
-   free(c_recvcounts);
-   free(c_displs);
-
    *f_error = (MPI_Fint) (c_error);
    *f_request = PMPI_Request_c2f(c_request);
 }

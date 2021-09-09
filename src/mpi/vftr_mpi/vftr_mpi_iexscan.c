@@ -76,21 +76,25 @@ int vftr_MPI_Iexscan(const void *sendbuf, void *recvbuf, int count,
          // rank 0 only sends to 1
          int tmprank = rank+1;
          vftr_register_collective_request(send, 1, &count, &datatype,
-                                          &tmprank, comm, *request, tstart);
+                                          &tmprank, comm, *request,
+                                          0, NULL, tstart);
       } else if (rank == size - 1) {
          // the last rank will only receive from the rank before it
          int tmprank = rank-1;
          vftr_register_collective_request(recv, 1, &count, &datatype,
-                                          &tmprank, comm, *request, tstart);
+                                          &tmprank, comm, *request,
+                                          0, NULL, tstart);
       } else {
          // all other ranks will receive from the rank before it
          // and send to the rank after it
          int tmprank = rank-1;
          vftr_register_collective_request(recv, 1, &count, &datatype,
-                                          &tmprank, comm, *request, tstart);
+                                          &tmprank, comm, *request,
+                                          0, NULL, tstart);
          tmprank = rank+1;
          vftr_register_collective_request(send, 1, &count, &datatype,
-                                          &tmprank, comm, *request, tstart);
+                                          &tmprank, comm, *request,
+                                          0, NULL, tstart);
       }
    }
    long long t2end = vftr_get_runtime_usec();

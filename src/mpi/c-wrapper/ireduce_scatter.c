@@ -29,7 +29,15 @@ int MPI_Ireduce_scatter(const void *sendbuf, void *recvbuf, const int *recvcount
       return PMPI_Ireduce_scatter(sendbuf, recvbuf, recvcounts,
                                   datatype, op, comm, request);
    } else {
-      return vftr_MPI_Ireduce_scatter(sendbuf, recvbuf, recvcounts,
+      int size;
+      PMPI_Comm_size(comm, &size);
+  
+      int *tmp_recvcounts = (int*) malloc(size*sizeof(int));
+      for (int i=0; i<size; i++) {
+         tmp_recvcounts[i] = recvcounts[i];
+      }
+
+      return vftr_MPI_Ireduce_scatter(sendbuf, recvbuf, tmp_recvcounts,
                                       datatype, op, comm, request);
    }
 }
