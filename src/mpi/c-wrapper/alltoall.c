@@ -19,19 +19,13 @@
 #ifdef _MPI
 #include <mpi.h>
 
-#include "vftr_mpi_utils.h"
-#include "vftr_mpi_alltoall.h"
+#include "alltoall_c2vftr.h"
 
 int MPI_Alltoall(const void *sendbuf, int sendcount,
                  MPI_Datatype sendtype, void *recvbuf, int recvcount,
                  MPI_Datatype recvtype, MPI_Comm comm) {
-   if (vftr_no_mpi_logging()) {
-      return PMPI_Alltoall(sendbuf, sendcount, sendtype, recvbuf,
-                           recvcount, recvtype, comm);
-   } else {
-      return vftr_MPI_Alltoall(sendbuf, sendcount, sendtype, recvbuf,
-                               recvcount, recvtype, comm);
-   }
+   return vftr_MPI_Alltoall(sendbuf, sendcount, sendtype, recvbuf,
+                            recvcount, recvtype, comm);
 }
 
 #endif

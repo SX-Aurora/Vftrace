@@ -18,18 +18,10 @@
 #ifdef _MPI
 #include <mpi.h>
 
-#include "vftr_mpi_utils.h"
-#include "vftr_mpi_utils.h"
-#include "vftr_mpi_utils.h"
-#include "vftr_setup.h"
+#include "init_c2vftr.h"
 
 int MPI_Init(int *argc, char ***argv) {
-
-   int returnValue = PMPI_Init(argc, argv);
-
-   vftr_after_mpi_init();
-
-   return returnValue;
+   return vftr_MPI_Init_c2vftr(argc, argv);
 }
 
 #endif

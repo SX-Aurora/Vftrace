@@ -19,15 +19,10 @@
 #ifdef _MPI
 #include <mpi.h>
 
-#include "vftr_mpi_utils.h"
-#include "vftr_mpi_barrier.h"
+#include "barrier_c2vftr.h"
 
 int MPI_Barrier(MPI_Comm comm) {
-   if (vftr_no_mpi_logging()) {
-      return PMPI_Barrier(comm);
-   } else {
-      return vftr_MPI_Barrier(comm);
-   }
+   return vftr_MPI_Barrier(comm);
 }
 
 #endif

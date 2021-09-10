@@ -19,27 +19,13 @@
 #ifdef _MPI
 #include <mpi.h>
 
-#include "vftr_mpi_utils.h"
-#include "vftr_mpi_ireduce_scatter.h"
+#include "ireduce_scatter_c2vftr.h"
 
 int MPI_Ireduce_scatter(const void *sendbuf, void *recvbuf, const int *recvcounts,
                         MPI_Datatype datatype, MPI_Op op, MPI_Comm comm,
                         MPI_Request *request) {
-   if (vftr_no_mpi_logging()) {
-      return PMPI_Ireduce_scatter(sendbuf, recvbuf, recvcounts,
-                                  datatype, op, comm, request);
-   } else {
-      int size;
-      PMPI_Comm_size(comm, &size);
-  
-      int *tmp_recvcounts = (int*) malloc(size*sizeof(int));
-      for (int i=0; i<size; i++) {
-         tmp_recvcounts[i] = recvcounts[i];
-      }
-
-      return vftr_MPI_Ireduce_scatter(sendbuf, recvbuf, tmp_recvcounts,
-                                      datatype, op, comm, request);
-   }
+   return vftr_MPI_Ireduce_scatter_c2vftr(sendbuf, recvbuf, recvcounts,
+                                          datatype, op, comm, request);
 }
 
 #endif

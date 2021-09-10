@@ -21,51 +21,15 @@
 
 #include <mpi.h>
 
-#include "vftr_mpi_utils.h"
-#include "vftr_mpi_igatherv.h"
+#include "igatherv_c2vftr.h"
 
 int MPI_Igatherv(const void *sendbuf, int sendcount, MPI_Datatype sendtype,
                  void *recvbuf, const int *recvcounts, const int *displs,
                  MPI_Datatype recvtype, int root, MPI_Comm comm,
                  MPI_Request *request) {
-   if (vftr_no_mpi_logging()) {
-      return PMPI_Igatherv(sendbuf, sendcount, sendtype, recvbuf,
-                           recvcounts, displs, recvtype, root, comm,
-                           request);
-   } else {
-      int isroot;
-      int size;
-      int isintercom;
-      PMPI_Comm_test_inter(comm, &isintercom);
-      if (isintercom) {
-         isroot = MPI_ROOT == root;
-      } else {
-         int myrank;
-         PMPI_Comm_rank(comm, &myrank);
-         isroot = myrank == root;
-      }
-  
-      int *tmp_recvcounts = NULL ;
-      int *tmp_displs = NULL ;
-      if (isroot) {
-         if (isintercom) {
-            PMPI_Comm_remote_size(comm, &size);
-         } else {
-            PMPI_Comm_size(comm, &size);
-         }
-         tmp_recvcounts = (int*) malloc(size*sizeof(int));
-         for (int i=0; i<size; i++) {
-           tmp_recvcounts[i] = recvcounts[i];
-         }
-         tmp_displs = (int*) malloc(size*sizeof(int));
-         for (int i=0; i<size; i++) {
-            tmp_displs[i] = displs[i];
-         }
-      }
-      return vftr_MPI_Igatherv(sendbuf, sendcount, sendtype, recvbuf,
-                               tmp_recvcounts, tmp_displs, recvtype, root, comm,
-                               request);
-   }
+   return vftr_MPI_Igatherv_c2vftr(sendbuf, sendcount, sendtype,
+                                   recvbuf, recvcounts, displs, recvtype,
+                                   root, comm, request);
 }
 
 #endif

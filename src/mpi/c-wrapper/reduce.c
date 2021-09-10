@@ -19,16 +19,11 @@
 #ifdef _MPI
 #include <mpi.h>
 
-#include "vftr_mpi_utils.h"
 #include "vftr_mpi_reduce.h"
 
 int MPI_Reduce(const void *sendbuf, void *recvbuf, int count,
                MPI_Datatype datatype, MPI_Op op, int root, MPI_Comm comm) {
-   if (vftr_no_mpi_logging()) {
-      return PMPI_Reduce(sendbuf, recvbuf, count, datatype, op, root, comm);
-   } else {
-      return vftr_MPI_Reduce(sendbuf, recvbuf, count, datatype, op, root, comm);
-   }
+   return vftr_MPI_Reduce_c2vftr(sendbuf, recvbuf, count, datatype, op, root, comm);
 }
 
 #endif
