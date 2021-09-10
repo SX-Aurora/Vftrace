@@ -14,7 +14,8 @@ libvftrace_la_LIBADD = libvftr_pause.la \
 libvftrace_la_LIBADD += ${top_builddir}/external/libtinyexpr.la
 
 if WITH_MPI
-libvftrace_la_LIBADD += mpi/c-wrapper/libvftr_cmpiwrap.la
+libvftrace_la_LIBADD += mpi/c-wrapper/libvftr_cmpiwrap.la \
+			mpi/c2vftr/libvftr_mpi_c2vftr.la
 if ENABLE_FORTRAN
 libvftrace_la_LIBADD += mpi/f-wrapper/libvftr_fmpiwrap.la \
 			mpi/f2vftr/libvftr_mpi_f2vftr.la

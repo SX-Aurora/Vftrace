@@ -1,6 +1,7 @@
 SUBDIRS = vftr_mpi
 if WITH_MPI
-SUBDIRS += c-wrapper
+SUBDIRS += c2vftr \
+	   c-wrapper
 if ENABLE_FORTRAN
 SUBDIRS += f2vftr \
 	   f-wrapper
