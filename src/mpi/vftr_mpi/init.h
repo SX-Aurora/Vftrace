@@ -16,32 +16,13 @@
    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
+#ifndef INIT_H
+#define INIT_H
+
 #ifdef _MPI
 #include <mpi.h>
 
-#include <stdbool.h>
+int vftr_MPI_Init(int *argc, char ***argv);
 
-#include "vftr_clear_requests.h"
-  
-int vftr_MPI_Wait(MPI_Request *request, MPI_Status *status) {
-   int retVal;
-
-   // loop until the communication corresponding to the request is completed
-   int flag = false;
-   while (!flag) {
-      // check if the communication is finished
-      retVal = PMPI_Request_get_status(*request,
-                                       &flag,
-                                       status);
-      // either the communication is completed, or not
-      // other communications might be completed in the background
-      // clear those from the list of open requests
-      vftr_clear_completed_requests();
-   }
-   // Properly set the request and status variable
-   retVal = PMPI_Wait(request, status);
-
-   return retVal;
-}
-
+#endif
 #endif

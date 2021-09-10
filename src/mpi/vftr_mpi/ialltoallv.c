@@ -24,7 +24,7 @@
 #include "vftr_timer.h"
 #include "vftr_collective_requests.h"
 #include "vftr_mpi_utils.h"
-#include "vftr_mpi_buf_addr_const.h"
+#include "vftr_buf_addr_const.h"
 
 int vftr_MPI_Ialltoallv(const void *sendbuf, const int *sendcounts,
                         const int *sdispls, MPI_Datatype sendtype, void *recvbuf,

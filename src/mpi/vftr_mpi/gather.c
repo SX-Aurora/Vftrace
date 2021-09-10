@@ -24,7 +24,6 @@
 #include "vftr_environment.h"
 #include "vftr_sync_messages.h"
 #include "vftr_mpi_utils.h"
-#include "vftr_mpi_buf_addr_const.h"
 
 int vftr_MPI_Gather(const void *sendbuf, int sendcount,
                     MPI_Datatype sendtype, void *recvbuf, int recvcount,

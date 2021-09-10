@@ -24,7 +24,6 @@
 #include "vftr_timer.h"
 #include "vftr_collective_requests.h"
 #include "vftr_mpi_utils.h"
-#include "vftr_mpi_buf_addr_const.h"
 
 int vftr_MPI_Ibcast(void *buffer, int count, MPI_Datatype datatype,
                    int root, MPI_Comm comm, MPI_Request *request) {

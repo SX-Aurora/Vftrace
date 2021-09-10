@@ -24,7 +24,7 @@
 #include "vftr_environment.h"
 #include "vftr_sync_messages.h"
 #include "vftr_mpi_utils.h"
-#include "vftr_mpi_buf_addr_const.h"
+#include "vftr_buf_addr_const.h"
 
 int vftr_MPI_Reduce_scatter(const void *sendbuf, void *recvbuf, const int *recvcounts,
                             MPI_Datatype datatype, MPI_Op op, MPI_Comm comm) {

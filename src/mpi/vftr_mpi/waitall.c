@@ -22,7 +22,6 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
-#include "vftr_mpi_pcontrol.h"
 #include "vftr_clear_requests.h"
   
 int vftr_MPI_Waitall(int count, MPI_Request array_of_requests[],

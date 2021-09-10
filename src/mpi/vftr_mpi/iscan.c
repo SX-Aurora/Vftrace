@@ -22,7 +22,7 @@
 #include "vftr_timer.h"
 #include "vftr_collective_requests.h"
 #include "vftr_mpi_utils.h"
-#include "vftr_mpi_buf_addr_const.h"
+#include "vftr_buf_addr_const.h"
 
 int vftr_MPI_Iscan(const void *sendbuf, void *recvbuf, int count,
                    MPI_Datatype datatype, MPI_Op op, MPI_Comm comm,

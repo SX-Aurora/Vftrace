@@ -27,7 +27,7 @@
 #include "vftr_filewrite.h"
 #include "vftr_pause.h"
 #include "vftr_mpi_utils.h"
-#include "vftr_mpi_pcontrol.h"
+#include "pcontrol.h"
 
 void vftr_reset_counts (function_t *func);
 
