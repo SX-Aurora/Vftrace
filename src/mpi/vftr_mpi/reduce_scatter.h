@@ -16,8 +16,8 @@
    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-#ifndef VFTR_MPI_REDUCE_SCATTER_H
-#define VFTR_MPI_REDUCE_SCATTER_H
+#ifndef REDUCE_SCATTER_H
+#define REDUCE_SCATTER_H
 
 #ifdef _MPI
 #include <mpi.h>

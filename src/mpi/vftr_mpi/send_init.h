@@ -16,8 +16,8 @@
    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-#ifndef VFTR_MPI_SEND_INIT_H
-#define VFTR_MPI_SEND_INIT_H
+#ifndef SEND_INIT_H
+#define SEND_INIT_H
 
 #ifdef _MPI
 #include <mpi.h>

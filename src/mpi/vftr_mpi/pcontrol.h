@@ -15,8 +15,8 @@
    with this program; if not, write to the Free Software Foundation, Inc.,
    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-#ifndef VFTR_MPI_PCONTROL_H
-#define VFTR_MPI_PCONTROL_H
+#ifndef PCONTROL_H
+#define PCONTROL_H
 
 // PControl level as required by the MPI-Standard for profiling interfaces
 extern int vftrace_Pcontrol_level;
