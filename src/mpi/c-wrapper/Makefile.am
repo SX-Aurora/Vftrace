@@ -31,15 +31,15 @@ libvftr_cmpiwrap_la_SOURCES += send.c \
 #			       ssend_init.c \
 #			       rsend_init.c \
 #			       recv_init.c 
-#
-##########
-## tests #
-##########
-#libvftr_cmpiwrap_la_SOURCES += test.c \
-#			       testany.c \
-#			       testsome.c \
-#			       testall.c
-#
+
+#########
+# tests #
+#########
+libvftr_cmpiwrap_la_SOURCES += test.c \
+			       testany.c \
+			       testsome.c \
+			       testall.c
+
 #########
 ## wait #
 #########
@@ -47,7 +47,7 @@ libvftr_cmpiwrap_la_SOURCES += send.c \
 #			       waitany.c \
 #			       waitsome.c \
 #			       waitall.c
-#
+
 #########################
 ## request deallocation #
 #########################
