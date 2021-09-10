@@ -48,18 +48,14 @@ libvftr_mpi_c2vftr_la_SOURCES += test_c2vftr.c \
 				 testsome_c2vftr.c \
 				 testall_c2vftr.c
 
-#########
-## wait #
-#########
-#libvftr_mpi_c2vftr_la_SOURCES += vftr_mpi_wait_c2vftr.c \
-#                              vftr_mpi_waitany_c2vftr.c \
-#                              vftr_mpi_waitsome_c2vftr.c \
-#                              vftr_mpi_waitall_c2vftr.c
-#libvftr_mpi_c2vftr_la_SOURCES += vftr_mpi_wait_c2vftr_finterface.F90 \
-#                              vftr_mpi_waitany_c2vftr_finterface.F90 \
-#                              vftr_mpi_waitsome_c2vftr_finterface.F90 \
-#                              vftr_mpi_waitall_c2vftr_finterface.F90
-#
+########
+# wait #
+########
+libvftr_mpi_c2vftr_la_SOURCES += wait_c2vftr.c \
+				 waitany_c2vftr.c \
+				 waitsome_c2vftr.c \
+				 waitall_c2vftr.c
+
 #########################
 ## request deallocation #
 #########################

@@ -20,14 +20,14 @@
 #include <mpi.h>
 
 #include "vftr_mpi_utils.h"
-#include "waitany.h"
+#include "waitall.h"
 
-int vftr_MPI_Waitany(int count, MPI_Request array_of_requests[],
-                int *index, MPI_Status *status) {
+int vftr_MPI_Waitall_c2vftr(int count, MPI_Request array_of_requests[],
+                            MPI_Status array_of_statuses[]) {
    if (vftr_no_mpi_logging()) {
-      return PMPI_Waitany(count, array_of_requests, index, status);
+      return PMPI_Waitall(count, array_of_requests, array_of_statuses);
    } else {
-      return vftr_MPI_Waitany(count, array_of_requests, index, status);
+      return vftr_MPI_Waitall(count, array_of_requests, array_of_statuses);
    }
 }
 

@@ -53,14 +53,14 @@ libvftr_mpi_la_SOURCES += test.c \
 			  testsome.c \
 			  testall.c
 
-#########
-## wait #
-#########
-#libvftr_mpi_la_SOURCES += wait.c \
-#			  waitany.c \
-#			  waitsome.c \
-#			  waitall.c
-#
+########
+# wait #
+########
+libvftr_mpi_la_SOURCES += wait.c \
+			  waitany.c \
+			  waitsome.c \
+			  waitall.c
+
 #########################
 ## request deallocation #
 #########################
