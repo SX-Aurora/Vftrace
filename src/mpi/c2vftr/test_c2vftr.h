@@ -16,18 +16,13 @@
    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
+#ifndef TEST_C2VFTR_H
+#define TEST_C2VFTR_H
+
 #ifdef _MPI
 #include <mpi.h>
 
-#include "vftr_mpi_utils.h"
-#include "test.h"
+int vftr_MPI_Test_c2vftr(MPI_Request *request, int *flag, MPI_Status *status);
 
-int vftr_MPI_Test(MPI_Request *request, int *flag, MPI_Status *status) {
-   if (vftr_no_mpi_logging()) {
-      return PMPI_Test(request, flag, status);
-   } else {
-      return vftr_MPI_Test(request, flag, status);
-   }
-}
-
+#endif
 #endif

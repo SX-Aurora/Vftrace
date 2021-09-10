@@ -39,19 +39,15 @@ libvftr_mpi_c2vftr_la_SOURCES += send_c2vftr.c \
 #                              vftr_mpi_ssend_init_c2vftr_finterface.F90 \
 #                              vftr_mpi_rsend_init_c2vftr_finterface.F90 \
 #                              vftr_mpi_recv_init_c2vftr_finterface.F90
-#
-##########
-## tests #
-##########
-#libvftr_mpi_c2vftr_la_SOURCES += vftr_mpi_test_c2vftr.c \
-#                              vftr_mpi_testany_c2vftr.c \
-#                              vftr_mpi_testsome_c2vftr.c \
-#                              vftr_mpi_testall_c2vftr.c
-#libvftr_mpi_c2vftr_la_SOURCES += vftr_mpi_test_c2vftr_finterface.F90 \
-#                              vftr_mpi_testany_c2vftr_finterface.F90 \
-#                              vftr_mpi_testsome_c2vftr_finterface.F90 \
-#                              vftr_mpi_testall_c2vftr_finterface.F90
-#
+
+#########
+# tests #
+#########
+libvftr_mpi_c2vftr_la_SOURCES += test_c2vftr.c \
+				 testany_c2vftr.c \
+				 testsome_c2vftr.c \
+				 testall_c2vftr.c
+
 #########
 ## wait #
 #########
