@@ -148,5 +148,5 @@ libvftr_mpi_c2vftr_la_SOURCES += put_c2vftr.c \
 libvftr_mpi_c2vftr_la_SOURCES += pcontrol_c2vftr.c
 
 libvftr_mpi_c2vftr_la_CFLAGS = -D_MPI
-libvftr_mpi_c2vftr_la_CFLAGS += -I${srcdir}/../../ \
+libvftr_mpi_c2vftr_la_CFLAGS += -I${srcdir}/../../
 libvftr_mpi_c2vftr_la_CFLAGS += -I${srcdir}/../vftr_mpi/
