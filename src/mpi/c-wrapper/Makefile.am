@@ -48,11 +48,11 @@ libvftr_cmpiwrap_la_SOURCES += wait.c \
 			       waitsome.c \
 			       waitall.c
 
-#########################
-## request deallocation #
-#########################
-#libvftr_cmpiwrap_la_SOURCES += request_free.c
-#
+########################
+# request deallocation #
+########################
+libvftr_cmpiwrap_la_SOURCES += request_free.c
+
 ################
 ## collectives #
 ################

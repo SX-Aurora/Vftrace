@@ -56,12 +56,11 @@ libvftr_mpi_c2vftr_la_SOURCES += wait_c2vftr.c \
 				 waitsome_c2vftr.c \
 				 waitall_c2vftr.c
 
-#########################
-## request deallocation #
-#########################
-#libvftr_mpi_c2vftr_la_SOURCES += vftr_mpi_request_free_c2vftr.c
-#libvftr_mpi_c2vftr_la_SOURCES += vftr_mpi_request_free_c2vftr_finterface.F90
-#
+########################
+# request deallocation #
+########################
+libvftr_mpi_c2vftr_la_SOURCES += request_free_c2vftr.c
+
 ################
 ## collectives #
 ################
