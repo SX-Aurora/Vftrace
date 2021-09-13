@@ -42,7 +42,7 @@ int vftr_MPI_Iexscan(const void *sendbuf, void *recvbuf, int count,
    PMPI_Comm_rank(comm, &rank);
    // If the comm size is one, no communication occours
    // not even self communication
-   if (size != 1) {
+   if (size > 1) {
       // the precise communication pattern for a scan operation
       // strongly depends on the MPI-implementation
       // and is not specified by the standard!
