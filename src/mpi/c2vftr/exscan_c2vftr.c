@@ -22,8 +22,8 @@
 #include "vftr_mpi_utils.h"
 #include "exscan.h"
 
-int vftr_MPI_Exscan(const void *sendbuf, void *recvbuf, int count,
-               MPI_Datatype datatype, MPI_Op op, MPI_Comm comm) {
+int vftr_MPI_Exscan_c2vftr(const void *sendbuf, void *recvbuf, int count,
+                           MPI_Datatype datatype, MPI_Op op, MPI_Comm comm) {
    if (vftr_no_mpi_logging()) {
       return PMPI_Exscan(sendbuf, recvbuf, count, datatype, op, comm);
    } else {
