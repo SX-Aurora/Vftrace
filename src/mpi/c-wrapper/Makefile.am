@@ -113,9 +113,7 @@ libvftr_cmpiwrap_la_SOURCES += put.c \
 ############
 libvftr_cmpiwrap_la_SOURCES += pcontrol.c
 
-libvftr_cmpiwrap_la_CFLAGS = -I${srcdir}/../c2vftr/
+libvftr_cmpiwrap_la_CFLAGS = -D_MPI
 libvftr_cmpiwrap_la_CFLAGS += -I${srcdir}/../../
+libvftr_cmpiwrap_la_CFLAGS += -I${srcdir}/../c2vftr/
 libvftr_cmpiwrap_la_CFLAGS += -finstrument-functions
-if WITH_MPI
-libvftr_cmpiwrap_la_CFLAGS += -D_MPI
-endif
