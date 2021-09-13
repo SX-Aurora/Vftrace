@@ -21,16 +21,16 @@ libvftr_cmpiwrap_la_SOURCES += send.c \
 			       probe.c \
 			       iprobe.c
 
-###################
-## persistent p2p #
-###################
-#libvftr_cmpiwrap_la_SOURCES += start.c \
-#			       startall.c \
-#			       send_init.c \
-#			       bsend_init.c \
-#			       ssend_init.c \
-#			       rsend_init.c \
-#			       recv_init.c 
+##################
+# persistent p2p #
+##################
+libvftr_cmpiwrap_la_SOURCES += start.c \
+			       startall.c \
+			       send_init.c \
+			       bsend_init.c \
+			       ssend_init.c \
+			       rsend_init.c \
+			       recv_init.c 
 
 #########
 # tests #

@@ -22,23 +22,16 @@ libvftr_mpi_c2vftr_la_SOURCES += send_c2vftr.c \
 				 probe_c2vftr.c \
 				 iprobe_c2vftr.c 
 
-###################
-## persistent p2p #
-###################
-#libvftr_mpi_c2vftr_la_SOURCES += vftr_mpi_start_c2vftr.c \
-#                              vftr_mpi_startall_c2vftr.c \
-#                              vftr_mpi_send_init_c2vftr.c \
-#                              vftr_mpi_bsend_init_c2vftr.c \
-#                              vftr_mpi_ssend_init_c2vftr.c \
-#                              vftr_mpi_rsend_init_c2vftr.c \
-#                              vftr_mpi_recv_init_c2vftr.c
-#libvftr_mpi_c2vftr_la_SOURCES += vftr_mpi_start_c2vftr_finterface.F90 \
-#                              vftr_mpi_startall_c2vftr_finterface.F90 \
-#                              vftr_mpi_send_init_c2vftr_finterface.F90 \
-#                              vftr_mpi_bsend_init_c2vftr_finterface.F90 \
-#                              vftr_mpi_ssend_init_c2vftr_finterface.F90 \
-#                              vftr_mpi_rsend_init_c2vftr_finterface.F90 \
-#                              vftr_mpi_recv_init_c2vftr_finterface.F90
+##################
+# persistent p2p #
+##################
+libvftr_mpi_c2vftr_la_SOURCES += start_c2vftr.c \
+                                 startall_c2vftr.c \
+                                 send_init_c2vftr.c \
+                                 bsend_init_c2vftr.c \
+                                 ssend_init_c2vftr.c \
+                                 rsend_init_c2vftr.c \
+                                 recv_init_c2vftr.c
 
 #########
 # tests #

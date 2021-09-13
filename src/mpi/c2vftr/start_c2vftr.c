@@ -22,7 +22,7 @@
 #include "vftr_mpi_utils.h"
 #include "start.h"
 
-int vftr_MPI_Start(MPI_Request *request) {
+int vftr_MPI_Start_c2vftr(MPI_Request *request) {
    if (vftr_no_mpi_logging()) {
       return PMPI_Start(request);
    } else {
