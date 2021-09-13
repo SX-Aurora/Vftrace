@@ -16,20 +16,15 @@
    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
+#ifndef IALLREDUCE_C2VFTR_H
+#define IALLREDUCE_C2VFTR_H
+
 #ifdef _MPI
 #include <mpi.h>
 
-#include "vftr_mpi_utils.h"
-#include "iallreduce.h"
+int vftr_MPI_Iallreduce_c2vftr(const void *sendbuf, void *recvbuf, int count,
+                               MPI_Datatype datatype, MPI_Op op, MPI_Comm comm,
+                               MPI_Request *request);
 
-int vftr_MPI_Iallreduce(const void *sendbuf, void *recvbuf, int count,
-                   MPI_Datatype datatype, MPI_Op op, MPI_Comm comm,
-                   MPI_Request *request) {
-   if (vftr_no_mpi_logging()) {
-      return PMPI_Iallreduce(sendbuf, recvbuf, count, datatype, op, comm, request);
-   } else {
-      return vftr_MPI_Iallreduce(sendbuf, recvbuf, count, datatype, op, comm, request);
-   }
-}
-
+#endif
 #endif
