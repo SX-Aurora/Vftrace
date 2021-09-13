@@ -22,9 +22,9 @@
 #include "vftr_mpi_utils.h"
 #include "ireduce_scatter.h"
 
-int vftr_MPI_Ireduce_scatter(const void *sendbuf, void *recvbuf, const int *recvcounts,
-                        MPI_Datatype datatype, MPI_Op op, MPI_Comm comm,
-                        MPI_Request *request) {
+int vftr_MPI_Ireduce_scatter_c2vftr(const void *sendbuf, void *recvbuf,
+                                    const int *recvcounts, MPI_Datatype datatype,
+                                    MPI_Op op, MPI_Comm comm, MPI_Request *request) {
    if (vftr_no_mpi_logging()) {
       return PMPI_Ireduce_scatter(sendbuf, recvbuf, recvcounts,
                                   datatype, op, comm, request);
