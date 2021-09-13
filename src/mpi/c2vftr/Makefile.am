@@ -127,20 +127,20 @@ libvftr_mpi_c2vftr_la_SOURCES += request_free_c2vftr.c
 #                              vftr_mpi_iscan_c2vftr_finterface.F90 \
 #                              vftr_mpi_exscan_c2vftr_finterface.F90 \
 #                              vftr_mpi_iexscan_c2vftr_finterface.F90
-#
-##############
-## one sided #
-##############
-#libvftr_mpi_c2vftr_la_SOURCES += vftr_mpi_put_c2vftr.c \
-#                              vftr_mpi_rput_c2vftr.c \
-#                              vftr_mpi_get_c2vftr.c \
-#                              vftr_mpi_rget_c2vftr.c \
-#                              vftr_mpi_accumulate_c2vftr.c \
-#                              vftr_mpi_raccumulate_c2vftr.c \
-#                              vftr_mpi_get_accumulate_c2vftr.c \
-#                              vftr_mpi_rget_accumulate_c2vftr.c \
-#                              vftr_mpi_fetch_and_op_c2vftr.c \
-#                              vftr_mpi_compare_and_swap_c2vftr.c
+
+#############
+# one sided #
+#############
+libvftr_mpi_c2vftr_la_SOURCES += put_c2vftr.c \
+                                 rput_c2vftr.c \
+                                 get_c2vftr.c \
+                                 rget_c2vftr.c \
+                                 accumulate_c2vftr.c \
+                                 raccumulate_c2vftr.c \
+                                 get_accumulate_c2vftr.c \
+                                 rget_accumulate_c2vftr.c \
+                                 fetch_and_op_c2vftr.c \
+                                 compare_and_swap_c2vftr.c
 
 ############
 # pcontrol #

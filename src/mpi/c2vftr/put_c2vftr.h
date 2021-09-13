@@ -16,25 +16,16 @@
    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
+#ifndef PUT_C2VFTR_H
+#define PUT_C2VFTR_H
+
 #ifdef _MPI
 #include <mpi.h>
 
-#include "vftr_mpi_utils.h"
-#include "put.h"
+int vftr_MPI_Put_c2vftr(const void *origin_addr, int origin_count,
+                        MPI_Datatype origin_datatype, int target_rank,
+                        MPI_Aint target_disp, int target_count,
+                        MPI_Datatype target_datatype, MPI_Win win);
 
-int vftr_MPI_Put(const void *origin_addr, int origin_count,
-            MPI_Datatype origin_datatype, int target_rank,
-            MPI_Aint target_disp, int target_count,
-            MPI_Datatype target_datatype, MPI_Win win) {
-   if (vftr_no_mpi_logging()) {
-      return PMPI_Put(origin_addr, origin_count, origin_datatype,
-                      target_rank, target_disp, target_count,
-                      target_datatype, win);
-   } else {
-      return vftr_MPI_Put(origin_addr, origin_count, origin_datatype,
-                          target_rank, target_disp, target_count,
-                          target_datatype, win);
-   }
-}
-
+#endif
 #endif
