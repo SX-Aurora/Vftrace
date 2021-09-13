@@ -24,8 +24,8 @@
 int MPI_Iscan(const void *sendbuf, void *recvbuf, int count,
               MPI_Datatype datatype, MPI_Op op, MPI_Comm comm,
               MPI_Request *request) {
-   return vftr_MPI_Iscan(sendbuf, recvbuf, count, datatype,
-                         op, comm, request);
+   return vftr_MPI_Iscan_c2vftr(sendbuf, recvbuf, count, datatype,
+                                op, comm, request);
 }
 
 #endif
