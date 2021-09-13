@@ -17,6 +17,9 @@
 */
 
 #ifdef _MPI
+
+#include <stdlib.h>
+
 #include <mpi.h>
 
 #include "vftr_mpi_utils.h"
