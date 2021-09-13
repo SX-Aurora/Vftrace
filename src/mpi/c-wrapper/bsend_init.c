@@ -24,7 +24,7 @@
 int MPI_Bsend_init(const void *buf, int count, MPI_Datatype datatype,
                    int dest, int tag, MPI_Comm comm,
                    MPI_Request *request) {
-   return vftr_MPI_Bsend_init(buf, count, datatype, dest, tag, comm, request);
+   return vftr_MPI_Bsend_init_c2vftr(buf, count, datatype, dest, tag, comm, request);
 }
 
 #endif
