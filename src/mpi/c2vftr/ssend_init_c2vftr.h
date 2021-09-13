@@ -16,20 +16,15 @@
    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
+#ifndef SSEND_INIT_C2VFTR_H
+#define SSEND_INIT_C2VFTR_H
+
 #ifdef _MPI
 #include <mpi.h>
 
-#include "vftr_mpi_utils.h"
-#include "ssend_init.h"
+int vftr_MPI_Ssend_init_c2vftr(const void *buf, int count, MPI_Datatype datatype,
+                               int dest, int tag, MPI_Comm comm,
+                               MPI_Request *request);
 
-int vftr_MPI_Ssend_init(const void *buf, int count, MPI_Datatype datatype,
-                   int dest, int tag, MPI_Comm comm,
-                   MPI_Request *request) {
-   if (vftr_no_mpi_logging()) {
-      return PMPI_Ssend_init(buf, count, datatype, dest, tag, comm, request);
-   } else {
-      return vftr_MPI_Ssend_init(buf, count, datatype, dest, tag, comm, request);
-   }
-}
-
+#endif
 #endif
