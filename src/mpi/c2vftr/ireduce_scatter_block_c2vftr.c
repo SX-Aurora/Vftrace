@@ -20,6 +20,7 @@
 #include <mpi.h>
 
 #include "vftr_mpi_utils.h"
+#include "vftr_buf_addr_const.h"
 #include "ireduce_scatter_block.h"
 
 int vftr_MPI_Ireduce_scatter_block_c2vftr(const void *sendbuf, void *recvbuf,
@@ -30,8 +31,24 @@ int vftr_MPI_Ireduce_scatter_block_c2vftr(const void *sendbuf, void *recvbuf,
       return PMPI_Ireduce_scatter_block(sendbuf, recvbuf, recvcount,
                                         datatype, op, comm, request);
    } else {
-      return vftr_MPI_Ireduce_scatter_block(sendbuf, recvbuf, recvcount,
-                                            datatype, op, comm, request);
+      // determine if inter or intra communicator
+      int isintercom;
+      PMPI_Comm_test_inter(comm, &isintercom);
+      if (isintercom) {
+         return vftr_MPI_Ireduce_scatter_block_intercom(sendbuf, recvbuf,
+                                                        recvcount, datatype,
+                                                        op, comm, request);
+      } else {
+         if (vftr_is_C_MPI_IN_PLACE(sendbuf)) {
+            return vftr_MPI_Ireduce_scatter_block_inplace(sendbuf, recvbuf,
+                                                          recvcount, datatype,
+                                                          op, comm, request);
+         } else {
+            return vftr_MPI_Ireduce_scatter_block(sendbuf, recvbuf,
+                                                  recvcount, datatype,
+                                                  op, comm, request);
+         }
+      }
    }
 }
 
