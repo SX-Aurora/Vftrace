@@ -19,7 +19,7 @@
 #ifdef _MPI
 #include <mpi.h>
 
-#include "ssend_init_c2vfrt.h"
+#include "ssend_init_c2vftr.h"
 
 int MPI_Ssend_init(const void *buf, int count, MPI_Datatype datatype,
                    int dest, int tag, MPI_Comm comm,
