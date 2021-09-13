@@ -16,22 +16,16 @@
    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
+#ifndef IREDUCE_SCATTER_BLOCK_C2VFTR_H
+#define IREDUCE_SCATTER_BLOCK_C2VFTR_H
+
 #ifdef _MPI
 #include <mpi.h>
 
-#include "vftr_mpi_utils.h"
-#include "ireduce_scatter_block.h"
+int vftr_MPI_Ireduce_scatter_block_c2vftr(const void *sendbuf, void *recvbuf,
+                                          int recvcount, MPI_Datatype datatype,
+                                          MPI_Op op, MPI_Comm comm,
+                                          MPI_Request *request);
 
-int vftr_MPI_Ireduce_scatter_block(const void *sendbuf, void *recvbuf, int recvcount,
-                              MPI_Datatype datatype, MPI_Op op, MPI_Comm comm,
-                              MPI_Request *request) {
-   if (vftr_no_mpi_logging()) {
-      return PMPI_Ireduce_scatter_block(sendbuf, recvbuf, recvcount,
-                                        datatype, op, comm, request);
-   } else {
-      return vftr_MPI_Ireduce_scatter_block(sendbuf, recvbuf, recvcount,
-                                            datatype, op, comm, request);
-   }
-}
-
+#endif
 #endif
