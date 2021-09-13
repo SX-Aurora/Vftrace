@@ -23,7 +23,7 @@
 
 int MPI_Allreduce(const void *sendbuf, void *recvbuf, int count,
                   MPI_Datatype datatype, MPI_Op op, MPI_Comm comm) {
-   return vftr_MPI_Allreduce(sendbuf, recvbuf, count, datatype, op, comm);
+   return vftr_MPI_Allreduce_c2vftr(sendbuf, recvbuf, count, datatype, op, comm);
 }
 
 #endif
