@@ -2,25 +2,25 @@ noinst_LTLIBRARIES = libvftr_mpi_c2vftr.la
 
 
 libvftr_mpi_c2vftr_la_SOURCES = init_c2vftr.c \
-				finalize_c2vftr.c
+                                finalize_c2vftr.c
 
 ##################
 # point to point #
 ##################
 libvftr_mpi_c2vftr_la_SOURCES += send_c2vftr.c \
-				 isend_c2vftr.c \
-				 bsend_c2vftr.c \
-				 ibsend_c2vftr.c \
-				 ssend_c2vftr.c \
-				 issend_c2vftr.c \
-				 rsend_c2vftr.c \
-				 irsend_c2vftr.c \
-				 recv_c2vftr.c \
-				 irecv_c2vftr.c \
-				 sendrecv_c2vftr.c \
-				 sendrecv_replace_c2vftr.c \
-				 probe_c2vftr.c \
-				 iprobe_c2vftr.c 
+                                 isend_c2vftr.c \
+                                 bsend_c2vftr.c \
+                                 ibsend_c2vftr.c \
+                                 ssend_c2vftr.c \
+                                 issend_c2vftr.c \
+                                 rsend_c2vftr.c \
+                                 irsend_c2vftr.c \
+                                 recv_c2vftr.c \
+                                 irecv_c2vftr.c \
+                                 sendrecv_c2vftr.c \
+                                 sendrecv_replace_c2vftr.c \
+                                 probe_c2vftr.c \
+                                 iprobe_c2vftr.c 
 
 ##################
 # persistent p2p #
@@ -37,17 +37,17 @@ libvftr_mpi_c2vftr_la_SOURCES += start_c2vftr.c \
 # tests #
 #########
 libvftr_mpi_c2vftr_la_SOURCES += test_c2vftr.c \
-				 testany_c2vftr.c \
-				 testsome_c2vftr.c \
-				 testall_c2vftr.c
+                                 testany_c2vftr.c \
+                                 testsome_c2vftr.c \
+                                 testall_c2vftr.c
 
 ########
 # wait #
 ########
 libvftr_mpi_c2vftr_la_SOURCES += wait_c2vftr.c \
-				 waitany_c2vftr.c \
-				 waitsome_c2vftr.c \
-				 waitall_c2vftr.c
+                                 waitany_c2vftr.c \
+                                 waitsome_c2vftr.c \
+                                 waitall_c2vftr.c
 
 ########################
 # request deallocation #
@@ -141,25 +141,12 @@ libvftr_mpi_c2vftr_la_SOURCES += request_free_c2vftr.c
 #                              vftr_mpi_rget_accumulate_c2vftr.c \
 #                              vftr_mpi_fetch_and_op_c2vftr.c \
 #                              vftr_mpi_compare_and_swap_c2vftr.c
-#libvftr_mpi_c2vftr_la_SOURCES += vftr_mpi_put_c2vftr_finterface.F90 \
-#                              vftr_mpi_rput_c2vftr_finterface.F90 \
-#                              vftr_mpi_get_c2vftr_finterface.F90 \
-#                              vftr_mpi_rget_c2vftr_finterface.F90 \
-#                              vftr_mpi_accumulate_c2vftr_finterface.F90 \
-#                              vftr_mpi_raccumulate_c2vftr_finterface.F90 \
-#                              vftr_mpi_get_accumulate_c2vftr_finterface.F90 \
-#                              vftr_mpi_rget_accumulate_c2vftr_finterface.F90 \
-#                              vftr_mpi_fetch_and_op_c2vftr_finterface.F90 \
-#                              vftr_mpi_compare_and_swap_c2vftr_finterface.F90
 
 ############
 # pcontrol #
 ############
 libvftr_mpi_c2vftr_la_SOURCES += pcontrol_c2vftr.c
 
-libvftr_mpi_c2vftr_la_CFLAGS =
-libvftr_mpi_c2vftr_la_FCFLAGS =
-
-libvftr_mpi_c2vftr_la_CFLAGS += -D_MPI
+libvftr_mpi_c2vftr_la_CFLAGS = -D_MPI
 libvftr_mpi_c2vftr_la_CFLAGS += -I${srcdir}/../../ \
-				-I${srcdir}/../vftr_mpi/
+libvftr_mpi_c2vftr_la_CFLAGS += -I${srcdir}/../vftr_mpi/
