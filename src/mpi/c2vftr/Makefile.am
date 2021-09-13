@@ -99,34 +99,22 @@ libvftr_mpi_c2vftr_la_SOURCES += request_free_c2vftr.c
 #                              vftr_mpi_ialltoallv_c2vftr_finterface.F90 \
 #                              vftr_mpi_alltoallw_c2vftr_finterface.F90 \
 #                              vftr_mpi_ialltoallw_c2vftr_finterface.F90
-#
-#####################
-## global reduction #
-#####################
-#libvftr_mpi_c2vftr_la_SOURCES += vftr_mpi_reduce_c2vftr.c \
-#                              vftr_mpi_ireduce_c2vftr.c \
-#                              vftr_mpi_allreduce_c2vftr.c \
-#                              vftr_mpi_iallreduce_c2vftr.c \
-#                              vftr_mpi_reduce_scatter_block_c2vftr.c \
-#                              vftr_mpi_ireduce_scatter_block_c2vftr.c \
-#                              vftr_mpi_reduce_scatter_c2vftr.c \
-#                              vftr_mpi_ireduce_scatter_c2vftr.c \
-#                              vftr_mpi_scan_c2vftr.c \
-#                              vftr_mpi_iscan_c2vftr.c \
-#                              vftr_mpi_exscan_c2vftr.c \
-#                              vftr_mpi_iexscan_c2vftr.c 
-#libvftr_mpi_c2vftr_la_SOURCES += vftr_mpi_reduce_c2vftr_finterface.F90 \
-#                              vftr_mpi_ireduce_c2vftr_finterface.F90 \
-#                              vftr_mpi_allreduce_c2vftr_finterface.F90 \
-#                              vftr_mpi_iallreduce_c2vftr_finterface.F90 \
-#                              vftr_mpi_reduce_scatter_block_c2vftr_finterface.F90 \
-#                              vftr_mpi_ireduce_scatter_block_c2vftr_finterface.F90 \
-#                              vftr_mpi_reduce_scatter_c2vftr_finterface.F90 \
-#                              vftr_mpi_ireduce_scatter_c2vftr_finterface.F90 \
-#                              vftr_mpi_scan_c2vftr_finterface.F90 \
-#                              vftr_mpi_iscan_c2vftr_finterface.F90 \
-#                              vftr_mpi_exscan_c2vftr_finterface.F90 \
-#                              vftr_mpi_iexscan_c2vftr_finterface.F90
+
+####################
+# global reduction #
+####################
+libvftr_mpi_c2vftr_la_SOURCES += reduce_c2vftr.c \
+                                 ireduce_c2vftr.c \
+                                 allreduce_c2vftr.c \
+                                 iallreduce_c2vftr.c \
+                                 reduce_scatter_block_c2vftr.c \
+                                 ireduce_scatter_block_c2vftr.c \
+                                 reduce_scatter_c2vftr.c \
+                                 ireduce_scatter_c2vftr.c \
+                                 scan_c2vftr.c \
+                                 iscan_c2vftr.c \
+                                 exscan_c2vftr.c \
+                                 iexscan_c2vftr.c 
 
 #############
 # one sided #

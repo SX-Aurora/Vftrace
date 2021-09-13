@@ -77,22 +77,22 @@ libvftr_cmpiwrap_la_SOURCES += request_free.c
 #                               ialltoallv.c \
 #                               alltoallw.c \
 #                               ialltoallw.c
-#
-#####################
-## global reduction #
-#####################
-#libvftr_cmpiwrap_la_SOURCES += reduce.c \
-#                               ireduce.c \
-#                               allreduce.c \
-#                               iallreduce.c \
-#                               reduce_scatter_block.c \
-#                               ireduce_scatter_block.c \
-#                               reduce_scatter.c \
-#                               ireduce_scatter.c \
-#                               scan.c \
-#                               iscan.c \
-#                               exscan.c \
-#                               iexscan.c 
+
+####################
+# global reduction #
+####################
+libvftr_cmpiwrap_la_SOURCES += reduce.c \
+                               ireduce.c \
+                               allreduce.c \
+                               iallreduce.c \
+                               reduce_scatter_block.c \
+                               ireduce_scatter_block.c \
+                               reduce_scatter.c \
+                               ireduce_scatter.c \
+                               scan.c \
+                               iscan.c \
+                               exscan.c \
+                               iexscan.c 
 
 #############
 # one sided #
