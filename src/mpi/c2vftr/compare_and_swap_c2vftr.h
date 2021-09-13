@@ -16,19 +16,16 @@
    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
+#ifndef COMPARE_AND_SWAP_C2VFTR_H
+#define COMPARE_AND_SWAP_C2VFTR_H
+
 #ifdef _MPI
 #include <mpi.h>
 
-#include "get_c2vftr.h"
+int vftr_MPI_Compare_and_swap_c2vftr(const void *origin_addr, const void *compare_addr,
+                                     void *result_addr, MPI_Datatype datatype,
+                                     int target_rank, MPI_Aint target_disp,
+                                     MPI_Win win);
 
-int MPI_Get(void *origin_addr, int origin_count,
-            MPI_Datatype origin_datatype, int target_rank,
-            MPI_Aint target_disp, int target_count,
-            MPI_Datatype target_datatype, MPI_Win win) {
-   return vftr_MPI_Get_c2vftr(origin_addr, origin_count, origin_datatype,
-                              target_rank, target_disp, target_count,
-                              target_datatype, win);
-
-}
-
+#endif
 #endif
