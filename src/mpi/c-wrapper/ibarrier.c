@@ -19,10 +19,10 @@
 #ifdef _MPI
 #include <mpi.h>
 
-#include "barrier_c2vftr.h"
+#include "ibarrier_c2vftr.h"
 
-int MPI_Barrier(MPI_Comm comm) {
-   return vftr_MPI_Barrier_c2vftr(comm);
+int MPI_Ibarrier(MPI_Comm comm, MPI_Request *request) {
+   return vftr_MPI_Ibarrier_c2vftr(comm, request);
 }
 
 #endif

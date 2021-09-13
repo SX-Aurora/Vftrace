@@ -319,6 +319,7 @@ dist_noinst_SCRIPTS += start.sh \
 ####################
 
 check_PROGRAMS += barrier \
+		  ibarrier \
 		  bcast \
 		  bcast_nolog \
 		  bcast_intercom \
@@ -401,6 +402,10 @@ check_PROGRAMS += barrier \
 barrier_SOURCES = $(srcdir)/barrier.c
 barrier_CFLAGS = $(AM_CFLAGS)
 barrier_LDFLAGS = $(AM_LDFLAGS)
+
+ibarrier_SOURCES = $(srcdir)/ibarrier.c
+ibarrier_CFLAGS = $(AM_CFLAGS)
+ibarrier_LDFLAGS = $(AM_LDFLAGS)
 
 bcast_SOURCES = $(srcdir)/bcast.c
 bcast_CFLAGS = $(AM_CFLAGS)
@@ -715,6 +720,7 @@ ialltoallw_intercom_CFLAGS = $(AM_CFLAGS)
 ialltoallw_intercom_LDFLAGS = $(AM_LDFLAGS)
 
 dist_noinst_SCRIPTS += barrier.sh \
+		       ibarrier.sh \
 		       bcast.sh \
 		       bcast_nolog.sh \
 		       bcast_intercom.sh \

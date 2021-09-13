@@ -16,13 +16,14 @@
    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
+
 #ifdef _MPI
 #include <mpi.h>
 
-#include "barrier_c2vftr.h"
-
-int MPI_Barrier(MPI_Comm comm) {
-   return vftr_MPI_Barrier_c2vftr(comm);
+int vftr_MPI_Ibarrier(MPI_Comm comm, MPI_Request *request) {
+   // there is no timing needed but we keep the wrapper here
+   // for the instrumentation
+   return PMPI_Ibarrier(comm, request);
 }
 
 #endif

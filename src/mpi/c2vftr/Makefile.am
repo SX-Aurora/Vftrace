@@ -54,51 +54,31 @@ libvftr_mpi_c2vftr_la_SOURCES += wait_c2vftr.c \
 ########################
 libvftr_mpi_c2vftr_la_SOURCES += request_free_c2vftr.c
 
-################
-## collectives #
-################
-#libvftr_mpi_c2vftr_la_SOURCES += vftr_mpi_barrier_c2vftr.c \
-#                              vftr_mpi_bcast_c2vftr.c \
-#                              vftr_mpi_ibcast_c2vftr.c \
-#                              vftr_mpi_gather_c2vftr.c \
-#                              vftr_mpi_igather_c2vftr.c \
-#                              vftr_mpi_gatherv_c2vftr.c \
-#                              vftr_mpi_igatherv_c2vftr.c \
-#                              vftr_mpi_scatter_c2vftr.c \
-#                              vftr_mpi_iscatter_c2vftr.c \
-#                              vftr_mpi_scatterv_c2vftr.c \
-#                              vftr_mpi_iscatterv_c2vftr.c \
-#                              vftr_mpi_allgather_c2vftr.c \
-#                              vftr_mpi_iallgather_c2vftr.c \
-#                              vftr_mpi_allgatherv_c2vftr.c \
-#                              vftr_mpi_iallgatherv_c2vftr.c \
-#                              vftr_mpi_alltoall_c2vftr.c \
-#                              vftr_mpi_ialltoall_c2vftr.c \
-#                              vftr_mpi_alltoallv_c2vftr.c \
-#                              vftr_mpi_ialltoallv_c2vftr.c \
-#                              vftr_mpi_alltoallw_c2vftr.c \
-#                              vftr_mpi_ialltoallw_c2vftr.c
-#libvftr_mpi_c2vftr_la_SOURCES += vftr_mpi_barrier_c2vftr_finterface.F90 \
-#                              vftr_mpi_bcast_c2vftr_finterface.F90 \
-#                              vftr_mpi_ibcast_c2vftr_finterface.F90 \
-#                              vftr_mpi_gather_c2vftr_finterface.F90 \
-#                              vftr_mpi_igather_c2vftr_finterface.F90 \
-#                              vftr_mpi_gatherv_c2vftr_finterface.F90 \
-#                              vftr_mpi_igatherv_c2vftr_finterface.F90 \
-#                              vftr_mpi_scatter_c2vftr_finterface.F90 \
-#                              vftr_mpi_iscatter_c2vftr_finterface.F90 \
-#                              vftr_mpi_scatterv_c2vftr_finterface.F90 \
-#                              vftr_mpi_iscatterv_c2vftr_finterface.F90 \
-#                              vftr_mpi_allgather_c2vftr_finterface.F90 \
-#                              vftr_mpi_iallgather_c2vftr_finterface.F90 \
-#                              vftr_mpi_allgatherv_c2vftr_finterface.F90 \
-#                              vftr_mpi_iallgatherv_c2vftr_finterface.F90 \
-#                              vftr_mpi_alltoall_c2vftr_finterface.F90 \
-#                              vftr_mpi_ialltoall_c2vftr_finterface.F90 \
-#                              vftr_mpi_alltoallv_c2vftr_finterface.F90 \
-#                              vftr_mpi_ialltoallv_c2vftr_finterface.F90 \
-#                              vftr_mpi_alltoallw_c2vftr_finterface.F90 \
-#                              vftr_mpi_ialltoallw_c2vftr_finterface.F90
+###############
+# collectives #
+###############
+libvftr_mpi_c2vftr_la_SOURCES += barrier_c2vftr.c \
+                                 ibarrier_c2vftr.c
+#                                bcast_c2vftr.c \
+#                                ibcast_c2vftr.c \
+#                                gather_c2vftr.c \
+#                                igather_c2vftr.c \
+#                                gatherv_c2vftr.c \
+#                                igatherv_c2vftr.c \
+#                                scatter_c2vftr.c \
+#                                iscatter_c2vftr.c \
+#                                scatterv_c2vftr.c \
+#                                iscatterv_c2vftr.c \
+#                                allgather_c2vftr.c \
+#                                iallgather_c2vftr.c \
+#                                allgatherv_c2vftr.c \
+#                                iallgatherv_c2vftr.c \
+#                                alltoall_c2vftr.c \
+#                                ialltoall_c2vftr.c \
+#                                alltoallv_c2vftr.c \
+#                                ialltoallv_c2vftr.c \
+#                                alltoallw_c2vftr.c \
+#                                ialltoallw_c2vftr.c
 
 ####################
 # global reduction #

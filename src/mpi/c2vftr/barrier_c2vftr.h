@@ -16,13 +16,13 @@
    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
+#ifndef BARRIER_C2VFTR_H
+#define BARRIER_C2VFTR_H
+
 #ifdef _MPI
 #include <mpi.h>
 
-#include "barrier_c2vftr.h"
+int vftr_MPI_Barrier_c2vftr(MPI_Comm comm);
 
-int MPI_Barrier(MPI_Comm comm) {
-   return vftr_MPI_Barrier_c2vftr(comm);
-}
-
+#endif
 #endif
