@@ -16,19 +16,14 @@
    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
+#ifndef SCAN_C2VFTR_H
+#define SCAN_C2VFTR_H
+
 #ifdef _MPI
 #include <mpi.h>
 
-#include "vftr_mpi_utils.h"
-#include "scan.h"
+int vftr_MPI_Scan_c2vftr(const void *sendbuf, void *recvbuf, int count,
+                         MPI_Datatype datatype, MPI_Op op, MPI_Comm comm);
 
-int vftr_MPI_Scan(const void *sendbuf, void *recvbuf, int count,
-             MPI_Datatype datatype, MPI_Op op, MPI_Comm comm) {
-   if (vftr_no_mpi_logging()) {
-      return PMPI_Scan(sendbuf, recvbuf, count, datatype, op, comm);
-   } else {
-      return vftr_MPI_Scan(sendbuf, recvbuf, count, datatype, op, comm);
-   }
-}
-
+#endif
 #endif
