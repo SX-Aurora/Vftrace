@@ -22,17 +22,21 @@
 #include <mpi.h>
 
 #include "vftr_mpi_utils.h"
+#include "vftr_buf_addr_const.h"
 #include "igatherv.h"
 
-int vftr_MPI_Igatherv(const void *sendbuf, int sendcount, MPI_Datatype sendtype,
-                 void *recvbuf, const int *recvcounts, const int *displs,
-                 MPI_Datatype recvtype, int root, MPI_Comm comm,
-                 MPI_Request *request) {
+int vftr_MPI_Igatherv_c2vftr(const void *sendbuf, int sendcount,
+                             MPI_Datatype sendtype, void *recvbuf,
+                             const int *recvcounts, const int *displs,
+                             MPI_Datatype recvtype, int root,
+                             MPI_Comm comm, MPI_Request *request) {
    if (vftr_no_mpi_logging()) {
       return PMPI_Igatherv(sendbuf, sendcount, sendtype, recvbuf,
                            recvcounts, displs, recvtype, root, comm,
                            request);
    } else {
+      // create a copy of recvcounts and displacements
+      // They will be deallocated upon completion of the request
       int isroot;
       int size;
       int isintercom;
@@ -62,9 +66,22 @@ int vftr_MPI_Igatherv(const void *sendbuf, int sendcount, MPI_Datatype sendtype,
             tmp_displs[i] = displs[i];
          }
       }
-      return vftr_MPI_Igatherv(sendbuf, sendcount, sendtype, recvbuf,
-                               tmp_recvcounts, tmp_displs, recvtype, root, comm,
-                               request);
+
+      if (isintercom) {
+         return vftr_MPI_Igatherv_intercom(sendbuf, sendcount, sendtype,
+                                           recvbuf, tmp_recvcounts, tmp_displs,
+                                           recvtype, root, comm, request);
+      } else {
+         if (vftr_is_C_MPI_IN_PLACE(sendbuf)) {
+            return vftr_MPI_Igatherv_inplace(sendbuf, sendcount, sendtype,
+                                             recvbuf, tmp_recvcounts, tmp_displs,
+                                             recvtype, root, comm, request);
+         } else {
+            return vftr_MPI_Igatherv(sendbuf, sendcount, sendtype,
+                                     recvbuf, tmp_recvcounts, tmp_displs,
+                                     recvtype, root, comm, request);
+         }
+      }
    }
 }
 
