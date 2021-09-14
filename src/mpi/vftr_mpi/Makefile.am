@@ -86,8 +86,8 @@ libvftr_mpi_la_SOURCES += barrier.c \
                           allgatherv.c \
                           iallgatherv.c \
                           alltoall.c \
-                          ialltoall.c 
-#                          alltoallv.c \
+                          ialltoall.c \
+                          alltoallv.c 
 #                          ialltoallv.c \
 #                          alltoallw.c \
 #                          ialltoallw.c

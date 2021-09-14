@@ -16,23 +16,17 @@
    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
+#ifndef ALLTOALLV_C2VFTR_H
+#define ALLTOALLV_C2VFTR_H
+
 #ifdef _MPI
 #include <mpi.h>
 
-#include "vftr_mpi_utils.h"
-#include "alltoallv.h"
+int vftr_MPI_Alltoallv_c2vftr(const void *sendbuf, const int *sendcounts,
+                              const int *sdispls, MPI_Datatype sendtype,
+                              void *recvbuf, const int *recvcounts,
+                              const int *rdispls, MPI_Datatype recvtype,
+                              MPI_Comm comm);
 
-int vftr_MPI_Alltoallv(const void *sendbuf, const int *sendcounts,
-                  const int *sdispls, MPI_Datatype sendtype, void *recvbuf,
-                  const int *recvcounts, const int *rdispls,
-                  MPI_Datatype recvtype, MPI_Comm comm) {
-   if (vftr_no_mpi_logging()) {
-      return PMPI_Alltoallv(sendbuf, sendcounts, sdispls, sendtype,
-                            recvbuf, recvcounts, rdispls, recvtype, comm);
-   } else {
-      return vftr_MPI_Alltoallv(sendbuf, sendcounts, sdispls, sendtype,
-                                recvbuf, recvcounts, rdispls, recvtype, comm);
-   }
-}
-
+#endif
 #endif
