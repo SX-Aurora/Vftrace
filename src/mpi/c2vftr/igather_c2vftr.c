@@ -20,6 +20,7 @@
 #include <mpi.h>
 
 #include "vftr_mpi_utils.h"
+#include "vftr_buf_addr_const.h"
 #include "igather.h"
 
 int vftr_MPI_Igather_c2vftr(const void *sendbuf, int sendcount,
