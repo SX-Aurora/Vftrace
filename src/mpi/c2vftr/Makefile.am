@@ -68,8 +68,8 @@ libvftr_mpi_c2vftr_la_SOURCES += barrier_c2vftr.c \
                                  scatter_c2vftr.c \
                                  iscatter_c2vftr.c \
                                  scatterv_c2vftr.c \
-                                 iscatterv_c2vftr.c 
-#                                allgather_c2vftr.c \
+                                 iscatterv_c2vftr.c \
+                                 allgather_c2vftr.c 
 #                                iallgather_c2vftr.c \
 #                                allgatherv_c2vftr.c \
 #                                iallgatherv_c2vftr.c \

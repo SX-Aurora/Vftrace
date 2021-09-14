@@ -24,8 +24,9 @@
 int MPI_Allgather(const void *sendbuf, int sendcount,
                   MPI_Datatype sendtype, void *recvbuf, int recvcount,
                   MPI_Datatype recvtype, MPI_Comm comm) {
-   return vftr_MPI_Allgather(sendbuf, sendcount, sendtype, recvbuf,
-                             recvcount, recvtype, comm);
+   return vftr_MPI_Allgather_c2vftr(sendbuf, sendcount, sendtype,
+                                    recvbuf, recvcount, recvtype,
+                                    comm);
 }
 
 #endif

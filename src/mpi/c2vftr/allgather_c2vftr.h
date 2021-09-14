@@ -16,22 +16,16 @@
    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
+#ifndef ALLGATHER_C2VFTR_H
+#define ALLGATHER_C2VFTR_H
+
 #ifdef _MPI
 #include <mpi.h>
 
-#include "vftr_mpi_utils.h"
-#include "allgather.h"
+int vftr_MPI_Allgather_c2vftr(const void *sendbuf, int sendcount,
+                              MPI_Datatype sendtype, void *recvbuf,
+                              int recvcount, MPI_Datatype recvtype,
+                              MPI_Comm comm);
 
-int vftr_MPI_Allgather(const void *sendbuf, int sendcount,
-                  MPI_Datatype sendtype, void *recvbuf, int recvcount,
-                  MPI_Datatype recvtype, MPI_Comm comm) {
-   if (vftr_no_mpi_logging()) {
-      return PMPI_Allgather(sendbuf, sendcount, sendtype, recvbuf,
-                            recvcount, recvtype, comm);
-   } else {
-      return vftr_MPI_Allgather(sendbuf, sendcount, sendtype, recvbuf,
-                                recvcount, recvtype, comm);
-   }
-}
-
+#endif
 #endif
