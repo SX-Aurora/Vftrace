@@ -49,13 +49,13 @@ int vftr_MPI_Gatherv_c2vftr(const void *sendbuf, int sendcount,
                                           recvtype, root, comm);
       } else {
          if (vftr_is_C_MPI_IN_PLACE(sendbuf)) {
-         return vftr_MPI_Gatherv_inplace(sendbuf, sendcount, sendtype,
-                                         recvbuf, recvcounts, displs,
-                                         recvtype, root, comm);
+            return vftr_MPI_Gatherv_inplace(sendbuf, sendcount, sendtype,
+                                            recvbuf, recvcounts, displs,
+                                            recvtype, root, comm);
          } else {
-         return vftr_MPI_Gatherv(sendbuf, sendcount, sendtype,
-                                 recvbuf, recvcounts, displs,
-                                 recvtype, root, comm);
+            return vftr_MPI_Gatherv(sendbuf, sendcount, sendtype,
+                                    recvbuf, recvcounts, displs,
+                                    recvtype, root, comm);
          }
       }
    }
