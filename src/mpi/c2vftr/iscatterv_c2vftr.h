@@ -16,18 +16,17 @@
    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
+#ifndef ISCATTERV_C2VFTR_H
+#define ISCATTERV_C2VFTR_H
+
 #ifdef _MPI
 #include <mpi.h>
 
-#include "iscatterv_c2vftr.h"
+int vftr_MPI_Iscatterv_c2vftr(const void *sendbuf, const int *sendcounts,
+                              const int *displs, MPI_Datatype sendtype,
+                              void *recvbuf, int recvcount,
+                              MPI_Datatype recvtype, int root,
+                              MPI_Comm comm, MPI_Request *request);
 
-int MPI_Iscatterv(const void *sendbuf, const int *sendcounts,
-                  const int *displs, MPI_Datatype sendtype,
-                  void *recvbuf, int recvcount, MPI_Datatype recvtype,
-                  int root, MPI_Comm comm, MPI_Request *request) {
-   return vftr_MPI_Iscatterv_c2vftr(sendbuf, sendcounts, displs,
-                                    sendtype, recvbuf, recvcount,
-                                    recvtype, root, comm, request);
-}
-
+#endif
 #endif

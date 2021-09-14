@@ -79,8 +79,8 @@ libvftr_mpi_la_SOURCES += barrier.c \
                           igatherv.c \
                           scatter.c \
                           iscatter.c \
-                          scatterv.c 
-#                          iscatterv.c \
+                          scatterv.c \
+                          iscatterv.c 
 #                          allgather.c \
 #                          iallgather.c \
 #                          allgatherv.c \
