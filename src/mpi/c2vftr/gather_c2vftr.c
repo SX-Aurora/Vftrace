@@ -36,8 +36,9 @@ int vftr_MPI_Gather_c2vftr(const void *sendbuf, int sendcount,
       vftr_internal_region_end("MPI_Gather_sync");
    }
    if (vftr_no_mpi_logging()) {
-      return PMPI_Gather(sendbuf, sendcount, sendtype, recvbuf, recvcount,
-                         recvtype, root, comm);
+      return PMPI_Gather(sendbuf, sendcount, sendtype,
+                         recvbuf, recvcount, recvtype,
+                         root, comm);
    } else {
       // determine if inter or intra communicator
       int isintercom;
