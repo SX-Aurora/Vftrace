@@ -71,8 +71,8 @@ libvftr_mpi_la_SOURCES += request_free.c
 ###############
 libvftr_mpi_la_SOURCES += barrier.c \
                           ibarrier.c \
-                          bcast.c 
-#                          ibcast.c \
+                          bcast.c \
+                          ibcast.c 
 #                          gather.c \
 #                          igather.c \
 #                          gatherv.c \
