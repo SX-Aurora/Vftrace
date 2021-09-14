@@ -19,14 +19,15 @@
 #ifdef _MPI
 #include <mpi.h>
 
-#include "vftr_mpi_scatterv.h"
+#include "scatterv_c2vftr.h"
 
 int MPI_Scatterv(const void *sendbuf, const int *sendcounts,
                  const int *displs, MPI_Datatype sendtype,
                  void *recvbuf, int recvcount, MPI_Datatype recvtype,
                  int root, MPI_Comm comm) {
-   return vftr_MPI_Scatterv_c2vftr(sendbuf, sendcounts, displs, sendtype,
-                                   recvbuf, recvcount, recvtype, root, comm);
+   return vftr_MPI_Scatterv_c2vftr(sendbuf, sendcounts, displs,
+                                   sendtype, recvbuf, recvcount,
+                                   recvtype, root, comm);
 }
 
 #endif

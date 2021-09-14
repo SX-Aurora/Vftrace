@@ -16,23 +16,17 @@
    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
+#ifndef SCATTERV_C2VFTR_H
+#define SCATTERV_C2VFTR_H
+
 #ifdef _MPI
 #include <mpi.h>
 
-#include "vftr_mpi_utils.h"
-#include "scatterv.h"
+int vftr_MPI_Scatterv_c2vftr(const void *sendbuf, const int *sendcounts,
+                             const int *displs, MPI_Datatype sendtype,
+                             void *recvbuf, int recvcount,
+                             MPI_Datatype recvtype,
+                             int root, MPI_Comm comm);
 
-int vftr_MPI_Scatterv(const void *sendbuf, const int *sendcounts,
-                 const int *displs, MPI_Datatype sendtype,
-                 void *recvbuf, int recvcount, MPI_Datatype recvtype,
-                 int root, MPI_Comm comm) {
-   if (vftr_no_mpi_logging()) {
-      return PMPI_Scatterv(sendbuf, sendcounts, displs, sendtype,
-                           recvbuf, recvcount, recvtype, root, comm);
-   } else {
-      return vftr_MPI_Scatterv(sendbuf, sendcounts, displs, sendtype,
-                               recvbuf, recvcount, recvtype, root, comm);
-   }
-}
-
+#endif
 #endif
