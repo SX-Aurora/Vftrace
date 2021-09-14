@@ -24,8 +24,9 @@
 int MPI_Iscatter(const void *sendbuf, int sendcount, MPI_Datatype sendtype,
                  void *recvbuf, int recvcount, MPI_Datatype recvtype,
                  int root, MPI_Comm comm, MPI_Request *request) {
-   return vftr_MPI_Iscatter(sendbuf, sendcount, sendtype, recvbuf, recvcount,
-                            recvtype, root, comm, request);
+   return vftr_MPI_Iscatter_c2vftr(sendbuf, sendcount, sendtype,
+                                   recvbuf, recvcount, recvtype,
+                                   root, comm, request);
 }
 
 #endif
