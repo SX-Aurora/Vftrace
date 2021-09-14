@@ -40,27 +40,49 @@ int vftr_MPI_Gather(const void *sendbuf, int sendcount,
    if (rank == root) {
       int size;
       PMPI_Comm_size(comm, &size);
-      // if sendbuf is special address MPI_IN_PLACE
-      // sendcount and sendtype are ignored.
-      // Use recvcount and recvtype for statistics
-      if (vftr_is_C_MPI_IN_PLACE(sendbuf)) {
-         // For the in-place option no self communication is executed
-         for (int i=0; i<rank; i++) {
-            vftr_store_sync_message_info(recv, recvcount, recvtype,
-                                         i, -1, comm, tstart, tend);
-         }
-         for (int i=rank+1; i<size; i++) {
-            vftr_store_sync_message_info(recv, recvcount, recvtype,
-                                         i, -1, comm, tstart, tend);
-         }
-      } else {
-         // self communication of root process
-         vftr_store_sync_message_info(send, sendcount, sendtype,
-                                      root, -1, comm, tstart, tend);
-         for (int i=0; i<size; i++) {
-            vftr_store_sync_message_info(recv, recvcount, recvtype,
-                                         i, -1, comm, tstart, tend);
-         }
+      // self communication of root process
+      vftr_store_sync_message_info(send, sendcount, sendtype,
+                                   root, -1, comm, tstart, tend);
+      for (int i=0; i<size; i++) {
+         vftr_store_sync_message_info(recv, recvcount, recvtype,
+                                      i, -1, comm, tstart, tend);
+      }
+   } else {
+      vftr_store_sync_message_info(send, sendcount, sendtype,
+                                   root, -1, comm, tstart, tend);
+   }
+   long long t2end = vftr_get_runtime_usec();
+
+   vftr_mpi_overhead_usec += t2end - t2start;
+
+   return retVal;
+}
+
+int vftr_MPI_Gather_inplace(const void *sendbuf, int sendcount,
+                            MPI_Datatype sendtype, void *recvbuf,
+                            int recvcount, MPI_Datatype recvtype,
+                            int root, MPI_Comm comm) {
+   long long tstart = vftr_get_runtime_usec();
+   int retVal = PMPI_Gather(sendbuf, sendcount, sendtype, recvbuf, recvcount,
+                            recvtype, root, comm);
+   long long tend = vftr_get_runtime_usec();
+
+   long long t2start = tend;
+   // in intracommunicators the expected behaviour is to
+   // bcast from root to all other processes in the communicator
+   int rank;
+   PMPI_Comm_rank(comm, &rank);
+   if (rank == root) {
+      int size;
+      PMPI_Comm_size(comm, &size);
+      // For the in-place option no self communication is executed
+      for (int i=0; i<rank; i++) {
+         vftr_store_sync_message_info(recv, recvcount, recvtype,
+                                      i, -1, comm, tstart, tend);
+      }
+      for (int i=rank+1; i<size; i++) {
+         vftr_store_sync_message_info(recv, recvcount, recvtype,
+                                      i, -1, comm, tstart, tend);
       }
    } else {
       vftr_store_sync_message_info(send, sendcount, sendtype,
