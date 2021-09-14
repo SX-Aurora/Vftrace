@@ -52,7 +52,6 @@ int vftr_MPI_Allgather_inplace(const void *sendbuf, int sendcount,
                                MPI_Datatype sendtype, void *recvbuf,
                                int recvcount, MPI_Datatype recvtype,
                                MPI_Comm comm) {
-   printf("asdf\n");
    long long tstart = vftr_get_runtime_usec();
    int retVal = PMPI_Allgather(sendbuf, sendcount, sendtype, recvbuf,
                                recvcount, recvtype, comm);
