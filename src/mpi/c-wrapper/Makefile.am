@@ -63,8 +63,8 @@ libvftr_cmpiwrap_la_SOURCES += barrier.c \
                                gather.c \
                                igather.c \
 			       gatherv.c \
-                               igatherv.c 
-#                               scatter.c \
+                               igatherv.c \
+                               scatter.c 
 #                               iscatter.c \
 #                               scatterv.c \
 #                               iscatterv.c \
