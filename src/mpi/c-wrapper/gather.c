@@ -24,8 +24,9 @@
 int MPI_Gather(const void *sendbuf, int sendcount,
                MPI_Datatype sendtype, void *recvbuf, int recvcount,
                MPI_Datatype recvtype, int root, MPI_Comm comm) {
-   return vftr_MPI_Gather(sendbuf, sendcount, sendtype, recvbuf, recvcount,
-                          recvtype, root, comm);
+   return vftr_MPI_Gather_c2vftr(sendbuf, sendcount, sendtype,
+                                 recvbuf, recvcount, recvtype,
+                                 root, comm);
 }
 
 #endif
