@@ -25,8 +25,9 @@ int MPI_Iallgather(const void *sendbuf, int sendcount,
                    MPI_Datatype sendtype, void *recvbuf, int recvcount,
                    MPI_Datatype recvtype, MPI_Comm comm,
                    MPI_Request *request) {
-   return vftr_MPI_Iallgather(sendbuf, sendcount, sendtype, recvbuf,
-                              recvcount, recvtype, comm, request);
+   return vftr_MPI_Iallgather_c2vftr(sendbuf, sendcount, sendtype,
+                                     recvbuf, recvcount, recvtype,
+                                     comm, request);
 }
 
 #endif
