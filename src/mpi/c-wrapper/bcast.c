@@ -23,7 +23,7 @@
 
 int MPI_Bcast(void *buffer, int count, MPI_Datatype datatype,
               int root, MPI_Comm comm) {
-   return vftr_MPI_Bcast(buffer, count, datatype, root, comm);
+   return vftr_MPI_Bcast_c2vftr(buffer, count, datatype, root, comm);
 }
 
 #endif

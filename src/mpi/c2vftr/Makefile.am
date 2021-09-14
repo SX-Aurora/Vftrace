@@ -58,8 +58,8 @@ libvftr_mpi_c2vftr_la_SOURCES += request_free_c2vftr.c
 # collectives #
 ###############
 libvftr_mpi_c2vftr_la_SOURCES += barrier_c2vftr.c \
-                                 ibarrier_c2vftr.c
-#                                bcast_c2vftr.c \
+                                 ibarrier_c2vftr.c \
+                                 bcast_c2vftr.c 
 #                                ibcast_c2vftr.c \
 #                                gather_c2vftr.c \
 #                                igather_c2vftr.c \
