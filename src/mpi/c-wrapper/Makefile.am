@@ -76,8 +76,8 @@ libvftr_cmpiwrap_la_SOURCES += barrier.c \
                                ialltoall.c \
                                alltoallv.c \
                                ialltoallv.c \
-                               alltoallw.c 
-#                               ialltoallw.c
+                               alltoallw.c \
+                               ialltoallw.c
 
 ####################
 # global reduction #

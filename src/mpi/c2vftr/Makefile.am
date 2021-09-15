@@ -77,8 +77,8 @@ libvftr_mpi_c2vftr_la_SOURCES += barrier_c2vftr.c \
                                  ialltoall_c2vftr.c \
                                  alltoallv_c2vftr.c \
                                  ialltoallv_c2vftr.c \
-                                 alltoallw_c2vftr.c 
-#                                ialltoallw_c2vftr.c
+                                 alltoallw_c2vftr.c \
+                                 ialltoallw_c2vftr.c
 
 ####################
 # global reduction #
