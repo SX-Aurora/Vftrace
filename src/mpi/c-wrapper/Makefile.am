@@ -75,8 +75,8 @@ libvftr_cmpiwrap_la_SOURCES += barrier.c \
                                alltoall.c \
                                ialltoall.c \
                                alltoallv.c \
-                               ialltoallv.c 
-#                               alltoallw.c \
+                               ialltoallv.c \
+                               alltoallw.c 
 #                               ialltoallw.c
 
 ####################

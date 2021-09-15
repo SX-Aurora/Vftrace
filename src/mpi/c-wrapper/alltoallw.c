@@ -25,8 +25,11 @@ int MPI_Alltoallw(const void *sendbuf, const int *sendcounts,
                   const int *sdispls, const MPI_Datatype *sendtypes,
                   void *recvbuf, const int *recvcounts, const int *rdispls,
                   const MPI_Datatype *recvtypes, MPI_Comm comm) {
-   return vftr_MPI_Alltoallw(sendbuf, sendcounts, sdispls, sendtypes,
-                             recvbuf, recvcounts, rdispls, recvtypes, comm);
+   return vftr_MPI_Alltoallw_c2vftr(sendbuf, sendcounts,
+                                    sdispls, sendtypes,
+                                    recvbuf, recvcounts,
+                                    rdispls, recvtypes,
+                                    comm);
 }
 
 #endif
