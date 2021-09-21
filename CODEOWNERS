@@ -3,7 +3,7 @@
 # Common infrastructure
 vftr_functions.c vftr_filewrite.c vftr_hooks.c vftr_setup.c felix.uhl@emea.nec.com christian.weiss@emea.nec.com
 # MPI functions
-vftr_mpi* felix.uhl@emea.nec.com
+mpi* felix.uhl@emea.nec.com
 # Message profiling
 vftr_async_messages.c vftr_sync_messages.c felix.uhl@emea.nec.com
 # Required for stack normalization
