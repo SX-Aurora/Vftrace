@@ -18,7 +18,6 @@
 #ifdef _MPI
 #include <mpi.h>
 
-#include "vftr_mpi_utils.h"
 #include "pcontrol.h"
 
 int vftr_MPI_Pcontrol_c2vftr(const int level, ...) {
