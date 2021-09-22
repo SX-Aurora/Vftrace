@@ -19,9 +19,6 @@
 #ifdef _MPI
 #include <mpi.h>
 
-#include "vftr_regions.h"
-#include "vftr_environment.h"
-#include "vftr_mpi_utils.h"
 #include "vftr_buf_addr_const.h"
 #include "gatherv.h"
 
@@ -30,33 +27,22 @@ int vftr_MPI_Gatherv_c2vftr(const void *sendbuf, int sendcount,
                             const int *recvcounts, const int *displs,
                             MPI_Datatype recvtype, int root,
                             MPI_Comm comm) {
-   // Estimate synchronization time
-   if (vftr_environment.mpi_show_sync_time->value) {
-      vftr_internal_region_begin("MPI_Gatherv_sync");
-      PMPI_Barrier(comm);
-      vftr_internal_region_end("MPI_Gatherv_sync");
-   }
-   if (vftr_no_mpi_logging()) {
-      return PMPI_Gatherv(sendbuf, sendcount, sendtype, recvbuf,
-                          recvcounts, displs, recvtype, root, comm);
+   // determine if inter or intra communicator
+   int isintercom;
+   PMPI_Comm_test_inter(comm, &isintercom);
+   if (isintercom) {
+      return vftr_MPI_Gatherv_intercom(sendbuf, sendcount, sendtype,
+                                       recvbuf, recvcounts, displs,
+                                       recvtype, root, comm);
    } else {
-      // determine if inter or intra communicator
-      int isintercom;
-      PMPI_Comm_test_inter(comm, &isintercom);
-      if (isintercom) {
-         return vftr_MPI_Gatherv_intercom(sendbuf, sendcount, sendtype,
-                                          recvbuf, recvcounts, displs,
-                                          recvtype, root, comm);
+      if (vftr_is_C_MPI_IN_PLACE(sendbuf)) {
+         return vftr_MPI_Gatherv_inplace(sendbuf, sendcount, sendtype,
+                                         recvbuf, recvcounts, displs,
+                                         recvtype, root, comm);
       } else {
-         if (vftr_is_C_MPI_IN_PLACE(sendbuf)) {
-            return vftr_MPI_Gatherv_inplace(sendbuf, sendcount, sendtype,
-                                            recvbuf, recvcounts, displs,
-                                            recvtype, root, comm);
-         } else {
-            return vftr_MPI_Gatherv(sendbuf, sendcount, sendtype,
-                                    recvbuf, recvcounts, displs,
-                                    recvtype, root, comm);
-         }
+         return vftr_MPI_Gatherv(sendbuf, sendcount, sendtype,
+                                 recvbuf, recvcounts, displs,
+                                 recvtype, root, comm);
       }
    }
 }
