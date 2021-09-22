@@ -19,43 +19,28 @@
 #ifdef _MPI
 #include <mpi.h>
 
-#include "vftr_mpi_utils.h"
-#include "vftr_regions.h"
-#include "vftr_environment.h"
 #include "vftr_buf_addr_const.h"
 #include "reduce_scatter_block.h"
 
 int vftr_MPI_Reduce_scatter_block_c2vftr(const void *sendbuf, void *recvbuf,
                                          int recvcount, MPI_Datatype datatype,
                                          MPI_Op op, MPI_Comm comm) {
-
-   // Estimate synchronization time
-   if (vftr_environment.mpi_show_sync_time->value) {
-      vftr_internal_region_begin("MPI_Reduce_scatter_block_sync");
-      PMPI_Barrier(comm);
-      vftr_internal_region_end("MPI_Reduce_scatter_block_sync");
-   }
-
-   if (vftr_no_mpi_logging()) {
-      return PMPI_Reduce_scatter_block(sendbuf, recvbuf, recvcount, datatype, op, comm);
+   // determine if inter or intra communicator
+   int isintercom;
+   PMPI_Comm_test_inter(comm, &isintercom);
+   if (isintercom) {
+      return vftr_MPI_Reduce_scatter_block_intercom(sendbuf, recvbuf,
+                                                    recvcount, datatype,
+                                                    op, comm);
    } else {
-      // determine if inter or intra communicator
-      int isintercom;
-      PMPI_Comm_test_inter(comm, &isintercom);
-      if (isintercom) {
-         return vftr_MPI_Reduce_scatter_block_intercom(sendbuf, recvbuf,
-                                                       recvcount, datatype,
-                                                       op, comm);
+      if (vftr_is_C_MPI_IN_PLACE(sendbuf)) {
+         return vftr_MPI_Reduce_scatter_block_inplace(sendbuf, recvbuf,
+                                                      recvcount, datatype,
+                                                      op, comm);
       } else {
-         if (vftr_is_C_MPI_IN_PLACE(sendbuf)) {
-            return vftr_MPI_Reduce_scatter_block_inplace(sendbuf, recvbuf,
-                                                         recvcount, datatype,
-                                                         op, comm);
-         } else {
-            return vftr_MPI_Reduce_scatter_block(sendbuf, recvbuf,
-                                                 recvcount, datatype,
-                                                 op, comm);
-         }
+         return vftr_MPI_Reduce_scatter_block(sendbuf, recvbuf,
+                                              recvcount, datatype,
+                                              op, comm);
       }
    }
 }
