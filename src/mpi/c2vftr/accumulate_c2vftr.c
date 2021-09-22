@@ -19,7 +19,6 @@
 #ifdef _MPI
 #include <mpi.h>
 
-#include "vftr_mpi_utils.h"
 #include "accumulate.h"
 
 int vftr_MPI_Accumulate_c2vftr(const void *origin_addr, int origin_count,
