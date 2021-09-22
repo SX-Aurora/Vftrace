@@ -19,17 +19,35 @@
 #ifdef _MPI
 #include <mpi.h>
 
+#include "vftr_mpi_utils.h"
+#include "vftr_regions.h"
+#include "vftr_environment.h"
 #include "alltoallv_c2vftr.h"
 
 int MPI_Alltoallv(const void *sendbuf, const int *sendcounts,
-                  const int *sdispls, MPI_Datatype sendtype, void *recvbuf,
-                  const int *recvcounts, const int *rdispls,
-                  MPI_Datatype recvtype, MPI_Comm comm) {
-   return vftr_MPI_Alltoallv_c2vftr(sendbuf, sendcounts,
-                                    sdispls, sendtype,
-                                    recvbuf, recvcounts,
-                                    rdispls, recvtype,
-                                    comm);
+                  const int *sdispls, MPI_Datatype sendtype,
+                  void *recvbuf, const int *recvcounts,
+                  const int *rdispls, MPI_Datatype recvtype,
+                  MPI_Comm comm) {
+   // Estimate synchronization time
+   if (vftr_environment.mpi_show_sync_time->value) {
+      vftr_internal_region_begin("MPI_Alltoallv_sync");
+      PMPI_Barrier(comm);
+      vftr_internal_region_end("MPI_Alltoallv_sync");
+   }
+   if (vftr_no_mpi_logging()) {
+      return PMPI_Alltoallv(sendbuf, sendcounts,
+                            sdispls, sendtype,
+                            recvbuf, recvcounts,
+                            rdispls, recvtype,
+                            comm);
+   } else {
+      return vftr_MPI_Alltoallv_c2vftr(sendbuf, sendcounts,
+                                       sdispls, sendtype,
+                                       recvbuf, recvcounts,
+                                       rdispls, recvtype,
+                                       comm);
+   }
 }
 
 #endif
