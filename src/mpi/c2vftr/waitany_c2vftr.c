@@ -19,16 +19,11 @@
 #ifdef _MPI
 #include <mpi.h>
 
-#include "vftr_mpi_utils.h"
 #include "waitany.h"
 
 int vftr_MPI_Waitany_c2vftr(int count, MPI_Request array_of_requests[],
                             int *index, MPI_Status *status) {
-   if (vftr_no_mpi_logging()) {
-      return PMPI_Waitany(count, array_of_requests, index, status);
-   } else {
-      return vftr_MPI_Waitany(count, array_of_requests, index, status);
-   }
+   return vftr_MPI_Waitany(count, array_of_requests, index, status);
 }
 
 #endif
