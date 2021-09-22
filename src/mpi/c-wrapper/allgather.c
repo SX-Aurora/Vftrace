@@ -19,14 +19,29 @@
 #ifdef _MPI
 #include <mpi.h>
 
+#include "vftr_regions.h"
+#include "vftr_environment.h"
+#include "vftr_mpi_utils.h"
 #include "allgather_c2vftr.h"
 
 int MPI_Allgather(const void *sendbuf, int sendcount,
                   MPI_Datatype sendtype, void *recvbuf, int recvcount,
                   MPI_Datatype recvtype, MPI_Comm comm) {
-   return vftr_MPI_Allgather_c2vftr(sendbuf, sendcount, sendtype,
-                                    recvbuf, recvcount, recvtype,
-                                    comm);
+   // Estimate synchronization time
+   if (vftr_environment.mpi_show_sync_time->value) {
+      vftr_internal_region_begin("MPI_Allather_sync");
+      PMPI_Barrier(comm);
+      vftr_internal_region_end("MPI_Allather_sync");
+   }
+   if (vftr_no_mpi_logging()) {
+      return PMPI_Allgather(sendbuf, sendcount, sendtype,
+                            recvbuf, recvcount, recvtype,
+                            comm);
+   } else {
+      return vftr_MPI_Allgather_c2vftr(sendbuf, sendcount, sendtype,
+                                       recvbuf, recvcount, recvtype,
+                                       comm);
+   }
 }
 
 #endif

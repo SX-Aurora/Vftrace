@@ -19,9 +19,6 @@
 #ifdef _MPI
 #include <mpi.h>
 
-#include "vftr_regions.h"
-#include "vftr_environment.h"
-#include "vftr_mpi_utils.h"
 #include "vftr_buf_addr_const.h"
 #include "allgather.h"
 
@@ -29,34 +26,22 @@ int vftr_MPI_Allgather_c2vftr(const void *sendbuf, int sendcount,
                               MPI_Datatype sendtype, void *recvbuf,
                               int recvcount, MPI_Datatype recvtype,
                               MPI_Comm comm) {
-   // Estimate synchronization time
-   if (vftr_environment.mpi_show_sync_time->value) {
-      vftr_internal_region_begin("MPI_Allather_sync");
-      PMPI_Barrier(comm);
-      vftr_internal_region_end("MPI_Allather_sync");
-   }
-   if (vftr_no_mpi_logging()) {
-      return PMPI_Allgather(sendbuf, sendcount, sendtype,
-                            recvbuf, recvcount, recvtype,
-                            comm);
+   // determine if inter or intra communicator
+   int isintercom;
+   PMPI_Comm_test_inter(comm, &isintercom);
+   if (isintercom) {
+      return vftr_MPI_Allgather_intercom(sendbuf, sendcount, sendtype,
+                                         recvbuf, recvcount, recvtype,
+                                         comm);
    } else {
-      // determine if inter or intra communicator
-      int isintercom;
-      PMPI_Comm_test_inter(comm, &isintercom);
-      if (isintercom) {
-         return vftr_MPI_Allgather_intercom(sendbuf, sendcount, sendtype,
-                                            recvbuf, recvcount, recvtype,
-                                            comm);
+      if (vftr_is_C_MPI_IN_PLACE(sendbuf)) {
+         return vftr_MPI_Allgather_inplace(sendbuf, sendcount, sendtype,
+                                           recvbuf, recvcount, recvtype,
+                                           comm);
       } else {
-         if (vftr_is_C_MPI_IN_PLACE(sendbuf)) {
-            return vftr_MPI_Allgather_inplace(sendbuf, sendcount, sendtype,
-                                              recvbuf, recvcount, recvtype,
-                                              comm);
-         } else {
-            return vftr_MPI_Allgather(sendbuf, sendcount, sendtype,
-                                      recvbuf, recvcount, recvtype,
-                                      comm);
-         }
+         return vftr_MPI_Allgather(sendbuf, sendcount, sendtype,
+                                   recvbuf, recvcount, recvtype,
+                                   comm);
       }
    }
 }
