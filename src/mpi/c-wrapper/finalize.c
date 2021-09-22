@@ -19,15 +19,10 @@
 #ifdef _MPI
 #include <mpi.h>
 
-#include "vftr_setup.h"
+#include "finalize_c2vftr.h"
 
 int MPI_Finalize() {
-
-   // it is neccessary to finalize vftrace here, in order to properly communicat stack ids
-   // between processes. After MPI_Finalize communication between processes is prohibited
-   vftr_finalize();
-
-   return PMPI_Finalize();
+   return vftr_MPI_Finalize_c2vftr();
 }
 
 #endif
