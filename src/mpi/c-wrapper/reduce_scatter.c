@@ -19,12 +19,28 @@
 #ifdef _MPI
 #include <mpi.h>
 
+#include "vftr_mpi_utils.h"
+#include "vftr_regions.h"
+#include "vftr_environment.h"
 #include "reduce_scatter_c2vftr.h"
 
-int MPI_Reduce_scatter(const void *sendbuf, void *recvbuf, const int *recvcounts,
-                       MPI_Datatype datatype, MPI_Op op, MPI_Comm comm) {
-   return vftr_MPI_Reduce_scatter_c2vftr(sendbuf, recvbuf, recvcounts,
-                                         datatype, op, comm);
+int MPI_Reduce_scatter(const void *sendbuf, void *recvbuf,
+                       const int *recvcounts, MPI_Datatype datatype,
+                       MPI_Op op, MPI_Comm comm) {
+   // Estimate synchronization time
+   if (vftr_environment.mpi_show_sync_time->value) {
+      vftr_internal_region_begin("MPI_Reduce_scatter_sync");
+      PMPI_Barrier(comm);
+      vftr_internal_region_end("MPI_Reduce_scatter_sync");
+   }
+
+   if (vftr_no_mpi_logging()) {
+      return PMPI_Reduce_scatter(sendbuf, recvbuf, recvcounts, datatype, op, comm);
+   } else {
+      return vftr_MPI_Reduce_scatter_c2vftr(sendbuf, recvbuf,
+                                            recvcounts, datatype,
+                                            op, comm);
+   }
 }
 
 #endif
