@@ -19,14 +19,30 @@
 #ifdef _MPI
 #include <mpi.h>
 
+#include "vftr_regions.h"
+#include "vftr_environment.h"
+#include "vftr_mpi_utils.h"
 #include "scatter_c2vftr.h"
 
-int MPI_Scatter(const void *sendbuf, int sendcount, MPI_Datatype sendtype,
-                void *recvbuf, int recvcount, MPI_Datatype recvtype,
+int MPI_Scatter(const void *sendbuf, int sendcount,
+                MPI_Datatype sendtype, void *recvbuf,
+                int recvcount, MPI_Datatype recvtype,
                 int root, MPI_Comm comm) {
-   return vftr_MPI_Scatter_c2vftr(sendbuf, sendcount, sendtype,
-                                  recvbuf, recvcount, recvtype,
-                                  root, comm);
+   // Estimate synchronization time
+   if (vftr_environment.mpi_show_sync_time->value) {
+      vftr_internal_region_begin("MPI_Scatter_sync");
+      PMPI_Barrier(comm);
+      vftr_internal_region_end("MPI_Scatter_sync");
+   }
+   if (vftr_no_mpi_logging()) {
+      return PMPI_Scatter(sendbuf, sendcount, sendtype,
+                          recvbuf, recvcount, recvtype,
+                          root, comm);
+   } else {
+      return vftr_MPI_Scatter_c2vftr(sendbuf, sendcount, sendtype,
+                                     recvbuf, recvcount, recvtype,
+                                     root, comm);
+   }
 }
 
 #endif
