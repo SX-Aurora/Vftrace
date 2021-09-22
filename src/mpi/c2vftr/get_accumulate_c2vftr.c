@@ -19,7 +19,6 @@
 #ifdef _MPI
 #include <mpi.h>
 
-#include "vftr_mpi_utils.h"
 #include "get_accumulate.h"
 
 int vftr_MPI_Get_accumulate_c2vftr(const void *origin_addr, int origin_count,
@@ -28,17 +27,10 @@ int vftr_MPI_Get_accumulate_c2vftr(const void *origin_addr, int origin_count,
                                    int target_rank, MPI_Aint target_disp,
                                    int target_count, MPI_Datatype target_datatype,
                                    MPI_Op op, MPI_Win win) {
-   if (vftr_no_mpi_logging()) {
-      return PMPI_Get_accumulate(origin_addr, origin_count, origin_datatype,
-                                 result_addr, result_count, result_datatype,
-                                 target_rank, target_disp, target_count,
-                                 target_datatype, op, win);
-   } else {
-      return vftr_MPI_Get_accumulate(origin_addr, origin_count, origin_datatype,
-                                     result_addr, result_count, result_datatype,
-                                     target_rank, target_disp, target_count,
-                                     target_datatype, op, win);
-   }
+   return vftr_MPI_Get_accumulate(origin_addr, origin_count, origin_datatype,
+                                  result_addr, result_count, result_datatype,
+                                  target_rank, target_disp, target_count,
+                                  target_datatype, op, win);
 }
 
 #endif
