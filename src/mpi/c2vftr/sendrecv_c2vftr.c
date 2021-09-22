@@ -19,7 +19,6 @@
 #ifdef _MPI
 #include <mpi.h>
 
-#include "vftr_mpi_utils.h"
 #include "sendrecv.h"
 
 int vftr_MPI_Sendrecv_c2vftr(const void *sendbuf, int sendcount,
@@ -27,15 +26,9 @@ int vftr_MPI_Sendrecv_c2vftr(const void *sendbuf, int sendcount,
                              void *recvbuf, int recvcount, MPI_Datatype recvtype,
                              int source, int recvtag, MPI_Comm comm,
                              MPI_Status *status) {
-   if (vftr_no_mpi_logging()) {
-      return PMPI_Sendrecv(sendbuf, sendcount, sendtype, dest, sendtag,
-                           recvbuf, recvcount, recvtype, source, recvtag,
-                           comm, status);
-   } else {
-      return vftr_MPI_Sendrecv(sendbuf, sendcount, sendtype, dest, sendtag,
-                               recvbuf, recvcount, recvtype, source, recvtag,
-                               comm, status);
-   }
+   return vftr_MPI_Sendrecv(sendbuf, sendcount, sendtype, dest, sendtag,
+                            recvbuf, recvcount, recvtype, source, recvtag,
+                            comm, status);
 }
 
 #endif
