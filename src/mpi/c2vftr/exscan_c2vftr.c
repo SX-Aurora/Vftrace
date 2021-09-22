@@ -19,16 +19,11 @@
 #ifdef _MPI
 #include <mpi.h>
 
-#include "vftr_mpi_utils.h"
 #include "exscan.h"
 
 int vftr_MPI_Exscan_c2vftr(const void *sendbuf, void *recvbuf, int count,
                            MPI_Datatype datatype, MPI_Op op, MPI_Comm comm) {
-   if (vftr_no_mpi_logging()) {
-      return PMPI_Exscan(sendbuf, recvbuf, count, datatype, op, comm);
-   } else {
-      return vftr_MPI_Exscan(sendbuf, recvbuf, count, datatype, op, comm);
-   }
+   return vftr_MPI_Exscan(sendbuf, recvbuf, count, datatype, op, comm);
 }
 
 #endif
