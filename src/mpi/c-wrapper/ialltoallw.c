@@ -17,8 +17,11 @@
 */
 
 #ifdef _MPI
+#include <stdlib.h>
+
 #include <mpi.h>
 
+#include "vftr_mpi_utils.h"
 #include "ialltoallw_c2vftr.h"
 
 int MPI_Ialltoallw(const void *sendbuf, const int *sendcounts,
@@ -26,11 +29,19 @@ int MPI_Ialltoallw(const void *sendbuf, const int *sendcounts,
                    void *recvbuf, const int *recvcounts,
                    const int *rdispls, const MPI_Datatype *recvtypes,
                    MPI_Comm comm, MPI_Request *request) {
-   return vftr_MPI_Ialltoallw_c2vftr(sendbuf, sendcounts,
-                                     sdispls, sendtypes,
-                                     recvbuf, recvcounts,
-                                     rdispls, recvtypes,
-                                     comm, request);
+   if (vftr_no_mpi_logging()) {
+      return PMPI_Ialltoallw(sendbuf, sendcounts,
+                             sdispls, sendtypes,
+                             recvbuf, recvcounts,
+                             rdispls, recvtypes,
+                             comm, request);
+   } else {
+      return vftr_MPI_Ialltoallw_c2vftr(sendbuf, sendcounts,
+                                        sdispls, sendtypes,
+                                        recvbuf, recvcounts,
+                                        rdispls, recvtypes,
+                                        comm, request);
+   }
 }
 
 #endif
