@@ -14,7 +14,7 @@
 ! with this program; if not, write to the Free Software Foundation, Inc.,
 ! 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-MODULE vftr_finalize_f082c_f08interface
+MODULE vftr_mpi_finalize_f082vftr_f08i
 #ifdef _MPI
 
    USE, INTRINSIC :: ISO_FORTRAN_ENV
@@ -24,14 +24,15 @@ MODULE vftr_finalize_f082c_f08interface
 
    PRIVATE
 
-   PUBLIC :: vftr_finalize_F08
+   PUBLIC :: vftr_MPI_Finalize_f082vftr
 
    INTERFACE
 
-      SUBROUTINE vftr_finalize_F08() &
-         BIND(c, NAME="vftr_finalize")
+      SUBROUTINE vftr_MPI_Finalize_f082vftr(error) &
+         BIND(c, NAME="vftr_MPI_Finalize_f082vftr")
          IMPLICIT NONE
-      END SUBROUTINE vftr_finalize_F08
+         INTEGER :: error
+      END SUBROUTINE vftr_MPI_Finalize_f082vftr
 
    END INTERFACE
 
@@ -39,4 +40,4 @@ MODULE vftr_finalize_f082c_f08interface
 
 CONTAINS
 
-END MODULE vftr_finalize_f082c_f08interface
+END MODULE vftr_mpi_finalize_f082vftr_f08i

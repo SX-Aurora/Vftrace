@@ -16,23 +16,17 @@
 
 #ifdef _MPI
 
-SUBROUTINE MPI_Finalize_f08(ierror)
-   USE vftr_finalize_f082c_f08interface, &
-      ONLY : vftr_finalize_F08
-   USE mpi_f08, &
-      ONLY : PMPI_Finalize
+SUBROUTINE MPI_Finalize_f08(error)
+   USE vftr_mpi_finalize_f082vftr_f08i, &
+      ONLY : vftr_mpi_finalize_f082vftr
    IMPLICIT NONE
-   INTEGER, OPTIONAL, INTENT(OUT) :: ierror
+   INTEGER, OPTIONAL, INTENT(OUT) :: error
 
-   ! it is neccessary to finalize vftrace here, in order to properly communicat stack ids
-   ! between processes. After MPI_Finalize communication between processes is prohibited
-   CALL vftr_finalize_F08()
+   INTEGER :: tmperror
 
-   IF (PRESENT(ierror)) THEN
-      CALL PMPI_Finalize(ierror)
-   ELSE
-      CALL PMPI_Finalize()
-   END IF
+   CALL vftr_mpi_finalize_f082vftr(tmperror)
+
+   IF (PRESENT(error)) error = tmperror
 
 END SUBROUTINE MPI_Finalize_f08
 

@@ -19,8 +19,8 @@
 SUBROUTINE MPI_Scatter_f08(sendbuf, sendcount, sendtype, &
                            recvbuf, recvcount, recvtype, &
                            root, comm, error)
-   USE vftr_mpi_scatter_f082c_f08interface, &
-      ONLY : vftr_MPI_Scatter_f082c
+   USE vftr_mpi_scatter_f082vftr_f08i, &
+      ONLY : vftr_MPI_Scatter_f082vftr
    USE vftr_mpi_logging_f08, &
       ONLY : vftr_no_mpi_logging_f08
    USE mpi_f08, &
@@ -44,7 +44,7 @@ SUBROUTINE MPI_Scatter_f08(sendbuf, sendcount, sendtype, &
                             recvbuf, recvcount, recvtype, &
                             root, comm, tmperror)
    ELSE
-      CALL vftr_MPI_Scatter_f082c(sendbuf, sendcount, sendtype%MPI_VAL, &
+      CALL vftr_MPI_Scatter_f082vftr(sendbuf, sendcount, sendtype%MPI_VAL, &
                                   recvbuf, recvcount, recvtype%MPI_VAL, &
                                   root, comm%MPI_VAL, tmperror)
    END IF

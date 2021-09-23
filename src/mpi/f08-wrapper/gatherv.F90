@@ -20,8 +20,8 @@ SUBROUTINE MPI_Gatherv_f08(sendbuf, sendcount, sendtype, &
                            recvbuf, recvcounts, displs, &
                            recvtype, root, comm, &
                            error)
-   USE vftr_mpi_gatherv_f082c_f08interface, &
-      ONLY : vftr_MPI_Gatherv_f082c
+   USE vftr_mpi_gatherv_f082vftr_f08i, &
+      ONLY : vftr_MPI_Gatherv_f082vftr
    USE vftr_mpi_logging_f08, &
       ONLY : vftr_no_mpi_logging_f08
    USE mpi_f08, &
@@ -47,7 +47,7 @@ SUBROUTINE MPI_Gatherv_f08(sendbuf, sendcount, sendtype, &
                             recvtype, root, comm, &
                             tmperror)
    ELSE
-      CALL vftr_MPI_Gatherv_f082c(sendbuf, sendcount, sendtype%MPI_VAL, &
+      CALL vftr_MPI_Gatherv_f082vftr(sendbuf, sendcount, sendtype%MPI_VAL, &
                                   recvbuf, recvcounts, displs, &
                                   recvtype%MPI_VAL, root, comm%MPI_VAL, &
                                   tmperror)

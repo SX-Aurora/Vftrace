@@ -19,8 +19,8 @@
 SUBROUTINE MPI_Reduce_scatter_f08(sendbuf, recvbuf, recvcounts, &
                                   datatype, op, comm, &
                                   error)
-   USE vftr_mpi_reduce_scatter_f082c_f08interface, &
-      ONLY : vftr_MPI_Reduce_scatter_f082c
+   USE vftr_mpi_reduce_scatter_f082vftr_f08i, &
+      ONLY : vftr_MPI_Reduce_scatter_f082vftr
    USE vftr_mpi_logging_f08, &
       ONLY : vftr_no_mpi_logging_f08
    USE mpi_f08, &
@@ -43,7 +43,7 @@ SUBROUTINE MPI_Reduce_scatter_f08(sendbuf, recvbuf, recvcounts, &
                                    datatype, op, comm, &
                                    tmperror)
    ELSE
-      CALL vftr_MPI_Reduce_scatter_f082c(sendbuf, recvbuf, recvcounts, &
+      CALL vftr_MPI_Reduce_scatter_f082vftr(sendbuf, recvbuf, recvcounts, &
                                          datatype%MPI_VAL, op%MPI_VAL, comm%MPI_VAL, &
                                          tmperror)
    END IF

@@ -17,17 +17,13 @@
 #ifdef _MPI
 
 SUBROUTINE MPI_Init_f08(error)
-   USE vftr_after_mpi_init_f082c_f08interface, &
-      ONLY : vftr_after_mpi_init_f082c
-   USE mpi_f08, &
-      ONLY : PMPI_Init
+   USE vftr_mpi_init_f082vftr_f08i, &
+      ONLY : vftr_mpi_init_f082vftr
    IMPLICIT NONE
    INTEGER, OPTIONAL, INTENT(OUT) :: error
    INTEGER :: tmperror
 
-   CALL PMPI_Init(tmperror)
-
-   CALL vftr_after_mpi_init_f082c()
+   CALL vftr_mpi_init_f082vftr(tmperror)
 
    IF (PRESENT(error)) error = tmperror
 

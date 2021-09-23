@@ -19,8 +19,8 @@
 SUBROUTINE MPI_Accumulate_f08(origin_addr, origin_count, origin_datatype, &
                              target_rank, target_disp, target_count, &
                              target_datatype, op, win, error)
-   USE vftr_mpi_accumulate_f082c_f08interface, &
-      ONLY : vftr_MPI_Accumulate_f082c
+   USE vftr_mpi_accumulate_f082vftr_f08i, &
+      ONLY : vftr_MPI_Accumulate_f082vftr
    USE vftr_mpi_logging_f08, &
       ONLY : vftr_no_mpi_logging_f08
    USE mpi_f08, &
@@ -48,7 +48,7 @@ SUBROUTINE MPI_Accumulate_f08(origin_addr, origin_count, origin_datatype, &
                            target_datatype, op, win, &
                            tmperror)
    ELSE
-      CALL vftr_MPI_Accumulate_f082c(origin_addr, origin_count, origin_datatype%MPI_VAL, &
+      CALL vftr_MPI_Accumulate_f082vftr(origin_addr, origin_count, origin_datatype%MPI_VAL, &
                                      target_rank, target_disp, target_count, &
                                      target_datatype%MPI_VAL, op%MPI_VAL, win%MPI_VAL, &
                                      tmperror)

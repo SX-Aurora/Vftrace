@@ -17,8 +17,8 @@
 #ifdef _MPI
 
 SUBROUTINE MPI_Bsend_f08(buf, count, datatype, dest, tag, comm, error)
-   USE vftr_mpi_bsend_f082c_f08interface, &
-      ONLY : vftr_MPI_Bsend_f082c
+   USE vftr_mpi_bsend_f082vftr_f08i, &
+      ONLY : vftr_MPI_Bsend_f082vftr
    USE vftr_mpi_logging_f08, &
       ONLY : vftr_no_mpi_logging_f08
    USE mpi_f08, &
@@ -40,7 +40,7 @@ SUBROUTINE MPI_Bsend_f08(buf, count, datatype, dest, tag, comm, error)
       CALL PMPI_Bsend_f08(buf, count, datatype, dest, tag, &
                           comm, tmperror)
    ELSE
-      CALL vftr_MPI_Bsend_f082c(buf, count, datatype%MPI_VAL, dest, tag, &
+      CALL vftr_MPI_Bsend_f082vftr(buf, count, datatype%MPI_VAL, dest, tag, &
                                 comm%MPI_VAL, tmperror)
    END IF
    IF (PRESENT(error)) error = tmperror

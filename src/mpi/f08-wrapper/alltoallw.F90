@@ -19,8 +19,8 @@
 SUBROUTINE MPI_Alltoallw_f08(sendbuf, sendcounts, sdispls, sendtypes, &
                              recvbuf, recvcounts, rdispls, recvtypes, &
                              comm, error)
-   USE vftr_mpi_alltoallw_f082c_f08interface, &
-      ONLY : vftr_MPI_Alltoallw_f082c
+   USE vftr_mpi_alltoallw_f082vftr_f08i, &
+      ONLY : vftr_MPI_Alltoallw_f082vftr
    USE vftr_mpi_logging_f08, &
       ONLY : vftr_no_mpi_logging_f08
    USE mpi_f08, &
@@ -66,7 +66,7 @@ SUBROUTINE MPI_Alltoallw_f08(sendbuf, sendcounts, sdispls, sendtypes, &
          tmprecvtypes(i) = recvtypes(i)%MPI_VAL
       END DO
    
-      CALL vftr_MPI_Alltoallw_f082c(sendbuf, sendcounts, sdispls, tmpsendtypes, &
+      CALL vftr_MPI_Alltoallw_f082vftr(sendbuf, sendcounts, sdispls, tmpsendtypes, &
                                     recvbuf, recvcounts, rdispls, tmprecvtypes, &
                                     comm%MPI_VAL, tmperror)
    
