@@ -18,8 +18,8 @@
 
 #include <stdbool.h>
 
-#ifndef VFTR_BUF_ADDR_CONST_H
-#define VFTR_BUF_ADDR_CONST_H
+#ifndef VFTR_MPI_BUF_ADDR_CONST_H
+#define VFTR_MPI_BUF_ADDR_CONST_H
 
 #ifdef _MPI
 #include <mpi.h>

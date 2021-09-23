@@ -24,7 +24,7 @@
 #include "vftr_environment.h"
 #include "vftr_sync_messages.h"
 #include "vftr_mpi_utils.h"
-#include "vftr_buf_addr_const.h"
+#include "vftr_mpi_buf_addr_const.h"
 
 int vftr_MPI_Scan(const void *sendbuf, void *recvbuf, int count,
                   MPI_Datatype datatype, MPI_Op op, MPI_Comm comm) {
