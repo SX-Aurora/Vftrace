@@ -68,11 +68,11 @@ libvftr_mpi_f082vftr_la_SOURCES += init_f082vftr_f08i.F90 \
 #########################
 #libvftr_mpi_f082vftr_la_SOURCES += vftr_mpi_request_free_f082c.c
 #libvftr_mpi_f082vftr_la_SOURCES += vftr_mpi_request_free_f082c_f08interface.F90
-#
-################
-## collectives #
-################
-#libvftr_mpi_f082vftr_la_SOURCES += vftr_mpi_barrier_f082c.c \
+
+###############
+# collectives #
+###############
+libvftr_mpi_f082vftr_la_SOURCES += barrier_f082vftr.c
 #                                vftr_mpi_bcast_f082c.c \
 #                                vftr_mpi_gather_f082c.c \
 #                                vftr_mpi_gatherv_f082c.c \
@@ -83,7 +83,7 @@ libvftr_mpi_f082vftr_la_SOURCES += init_f082vftr_f08i.F90 \
 #                                vftr_mpi_alltoall_f082c.c \
 #                                vftr_mpi_alltoallv_f082c.c \
 #                                vftr_mpi_alltoallw_f082c.c 
-#libvftr_mpi_f082vftr_la_SOURCES += vftr_mpi_barrier_f082c_f08interface.F90 \
+libvftr_mpi_f082vftr_la_SOURCES += barrier_f082vftr_f08i.F90
 #                                vftr_mpi_bcast_f082c_f08interface.F90 \
 #                                vftr_mpi_gather_f082c_f08interface.F90 \
 #                                vftr_mpi_gatherv_f082c_f08interface.F90 \
