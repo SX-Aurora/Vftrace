@@ -31,8 +31,8 @@ libvftr_f08mpiwrap_la_SOURCES += barrier.F90 \
 				 gather.F90 \
 				 gatherv.F90 \
 				 scatter.F90 \
-				 scatterv.F90 
-#				 allgather.F90 \
+				 scatterv.F90 \
+				 allgather.F90 
 #				 allgatherv.F90 \
 #				 alltoall.F90 \
 #				 alltoallv.F90 \
