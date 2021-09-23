@@ -14,7 +14,7 @@
 ! with this program; if not, write to the Free Software Foundation, Inc.,
 ! 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-MODULE vftr_mpi_init_f2vftr_fi
+MODULE vftr_mpi_finalize_f2vftr_fi
 #ifdef _MPI
 
    USE, INTRINSIC :: ISO_FORTRAN_ENV
@@ -24,15 +24,15 @@ MODULE vftr_mpi_init_f2vftr_fi
 
    PRIVATE
 
-   PUBLIC :: vftr_mpi_init_f2vftr
+   PUBLIC :: vftr_mpi_finalize_f2vftr
 
    INTERFACE
 
-      SUBROUTINE vftr_mpi_init_f2vftr(IERROR) &
-         BIND(c, NAME="vftr_MPI_Init")
+      SUBROUTINE vftr_mpi_finalize_f2vftr(IERROR) &
+         BIND(c, NAME="vftr_MPI_Finalize_f2vftr")
          IMPLICIT NONE
          INTEGER :: IERROR
-      END SUBROUTINE vftr_mpi_init_f2vftr
+      END SUBROUTINE vftr_mpi_finalize_f2vftr
 
    END INTERFACE
 
@@ -40,4 +40,4 @@ MODULE vftr_mpi_init_f2vftr_fi
 
 CONTAINS
 
-END MODULE vftr_mpi_init_f2vftr_fi
+END MODULE vftr_mpi_finalize_f2vftr_fi
