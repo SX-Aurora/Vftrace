@@ -76,8 +76,8 @@ libvftr_mpi_f082vftr_la_SOURCES += barrier_f082vftr.c \
                                    bcast_f082vftr.c \
                                    gather_f082vftr.c \
                                    gatherv_f082vftr.c \
-                                   scatter_f082vftr.c 
-#                                   scatterv_f082vftr.c \
+                                   scatter_f082vftr.c \
+                                   scatterv_f082vftr.c 
 #                                   allgather_f082vftr.c \
 #                                   allgatherv_f082vftr.c \
 #                                   alltoall_f082vftr.c \
@@ -87,8 +87,8 @@ libvftr_mpi_f082vftr_la_SOURCES += barrier_f082vftr_f08i.F90 \
                                    bcast_f082vftr_f08i.F90 \
                                    gather_f082vftr_f08i.F90 \
                                    gatherv_f082vftr_f08i.F90 \
-                                   scatter_f082vftr_f08i.F90 
-#                                   scatterv_f082vftr_f08i.F90 \
+                                   scatter_f082vftr_f08i.F90 \
+                                   scatterv_f082vftr_f08i.F90 
 #                                   allgather_f082vftr_f08i.F90 \
 #                                   allgatherv_f082vftr_f08i.F90 \
 #                                   alltoall_f082vftr_f08i.F90 \
