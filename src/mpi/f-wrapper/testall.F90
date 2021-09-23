@@ -17,8 +17,8 @@
 #ifdef _MPI
 
 SUBROUTINE MPI_TESTALL(COUNT, ARRAY_OREQUESTS, FLAG, ARRAY_OSTATUSES, ERROR)
-   USE vftr_mpi_testall_f2c_finterface, &
-      ONLY : vftr_MPI_Testall_f2c
+   USE vftr_mpi_testall_f2vftr_fi, &
+      ONLY : vftr_MPI_Testall_f2vftr
    USE vftr_mpi_logging_F, &
       ONLY : vftr_no_mpi_logging_F
    USE mpi, &
@@ -36,7 +36,7 @@ SUBROUTINE MPI_TESTALL(COUNT, ARRAY_OREQUESTS, FLAG, ARRAY_OSTATUSES, ERROR)
    IF (vftr_no_mpi_logging_F()) THEN
       CALL PMPI_TESTALL(COUNT, ARRAY_OREQUESTS, FLAG, ARRAY_OSTATUSES, ERROR)
    ELSE
-      CALL vftr_MPI_Testall_f2c(COUNT, ARRAY_OREQUESTS, TMPFLAG, ARRAY_OSTATUSES, ERROR)
+      CALL vftr_MPI_Testall_f2vftr(COUNT, ARRAY_OREQUESTS, TMPFLAG, ARRAY_OSTATUSES, ERROR)
 
       FLAG = (TMPFLAG /= 0)
    END IF

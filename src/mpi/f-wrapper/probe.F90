@@ -17,8 +17,8 @@
 #ifdef _MPI
 
 SUBROUTINE MPI_PROBE(SOURCE, TAG, COMM, STATUS, ERROR)
-   USE vftr_mpi_probe_f2c_finterface, &
-      ONLY : vftr_MPI_Probe_f2c
+   USE vftr_mpi_probe_f2vftr_fi, &
+      ONLY : vftr_MPI_Probe_f2vftr
    USE vftr_mpi_logging_F, &
       ONLY : vftr_no_mpi_logging_F
    USE mpi, &
@@ -34,7 +34,7 @@ SUBROUTINE MPI_PROBE(SOURCE, TAG, COMM, STATUS, ERROR)
    IF (vftr_no_mpi_logging_F()) THEN
       CALL PMPI_PROBE(SOURCE, TAG, COMM, STATUS, ERROR)
    ELSE
-      CALL vftr_MPI_Probe_f2c(SOURCE, TAG, COMM, STATUS, ERROR)
+      CALL vftr_MPI_Probe_f2vftr(SOURCE, TAG, COMM, STATUS, ERROR)
    END IF
 
 END SUBROUTINE MPI_PROBE

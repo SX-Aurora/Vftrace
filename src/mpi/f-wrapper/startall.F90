@@ -17,8 +17,8 @@
 #ifdef _MPI
 
 SUBROUTINE MPI_Startall(COUNT, ARRAY_OREQUESTS, ERROR)
-   USE vftr_mpi_startall_f2c_finterface, &
-      ONLY : vftr_MPI_Startall_f2c
+   USE vftr_mpi_startall_f2vftr_fi, &
+      ONLY : vftr_MPI_Startall_f2vftr
    USE vftr_mpi_logging_F, &
       ONLY : vftr_no_mpi_logging_F
    USE mpi, &
@@ -31,7 +31,7 @@ SUBROUTINE MPI_Startall(COUNT, ARRAY_OREQUESTS, ERROR)
    IF (vftr_no_mpi_logging_F()) THEN
       CALL PMPI_Startall(COUNT, ARRAY_OREQUESTS, ERROR)
    ELSE
-      CALL vftr_MPI_Startall_f2c(COUNT, ARRAY_OREQUESTS, ERROR)
+      CALL vftr_MPI_Startall_f2vftr(COUNT, ARRAY_OREQUESTS, ERROR)
    END IF
 
 END SUBROUTINE MPI_Startall

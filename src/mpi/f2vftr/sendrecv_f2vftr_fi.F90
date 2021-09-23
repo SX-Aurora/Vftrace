@@ -14,7 +14,7 @@
 ! with this program; if not, write to the Free Software Foundation, Inc.,
 ! 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-MODULE vftr_mpi_sendrecv_f2c_finterface
+MODULE vftr_mpi_sendrecv_f2vftr_fi
 #ifdef _MPI
 
    USE, INTRINSIC :: ISO_FORTRAN_ENV
@@ -24,14 +24,14 @@ MODULE vftr_mpi_sendrecv_f2c_finterface
 
    PRIVATE
 
-   PUBLIC :: vftr_MPI_Sendrecv_f2c
+   PUBLIC :: vftr_MPI_Sendrecv_f2vftr
 
    INTERFACE 
 
-      SUBROUTINE vftr_MPI_Sendrecv_f2c(SENDBUF, SENDCOUNT, F_SENDTYPE, DEST, SENDTAG, &
+      SUBROUTINE vftr_MPI_Sendrecv_f2vftr(SENDBUF, SENDCOUNT, F_SENDTYPE, DEST, SENDTAG, &
                                        RECVBUF, RECVCOUNT, F_RECVTYPE, SOURCE, RECVTAG, &
                                        F_COMM, F_STATUS, F_ERROR) &
-         BIND(C, name="vftr_MPI_Sendrecv_f2c")
+         BIND(C, name="vftr_MPI_Sendrecv_f2vftr")
          USE mpi, ONLY : MPI_STATUS_SIZE
          IMPLICIT NONE
          INTEGER SENDBUF
@@ -47,7 +47,7 @@ MODULE vftr_mpi_sendrecv_f2c_finterface
          INTEGER F_COMM
          INTEGER F_STATUS(MPI_STATUS_SIZE)
          INTEGER F_ERROR
-      END SUBROUTINE vftr_MPI_Sendrecv_f2c
+      END SUBROUTINE vftr_MPI_Sendrecv_f2vftr
 
    END INTERFACE
 
@@ -55,4 +55,4 @@ MODULE vftr_mpi_sendrecv_f2c_finterface
 
 CONTAINS
 
-END MODULE vftr_mpi_sendrecv_f2c_finterface
+END MODULE vftr_mpi_sendrecv_f2vftr_fi

@@ -17,8 +17,8 @@
 #ifdef _MPI
 
 SUBROUTINE MPI_WAITANY(COUNT, ARRAY_OREQUESTS, INDEX, STATUS, ERROR)
-   USE vftr_mpi_waitany_f2c_finterface, &
-      ONLY : vftr_MPI_Waitany_f2c
+   USE vftr_mpi_waitany_f2vftr_fi, &
+      ONLY : vftr_MPI_Waitany_f2vftr
    USE vftr_mpi_logging_F, &
       ONLY : vftr_no_mpi_logging_F
    USE mpi, &
@@ -34,7 +34,7 @@ SUBROUTINE MPI_WAITANY(COUNT, ARRAY_OREQUESTS, INDEX, STATUS, ERROR)
    IF (vftr_no_mpi_logging_F()) THEN
       CALL PMPI_WAITANY(COUNT, ARRAY_OREQUESTS, INDEX, STATUS, ERROR)
    ELSE
-      CALL vftr_MPI_Waitany_f2c(COUNT, ARRAY_OREQUESTS, INDEX, STATUS, ERROR)
+      CALL vftr_MPI_Waitany_f2vftr(COUNT, ARRAY_OREQUESTS, INDEX, STATUS, ERROR)
    END IF
 
 END SUBROUTINE MPI_WAITANY

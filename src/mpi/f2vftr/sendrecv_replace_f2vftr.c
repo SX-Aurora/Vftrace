@@ -19,12 +19,13 @@
 #ifdef _MPI
 #include <mpi.h>
 
-#include <vftr_mpi_sendrecv_replace.h>
+#include "sendrecv_replace.h"
 
-void vftr_MPI_Sendrecv_replace_f2c(void *buf, MPI_Fint *count, MPI_Fint *f_datatype,
-                                   MPI_Fint *dest, MPI_Fint *sendtag, MPI_Fint *source,
-                                   MPI_Fint *recvtag, MPI_Fint *f_comm, MPI_Fint *f_status,
-                                   MPI_Fint *f_error) {
+void vftr_MPI_Sendrecv_replace_f2vftr(void *buf, MPI_Fint *count,
+                                      MPI_Fint *f_datatype, MPI_Fint *dest,
+                                      MPI_Fint *sendtag, MPI_Fint *source,
+                                      MPI_Fint *recvtag, MPI_Fint *f_comm,
+                                      MPI_Fint *f_status, MPI_Fint *f_error) {
 
    MPI_Comm c_comm = PMPI_Comm_f2c(*f_comm);
    MPI_Datatype c_datatype = PMPI_Type_f2c(*f_datatype);

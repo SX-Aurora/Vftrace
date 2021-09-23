@@ -17,8 +17,8 @@
 #ifdef _MPI
 
 SUBROUTINE MPI_RECV_INIT(BUF, COUNT, DATATYPE, SOURCE, TAG, COMM, REQUEST, ERROR)
-   USE vftr_mpi_recv_init_f2c_finterface, &
-      ONLY : vftr_MPI_Recv_init_f2c
+   USE vftr_mpi_recv_init_f2vftr_fi, &
+      ONLY : vftr_MPI_Recv_init_f2vftr
    USE vftr_mpi_logging_F, &
       ONLY : vftr_no_mpi_logging_F
    USE mpi, &
@@ -36,7 +36,7 @@ SUBROUTINE MPI_RECV_INIT(BUF, COUNT, DATATYPE, SOURCE, TAG, COMM, REQUEST, ERROR
    IF (vftr_no_mpi_logging_F()) THEN
       CALL PMPI_RECV_INIT(BUF, COUNT, DATATYPE, SOURCE, TAG, COMM, REQUEST, ERROR)
    ELSE
-      CALL vftr_MPI_Recv_init_f2c(BUF, COUNT, DATATYPE, SOURCE, TAG, COMM, REQUEST, ERROR)
+      CALL vftr_MPI_Recv_init_f2vftr(BUF, COUNT, DATATYPE, SOURCE, TAG, COMM, REQUEST, ERROR)
    END IF
 
 END SUBROUTINE MPI_RECV_INIT

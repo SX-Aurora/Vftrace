@@ -14,7 +14,7 @@
 ! with this program; if not, write to the Free Software Foundation, Inc.,
 ! 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-MODULE vftr_mpi_iprobe_f2c_finterface
+MODULE vftr_mpi_iprobe_f2vftr_fi
 #ifdef _MPI
 
    USE, INTRINSIC :: ISO_FORTRAN_ENV
@@ -24,12 +24,12 @@ MODULE vftr_mpi_iprobe_f2c_finterface
 
    PRIVATE
 
-   PUBLIC :: vftr_MPI_Iprobe_f2c
+   PUBLIC :: vftr_MPI_Iprobe_f2vftr
 
    INTERFACE
 
-      SUBROUTINE vftr_MPI_Iprobe_f2c(SOURCE, TAG, F_COMM, F_FLAG, F_STATUS, F_ERROR) &
-         BIND(C, name="vftr_MPI_Iprobe_f2c")
+      SUBROUTINE vftr_MPI_Iprobe_f2vftr(SOURCE, TAG, F_COMM, F_FLAG, F_STATUS, F_ERROR) &
+         BIND(C, name="vftr_MPI_Iprobe_f2vftr")
          USE mpi, ONLY : MPI_STATUS_SIZE
          IMPLICIT NONE
          INTEGER SOURCE
@@ -38,7 +38,7 @@ MODULE vftr_mpi_iprobe_f2c_finterface
          INTEGER F_FLAG
          INTEGER F_STATUS(MPI_STATUS_SIZE)
          INTEGER F_ERROR
-      END SUBROUTINE vftr_MPI_Iprobe_f2c
+      END SUBROUTINE vftr_MPI_Iprobe_f2vftr
 
    END INTERFACE
 
@@ -46,4 +46,4 @@ MODULE vftr_mpi_iprobe_f2c_finterface
 
 CONTAINS
 
-END MODULE vftr_mpi_iprobe_f2c_finterface
+END MODULE vftr_mpi_iprobe_f2vftr_fi

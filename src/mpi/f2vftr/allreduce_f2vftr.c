@@ -19,12 +19,12 @@
 #ifdef _MPI
 #include <mpi.h>
 
-#include <vftr_mpi_buf_addr_const.h>
-#include <vftr_mpi_allreduce.h>
+#include "vftr_mpi_buf_addr_const.h"
+#include "allreduce.h"
 
-void vftr_MPI_Allreduce_f2c(void *sendbuf, void *recvbuf, MPI_Fint *count,
-                            MPI_Fint *f_datatype, MPI_Fint *f_op, MPI_Fint *f_comm,
-                            MPI_Fint *f_error) {
+void vftr_MPI_Allreduce_f2vftr(void *sendbuf, void *recvbuf, MPI_Fint *count,
+                               MPI_Fint *f_datatype, MPI_Fint *f_op,
+                               MPI_Fint *f_comm, MPI_Fint *f_error) {
 
    MPI_Datatype c_datatype = PMPI_Type_f2c(*f_datatype);
    MPI_Op c_op = PMPI_Op_f2c(*f_op);

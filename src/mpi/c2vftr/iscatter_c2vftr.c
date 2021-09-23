@@ -19,7 +19,7 @@
 #ifdef _MPI
 #include <mpi.h>
 
-#include "vftr_buf_addr_const.h"
+#include "vftr_mpi_buf_addr_const.h"
 #include "iscatter.h"
 
 int vftr_MPI_Iscatter_c2vftr(const void *sendbuf, int sendcount,

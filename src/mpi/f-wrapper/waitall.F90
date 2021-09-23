@@ -17,8 +17,8 @@
 #ifdef _MPI
 
 SUBROUTINE MPI_WAITALL(COUNT, ARRAY_OREQUESTS, ARRAY_OF_STATUSES, ERROR)
-   USE vftr_mpi_waitall_f2c_finterface, &
-      ONLY : vftr_MPI_Waitall_f2c
+   USE vftr_mpi_waitall_f2vftr_fi, &
+      ONLY : vftr_MPI_Waitall_f2vftr
    USE vftr_mpi_logging_F, &
       ONLY : vftr_no_mpi_logging_F
    USE mpi, &
@@ -33,7 +33,7 @@ SUBROUTINE MPI_WAITALL(COUNT, ARRAY_OREQUESTS, ARRAY_OF_STATUSES, ERROR)
    IF (vftr_no_mpi_logging_F()) THEN
       CALL PMPI_WAITALL(COUNT, ARRAY_OREQUESTS, ARRAY_OF_STATUSES, ERROR)
    ELSE
-      CALL vftr_MPI_Waitall_f2c(COUNT, ARRAY_OREQUESTS, ARRAY_OF_STATUSES, ERROR)
+      CALL vftr_MPI_Waitall_f2vftr(COUNT, ARRAY_OREQUESTS, ARRAY_OF_STATUSES, ERROR)
    END IF
 
 END SUBROUTINE MPI_WAITALL

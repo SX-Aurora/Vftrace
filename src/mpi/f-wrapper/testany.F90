@@ -17,8 +17,8 @@
 #ifdef _MPI
 
 SUBROUTINE MPI_TESTANY(COUNT, ARRAY_OREQUESTS, INDEX, FLAG, STATUS, ERROR)
-   USE vftr_mpi_testany_f2c_finterface, &
-      ONLY : vftr_MPI_Testany_f2c
+   USE vftr_mpi_testany_f2vftr_fi, &
+      ONLY : vftr_MPI_Testany_f2vftr
    USE vftr_mpi_logging_F, &
       ONLY : vftr_no_mpi_logging_F
    USE mpi, &
@@ -36,7 +36,7 @@ SUBROUTINE MPI_TESTANY(COUNT, ARRAY_OREQUESTS, INDEX, FLAG, STATUS, ERROR)
    IF (vftr_no_mpi_logging_F()) THEN
       CALL PMPI_TESTANY(COUNT, ARRAY_OREQUESTS, INDEX, FLAG, STATUS, ERROR)
    ELSE
-      CALL vftr_MPI_Testany_f2c(COUNT, ARRAY_OREQUESTS, INDEX, TMPFLAG, STATUS, ERROR)
+      CALL vftr_MPI_Testany_f2vftr(COUNT, ARRAY_OREQUESTS, INDEX, TMPFLAG, STATUS, ERROR)
 
       FLAG = (TMPFLAG /= 0)
    END IF

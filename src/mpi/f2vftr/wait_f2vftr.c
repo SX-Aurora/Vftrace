@@ -21,9 +21,9 @@
 
 #include <stdlib.h>
 
-#include <vftr_mpi_wait.h>
+#include "wait.h"
 
-void vftr_MPI_Wait_f2c(MPI_Fint *f_request, MPI_Fint *f_status, MPI_Fint *f_error) {
+void vftr_MPI_Wait_f2vftr(MPI_Fint *f_request, MPI_Fint *f_status, MPI_Fint *f_error) {
 
    MPI_Request c_request;
    c_request = PMPI_Request_f2c(*f_request);

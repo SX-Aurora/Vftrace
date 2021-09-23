@@ -18,8 +18,8 @@
 
 SUBROUTINE MPI_IBCAST(BUFFER, COUNT, DATATYPE, &
                       ROOT, COMM, REQUEST, ERROR)
-   USE vftr_mpi_ibcast_f2c_finterface, &
-      ONLY : vftr_MPI_Ibcast_f2c
+   USE vftr_mpi_ibcast_f2vftr_fi, &
+      ONLY : vftr_MPI_Ibcast_f2vftr
    USE vftr_mpi_logging_F, &
       ONLY : vftr_no_mpi_logging_F
    USE mpi, &
@@ -37,7 +37,7 @@ SUBROUTINE MPI_IBCAST(BUFFER, COUNT, DATATYPE, &
       CALL PMPI_IBCAST(BUFFER, COUNT, DATATYPE, &
                        ROOT, COMM, REQUEST, ERROR)
    ELSE
-      CALL vftr_MPI_Ibcast_f2c(BUFFER, COUNT, DATATYPE, &
+      CALL vftr_MPI_Ibcast_f2vftr(BUFFER, COUNT, DATATYPE, &
                                ROOT, COMM, REQUEST, ERROR)
    END IF
 

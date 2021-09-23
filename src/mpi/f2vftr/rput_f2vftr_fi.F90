@@ -14,7 +14,7 @@
 ! with this program; if not, write to the Free Software Foundation, Inc.,
 ! 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-MODULE vftr_mpi_rput_f2c_finterface
+MODULE vftr_mpi_rput_f2vftr_fi
 #ifdef _MPI
 
    USE, INTRINSIC :: ISO_FORTRAN_ENV
@@ -24,14 +24,14 @@ MODULE vftr_mpi_rput_f2c_finterface
 
    PRIVATE
 
-   PUBLIC :: vftr_MPI_Rput_f2c
+   PUBLIC :: vftr_MPI_Rput_f2vftr
 
    INTERFACE
 
-      SUBROUTINE vftr_MPI_Rput_f2c(ORIGIN_ADDR, ORIGIN_COUNT, F_ORIGIN_DATATYPE, &
+      SUBROUTINE vftr_MPI_Rput_f2vftr(ORIGIN_ADDR, ORIGIN_COUNT, F_ORIGIN_DATATYPE, &
                                    TARGET_RANK, TARGET_DISP, TARGET_COUNT, &
                                    F_TARGET_DATATYPE, F_WIN, F_REQUEST, F_ERROR) &
-         BIND(C, name="vftr_MPI_Rput_f2c")
+         BIND(C, name="vftr_MPI_Rput_f2vftr")
          USE mpi, ONLY: MPI_ADDRESS_KIND
          IMPLICIT NONE
          INTEGER ORIGIN_ADDR
@@ -44,7 +44,7 @@ MODULE vftr_mpi_rput_f2c_finterface
          INTEGER F_WIN
          INTEGER F_REQUEST
          INTEGER F_ERROR
-      END SUBROUTINE vftr_MPI_Rput_f2c
+      END SUBROUTINE vftr_MPI_Rput_f2vftr
 
    END INTERFACE
 
@@ -52,4 +52,4 @@ MODULE vftr_mpi_rput_f2c_finterface
 
 CONTAINS
 
-END MODULE vftr_mpi_rput_f2c_finterface
+END MODULE vftr_mpi_rput_f2vftr_fi

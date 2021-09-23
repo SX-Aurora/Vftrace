@@ -20,8 +20,8 @@ SUBROUTINE MPI_SCATTERV(SENDBUF, SENDCOUNTS, DISPLS, &
                         SENDTYPE, RECVBUF, RECVCOUNT, &
                         RECVTYPE, ROOT, COMM, &
                         ERROR)
-   USE vftr_mpi_scatterv_f2c_finterface, &
-      ONLY : vftr_MPI_Scatterv_f2c
+   USE vftr_mpi_scatterv_f2vftr_fi, &
+      ONLY : vftr_MPI_Scatterv_f2vftr
    USE vftr_mpi_logging_F, &
       ONLY : vftr_no_mpi_logging_F
    USE mpi, &
@@ -44,7 +44,7 @@ SUBROUTINE MPI_SCATTERV(SENDBUF, SENDCOUNTS, DISPLS, &
                          RECVTYPE, ROOT, COMM, &
                          ERROR)
    ELSE
-      CALL vftr_MPI_Scatterv_f2c(SENDBUF, SENDCOUNTS, DISPLS, &
+      CALL vftr_MPI_Scatterv_f2vftr(SENDBUF, SENDCOUNTS, DISPLS, &
                                  SENDTYPE, RECVBUF, RECVCOUNT, &
                                  RECVTYPE, ROOT, COMM, &
                                  ERROR)

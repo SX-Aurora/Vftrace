@@ -21,12 +21,13 @@
 
 #include <stdlib.h>
 
-#include <vftr_mpi_buf_addr_const.h>
-#include <vftr_mpi_reduce_scatter.h>
+#include "vftr_mpi_buf_addr_const.h"
+#include "reduce_scatter.h"
 
-void vftr_MPI_Reduce_scatter_f2c(void *sendbuf, void *recvbuf, MPI_Fint *f_recvcounts,
-                                 MPI_Fint *f_datatype, MPI_Fint *f_op, MPI_Fint *f_comm,
-                                 MPI_Fint *f_error) {
+void vftr_MPI_Reduce_scatter_f2vftr(void *sendbuf, void *recvbuf,
+                                    MPI_Fint *f_recvcounts, MPI_Fint *f_datatype,
+                                    MPI_Fint *f_op, MPI_Fint *f_comm,
+                                    MPI_Fint *f_error) {
 
    MPI_Comm c_comm = PMPI_Comm_f2c(*f_comm);
 
@@ -45,12 +46,33 @@ void vftr_MPI_Reduce_scatter_f2c(void *sendbuf, void *recvbuf, MPI_Fint *f_recvc
    sendbuf = (void*) vftr_is_F_MPI_BOTTOM(sendbuf) ? MPI_BOTTOM : sendbuf;
    recvbuf = (void*) vftr_is_F_MPI_BOTTOM(recvbuf) ? MPI_BOTTOM : recvbuf;
 
-   int c_error = vftr_MPI_Reduce_scatter(sendbuf,
-                                         recvbuf,
-                                         c_recvcounts,
-                                         c_datatype,
-                                         c_op,
-                                         c_comm);
+   int c_error;
+   int isintercom;
+   PMPI_Comm_test_inter(c_comm, &isintercom);
+   if (isintercom) {
+      c_error = vftr_MPI_Reduce_scatter_intercom(sendbuf,
+                                                 recvbuf,
+                                                 c_recvcounts,
+                                                 c_datatype,
+                                                 c_op,
+                                                 c_comm);
+   } else {
+      if (vftr_is_C_MPI_IN_PLACE(sendbuf)) {
+         c_error = vftr_MPI_Reduce_scatter_inplace(sendbuf,
+                                                   recvbuf,
+                                                   c_recvcounts,
+                                                   c_datatype,
+                                                   c_op,
+                                                   c_comm);
+      } else {
+         c_error = vftr_MPI_Reduce_scatter(sendbuf,
+                                           recvbuf,
+                                           c_recvcounts,
+                                           c_datatype,
+                                           c_op,
+                                           c_comm);
+      }
+   }
            
    free(c_recvcounts);
 

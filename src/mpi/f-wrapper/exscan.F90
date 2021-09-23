@@ -18,8 +18,8 @@
 
 SUBROUTINE MPI_EXSCAN(SENDBUF, RECVBUF, COUNT, DATATYPE, &
                       OP, COMM, ERROR)
-   USE vftr_mpi_exscan_f2c_finterface, &
-      ONLY : vftr_MPI_Exscan_f2c
+   USE vftr_mpi_exscan_f2vftr_fi, &
+      ONLY : vftr_MPI_Exscan_f2vftr
    USE vftr_mpi_logging_F, &
       ONLY : vftr_no_mpi_logging_F
    USE mpi, &
@@ -37,7 +37,7 @@ SUBROUTINE MPI_EXSCAN(SENDBUF, RECVBUF, COUNT, DATATYPE, &
       CALL PMPI_EXSCAN(SENDBUF, RECVBUF, COUNT, DATATYPE, &
                        OP, COMM, ERROR)
    ELSE
-      CALL vftr_MPI_Exscan_f2c(SENDBUF, RECVBUF, COUNT, DATATYPE, &
+      CALL vftr_MPI_Exscan_f2vftr(SENDBUF, RECVBUF, COUNT, DATATYPE, &
                                OP, COMM, ERROR)
    END IF
 

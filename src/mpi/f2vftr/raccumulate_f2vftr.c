@@ -19,14 +19,14 @@
 #ifdef _MPI
 #include <mpi.h>
 
-#include <vftr_mpi_raccumulate.h>
+#include "raccumulate.h"
 
-void vftr_MPI_Raccumulate_f2c(void *origin_addr, MPI_Fint *origin_count,
-                              MPI_Fint *f_origin_datatype, MPI_Fint *target_rank,
-                            MPI_Aint *target_disp, MPI_Fint *target_count,
-                              MPI_Fint *f_target_datatype, MPI_Fint *f_op,
-                              MPI_Fint *f_win, MPI_Fint *f_request,
-                              MPI_Fint *f_error) {
+void vftr_MPI_Raccumulate_f2vftr(void *origin_addr, MPI_Fint *origin_count,
+                                 MPI_Fint *f_origin_datatype, MPI_Fint *target_rank,
+                                 MPI_Aint *target_disp, MPI_Fint *target_count,
+                                 MPI_Fint *f_target_datatype, MPI_Fint *f_op,
+                                 MPI_Fint *f_win, MPI_Fint *f_request,
+                                 MPI_Fint *f_error) {
 
    MPI_Datatype c_origin_datatype = PMPI_Type_f2c(*f_origin_datatype);
    MPI_Datatype c_target_datatype = PMPI_Type_f2c(*f_target_datatype);

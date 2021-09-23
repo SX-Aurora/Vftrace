@@ -19,8 +19,8 @@
 SUBROUTINE MPI_PUT(ORIGIN_ADDR, ORIGIN_COUNT, ORIGIN_DATATYPE, &
                    TARGET_RANK, TARGET_DISP, TARGET_COUNT, &
                    TARGET_DATATYPE, WIN, ERROR)
-   USE vftr_mpi_put_f2c_finterface, &
-      ONLY : vftr_MPI_Put_f2c
+   USE vftr_mpi_put_f2vftr_fi, &
+      ONLY : vftr_MPI_Put_f2vftr
    USE vftr_mpi_logging_F, &
       ONLY : vftr_no_mpi_logging_F
    USE mpi, &
@@ -42,7 +42,7 @@ SUBROUTINE MPI_PUT(ORIGIN_ADDR, ORIGIN_COUNT, ORIGIN_DATATYPE, &
                     TARGET_RANK, TARGET_DISP, TARGET_COUNT, &
                     TARGET_DATATYPE, WIN, ERROR)
    ELSE
-      CALL vftr_MPI_Put_f2c(ORIGIN_ADDR, ORIGIN_COUNT, ORIGIN_DATATYPE, &
+      CALL vftr_MPI_Put_f2vftr(ORIGIN_ADDR, ORIGIN_COUNT, ORIGIN_DATATYPE, &
                             TARGET_RANK, TARGET_DISP, TARGET_COUNT, &
                             TARGET_DATATYPE, WIN, ERROR)
    END IF

@@ -19,8 +19,8 @@
 SUBROUTINE MPI_FETCH_AND_OP(ORIGIN_ADDR, RESULT_ADDR, DATATYPE, &
                             TARGET_RANK, TARGET_DISP, OP, WIN, &
                             ERROR)
-   USE vftr_mpi_fetch_and_op_f2c_finterface, &
-      ONLY : vftr_MPI_Fetch_and_op_f2c
+   USE vftr_mpi_fetch_and_op_f2vftr_fi, &
+      ONLY : vftr_MPI_Fetch_and_op_f2vftr
    USE vftr_mpi_logging_F, &
       ONLY : vftr_no_mpi_logging_F
    USE mpi,&
@@ -41,7 +41,7 @@ SUBROUTINE MPI_FETCH_AND_OP(ORIGIN_ADDR, RESULT_ADDR, DATATYPE, &
                              TARGET_RANK, TARGET_DISP, OP, WIN, &
                              ERROR)
    ELSE
-      CALL vftr_MPI_Fetch_and_op_f2c(ORIGIN_ADDR, RESULT_ADDR, DATATYPE, &
+      CALL vftr_MPI_Fetch_and_op_f2vftr(ORIGIN_ADDR, RESULT_ADDR, DATATYPE, &
                                      TARGET_RANK, TARGET_DISP, OP, WIN, &
                                      ERROR)
    END IF

@@ -21,13 +21,14 @@
 
 #include <stdlib.h>
 
-#include <vftr_mpi_buf_addr_const.h>
-#include <vftr_mpi_alltoallw.h>
+#include "vftr_mpi_buf_addr_const.h"
+#include "alltoallw.h"
 
-void vftr_MPI_Alltoallw_f2c(void *sendbuf, MPI_Fint *f_sendcounts, MPI_Fint *f_sdispls,
-                            MPI_Fint *f_sendtypes, void *recvbuf, MPI_Fint *f_recvcounts,
-                            MPI_Fint *f_rdispls, MPI_Fint *f_recvtypes,
-                            MPI_Fint *f_comm, MPI_Fint *f_error) {
+void vftr_MPI_Alltoallw_f2vftr(void *sendbuf, MPI_Fint *f_sendcounts,
+                               MPI_Fint *f_sdispls, MPI_Fint *f_sendtypes,
+                               void *recvbuf, MPI_Fint *f_recvcounts,
+                               MPI_Fint *f_rdispls, MPI_Fint *f_recvtypes,
+                               MPI_Fint *f_comm, MPI_Fint *f_error) {
 
    MPI_Comm c_comm = PMPI_Comm_f2c(*f_comm);
 
@@ -70,15 +71,40 @@ void vftr_MPI_Alltoallw_f2c(void *sendbuf, MPI_Fint *f_sendcounts, MPI_Fint *f_s
    sendbuf = (void*) vftr_is_F_MPI_BOTTOM(sendbuf) ? MPI_BOTTOM : sendbuf;
    recvbuf = (void*) vftr_is_F_MPI_BOTTOM(recvbuf) ? MPI_BOTTOM : recvbuf;
 
-   int c_error = vftr_MPI_Alltoallw(sendbuf,
-                                    c_sendcounts,
-                                    c_sdispls,
-                                    c_sendtypes,
-                                    recvbuf,
-                                    c_recvcounts,
-                                    c_rdispls,
-                                    c_recvtypes,
-                                    c_comm);
+   int c_error;
+   if (isintercom) {
+      c_error = vftr_MPI_Alltoallw_intercom(sendbuf,
+                                            c_sendcounts,
+                                            c_sdispls,
+                                            c_sendtypes,
+                                            recvbuf,
+                                            c_recvcounts,
+                                            c_rdispls,
+                                            c_recvtypes,
+                                            c_comm);
+   } else {
+      if (vftr_is_C_MPI_IN_PLACE(sendbuf)) {
+         c_error = vftr_MPI_Alltoallw_inplace(sendbuf,
+                                              c_sendcounts,
+                                              c_sdispls,
+                                              c_sendtypes,
+                                              recvbuf,
+                                              c_recvcounts,
+                                              c_rdispls,
+                                              c_recvtypes,
+                                              c_comm);
+      } else {
+         c_error = vftr_MPI_Alltoallw(sendbuf,
+                                      c_sendcounts,
+                                      c_sdispls,
+                                      c_sendtypes,
+                                      recvbuf,
+                                      c_recvcounts,
+                                      c_rdispls,
+                                      c_recvtypes,
+                                      c_comm);
+      }
+   }
 
    free(c_sendcounts);
    free(c_sdispls);

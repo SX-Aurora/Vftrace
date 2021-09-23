@@ -19,8 +19,8 @@
 SUBROUTINE MPI_ALLREDUCE(SENDBUF, RECVBUF, COUNT, &
                          DATATYPE, OP, COMM, &
                          ERROR)
-   USE vftr_mpi_allreduce_f2c_finterface, &
-      ONLY : vftr_MPI_Allreduce_f2c
+   USE vftr_mpi_allreduce_f2vftr_fi, &
+      ONLY : vftr_MPI_Allreduce_f2vftr
    USE vftr_mpi_logging_F, &
       ONLY : vftr_no_mpi_logging_F
    USE mpi, &
@@ -39,7 +39,7 @@ SUBROUTINE MPI_ALLREDUCE(SENDBUF, RECVBUF, COUNT, &
                           DATATYPE, OP, COMM, &
                           ERROR)
    ELSE
-      CALL vftr_MPI_Allreduce_f2c(SENDBUF, RECVBUF, COUNT, &
+      CALL vftr_MPI_Allreduce_f2vftr(SENDBUF, RECVBUF, COUNT, &
                                   DATATYPE, OP, COMM, &
                                   ERROR)
    END IF

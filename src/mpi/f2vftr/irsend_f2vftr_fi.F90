@@ -14,7 +14,7 @@
 ! with this program; if not, write to the Free Software Foundation, Inc.,
 ! 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-MODULE vftr_mpi_irsend_f2c_finterface
+MODULE vftr_mpi_irsend_f2vftr_fi
 #ifdef _MPI
 
    USE, INTRINSIC :: ISO_FORTRAN_ENV
@@ -24,13 +24,13 @@ MODULE vftr_mpi_irsend_f2c_finterface
 
    PRIVATE
 
-   PUBLIC :: vftr_MPI_Irsend_f2c
+   PUBLIC :: vftr_MPI_Irsend_f2vftr
 
    INTERFACE 
 
-      SUBROUTINE vftr_MPI_Irsend_f2c(BUF, COUNT, F_DATATYPE, DEST, TAG, &
+      SUBROUTINE vftr_MPI_Irsend_f2vftr(BUF, COUNT, F_DATATYPE, DEST, TAG, &
                                      F_COMM, F_REQUEST, F_ERROR) &
-         BIND(C, name="vftr_MPI_Irsend_f2c")
+         BIND(C, name="vftr_MPI_Irsend_f2vftr")
          INTEGER BUF
          INTEGER COUNT
          INTEGER F_DATATYPE
@@ -39,7 +39,7 @@ MODULE vftr_mpi_irsend_f2c_finterface
          INTEGER F_COMM
          INTEGER F_REQUEST
          INTEGER F_ERROR
-      END SUBROUTINE vftr_MPI_Irsend_f2c
+      END SUBROUTINE vftr_MPI_Irsend_f2vftr
 
    END INTERFACE
 
@@ -47,4 +47,4 @@ MODULE vftr_mpi_irsend_f2c_finterface
 
 CONTAINS
 
-END MODULE vftr_mpi_irsend_f2c_finterface
+END MODULE vftr_mpi_irsend_f2vftr_fi

@@ -17,8 +17,8 @@
 #ifdef _MPI
 
 SUBROUTINE MPI_IRECV(BUF, COUNT, DATATYPE, SOURCE, TAG, COMM, REQUEST, ERROR)
-   USE vftr_mpi_irecv_f2c_finterface, &
-      ONLY : vftr_MPI_Irecv_f2c
+   USE vftr_mpi_irecv_f2vftr_fi, &
+      ONLY : vftr_MPI_Irecv_f2vftr
    USE vftr_mpi_logging_F, &
       ONLY : vftr_no_mpi_logging_F
    USE mpi, &
@@ -36,7 +36,7 @@ SUBROUTINE MPI_IRECV(BUF, COUNT, DATATYPE, SOURCE, TAG, COMM, REQUEST, ERROR)
    IF (vftr_no_mpi_logging_F()) THEN
       CALL PMPI_IRECV(BUF, COUNT, DATATYPE, SOURCE, TAG, COMM, REQUEST, ERROR)
    ELSE
-      CALL vftr_MPI_Irecv_f2c(BUF, COUNT, DATATYPE, SOURCE, TAG, COMM, REQUEST, ERROR)
+      CALL vftr_MPI_Irecv_f2vftr(BUF, COUNT, DATATYPE, SOURCE, TAG, COMM, REQUEST, ERROR)
    END IF
 
 END SUBROUTINE MPI_IRECV

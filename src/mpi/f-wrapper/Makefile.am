@@ -58,6 +58,7 @@ libvftr_fmpiwrap_la_SOURCES += request_free.F90
 # collectives #
 ###############
 libvftr_fmpiwrap_la_SOURCES += barrier.F90 \
+			       ibarrier.F90 \
 			       bcast.F90 \
 			       ibcast.F90 \
 			       gather.F90 \
@@ -115,7 +116,7 @@ libvftr_fmpiwrap_la_SOURCES += put.F90 \
 libvftr_fmpiwrap_la_SOURCES += pcontrol.F90
 
 libvftr_fmpiwrap_la_FCFLAGS = -finstrument-functions
-libvftr_fmpiwrap_la_FCFLAGS += -I${builddir}/../f2c/
+libvftr_fmpiwrap_la_FCFLAGS += -I${builddir}/../f2vftr/
 libvftr_fmpiwrap_la_FCFLAGS += -D_MPI
 
 clean-local:

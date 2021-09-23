@@ -21,11 +21,11 @@
 
 #include <stdlib.h>
 
-#include <vftr_mpi_testsome.h>
+#include "testsome.h"
   
-void vftr_MPI_Testsome_f2c(MPI_Fint *f_incount, MPI_Fint *f_array_of_requests,
-                           MPI_Fint *f_outcount, MPI_Fint *f_array_of_indices,
-                           MPI_Fint *f_array_of_statuses, MPI_Fint *f_error) {
+void vftr_MPI_Testsome_f2vftr(MPI_Fint *f_incount, MPI_Fint *f_array_of_requests,
+                              MPI_Fint *f_outcount, MPI_Fint *f_array_of_indices,
+                              MPI_Fint *f_array_of_statuses, MPI_Fint *f_error) {
 
    int c_incount = (int)(*f_incount);
    MPI_Request *c_array_of_requests = (MPI_Request*) 

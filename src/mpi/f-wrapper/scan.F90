@@ -18,8 +18,8 @@
 
 SUBROUTINE MPI_SCAN(SENDBUF, RECVBUF, COUNT, DATATYPE, &
                     OP, COMM, ERROR)
-   USE vftr_mpi_scan_f2c_finterface, &
-      ONLY : vftr_MPI_Scan_f2c
+   USE vftr_mpi_scan_f2vftr_fi, &
+      ONLY : vftr_MPI_Scan_f2vftr
    USE vftr_mpi_logging_F, &
       ONLY : vftr_no_mpi_logging_F
    USE mpi, &
@@ -37,7 +37,7 @@ SUBROUTINE MPI_SCAN(SENDBUF, RECVBUF, COUNT, DATATYPE, &
       CALL PMPI_SCAN(SENDBUF, RECVBUF, COUNT, DATATYPE, &
                      OP, COMM, ERROR)
    ELSE
-      CALL vftr_MPI_Scan_f2c(SENDBUF, RECVBUF, COUNT, DATATYPE, &
+      CALL vftr_MPI_Scan_f2vftr(SENDBUF, RECVBUF, COUNT, DATATYPE, &
                              OP, COMM, ERROR)
    END IF
 

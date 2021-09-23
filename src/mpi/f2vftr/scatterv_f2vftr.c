@@ -21,13 +21,13 @@
 
 #include <stdlib.h>
 
-#include <vftr_mpi_buf_addr_const.h>
-#include <vftr_mpi_scatterv.h>
+#include "vftr_mpi_buf_addr_const.h"
+#include "scatterv.h"
 
-void vftr_MPI_Scatterv_f2c(void *sendbuf, MPI_Fint *f_sendcounts, MPI_Fint *f_displs,
-                           MPI_Fint *f_sendtype, void *recvbuf, MPI_Fint *recvcount,
-                           MPI_Fint *f_recvtype, MPI_Fint *root, MPI_Fint *f_comm,
-                           MPI_Fint *f_error) {
+void vftr_MPI_Scatterv_f2vftr(void *sendbuf, MPI_Fint *f_sendcounts, MPI_Fint *f_displs,
+                              MPI_Fint *f_sendtype, void *recvbuf, MPI_Fint *recvcount,
+                              MPI_Fint *f_recvtype, MPI_Fint *root, MPI_Fint *f_comm,
+                              MPI_Fint *f_error) {
 
 
    MPI_Comm c_comm = PMPI_Comm_f2c(*f_comm);
@@ -69,15 +69,40 @@ void vftr_MPI_Scatterv_f2c(void *sendbuf, MPI_Fint *f_sendcounts, MPI_Fint *f_di
    recvbuf = (void*) vftr_is_F_MPI_IN_PLACE(recvbuf) ? MPI_IN_PLACE : recvbuf;
    recvbuf = (void*) vftr_is_F_MPI_BOTTOM(recvbuf) ? MPI_BOTTOM : recvbuf;
 
-   int c_error = vftr_MPI_Scatterv(sendbuf,
-                                   c_sendcounts,
-                                   c_displs,
-                                   c_sendtype,
-                                   recvbuf,
-                                   (int)(*recvcount),
-                                   c_recvtype,
-                                   (int)(*root),
-                                   c_comm);
+   int c_error;
+   if (isintercom) {
+      c_error = vftr_MPI_Scatterv_intercom(sendbuf,
+                                           c_sendcounts,
+                                           c_displs,
+                                           c_sendtype,
+                                           recvbuf,
+                                           (int)(*recvcount),
+                                           c_recvtype,
+                                           (int)(*root),
+                                           c_comm);
+   } else {
+      if (vftr_is_C_MPI_IN_PLACE(recvbuf)) {
+         c_error = vftr_MPI_Scatterv_inplace(sendbuf,
+                                             c_sendcounts,
+                                             c_displs,
+                                             c_sendtype,
+                                             recvbuf,
+                                             (int)(*recvcount),
+                                             c_recvtype,
+                                             (int)(*root),
+                                             c_comm);
+      } else {
+         c_error = vftr_MPI_Scatterv(sendbuf,
+                                     c_sendcounts,
+                                     c_displs,
+                                     c_sendtype,
+                                     recvbuf,
+                                     (int)(*recvcount),
+                                     c_recvtype,
+                                     (int)(*root),
+                                     c_comm);
+      }
+   }
 
    if (isroot) {
       free(c_sendcounts);

@@ -14,7 +14,7 @@
 ! with this program; if not, write to the Free Software Foundation, Inc.,
 ! 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-MODULE vftr_mpi_reduce_scatter_f2c_finterface
+MODULE vftr_mpi_reduce_scatter_f2vftr_fi
 #ifdef _MPI
 
    USE, INTRINSIC :: ISO_FORTRAN_ENV
@@ -24,14 +24,14 @@ MODULE vftr_mpi_reduce_scatter_f2c_finterface
 
    PRIVATE
 
-   PUBLIC :: vftr_MPI_Reduce_scatter_f2c
+   PUBLIC :: vftr_MPI_Reduce_scatter_f2vftr
 
    INTERFACE 
 
-      SUBROUTINE vftr_MPI_Reduce_scatter_f2c(SENDBUF, RECVBUF, F_RECVCOUNTS, &
+      SUBROUTINE vftr_MPI_Reduce_scatter_f2vftr(SENDBUF, RECVBUF, F_RECVCOUNTS, &
                                              F_DATATYPE, F_OP, F_COMM, &
                                              F_ERROR) &
-         BIND(C, name="vftr_MPI_Reduce_scatter_f2c")
+         BIND(C, name="vftr_MPI_Reduce_scatter_f2vftr")
          IMPLICIT NONE
          INTEGER SENDBUF
          INTEGER RECVBUF
@@ -40,7 +40,7 @@ MODULE vftr_mpi_reduce_scatter_f2c_finterface
          INTEGER F_OP
          INTEGER F_COMM
          INTEGER F_ERROR
-      END SUBROUTINE vftr_MPI_Reduce_scatter_f2c
+      END SUBROUTINE vftr_MPI_Reduce_scatter_f2vftr
 
    END INTERFACE
 
@@ -48,4 +48,4 @@ MODULE vftr_mpi_reduce_scatter_f2c_finterface
 
 CONTAINS
 
-END MODULE vftr_mpi_reduce_scatter_f2c_finterface
+END MODULE vftr_mpi_reduce_scatter_f2vftr_fi

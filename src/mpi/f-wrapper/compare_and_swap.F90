@@ -19,8 +19,8 @@
 SUBROUTINE MPI_COMPARE_AND_SWAP(ORIGIN_ADDR, COMPARE_ADDR, RESULT_ADDR, &
                                 DATATYPE, TARGET_RANK, TARGET_DISP, &
                                 WIN, ERROR)
-   USE vftr_mpi_compare_and_swap_f2c_finterface, &
-      ONLY : vftr_MPI_Compare_and_swap_f2c
+   USE vftr_mpi_compare_and_swap_f2vftr_fi, &
+      ONLY : vftr_MPI_Compare_and_swap_f2vftr
    USE vftr_mpi_logging_F, &
       ONLY : vftr_no_mpi_logging_F
    USE mpi, &
@@ -41,7 +41,7 @@ SUBROUTINE MPI_COMPARE_AND_SWAP(ORIGIN_ADDR, COMPARE_ADDR, RESULT_ADDR, &
                                  DATATYPE, TARGET_RANK, TARGET_DISP, &
                                  WIN, ERROR)
    ELSE
-      CALL vftr_MPI_Compare_and_swap_f2c(ORIGIN_ADDR, COMPARE_ADDR, RESULT_ADDR, &
+      CALL vftr_MPI_Compare_and_swap_f2vftr(ORIGIN_ADDR, COMPARE_ADDR, RESULT_ADDR, &
                                          DATATYPE, TARGET_RANK, TARGET_DISP, &
                                          WIN, ERROR)
    END IF

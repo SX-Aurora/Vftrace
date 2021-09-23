@@ -14,7 +14,7 @@
 ! with this program; if not, write to the Free Software Foundation, Inc.,
 ! 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-MODULE vftr_mpi_iscatterv_f2c_finterface
+MODULE vftr_mpi_iscatterv_f2vftr_fi
 #ifdef _MPI
 
    USE, INTRINSIC :: ISO_FORTRAN_ENV
@@ -24,15 +24,15 @@ MODULE vftr_mpi_iscatterv_f2c_finterface
 
    PRIVATE
 
-   PUBLIC :: vftr_MPI_Iscatterv_f2c
+   PUBLIC :: vftr_MPI_Iscatterv_f2vftr
 
    INTERFACE 
 
-      SUBROUTINE vftr_MPI_Iscatterv_f2c(SENDBUF, F_SENDCOUNTS, F_DISPLS, &
+      SUBROUTINE vftr_MPI_Iscatterv_f2vftr(SENDBUF, F_SENDCOUNTS, F_DISPLS, &
                                         F_SENDTYPE, RECVBUF, RECVCOUNT, &
                                         F_RECVTYPE, ROOT, F_COMM, &
                                         F_REQUEST, F_ERROR) &
-         BIND(C, name="vftr_MPI_Iscatterv_f2c")
+         BIND(C, name="vftr_MPI_Iscatterv_f2vftr")
          IMPLICIT NONE
          INTEGER SENDBUF
          INTEGER F_SENDCOUNTS(*)
@@ -45,7 +45,7 @@ MODULE vftr_mpi_iscatterv_f2c_finterface
          INTEGER F_COMM
          INTEGER F_REQUEST
          INTEGER F_ERROR
-      END SUBROUTINE vftr_MPI_Iscatterv_f2c
+      END SUBROUTINE vftr_MPI_Iscatterv_f2vftr
 
    END INTERFACE
 
@@ -53,4 +53,4 @@ MODULE vftr_mpi_iscatterv_f2c_finterface
 
 CONTAINS
 
-END MODULE vftr_mpi_iscatterv_f2c_finterface
+END MODULE vftr_mpi_iscatterv_f2vftr_fi
