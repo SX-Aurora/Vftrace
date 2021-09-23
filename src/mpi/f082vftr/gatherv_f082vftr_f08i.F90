@@ -14,7 +14,7 @@
 ! with this program; if not, write to the Free Software Foundation, Inc.,
 ! 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-MODULE vftr_mpi_gatherv_f082c_f08interface
+MODULE vftr_mpi_gatherv_f082vftr_f08i
 #ifdef _MPI
 
    USE, INTRINSIC :: ISO_FORTRAN_ENV
@@ -24,15 +24,15 @@ MODULE vftr_mpi_gatherv_f082c_f08interface
 
    PRIVATE
 
-   PUBLIC :: vftr_MPI_Gatherv_f082c
+   PUBLIC :: vftr_MPI_Gatherv_f082vftr
 
    INTERFACE 
 
-      SUBROUTINE vftr_MPI_Gatherv_f082c(sendbuf, sendcount, f_sendtype, &
-                                        recvbuf, f_recvcounts, f_displs, &
-                                        f_recvtype, root, f_comm, &
-                                        f_error) &
-         BIND(C, name="vftr_MPI_Gatherv_f082c")
+      SUBROUTINE vftr_MPI_Gatherv_f082vftr(sendbuf, sendcount, f_sendtype, &
+                                           recvbuf, f_recvcounts, f_displs, &
+                                           f_recvtype, root, f_comm, &
+                                           f_error) &
+         BIND(C, name="vftr_MPI_Gatherv_f082vftr")
          IMPLICIT NONE
          INTEGER, INTENT(IN) :: SENDBUF
          INTEGER, INTENT(IN) :: SENDCOUNT
@@ -44,7 +44,7 @@ MODULE vftr_mpi_gatherv_f082c_f08interface
          INTEGER, INTENT(IN) :: ROOT
          INTEGER, INTENT(IN) :: F_COMM
          INTEGER, INTENT(OUT) :: F_ERROR
-      END SUBROUTINE vftr_MPI_Gatherv_f082c
+      END SUBROUTINE vftr_MPI_Gatherv_f082vftr
 
    END INTERFACE
 
@@ -52,4 +52,4 @@ MODULE vftr_mpi_gatherv_f082c_f08interface
 
 CONTAINS
 
-END MODULE vftr_mpi_gatherv_f082c_f08interface
+END MODULE vftr_mpi_gatherv_f082vftr_f08i
