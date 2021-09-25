@@ -1,3 +1,6 @@
+#ifdef _MPI
+#include <mpi.h>
+#endif
 __attribute__((no_instrument_function))
 int not_instrumented_function () {
    return 0;
