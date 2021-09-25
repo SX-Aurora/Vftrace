@@ -17,6 +17,8 @@
 */
 
 #ifdef _MPI
+#include <stdlib.h>
+
 #include <mpi.h>
 
 #include "init.h"
