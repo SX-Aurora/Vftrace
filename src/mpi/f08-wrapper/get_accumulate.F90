@@ -25,7 +25,7 @@ SUBROUTINE MPI_Get_accumulate_f08(origin_addr, origin_count, origin_datatype, &
    USE vftr_mpi_logging_f08, &
       ONLY : vftr_no_mpi_logging_f08
    USE mpi_f08, &
-      ONLY : PMPI_Get_accumulate_F08, &
+      ONLY : PMPI_Get_accumulate, &
              MPI_Datatype, &
              MPI_Op, &
              MPI_Win, &
@@ -47,11 +47,11 @@ SUBROUTINE MPI_Get_accumulate_f08(origin_addr, origin_count, origin_datatype, &
    INTEGER :: tmperror
 
    IF (vftr_no_mpi_logging_f08()) THEN
-      CALL PMPI_Get_accumulate_f08(origin_addr, origin_count, origin_datatype, &
-                                   result_addr, result_count, result_datatype, &
-                                   target_rank, target_disp, target_count, &
-                                   target_datatype, op, win, &
-                                   tmperror)
+      CALL PMPI_Get_accumulate(origin_addr, origin_count, origin_datatype, &
+                               result_addr, result_count, result_datatype, &
+                               target_rank, target_disp, target_count, &
+                               target_datatype, op, win, &
+                               tmperror)
    ELSE
       CALL vftr_MPI_Get_accumulate_f082vftr(origin_addr, origin_count, origin_datatype%MPI_VAL, &
                                          result_addr, result_count, result_datatype%MPI_VAL, &
