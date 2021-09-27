@@ -24,7 +24,7 @@ SUBROUTINE MPI_Alltoallw_f08(sendbuf, sendcounts, sdispls, sendtypes, &
    USE vftr_mpi_logging_f08, &
       ONLY : vftr_no_mpi_logging_f08
    USE mpi_f08, &
-      ONLY : PMPI_Alltoallw_f08, &
+      ONLY : PMPI_Alltoallw, &
              MPI_Datatype, &
              MPI_Comm
    IMPLICIT NONE
@@ -46,9 +46,9 @@ SUBROUTINE MPI_Alltoallw_f08(sendbuf, sendcounts, sdispls, sendtypes, &
    LOGICAL :: isintercom
 
    IF (vftr_no_mpi_logging_f08()) THEN
-      CALL PMPI_Alltoallw_f08(sendbuf, sendcounts, sdispls, sendtypes, &
-                              recvbuf, recvcounts, rdispls, recvtypes, &
-                              comm, tmperror)
+      CALL PMPI_Alltoallw(sendbuf, sendcounts, sdispls, sendtypes, &
+                          recvbuf, recvcounts, rdispls, recvtypes, &
+                          comm, tmperror)
    ELSE
       CALL PMPI_Comm_test_inter(comm, isintercom, tmperror)
       IF (isintercom) THEN
