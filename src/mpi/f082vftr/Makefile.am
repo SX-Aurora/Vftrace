@@ -114,14 +114,14 @@ libvftr_mpi_f082vftr_la_SOURCES += reduce_f082vftr_f08i.F90 \
 #############
 # one sided #
 #############
-libvftr_mpi_f082vftr_la_SOURCES += put_f082vftr.c 
-#                                   get_f082vftr.c \
+libvftr_mpi_f082vftr_la_SOURCES += put_f082vftr.c \
+                                   get_f082vftr.c 
 #                                   accumulate_f082vftr.c \
 #                                   get_accumulate_f082vftr.c \
 #                                   fetch_and_op_f082vftr.c \
 #                                   compare_and_swap_f082vftr.c
-libvftr_mpi_f082vftr_la_SOURCES += put_f082vftr_f08i.F90 
-#                                   get_f082vftr_f08i.F90 \
+libvftr_mpi_f082vftr_la_SOURCES += put_f082vftr_f08i.F90 \
+                                   get_f082vftr_f08i.F90 
 #                                   accumulate_f082vftr_f08i.F90 \
 #                                   get_accumulate_f082vftr_f08i.F90 \
 #                                   fetch_and_op_f082vftr_f08i.F90 \
