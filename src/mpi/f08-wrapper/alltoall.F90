@@ -24,7 +24,7 @@ SUBROUTINE MPI_Alltoall_f08(sendbuf, sendcount, sendtype, &
    USE vftr_mpi_logging_f08, &
       ONLY : vftr_no_mpi_logging_f08
    USE mpi_f08, &
-      ONLY : PMPI_Alltoall_f08, &
+      ONLY : PMPI_Alltoall, &
              MPI_Datatype, &
              MPI_Comm
    IMPLICIT NONE
@@ -39,9 +39,9 @@ SUBROUTINE MPI_Alltoall_f08(sendbuf, sendcount, sendtype, &
    INTEGER :: tmperror
 
    IF (vftr_no_mpi_logging_f08()) THEN
-      CALL PMPI_Alltoall_f08(sendbuf, sendcount, sendtype, &
-                             recvbuf, recvcount, recvtype, &
-                             comm, tmperror)
+      CALL PMPI_Alltoall(sendbuf, sendcount, sendtype, &
+                         recvbuf, recvcount, recvtype, &
+                         comm, tmperror)
    ELSE
       CALL vftr_MPI_Alltoall_f082vftr(sendbuf, sendcount, sendtype%MPI_VAL, &
                                    recvbuf, recvcount, recvtype%MPI_VAL, &
