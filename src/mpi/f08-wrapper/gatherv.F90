@@ -25,7 +25,7 @@ SUBROUTINE MPI_Gatherv_f08(sendbuf, sendcount, sendtype, &
    USE vftr_mpi_logging_f08, &
       ONLY : vftr_no_mpi_logging_f08
    USE mpi_f08, &
-      ONLY : PMPI_Gatherv_f08, &
+      ONLY : PMPI_Gatherv, &
              MPI_Datatype, &
              MPI_Comm
    IMPLICIT NONE
@@ -42,10 +42,10 @@ SUBROUTINE MPI_Gatherv_f08(sendbuf, sendcount, sendtype, &
    INTEGER :: tmperror
 
    IF (vftr_no_mpi_logging_f08()) THEN
-      CALL PMPI_Gatherv_f08(sendbuf, sendcount, sendtype, &
-                            recvbuf, recvcounts, displs, &
-                            recvtype, root, comm, &
-                            tmperror)
+      CALL PMPI_Gatherv(sendbuf, sendcount, sendtype, &
+                        recvbuf, recvcounts, displs, &
+                        recvtype, root, comm, &
+                        tmperror)
    ELSE
       CALL vftr_MPI_Gatherv_f082vftr(sendbuf, sendcount, sendtype%MPI_VAL, &
                                   recvbuf, recvcounts, displs, &
