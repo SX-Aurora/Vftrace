@@ -24,7 +24,7 @@ SUBROUTINE MPI_Put_f08(origin_addr, origin_count, origin_datatype, &
    USE vftr_mpi_logging_f08, &
       ONLY : vftr_no_mpi_logging_f08
    USE mpi_f08, &
-      ONLY : PMPI_Put_f08, &
+      ONLY : PMPI_Put, &
              MPI_Datatype, &
              MPI_Win, &
              MPI_ADDRESS_KIND
@@ -41,9 +41,9 @@ SUBROUTINE MPI_Put_f08(origin_addr, origin_count, origin_datatype, &
    INTEGER :: tmperror
 
    IF (vftr_no_mpi_logging_f08()) THEN
-      CALL PMPI_Put_f08(origin_addr, origin_count, origin_datatype, &
-                        target_rank, target_disp, target_count, &
-                        target_datatype, win, tmperror)
+      CALL PMPI_Put(origin_addr, origin_count, origin_datatype, &
+                    target_rank, target_disp, target_count, &
+                    target_datatype, win, tmperror)
    ELSE
       CALL vftr_MPI_Put_f082vftr(origin_addr, origin_count, origin_datatype%MPI_VAL, &
                               target_rank, target_disp, target_count, &
