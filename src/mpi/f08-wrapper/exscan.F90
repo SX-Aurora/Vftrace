@@ -38,9 +38,9 @@ SUBROUTINE MPI_Exscan_f08(sendbuf, recvbuf, count, &
    INTEGER :: tmperror
 
    IF (vftr_no_mpi_logging_f08()) THEN
-      CALL PMPI_Exscan_f08(sendbuf, recvbuf, count, &
-                           datatype, op, &
-                           comm, tmperror)
+      CALL PMPI_Exscan(sendbuf, recvbuf, count, &
+                       datatype, op, &
+                       comm, tmperror)
    ELSE
       CALL vftr_MPI_Exscan_f082vftr(sendbuf, recvbuf, count, &
                                  datatype%MPI_VAL, op%MPI_VAL, &
