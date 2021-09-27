@@ -19,11 +19,13 @@
 #ifdef _MPI
 #include <mpi.h>
 
-#include <vftr_mpi_compare_and_swap.h>
+#include "compare_and_swap.h"
 
-void vftr_MPI_Compare_and_swap_f082c(const void *origin_addr, const void *compare_addr,void *result_addr,
-                                     MPI_Fint *f_datatype, MPI_Fint *target_rank, MPI_Aint *target_disp,
-                                     MPI_Fint *f_win, MPI_Fint *f_error) {
+void vftr_MPI_Compare_and_swap_f082vftr(const void *origin_addr,
+                                        const void *compare_addr,
+                                        void *result_addr, MPI_Fint *f_datatype,
+                                        MPI_Fint *target_rank, MPI_Aint *target_disp,
+                                        MPI_Fint *f_win, MPI_Fint *f_error) {
 
    MPI_Datatype c_datatype = PMPI_Type_f2c(*f_datatype);
    MPI_Win c_win = PMPI_Win_f2c(*f_win);
