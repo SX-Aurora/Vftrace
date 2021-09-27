@@ -22,7 +22,7 @@ SUBROUTINE MPI_Rsend_f08(buf, count, datatype, dest, tag, comm, error)
    USE vftr_mpi_logging_f08, &
       ONLY : vftr_no_mpi_logging_f08
    USE mpi_f08, &
-      ONLY : PMPI_Rsend_f08, &
+      ONLY : PMPI_Rsend, &
              MPI_Datatype, &
              MPI_Comm
    IMPLICIT NONE
@@ -36,7 +36,7 @@ SUBROUTINE MPI_Rsend_f08(buf, count, datatype, dest, tag, comm, error)
    INTEGER :: tmperror
 
    IF (vftr_no_mpi_logging_f08()) THEN
-      CALL PMPI_Rsend_f08(buf, count, datatype, dest, tag, comm, tmperror)
+      CALL PMPI_Rsend(buf, count, datatype, dest, tag, comm, tmperror)
    ELSE
       CALL vftr_MPI_Rsend_f082vftr(buf, count, datatype%MPI_VAL, dest, tag, comm%MPI_VAL, tmperror)
    END IF
