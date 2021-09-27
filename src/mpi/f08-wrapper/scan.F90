@@ -23,7 +23,7 @@ SUBROUTINE MPI_Scan_f08(sendbuf, recvbuf, count, &
    USE vftr_mpi_logging_f08, &
       ONLY : vftr_no_mpi_logging_f08
    USE mpi_f08, &
-      ONLY : PMPI_Scan_f08, &
+      ONLY : PMPI_Scan, &
              MPI_Datatype, &
              MPI_Op, &
              MPI_Comm
@@ -38,9 +38,9 @@ SUBROUTINE MPI_Scan_f08(sendbuf, recvbuf, count, &
    INTEGER :: tmperror
 
    IF (vftr_no_mpi_logging_f08()) THEN
-      CALL PMPI_Scan_f08(sendbuf, recvbuf, count, &
-                         datatype, op, &
-                         comm, tmperror)
+      CALL PMPI_Scan(sendbuf, recvbuf, count, &
+                     datatype, op, &
+                     comm, tmperror)
    ELSE
       CALL vftr_MPI_Scan_f082vftr(sendbuf, recvbuf, count, &
                                datatype%MPI_VAL, op%MPI_VAL, &
