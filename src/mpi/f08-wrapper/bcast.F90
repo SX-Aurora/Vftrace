@@ -23,7 +23,7 @@ SUBROUTINE MPI_Bcast_f08(buffer, count, datatype, &
    USE vftr_mpi_logging_f08, &
       ONLY : vftr_no_mpi_logging_f08
    USE mpi_f08, &
-      ONLY : PMPI_Bcast_f08, &
+      ONLY : PMPI_Bcast, &
              MPI_Datatype, &
              MPI_Comm
    IMPLICIT NONE
@@ -36,8 +36,8 @@ SUBROUTINE MPI_Bcast_f08(buffer, count, datatype, &
    INTEGER :: tmperror
 
    IF (vftr_no_mpi_logging_f08()) THEN
-      CALL PMPI_Bcast_f08(buffer, count, datatype, &
-                          root, comm, tmperror)
+      CALL PMPI_Bcast(buffer, count, datatype, &
+                      root, comm, tmperror)
    ELSE
       CALL vftr_MPI_Bcast_f082vftr(buffer, count, datatype%MPI_VAL, &
                                 root, comm%MPI_VAL, tmperror)
