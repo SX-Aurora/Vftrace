@@ -39,8 +39,8 @@ SUBROUTINE MPI_Reduce_f08(sendbuf, recvbuf, count, datatype, &
    INTEGER :: tmperror
 
    IF (vftr_no_mpi_logging_f08()) THEN
-      CALL PMPI_Reduce_f08(sendbuf, recvbuf, count, datatype, &
-                           op, root, comm, tmperror)
+      CALL PMPI_Reduce(sendbuf, recvbuf, count, datatype, &
+                       op, root, comm, tmperror)
    ELSE
       CALL vftr_MPI_Reduce_f082vftr(sendbuf, recvbuf, count, datatype%MPI_VAL, &
                                  op%MPI_VAL, root, comm%MPI_VAL, tmperror)
