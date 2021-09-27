@@ -14,7 +14,7 @@
 ! with this program; if not, write to the Free Software Foundation, Inc.,
 ! 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-MODULE vftr_mpi_put_f082c_f08interface
+MODULE vftr_mpi_put_f082vftr_f08i
 #ifdef _MPI
 
    USE, INTRINSIC :: ISO_FORTRAN_ENV
@@ -24,14 +24,14 @@ MODULE vftr_mpi_put_f082c_f08interface
 
    PRIVATE
 
-   PUBLIC :: vftr_MPI_Put_f082c
+   PUBLIC :: vftr_MPI_Put_f082vftr
 
    INTERFACE
 
-      SUBROUTINE vftr_MPI_Put_f082c(origin_addr, origin_count, f_origin_datatype, &
-                                    target_rank, target_disp, target_count, &
-                                    f_target_datatype, f_win, f_error) &
-         BIND(C, name="vftr_MPI_Put_f082c")
+      SUBROUTINE vftr_MPI_Put_f082vftr(origin_addr, origin_count, f_origin_datatype, &
+                                       target_rank, target_disp, target_count, &
+                                       f_target_datatype, f_win, f_error) &
+         BIND(C, name="vftr_MPI_Put_f082vftr")
          USE mpi_f08, ONLY: MPI_ADDRESS_KIND
          IMPLICIT NONE
          INTEGER, INTENT(IN) :: origin_addr
@@ -43,7 +43,7 @@ MODULE vftr_mpi_put_f082c_f08interface
          INTEGER, INTENT(IN) :: f_target_datatype
          INTEGER, INTENT(IN) :: f_win
          INTEGER, INTENT(OUT) :: f_error
-      END SUBROUTINE vftr_MPI_Put_f082c
+      END SUBROUTINE vftr_MPI_Put_f082vftr
 
    END INTERFACE
 
@@ -51,4 +51,4 @@ MODULE vftr_mpi_put_f082c_f08interface
 
 CONTAINS
 
-END MODULE vftr_mpi_put_f082c_f08interface
+END MODULE vftr_mpi_put_f082vftr_f08i
