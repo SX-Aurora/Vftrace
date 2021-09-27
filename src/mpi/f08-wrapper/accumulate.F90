@@ -24,7 +24,7 @@ SUBROUTINE MPI_Accumulate_f08(origin_addr, origin_count, origin_datatype, &
    USE vftr_mpi_logging_f08, &
       ONLY : vftr_no_mpi_logging_f08
    USE mpi_f08, &
-      ONLY : PMPI_Accumulate_f08, &
+      ONLY : PMPI_Accumulate, &
              MPI_Datatype, &
              MPI_Op, &
              MPI_Win, &
