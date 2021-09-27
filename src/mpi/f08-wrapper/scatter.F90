@@ -24,7 +24,7 @@ SUBROUTINE MPI_Scatter_f08(sendbuf, sendcount, sendtype, &
    USE vftr_mpi_logging_f08, &
       ONLY : vftr_no_mpi_logging_f08
    USE mpi_f08, &
-      ONLY : PMPI_Scatter_f08, &
+      ONLY : PMPI_Scatter, &
              MPI_Datatype, &
              MPI_Comm
    IMPLICIT NONE
@@ -40,9 +40,9 @@ SUBROUTINE MPI_Scatter_f08(sendbuf, sendcount, sendtype, &
    INTEGER :: tmperror
 
    IF (vftr_no_mpi_logging_f08()) THEN
-      CALL PMPI_Scatter_f08(sendbuf, sendcount, sendtype, &
-                            recvbuf, recvcount, recvtype, &
-                            root, comm, tmperror)
+      CALL PMPI_Scatter(sendbuf, sendcount, sendtype, &
+                        recvbuf, recvcount, recvtype, &
+                        root, comm, tmperror)
    ELSE
       CALL vftr_MPI_Scatter_f082vftr(sendbuf, sendcount, sendtype%MPI_VAL, &
                                   recvbuf, recvcount, recvtype%MPI_VAL, &
