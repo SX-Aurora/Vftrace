@@ -26,7 +26,7 @@ SUBROUTINE MPI_Allreduce_f08(sendbuf, recvbuf, count, &
    USE vftr_mpi_logging_f08, &
       ONLY : vftr_no_mpi_logging_f08
    USE mpi_f08, &
-      ONLY : PMPI_Allreduce_f08, &
+      ONLY : PMPI_Allreduce, &
              MPI_Datatype, &
              MPI_Comm, &
              MPI_Op
@@ -41,9 +41,9 @@ SUBROUTINE MPI_Allreduce_f08(sendbuf, recvbuf, count, &
    INTEGER :: tmperror
 
    IF (vftr_no_mpi_logging_f08()) THEN
-      CALL PMPI_Allreduce_f08(sendbuf, recvbuf, count, &
-                              datatype, op, comm, &
-                              tmperror)
+      CALL PMPI_Allreduce(sendbuf, recvbuf, count, &
+                          datatype, op, comm, &
+                          tmperror)
    ELSE
       CALL vftr_MPI_Allreduce_f082vftr(sendbuf, recvbuf, count, &
                                     datatype%MPI_VAL, op%MPI_VAL, comm%MPI_VAL, &
