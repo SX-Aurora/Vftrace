@@ -25,7 +25,7 @@ SUBROUTINE MPI_Scatterv_f08(sendbuf, sendcounts, displs, &
    USE vftr_mpi_logging_f08, &
       ONLY : vftr_no_mpi_logging_f08
    USE mpi_f08, &
-      ONLY : PMPI_Scatterv_f08, &
+      ONLY : PMPI_Scatterv, &
              MPI_Datatype, &
              MPI_Comm
    IMPLICIT NONE
@@ -42,10 +42,10 @@ SUBROUTINE MPI_Scatterv_f08(sendbuf, sendcounts, displs, &
    INTEGER :: tmperror
 
    IF (vftr_no_mpi_logging_f08()) THEN
-      CALL PMPI_Scatterv_f08(sendbuf, sendcounts, displs, &
-                             sendtype, recvbuf, recvcount, &
-                             recvtype, root, comm, &
-                             tmperror)
+      CALL PMPI_Scatterv(sendbuf, sendcounts, displs, &
+                         sendtype, recvbuf, recvcount, &
+                         recvtype, root, comm, &
+                         tmperror)
    ELSE
       CALL vftr_MPI_Scatterv_f082vftr(sendbuf, sendcounts, displs, &
                                    sendtype%MPI_VAL, recvbuf, recvcount, &
