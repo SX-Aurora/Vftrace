@@ -19,12 +19,12 @@
 #ifdef _MPI
 #include <mpi.h>
 
-#include <vftr_mpi_buf_addr_const.h>
-#include <vftr_mpi_reduce.h>
+#include "vftr_mpi_buf_addr_const.h"
+#include "allreduce.h"
 
-void vftr_MPI_Reduce_f082c(void *sendbuf, void *recvbuf, MPI_Fint *count,
-                           MPI_Fint *f_datatype, MPI_Fint *f_op, MPI_Fint *root,
-                           MPI_Fint *f_comm, MPI_Fint *f_error) {
+void vftr_MPI_Allreduce_f082vftr(void *sendbuf, void *recvbuf, MPI_Fint *count,
+                                 MPI_Fint *f_datatype, MPI_Fint *f_op,
+                                 MPI_Fint *f_comm, MPI_Fint *f_error) {
 
    MPI_Datatype c_datatype = PMPI_Type_f2c(*f_datatype);
    MPI_Op c_op = PMPI_Op_f2c(*f_op);
@@ -34,13 +34,12 @@ void vftr_MPI_Reduce_f082c(void *sendbuf, void *recvbuf, MPI_Fint *count,
    sendbuf = (void*) vftr_is_F_MPI_BOTTOM(sendbuf) ? MPI_BOTTOM : sendbuf;
    recvbuf = (void*) vftr_is_F_MPI_BOTTOM(recvbuf) ? MPI_BOTTOM : recvbuf;
 
-   int c_error = vftr_MPI_Reduce(sendbuf,
-                                 recvbuf,
-                                 (int)(*count),
-                                 c_datatype,
-                                 c_op,
-                                 (int)(*root),
-                                 c_comm);
+   int c_error = vftr_MPI_Allreduce(sendbuf,
+                                    recvbuf,
+                                    (int)(*count),
+                                    c_datatype,
+                                    c_op,
+                                    c_comm);
 
    *f_error = (MPI_Fint) (c_error);
 }
