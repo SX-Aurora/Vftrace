@@ -24,7 +24,7 @@ SUBROUTINE MPI_Reduce_scatter_block_f08(sendbuf, recvbuf, recvcount, &
    USE vftr_mpi_logging_f08, &
       ONLY : vftr_no_mpi_logging_f08
    USE mpi_f08, &
-      ONLY : PMPI_Reduce_scatter_block_f08, &
+      ONLY : PMPI_Reduce_scatter_block, &
              MPI_Datatype, &
              MPI_Comm, &
              MPI_Op
@@ -39,9 +39,9 @@ SUBROUTINE MPI_Reduce_scatter_block_f08(sendbuf, recvbuf, recvcount, &
    INTEGER :: tmperror
 
    IF (vftr_no_mpi_logging_f08()) THEN
-      CALL PMPI_Reduce_scatter_block_f08(sendbuf, recvbuf, recvcount, &
-                                         datatype, op, comm, &
-                                         tmperror)
+      CALL PMPI_Reduce_scatter_block(sendbuf, recvbuf, recvcount, &
+                                     datatype, op, comm, &
+                                     tmperror)
    ELSE
       CALL vftr_MPI_Reduce_scatter_block_f082vftr(sendbuf, recvbuf, recvcount, &
                                                datatype%MPI_VAL, op%MPI_VAL, comm%MPI_VAL, &
