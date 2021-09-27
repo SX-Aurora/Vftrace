@@ -53,9 +53,9 @@ libvftr_f08mpiwrap_la_SOURCES += reduce.F90 \
 #############
 libvftr_f08mpiwrap_la_SOURCES += put.F90 \
 				 get.F90 \
-				 accumulate.F90 
-#				 get_accumulate.F90 \
-#				 fetch_and_op.F90 \
+				 accumulate.F90 \
+				 get_accumulate.F90 \
+				 fetch_and_op.F90 
 #				 compare_and_swap.F90
 #
 #############
