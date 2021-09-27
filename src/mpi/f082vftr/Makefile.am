@@ -101,14 +101,14 @@ libvftr_mpi_f082vftr_la_SOURCES += barrier_f082vftr_f08i.F90 \
 libvftr_mpi_f082vftr_la_SOURCES += reduce_f082vftr.c \
                                    allreduce_f082vftr.c \
                                    reduce_scatter_block_f082vftr.c \
-                                   reduce_scatter_f082vftr.c 
-#                                   scan_f082vftr.c \
+                                   reduce_scatter_f082vftr.c \
+                                   scan_f082vftr.c 
 #                                   exscan_f082vftr.c
 libvftr_mpi_f082vftr_la_SOURCES += reduce_f082vftr_f08i.F90 \
                                    allreduce_f082vftr_f08i.F90 \
                                    reduce_scatter_block_f082vftr_f08i.F90 \
-                                   reduce_scatter_f082vftr_f08i.F90 
-#                                   scan_f082vftr_f08i.F90 \
+                                   reduce_scatter_f082vftr_f08i.F90 \
+                                   scan_f082vftr_f08i.F90 
 #                                   exscan_f082vftr_f08i.F90
 #
 ##############
