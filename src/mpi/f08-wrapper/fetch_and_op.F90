@@ -24,7 +24,7 @@ SUBROUTINE MPI_Fetch_and_op_f08(origin_addr, result_addr, datatype, &
    USE vftr_mpi_logging_f08, &
       ONLY : vftr_no_mpi_logging_f08
    USE mpi_f08, &
-      ONLY : PMPI_Fetch_and_op_f08, &
+      ONLY : PMPI_Fetch_and_op, &
              MPI_Datatype, &
              MPI_Op, &
              MPI_Win, &
@@ -41,9 +41,9 @@ SUBROUTINE MPI_Fetch_and_op_f08(origin_addr, result_addr, datatype, &
    INTEGER :: tmperror
 
    IF (vftr_no_mpi_logging_f08()) THEN
-      CALL PMPI_Fetch_and_op_f08(origin_addr, result_addr, datatype, &
-                                 target_rank, target_disp, op, win, &
-                                 tmperror)
+      CALL PMPI_Fetch_and_op(origin_addr, result_addr, datatype, &
+                             target_rank, target_disp, op, win, &
+                             tmperror)
    ELSE
       CALL vftr_MPI_Fetch_and_op_f082vftr(origin_addr, result_addr, datatype%MPI_VAL, &
                                        target_rank, target_disp, op%MPI_VAL, win%MPI_VAL, &
