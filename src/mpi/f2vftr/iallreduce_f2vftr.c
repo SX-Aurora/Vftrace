@@ -19,6 +19,7 @@
 #ifdef _MPI
 #include <mpi.h>
 
+#include "vftr_mpi_utils.h"
 #include "vftr_mpi_buf_addr_const.h"
 #include "iallreduce.h"
 
@@ -36,13 +37,36 @@ void vftr_MPI_Iallreduce_f2vftr(void *sendbuf, void *recvbuf, MPI_Fint *count,
    sendbuf = (void*) vftr_is_F_MPI_BOTTOM(sendbuf) ? MPI_BOTTOM : sendbuf;
    recvbuf = (void*) vftr_is_F_MPI_BOTTOM(recvbuf) ? MPI_BOTTOM : recvbuf;
 
-   int c_error = vftr_MPI_Iallreduce(sendbuf,
-                                     recvbuf,
-                                     (int)(*count),
-                                     c_datatype,
-                                     c_op,
-                                     c_comm,
-                                     &c_request);
+   int c_error;
+   int isintercom;
+   PMPI_Comm_test_inter(c_comm, &isintercom);
+   if (isintercom) {
+      c_error = vftr_MPI_Iallreduce_intercom(sendbuf,
+                                             recvbuf,
+                                             (int)(*count),
+                                             c_datatype,
+                                             c_op,
+                                             c_comm,
+                                             &c_request);
+   } else {
+      if (vftr_is_C_MPI_IN_PLACE(sendbuf)) {
+         c_error = vftr_MPI_Iallreduce_inplace(sendbuf,
+                                               recvbuf,
+                                               (int)(*count),
+                                               c_datatype,
+                                               c_op,
+                                               c_comm,
+                                               &c_request);
+      } else {
+         c_error = vftr_MPI_Iallreduce(sendbuf,
+                                       recvbuf,
+                                       (int)(*count),
+                                       c_datatype,
+                                       c_op,
+                                       c_comm,
+                                       &c_request);
+      }
+   }
 
    *f_error = (MPI_Fint) (c_error);
    *f_request = PMPI_Request_c2f(c_request);
