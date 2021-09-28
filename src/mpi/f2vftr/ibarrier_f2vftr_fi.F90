@@ -28,12 +28,11 @@ MODULE vftr_mpi_ibarrier_f2vftr_fi
 
    INTERFACE
 
-      SUBROUTINE vftr_MPI_Ibarrier_f2vftr(F_COMM, F_STATUS, F_ERROR) &
+      SUBROUTINE vftr_MPI_Ibarrier_f2vftr(F_COMM, F_REQUEST, F_ERROR) &
          BIND(C, name="vftr_MPI_Ibarrier_f2vftr")
-         USE mpi, ONLY: MPI_STATUS_SIZE
          IMPLICIT NONE
          INTEGER F_COMM
-         INTEGER F_STATUS(MPI_STATUS_SIZE)
+         INTEGER F_REQUEST
          INTEGER F_ERROR
       END SUBROUTINE vftr_MPI_Ibarrier_f2vftr
 
