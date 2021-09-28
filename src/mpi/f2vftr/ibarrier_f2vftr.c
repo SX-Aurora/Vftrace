@@ -32,7 +32,7 @@ void vftr_MPI_Ibarrier_f2vftr(MPI_Fint *f_comm, MPI_Fint *f_request,
    int c_error = vftr_MPI_Ibarrier(c_comm,
                                    &c_request);
 
-   PMPI_Request_c2f(&c_request, f_request);
+   *f_request = PMPI_Request_c2f(c_request);
    *f_error = (MPI_Fint) c_error;
 }
 
