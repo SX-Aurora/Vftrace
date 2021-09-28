@@ -29,7 +29,7 @@ MODULE vftr_mpi_init_f2vftr_fi
    INTERFACE
 
       SUBROUTINE vftr_mpi_init_f2vftr(IERROR) &
-         BIND(c, NAME="vftr_MPI_Init")
+         BIND(c, NAME="vftr_MPI_Init_f2vftr")
          IMPLICIT NONE
          INTEGER :: IERROR
       END SUBROUTINE vftr_mpi_init_f2vftr
