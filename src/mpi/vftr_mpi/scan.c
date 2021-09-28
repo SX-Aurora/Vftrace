@@ -20,21 +20,11 @@
 #include <mpi.h>
 
 #include "vftr_timer.h"
-#include "vftr_regions.h"
-#include "vftr_environment.h"
 #include "vftr_sync_messages.h"
 #include "vftr_mpi_utils.h"
-#include "vftr_mpi_buf_addr_const.h"
 
 int vftr_MPI_Scan(const void *sendbuf, void *recvbuf, int count,
                   MPI_Datatype datatype, MPI_Op op, MPI_Comm comm) {
-
-   // Estimate synchronization time
-   if (vftr_environment.mpi_show_sync_time->value) {
-      vftr_internal_region_begin("MPI_Scan_sync");
-      PMPI_Barrier(comm);
-      vftr_internal_region_end("MPI_Scan_sync");
-   }
 
    long long tstart = vftr_get_runtime_usec();
    int retVal = PMPI_Scan(sendbuf, recvbuf, count, datatype, op, comm);

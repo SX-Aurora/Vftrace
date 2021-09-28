@@ -19,11 +19,21 @@
 #ifdef _MPI
 #include <mpi.h>
 
+#include "vftr_regions.h"
+#include "vftr_environment.h"
 #include "vftr_mpi_utils.h"
 #include "scan_c2vftr.h"
 
 int MPI_Scan(const void *sendbuf, void *recvbuf, int count,
              MPI_Datatype datatype, MPI_Op op, MPI_Comm comm) {
+
+   // Estimate synchronization time
+   if (vftr_environment.mpi_show_sync_time->value) {
+      vftr_internal_region_begin("MPI_Scan_sync");
+      PMPI_Barrier(comm);
+      vftr_internal_region_end("MPI_Scan_sync");
+   }
+
    if (vftr_no_mpi_logging()) {
       return PMPI_Scan(sendbuf, recvbuf, count, datatype, op, comm);
    } else {
