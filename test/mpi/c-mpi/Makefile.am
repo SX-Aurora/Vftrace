@@ -394,6 +394,7 @@ check_PROGRAMS += barrier \
 		  alltoallv_nolog \
 		  alltoallv_inplace \
 		  alltoallv_intercom \
+		  alltoallv_sync_time \
 		  ialltoallv \
 		  ialltoallv_nolog \
 		  ialltoallv_inplace \
@@ -711,6 +712,10 @@ alltoallv_intercom_SOURCES = $(srcdir)/alltoallv_intercom.c
 alltoallv_intercom_CFLAGS = $(AM_CFLAGS)
 alltoallv_intercom_LDFLAGS = $(AM_LDFLAGS)
 
+alltoallv_sync_time_SOURCES = $(srcdir)/alltoallv.c
+alltoallv_sync_time_CFLAGS = $(AM_CFLAGS)
+alltoallv_sync_time_LDFLAGS = $(AM_LDFLAGS)
+
 ialltoallv_SOURCES = $(srcdir)/ialltoallv.c
 ialltoallv_CFLAGS = $(AM_CFLAGS)
 ialltoallv_LDFLAGS = $(AM_LDFLAGS)
@@ -835,6 +840,7 @@ dist_noinst_SCRIPTS += barrier.sh \
 		       alltoallv_nolog.sh \
 		       alltoallv_inplace.sh \
 		       alltoallv_intercom.sh \
+		       alltoallv_sync_time.sh \
 		       ialltoallv.sh \
 		       ialltoallv_nolog.sh \
 		       ialltoallv_inplace.sh \
