@@ -868,6 +868,7 @@ check_PROGRAMS += reduce \
 		  reduce_nolog \
 		  reduce_inplace \
 		  reduce_intercom \
+		  reduce_sync_time \
 		  ireduce \
 		  ireduce_nolog \
 		  ireduce_inplace \
@@ -925,6 +926,10 @@ reduce_inplace_LDFLAGS = $(AM_LDFLAGS)
 reduce_intercom_SOURCES = $(srcdir)/reduce_intercom.c
 reduce_intercom_CFLAGS = $(AM_CFLAGS)
 reduce_intercom_LDFLAGS = $(AM_LDFLAGS)
+
+reduce_sync_time_SOURCES = $(srcdir)/reduce.c
+reduce_sync_time_CFLAGS = $(AM_CFLAGS)
+reduce_sync_time_LDFLAGS = $(AM_LDFLAGS)
 
 ireduce_SOURCES = $(srcdir)/ireduce.c
 ireduce_CFLAGS = $(AM_CFLAGS)
@@ -1094,6 +1099,7 @@ dist_noinst_SCRIPTS += reduce.sh \
 		       reduce_nolog.sh \
 		       reduce_inplace.sh \
 		       reduce_intercom.sh \
+		       reduce_sync_time.sh \
 		       ireduce.sh \
 		       ireduce_nolog.sh \
 		       ireduce_inplace.sh \
