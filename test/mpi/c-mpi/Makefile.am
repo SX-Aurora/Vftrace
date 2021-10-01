@@ -903,6 +903,7 @@ check_PROGRAMS += reduce \
 		  scan \
 		  scan_nolog \
 		  scan_inplace \
+		  scan_sync_time \
 		  iscan \
 		  iscan_nolog \
 		  iscan_inplace \
@@ -1069,6 +1070,10 @@ scan_inplace_SOURCES = $(srcdir)/scan_inplace.c
 scan_inplace_CFLAGS = $(AM_CFLAGS)
 scan_inplace_LDFLAGS = $(AM_LDFLAGS)
 
+scan_sync_time_SOURCES = $(srcdir)/scan.c
+scan_sync_time_CFLAGS = $(AM_CFLAGS)
+scan_sync_time_LDFLAGS = $(AM_LDFLAGS)
+
 iscan_SOURCES = $(srcdir)/iscan.c
 iscan_CFLAGS = $(AM_CFLAGS)
 iscan_LDFLAGS = $(AM_LDFLAGS)
@@ -1144,6 +1149,7 @@ dist_noinst_SCRIPTS += reduce.sh \
 		       scan.sh \
 		       scan_nolog.sh \
 		       scan_inplace.sh \
+		       scan_sync_time.sh \
 		       iscan.sh \
 		       iscan_nolog.sh \
 		       iscan_inplace.sh \
