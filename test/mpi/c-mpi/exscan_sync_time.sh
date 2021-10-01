@@ -1,0 +1,1 @@
+../testscripts/exscan_sync_time.sh
