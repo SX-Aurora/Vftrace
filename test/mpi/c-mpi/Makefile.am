@@ -910,6 +910,7 @@ check_PROGRAMS += reduce \
 		  exscan \
 		  exscan_nolog \
 		  exscan_inplace \
+		  exscan_sync_time \
 		  iexscan \
 		  iexscan_nolog \
 		  iexscan_inplace
@@ -1098,6 +1099,10 @@ exscan_inplace_SOURCES = $(srcdir)/exscan_inplace.c
 exscan_inplace_CFLAGS = $(AM_CFLAGS)
 exscan_inplace_LDFLAGS = $(AM_LDFLAGS)
 
+exscan_sync_time_SOURCES = $(srcdir)/exscan.c
+exscan_sync_time_CFLAGS = $(AM_CFLAGS)
+exscan_sync_time_LDFLAGS = $(AM_LDFLAGS)
+
 iexscan_SOURCES = $(srcdir)/iexscan.c
 iexscan_CFLAGS = $(AM_CFLAGS)
 iexscan_LDFLAGS = $(AM_LDFLAGS)
@@ -1156,6 +1161,7 @@ dist_noinst_SCRIPTS += reduce.sh \
 		       exscan.sh \
 		       exscan_nolog.sh \
 		       exscan_inplace.sh \
+		       exscan_sync_time.sh \
 		       iexscan.sh \
 		       iexscan_nolog.sh \
 		       iexscan_inplace.sh
