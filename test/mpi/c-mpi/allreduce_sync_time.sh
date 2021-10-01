@@ -1,0 +1,1 @@
+../testscripts/allreduce_sync_time.sh
