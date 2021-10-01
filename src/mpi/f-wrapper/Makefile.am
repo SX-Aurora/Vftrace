@@ -1,9 +1,7 @@
 noinst_LTLIBRARIES = libvftr_fmpiwrap.la
 
-libvftr_fmpiwrap_la_SOURCES =
-
-libvftr_fmpiwrap_la_SOURCES += init.F90 \
-			       finalize.F90
+libvftr_fmpiwrap_la_SOURCES = init.F90 \
+			      finalize.F90
 
 ##################
 # point to point #

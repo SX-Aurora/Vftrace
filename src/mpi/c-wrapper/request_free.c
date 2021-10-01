@@ -19,7 +19,6 @@
 #ifdef _MPI
 #include <mpi.h>
 
-#include "vftr_mpi_utils.h"
 #include "request_free_c2vftr.h"
 
 int MPI_Request_free(MPI_Request *request) {

@@ -17,7 +17,6 @@
 */
 
 
-#ifdef _MPI
 #include <mpi.h>
 
 int vftr_MPI_Ibarrier(MPI_Comm comm, MPI_Request *request) {
@@ -25,5 +24,3 @@ int vftr_MPI_Ibarrier(MPI_Comm comm, MPI_Request *request) {
    // for the instrumentation
    return PMPI_Ibarrier(comm, request);
 }
-
-#endif

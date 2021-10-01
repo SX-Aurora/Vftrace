@@ -34,7 +34,7 @@
 #include "vftr_functions.h"
 #include "vftr_timer.h"
 #include "vftr_setup.h"
-#include "vftr_mpi_utils.h"
+#include "mpi_util_types.h"
 #include "vftr_stacks.h"
 #include "vftr_browse.h"
 #include "vftr_sorting.h"

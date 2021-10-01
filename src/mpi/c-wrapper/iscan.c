@@ -19,7 +19,6 @@
 #ifdef _MPI
 #include <mpi.h>
 
-#include "vftr_mpi_utils.h"
 #include "iscan_c2vftr.h"
 
 int MPI_Iscan(const void *sendbuf, void *recvbuf, int count,

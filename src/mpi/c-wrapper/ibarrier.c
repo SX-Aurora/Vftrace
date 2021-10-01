@@ -19,7 +19,6 @@
 #ifdef _MPI
 #include <mpi.h>
 
-#include "vftr_mpi_utils.h"
 #include "ibarrier_c2vftr.h"
 
 int MPI_Ibarrier(MPI_Comm comm, MPI_Request *request) {

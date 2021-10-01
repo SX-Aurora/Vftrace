@@ -22,7 +22,7 @@
 #ifdef _MPI
 #include <stdbool.h>
 
-#include "vftr_mpi_utils.h"
+#include "mpi_util_types.h"
 
 // store open requests as doubly linked list
 typedef struct vftr_request_type {

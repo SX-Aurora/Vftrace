@@ -19,7 +19,6 @@
 #ifdef _MPI
 #include <mpi.h>
 
-#include "vftr_mpi_utils.h"
 #include "ireduce_scatter_block_c2vftr.h"
 
 int MPI_Ireduce_scatter_block(const void *sendbuf, void *recvbuf,

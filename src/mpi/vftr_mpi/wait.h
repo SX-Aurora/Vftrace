@@ -19,10 +19,8 @@
 #ifndef WAIT_H
 #define WAIT_H
 
-#ifdef _MPI
 #include <mpi.h>
 
 int vftr_MPI_Wait(MPI_Request *request, MPI_Status *status);
 
-#endif
 #endif

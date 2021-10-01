@@ -1,9 +1,6 @@
 noinst_LTLIBRARIES = libvftr_mpi_f2vftr.la
 
-libvftr_mpi_f2vftr_la_SOURCES = vftr_mpi_buf_addr_const_F.F90 \
-                                vftr_mpi_logging_F.F90
-
-libvftr_mpi_f2vftr_la_SOURCES += init_f2vftr.c \
+libvftr_mpi_f2vftr_la_SOURCES  = init_f2vftr.c \
                                  finalize_f2vftr.c
 libvftr_mpi_f2vftr_la_SOURCES += init_f2vftr_fi.F90 \
                                  finalize_f2vftr_fi.F90

@@ -21,7 +21,6 @@
 
 #include "vftr_regions.h"
 #include "vftr_environment.h"
-#include "vftr_mpi_utils.h"
 #include "scatterv_c2vftr.h"
 
 int MPI_Scatterv(const void *sendbuf, const int *sendcounts,

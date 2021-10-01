@@ -19,7 +19,6 @@
 #ifdef _MPI
 #include <mpi.h>
 
-#include "vftr_mpi_utils.h"
 #include "ibcast_c2vftr.h"
 
 int MPI_Ibcast(void *buffer, int count, MPI_Datatype datatype,

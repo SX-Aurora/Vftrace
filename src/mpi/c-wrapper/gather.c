@@ -21,7 +21,6 @@
 
 #include "vftr_regions.h"
 #include "vftr_environment.h"
-#include "vftr_mpi_utils.h"
 #include "gather_c2vftr.h"
 
 int MPI_Gather(const void *sendbuf, int sendcount,

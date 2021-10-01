@@ -16,7 +16,6 @@
    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-#ifdef _MPI
 #include <mpi.h>
 
 #include <stdbool.h>
@@ -56,5 +55,3 @@ int vftr_MPI_Testall(int count, MPI_Request array_of_requests[],
 
    return retVal;
 }
-
-#endif

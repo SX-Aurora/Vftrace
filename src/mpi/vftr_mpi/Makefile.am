@@ -1,20 +1,8 @@
 noinst_LTLIBRARIES = libvftr_mpi.la
 
 
-libvftr_mpi_la_SOURCES = vftr_mpi_utils.c
-
-if WITH_MPI
-libvftr_mpi_la_SOURCES += vftr_requests.c \
-                          vftr_p2p_requests.c \
-                          vftr_persistent_requests.c \
-                          vftr_collective_requests.c \
-                          vftr_onesided_requests.c \
-                          vftr_clear_requests.c \
-                          vftr_sync_messages.c \
-                          vftr_mpi_buf_addr_const.c
-
-libvftr_mpi_la_SOURCES += init.c \
-                          finalize.c
+libvftr_mpi_la_SOURCES = init.c \
+                         finalize.c
 
 ##################
 # point to point #
@@ -126,14 +114,10 @@ libvftr_mpi_la_SOURCES += put.c \
 # pcontrol #
 ############
 libvftr_mpi_la_SOURCES += pcontrol.c
-endif
 
 libvftr_mpi_la_CFLAGS =
-libvftr_mpi_la_FCFLAGS =
 
-if WITH_MPI
-libvftr_mpi_la_CFLAGS += -D_MPI
-libvftr_mpi_la_FCFLAGS += -D_MPI
-endif
+libvftr_mpi_la_CFLAGS +=-D_MPI
 
+libvftr_mpi_la_CFLAGS += -I${srcdir}/../utils/
 libvftr_mpi_la_CFLAGS += -I${srcdir}/../../

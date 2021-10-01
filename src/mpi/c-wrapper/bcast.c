@@ -19,19 +19,14 @@
 #ifdef _MPI
 #include <mpi.h>
 
-#include "vftr_regions.h"
-#include "vftr_environment.h"
-#include "vftr_mpi_utils.h"
+#include "sync_time.h"
+#include "mpi_logging.h"
 #include "bcast_c2vftr.h"
 
 int MPI_Bcast(void *buffer, int count, MPI_Datatype datatype,
               int root, MPI_Comm comm) {
-   // Estimate synchronization time
-   if (vftr_environment.mpi_show_sync_time->value) {
-      vftr_internal_region_begin("MPI_Bcast_sync");
-      PMPI_Barrier(comm);
-      vftr_internal_region_end("MPI_Bcast_sync");
-   }
+
+   vftr_estimate_sync_time("MPI_Bcast_sync", comm);
 
    if (vftr_no_mpi_logging()) {
       return PMPI_Bcast(buffer, count, datatype, root, comm);

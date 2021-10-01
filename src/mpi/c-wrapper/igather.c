@@ -19,7 +19,6 @@
 #ifdef _MPI
 #include <mpi.h>
 
-#include "vftr_mpi_utils.h"
 #include "igather_c2vftr.h"
 
 int MPI_Igather(const void *sendbuf, int sendcount,

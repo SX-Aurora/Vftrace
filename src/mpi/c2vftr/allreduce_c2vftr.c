@@ -19,7 +19,6 @@
 #ifdef _MPI
 #include <mpi.h>
 
-#include "vftr_mpi_utils.h"
 #include "vftr_mpi_buf_addr_const.h"
 #include "allreduce.h"
 

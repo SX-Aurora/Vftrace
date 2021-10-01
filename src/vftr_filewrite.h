@@ -8,8 +8,7 @@
 #include <stdbool.h>
 
 #include "vftr_functions.h"
-#include "vftr_mpi_utils.h"
-
+#include "mpi_util_types.h"
 // File pointer of the log file
 extern FILE *vftr_log;
 

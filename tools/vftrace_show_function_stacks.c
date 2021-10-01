@@ -26,7 +26,6 @@
 #include <limits.h>
 //#include "vftr_scenarios.h"
 #include "vftr_filewrite.h"
-#include "vftr_mpi_utils.h"
 
 #include "vftr_vfd_utils.h"
 

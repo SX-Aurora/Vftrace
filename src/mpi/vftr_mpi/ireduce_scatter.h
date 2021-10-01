@@ -19,7 +19,6 @@
 #ifndef IREDUCE_SCATTER_H
 #define IREDUCE_SCATTER_H
 
-#ifdef _MPI
 #include <mpi.h>
 
 int vftr_MPI_Ireduce_scatter(const void *sendbuf, void *recvbuf,
@@ -37,5 +36,4 @@ int vftr_MPI_Ireduce_scatter_intercom(const void *sendbuf, void *recvbuf,
                                       MPI_Op op, MPI_Comm comm,
                                       MPI_Request *request);
 
-#endif
 #endif

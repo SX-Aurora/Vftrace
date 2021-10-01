@@ -19,10 +19,8 @@
 #ifndef FINALIZE_H
 #define FINALIZE_H
 
-#ifdef _MPI
 #include <mpi.h>
 
 int vftr_MPI_Finalize();
 
-#endif
 #endif

@@ -25,7 +25,7 @@
 #include <byteswap.h>
 #include "vftr_filewrite.h"
 #include "vftr_fileutils.h"
-#include "vftr_mpi_utils.h"
+#include "mpi_util_types.h"
 
 #include "vftr_vfd_utils.h"
 

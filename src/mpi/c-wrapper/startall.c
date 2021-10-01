@@ -19,7 +19,6 @@
 #ifdef _MPI
 #include <mpi.h>
 
-#include "vftr_mpi_utils.h"
 #include "startall_c2vftr.h"
 
 int MPI_Startall(int count, MPI_Request *array_of_requests) {

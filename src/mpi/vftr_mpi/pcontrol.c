@@ -16,7 +16,6 @@
    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-#ifdef _MPI
 // PControl level as required by the MPI-Standard for profiling interfaces
 int vftrace_Pcontrol_level = 1;
 
@@ -33,4 +32,3 @@ int vftr_MPI_Pcontrol(const int level) {
 
    return 1;
 }
-#endif

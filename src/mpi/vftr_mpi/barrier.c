@@ -17,7 +17,6 @@
 */
 
 
-#ifdef _MPI
 #include <mpi.h>
 
 int vftr_MPI_Barrier(MPI_Comm comm) {
@@ -25,5 +24,3 @@ int vftr_MPI_Barrier(MPI_Comm comm) {
    // for the instrumentation
    return PMPI_Barrier(comm);
 }
-
-#endif

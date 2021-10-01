@@ -19,7 +19,6 @@
 #ifndef ISCATTER_H
 #define ISCATTER_H
 
-#ifdef _MPI
 #include <mpi.h>
 
 int vftr_MPI_Iscatter(const void *sendbuf, int sendcount,
@@ -40,5 +39,4 @@ int vftr_MPI_Iscatter_intercom(const void *sendbuf, int sendcount,
                                int root, MPI_Comm comm,
                                MPI_Request *request);
 
-#endif
 #endif

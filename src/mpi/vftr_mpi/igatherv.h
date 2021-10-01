@@ -19,7 +19,6 @@
 #ifndef IGATHERV_H
 #define IGATHERV_H
 
-#ifdef _MPI
 #include <mpi.h>
 
 int vftr_MPI_Igatherv(const void *sendbuf, int sendcount,
@@ -40,5 +39,4 @@ int vftr_MPI_Igatherv_intercom(const void *sendbuf, int sendcount,
                                MPI_Datatype recvtype, int root,
                                MPI_Comm comm, MPI_Request *request);
 
-#endif
 #endif

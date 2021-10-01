@@ -19,7 +19,6 @@
 #ifdef _MPI
 #include <mpi.h>
 
-#include "vftr_mpi_utils.h"
 #include "vftr_regions.h"
 #include "vftr_environment.h"
 #include "reduce_scatter_block_c2vftr.h"

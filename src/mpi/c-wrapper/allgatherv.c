@@ -21,7 +21,6 @@
 
 #include "vftr_regions.h"
 #include "vftr_environment.h"
-#include "vftr_mpi_utils.h"
 #include "allgatherv_c2vftr.h"
 
 int MPI_Allgatherv(const void *sendbuf, int sendcount,

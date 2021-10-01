@@ -16,10 +16,10 @@
    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-#ifndef VFTR_MPI_UTILS_H
-#define VFTR_MPI_UTILS_H
+#ifndef VFTR_MPI_UTIL_TYPES_H
+#define VFTR_MPI_UTIL_TYPES_H
 
-#include <stdbool.h>
+//#include <stdbool.h>
 
 #ifdef _MPI
 #include <mpi.h>
@@ -30,42 +30,24 @@ typedef enum vftr_direction_t {
    recv
 } vftr_direction;
 
+struct vftr_mpi_type_t {
 #ifdef _MPI
-// Adjust vftrace to the just initialized MPI-environment
-void vftr_after_mpi_init();
+   MPI_Datatype mpi_type;
+#else
+   int mpi_type;
+#endif
+   char *name;
+};
 
+#ifdef _MPI
 // Translates an MPI-Datatype into the vftr type index
 int vftr_get_mpitype_idx(MPI_Datatype mpi_type);
 
 // Converts an mpi-datatype into a name string for that type
 const char *vftr_get_mpitype_string(MPI_Datatype mpi_type);
-
-// Translate a rank from a local group to the global rank
-int vftr_local2global_rank(MPI_Comm comm, int local_rank);
-
-// Translate a rank from a remote group
-int vftr_remote2global_rank(MPI_Comm comm, int remote_rank);
-
-// determine based on several criteria if
-// the communication should just be executed or also logged
-bool vftr_no_mpi_logging();
-// int version of above function for well defined fortran-interoperability
-int vftr_no_mpi_logging_int();
-
 #endif
 
 // Converts an mpi-datatype into a name string for that type
 const char *vftr_get_mpitype_string_from_idx(int mpi_type_idx);
-
-#ifdef _MPI
-// mark a MPI_Status as empty
-void vftr_empty_mpi_status(MPI_Status *status);
-
-bool vftr_mpi_status_is_empty(MPI_Status *status);
-
-// check if a request is active
-bool vftr_mpi_request_is_active(MPI_Request request);
-
-#endif
 
 #endif

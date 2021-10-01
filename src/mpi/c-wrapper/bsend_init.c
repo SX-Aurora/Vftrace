@@ -19,7 +19,6 @@
 #ifdef _MPI
 #include <mpi.h>
 
-#include "vftr_mpi_utils.h"
 #include "bsend_init_c2vftr.h"
 
 int MPI_Bsend_init(const void *buf, int count, MPI_Datatype datatype,

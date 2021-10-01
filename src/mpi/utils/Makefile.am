@@ -1,8 +1,18 @@
 noinst_LTLIBRARIES = libvftr_mpi_utils.la
 
-libvftr_mpi_la_SOURCES = vftr_mpi_utils.c
+libvftr_mpi_utils_la_SOURCES = mpi_util_types.c
 
-libvftr_mpi_la_CFLAGS += -D_MPI
-libvftr_mpi_la_FCFLAGS += -D_MPI
+if WITH_MPI
+libvftr_mpi_utils_la_SOURCES += mpi_logging.c \
+                                mpi_logging_F.F90
 
-libvftr_mpi_la_CFLAGS += -I${srcdir}/../
+libvftr_mpi_utils_la_SOURCES += sync_time.c
+
+libvftr_mpi_utils_la_SOURCES += rank_translate.c
+endif
+
+libvftr_mpi_utils_la_CFLAGS =
+libvftr_mpi_utils_la_FCFLAGS =
+
+libvftr_mpi_utils_la_CFLAGS += -I${srcdir}/../../
+libvftr_mpi_utils_la_CFLAGS += -I${srcdir}/../vftr_mpi/

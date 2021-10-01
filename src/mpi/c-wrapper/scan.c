@@ -21,7 +21,6 @@
 
 #include "vftr_regions.h"
 #include "vftr_environment.h"
-#include "vftr_mpi_utils.h"
 #include "scan_c2vftr.h"
 
 int MPI_Scan(const void *sendbuf, void *recvbuf, int count,

@@ -19,7 +19,6 @@
 #ifdef _MPI
 #include <mpi.h>
 
-#include "vftr_mpi_utils.h"
 #include "recv_c2vftr.h"
 
 int MPI_Recv(void *buf, int count, MPI_Datatype datatype,

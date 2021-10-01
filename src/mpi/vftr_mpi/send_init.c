@@ -16,7 +16,6 @@
    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-#ifdef _MPI
 #include <mpi.h>
 
 #include "vftr_timer.h"
@@ -34,5 +33,3 @@ int vftr_MPI_Send_init(const void *buf, int count, MPI_Datatype datatype,
 
    return retVal;
 }
-
-#endif

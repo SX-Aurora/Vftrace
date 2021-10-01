@@ -16,13 +16,16 @@
    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-#ifndef VFTR_SYNC_MESSAGES_H
-#define VFTR_SYNC_MESSAGES_H
-#ifdef _MPI
-#include "vftr_mpi_utils.h"
+#ifndef MPI_LOGGING_H
+#define MPI_LOGGING_H
 
-void vftr_store_sync_message_info(vftr_direction dir, int count, MPI_Datatype type,
-                                  int peer_rank, int tag, MPI_Comm comm, 
-                                  long long tstart, long long tend);
-#endif
+#include <stdbool.h>
+
+// determine based on several criteria if
+// the communication should just be executed or also logged
+bool vftr_no_mpi_logging();
+
+// int version of above function for well defined fortran-interoperability
+int vftr_no_mpi_logging_int();
+
 #endif

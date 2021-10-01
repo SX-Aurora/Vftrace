@@ -16,12 +16,10 @@
    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-#ifdef _MPI
 #include <mpi.h>
 
 #include "vftr_timer.h"
 #include "vftr_sync_messages.h"
-#include "vftr_mpi_utils.h"
 
 int vftr_MPI_Get(void *origin_addr, int origin_count,
                  MPI_Datatype origin_datatype, int target_rank,
@@ -56,5 +54,3 @@ int vftr_MPI_Get(void *origin_addr, int origin_count,
 
    return retVal;
 }
-
-#endif
