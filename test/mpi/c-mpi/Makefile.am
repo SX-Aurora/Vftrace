@@ -358,6 +358,7 @@ check_PROGRAMS += barrier \
 		  scatterv_nolog \
 		  scatterv_inplace \
 		  scatterv_intercom \
+		  scatterv_sync_time \
 		  iscatterv \
 		  iscatterv_nolog \
 		  iscatterv_inplace \
@@ -562,6 +563,10 @@ scatterv_inplace_LDFLAGS = $(AM_LDFLAGS)
 scatterv_intercom_SOURCES = $(srcdir)/scatterv_intercom.c
 scatterv_intercom_CFLAGS = $(AM_CFLAGS)
 scatterv_intercom_LDFLAGS = $(AM_LDFLAGS)
+
+scatterv_sync_time_SOURCES = $(srcdir)/scatterv.c
+scatterv_sync_time_CFLAGS = $(AM_CFLAGS)
+scatterv_sync_time_LDFLAGS = $(AM_LDFLAGS)
 
 iscatterv_SOURCES = $(srcdir)/iscatterv.c
 iscatterv_CFLAGS = $(AM_CFLAGS)
@@ -779,6 +784,7 @@ dist_noinst_SCRIPTS += barrier.sh \
 		       scatterv_nolog.sh \
 		       scatterv_inplace.sh \
 		       scatterv_intercom.sh \
+		       scatterv_sync_time.sh \
 		       iscatterv.sh \
 		       iscatterv_nolog.sh \
 		       iscatterv_inplace.sh \
