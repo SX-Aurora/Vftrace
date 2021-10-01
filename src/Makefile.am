@@ -8,12 +8,13 @@ SUBDIRS = mpi
 external_includes = -I$(top_srcdir)/external/tinyexpr/ \
 		    -I$(top_srcdir)/external/jsmn/
 
-libvftrace_la_LIBADD = libvftr_pause.la \
-		       mpi/vftr_mpi/libvftr_mpi.la
+libvftrace_la_LIBADD = libvftr_pause.la
 # external libraries
 libvftrace_la_LIBADD += ${top_builddir}/external/libtinyexpr.la
 
 if WITH_MPI
+libvftrace_la_LIBADD += mpi/vftr_mpi/libvftr_mpi_utils.la \
+			mpi/vftr_mpi/libvftr_mpi.la
 libvftrace_la_LIBADD += mpi/c-wrapper/libvftr_cmpiwrap.la \
 			mpi/c2vftr/libvftr_mpi_c2vftr.la
 if ENABLE_FORTRAN

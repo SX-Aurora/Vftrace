@@ -1,4 +1,5 @@
-SUBDIRS = vftr_mpi
+SUBDIRS = utils \
+	  vftr_mpi
 if WITH_MPI
 SUBDIRS += c2vftr \
 	   c-wrapper
