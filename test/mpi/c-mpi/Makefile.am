@@ -323,6 +323,7 @@ check_PROGRAMS += barrier \
 		  bcast \
 		  bcast_nolog \
 		  bcast_intercom \
+		  bcast_sync_time \
 		  ibcast \
 		  ibcast_nolog \
 		  ibcast_intercom \
@@ -418,6 +419,10 @@ bcast_nolog_LDFLAGS = $(AM_LDFLAGS)
 bcast_intercom_SOURCES = $(srcdir)/bcast_intercom.c
 bcast_intercom_CFLAGS = $(AM_CFLAGS)
 bcast_intercom_LDFLAGS = $(AM_LDFLAGS)
+
+bcast_sync_time_SOURCES = $(srcdir)/bcast.c
+bcast_sync_time_CFLAGS = $(AM_CFLAGS)
+bcast_sync_time_LDFLAGS = $(AM_LDFLAGS)
 
 ibcast_SOURCES = $(srcdir)/ibcast.c
 ibcast_CFLAGS = $(AM_CFLAGS)
@@ -724,6 +729,7 @@ dist_noinst_SCRIPTS += barrier.sh \
 		       bcast.sh \
 		       bcast_nolog.sh \
 		       bcast_intercom.sh \
+		       bcast_sync_time.sh \
 		       ibcast.sh \
 		       ibcast_nolog.sh \
 		       ibcast_intercom.sh \
