@@ -1,0 +1,1 @@
+../testscripts/scatterv_sync_time.sh
