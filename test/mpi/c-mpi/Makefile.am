@@ -895,6 +895,7 @@ check_PROGRAMS += reduce \
 		  reduce_scatter_nolog \
 		  reduce_scatter_inplace \
 		  reduce_scatter_intercom \
+		  reduce_scatter_sync_time \
 		  ireduce_scatter \
 		  ireduce_scatter_nolog \
 		  ireduce_scatter_inplace \
@@ -1036,6 +1037,10 @@ reduce_scatter_intercom_SOURCES = $(srcdir)/reduce_scatter_intercom.c
 reduce_scatter_intercom_CFLAGS = $(AM_CFLAGS)
 reduce_scatter_intercom_LDFLAGS = $(AM_LDFLAGS)
 
+reduce_scatter_sync_time_SOURCES = $(srcdir)/reduce_scatter.c
+reduce_scatter_sync_time_CFLAGS = $(AM_CFLAGS)
+reduce_scatter_sync_time_LDFLAGS = $(AM_LDFLAGS)
+
 ireduce_scatter_SOURCES = $(srcdir)/ireduce_scatter.c
 ireduce_scatter_CFLAGS = $(AM_CFLAGS)
 ireduce_scatter_LDFLAGS = $(AM_LDFLAGS)
@@ -1131,6 +1136,7 @@ dist_noinst_SCRIPTS += reduce.sh \
 		       reduce_scatter_nolog.sh \
 		       reduce_scatter_inplace.sh \
 		       reduce_scatter_intercom.sh \
+		       reduce_scatter_sync_time.sh \
 		       ireduce_scatter.sh \
 		       ireduce_scatter_nolog.sh \
 		       ireduce_scatter_inplace.sh \
