@@ -1,0 +1,1 @@
+../c-mpi/alltoallw_sync_time.sh
