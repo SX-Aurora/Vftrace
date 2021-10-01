@@ -30,9 +30,9 @@ int MPI_Allgatherv(const void *sendbuf, int sendcount,
                    MPI_Datatype recvtype, MPI_Comm comm) {
    // Estimate synchronization time
    if (vftr_environment.mpi_show_sync_time->value) {
-      vftr_internal_region_begin("MPI_Allatherv_sync");
+      vftr_internal_region_begin("MPI_Allgatherv_sync");
       PMPI_Barrier(comm);
-      vftr_internal_region_end("MPI_Allatherv_sync");
+      vftr_internal_region_end("MPI_Allgatherv_sync");
    }
    if (vftr_no_mpi_logging()) {
       return PMPI_Allgatherv(sendbuf, sendcount, sendtype,
