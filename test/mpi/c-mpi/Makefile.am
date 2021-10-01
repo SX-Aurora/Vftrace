@@ -367,6 +367,7 @@ check_PROGRAMS += barrier \
 		  allgather_nolog \
 		  allgather_inplace \
 		  allgather_intercom \
+		  allgather_sync_time \
 		  iallgather \
 		  iallgather_nolog \
 		  iallgather_inplace \
@@ -600,6 +601,10 @@ allgather_intercom_SOURCES = $(srcdir)/allgather_intercom.c
 allgather_intercom_CFLAGS = $(AM_CFLAGS)
 allgather_intercom_LDFLAGS = $(AM_LDFLAGS)
 
+allgather_sync_time_SOURCES = $(srcdir)/allgather.c
+allgather_sync_time_CFLAGS = $(AM_CFLAGS)
+allgather_sync_time_LDFLAGS = $(AM_LDFLAGS)
+
 iallgather_SOURCES = $(srcdir)/iallgather.c
 iallgather_CFLAGS = $(AM_CFLAGS)
 iallgather_LDFLAGS = $(AM_LDFLAGS)
@@ -793,6 +798,7 @@ dist_noinst_SCRIPTS += barrier.sh \
 		       allgather_nolog.sh \
 		       allgather_inplace.sh \
 		       allgather_intercom.sh \
+		       allgather_sync_time.sh \
 		       iallgather.sh \
 		       iallgather_nolog.sh \
 		       iallgather_inplace.sh \
