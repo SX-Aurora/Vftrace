@@ -331,6 +331,7 @@ check_PROGRAMS += barrier \
 		  gather_nolog \
 		  gather_inplace \
 		  gather_intercom \
+		  gather_sync_time \
 		  igather \
 		  igather_nolog \
 		  igather_inplace \
@@ -451,6 +452,10 @@ gather_inplace_LDFLAGS = $(AM_LDFLAGS)
 gather_intercom_SOURCES = $(srcdir)/gather_intercom.c
 gather_intercom_CFLAGS = $(AM_CFLAGS)
 gather_intercom_LDFLAGS = $(AM_LDFLAGS)
+
+gather_sync_time_SOURCES = $(srcdir)/gather.c
+gather_sync_time_CFLAGS = $(AM_CFLAGS)
+gather_sync_time_LDFLAGS = $(AM_LDFLAGS)
 
 igather_SOURCES = $(srcdir)/igather.c
 igather_CFLAGS = $(AM_CFLAGS)
@@ -737,6 +742,7 @@ dist_noinst_SCRIPTS += barrier.sh \
 		       gather_nolog.sh \
 		       gather_inplace.sh \
 		       gather_intercom.sh \
+		       gather_sync_time.sh \
 		       igather.sh \
 		       igather_nolog.sh \
 		       igather_inplace.sh \
