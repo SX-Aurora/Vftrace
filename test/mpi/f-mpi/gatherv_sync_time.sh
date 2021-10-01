@@ -1,0 +1,1 @@
+../c-mpi/gatherv_sync_time.sh
