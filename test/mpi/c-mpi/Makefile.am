@@ -349,6 +349,7 @@ check_PROGRAMS += barrier \
 		  scatter_nolog \
 		  scatter_inplace \
 		  scatter_intercom \
+		  scatter_sync_time \
 		  iscatter \
 		  iscatter_nolog \
 		  iscatter_inplace \
@@ -525,6 +526,10 @@ scatter_inplace_LDFLAGS = $(AM_LDFLAGS)
 scatter_intercom_SOURCES = $(srcdir)/scatter_intercom.c
 scatter_intercom_CFLAGS = $(AM_CFLAGS)
 scatter_intercom_LDFLAGS = $(AM_LDFLAGS)
+
+scatter_sync_time_SOURCES = $(srcdir)/scatter.c
+scatter_sync_time_CFLAGS = $(AM_CFLAGS)
+scatter_sync_time_LDFLAGS = $(AM_LDFLAGS)
 
 iscatter_SOURCES = $(srcdir)/iscatter.c
 iscatter_CFLAGS = $(AM_CFLAGS)
@@ -765,6 +770,7 @@ dist_noinst_SCRIPTS += barrier.sh \
 		       scatter_nolog.sh \
 		       scatter_inplace.sh \
 		       scatter_intercom.sh \
+		       scatter_sync_time.sh \
 		       iscatter.sh \
 		       iscatter_nolog.sh \
 		       iscatter_inplace.sh \
