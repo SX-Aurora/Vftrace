@@ -876,6 +876,7 @@ check_PROGRAMS += reduce \
 		  allreduce_nolog \
 		  allreduce_inplace \
 		  allreduce_intercom \
+		  allreduce_sync_time \
 		  iallreduce \
 		  iallreduce_nolog \
 		  iallreduce_inplace \
@@ -956,6 +957,10 @@ allreduce_inplace_LDFLAGS = $(AM_LDFLAGS)
 allreduce_intercom_SOURCES = $(srcdir)/allreduce_intercom.c
 allreduce_intercom_CFLAGS = $(AM_CFLAGS)
 allreduce_intercom_LDFLAGS = $(AM_LDFLAGS)
+
+allreduce_sync_time_intercom_SOURCES = $(srcdir)/allreduce.c
+allreduce_sync_time_intercom_CFLAGS = $(AM_CFLAGS)
+allreduce_sync_time_intercom_LDFLAGS = $(AM_LDFLAGS)
 
 iallreduce_SOURCES = $(srcdir)/iallreduce.c
 iallreduce_CFLAGS = $(AM_CFLAGS)
@@ -1097,6 +1102,7 @@ dist_noinst_SCRIPTS += reduce.sh \
 		       allreduce_nolog.sh \
 		       allreduce_inplace.sh \
 		       allreduce_intercom.sh \
+		       allreduce_sync_time.sh \
 		       iallreduce.sh \
 		       iallreduce_nolog.sh \
 		       iallreduce_inplace.sh \
