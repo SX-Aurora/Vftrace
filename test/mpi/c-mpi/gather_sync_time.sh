@@ -1,0 +1,1 @@
+../testscripts/gather_sync_time.sh
