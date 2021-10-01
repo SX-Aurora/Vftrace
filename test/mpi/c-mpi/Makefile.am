@@ -376,6 +376,7 @@ check_PROGRAMS += barrier \
 		  allgatherv_nolog \
 		  allgatherv_inplace \
 		  allgatherv_intercom \
+		  allgatherv_sync_time \
 		  iallgatherv \
 		  iallgatherv_nolog \
 		  iallgatherv_inplace \
@@ -637,6 +638,10 @@ allgatherv_intercom_SOURCES = $(srcdir)/allgatherv_intercom.c
 allgatherv_intercom_CFLAGS = $(AM_CFLAGS)
 allgatherv_intercom_LDFLAGS = $(AM_LDFLAGS)
 
+allgatherv_sync_time_SOURCES = $(srcdir)/allgatherv.c
+allgatherv_sync_time_CFLAGS = $(AM_CFLAGS)
+allgatherv_sync_time_LDFLAGS = $(AM_LDFLAGS)
+
 iallgatherv_SOURCES = $(srcdir)/iallgatherv.c
 iallgatherv_CFLAGS = $(AM_CFLAGS)
 iallgatherv_LDFLAGS = $(AM_LDFLAGS)
@@ -807,6 +812,7 @@ dist_noinst_SCRIPTS += barrier.sh \
 		       allgatherv_nolog.sh \
 		       allgatherv_inplace.sh \
 		       allgatherv_intercom.sh \
+		       allgatherv_sync_time.sh \
 		       iallgatherv.sh \
 		       iallgatherv_nolog.sh \
 		       iallgatherv_inplace.sh \
