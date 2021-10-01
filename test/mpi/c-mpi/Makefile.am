@@ -967,9 +967,9 @@ allreduce_intercom_SOURCES = $(srcdir)/allreduce_intercom.c
 allreduce_intercom_CFLAGS = $(AM_CFLAGS)
 allreduce_intercom_LDFLAGS = $(AM_LDFLAGS)
 
-allreduce_sync_time_intercom_SOURCES = $(srcdir)/allreduce.c
-allreduce_sync_time_intercom_CFLAGS = $(AM_CFLAGS)
-allreduce_sync_time_intercom_LDFLAGS = $(AM_LDFLAGS)
+allreduce_sync_time_SOURCES = $(srcdir)/allreduce.c
+allreduce_sync_time_CFLAGS = $(AM_CFLAGS)
+allreduce_sync_time_LDFLAGS = $(AM_LDFLAGS)
 
 iallreduce_SOURCES = $(srcdir)/iallreduce.c
 iallreduce_CFLAGS = $(AM_CFLAGS)
