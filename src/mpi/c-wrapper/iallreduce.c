@@ -19,6 +19,7 @@
 #ifdef _MPI
 #include <mpi.h>
 
+#include "mpi_logging.h"
 #include "iallreduce_c2vftr.h"
 
 int MPI_Iallreduce(const void *sendbuf, void *recvbuf, int count,

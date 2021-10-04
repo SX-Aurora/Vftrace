@@ -19,6 +19,7 @@
 #ifdef _MPI
 #include <mpi.h>
 
+#include "mpi_logging.h"
 #include "isend_c2vftr.h"
 
 int MPI_Isend(const void *buf, int count, MPI_Datatype datatype,

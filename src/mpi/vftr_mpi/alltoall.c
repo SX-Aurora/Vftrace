@@ -18,6 +18,7 @@
 
 #include <mpi.h>
 
+#include "rank_translate.h"
 #include "vftr_timer.h"
 #include "sync_messages.h"
 

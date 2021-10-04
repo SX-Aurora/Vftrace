@@ -19,6 +19,7 @@
 #ifdef _MPI
 #include <mpi.h>
 
+#include "mpi_logging.h"
 #include "compare_and_swap_c2vftr.h"
 
 int MPI_Compare_and_swap(const void *origin_addr, const void *compare_addr,

@@ -19,6 +19,7 @@
 #ifdef _MPI
 #include <mpi.h>
 
+#include "mpi_logging.h"
 #include "probe_c2vftr.h"
 
 int MPI_Probe(int source, int tag, MPI_Comm comm, MPI_Status *status) {

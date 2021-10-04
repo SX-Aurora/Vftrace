@@ -19,6 +19,7 @@
 #ifdef _MPI
 #include <mpi.h>
 
+#include "mpi_logging.h"
 #include "wait_c2vftr.h"
 
 int MPI_Wait(MPI_Request *request, MPI_Status *status) {

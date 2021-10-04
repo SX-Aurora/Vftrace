@@ -20,6 +20,8 @@
 
 #include <mpi.h>
 
+#include "status_utils.h"
+
 // check if a request is active
 bool vftr_mpi_request_is_active(MPI_Request request) {
    // According to the MPI_Standard 3.0 (capter 3.7.3, p.52)

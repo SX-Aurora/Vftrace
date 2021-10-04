@@ -20,6 +20,7 @@
 
 #include <stdlib.h>
 
+#include "rank_translate.h"
 #include "vftr_environment.h"
 #include "requests.h"
 #include "vftr_timer.h"

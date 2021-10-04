@@ -19,6 +19,7 @@
 #ifdef _MPI
 #include <mpi.h>
 
+#include "mpi_logging.h"
 #include "vftr_regions.h"
 #include "vftr_environment.h"
 #include "scatterv_c2vftr.h"

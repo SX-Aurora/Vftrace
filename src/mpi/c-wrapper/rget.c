@@ -19,6 +19,7 @@
 #ifdef _MPI
 #include <mpi.h>
 
+#include "mpi_logging.h"
 #include "rget_c2vftr.h"
 
 int MPI_Rget(void *origin_addr, int origin_count,

@@ -21,6 +21,7 @@
 
 #include <mpi.h>
 
+#include "mpi_logging.h"
 #include "igatherv_c2vftr.h"
 
 int MPI_Igatherv(const void *sendbuf, int sendcount,

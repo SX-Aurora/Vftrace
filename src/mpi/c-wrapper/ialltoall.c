@@ -19,6 +19,7 @@
 #ifdef _MPI
 #include <mpi.h>
 
+#include "mpi_logging.h"
 #include "ialltoall_c2vftr.h"
 
 int MPI_Ialltoall(const void *sendbuf, int sendcount,

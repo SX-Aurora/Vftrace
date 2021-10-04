@@ -19,6 +19,7 @@
 #ifdef _MPI
 #include <mpi.h>
 
+#include "mpi_logging.h"
 #include "rsend_c2vftr.h"
 
 int MPI_Rsend(const void *buf, int count, MPI_Datatype datatype,

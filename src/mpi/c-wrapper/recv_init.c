@@ -19,6 +19,7 @@
 #ifdef _MPI
 #include <mpi.h>
 
+#include "mpi_logging.h"
 #include "recv_init_c2vftr.h"
 
 int MPI_Recv_init(void *buf, int count, MPI_Datatype datatype,

@@ -19,6 +19,7 @@
 #ifdef _MPI
 #include <mpi.h>
 
+#include "mpi_logging.h"
 #include "waitsome_c2vftr.h"
 
 int MPI_Waitsome(int incount, MPI_Request array_of_requests[],
