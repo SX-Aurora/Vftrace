@@ -23,6 +23,8 @@ SUBROUTINE MPI_ALLGATHERV(SENDBUF, SENDCOUNT, SENDTYPE, &
       ONLY : vftr_MPI_Allgatherv_f2vftr
    USE vftr_mpi_logging_F, &
       ONLY : vftr_no_mpi_logging_F
+   USE vftr_sync_time_F, &
+      ONLY : vftr_estimate_sync_time
    USE mpi, &
       ONLY : PMPI_ALLGATHERV
    IMPLICIT NONE
@@ -35,6 +37,8 @@ SUBROUTINE MPI_ALLGATHERV(SENDBUF, SENDCOUNT, SENDTYPE, &
    INTEGER ::  RECVTYPE
    INTEGER ::  COMM
    INTEGER ::  ERROR
+
+   CALL vftr_estimate_sync_time("MPI_Allgatherv_sync", COMM)
 
    IF (vftr_no_mpi_logging_F()) THEN
       CALL PMPI_ALLGATHERV(SENDBUF, SENDCOUNT, SENDTYPE, &

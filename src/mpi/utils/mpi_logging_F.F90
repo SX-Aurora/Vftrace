@@ -15,7 +15,6 @@
 ! 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 MODULE vftr_mpi_logging_F
-#ifdef _MPI
 
    USE, INTRINSIC :: ISO_FORTRAN_ENV
    USE, INTRINSIC :: ISO_C_BINDING
@@ -37,15 +36,11 @@ MODULE vftr_mpi_logging_F
 
    END INTERFACE
 
-#endif
-
 CONTAINS
 
-#ifdef _MPI
    LOGICAL FUNCTION vftr_no_mpi_logging_F()
       vftr_no_mpi_logging_F = vftr_no_mpi_logging_int_F() == 1
       RETURN
    END FUNCTION vftr_no_mpi_logging_F
-#endif
 
 END MODULE vftr_mpi_logging_F

@@ -196,5 +196,5 @@ libvftr_mpi_f2vftr_la_FCFLAGS =
 
 libvftr_mpi_f2vftr_la_CFLAGS += -D_MPI
 libvftr_mpi_f2vftr_la_FCFLAGS += -D_MPI
-libvftr_mpi_f2vftr_la_CFLAGS += -I${srcdir}/../../ \
+libvftr_mpi_f2vftr_la_CFLAGS += -I${srcdir}/../utils/ \
 			        -I${srcdir}/../vftr_mpi/

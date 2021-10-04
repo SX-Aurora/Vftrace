@@ -23,6 +23,8 @@ SUBROUTINE MPI_REDUCE_SCATTER_BLOCK(SENDBUF, RECVBUF, RECVCOUNT, &
       ONLY : vftr_MPI_Reduce_scatter_block_f2vftr
    USE vftr_mpi_logging_F, &
       ONLY : vftr_no_mpi_logging_F
+   USE vftr_sync_time_F, &
+      ONLY : vftr_estimate_sync_time
    USE mpi, &
       ONLY : PMPI_REDUCE_SCATTER_BLOCK
    IMPLICIT NONE
@@ -33,6 +35,8 @@ SUBROUTINE MPI_REDUCE_SCATTER_BLOCK(SENDBUF, RECVBUF, RECVCOUNT, &
    INTEGER OP
    INTEGER COMM
    INTEGER ERROR
+
+   CALL vftr_estimate_sync_time("MPI_Reduce_scatter_block_sync", COMM)
 
    IF (vftr_no_mpi_logging_F()) THEN
       CALL PMPI_REDUCE_SCATTER_BLOCK(SENDBUF, RECVBUF, RECVCOUNT, &

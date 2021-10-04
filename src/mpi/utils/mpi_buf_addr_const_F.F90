@@ -14,8 +14,6 @@
 ! with this program; if not, write to the Free Software Foundation, Inc.,
 ! 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-#ifdef _MPI
- 
 MODULE mpi_buf_addr_const_F
 
    IMPLICIT NONE
@@ -71,5 +69,3 @@ CONTAINS
    END FUNCTION vftr_is_F_MPI_IN_PLACE
 
 END MODULE mpi_buf_addr_const_F
-
-#endif

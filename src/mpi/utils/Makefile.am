@@ -4,13 +4,18 @@ libvftr_mpi_utils_la_SOURCES = mpi_util_types.c
 
 if WITH_MPI
 libvftr_mpi_utils_la_SOURCES += mpi_logging.c \
-                                mpi_logging_F.F90
+				mpi_buf_addr_const.c \
+				sync_time.c
+if ENABLE_FORTRAN
+libvftr_mpi_utils_la_SOURCES += mpi_logging_F.F90 \
+				mpi_buf_addr_const_F.F90 \
+				sync_time_F2c.c \
+				sync_time_F.F90
+endif
 
-libvftr_mpi_utils_la_SOURCES += mpi_buf_addr_const.c \
-				status_utils.c \
+libvftr_mpi_utils_la_SOURCES += status_utils.c \
 				request_utils.c
 
-libvftr_mpi_utils_la_SOURCES += sync_time.c
 
 libvftr_mpi_utils_la_SOURCES += rank_translate.c
 
@@ -29,6 +34,7 @@ libvftr_mpi_utils_la_CFLAGS =
 libvftr_mpi_utils_la_FCFLAGS =
 if WITH_MPI
 libvftr_mpi_utils_la_CFLAGS += -D_MPI
+libvftr_mpi_utils_la_FCFLAGS +=
 endif
 
 libvftr_mpi_utils_la_CFLAGS += -I${srcdir}/../../

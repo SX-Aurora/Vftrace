@@ -23,6 +23,8 @@ SUBROUTINE MPI_ALLTOALLW(SENDBUF, SENDCOUNTS, SDISPLS, SENDTYPES, &
       ONLY : vftr_MPI_Alltoallw_f2vftr
    USE vftr_mpi_logging_F, &
       ONLY : vftr_no_mpi_logging_F
+   USE vftr_sync_time_F, &
+      ONLY : vftr_estimate_sync_time
    USE mpi, &
       ONLY : PMPI_ALLTOALLW
    IMPLICIT NONE
@@ -36,6 +38,8 @@ SUBROUTINE MPI_ALLTOALLW(SENDBUF, SENDCOUNTS, SDISPLS, SENDTYPES, &
    INTEGER RECVTYPES(*)
    INTEGER COMM
    INTEGER ERROR
+
+   CALL vftr_estimate_sync_time("MPI_Alltoallw_sync", COMM)
 
    IF (vftr_no_mpi_logging_F()) THEN
       CALL PMPI_ALLTOALLW(SENDBUF, SENDCOUNTS, SDISPLS, SENDTYPES, &
