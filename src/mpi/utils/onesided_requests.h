@@ -16,21 +16,16 @@
    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-#include <mpi.h>
+#ifndef VFTR_ONESIDED_REQUESTS_H
+#define VFTR_ONESIDED_REQUESTS_H
 
-#include "vftr_timer.h"
-#include "persistent_requests.h"
+#include "requests.h"
 
-int vftr_MPI_Bsend_init(const void *buf, int count, MPI_Datatype datatype,
-                        int dest, int tag, MPI_Comm comm, MPI_Request *request) {
+void vftr_register_onesided_request(vftr_direction dir, int count,
+                                    MPI_Datatype type, int peer_rank,
+                                    MPI_Comm comm, MPI_Request request,
+                                    long long tstart);
 
-   int retVal = PMPI_Bsend_init(buf, count, datatype, dest, tag, comm, request);
+void vftr_clear_completed_onesided_requests();
 
-   long long t2start = vftr_get_runtime_usec();
-   vftr_register_persistent_request(send, count, datatype, dest, tag, comm, *request);
-   long long t2end = vftr_get_runtime_usec();
-
-   vftr_mpi_overhead_usec += t2end - t2start;
-
-   return retVal;
-}
+#endif

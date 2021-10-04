@@ -19,7 +19,7 @@
 #include <mpi.h>
 
 #include "vftr_timer.h"
-#include "vftr_sync_messages.h"
+#include "sync_messages.h"
 #include "rank_translate.h"
 
 int vftr_MPI_Bcast(void *buffer, int count, MPI_Datatype datatype,

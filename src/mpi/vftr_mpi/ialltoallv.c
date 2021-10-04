@@ -21,7 +21,7 @@
 #include <mpi.h>
 
 #include "vftr_timer.h"
-#include "vftr_collective_requests.h"
+#include "collective_requests.h"
 
 int vftr_MPI_Ialltoallv(const void *sendbuf, const int *sendcounts,
                         const int *sdispls, MPI_Datatype sendtype,

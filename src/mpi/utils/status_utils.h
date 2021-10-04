@@ -16,22 +16,17 @@
    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-#ifndef VFTR_P2P_REQUESTS_H
-#define VFTR_P2P_REQUESTS_H
+#ifndef STATUS_UTILS_H
+#define STATUS_UTILS_H
 
-#ifdef _MPI
-#include "vftr_requests.h"
+#include <stdbool.h>
 
-void vftr_register_P2P_request(vftr_direction dir, int count,
-                               MPI_Datatype type, int peer_rank, int tag,
-                               MPI_Comm comm, MPI_Request request,
-                               long long tstart);
+#include <mpi.h>
 
-void vftr_clear_completed_P2P_requests();
+// mark a MPI_Status as empty
+void vftr_empty_mpi_status(MPI_Status *status);
 
-vftr_request_t *vftr_search_P2P_request(MPI_Request request);
+// check if a status is empty
+bool vftr_mpi_status_is_empty(MPI_Status *status);
 
-int vftr_number_of_open_p2p_requests();
-
-#endif
 #endif

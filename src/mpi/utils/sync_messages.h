@@ -16,23 +16,13 @@
    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-#include <stdbool.h>
+#ifndef SYNC_MESSAGES_H
+#define SYNC_MESSAGES_H
 
-#ifndef VFTR_MPI_BUF_ADDR_CONST_H
-#define VFTR_MPI_BUF_ADDR_CONST_H
+#include "mpi_util_types.h"
 
-#ifdef _MPI
-#include <mpi.h>
+void vftr_store_sync_message_info(vftr_direction dir, int count, MPI_Datatype type,
+                                  int peer_rank, int tag, MPI_Comm comm, 
+                                  long long tstart, long long tend);
 
-// check if the given address is the special MPI_BOTTOM handle
-bool vftr_is_C_MPI_BOTTOM(const void *addr);
-
-bool vftr_is_F_MPI_BOTTOM(const void *addr);
-
-// check if the given address is the special MPI_IN_PLACE handle
-bool vftr_is_C_MPI_IN_PLACE(const void *addr);
-
-bool vftr_is_F_MPI_IN_PLACE(const void *addr);
-
-#endif
 #endif

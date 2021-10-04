@@ -16,14 +16,12 @@
    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-
-#ifdef _MPI
 #include <mpi.h>
 
 #include <stdlib.h>
 
 #include "vftr_environment.h"
-#include "vftr_requests.h"
+#include "requests.h"
 #include "vftr_timer.h"
 #include "vftr_filewrite.h"
 
@@ -115,6 +113,3 @@ int vftr_number_of_open_collective_requests() {
    }
    return nrequests;
 }
-
-
-#endif

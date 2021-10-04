@@ -18,7 +18,6 @@
 
 #include <mpi.h>
 
-#ifdef _MPI
 // Translate a rank from a local group to the global rank
 int vftr_local2global_rank(MPI_Comm comm, int local_rank) {
 
@@ -74,4 +73,3 @@ int vftr_remote2global_rank(MPI_Comm comm, int remote_rank) {
                               &global_rank); // addr of global rank variable
    return global_rank;
 }
-#endif

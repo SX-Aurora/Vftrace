@@ -21,7 +21,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
-#include "vftr_clear_requests.h"
+#include "clear_mpi_requests.h"
   
 int vftr_MPI_Waitsome(int incount, MPI_Request array_of_requests[],
                       int *outcount, int array_of_indices[],

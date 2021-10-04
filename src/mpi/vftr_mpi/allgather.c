@@ -19,7 +19,7 @@
 #include <mpi.h>
 
 #include "vftr_timer.h"
-#include "vftr_sync_messages.h"
+#include "sync_messages.h"
 
 int vftr_MPI_Allgather(const void *sendbuf, int sendcount,
                        MPI_Datatype sendtype, void *recvbuf,

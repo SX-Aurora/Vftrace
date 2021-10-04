@@ -19,7 +19,7 @@
 #include <mpi.h>
 
 #include "vftr_timer.h"
-#include "vftr_sync_messages.h"
+#include "sync_messages.h"
 
 int vftr_MPI_Fetch_and_op(const void *origin_addr, void *result_addr,
                           MPI_Datatype datatype, int target_rank,

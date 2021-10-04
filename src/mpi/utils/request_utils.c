@@ -16,18 +16,24 @@
    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
+#include <stdbool.h>
 
-#ifdef _MPI
-#include "vftr_p2p_requests.h"
-#include "vftr_persistent_requests.h"
-#include "vftr_collective_requests.h"
-#include "vftr_onesided_requests.h"
+#include <mpi.h>
 
-void vftr_clear_completed_requests() {
-   vftr_clear_completed_P2P_requests();
-   vftr_deactivate_completed_persistent_requests();
-   vftr_clear_completed_collective_requests();
-   vftr_clear_completed_onesided_requests();
+// check if a request is active
+bool vftr_mpi_request_is_active(MPI_Request request) {
+   // According to the MPI_Standard 3.0 (capter 3.7.3, p.52)
+   // a request is active if it is neither a null request
+   // nor returns an empty status for Request_get_status 
+   // (the function returns an empty status if it is inactive)
+   
+   if (request == MPI_REQUEST_NULL) {
+      return false;
+   }
+
+   MPI_Status status;
+   int flag;
+   PMPI_Request_get_status(request, &flag, &status);
+
+   return !vftr_mpi_status_is_empty(&status);
 }
-
-#endif

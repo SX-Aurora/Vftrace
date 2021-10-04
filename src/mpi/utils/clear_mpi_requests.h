@@ -16,25 +16,9 @@
    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-#ifndef VFTR_PERSISTENT_REQUESTS_H
-#define VFTR_PERSISTENT_REQUESTS_H
+#ifndef VFTR_CLEAR_REQUESTS_H
+#define VFTR_CLEAR_REQUESTS_H
 
-#ifdef _MPI
-#include "vftr_requests.h"
+void vftr_clear_completed_requests();
 
-extern vftr_request_t *vftr_open_persistent_request_list;
-
-void vftr_register_persistent_request(vftr_direction dir, int count,
-                                      MPI_Datatype type, int peer_rank, int tag,
-                                      MPI_Comm comm, MPI_Request request);
-
-void vftr_activate_persistent_request(MPI_Request request, long long tstart);
-
-void vftr_deactivate_completed_persistent_requests();
-
-vftr_request_t *vftr_search_persistent_request(MPI_Request request);
-
-int vftr_number_of_open_persistent_requests();
-
-#endif
 #endif

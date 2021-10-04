@@ -16,21 +16,21 @@
    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-#ifndef VFTR_COLLECTIVE_REQUESTS_H
-#define VFTR_COLLECTIVE_REQUESTS_H
+#include <stdbool.h>
 
-#ifdef _MPI
-#include "vftr_requests.h"
+#ifndef VFTR_MPI_BUF_ADDR_CONST_H
+#define VFTR_MPI_BUF_ADDR_CONST_H
 
-void vftr_register_collective_request(vftr_direction dir, int nmsg, int *count,
-                                      MPI_Datatype *type, int *peer_rank,
-                                      MPI_Comm comm, MPI_Request request,
-                                      int n_tmp_ptr, void **tmp_ptrs,
-                                      long long tstart);
+#include <mpi.h>
 
-void vftr_clear_completed_collective_requests();
+// check if the given address is the special MPI_BOTTOM handle
+bool vftr_is_C_MPI_BOTTOM(const void *addr);
 
-int vftr_number_of_open_collective_requests();
+bool vftr_is_F_MPI_BOTTOM(const void *addr);
 
-#endif
+// check if the given address is the special MPI_IN_PLACE handle
+bool vftr_is_C_MPI_IN_PLACE(const void *addr);
+
+bool vftr_is_F_MPI_IN_PLACE(const void *addr);
+
 #endif

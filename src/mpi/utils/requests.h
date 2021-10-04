@@ -19,8 +19,9 @@
 #ifndef VFTR_REQUESTS_H
 #define VFTR_REQUESTS_H
 
-#ifdef _MPI
 #include <stdbool.h>
+
+#include <mpi.h>
 
 #include "mpi_util_types.h"
 
@@ -66,5 +67,4 @@ void vftr_remove_request(vftr_request_t **open_request_list,
 vftr_request_t *vftr_search_request(vftr_request_t *open_request_list,
                                     MPI_Request request);
 
-#endif
 #endif

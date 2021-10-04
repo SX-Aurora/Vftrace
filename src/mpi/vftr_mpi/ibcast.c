@@ -21,7 +21,7 @@
 #include <stdlib.h>
 
 #include "vftr_timer.h"
-#include "vftr_collective_requests.h"
+#include "collective_requests.h"
 #include "rank_translate.h"
 
 int vftr_MPI_Ibcast(void *buffer, int count, MPI_Datatype datatype,

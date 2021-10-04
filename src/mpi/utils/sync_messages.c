@@ -16,13 +16,14 @@
    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-#ifdef _MPI
 #include <mpi.h>
-#include "vftr_mpi_utils.h"
+
 #include "vftr_environment.h"
 #include "vftr_filewrite.h"
 #include "vftr_stacks.h"
 #include "vftr_pause.h"
+#include "mpi_util_types.h"
+#include "rank_translate.h"
 
 // store message info for synchronous mpi-communication
 void vftr_store_sync_message_info(vftr_direction dir, int count, MPI_Datatype type,
@@ -68,5 +69,3 @@ void vftr_store_sync_message_info(vftr_direction dir, int count, MPI_Datatype ty
 
    return;
 }
-
-#endif

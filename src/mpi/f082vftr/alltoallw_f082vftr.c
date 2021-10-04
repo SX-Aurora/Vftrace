@@ -21,7 +21,7 @@
 
 #include <stdlib.h>
 
-#include "vftr_mpi_buf_addr_const.h"
+#include "mpi_buf_addr_const.h"
 #include "alltoallw.h"
 
 void vftr_MPI_Alltoallw_f082vftr(void *sendbuf, MPI_Fint *f_sendcounts,

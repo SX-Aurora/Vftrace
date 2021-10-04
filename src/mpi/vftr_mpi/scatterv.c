@@ -19,7 +19,7 @@
 #include <mpi.h>
 
 #include "vftr_timer.h"
-#include "vftr_sync_messages.h"
+#include "sync_messages.h"
 
 int vftr_MPI_Scatterv(const void *sendbuf, const int *sendcounts,
                       const int *displs, MPI_Datatype sendtype,

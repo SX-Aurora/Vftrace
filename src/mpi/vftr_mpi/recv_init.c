@@ -19,7 +19,7 @@
 #include <mpi.h>
 
 #include "vftr_timer.h"
-#include "vftr_persistent_requests.h"
+#include "persistent_requests.h"
 
 int vftr_MPI_Recv_init(void *buf, int count, MPI_Datatype datatype,
                        int source, int tag, MPI_Comm comm, MPI_Request *request) {

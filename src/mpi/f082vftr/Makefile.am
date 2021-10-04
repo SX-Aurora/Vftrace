@@ -1,7 +1,7 @@
 noinst_LTLIBRARIES = libvftr_mpi_f082vftr.la
 
 
-libvftr_mpi_f082vftr_la_SOURCES = vftr_mpi_buf_addr_const_F08.F90 \
+libvftr_mpi_f082vftr_la_SOURCES = mpi_buf_addr_const_F08.F90 \
                                   vftr_mpi_logging_F08.F90
 
 libvftr_mpi_f082vftr_la_SOURCES += init_f082vftr.c \

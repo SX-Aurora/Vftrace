@@ -16,21 +16,14 @@
    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-#include <mpi.h>
-
-#include "vftr_timer.h"
+#include "p2p_requests.h"
 #include "persistent_requests.h"
+#include "collective_requests.h"
+#include "onesided_requests.h"
 
-int vftr_MPI_Bsend_init(const void *buf, int count, MPI_Datatype datatype,
-                        int dest, int tag, MPI_Comm comm, MPI_Request *request) {
-
-   int retVal = PMPI_Bsend_init(buf, count, datatype, dest, tag, comm, request);
-
-   long long t2start = vftr_get_runtime_usec();
-   vftr_register_persistent_request(send, count, datatype, dest, tag, comm, *request);
-   long long t2end = vftr_get_runtime_usec();
-
-   vftr_mpi_overhead_usec += t2end - t2start;
-
-   return retVal;
+void vftr_clear_completed_requests() {
+   vftr_clear_completed_P2P_requests();
+   vftr_deactivate_completed_persistent_requests();
+   vftr_clear_completed_collective_requests();
+   vftr_clear_completed_onesided_requests();
 }

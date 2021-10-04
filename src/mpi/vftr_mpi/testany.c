@@ -20,7 +20,7 @@
 
 #include <stdbool.h>
 
-#include "vftr_clear_requests.h"
+#include "clear_mpi_requests.h"
   
 int vftr_MPI_Testany(int count, MPI_Request array_of_requests[],
                      int *index, int *flag, MPI_Status *status) {

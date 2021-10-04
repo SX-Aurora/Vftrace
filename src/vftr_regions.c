@@ -36,7 +36,7 @@
 #include "vftr_pause.h"
 #include "vftr_timer.h"
 #include "vftr_stacks.h"
-#include "vftr_clear_requests.h"
+#include "clear_mpi_requests.h"
 #include "vftr_sorting.h"
 #include "vftr_mallinfo.h"
 

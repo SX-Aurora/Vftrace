@@ -19,7 +19,7 @@
 #include <mpi.h>
 
 #include "vftr_timer.h"
-#include "vftr_onesided_requests.h"
+#include "onesided_requests.h"
 
 int vftr_MPI_Raccumulate(const void *origin_addr, int origin_count,
                          MPI_Datatype origin_datatype, int target_rank,

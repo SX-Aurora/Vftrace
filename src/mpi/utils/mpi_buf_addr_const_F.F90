@@ -16,7 +16,7 @@
 
 #ifdef _MPI
  
-MODULE vftr_mpi_buf_addr_const_F
+MODULE mpi_buf_addr_const_F
 
    IMPLICIT NONE
 
@@ -70,6 +70,6 @@ CONTAINS
       END IF
    END FUNCTION vftr_is_F_MPI_IN_PLACE
 
-END MODULE vftr_mpi_buf_addr_const_F
+END MODULE mpi_buf_addr_const_F
 
 #endif

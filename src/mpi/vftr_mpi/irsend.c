@@ -19,7 +19,7 @@
 #include <mpi.h>
 
 #include "vftr_timer.h"
-#include "vftr_p2p_requests.h"
+#include "p2p_requests.h"
 
 int vftr_MPI_Irsend(const void *buf, int count, MPI_Datatype datatype,
                     int dest, int tag, MPI_Comm comm,

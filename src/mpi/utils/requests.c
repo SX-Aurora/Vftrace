@@ -16,16 +16,14 @@
    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-
-#ifdef _MPI
 #include <mpi.h>
 
 #include <stdlib.h>
 #include <stdbool.h>
 
-#include "vftr_requests.h"
-#include "vftr_collective_requests.h"
-#include "vftr_onesided_requests.h"
+#include "requests.h"
+#include "collective_requests.h"
+#include "onesided_requests.h"
 #include "vftr_stacks.h"
 
 // create new request to be stored
@@ -167,5 +165,3 @@ vftr_request_t *vftr_search_request(vftr_request_t *open_request_list,
    }
    return matching_request;
 }
-
-#endif

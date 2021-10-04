@@ -21,7 +21,7 @@
 
 #include <mpi.h>
 
-#include "vftr_mpi_buf_addr_const.h"
+#include "mpi_buf_addr_const.h"
 #include "igatherv.h"
 
 int vftr_MPI_Igatherv_c2vftr(const void *sendbuf, int sendcount,

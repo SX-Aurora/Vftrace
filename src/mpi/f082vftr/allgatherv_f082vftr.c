@@ -21,7 +21,7 @@
 
 #include <stdlib.h>
 
-#include "vftr_mpi_buf_addr_const.h"
+#include "mpi_buf_addr_const.h"
 #include "allgatherv.h"
 
 void vftr_MPI_Allgatherv_f082vftr(void *sendbuf, MPI_Fint *sendcount,

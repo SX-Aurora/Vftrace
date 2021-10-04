@@ -21,7 +21,7 @@
 #include <stdlib.h>
 
 #include "vftr_timer.h"
-#include "vftr_collective_requests.h"
+#include "collective_requests.h"
 
 int vftr_MPI_Iscatter(const void *sendbuf, int sendcount,
                       MPI_Datatype sendtype, void *recvbuf,
