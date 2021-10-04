@@ -1,0 +1,1 @@
+../c-mpi/exscan_sync_time.sh
