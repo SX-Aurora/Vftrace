@@ -1,0 +1,1 @@
+../c-mpi/allgather_sync_time.sh
