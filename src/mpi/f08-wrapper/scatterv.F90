@@ -24,6 +24,8 @@ SUBROUTINE MPI_Scatterv_f08(sendbuf, sendcounts, displs, &
       ONLY : vftr_MPI_Scatterv_f082vftr
    USE vftr_mpi_logging_f08, &
       ONLY : vftr_no_mpi_logging_f08
+   USE vftr_sync_time_F08, &
+      ONLY : vftr_estimate_sync_time
    USE mpi_f08, &
       ONLY : PMPI_Scatterv, &
              MPI_Datatype, &
@@ -40,6 +42,8 @@ SUBROUTINE MPI_Scatterv_f08(sendbuf, sendcounts, displs, &
    TYPE(MPI_Comm), INTENT(IN) :: comm
    INTEGER, OPTIONAL, INTENT(OUT) :: error
    INTEGER :: tmperror
+
+   CALL vftr_estimate_sync_time("MPI_Scatterv_sync", comm)
 
    IF (vftr_no_mpi_logging_f08()) THEN
       CALL PMPI_Scatterv(sendbuf, sendcounts, displs, &

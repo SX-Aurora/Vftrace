@@ -23,6 +23,8 @@ SUBROUTINE MPI_Reduce_scatter_f08(sendbuf, recvbuf, recvcounts, &
       ONLY : vftr_MPI_Reduce_scatter_f082vftr
    USE vftr_mpi_logging_f08, &
       ONLY : vftr_no_mpi_logging_f08
+   USE vftr_sync_time_F08, &
+      ONLY : vftr_estimate_sync_time
    USE mpi_f08, &
       ONLY : PMPI_Reduce_scatter, &
              MPI_Datatype, &
@@ -37,6 +39,8 @@ SUBROUTINE MPI_Reduce_scatter_f08(sendbuf, recvbuf, recvcounts, &
    TYPE(MPI_Comm), INTENT(IN) :: comm
    INTEGER, OPTIONAL, INTENT(OUT) :: error
    INTEGER :: tmperror
+
+   CALL vftr_estimate_sync_time("MPI_Reduce_scatter_sync", comm)
 
    IF (vftr_no_mpi_logging_f08()) THEN
       CALL PMPI_Reduce_scatter(sendbuf, recvbuf, recvcounts, &

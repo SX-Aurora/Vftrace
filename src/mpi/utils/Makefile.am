@@ -11,6 +11,12 @@ libvftr_mpi_utils_la_SOURCES += mpi_logging_F.F90 \
 				mpi_buf_addr_const_F.F90 \
 				sync_time_F2c.c \
 				sync_time_F.F90
+if ENABLE_FORTRAN08
+libvftr_mpi_utils_la_SOURCES += mpi_logging_F08.F90 \
+                                mpi_buf_addr_const_F08.F90 \
+                                sync_time_F082c.c \
+                                sync_time_F08.F90
+endif
 endif
 
 libvftr_mpi_utils_la_SOURCES += status_utils.c \

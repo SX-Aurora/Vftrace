@@ -23,6 +23,8 @@ SUBROUTINE MPI_Allgatherv_f08(sendbuf, sendcount, sendtype, &
       ONLY : vftr_MPI_Allgatherv_f082vftr
    USE vftr_mpi_logging_f08, &
       ONLY : vftr_no_mpi_logging_f08
+   USE vftr_sync_time_F08, &
+      ONLY : vftr_estimate_sync_time
    USE mpi_f08, &
       ONLY : PMPI_Allgatherv, &
              MPI_Datatype, &
@@ -38,6 +40,9 @@ SUBROUTINE MPI_Allgatherv_f08(sendbuf, sendcount, sendtype, &
    TYPE(MPI_Comm), INTENT(IN) :: comm
    INTEGER, OPTIONAL, INTENT(OUT) :: error
    INTEGER :: tmperror
+
+   CALL vftr_estimate_sync_time("MPI_Allgatherv_sync", comm)
+
 
    IF (vftr_no_mpi_logging_f08()) THEN
       CALL PMPI_Allgatherv(sendbuf, sendcount, sendtype, &

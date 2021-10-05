@@ -22,6 +22,8 @@ SUBROUTINE MPI_Exscan_f08(sendbuf, recvbuf, count, &
       ONLY : vftr_MPI_Exscan_f082vftr
    USE vftr_mpi_logging_f08, &
       ONLY : vftr_no_mpi_logging_f08
+   USE vftr_sync_time_F08, &
+      ONLY : vftr_estimate_sync_time
    USE mpi_f08, &
       ONLY : PMPI_Exscan, &
              MPI_Datatype, &
@@ -36,6 +38,8 @@ SUBROUTINE MPI_Exscan_f08(sendbuf, recvbuf, count, &
    TYPE(MPI_Comm), INTENT(IN) :: comm
    INTEGER, OPTIONAL, INTENT(OUT) :: error
    INTEGER :: tmperror
+
+   CALL vftr_estimate_sync_time("MPI_Exscan_sync", comm)
 
    IF (vftr_no_mpi_logging_f08()) THEN
       CALL PMPI_Exscan(sendbuf, recvbuf, count, &
