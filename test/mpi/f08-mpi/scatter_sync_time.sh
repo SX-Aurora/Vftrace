@@ -1,0 +1,1 @@
+../c-mpi/scatter_sync_time.sh

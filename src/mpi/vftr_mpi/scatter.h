@@ -19,7 +19,6 @@
 #ifndef SCATTER_H
 #define SCATTER_H
 
-#ifdef _MPI
 #include <mpi.h>
 
 int vftr_MPI_Scatter(const void *sendbuf, int sendcount,
@@ -37,5 +36,4 @@ int vftr_MPI_Scatter_intercom(const void *sendbuf, int sendcount,
                               int recvcount, MPI_Datatype recvtype,
                               int root, MPI_Comm comm);
 
-#endif
 #endif

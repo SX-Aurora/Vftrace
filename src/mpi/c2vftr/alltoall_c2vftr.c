@@ -19,8 +19,7 @@
 #ifdef _MPI
 #include <mpi.h>
 
-#include "vftr_environment.h"
-#include "vftr_mpi_buf_addr_const.h"
+#include "mpi_buf_addr_const.h"
 #include "alltoall.h"
 
 int vftr_MPI_Alltoall_c2vftr(const void *sendbuf, int sendcount,

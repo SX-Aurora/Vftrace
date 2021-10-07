@@ -1,0 +1,1 @@
+../testscripts/scan_sync_time.sh

@@ -1,0 +1,1 @@
+../testscripts/scatter_sync_time.sh

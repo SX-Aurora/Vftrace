@@ -19,7 +19,6 @@
 #ifndef ALLTOALLW_H
 #define ALLTOALLW_H
 
-#ifdef _MPI
 #include <mpi.h>
 
 int vftr_MPI_Alltoallw(const void *sendbuf, const int *sendcounts,
@@ -40,5 +39,4 @@ int vftr_MPI_Alltoallw_intercom(const void *sendbuf, const int *sendcounts,
                                 const int *rdispls, const MPI_Datatype *recvtypes,
                                 MPI_Comm comm);
 
-#endif
 #endif

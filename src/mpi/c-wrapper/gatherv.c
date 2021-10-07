@@ -19,9 +19,9 @@
 #ifdef _MPI
 #include <mpi.h>
 
+#include "mpi_logging.h"
 #include "vftr_regions.h"
 #include "vftr_environment.h"
-#include "vftr_mpi_utils.h"
 #include "gatherv_c2vftr.h"
 
 int MPI_Gatherv(const void *sendbuf, int sendcount,

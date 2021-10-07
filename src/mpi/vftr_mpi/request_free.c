@@ -16,16 +16,14 @@
    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-#ifdef _MPI
 #include <mpi.h>
 
 #include <stdbool.h>
 
 #include "vftr_timer.h"
-#include "vftr_requests.h"
-#include "vftr_p2p_requests.h"
-#include "vftr_persistent_requests.h"
-#include "vftr_mpi_utils.h"
+#include "requests.h"
+#include "p2p_requests.h"
+#include "persistent_requests.h"
 
 int vftr_MPI_Request_free(MPI_Request *request) {
 
@@ -47,5 +45,3 @@ int vftr_MPI_Request_free(MPI_Request *request) {
 
    return 0;
 }
-
-#endif

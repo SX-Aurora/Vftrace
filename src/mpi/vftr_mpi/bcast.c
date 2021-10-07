@@ -16,12 +16,11 @@
    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-#ifdef _MPI
 #include <mpi.h>
 
 #include "vftr_timer.h"
-#include "vftr_sync_messages.h"
-#include "vftr_mpi_utils.h"
+#include "sync_messages.h"
+#include "rank_translate.h"
 
 int vftr_MPI_Bcast(void *buffer, int count, MPI_Datatype datatype,
                    int root, MPI_Comm comm) {
@@ -95,5 +94,3 @@ int vftr_MPI_Bcast_intercom(void *buffer, int count, MPI_Datatype datatype,
 
    return retVal;
 }
-
-#endif

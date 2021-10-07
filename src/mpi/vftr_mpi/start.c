@@ -16,12 +16,10 @@
    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-#ifdef _MPI
 #include <mpi.h>
 
 #include "vftr_timer.h"
-#include "vftr_persistent_requests.h"
-#include "vftr_mpi_utils.h"
+#include "persistent_requests.h"
 
 int vftr_MPI_Start(MPI_Request *request) {
    long long tstart = vftr_get_runtime_usec();
@@ -35,5 +33,3 @@ int vftr_MPI_Start(MPI_Request *request) {
 
    return retVal;
 }
-
-#endif

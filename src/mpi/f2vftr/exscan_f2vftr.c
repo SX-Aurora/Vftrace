@@ -19,7 +19,7 @@
 #ifdef _MPI
 #include <mpi.h>
 
-#include "vftr_mpi_buf_addr_const.h"
+#include "mpi_buf_addr_const.h"
 #include "exscan.h"
 
 void vftr_MPI_Exscan_f2vftr(void *sendbuf, void *recvbuf, MPI_Fint *count,

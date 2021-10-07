@@ -10,12 +10,12 @@ vftrace_mpi_stack_crosscheck_SOURCES = vftrace_mpi_stack_crosscheck.c
 
 vftrace_vfd_dump_SOURCES = vftrace_vfd_dump.c vftr_vfd_utils.c
 vftrace_vfd_dump_CFLAGS = -I${srcdir}/../src/
-vftrace_vfd_dump_CFLAGS += -I${srcdir}/../src/mpi/vftr_mpi/
+vftrace_vfd_dump_CFLAGS += -I${srcdir}/../src/mpi/utils/
 vftrace_vfd_dump_LDFLAGS = -L${top_builddir}/src/.libs -lvftrace -lm
 
 vftrace_show_function_stacks_SOURCES = vftrace_show_function_stacks.c vftr_vfd_utils.c
 vftrace_show_function_stacks_CFLAGS = -I${srcdir}/../src/
-vftrace_show_function_stacks_CFLAGS += -I${srcdir}/../src/mpi/vftr_mpi/
+vftrace_show_function_stacks_CFLAGS += -I${srcdir}/../src/mpi/utils/
 vftrace_show_function_stacks_LDFLAGS = -L${top_builddir}/src/.libs -lvftrace -lm
 
 vftrace_filter_stacks_SOURCES = vftrace_filter_stacks.c

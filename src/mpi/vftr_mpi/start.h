@@ -19,10 +19,8 @@
 #ifndef START_H
 #define START_H
 
-#ifdef _MPI
 #include <mpi.h>
 
 int vftr_MPI_Start(MPI_Request *request);
 
-#endif
 #endif

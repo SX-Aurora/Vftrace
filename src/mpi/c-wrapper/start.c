@@ -19,7 +19,7 @@
 #ifdef _MPI
 #include <mpi.h>
 
-#include "vftr_mpi_utils.h"
+#include "mpi_logging.h"
 #include "start_c2vftr.h"
 
 int MPI_Start(MPI_Request *request) {

@@ -19,10 +19,8 @@
 #ifndef INIT_H
 #define INIT_H
 
-#ifdef _MPI
 #include <mpi.h>
 
 int vftr_MPI_Init(int *argc, char ***argv);
 
-#endif
 #endif

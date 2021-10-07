@@ -19,12 +19,10 @@
 #ifndef RSEND_INIT_H
 #define RSEND_INIT_H
 
-#ifdef _MPI
 #include <mpi.h>
 
 int vftr_MPI_Rsend_init(const void *buf, int count, MPI_Datatype datatype,
                         int dest, int tag, MPI_Comm comm,
                         MPI_Request *request);
 
-#endif
 #endif

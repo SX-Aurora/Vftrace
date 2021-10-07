@@ -19,11 +19,9 @@
 #ifndef RSEND_H
 #define RSEND_H
 
-#ifdef _MPI
 #include <mpi.h>
 
 int vftr_MPI_Rsend(const void *buf, int count, MPI_Datatype datatype,
                    int dest, int tag, MPI_Comm comm);
 
-#endif
 #endif

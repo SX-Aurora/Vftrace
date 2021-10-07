@@ -16,12 +16,10 @@
    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-#ifdef _MPI
 #include <mpi.h>
 
 #include "vftr_timer.h"
-#include "vftr_p2p_requests.h"
-#include "vftr_mpi_utils.h"
+#include "p2p_requests.h"
 
 int vftr_MPI_Issend(const void *buf, int count, MPI_Datatype datatype,
                     int dest, int tag, MPI_Comm comm,
@@ -37,5 +35,3 @@ int vftr_MPI_Issend(const void *buf, int count, MPI_Datatype datatype,
 
    return retVal;
 }
-
-#endif

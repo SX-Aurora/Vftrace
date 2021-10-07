@@ -19,7 +19,6 @@
 #ifndef IBCAST_H
 #define IBCAST_H
 
-#ifdef _MPI
 #include <mpi.h>
 
 int vftr_MPI_Ibcast(void *buffer, int count, MPI_Datatype datatype,
@@ -28,5 +27,4 @@ int vftr_MPI_Ibcast(void *buffer, int count, MPI_Datatype datatype,
 int vftr_MPI_Ibcast_intercom(void *buffer, int count, MPI_Datatype datatype,
                              int root, MPI_Comm comm, MPI_Request *request);
 
-#endif
 #endif

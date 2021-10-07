@@ -19,7 +19,7 @@
 #ifdef _MPI
 #include <mpi.h>
 
-#include "vftr_mpi_utils.h"
+#include "mpi_logging.h"
 #include "test_c2vftr.h"
 
 int MPI_Test(MPI_Request *request, int *flag, MPI_Status *status) {

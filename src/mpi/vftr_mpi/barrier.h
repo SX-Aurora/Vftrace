@@ -19,10 +19,8 @@
 #ifndef BARRIER_H
 #define BARRIER_H
 
-#ifdef _MPI
 #include <mpi.h>
 
 int vftr_MPI_Barrier(MPI_Comm comm);
 
-#endif
 #endif

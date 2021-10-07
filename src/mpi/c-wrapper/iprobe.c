@@ -19,7 +19,7 @@
 #ifdef _MPI
 #include <mpi.h>
 
-#include "vftr_mpi_utils.h"
+#include "mpi_logging.h"
 #include "iprobe_c2vftr.h"
 
 int MPI_Iprobe(int source, int tag, MPI_Comm comm,

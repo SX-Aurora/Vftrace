@@ -19,7 +19,7 @@
 #ifdef _MPI
 #include <mpi.h>
 
-#include "vftr_mpi_buf_addr_const.h"
+#include "mpi_buf_addr_const.h"
 #include "ibcast.h"
 
 void vftr_MPI_Ibcast_f2vftr(void *buffer, MPI_Fint *count, MPI_Fint *f_datatype, 

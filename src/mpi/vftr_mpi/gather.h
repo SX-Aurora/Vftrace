@@ -19,7 +19,6 @@
 #ifndef GATHER_H
 #define GATHER_H
 
-#ifdef _MPI
 #include <mpi.h>
 
 int vftr_MPI_Gather(const void *sendbuf, int sendcount,
@@ -37,5 +36,4 @@ int vftr_MPI_Gather_intercom(const void *sendbuf, int sendcount,
                              int recvcount, MPI_Datatype recvtype,
                              int root, MPI_Comm comm);
 
-#endif
 #endif

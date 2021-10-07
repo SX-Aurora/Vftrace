@@ -16,8 +16,6 @@
    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-
-#ifdef _MPI
 #include <mpi.h>
 
 int vftr_MPI_Probe(int source, int tag, MPI_Comm comm, MPI_Status *status) {
@@ -25,5 +23,3 @@ int vftr_MPI_Probe(int source, int tag, MPI_Comm comm, MPI_Status *status) {
    // for the instrumentation
    return PMPI_Probe(source, tag, comm, status);
 }
-
-#endif

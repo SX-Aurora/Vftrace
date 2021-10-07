@@ -16,13 +16,12 @@
    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-#ifdef _MPI
 #include <mpi.h>
 
 #include <stdlib.h>
 #include <stdbool.h>
 
-#include "vftr_clear_requests.h"
+#include "clear_mpi_requests.h"
   
 int vftr_MPI_Waitall(int count, MPI_Request array_of_requests[],
                      MPI_Status array_of_statuses[]) {
@@ -61,5 +60,3 @@ int vftr_MPI_Waitall(int count, MPI_Request array_of_requests[],
    
    return PMPI_Waitall(count, array_of_requests, array_of_statuses);
 }
-
-#endif

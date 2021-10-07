@@ -22,6 +22,8 @@ SUBROUTINE MPI_EXSCAN(SENDBUF, RECVBUF, COUNT, DATATYPE, &
       ONLY : vftr_MPI_Exscan_f2vftr
    USE vftr_mpi_logging_F, &
       ONLY : vftr_no_mpi_logging_F
+   USE vftr_sync_time_F, &
+      ONLY : vftr_estimate_sync_time
    USE mpi, &
       ONLY : PMPI_EXSCAN
    IMPLICIT NONE
@@ -32,6 +34,8 @@ SUBROUTINE MPI_EXSCAN(SENDBUF, RECVBUF, COUNT, DATATYPE, &
    INTEGER OP
    INTEGER COMM
    INTEGER ERROR
+
+   CALL vftr_estimate_sync_time("MPI_Exscan_sync", COMM)
 
    IF (vftr_no_mpi_logging_F()) THEN
       CALL PMPI_EXSCAN(SENDBUF, RECVBUF, COUNT, DATATYPE, &

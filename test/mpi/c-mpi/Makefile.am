@@ -331,6 +331,7 @@ check_PROGRAMS += barrier \
 		  gather_nolog \
 		  gather_inplace \
 		  gather_intercom \
+		  gather_sync_time \
 		  igather \
 		  igather_nolog \
 		  igather_inplace \
@@ -339,6 +340,7 @@ check_PROGRAMS += barrier \
 		  gatherv_nolog \
 		  gatherv_inplace \
 		  gatherv_intercom \
+		  gatherv_sync_time \
 		  igatherv \
 		  igatherv_nolog \
 		  igatherv_inplace \
@@ -347,6 +349,7 @@ check_PROGRAMS += barrier \
 		  scatter_nolog \
 		  scatter_inplace \
 		  scatter_intercom \
+		  scatter_sync_time \
 		  iscatter \
 		  iscatter_nolog \
 		  iscatter_inplace \
@@ -355,6 +358,7 @@ check_PROGRAMS += barrier \
 		  scatterv_nolog \
 		  scatterv_inplace \
 		  scatterv_intercom \
+		  scatterv_sync_time \
 		  iscatterv \
 		  iscatterv_nolog \
 		  iscatterv_inplace \
@@ -363,6 +367,7 @@ check_PROGRAMS += barrier \
 		  allgather_nolog \
 		  allgather_inplace \
 		  allgather_intercom \
+		  allgather_sync_time \
 		  iallgather \
 		  iallgather_nolog \
 		  iallgather_inplace \
@@ -371,6 +376,7 @@ check_PROGRAMS += barrier \
 		  allgatherv_nolog \
 		  allgatherv_inplace \
 		  allgatherv_intercom \
+		  allgatherv_sync_time \
 		  iallgatherv \
 		  iallgatherv_nolog \
 		  iallgatherv_inplace \
@@ -379,6 +385,7 @@ check_PROGRAMS += barrier \
 		  alltoall_nolog \
 		  alltoall_inplace \
 		  alltoall_intercom \
+		  alltoall_sync_time \
 		  ialltoall \
 		  ialltoall_nolog \
 		  ialltoall_inplace \
@@ -387,6 +394,7 @@ check_PROGRAMS += barrier \
 		  alltoallv_nolog \
 		  alltoallv_inplace \
 		  alltoallv_intercom \
+		  alltoallv_sync_time \
 		  ialltoallv \
 		  ialltoallv_nolog \
 		  ialltoallv_inplace \
@@ -395,6 +403,7 @@ check_PROGRAMS += barrier \
 		  alltoallw_nolog \
 		  alltoallw_inplace \
 		  alltoallw_intercom \
+		  alltoallw_sync_time \
 		  ialltoallw \
 		  ialltoallw_nolog \
 		  ialltoallw_inplace \
@@ -452,6 +461,10 @@ gather_intercom_SOURCES = $(srcdir)/gather_intercom.c
 gather_intercom_CFLAGS = $(AM_CFLAGS)
 gather_intercom_LDFLAGS = $(AM_LDFLAGS)
 
+gather_sync_time_SOURCES = $(srcdir)/gather.c
+gather_sync_time_CFLAGS = $(AM_CFLAGS)
+gather_sync_time_LDFLAGS = $(AM_LDFLAGS)
+
 igather_SOURCES = $(srcdir)/igather.c
 igather_CFLAGS = $(AM_CFLAGS)
 igather_LDFLAGS = $(AM_LDFLAGS)
@@ -483,6 +496,10 @@ gatherv_inplace_LDFLAGS = $(AM_LDFLAGS)
 gatherv_intercom_SOURCES = $(srcdir)/gatherv_intercom.c
 gatherv_intercom_CFLAGS = $(AM_CFLAGS)
 gatherv_intercom_LDFLAGS = $(AM_LDFLAGS)
+
+gatherv_sync_time_SOURCES = $(srcdir)/gatherv.c
+gatherv_sync_time_CFLAGS = $(AM_CFLAGS)
+gatherv_sync_time_LDFLAGS = $(AM_LDFLAGS)
 
 igatherv_SOURCES = $(srcdir)/igatherv.c
 igatherv_CFLAGS = $(AM_CFLAGS)
@@ -516,6 +533,10 @@ scatter_intercom_SOURCES = $(srcdir)/scatter_intercom.c
 scatter_intercom_CFLAGS = $(AM_CFLAGS)
 scatter_intercom_LDFLAGS = $(AM_LDFLAGS)
 
+scatter_sync_time_SOURCES = $(srcdir)/scatter.c
+scatter_sync_time_CFLAGS = $(AM_CFLAGS)
+scatter_sync_time_LDFLAGS = $(AM_LDFLAGS)
+
 iscatter_SOURCES = $(srcdir)/iscatter.c
 iscatter_CFLAGS = $(AM_CFLAGS)
 iscatter_LDFLAGS = $(AM_LDFLAGS)
@@ -547,6 +568,10 @@ scatterv_inplace_LDFLAGS = $(AM_LDFLAGS)
 scatterv_intercom_SOURCES = $(srcdir)/scatterv_intercom.c
 scatterv_intercom_CFLAGS = $(AM_CFLAGS)
 scatterv_intercom_LDFLAGS = $(AM_LDFLAGS)
+
+scatterv_sync_time_SOURCES = $(srcdir)/scatterv.c
+scatterv_sync_time_CFLAGS = $(AM_CFLAGS)
+scatterv_sync_time_LDFLAGS = $(AM_LDFLAGS)
 
 iscatterv_SOURCES = $(srcdir)/iscatterv.c
 iscatterv_CFLAGS = $(AM_CFLAGS)
@@ -580,6 +605,10 @@ allgather_intercom_SOURCES = $(srcdir)/allgather_intercom.c
 allgather_intercom_CFLAGS = $(AM_CFLAGS)
 allgather_intercom_LDFLAGS = $(AM_LDFLAGS)
 
+allgather_sync_time_SOURCES = $(srcdir)/allgather.c
+allgather_sync_time_CFLAGS = $(AM_CFLAGS)
+allgather_sync_time_LDFLAGS = $(AM_LDFLAGS)
+
 iallgather_SOURCES = $(srcdir)/iallgather.c
 iallgather_CFLAGS = $(AM_CFLAGS)
 iallgather_LDFLAGS = $(AM_LDFLAGS)
@@ -611,6 +640,10 @@ allgatherv_inplace_LDFLAGS = $(AM_LDFLAGS)
 allgatherv_intercom_SOURCES = $(srcdir)/allgatherv_intercom.c
 allgatherv_intercom_CFLAGS = $(AM_CFLAGS)
 allgatherv_intercom_LDFLAGS = $(AM_LDFLAGS)
+
+allgatherv_sync_time_SOURCES = $(srcdir)/allgatherv.c
+allgatherv_sync_time_CFLAGS = $(AM_CFLAGS)
+allgatherv_sync_time_LDFLAGS = $(AM_LDFLAGS)
 
 iallgatherv_SOURCES = $(srcdir)/iallgatherv.c
 iallgatherv_CFLAGS = $(AM_CFLAGS)
@@ -644,6 +677,10 @@ alltoall_intercom_SOURCES = $(srcdir)/alltoall_intercom.c
 alltoall_intercom_CFLAGS = $(AM_CFLAGS)
 alltoall_intercom_LDFLAGS = $(AM_LDFLAGS)
 
+alltoall_sync_time_SOURCES = $(srcdir)/alltoall.c
+alltoall_sync_time_CFLAGS = $(AM_CFLAGS)
+alltoall_sync_time_LDFLAGS = $(AM_LDFLAGS)
+
 ialltoall_SOURCES = $(srcdir)/ialltoall.c
 ialltoall_CFLAGS = $(AM_CFLAGS)
 ialltoall_LDFLAGS = $(AM_LDFLAGS)
@@ -675,6 +712,10 @@ alltoallv_inplace_LDFLAGS = $(AM_LDFLAGS)
 alltoallv_intercom_SOURCES = $(srcdir)/alltoallv_intercom.c
 alltoallv_intercom_CFLAGS = $(AM_CFLAGS)
 alltoallv_intercom_LDFLAGS = $(AM_LDFLAGS)
+
+alltoallv_sync_time_SOURCES = $(srcdir)/alltoallv.c
+alltoallv_sync_time_CFLAGS = $(AM_CFLAGS)
+alltoallv_sync_time_LDFLAGS = $(AM_LDFLAGS)
 
 ialltoallv_SOURCES = $(srcdir)/ialltoallv.c
 ialltoallv_CFLAGS = $(AM_CFLAGS)
@@ -708,6 +749,10 @@ alltoallw_intercom_SOURCES = $(srcdir)/alltoallw_intercom.c
 alltoallw_intercom_CFLAGS = $(AM_CFLAGS)
 alltoallw_intercom_LDFLAGS = $(AM_LDFLAGS)
 
+alltoallw_sync_time_SOURCES = $(srcdir)/alltoallw.c
+alltoallw_sync_time_CFLAGS = $(AM_CFLAGS)
+alltoallw_sync_time_LDFLAGS = $(AM_LDFLAGS)
+
 ialltoallw_SOURCES = $(srcdir)/ialltoallw.c
 ialltoallw_CFLAGS = $(AM_CFLAGS)
 ialltoallw_LDFLAGS = $(AM_LDFLAGS)
@@ -737,6 +782,7 @@ dist_noinst_SCRIPTS += barrier.sh \
 		       gather_nolog.sh \
 		       gather_inplace.sh \
 		       gather_intercom.sh \
+		       gather_sync_time.sh \
 		       igather.sh \
 		       igather_nolog.sh \
 		       igather_inplace.sh \
@@ -745,6 +791,7 @@ dist_noinst_SCRIPTS += barrier.sh \
 		       gatherv_nolog.sh \
 		       gatherv_inplace.sh \
 		       gatherv_intercom.sh \
+		       gatherv_sync_time.sh \
 		       igatherv.sh \
 		       igatherv_nolog.sh \
 		       igatherv_inplace.sh \
@@ -753,6 +800,7 @@ dist_noinst_SCRIPTS += barrier.sh \
 		       scatter_nolog.sh \
 		       scatter_inplace.sh \
 		       scatter_intercom.sh \
+		       scatter_sync_time.sh \
 		       iscatter.sh \
 		       iscatter_nolog.sh \
 		       iscatter_inplace.sh \
@@ -761,6 +809,7 @@ dist_noinst_SCRIPTS += barrier.sh \
 		       scatterv_nolog.sh \
 		       scatterv_inplace.sh \
 		       scatterv_intercom.sh \
+		       scatterv_sync_time.sh \
 		       iscatterv.sh \
 		       iscatterv_nolog.sh \
 		       iscatterv_inplace.sh \
@@ -769,6 +818,7 @@ dist_noinst_SCRIPTS += barrier.sh \
 		       allgather_nolog.sh \
 		       allgather_inplace.sh \
 		       allgather_intercom.sh \
+		       allgather_sync_time.sh \
 		       iallgather.sh \
 		       iallgather_nolog.sh \
 		       iallgather_inplace.sh \
@@ -777,6 +827,7 @@ dist_noinst_SCRIPTS += barrier.sh \
 		       allgatherv_nolog.sh \
 		       allgatherv_inplace.sh \
 		       allgatherv_intercom.sh \
+		       allgatherv_sync_time.sh \
 		       iallgatherv.sh \
 		       iallgatherv_nolog.sh \
 		       iallgatherv_inplace.sh \
@@ -785,6 +836,7 @@ dist_noinst_SCRIPTS += barrier.sh \
 		       alltoall_nolog.sh \
 		       alltoall_inplace.sh \
 		       alltoall_intercom.sh \
+		       alltoall_sync_time.sh \
 		       ialltoall.sh \
 		       ialltoall_nolog.sh \
 		       ialltoall_inplace.sh \
@@ -793,6 +845,7 @@ dist_noinst_SCRIPTS += barrier.sh \
 		       alltoallv_nolog.sh \
 		       alltoallv_inplace.sh \
 		       alltoallv_intercom.sh \
+		       alltoallv_sync_time.sh \
 		       ialltoallv.sh \
 		       ialltoallv_nolog.sh \
 		       ialltoallv_inplace.sh \
@@ -801,6 +854,7 @@ dist_noinst_SCRIPTS += barrier.sh \
 		       alltoallw_nolog.sh \
 		       alltoallw_inplace.sh \
 		       alltoallw_intercom.sh \
+		       alltoallw_sync_time.sh \
 		       ialltoallw.sh \
 		       ialltoallw_nolog.sh \
 		       ialltoallw_inplace.sh \
@@ -814,6 +868,7 @@ check_PROGRAMS += reduce \
 		  reduce_nolog \
 		  reduce_inplace \
 		  reduce_intercom \
+		  reduce_sync_time \
 		  ireduce \
 		  ireduce_nolog \
 		  ireduce_inplace \
@@ -822,6 +877,7 @@ check_PROGRAMS += reduce \
 		  allreduce_nolog \
 		  allreduce_inplace \
 		  allreduce_intercom \
+		  allreduce_sync_time \
 		  iallreduce \
 		  iallreduce_nolog \
 		  iallreduce_inplace \
@@ -830,6 +886,7 @@ check_PROGRAMS += reduce \
 		  reduce_scatter_block_nolog \
 		  reduce_scatter_block_inplace \
 		  reduce_scatter_block_intercom \
+		  reduce_scatter_block_sync_time \
 		  ireduce_scatter_block \
 		  ireduce_scatter_block_nolog \
 		  ireduce_scatter_block_inplace \
@@ -838,6 +895,7 @@ check_PROGRAMS += reduce \
 		  reduce_scatter_nolog \
 		  reduce_scatter_inplace \
 		  reduce_scatter_intercom \
+		  reduce_scatter_sync_time \
 		  ireduce_scatter \
 		  ireduce_scatter_nolog \
 		  ireduce_scatter_inplace \
@@ -845,12 +903,14 @@ check_PROGRAMS += reduce \
 		  scan \
 		  scan_nolog \
 		  scan_inplace \
+		  scan_sync_time \
 		  iscan \
 		  iscan_nolog \
 		  iscan_inplace \
 		  exscan \
 		  exscan_nolog \
 		  exscan_inplace \
+		  exscan_sync_time \
 		  iexscan \
 		  iexscan_nolog \
 		  iexscan_inplace
@@ -870,6 +930,10 @@ reduce_inplace_LDFLAGS = $(AM_LDFLAGS)
 reduce_intercom_SOURCES = $(srcdir)/reduce_intercom.c
 reduce_intercom_CFLAGS = $(AM_CFLAGS)
 reduce_intercom_LDFLAGS = $(AM_LDFLAGS)
+
+reduce_sync_time_SOURCES = $(srcdir)/reduce.c
+reduce_sync_time_CFLAGS = $(AM_CFLAGS)
+reduce_sync_time_LDFLAGS = $(AM_LDFLAGS)
 
 ireduce_SOURCES = $(srcdir)/ireduce.c
 ireduce_CFLAGS = $(AM_CFLAGS)
@@ -903,6 +967,10 @@ allreduce_intercom_SOURCES = $(srcdir)/allreduce_intercom.c
 allreduce_intercom_CFLAGS = $(AM_CFLAGS)
 allreduce_intercom_LDFLAGS = $(AM_LDFLAGS)
 
+allreduce_sync_time_SOURCES = $(srcdir)/allreduce.c
+allreduce_sync_time_CFLAGS = $(AM_CFLAGS)
+allreduce_sync_time_LDFLAGS = $(AM_LDFLAGS)
+
 iallreduce_SOURCES = $(srcdir)/iallreduce.c
 iallreduce_CFLAGS = $(AM_CFLAGS)
 iallreduce_LDFLAGS = $(AM_LDFLAGS)
@@ -934,6 +1002,10 @@ reduce_scatter_block_inplace_LDFLAGS = $(AM_LDFLAGS)
 reduce_scatter_block_intercom_SOURCES = $(srcdir)/reduce_scatter_block_intercom.c
 reduce_scatter_block_intercom_CFLAGS = $(AM_CFLAGS)
 reduce_scatter_block_intercom_LDFLAGS = $(AM_LDFLAGS)
+
+reduce_scatter_block_sync_time_SOURCES = $(srcdir)/reduce_scatter_block.c
+reduce_scatter_block_sync_time_CFLAGS = $(AM_CFLAGS)
+reduce_scatter_block_sync_time_LDFLAGS = $(AM_LDFLAGS)
 
 ireduce_scatter_block_SOURCES = $(srcdir)/ireduce_scatter_block.c
 ireduce_scatter_block_CFLAGS = $(AM_CFLAGS)
@@ -967,6 +1039,10 @@ reduce_scatter_intercom_SOURCES = $(srcdir)/reduce_scatter_intercom.c
 reduce_scatter_intercom_CFLAGS = $(AM_CFLAGS)
 reduce_scatter_intercom_LDFLAGS = $(AM_LDFLAGS)
 
+reduce_scatter_sync_time_SOURCES = $(srcdir)/reduce_scatter.c
+reduce_scatter_sync_time_CFLAGS = $(AM_CFLAGS)
+reduce_scatter_sync_time_LDFLAGS = $(AM_LDFLAGS)
+
 ireduce_scatter_SOURCES = $(srcdir)/ireduce_scatter.c
 ireduce_scatter_CFLAGS = $(AM_CFLAGS)
 ireduce_scatter_LDFLAGS = $(AM_LDFLAGS)
@@ -995,6 +1071,10 @@ scan_inplace_SOURCES = $(srcdir)/scan_inplace.c
 scan_inplace_CFLAGS = $(AM_CFLAGS)
 scan_inplace_LDFLAGS = $(AM_LDFLAGS)
 
+scan_sync_time_SOURCES = $(srcdir)/scan.c
+scan_sync_time_CFLAGS = $(AM_CFLAGS)
+scan_sync_time_LDFLAGS = $(AM_LDFLAGS)
+
 iscan_SOURCES = $(srcdir)/iscan.c
 iscan_CFLAGS = $(AM_CFLAGS)
 iscan_LDFLAGS = $(AM_LDFLAGS)
@@ -1019,6 +1099,10 @@ exscan_inplace_SOURCES = $(srcdir)/exscan_inplace.c
 exscan_inplace_CFLAGS = $(AM_CFLAGS)
 exscan_inplace_LDFLAGS = $(AM_LDFLAGS)
 
+exscan_sync_time_SOURCES = $(srcdir)/exscan.c
+exscan_sync_time_CFLAGS = $(AM_CFLAGS)
+exscan_sync_time_LDFLAGS = $(AM_LDFLAGS)
+
 iexscan_SOURCES = $(srcdir)/iexscan.c
 iexscan_CFLAGS = $(AM_CFLAGS)
 iexscan_LDFLAGS = $(AM_LDFLAGS)
@@ -1035,6 +1119,7 @@ dist_noinst_SCRIPTS += reduce.sh \
 		       reduce_nolog.sh \
 		       reduce_inplace.sh \
 		       reduce_intercom.sh \
+		       reduce_sync_time.sh \
 		       ireduce.sh \
 		       ireduce_nolog.sh \
 		       ireduce_inplace.sh \
@@ -1043,6 +1128,7 @@ dist_noinst_SCRIPTS += reduce.sh \
 		       allreduce_nolog.sh \
 		       allreduce_inplace.sh \
 		       allreduce_intercom.sh \
+		       allreduce_sync_time.sh \
 		       iallreduce.sh \
 		       iallreduce_nolog.sh \
 		       iallreduce_inplace.sh \
@@ -1051,6 +1137,7 @@ dist_noinst_SCRIPTS += reduce.sh \
 		       reduce_scatter_block_nolog.sh \
 		       reduce_scatter_block_inplace.sh \
 		       reduce_scatter_block_intercom.sh \
+		       reduce_scatter_block_sync_time.sh \
 		       ireduce_scatter_block.sh \
 		       ireduce_scatter_block_nolog.sh \
 		       ireduce_scatter_block_inplace.sh \
@@ -1059,6 +1146,7 @@ dist_noinst_SCRIPTS += reduce.sh \
 		       reduce_scatter_nolog.sh \
 		       reduce_scatter_inplace.sh \
 		       reduce_scatter_intercom.sh \
+		       reduce_scatter_sync_time.sh \
 		       ireduce_scatter.sh \
 		       ireduce_scatter_nolog.sh \
 		       ireduce_scatter_inplace.sh \
@@ -1066,12 +1154,14 @@ dist_noinst_SCRIPTS += reduce.sh \
 		       scan.sh \
 		       scan_nolog.sh \
 		       scan_inplace.sh \
+		       scan_sync_time.sh \
 		       iscan.sh \
 		       iscan_nolog.sh \
 		       iscan_inplace.sh \
 		       exscan.sh \
 		       exscan_nolog.sh \
 		       exscan_inplace.sh \
+		       exscan_sync_time.sh \
 		       iexscan.sh \
 		       iexscan_nolog.sh \
 		       iexscan_inplace.sh

@@ -19,7 +19,7 @@
 #ifdef _MPI
 #include <mpi.h>
 
-#include "vftr_mpi_buf_addr_const.h"
+#include "mpi_buf_addr_const.h"
 #include "reduce.h"
 
 void vftr_MPI_Reduce_f082vftr(void *sendbuf, void *recvbuf, MPI_Fint *count,

@@ -22,7 +22,7 @@
 
 #include <mpi.h>
 
-#include "vftr_mpi_utils.h"
+#include "mpi_logging.h"
 #include "ireduce_scatter_c2vftr.h"
 
 int MPI_Ireduce_scatter(const void *sendbuf, void *recvbuf,

@@ -16,12 +16,8 @@
    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-#ifdef _MPI
-
 #include "vftr_mpi_pcontrol.h"
 
 void vftr_MPI_Pcontrol_F08(const int level) {
    vftr_MPI_Pcontrol(level);
 }
-
-#endif

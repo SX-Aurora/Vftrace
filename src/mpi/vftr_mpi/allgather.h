@@ -19,7 +19,6 @@
 #ifndef ALLGATHER_H
 #define ALLGATHER_H
 
-#ifdef _MPI
 #include <mpi.h>
 
 int vftr_MPI_Allgather(const void *sendbuf, int sendcount,
@@ -37,5 +36,4 @@ int vftr_MPI_Allgather_intercom(const void *sendbuf, int sendcount,
                                 int recvcount, MPI_Datatype recvtype,
                                 MPI_Comm comm);
 
-#endif
 #endif

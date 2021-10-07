@@ -19,7 +19,7 @@
 #ifdef _MPI
 #include <mpi.h>
 
-#include "vftr_mpi_utils.h"
+#include "mpi_logging.h"
 #include "fetch_and_op_c2vftr.h"
 
 int MPI_Fetch_and_op(const void *origin_addr, void *result_addr,

@@ -19,7 +19,6 @@
 #ifndef RPUT_H
 #define RPUT_H
 
-#ifdef _MPI
 #include <mpi.h>
 
 int vftr_MPI_Rput(const void *origin_addr, int origin_count,
@@ -28,5 +27,4 @@ int vftr_MPI_Rput(const void *origin_addr, int origin_count,
                   MPI_Datatype target_datatype, MPI_Win win, 
                   MPI_Request *request);
 
-#endif
 #endif

@@ -19,7 +19,6 @@
 #ifndef IGATHER_H
 #define IGATHER_H
 
-#ifdef _MPI
 #include <mpi.h>
 
 int vftr_MPI_Igather(const void *sendbuf, int sendcount,
@@ -40,5 +39,4 @@ int vftr_MPI_Igather_intercom(const void *sendbuf, int sendcount,
                               int root, MPI_Comm comm, 
                               MPI_Request *request);
 
-#endif
 #endif

@@ -19,7 +19,6 @@
 #ifndef PUT_H
 #define PUT_H
 
-#ifdef _MPI
 #include <mpi.h>
 
 int vftr_MPI_Put(const void *origin_addr, int origin_count,
@@ -27,5 +26,4 @@ int vftr_MPI_Put(const void *origin_addr, int origin_count,
                  MPI_Aint target_disp, int target_count,
                  MPI_Datatype target_datatype, MPI_Win win);
 
-#endif
 #endif

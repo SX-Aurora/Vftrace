@@ -34,6 +34,6 @@ do
          echo "Mismatch in callcount of sync region."
          echo "expected 1 call, found ${callcount}."
          exit 1;
-      fi
+      fi  
    done
 done

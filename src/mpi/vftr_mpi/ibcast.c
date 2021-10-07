@@ -16,14 +16,13 @@
    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-#ifdef _MPI
 #include <mpi.h>
 
 #include <stdlib.h>
 
 #include "vftr_timer.h"
-#include "vftr_collective_requests.h"
-#include "vftr_mpi_utils.h"
+#include "collective_requests.h"
+#include "rank_translate.h"
 
 int vftr_MPI_Ibcast(void *buffer, int count, MPI_Datatype datatype,
                    int root, MPI_Comm comm, MPI_Request *request) {
@@ -121,5 +120,3 @@ int vftr_MPI_Ibcast_intercom(void *buffer, int count, MPI_Datatype datatype,
 
    return retVal;
 }
-
-#endif

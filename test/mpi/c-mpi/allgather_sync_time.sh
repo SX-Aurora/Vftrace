@@ -1,0 +1,1 @@
+../testscripts/allgather_sync_time.sh

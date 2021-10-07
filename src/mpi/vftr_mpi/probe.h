@@ -19,10 +19,8 @@
 #ifndef PROBE_H
 #define PROBE_H
 
-#ifdef _MPI
 #include <mpi.h>
 
 int vftr_MPI_Probe(int source, int tag, MPI_Comm comm, MPI_Status *status);
 
-#endif
 #endif

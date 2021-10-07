@@ -19,7 +19,7 @@
 #ifdef _MPI
 #include <mpi.h>
 
-#include "vftr_mpi_utils.h"
+#include "mpi_logging.h"
 #include "rget_accumulate_c2vftr.h"
 
 int MPI_Rget_accumulate(const void *origin_addr, int origin_count,

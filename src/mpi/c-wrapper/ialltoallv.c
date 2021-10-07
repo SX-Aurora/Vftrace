@@ -21,7 +21,7 @@
 
 #include <mpi.h>
 
-#include "vftr_mpi_utils.h"
+#include "mpi_logging.h"
 #include "ialltoallv_c2vftr.h"
 
 int MPI_Ialltoallv(const void *sendbuf, const int *sendcounts,

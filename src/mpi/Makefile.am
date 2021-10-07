@@ -1,5 +1,8 @@
-SUBDIRS = vftr_mpi
+SUBDIRS = utils
+
 if WITH_MPI
+SUBDIRS +=vftr_mpi
+
 SUBDIRS += c2vftr \
 	   c-wrapper
 if ENABLE_FORTRAN

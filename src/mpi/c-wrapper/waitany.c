@@ -19,7 +19,7 @@
 #ifdef _MPI
 #include <mpi.h>
 
-#include "vftr_mpi_utils.h"
+#include "mpi_logging.h"
 #include "waitany_c2vftr.h"
 
 int MPI_Waitany(int count, MPI_Request array_of_requests[],

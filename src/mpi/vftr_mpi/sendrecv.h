@@ -19,7 +19,6 @@
 #ifndef SENDRECV_H
 #define SENDRECV_H
 
-#ifdef _MPI
 #include <mpi.h>
 
 int vftr_MPI_Sendrecv(const void *sendbuf, int sendcount,
@@ -28,5 +27,4 @@ int vftr_MPI_Sendrecv(const void *sendbuf, int sendcount,
                       int source, int recvtag, MPI_Comm comm,
                       MPI_Status *status);
 
-#endif
 #endif

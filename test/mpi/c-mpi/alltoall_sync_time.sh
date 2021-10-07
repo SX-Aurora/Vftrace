@@ -1,0 +1,1 @@
+../testscripts/alltoall_sync_time.sh

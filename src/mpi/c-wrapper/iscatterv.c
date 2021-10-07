@@ -21,7 +21,7 @@
 
 #include <mpi.h>
 
-#include "vftr_mpi_utils.h"
+#include "mpi_logging.h"
 #include "iscatterv_c2vftr.h"
 
 int MPI_Iscatterv(const void *sendbuf, const int *sendcounts,

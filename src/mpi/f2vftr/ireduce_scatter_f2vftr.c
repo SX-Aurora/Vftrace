@@ -21,7 +21,7 @@
 
 #include <stdlib.h>
 
-#include "vftr_mpi_buf_addr_const.h"
+#include "mpi_buf_addr_const.h"
 #include "ireduce_scatter.h"
 
 void vftr_MPI_Ireduce_scatter_f2vftr(void *sendbuf, void *recvbuf,

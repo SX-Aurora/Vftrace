@@ -19,11 +19,9 @@
 #ifndef WAITALL_H
 #define WAITALL_H
 
-#ifdef _MPI
 #include <mpi.h>
 
 int vftr_MPI_Waitall(int count, MPI_Request array_of_requests[],
                      MPI_Status array_of_statuses[]);
 
-#endif
 #endif

@@ -16,15 +16,13 @@
    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-#ifdef _MPI
 #include <stdlib.h>
 
 #include <mpi.h>
 
+#include "rank_translate.h"
 #include "vftr_timer.h"
-#include "vftr_collective_requests.h"
-#include "vftr_mpi_utils.h"
-#include "vftr_mpi_buf_addr_const.h"
+#include "collective_requests.h"
 
 int vftr_MPI_Ireduce_scatter_block(const void *sendbuf, void *recvbuf,
                                    int recvcount, MPI_Datatype datatype,
@@ -285,5 +283,3 @@ int vftr_MPI_Ireduce_scatter_block_intercom(const void *sendbuf, void *recvbuf,
 
    return retVal;
 }
-
-#endif

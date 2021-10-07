@@ -1,9 +1,7 @@
 noinst_LTLIBRARIES = libvftr_fmpiwrap.la
 
-libvftr_fmpiwrap_la_SOURCES =
-
-libvftr_fmpiwrap_la_SOURCES += init.F90 \
-			       finalize.F90
+libvftr_fmpiwrap_la_SOURCES = init.F90 \
+			      finalize.F90
 
 ##################
 # point to point #
@@ -116,7 +114,8 @@ libvftr_fmpiwrap_la_SOURCES += put.F90 \
 libvftr_fmpiwrap_la_SOURCES += pcontrol.F90
 
 libvftr_fmpiwrap_la_FCFLAGS = -finstrument-functions
-libvftr_fmpiwrap_la_FCFLAGS += -I${builddir}/../f2vftr/
+libvftr_fmpiwrap_la_FCFLAGS += -I${builddir}/../f2vftr/ \
+			       -I${builddir}/../utils/
 libvftr_fmpiwrap_la_FCFLAGS += -D_MPI
 
 clean-local:
