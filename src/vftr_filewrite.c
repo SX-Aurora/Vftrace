@@ -1194,6 +1194,12 @@ void vftr_evaluate_display_function (char *func_name, display_function_t **displ
 		}
        	  }
        }
+    } else {
+    // The display function is not present in the given rank's stack tree.
+    // t_min and t_sync_min need are initialized to LLONG_MAX, which does not make sense in this context.
+    // We set their values to zero.
+       (*display_func)->t_min = 0LL; 
+       (*display_func)->t_sync_min = 0LL;
     }
 }
 
