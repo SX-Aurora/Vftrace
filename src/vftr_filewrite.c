@@ -932,8 +932,6 @@ void vftr_summary_print_header (FILE *fp, column_t *columns, int table_width, bo
    }
    for (int i = 0; i < table_width; i++) fprintf (fp, "-");
    fprintf (fp, "\n");
-   fprintf (fp, "malloc_info overhead: %lf\n", (double)vftr_mallinfo_ovhd * 1e-6);
-   fprintf (fp, "malloc_info parsing overhead: %lf\n", (double)vftr_mallinfo_post_ovhd * 1e-6);
 }
 
 /**********************************************************************/
