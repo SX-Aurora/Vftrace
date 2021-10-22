@@ -151,7 +151,6 @@ void vftr_add_remark (remarks_t **r, remarks_t **r_orig, int id) {
 #define OVERHEAD_THRESHOLD 2
 void vftr_make_remarks (function_t *this_func, remarks_t **remarks) {
   double t_excl = (double)this_func->prof_current.time_excl * 1e-6;
-  int n_calls = this_func->prof_current.calls;
   double t_overhead = (double)this_func->overhead * 1e-6;
   remarks_t *r_orig = NULL;
   if (t_excl < OVERHEAD_THRESHOLD * t_overhead) {
@@ -177,7 +176,6 @@ char *vftr_get_remark_indices (remarks_t *remarks) {
    s_out[0] = '\0';
    char buf[3];
    r = remarks;
-   int i = 0;
    while (r != NULL) { 
      snprintf (buf, 3, "(%d", r->id);
      strncat (s_out, buf, 2);
