@@ -1218,6 +1218,19 @@ int vftr_compare_display_functions_tavg (const void *a1, const void *a2) {
 	return 0; 
 }
 
+int vftr_compare_display_functions_imbalance (const void *a1, const void *a2) {
+	display_function_t *f1 = *(display_function_t **)a1;
+	display_function_t *f2 = *(display_function_t **)a2;
+	if (!f2) return -1;
+	if (!f1) return 1;
+	double t1 = f1->t_avg * f1->imbalance;
+	double t2 = f2->t_avg * f2->imbalance;
+	double diff = t2 - t1;
+	if (diff > 0) return 1;
+	if (diff < 0) return -1;
+	return 0; 
+}
+
 int vftr_compare_display_functions_iorig (const void *a1, const void *a2) {
 	display_function_t *f1 = *(display_function_t **)a1;
 	display_function_t *f2 = *(display_function_t **)a2;
@@ -1330,7 +1343,7 @@ display_function_t **vftr_create_display_functions (bool display_sync_time, int 
    }
 
    qsort ((void*)displ_f, (size_t)(*n_display_funcs),
-           sizeof (display_function_t *), vftr_compare_display_functions_tavg);
+           sizeof (display_function_t *), vftr_compare_display_functions_imbalance);
    return displ_f;
 }
 
