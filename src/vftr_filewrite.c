@@ -1109,6 +1109,16 @@ void vftr_evaluate_display_function (char *func_name, display_function_t **displ
     (*display_func)->mpi_tot_send_bytes = 0;
     (*display_func)->mpi_tot_recv_bytes = 0;
     (*display_func)->properly_terminated = true;
+    (*display_func)->t_max = 0;
+    (*display_func)->t_sync_max = 0;
+    (*display_func)->t_min = LLONG_MAX;
+    (*display_func)->rank_min = -1;
+    (*display_func)->t_sync_min = LLONG_MAX;
+    (*display_func)->rank_max = -1;
+    (*display_func)->t_avg = 0.0;
+    (*display_func)->t_sync_avg = 0.0;
+    (*display_func)->imbalance = 0.0;
+
     for (int i = 0; i < n_func_indices; i++) {
         if (func_indices[i] < 0) break;
         // If synchronization times shall be displayed, only the inclusive time makes sense. For consistency,
@@ -1147,15 +1157,6 @@ void vftr_evaluate_display_function (char *func_name, display_function_t **displ
 #else
     all_times[0] = (*display_func)->this_mpi_time;
 #endif
-    (*display_func)->t_max = 0;
-    (*display_func)->t_sync_max = 0;
-    (*display_func)->t_min = LLONG_MAX;
-    (*display_func)->rank_min = -1;
-    (*display_func)->t_sync_min = LLONG_MAX;
-    (*display_func)->rank_max = -1;
-    (*display_func)->t_avg = 0.0;
-    (*display_func)->t_sync_avg = 0.0;
-    (*display_func)->imbalance = 0.0;
 
     if ((*display_func)->n_calls == 0) return;
 
