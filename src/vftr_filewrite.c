@@ -963,54 +963,16 @@ void vftr_summary_print_line (FILE *fp, display_function_t *displ_f, column_t *c
 /**********************************************************************/
 
 void vftr_proftab_print_header (FILE *fp, column_t *columns) {
-	// NOTE: The evaluation order of function arguments is not strictly defined.
-	// Therefore, do not increment an array index if it is used more than
-	// once in the function call, like func(a[i], b[i++]);
-	int i;
-	for (i = 0; i < 5; i++) {
-	   vftr_column_print_header (fp, columns[i]);
-	}
-
-	if (vftr_environment.show_overhead->value) {
-	   vftr_column_print_header (fp, columns[i]);
-	   i++; // See above
-	   vftr_column_print_header (fp, columns[i]);
-	   i++;
-	   vftr_column_print_header (fp, columns[i]);
-	   i++;
-	}
-
-	if (vftr_events_enabled) {
-	   for (int j = 0; j < vftr_scenario_expr_n_formulas; j++) {
-	      vftr_column_print_header (fp, columns[i]);
-	      i++;
-	   }
-   	}
-
-        if (vftr_memtrace) {
-	   vftr_column_print_header (fp, columns[i]);
-           i++;
+	int n_columns = 9;
+        if (vftr_environment.show_overhead->value) n_columns += 3;
+        if (vftr_events_enabled) n_columns += vftr_scenario_expr_n_formulas;
+        if (vftr_memtrace) n_columns += 1;
+        if (vftr_max_allocated_fields > 0) n_columns += 2;
+        if (vftr_environment.show_stacks_in_profile->value) n_columns += 1;
+      
+        for (int i = 0; i < n_columns; i++) {
+           vftr_column_print_header (fp, columns[i]);
         }
-
-        if (vftr_max_allocated_fields > 0) {
-	   vftr_column_print_header (fp, columns[i]);
-           i++;
-	   vftr_column_print_header (fp, columns[i]);
-           i++;
-        } 
-
-	vftr_column_print_header (fp, columns[i]);
-	i++;
-	vftr_column_print_header (fp, columns[i]);
-	i++;
-	vftr_column_print_header (fp, columns[i]);
-	i++;
-        if (vftr_environment.show_stacks_in_profile->value) {
-	  vftr_column_print_header (fp, columns[i]);
-	  i++;
-        }
-	vftr_column_print_header (fp, columns[i]);
-        i++;
 	fprintf (fp, "\n");
 }
 
