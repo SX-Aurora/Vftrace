@@ -1350,7 +1350,7 @@ void vftr_print_function_statistics (FILE *fp_log, display_function_t **display_
 
     double total_time = 0;
     bool print_mpi_columns = false;
-    if (!vftr_environment.all_mpi_summary->value) {
+    if (vftr_environment.all_mpi_summary->value) {
        for (int i = 0; i < n_display_funcs; i++) {
          if (display_functions[i]->properly_terminated) {
            total_time += display_functions[i]->this_mpi_time * 1e-6;
