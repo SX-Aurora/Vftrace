@@ -942,7 +942,7 @@ void vftr_summary_print_line (FILE *fp, display_function_t *displ_f, column_t *c
    if (vftr_environment.all_mpi_summary->value) vftr_prof_column_print (fp, columns[i_column++], &displ_f->stack_id, NULL, NULL);
    double t, t2;
    if (print_mpi) {
-      t = displ_f->this_mpi_time * 1e-6 / total_time * 100;
+      t = displ_f->is_mpi ? displ_f->this_mpi_time * 1e-6 / total_time * 100 : 0;
       vftr_prof_column_print (fp, columns[i_column++], &t, NULL, NULL);
    }
    vftr_prof_column_print (fp, columns[i_column++], &displ_f->n_calls, NULL, NULL);
