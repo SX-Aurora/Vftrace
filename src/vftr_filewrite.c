@@ -686,7 +686,7 @@ void vftr_prof_column_print (FILE *fp, column_t c, void *value, void *opt_1, voi
 	   	     *(double*)value, c.n_chars_opt_1 - 2, *(double*)opt_1 / *(double*)value * 100.0);
 	 } else if (opt_2 != NULL && c.n_chars_opt_2 > 0) {
             fprintf (fp, " %*.*f(%*d) ", c.n_chars - c.n_chars_opt_2 - 1, c.n_decimal_places, *(double*)value,
-                     c.n_chars_opt_2 - 2, *(int*)opt_2);
+                     c.n_chars_opt_2 - 1, *(int*)opt_2);
 	 } else {
             fprintf (fp, " %*.*f ", c.n_chars, c.n_decimal_places, *(double*)value);
 	 }
@@ -761,16 +761,16 @@ void vftr_set_proftab_column_formats (function_t **func_table,
 	long long runtime_usec, double sampling_overhead_time, 
 	int n_funcs, int *func_indices, column_t *columns) {
 	int i_column = 0;
-        vftr_prof_column_init ("Calls", NULL, 0, COL_INT, SEP_NONE, &(columns)[i_column++]);
-        vftr_prof_column_init ("t_excl[s]", NULL, 3, COL_DOUBLE, SEP_NONE, &(columns)[i_column++]);
-        vftr_prof_column_init ("t_incl[s]", NULL, 3, COL_DOUBLE, SEP_NONE, &(columns)[i_column++]);
-        vftr_prof_column_init ("%abs", NULL, 1, COL_DOUBLE, SEP_NONE, &(columns)[i_column++]);
-        vftr_prof_column_init ("%cum", NULL, 1, COL_DOUBLE, SEP_NONE, &(columns)[i_column++]);
+        vftr_prof_column_init ("Calls", NULL, 0, COL_INT, SEP_MID, &(columns)[i_column++]);
+        vftr_prof_column_init ("t_excl[s]", NULL, 3, COL_DOUBLE, SEP_MID, &(columns)[i_column++]);
+        vftr_prof_column_init ("t_incl[s]", NULL, 3, COL_DOUBLE, SEP_MID, &(columns)[i_column++]);
+        vftr_prof_column_init ("%abs", NULL, 1, COL_DOUBLE, SEP_MID, &(columns)[i_column++]);
+        vftr_prof_column_init ("%cum", NULL, 1, COL_DOUBLE, SEP_MID, &(columns)[i_column++]);
 
         if (vftr_environment.show_overhead->value) {
-	   vftr_prof_column_init ("t_ovhd[s]", NULL, 3, COL_DOUBLE, SEP_NONE, &(columns)[i_column++]);
-	   vftr_prof_column_init ("%ovhd", NULL, 1, COL_DOUBLE, SEP_NONE, &(columns)[i_column++]);
-	   vftr_prof_column_init ("t_ovhd / t_excl", NULL, 1, COL_DOUBLE, SEP_NONE, &(columns)[i_column++]);
+	   vftr_prof_column_init ("t_ovhd[s]", NULL, 3, COL_DOUBLE, SEP_MID, &(columns)[i_column++]);
+	   vftr_prof_column_init ("%ovhd", NULL, 1, COL_DOUBLE, SEP_MID, &(columns)[i_column++]);
+	   vftr_prof_column_init ("t_ovhd / t_excl", NULL, 1, COL_DOUBLE, SEP_MID, &(columns)[i_column++]);
         }
 
 	if (vftr_events_enabled) {
@@ -788,26 +788,26 @@ void vftr_set_proftab_column_formats (function_t **func_table,
 	         }
 	      }
 	      vftr_prof_column_init (header_with_unit, NULL, vftr_scenario_expr_format[i].decimal_places,
-	              		  COL_DOUBLE, SEP_NONE, &(columns)[i_column++]);
+	              		  COL_DOUBLE, SEP_MID, &(columns)[i_column++]);
 	   } 
  	}
            
         if (vftr_memtrace) {
-           vftr_prof_column_init ("VmRSS", NULL, 2, COL_MEM, SEP_NONE, &(columns)[i_column++]);
+           vftr_prof_column_init ("VmRSS", NULL, 2, COL_MEM, SEP_MID, &(columns)[i_column++]);
         }
 
         if (vftr_max_allocated_fields > 0) {
-           vftr_prof_column_init ("Max mem", NULL, 2, COL_MEM, SEP_NONE, &(columns)[i_column++]);
-           vftr_prof_column_init ("Tot mem", NULL, 2, COL_MEM, SEP_NONE, &(columns)[i_column++]);
+           vftr_prof_column_init ("Max mem", NULL, 2, COL_MEM, SEP_MID, &(columns)[i_column++]);
+           vftr_prof_column_init ("Tot mem", NULL, 2, COL_MEM, SEP_MID, &(columns)[i_column++]);
         }
 
-        vftr_prof_column_init ("Function", NULL, 0, COL_CHAR_RIGHT, SEP_NONE, &(columns)[i_column++]);
-        vftr_prof_column_init ("Caller", NULL, 0, COL_CHAR_RIGHT, SEP_NONE, &(columns)[i_column++]);
-        vftr_prof_column_init ("ID", NULL, 0, COL_INT, SEP_NONE, &(columns)[i_column++]);
+        vftr_prof_column_init ("Function", NULL, 0, COL_CHAR_RIGHT, SEP_MID, &(columns)[i_column++]);
+        vftr_prof_column_init ("Caller", NULL, 0, COL_CHAR_RIGHT, SEP_MID, &(columns)[i_column++]);
+        vftr_prof_column_init ("ID", NULL, 0, COL_INT, SEP_MID, &(columns)[i_column++]);
         if (vftr_environment.show_stacks_in_profile->value) {
-           vftr_prof_column_init ("Stack", NULL, 0, COL_CHAR_LEFT, SEP_NONE, &(columns)[i_column++]);
+           vftr_prof_column_init ("Stack", NULL, 0, COL_CHAR_LEFT, SEP_MID, &(columns)[i_column++]);
         }
-        vftr_prof_column_init ("Remarks", NULL, 0, COL_CHAR_RIGHT, SEP_NONE, &(columns)[i_column++]);
+        vftr_prof_column_init ("Remarks", NULL, 0, COL_CHAR_RIGHT, SEP_LAST, &(columns)[i_column++]);
         int stat;
         long long t_sum = 0;
         for (int i = 0; i < n_funcs; i++) {
@@ -894,42 +894,33 @@ int vftr_get_tablewidth_from_columns (column_t *columns, int n_columns, bool use
 
 /**********************************************************************/
 
+void vftr_column_print_header (FILE *fp, column_t column) {
+   if (column.separator_type == SEP_NONE) {
+     fprintf (fp, " %*s ", column.n_chars, column.header);
+   } else if (column.separator_type == SEP_MID) {
+     fprintf (fp, "| %*s ", column.n_chars, column.header);
+   } else if (column.separator_type == SEP_LAST) {
+     fprintf (fp, "| %*s |", column.n_chars, column.header);
+   }
+}
+/**********************************************************************/
+
 void vftr_summary_print_header (FILE *fp, column_t *columns, int table_width, bool print_mpi) {
    enum column_ids {FUNC, MPI, CALLS, TOT_SEND_BYTES, TOT_RECV_BYTES, T_AVG, T_MIN, T_MAX, IMBA, THIS_T};
    for (int i = 0; i < table_width; i++) fprintf (fp, "-");
    fprintf (fp, "\n");
+   int n_columns;
    if (print_mpi) {
-      fprintf (fp, "| %*s | %*s | %*s | %*s | %*s | %*s | %*s | %*s | %*s | %*s |\n",
-	       columns[0].n_chars, columns[0].header,
-               columns[1].n_chars, columns[1].header,
-	       columns[2].n_chars, columns[2].header,
- 	       columns[3].n_chars, columns[3].header,
-	       columns[4].n_chars, columns[4].header,
-	       columns[5].n_chars, columns[5].header,
-	       columns[6].n_chars, columns[6].header,
-	       columns[7].n_chars, columns[7].header,
-	       columns[8].n_chars, columns[8].header,
-	       columns[9].n_chars, columns[9].header);
+      n_columns = 10;
    } else if (vftr_environment.all_mpi_summary->value) {
-      fprintf (fp, "| %*s | %*s | %*s | %*s | %*s | %*s | %*s | %*s |\n",
-	       columns[0].n_chars, columns[0].header,
-	       columns[1].n_chars, columns[1].header,
-	       columns[2].n_chars, columns[2].header,
-	       columns[3].n_chars, columns[3].header,
-	       columns[4].n_chars, columns[4].header,
-	       columns[5].n_chars, columns[5].header,
-	       columns[6].n_chars, columns[6].header,
-	       columns[7].n_chars, columns[7].header);
+      n_columns = 8;
    } else {
-      fprintf (fp, "| %*s | %*s | %*s | %*s | %*s | %*s | %*s |\n",
-	       columns[0].n_chars, columns[0].header,
-	       columns[1].n_chars, columns[1].header,
-	       columns[2].n_chars, columns[2].header,
-	       columns[3].n_chars, columns[3].header,
-	       columns[4].n_chars, columns[4].header,
-	       columns[5].n_chars, columns[5].header,
-	       columns[6].n_chars, columns[6].header);
+      n_columns = 7;
    }
+   for (int i = 0; i < n_columns; i++) {
+      vftr_column_print_header (fp, columns[i]);
+   }
+   fprintf (fp, "\n");
    for (int i = 0; i < table_width; i++) fprintf (fp, "-");
    fprintf (fp, "\n");
 }
@@ -977,48 +968,48 @@ void vftr_proftab_print_header (FILE *fp, column_t *columns) {
 	// once in the function call, like func(a[i], b[i++]);
 	int i;
 	for (i = 0; i < 5; i++) {
-	   fprintf (fp, " %*s ", columns[i].n_chars, columns[i].header);
+	   vftr_column_print_header (fp, columns[i]);
 	}
 
 	if (vftr_environment.show_overhead->value) {
-	   fprintf (fp, " %*s ", columns[i].n_chars, columns[i].header);
+	   vftr_column_print_header (fp, columns[i]);
 	   i++; // See above
-	   fprintf (fp, " %*s ", columns[i].n_chars, columns[i].header);
+	   vftr_column_print_header (fp, columns[i]);
 	   i++;
-	   fprintf (fp, " %*s ", columns[i].n_chars, columns[i].header);
+	   vftr_column_print_header (fp, columns[i]);
 	   i++;
 	}
 
 	if (vftr_events_enabled) {
 	   for (int j = 0; j < vftr_scenario_expr_n_formulas; j++) {
-	      fprintf (fp, " %*s ", columns[i].n_chars, columns[i].header);
+	      vftr_column_print_header (fp, columns[i]);
 	      i++;
 	   }
    	}
 
         if (vftr_memtrace) {
-           fprintf (fp, " %*s ", columns[i].n_chars, columns[i].header);
+	   vftr_column_print_header (fp, columns[i]);
            i++;
         }
 
         if (vftr_max_allocated_fields > 0) {
-           fprintf (fp, " %*s ", columns[i].n_chars, columns[i].header);
+	   vftr_column_print_header (fp, columns[i]);
            i++;
-           fprintf (fp, " %*s ", columns[i].n_chars, columns[i].header);
+	   vftr_column_print_header (fp, columns[i]);
            i++;
         } 
 
-	fprintf (fp, " %*s ", columns[i].n_chars, columns[i].header);
+	vftr_column_print_header (fp, columns[i]);
 	i++;
-	fprintf (fp, " %*s ", columns[i].n_chars, columns[i].header);
+	vftr_column_print_header (fp, columns[i]);
 	i++;
-	fprintf (fp, " %*s ", columns[i].n_chars, columns[i].header);
+	vftr_column_print_header (fp, columns[i]);
 	i++;
         if (vftr_environment.show_stacks_in_profile->value) {
-          fprintf (fp, " %*s ", columns[i].n_chars, columns[i].header);
+	  vftr_column_print_header (fp, columns[i]);
 	  i++;
         }
-        fprintf (fp, " %*s ", columns[i].n_chars, columns[i].header);
+	vftr_column_print_header (fp, columns[i]);
         i++;
 	fprintf (fp, "\n");
 }
@@ -1679,6 +1670,7 @@ void vftr_print_profile (FILE *fp_log, FILE *f_html, int *n_func_indices, long l
        vftr_browse_create_profile_header (f_html);
     }
 
+    vftr_print_dashes (fp_log, table_width);
     vftr_proftab_print_header (fp_log, prof_columns);
     vftr_print_dashes (fp_log, table_width);
 
