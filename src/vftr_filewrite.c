@@ -1127,19 +1127,14 @@ void vftr_evaluate_display_function (char *func_name, display_function_t **displ
         long long t1, t2, t1_sync, t2_sync;
         if (display_sync_time) {
             t1 = vftr_func_table[func_indices[i]]->prof_current.time_incl;
-	    ///(*display_func)->this_mpi_time += vftr_func_table[func_indices[i]]->prof_current.time_incl;
-            // Stack indices with n_func_indices_sync > 0 have a synchro entry.
-	    ///if (n_func_indices_sync > 0) (*display_func)->this_sync_time += vftr_func_table[func_indices_sync[i]]->prof_current.time_incl;
 	    if (n_func_indices_sync > 0) {
                t1_sync = vftr_func_table[func_indices_sync[i]]->prof_current.time_incl;
             }
         } else {
-            //printf ("Check time: %d %lld\n", func_indices[i], vftr_func_table[func_indices[i]]->prof_current.time_excl);
             t1 = vftr_func_table[func_indices[i]]->prof_current.time_excl;
-	    ///(*display_func)->this_mpi_time += vftr_func_table[func_indices[i]]->prof_current.time_excl;
         }
-        (*display_func)->this_mpi_time += t1 - t2;
-        if (n_func_indices_sync > 0) (*display_func)->this_sync_time += t1_sync - t2_sync;
+        (*display_func)->this_mpi_time += t1;
+        if (n_func_indices_sync > 0) (*display_func)->this_sync_time += t1_sync;
 	(*display_func)->n_calls += vftr_func_table[func_indices[i]]->prof_current.calls;
 	(*display_func)->mpi_tot_send_bytes += vftr_func_table[func_indices[i]]->prof_current.mpi_tot_send_bytes;
 	(*display_func)->mpi_tot_recv_bytes += vftr_func_table[func_indices[i]]->prof_current.mpi_tot_recv_bytes;
