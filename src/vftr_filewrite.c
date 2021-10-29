@@ -1124,7 +1124,7 @@ void vftr_evaluate_display_function (char *func_name, display_function_t **displ
         // If synchronization times shall be displayed, only the inclusive time makes sense. For consistency,
         // we then show the inclusive time for all entries, not just that which have a synchronization barrier within them.
         // In the default case, we use the exclusive time.
-        long long t1, t2, t1_sync, t2_sync;
+        long long t1, t1_sync;
         if (display_sync_time) {
             t1 = vftr_func_table[func_indices[i]]->prof_current.time_incl;
 	    if (n_func_indices_sync > 0) {
