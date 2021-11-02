@@ -1433,11 +1433,11 @@ void vftr_print_profile_summary (FILE *fp_log, function_t **func_table, double t
 				 double total_overhead_time, double sampling_overhead_time, double mpi_overhead_time) {
 
     fprintf (fp_log, "\n------------------------------------------------------------\n");
-    fprintf(fp_log, "MPI size              %d\n", vftr_mpisize);
+    fprintf(fp_log, "Nr. of MPI ranks      %8d\n", vftr_mpisize);
     fprintf(fp_log, "Total runtime:        %8.2f seconds\n", total_runtime);
     fprintf(fp_log, "Application time:     %8.2f seconds\n", application_runtime);
     fprintf(fp_log, "Overhead:             %8.2f seconds (%.2f%%)\n",
-            total_overhead_time, 100.0*total_overhead_time/total_runtime);
+            total_overhead_time, 100.0 * total_overhead_time / total_runtime);
 #ifdef _MPI
     fprintf(fp_log, "   Sampling overhead: %8.2f seconds (%.2f%%)\n",
             sampling_overhead_time, 100.0 * sampling_overhead_time / total_runtime);
