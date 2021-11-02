@@ -1307,10 +1307,12 @@ void vftr_print_function_statistics (FILE *fp_log, display_function_t **display_
 
     int table_width;
     if (print_this_rank) {
-       fprintf (fp_log, "\n------------------------------------------------------------\n");
+       fprintf (fp_log, "\n");
+       fprintf (fp_log, "MPI summary: \n");
        fprintf (fp_log, "Total time spent in MPI for rank %d: %8.2fs (%5.2f%%)\n",
                 vftr_mpirank, total_mpi_time, total_mpi_time / (vftr_get_runtime_usec() * 1e-6) * 100);
        fprintf (fp_log, "Imbalance computed as: max (T - T_avg)\n");
+       fprintf (fp_log, "\n");
 
        //int n_columns = print_mpi_columns ? 10 : 7;
        // Per default, there are seven columns:
