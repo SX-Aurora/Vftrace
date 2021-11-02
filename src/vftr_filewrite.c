@@ -1440,9 +1440,11 @@ void vftr_print_profile_summary (FILE *fp_log, function_t **func_table, double t
             total_overhead_time, 100.0*total_overhead_time/total_runtime);
 #ifdef _MPI
     fprintf(fp_log, "   Sampling overhead: %8.2f seconds (%.2f%%)\n",
-            sampling_overhead_time, 100.0*sampling_overhead_time/total_runtime);
-    fprintf(fp_log, "   MPI overhead:      %8.2f seconds (%.2f%%)\n",
-            mpi_overhead_time, 100.0*mpi_overhead_time/total_runtime);
+            sampling_overhead_time, 100.0 * sampling_overhead_time / total_runtime);
+    if (vftr_environment.mpi_log->value) {
+       fprintf(fp_log, "   MPI overhead:      %8.2f seconds (%.2f%%)\n",
+               mpi_overhead_time, 100.0 * mpi_overhead_time / total_runtime);
+    }
 #endif
 
     if (vftr_events_enabled) {
