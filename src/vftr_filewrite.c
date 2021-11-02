@@ -911,7 +911,7 @@ void vftr_summary_print_header (FILE *fp, column_t *columns, int table_width, bo
    fprintf (fp, "\n");
    int n_columns;
    if (print_mpi) {
-      n_columns = 10;
+      n_columns = 11;
    } else if (vftr_environment.all_mpi_summary->value) {
       n_columns = 8;
    } else {
@@ -1325,8 +1325,9 @@ void vftr_print_function_statistics (FILE *fp_log, display_function_t **display_
        //   - Data size sent and received
        if (print_mpi_columns) {
           n_columns += 3;
+       }
        // If the complete overview is printed, add one column for global stack ID (or entire stack).
-       } else if (vftr_environment.all_mpi_summary->value) {
+       if (vftr_environment.all_mpi_summary->value) {
           n_columns += 1;
        }
          
