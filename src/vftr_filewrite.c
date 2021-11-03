@@ -986,10 +986,11 @@ double vftr_compute_mpi_imbalance (long long *all_times, double t_avg) {
 		long long sum_times = 0ll;
 		int n = 0;
 		for (int i = 0; i < vftr_mpisize; i++) {
-			if (all_times[i] > 0) {
-				n++;
-				sum_times += all_times[i];
-			}
+                   if (i == 0) continue;
+		   if (all_times[i] > 0) {
+		   	n++;
+		   	sum_times += all_times[i];
+		   }
 		}
 		if (n > 0) {
 			t_avg = (double)sum_times / n;
@@ -1126,6 +1127,7 @@ void vftr_evaluate_display_function (char *func_name, display_function_t **displ
        (*display_func)->imbalance = vftr_compute_mpi_imbalance (all_times, (*display_func)->t_avg);
 #endif
        for (int i = 0; i < vftr_mpisize; i++) {	
+          if (i == 0) continue;
        	  if (all_times[i] > 0) {
        		if (all_times[i] < (*display_func)->t_min) {
 			(*display_func)->t_min = all_times[i];
@@ -1306,7 +1308,7 @@ void vftr_print_function_statistics (FILE *fp_log, display_function_t **display_
     }
 
     int table_width;
-    if (print_this_rank) {
+    if (print_this_rank && vftr_mpirank > 0) {
        fprintf (fp_log, "\n");
        fprintf (fp_log, "MPI summary: \n");
        fprintf (fp_log, "Total time spent in MPI for rank %d: %8.2fs (%5.2f%%)\n",
