@@ -71,7 +71,11 @@ check_PROGRAMS = radixsort_uint64 \
 
 if WITH_MPI
 check_PROGRAMS += stacks_2 \
-		  stacks_3
+		  stacks_3 \
+		  no_mpi_init_C
+if ENABLE_FORTRAN
+check_PROGRAMS += no_mpi_init_F
+endif
 endif
 
 if ENABLE_HWC
@@ -180,6 +184,16 @@ stacks_2_LDFLAGS = $(AM_LDFLAGS)
 stacks_3_SOURCES = $(srcdir)/stacks_3.c
 stacks_3_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
 stacks_3_LDFLAGS = $(AM_LDFLAGS)
+
+no_mpi_init_C_SOURCES = $(srcdir)/no_mpi_init.c
+no_mpi_init_C_CFLAGS = $(AM_CFLAGS) -finstrument-functions
+no_mpi_init_C_LDFLAGS = $(AM_LDFLAGS)
+
+if ENABLE_FORTRAN
+no_mpi_init_F_SOURCES = $(srcdir)/no_mpi_init.F90
+no_mpi_init_F_FCFLAGS = $(AM_FFLAGS) -finstrument-functions
+no_mpi_init_F_LDFLAGS = $(AM_LDFLAGS)
+endif
 endif
 
 browse_1_SOURCES = $(srcdir)/browse_1.c
@@ -232,7 +246,11 @@ endif
 
 if WITH_MPI
 dist_check_SCRIPTS += stacks_2.sh \
-		      stacks_3.sh
+		      stacks_3.sh \
+		      no_mpi_init_C.sh
+if ENABLE_FORTRAN
+dist_check_SCRIPTS += no_mpi_init_F.sh
+endif
 endif
 
 TEST_EXTENSIONS = .sh
