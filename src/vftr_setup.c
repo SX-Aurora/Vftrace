@@ -322,6 +322,12 @@ void vftr_finalize() {
 
     vftr_timer_end = true;
 
+#ifdef _MPI
+    // check whether an MPI-init was actually called
+    int was_mpi_initialized;
+    PMPI_Initialized(&was_mpi_initialized);
+#endif
+
     // Mark end of non-parallel interval
     if (vftr_env_do_sampling()) {
         vftr_write_to_vfd (finalize_time, NULL, 0, SID_EXIT);
@@ -340,7 +346,11 @@ void vftr_finalize() {
     FILE *f_html = NULL;
     display_function_t **display_functions = NULL;
     int n_display_functions = 0;
+#ifdef _MPI
+    if (vftr_do_stack_normalization && was_mpi_initialized) {
+#else
     if (vftr_do_stack_normalization) {
+#endif
        vftr_normalize_stacks();
 
        if (vftr_env_need_display_functions()) {
@@ -359,11 +369,13 @@ void vftr_finalize() {
        vftr_print_profile (vftr_log, f_html, &ntop, vftr_get_runtime_usec(), n_display_functions, display_functions);
     }
 #ifdef _MPI
-    if (vftr_do_stack_normalization && (vftr_environment.print_stack_profile->value || vftr_environment.all_mpi_summary->value)) {
-       // Inside of vftr_print_function_statistics, we use an MPI_Allgather to compute MPI imbalances. Therefore,
-       // we need to call this function for every rank, but give it the information of vftr_profile_wanted
-       // to avoid unrequired output.
-       vftr_print_function_statistics (vftr_log, display_functions, n_display_functions, vftr_profile_wanted);
+    if (was_mpi_initialized) {
+       if (vftr_do_stack_normalization && (vftr_environment.print_stack_profile->value || vftr_environment.all_mpi_summary->value)) {
+          // Inside of vftr_print_function_statistics, we use an MPI_Allgather to compute MPI imbalances. Therefore,
+          // we need to call this function for every rank, but give it the information of vftr_profile_wanted
+          // to avoid unrequired output.
+          vftr_print_function_statistics (vftr_log, display_functions, n_display_functions, vftr_profile_wanted);
+       }
     }
 #endif
  
