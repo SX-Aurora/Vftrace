@@ -1312,7 +1312,7 @@ void vftr_print_function_statistics (FILE *fp_log, display_function_t **display_
     int table_width;
     if (print_this_rank && vftr_rank_needs_mpi_summary(vftr_mpirank)) {
        fprintf (fp_log, "\n");
-       fprintf (fp_log, "MPI summary: \n");
+       fprintf (fp_log, "MPI summary for ranks %d - %d: \n", vftr_mpi_sum_rank_1, vftr_mpi_sum_rank_2);
        fprintf (fp_log, "Total time spent in MPI for rank %d: %8.2fs (%5.2f%%)\n",
                 vftr_mpirank, total_mpi_time, total_mpi_time / (vftr_get_runtime_usec() * 1e-6) * 100);
        fprintf (fp_log, "Imbalance computed as: max (T - T_avg)\n");

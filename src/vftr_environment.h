@@ -111,6 +111,9 @@ extern vftr_envs_t vftr_environment;
 enum vftr_profile_sortings {SORT_EXCL_TIME, SORT_INCL_TIME, SORT_N_CALLS, SORT_STACK_ID,
                             SORT_OVERHEAD, SORT_OVERHEAD_RELATIVE, SORT_MEMTRACE, SORT_NONE, SORT_INVALID}; 
 
+extern int vftr_mpi_sum_rank_1;
+extern int vftr_mpi_sum_rank_2;
+
 void vftr_read_environment();
 void vftr_assert_environment();
 void vftr_free_environment();
