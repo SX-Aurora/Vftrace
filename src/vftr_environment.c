@@ -300,22 +300,17 @@ bool vftr_rank_needs_mpi_summary (int rank) {
 
 // Determine for which ranks a logfile should be created
 
-//void vftr_set_logfile_ranks () {
 void vftr_set_rank_range (char *env_string, int *rank_1, int *rank_2) {
-   //char *env_log = strdup(vftr_environment.logfile_for_ranks->value);
    bool is_valid;
    if (!strcmp(env_string, "all")) {
       // Create a logfile for all ranks
       *rank_1 = 0;
       *rank_2 = vftr_mpisize;
       is_valid = true;
-   //} else if (strstr(env_log, "-")) { // A range is "x1-x2" is specified.
    } else if (strstr(env_string, "-")) { // A range is "x1-x2" is specified.
       char *s1 = strtok(env_string, "-");
       char *s2 = strtok(NULL, " ");
       if (vftr_string_is_number(s1) && vftr_string_is_number(s2)) {
-        //vftr_rank_1 = atoi(s1);
-        //vftr_rank_2 = atoi(s2);
         *rank_1 = atoi(s1);
         *rank_2 = atoi(s2);
         // The first rank must be smaller than the second (or equal). Otherwise the option is rejected.
@@ -325,15 +320,13 @@ void vftr_set_rank_range (char *env_string, int *rank_1, int *rank_2) {
       }
    } else if (vftr_string_is_number(env_string)) {
       // There is no "-" in the environment string. Check if it is a single number.
-      //vftr_rank_1 = vftr_rank_2 = atoi(env_log);
       *rank_1 = *rank_2 = atoi(env_string);
       is_valid = true;
    } else {
       is_valid = false;
    }
    if (!is_valid) {
-      fprintf (stderr, "Vftrace: The logfile rank range %s is invalid. A logfile is only created for rank 0.\n");
-      //vftr_rank_1 = vftr_rank_2 = 0;
+      fprintf (stderr, "Vftrace: The logfile rank range %s is invalid. A logfile is only created for rank 0.\n", env_string);
       *rank_1 = *rank_2 = 0;
    }
 }

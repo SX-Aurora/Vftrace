@@ -1117,9 +1117,9 @@ void vftr_evaluate_display_function (char *func_name, display_function_t **displ
     for (int i = 0; i < vftr_mpisize; i++) {
         if (!vftr_rank_needs_mpi_summary(i)) continue;
     	if (all_times[i] > 0) {
-    		sum_times += all_times[i];
-		if (n_func_indices_sync > 0) sum_times_sync += all_times_sync[i];
-    		n_count++;
+    	   sum_times += all_times[i];
+	   if (n_func_indices_sync > 0) sum_times_sync += all_times_sync[i];
+    	   n_count++;
     	}
     }
     if (n_count > 0) {
@@ -1132,14 +1132,14 @@ void vftr_evaluate_display_function (char *func_name, display_function_t **displ
           if (!vftr_rank_needs_mpi_summary(i)) continue;
        	  if (all_times[i] > 0) {
        		if (all_times[i] < (*display_func)->t_min) {
-			(*display_func)->t_min = all_times[i];
-			(*display_func)->rank_min = i;
-			if (n_func_indices_sync > 0) (*display_func)->t_sync_min = all_times_sync[i];
+		   (*display_func)->t_min = all_times[i];
+		   (*display_func)->rank_min = i;
+		   if (n_func_indices_sync > 0) (*display_func)->t_sync_min = all_times_sync[i];
 		}
        		if (all_times[i] > (*display_func)->t_max) {
-			(*display_func)->t_max = all_times[i];
-			(*display_func)->rank_max = i;
-			if (n_func_indices_sync > 0) (*display_func)->t_sync_max = all_times_sync[i];
+		   (*display_func)->t_max = all_times[i];
+		   (*display_func)->rank_max = i;
+		   if (n_func_indices_sync > 0) (*display_func)->t_sync_max = all_times_sync[i];
 		}
        	  }
        }
