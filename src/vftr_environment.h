@@ -68,6 +68,7 @@ typedef struct vftr_envs {
         env_var_string_t *output_directory;
 	env_var_string_t *logfile_basename;
         env_var_string_t *logfile_for_ranks;
+        env_var_string_t *mpi_summary_for_ranks;
 // default sample time in s as a floating point number
 	env_var_double_t *sampletime;
 // maximum runtime in seconds (default: a week)
@@ -126,6 +127,8 @@ void vftr_print_environment (FILE *fp);
 
 void vftr_check_env_names (FILE *fp);
 void vftr_set_logfile_ranks();
+void vftr_set_mpi_summary_ranks();
 bool vftr_rank_needs_logfile();
+bool vftr_rank_needs_mpi_summary (int rank);
 
 #endif

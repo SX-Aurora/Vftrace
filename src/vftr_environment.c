@@ -54,8 +54,10 @@ int vftr_n_env_variables;
 char **vftr_env_variable_names;
 int vftr_env_counter;
 
-int vftr_rank_1;
-int vftr_rank_2;
+int vftr_log_rank_1;
+int vftr_log_rank_2;
+int vftr_mpi_sum_rank_1;
+int vftr_mpi_sum_rank_2;
 
 // Create and free the Levenshtein lookup table
 
@@ -277,50 +279,75 @@ env_var_regex_t *vftr_read_env_regex (char *env_name, regex_t *val_default) {
 
 /**********************************************************************/
 
+bool vftr_rank_needs_logfile () {
+   return vftr_mpirank >= vftr_log_rank_1 && vftr_mpirank <= vftr_log_rank_2;
+}
+
+/**********************************************************************/
+
+bool vftr_n_logfile_ranks () {
+   return vftr_log_rank_2 - vftr_log_rank_1 + 1;
+}
+
+/**********************************************************************/
+
+bool vftr_rank_needs_mpi_summary (int rank) {
+   return rank >= vftr_mpi_sum_rank_1 && rank <= vftr_mpi_sum_rank_2;
+} 
+
+/**********************************************************************/
+
+
 // Determine for which ranks a logfile should be created
 
-void vftr_set_logfile_ranks () {
-   char *env_log = strdup(vftr_environment.logfile_for_ranks->value);
+//void vftr_set_logfile_ranks () {
+void vftr_set_rank_range (char *env_string, int *rank_1, int *rank_2) {
+   //char *env_log = strdup(vftr_environment.logfile_for_ranks->value);
    bool is_valid;
-   if (!strcmp(env_log, "all")) {
+   if (!strcmp(env_string, "all")) {
       // Create a logfile for all ranks
-      vftr_rank_1 = 0;
-      vftr_rank_2 = vftr_mpisize;
+      *rank_1 = 0;
+      *rank_2 = vftr_mpisize;
       is_valid = true;
-   } else if (strstr(env_log, "-")) { // A range is "x1-x2" is specified.
-      char *s1 = strtok(env_log, "-");
+   //} else if (strstr(env_log, "-")) { // A range is "x1-x2" is specified.
+   } else if (strstr(env_string, "-")) { // A range is "x1-x2" is specified.
+      char *s1 = strtok(env_string, "-");
       char *s2 = strtok(NULL, " ");
       if (vftr_string_is_number(s1) && vftr_string_is_number(s2)) {
-        vftr_rank_1 = atoi(s1);
-        vftr_rank_2 = atoi(s2);
+        //vftr_rank_1 = atoi(s1);
+        //vftr_rank_2 = atoi(s2);
+        *rank_1 = atoi(s1);
+        *rank_2 = atoi(s2);
         // The first rank must be smaller than the second (or equal). Otherwise the option is rejected.
-        is_valid = vftr_rank_1 <= vftr_rank_2;
+        is_valid = *rank_1 <= *rank_2;
       } else {
         is_valid = false;
       }
-   } else if (vftr_string_is_number(env_log)) {
+   } else if (vftr_string_is_number(env_string)) {
       // There is no "-" in the environment string. Check if it is a single number.
-      vftr_rank_1 = vftr_rank_2 = atoi(env_log);
+      //vftr_rank_1 = vftr_rank_2 = atoi(env_log);
+      *rank_1 = *rank_2 = atoi(env_string);
       is_valid = true;
    } else {
       is_valid = false;
    }
    if (!is_valid) {
       fprintf (stderr, "Vftrace: The logfile rank range %s is invalid. A logfile is only created for rank 0.\n");
-      vftr_rank_1 = vftr_rank_2 = 0;
+      //vftr_rank_1 = vftr_rank_2 = 0;
+      *rank_1 = *rank_2 = 0;
    }
 }
 
 /**********************************************************************/
 
-bool vftr_rank_needs_logfile () {
-   return vftr_mpirank >= vftr_rank_1 && vftr_mpirank <= vftr_rank_2;
+void vftr_set_logfile_ranks () {
+   vftr_set_rank_range (vftr_environment.logfile_for_ranks->value, &vftr_log_rank_1, &vftr_log_rank_2);
 }
 
-/**********************************************************************/
-
-int vftr_n_logfile_ranks () {
-   return vftr_rank_2 - vftr_rank_1 + 1;
+void vftr_set_mpi_summary_ranks () {
+   printf ("Set range: %s\n", vftr_environment.mpi_summary_for_ranks->value);
+   vftr_set_rank_range (vftr_environment.mpi_summary_for_ranks->value, &vftr_mpi_sum_rank_1, &vftr_mpi_sum_rank_2);
+   printf ("TEST: %d\n", vftr_rank_needs_mpi_summary (0));
 }
 
 /**********************************************************************/
@@ -382,6 +409,7 @@ void vftr_read_environment () {
     vftr_environment.output_directory = vftr_read_env_string ("VFTR_OUT_DIRECTORY", ".");
     vftr_environment.logfile_basename = vftr_read_env_string ("VFTR_LOGFILE_BASENAME", NULL);
     vftr_environment.logfile_for_ranks = vftr_read_env_string ("VFTR_LOGFILE_FOR_RANKS", "0");
+    vftr_environment.mpi_summary_for_ranks = vftr_read_env_string ("VFTR_MPI_SUMMARY_FOR_RANKS", "0");
     vftr_environment.sampletime = vftr_read_env_double ("VFTR_SAMPLETIME", 0.005);
     vftr_environment.stoptime = vftr_read_env_long_long ("VFTR_STOPTIME", 7ll*24ll*60ll*60ll);
     vftr_environment.accurate_profile = vftr_read_env_bool ("VFTR_ACCURATE_PROFILE", false);
@@ -569,6 +597,7 @@ void vftr_free_environment () {
 	free (vftr_environment.output_directory);
 	free (vftr_environment.logfile_basename);
 	free (vftr_environment.logfile_for_ranks);
+	free (vftr_environment.mpi_summary_for_ranks);
 	free (vftr_environment.sampletime);
 	free (vftr_environment.stoptime);
 	free (vftr_environment.accurate_profile);
@@ -637,6 +666,7 @@ void vftr_print_environment (FILE *fp) {
 	vftr_print_env_string (fp, "VFTR_OUT_DIRECTORY", vftr_environment.output_directory);
 	vftr_print_env_string (fp, "VFTR_LOGFILE_BASENAME", vftr_environment.logfile_basename);
 	vftr_print_env_string (fp, "VFTR_LOGFILE_FOR_RANKS", vftr_environment.logfile_for_ranks);
+	vftr_print_env_string (fp, "VFTR_MPI_SUMMARY_FOR_RANKS", vftr_environment.mpi_summary_for_ranks);
 	vftr_print_env_double (fp, "VFTR_SAMPLETIME", vftr_environment.sampletime);
 	vftr_print_env_long_long (fp, "VFTR_STOPTIME", vftr_environment.stoptime);
 	vftr_print_env_bool (fp, "VFTR_ACCURATE_PROFILE", vftr_environment.accurate_profile);
