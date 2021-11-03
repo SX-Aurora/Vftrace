@@ -980,31 +980,32 @@ void vftr_proftab_print_header (FILE *fp, column_t *columns) {
 
 #ifdef _MPI
 double vftr_compute_mpi_imbalance (long long *all_times, double t_avg) {
-	double max_diff = 0;
-	// If no average time is given (e.g. when it is not of interest), compute it here
-	if (t_avg < 0.0) {
-		long long sum_times = 0ll;
-		int n = 0;
-		for (int i = 0; i < vftr_mpisize; i++) {
-                   if (!vftr_rank_needs_mpi_summary(i)) continue;
-		   if (all_times[i] > 0) {
-		   	n++;
-		   	sum_times += all_times[i];
-		   }
-		}
-		if (n > 0) {
-			t_avg = (double)sum_times / n;
-		} else {
-			return 0;
-		}
-	}
-	for (int i = 0; i < vftr_mpisize; i++) {
-		if (all_times[i] > 0) {
-			double d = fabs((double)(all_times[i]) - t_avg);
-			if (d > max_diff) max_diff = d;
-		}
-	}
-	return max_diff / t_avg * 100;
+   double max_diff = 0;
+   // If no average time is given (e.g. when it is not of interest), compute it here
+   if (t_avg < 0.0) {
+      long long sum_times = 0ll;
+      int n = 0;
+      for (int i = 0; i < vftr_mpisize; i++) {
+         if (!vftr_rank_needs_mpi_summary(i)) continue;
+         if (all_times[i] > 0) {
+             n++;
+             sum_times += all_times[i];
+         }
+      }
+      if (n > 0) {
+         t_avg = (double)sum_times / n;
+      } else {
+         return 0;
+      }
+   }
+   for (int i = 0; i < vftr_mpisize; i++) {
+      if (!vftr_rank_needs_mpi_summary(i)) continue;
+      if (all_times[i] > 0) {
+      	double d = fabs((double)(all_times[i]) - t_avg);
+      	if (d > max_diff) max_diff = d;
+      }
+   }
+   return max_diff / t_avg * 100;
 }
 
 /**********************************************************************/
