@@ -1350,7 +1350,7 @@ void vftr_print_function_statistics (FILE *fp_log, display_function_t **display_
     }
 
     //Print a final separator line.
-    if (vftr_rank_needs_logfile()) {
+    if (vftr_rank_needs_logfile() && vftr_mpirank > 0) {
        for (int i = 0; i < table_width; i++) fprintf (fp_log, "-");
        fprintf (fp_log, "\n");
     }
@@ -1383,7 +1383,7 @@ void vftr_print_function_statistics (FILE *fp_log, display_function_t **display_
 		   double *imbalances = (double*) malloc (vftr_func_table_size * sizeof (double));
 		   vftr_stack_compute_imbalances (imbalances, display_functions[i]->n_stack_indices,
 		   			       display_functions[i]->stack_indices);
-                   if (print_this_rank) {
+                   if (print_this_rank && vftr_mpirank > 0) {
 		      vftr_create_stacktree (&stack_tree, display_functions[i]->n_stack_indices, display_functions[i]->stack_indices);
 		      long long total_time = 0;
 		      vftr_stack_get_total_time (stack_tree->origin, &total_time);
