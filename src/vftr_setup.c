@@ -356,7 +356,8 @@ void vftr_finalize() {
 
        if (vftr_env_need_display_functions()) {
           display_functions = vftr_create_display_functions (vftr_environment.mpi_show_sync_time->value,
-                                                             &n_display_functions, vftr_environment.all_mpi_summary->value); 
+                                                             &n_display_functions,
+                                                             strcmp(vftr_environment.mpi_summary_for_ranks->value, "")); 
        }
 
        if (vftr_environment.create_html->value) {
@@ -371,7 +372,7 @@ void vftr_finalize() {
     }
 #ifdef _MPI
     if (was_mpi_initialized) {
-       if (vftr_do_stack_normalization && (vftr_environment.print_stack_profile->value || vftr_environment.all_mpi_summary->value)) {
+       if (vftr_do_stack_normalization && (vftr_environment.print_stack_profile->value || vftr_needs_mpi_summary())) {
           // Inside of vftr_print_function_statistics, we use an MPI_Allgather to compute MPI imbalances. Therefore,
           // we need to call this function for every rank, but give it the information of vftr_profile_wanted
           // to avoid unrequired output.

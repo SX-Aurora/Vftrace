@@ -392,7 +392,6 @@ void vftr_write_function (FILE *fp, function_t *func, bool verbose) {
 void vftr_stackid_list_init () {
    vftr_n_print_stackids = 0;
    vftr_stackid_list_size = STACKID_LIST_INC;
-   //vftr_print_stackid_list = (int*)malloc(STACKID_LIST_INC * sizeof(int));
    vftr_print_stackid_list = (struct loc_glob_id*) malloc (STACKID_LIST_INC * sizeof (struct loc_glob_id));
 }
 
@@ -401,10 +400,8 @@ void vftr_stackid_list_init () {
 void vftr_stackid_list_add (int local_stack_id, int global_stack_id) {
    if (vftr_n_print_stackids + 1 > vftr_stackid_list_size) {
       vftr_stackid_list_size += STACKID_LIST_INC;
-      //vftr_print_stackid_list = (int*)realloc (vftr_print_stackid_list, vftr_stackid_list_size * sizeof(int));
       vftr_print_stackid_list = (struct loc_glob_id*) realloc (vftr_print_stackid_list, vftr_stackid_list_size * sizeof (struct loc_glob_id));
    }
-   //vftr_print_stackid_list[vftr_n_print_stackids++] = stack_id;
    vftr_print_stackid_list[vftr_n_print_stackids].loc = local_stack_id;
    vftr_print_stackid_list[vftr_n_print_stackids].glob = global_stack_id;
    vftr_n_print_stackids++;

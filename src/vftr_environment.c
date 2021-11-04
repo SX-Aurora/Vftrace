@@ -323,6 +323,8 @@ void vftr_set_rank_range (char *env_string, int *rank_1, int *rank_2) {
       *rank_1 = *rank_2 = atoi(env_string);
       is_valid = true;
    } else {
+      *rank_1 = -1;
+      *rank_2 = -1;
       is_valid = false;
    }
    if (!is_valid) {
@@ -338,9 +340,11 @@ void vftr_set_logfile_ranks () {
 }
 
 void vftr_set_mpi_summary_ranks () {
-   printf ("Set range: %s\n", vftr_environment.mpi_summary_for_ranks->value);
    vftr_set_rank_range (vftr_environment.mpi_summary_for_ranks->value, &vftr_mpi_sum_rank_1, &vftr_mpi_sum_rank_2);
-   printf ("TEST: %d\n", vftr_rank_needs_mpi_summary (0));
+}
+
+bool vftr_needs_mpi_summary () {
+   return vftr_mpi_sum_rank_1 >= 0 && vftr_mpi_sum_rank_2 >= 0;
 }
 
 /**********************************************************************/
@@ -402,7 +406,7 @@ void vftr_read_environment () {
     vftr_environment.output_directory = vftr_read_env_string ("VFTR_OUT_DIRECTORY", ".");
     vftr_environment.logfile_basename = vftr_read_env_string ("VFTR_LOGFILE_BASENAME", NULL);
     vftr_environment.logfile_for_ranks = vftr_read_env_string ("VFTR_LOGFILE_FOR_RANKS", "0");
-    vftr_environment.mpi_summary_for_ranks = vftr_read_env_string ("VFTR_MPI_SUMMARY_FOR_RANKS", "0");
+    vftr_environment.mpi_summary_for_ranks = vftr_read_env_string ("VFTR_MPI_SUMMARY_FOR_RANKS", "");
     vftr_environment.sampletime = vftr_read_env_double ("VFTR_SAMPLETIME", 0.005);
     vftr_environment.stoptime = vftr_read_env_long_long ("VFTR_STOPTIME", 7ll*24ll*60ll*60ll);
     vftr_environment.accurate_profile = vftr_read_env_bool ("VFTR_ACCURATE_PROFILE", false);
@@ -429,7 +433,6 @@ void vftr_read_environment () {
     vftr_environment.meminfo_stepsize = vftr_read_env_int ("VFTR_MEMINFO_STEPSIZE", 1000);
     vftr_environment.print_env = vftr_read_env_bool ("VFTR_PRINT_ENVIRONMENT", false);
     vftr_environment.no_memtrace = vftr_read_env_bool ("VFTR_NO_MEMTRACE", false);
-    vftr_environment.all_mpi_summary = vftr_read_env_bool ("VFTR_COMPLETE_MPI_SUMMARY", false);
     vftr_environment.show_stacks_in_profile = vftr_read_env_bool ("VFTR_SHOW_STACKS_IN_PROFILE", false);
     vftr_environment.no_stack_normalization = vftr_read_env_bool ("VFTR_NO_STACK_NORM", false);
     vftr_environment.demangle_cpp = vftr_read_env_bool ("VFTR_DEMANGLE_CPP", false);
@@ -527,7 +530,7 @@ void vftr_assert_environment () {
         }
 #endif
 
-        if (vftr_environment.all_mpi_summary->value) {
+        if (strcmp(vftr_environment.mpi_summary_for_ranks->value, "")) {
            bool veto = vftr_environment.mpi_show_sync_time->value || vftr_environment.print_stack_profile->value;
            if (veto) {
               if (vftr_rank_needs_logfile()) {
@@ -537,10 +540,10 @@ void vftr_assert_environment () {
                  } else {
                     printf ("VFTR_PRINT_STACK_PROFILE ");
                  }
-	         printf ("is incompatible with VFTR_COMPLETE_MPI_SUMMARY.\n");
-                 printf ("DISABLED: VFTR_COMPLETE_MPI_SUMMARY.\n");
+	         printf ("is incompatible with VFTR_MPI_SUMMARY_FOR_RANKS.\n");
+                 printf ("DISABLED: VFTR_MPI_SUMMARY_FOR_RANKS.\n");
               }
-              vftr_environment.all_mpi_summary->value = false;
+              vftr_environment.mpi_summary_for_ranks->value = "";
 	   }
         }
 
@@ -572,13 +575,16 @@ bool vftr_env_no_memtrace () {
 }
 
 bool vftr_env_need_display_functions () {
-   return vftr_environment.print_stack_profile->value || vftr_environment.create_html->value || vftr_environment.all_mpi_summary->value;
+   printf ("HUHU DISPLAY: '%s' %d\n", vftr_environment.mpi_summary_for_ranks->value, strcmp(vftr_environment.mpi_summary_for_ranks->value, ""));
+   return vftr_environment.print_stack_profile->value
+       || vftr_environment.create_html->value
+       || strcmp(vftr_environment.mpi_summary_for_ranks->value, "");
 }
 
 bool vftr_env_distribute_gStack () {
-   return vftr_n_logfile_ranks () > 1 ||
-          vftr_environment.print_stack_profile->value ||
-          vftr_environment.all_mpi_summary->value; 
+   return vftr_n_logfile_ranks () > 1
+       || vftr_environment.print_stack_profile->value
+       || strcmp(vftr_environment.mpi_summary_for_ranks->value, ""); 
 }
 
 /**********************************************************************/
@@ -615,7 +621,6 @@ void vftr_free_environment () {
         free (vftr_environment.meminfo_stepsize);
         free (vftr_environment.print_env);
 	free (vftr_environment.no_memtrace);
-        free (vftr_environment.all_mpi_summary);
         free (vftr_environment.show_stacks_in_profile);
         free (vftr_environment.no_stack_normalization);
         free (vftr_environment.demangle_cpp);
@@ -682,7 +687,6 @@ void vftr_print_environment (FILE *fp) {
         vftr_print_env_int (fp, "VFTR_MEMINFO_STEPSIZE", vftr_environment.meminfo_stepsize);
         vftr_print_env_bool (fp, "VFTR_PRINT_ENVIRONMENT", vftr_environment.print_env);
         vftr_print_env_bool (fp, "VFTR_NO_MEMTRACE", vftr_environment.no_memtrace);
-        vftr_print_env_bool (fp, "VFTR_COMPLETE_MPI_SUMMARY", vftr_environment.all_mpi_summary);
         vftr_print_env_bool (fp, "VFTR_SHOW_STACKS_IN_PROFILE", vftr_environment.show_stacks_in_profile);
         vftr_print_env_bool (fp, "VFTR_NO_STACK_NORM", vftr_environment.no_stack_normalization);
         vftr_print_env_bool (fp, "VFTR_DEMANGLE_CPP", vftr_environment.demangle_cpp);

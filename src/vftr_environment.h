@@ -97,7 +97,6 @@ typedef struct vftr_envs {
         env_var_int_t *meminfo_stepsize;
         env_var_bool_t *print_env;
         env_var_bool_t *no_memtrace;
-	env_var_bool_t *all_mpi_summary;
         env_var_bool_t *show_stacks_in_profile;
         env_var_bool_t *no_stack_normalization;
         env_var_bool_t *demangle_cpp;
@@ -132,6 +131,7 @@ void vftr_check_env_names (FILE *fp);
 void vftr_set_logfile_ranks();
 void vftr_set_mpi_summary_ranks();
 bool vftr_rank_needs_logfile();
+bool vftr_needs_mpi_summary ();
 bool vftr_rank_needs_mpi_summary (int rank);
 
 #endif
