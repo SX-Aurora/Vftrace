@@ -285,7 +285,7 @@ bool vftr_rank_needs_logfile () {
 
 /**********************************************************************/
 
-bool vftr_n_logfile_ranks () {
+int vftr_n_logfile_ranks () {
    return vftr_log_rank_2 - vftr_log_rank_1 + 1;
 }
 
@@ -305,14 +305,14 @@ void vftr_set_rank_range (char *env_string, int *rank_1, int *rank_2) {
    if (!strcmp(env_string, "all")) {
       // Create a logfile for all ranks
       *rank_1 = 0;
-      *rank_2 = vftr_mpisize;
+      *rank_2 = vftr_mpisize - 1;
       is_valid = true;
    } else if (strstr(env_string, "-")) { // A range is "x1-x2" is specified.
       char *s1 = strtok(env_string, "-");
       char *s2 = strtok(NULL, " ");
       if (vftr_string_is_number(s1) && vftr_string_is_number(s2)) {
         *rank_1 = atoi(s1);
-        *rank_2 = atoi(s2);
+        *rank_2 = atoi(s2) - 1;
         // The first rank must be smaller than the second (or equal). Otherwise the option is rejected.
         is_valid = *rank_1 <= *rank_2;
       } else {
@@ -575,7 +575,6 @@ bool vftr_env_no_memtrace () {
 }
 
 bool vftr_env_need_display_functions () {
-   printf ("HUHU DISPLAY: '%s' %d\n", vftr_environment.mpi_summary_for_ranks->value, strcmp(vftr_environment.mpi_summary_for_ranks->value, ""));
    return vftr_environment.print_stack_profile->value
        || vftr_environment.create_html->value
        || strcmp(vftr_environment.mpi_summary_for_ranks->value, "");
