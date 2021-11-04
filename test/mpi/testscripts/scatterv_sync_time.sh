@@ -21,14 +21,14 @@ do
       cat ${vftr_binary}_${irank}.log
       # Count the logs
       count=$(cat ${vftr_binary}_${irank}.log | \
-              grep -i "MPI_Scatterv_sync[ ]*MPI_Scatterv" | \
+              grep -i "MPI_Scatterv_sync[ |]*MPI_Scatterv" | \
               wc -l);
       if [[ "${count}" -lt "1" ]] ; then
          echo "Sync region not found on rank ${irank}"
          exit 1;
       fi  
       callcount=$(cat ${vftr_binary}_${irank}.log | \
-                  grep -i "MPI_Scatterv_sync[ ]*MPI_Scatterv" | \
+                  grep -i "MPI_Scatterv_sync[ |]*MPI_Scatterv" | \
                   awk '{print $1}');
       if [[ "${callcount}" -ne "1" ]] ; then
          echo "Mismatch in callcount of sync region."

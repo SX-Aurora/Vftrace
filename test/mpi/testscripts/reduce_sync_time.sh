@@ -21,14 +21,14 @@ do
       cat ${vftr_binary}_${irank}.log
       # Count the logs
       count=$(cat ${vftr_binary}_${irank}.log | \
-              grep -i "MPI_Reduce_sync[ ]*MPI_Reduce" | \
+              grep -i "MPI_Reduce_sync[ |]*MPI_Reduce" | \
               wc -l);
       if [[ "${count}" -lt "1" ]] ; then
          echo "Sync region not found on rank ${irank}"
          exit 1;
       fi  
       callcount=$(cat ${vftr_binary}_${irank}.log | \
-                  grep -i "MPI_Reduce_sync[ ]*MPI_Reduce" | \
+                  grep -i "MPI_Reduce_sync[ |]*MPI_Reduce" | \
                   awk '{print $1}');
       if [[ "${callcount}" -ne "1" ]] ; then
          echo "Mismatch in callcount of sync region."
