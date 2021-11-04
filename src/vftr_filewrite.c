@@ -705,7 +705,8 @@ void vftr_set_summary_column_formats (bool mpi_autodetect, int n_display_funcs, 
 
     int i_column = 0;
     vftr_prof_column_init (headers[FUNC], NULL, 0, COL_CHAR_RIGHT, SEP_MID, &(*columns)[i_column++]);
-    if (vftr_needs_mpi_summary()) vftr_prof_column_init (headers[STACK_ID], NULL, 0, COL_INT, SEP_MID, &(*columns)[i_column++]);
+    if (strcmp(vftr_environment.mpi_summary_for_ranks->value, ""))
+       vftr_prof_column_init (headers[STACK_ID], NULL, 0, COL_INT, SEP_MID, &(*columns)[i_column++]);
     if (mpi_autodetect) vftr_prof_column_init (headers[MPI], NULL, 2, COL_DOUBLE, SEP_MID, &(*columns)[i_column++]);
     vftr_prof_column_init (headers[CALLS], NULL, 0, COL_INT, SEP_MID, &(*columns)[i_column++]);
     if (mpi_autodetect && vftr_environment.mpi_log->value) {
@@ -723,7 +724,7 @@ void vftr_set_summary_column_formats (bool mpi_autodetect, int n_display_funcs, 
        if (!display_functions[i]->properly_terminated) continue;       
        i_column = 0;
        vftr_prof_column_set_n_chars (display_functions[i]->func_name, NULL, NULL, &(*columns)[i_column++], &stat);
-       if (vftr_needs_mpi_summary()) {
+       if (strcmp(vftr_environment.mpi_summary_for_ranks->value, "")) {
           int stack_id = display_functions[i]->stack_id;
           vftr_prof_column_set_n_chars (&stack_id, NULL, NULL, &(*columns)[i_column++], &stat);
        }
@@ -914,7 +915,7 @@ void vftr_summary_print_header (FILE *fp, column_t *columns, int table_width, bo
       n_columns = 11;
    } else if (mpi_autodetect) {
       n_columns = 9;
-   } else if (vftr_needs_mpi_summary()) {
+   } else if (strcmp(vftr_environment.mpi_summary_for_ranks->value, "")) {
       n_columns = 8;
    } else {
       n_columns = 7;
@@ -932,7 +933,8 @@ void vftr_summary_print_header (FILE *fp, column_t *columns, int table_width, bo
 void vftr_summary_print_line (FILE *fp, display_function_t *displ_f, column_t *columns, double total_time, bool mpi_autodetect) {
    int i_column = 0;
    vftr_prof_column_print (fp, columns[i_column++], displ_f->func_name, NULL, NULL);
-   if (vftr_needs_mpi_summary()) vftr_prof_column_print (fp, columns[i_column++], &displ_f->stack_id, NULL, NULL);
+   if (strcmp(vftr_environment.mpi_summary_for_ranks->value, ""))
+      vftr_prof_column_print (fp, columns[i_column++], &displ_f->stack_id, NULL, NULL);
    double t, t2;
    if (mpi_autodetect) {
       t = displ_f->is_mpi ? displ_f->this_mpi_time * 1e-6 / total_time * 100 : 0;
@@ -1334,7 +1336,7 @@ void vftr_print_function_statistics (FILE *fp_log, display_function_t **display_
           if (vftr_environment.mpi_log->value) n_columns += 2;
        }
        // If the complete overview is printed, add one column for global stack ID (or entire stack).
-       if (vftr_needs_mpi_summary ()) {
+       if (strcmp(vftr_environment.mpi_summary_for_ranks->value, "")) {
           n_columns += 1;
        }
          
