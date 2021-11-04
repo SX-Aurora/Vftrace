@@ -1318,6 +1318,7 @@ void vftr_print_function_statistics (FILE *fp_log, display_function_t **display_
        fprintf (fp_log, "Total time spent in MPI for rank %d: %8.2fs (%5.2f%%)\n",
                 vftr_mpirank, total_mpi_time, total_mpi_time / (vftr_get_runtime_usec() * 1e-6) * 100);
        fprintf (fp_log, "Imbalance computed as: max (T - T_avg)\n");
+       if (!vftr_environment.mpi_log->value) fprintf (fp_log, "Message sizes have not been measured. To do so, set VFTR_MPI_LOG=yes\n");
        fprintf (fp_log, "\n");
 
        // Per default, there are seven columns:
