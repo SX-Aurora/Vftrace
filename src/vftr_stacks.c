@@ -764,10 +764,16 @@ void vftr_print_stacktree_header (FILE *fp, int n_stacks, char *func_name,
 	if (*n_spaces_max < strlen(title)) *n_spaces_max = strlen(title);
 	*n_char_tot = *n_spaces_max + fmt_calls + fmt_t + fmt_imba + fmt_send_bytes + fmt_recv_bytes + fmt_stackid + fmt_position + 21;
 	for (int i = 0; i < *n_spaces_max - strlen(title); i++) fprintf (fp, " ");
-	fprintf (fp, "   %*s   %*s   %*s   %*s   %*s   %*s   %*s\n", fmt_t, vftr_stacktree_headers[TIME],
+        if (vftr_environment.mpi_log->value) {
+	   fprintf (fp, "   %*s   %*s   %*s   %*s   %*s   %*s   %*s\n", fmt_t, vftr_stacktree_headers[TIME],
 		 fmt_calls, vftr_stacktree_headers[CALLS], fmt_imba, vftr_stacktree_headers[IMBA],
 		 fmt_send_bytes, vftr_stacktree_headers[SEND_BYTES], fmt_recv_bytes, vftr_stacktree_headers[RECV_BYTES],
 		 fmt_stackid, vftr_stacktree_headers[STACK_ID], (int)strlen("position"), "position");
+        } else {
+	   fprintf (fp, "   %*s   %*s   %*s   %*s   %*s\n", fmt_t, vftr_stacktree_headers[TIME],
+		 fmt_calls, vftr_stacktree_headers[CALLS], fmt_imba, vftr_stacktree_headers[IMBA],
+		 fmt_stackid, vftr_stacktree_headers[STACK_ID], (int)strlen("position"), "position");
+        }
 }
 
 /**********************************************************************/
@@ -792,18 +798,26 @@ void vftr_print_stacktree (FILE *fp, stack_leaf_t *leaf, int n_spaces, double *i
 			for (int i = n_spaces + strlen(vftr_gStackinfo[leaf->stack_id].name) + 2; i < n_spaces_max; i++) {
 			   fprintf (fp, " ");
 			}
-			char *send_unit_str, *recv_unit_str;
-		        double mpi_tot_send_bytes = vftr_func_table[leaf->func_id]->prof_current.mpi_tot_send_bytes;
-		        double mpi_tot_recv_bytes = vftr_func_table[leaf->func_id]->prof_current.mpi_tot_recv_bytes;
-			vftr_memory_unit (&mpi_tot_send_bytes, &send_unit_str);	
-			vftr_memory_unit (&mpi_tot_recv_bytes, &recv_unit_str);	
-			fprintf (fp, "   %*.6f   %*lld   %*.2f   %*.lf %s   %*.lf %s   %*d   %*d\n",
-				 fmt_t, (double)vftr_func_table[leaf->func_id]->prof_current.time_incl * 1e-6,
-				 fmt_calls, vftr_func_table[leaf->func_id]->prof_current.calls,
-				 fmt_imba, imbalances[leaf->func_id],
-			 	 fmt_send_bytes - 4, mpi_tot_send_bytes, send_unit_str,
-				 fmt_recv_bytes - 4, mpi_tot_recv_bytes, recv_unit_str,
-				 fmt_stackid, leaf->stack_id, (int)strlen("position"), leaf->final_id);
+                        if (vftr_environment.mpi_log->value) {
+			   char *send_unit_str, *recv_unit_str;
+		           double mpi_tot_send_bytes = vftr_func_table[leaf->func_id]->prof_current.mpi_tot_send_bytes;
+		           double mpi_tot_recv_bytes = vftr_func_table[leaf->func_id]->prof_current.mpi_tot_recv_bytes;
+			   vftr_memory_unit (&mpi_tot_send_bytes, &send_unit_str);	
+			   vftr_memory_unit (&mpi_tot_recv_bytes, &recv_unit_str);	
+			   fprintf (fp, "   %*.6f   %*lld   %*.2f   %*.lf %s   %*.lf %s   %*d   %*d\n",
+			   	 fmt_t, (double)vftr_func_table[leaf->func_id]->prof_current.time_incl * 1e-6,
+			   	 fmt_calls, vftr_func_table[leaf->func_id]->prof_current.calls,
+			   	 fmt_imba, imbalances[leaf->func_id],
+			    	 fmt_send_bytes - 4, mpi_tot_send_bytes, send_unit_str,
+			   	 fmt_recv_bytes - 4, mpi_tot_recv_bytes, recv_unit_str,
+			   	 fmt_stackid, leaf->stack_id, (int)strlen("position"), leaf->final_id);
+                        } else {
+			   fprintf (fp, "   %*.6f   %*lld   %*.2f   %*d   %*d\n",
+			   	 fmt_t, (double)vftr_func_table[leaf->func_id]->prof_current.time_incl * 1e-6,
+			   	 fmt_calls, vftr_func_table[leaf->func_id]->prof_current.calls,
+			   	 fmt_imba, imbalances[leaf->func_id],
+			   	 fmt_stackid, leaf->stack_id, (int)strlen("position"), leaf->final_id);
+                        }
 		}
 	}
 	if (leaf->next_in_level) {
