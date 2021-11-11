@@ -47,7 +47,7 @@ int main (int argc, char **argv) {
   vftr_mpi_overhead_usec = 0;
 #endif
   int n_func_indices;
-  vftr_print_profile (stdout, NULL, &n_func_indices, vftr_test_runtime, 0, NULL);
+  vftr_print_profile (stdout, &n_func_indices, vftr_test_runtime, 0, NULL);
 
 #ifdef _MPI
   PMPI_Finalize();

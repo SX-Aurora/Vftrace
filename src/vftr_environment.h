@@ -134,4 +134,6 @@ bool vftr_rank_needs_logfile();
 bool vftr_needs_mpi_summary ();
 bool vftr_rank_needs_mpi_summary (int rank);
 
+int vftr_env_compute_n_columns();
+
 #endif

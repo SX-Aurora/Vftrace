@@ -368,7 +368,8 @@ void vftr_finalize() {
 
     if (vftr_profile_wanted) {
        if (vftr_do_stack_normalization) vftr_create_global_stack_strings ();
-       vftr_print_profile (vftr_log, f_html, &ntop, vftr_get_runtime_usec(), n_display_functions, display_functions);
+       //vftr_print_profile (vftr_log, f_html, &ntop, vftr_get_runtime_usec(), n_display_functions, display_functions);
+       vftr_print_profile (vftr_log, &ntop, vftr_get_runtime_usec(), n_display_functions, display_functions);
     }
 #ifdef _MPI
     if (was_mpi_initialized) {
@@ -380,6 +381,10 @@ void vftr_finalize() {
        }
     }
 #endif
+
+    if (f_html != NULL) {
+       vftr_print_html_profile(f_html, ntop, n_display_functions, display_functions, vftr_get_runtime_usec());
+    }
  
     funcTable = vftr_func_table;
 

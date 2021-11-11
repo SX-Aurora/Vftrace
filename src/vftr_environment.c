@@ -28,6 +28,9 @@
 #include "vftr_environment.h"
 #include "vftr_filewrite.h"
 #include "vftr_fileutils.h"
+#include "vftr_scenarios.h"
+#include "vftr_mallinfo.h"
+#include "vftr_allocate.h"
 
 /**********************************************************************/
 // Recommender for unmatched environment variables:
@@ -345,6 +348,25 @@ void vftr_set_mpi_summary_ranks () {
 
 bool vftr_needs_mpi_summary () {
    return vftr_mpi_sum_rank_1 >= 0 && vftr_mpi_sum_rank_2 >= 0;
+}
+
+/**********************************************************************/
+
+int vftr_env_compute_n_columns () {
+    // Number of columns. Default: nCalls, exclusive & inclusive time, %abs, %cum,
+    // function & caller name and stack ID (i.e. 8 columns). 
+    int n_columns = 8;
+    // Add one column for each hardware counter.
+    n_columns += vftr_scenario_expr_n_formulas;
+    // Add one column for self-traced memory consumption
+    if (vftr_memtrace) n_columns += 1;
+    if (vftr_max_allocated_fields > 0) n_columns += 2;
+    // If function overhead is displayed, add three more columns.
+    if (vftr_environment.show_overhead->value) n_columns += 3;
+    if (vftr_environment.show_stacks_in_profile->value) n_columns += 1;
+    // Add one more column for final remarks
+    n_columns += 1;
+    return n_columns;
 }
 
 /**********************************************************************/
