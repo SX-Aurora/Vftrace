@@ -378,6 +378,7 @@ void vftr_finalize() {
           // we need to call this function for every rank, but give it the information of vftr_profile_wanted
           // to avoid unrequired output.
           vftr_print_function_statistics (vftr_log, display_functions, n_display_functions, vftr_profile_wanted);
+          if (vftr_environment.create_html->value) vftr_print_function_statistics_html (display_functions, n_display_functions, vftr_profile_wanted);
        }
     }
 #endif

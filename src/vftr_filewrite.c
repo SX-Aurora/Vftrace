@@ -1370,19 +1370,19 @@ void vftr_print_function_statistics (FILE *fp_log, display_function_t **display_
 	qsort ((void*)display_functions, (size_t)n_display_funcs,
 	       sizeof (display_function_t *), vftr_compare_display_functions_iorig);
 
-	if (vftr_environment.create_html->value) {
-	   if (vftr_mpirank == 0) {
-	      vftr_browse_print_index_html (display_functions, n_display_funcs);
-	   }
-        }
+	//if (vftr_environment.create_html->value) {
+	//   if (vftr_mpirank == 0) {
+	//      vftr_browse_print_index_html (display_functions, n_display_funcs);
+	//   }
+        //}
 
   	for (int i = 0; i < n_display_funcs; i++) {
                 //if (!display_functions[i]->properly_terminated) continue;
-		if (display_functions[i]->n_stack_indices == 0) {;
-	 	   if (vftr_environment.create_html->value) {
-		      vftr_browse_print_stacktree_page (NULL, true, display_functions, i,
-		         				n_display_funcs, NULL, NULL, 0.0, 0, 0);
-          	   }
+		if (display_functions[i]->n_stack_indices == 0) {
+	 	   //if (vftr_environment.create_html->value) {
+		   //   vftr_browse_print_stacktree_page (NULL, true, display_functions, i,
+		   //      				n_display_funcs, NULL, NULL, 0.0, 0, 0);
+          	   //}
 		} else {
 		   stack_leaf_t *stack_tree = NULL;
 		   double *imbalances = (double*) malloc (vftr_func_table_size * sizeof (double));
@@ -1402,12 +1402,12 @@ void vftr_print_function_statistics (FILE *fp_log, display_function_t **display_
 		      		              imbalances, total_time,
 		           		      t_max, n_calls_max, imba_max, n_spaces_max,
 		           		      stack_tree);
-		      if (vftr_environment.create_html->value) {
-		         vftr_browse_print_stacktree_page (NULL, false, display_functions, i,
-		           			        n_display_funcs, stack_tree->origin,
-		           		                imbalances, (double)total_time * 1e-6, n_chars_max,
-		           			        display_functions[i]->n_stack_indices);
-		      }
+		      //if (vftr_environment.create_html->value) {
+		      //   vftr_browse_print_stacktree_page (NULL, false, display_functions, i,
+		      //     			        n_display_funcs, stack_tree->origin,
+		      //     		                imbalances, (double)total_time * 1e-6, n_chars_max,
+		      //     			        display_functions[i]->n_stack_indices);
+		      //}
                    }
 		   free (stack_tree);
 		   free (imbalances);
@@ -1416,6 +1416,45 @@ void vftr_print_function_statistics (FILE *fp_log, display_function_t **display_
   }
 
   free (display_functions);
+}
+
+/**********************************************************************/
+
+void vftr_print_function_statistics_html (display_function_t **display_functions,
+                                          int n_display_funcs, bool print_this_rank) {
+   if (vftr_environment.print_stack_profile->value) {
+      if (vftr_mpirank == 0) {
+         vftr_browse_print_index_html (display_functions, n_display_funcs);
+      }
+
+      for (int i = 0; i < n_display_funcs; i++) {
+         if (display_functions[i]->n_stack_indices == 0) {
+            vftr_browse_print_stacktree_page (NULL, true, display_functions, i,
+                                              n_display_funcs, NULL, NULL, 0.0, 0, 0);
+         } else {
+            if (print_this_rank && vftr_rank_needs_mpi_summary(vftr_mpirank)) {
+		   stack_leaf_t *stack_tree = NULL;
+                   double *imbalances = (double*) malloc (vftr_func_table_size * sizeof(double));
+                   vftr_stack_compute_imbalances (imbalances, display_functions[i]->n_stack_indices,
+                                                  display_functions[i]->stack_indices);
+                   vftr_create_stacktree (&stack_tree, display_functions[i]->n_stack_indices,
+                                          display_functions[i]->stack_indices);
+                   long long total_time = 0;
+                   double t_max, imba_max;
+                   int n_calls_max, n_spaces_max, n_chars_max;
+                   vftr_scan_stacktree (stack_tree, display_functions[i]->n_stack_indices, 
+                                        imbalances, &t_max, &n_calls_max, &imba_max,
+                                        &n_spaces_max, &n_chars_max);
+		   vftr_browse_print_stacktree_page (NULL, false, display_functions, i,
+		           			     n_display_funcs, stack_tree->origin,
+		           		             imbalances, (double)total_time * 1e-6, n_chars_max,
+		           			     display_functions[i]->n_stack_indices);
+                   free(stack_tree);
+                   free(imbalances);
+            }
+         }
+      }
+   }
 }
 
 /**********************************************************************/
@@ -1725,7 +1764,7 @@ void vftr_print_profile (FILE *fp_log, int *n_func_indices, long long time0,
 void vftr_print_html_profile (FILE *f_html, const int n_func_indices, 
                               const int n_display_functions, display_function_t **display_functions,
                               long long time0) {
-   vftr_browse_create_profile_header (f_html); 
+    vftr_browse_create_profile_header (f_html); 
 
     // Create a local copy of the global function table to sort it.
     function_t **func_table = (function_t**) malloc (vftr_func_table_size * sizeof(function_t*));

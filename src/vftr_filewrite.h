@@ -124,6 +124,7 @@ char *vftr_create_logfile_name (int mpi_rank, int mpi_size, char *suffix);
 
 void vftr_print_function_statistics (FILE *fp_log, display_function_t **display_functions, int n_display_functions, bool print_this_rank);
 
+void vftr_print_function_statistics_html (display_function_t **display_functions, int n_display_functions, bool print_this_rank);
 void vftr_memory_unit(double *value, char **unit);
 char *vftr_memory_unit_string (double value, int n_decimal_places);
 void vftr_time_unit (double *value, char **unit, bool for_html);
