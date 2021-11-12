@@ -411,6 +411,8 @@ void vftr_finalize() {
 
     	fclose (vftr_log);
     }
+
+    free (display_functions);
     vftr_switch_off();
     in_vftr_finalize = false;
 }

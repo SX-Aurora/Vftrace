@@ -1414,8 +1414,6 @@ void vftr_print_function_statistics (FILE *fp_log, display_function_t **display_
 	       }
 	}
   }
-
-  free (display_functions);
 }
 
 /**********************************************************************/
