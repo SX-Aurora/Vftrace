@@ -1300,6 +1300,29 @@ display_function_t **vftr_create_display_functions (bool display_sync_time, int 
 
 /**********************************************************************/
 
+//void vftr_create_stacktree_func (stack_leaf_t *stack_tree, double *imbalances,
+stack_leaf_t * vftr_create_stacktree_func (double *imbalances,
+                                 display_function_t *display_function, 
+                                 long long *total_time, double *t_max, 
+                                 int *n_calls_max, double *imba_max, int *n_spaces_max) {
+   stack_leaf_t *stack_tree = NULL;
+   *total_time = 0;
+   vftr_create_stacktree(&stack_tree, display_function->n_stack_indices, display_function->stack_indices);
+   printf ("Has origin?: %d\n", stack_tree->origin != NULL);
+   vftr_stack_get_total_time (stack_tree->origin, total_time);
+   printf ("TEST total time: \n");
+   printf ("TOTAL time: %lld\n", *total_time);
+   *total_time = 0;
+   vftr_stack_get_total_time (stack_tree->origin, total_time);
+   printf ("TOTAL time again: %lld\n", *total_time);
+   int n_chars_max;
+   vftr_scan_stacktree (stack_tree, display_function->n_stack_indices, imbalances,
+                        t_max, n_calls_max, imba_max, n_spaces_max, &n_chars_max);
+   return stack_tree;
+}
+
+/**********************************************************************/
+
 void vftr_print_function_statistics (FILE *fp_log, display_function_t **display_functions, int n_display_funcs, bool print_this_rank) {
 
     double total_mpi_time = 0;
@@ -1389,14 +1412,19 @@ void vftr_print_function_statistics (FILE *fp_log, display_function_t **display_
 		   vftr_stack_compute_imbalances (imbalances, display_functions[i]->n_stack_indices,
 		   			       display_functions[i]->stack_indices);
                    if (print_this_rank && vftr_rank_needs_mpi_summary(vftr_mpirank)) {
-		      vftr_create_stacktree (&stack_tree, display_functions[i]->n_stack_indices, display_functions[i]->stack_indices);
-		      long long total_time = 0;
-		      vftr_stack_get_total_time (stack_tree->origin, &total_time);
+                      //stack_tree = vftr_create_stacktree_func (imbalances, display_functions[i]); 
+		      //vftr_create_stacktree (&stack_tree, display_functions[i]->n_stack_indices, display_functions[i]->stack_indices);
+		      long long total_time;
+		      ///vftr_stack_get_total_time (stack_tree->origin, &total_time);
 
 		      double t_max, imba_max;
 		      int n_calls_max, n_spaces_max, n_chars_max;
-		      vftr_scan_stacktree (stack_tree, display_functions[i]->n_stack_indices, imbalances,
-		           		&t_max, &n_calls_max, &imba_max, &n_spaces_max, &n_chars_max);
+                      //vftr_create_stacktree_func (stack_tree, imbalances,
+                      stack_tree = vftr_create_stacktree_func (imbalances,
+                                                  display_functions[i], &total_time,
+                                                  &t_max, &n_calls_max, &imba_max, &n_spaces_max);
+		      ///vftr_scan_stacktree (stack_tree, display_functions[i]->n_stack_indices, imbalances,
+		      ///     		&t_max, &n_calls_max, &imba_max, &n_spaces_max, &n_chars_max);
   		      vftr_print_function_stack (fp_log, display_functions[i]->func_name, 
 		      		              display_functions[i]->n_stack_indices,
 		      		              imbalances, total_time,
