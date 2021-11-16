@@ -1308,13 +1308,9 @@ stack_leaf_t * vftr_create_stacktree_func (double *imbalances,
    stack_leaf_t *stack_tree = NULL;
    *total_time = 0;
    vftr_create_stacktree(&stack_tree, display_function->n_stack_indices, display_function->stack_indices);
-   printf ("Has origin?: %d\n", stack_tree->origin != NULL);
    vftr_stack_get_total_time (stack_tree->origin, total_time);
-   printf ("TEST total time: \n");
-   printf ("TOTAL time: %lld\n", *total_time);
    *total_time = 0;
    vftr_stack_get_total_time (stack_tree->origin, total_time);
-   printf ("TOTAL time again: %lld\n", *total_time);
    int n_chars_max;
    vftr_scan_stacktree (stack_tree, display_function->n_stack_indices, imbalances,
                         t_max, n_calls_max, imba_max, n_spaces_max, &n_chars_max);
@@ -1454,30 +1450,31 @@ void vftr_print_function_statistics_html (display_function_t **display_functions
       }
 
       for (int i = 0; i < n_display_funcs; i++) {
+         printf ("Check: %d %d %d\n", vftr_mpirank, print_this_rank, vftr_rank_needs_mpi_summary(vftr_mpirank));
          if (display_functions[i]->n_stack_indices == 0) {
             vftr_browse_print_stacktree_page (NULL, true, display_functions, i,
                                               n_display_funcs, NULL, NULL, 0.0, 0, 0);
          } else {
+            double *imbalances = (double*) malloc (vftr_func_table_size * sizeof(double));
+            vftr_stack_compute_imbalances (imbalances, display_functions[i]->n_stack_indices,
+                                                       display_functions[i]->stack_indices);
             if (print_this_rank && vftr_rank_needs_mpi_summary(vftr_mpirank)) {
-		   stack_leaf_t *stack_tree = NULL;
-                   double *imbalances = (double*) malloc (vftr_func_table_size * sizeof(double));
-                   vftr_stack_compute_imbalances (imbalances, display_functions[i]->n_stack_indices,
-                                                  display_functions[i]->stack_indices);
-                   vftr_create_stacktree (&stack_tree, display_functions[i]->n_stack_indices,
-                                          display_functions[i]->stack_indices);
-                   long long total_time = 0;
-                   double t_max, imba_max;
-                   int n_calls_max, n_spaces_max, n_chars_max;
-                   vftr_scan_stacktree (stack_tree, display_functions[i]->n_stack_indices, 
-                                        imbalances, &t_max, &n_calls_max, &imba_max,
-                                        &n_spaces_max, &n_chars_max);
-		   vftr_browse_print_stacktree_page (NULL, false, display_functions, i,
-		           			     n_display_funcs, stack_tree->origin,
-		           		             imbalances, (double)total_time * 1e-6, n_chars_max,
-		           			     display_functions[i]->n_stack_indices);
-                   free(stack_tree);
-                   free(imbalances);
+		stack_leaf_t *stack_tree = NULL;
+                vftr_create_stacktree (&stack_tree, display_functions[i]->n_stack_indices,
+                                       display_functions[i]->stack_indices);
+                long long total_time = 0;
+                double t_max, imba_max;
+                int n_calls_max, n_spaces_max, n_chars_max;
+                vftr_scan_stacktree (stack_tree, display_functions[i]->n_stack_indices, 
+                                     imbalances, &t_max, &n_calls_max, &imba_max,
+                                     &n_spaces_max, &n_chars_max);
+		vftr_browse_print_stacktree_page (NULL, false, display_functions, i,
+		        			     n_display_funcs, stack_tree->origin,
+		        		             imbalances, (double)total_time * 1e-6, n_chars_max,
+		        			     display_functions[i]->n_stack_indices);
+                free(stack_tree);
             }
+            free(imbalances);
          }
       }
    }
