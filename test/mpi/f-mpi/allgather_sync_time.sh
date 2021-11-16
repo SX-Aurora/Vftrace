@@ -1,1 +1,1 @@
-../c-mpi/allgather_sync_time.sh
+../testscripts/allgather_sync_time.sh
