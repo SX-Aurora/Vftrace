@@ -42,6 +42,7 @@ SUBROUTINE MPI_Recv_f08(buf, count, datatype, source, tag, comm, status, error)
    ELSE
       CALL vftr_MPI_Recv_f082vftr(buf, count, datatype%MPI_VAL, source, tag, comm%MPI_VAL, status, tmperror)
    END IF
+   IF (PRESENT(error)) error = tmperror
 
 END SUBROUTINE MPI_Recv_f08
 
