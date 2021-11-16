@@ -8,7 +8,8 @@ libvftr_f08mpiwrap_la_SOURCES += init.F90 \
 ##################
 # point to point #
 ##################
-libvftr_f08mpiwrap_la_SOURCES += send.F90 
+libvftr_f08mpiwrap_la_SOURCES += send.F90 \
+				 recv.F90
 #				 bsend.F90 \
 #				 ssend.F90 \
 #				 rsend.F90
