@@ -69,7 +69,7 @@ PROGRAM testany
          END IF
       END DO
       DO ireq = 1, comm_size - 1 
-         IF (requests(ireq) /= idx) THEN
+         IF (ireq /= idx) THEN
             CALL MPI_Wait(requests(ireq), mystat, ierr)
          END IF
       END DO
