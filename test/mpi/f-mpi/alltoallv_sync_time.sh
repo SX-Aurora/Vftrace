@@ -1,1 +1,1 @@
-../c-mpi/alltoallv_sync_time.sh
+../testscripts/alltoallv_sync_time.sh
