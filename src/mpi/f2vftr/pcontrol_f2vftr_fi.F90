@@ -30,7 +30,7 @@ MODULE vftr_mpi_pcontrol_f2vftr_fi
 
       SUBROUTINE vftr_MPI_Pcontrol_f2vftr(level) &
          BIND(c, NAME="vftr_MPI_Pcontrol_f2vftr")
-         IMPORT c_int
+         USE, INTRINSIC :: ISO_C_BINDING, ONLY : c_int
          IMPLICIT NONE
          INTEGER(KIND=c_int), VALUE, INTENT(IN) :: level
       END SUBROUTINE vftr_MPI_Pcontrol_f2vftr

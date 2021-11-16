@@ -58,10 +58,10 @@ libvftr_f08mpiwrap_la_SOURCES += put.F90 \
 				 fetch_and_op.F90 \
 				 compare_and_swap.F90
 
-#############
-## pcontrol #
-#############
-#libvftr_f08mpiwrap_la_SOURCES += pcontrol.F90
+############
+# pcontrol #
+############
+libvftr_f08mpiwrap_la_SOURCES += pcontrol.F90
 
 libvftr_f08mpiwrap_la_FCFLAGS = -finstrument-functions
 libvftr_f08mpiwrap_la_FCFLAGS += -I${builddir}/../utils/

@@ -16,7 +16,7 @@
 
 #ifdef _MPI
 
-SUBROUTINE MPI_Pcontrol_f08(level)
+SUBROUTINE MPI_Pcontrol(level)
    USE vftr_mpi_pcontrol_f082vftr_f08i, &
       ONLY : vftr_MPI_Pcontrol_f082vftr
    IMPLICIT NONE
@@ -24,6 +24,6 @@ SUBROUTINE MPI_Pcontrol_f08(level)
 
    CALL vftr_MPI_Pcontrol_f082vftr(level)
 
-END SUBROUTINE MPI_Pcontrol_f08
+END SUBROUTINE MPI_Pcontrol
 
 #endif

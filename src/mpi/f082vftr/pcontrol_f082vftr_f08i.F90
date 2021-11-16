@@ -14,7 +14,7 @@
 ! with this program; if not, write to the Free Software Foundation, Inc.,
 ! 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-MODULE vftr_mpi_pcontrol_f082c_f08interface
+MODULE vftr_mpi_pcontrol_f082vftr_f08i
 #ifdef _MPI
 
    USE, INTRINSIC :: ISO_FORTRAN_ENV
@@ -24,16 +24,16 @@ MODULE vftr_mpi_pcontrol_f082c_f08interface
 
    PRIVATE
 
-   PUBLIC :: vftr_MPI_Pcontrol_f082c
+   PUBLIC :: vftr_MPI_Pcontrol_f082vftr
 
    INTERFACE
 
-      SUBROUTINE vftr_MPI_Pcontrol_f082c(level) &
-         BIND(c, NAME="vftr_MPI_Pcontrol_f082c")
-         IMPORT c_int
+      SUBROUTINE vftr_MPI_Pcontrol_f082vftr(level) &
+         BIND(c, NAME="vftr_MPI_Pcontrol_f082vftr")
+         USE, INTRINSIC :: ISO_C_BINDING, ONLY : c_int
          IMPLICIT NONE
          INTEGER(KIND=c_int), VALUE, INTENT(IN) :: level
-      END SUBROUTINE vftr_MPI_Pcontrol_f082c
+      END SUBROUTINE vftr_MPI_Pcontrol_f082vftr
 
    END INTERFACE
 
@@ -41,4 +41,4 @@ MODULE vftr_mpi_pcontrol_f082c_f08interface
 
 CONTAINS
 
-END MODULE vftr_mpi_pcontrol_f082c_f08interface
+END MODULE vftr_mpi_pcontrol_f082vftr_f08i

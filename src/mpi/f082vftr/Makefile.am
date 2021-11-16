@@ -1,9 +1,8 @@
 noinst_LTLIBRARIES = libvftr_mpi_f082vftr.la
 
 
-libvftr_mpi_f082vftr_la_SOURCES = 
 
-libvftr_mpi_f082vftr_la_SOURCES += init_f082vftr.c \
+libvftr_mpi_f082vftr_la_SOURCES  = init_f082vftr.c \
                                    finalize_f082vftr.c
 libvftr_mpi_f082vftr_la_SOURCES += init_f082vftr_f08i.F90 \
                                    finalize_f082vftr_f08i.F90
@@ -126,11 +125,11 @@ libvftr_mpi_f082vftr_la_SOURCES += put_f082vftr_f08i.F90 \
                                    fetch_and_op_f082vftr_f08i.F90 \
                                    compare_and_swap_f082vftr_f08i.F90
 
-#############
-## pcontrol #
-#############
-#libvftr_mpi_f082vftr_la_SOURCES += pcontrol_f082vftr.c
-#libvftr_mpi_f082vftr_la_SOURCES += pcontrol_f082vftr_f08i.F90
+############
+# pcontrol #
+############
+libvftr_mpi_f082vftr_la_SOURCES += pcontrol_f082vftr.c
+libvftr_mpi_f082vftr_la_SOURCES += pcontrol_f082vftr_f08i.F90
 
 libvftr_mpi_f082vftr_la_CFLAGS =
 libvftr_mpi_f082vftr_la_FCFLAGS =
