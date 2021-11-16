@@ -1893,7 +1893,7 @@ char *vftr_memory_unit_string (double value, int n_decimal_places) {
 void vftr_time_unit (double *value, char **unit, bool for_html) {
    int unit_idx = 0;
    // Explicitly treat zero. Otherwise, the loop below will be indefinite.
-   if (*value == 0.0) {
+   if (*value <= 0.0) {
       *unit = "s";
       return;
    }
