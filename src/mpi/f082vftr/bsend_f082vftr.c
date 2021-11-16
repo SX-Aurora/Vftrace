@@ -19,11 +19,11 @@
 #ifdef _MPI
 #include <mpi.h>
 
-#include <vftr_mpi_bsend.h>
+#include "bsend.h"
 
-void vftr_MPI_Bsend_f082c(void *buf, MPI_Fint *count, MPI_Fint *f_datatype,
-                          MPI_Fint *dest, MPI_Fint *tag, MPI_Fint *f_comm,
-                          MPI_Fint *f_error) {
+void vftr_MPI_Bsend_f082vftr(void *buf, MPI_Fint *count, MPI_Fint *f_datatype,
+                             MPI_Fint *dest, MPI_Fint *tag, MPI_Fint *f_comm,
+                             MPI_Fint *f_error) {
 
    MPI_Comm c_comm = PMPI_Comm_f2c(*f_comm);
    MPI_Datatype c_datatype = PMPI_Type_f2c(*f_datatype);
