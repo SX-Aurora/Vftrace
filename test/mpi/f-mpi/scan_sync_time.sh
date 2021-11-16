@@ -1,1 +1,1 @@
-../c-mpi/scan_sync_time.sh
+../testscripts/scan_sync_time.sh
