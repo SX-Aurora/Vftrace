@@ -1,1 +1,1 @@
-../c-mpi/exscan_sync_time.sh
+../testscripts/exscan_sync_time.sh
