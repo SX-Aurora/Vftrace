@@ -1,1 +1,1 @@
-../c-mpi/reduce_sync_time.sh
+../testscripts/reduce_sync_time.sh
