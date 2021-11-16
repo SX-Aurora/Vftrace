@@ -443,6 +443,16 @@ void vftr_browse_print_stacktree (FILE *fp, stack_leaf_t *leaf, int n_spaces, do
   
 /**********************************************************************/
 
+void vftr_browse_create_stat_directories (display_function_t **display_functions, int i_func) {
+   char *func_name = display_functions[i_func]->func_name;
+   char outdir[strlen(func_name) + 8];
+   snprintf (outdir, strlen(func_name) + 8, "browse/%s", func_name);
+   mkdir (outdir, 0777);
+  
+}
+
+/**********************************************************************/
+
 void vftr_browse_print_stacktree_page (FILE *fp_out, bool is_empty, display_function_t **display_functions, int i_func, int n_funcs,
 			               stack_leaf_t *leaf, double *imbalances, double total_time,
 				       int n_chars_max, int n_final) {
@@ -452,12 +462,6 @@ void vftr_browse_print_stacktree_page (FILE *fp_out, bool is_empty, display_func
 	if (!fp_out) {
 	   char outdir[strlen(func_name) + 8];
 	   snprintf (outdir, strlen(func_name) + 8, "browse/%s", func_name);
-	   if (vftr_mpirank == 0) {
-	      mkdir (outdir, 0777);
-	   }
-#ifdef _MPI
-	   PMPI_Barrier(MPI_COMM_WORLD);
-#endif
 	   char html_filename[2*(strlen(func_name) + 8)];
 	   snprintf (html_filename, 2*(strlen(func_name) + 8) + vftr_count_digits_int(vftr_mpisize) + 1,
 		     "%s/%s_%d.html", outdir, func_name, vftr_mpirank);

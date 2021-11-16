@@ -9,6 +9,7 @@ enum origin_page {HOME, TREE, PROFILE};
 
 void vftr_browse_make_html_indent (FILE *fp, int n_indent_0, int n_indent_extra);
 void vftr_browse_print_css_header (FILE *fp, int n_chars_max, int n_final);
+void vftr_browse_create_stat_directories (display_function_t **display_functions, int i_func);
 void vftr_browse_print_stacktree_page (FILE *fp_out, bool is_empty, display_function_t **display_functions, int i_func, int n_funcs,
 			               stack_leaf_t *leaf, double *imbalances, double total_time,
 				       int n_chars_max, int n_final);

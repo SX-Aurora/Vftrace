@@ -1458,6 +1458,13 @@ void vftr_print_function_statistics_html (display_function_t **display_functions
             double *imbalances = (double*) malloc (vftr_func_table_size * sizeof(double));
             vftr_stack_compute_imbalances (imbalances, display_functions[i]->n_stack_indices,
                                                        display_functions[i]->stack_indices);
+            if (vftr_mpirank == 0) {
+               vftr_browse_create_stat_directories(display_functions, i);
+            }
+#ifdef _MPI
+            PMPI_Barrier(MPI_COMM_WORLD);
+#endif
+    
             if (print_this_rank && vftr_rank_needs_mpi_summary(vftr_mpirank)) {
 		stack_leaf_t *stack_tree = NULL;
                 vftr_create_stacktree (&stack_tree, display_functions[i]->n_stack_indices,
