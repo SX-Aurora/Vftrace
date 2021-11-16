@@ -1450,7 +1450,6 @@ void vftr_print_function_statistics_html (display_function_t **display_functions
       }
 
       for (int i = 0; i < n_display_funcs; i++) {
-         printf ("Check: %d %d %d\n", vftr_mpirank, print_this_rank, vftr_rank_needs_mpi_summary(vftr_mpirank));
          if (display_functions[i]->n_stack_indices == 0) {
             vftr_browse_print_stacktree_page (NULL, true, display_functions, i,
                                               n_display_funcs, NULL, NULL, 0.0, 0, 0);
