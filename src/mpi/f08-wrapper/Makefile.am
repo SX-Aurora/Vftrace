@@ -35,6 +35,7 @@ libvftr_f08mpiwrap_la_SOURCES += wait.F90 \
 # collectives #
 ###############
 libvftr_f08mpiwrap_la_SOURCES += barrier.F90 \
+				 ibarrier.F90 \
 				 bcast.F90 \
 				 gather.F90 \
 				 gatherv.F90 \

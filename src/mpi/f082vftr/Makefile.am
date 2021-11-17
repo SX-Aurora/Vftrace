@@ -73,6 +73,7 @@ libvftr_mpi_f082vftr_la_SOURCES += wait_f082vftr_f08i.F90 \
 # collectives #
 ###############
 libvftr_mpi_f082vftr_la_SOURCES += barrier_f082vftr.c \
+				   ibarrier_f082vftr.c \
                                    bcast_f082vftr.c \
                                    gather_f082vftr.c \
                                    gatherv_f082vftr.c \
@@ -84,6 +85,7 @@ libvftr_mpi_f082vftr_la_SOURCES += barrier_f082vftr.c \
                                    alltoallv_f082vftr.c \
                                    alltoallw_f082vftr.c 
 libvftr_mpi_f082vftr_la_SOURCES += barrier_f082vftr_f08i.F90 \
+				   ibarrier_f082vftr_f08i.F90 \
                                    bcast_f082vftr_f08i.F90 \
                                    gather_f082vftr_f08i.F90 \
                                    gatherv_f082vftr_f08i.F90 \
