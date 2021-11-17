@@ -23,7 +23,8 @@ libvftr_f08mpiwrap_la_SOURCES += send.F90 \
 ########
 # wait #
 ########
-libvftr_f08mpiwrap_la_SOURCES += wait.F90
+libvftr_f08mpiwrap_la_SOURCES += wait.F90 \
+				 waitany.F90
 
 ###############
 # collectives #
