@@ -1659,7 +1659,7 @@ void vftr_print_profile_line (FILE *fp_log, function_t *func, long long runtime_
 /**********************************************************************/
 
 ///void vftr_print_profile (FILE *fp_log, int *n_func_indices, long long time0,
-void vftr_print_profile (FILE *fp_log, function_t **sorted_func_table, int *n_func_indices, vftr_prof_times_t prof_times,
+void vftr_print_profile (FILE *fp_log, function_t **sorted_func_table, int n_func_indices, vftr_prof_times_t prof_times,
                          int n_display_functions, display_function_t **display_functions) {
     int table_width;
 
@@ -1709,7 +1709,7 @@ void vftr_print_profile (FILE *fp_log, function_t **sorted_func_table, int *n_fu
     //long long function_time = total_runtime_usec - sampling_overhead_time_usec;
     long long function_time = prof_times.t_usec[TOTAL_TIME] - prof_times.t_usec[SAMPLING_OVERHEAD];
     //*n_func_indices = vftr_count_func_indices_up_to_truncate (func_table, function_time);
-    int *func_indices = (int *)malloc (*n_func_indices * sizeof(int));
+    int *func_indices = (int *)malloc (n_func_indices * sizeof(int));
     ///vftr_fill_func_indices_up_to_truncate (func_table, function_time, func_indices);
     //vftr_fill_func_indices_up_to_truncate (func_table, function_time);
     vftr_fill_func_indices_up_to_truncate (sorted_func_table, function_time);
@@ -1733,7 +1733,7 @@ void vftr_print_profile (FILE *fp_log, function_t **sorted_func_table, int *n_fu
     column_t *prof_columns = (column_t*) malloc (n_columns * sizeof(column_t));
     //vftr_set_proftab_column_formats (func_table, function_time, sampling_overhead_time_usec * 1e-6,
     vftr_set_proftab_column_formats (sorted_func_table, function_time, prof_times.t_usec[SAMPLING_OVERHEAD] * 1e-6,
-				     *n_func_indices, func_indices, prof_columns);
+				     n_func_indices, func_indices, prof_columns);
 
     table_width = vftr_get_tablewidth_from_columns (prof_columns, n_columns, false);
 
@@ -1749,7 +1749,7 @@ void vftr_print_profile (FILE *fp_log, function_t **sorted_func_table, int *n_fu
     // Next: the numbers
 
     long long cumulative_time = 0;
-    for (int i = 0; i < *n_func_indices; i++) {
+    for (int i = 0; i < n_func_indices; i++) {
        int i_func = func_indices[i];
        if (sorted_func_table[i_func]->open) continue;
        int n_calls;
@@ -1789,7 +1789,7 @@ void vftr_print_profile (FILE *fp_log, function_t **sorted_func_table, int *n_fu
     //if (f_html != NULL) {
     //   cumulative_time = 0;
     //   bool mark_disp_f = false;
-    //   for (int i = 0; i < *n_func_indices; i++) {
+    //   for (int i = 0; i < n_func_indices; i++) {
     //      int i_func = func_indices[i];
     //      if (func_table[i_func]->open) continue;
     //      int n_calls;

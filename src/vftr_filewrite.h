@@ -127,10 +127,11 @@ void vftr_store_message_info(vftr_direction dir, int count, int type_idx,
 //				 long long  *sampling_overhead_time_usec, long long *mpi_overhead_time_usec,
 //			  	 long long  *total_overhead_time_usec, long long *application_time_usec);
 vftr_prof_times_t vftr_get_application_times_usec (long long time0, bool include_t[5]);
+int vftr_count_func_indices_up_to_truncate (function_t **func_table, long long runtime_usec);
 
 ///void vftr_print_profile (FILE *fp_log, int *n_func_indices, long long t0,
 ///                         int n_display_functions, display_function_t **display_functions);
-void vftr_print_profile (FILE *fp_log, function_t **sorted_func_table, int *n_func_indices,
+void vftr_print_profile (FILE *fp_log, function_t **sorted_func_table, int n_func_indices,
                          vftr_prof_times_t prof_times,
                          int n_display_functions, display_function_t **display_functions);
 
