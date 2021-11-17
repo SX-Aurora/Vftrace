@@ -377,7 +377,6 @@ void vftr_finalize() {
 
     if (vftr_profile_wanted) {
        if (vftr_do_stack_normalization) vftr_create_global_stack_strings ();
-       //vftr_print_profile (vftr_log, f_html, &ntop, vftr_get_runtime_usec(), n_display_functions, display_functions);
        vftr_print_profile (vftr_log, sorted_func_table, ntop, prof_times, n_display_functions, display_functions);
     }
 #ifdef _MPI

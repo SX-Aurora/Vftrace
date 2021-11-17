@@ -344,29 +344,18 @@ void vftr_browse_print_index_html (display_function_t **display_functions,
    vftr_browse_make_html_indent (fp, 0, 1);
    fprintf (fp, "<p>Number of MPI ranks: %d</p>\n", vftr_mpisize);
 
-///   long long total_runtime_usec, sampling_overhead_time_usec, total_overhead_time_usec;
-///   long long mpi_overhead_time_usec, application_runtime_usec;
-///   vftr_get_application_times_usec (0, &total_runtime_usec, &sampling_overhead_time_usec, &mpi_overhead_time_usec, 
-///			            &total_overhead_time_usec, &application_runtime_usec);
    vftr_browse_make_html_indent (fp, 0, 1);
-   //fprintf (fp, "<p>Total runtime: %8.2f seconds</p>\n", total_runtime_usec * 1e-6);
    fprintf (fp, "<p>Total runtime: %8.2f seconds</p>\n", prof_times.t_usec[TOTAL_TIME] * 1e-6);
    vftr_browse_make_html_indent (fp, 0, 1);
-   //fprintf (fp, "<p>Application time: %8.2f seconds</p>\n", application_runtime_usec * 1e-6);
    fprintf (fp, "<p>Application time: %8.2f seconds</p>\n", prof_times.t_usec[APP_TIME] * 1e-6);
    vftr_browse_make_html_indent (fp, 0, 1);
-   //fprintf (fp, "<p>Overhead: %8.2f seconds (%.2f%%)</p>\n", total_overhead_time_usec * 1e-6, total_overhead_time_usec / total_runtime_usec * 100.0);
    fprintf (fp, "<p>Overhead: %8.2f seconds (%.2f%%)</p>\n", prof_times.t_usec[TOTAL_OVERHEAD] * 1e-6, prof_times.t_usec[TOTAL_OVERHEAD] / prof_times.t_usec[ TOTAL_TIME]* 100.0);
    vftr_browse_make_html_indent (fp, 0, 1);
-//   fprintf (fp, "<p>Sampling overhead: %8.2f seconds (%.2f%%)</p>\n", sampling_overhead_time_usec * 1e-6,
-//	    sampling_overhead_time_usec / total_runtime_usec * 100.0);
    fprintf (fp, "<p>Sampling overhead: %8.2f seconds (%.2f%%)</p>\n",
             prof_times.t_usec[SAMPLING_OVERHEAD] * 1e-6,
 	    prof_times.t_usec[SAMPLING_OVERHEAD] / prof_times.t_usec[TOTAL_TIME] * 100.0);
 
    vftr_browse_make_html_indent (fp, 0, 1);
-///   fprintf (fp, "<p>MPI overhead: %8.2f seconds (%.2f%%)</p>\n", mpi_overhead_time_usec * 1e-6,
-///	   mpi_overhead_time_usec / total_runtime_usec * 100.0);
    fprintf (fp, "<p>MPI overhead: %8.2f seconds (%.2f%%)</p>\n", prof_times.t_usec[MPI_OVERHEAD] * 1e-6,
 	   prof_times.t_usec[MPI_OVERHEAD] / prof_times.t_usec[TOTAL_TIME] * 100.0);
    fprintf (fp, "</div>\n");
