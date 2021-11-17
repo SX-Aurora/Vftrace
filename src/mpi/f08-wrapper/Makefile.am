@@ -11,6 +11,7 @@ libvftr_f08mpiwrap_la_SOURCES += init.F90 \
 libvftr_f08mpiwrap_la_SOURCES += send.F90 \
 				 isend.F90 \
 				 bsend.F90 \
+				 ibsend.F90 \
 				 ssend.F90 \
 				 rsend.F90 \
 				 recv.F90 \
