@@ -15,11 +15,11 @@ libvftr_f08mpiwrap_la_SOURCES += send.F90 \
 				 rsend.F90 \
 				 recv.F90
 
-##########
-## tests #
-##########
-#libvftr_f08mpiwrap_la_SOURCES +=
-#
+#########
+# tests #
+#########
+libvftr_f08mpiwrap_la_SOURCES += test.F90
+
 ########
 # wait #
 ########
