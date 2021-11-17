@@ -1,7 +1,5 @@
 noinst_LTLIBRARIES = libvftr_mpi_f082vftr.la
 
-
-
 libvftr_mpi_f082vftr_la_SOURCES  = init_f082vftr.c \
                                    finalize_f082vftr.c
 libvftr_mpi_f082vftr_la_SOURCES += init_f082vftr_f08i.F90 \
@@ -11,18 +9,16 @@ libvftr_mpi_f082vftr_la_SOURCES += init_f082vftr_f08i.F90 \
 # point to point #
 ##################
 libvftr_mpi_f082vftr_la_SOURCES += send_f082vftr.c \
-				   isend_f082vftr.c \
+                                   isend_f082vftr.c \
                                    bsend_f082vftr.c \
-				   recv_f082vftr.c
-#                                   ssend_f082vftr.c \
-#                                   rsend_f082vftr.c 
+                                   rsend_f082vftr.c \
+                                   recv_f082vftr.c
 libvftr_mpi_f082vftr_la_SOURCES += send_f082vftr_f08i.F90 \
-				   isend_f082vftr_f08i.F90 \
+                                   isend_f082vftr_f08i.F90 \
                                    bsend_f082vftr_f08i.F90 \
-				   recv_f082vftr_f08i.F90
-#                                   ssend_f082vftr_f08i.F90 \
-#                                   rsend_f082vftr_f08i.F90
-#
+                                   rsend_f082vftr_f08i.F90 \
+                                   recv_f082vftr_f08i.F90
+
 ###################
 ## persistent p2p #
 ###################
