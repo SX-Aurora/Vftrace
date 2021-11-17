@@ -30,12 +30,12 @@ SUBROUTINE MPI_Sendrecv_f08(sendbuf, sendcount, sendtype, dest, sendtag, &
              MPI_Status
    IMPLICIT NONE
    INTEGER :: sendbuf
-   INTEGER, INTENT(IN) ::  sendcount
+   INTEGER, INTENT(IN) :: sendcount
    TYPE(MPI_Datatype), INTENT(IN) :: sendtype
-   INTEGER, INTENT(IN) ::  dest
-   INTEGER, INTENT(IN) ::  sendtag
+   INTEGER, INTENT(IN) :: dest
+   INTEGER, INTENT(IN) :: sendtag
    INTEGER :: recvbuf
-   INTEGER, INTENT(IN) ::  recvcount
+   INTEGER, INTENT(IN) :: recvcount
    TYPE(MPI_Datatype), INTENT(IN) :: recvtype
    INTEGER, INTENT(IN) ::  source
    INTEGER, INTENT(IN) ::  recvtag
