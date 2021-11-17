@@ -20,7 +20,8 @@ libvftr_mpi_f082vftr_la_SOURCES += send_f082vftr.c \
                                    irecv_f082vftr.c \
 				   sendrecv_f082vftr.c \
 				   sendrecv_replace_f082vftr.c \
-				   probe_f082vftr.c
+				   probe_f082vftr.c \
+				   iprobe_f082vftr.c
 libvftr_mpi_f082vftr_la_SOURCES += send_f082vftr_f08i.F90 \
                                    isend_f082vftr_f08i.F90 \
                                    bsend_f082vftr_f08i.F90 \
@@ -33,7 +34,8 @@ libvftr_mpi_f082vftr_la_SOURCES += send_f082vftr_f08i.F90 \
                                    irecv_f082vftr_f08i.F90 \
 				   sendrecv_f082vftr_f08i.F90 \
 				   sendrecv_replace_f082vftr_f08i.F90 \
-				   probe_f082vftr_f08i.F90
+				   probe_f082vftr_f08i.F90 \
+				   iprobe_f082vftr_f08i.F90
 
 ###################
 ## persistent p2p #
