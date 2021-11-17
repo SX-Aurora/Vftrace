@@ -15,6 +15,7 @@ libvftr_mpi_f082vftr_la_SOURCES += send_f082vftr.c \
 				   ssend_f082vftr.c \
 				   issend_f082vftr.c \
                                    rsend_f082vftr.c \
+                                   irsend_f082vftr.c \
                                    recv_f082vftr.c \
 				   sendrecv_f082vftr.c \
 				   sendrecv_replace_f082vftr.c
@@ -25,6 +26,7 @@ libvftr_mpi_f082vftr_la_SOURCES += send_f082vftr_f08i.F90 \
                                    ssend_f082vftr_f08i.F90 \
                                    issend_f082vftr_f08i.F90 \
                                    rsend_f082vftr_f08i.F90 \
+                                   irsend_f082vftr_f08i.F90 \
                                    recv_f082vftr_f08i.F90 \
 				   sendrecv_f082vftr_f08i.F90 \
 				   sendrecv_replace_f082vftr_f08i.F90
