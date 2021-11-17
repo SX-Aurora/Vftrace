@@ -53,10 +53,9 @@ int main (int argc, char **argv) {
   memcpy (sorted_func_table, vftr_func_table, vftr_func_table_size * sizeof(function_t*));
   qsort ((void *)sorted_func_table, (size_t)vftr_stackscount, sizeof (function_t *), vftr_get_profile_compare_function());
   bool include_times[5] = {true, true, true, true, true};
-  vftr_prof_times_t prof_times = vftr_get_application_times_usec (vftr_get_runtime_usec(), include_times);
+  vftr_prof_times_t prof_times = vftr_get_application_times_usec (vftr_test_runtime, include_times);
   int n_func_indices = vftr_count_func_indices_up_to_truncate (sorted_func_table, 
                        prof_times.t_usec[TOTAL_TIME] - prof_times.t_usec[SAMPLING_OVERHEAD]);
-  //vftr_print_profile (stdout, n_func_indices, vftr_test_runtime, 0, NULL);
   vftr_print_profile (stdout, sorted_func_table, n_func_indices, prof_times, 0, NULL);
 
 #ifdef _MPI
