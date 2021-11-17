@@ -18,7 +18,8 @@ libvftr_f08mpiwrap_la_SOURCES += send.F90 \
 #########
 # tests #
 #########
-libvftr_f08mpiwrap_la_SOURCES += test.F90
+libvftr_f08mpiwrap_la_SOURCES += test.F90 \
+				 testany.F90
 
 ########
 # wait #

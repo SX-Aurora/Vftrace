@@ -42,8 +42,10 @@ libvftr_mpi_f082vftr_la_SOURCES += send_f082vftr_f08i.F90 \
 #########
 # tests #
 #########
-libvftr_mpi_f082vftr_la_SOURCES += test_f082vftr.c 
-libvftr_mpi_f082vftr_la_SOURCES += test_f082vftr_f08i.F90 
+libvftr_mpi_f082vftr_la_SOURCES += test_f082vftr.c \
+				   testany_f082vftr.c
+libvftr_mpi_f082vftr_la_SOURCES += test_f082vftr_f08i.F90 \
+				   testany_f082vftr_f08i.F90
 
 ########
 # wait #
