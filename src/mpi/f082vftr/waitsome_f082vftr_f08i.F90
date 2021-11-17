@@ -40,7 +40,7 @@ MODULE vftr_mpi_waitsome_f082vftr_f08i
          INTEGER :: f_outcount
          INTEGER :: f_array_of_indices(*)
          TYPE(MPI_Status) :: f_array_of_statuses(*)
-         INTEGER f_error
+         INTEGER :: f_error
       END SUBROUTINE vftr_MPI_Waitsome_f082vftr
 
    END INTERFACE
