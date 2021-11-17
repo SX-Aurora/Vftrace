@@ -34,12 +34,12 @@ MODULE vftr_mpi_recv_f082vftr_f08i
          USE mpi_f08, &
             ONLY : MPI_Status
          IMPLICIT NONE
-         INTEGER buf
-         INTEGER count
-         INTEGER f_datatype
-         INTEGER source
-         INTEGER tag
-         INTEGER f_comm
+         INTEGER :: buf
+         INTEGER :: count
+         INTEGER :: f_datatype
+         INTEGER :: source
+         INTEGER :: tag
+         INTEGER :: f_comm
          TYPE(MPI_Status) :: f_status
          INTEGER :: f_error
       END SUBROUTINE vftr_MPI_Recv_f082vftr
