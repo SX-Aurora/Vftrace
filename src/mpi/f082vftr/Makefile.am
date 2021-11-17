@@ -56,11 +56,12 @@ libvftr_mpi_f082vftr_la_SOURCES += send_f082vftr_f08i.F90 \
 ########
 libvftr_mpi_f082vftr_la_SOURCES += wait_f082vftr.c \
                                    waitany_f082vftr.c \
-                                   waitsome_f082vftr.c 
-
+                                   waitsome_f082vftr.c \
+                                   waitall_f082vftr.c 
 libvftr_mpi_f082vftr_la_SOURCES += wait_f082vftr_f08i.F90 \
                                    waitany_f082vftr_f08i.F90 \
-                                   waitsome_f082vftr_f08i.F90 
+                                   waitsome_f082vftr_f08i.F90 \
+                                   waitall_f082vftr_f08i.F90
 
 #########################
 ## request deallocation #
