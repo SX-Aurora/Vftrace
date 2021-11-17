@@ -503,21 +503,23 @@ void vftr_get_stack_times (profdata_t prof_current, long long *t_excl_usec, long
 
 /**********************************************************************/
 
-void vftr_fill_func_indices_up_to_truncate (function_t **func_table, long long runtime_usec, int *indices) {
-	long long cumulative_time_usec = 0;
-	long long t_excl, t_incl;
-	int j = 0;
-	for (int i = 0; i < vftr_stackscount; i++) {
-		if (func_table[i] == NULL) continue;
-		profdata_t prof_current = func_table[i]->prof_current;
-		/* If function has a caller and has been called */
-		if (!(func_table[i]->return_to && prof_current.calls)) continue;
-		indices[j++] = i;
-		vftr_get_stack_times (prof_current, &t_excl, &t_incl);
-		cumulative_time_usec += t_excl;
-		double t_cum = (double)cumulative_time_usec / (double)runtime_usec * 100.0;
-		if (vftr_environment.prof_truncate->value && t_cum > vftr_environment.prof_truncate_cutoff->value) break;
-	}
+///void vftr_fill_func_indices_up_to_truncate (function_t **func_table, long long runtime_usec, int *indices) {
+void vftr_fill_func_indices_up_to_truncate (function_t **func_table, long long runtime_usec) {
+///void vftr_fill_func_indices_up_to_truncate () {
+   ///long long cumulative_time_usec = 0;
+   ///long long t_excl, t_incl;
+   ///int j = 0;
+   ///for (int i = 0; i < vftr_stackscount; i++) {
+   	////if (func_table[i] == NULL) continue;
+   	////profdata_t prof_current = func_table[i]->prof_current;
+   	/* If function has a caller and has been called */
+   	////if (!(func_table[i]->return_to && prof_current.calls)) continue;
+   	////indices[j++] = i;
+   	////vftr_get_stack_times (prof_current, &t_excl, &t_incl);
+   	////cumulative_time_usec += t_excl;
+   	////double t_cum = (double)cumulative_time_usec / (double)runtime_usec * 100.0;
+   	////if (vftr_environment.prof_truncate->value && t_cum > vftr_environment.prof_truncate_cutoff->value) break;
+   ///}
 }
 
 /**********************************************************************/
@@ -1443,10 +1445,11 @@ void vftr_print_function_statistics (FILE *fp_log, display_function_t **display_
 /**********************************************************************/
 
 void vftr_print_function_statistics_html (display_function_t **display_functions,
+                                          vftr_prof_times_t prof_times, 
                                           int n_display_funcs, bool print_this_rank) {
    if (vftr_environment.print_stack_profile->value) {
       if (vftr_mpirank == 0) {
-         vftr_browse_print_index_html (display_functions, n_display_funcs);
+         vftr_browse_print_index_html (display_functions, prof_times, n_display_funcs);
       }
 
       for (int i = 0; i < n_display_funcs; i++) {
@@ -1488,21 +1491,40 @@ void vftr_print_function_statistics_html (display_function_t **display_functions
 
 /**********************************************************************/
 
-void vftr_get_application_times_usec (long long time0, long long *total_runtime, long long *sampling_overhead_time,
-			  	 long long  *mpi_overhead_time, long long *total_overhead_time, long long *application_time) {
-   if (total_runtime != NULL) *total_runtime = time0 > 0 ? time0 : vftr_get_runtime_usec(); 
-   if (sampling_overhead_time != NULL) *sampling_overhead_time = vftr_overhead_usec;
-   if (total_overhead_time != NULL) *total_overhead_time = *sampling_overhead_time;
-#if defined(_MPI)
-   if (mpi_overhead_time != NULL) *mpi_overhead_time = vftr_mpi_overhead_usec;
-   if (total_overhead_time != NULL) 
-       *total_overhead_time = *sampling_overhead_time + *mpi_overhead_time;
-#else
-   if (mpi_overhead_time != NULL) *mpi_overhead_time = 0;
-#endif
-   if (application_time != NULL) *application_time = *total_runtime - *total_overhead_time;
-}
+///void vftr_get_application_times_usec (long long time0, long long *total_runtime, long long *sampling_overhead_time,
+///			  	 long long  *mpi_overhead_time, long long *total_overhead_time, long long *application_time) {
+///   if (total_runtime != NULL) *total_runtime = time0 > 0 ? time0 : vftr_get_runtime_usec(); 
+///   if (sampling_overhead_time != NULL) *sampling_overhead_time = vftr_overhead_usec;
+///   if (total_overhead_time != NULL) *total_overhead_time = *sampling_overhead_time;
+///#if defined(_MPI)
+///   if (mpi_overhead_time != NULL) *mpi_overhead_time = vftr_mpi_overhead_usec;
+///   if (total_overhead_time != NULL) 
+///       *total_overhead_time = *sampling_overhead_time + *mpi_overhead_time;
+///#else
+///   if (mpi_overhead_time != NULL) *mpi_overhead_time = 0;
+///#endif
+///   if (application_time != NULL) *application_time = *total_runtime - *total_overhead_time;
+///}
 
+/**********************************************************************/
+
+vftr_prof_times_t vftr_get_application_times_usec (long long time0, bool include_t[5]) {
+   vftr_prof_times_t prof_times;
+   for (int i = 0; i < 5; i++) {
+      prof_times.t_usec[i] = -1;
+   }
+   if (include_t[TOTAL_TIME]) prof_times.t_usec[TOTAL_TIME] = time0 > 0 ? time0 : vftr_get_runtime_usec();
+   if (include_t[SAMPLING_OVERHEAD]) prof_times.t_usec[SAMPLING_OVERHEAD] = vftr_overhead_usec;
+#if defined(_MPI)
+   if (include_t[MPI_OVERHEAD]) prof_times.t_usec[MPI_OVERHEAD] = vftr_mpi_overhead_usec;
+   if (include_t[TOTAL_OVERHEAD]) prof_times.t_usec[TOTAL_OVERHEAD] = prof_times.t_usec[SAMPLING_OVERHEAD] + prof_times.t_usec[MPI_OVERHEAD];
+#else
+   if (include_t[TOTAL_OVERHEAD]) prof_times.t_usec[TOTAL_OVERHEAD] = prof_times.t_usec[SAMPLING_OVERHEAD];
+   if (include_t[MPI_OVERHEAD]) prof_times.t_usec[MPI_OVERHEAD] = 0;
+#endif
+   if (include_t[APP_TIME]) prof_times.t_usec[APP_TIME] = prof_times.t_usec[TOTAL_TIME] - prof_times.t_usec[TOTAL_OVERHEAD];
+   return prof_times;
+}
 /**********************************************************************/
 
 void vftr_print_profile_summary (FILE *fp_log, function_t **func_table, double total_runtime, double application_runtime,
@@ -1636,13 +1658,14 @@ void vftr_print_profile_line (FILE *fp_log, function_t *func, long long runtime_
 
 /**********************************************************************/
 
-void vftr_print_profile (FILE *fp_log, int *n_func_indices, long long time0,
+///void vftr_print_profile (FILE *fp_log, int *n_func_indices, long long time0,
+void vftr_print_profile (FILE *fp_log, function_t **sorted_func_table, int *n_func_indices, vftr_prof_times_t prof_times,
                          int n_display_functions, display_function_t **display_functions) {
     int table_width;
 
     if (!vftr_stackscount) return;
 
-    function_t **func_table;
+    //function_t **func_table;
 
     for (int i = 0; i < vftr_scenario_expr_n_vars; i++) {
        vftr_scenario_expr_counter_values[i] = 0.0;
@@ -1652,20 +1675,26 @@ void vftr_print_profile (FILE *fp_log, int *n_func_indices, long long time0,
        vftr_has_remark[i] = false; 
     }
 
-    func_table = (function_t**) malloc (vftr_func_table_size * sizeof(function_t*));
+    //func_table = (function_t**) malloc (vftr_func_table_size * sizeof(function_t*));
     // Create a local copy of the global function table to sort it.
-    memcpy (func_table, vftr_func_table, vftr_func_table_size * sizeof(function_t*));
+    //memcpy (func_table, vftr_func_table, vftr_func_table_size * sizeof(function_t*));
 
-    qsort ((void *)func_table, (size_t)vftr_stackscount, sizeof (function_t *), vftr_get_profile_compare_function());
+    //qsort ((void *)func_table, (size_t)vftr_stackscount, sizeof (function_t *), vftr_get_profile_compare_function());
 
-    long long total_runtime_usec, sampling_overhead_time_usec,
-	      total_overhead_time_usec, mpi_overhead_time_usec, application_runtime_usec;
-    vftr_get_application_times_usec (time0, &total_runtime_usec, &sampling_overhead_time_usec, &mpi_overhead_time_usec, 
-				     &total_overhead_time_usec, &application_runtime_usec);
+    ///long long total_runtime_usec, sampling_overhead_time_usec,
+    ///	      total_overhead_time_usec, mpi_overhead_time_usec, application_runtime_usec;
+    ///vftr_get_application_times_usec (time0, &total_runtime_usec, &sampling_overhead_time_usec, &mpi_overhead_time_usec, 
+    ///				     &total_overhead_time_usec, &application_runtime_usec);
 
-    vftr_print_profile_summary (fp_log, func_table, total_runtime_usec * 1e-6,
-				application_runtime_usec * 1e-6, total_overhead_time_usec * 1e-6,
-				sampling_overhead_time_usec * 1e-6, mpi_overhead_time_usec * 1e-6);
+///    vftr_print_profile_summary (fp_log, func_table, total_runtime_usec * 1e-6,
+///				application_runtime_usec * 1e-6, total_overhead_time_usec * 1e-6,
+///				sampling_overhead_time_usec * 1e-6, mpi_overhead_time_usec * 1e-6);
+//
+    vftr_print_profile_summary (fp_log, sorted_func_table, prof_times.t_usec[TOTAL_TIME] *1e-6,
+                                prof_times.t_usec[APP_TIME] * 1e-6,
+                                prof_times.t_usec[TOTAL_OVERHEAD] * 1e-6,
+                                prof_times.t_usec[SAMPLING_OVERHEAD] * 1e-6,
+                                prof_times.t_usec[MPI_OVERHEAD] * 1e-6);
 
     fprintf (fp_log, "Runtime profile");
     if (vftr_mpisize > 1) {
@@ -1677,10 +1706,13 @@ void vftr_print_profile (FILE *fp_log, int *n_func_indices, long long time0,
     fprintf (fp_log, ", %s", vftr_profile_sorting_method_string());
     fprintf (fp_log, " :\n\n");
 
-    long long function_time = total_runtime_usec - sampling_overhead_time_usec;
-    *n_func_indices = vftr_count_func_indices_up_to_truncate (func_table, function_time);
+    //long long function_time = total_runtime_usec - sampling_overhead_time_usec;
+    long long function_time = prof_times.t_usec[TOTAL_TIME] - prof_times.t_usec[SAMPLING_OVERHEAD];
+    //*n_func_indices = vftr_count_func_indices_up_to_truncate (func_table, function_time);
     int *func_indices = (int *)malloc (*n_func_indices * sizeof(int));
-    vftr_fill_func_indices_up_to_truncate (func_table, function_time, func_indices);
+    ///vftr_fill_func_indices_up_to_truncate (func_table, function_time, func_indices);
+    //vftr_fill_func_indices_up_to_truncate (func_table, function_time);
+    vftr_fill_func_indices_up_to_truncate (sorted_func_table, function_time);
 
     //// Number of columns. Default: nCalls, exclusive & inclusive time, %abs, %cum,
     //// function & caller name and stack ID (i.e. 8 columns). 
@@ -1699,7 +1731,8 @@ void vftr_print_profile (FILE *fp_log, int *n_func_indices, long long time0,
     int n_columns = vftr_env_compute_n_columns ();
 
     column_t *prof_columns = (column_t*) malloc (n_columns * sizeof(column_t));
-    vftr_set_proftab_column_formats (func_table, function_time, sampling_overhead_time_usec * 1e-6,
+    //vftr_set_proftab_column_formats (func_table, function_time, sampling_overhead_time_usec * 1e-6,
+    vftr_set_proftab_column_formats (sorted_func_table, function_time, prof_times.t_usec[SAMPLING_OVERHEAD] * 1e-6,
 				     *n_func_indices, func_indices, prof_columns);
 
     table_width = vftr_get_tablewidth_from_columns (prof_columns, n_columns, false);
@@ -1718,17 +1751,21 @@ void vftr_print_profile (FILE *fp_log, int *n_func_indices, long long time0,
     long long cumulative_time = 0;
     for (int i = 0; i < *n_func_indices; i++) {
        int i_func = func_indices[i];
-       if (func_table[i_func]->open) continue;
+       if (sorted_func_table[i_func]->open) continue;
        int n_calls;
        long long t_excl, t_incl;
        double t_overhead;
-       vftr_compute_line_content (func_table[i_func], &n_calls, &t_excl, &t_incl, &t_overhead);
+       vftr_compute_line_content (sorted_func_table[i_func], &n_calls, &t_excl, &t_incl, &t_overhead);
        remarks_t *remarks = NULL;
-       vftr_make_remarks (func_table[i_func], &remarks);
+       vftr_make_remarks (sorted_func_table[i_func], &remarks);
        cumulative_time += t_excl;
 
-       vftr_print_profile_line (fp_log, func_table[i_func], function_time, sampling_overhead_time_usec * 1e-6,
-                                n_calls, t_excl, t_incl, cumulative_time, t_overhead, remarks, prof_columns);
+       ///vftr_print_profile_line (fp_log, func_table[i_func], function_time, sampling_overhead_time_usec * 1e-6,
+       ///                         n_calls, t_excl, t_incl, cumulative_time, t_overhead, remarks, prof_columns);
+       vftr_print_profile_line (fp_log, sorted_func_table[i_func], function_time,
+                                prof_times.t_usec[SAMPLING_OVERHEAD] * 1e-6,
+                                n_calls, t_excl, t_incl, cumulative_time, t_overhead,
+                                remarks, prof_columns);
 
        ///if (f_html != NULL) {
        ///   bool mark_disp_f = false;
@@ -1784,64 +1821,80 @@ void vftr_print_profile (FILE *fp_log, int *n_func_indices, long long time0,
     vftr_print_remark_list (fp_log);
     fflush(fp_log);
     
-    free (func_table);
+    //free (sorted_func_table);
     free (func_indices);
 }
 
 /**********************************************************************/
 
-void vftr_print_html_profile (FILE *f_html, const int n_func_indices, 
+void vftr_print_html_profile (FILE *f_html, function_t **sorted_func_table,
+                              const int n_func_indices, vftr_prof_times_t prof_times, 
                               const int n_display_functions, display_function_t **display_functions,
                               long long time0) {
     vftr_browse_create_profile_header (f_html); 
 
-    // Create a local copy of the global function table to sort it.
-    function_t **func_table = (function_t**) malloc (vftr_func_table_size * sizeof(function_t*));
-    memcpy (func_table, vftr_func_table, vftr_func_table_size * sizeof(function_t*));
-    qsort ((void *)func_table, (size_t)vftr_stackscount, sizeof (function_t *), vftr_get_profile_compare_function());
+    /// Create a local copy of the global function table to sort it.
+    ///function_t **func_table = (function_t**) malloc (vftr_func_table_size * sizeof(function_t*));
+    ///memcpy (func_table, vftr_func_table, vftr_func_table_size * sizeof(function_t*));
+    ///qsort ((void *)func_table, (size_t)vftr_stackscount, sizeof (function_t *), vftr_get_profile_compare_function());
+    ///long long total_runtime_usec, sampling_overhead_time_usec;
+    ///vftr_get_application_times_usec (time0, &total_runtime_usec, &sampling_overhead_time_usec,
+    ///                                 NULL, NULL, NULL);
 
-    long long total_runtime_usec, sampling_overhead_time_usec;
-    vftr_get_application_times_usec (time0, &total_runtime_usec, &sampling_overhead_time_usec,
-                                     NULL, NULL, NULL);
-
-    long long function_time = total_runtime_usec - sampling_overhead_time_usec;
+    //long long function_time = total_runtime_usec - sampling_overhead_time_usec;
+    long long function_time = prof_times.t_usec[TOTAL_TIME] - prof_times.t_usec[SAMPLING_OVERHEAD];
+    printf ("n_func_indices: %d\n", n_func_indices);
+    fflush(stdout);
     int *func_indices = (int *)malloc (n_func_indices * sizeof(int));
-    vftr_fill_func_indices_up_to_truncate (func_table, function_time, func_indices);
+    ////vftr_fill_func_indices_up_to_truncate (func_table, function_time, func_indices);
+    vftr_fill_func_indices_up_to_truncate (sorted_func_table, function_time);
+    //vftr_fill_func_indices_up_to_truncate ();
+    //return;
 
-    int n_columns = vftr_env_compute_n_columns();
+    ////int n_columns = vftr_env_compute_n_columns();
+    int n_columns = 9;
+    //return;
+    printf ("FOO 1: %d %d\n", vftr_mpirank, sizeof(column_t));
+    fflush(stdout);
     column_t *prof_columns = (column_t*) malloc (n_columns * sizeof(column_t));
-    vftr_set_proftab_column_formats (func_table, function_time, sampling_overhead_time_usec * 1e-6,
-				     n_func_indices, func_indices, prof_columns);
+    //column_t *prof_columns;
+    //long long *foo = (long long *) malloc (n_columns * sizeof(long long));
+    printf ("FOO 2: %d\n", vftr_mpirank);
+    fflush(stdout);
+    //column_t *prof_columns = (column_t*) malloc (n_columns * sizeof(column_t));
+    //vftr_set_proftab_column_formats (func_table, function_time, sampling_overhead_time_usec * 1e-6,
+    //    			     n_func_indices, func_indices, prof_columns);
+    return;
 
-    long long cumulative_time = 0;
-    bool mark_disp_f = false;
-    for (int i = 0; i < n_func_indices; i++) {
-       int i_func = func_indices[i];
-       if (func_table[i_func]->open) continue;
-       int n_calls;
-       long long t_excl, t_incl;
-       double t_overhead;
-       vftr_compute_line_content (func_table[i_func], &n_calls, &t_excl, &t_incl, &t_overhead);
-       cumulative_time += t_excl;
-       for (int i_disp = 0; i_disp < n_display_functions; i_disp++) {
-          if ((mark_disp_f = !strcmp(func_table[i_func]->name, display_functions[i_disp]->func_name))) break;
-       }
-       if (func_table[i_func]->return_to != NULL) {
-          vftr_browse_print_table_line (f_html, func_table[i_func]->gid,
-        			        function_time, sampling_overhead_time_usec * 1e-6,
-        				n_calls, t_excl, t_incl, cumulative_time, t_overhead,
-        			        func_table[i_func]->name, func_table[i_func]->return_to->name, prof_columns, mark_disp_f);
-       } else {
-          vftr_browse_print_table_line (f_html, func_table[i_func]->gid,
-        			        function_time, sampling_overhead_time_usec * 1e-6,
-        				n_calls, t_excl, t_incl, cumulative_time, t_overhead,
-        			        func_table[i_func]->name, NULL, prof_columns, mark_disp_f);
-       }
-    }
-    vftr_browse_finalize_table(f_html);
+    ////long long cumulative_time = 0;
+    ////bool mark_disp_f = false;
+    ////for (int i = 0; i < n_func_indices; i++) {
+    ////   int i_func = func_indices[i];
+    ////   if (func_table[i_func]->open) continue;
+    ////   int n_calls;
+    ////   long long t_excl, t_incl;
+    ////   double t_overhead;
+    ////   vftr_compute_line_content (func_table[i_func], &n_calls, &t_excl, &t_incl, &t_overhead);
+    ////   cumulative_time += t_excl;
+    ////   for (int i_disp = 0; i_disp < n_display_functions; i_disp++) {
+    ////      if ((mark_disp_f = !strcmp(func_table[i_func]->name, display_functions[i_disp]->func_name))) break;
+    ////   }
+    ////   if (func_table[i_func]->return_to != NULL) {
+    ////      vftr_browse_print_table_line (f_html, func_table[i_func]->gid,
+    ////    			        function_time, sampling_overhead_time_usec * 1e-6,
+    ////    				n_calls, t_excl, t_incl, cumulative_time, t_overhead,
+    ////    			        func_table[i_func]->name, func_table[i_func]->return_to->name, prof_columns, mark_disp_f);
+    ////   } else {
+    ////      vftr_browse_print_table_line (f_html, func_table[i_func]->gid,
+    ////    			        function_time, sampling_overhead_time_usec * 1e-6,
+    ////    				n_calls, t_excl, t_incl, cumulative_time, t_overhead,
+    ////    			        func_table[i_func]->name, NULL, prof_columns, mark_disp_f);
+    ////   }
+    ////}
+    ////vftr_browse_finalize_table(f_html);
 
-    free (func_table);
-    free (func_indices);
+    ////free (func_table);
+    ////free (func_indices);
 }
 
 /**********************************************************************/

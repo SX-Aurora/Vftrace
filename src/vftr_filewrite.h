@@ -88,6 +88,18 @@ typedef struct display_function {
     bool properly_terminated;
 } display_function_t;
 
+typedef struct vftr_prof_times {
+   long long t_usec[5];
+   //long long total_runtime_usec;
+   //long long sampling_overhead_time_usec;
+   //long long total_overhead_time_usec;
+   //long long mpi_overhead_time_usec;
+   //long long application_runtime_usec;
+} vftr_prof_times_t;
+
+long long vftr_prof_times[5];
+enum log_time_type {TOTAL_TIME, SAMPLING_OVERHEAD, MPI_OVERHEAD, TOTAL_OVERHEAD, APP_TIME};
+
 display_function_t **vftr_create_display_functions (bool display_sync_time, int *n_display_funcs, bool use_all);
 
 enum sample_id {SID_ENTRY, SID_EXIT, SID_MESSAGE};
@@ -111,20 +123,32 @@ void vftr_store_message_info(vftr_direction dir, int count, int type_idx,
                              long long tstart, long long tend,
                              int callingStackID);
 
-void vftr_get_application_times_usec (long long time0, long long  *total_runtime_usec,
-				 long long  *sampling_overhead_time_usec, long long *mpi_overhead_time_usec,
-			  	 long long  *total_overhead_time_usec, long long *application_time_usec);
-void vftr_print_profile (FILE *fp_log, int *n_func_indices, long long t0,
+//void vftr_get_application_times_usec (long long time0, long long  *total_runtime_usec,
+//				 long long  *sampling_overhead_time_usec, long long *mpi_overhead_time_usec,
+//			  	 long long  *total_overhead_time_usec, long long *application_time_usec);
+vftr_prof_times_t vftr_get_application_times_usec (long long time0, bool include_t[5]);
+
+///void vftr_print_profile (FILE *fp_log, int *n_func_indices, long long t0,
+///                         int n_display_functions, display_function_t **display_functions);
+void vftr_print_profile (FILE *fp_log, function_t **sorted_func_table, int *n_func_indices,
+                         vftr_prof_times_t prof_times,
                          int n_display_functions, display_function_t **display_functions);
-void vftr_print_html_profile (FILE *f_html, const int n_func_indices,
+
+//void vftr_print_html_profile (FILE *f_html, const int n_func_indices,
+//                              const int n_display_functions, display_function_t **display_functions,
+//                              const long long time0);
+
+void vftr_print_html_profile (FILE *f_html, function_t **sorted_func_table,
+                              const int n_func_indices, vftr_prof_times_t prof_times, 
                               const int n_display_functions, display_function_t **display_functions,
-                              const long long time0);
+                              long long time0);
+
 char *vftr_get_program_path ();
 char *vftr_create_logfile_name (int mpi_rank, int mpi_size, char *suffix);
 
 void vftr_print_function_statistics (FILE *fp_log, display_function_t **display_functions, int n_display_functions, bool print_this_rank);
 
-void vftr_print_function_statistics_html (display_function_t **display_functions, int n_display_functions, bool print_this_rank);
+void vftr_print_function_statistics_html (display_function_t **display_functions, vftr_prof_times_t prof_times, int n_display_functions, bool print_this_rank);
 void vftr_memory_unit(double *value, char **unit);
 char *vftr_memory_unit_string (double value, int n_decimal_places);
 void vftr_time_unit (double *value, char **unit, bool for_html);

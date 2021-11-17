@@ -14,7 +14,9 @@ void vftr_browse_print_stacktree_page (FILE *fp_out, bool is_empty, display_func
 			               stack_leaf_t *leaf, double *imbalances, double total_time,
 				       int n_chars_max, int n_final);
 void vftr_browse_print_navigation_bars (FILE *fp, display_function_t **display_functions, int i_func, int n_funcs, enum origin_page op);
-void vftr_browse_print_index_html (display_function_t **display_functions, int n_funcs);
+//void vftr_browse_print_index_html (display_function_t **display_functions, int n_funcs);
+void vftr_browse_print_index_html (display_function_t **display_functions,
+                                   vftr_prof_times_t prof_times, int n_funcs);
 
 void vftr_browse_create_directory ();
 FILE *vftr_browse_init_profile_table (display_function_t **display_functions, int n_display_functions);

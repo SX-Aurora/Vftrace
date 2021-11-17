@@ -170,7 +170,7 @@ void vftr_region_entry (const char *s, void *addr, bool isPrecise){
         vftr_write_stack_ascii (vftr_log, wtime, func, "profile before call to", 0);
         vftr_profile_wanted = true;
         int ntop;
-        vftr_print_profile (vftr_log, &ntop, timer, 0, NULL);
+        //vftr_print_profile (vftr_log, &ntop, timer, 0, NULL);
         vftr_print_local_stacklist (vftr_func_table, vftr_log, ntop);
     }
 
@@ -348,7 +348,7 @@ void vftr_region_exit() {
         vftr_write_stack_ascii (vftr_log, wtime, func, "profile at exit from", timeToSample);
         vftr_profile_wanted = true;
         int ntop;
-        vftr_print_profile (stdout, &ntop, timer, 0, NULL);
+        //vftr_print_profile (stdout, &ntop, timer, 0, NULL);
         vftr_print_local_stacklist( vftr_func_table, stdout, ntop );
     }
 
