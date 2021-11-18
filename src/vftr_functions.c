@@ -253,6 +253,15 @@ void vftr_reset_counts (function_t *func) {
 
 /**********************************************************************/
 
+function_t **vftr_get_sorted_func_table () {
+    function_t **sorted_func_table = (function_t**) malloc (vftr_func_table_size * sizeof(function_t*));
+    memcpy (sorted_func_table, vftr_func_table, vftr_func_table_size * sizeof(function_t*));
+    qsort ((void *)sorted_func_table, (size_t)vftr_stackscount, sizeof (function_t *), vftr_get_profile_compare_function());
+    return sorted_func_table;
+}
+
+/**********************************************************************/
+
 void vftr_find_function_in_table (char *func_name, int **indices, int *n_indices, bool to_lower_case) {
 	*n_indices = 0;
         bool equal;

@@ -41,7 +41,6 @@
 #include "vftr_hooks.h"
 #include "vftr_timer.h"
 #include "vftr_functions.h"
-#include "vftr_sorting.h"
 #include "vftr_mallinfo.h"
 #include "vftr_allocate.h"
 
@@ -367,11 +366,8 @@ void vftr_finalize() {
        }
     }
 
-    function_t **sorted_func_table = (function_t**) malloc (vftr_func_table_size * sizeof(function_t*));
-    memcpy (sorted_func_table, vftr_func_table, vftr_func_table_size * sizeof(function_t*));
-    qsort ((void *)sorted_func_table, (size_t)vftr_stackscount, sizeof (function_t *), vftr_get_profile_compare_function());
-    bool include_times[5] = {true, true, true, true, true};
-    vftr_prof_times_t prof_times = vftr_get_application_times_usec (vftr_get_runtime_usec(), include_times);
+    function_t **sorted_func_table = vftr_get_sorted_func_table ();
+    vftr_prof_times_t prof_times = vftr_get_application_times_all (vftr_get_runtime_usec());
     ntop = vftr_count_func_indices_up_to_truncate (sorted_func_table,
                       prof_times.t_usec[TOTAL_TIME] - prof_times.t_usec[SAMPLING_OVERHEAD]);
 

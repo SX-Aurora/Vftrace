@@ -6,6 +6,8 @@
 #include <stdint.h>
 #include <stdbool.h>
 
+#include "vftr_sorting.h"
+
 typedef struct memProf {
    long long mem_entry;
    long long mem_exit;
@@ -62,6 +64,7 @@ typedef struct Function {
 void vftr_find_function_in_table (char *func_name, int **indices, int *n_indices, bool to_lower_case);
 void vftr_find_function_in_stack (char *func_name, int **indices, int *n_indices, bool to_lower_case);
 
+function_t **vftr_get_sorted_func_table ();
 // Remove everything in front of (and including) _MP_ for all the symbols in
 // the table, if necessary.
 void vftr_strip_all_module_names ();

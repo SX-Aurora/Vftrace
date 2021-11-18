@@ -5,7 +5,6 @@
 #include "vftr_filewrite.h"
 #include "vftr_stacks.h"
 #include "vftr_hooks.h"
-#include "vftr_sorting.h"
 #include "vftr_environment.h"
 #ifdef _MPI
 #include <mpi.h>
@@ -49,11 +48,14 @@ int main (int argc, char **argv) {
 #ifdef _MPI
   vftr_mpi_overhead_usec = 0;
 #endif
-  function_t **sorted_func_table = (function_t**) malloc (vftr_func_table_size * sizeof(function_t*));
-  memcpy (sorted_func_table, vftr_func_table, vftr_func_table_size * sizeof(function_t*));
-  qsort ((void *)sorted_func_table, (size_t)vftr_stackscount, sizeof (function_t *), vftr_get_profile_compare_function());
-  bool include_times[5] = {true, true, true, true, true};
-  vftr_prof_times_t prof_times = vftr_get_application_times_usec (vftr_test_runtime, include_times);
+  //function_t **sorted_func_table = (function_t**) malloc (vftr_func_table_size * sizeof(function_t*));
+  //memcpy (sorted_func_table, vftr_func_table, vftr_func_table_size * sizeof(function_t*));
+  //qsort ((void *)sorted_func_table, (size_t)vftr_stackscount, sizeof (function_t *), vftr_get_profile_compare_function());
+  function_t **sorted_func_table = vftr_get_sorted_func_table();
+  //bool include_times[5] = {true, true, true, true, true};
+  //vftr_prof_times_t prof_times = vftr_get_application_times_usec (vftr_test_runtime, include_times);
+  vftr_prof_times_t prof_times = vftr_get_application_times_all (vftr_test_runtime);
+  printf ("vftr_test_runtime: %lld\n", prof_times.t_usec[TOTAL_TIME]);
   int n_func_indices = vftr_count_func_indices_up_to_truncate (sorted_func_table, 
                        prof_times.t_usec[TOTAL_TIME] - prof_times.t_usec[SAMPLING_OVERHEAD]);
   vftr_print_profile (stdout, sorted_func_table, n_func_indices, prof_times, 0, NULL);

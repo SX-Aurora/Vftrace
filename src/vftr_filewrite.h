@@ -117,7 +117,8 @@ void vftr_store_message_info(vftr_direction dir, int count, int type_idx,
                              long long tstart, long long tend,
                              int callingStackID);
 
-vftr_prof_times_t vftr_get_application_times_usec (long long time0, bool include_t[5]);
+vftr_prof_times_t vftr_get_application_times (long long time0, bool include_t[5]);
+vftr_prof_times_t vftr_get_application_times_all (long long time0);
 int vftr_count_func_indices_up_to_truncate (function_t **func_table, long long runtime_usec);
 
 void vftr_print_profile (FILE *fp_log, function_t **sorted_func_table, int n_func_indices,

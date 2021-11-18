@@ -1471,7 +1471,7 @@ void vftr_print_function_statistics_html (display_function_t **display_functions
 
 /**********************************************************************/
 
-vftr_prof_times_t vftr_get_application_times_usec (long long time0, bool include_t[5]) {
+vftr_prof_times_t vftr_get_application_times (long long time0, bool include_t[5]) {
    vftr_prof_times_t prof_times;
    for (int i = 0; i < 5; i++) {
       prof_times.t_usec[i] = -1;
@@ -1493,6 +1493,14 @@ vftr_prof_times_t vftr_get_application_times_usec (long long time0, bool include
    }
    return prof_times;
 }
+
+/**********************************************************************/
+
+vftr_prof_times_t vftr_get_application_times_all (long long time0) {
+  bool include_times[5] = {true, true, true, true, true};
+  return vftr_get_application_times (time0, include_times);
+}
+
 /**********************************************************************/
 
 void vftr_print_profile_summary (FILE *fp_log, function_t **func_table, double total_runtime, double application_runtime,
