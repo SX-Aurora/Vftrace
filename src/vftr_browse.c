@@ -345,19 +345,19 @@ void vftr_browse_print_index_html (display_function_t **display_functions,
    fprintf (fp, "<p>Number of MPI ranks: %d</p>\n", vftr_mpisize);
 
    vftr_browse_make_html_indent (fp, 0, 1);
-   fprintf (fp, "<p>Total runtime: %8.2f seconds</p>\n", prof_times.t_usec[TOTAL_TIME] * 1e-6);
+   fprintf (fp, "<p>Total runtime: %8.2f seconds</p>\n", prof_times.t_sec[TOTAL_TIME]);
    vftr_browse_make_html_indent (fp, 0, 1);
-   fprintf (fp, "<p>Application time: %8.2f seconds</p>\n", prof_times.t_usec[APP_TIME] * 1e-6);
+   fprintf (fp, "<p>Application time: %8.2f seconds</p>\n", prof_times.t_sec[APP_TIME]);
    vftr_browse_make_html_indent (fp, 0, 1);
-   fprintf (fp, "<p>Overhead: %8.2f seconds (%.2f%%)</p>\n", prof_times.t_usec[TOTAL_OVERHEAD] * 1e-6, prof_times.t_usec[TOTAL_OVERHEAD] / prof_times.t_usec[ TOTAL_TIME]* 100.0);
+   fprintf (fp, "<p>Overhead: %8.2f seconds (%.2f%%)</p>\n", prof_times.t_sec[TOTAL_OVERHEAD], prof_times.t_sec[TOTAL_OVERHEAD] / prof_times.t_sec[ TOTAL_TIME]* 100.0);
    vftr_browse_make_html_indent (fp, 0, 1);
    fprintf (fp, "<p>Sampling overhead: %8.2f seconds (%.2f%%)</p>\n",
-            prof_times.t_usec[SAMPLING_OVERHEAD] * 1e-6,
-	    prof_times.t_usec[SAMPLING_OVERHEAD] / prof_times.t_usec[TOTAL_TIME] * 100.0);
+            prof_times.t_sec[SAMPLING_OVERHEAD],
+	    prof_times.t_sec[SAMPLING_OVERHEAD] / prof_times.t_sec[TOTAL_TIME] * 100.0);
 
    vftr_browse_make_html_indent (fp, 0, 1);
-   fprintf (fp, "<p>MPI overhead: %8.2f seconds (%.2f%%)</p>\n", prof_times.t_usec[MPI_OVERHEAD] * 1e-6,
-	   prof_times.t_usec[MPI_OVERHEAD] / prof_times.t_usec[TOTAL_TIME] * 100.0);
+   fprintf (fp, "<p>MPI overhead: %8.2f seconds (%.2f%%)</p>\n", prof_times.t_sec[MPI_OVERHEAD],
+	   prof_times.t_sec[MPI_OVERHEAD] / prof_times.t_sec[TOTAL_TIME] * 100.0);
    fprintf (fp, "</div>\n");
    fclose (fp); 
 }

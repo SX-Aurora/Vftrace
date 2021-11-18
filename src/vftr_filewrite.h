@@ -91,6 +91,7 @@ typedef struct display_function {
 enum log_time_type {TOTAL_TIME, SAMPLING_OVERHEAD, MPI_OVERHEAD, TOTAL_OVERHEAD, APP_TIME};
 typedef struct vftr_prof_times {
    long long t_usec[5];
+   long long t_sec[5];
 } vftr_prof_times_t;
 
 display_function_t **vftr_create_display_functions (bool display_sync_time, int *n_display_funcs, bool use_all);

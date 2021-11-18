@@ -1475,6 +1475,7 @@ vftr_prof_times_t vftr_get_application_times_usec (long long time0, bool include
    vftr_prof_times_t prof_times;
    for (int i = 0; i < 5; i++) {
       prof_times.t_usec[i] = -1;
+      prof_times.t_sec[i] = -1.0;
    }
    if (include_t[TOTAL_TIME]) prof_times.t_usec[TOTAL_TIME] = time0 > 0 ? time0 : vftr_get_runtime_usec();
    if (include_t[SAMPLING_OVERHEAD]) prof_times.t_usec[SAMPLING_OVERHEAD] = vftr_overhead_usec;
@@ -1486,6 +1487,10 @@ vftr_prof_times_t vftr_get_application_times_usec (long long time0, bool include
    if (include_t[MPI_OVERHEAD]) prof_times.t_usec[MPI_OVERHEAD] = 0;
 #endif
    if (include_t[APP_TIME]) prof_times.t_usec[APP_TIME] = prof_times.t_usec[TOTAL_TIME] - prof_times.t_usec[TOTAL_OVERHEAD];
+
+   for (int i = 0; i < 5; i++) {
+      prof_times.t_sec[i] = prof_times.t_usec[i] * 1e-6;
+   }
    return prof_times;
 }
 /**********************************************************************/
@@ -1635,11 +1640,11 @@ void vftr_print_profile (FILE *fp_log, function_t **sorted_func_table, int n_fun
        vftr_has_remark[i] = false; 
     }
 
-    vftr_print_profile_summary (fp_log, sorted_func_table, prof_times.t_usec[TOTAL_TIME] *1e-6,
-                                prof_times.t_usec[APP_TIME] * 1e-6,
-                                prof_times.t_usec[TOTAL_OVERHEAD] * 1e-6,
-                                prof_times.t_usec[SAMPLING_OVERHEAD] * 1e-6,
-                                prof_times.t_usec[MPI_OVERHEAD] * 1e-6);
+    vftr_print_profile_summary (fp_log, sorted_func_table, prof_times.t_sec[TOTAL_TIME],
+                                prof_times.t_sec[APP_TIME],
+                                prof_times.t_sec[TOTAL_OVERHEAD],
+                                prof_times.t_sec[SAMPLING_OVERHEAD],
+                                prof_times.t_sec[MPI_OVERHEAD]);
 
     fprintf (fp_log, "Runtime profile");
     if (vftr_mpisize > 1) {
@@ -1657,7 +1662,7 @@ void vftr_print_profile (FILE *fp_log, function_t **sorted_func_table, int n_fun
 
     int n_columns = vftr_env_compute_n_columns ();
     column_t *prof_columns = (column_t*) malloc (n_columns * sizeof(column_t));
-    vftr_set_proftab_column_formats (sorted_func_table, function_time, prof_times.t_usec[SAMPLING_OVERHEAD] * 1e-6,
+    vftr_set_proftab_column_formats (sorted_func_table, function_time, prof_times.t_sec[SAMPLING_OVERHEAD],
 				     n_func_indices, func_indices, prof_columns);
 
     table_width = vftr_get_tablewidth_from_columns (prof_columns, n_columns, false);
@@ -1682,7 +1687,7 @@ void vftr_print_profile (FILE *fp_log, function_t **sorted_func_table, int n_fun
        cumulative_time += t_excl;
 
        vftr_print_profile_line (fp_log, sorted_func_table[i_func], function_time,
-                                prof_times.t_usec[SAMPLING_OVERHEAD] * 1e-6,
+                                prof_times.t_sec[SAMPLING_OVERHEAD],
                                 n_calls, t_excl, t_incl, cumulative_time, t_overhead,
                                 remarks, prof_columns);
 
@@ -1709,7 +1714,7 @@ void vftr_print_html_profile (FILE *f_html, function_t **sorted_func_table,
 
     int n_columns = vftr_env_compute_n_columns();
     column_t *prof_columns = (column_t*) malloc (n_columns * sizeof(column_t));
-    vftr_set_proftab_column_formats (sorted_func_table, function_time, prof_times.t_usec[SAMPLING_OVERHEAD] * 1e-6,
+    vftr_set_proftab_column_formats (sorted_func_table, function_time, prof_times.t_sec[SAMPLING_OVERHEAD],
         			     n_func_indices, func_indices, prof_columns);
 
     long long cumulative_time = 0;
@@ -1727,12 +1732,12 @@ void vftr_print_html_profile (FILE *f_html, function_t **sorted_func_table,
        }
        if (sorted_func_table[i_func]->return_to != NULL) {
           vftr_browse_print_table_line (f_html, sorted_func_table[i_func]->gid,
-        			        function_time, prof_times.t_usec[SAMPLING_OVERHEAD] * 1e-6,
+        			        function_time, prof_times.t_sec[SAMPLING_OVERHEAD],
         				n_calls, t_excl, t_incl, cumulative_time, t_overhead,
         			        sorted_func_table[i_func]->name, sorted_func_table[i_func]->return_to->name, prof_columns, mark_disp_f);
        } else {
           vftr_browse_print_table_line (f_html, sorted_func_table[i_func]->gid,
-        			        function_time, prof_times.t_usec[SAMPLING_OVERHEAD] * 1e-6,
+        			        function_time, prof_times.t_sec[SAMPLING_OVERHEAD],
         				n_calls, t_excl, t_incl, cumulative_time, t_overhead,
         			        sorted_func_table[i_func]->name, NULL, prof_columns, mark_disp_f);
        }
