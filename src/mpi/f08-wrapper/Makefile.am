@@ -26,7 +26,8 @@ libvftr_f08mpiwrap_la_SOURCES += send.F90 \
 ##################
 # persistent p2p #
 ##################
-libvftr_f08mpiwrap_la_SOURCES += start.F90
+libvftr_f08mpiwrap_la_SOURCES += start.F90 \
+				 startall.F90
 
 #########
 # tests #
