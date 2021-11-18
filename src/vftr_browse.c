@@ -447,7 +447,6 @@ void vftr_browse_create_stat_directories (display_function_t **display_functions
    char outdir[strlen(func_name) + 8];
    snprintf (outdir, strlen(func_name) + 8, "browse/%s", func_name);
    mkdir (outdir, 0777);
-  
 }
 
 /**********************************************************************/
