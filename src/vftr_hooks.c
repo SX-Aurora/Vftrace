@@ -145,6 +145,7 @@ void vftr_function_entry (const char *s, void *addr, bool isPrecise) {
 
     if (func->profile_this) {
         vftr_print_stack_at_runtime (func, true, false);
+        vftr_profile_wanted = true;
     }
 
 
@@ -316,6 +317,7 @@ void vftr_function_exit () {
 
     if (func->profile_this)  {
         vftr_print_stack_at_runtime (func, false, time_to_sample);
+        vftr_profile_wanted = true;
     }
 
     if (timer >= vftr_timelimit) {

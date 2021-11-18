@@ -166,12 +166,8 @@ void vftr_region_entry (const char *s, void *addr, bool isPrecise){
     caller->callee = func; // Faster lookup next time around
 
     if (func->profile_this) {
-        wtime = (vftr_get_runtime_usec() - vftr_overhead_usec) * 1.0e-6;
-        vftr_write_stack_ascii (vftr_log, wtime, func, "profile before call to", 0);
+        vftr_print_stack_at_runtime (func, true, false);
         vftr_profile_wanted = true;
-        int ntop;
-        //vftr_print_profile (vftr_log, &ntop, timer, 0, NULL);
-        vftr_print_local_stacklist (vftr_func_table, vftr_log, ntop);
     }
 
     vftr_fstack = func; /* Here's where we are now */
@@ -345,11 +341,8 @@ void vftr_region_exit() {
     wtime = (vftr_get_runtime_usec() - vftr_overhead_usec) * 1.0e-6;
 
     if (func->profile_this)  {
-        vftr_write_stack_ascii (vftr_log, wtime, func, "profile at exit from", timeToSample);
+        vftr_print_stack_at_runtime (func, false, timeToSample);
         vftr_profile_wanted = true;
-        int ntop;
-        //vftr_print_profile (stdout, &ntop, timer, 0, NULL);
-        vftr_print_local_stacklist( vftr_func_table, stdout, ntop );
     }
 
     if (timer >= vftr_timelimit) {
