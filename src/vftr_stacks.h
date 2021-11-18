@@ -93,8 +93,8 @@ void vftr_normalize_stacks();
 // Write the stacks out
 void vftr_write_stacks_vfd (FILE *fp, int level, function_t *func);
 void vftr_write_stack_ascii (FILE *fp, double time, function_t *func, char *label, int timeToSample);
-void vftr_print_local_stacklist (function_t **funcTable, FILE *pout, int ntop);
-void vftr_print_local_demangled (function_t **funcTable, FILE *pout, int ntop);
+void vftr_print_local_stacklist (function_t **funcTable, FILE *pout, int n_functions_top);
+void vftr_print_local_demangled (function_t **funcTable, FILE *pout, int n_functions_top);
 void vftr_print_global_stacklist (FILE *pout);
 
 typedef struct stack_leaf {

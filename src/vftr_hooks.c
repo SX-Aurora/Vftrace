@@ -52,11 +52,11 @@ void vftr_print_stack_at_runtime (function_t *this_func, bool is_entry, bool tim
    
    vftr_write_stack_ascii (vftr_log, prof_times.t_sec[TOTAL_TIME] - prof_times.t_sec[TOTAL_OVERHEAD],
                            this_func, msg, time_to_sample);
-   int ntop = vftr_count_func_indices_up_to_truncate (vftr_func_table,
+   int n_functions_top = vftr_count_func_indices_up_to_truncate (vftr_func_table,
                    prof_times.t_usec[TOTAL_TIME] - prof_times.t_usec[SAMPLING_OVERHEAD]);
    // No sorting of the function table at this point. We want a snapshot of the current state.
-   vftr_print_profile (stdout, vftr_func_table, ntop, prof_times, 0, NULL);
-   vftr_print_local_stacklist (vftr_func_table, vftr_log, ntop);
+   vftr_print_profile (stdout, vftr_func_table, n_functions_top, prof_times, 0, NULL);
+   vftr_print_local_stacklist (vftr_func_table, vftr_log, n_functions_top);
 }
 
 /**********************************************************************/

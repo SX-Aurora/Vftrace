@@ -313,7 +313,6 @@ void vftr_initialize() {
 
 void vftr_finalize() {
     in_vftr_finalize = true;
-    int ntop = 0;
     function_t **funcTable;
 
     if (vftr_off())  return;
@@ -368,12 +367,12 @@ void vftr_finalize() {
 
     function_t **sorted_func_table = vftr_get_sorted_func_table ();
     vftr_prof_times_t prof_times = vftr_get_application_times_all (vftr_get_runtime_usec());
-    ntop = vftr_count_func_indices_up_to_truncate (sorted_func_table,
+    int n_functions_top = vftr_count_func_indices_up_to_truncate (sorted_func_table,
                       prof_times.t_usec[TOTAL_TIME] - prof_times.t_usec[SAMPLING_OVERHEAD]);
 
     if (vftr_profile_wanted) {
        if (vftr_do_stack_normalization) vftr_create_global_stack_strings ();
-       vftr_print_profile (vftr_log, sorted_func_table, ntop, prof_times, n_display_functions, display_functions);
+       vftr_print_profile (vftr_log, sorted_func_table, n_functions_top, prof_times, n_display_functions, display_functions);
     }
 #ifdef _MPI
     if (was_mpi_initialized) {
@@ -387,15 +386,9 @@ void vftr_finalize() {
     }
 #endif
 
-    printf ("CHECK FHTML\n");
-    fflush(stdout);
     if (f_html != NULL) {
-       printf ("HTML ntop: %d\n", ntop);
-       fflush(stdout);
-       vftr_print_html_profile(f_html, sorted_func_table, ntop, prof_times, n_display_functions, display_functions, vftr_get_runtime_usec());
+       vftr_print_html_profile(f_html, sorted_func_table, n_functions_top, prof_times, n_display_functions, display_functions, vftr_get_runtime_usec());
     }
-    printf ("HUHU: %d\n", vftr_mpirank);
-    fflush(stdout);
  
     funcTable = vftr_func_table;
 
