@@ -30,7 +30,8 @@ libvftr_f08mpiwrap_la_SOURCES += start.F90 \
 				 startall.F90 \
 				 send_init.F90 \
 				 bsend_init.F90 \
-				 ssend_init.F90
+				 ssend_init.F90 \
+				 rsend_init.F90
 
 #########
 # tests #
