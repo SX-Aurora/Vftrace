@@ -80,7 +80,8 @@ libvftr_f08mpiwrap_la_SOURCES += reduce.F90 \
 				 reduce_scatter.F90 \
 				 scan.F90 \
 				 iscan.F90 \
-				 exscan.F90
+				 exscan.F90 \
+				 iexscan.F90
 
 #############
 # one sided #
