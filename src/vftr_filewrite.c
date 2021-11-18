@@ -1300,7 +1300,7 @@ display_function_t **vftr_create_display_functions (bool display_sync_time, int 
 
 /**********************************************************************/
 
-stack_leaf_t * vftr_create_stacktree_func (double *imbalances,
+stack_leaf_t * vftr_create_and_scan_stacktree (double *imbalances,
                                  display_function_t *display_function, 
                                  long long *total_time, double *t_max, 
                                  int *n_calls_max, double *imba_max, int *n_spaces_max) {
@@ -1405,7 +1405,7 @@ void vftr_print_function_statistics (FILE *fp_log, display_function_t **display_
 		      double t_max, imba_max;
 		      int n_calls_max, n_spaces_max, n_chars_max;
 
-                      stack_tree = vftr_create_stacktree_func (imbalances,
+                      stack_tree = vftr_create_and_scan_stacktree (imbalances,
                                                   display_functions[i], &total_time,
                                                   &t_max, &n_calls_max, &imba_max, &n_spaces_max);
 
