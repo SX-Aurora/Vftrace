@@ -38,7 +38,7 @@ SUBROUTINE MPI_Irecv_f08(buf, count, datatype, source, tag, comm, request, error
    INTEGER :: tmperror
 
    IF (vftr_no_mpi_logging_f08()) THEN
-      CALL PMPI_Irecv(buf, count, datatype, source, tag, comm, request, error)
+      CALL PMPI_Irecv(buf, count, datatype, source, tag, comm, request, tmperror)
    ELSE
       CALL vftr_MPI_Irecv_f082vftr(buf, count, datatype%MPI_VAL, source, tag, comm%MPI_VAL, request%MPI_VAL, tmperror)
    END IF
