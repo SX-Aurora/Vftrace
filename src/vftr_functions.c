@@ -34,6 +34,7 @@
 #include "vftr_fileutils.h"
 #include "vftr_hwcounters.h"
 #include "vftr_mallinfo.h"
+#include "vftr_sorting.h"
 
 
 char *vftr_precise_functions[] = {

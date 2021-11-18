@@ -6,8 +6,6 @@
 #include <stdint.h>
 #include <stdbool.h>
 
-#include "vftr_sorting.h"
-
 typedef struct memProf {
    long long mem_entry;
    long long mem_exit;
