@@ -1389,7 +1389,7 @@ void vftr_print_function_statistics (FILE *fp_log, display_function_t **display_
 	       sizeof (display_function_t *), vftr_compare_display_functions_iorig);
 
   	for (int i = 0; i < n_display_funcs; i++) {
-                //if (!display_functions[i]->properly_terminated) continue;
+                if (!display_functions[i]->properly_terminated) continue;
 		if (display_functions[i]->n_stack_indices == 0) {
 	 	   if (vftr_environment.create_html->value) {
 		      vftr_browse_print_stacktree_page (NULL, true, display_functions, i,
