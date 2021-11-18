@@ -37,17 +37,17 @@ libvftr_mpi_f082vftr_la_SOURCES += send_f082vftr_f08i.F90 \
 				   probe_f082vftr_f08i.F90 \
 				   iprobe_f082vftr_f08i.F90
 
-###################
-## persistent p2p #
-###################
-#libvftr_mpi_f082vftr_la_SOURCES += start_f082vftr.c \
+##################
+# persistent p2p #
+##################
+libvftr_mpi_f082vftr_la_SOURCES += start_f082vftr.c 
 #                                   startall_f082vftr.c \
 #                                   send_init_f082vftr.c \
 #                                   bsend_init_f082vftr.c \
 #                                   ssend_init_f082vftr.c \
 #                                   rsend_init_f082vftr.c \
 #                                   recv_init_f082vftr.c
-#libvftr_mpi_f082vftr_la_SOURCES += start_f082vftr_f08i.F90 \
+libvftr_mpi_f082vftr_la_SOURCES += start_f082vftr_f08i.F90 
 #                                   startall_f082vftr_f08i.F90 \
 #                                   send_init_f082vftr_f08i.F90 \
 #                                   bsend_init_f082vftr_f08i.F90 \
