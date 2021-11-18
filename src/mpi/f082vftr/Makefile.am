@@ -71,11 +71,11 @@ libvftr_mpi_f082vftr_la_SOURCES += wait_f082vftr_f08i.F90 \
                                    waitsome_f082vftr_f08i.F90 \
                                    waitall_f082vftr_f08i.F90
 
-#########################
-## request deallocation #
-#########################
-#libvftr_mpi_f082vftr_la_SOURCES += request_free_f082vftr.c
-#libvftr_mpi_f082vftr_la_SOURCES += request_free_f082vftr_f08i.F90
+########################
+# request deallocation #
+########################
+libvftr_mpi_f082vftr_la_SOURCES += request_free_f082vftr.c
+libvftr_mpi_f082vftr_la_SOURCES += request_free_f082vftr_f08i.F90
 
 ###############
 # collectives #

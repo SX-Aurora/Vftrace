@@ -46,6 +46,11 @@ libvftr_f08mpiwrap_la_SOURCES += wait.F90 \
 				 waitsome.F90 \
 				 waitall.F90
 
+########################
+# request deallocation #
+########################
+libvftr_f08mpiwrap_la_SOURCES += request_free.F90
+
 ###############
 # collectives #
 ###############
