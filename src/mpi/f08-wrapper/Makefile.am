@@ -63,6 +63,7 @@ libvftr_f08mpiwrap_la_SOURCES += barrier.F90 \
 				 bcast.F90 \
 				 ibcast.F90 \
 				 gather.F90 \
+				 igather.F90 \
 				 gatherv.F90 \
 				 scatter.F90 \
 				 scatterv.F90 \
