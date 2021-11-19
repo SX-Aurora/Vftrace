@@ -147,5 +147,5 @@ END PROGRAM test]])],
    AM_CONDITIONAL([SUPPORTS_MPIF08_TS], [test "$supports_mpi_f08_ts29113" = "yes"])
 
    # Check Supported MPI-Standard
-   AM_COND_IF([WITH_MPI], [AX_CHECK_MPI_STD])
+   AX_CHECK_MPI_STD
 ])
