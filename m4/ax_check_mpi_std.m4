@@ -13,10 +13,10 @@
 
 AC_DEFUN([AX_CHECK_MPI_STD], [
    AC_PREREQ(2.50)
-   AC_MSG_CHECKING([which MPI-standard])
-   AC_LANG(C)
    mpi_version=none
    AM_COND_IF([WITH_MPI],[
+      AC_MSG_CHECKING([which MPI-standard])
+      AC_LANG(C)
       for maj_ver in 1 2 3 4;
       do
          for min_ver in 1 2 3;
