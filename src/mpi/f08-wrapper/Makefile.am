@@ -65,6 +65,7 @@ libvftr_f08mpiwrap_la_SOURCES += barrier.F90 \
 				 gather.F90 \
 				 igather.F90 \
 				 gatherv.F90 \
+				 igatherv.F90 \
 				 scatter.F90 \
 				 scatterv.F90 \
 				 allgather.F90 \
