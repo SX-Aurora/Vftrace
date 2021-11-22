@@ -78,7 +78,8 @@ libvftr_f08mpiwrap_la_SOURCES += barrier.F90 \
 				 ialltoall.F90 \
 				 alltoallv.F90 \
 				 ialltoallv.F90 \
-				 alltoallw.F90
+				 alltoallw.F90 \
+				 ialltoallw.F90
 
 ####################
 # global reduction #
