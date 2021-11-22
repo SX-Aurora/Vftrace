@@ -101,6 +101,7 @@ libvftr_mpi_f082vftr_la_SOURCES += barrier_f082vftr.c \
                                    scatterv_f082vftr.c \
                                    iscatterv_f082vftr.c \
                                    allgather_f082vftr.c \
+                                   iallgather_f082vftr.c \
                                    allgatherv_f082vftr.c \
                                    alltoall_f082vftr.c \
                                    alltoallv_f082vftr.c \
@@ -118,6 +119,7 @@ libvftr_mpi_f082vftr_la_SOURCES += barrier_f082vftr_f08i.F90 \
                                    scatterv_f082vftr_f08i.F90 \
                                    iscatterv_f082vftr_f08i.F90 \
                                    allgather_f082vftr_f08i.F90 \
+                                   iallgather_f082vftr_f08i.F90 \
                                    allgatherv_f082vftr_f08i.F90 \
                                    alltoall_f082vftr_f08i.F90 \
                                    alltoallv_f082vftr_f08i.F90 \
