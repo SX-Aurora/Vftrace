@@ -31,7 +31,6 @@ MODULE vftr_mpi_recv_init_f2vftr_fi
       SUBROUTINE vftr_MPI_Recv_init_f2vftr(BUF, COUNT, F_DATATYPE, SOURCE, TAG, &
                                         F_COMM, F_REQUEST, F_ERROR) &
          BIND(C, name="vftr_MPI_Recv_init_f2vftr")
-         USE mpi, ONLY : MPI_STATUS_SIZE
          IMPLICIT NONE
          INTEGER BUF
          INTEGER COUNT
@@ -39,7 +38,6 @@ MODULE vftr_mpi_recv_init_f2vftr_fi
          INTEGER SOURCE
          INTEGER TAG
          INTEGER F_COMM
-         INTEGER F_STATUS(MPI_STATUS_SIZE)
          INTEGER F_REQUEST
          INTEGER F_ERROR
       END SUBROUTINE vftr_MPI_Recv_init_f2vftr

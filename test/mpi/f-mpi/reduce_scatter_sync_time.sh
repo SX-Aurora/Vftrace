@@ -1,1 +1,1 @@
-../c-mpi/reduce_scatter_sync_time.sh
+../testscripts/reduce_scatter_sync_time.sh

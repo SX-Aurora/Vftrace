@@ -1,0 +1,1 @@
+../testscripts/igatherv_intercom.sh

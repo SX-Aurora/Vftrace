@@ -1,1 +1,1 @@
-../c-mpi/scatterv_sync_time.sh
+../testscripts/scatterv_sync_time.sh

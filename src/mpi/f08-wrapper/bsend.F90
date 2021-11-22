@@ -41,7 +41,7 @@ SUBROUTINE MPI_Bsend_f08(buf, count, datatype, dest, tag, comm, error)
                       comm, tmperror)
    ELSE
       CALL vftr_MPI_Bsend_f082vftr(buf, count, datatype%MPI_VAL, dest, tag, &
-                                comm%MPI_VAL, tmperror)
+                                   comm%MPI_VAL, tmperror)
    END IF
    IF (PRESENT(error)) error = tmperror
 

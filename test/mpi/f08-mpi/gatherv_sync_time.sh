@@ -1,1 +1,1 @@
-../c-mpi/gatherv_sync_time.sh
+../testscripts/gatherv_sync_time.sh
