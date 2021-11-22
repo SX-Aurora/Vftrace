@@ -19,7 +19,7 @@
 SUBROUTINE MPI_Iscatter_f08(sendbuf, sendcount, sendtype, &
                            recvbuf, recvcount, recvtype, &
                            root, comm, request, error)
-   USE vftr_mpi_Iscatter_f082vftr_f08i, &
+   USE vftr_mpi_iscatter_f082vftr_f08i, &
       ONLY : vftr_MPI_Iscatter_f082vftr
    USE vftr_mpi_logging_f08, &
       ONLY : vftr_no_mpi_logging_f08
