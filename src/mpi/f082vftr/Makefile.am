@@ -143,6 +143,7 @@ libvftr_mpi_f082vftr_la_SOURCES += reduce_f082vftr.c \
                                    reduce_scatter_block_f082vftr.c \
                                    ireduce_scatter_block_f082vftr.c \
                                    reduce_scatter_f082vftr.c \
+                                   ireduce_scatter_f082vftr.c \
                                    scan_f082vftr.c \
                                    iscan_f082vftr.c \
                                    exscan_f082vftr.c \
@@ -154,6 +155,7 @@ libvftr_mpi_f082vftr_la_SOURCES += reduce_f082vftr_f08i.F90 \
                                    reduce_scatter_block_f082vftr_f08i.F90 \
                                    ireduce_scatter_block_f082vftr_f08i.F90 \
                                    reduce_scatter_f082vftr_f08i.F90 \
+                                   ireduce_scatter_f082vftr_f08i.F90 \
                                    scan_f082vftr_f08i.F90 \
                                    iscan_f082vftr_f08i.F90 \
                                    exscan_f082vftr_f08i.F90 \
