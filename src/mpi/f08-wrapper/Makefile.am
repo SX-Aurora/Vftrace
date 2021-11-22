@@ -85,6 +85,7 @@ libvftr_f08mpiwrap_la_SOURCES += barrier.F90 \
 # global reduction #
 ####################
 libvftr_f08mpiwrap_la_SOURCES += reduce.F90 \
+				 ireduce.F90 \
 				 allreduce.F90 \
 				 reduce_scatter_block.F90 \
 				 reduce_scatter.F90 \
