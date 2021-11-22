@@ -105,6 +105,7 @@ libvftr_mpi_f082vftr_la_SOURCES += barrier_f082vftr.c \
                                    allgatherv_f082vftr.c \
                                    iallgatherv_f082vftr.c \
                                    alltoall_f082vftr.c \
+                                   ialltoall_f082vftr.c \
                                    alltoallv_f082vftr.c \
                                    alltoallw_f082vftr.c 
 libvftr_mpi_f082vftr_la_SOURCES += barrier_f082vftr_f08i.F90 \
@@ -124,6 +125,7 @@ libvftr_mpi_f082vftr_la_SOURCES += barrier_f082vftr_f08i.F90 \
                                    allgatherv_f082vftr_f08i.F90 \
                                    iallgatherv_f082vftr_f08i.F90 \
                                    alltoall_f082vftr_f08i.F90 \
+                                   ialltoall_f082vftr_f08i.F90 \
                                    alltoallv_f082vftr_f08i.F90 \
                                    alltoallw_f082vftr_f08i.F90
 
