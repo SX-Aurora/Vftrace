@@ -34,6 +34,7 @@
 #include "vftr_fileutils.h"
 #include "vftr_hwcounters.h"
 #include "vftr_mallinfo.h"
+#include "vftr_sorting.h"
 
 
 char *vftr_precise_functions[] = {
@@ -249,6 +250,15 @@ void vftr_reset_counts (function_t *func) {
    for (i = 0,f = func->first_in_level; i < n; i++, f = f->next_in_level) {
        vftr_reset_counts (f);
    }
+}
+
+/**********************************************************************/
+
+function_t **vftr_get_sorted_func_table () {
+    function_t **sorted_func_table = (function_t**) malloc (vftr_func_table_size * sizeof(function_t*));
+    memcpy (sorted_func_table, vftr_func_table, vftr_func_table_size * sizeof(function_t*));
+    qsort ((void *)sorted_func_table, (size_t)vftr_stackscount, sizeof (function_t *), vftr_get_profile_compare_function());
+    return sorted_func_table;
 }
 
 /**********************************************************************/

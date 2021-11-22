@@ -20,6 +20,8 @@
 
 #include <stdbool.h>
 
+#include "vftr_functions.h"
+
 extern bool vftr_profile_wanted;
 
 // We keep a list of the addresses of the exluded functions.
@@ -35,6 +37,8 @@ typedef struct excl_addr_list {
 } excl_fun_t;
 
 extern excl_fun_t *exclude_addr;
+
+void vftr_print_stack_at_runtime (function_t *this_func, bool is_entry, bool time_to_sample);
 
 void vftr_function_entry (const char *s, void *addr, bool isPrecise);
 void vftr_function_exit ();

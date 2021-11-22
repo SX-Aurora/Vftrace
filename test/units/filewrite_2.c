@@ -1,3 +1,5 @@
+#include <string.h>
+
 #include "vftr_setup.h"
 #include "vftr_functions.h"
 #include "vftr_filewrite.h"
@@ -46,8 +48,11 @@ int main (int argc, char **argv) {
 #ifdef _MPI
   vftr_mpi_overhead_usec = 0;
 #endif
-  int n_func_indices;
-  vftr_print_profile (stdout, NULL, &n_func_indices, vftr_test_runtime, 0, NULL);
+  function_t **sorted_func_table = vftr_get_sorted_func_table();
+  vftr_prof_times_t prof_times = vftr_get_application_times_all (vftr_test_runtime);
+  int n_func_indices = vftr_count_func_indices_up_to_truncate (sorted_func_table, 
+                       prof_times.t_usec[TOTAL_TIME] - prof_times.t_usec[SAMPLING_OVERHEAD]);
+  vftr_print_profile (stdout, sorted_func_table, n_func_indices, prof_times, 0, NULL);
 
 #ifdef _MPI
   PMPI_Finalize();

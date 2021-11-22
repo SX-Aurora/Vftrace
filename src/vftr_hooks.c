@@ -46,6 +46,21 @@ bool vftr_profile_wanted = false;
 
 /**********************************************************************/
 
+void vftr_print_stack_at_runtime (function_t *this_func, bool is_entry, bool time_to_sample) {
+   vftr_prof_times_t prof_times = vftr_get_application_times_all (vftr_get_runtime_usec());
+   char *msg = is_entry ? "profile before call to" : "profile_at_exit_from"; 
+   
+   vftr_write_stack_ascii (vftr_log, prof_times.t_sec[TOTAL_TIME] - prof_times.t_sec[TOTAL_OVERHEAD],
+                           this_func, msg, time_to_sample);
+   int n_functions_top = vftr_count_func_indices_up_to_truncate (vftr_func_table,
+                   prof_times.t_usec[TOTAL_TIME] - prof_times.t_usec[SAMPLING_OVERHEAD]);
+   // No sorting of the function table at this point. We want a snapshot of the current state.
+   vftr_print_profile (stdout, vftr_func_table, n_functions_top, prof_times, 0, NULL);
+   vftr_print_local_stacklist (vftr_func_table, vftr_log, n_functions_top);
+}
+
+/**********************************************************************/
+
 void vftr_function_entry (const char *s, void *addr, bool isPrecise) {
     bool time_to_sample, read_counters;
     unsigned long long timer, delta;
@@ -129,12 +144,8 @@ void vftr_function_entry (const char *s, void *addr, bool isPrecise) {
     func->open = true;
 
     if (func->profile_this) {
-        wall_time = (vftr_get_runtime_usec() - vftr_overhead_usec) * 1.0e-6;
-        vftr_write_stack_ascii (vftr_log, wall_time, func, "profile before call to", 0);
+        vftr_print_stack_at_runtime (func, true, false);
         vftr_profile_wanted = true;
-        int ntop;
-        vftr_print_profile (vftr_log, NULL, &ntop, timer, 0, NULL);
-        vftr_print_local_stacklist (vftr_func_table, vftr_log, ntop);
     }
 
 
@@ -305,11 +316,8 @@ void vftr_function_exit () {
     wall_time = (vftr_get_runtime_usec() - vftr_overhead_usec) * 1.0e-6;
 
     if (func->profile_this)  {
-        vftr_write_stack_ascii (vftr_log, wall_time, func, "profile at exit from", time_to_sample);
+        vftr_print_stack_at_runtime (func, false, time_to_sample);
         vftr_profile_wanted = true;
-        int ntop;
-        vftr_print_profile (stdout, NULL, &ntop, timer, 0, NULL);
-        vftr_print_local_stacklist( vftr_func_table, stdout, ntop );
     }
 
     if (timer >= vftr_timelimit) {

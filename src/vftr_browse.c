@@ -327,7 +327,8 @@ void vftr_browse_print_navigation_bars (FILE *fp, display_function_t **display_f
 
 /**********************************************************************/
 
-void vftr_browse_print_index_html (display_function_t **display_functions, int n_funcs) {
+void vftr_browse_print_index_html (display_function_t **display_functions,
+                                   vftr_prof_times_t prof_times, int n_funcs) {
    FILE *fp = fopen ("browse/index.html", "w+");
    vftr_browse_print_css_header (fp, CSS_DEFAULT_WIDTH, 1);
    vftr_browse_print_navigation_bars (fp, display_functions, 0, n_funcs, HOME);
@@ -343,22 +344,20 @@ void vftr_browse_print_index_html (display_function_t **display_functions, int n
    vftr_browse_make_html_indent (fp, 0, 1);
    fprintf (fp, "<p>Number of MPI ranks: %d</p>\n", vftr_mpisize);
 
-   long long total_runtime_usec, sampling_overhead_time_usec, total_overhead_time_usec;
-   long long mpi_overhead_time_usec, application_runtime_usec;
-   vftr_get_application_times_usec (0, &total_runtime_usec, &sampling_overhead_time_usec, &mpi_overhead_time_usec, 
-			            &total_overhead_time_usec, &application_runtime_usec);
    vftr_browse_make_html_indent (fp, 0, 1);
-   fprintf (fp, "<p>Total runtime: %8.2f seconds</p>\n", total_runtime_usec * 1e-6);
+   fprintf (fp, "<p>Total runtime: %8.2f seconds</p>\n", prof_times.t_sec[TOTAL_TIME]);
    vftr_browse_make_html_indent (fp, 0, 1);
-   fprintf (fp, "<p>Application time: %8.2f seconds</p>\n", application_runtime_usec * 1e-6);
+   fprintf (fp, "<p>Application time: %8.2f seconds</p>\n", prof_times.t_sec[APP_TIME]);
    vftr_browse_make_html_indent (fp, 0, 1);
-   fprintf (fp, "<p>Overhead: %8.2f seconds (%.2f%%)</p>\n", total_overhead_time_usec * 1e-6, total_overhead_time_usec / total_runtime_usec * 100.0);
+   fprintf (fp, "<p>Overhead: %8.2f seconds (%.2f%%)</p>\n", prof_times.t_sec[TOTAL_OVERHEAD], prof_times.t_sec[TOTAL_OVERHEAD] / prof_times.t_sec[ TOTAL_TIME]* 100.0);
    vftr_browse_make_html_indent (fp, 0, 1);
-   fprintf (fp, "<p>Sampling overhead: %8.2f seconds (%.2f%%)</p>\n", sampling_overhead_time_usec * 1e-6,
-	    sampling_overhead_time_usec / total_runtime_usec * 100.0);
+   fprintf (fp, "<p>Sampling overhead: %8.2f seconds (%.2f%%)</p>\n",
+            prof_times.t_sec[SAMPLING_OVERHEAD],
+	    prof_times.t_sec[SAMPLING_OVERHEAD] / prof_times.t_sec[TOTAL_TIME] * 100.0);
+
    vftr_browse_make_html_indent (fp, 0, 1);
-   fprintf (fp, "<p>MPI overhead: %8.2f seconds (%.2f%%)</p>\n", mpi_overhead_time_usec * 1e-6,
-	   mpi_overhead_time_usec / total_runtime_usec * 100.0);
+   fprintf (fp, "<p>MPI overhead: %8.2f seconds (%.2f%%)</p>\n", prof_times.t_sec[MPI_OVERHEAD],
+	   prof_times.t_sec[MPI_OVERHEAD] / prof_times.t_sec[TOTAL_TIME] * 100.0);
    fprintf (fp, "</div>\n");
    fclose (fp); 
 }
@@ -443,6 +442,15 @@ void vftr_browse_print_stacktree (FILE *fp, stack_leaf_t *leaf, int n_spaces, do
   
 /**********************************************************************/
 
+void vftr_browse_create_stat_directories (display_function_t **display_functions, int i_func) {
+   char *func_name = display_functions[i_func]->func_name;
+   char outdir[strlen(func_name) + 8];
+   snprintf (outdir, strlen(func_name) + 8, "browse/%s", func_name);
+   mkdir (outdir, 0777);
+}
+
+/**********************************************************************/
+
 void vftr_browse_print_stacktree_page (FILE *fp_out, bool is_empty, display_function_t **display_functions, int i_func, int n_funcs,
 			               stack_leaf_t *leaf, double *imbalances, double total_time,
 				       int n_chars_max, int n_final) {
@@ -452,12 +460,6 @@ void vftr_browse_print_stacktree_page (FILE *fp_out, bool is_empty, display_func
 	if (!fp_out) {
 	   char outdir[strlen(func_name) + 8];
 	   snprintf (outdir, strlen(func_name) + 8, "browse/%s", func_name);
-	   if (vftr_mpirank == 0) {
-	      mkdir (outdir, 0777);
-	   }
-#ifdef _MPI
-	   PMPI_Barrier(MPI_COMM_WORLD);
-#endif
 	   char html_filename[2*(strlen(func_name) + 8)];
 	   snprintf (html_filename, 2*(strlen(func_name) + 8) + vftr_count_digits_int(vftr_mpisize) + 1,
 		     "%s/%s_%d.html", outdir, func_name, vftr_mpirank);
