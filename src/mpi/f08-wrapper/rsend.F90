@@ -26,6 +26,7 @@ SUBROUTINE MPI_Rsend_f08(buf, count, datatype, dest, tag, comm, error)
              MPI_Datatype, &
              MPI_Comm
    IMPLICIT NONE
+
    INTEGER, INTENT(IN) :: buf
    INTEGER, INTENT(IN) :: count
    TYPE(MPI_Datatype), INTENT(IN) :: datatype
@@ -36,9 +37,11 @@ SUBROUTINE MPI_Rsend_f08(buf, count, datatype, dest, tag, comm, error)
    INTEGER :: tmperror
 
    IF (vftr_no_mpi_logging_f08()) THEN
-      CALL PMPI_Rsend(buf, count, datatype, dest, tag, comm, tmperror)
+      CALL PMPI_Rsend(buf, count, datatype, dest, tag, &
+                      comm, tmperror)
    ELSE
-      CALL vftr_MPI_Rsend_f082vftr(buf, count, datatype%MPI_VAL, dest, tag, comm%MPI_VAL, tmperror)
+      CALL vftr_MPI_Rsend_f082vftr(buf, count, datatype%MPI_VAL, dest, tag, &
+                                   comm%MPI_VAL, tmperror)
    END IF
    IF (PRESENT(error)) error = tmperror
 

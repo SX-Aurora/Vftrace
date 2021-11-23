@@ -19,8 +19,6 @@
 #ifdef _MPI
 #include <mpi.h>
 
-#include <stdlib.h>
-
 #include "start.h"
 
 void vftr_MPI_Start_f2vftr(MPI_Fint *f_request, MPI_Fint *f_error) {

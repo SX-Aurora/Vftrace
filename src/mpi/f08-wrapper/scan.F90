@@ -22,7 +22,7 @@ SUBROUTINE MPI_Scan_f08(sendbuf, recvbuf, count, &
       ONLY : vftr_MPI_Scan_f082vftr
    USE vftr_mpi_logging_f08, &
       ONLY : vftr_no_mpi_logging_f08
-   USE vftr_sync_time_F08, &
+   USE vftr_sync_time_f08, &
       ONLY : vftr_estimate_sync_time
    USE mpi_f08, &
       ONLY : PMPI_Scan, &

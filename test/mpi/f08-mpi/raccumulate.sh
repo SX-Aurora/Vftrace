@@ -1,0 +1,1 @@
+../testscripts/raccumulate.sh

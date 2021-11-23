@@ -22,7 +22,7 @@
 #include "rget_accumulate.h"
 
 void vftr_MPI_Rget_accumulate_f2vftr(void *origin_addr, MPI_Fint *origin_count,
-                                     MPI_Fint *f_origin_datatype,void *result_addr,
+                                     MPI_Fint *f_origin_datatype, void *result_addr,
                                      MPI_Fint *result_count, MPI_Fint *f_result_datatype,
                                      MPI_Fint *target_rank, MPI_Aint *target_disp,
                                      MPI_Fint *target_count, MPI_Fint *f_target_datatype,

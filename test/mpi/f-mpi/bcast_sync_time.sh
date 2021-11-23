@@ -1,1 +1,1 @@
-../c-mpi/bcast_sync_time.sh
+../testscripts/bcast_sync_time.sh
