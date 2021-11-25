@@ -861,6 +861,28 @@ dist_noinst_SCRIPTS += barrier.sh \
 		       ialltoallw_inplace.sh \
 		       ialltoallw_intercom.sh
 
+########################
+# Neighbor Collectives #
+########################
+check_PROGRAMS += neighbor_allgather_cart \
+		  neighbor_allgather_cart_periodic
+
+neighbor_allgather_cart_SOURCES = $(srcdir)/neighbor_allgather_cart.c \
+				  $(srcdir)/cart_neighbor_ranks.c
+neighbor_allgather_cart_CFLAGS = $(AM_CFLAGS)
+neighbor_allgather_cart_LDFLAGS = $(AM_LDFLAGS)
+
+neighbor_allgather_cart_periodic_SOURCES = $(srcdir)/neighbor_allgather_cart_periodic.c \
+					   $(srcdir)/cart_neighbor_ranks.c
+neighbor_allgather_cart_periodic_CFLAGS = $(AM_CFLAGS)
+neighbor_allgather_cart_periodic_LDFLAGS = $(AM_LDFLAGS)
+
+dist_noinst_SCRIPTS += neighbor_allgather_cart.sh \
+		       neighbor_allgather_cart_periodic.sh
+
+
+
+
 #####################
 # Global reductions #
 #####################
