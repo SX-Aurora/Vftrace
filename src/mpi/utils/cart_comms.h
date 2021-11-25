@@ -16,8 +16,6 @@
    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-#include <stdbool.h>
-
 #ifndef CART_COMMS_H
 #define CART_COMMS_H
 
