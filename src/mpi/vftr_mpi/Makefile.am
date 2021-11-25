@@ -99,6 +99,14 @@ libvftr_mpi_la_SOURCES += ibarrier.c \
 			  ialltoallw.c
 endif
 
+########################
+# neighbor collectives #
+########################
+
+if HAS_MPI_STD_3_0
+libvftr_mpi_la_SOURCES += neighbor_allgather.c
+endif
+
 ####################
 # global reduction #
 ####################
