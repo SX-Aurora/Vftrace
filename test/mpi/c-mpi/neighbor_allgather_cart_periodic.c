@@ -4,8 +4,6 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-#include "cart_neighbor_ranks.h"
-
 int main(int argc, char** argv) {
    MPI_Init(&argc, &argv);
 
@@ -22,22 +20,21 @@ int main(int argc, char** argv) {
       return 1;
    }
 
+   // requires precicely 4 processes
+   if (comm_size != 4) {
+      printf("requires precicely 4 processes. Start with -np 4!\n");
+      return 1;
+   }
+
    // Create the cartesian communicator
    MPI_Comm comm_cart;
+   int nnodes = 4;
    int ndims = 3;
-   int *dims = (int*) malloc(ndims*sizeof(int));
-   int *periods = (int*) malloc(ndims*sizeof(int));
+   int dims[3] = {2,2,1};
+   // determine own coordinates
+   int periods[3] = {true,true,true};
    int reorder = false;
-   for (int idim=0; idim<ndims; idim++) {
-      dims[idim] = 0;
-      periods[idim] = true;
-   }
-   MPI_Dims_create(comm_size, ndims, dims);
    MPI_Cart_create(MPI_COMM_WORLD, ndims, dims, periods, reorder, &comm_cart);
-   free(dims);
-   dims = NULL;
-   free(periods);
-   periods = NULL;
 
    // allocating send/recv buffer
    int nneighbors = 2*ndims;
@@ -53,10 +50,36 @@ int main(int argc, char** argv) {
 
    // validate data
    bool valid_data = true;
-   int *list_of_neighbor_ranks;
-   cart_neighbor_ranks(comm_cart,
-                       &nneighbors,
-                       &list_of_neighbor_ranks);
+   // fill the neighbor list
+   int list_of_neighbor_ranks[6] = {0,0,0,0,0,0};
+   switch(my_rank) {
+      case 0:
+         list_of_neighbor_ranks[0] = 2;
+         list_of_neighbor_ranks[1] = 2;
+         list_of_neighbor_ranks[2] = 1;
+         list_of_neighbor_ranks[3] = 1;
+         break;
+      case 1:
+         list_of_neighbor_ranks[0] = 3;
+         list_of_neighbor_ranks[1] = 3;
+         list_of_neighbor_ranks[4] = 1;
+         list_of_neighbor_ranks[5] = 1;
+         break;
+      case 2:
+         list_of_neighbor_ranks[2] = 3;
+         list_of_neighbor_ranks[3] = 3;
+         list_of_neighbor_ranks[4] = 2;
+         list_of_neighbor_ranks[5] = 2;
+         break;
+      case 3:
+         list_of_neighbor_ranks[0] = 1;
+         list_of_neighbor_ranks[1] = 1;
+         list_of_neighbor_ranks[2] = 2;
+         list_of_neighbor_ranks[3] = 2;
+         list_of_neighbor_ranks[4] = 3;
+         list_of_neighbor_ranks[5] = 3;
+         break;
+   }
    for (int ineighbor=0; ineighbor<nneighbors; ineighbor++) {
       int refval = -1;
       if (list_of_neighbor_ranks[ineighbor] >= 0) {
@@ -70,13 +93,12 @@ int main(int argc, char** argv) {
          }
       }
    }
-   free(list_of_neighbor_ranks);
-   list_of_neighbor_ranks = NULL;
    free(rbuffer);
    rbuffer=NULL;
    free(sbuffer);
    sbuffer=NULL;
 
+   MPI_Comm_free(&comm_cart);
    MPI_Finalize();
 
    return valid_data ? 0 : 1;

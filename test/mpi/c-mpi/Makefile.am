@@ -867,13 +867,11 @@ dist_noinst_SCRIPTS += barrier.sh \
 check_PROGRAMS += neighbor_allgather_cart \
 		  neighbor_allgather_cart_periodic
 
-neighbor_allgather_cart_SOURCES = $(srcdir)/neighbor_allgather_cart.c \
-				  $(srcdir)/cart_neighbor_ranks.c
+neighbor_allgather_cart_SOURCES = $(srcdir)/neighbor_allgather_cart.c
 neighbor_allgather_cart_CFLAGS = $(AM_CFLAGS)
 neighbor_allgather_cart_LDFLAGS = $(AM_LDFLAGS)
 
-neighbor_allgather_cart_periodic_SOURCES = $(srcdir)/neighbor_allgather_cart_periodic.c \
-					   $(srcdir)/cart_neighbor_ranks.c
+neighbor_allgather_cart_periodic_SOURCES = $(srcdir)/neighbor_allgather_cart_periodic.c
 neighbor_allgather_cart_periodic_CFLAGS = $(AM_CFLAGS)
 neighbor_allgather_cart_periodic_LDFLAGS = $(AM_LDFLAGS)
 
