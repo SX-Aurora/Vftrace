@@ -75,6 +75,8 @@ int vftr_MPI_Neighbor_allgather_cart(const void *sendbuf, int sendcount,
                                       comm, tstart, tend);
       }
    }
+   free(neighbors);
+   neighbors = NULL;
    long long t2end = vftr_get_runtime_usec();
 
    vftr_mpi_overhead_usec += t2end - t2start;
