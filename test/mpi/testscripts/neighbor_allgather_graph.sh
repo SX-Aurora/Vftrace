@@ -21,8 +21,8 @@ do
    neighborlist[3]="2 3"
    msgnum[0]="2 1"
    msgnum[1]="2 1"
-   msgnum[2]="0 1 3"
-   msgnum[3]="2 3"
+   msgnum[2]="1 1 1"
+   msgnum[3]="1 1"
    # check each rank for the correct message communication
    # patterns in the vfd file
    for irank in $(seq 0 1 $(bc <<< "${nprocs}-1"));
