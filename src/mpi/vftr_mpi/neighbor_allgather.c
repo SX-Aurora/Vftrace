@@ -33,14 +33,22 @@ int vftr_MPI_Neighbor_allgather_graph(const void *sendbuf, int sendcount,
    long long tend = vftr_get_runtime_usec();
 
    long long t2start = vftr_get_runtime_usec();
-//   int size;
-//   PMPI_Comm_size(comm, &size);
-//   for (int i=0; i<size; i++) {
-//      vftr_store_sync_message_info(send, sendcount, sendtype, i, -1, comm,
-//                                   tstart, tend);
-//      vftr_store_sync_message_info(recv, recvcount, recvtype, i, -1, comm,
-//                                   tstart, tend);
-//   }
+   int rank;
+   PMPI_Comm_rank(comm, &rank);
+   int nneighbors;
+   MPI_Graph_neighbors_count(comm, rank, &nneighbors);
+   int *neighbors = (int*) malloc(nneighbors*sizeof(int));
+   MPI_Graph_neighbors(comm, rank, nneighbors, neighbors);
+   for (int ineighbor=0; ineighbor<nneighbors; ineighbor++) {
+      vftr_store_sync_message_info(send, sendcount, sendtype,
+                                   neighbors[ineighbor], -1,
+                                   comm, tstart, tend);
+      vftr_store_sync_message_info(recv, sendcount, sendtype,
+                                   neighbors[ineighbor], -1,
+                                   comm, tstart, tend);
+   }
+   free(neighbors);
+   neighbors = NULL;
    long long t2end = vftr_get_runtime_usec();
 
    vftr_mpi_overhead_usec += t2end - t2start;

@@ -864,8 +864,11 @@ dist_noinst_SCRIPTS += barrier.sh \
 ########################
 # Neighbor Collectives #
 ########################
+#TODO: add synctime tests
+#TODO: add nolog tests
 check_PROGRAMS += neighbor_allgather_cart \
-		  neighbor_allgather_cart_periodic
+		  neighbor_allgather_cart_periodic \
+		  neighbor_allgather_graph
 
 neighbor_allgather_cart_SOURCES = $(srcdir)/neighbor_allgather_cart.c
 neighbor_allgather_cart_CFLAGS = $(AM_CFLAGS)
@@ -875,11 +878,13 @@ neighbor_allgather_cart_periodic_SOURCES = $(srcdir)/neighbor_allgather_cart_per
 neighbor_allgather_cart_periodic_CFLAGS = $(AM_CFLAGS)
 neighbor_allgather_cart_periodic_LDFLAGS = $(AM_LDFLAGS)
 
+neighbor_allgather_graph_SOURCES = $(srcdir)/neighbor_allgather_graph.c
+neighbor_allgather_graph_CFLAGS = $(AM_CFLAGS)
+neighbor_allgather_graph_LDFLAGS = $(AM_LDFLAGS)
+
 dist_noinst_SCRIPTS += neighbor_allgather_cart.sh \
-		       neighbor_allgather_cart_periodic.sh
-
-
-
+		       neighbor_allgather_cart_periodic.sh \
+		       neighbor_allgather_graph.sh
 
 #####################
 # Global reductions #
