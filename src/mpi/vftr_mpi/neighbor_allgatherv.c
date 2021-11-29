@@ -26,11 +26,11 @@
 
 int vftr_MPI_Neighbor_allgatherv_graph(const void *sendbuf, int sendcount,
                                        MPI_Datatype sendtype, void *recvbuf,
-                                       int *recvcounts, MPI_Datatype recvtype,
-                                       MPI_Comm comm) {
+                                       int *recvcounts, int *displs,
+                                       MPI_Datatype recvtype, MPI_Comm comm) {
    long long tstart = vftr_get_runtime_usec();
    int retVal = PMPI_Neighbor_allgatherv(sendbuf, sendcount, sendtype, recvbuf,
-                                         recvcounts, recvtype, comm);
+                                         recvcounts, displs, recvtype, comm);
    long long tend = vftr_get_runtime_usec();
 
    long long t2start = vftr_get_runtime_usec();
@@ -59,11 +59,11 @@ int vftr_MPI_Neighbor_allgatherv_graph(const void *sendbuf, int sendcount,
 
 int vftr_MPI_Neighbor_allgatherv_cart(const void *sendbuf, int sendcount,
                                       MPI_Datatype sendtype, void *recvbuf,
-                                      int *recvcounts, MPI_Datatype recvtype,
-                                      MPI_Comm comm) {
+                                      int *recvcounts, int *displs,
+                                      MPI_Datatype recvtype, MPI_Comm comm) {
    long long tstart = vftr_get_runtime_usec();
    int retVal = PMPI_Neighbor_allgatherv(sendbuf, sendcount, sendtype, recvbuf,
-                                         recvcounts, recvtype, comm);
+                                         recvcounts, displs, recvtype, comm);
    long long tend = vftr_get_runtime_usec();
 
    long long t2start = vftr_get_runtime_usec();
@@ -95,11 +95,11 @@ int vftr_MPI_Neighbor_allgatherv_cart(const void *sendbuf, int sendcount,
 
 int vftr_MPI_Neighbor_allgatherv_dist_graph(const void *sendbuf, int sendcount,
                                             MPI_Datatype sendtype, void *recvbuf,
-                                            int recvcounts, MPI_Datatype recvtype,
-                                            MPI_Comm comm) {
+                                            int *recvcounts, int *displs,
+                                            MPI_Datatype recvtype, MPI_Comm comm) {
    long long tstart = vftr_get_runtime_usec();
    int retVal = PMPI_Neighbor_allgatherv(sendbuf, sendcount, sendtype, recvbuf,
-                                         recvcounts, recvtype, comm);
+                                         recvcounts, displs, recvtype, comm);
    long long tend = vftr_get_runtime_usec();
 
    long long t2start = vftr_get_runtime_usec();
@@ -122,7 +122,7 @@ int vftr_MPI_Neighbor_allgatherv_dist_graph(const void *sendbuf, int sendcount,
                                    comm, tstart, tend);
    }
    for (int ineighbor=0; ineighbor<ninneighbors; ineighbor++) {
-      vftr_store_sync_message_info(recv, recvcounts, recvtype,
+      vftr_store_sync_message_info(recv, recvcounts[ineighbor], recvtype,
                                    inneighbors[ineighbor], -1,
                                    comm, tstart, tend);
    }
