@@ -155,7 +155,7 @@ int main(int argc, char** argv) {
    free(sbuffer);
    sbuffer=NULL;
 
-   MPI_Comm_free(comm_dist_graph);
+   MPI_Comm_free(&comm_dist_graph);
    MPI_Finalize();
 
    return valid_data ? 0 : 1;
