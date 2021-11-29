@@ -50,10 +50,10 @@ int main(int argc, char** argv) {
 
    // validate data
    bool valid_data = true;
-   int *list_of_neighbor_ranks = (int*) malloc(nneighbors*sizeof(int));
-   MPI_Graph_neighbors(comm_graph, my_rank, nneighbors, list_of_neighbor_ranks);
+   int *neighbors = (int*) malloc(nneighbors*sizeof(int));
+   MPI_Graph_neighbors(comm_graph, my_rank, nneighbors, neighbors);
    for (int ineighbor=0; ineighbor<nneighbors; ineighbor++) {
-      int refval = list_of_neighbor_ranks[ineighbor];
+      int refval = neighbors[ineighbor];
       for (int i=0; i<nints; i++) {
          if (rbuffer[i+ineighbor*nints] != refval) {
             printf("Rank %d received faulty data from rank %d\n", my_rank, refval);
@@ -63,8 +63,8 @@ int main(int argc, char** argv) {
       }
    }
 
-   free(list_of_neighbor_ranks);
-   list_of_neighbor_ranks = NULL;
+   free(neighbors);
+   neighbors = NULL;
    free(rbuffer);
    rbuffer=NULL;
    free(sbuffer);
