@@ -79,10 +79,6 @@ int main(int argc, char** argv) {
          recvcounts[ineighbor] = nints - my_rank + neighbors[ineighbor];
          displs[ineighbor] = ntot;
          ntot += recvcounts[ineighbor];
-         if (neighbors[ineighbor] == -1) {
-            recvcounts[ineighbor] = 0;
-         }
-
    }
    int *rbuffer = (int*) malloc(ntot*sizeof(int));
    for (int i=0; i<ntot; i++) {rbuffer[i]=-1;}
