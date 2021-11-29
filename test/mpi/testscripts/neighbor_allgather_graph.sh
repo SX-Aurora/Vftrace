@@ -30,6 +30,27 @@ do
       ../../../tools/vftrace_vfd_dump ${vftr_binary}_${irank}.vfd
 
       npeers=$(echo "${neighborlist[${irank}]}" | wc -w)
+      totsendmsg=$(echo "${msgnum[${irank}]}" | sed 's/ /+/g' | bc)
+      totrecvmsg=$(echo "${msgnum[${irank}]}" | sed 's/ /+/g' | bc)
+
+      # check if the total number of messages is the sum of individual ones
+      totmsgcount=$(../../../tools/vftrace_vfd_dump ${vftr_binary}_${irank}.vfd | \
+                    awk '$2=="send" && $3!="end"{getline;print;}' | \
+                    wc -l)
+      if [[ "${totmsgcount}" -ne "${totsendmsg}" ]] ; then
+         echo "Expected a total of ${totsendmsg} messages to be send from rank ${irank}!"
+         echo "Found a total of ${totmsgcount} messages!"
+         exit 1;
+      fi
+      totmsgcount=$(../../../tools/vftrace_vfd_dump ${vftr_binary}_${irank}.vfd | \
+                    awk '$2=="recv" && $3!="end"{getline;print;}' | \
+                    wc -l)
+      if [[ "${totmsgcount}" -ne "${totrecvmsg}" ]] ; then
+         echo "Expected a total of ${totrecvmsg} messages to be received by rank ${irank}!"
+         echo "Found a total of ${totmsgcount} messages!"
+         exit 1;
+      fi
+
       for peer_idx in $(seq 1 1 ${npeers});
       do
          jrank=$(echo "${neighborlist[${irank}]}" | awk -v i=${peer_idx} '{print $i}')
