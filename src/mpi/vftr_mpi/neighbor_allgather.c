@@ -15,6 +15,7 @@
    with this program; if not, write to the Free Software Foundation, Inc.,
    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+#include <stdlib.h>
 
 #include <mpi.h>
 
@@ -102,23 +103,38 @@ int vftr_MPI_Neighbor_allgather_dist_graph(const void *sendbuf, int sendcount,
    long long tend = vftr_get_runtime_usec();
 
    long long t2start = vftr_get_runtime_usec();
-//   // Every process of group A sends sendcount data to and
-//   // receives recvcount data from every process in group B and
-//   // vice versa
-//   int size;
-//   PMPI_Comm_remote_size(comm, &size);
-//   for (int i=0; i<size; i++) {
-//      // translate the i-th rank in the remote group to the global rank
-//      int global_peer_rank = vftr_remote2global_rank(comm, i);
-//      // Store message info with MPI_COMM_WORLD as communicator
-//      // to prevent additional (and thus faulty rank translation)
-//      vftr_store_sync_message_info(send, sendcount, sendtype, 
-//                                   global_peer_rank, -1, MPI_COMM_WORLD,
-//                                   tstart, tend);
-//      vftr_store_sync_message_info(recv, recvcount, recvtype,
-//                                   global_peer_rank, -1, MPI_COMM_WORLD,
-//                                   tstart, tend);
-//   }
+   // first obtain the distributed graph info for this process
+   int ninneighbors;
+   int noutneighbors;
+   int weighted;
+   PMPI_Dist_graph_neighbors_count(comm, &ninneighbors,
+                                   &noutneighbors, &weighted);
+   int *inneighbors = (int*) malloc(ninneighbors*sizeof(int));
+   int *inweights = (int*) malloc(ninneighbors*sizeof(int));
+   int *outneighbors = (int*) malloc(noutneighbors*sizeof(int));
+   int *outweights = (int*) malloc(noutneighbors*sizeof(int));
+   PMPI_Dist_graph_neighbors(comm,
+                             ninneighbors, inneighbors, inweights,
+                             noutneighbors, outneighbors, outweights);
+   for (int ineighbor=0; ineighbor<noutneighbors; ineighbor++) {
+      vftr_store_sync_message_info(send, sendcount, sendtype,
+                                   outneighbors[ineighbor], -1,
+                                   comm, tstart, tend);
+   }
+   for (int ineighbor=0; ineighbor<ninneighbors; ineighbor++) {
+      vftr_store_sync_message_info(recv, sendcount, sendtype,
+                                   inneighbors[ineighbor], -1,
+                                   comm, tstart, tend);
+   }
+   free(inneighbors);
+   inneighbors = NULL;
+   free(inweights);
+   inweights = NULL;
+   free(outneighbors);
+   outneighbors = NULL;
+   free(outweights);
+   outweights = NULL;
+
    long long t2end = vftr_get_runtime_usec();
 
    vftr_mpi_overhead_usec += t2end - t2start;
