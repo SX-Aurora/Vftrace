@@ -50,29 +50,29 @@ int main(int argc, char** argv) {
    // validate data
    bool valid_data = true;
    // fill the neighbor list
-   int list_of_neighbor_ranks[6] = {-1,-1,-1,-1,-1,-1};
+   int neighbors[6] = {-1,-1,-1,-1,-1,-1};
    switch(my_rank) {
       case 0:
-         list_of_neighbor_ranks[1] = 2;
-         list_of_neighbor_ranks[3] = 1;
+         neighbors[1] = 2;
+         neighbors[3] = 1;
          break;
       case 1:
-         list_of_neighbor_ranks[1] = 3;
-         list_of_neighbor_ranks[2] = 0;
+         neighbors[1] = 3;
+         neighbors[2] = 0;
          break;
       case 2:
-         list_of_neighbor_ranks[0] = 0;
-         list_of_neighbor_ranks[3] = 3;
+         neighbors[0] = 0;
+         neighbors[3] = 3;
          break;
       case 3:
-         list_of_neighbor_ranks[0] = 1;
-         list_of_neighbor_ranks[2] = 2;
+         neighbors[0] = 1;
+         neighbors[2] = 2;
          break;
    }
    for (int ineighbor=0; ineighbor<nneighbors; ineighbor++) {
       int refval = -1;
-      if (list_of_neighbor_ranks[ineighbor] >= 0) {
-         refval = list_of_neighbor_ranks[ineighbor];
+      if (neighbors[ineighbor] >= 0) {
+         refval = neighbors[ineighbor];
       }
       for (int i=0; i<nints; i++) {
          if (rbuffer[i+ineighbor*nints] != refval) {
