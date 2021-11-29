@@ -22,10 +22,10 @@
 #include "mpi_buf_addr_const.h"
 #include "neighbor_allgatherv.h"
 
-int vftr_MPI_Neighbor_allgather_c2vftr(const void *sendbuf, int sendcount,
-                                       MPI_Datatype sendtype, void *recvbuf,
-                                       const int *recvcounts, const int *displs,
-                                       MPI_Datatype recvtype, MPI_Comm comm) {
+int vftr_MPI_Neighbor_allgatherv_c2vftr(const void *sendbuf, int sendcount,
+                                        MPI_Datatype sendtype, void *recvbuf,
+                                        const int *recvcounts, const int *displs,
+                                        MPI_Datatype recvtype, MPI_Comm comm) {
    // determine the topology of the communicator
    int topology;
    PMPI_Topo_test(comm, &topology);
