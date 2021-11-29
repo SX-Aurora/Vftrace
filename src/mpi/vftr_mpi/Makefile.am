@@ -104,7 +104,8 @@ endif
 ########################
 
 if HAS_MPI_STD_3_0
-libvftr_mpi_la_SOURCES += neighbor_allgather.c
+libvftr_mpi_la_SOURCES += neighbor_allgather.c \
+			  neighbor_allgatherv.c
 endif
 
 ####################
