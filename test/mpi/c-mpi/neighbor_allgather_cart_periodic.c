@@ -28,7 +28,6 @@ int main(int argc, char** argv) {
 
    // Create the cartesian communicator
    MPI_Comm comm_cart;
-   int nnodes = 4;
    int ndims = 3;
    int dims[3] = {2,2,1};
    // determine own coordinates
