@@ -24,7 +24,7 @@
 
 int vftr_MPI_Neighbor_allgather_c2vftr(const void *sendbuf, int sendcount,
                                        MPI_Datatype sendtype, void *recvbuf,
-                                       int *recvcounts, int *displs,
+                                       const int *recvcounts, const int *displs,
                                        MPI_Datatype recvtype, MPI_Comm comm) {
    // determine the topology of the communicator
    int topology;
