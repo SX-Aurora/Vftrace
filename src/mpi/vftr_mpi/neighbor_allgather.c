@@ -44,7 +44,7 @@ int vftr_MPI_Neighbor_allgather_graph(const void *sendbuf, int sendcount,
       vftr_store_sync_message_info(send, sendcount, sendtype,
                                    neighbors[ineighbor], -1,
                                    comm, tstart, tend);
-      vftr_store_sync_message_info(recv, sendcount, sendtype,
+      vftr_store_sync_message_info(recv, recvcount, recvtype,
                                    neighbors[ineighbor], -1,
                                    comm, tstart, tend);
    }
@@ -79,7 +79,7 @@ int vftr_MPI_Neighbor_allgather_cart(const void *sendbuf, int sendcount,
          vftr_store_sync_message_info(send, sendcount, sendtype,
                                       neighbors[ineighbor], -1,
                                       comm, tstart, tend);
-         vftr_store_sync_message_info(recv, sendcount, sendtype,
+         vftr_store_sync_message_info(recv, recvcount, recvtype,
                                       neighbors[ineighbor], -1,
                                       comm, tstart, tend);
       }
@@ -122,7 +122,7 @@ int vftr_MPI_Neighbor_allgather_dist_graph(const void *sendbuf, int sendcount,
                                    comm, tstart, tend);
    }
    for (int ineighbor=0; ineighbor<ninneighbors; ineighbor++) {
-      vftr_store_sync_message_info(recv, sendcount, sendtype,
+      vftr_store_sync_message_info(recv, recvcount, recvtype,
                                    inneighbors[ineighbor], -1,
                                    comm, tstart, tend);
    }
