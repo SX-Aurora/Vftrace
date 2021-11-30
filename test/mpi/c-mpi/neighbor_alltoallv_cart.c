@@ -65,12 +65,13 @@ int main(int argc, char** argv) {
    int *sdispls = (int*) malloc(nneighbors*sizeof(int));
    int nstot = 0;
    for (int ineighbor=0; ineighbor<nneighbors; ineighbor++) {
-      sendcounts[ineighbor] = nints;
-      sdispls[ineighbor] = nstot;
-      nstot += sendcounts[ineighbor];
-      if (neighbors[ineighbor] == -1) {
+      if (neighbors[ineighbor] != -1) {
+         sendcounts[ineighbor] = nints;
+      } else {
          sendcounts[ineighbor] = 0;
       }
+      sdispls[ineighbor] = nstot;
+      nstot += sendcounts[ineighbor];
    }
    int *sbuffer = (int*) malloc(nstot*sizeof(int));
    for (int i=0; i<nstot; i++) {sbuffer[i]=my_rank;}
@@ -79,12 +80,13 @@ int main(int argc, char** argv) {
    int *rdispls = (int*) malloc(nneighbors*sizeof(int));
    int nrtot = 0;
    for (int ineighbor=0; ineighbor<nneighbors; ineighbor++) {
-      recvcounts[ineighbor] = nints - my_rank + neighbors[ineighbor];
-      rdispls[ineighbor] = nrtot;
-      nrtot += recvcounts[ineighbor];
-      if (neighbors[ineighbor] == -1) {
+      if (neighbors[ineighbor] != -1) {
+         recvcounts[ineighbor] = nints - my_rank + neighbors[ineighbor];
+      } else {
          recvcounts[ineighbor] = 0;
       }
+      rdispls[ineighbor] = nrtot;
+      nrtot += recvcounts[ineighbor];
    }
    int *rbuffer = (int*) malloc(nrtot*sizeof(int));
    for (int i=0; i<nrtot; i++) {rbuffer[i]=-1;}
@@ -93,6 +95,48 @@ int main(int argc, char** argv) {
                           rbuffer, recvcounts, rdispls, MPI_INT,
                           comm_cart);
 
+for (int irank=0; irank<comm_size; irank++) {
+   if (my_rank == irank) {
+      printf("Rank: %d\n", my_rank);
+      printf("   Neighbors:");
+      for (int i=0; i<nneighbors; i++) {
+         printf(" %d", neighbors[i]);
+      }
+      printf("\n");
+      printf("   Sendcount:");
+      for (int i=0; i<nneighbors; i++) {
+         printf(" %d", sendcounts[i]);
+      }
+      printf("\n");
+      printf("   sdispls:");
+      for (int i=0; i<nneighbors; i++) {
+         printf(" %d", (int) (sdispls[i]));
+      }
+      printf("\n");
+      printf("   sbuff:");
+      for (int i=0; i<nstot; i++) {
+         printf(" %d", (int) (sbuffer[i]));
+      }
+      printf("\n");
+      printf("   Recvcount:");
+      for (int i=0; i<nneighbors; i++) {
+         printf(" %d", recvcounts[i]);
+      }
+      printf("\n");
+      printf("   rdispls:");
+      for (int i=0; i<nneighbors; i++) {
+         printf(" %d", (int) (rdispls[i]));
+      }
+      printf("\n");
+      printf("   rbuff:");
+      for (int i=0; i<nrtot; i++) {
+         printf(" %d", (int) (rbuffer[i]));
+      }
+      printf("\n");
+      fflush(stdout);
+   }
+   MPI_Barrier(MPI_COMM_WORLD);
+}
    // validate data
    bool valid_data = true;
    for (int ineighbor=0; ineighbor<nneighbors; ineighbor++) {
