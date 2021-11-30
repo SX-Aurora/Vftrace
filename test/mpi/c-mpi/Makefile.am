@@ -880,7 +880,8 @@ check_PROGRAMS += neighbor_allgather_cart \
 		  neighbor_alltoall_dist_graph \
 		  neighbor_alltoallv_cart \
 		  neighbor_alltoallv_cart_periodic \
-		  neighbor_alltoallv_graph
+		  neighbor_alltoallv_graph \
+		  neighbor_alltoallv_dist_graph
 
 neighbor_allgather_cart_SOURCES = $(srcdir)/neighbor_allgather_cart.c
 neighbor_allgather_cart_CFLAGS = $(AM_CFLAGS)
@@ -942,6 +943,10 @@ neighbor_alltoallv_graph_SOURCES = $(srcdir)/neighbor_alltoallv_graph.c
 neighbor_alltoallv_graph_CFLAGS = $(AM_CFLAGS)
 neighbor_alltoallv_graph_LDFLAGS = $(AM_LDFLAGS)
 
+neighbor_alltoallv_dist_graph_SOURCES = $(srcdir)/neighbor_alltoallv_dist_graph.c
+neighbor_alltoallv_dist_graph_CFLAGS = $(AM_CFLAGS)
+neighbor_alltoallv_dist_graph_LDFLAGS = $(AM_LDFLAGS)
+
 dist_noinst_SCRIPTS += neighbor_allgather_cart.sh \
 		       neighbor_allgather_cart_periodic.sh \
 		       neighbor_allgather_graph.sh \
@@ -956,7 +961,8 @@ dist_noinst_SCRIPTS += neighbor_allgather_cart.sh \
 		       neighbor_alltoall_dist_graph.sh \
 		       neighbor_alltoallv_cart.sh \
 		       neighbor_alltoallv_cart_periodic.sh \
-		       neighbor_alltoallv_graph.sh
+		       neighbor_alltoallv_graph.sh \
+		       neighbor_alltoallv_dist_graph.sh
 
 #####################
 # Global reductions #
