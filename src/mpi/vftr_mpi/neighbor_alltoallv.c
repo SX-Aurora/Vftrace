@@ -97,11 +97,11 @@ int vftr_MPI_Neighbor_alltoallv_cart(const void *sendbuf, const int *sendcounts,
    return retVal;
 }
 
-int vftr_MPI_Neighbor_allgatherv_dist_graph(const void *sendbuf, const int *sendcounts,
-                                            const int *sdispls, MPI_Datatype sendtype,
-                                            void *recvbuf, const int *recvcounts,
-                                            const int *rdispls, MPI_Datatype recvtype,
-                                            MPI_Comm comm) {
+int vftr_MPI_Neighbor_alltoallv_dist_graph(const void *sendbuf, const int *sendcounts,
+                                           const int *sdispls, MPI_Datatype sendtype,
+                                           void *recvbuf, const int *recvcounts,
+                                           const int *rdispls, MPI_Datatype recvtype,
+                                           MPI_Comm comm) {
    long long tstart = vftr_get_runtime_usec();
    int retVal = PMPI_Neighbor_alltoallv(sendbuf, sendcounts, sdispls, sendtype,
                                         recvbuf, recvcounts, rdispls, recvtype,
