@@ -66,12 +66,13 @@ int main(int argc, char** argv) {
    int *displs = (int*) malloc(nneighbors*sizeof(int));
    int ntot = 0;
    for (int ineighbor=0; ineighbor<nneighbors; ineighbor++) {
+      if (neighbors[ineighbor] != -1) {
          recvcounts[ineighbor] = nints - my_rank + neighbors[ineighbor];
-         displs[ineighbor] = ntot;
-         ntot += recvcounts[ineighbor];
-         if (neighbors[ineighbor] == -1) {
-            recvcounts[ineighbor] = 0;
-         }
+      } else {
+         recvcounts[ineighbor] = 0;
+      }
+      displs[ineighbor] = ntot;
+      ntot += recvcounts[ineighbor];
    }
    int *rbuffer = (int*) malloc(ntot*sizeof(int));
    for (int i=0; i<ntot; i++) {rbuffer[i]=-1;}
