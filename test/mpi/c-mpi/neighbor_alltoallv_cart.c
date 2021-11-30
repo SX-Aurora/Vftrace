@@ -16,7 +16,7 @@ int main(int argc, char** argv) {
 
    // require cmd-line argument
    if (argc < 2) {
-      printf("./neighbor_allgatherv_cart <msgsize in ints>\n");
+      printf("./neighbor_alltoallv_cart <msgsize in ints>\n");
       return 1;
    }
 
