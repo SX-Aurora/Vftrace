@@ -71,7 +71,7 @@ int main(int argc, char** argv) {
       } else {
          sendcounts[ineighbor] = 0;
       }
-      sdispls[ineighbor] = nstot;
+      sdispls[ineighbor] = nstot*sizeof(int);
       nstot += sendcounts[ineighbor];
       sendtypes[ineighbor] = MPI_INT;
    }
@@ -88,7 +88,7 @@ int main(int argc, char** argv) {
       } else {
          recvcounts[ineighbor] = 0;
       }
-      rdispls[ineighbor] = nrtot;
+      rdispls[ineighbor] = nrtot*sizeof(int);
       nrtot += recvcounts[ineighbor];
       recvtypes[ineighbor] = MPI_INT;
    }
@@ -99,48 +99,6 @@ int main(int argc, char** argv) {
                           rbuffer, recvcounts, rdispls, recvtypes,
                           comm_cart);
 
-//for (int irank=0; irank<comm_size; irank++) {
-//   if (my_rank == irank) {
-//      printf("Rank: %d\n", my_rank);
-//      printf("   Neighbors:");
-//      for (int i=0; i<nneighbors; i++) {
-//         printf(" %d", neighbors[i]);
-//      }
-//      printf("\n");
-//      printf("   Sendcount:");
-//      for (int i=0; i<nneighbors; i++) {
-//         printf(" %d", sendcounts[i]);
-//      }
-//      printf("\n");
-//      printf("   sdispls:");
-//      for (int i=0; i<nneighbors; i++) {
-//         printf(" %d", (int) (sdispls[i]));
-//      }
-//      printf("\n");
-//      printf("   sbuff:");
-//      for (int i=0; i<nstot; i++) {
-//         printf(" %d", (int) (sbuffer[i]));
-//      }
-//      printf("\n");
-//      printf("   Recvcount:");
-//      for (int i=0; i<nneighbors; i++) {
-//         printf(" %d", recvcounts[i]);
-//      }
-//      printf("\n");
-//      printf("   rdispls:");
-//      for (int i=0; i<nneighbors; i++) {
-//         printf(" %d", (int) (rdispls[i]));
-//      }
-//      printf("\n");
-//      printf("   rbuff:");
-//      for (int i=0; i<nrtot; i++) {
-//         printf(" %d", (int) (rbuffer[i]));
-//      }
-//      printf("\n");
-//      fflush(stdout);
-//   }
-//   MPI_Barrier(MPI_COMM_WORLD);
-//}
    // validate data
    bool valid_data = true;
    for (int ineighbor=0; ineighbor<nneighbors; ineighbor++) {
@@ -149,7 +107,7 @@ int main(int argc, char** argv) {
          refval = neighbors[ineighbor];
       }
       for (int i=0; i<recvcounts[ineighbor]; i++) {
-         if (rbuffer[i+rdispls[ineighbor]] != refval) {
+         if (rbuffer[i+rdispls[ineighbor]/sizeof(int)] != refval) {
             printf("Rank %d received faulty data from rank %d\n", my_rank, refval);
             valid_data = false;
             break;
