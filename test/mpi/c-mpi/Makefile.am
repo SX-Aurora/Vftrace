@@ -869,6 +869,7 @@ dist_noinst_SCRIPTS += barrier.sh \
 check_PROGRAMS += neighbor_allgather_cart \
 		  ineighbor_allgather_cart \
 		  neighbor_allgather_cart_periodic \
+		  ineighbor_allgather_cart_periodic \
 		  neighbor_allgather_graph \
 		  neighbor_allgather_dist_graph \
 		  neighbor_allgatherv_cart \
@@ -899,6 +900,10 @@ ineighbor_allgather_cart_LDFLAGS = $(AM_LDFLAGS)
 neighbor_allgather_cart_periodic_SOURCES = $(srcdir)/neighbor_allgather_cart_periodic.c
 neighbor_allgather_cart_periodic_CFLAGS = $(AM_CFLAGS)
 neighbor_allgather_cart_periodic_LDFLAGS = $(AM_LDFLAGS)
+
+ineighbor_allgather_cart_periodic_SOURCES = $(srcdir)/ineighbor_allgather_cart_periodic.c
+ineighbor_allgather_cart_periodic_CFLAGS = $(AM_CFLAGS)
+ineighbor_allgather_cart_periodic_LDFLAGS = $(AM_LDFLAGS)
 
 neighbor_allgather_graph_SOURCES = $(srcdir)/neighbor_allgather_graph.c
 neighbor_allgather_graph_CFLAGS = $(AM_CFLAGS)
@@ -975,6 +980,7 @@ neighbor_alltoallw_dist_graph_LDFLAGS = $(AM_LDFLAGS)
 dist_noinst_SCRIPTS += neighbor_allgather_cart.sh \
 		       ineighbor_allgather_cart.sh \
 		       neighbor_allgather_cart_periodic.sh \
+		       ineighbor_allgather_cart_periodic.sh \
 		       neighbor_allgather_graph.sh \
 		       neighbor_allgather_dist_graph.sh \
 		       neighbor_allgatherv_cart.sh \
