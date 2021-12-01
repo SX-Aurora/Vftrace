@@ -89,42 +89,25 @@ int vftr_MPI_Ineighbor_allgather_cart(const void *sendbuf, int sendcount,
    // to register communication request
    int *tmpcount = (int*) malloc(sizeof(int)*nneighbors);
    MPI_Datatype *tmptype = (MPI_Datatype*) malloc(sizeof(MPI_Datatype)*nneighbors);
-   int *peer_ranks = (int*) malloc(sizeof(int)*nneighbors);
    // messages to be send
-   int nvalidneighbors=0;
    for (int ineighbor=0; ineighbor<nneighbors; ineighbor++) {
-      // the neighborlist contains a -1 for non existent neighbors
-      // due to non-periodic boundaries
-      if (neighbors[ineighbor] >= 0) {
-         tmpcount[nvalidneighbors] = sendcount;
-         tmptype[nvalidneighbors] = sendtype;
-         peer_ranks[nvalidneighbors] = neighbors[ineighbor];
-         nvalidneighbors++;
-      }
+      tmpcount[ineighbor] = sendcount;
+      tmptype[ineighbor] = sendtype;
    }
-   vftr_register_collective_request(send, nvalidneighbors, tmpcount, tmptype, peer_ranks,
+   vftr_register_collective_request(send, nneighbors, tmpcount, tmptype, neighbors,
                                     comm, *request, 0, NULL, tstart);
    // messages to be received
-   nvalidneighbors=0;
    for (int ineighbor=0; ineighbor<nneighbors; ineighbor++) {
-      // the neighborlist contains a -1 for non existent neighbors
-      // due to non-periodic boundaries
-      if (neighbors[ineighbor] >= 0) {
-         tmpcount[nvalidneighbors] = recvcount;
-         tmptype[nvalidneighbors] = recvtype;
-         peer_ranks[nvalidneighbors] = neighbors[ineighbor];
-         nvalidneighbors++;
-      }
+      tmpcount[ineighbor] = recvcount;
+      tmptype[ineighbor] = recvtype;
    }
-   vftr_register_collective_request(recv, nvalidneighbors, tmpcount, tmptype, peer_ranks,
+   vftr_register_collective_request(recv, nneighbors, tmpcount, tmptype, neighbors,
                                     comm, *request, 0, NULL, tstart);
    // cleanup temporary arrays
    free(tmpcount);
    tmpcount = NULL;
    free(tmptype);
    tmptype = NULL;
-   free(peer_ranks);
-   peer_ranks = NULL;
    free(neighbors);
    neighbors = NULL;
    long long t2end = vftr_get_runtime_usec();
