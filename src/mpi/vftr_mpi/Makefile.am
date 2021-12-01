@@ -107,6 +107,7 @@ if HAS_MPI_STD_3_0
 libvftr_mpi_la_SOURCES += neighbor_allgather.c \
 			  ineighbor_allgather.c \
 			  neighbor_allgatherv.c \
+			  ineighbor_allgatherv.c \
 			  neighbor_alltoall.c \
 			  ineighbor_alltoall.c \
 			  neighbor_alltoallv.c \
