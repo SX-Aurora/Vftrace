@@ -111,6 +111,7 @@ libvftr_cmpiwrap_la_SOURCES += neighbor_allgather.c \
 			       neighbor_alltoall.c \
 			       ineighbor_alltoall.c \
 			       neighbor_alltoallv.c \
+			       ineighbor_alltoallv.c \
 			       neighbor_alltoallw.c
 endif
 
