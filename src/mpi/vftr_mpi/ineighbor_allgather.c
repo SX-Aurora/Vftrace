@@ -175,7 +175,7 @@ int vftr_MPI_Ineighbor_allgather_dist_graph(const void *sendbuf, int sendcount,
       tmpcount[ineighbor] = recvcount;
       tmptype[ineighbor] = recvtype;
    }
-   vftr_register_collective_request(recv, size, tmpcount, tmptype, inneighbors,
+   vftr_register_collective_request(recv, ninneighbors, tmpcount, tmptype, inneighbors,
                                     comm, *request, 0, NULL, tstart);
    // cleanup temporary arrays
    free(tmpcount);
