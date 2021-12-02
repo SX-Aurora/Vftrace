@@ -1,0 +1,1 @@
+../testscripts/neighbor_alltoall_dist_graph.sh
