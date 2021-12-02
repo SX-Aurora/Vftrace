@@ -36,6 +36,8 @@ int main(int argc, char** argv) {
 
    int nneighbors;
    MPI_Graph_neighbors_count(comm_graph, my_rank, &nneighbors);
+   int *neighbors = (int*) malloc(nneighbors*sizeof(int));
+   MPI_Graph_neighbors(comm_graph, my_rank, nneighbors, neighbors);
 
    // allocating send/recv buffer
    int nints = atoi(argv[1]);
@@ -56,7 +58,7 @@ int main(int argc, char** argv) {
       int refval = neighbors[ineighbor];
       for (int i=0; i<nints; i++) {
          if (rbuffer[i+ineighbor*nints] != refval) {
-            printf("Rank %d received faulty data from rank %d\n", my_rank, refval);
+            printf("Rank %d received faulty data from rank %d\n", my_rank, neighbors[ineighbor]);
             valid_data = false;
             break;
          }
