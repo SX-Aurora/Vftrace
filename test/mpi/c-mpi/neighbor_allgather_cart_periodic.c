@@ -34,21 +34,6 @@ int main(int argc, char** argv) {
    int periods[3] = {true,true,true};
    int reorder = false;
    MPI_Cart_create(MPI_COMM_WORLD, ndims, dims, periods, reorder, &comm_cart);
-
-   // allocating send/recv buffer
-   int nneighbors = 2*ndims;
-   int nints = atoi(argv[1]);
-   int *sbuffer = (int*) malloc(nints*sizeof(int));
-   for (int i=0; i<nints; i++) {sbuffer[i]=my_rank;}
-   int *rbuffer = (int*) malloc(nints*nneighbors*sizeof(int));
-   for (int i=0; i<nints*nneighbors; i++) {rbuffer[i]=-1;}
-
-   MPI_Neighbor_allgather(sbuffer, nints, MPI_INT,
-                          rbuffer, nints, MPI_INT,
-                          comm_cart);
-
-   // validate data
-   bool valid_data = true;
    // fill the neighbor list
    int neighbors[6] = {0,0,0,0,0,0};
    switch(my_rank) {
@@ -79,6 +64,21 @@ int main(int argc, char** argv) {
          neighbors[5] = 3;
          break;
    }
+
+   // allocating send/recv buffer
+   int nneighbors = 2*ndims;
+   int nints = atoi(argv[1]);
+   int *sbuffer = (int*) malloc(nints*sizeof(int));
+   for (int i=0; i<nints; i++) {sbuffer[i]=my_rank;}
+   int *rbuffer = (int*) malloc(nints*nneighbors*sizeof(int));
+   for (int i=0; i<nints*nneighbors; i++) {rbuffer[i]=-1;}
+
+   MPI_Neighbor_allgather(sbuffer, nints, MPI_INT,
+                          rbuffer, nints, MPI_INT,
+                          comm_cart);
+
+   // validate data
+   bool valid_data = true;
    for (int ineighbor=0; ineighbor<nneighbors; ineighbor++) {
       int refval = -1;
       if (neighbors[ineighbor] >= 0) {
@@ -86,7 +86,7 @@ int main(int argc, char** argv) {
       }
       for (int i=0; i<nints; i++) {
          if (rbuffer[i+ineighbor*nints] != refval) {
-            printf("Rank %d received faulty data from rank %d\n", my_rank, refval);
+            printf("Rank %d received faulty data from rank %d\n", my_rank, neighbors[ineighbor]);
             valid_data = false;
             break;
          }
