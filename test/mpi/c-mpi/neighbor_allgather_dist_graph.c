@@ -70,6 +70,13 @@ int main(int argc, char** argv) {
    int outdegree;
    int weighted;
    MPI_Dist_graph_neighbors_count(comm_dist_graph, &indegree, &outdegree, &weighted);
+   int *inneighbors = (int*) malloc(indegree*sizeof(int));
+   int *inweights = (int*) malloc(indegree*sizeof(int));
+   int *outneighbors = (int*) malloc(outdegree*sizeof(int));
+   int *outweights = (int*) malloc(outdegree*sizeof(int));
+   MPI_Dist_graph_neighbors(comm_dist_graph,
+                            indegree, inneighbors, inweights,
+                            outdegree, outneighbors, outweights);
 
    // allocating send/recv buffer
    int nints = atoi(argv[1]);
@@ -81,56 +88,8 @@ int main(int argc, char** argv) {
    MPI_Neighbor_allgather(sbuffer, nints, MPI_INT,
                           rbuffer, nints, MPI_INT,
                           comm_dist_graph);
-
-//   for (int irank=0; irank<comm_size; irank++) {
-//      if (my_rank == irank) {
-//         int *inneighbors = (int*) malloc(indegree*sizeof(int));
-//         int *inweights = (int*) malloc(indegree*sizeof(int));
-//         int *outneighbors = (int*) malloc(outdegree*sizeof(int));
-//         int *outweights = (int*) malloc(outdegree*sizeof(int));
-//         MPI_Dist_graph_neighbors(comm_dist_graph,
-//                                  indegree, inneighbors, inweights,
-//                                  outdegree, outneighbors, outweights);
-//         printf("Rank %d:\n", my_rank);
-//         printf("   In: ");
-//         for (int i=0; i<indegree; i++) {
-//            printf(" %d", inneighbors[i]);
-//         }
-//         printf("\n");
-//         printf("   Out:");
-//         for (int i=0; i<outdegree; i++) {
-//            printf(" %d", outneighbors[i]);
-//         }
-//         printf("\n");
-//         free(inneighbors);
-//         free(inweights);
-//         free(outneighbors);
-//         free(outweights);
-//
-//         printf("   sbuff:");
-//         for (int i=0; i<nints; i++) {
-//            printf(" %d", sbuffer[i]);
-//         }
-//         printf("\n");
-//         printf("   rbuff:");
-//         for (int i=0; i<nints*indegree; i++) {
-//            printf(" %d", rbuffer[i]);
-//         }
-//         printf("\n");
-//         printf("\n");
-//      }
-//      MPI_Barrier(MPI_COMM_WORLD);
-//   }
-
    // validate data
    bool valid_data = true;
-         int *inneighbors = (int*) malloc(indegree*sizeof(int));
-         int *inweights = (int*) malloc(indegree*sizeof(int));
-         int *outneighbors = (int*) malloc(outdegree*sizeof(int));
-         int *outweights = (int*) malloc(outdegree*sizeof(int));
-         MPI_Dist_graph_neighbors(comm_dist_graph,
-                                  indegree, inneighbors, inweights,
-                                  outdegree, outneighbors, outweights);
    for (int ineighbor=0; ineighbor<indegree; ineighbor++) {
       int refval = inneighbors[ineighbor];
       for (int i=0; i<nints; i++) {
