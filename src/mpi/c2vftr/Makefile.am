@@ -112,7 +112,8 @@ libvftr_mpi_c2vftr_la_SOURCES += neighbor_allgather_c2vftr.c \
 				 ineighbor_alltoall_c2vftr.c \
 				 neighbor_alltoallv_c2vftr.c \
 				 ineighbor_alltoallv_c2vftr.c \
-				 neighbor_alltoallw_c2vftr.c
+				 neighbor_alltoallw_c2vftr.c \
+				 ineighbor_alltoallw_c2vftr.c
 endif
 
 ####################
