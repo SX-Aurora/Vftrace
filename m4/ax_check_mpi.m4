@@ -16,9 +16,8 @@ AC_DEFUN([AX_CHECK_MPI], [
    AC_ARG_WITH([mpi],
       [AS_HELP_STRING([--with-mpi],
          [compile with MPI support. If none is found,
-            MPI is not used. Default: no])],
-      [with_mpi=yes])
-   AM_CONDITIONAL([WITH_MPI], [test "$with_mpi" = "yes"])
+            MPI is not used. Default: no])])
+   AM_CONDITIONAL([WITH_MPI], [test "x$with_mpi" = "xyes"])
 
    # NEC_MPI for x86 links mpi_mem and not mpi
    # Check which one is required and use that one
@@ -72,13 +71,14 @@ AC_DEFUN([AX_CHECK_MPI], [
    # and the old one deprecated.
    # We need the flag as some mpi-tests require four processes
    # which can be problematic on systems with few cores
-   AM_COND_IF([USES_OPEN_MPI], [
-      AC_MSG_CHECKING([OpenMPI version])
-      ompi_version="$(mpirun --version 2> /dev/null | head -n 1 | awk '{print $NF}')"
-      AC_MSG_RESULT([${ompi_version}])
-      AX_COMPARE_VERSION([${ompi_version}], [lt], [5.0.0],
-         [ompi_version_lt5="yes"],
-         [ompi_version_lt5="no"])])
+   AM_COND_IF([WITH_MPI], [
+      AM_COND_IF([USES_OPEN_MPI], [
+         AC_MSG_CHECKING([OpenMPI version])
+         ompi_version="$(mpirun --version 2> /dev/null | head -n 1 | awk '{print $NF}')"
+         AC_MSG_RESULT([${ompi_version}])
+         AX_COMPARE_VERSION([${ompi_version}], [lt], [5.0.0],
+            [ompi_version_lt5="yes"],
+            [ompi_version_lt5="no"])])])
    AM_CONDITIONAL([OMPI_VERSION_LT5],
                   [test "x$ompi_version_lt5" = "xyes"])
 
