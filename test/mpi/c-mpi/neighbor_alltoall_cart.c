@@ -34,9 +34,6 @@ int main(int argc, char** argv) {
    int periods[3] = {false, false, false};
    int reorder = false;
    MPI_Cart_create(MPI_COMM_WORLD, ndims, dims, periods, reorder, &comm_cart);
-
-   // allocating send/recv buffer
-   int nneighbors = 2*ndims;
    // fill the neighbor list
    int neighbors[6] = {-1,-1,-1,-1,-1,-1};
    switch(my_rank) {
@@ -57,6 +54,9 @@ int main(int argc, char** argv) {
          neighbors[2] = 2;
          break;
    }
+
+   // allocating send/recv buffer
+   int nneighbors = 2*ndims;
    int nints = atoi(argv[1]);
    int *sbuffer = (int*) malloc(nints*nneighbors*sizeof(int));
    for (int i=0; i<nints*nneighbors; i++) {sbuffer[i]=my_rank;}
@@ -76,7 +76,7 @@ int main(int argc, char** argv) {
       }
       for (int i=0; i<nints; i++) {
          if (rbuffer[i+ineighbor*nints] != refval) {
-            printf("Rank %d received faulty data from rank %d\n", my_rank, refval);
+            printf("Rank %d received faulty data from rank %d\n", my_rank, neighbors[ineighbor]);
             valid_data = false;
             break;
          }
