@@ -34,6 +34,8 @@ int main(int argc, char** argv) {
    int periods[3] = {false, false, false};
    int reorder = false;
    MPI_Cart_create(MPI_COMM_WORLD, ndims, dims, periods, reorder, &comm_cart);
+
+   int nneighbors = 2*ndims;
    // fill the neighbor list
    int neighbors[6] = {-1,-1,-1,-1,-1,-1};
    switch(my_rank) {
@@ -56,7 +58,6 @@ int main(int argc, char** argv) {
    }
 
    // allocating send/recv buffer
-   int nneighbors = 2*ndims;
    int nints = atoi(argv[1]);
    int *sbuffer = (int*) malloc(nints*sizeof(int));
    for (int i=0; i<nints; i++) {sbuffer[i]=my_rank;}
