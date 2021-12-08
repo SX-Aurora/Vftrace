@@ -62,7 +62,7 @@ PROGRAM ineighbor_alltoall_graph
    CALL GET_COMMAND_ARGUMENT(1,cmdargstr)
    READ(UNIT=cmdargstr, FMT=*) nints
    ALLOCATE(sbuffer(nints,nneighbors))
-   sbuffer(:,nneighbors) = my_rank
+   sbuffer(:,:) = my_rank
    ALLOCATE(rbuffer(nints,nneighbors))
    rbuffer(:,:) = -1
 
