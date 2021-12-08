@@ -52,8 +52,6 @@ int main(int argc, char** argv) {
 
    // validate data
    bool valid_data = true;
-   int *neighbors = (int*) malloc(nneighbors*sizeof(int));
-   MPI_Graph_neighbors(comm_graph, my_rank, nneighbors, neighbors);
    for (int ineighbor=0; ineighbor<nneighbors; ineighbor++) {
       int refval = neighbors[ineighbor];
       for (int i=0; i<nints; i++) {
