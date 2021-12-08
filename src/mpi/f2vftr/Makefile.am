@@ -139,10 +139,14 @@ libvftr_mpi_f2vftr_la_SOURCES += barrier_f2vftr_fi.F90 \
 
 libvftr_mpi_f2vftr_la_SOURCES += neighbor_allgather_f2vftr.c \
 				 ineighbor_allgather_f2vftr.c \
-				 neighbor_alltoall_f2vftr.c
+				 neighbor_allgatherv_f2vftr.c \
+				 neighbor_alltoall_f2vftr.c \
+				 ineighbor_alltoall_f2vftr.c
 libvftr_mpi_f2vftr_la_SOURCES += neighbor_allgather_f2vftr_fi.F90 \
 				 ineighbor_allgather_f2vftr_fi.F90 \
-				 neighbor_alltoall_f2vftr_fi.F90
+				 neighbor_allgatherv_f2vftr_fi.F90 \
+				 neighbor_alltoall_f2vftr_fi.F90 \
+				 ineighbor_alltoall_f2vftr_fi.F90
 
 ####################
 # global reduction #
