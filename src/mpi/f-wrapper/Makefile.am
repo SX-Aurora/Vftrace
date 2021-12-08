@@ -108,7 +108,8 @@ libvftr_fmpiwrap_la_SOURCES += neighbor_allgather.F90 \
 			       neighbor_allgatherv.F90 \
 			       ineighbor_allgatherv.F90 \
 			       neighbor_alltoall.F90 \
-			       ineighbor_alltoall.F90 
+			       ineighbor_alltoall.F90 \
+			       neighbor_alltoallv.F90 
 endif
 
 ####################
