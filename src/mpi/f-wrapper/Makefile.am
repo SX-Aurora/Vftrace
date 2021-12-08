@@ -99,6 +99,13 @@ libvftr_fmpiwrap_la_SOURCES += ibarrier.F90 \
 			       ialltoallw.F90
 endif
 
+########################
+# neighbor collectives #
+########################
+if HAS_MPI_STD_3_0
+libvftr_fmpiwrap_la_SOURCES += neighbor_allgather.F90
+endif
+
 ####################
 # global reduction #
 ####################
