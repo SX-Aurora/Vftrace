@@ -59,7 +59,7 @@ PROGRAM neighbor_alltoall_graph
    CALL GET_COMMAND_ARGUMENT(1,cmdargstr)
    READ(UNIT=cmdargstr, FMT=*) nints
    ALLOCATE(sbuffer(nints,nneighbors))
-   sbuffer(:,nneighbors) = my_rank
+   sbuffer(:,:) = my_rank
    ALLOCATE(rbuffer(nints,nneighbors))
    rbuffer(:,:) = -1
 
@@ -73,7 +73,7 @@ PROGRAM neighbor_alltoall_graph
    DO ineighbor = 0, nneighbors - 1
       refval = neighbors(ineighbor+1)
       IF (ANY(rbuffer(:,ineighbor+1) /= refval)) THEN
-         WRITE(UNIT=OUTPUT_UNIT, FMT="(A,I4,A)") &
+         WRITE(UNIT=OUTPUT_UNIT, FMT="(A,I4,A,I4)") &
             "Rank ", my_rank, " received faulty data from rank ", neighbors(ineighbor+1)
          valid_data = .FALSE.
       END IF
