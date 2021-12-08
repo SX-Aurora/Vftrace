@@ -133,6 +133,13 @@ libvftr_mpi_f2vftr_la_SOURCES += barrier_f2vftr_fi.F90 \
                                  alltoallw_f2vftr_fi.F90 \
                                  ialltoallw_f2vftr_fi.F90
 
+########################
+# neighbor collectives #
+########################
+
+libvftr_mpi_f2vftr_la_SOURCES += neighbor_allgather_f2vftr.c
+libvftr_mpi_f2vftr_la_SOURCES += neighbor_allgather_f2vftr_fi.F90
+
 ####################
 # global reduction #
 ####################
