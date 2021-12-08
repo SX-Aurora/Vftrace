@@ -94,14 +94,14 @@ int main(int argc, char** argv) {
 
    int *recvcounts = (int*) malloc(indegree*sizeof(int));
    int *rdispls = (int*) malloc(indegree*sizeof(int));
-   int ntot = 0;
+   int nrtot = 0;
    for (int ineighbor=0; ineighbor<indegree; ineighbor++) {
       recvcounts[ineighbor] = nints - my_rank + inneighbors[ineighbor];
-      rdispls[ineighbor] = ntot;
-      ntot += recvcounts[ineighbor];
+      rdispls[ineighbor] = nrtot;
+      nrtot += recvcounts[ineighbor];
    }
-   int *rbuffer = (int*) malloc(ntot*sizeof(int));
-   for (int i=0; i<ntot; i++) {rbuffer[i]=-1;}
+   int *rbuffer = (int*) malloc(nrtot*sizeof(int));
+   for (int i=0; i<nrtot; i++) {rbuffer[i]=-1;}
 
    MPI_Neighbor_alltoallv(sbuffer, sendcounts, sdispls, MPI_INT,
                           rbuffer, recvcounts, rdispls, MPI_INT,
