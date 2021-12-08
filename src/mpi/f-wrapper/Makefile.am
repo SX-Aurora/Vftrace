@@ -104,7 +104,8 @@ endif
 ########################
 if HAS_MPI_STD_3_0
 libvftr_fmpiwrap_la_SOURCES += neighbor_allgather.F90 \
-			       ineighbor_allgather.F90
+			       ineighbor_allgather.F90 \
+			       neighbor_alltoall.F90
 endif
 
 ####################
