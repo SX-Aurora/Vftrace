@@ -29,7 +29,7 @@ MODULE vftr_mpi_init_f082vftr_f08i
    INTERFACE
 
       SUBROUTINE vftr_MPI_Init_f082vftr(error) &
-         BIND(c, NAME="vftr_MPI_Init")
+         BIND(c, NAME="vftr_MPI_Init_f082vftr")
          IMPLICIT NONE
          INTEGER :: error
       END SUBROUTINE vftr_MPI_Init_f082vftr
