@@ -860,6 +860,253 @@ dist_noinst_SCRIPTS += barrier.sh \
 		       ialltoallw_inplace.sh \
 		       ialltoallw_intercom.sh
 
+########################
+# Neighbor Collectives #
+########################
+#TODO: add synctime tests
+#TODO: add nolog tests
+check_PROGRAMS += neighbor_allgather_cart \
+		  ineighbor_allgather_cart \
+		  neighbor_allgather_cart_periodic \
+		  ineighbor_allgather_cart_periodic \
+		  neighbor_allgather_graph \
+		  ineighbor_allgather_graph \
+		  neighbor_allgather_dist_graph \
+		  ineighbor_allgather_dist_graph \
+		  neighbor_allgatherv_cart \
+		  ineighbor_allgatherv_cart \
+		  neighbor_allgatherv_cart_periodic \
+		  ineighbor_allgatherv_cart_periodic \
+		  neighbor_allgatherv_graph \
+		  ineighbor_allgatherv_graph \
+		  neighbor_allgatherv_dist_graph \
+		  ineighbor_allgatherv_dist_graph \
+		  neighbor_alltoall_cart \
+		  ineighbor_alltoall_cart \
+		  neighbor_alltoall_cart_periodic \
+		  ineighbor_alltoall_cart_periodic \
+		  neighbor_alltoall_graph \
+		  ineighbor_alltoall_graph \
+		  neighbor_alltoall_dist_graph \
+		  ineighbor_alltoall_dist_graph \
+		  neighbor_alltoallv_cart \
+		  ineighbor_alltoallv_cart \
+		  neighbor_alltoallv_cart_periodic \
+		  ineighbor_alltoallv_cart_periodic \
+		  neighbor_alltoallv_graph \
+		  ineighbor_alltoallv_graph \
+		  neighbor_alltoallv_dist_graph \
+		  ineighbor_alltoallv_dist_graph \
+		  neighbor_alltoallw_cart \
+		  ineighbor_alltoallw_cart \
+		  neighbor_alltoallw_cart_periodic \
+		  ineighbor_alltoallw_cart_periodic \
+		  neighbor_alltoallw_graph \
+		  ineighbor_alltoallw_graph \
+		  neighbor_alltoallw_dist_graph \
+		  ineighbor_alltoallw_dist_graph 
+
+neighbor_allgather_cart_SOURCES = $(srcdir)/neighbor_allgather_cart.F90
+neighbor_allgather_cart_FCFLAGS = $(AM_FCFLAGS)
+neighbor_allgather_cart_LDFLAGS = $(AM_LDFLAGS)
+
+ineighbor_allgather_cart_SOURCES = $(srcdir)/ineighbor_allgather_cart.F90
+ineighbor_allgather_cart_FCFLAGS = $(AM_FCFLAGS)
+ineighbor_allgather_cart_LDFLAGS = $(AM_LDFLAGS)
+
+neighbor_allgather_cart_periodic_SOURCES = $(srcdir)/neighbor_allgather_cart_periodic.F90
+neighbor_allgather_cart_periodic_FCFLAGS = $(AM_FCFLAGS)
+neighbor_allgather_cart_periodic_LDFLAGS = $(AM_LDFLAGS)
+
+ineighbor_allgather_cart_periodic_SOURCES = $(srcdir)/ineighbor_allgather_cart_periodic.F90
+ineighbor_allgather_cart_periodic_FCFLAGS = $(AM_FCFLAGS)
+ineighbor_allgather_cart_periodic_LDFLAGS = $(AM_LDFLAGS)
+
+neighbor_allgather_graph_SOURCES = $(srcdir)/neighbor_allgather_graph.F90
+neighbor_allgather_graph_FCFLAGS = $(AM_FCFLAGS)
+neighbor_allgather_graph_LDFLAGS = $(AM_LDFLAGS)
+
+ineighbor_allgather_graph_SOURCES = $(srcdir)/ineighbor_allgather_graph.F90
+ineighbor_allgather_graph_FCFLAGS = $(AM_FCFLAGS)
+ineighbor_allgather_graph_LDFLAGS = $(AM_LDFLAGS)
+
+neighbor_allgather_dist_graph_SOURCES = $(srcdir)/neighbor_allgather_dist_graph.F90
+neighbor_allgather_dist_graph_FCFLAGS = $(AM_FCFLAGS)
+neighbor_allgather_dist_graph_LDFLAGS = $(AM_LDFLAGS)
+
+ineighbor_allgather_dist_graph_SOURCES = $(srcdir)/ineighbor_allgather_dist_graph.F90
+ineighbor_allgather_dist_graph_FCFLAGS = $(AM_FCFLAGS)
+ineighbor_allgather_dist_graph_LDFLAGS = $(AM_LDFLAGS)
+
+neighbor_allgatherv_cart_SOURCES = $(srcdir)/neighbor_allgatherv_cart.F90
+neighbor_allgatherv_cart_FCFLAGS = $(AM_FCFLAGS)
+neighbor_allgatherv_cart_LDFLAGS = $(AM_LDFLAGS)
+
+ineighbor_allgatherv_cart_SOURCES = $(srcdir)/ineighbor_allgatherv_cart.F90
+ineighbor_allgatherv_cart_FCFLAGS = $(AM_FCFLAGS)
+ineighbor_allgatherv_cart_LDFLAGS = $(AM_LDFLAGS)
+
+neighbor_allgatherv_cart_periodic_SOURCES = $(srcdir)/neighbor_allgatherv_cart_periodic.F90
+neighbor_allgatherv_cart_periodic_FCFLAGS = $(AM_FCFLAGS)
+neighbor_allgatherv_cart_periodic_LDFLAGS = $(AM_LDFLAGS)
+
+ineighbor_allgatherv_cart_periodic_SOURCES = $(srcdir)/ineighbor_allgatherv_cart_periodic.F90
+ineighbor_allgatherv_cart_periodic_FCFLAGS = $(AM_FCFLAGS)
+ineighbor_allgatherv_cart_periodic_LDFLAGS = $(AM_LDFLAGS)
+
+neighbor_allgatherv_graph_SOURCES = $(srcdir)/neighbor_allgatherv_graph.F90
+neighbor_allgatherv_graph_FCFLAGS = $(AM_FCFLAGS)
+neighbor_allgatherv_graph_LDFLAGS = $(AM_LDFLAGS)
+
+ineighbor_allgatherv_graph_SOURCES = $(srcdir)/ineighbor_allgatherv_graph.F90
+ineighbor_allgatherv_graph_FCFLAGS = $(AM_FCFLAGS)
+ineighbor_allgatherv_graph_LDFLAGS = $(AM_LDFLAGS)
+
+neighbor_allgatherv_dist_graph_SOURCES = $(srcdir)/neighbor_allgatherv_dist_graph.F90
+neighbor_allgatherv_dist_graph_FCFLAGS = $(AM_FCFLAGS)
+neighbor_allgatherv_dist_graph_LDFLAGS = $(AM_LDFLAGS)
+
+ineighbor_allgatherv_dist_graph_SOURCES = $(srcdir)/ineighbor_allgatherv_dist_graph.F90
+ineighbor_allgatherv_dist_graph_FCFLAGS = $(AM_FCFLAGS)
+ineighbor_allgatherv_dist_graph_LDFLAGS = $(AM_LDFLAGS)
+
+neighbor_alltoall_cart_SOURCES = $(srcdir)/neighbor_alltoall_cart.F90
+neighbor_alltoall_cart_FCFLAGS = $(AM_FCFLAGS)
+neighbor_alltoall_cart_LDFLAGS = $(AM_LDFLAGS)
+
+ineighbor_alltoall_cart_SOURCES = $(srcdir)/ineighbor_alltoall_cart.F90
+ineighbor_alltoall_cart_FCFLAGS = $(AM_FCFLAGS)
+ineighbor_alltoall_cart_LDFLAGS = $(AM_LDFLAGS)
+
+neighbor_alltoall_cart_periodic_SOURCES = $(srcdir)/neighbor_alltoall_cart_periodic.F90
+neighbor_alltoall_cart_periodic_FCFLAGS = $(AM_FCFLAGS)
+neighbor_alltoall_cart_periodic_LDFLAGS = $(AM_LDFLAGS)
+
+ineighbor_alltoall_cart_periodic_SOURCES = $(srcdir)/ineighbor_alltoall_cart_periodic.F90
+ineighbor_alltoall_cart_periodic_FCFLAGS = $(AM_FCFLAGS)
+ineighbor_alltoall_cart_periodic_LDFLAGS = $(AM_LDFLAGS)
+
+neighbor_alltoall_graph_SOURCES = $(srcdir)/neighbor_alltoall_graph.F90
+neighbor_alltoall_graph_FCFLAGS = $(AM_FCFLAGS)
+neighbor_alltoall_graph_LDFLAGS = $(AM_LDFLAGS)
+
+ineighbor_alltoall_graph_SOURCES = $(srcdir)/ineighbor_alltoall_graph.F90
+ineighbor_alltoall_graph_FCFLAGS = $(AM_FCFLAGS)
+ineighbor_alltoall_graph_LDFLAGS = $(AM_LDFLAGS)
+
+neighbor_alltoall_dist_graph_SOURCES = $(srcdir)/neighbor_alltoall_dist_graph.F90
+neighbor_alltoall_dist_graph_FCFLAGS = $(AM_FCFLAGS)
+neighbor_alltoall_dist_graph_LDFLAGS = $(AM_LDFLAGS)
+
+ineighbor_alltoall_dist_graph_SOURCES = $(srcdir)/ineighbor_alltoall_dist_graph.F90
+ineighbor_alltoall_dist_graph_FCFLAGS = $(AM_FCFLAGS)
+ineighbor_alltoall_dist_graph_LDFLAGS = $(AM_LDFLAGS)
+
+neighbor_alltoallv_cart_SOURCES = $(srcdir)/neighbor_alltoallv_cart.F90
+neighbor_alltoallv_cart_FCFLAGS = $(AM_FCFLAGS)
+neighbor_alltoallv_cart_LDFLAGS = $(AM_LDFLAGS)
+
+ineighbor_alltoallv_cart_SOURCES = $(srcdir)/ineighbor_alltoallv_cart.F90
+ineighbor_alltoallv_cart_FCFLAGS = $(AM_FCFLAGS)
+ineighbor_alltoallv_cart_LDFLAGS = $(AM_LDFLAGS)
+
+neighbor_alltoallv_cart_periodic_SOURCES = $(srcdir)/neighbor_alltoallv_cart_periodic.F90
+neighbor_alltoallv_cart_periodic_FCFLAGS = $(AM_FCFLAGS)
+neighbor_alltoallv_cart_periodic_LDFLAGS = $(AM_LDFLAGS)
+
+ineighbor_alltoallv_cart_periodic_SOURCES = $(srcdir)/ineighbor_alltoallv_cart_periodic.F90
+ineighbor_alltoallv_cart_periodic_FCFLAGS = $(AM_FCFLAGS)
+ineighbor_alltoallv_cart_periodic_LDFLAGS = $(AM_LDFLAGS)
+
+neighbor_alltoallv_graph_SOURCES = $(srcdir)/neighbor_alltoallv_graph.F90
+neighbor_alltoallv_graph_FCFLAGS = $(AM_FCFLAGS)
+neighbor_alltoallv_graph_LDFLAGS = $(AM_LDFLAGS)
+
+ineighbor_alltoallv_graph_SOURCES = $(srcdir)/ineighbor_alltoallv_graph.F90
+ineighbor_alltoallv_graph_FCFLAGS = $(AM_FCFLAGS)
+ineighbor_alltoallv_graph_LDFLAGS = $(AM_LDFLAGS)
+
+neighbor_alltoallv_dist_graph_SOURCES = $(srcdir)/neighbor_alltoallv_dist_graph.F90
+neighbor_alltoallv_dist_graph_FCFLAGS = $(AM_FCFLAGS)
+neighbor_alltoallv_dist_graph_LDFLAGS = $(AM_LDFLAGS)
+
+ineighbor_alltoallv_dist_graph_SOURCES = $(srcdir)/ineighbor_alltoallv_dist_graph.F90
+ineighbor_alltoallv_dist_graph_FCFLAGS = $(AM_FCFLAGS)
+ineighbor_alltoallv_dist_graph_LDFLAGS = $(AM_LDFLAGS)
+
+neighbor_alltoallw_cart_SOURCES = $(srcdir)/neighbor_alltoallw_cart.F90
+neighbor_alltoallw_cart_FCFLAGS = $(AM_FCFLAGS)
+neighbor_alltoallw_cart_LDFLAGS = $(AM_LDFLAGS)
+
+ineighbor_alltoallw_cart_SOURCES = $(srcdir)/ineighbor_alltoallw_cart.F90
+ineighbor_alltoallw_cart_FCFLAGS = $(AM_FCFLAGS)
+ineighbor_alltoallw_cart_LDFLAGS = $(AM_LDFLAGS)
+
+neighbor_alltoallw_cart_periodic_SOURCES = $(srcdir)/neighbor_alltoallw_cart_periodic.F90
+neighbor_alltoallw_cart_periodic_FCFLAGS = $(AM_FCFLAGS)
+neighbor_alltoallw_cart_periodic_LDFLAGS = $(AM_LDFLAGS)
+
+ineighbor_alltoallw_cart_periodic_SOURCES = $(srcdir)/ineighbor_alltoallw_cart_periodic.F90
+ineighbor_alltoallw_cart_periodic_FCFLAGS = $(AM_FCFLAGS)
+ineighbor_alltoallw_cart_periodic_LDFLAGS = $(AM_LDFLAGS)
+
+neighbor_alltoallw_graph_SOURCES = $(srcdir)/neighbor_alltoallw_graph.F90
+neighbor_alltoallw_graph_FCFLAGS = $(AM_FCFLAGS)
+neighbor_alltoallw_graph_LDFLAGS = $(AM_LDFLAGS)
+
+ineighbor_alltoallw_graph_SOURCES = $(srcdir)/ineighbor_alltoallw_graph.F90
+ineighbor_alltoallw_graph_FCFLAGS = $(AM_FCFLAGS)
+ineighbor_alltoallw_graph_LDFLAGS = $(AM_LDFLAGS)
+
+neighbor_alltoallw_dist_graph_SOURCES = $(srcdir)/neighbor_alltoallw_dist_graph.F90
+neighbor_alltoallw_dist_graph_FCFLAGS = $(AM_FCFLAGS)
+neighbor_alltoallw_dist_graph_LDFLAGS = $(AM_LDFLAGS)
+
+ineighbor_alltoallw_dist_graph_SOURCES = $(srcdir)/ineighbor_alltoallw_dist_graph.F90
+ineighbor_alltoallw_dist_graph_FCFLAGS = $(AM_FCFLAGS)
+ineighbor_alltoallw_dist_graph_LDFLAGS = $(AM_LDFLAGS)
+
+dist_noinst_SCRIPTS += neighbor_allgather_cart.sh \
+		       ineighbor_allgather_cart.sh \
+		       neighbor_allgather_cart_periodic.sh \
+		       ineighbor_allgather_cart_periodic.sh \
+		       neighbor_allgather_graph.sh \
+		       ineighbor_allgather_graph.sh \
+		       neighbor_allgather_dist_graph.sh \
+		       ineighbor_allgather_dist_graph.sh \
+		       neighbor_allgatherv_cart.sh \
+		       ineighbor_allgatherv_cart.sh \
+		       neighbor_allgatherv_cart_periodic.sh \
+		       ineighbor_allgatherv_cart_periodic.sh \
+		       neighbor_allgatherv_graph.sh \
+		       ineighbor_allgatherv_graph.sh \
+		       neighbor_allgatherv_dist_graph.sh \
+		       ineighbor_allgatherv_dist_graph.sh \
+		       neighbor_alltoall_cart.sh \
+		       ineighbor_alltoall_cart.sh \
+		       neighbor_alltoall_cart_periodic.sh \
+		       ineighbor_alltoall_cart_periodic.sh \
+		       neighbor_alltoall_graph.sh \
+		       ineighbor_alltoall_graph.sh \
+		       neighbor_alltoall_dist_graph.sh \
+		       ineighbor_alltoall_dist_graph.sh \
+		       neighbor_alltoallv_cart.sh \
+		       ineighbor_alltoallv_cart.sh \
+		       neighbor_alltoallv_cart_periodic.sh \
+		       ineighbor_alltoallv_cart_periodic.sh \
+		       neighbor_alltoallv_graph.sh \
+		       ineighbor_alltoallv_graph.sh \
+		       neighbor_alltoallv_dist_graph.sh \
+		       ineighbor_alltoallv_dist_graph.sh \
+		       neighbor_alltoallw_cart.sh \
+		       ineighbor_alltoallw_cart.sh \
+		       neighbor_alltoallw_cart_periodic.sh \
+		       ineighbor_alltoallw_cart_periodic.sh \
+		       neighbor_alltoallw_graph.sh \
+		       ineighbor_alltoallw_graph.sh \
+		       neighbor_alltoallw_dist_graph.sh \
+		       ineighbor_alltoallw_dist_graph.sh
+
 #####################
 # Global reductions #
 #####################
