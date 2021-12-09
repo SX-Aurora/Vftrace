@@ -112,22 +112,6 @@ PROGRAM neighbor_alltoallw_cart
    ALLOCATE(rbuffer(nrtot))
    rbuffer(:) = -1
 
-DO i = 0, comm_size - 1
-IF (my_rank == i) THEN
-WRITE(*,*) "Rank: ", my_rank
-WRITE(*,*) "   neighbors: ", neighbors
-WRITE(*,*) "   sendcount: ", sendcounts
-WRITE(*,*) "   sdispls:   ", sdispls
-WRITE(*,*) "   sendtypes: ", ALL(sendtypes == MPI_INTEGER)
-WRITE(*,*) "   sendbuff:  ", sbuffer
-WRITE(*,*) "   recvcount: ", recvcounts
-WRITE(*,*) "   rdispls:   ", rdispls
-WRITE(*,*) "   recvtypes: ", ALL(recvtypes == MPI_INTEGER)
-WRITE(*,*) "   recvbuff:  ", rbuffer
-WRITE(*,*) ""
-ENDIF
-CALL MPI_BARRIER(MPI_COMM_WORLD, ierr)
-END DO
    ! Message cycle
    CALL MPI_Neighbor_alltoallw(sbuffer, sendcounts, sdispls, sendtypes, &
                                rbuffer, recvcounts, rdispls, recvtypes, &
@@ -135,26 +119,26 @@ END DO
 
    ! validate data
    valid_data = .TRUE.
-!   DO ineighbor = 0, nneighbors - 1
-!      refval = neighbors(ineighbor+1)
-!      DO i = 1, recvcounts(ineighbor+1)
-!         IF (rbuffer(i+rdispls(ineighbor+1)/C_SIZEOF(dummyint)) /= refval) THEN
-!            WRITE(UNIT=OUTPUT_UNIT, FMT="(A,I4,A,I4)") &
-!               "Rank ", my_rank, " received faulty data from rank ", neighbors(ineighbor+1)
-!            valid_data = .FALSE.
-!            EXIT
-!         END IF
-!      END DO
-!   END DO
-!
-!   DEALLOCATE(rbuffer)
-!   DEALLOCATE(recvcounts)
-!   DEALLOCATE(rdispls)
-!   DEALLOCATE(recvtypes)
-!   DEALLOCATE(sbuffer)
-!   DEALLOCATE(sendcounts)
-!   DEALLOCATE(sdispls)
-!   DEALLOCATE(sendtypes)
+   DO ineighbor = 0, nneighbors - 1
+      refval = neighbors(ineighbor+1)
+      DO i = 1, recvcounts(ineighbor+1)
+         IF (rbuffer(i+rdispls(ineighbor+1)/C_SIZEOF(dummyint)) /= refval) THEN
+            WRITE(UNIT=OUTPUT_UNIT, FMT="(A,I4,A,I4)") &
+               "Rank ", my_rank, " received faulty data from rank ", neighbors(ineighbor+1)
+            valid_data = .FALSE.
+            EXIT
+         END IF
+      END DO
+   END DO
+
+   DEALLOCATE(rbuffer)
+   DEALLOCATE(recvcounts)
+   DEALLOCATE(rdispls)
+   DEALLOCATE(recvtypes)
+   DEALLOCATE(sbuffer)
+   DEALLOCATE(sendcounts)
+   DEALLOCATE(sdispls)
+   DEALLOCATE(sendtypes)
 
    CALL MPI_Finalize(ierr)
 
