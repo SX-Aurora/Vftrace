@@ -97,20 +97,20 @@ PROGRAM neighbor_alltoallv_dist_graph
    CALL GET_COMMAND_ARGUMENT(1,cmdargstr)
    READ(UNIT=cmdargstr, FMT=*) nints
    nints = nints + my_rank
-   ALLOCATE(sendcounts(indegree))
-   ALLOCATE(sdispls(indegree))
+   ALLOCATE(sendcounts(outdegree))
+   ALLOCATE(sdispls(outdegree))
    nstot = 0
-   DO ineighbor = 0, indegree - 1
+   DO ineighbor = 0, outdegree - 1
       sendcounts(ineighbor+1) = nints
       sdispls(ineighbor+1) = nstot
       nstot = nstot + sendcounts(ineighbor+1)
    END DO
    ALLOCATE(sbuffer(nstot))
    sbuffer(:) = my_rank
-   ALLOCATE(recvcounts(outdegree))
-   ALLOCATE(rdispls(outdegree))
+   ALLOCATE(recvcounts(indegree))
+   ALLOCATE(rdispls(indegree))
    nrtot = 0
-   DO ineighbor = 0, outdegree - 1
+   DO ineighbor = 0, indegree - 1
       recvcounts(ineighbor+1) = nints - my_rank + inneighbors(ineighbor+1)
       rdispls(ineighbor+1) = nrtot
       nrtot = nrtot + recvcounts(ineighbor+1)
