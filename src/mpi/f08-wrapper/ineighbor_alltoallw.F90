@@ -27,15 +27,16 @@ SUBROUTINE MPI_Ineighbor_alltoallw_f08(sendbuf, sendcounts, sdispls, sendtypes, 
       ONLY : PMPI_Ineighbor_alltoallw, &
              MPI_Datatype, &
              MPI_Comm, &
-             MPI_Request
+             MPI_Request, &
+             MPI_ADDRESS_KIND
    IMPLICIT NONE
    INTEGER, INTENT(IN) :: sendbuf
    INTEGER, INTENT(IN) :: sendcounts(*)
-   INTEGER, INTENT(IN) :: sdispls(*)
+   INTEGER(KIND=MPI_ADDRESS_KIND), INTENT(IN) :: sdispls(*)
    TYPE(MPI_Datatype), INTENT(IN) :: sendtypes(*)
    INTEGER :: recvbuf
    INTEGER, INTENT(IN) :: recvcounts(*)
-   INTEGER, INTENT(IN) :: rdispls(*)
+   INTEGER(KIND=MPI_ADDRESS_KIND), INTENT(IN) :: rdispls(*)
    TYPE(MPI_Datatype), INTENT(IN) :: recvtypes(*)
    TYPE(MPI_Comm), INTENT(IN) :: comm
    TYPE(MPI_Request), INTENT(OUT) :: request
