@@ -1,0 +1,1 @@
+../testscripts/ineighbor_allgather_cart_periodic.sh
