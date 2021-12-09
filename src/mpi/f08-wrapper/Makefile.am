@@ -85,16 +85,16 @@ libvftr_f08mpiwrap_la_SOURCES += barrier.F90 \
 # neighbor collectives #
 ########################
 if HAS_MPI_STD_3_0
-libvftr_fmpiwrap_la_SOURCES += neighbor_allgather.F90 \
-			       ineighbor_allgather.F90 \
-			       neighbor_allgatherv.F90 \
-			       ineighbor_allgatherv.F90 \
-			       neighbor_alltoall.F90 \
-			       ineighbor_alltoall.F90 \
-			       neighbor_alltoallv.F90 \
-			       ineighbor_alltoallv.F90 \
-			       neighbor_alltoallw.F90 \
-			       ineighbor_alltoallw.F90 
+libvftr_f08mpiwrap_la_SOURCES += neighbor_allgather.F90 \
+				 ineighbor_allgather.F90 \
+				 neighbor_allgatherv.F90 \
+				 ineighbor_allgatherv.F90 \
+				 neighbor_alltoall.F90 \
+				 ineighbor_alltoall.F90 \
+				 neighbor_alltoallv.F90 \
+				 ineighbor_alltoallv.F90 \
+				 neighbor_alltoallw.F90 \
+				 ineighbor_alltoallw.F90 
 endif
 
 ####################
