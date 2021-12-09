@@ -147,16 +147,16 @@ libvftr_mpi_f082vftr_la_SOURCES += neighbor_allgather_f082vftr.c \
 				   ineighbor_alltoallv_f082vftr.c \
 				   neighbor_alltoallw_f082vftr.c \
 				   ineighbor_alltoallw_f082vftr.c 
-libvftr_mpi_f082vftr_la_SOURCES += neighbor_allgather_f082vftr_fi.F90 \
-				   ineighbor_allgather_f082vftr_fi.F90 \
-				   neighbor_allgatherv_f082vftr_fi.F90 \
-				   ineighbor_allgatherv_f082vftr_fi.F90 \
-				   neighbor_alltoall_f082vftr_fi.F90 \
-				   ineighbor_alltoall_f082vftr_fi.F90 \
-				   neighbor_alltoallv_f082vftr_fi.F90 \
-				   ineighbor_alltoallv_f082vftr_fi.F90 \
-				   neighbor_alltoallw_f082vftr_fi.F90 \
-				   ineighbor_alltoallw_f082vftr_fi.F90 
+libvftr_mpi_f082vftr_la_SOURCES += neighbor_allgather_f082vftr_f08i.F90 \
+				   ineighbor_allgather_f082vftr_f08i.F90 \
+				   neighbor_allgatherv_f082vftr_f08i.F90 \
+				   ineighbor_allgatherv_f082vftr_f08i.F90 \
+				   neighbor_alltoall_f082vftr_f08i.F90 \
+				   ineighbor_alltoall_f082vftr_f08i.F90 \
+				   neighbor_alltoallv_f082vftr_f08i.F90 \
+				   ineighbor_alltoallv_f082vftr_f08i.F90 \
+				   neighbor_alltoallw_f082vftr_f08i.F90 \
+				   ineighbor_alltoallw_f082vftr_f08i.F90 
 
 ####################
 # global reduction #
