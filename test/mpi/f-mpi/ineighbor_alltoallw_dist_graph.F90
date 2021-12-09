@@ -104,11 +104,11 @@ PROGRAM ineighbor_alltoallw_dist_graph
    CALL GET_COMMAND_ARGUMENT(1,cmdargstr)
    READ(UNIT=cmdargstr, FMT=*) nints
    nints = nints + my_rank
-   ALLOCATE(sendcounts(indegree))
-   ALLOCATE(sdispls(indegree))
-   ALLOCATE(sendtypes(indegree))
+   ALLOCATE(sendcounts(outdegree))
+   ALLOCATE(sdispls(outdegree))
+   ALLOCATE(sendtypes(outdegree))
    nstot = 0
-   DO ineighbor = 0, indegree - 1
+   DO ineighbor = 0, outdegree - 1
       sendcounts(ineighbor+1) = nints
       sdispls(ineighbor+1) = INT(nstot*C_SIZEOF(dummyint), MPI_ADDRESS_KIND)
       sendtypes(ineighbor+1) = MPI_INTEGER
@@ -116,11 +116,11 @@ PROGRAM ineighbor_alltoallw_dist_graph
    END DO
    ALLOCATE(sbuffer(nstot))
    sbuffer(:) = my_rank
-   ALLOCATE(recvcounts(outdegree))
-   ALLOCATE(rdispls(outdegree))
-   ALLOCATE(recvtypes(outdegree))
+   ALLOCATE(recvcounts(indegree))
+   ALLOCATE(rdispls(indegree))
+   ALLOCATE(recvtypes(indegree))
    nrtot = 0
-   DO ineighbor = 0, outdegree - 1
+   DO ineighbor = 0, indegree - 1
       recvcounts(ineighbor+1) = nints - my_rank + inneighbors(ineighbor+1)
       rdispls(ineighbor+1) = INT(nrtot*C_SIZEOF(dummyint), MPI_ADDRESS_KIND)
       recvtypes(ineighbor+1) = MPI_INTEGER
