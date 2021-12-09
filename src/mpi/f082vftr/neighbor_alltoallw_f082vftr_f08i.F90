@@ -34,8 +34,8 @@ MODULE vftr_mpi_neighbor_alltoallw_f082vftr_f08i
                                                       f_rdispls, f_recvtypes, &
                                                       f_comm, f_error) &
          BIND(C, name="vftr_MPI_Neighbor_alltoallw_f082vftr")
-         IMPLICIT NONE
          USE mpi_f08, ONLY : MPI_ADDRESS_KIND
+         IMPLICIT NONE
          INTEGER, INTENT(IN) :: sendbuf
          INTEGER, INTENT(IN) :: f_sendcounts(*)
          INTEGER(KIND=MPI_ADDRESS_KIND), INTENT(IN) :: f_sdispls(*)
