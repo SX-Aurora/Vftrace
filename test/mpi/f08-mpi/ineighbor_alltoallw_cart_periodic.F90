@@ -19,7 +19,7 @@ PROGRAM ineighbor_alltoallw_cart_periodic
    INTEGER, DIMENSION(:), ALLOCATABLE :: rbuffer
    INTEGER, DIMENSION(:), ALLOCATABLE :: recvcounts
    INTEGER(KIND=MPI_ADDRESS_KIND), DIMENSION(:), ALLOCATABLE :: rdispls
-   INTEGER, DIMENSION(:), ALLOCATABLE :: recvtypes
+   TYPE(MPI_Datatype), DIMENSION(:), ALLOCATABLE :: recvtypes
    INTEGER :: nstot, nrtot
    INTEGER :: dummyint
 
