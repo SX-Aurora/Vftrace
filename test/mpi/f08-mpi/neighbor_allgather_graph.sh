@@ -1,0 +1,1 @@
+../testscripts/neighbor_allgather_graph.sh
