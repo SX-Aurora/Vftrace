@@ -40,10 +40,10 @@ void vftr_MPI_Ineighbor_allgatherv_f2vftr(void *sendbuf, MPI_Fint *sendcount,
       case MPI_GRAPH:;
          int rank;
          PMPI_Comm_rank(c_comm, &rank);
-         MPI_Graph_neighbors_count(c_comm, rank, &sizein);
+         PMPI_Graph_neighbors_count(c_comm, rank, &sizein);
          break;
       case MPI_CART:
-         MPI_Cartdim_get(c_comm, &sizein);
+         PMPI_Cartdim_get(c_comm, &sizein);
          // Number of neighbors for cartesian communicators is always 2*ndims
          sizein *= 2;
          break;

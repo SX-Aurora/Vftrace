@@ -37,11 +37,11 @@ int vftr_MPI_Ineighbor_alltoallw_c2vftr(const void *sendbuf, const int *sendcoun
       case MPI_GRAPH:;
          int rank;
          PMPI_Comm_rank(comm, &rank);
-         MPI_Graph_neighbors_count(comm, rank, &sizein);
+         PMPI_Graph_neighbors_count(comm, rank, &sizein);
          sizeout = sizein;
          break;
       case MPI_CART:
-         MPI_Cartdim_get(comm, &sizein);
+         PMPI_Cartdim_get(comm, &sizein);
          // Number of neighbors for cartesian communicators is always 2*ndims
          sizein *= 2;
          sizeout = sizein;

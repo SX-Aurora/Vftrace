@@ -39,9 +39,9 @@ int vftr_MPI_Neighbor_alltoallw_graph(const void *sendbuf, const int *sendcounts
    int rank;
    PMPI_Comm_rank(comm, &rank);
    int nneighbors;
-   MPI_Graph_neighbors_count(comm, rank, &nneighbors);
+   PMPI_Graph_neighbors_count(comm, rank, &nneighbors);
    int *neighbors = (int*) malloc(nneighbors*sizeof(int));
-   MPI_Graph_neighbors(comm, rank, nneighbors, neighbors);
+   PMPI_Graph_neighbors(comm, rank, nneighbors, neighbors);
    for (int ineighbor=0; ineighbor<nneighbors; ineighbor++) {
       vftr_store_sync_message_info(send, sendcounts[ineighbor],
                                    sendtypes[ineighbor],

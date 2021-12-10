@@ -36,9 +36,9 @@ int vftr_MPI_Ineighbor_alltoall_graph(const void *sendbuf, int sendcount,
    int rank;
    PMPI_Comm_rank(comm, &rank);
    int nneighbors;
-   MPI_Graph_neighbors_count(comm, rank, &nneighbors);
+   PMPI_Graph_neighbors_count(comm, rank, &nneighbors);
    int *neighbors = (int*) malloc(nneighbors*sizeof(int));
-   MPI_Graph_neighbors(comm, rank, nneighbors, neighbors);
+   PMPI_Graph_neighbors(comm, rank, nneighbors, neighbors);
    // allocate memory for the temporary arrays
    // to register communication request
    int *tmpcount = (int*) malloc(sizeof(int)*nneighbors);

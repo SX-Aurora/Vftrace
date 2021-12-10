@@ -28,7 +28,7 @@ void vftr_mpi_cart_neighbor_ranks(MPI_Comm cart_comm,
    int *dims = (int*) malloc(ndims*sizeof(int));
    int *periodic = (int*) malloc(ndims*sizeof(int));
    int *coords = (int*) malloc(ndims*sizeof(int));
-   MPI_Cart_get(cart_comm, ndims, dims, periodic, coords);
+   PMPI_Cart_get(cart_comm, ndims, dims, periodic, coords);
    int nneighbors = 2*ndims;
    int *neighbors = (int*) malloc(nneighbors*sizeof(int));
    int ineighbor = 0;
@@ -38,7 +38,7 @@ void vftr_mpi_cart_neighbor_ranks(MPI_Comm cart_comm,
       // if non-periodic then don't record the neighbors rank.
       if (periodic[idim] || coords[idim] > 0) {
          coords[idim]--;
-         MPI_Cart_rank(cart_comm, coords, neighbors+ineighbor);
+         PMPI_Cart_rank(cart_comm, coords, neighbors+ineighbor);
          coords[idim]++;
       }  
       ineighbor++;
@@ -48,7 +48,7 @@ void vftr_mpi_cart_neighbor_ranks(MPI_Comm cart_comm,
       // if non-periodic then con't record the neighbors rank.
       if (periodic[idim] || coords[idim] < dims[idim]-1) {
          coords[idim]++;
-         MPI_Cart_rank(cart_comm, coords, neighbors+ineighbor);
+         PMPI_Cart_rank(cart_comm, coords, neighbors+ineighbor);
          coords[idim]--;
       }  
       ineighbor++;
