@@ -70,7 +70,6 @@ SUBROUTINE MPI_Neighbor_alltoallw_f08(sendbuf, sendcounts, sdispls, sendtypes, &
             CALL PMPI_Dist_graph_neighbors_count(comm, sizein, sizeout, i)
       END SELECT
 
-   
       ALLOCATE(tmpsendtypes(sizeout))
       ALLOCATE(tmprecvtypes(sizein))
       DO i = 1, sizeout
