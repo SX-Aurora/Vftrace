@@ -27,6 +27,11 @@ SUBROUTINE MPI_Neighbor_alltoallw_f08(sendbuf, sendcounts, sdispls, sendtypes, &
       ONLY : vftr_estimate_sync_time
    USE mpi_f08, &
       ONLY : PMPI_Neighbor_alltoallw, &
+             PMPI_Topo_test, &
+             PMPI_Comm_rank, &
+             PMPI_Graph_neighbors_count, &
+             PMPI_Cartdim_get, &
+             PMPI_Dist_graph_neighbors_count, &
              MPI_Datatype, &
              MPI_Comm, &
              MPI_ADDRESS_KIND, &

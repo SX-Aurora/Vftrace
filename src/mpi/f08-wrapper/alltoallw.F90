@@ -27,6 +27,9 @@ SUBROUTINE MPI_Alltoallw_f08(sendbuf, sendcounts, sdispls, sendtypes, &
       ONLY : vftr_estimate_sync_time
    USE mpi_f08, &
       ONLY : PMPI_Alltoallw, &
+             PMPI_Comm_test_inter, &
+             PMPI_Comm_remote_size, &
+             PMPI_Comm_size, &
              MPI_Datatype, &
              MPI_Comm
    IMPLICIT NONE
