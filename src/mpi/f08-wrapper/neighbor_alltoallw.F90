@@ -29,7 +29,8 @@ SUBROUTINE MPI_Neighbor_alltoallw_f08(sendbuf, sendcounts, sdispls, sendtypes, &
       ONLY : PMPI_Neighbor_alltoallw, &
              MPI_Datatype, &
              MPI_Comm, &
-             MPI_ADDRESS_KIND
+             MPI_ADDRESS_KIND, &
+             MPI_GRAPH, MPI_CART, MPI_DIST_GRAPH
    IMPLICIT NONE
    INTEGER, INTENT(IN) :: sendbuf
    INTEGER, INTENT(IN) :: sendcounts(*)
@@ -44,8 +45,8 @@ SUBROUTINE MPI_Neighbor_alltoallw_f08(sendbuf, sendcounts, sdispls, sendtypes, &
    INTEGER :: tmperror
    INTEGER, DIMENSION(:), ALLOCATABLE :: tmpsendtypes
    INTEGER, DIMENSION(:), ALLOCATABLE :: tmprecvtypes
-   INTEGER :: comm_size, i
-   LOGICAL :: isintercom
+   INTEGER :: sizein, sizeout, i, rank
+   INTEGER :: topology
 
    CALL vftr_estimate_sync_time("MPI_Neighbor_alltoallw_sync", comm)
 
@@ -54,19 +55,28 @@ SUBROUTINE MPI_Neighbor_alltoallw_f08(sendbuf, sendcounts, sdispls, sendtypes, &
                                    recvbuf, recvcounts, rdispls, recvtypes, &
                                    comm, tmperror)
    ELSE
-      CALL PMPI_Comm_test_inter(comm, isintercom, tmperror)
-      IF (isintercom) THEN
-         CALL PMPI_Comm_remote_size(comm, comm_size, tmperror)
-      ELSE
-         CALL PMPI_Comm_size(comm, comm_size, tmperror)
-      END IF
+      CALL PMPI_Topo_test(comm, topology, tmperror)
+      SELECT CASE(topology)
+         CASE(MPI_GRAPH)
+            CALL PMPI_Comm_rank(comm, rank, tmperror)
+            CALL PMPI_Graph_neighbors_count(comm, rank, sizein);
+            sizeout = sizein
+         CASE(MPI_CART)
+            CALL PMPI_Cartdim_get(comm, sizein)
+            ! Number of neighbors for cartesian communicators is always 2*ndims
+            sizein = 2*sizein
+            sizeout = sizein
+         CASE(MPI_DIST_GRAPH)
+            CALL PMPI_Dist_graph_neighbors_count(comm, sizein, sizeout, i)
+      END SELECT
+
    
-      ALLOCATE(tmpsendtypes(comm_size))
-      ALLOCATE(tmprecvtypes(comm_size))
-      DO i = 1, comm_size
+      ALLOCATE(tmpsendtypes(sizeout))
+      ALLOCATE(tmprecvtypes(sizein))
+      DO i = 1, sizeout
          tmpsendtypes(i) = sendtypes(i)%MPI_VAL
       END DO
-      DO i = 1, comm_size
+      DO i = 1, sizein
          tmprecvtypes(i) = recvtypes(i)%MPI_VAL
       END DO
    
