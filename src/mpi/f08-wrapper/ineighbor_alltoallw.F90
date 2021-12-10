@@ -52,6 +52,7 @@ SUBROUTINE MPI_Ineighbor_alltoallw_f08(sendbuf, sendcounts, sdispls, sendtypes, 
    INTEGER, DIMENSION(:), ALLOCATABLE :: tmprecvtypes
    INTEGER :: sizein, sizeout, i, rank
    INTEGER :: topology
+   LOGICAL :: weighted
 
    IF (vftr_no_mpi_logging_f08()) THEN
       CALL PMPI_Ineighbor_alltoallw(sendbuf, sendcounts, sdispls, sendtypes, &
@@ -70,7 +71,7 @@ SUBROUTINE MPI_Ineighbor_alltoallw_f08(sendbuf, sendcounts, sdispls, sendtypes, 
             sizein = 2*sizein
             sizeout = sizein
          CASE(MPI_DIST_GRAPH)
-            CALL PMPI_Dist_graph_neighbors_count(comm, sizein, sizeout, i)
+            CALL PMPI_Dist_graph_neighbors_count(comm, sizein, sizeout, weighted)
       END SELECT
 
       ALLOCATE(tmpsendtypes(sizeout))

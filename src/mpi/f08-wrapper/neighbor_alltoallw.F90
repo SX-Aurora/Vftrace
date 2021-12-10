@@ -52,6 +52,7 @@ SUBROUTINE MPI_Neighbor_alltoallw_f08(sendbuf, sendcounts, sdispls, sendtypes, &
    INTEGER, DIMENSION(:), ALLOCATABLE :: tmprecvtypes
    INTEGER :: sizein, sizeout, i, rank
    INTEGER :: topology
+   LOGICAL :: weighted
 
    CALL vftr_estimate_sync_time("MPI_Neighbor_alltoallw_sync", comm)
 
@@ -72,7 +73,7 @@ SUBROUTINE MPI_Neighbor_alltoallw_f08(sendbuf, sendcounts, sdispls, sendtypes, &
             sizein = 2*sizein
             sizeout = sizein
          CASE(MPI_DIST_GRAPH)
-            CALL PMPI_Dist_graph_neighbors_count(comm, sizein, sizeout, i)
+            CALL PMPI_Dist_graph_neighbors_count(comm, sizein, sizeout, weighted)
       END SELECT
 
       ALLOCATE(tmpsendtypes(sizeout))
