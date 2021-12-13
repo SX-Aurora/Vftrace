@@ -37,7 +37,7 @@ SUBROUTINE MPI_NEIGHBOR_ALLTOALL(SENDBUF, SENDCOUNT, SENDTYPE, &
    INTEGER COMM
    INTEGER ERROR
 
-   CALL vftr_estimate_sync_time("MPI_Alltoall_sync", COMM)
+   CALL vftr_estimate_sync_time("MPI_Neighbor_alltoall_sync", COMM)
 
    IF (vftr_no_mpi_logging_F()) THEN
       CALL PMPI_NEIGHBOR_ALLTOALL(SENDBUF, SENDCOUNT, SENDTYPE, &
