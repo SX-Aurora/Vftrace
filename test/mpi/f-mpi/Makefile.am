@@ -863,8 +863,6 @@ dist_noinst_SCRIPTS += barrier.sh \
 ########################
 # Neighbor Collectives #
 ########################
-#TODO: add synctime tests
-#TODO: add nolog tests
 check_PROGRAMS += neighbor_allgather_nolog \
 		  neighbor_allgather_sync_time \
 		  neighbor_allgather_cart \
