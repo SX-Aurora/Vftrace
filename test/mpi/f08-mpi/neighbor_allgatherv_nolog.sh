@@ -1,0 +1,1 @@
+../testscripts/neighbor_allgatherv_nolog.sh

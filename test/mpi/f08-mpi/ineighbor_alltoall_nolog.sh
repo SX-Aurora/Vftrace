@@ -1,0 +1,1 @@
+../testscripts/ineighbor_alltoall_nolog.sh
