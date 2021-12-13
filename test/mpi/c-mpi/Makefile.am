@@ -864,9 +864,10 @@ dist_noinst_SCRIPTS += barrier.sh \
 ########################
 # Neighbor Collectives #
 ########################
-#TODO: add synctime tests
-#TODO: add nolog tests
-check_PROGRAMS += neighbor_allgather_cart \
+check_PROGRAMS += neighbor_allgather_nolog \
+		  neighbor_allgather_sync_time \
+		  neighbor_allgather_cart \
+		  ineighbor_allgather_nolog \
 		  ineighbor_allgather_cart \
 		  neighbor_allgather_cart_periodic \
 		  ineighbor_allgather_cart_periodic \
@@ -874,7 +875,10 @@ check_PROGRAMS += neighbor_allgather_cart \
 		  ineighbor_allgather_graph \
 		  neighbor_allgather_dist_graph \
 		  ineighbor_allgather_dist_graph \
+		  neighbor_allgatherv_nolog \
+		  neighbor_allgatherv_sync_time \
 		  neighbor_allgatherv_cart \
+		  ineighbor_allgatherv_nolog \
 		  ineighbor_allgatherv_cart \
 		  neighbor_allgatherv_cart_periodic \
 		  ineighbor_allgatherv_cart_periodic \
@@ -882,7 +886,10 @@ check_PROGRAMS += neighbor_allgather_cart \
 		  ineighbor_allgatherv_graph \
 		  neighbor_allgatherv_dist_graph \
 		  ineighbor_allgatherv_dist_graph \
+		  neighbor_alltoall_nolog \
+		  neighbor_alltoall_sync_time \
 		  neighbor_alltoall_cart \
+		  ineighbor_alltoall_nolog \
 		  ineighbor_alltoall_cart \
 		  neighbor_alltoall_cart_periodic \
 		  ineighbor_alltoall_cart_periodic \
@@ -890,7 +897,10 @@ check_PROGRAMS += neighbor_allgather_cart \
 		  ineighbor_alltoall_graph \
 		  neighbor_alltoall_dist_graph \
 		  ineighbor_alltoall_dist_graph \
+		  neighbor_alltoallv_nolog \
+		  neighbor_alltoallv_sync_time \
 		  neighbor_alltoallv_cart \
+		  ineighbor_alltoallv_nolog \
 		  ineighbor_alltoallv_cart \
 		  neighbor_alltoallv_cart_periodic \
 		  ineighbor_alltoallv_cart_periodic \
@@ -898,7 +908,10 @@ check_PROGRAMS += neighbor_allgather_cart \
 		  ineighbor_alltoallv_graph \
 		  neighbor_alltoallv_dist_graph \
 		  ineighbor_alltoallv_dist_graph \
+		  neighbor_alltoallw_nolog \
+		  neighbor_alltoallw_sync_time \
 		  neighbor_alltoallw_cart \
+		  ineighbor_alltoallw_nolog \
 		  ineighbor_alltoallw_cart \
 		  neighbor_alltoallw_cart_periodic \
 		  ineighbor_alltoallw_cart_periodic \
@@ -907,9 +920,21 @@ check_PROGRAMS += neighbor_allgather_cart \
 		  neighbor_alltoallw_dist_graph \
 		  ineighbor_alltoallw_dist_graph 
 
+neighbor_allgather_nolog_SOURCES = $(srcdir)/neighbor_allgather_cart.c
+neighbor_allgather_nolog_CFLAGS = $(AM_CFLAGS)
+neighbor_allgather_nolog_LDFLAGS = $(AM_LDFLAGS)
+
+neighbor_allgather_sync_time_SOURCES = $(srcdir)/neighbor_allgather_cart.c
+neighbor_allgather_sync_time_CFLAGS = $(AM_CFLAGS)
+neighbor_allgather_sync_time_LDFLAGS = $(AM_LDFLAGS)
+
 neighbor_allgather_cart_SOURCES = $(srcdir)/neighbor_allgather_cart.c
 neighbor_allgather_cart_CFLAGS = $(AM_CFLAGS)
 neighbor_allgather_cart_LDFLAGS = $(AM_LDFLAGS)
+
+ineighbor_allgather_nolog_SOURCES = $(srcdir)/ineighbor_allgather_cart.c
+ineighbor_allgather_nolog_CFLAGS = $(AM_CFLAGS)
+ineighbor_allgather_nolog_LDFLAGS = $(AM_LDFLAGS)
 
 ineighbor_allgather_cart_SOURCES = $(srcdir)/ineighbor_allgather_cart.c
 ineighbor_allgather_cart_CFLAGS = $(AM_CFLAGS)
@@ -939,9 +964,21 @@ ineighbor_allgather_dist_graph_SOURCES = $(srcdir)/ineighbor_allgather_dist_grap
 ineighbor_allgather_dist_graph_CFLAGS = $(AM_CFLAGS)
 ineighbor_allgather_dist_graph_LDFLAGS = $(AM_LDFLAGS)
 
+neighbor_allgatherv_nolog_SOURCES = $(srcdir)/neighbor_allgatherv_cart.c
+neighbor_allgatherv_nolog_CFLAGS = $(AM_CFLAGS)
+neighbor_allgatherv_nolog_LDFLAGS = $(AM_LDFLAGS)
+
+neighbor_allgatherv_sync_time_SOURCES = $(srcdir)/neighbor_allgatherv_cart.c
+neighbor_allgatherv_sync_time_CFLAGS = $(AM_CFLAGS)
+neighbor_allgatherv_sync_time_LDFLAGS = $(AM_LDFLAGS)
+
 neighbor_allgatherv_cart_SOURCES = $(srcdir)/neighbor_allgatherv_cart.c
 neighbor_allgatherv_cart_CFLAGS = $(AM_CFLAGS)
 neighbor_allgatherv_cart_LDFLAGS = $(AM_LDFLAGS)
+
+ineighbor_allgatherv_nolog_SOURCES = $(srcdir)/ineighbor_allgatherv_cart.c
+ineighbor_allgatherv_nolog_CFLAGS = $(AM_CFLAGS)
+ineighbor_allgatherv_nolog_LDFLAGS = $(AM_LDFLAGS)
 
 ineighbor_allgatherv_cart_SOURCES = $(srcdir)/ineighbor_allgatherv_cart.c
 ineighbor_allgatherv_cart_CFLAGS = $(AM_CFLAGS)
@@ -971,9 +1008,21 @@ ineighbor_allgatherv_dist_graph_SOURCES = $(srcdir)/ineighbor_allgatherv_dist_gr
 ineighbor_allgatherv_dist_graph_CFLAGS = $(AM_CFLAGS)
 ineighbor_allgatherv_dist_graph_LDFLAGS = $(AM_LDFLAGS)
 
+neighbor_alltoall_nolog_SOURCES = $(srcdir)/neighbor_alltoall_cart.c
+neighbor_alltoall_nolog_CFLAGS = $(AM_CFLAGS)
+neighbor_alltoall_nolog_LDFLAGS = $(AM_LDFLAGS)
+
+neighbor_alltoall_sync_time_SOURCES = $(srcdir)/neighbor_alltoall_cart.c
+neighbor_alltoall_sync_time_CFLAGS = $(AM_CFLAGS)
+neighbor_alltoall_sync_time_LDFLAGS = $(AM_LDFLAGS)
+
 neighbor_alltoall_cart_SOURCES = $(srcdir)/neighbor_alltoall_cart.c
 neighbor_alltoall_cart_CFLAGS = $(AM_CFLAGS)
 neighbor_alltoall_cart_LDFLAGS = $(AM_LDFLAGS)
+
+ineighbor_alltoall_nolog_SOURCES = $(srcdir)/ineighbor_alltoall_cart.c
+ineighbor_alltoall_nolog_CFLAGS = $(AM_CFLAGS)
+ineighbor_alltoall_nolog_LDFLAGS = $(AM_LDFLAGS)
 
 ineighbor_alltoall_cart_SOURCES = $(srcdir)/ineighbor_alltoall_cart.c
 ineighbor_alltoall_cart_CFLAGS = $(AM_CFLAGS)
@@ -1003,9 +1052,21 @@ ineighbor_alltoall_dist_graph_SOURCES = $(srcdir)/ineighbor_alltoall_dist_graph.
 ineighbor_alltoall_dist_graph_CFLAGS = $(AM_CFLAGS)
 ineighbor_alltoall_dist_graph_LDFLAGS = $(AM_LDFLAGS)
 
+neighbor_alltoallv_nolog_SOURCES = $(srcdir)/neighbor_alltoallv_cart.c
+neighbor_alltoallv_nolog_CFLAGS = $(AM_CFLAGS)
+neighbor_alltoallv_nolog_LDFLAGS = $(AM_LDFLAGS)
+
+neighbor_alltoallv_sync_time_SOURCES = $(srcdir)/neighbor_alltoallv_cart.c
+neighbor_alltoallv_sync_time_CFLAGS = $(AM_CFLAGS)
+neighbor_alltoallv_sync_time_LDFLAGS = $(AM_LDFLAGS)
+
 neighbor_alltoallv_cart_SOURCES = $(srcdir)/neighbor_alltoallv_cart.c
 neighbor_alltoallv_cart_CFLAGS = $(AM_CFLAGS)
 neighbor_alltoallv_cart_LDFLAGS = $(AM_LDFLAGS)
+
+ineighbor_alltoallv_nolog_SOURCES = $(srcdir)/ineighbor_alltoallv_cart.c
+ineighbor_alltoallv_nolog_CFLAGS = $(AM_CFLAGS)
+ineighbor_alltoallv_nolog_LDFLAGS = $(AM_LDFLAGS)
 
 ineighbor_alltoallv_cart_SOURCES = $(srcdir)/ineighbor_alltoallv_cart.c
 ineighbor_alltoallv_cart_CFLAGS = $(AM_CFLAGS)
@@ -1035,9 +1096,21 @@ ineighbor_alltoallv_dist_graph_SOURCES = $(srcdir)/ineighbor_alltoallv_dist_grap
 ineighbor_alltoallv_dist_graph_CFLAGS = $(AM_CFLAGS)
 ineighbor_alltoallv_dist_graph_LDFLAGS = $(AM_LDFLAGS)
 
+neighbor_alltoallw_nolog_SOURCES = $(srcdir)/neighbor_alltoallw_cart.c
+neighbor_alltoallw_nolog_CFLAGS = $(AM_CFLAGS)
+neighbor_alltoallw_nolog_LDFLAGS = $(AM_LDFLAGS)
+
+neighbor_alltoallw_sync_time_SOURCES = $(srcdir)/neighbor_alltoallw_cart.c
+neighbor_alltoallw_sync_time_CFLAGS = $(AM_CFLAGS)
+neighbor_alltoallw_sync_time_LDFLAGS = $(AM_LDFLAGS)
+
 neighbor_alltoallw_cart_SOURCES = $(srcdir)/neighbor_alltoallw_cart.c
 neighbor_alltoallw_cart_CFLAGS = $(AM_CFLAGS)
 neighbor_alltoallw_cart_LDFLAGS = $(AM_LDFLAGS)
+
+ineighbor_alltoallw_nolog_SOURCES = $(srcdir)/ineighbor_alltoallw_cart.c
+ineighbor_alltoallw_nolog_CFLAGS = $(AM_CFLAGS)
+ineighbor_alltoallw_nolog_LDFLAGS = $(AM_LDFLAGS)
 
 ineighbor_alltoallw_cart_SOURCES = $(srcdir)/ineighbor_alltoallw_cart.c
 ineighbor_alltoallw_cart_CFLAGS = $(AM_CFLAGS)
@@ -1067,7 +1140,10 @@ ineighbor_alltoallw_dist_graph_SOURCES = $(srcdir)/ineighbor_alltoallw_dist_grap
 ineighbor_alltoallw_dist_graph_CFLAGS = $(AM_CFLAGS)
 ineighbor_alltoallw_dist_graph_LDFLAGS = $(AM_LDFLAGS)
 
-dist_noinst_SCRIPTS += neighbor_allgather_cart.sh \
+dist_noinst_SCRIPTS += neighbor_allgather_nolog.sh \
+		       neighbor_allgather_sync_time.sh \
+		       neighbor_allgather_cart.sh \
+		       ineighbor_allgather_nolog.sh \
 		       ineighbor_allgather_cart.sh \
 		       neighbor_allgather_cart_periodic.sh \
 		       ineighbor_allgather_cart_periodic.sh \
@@ -1075,7 +1151,10 @@ dist_noinst_SCRIPTS += neighbor_allgather_cart.sh \
 		       ineighbor_allgather_graph.sh \
 		       neighbor_allgather_dist_graph.sh \
 		       ineighbor_allgather_dist_graph.sh \
+		       neighbor_allgatherv_nolog.sh \
+		       neighbor_allgatherv_sync_time.sh \
 		       neighbor_allgatherv_cart.sh \
+		       ineighbor_allgatherv_nolog.sh \
 		       ineighbor_allgatherv_cart.sh \
 		       neighbor_allgatherv_cart_periodic.sh \
 		       ineighbor_allgatherv_cart_periodic.sh \
@@ -1083,7 +1162,10 @@ dist_noinst_SCRIPTS += neighbor_allgather_cart.sh \
 		       ineighbor_allgatherv_graph.sh \
 		       neighbor_allgatherv_dist_graph.sh \
 		       ineighbor_allgatherv_dist_graph.sh \
+		       neighbor_alltoall_nolog.sh \
+		       neighbor_alltoall_sync_time.sh \
 		       neighbor_alltoall_cart.sh \
+		       ineighbor_alltoall_nolog.sh \
 		       ineighbor_alltoall_cart.sh \
 		       neighbor_alltoall_cart_periodic.sh \
 		       ineighbor_alltoall_cart_periodic.sh \
@@ -1091,7 +1173,10 @@ dist_noinst_SCRIPTS += neighbor_allgather_cart.sh \
 		       ineighbor_alltoall_graph.sh \
 		       neighbor_alltoall_dist_graph.sh \
 		       ineighbor_alltoall_dist_graph.sh \
+		       neighbor_alltoallv_sync_time.sh \
+		       neighbor_alltoallv_nolog.sh \
 		       neighbor_alltoallv_cart.sh \
+		       ineighbor_alltoallv_nolog.sh \
 		       ineighbor_alltoallv_cart.sh \
 		       neighbor_alltoallv_cart_periodic.sh \
 		       ineighbor_alltoallv_cart_periodic.sh \
@@ -1099,7 +1184,10 @@ dist_noinst_SCRIPTS += neighbor_allgather_cart.sh \
 		       ineighbor_alltoallv_graph.sh \
 		       neighbor_alltoallv_dist_graph.sh \
 		       ineighbor_alltoallv_dist_graph.sh \
+		       neighbor_alltoallw_nolog.sh \
+		       neighbor_alltoallw_sync_time.sh \
 		       neighbor_alltoallw_cart.sh \
+		       ineighbor_alltoallw_nolog.sh \
 		       ineighbor_alltoallw_cart.sh \
 		       neighbor_alltoallw_cart_periodic.sh \
 		       ineighbor_alltoallw_cart_periodic.sh \
