@@ -1,0 +1,1 @@
+../testscripts/neighbor_alltoallv_sync_time.sh
