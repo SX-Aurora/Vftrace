@@ -28,7 +28,7 @@
 #include "vftr_setup.h"
 
 void vftr_rank0_printf (const char *fmt, ...) {
-   if (vftr_mpirank == 0) printf (fmt);
+   if (vftr_mpirank == 0) printf ("%s\n", fmt);
 }
 
 /**********************************************************************/

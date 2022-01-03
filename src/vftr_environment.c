@@ -412,6 +412,8 @@ char *vftr_profile_sorting_method_string () {
       return "sorted by self-memory profile (VmRSS)";
     case SORT_NONE:
       return "unsorted";
+    default:
+      return "unknown sorting method!";
   }
 }
 

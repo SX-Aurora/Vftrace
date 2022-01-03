@@ -1,0 +1,1 @@
+../testscripts/ineighbor_allgather_dist_graph.sh

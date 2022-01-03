@@ -44,8 +44,8 @@ char *vftr_get_application_name () {
         char *p;
         if (fd > 0) {
             p = cmdline;
-	    char *pend = p + read (fd, cmdline, MAX_CMDLINE);
 #ifdef __ve__
+	    char *pend = p + read (fd, cmdline, MAX_CMDLINE);
             int last = 0;
             /* Skip ve_exec and its options */
             while (p < pend && !last) {
@@ -116,5 +116,5 @@ char *vftr_to_lowercase (char *s_orig) {
 // This function exists to reduce the number of calls to vftr_rank_needs_logfile
 // present in the code.
 void vftr_logfile_message (FILE *fp, char *message) {
-  if (vftr_rank_needs_logfile()) fprintf (fp, message);
+  if (vftr_rank_needs_logfile()) fprintf (fp, "%s\n", message);
 } 

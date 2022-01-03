@@ -1,0 +1,1 @@
+../testscripts/neighbor_allgatherv_sync_time.sh

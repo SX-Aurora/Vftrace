@@ -31,8 +31,6 @@ regex_t *vftr_compile_regexp(char *pattern) {
     r = (regex_t*) malloc(sizeof(regex_t));
     if ((err = regcomp (r, pattern, REG_NOSUB|REG_EXTENDED))) {
         char msg[256];
-        size_t msglen;
-        msglen = regerror(err, r, msg, 256);
         fprintf(stderr, "Vftrace: Invalid Regular Expression (%s): %s\n", pattern, msg);
     }
     return err ? NULL : r;

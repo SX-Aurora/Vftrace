@@ -1,0 +1,1 @@
+../testscripts/ineighbor_alltoallv_graph.sh

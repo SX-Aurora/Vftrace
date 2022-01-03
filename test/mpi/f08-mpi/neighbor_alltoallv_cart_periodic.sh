@@ -1,0 +1,1 @@
+../testscripts/neighbor_alltoallv_cart_periodic.sh

@@ -6,6 +6,9 @@ if WITH_MPI
 libvftr_mpi_utils_la_SOURCES += mpi_logging.c \
 				mpi_buf_addr_const.c \
 				sync_time.c
+
+libvftr_mpi_utils_la_SOURCES += cart_comms.c
+
 if ENABLE_FORTRAN
 libvftr_mpi_utils_la_SOURCES += mpi_logging_F.F90 \
 				mpi_buf_addr_const_F.F90 \

@@ -37,13 +37,20 @@ void vftr_register_collective_request(vftr_direction dir, int nmsg, int *count,
    vftr_request_t *new_request = vftr_new_request(dir, nmsg, count, type, -1, comm, request, n_tmp_ptr, tmp_ptrs, tstart);
    int isintercom;
    PMPI_Comm_test_inter(comm, &isintercom);
+   // translate the ranks to MPI_COMM_WORLD ranks
    if (isintercom) {
       for (int i=0; i<nmsg; i++) {
          new_request->rank[i] = vftr_remote2global_rank(comm, peer_rank[i]);
       }
    } else {
       for (int i=0; i<nmsg; i++) {
-         new_request->rank[i] = vftr_local2global_rank(comm, peer_rank[i]);
+         // If a rank is -1 keep it. It is an invalid rank due to
+         // non-periodic cartesian communicators.
+         if (peer_rank[i] == -1) {
+            new_request->rank[i] = -1;
+         } else {
+            new_request->rank[i] = vftr_local2global_rank(comm, peer_rank[i]);
+         }
       }
    }
 
@@ -77,15 +84,20 @@ void vftr_clear_completed_collective_requests() {
          // by the register routine
          if (vftr_environment.do_sampling->value) {
             for (int i=0; i<current_request->nmsg; i++) {
-               vftr_store_message_info(current_request->dir,
-                                       current_request->count[i],
-                                       current_request->type_idx[i],
-                                       current_request->type_size[i],
-                                       current_request->rank[i],
-                                       current_request->tag,
-                                       current_request->tstart,
-                                       tend,
-                                       current_request->callingstackID);
+               // if a rank is -1 skip the registering, as
+               // it is an invalid rank due to non periodic
+               // cartesian communicators.
+               if (current_request->rank[i] != -1) {
+                  vftr_store_message_info(current_request->dir,
+                                          current_request->count[i],
+                                          current_request->type_idx[i],
+                                          current_request->type_size[i],
+                                          current_request->rank[i],
+                                          current_request->tag,
+                                          current_request->tstart,
+                                          tend,
+                                          current_request->callingstackID);
+               }
             }
          }
 

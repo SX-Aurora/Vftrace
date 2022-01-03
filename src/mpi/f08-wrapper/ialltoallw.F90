@@ -25,6 +25,9 @@ SUBROUTINE MPI_Ialltoallw_f08(sendbuf, sendcounts, sdispls, sendtypes, &
       ONLY : vftr_no_mpi_logging_f08
    USE mpi_f08, &
       ONLY : PMPI_Ialltoallw, &
+             PMPI_Comm_test_inter, &
+             PMPI_Comm_remote_size, &
+             PMPI_Comm_size, &
              MPI_Datatype, &
              MPI_Comm, &
              MPI_Request

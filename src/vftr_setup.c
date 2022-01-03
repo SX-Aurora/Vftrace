@@ -313,7 +313,6 @@ void vftr_initialize() {
 
 void vftr_finalize() {
     in_vftr_finalize = true;
-    function_t **funcTable;
 
     if (vftr_off())  return;
     vftr_set_end_date();
@@ -390,8 +389,6 @@ void vftr_finalize() {
        vftr_print_html_profile(f_html, sorted_func_table, n_functions_top, prof_times, n_display_functions, display_functions, vftr_get_runtime_usec());
     }
  
-    funcTable = vftr_func_table;
-
     if (vftr_profile_wanted && vftr_do_stack_normalization) {
         vftr_print_global_stacklist(vftr_log);
     }
