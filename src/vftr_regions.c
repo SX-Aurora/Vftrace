@@ -84,9 +84,6 @@ void vftr_internal_region_end(const char *s) {
 
 void vftr_region_entry (const char *s, void *addr, bool isPrecise){
     int e, read_counters;
-    unsigned long long timer, delta;
-    unsigned long long cycles0;
-    double wtime;
     bool time_to_sample = false;
     function_t *caller, *func, *callee;
     profdata_t *prof_return;
@@ -100,8 +97,8 @@ void vftr_region_entry (const char *s, void *addr, bool isPrecise){
     long long func_entry_time = vftr_get_runtime_usec();
     // log function entry and exit time to estimate the overhead time
     long long overhead_time_start = func_entry_time;
-    timer = vftr_get_runtime_usec ();
-    cycles0 = vftr_get_cycles() - vftr_initcycles;
+    unsigned long long timer = vftr_get_runtime_usec ();
+    unsigned long long cycles0 = vftr_get_cycles() - vftr_initcycles;
 
     // This is the hook for shared libraries opened during the
     // application's runtime. The preloaded library vftr_dlopen.so
@@ -201,7 +198,7 @@ void vftr_region_entry (const char *s, void *addr, bool isPrecise){
 
     if (func->return_to) {
         prof_return = &func->return_to->prof_current;
-        delta = cycles0 - vftr_prof_data.cycles;
+        unsigned long long delta = cycles0 - vftr_prof_data.cycles;
 	prof_return->cycles += delta;
         prof_return->time_excl += func_entry_time - vftr_prof_data.time_excl;
         vftr_prog_cycles += delta;
@@ -222,7 +219,6 @@ void vftr_region_entry (const char *s, void *addr, bool isPrecise){
             }
 	    vftr_prof_data.ic = 1 - ic;
 	}
-       profdata_t *prof_current = &func->prof_current;
     }
 
     if (vftr_memtrace) {

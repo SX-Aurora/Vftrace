@@ -63,9 +63,7 @@ void vftr_print_stack_at_runtime (function_t *this_func, bool is_entry, bool tim
 
 void vftr_function_entry (const char *s, void *addr, bool isPrecise) {
     bool time_to_sample, read_counters;
-    unsigned long long timer, delta;
-    unsigned long long cycles0;
-    double wall_time;
+    unsigned long long delta, cycles0;
     static bool vftr_needs_init = true;
     function_t *caller, *func, *callee;
     profdata_t *prof_return;
@@ -82,7 +80,6 @@ void vftr_function_entry (const char *s, void *addr, bool isPrecise) {
     long long func_entry_time = vftr_get_runtime_usec();
     // log function entry and exit time to estimate the overhead time
     long long overhead_time_start = func_entry_time;
-    timer = vftr_get_runtime_usec ();
     cycles0 = vftr_get_cycles() - vftr_initcycles;
 
     // This is the hook for shared libraries opened during the

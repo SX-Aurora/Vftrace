@@ -116,5 +116,5 @@ char *vftr_to_lowercase (char *s_orig) {
 // This function exists to reduce the number of calls to vftr_rank_needs_logfile
 // present in the code.
 void vftr_logfile_message (FILE *fp, char *message) {
-  if (vftr_rank_needs_logfile()) fprintf (fp, message);
+  if (vftr_rank_needs_logfile()) fprintf (fp, "%s\n", message);
 } 
