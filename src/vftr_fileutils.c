@@ -44,8 +44,8 @@ char *vftr_get_application_name () {
         char *p;
         if (fd > 0) {
             p = cmdline;
-#ifdef __ve__
 	    char *pend = p + read (fd, cmdline, MAX_CMDLINE);
+#ifdef __ve__
             int last = 0;
             /* Skip ve_exec and its options */
             while (p < pend && !last) {
