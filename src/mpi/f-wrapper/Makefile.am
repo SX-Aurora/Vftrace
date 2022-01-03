@@ -131,8 +131,7 @@ if HAS_MPI_STD_2_2
 libvftr_fmpiwrap_la_SOURCES += reduce_scatter_block.F90
 endif
 if HAS_MPI_STD_3_0
-libvftr_fmpiwrap_la_SOURCES += ireduce_scatter.F90 \
-			       ireduce.F90 \
+libvftr_fmpiwrap_la_SOURCES += ireduce.F90 \
 			       iallreduce.F90 \
 			       ireduce_scatter_block.F90 \
 			       ireduce_scatter.F90 \

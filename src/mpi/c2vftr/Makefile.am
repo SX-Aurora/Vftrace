@@ -132,8 +132,7 @@ if HAS_MPI_STD_2_2
 libvftr_mpi_c2vftr_la_SOURCES += reduce_scatter_block_c2vftr.c
 endif
 if HAS_MPI_STD_3_0
-libvftr_mpi_c2vftr_la_SOURCES += ireduce_scatter_c2vftr.c \
-				 ireduce_c2vftr.c \
+libvftr_mpi_c2vftr_la_SOURCES += ireduce_c2vftr.c \
 				 iallreduce_c2vftr.c \
 				 ireduce_scatter_block_c2vftr.c \
 				 ireduce_scatter_c2vftr.c \

@@ -131,8 +131,7 @@ if HAS_MPI_STD_2_2
 libvftr_cmpiwrap_la_SOURCES += reduce_scatter_block.c
 endif
 if HAS_MPI_STD_3_0
-libvftr_cmpiwrap_la_SOURCES += ireduce_scatter.c \
-			       ireduce.c \
+libvftr_cmpiwrap_la_SOURCES += ireduce.c \
 			       iallreduce.c \
 			       ireduce_scatter_block.c \
 			       ireduce_scatter.c \
