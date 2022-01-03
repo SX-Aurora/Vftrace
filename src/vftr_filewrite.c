@@ -1403,7 +1403,7 @@ void vftr_print_function_statistics (FILE *fp_log, display_function_t **display_
                    if (print_this_rank && vftr_rank_needs_mpi_summary(vftr_mpirank)) {
 		      long long total_time;
 		      double t_max, imba_max;
-		      int n_calls_max, n_spaces_max, n_chars_max;
+		      int n_calls_max, n_spaces_max;
 
                       stack_tree = vftr_create_and_scan_stacktree (imbalances,
                                                   display_functions[i], &total_time,
