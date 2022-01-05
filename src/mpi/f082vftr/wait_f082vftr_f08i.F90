@@ -30,7 +30,7 @@ MODULE vftr_mpi_wait_f082vftr_f08i
 
       SUBROUTINE vftr_MPI_Wait_f082vftr(f_request, f_status, f_error) &
          BIND(C, name="vftr_MPI_Wait_f082vftr")
-         USE mpi, &
+         USE mpi_f08, &
             ONLY: MPI_Status
          IMPLICIT NONE
          INTEGER :: f_request
