@@ -61,6 +61,7 @@ typedef struct library_list {
 } library_list_t;
 
 char *vftr_strip_module_name (char *base_name);
+char *vftr_remove_inline_suffix (char *base_name);
 
 FILE *vftr_get_fmap ();
 

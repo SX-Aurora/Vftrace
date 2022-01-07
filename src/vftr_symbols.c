@@ -126,6 +126,24 @@ char *vftr_strip_module_name (char *base_name) {
 		
 /**********************************************************************/
 
+// Some compilers, e.g. GCC, perform partial inlining. The remainder of the function's symbol name
+// obtains a suffix indicated by a dot. This function removes that suffix.
+//
+
+char *vftr_remove_inline_suffix (char *base_name) {
+   char *tmp = strdup(base_name);
+   char *func_name = tmp;
+   while (*tmp != '\0') {
+      if (*tmp == '.') {
+         *tmp = '\0';
+      } else {
+         tmp++;
+      }
+   }
+   return func_name;
+}
+/**********************************************************************/
+
 int vftr_cmpsym( const void *a, const void *b ) {
     symtab_t *s1 = *(symtab_t **) a;
     symtab_t *s2 = *(symtab_t **) b;

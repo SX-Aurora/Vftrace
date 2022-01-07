@@ -439,6 +439,7 @@ void vftr_stackid_list_finalize () {
 void vftr_strip_all_module_names () {
   for (int i = 0; i < vftr_stackscount; i++) {
      vftr_func_table[i]->name = vftr_strip_module_name (vftr_func_table[i]->name);
+     vftr_func_table[i]->name = vftr_remove_inline_suffix (vftr_func_table[i]->name);
   }
 }
 
