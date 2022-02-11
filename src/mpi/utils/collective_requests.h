@@ -27,8 +27,6 @@ void vftr_register_collective_request(vftr_direction dir, int nmsg, int *count,
                                       int n_tmp_ptr, void **tmp_ptrs,
                                       long long tstart);
 
-void vftr_clear_completed_collective_requests();
-
-int vftr_number_of_open_collective_requests();
+void vftr_clear_completed_collective_request(vftr_request_t *request);
 
 #endif
