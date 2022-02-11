@@ -41,56 +41,43 @@ void vftr_register_onesided_request(vftr_direction dir, int count,
    new_request->persistent = false;
 }
 
-void vftr_clear_completed_onesided_requests() {
-   // go through the complete list and check the request
-   vftr_request_t *current_request = vftr_open_onesided_request_list;
-   while (current_request != NULL) {
-      // Test if the current request is still ongoing or completed
-      // Note: MPI_Test is a destructive test. It will destroy the request
-      //       Thus, running with and without vftr can lead to different program executions
-      //       MPI_Request_get_status is a non destructive status check
-      MPI_Status tmpStatus;
-      int flag;
-      PMPI_Request_get_status(current_request->request,
-                              &flag,
-                              &tmpStatus);
+void vftr_clear_completed_onesided_request(vftr_request_t *request) {
+   // Test if the current request is still ongoing or completed
+   // Note: MPI_Test is a destructive test. It will destroy the request
+   //       Thus, running with and without vftr can lead to different program executions
+   //       MPI_Request_get_status is a non destructive status check
+   MPI_Status tmpStatus;
+   int flag;
+   PMPI_Request_get_status(request->request,
+                           &flag,
+                           &tmpStatus);
 
-      // if the requested communication is finished write the communication out
-      // and remove the request from the request list
-      if (flag) {
-         // record the time when the communication is finished
-         // (might be to late, but thats as accurate as we can make it
-         //  without violating the MPI-Standard)
-         // Therefore: measures asynchronous communication with vftrace always
-         //            yields to small bandwidth.
-         long long tend = vftr_get_runtime_usec ();
+   // if the requested communication is finished write the communication out
+   // and remove the request from the request list
+   if (flag) {
+      // record the time when the communication is finished
+      // (might be to late, but thats as accurate as we can make it
+      //  without violating the MPI-Standard)
+      // Therefore: measures asynchronous communication with vftrace always
+      //            yields to small bandwidth.
+      long long tend = vftr_get_runtime_usec ();
 
-         // Every rank should already be translated to the global rank
-         // by the register routine
-         // store the completed communication info to the outfile
-         if (vftr_environment.do_sampling->value) {
-            vftr_store_message_info(current_request->dir,
-                                    current_request->count[0],
-                                    current_request->type_idx[0],
-                                    current_request->type_size[0],
-                                    current_request->rank[0],
-                                    current_request->tag,
-                                    current_request->tstart,
-                                    tend,
-                                    current_request->callingstackID);
-	 }
-
-         // Take the request out of the list and close the gap
-         vftr_remove_request(&vftr_open_onesided_request_list, current_request);
-
-         // create a temporary pointer to the current element to be used for deallocation
-         vftr_request_t * tmp_current_request = current_request;
-         // advance in list
-         current_request = current_request->next;
-         vftr_free_request(&tmp_current_request);
-      } else {
-         // advance in list
-         current_request = current_request->next;
+      // Every rank should already be translated to the global rank
+      // by the register routine
+      // store the completed communication info to the outfile
+      if (vftr_environment.do_sampling->value) {
+         vftr_store_message_info(request->dir,
+                                 request->count[0],
+                                 request->type_idx[0],
+                                 request->type_size[0],
+                                 request->rank[0],
+                                 request->tag,
+                                 request->tstart,
+                                 tend,
+                                 request->callingstackID);
       }
-   } // end of while loop
+
+      // Take the request out of the list
+      vftr_remove_request(request);
+   }
 }

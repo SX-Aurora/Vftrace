@@ -26,6 +26,6 @@ void vftr_register_onesided_request(vftr_direction dir, int count,
                                     MPI_Comm comm, MPI_Request request,
                                     long long tstart);
 
-void vftr_clear_completed_onesided_requests();
+void vftr_clear_completed_onesided_request(vftr_request_t *request);
 
 #endif
