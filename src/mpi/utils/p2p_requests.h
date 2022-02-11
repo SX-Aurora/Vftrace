@@ -26,10 +26,10 @@ void vftr_register_p2p_request(vftr_direction dir, int count,
                                MPI_Comm comm, MPI_Request request,
                                long long tstart);
 
-void vftr_clear_completed_P2P_requests();
+void vftr_register_pers_p2p_request(vftr_direction dir, int count,
+                                    MPI_Datatype type, int peer_rank, int tag,
+                                    MPI_Comm comm, MPI_Request request);
 
-vftr_request_t *vftr_search_P2P_request(MPI_Request request);
-
-int vftr_number_of_open_p2p_requests();
+void vftr_clear_completed_p2p_request(vftr_request_t *request);
 
 #endif
