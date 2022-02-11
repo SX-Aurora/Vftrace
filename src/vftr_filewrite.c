@@ -62,6 +62,9 @@ char *vftr_logfile_name;
 
 FILE *vftr_vfd_file;
 
+// buffer for buffered output for vfdfiles
+char *vftr_vfd_vbuffer = NULL;
+
 // TODO: Explain
 long vftr_admin_offset;
 long vftr_samples_offset;
@@ -285,9 +288,9 @@ void vftr_init_vfd_file () {
 	FILE *fp = fopen (filename, "w+");
 	assert (fp);
 	size_t size = vftr_environment.bufsize->value * 1024 * 1024;
-	char *buf = (char *) malloc (size);
-	assert (buf);
-	int status = setvbuf (fp, buf, _IOFBF, size);
+	vftr_vfd_vbuffer= (char *) malloc (size);
+	assert (vftr_vfd_vbuffer);
+	int status = setvbuf (fp, vftr_vfd_vbuffer, _IOFBF, size);
 	assert (!status);
 	
 	/* Some of these numbers will be updated later in vftr_finalize */
@@ -345,6 +348,7 @@ void vftr_finalize_vfd_file (long long finalize_time) {
   fwrite (&stackstable_offset, sizeof(long), 1, vftr_vfd_file);
   fwrite (&vftr_samples_offset, sizeof(long), 1, vftr_vfd_file);
   fclose (vftr_vfd_file);
+  free(vftr_vfd_vbuffer);
 }
 
 /**********************************************************************/
