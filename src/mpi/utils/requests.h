@@ -61,19 +61,17 @@ vftr_request_t* vftr_register_request(vftr_direction dir, int nmsg, int *count,
                                       int n_tmp_ptr, void **tmp_ptrs,
                                       long long tstart);
 
-// free a request
-void vftr_free_request(vftr_request_t **request_ptr);
+// clear the requests and log the messaging
+void vftr_clear_completed_requests();
 
-// prepend request to open_request_list
-void vftr_request_prepend(vftr_request_t **open_request_list,
-                          vftr_request_t *new_request);
+void vftr_activate_pers_request(MPI_Request request, long long tstart);
 
-// remove request from open_request_list
-void vftr_remove_request(vftr_request_t **open_request_list,
-                         vftr_request_t *request);
+void vftr_remove_request(vftr_request_t *request);
+
+// deallocate entire request list
+void vftr_free_request_list();
 
 // find a specific request in the request list.
-vftr_request_t *vftr_search_request(vftr_request_t *open_request_list,
-                                    MPI_Request request);
+vftr_request_t *vftr_search_request(MPI_Request request);
 
 #endif
