@@ -26,8 +26,6 @@
 #include "vftr_timer.h"
 #include "vftr_filewrite.h"
 
-vftr_request_t *vftr_open_onesided_request_list = NULL;
-
 void vftr_register_onesided_request(vftr_direction dir, int count,
                                     MPI_Datatype type, int peer_rank,
                                     MPI_Comm comm, MPI_Request request,
@@ -37,10 +35,10 @@ void vftr_register_onesided_request(vftr_direction dir, int count,
    // with no effect on communication at all
    if (peer_rank == MPI_PROC_NULL) {return;}
 
-   vftr_request_t *new_request = vftr_new_request(dir, 1, &count, &type, -1, comm, request, 0, NULL, tstart);
+   vftr_request_t *new_request = vftr_register_request(dir, 1, &count, &type, -1, comm, request, 0, NULL, tstart);
    new_request->rank[0] = vftr_local2global_rank(comm, peer_rank);
-
-   vftr_request_prepend(&vftr_open_onesided_request_list, new_request);
+   new_request->request_kind = onesided;
+   new_request->persistent = false;
 }
 
 void vftr_clear_completed_onesided_requests() {
