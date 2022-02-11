@@ -19,9 +19,11 @@
 #include <mpi.h>
 
 #include "vftr_setup.h"
+#include "requests.h"
 
 int vftr_MPI_Finalize() {
 
+   vftr_free_request_list();
    // it is neccessary to finalize vftrace here, in order to properly communicat stack ids
    // between processes. After MPI_Finalize communication between processes is prohibited
    vftr_finalize();
