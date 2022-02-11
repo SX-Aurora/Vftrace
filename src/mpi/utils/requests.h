@@ -25,11 +25,20 @@
 
 #include "mpi_util_types.h"
 
-// store open requests as doubly linked list
+typedef enum vftr_request_kind_t {
+   p2p,
+   collective,
+   onesided
+} vftr_request_kind;
+
+// open requests
 typedef struct vftr_request_type {
-   struct vftr_request_type *prev, *next;
-   MPI_Request request;
+   bool valid;
+   bool persistent;
+   bool active;
    bool marked_for_deallocation;
+   MPI_Request request;
+   vftr_request_kind request_kind;
    MPI_Comm comm;
    int nmsg;
    vftr_direction dir;
