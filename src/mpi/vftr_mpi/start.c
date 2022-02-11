@@ -26,7 +26,7 @@ int vftr_MPI_Start(MPI_Request *request) {
    int retVal = PMPI_Start(request);
 
    long long t2start = vftr_get_runtime_usec();
-   vftr_activate_persistent_request(*request, tstart);
+   vftr_activate_pers_request(*request, tstart);
    long long t2end = vftr_get_runtime_usec();
 
    vftr_mpi_overhead_usec += t2end - t2start;
