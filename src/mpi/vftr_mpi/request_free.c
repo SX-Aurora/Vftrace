@@ -28,16 +28,12 @@
 int vftr_MPI_Request_free(MPI_Request *request) {
 
    long long t2start= vftr_get_runtime_usec();
-   vftr_request_t *matched_request = vftr_search_P2P_request(*request);
-   if (matched_request == NULL) {
-      matched_request = vftr_search_persistent_request(*request);
-   }
-   if (matched_request == NULL) {
-      PMPI_Request_free(request);
+   vftr_request_t *matched_request = vftr_search_request(*request);
+   if (matched_request != NULL) {
+         matched_request->marked_for_deallocation = true;
    } else {
-      matched_request->marked_for_deallocation = true;
+      PMPI_Request_free(request);
    }
-
    *request = MPI_REQUEST_NULL;
    long long t2end = vftr_get_runtime_usec();
 
