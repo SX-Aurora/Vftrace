@@ -19,7 +19,7 @@
 #include <mpi.h>
 
 #include "vftr_timer.h"
-#include "persistent_requests.h"
+#include "requests.h"
 
 int vftr_MPI_Start(MPI_Request *request) {
    long long tstart = vftr_get_runtime_usec();

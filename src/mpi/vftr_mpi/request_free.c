@@ -23,7 +23,7 @@
 #include "vftr_timer.h"
 #include "requests.h"
 #include "p2p_requests.h"
-#include "persistent_requests.h"
+#include "requests.h"
 
 int vftr_MPI_Request_free(MPI_Request *request) {
 
