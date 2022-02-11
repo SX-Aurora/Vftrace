@@ -27,7 +27,7 @@ int vftr_MPI_Startall(int count, MPI_Request *array_of_requests) {
 
    long long t2start = vftr_get_runtime_usec();
    for (int ireq=0; ireq<count; ireq++) {
-      vftr_activate_persistent_request(array_of_requests[ireq], tstart) ;
+      vftr_activate_pers_request(array_of_requests[ireq], tstart) ;
    }
    long long t2end = vftr_get_runtime_usec();
 
