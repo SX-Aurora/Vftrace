@@ -26,6 +26,9 @@
 #include "onesided_requests.h"
 #include "vftr_stacks.h"
 
+int vftr_open_request_list_length = 0;
+vftr_request_t *vftr_open_request_list = NULL;
+
 // create new request to be stored
 vftr_request_t* vftr_new_request(vftr_direction dir, int nmsg, int *count,
                                  MPI_Datatype *type, int tag,
