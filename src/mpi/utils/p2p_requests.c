@@ -26,14 +26,7 @@
 #include "vftr_timer.h"
 #include "vftr_filewrite.h"
 
-vftr_request_t *vftr_open_p2p_request_list = NULL;
-
-vftr_request_t *vftr_search_P2P_request(MPI_Request request) {
-   return vftr_search_request(vftr_open_p2p_request_list, request);
-}
-
-
-void vftr_register_P2P_request(vftr_direction dir, int count,
+void vftr_register_p2p_request(vftr_direction dir, int count,
                                MPI_Datatype type, int peer_rank, int tag,
                                MPI_Comm comm, MPI_Request request,
                                long long tstart) {
@@ -42,8 +35,11 @@ void vftr_register_P2P_request(vftr_direction dir, int count,
    // with no effect on communication at all
    if (peer_rank == MPI_PROC_NULL) {return;}
 
-   vftr_request_t *new_request = vftr_new_request(dir, 1, &count, &type, tag, comm, request, 0, NULL, tstart);
+   vftr_request_t *new_request = vftr_register_request(dir, 1, &count, &type, tag, comm, request, 0, NULL, tstart);
    new_request->rank[0] = peer_rank;
+   new_request->request_kind = p2p;
+   new_request->persistent = false;
+}
 
    vftr_request_prepend(&vftr_open_p2p_request_list, new_request);
 }
