@@ -30,29 +30,46 @@ int vftr_open_request_list_length = 0;
 vftr_request_t *vftr_open_request_list = NULL;
 
 // create new request to be stored
-vftr_request_t* vftr_new_request(vftr_direction dir, int nmsg, int *count,
-                                 MPI_Datatype *type, int tag,
-                                 MPI_Comm comm, MPI_Request request,
-                                 int n_tmp_ptr, void **tmp_ptrs,
-                                 long long tstart) {
+vftr_request_t* vftr_register_request(vftr_direction dir, int nmsg, int *count,
+                                      MPI_Datatype *type, int tag,
+                                      MPI_Comm comm, MPI_Request request,
+                                      int n_tmp_ptr, void **tmp_ptrs,
+                                      long long tstart) {
 
-   vftr_request_t *new_open_request = (vftr_request_t*) 
-      malloc(sizeof(vftr_request_t));
-   new_open_request->request   = request;
-   new_open_request->marked_for_deallocation = false;
-   new_open_request->comm      = comm;
-   new_open_request->nmsg      = nmsg;
-   new_open_request->dir       = dir;
-   new_open_request->count     = (int*) malloc(sizeof(int)*nmsg);
-   for (int i=0; i<nmsg; i++) {
-      new_open_request->count[i] = count[i];
+   // search for the first invalidated request
+   int invalid_request_id = -1;
+   bool invalid_request = false;
+   while (invalid_request == false && 
+          (invalid_request_id+1)<vftr_open_request_list_length) {
+      invalid_request_id++;
+      invalid_request = (!vftr_open_request_list[invalid_request_id].valid);
    }
-   new_open_request->type      = (MPI_Datatype*) malloc(sizeof(MPI_Datatype)*nmsg);
-   for (int i=0; i<nmsg; i++) {
-      new_open_request->type[i] = type[i];
+
+   // if no free spot was found reallocate
+   if (!invalid_request) {
+      invalid_request_id = vftr_open_request_list_length;
+      vftr_open_request_list_length++;
+      vftr_open_request_list = (vftr_request_t*) realloc(vftr_open_request_list,
+                               vftr_open_request_list_length*sizeof(vftr_request_t));
    }
-   new_open_request->type_idx  = (int*) malloc(sizeof(int)*nmsg);
-   new_open_request->type_size = (int*) malloc(sizeof(int)*nmsg);
+
+   // fill data into request
+   vftr_request_t *new_request = vftr_open_request_list+invalid_request_id;
+   new_request->valid     = true;
+   new_request->request   = request;
+   new_request->comm      = comm;
+   new_request->nmsg      = nmsg;
+   new_request->dir       = dir;
+   new_request->count     = (int*) malloc(sizeof(int)*nmsg);
+   for (int i=0; i<nmsg; i++) {
+      new_request->count[i] = count[i];
+   }
+   new_request->type      = (MPI_Datatype*) malloc(sizeof(MPI_Datatype)*nmsg);
+   for (int i=0; i<nmsg; i++) {
+      new_request->type[i] = type[i];
+   }
+   new_request->type_idx  = (int*) malloc(sizeof(int)*nmsg);
+   new_request->type_size = (int*) malloc(sizeof(int)*nmsg);
    for (int i=0; i<nmsg; i++) {
       // Determine type index in vftrace type list
       // and its size in bytes
@@ -63,23 +80,24 @@ vftr_request_t* vftr_new_request(vftr_direction dir, int nmsg, int *count,
       } else {
          type_size = 0;
       }
-      new_open_request->type_idx[i]  = type_idx;
-      new_open_request->type_size[i] = type_size;
+      new_request->type_idx[i]  = type_idx;
+      new_request->type_size[i] = type_size;
    }
-   new_open_request->tstart    = tstart;
+   new_request->tstart    = tstart;
+   new_request->marked_for_deallocation = false;
 
    // rank and tag
    // Due to differences in how they are filled within P2P, collective, onesided
    // communications, only memory space is provided and is to be filled later.
-   new_open_request->tag = tag;
-   new_open_request->rank = (int*) malloc(sizeof(int)*nmsg);
-   new_open_request->callingstackID = vftr_fstack->id;
+   new_request->tag = tag;
+   new_request->rank = (int*) malloc(sizeof(int)*nmsg);
+   new_request->callingstackID = vftr_fstack->id;
 
    // store temporary pointers used for mpi-communication
-   new_open_request->n_tmp_ptr = n_tmp_ptr;
-   new_open_request->tmp_ptrs = tmp_ptrs;
+   new_request->n_tmp_ptr = n_tmp_ptr;
+   new_request->tmp_ptrs = tmp_ptrs;
 
-   return new_open_request;
+   return new_request;
 }
 
 // free a request

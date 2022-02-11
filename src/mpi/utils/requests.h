@@ -55,11 +55,11 @@ typedef struct vftr_request_type {
 } vftr_request_t;
 
 // create new request to be stored
-vftr_request_t* vftr_new_request(vftr_direction dir, int nmsg, int *count,
-                                 MPI_Datatype *type, int tag,
-                                 MPI_Comm comm, MPI_Request request,
-                                 int n_tmp_ptr, void **tmp_ptrs,
-                                 long long tstart);
+vftr_request_t* vftr_register_request(vftr_direction dir, int nmsg, int *count,
+                                      MPI_Datatype *type, int tag,
+                                      MPI_Comm comm, MPI_Request request,
+                                      int n_tmp_ptr, void **tmp_ptrs,
+                                      long long tstart);
 
 // free a request
 void vftr_free_request(vftr_request_t **request_ptr);
