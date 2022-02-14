@@ -34,11 +34,11 @@ AX_CHECK_VE
 # Check MPI
 AX_CHECK_MPI
 
+# Check OMP
+AX_CHECK_OMP
+
 # Enable hardware counters
 AX_ENABLE_HWC
-
-# Enable OpenMP bounces
-AX_ENABLE_OPENMP
 
 # Check for Papi library
 AX_PAPI_LIBRARY

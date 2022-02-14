@@ -21,25 +21,12 @@ else
 endif
 AM_TESTS_ENVIRONMENT+=. $(top_srcdir)/test/environment/unset_vftr_env.sh;
 
-AM_CFLAGS = -O3 -finstrument-functions
+AM_CFLAGS = -O3 -finstrument-functions $(OPENMP_CFLAGS)
 
 AM_LDFLAGS = -L$(top_builddir)/src/.libs -lvftrace -lm
 if USES_NEC_MPI
   AM_LDFLAGS += -mpiprof
 endif
-
-if ENABLE_OPENMP
-if USES_INTEL_COMPILER
-  AM_CFLAGS += -qopenmp
-endif
-if USES_GNU_COMPILER
-  AM_CFLAGS += -fopenmp
-endif
-if USES_NEC_COMPILER
-  AM_CFLAGS += -fopenmp
-endif
-endif
-
 
 ################
 # System Tests #

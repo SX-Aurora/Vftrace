@@ -28,7 +28,8 @@ endif
 endif
 
 libvftr_pause_la_SOURCES = vftr_pause.c
-libvftr_pause_la_CFLAGS = -finstrument-functions
+libvftr_pause_la_CFLAGS = -finstrument-functions \
+			  $(OPENMP_CFLAGS)
 
 libvftrace_la_SOURCES = vftr_scenarios.c \
 		       vftr_symbols.c \
@@ -66,6 +67,11 @@ libvftrace_la_LDFLAGS =
 libvftrace_la_CFLAGS += -I${srcdir}/mpi/utils/ \
 			${external_includes}
 
+libvftrace_la_CFLAGS += $(OPENMP_CFLAGS)
+libvftrace_la_CXXFLAGS += $(OPENMP_CXXFLAGS)
+libvftrace_la_FCFLAGS += $(OPENMP_FCFLAGS)
+libvftrace_la_LDFLAGS += $(OPENMP_FCFLAGS)
+
 if ENABLE_HWC
 libvftrace_la_CFLAGS += -DHAS_HWC
 if ON_VECTOR_ENGINE
@@ -92,25 +98,6 @@ endif
 
 if USES_INTEL_COMPILER
 libvftrace_la_LDFLAGS += -lifcore
-endif
-
-if ENABLE_OPENMP
-
-if USES_INTEL_COMPILER
-libvftrace_la_CFLAGS += -qopenmp
-libvftrace_la_FCFLAGS += -qopenmp
-endif
-
-if USES_GNU_COMPILER
-libvftrace_la_CFLAGS += -fopenmp
-libvftrace_la_FCFLAGS += -fopenmp
-endif
-
-if USES_NEC_COMPILER
-libvftrace_la_CFLAGS += -fopenmp
-libvftrace_la_FCFLAGS += -fopenmp
-endif
-
 endif
 
 libvftr_dlopen_la_SOURCES = vftr_dlopen.c

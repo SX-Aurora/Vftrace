@@ -21,7 +21,7 @@ else
 endif
 AM_TESTS_ENVIRONMENT+=. $(top_srcdir)/test/environment/unset_vftr_env.sh;
 
-AM_CFLAGS = -I$(top_srcdir)/src/ -I$(top_srcdir)/src/mpi/utils/
+AM_CFLAGS = -I$(top_srcdir)/src/ -I$(top_srcdir)/src/mpi/utils/ $(OPENMPI_CFLAGS)
 
 AM_LDFLAGS = -L$(top_builddir)/src/.libs -lvftrace -lm
 
@@ -29,18 +29,6 @@ if WITH_MPI
   AM_CFLAGS += -D_MPI
 if USES_NEC_MPI
   AM_LDFLAGS += -mpiprof
-endif
-endif
-
-if ENABLE_OPENMP
-if USES_INTEL_COMPILER
-  AM_CFLAGS += -qopenmp
-endif
-if USES_GNU_COMPILER
-  AM_CFLAGS += -fopenmp
-endif
-if USES_NEC_COMPILER
-  AM_CFLAGS += -fopenmp
 endif
 endif
 
