@@ -4,6 +4,9 @@ noinst_LTLIBRARIES = libvftr_pause.la
 include_HEADERS = vftrace.h
 
 SUBDIRS = mpi
+if WITH_OMP
+SUBDIRS = omp
+endif
 
 external_includes = -I$(top_srcdir)/external/tinyexpr/ \
 		    -I$(top_srcdir)/external/jsmn/
@@ -25,6 +28,10 @@ libvftrace_la_LIBADD += mpi/f08-wrapper/libvftr_f08mpiwrap.la \
 			mpi/f082vftr/libvftr_mpi_f082vftr.la
 endif
 endif
+endif
+
+if WITH_OMP
+libvftrace_la_LIBADD += omp/libvftr_omp.la
 endif
 
 libvftr_pause_la_SOURCES = vftr_pause.c
