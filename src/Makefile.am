@@ -5,7 +5,7 @@ include_HEADERS = vftrace.h
 
 SUBDIRS = mpi
 if WITH_OMP
-SUBDIRS = omp
+SUBDIRS += omp
 endif
 
 external_includes = -I$(top_srcdir)/external/tinyexpr/ \
