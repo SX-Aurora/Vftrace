@@ -43,6 +43,7 @@
 #include "vftr_functions.h"
 #include "vftr_mallinfo.h"
 #include "vftr_allocate.h"
+#include "start_tool.h"
 
 bool vftr_timer_end;
 
@@ -307,6 +308,11 @@ void vftr_initialize() {
     // get the time to estimate vftrace overhead
     long long overhead_time_end = vftr_get_runtime_usec();
     vftr_overhead_usec += overhead_time_end - overhead_time_start;
+
+    // trick the linker into including the omp callback symbols
+#ifdef _OMP
+    ompt_start_tool(0, NULL);
+#endif
 }
 
 /**********************************************************************/

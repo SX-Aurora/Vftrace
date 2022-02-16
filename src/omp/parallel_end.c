@@ -16,22 +16,21 @@
    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-#include <stdlib.h>
+#include <stdio.h>
 
 #include <omp.h>
 #include <omp-tools.h>
 
-#include "initialize.h"
-#include "finalize.h"
+static void vftr_ompt_callback_parallel_end(ompt_data_t *parallel_data,
+                                            ompt_data_t *encountering_task_data,
+                                            int flags, const void *codeptr_ra) {
+   printf("ending parallel region\n");
+}
 
-ompt_start_tool_result_t vftr_ompt_start_tool_result;
-
-ompt_start_tool_result_t *ompt_start_tool(unsigned int omp_version,
-                                          const char *runtime_version) {
-   if (omp_version == 0 && runtime_version == NULL) {return NULL;}
-
-   vftr_ompt_start_tool_result.initialize = ompt_initialize_ptr;
-   vftr_ompt_start_tool_result.finalize = ompt_finalize_ptr;
-
-   return &vftr_ompt_start_tool_result; // success: registers tool
+void vftr_register_ompt_callback_parallel_end(ompt_set_callback_t ompt_set_callback) {
+   ompt_callback_parallel_end_t f_ompt_callback_parallel_end =
+      &vftr_ompt_callback_parallel_end;
+   if (ompt_set_callback(ompt_callback_parallel_end, (ompt_callback_t)f_ompt_callback_parallel_end) == ompt_set_never) {
+      fprintf(stderr, "0: Could not register callback \"ompt_callback_parallel_end\"\n");
+   }
 }

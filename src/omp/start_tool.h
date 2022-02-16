@@ -16,22 +16,13 @@
    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-#include <stdlib.h>
+#ifndef START_TOOL_H
+#define START_TOOL_H
 
 #include <omp.h>
 #include <omp-tools.h>
 
-#include "initialize.h"
-#include "finalize.h"
-
-ompt_start_tool_result_t vftr_ompt_start_tool_result;
-
 ompt_start_tool_result_t *ompt_start_tool(unsigned int omp_version,
-                                          const char *runtime_version) {
-   if (omp_version == 0 && runtime_version == NULL) {return NULL;}
+                                          const char *runtime_version);
 
-   vftr_ompt_start_tool_result.initialize = ompt_initialize_ptr;
-   vftr_ompt_start_tool_result.finalize = ompt_finalize_ptr;
-
-   return &vftr_ompt_start_tool_result; // success: registers tool
-}
+#endif

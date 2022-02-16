@@ -16,22 +16,18 @@
    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-#include <stdlib.h>
+#ifndef PARALLEL_BEGIN_H
+#define PARALLEL_BEGIN_H
 
 #include <omp.h>
 #include <omp-tools.h>
 
-#include "initialize.h"
-#include "finalize.h"
+static void vftr_ompt_callback_parallel_begin(ompt_data_t *encountering_task_data,
+                                              const ompt_frame_t *encountering_task_frame,
+                                              ompt_data_t *parallel_data,
+                                              uint32_t requested_parallelism,
+                                              int flags, const void *codeptr_ra);
 
-ompt_start_tool_result_t vftr_ompt_start_tool_result;
+void vftr_register_ompt_callback_parallel_begin(ompt_set_callback_t ompt_set_callback);
 
-ompt_start_tool_result_t *ompt_start_tool(unsigned int omp_version,
-                                          const char *runtime_version) {
-   if (omp_version == 0 && runtime_version == NULL) {return NULL;}
-
-   vftr_ompt_start_tool_result.initialize = ompt_initialize_ptr;
-   vftr_ompt_start_tool_result.finalize = ompt_finalize_ptr;
-
-   return &vftr_ompt_start_tool_result; // success: registers tool
-}
+#endif

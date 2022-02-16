@@ -98,6 +98,11 @@ libvftrace_la_CFLAGS += -D_MPI
 libvftrace_la_FCFLAGS += -D_MPI
 endif 
 
+if WITH_OMP
+libvftrace_la_CFLAGS += -I${srcdir}/omp/
+libvftrace_la_CFLAGS += -D_OMP
+endif
+
 if HAS_LIBERTY
 libvftrace_la_CFLAGS += -D_LIBERTY_AVAIL
 libvftrace_la_LIBADD += -liberty

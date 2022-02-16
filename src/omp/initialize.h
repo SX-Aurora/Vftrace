@@ -15,23 +15,15 @@
    with this program; if not, write to the Free Software Foundation, Inc.,
    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-
-#include <stdlib.h>
+#ifndef INITIALIZE_H
+#define INITIALIZE_H
 
 #include <omp.h>
 #include <omp-tools.h>
 
-#include "initialize.h"
-#include "finalize.h"
+int ompt_initialize(ompt_function_lookup_t lookup, int initial_device_num,
+                    ompt_data_t *tool_data);
 
-ompt_start_tool_result_t vftr_ompt_start_tool_result;
+extern int (*ompt_initialize_ptr)(ompt_function_lookup_t, int, ompt_data_t*);
 
-ompt_start_tool_result_t *ompt_start_tool(unsigned int omp_version,
-                                          const char *runtime_version) {
-   if (omp_version == 0 && runtime_version == NULL) {return NULL;}
-
-   vftr_ompt_start_tool_result.initialize = ompt_initialize_ptr;
-   vftr_ompt_start_tool_result.finalize = ompt_finalize_ptr;
-
-   return &vftr_ompt_start_tool_result; // success: registers tool
-}
+#endif
