@@ -1514,6 +1514,15 @@ void vftr_print_profile_summary (FILE *fp_log, function_t **func_table, double t
     fprintf(fp_log, "Nr. of MPI ranks      %8d\n", vftr_mpisize);
     fprintf(fp_log, "Total runtime:        %8.2f seconds\n", total_runtime);
     fprintf(fp_log, "Application time:     %8.2f seconds\n", application_runtime);
+#ifdef _OMP
+//TODO: properly get the times as a function argument
+       double omp_time = vftr_omp_time_usec * 1.0e-6;
+//TODO: create a omp_log environment variable
+    //if (vftr_environment.omp_log->value) {
+       fprintf(fp_log, "OMP Parallel time:    %8.2f seconds (%.2f%%)\n",
+               omp_time, 100.0 * omp_time / total_runtime);
+    //}
+#endif
     fprintf(fp_log, "Overhead:             %8.2f seconds (%.2f%%)\n",
             total_overhead_time, 100.0 * total_overhead_time / total_runtime);
 #ifdef _MPI
@@ -1523,6 +1532,15 @@ void vftr_print_profile_summary (FILE *fp_log, function_t **func_table, double t
        fprintf(fp_log, "   MPI overhead:      %8.2f seconds (%.2f%%)\n",
                mpi_overhead_time, 100.0 * mpi_overhead_time / total_runtime);
     }
+#endif
+#ifdef _OMP
+//TODO: properly get the times as a function argument
+    double omp_overhead_time = vftr_omp_overhead_usec * 1.0e-6;
+//TODO: create a omp_log environment variable
+    //if (vftr_environment.omp_log->value) {
+       fprintf(fp_log, "   OMP overhead:      %8.2f seconds (%.2f%%)\n",
+               omp_overhead_time, 100.0 * omp_overhead_time / total_runtime);
+    //}
 #endif
 
     if (vftr_events_enabled) {

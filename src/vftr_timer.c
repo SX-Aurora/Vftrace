@@ -38,6 +38,11 @@ long long vftr_overhead_usec = 0ll;
 long long vftr_mpi_overhead_usec = 0ll;
 #endif
 
+#ifdef _OMP
+long long vftr_omp_overhead_usec = 0ll;
+long long vftr_omp_time_usec = 0ll;
+#endif
+
 long long vftr_initcycles;
 
 // A time interval indicating when the function table should be sorted.

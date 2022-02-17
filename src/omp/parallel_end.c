@@ -21,10 +21,20 @@
 #include <omp.h>
 #include <omp-tools.h>
 
+#include "vftr_timer.h"
+#include "omp_state.h"
+
 static void vftr_ompt_callback_parallel_end(ompt_data_t *parallel_data,
                                             ompt_data_t *encountering_task_data,
                                             int flags, const void *codeptr_ra) {
-   printf("ending parallel region\n");
+   printf("ending parallel region (%lld)\n", vftr_get_runtime_usec());
+   // decrementing the parallel region level
+   vftr_omp_parallel_level_decr();
+   
+   // record ending timestamp if the outermost parallel region is ended
+   if (vftr_omp_parallel_level_get() == 0) {
+      vftr_omp_time_usec += vftr_get_runtime_usec();
+   }
 }
 
 void vftr_register_ompt_callback_parallel_end(ompt_set_callback_t ompt_set_callback) {
