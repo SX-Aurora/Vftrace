@@ -12,6 +12,8 @@ libvftr_omp_la_SOURCES += parallel_begin.c \
 libvftr_omp_la_SOURCES += thread_begin.c \
                           thread_end.c
 
+libvftr_omp_la_SOURCES += sync_region.c
+
 libvftr_omp_la_SOURCES += omp_state.c
 
 libvftr_omp_la_CFLAGS = 

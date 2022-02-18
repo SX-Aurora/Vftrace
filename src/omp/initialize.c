@@ -23,6 +23,7 @@
 #include "parallel_end.h"
 #include "thread_begin.h"
 #include "thread_end.h"
+#include "sync_region.h"
 
 int ompt_initialize(ompt_function_lookup_t lookup, int initial_device_num,
                     ompt_data_t *tool_data) {
@@ -35,6 +36,7 @@ int ompt_initialize(ompt_function_lookup_t lookup, int initial_device_num,
    vftr_register_ompt_callback_parallel_end(ompt_set_callback);
 //   vftr_register_ompt_callback_thread_begin(ompt_set_callback);
 //   vftr_register_ompt_callback_thread_end(ompt_set_callback);
+   vftr_register_ompt_callback_sync_region(ompt_set_callback);
 
    return 1; // success: activates tool
 }
