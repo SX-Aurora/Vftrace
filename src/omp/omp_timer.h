@@ -35,4 +35,6 @@ void vftr_omp_time_add(int ithread, long long timeslice);
 
 void vftr_omp_wait_time_add(int ithread, long long timeslice);
 
+void vftr_omp_free_timers();
+
 #endif

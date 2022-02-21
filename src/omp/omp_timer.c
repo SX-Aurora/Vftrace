@@ -50,3 +50,15 @@ void vftr_omp_wait_time_add(int ithread, long long timeslice) {
    vftr_omp_timer_realloc(ithread);
    vftr_omp_wait_time_usec[ithread] += timeslice;
 }
+
+void vftr_omp_free_timers() {
+   if (vftr_omp_time_usec != NULL) {
+      free(vftr_omp_time_usec);
+      vftr_omp_time_usec = NULL;
+   }
+   if (vftr_omp_wait_time_usec != NULL) {
+      free(vftr_omp_wait_time_usec);
+      vftr_omp_wait_time_usec = NULL;
+   }
+   vftr_omp_ntimer = 0;
+}

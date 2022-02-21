@@ -1548,6 +1548,7 @@ void vftr_print_profile_summary (FILE *fp_log, function_t **func_table, double t
        fprintf(fp_log, "   OMP overhead:      %8.2f seconds (%.2f%%)\n",
                omp_overhead_time, 100.0 * omp_overhead_time / total_runtime);
     //}
+    vftr_omp_free_timers();
 #endif
 
     if (vftr_events_enabled) {
