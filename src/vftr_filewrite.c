@@ -1522,11 +1522,12 @@ void vftr_print_profile_summary (FILE *fp_log, function_t **func_table, double t
 //TODO: properly get the times as a function argument
     //if (vftr_environment.omp_log->value) {
        unsigned int threads = vftr_omp_ntimer;
+       printf("OMP Parallel time:\n");
        for (int ithread=0; ithread<threads; ithread++) {
           double omp_time = vftr_omp_time_usec[ithread] * 1.0e-6;
 //TODO: create a omp_log environment variable
-          fprintf(fp_log, "OMP Parallel time:    %8.2f seconds (%.2f%%)\n",
-                  omp_time, 100.0 * omp_time / total_runtime);
+          fprintf(fp_log, "   Thread %2d:         %8.2f seconds (%.2f%%)\n",
+                  ithread, omp_time, 100.0 * omp_time / total_runtime);
        }
     //}
 #endif
