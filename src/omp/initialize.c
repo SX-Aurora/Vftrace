@@ -16,8 +16,13 @@
    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
+#include <stdlib.h>
+
 #include <omp.h>
 #include <omp-tools.h>
+
+#include "vftr_timer.h"
+#include "omp_timer.h"
 
 #include "parallel_begin.h"
 #include "parallel_end.h"
@@ -28,18 +33,22 @@
 
 int ompt_initialize(ompt_function_lookup_t lookup, int initial_device_num,
                     ompt_data_t *tool_data) {
+   // Start counter for overhead
+   long long tstart = vftr_get_runtime_usec();
+
    // Get the set_callback function pointer
    ompt_set_callback_t ompt_set_callback =
       (ompt_set_callback_t)lookup("ompt_set_callback");
-
    // register the available callback functions
    vftr_register_ompt_callback_parallel_begin(ompt_set_callback);
    vftr_register_ompt_callback_parallel_end(ompt_set_callback);
 //   vftr_register_ompt_callback_thread_begin(ompt_set_callback);
 //   vftr_register_ompt_callback_thread_end(ompt_set_callback);
    vftr_register_ompt_callback_sync_region(ompt_set_callback);
-   vftr_register_ompt_callback_sync_region_wait(ompt_set_callback);
+//   vftr_register_ompt_callback_sync_region_wait(ompt_set_callback);
 
+   long long tend = vftr_get_runtime_usec();
+   vftr_omp_overhead_usec += tend - tstart;
    return 1; // success: activates tool
 }
 

@@ -21,7 +21,7 @@
 #include <omp.h>
 #include <omp-tools.h>
 
-#include "vftr_timer.h"
+#include "omp_timer.h"
 #include "omp_state.h"
 
 static void vftr_ompt_callback_parallel_end(ompt_data_t *parallel_data,
@@ -33,7 +33,11 @@ static void vftr_ompt_callback_parallel_end(ompt_data_t *parallel_data,
    
    // record ending timestamp if the outermost parallel region is ended
    if (vftr_omp_parallel_level_get() == 0) {
-      vftr_omp_time_usec += vftr_get_runtime_usec();
+      long long tend = vftr_get_runtime_usec();
+      for (int ithread=0; ithread<vftr_omp_lvl0_num_threads; ithread++) {
+         vftr_omp_time_add(ithread, tend);
+      }
+      vftr_omp_lvl0_num_threads = 0;
    }
 }
 

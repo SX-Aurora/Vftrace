@@ -51,11 +51,6 @@ extern long long vftr_overhead_usec;
 extern long long vftr_mpi_overhead_usec;
 #endif
 
-#ifdef _OMP
-extern long long vftr_omp_overhead_usec;
-extern long long vftr_omp_time_usec;
-#endif
-
 extern long long vftr_initcycles;
 
 // A time interval indicating when the function table should be sorted.

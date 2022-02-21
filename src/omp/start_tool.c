@@ -29,6 +29,7 @@ ompt_start_tool_result_t vftr_ompt_start_tool_result;
 ompt_start_tool_result_t *ompt_start_tool(unsigned int omp_version,
                                           const char *runtime_version) {
    if (omp_version == 0 && runtime_version == NULL) {return NULL;}
+printf("starting tool\n");
 
    vftr_ompt_start_tool_result.initialize = ompt_initialize_ptr;
    vftr_ompt_start_tool_result.finalize = ompt_finalize_ptr;

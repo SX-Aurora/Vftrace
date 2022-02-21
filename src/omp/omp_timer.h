@@ -16,22 +16,23 @@
    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-unsigned int vftr_omp_lvl0_num_threads = 0;
+#ifndef OMP_TIMER_H
+#define OMP_TIMER_H
 
-unsigned int vftr_omp_parallel_level = 0;
+#include <stdlib.h>
 
-void vftr_omp_parallel_level_incr() {
-   vftr_omp_parallel_level++;
-}
+#include <vftr_timer.h>
 
-void vftr_omp_parallel_level_decr() {
-   vftr_omp_parallel_level--;
-}
+extern long long vftr_omp_overhead_usec;
 
-void vftr_omp_parallel_level_set(unsigned int level) {
-   vftr_omp_parallel_level = level;
-}
+extern int vftr_omp_ntimer;
+extern long long *vftr_omp_time_usec;
+extern long long *vftr_omp_wait_time_usec;
 
-unsigned int vftr_omp_parallel_level_get() {
-   return vftr_omp_parallel_level;
-}
+void vftr_omp_timer_realloc(int ithread);
+
+void vftr_omp_time_add(int ithread, long long timeslice);
+
+void vftr_omp_wait_time_add(int ithread, long long timeslice);
+
+#endif

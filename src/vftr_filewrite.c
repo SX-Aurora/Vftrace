@@ -24,6 +24,10 @@
 #include <signal.h>
 #include <math.h>
 #include <limits.h>
+#ifdef _OMP
+#include <omp.h>
+#include "omp_timer.h"
+#endif
 
 #include "vftr_scenarios.h"
 #include "vftr_hwcounters.h"
@@ -1516,11 +1520,14 @@ void vftr_print_profile_summary (FILE *fp_log, function_t **func_table, double t
     fprintf(fp_log, "Application time:     %8.2f seconds\n", application_runtime);
 #ifdef _OMP
 //TODO: properly get the times as a function argument
-       double omp_time = vftr_omp_time_usec * 1.0e-6;
-//TODO: create a omp_log environment variable
     //if (vftr_environment.omp_log->value) {
-       fprintf(fp_log, "OMP Parallel time:    %8.2f seconds (%.2f%%)\n",
-               omp_time, 100.0 * omp_time / total_runtime);
+       unsigned int threads = vftr_omp_ntimer;
+       for (int ithread=0; ithread<threads; ithread++) {
+          double omp_time = vftr_omp_time_usec[ithread] * 1.0e-6;
+//TODO: create a omp_log environment variable
+          fprintf(fp_log, "OMP Parallel time:    %8.2f seconds (%.2f%%)\n",
+                  omp_time, 100.0 * omp_time / total_runtime);
+       }
     //}
 #endif
     fprintf(fp_log, "Overhead:             %8.2f seconds (%.2f%%)\n",

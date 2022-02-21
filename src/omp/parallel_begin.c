@@ -21,7 +21,7 @@
 #include <omp.h>
 #include <omp-tools.h>
 
-#include "vftr_timer.h"
+#include "omp_timer.h"
 #include "omp_state.h"
 
 static void vftr_ompt_callback_parallel_begin(ompt_data_t *encountering_task_data,
@@ -31,7 +31,11 @@ static void vftr_ompt_callback_parallel_begin(ompt_data_t *encountering_task_dat
                                               int flags, const void *codeptr_ra) {
    // record starting timestamp if the outermost parallel region is started
    if (vftr_omp_parallel_level_get() == 0) {
-      vftr_omp_time_usec -= vftr_get_runtime_usec();
+      long long tbegin = vftr_get_runtime_usec();
+      vftr_omp_lvl0_num_threads = requested_parallelism;
+      for (int ithread=0; ithread<vftr_omp_lvl0_num_threads; ithread++) {
+         vftr_omp_time_add(ithread, -tbegin);
+      }
    }
 
    // increase the parallel region level

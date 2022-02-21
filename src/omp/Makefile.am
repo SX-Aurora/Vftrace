@@ -15,7 +15,8 @@ libvftr_omp_la_SOURCES += thread_begin.c \
 libvftr_omp_la_SOURCES += sync_region.c \
                           sync_region_wait.c
 
-libvftr_omp_la_SOURCES += omp_state.c
+libvftr_omp_la_SOURCES += omp_state.c \
+                          omp_timer.c
 
 libvftr_omp_la_CFLAGS = 
 libvftr_omp_la_CFLAGS += -I${srcdir}/../ -D_OMP

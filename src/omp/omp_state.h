@@ -19,6 +19,8 @@
 #ifndef OMP_STATE_H
 #define OMP_STATE_H
 
+extern unsigned int vftr_omp_lvl0_num_threads;
+
 void vftr_omp_parallel_level_incr();
 
 void vftr_omp_parallel_level_decr();
