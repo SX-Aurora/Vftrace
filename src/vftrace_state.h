@@ -20,6 +20,7 @@
 #define VFTRACE_STATE_H
 
 #include <stdbool.h>
+#include "environment_types.h"
 
 // tracing state of vftrace
 typedef enum {
@@ -31,6 +32,7 @@ typedef enum {
 
 // main datatype to store everything 
 typedef struct {
+   environment_t environment;
    state_t state;
 } vftrace_t;
 

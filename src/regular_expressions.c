@@ -4,8 +4,7 @@
 #include <regex.h>
 
 regex_t *vftr_compile_regexp(char *pattern) {
-   regex_t *r;
-   r = (regex_t*) malloc(sizeof(regex_t));
+   regex_t *r = (regex_t*) malloc(sizeof(regex_t));
    if (regcomp(r, pattern, REG_NOSUB|REG_EXTENDED)) {
        fprintf(stderr, "Vftrace: Invalid Regular Expression \"%s\"\n", pattern);
        free(r);

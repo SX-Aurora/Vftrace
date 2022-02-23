@@ -1,9 +1,18 @@
+#ifdef _DEBUG
+#include <stdio.h>
+#endif
+
 #include "off_hooks.h"
 #include "cyghooks.h"
 #include "vftr_hooks.h"
 #include "vftrace_state.h"
+#include "environment.h"
 
 void vftr_initialize(void *func, void *caller) {
+   // First step is to parse the relevant environment variables
+   vftrace.environment = vftr_read_environment();
+   vftr_environment_free(&(vftrace.environment));
+   
    // update the vftrace state
    vftrace.state = initialized;
 
