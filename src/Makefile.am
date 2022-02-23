@@ -1,60 +1,34 @@
-lib_LTLIBRARIES = libvftrace.la libvftr_dlopen.la
-noinst_LTLIBRARIES = libvftr_pause.la
+lib_LTLIBRARIES = libvftrace.la
 
-include_HEADERS = vftrace.h
+#include_HEADERS = vftrace.h
+#if ENABLE_FORTRAN
+#include_HEADERS += vftrace.mod
+#endif
 
-SUBDIRS = mpi
+#SUBDIRS = mpi
+#
+#external_includes = -I$(top_srcdir)/external/tinyexpr/ \
+#		    -I$(top_srcdir)/external/jsmn/
+#
+## external libraries
+#libvftrace_la_LIBADD += ${top_builddir}/external/libtinyexpr.la
+#
+#libvftrace_la_LIBADD += mpi/utils/libvftr_mpi_utils.la
+#if WITH_MPI
+#libvftrace_la_LIBADD += mpi/vftr_mpi/libvftr_mpi.la
+#libvftrace_la_LIBADD += mpi/c-wrapper/libvftr_cmpiwrap.la \
+#			mpi/c2vftr/libvftr_mpi_c2vftr.la
+#if ENABLE_FORTRAN
+#libvftrace_la_LIBADD += mpi/f-wrapper/libvftr_fmpiwrap.la \
+#			mpi/f2vftr/libvftr_mpi_f2vftr.la
+#if ENABLE_FORTRAN08
+#libvftrace_la_LIBADD += mpi/f08-wrapper/libvftr_f08mpiwrap.la \
+#			mpi/f082vftr/libvftr_mpi_f082vftr.la
+#endif
+#endif
+#endif
 
-external_includes = -I$(top_srcdir)/external/tinyexpr/ \
-		    -I$(top_srcdir)/external/jsmn/
-
-libvftrace_la_LIBADD = libvftr_pause.la
-# external libraries
-libvftrace_la_LIBADD += ${top_builddir}/external/libtinyexpr.la
-
-libvftrace_la_LIBADD += mpi/utils/libvftr_mpi_utils.la
-if WITH_MPI
-libvftrace_la_LIBADD += mpi/vftr_mpi/libvftr_mpi.la
-libvftrace_la_LIBADD += mpi/c-wrapper/libvftr_cmpiwrap.la \
-			mpi/c2vftr/libvftr_mpi_c2vftr.la
-if ENABLE_FORTRAN
-libvftrace_la_LIBADD += mpi/f-wrapper/libvftr_fmpiwrap.la \
-			mpi/f2vftr/libvftr_mpi_f2vftr.la
-if ENABLE_FORTRAN08
-libvftrace_la_LIBADD += mpi/f08-wrapper/libvftr_f08mpiwrap.la \
-			mpi/f082vftr/libvftr_mpi_f082vftr.la
-endif
-endif
-endif
-
-libvftr_pause_la_SOURCES = vftr_pause.c
-libvftr_pause_la_CFLAGS = -finstrument-functions
-
-libvftrace_la_SOURCES = vftr_scenarios.c \
-		       vftr_symbols.c \
-                       vftr_hwcounters.c \
-		       vftr_hooks.c \
-		       vftr_setup.c \
-		       vftr_filewrite.c \
-		       vftr_fileutils.c \
-		       vftr_stringutils.c \
-		       vftr_hashing.c \
-		       vftr_sorting.c \
-		       vftr_stacks.c \
-		       vftr_user_stack.c \
-		       vftr_functions.c \
-		       vftr_regions.c \
-                       vftr_allocate.c \
- 		       vftr_timer.c \
-		       vftr_regex.c \
-	 	       vftr_environment.c \
-		       vftr_signals.c \
-		       vftr_browse.c \
-                       vftr_mallinfo.c
-
-if ENABLE_FORTRAN
-libvftrace_la_SOURCES += vftrace_mod.F90
-endif
+libvftrace_la_SOURCES = 
 
 libvftrace_la_CPPFLAGS = -D_VERSION=${PACKAGE_VERSION} \
 			 -D_BUGREPORT=${PACKAGE_BUGREPORT}
@@ -62,6 +36,12 @@ libvftrace_la_CFLAGS =
 libvftrace_la_CXXFLAGS =
 libvftrace_la_FCFLAGS =
 libvftrace_la_LDFLAGS =
+
+libvftrace_la_SOURCES += cyghooks.c \
+			 vftr_hooks.c \
+			 off_hooks.c
+libvftrace_la_SOURCES += vftrace_state.c \
+			 initialize.c
 
 libvftrace_la_CFLAGS += -I${srcdir}/mpi/utils/ \
 			${external_includes}
@@ -87,7 +67,7 @@ endif
 
 if HAS_LIBERTY
 libvftrace_la_CFLAGS += -D_LIBERTY_AVAIL
-libvftrace_la_LIBADD += -liberty
+#libvftrace_la_LIBADD += -liberty
 endif
 
 if USES_INTEL_COMPILER
@@ -111,12 +91,6 @@ libvftrace_la_CFLAGS += -fopenmp
 libvftrace_la_FCFLAGS += -fopenmp
 endif
 
-endif
-
-libvftr_dlopen_la_SOURCES = vftr_dlopen.c
-
-if ENABLE_FORTRAN
-include_HEADERS += vftrace.mod
 endif
 
 clean-local:
