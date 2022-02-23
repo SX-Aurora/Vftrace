@@ -42,6 +42,7 @@ libvftrace_la_SOURCES += cyghooks.c \
 			 off_hooks.c
 libvftrace_la_SOURCES += vftrace_state.c \
 			 initialize.c
+libvftrace_la_SOURCES += regular_expressions.c
 
 libvftrace_la_CFLAGS += -I${srcdir}/mpi/utils/ \
 			${external_includes}
