@@ -11,7 +11,9 @@
 #include "finalize.h"
 
 void vftr_initialize(void *func, void *caller) {
-   // First step is to parse the relevant environment variables
+   // First step is to initialize the reference timer
+   vftrace.reftimer = vftr_set_local_ref_time();
+   // parse the relevant environment variables
    vftrace.environment = vftr_read_environment();
 
    if (vftrace.environment.vftrace_off.value.bool_val) {

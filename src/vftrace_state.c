@@ -17,11 +17,13 @@
 */
 
 #include <stdbool.h>
+
 #include "vftrace_state.h"
 
 // main datatype to store everything 
 
 vftrace_t vftrace = {
    .environment.valid = false,
+   .reftimer.valid = false,
    .state = undefined,
 };
