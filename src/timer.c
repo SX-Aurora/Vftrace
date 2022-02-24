@@ -1,3 +1,7 @@
+#ifdef _DEBUG
+#include <stdlib.h>
+#include <string.h>
+#endif
 #include <time.h>
 #include <stdio.h>
 
@@ -66,3 +70,20 @@ reftime_t vftr_set_local_ref_time() {
    return ref_timer;
 }
 
+#ifdef _DEBUG
+void vftr_print_date_str(FILE *fp) {
+   time_t current_time = time(NULL);
+   char *current_time_string = ctime(&current_time);
+   // remove the linebreak at the end of the string
+   if (current_time_string != NULL) {
+      char *timestr = strdup(current_time_string);
+      char *s = timestr;
+      while (*s != '\0') {
+         *s = (*s == '\n' ? '\0' : *s);
+         s++;
+      }
+      fprintf(fp, "%s", timestr);
+      free(timestr);
+   }
+}
+#endif

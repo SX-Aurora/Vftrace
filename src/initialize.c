@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #ifdef _DEBUG
 #include <stdio.h>
+#include <time.h>
 #endif
 
 #include "off_hooks.h"
@@ -13,6 +14,11 @@
 void vftr_initialize(void *func, void *caller) {
    // First step is to initialize the reference timer
    vftrace.reftimer = vftr_set_local_ref_time();
+#ifdef _DEBUG
+   fprintf(stderr, "Vftrace initilized at ");
+   vftr_print_date_str(stderr);
+   fprintf(stderr, "\n");
+#endif
    // parse the relevant environment variables
    vftrace.environment = vftr_read_environment();
 

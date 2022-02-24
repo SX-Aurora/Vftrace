@@ -1,6 +1,7 @@
 #ifndef TIMER_H
 #define TIMER_H
 
+#include <stdio.h>
 #include <stdbool.h>
 
 #include "time.h"
@@ -21,5 +22,9 @@ unsigned long long vftr_get_cycles();
 // set the local reference time to which all 
 // timedifferences are measured
 reftime_t vftr_set_local_ref_time();
+
+#ifdef _DEBUG
+void vftr_print_date_str(FILE *fp);
+#endif
 
 #endif

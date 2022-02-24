@@ -1,5 +1,6 @@
 #ifdef _DEBUG
 #include <stdio.h>
+#include "timer.h"
 #endif
 
 #include "off_hooks.h"
@@ -11,6 +12,11 @@
 void vftr_finalize() {
    // update the vftrace state
    vftrace.state = finalized;
+#ifdef _DEBUG
+   fprintf(stderr, "Vftrace finalized at ");
+   vftr_print_date_str(stderr);
+   fprintf(stderr, "\n");
+#endif
 
 
 
