@@ -45,7 +45,8 @@ libvftrace_la_SOURCES += vftrace_state.c \
 			 finalize.c \
 			 timer.c
 libvftrace_la_SOURCES += regular_expressions.c \
-			 environment.c
+			 environment.c \
+			 symbols.c
 
 libvftrace_la_CFLAGS += -I${srcdir}/mpi/utils/ \
 			${external_includes}

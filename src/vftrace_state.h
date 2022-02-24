@@ -22,6 +22,7 @@
 #include <stdbool.h>
 
 #include "environment.h"
+#include "symbols.h"
 #include "timer.h"
 
 // tracing state of vftrace
@@ -36,7 +37,7 @@ typedef enum {
 typedef struct {
    environment_t environment; // set of all relevant environment variables
    reftime_t reftimer; // reference timer to which all timestamps are taken
-
+   symbollist_t symbols; // list of function symbols
    state_t state; // current state of vftrace
 } vftrace_t;
 

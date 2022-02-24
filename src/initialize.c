@@ -9,6 +9,7 @@
 #include "vftr_hooks.h"
 #include "vftrace_state.h"
 #include "environment.h"
+#include "symbols.h"
 #include "finalize.h"
 
 void vftr_initialize(void *func, void *caller) {
@@ -33,6 +34,10 @@ void vftr_initialize(void *func, void *caller) {
    } else {
       // update the vftrace state
       vftrace.state = initialized;
+
+      // read the symbol table of the executable and its libraries
+      vftrace.symbols = vftr_read_symbols();
+
       // assign the appropriate function hooks to handle sampling.
       vftr_set_enter_func_hook(vftr_function_entry);
       vftr_set_exit_func_hook(vftr_function_exit);
