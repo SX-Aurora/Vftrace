@@ -6,6 +6,7 @@
 #include "cyghooks.h"
 #include "vftr_hooks.h"
 #include "vftrace_state.h"
+#include "environment.h"
 
 void vftr_finalize() {
    // update the vftrace state
@@ -16,7 +17,8 @@ void vftr_finalize() {
 
 
 
-
+   // free the environment to avoid memory leaks
+   vftr_environment_free(&(vftrace.environment));
 
    // redirect the function entry and exit hooks to deactivate them
    // use a dummy function that does nothing
