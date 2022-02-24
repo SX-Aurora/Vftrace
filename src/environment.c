@@ -94,14 +94,10 @@ env_var_t vftr_read_env_bool(char *env_name, bool default_val) {
          *s = tolower(*s);
          s++;
       }
-      if (!strcmp(s, "1") ||
-          !strcmp(s, "yes") ||
-          !strcmp(s, "on")) {
+      if (!strcmp(env_var.value_string, "1") ||
+          !strcmp(env_var.value_string, "yes") ||
+          !strcmp(env_var.value_string, "on")) {
          env_var.value.bool_val = true;
-      } else if (!strcmp(s, "0") ||
-                 !strcmp(s, "no") ||
-                 !strcmp(s, "off")) {
-         env_var.value.bool_val = false;
       } else {
          env_var.value.bool_val = false;
       }
