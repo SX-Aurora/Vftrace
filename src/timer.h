@@ -3,6 +3,8 @@
 
 #include <stdbool.h>
 
+#include "time.h"
+
 typedef struct {
    bool valid;
    struct timespec timestamp;
