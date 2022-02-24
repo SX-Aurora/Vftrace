@@ -12,18 +12,18 @@ typedef struct {
    symbol_t *symbols;
 } symbollist_t;
 
-// types to contain paths
+// types to contain library paths
 typedef struct {
    off_t base;
    off_t offset;
    char *path;
-} path_t;
+} library_t;
 
 typedef struct {
-   unsigned int npaths;
-   unsigned int maxpaths;
-   path_t *paths;
-} pathlist_t;
+   int nlibraries;
+   int maxlibraries;
+   library_t *libraries;
+} librarylist_t;
 
 symbollist_t vftr_read_symbols();
 

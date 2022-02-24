@@ -5,8 +5,8 @@
 
 #include "symbols.h"
 
-path_t vftr_parse_library_path(char *line) {
-   path_t libpath = {
+library_t vftr_parse_maps_line(char *line) {
+   library_t library = {
       .base = 0,
       .offset = 0,
       .path = NULL
@@ -19,10 +19,10 @@ path_t vftr_parse_library_path(char *line) {
    strtok(NULL," ");
    char *permissions = strtok(NULL," ");
    // only continue parsing if the library is marked executable
-   if (permissions[2] != 'x') {return libpath;}
+   if (permissions[2] != 'x') {return library;}
    char *offset = strtok(NULL, " ");
 #ifndef __VMAP_OFFSET
-   if (strncmp(offset, "00000000", 8)) {return libpath;}
+   if (strncmp(offset, "00000000", 8)) {return library;}
 #endif
    // skip over devide
    strtok(NULL," ");
@@ -30,39 +30,39 @@ path_t vftr_parse_library_path(char *line) {
    strtok(NULL," ");
    char *path = strtok(NULL," \n");
    // only continue if a valid path is found
-   if (path == NULL || path[0] == '[') {return libpath;}
+   if (path == NULL || path[0] == '[') {return library;}
    // Filter out devices and system libraries
    // They are not instrumented and can be discarded
    // test for common path names
-   if (!strncmp(path, "/dev/", 5)) {return libpath;}
-   if (!strncmp(path, "/usr/lib", 8)) {return libpath;}
-   if (!strncmp(path, "/usr/lib64", 10)) {return libpath;}
-   if (!strncmp(path, "/lib", 4)) {return libpath;}
+   if (!strncmp(path, "/dev/", 5)) {return library;}
+   if (!strncmp(path, "/usr/lib", 8)) {return library;}
+   if (!strncmp(path, "/usr/lib64", 10)) {return library;}
+   if (!strncmp(path, "/lib", 4)) {return library;}
 #ifdef __ve__
-   if (!strncmp(path, "/opt/nec/ve/veos/lib", 20)) {return libpath;}
+   if (!strncmp(path, "/opt/nec/ve/veos/lib", 20)) {return library;}
 #endif
-   sscanf(base, "%ld", &(libpath.base));
-   libpath.path = strdup(path);
+   sscanf(base, "%ld", &(library.base));
+   library.path = strdup(path);
 #ifdef __VMAP_OFFSET
-   libpath.offset = strtoul(offset, NULL, 16);
+   library.offset = strtoul(offset, NULL, 16);
 #else
-   libpath.offset = 0L;
+   library.offset = 0L;
 #endif
-   return libpath;
+   return library;
 }
 
 // read the different library paths from the applications map
-pathlist_t vftr_read_library_paths() {
+librarylist_t vftr_read_library_maps() {
    FILE *fmap = fopen("/proc/self/maps", "r");
    if (fmap == NULL) {
       perror ("Opening /proc/self/maps");
       abort();
    }
 
-   pathlist_t pathlist = {
-      .npaths = 0,
-      .maxpaths = 0,
-      .paths = NULL
+   librarylist_t librarylist = {
+      .nlibraries = 0,
+      .maxlibraries = 0,
+      .libraries = NULL
    };
 
    char *lineptr = NULL;
@@ -70,46 +70,47 @@ pathlist_t vftr_read_library_paths() {
    ssize_t readbytes = 0;
    // read all lines
    while ((readbytes = getline(&lineptr, &buffsize, fmap)) > 0) {
-      path_t libpath = vftr_parse_library_path(lineptr);
-      if (libpath.path != NULL) {
-         // append it to the pathlist
-         int idx = pathlist.npaths;
-         pathlist.npaths++;
-         if (pathlist.npaths > pathlist.maxpaths) {
-            pathlist.maxpaths = 1.4*(pathlist.maxpaths+1);
-            pathlist.paths = (path_t*)
-               realloc(pathlist.paths, pathlist.maxpaths*sizeof(path_t));
+      library_t library = vftr_parse_maps_line(lineptr);
+      if (library.path != NULL) {
+         // append it to the librarylist
+         int idx = librarylist.nlibraries;
+         librarylist.nlibraries++;
+         if (librarylist.nlibraries > librarylist.maxlibraries) {
+            librarylist.maxlibraries = 1.4*(librarylist.maxlibraries+1);
+            librarylist.libraries = (library_t*)
+               realloc(librarylist.libraries, librarylist.maxlibraries*sizeof(library_t));
          }
-         pathlist.paths[idx] = libpath;
+         librarylist.libraries[idx] = library;
 #ifdef _DEBUG
-         fprintf(stderr, "Found library path b=%lu o=%lu p=%s\n",
-                 pathlist.paths[pathlist.npaths-1].base,
-                 pathlist.paths[pathlist.npaths-1].offset,
-                 pathlist.paths[pathlist.npaths-1].path);
+         fprintf(stderr, "Found library p=%s (%lu,%lu)\n",
+                 librarylist.libraries[librarylist.nlibraries-1].path,
+                 librarylist.libraries[librarylist.nlibraries-1].base,
+                 librarylist.libraries[librarylist.nlibraries-1].offset);
 #endif
       }
    }
    free(lineptr);
    fclose(fmap);
-   return pathlist;
+   return librarylist;
 }
 
-void vftr_free_pathlist(pathlist_t *pathlist_ptr) {
-   pathlist_t pathlist = *pathlist_ptr;
-   if (pathlist.npaths > 0) {
-      for (int ipath=0; ipath<pathlist.npaths; ipath++) {
-         free(pathlist.paths[ipath].path);
-         pathlist.paths[ipath].path = NULL;
+void vftr_free_librarylist(librarylist_t *librarylist_ptr) {
+   librarylist_t librarylist = *librarylist_ptr;
+   if (librarylist.nlibraries > 0) {
+      for (int ilib=0; ilib<librarylist.nlibraries; ilib++) {
+         free(librarylist.libraries[ilib].path);
+         librarylist.libraries[ilib].path = NULL;
       }
-      free(pathlist.paths);
-      pathlist.paths = NULL;
+      free(librarylist.libraries);
+      librarylist.libraries = NULL;
    }
 }
 
 symbollist_t vftr_read_symbols() {
    symbollist_t symbols;
-   pathlist_t pathlist = vftr_read_library_paths();
+   // get all library paths that belong to the program
+   librarylist_t librarylist = vftr_read_library_maps();
 
-   vftr_free_pathlist(&pathlist);
+   vftr_free_librarylist(&librarylist);
    return symbols;
 }
