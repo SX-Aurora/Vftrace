@@ -41,7 +41,8 @@ libvftrace_la_SOURCES += cyghooks.c \
 			 vftr_hooks.c \
 			 off_hooks.c
 libvftrace_la_SOURCES += vftrace_state.c \
-			 initialize.c
+			 initialize.c \
+			 finalize.c
 libvftrace_la_SOURCES += regular_expressions.c \
 			 environment.c
 

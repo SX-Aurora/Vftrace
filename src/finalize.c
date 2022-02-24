@@ -7,8 +7,7 @@
 #include "vftr_hooks.h"
 #include "vftrace_state.h"
 
-void vftr_finalize(void *func, void *caller) {
-
+void vftr_finalize() {
    // update the vftrace state
    vftrace.state = finalized;
 

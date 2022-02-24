@@ -1,3 +1,4 @@
+#include <stdlib.h>
 #ifdef _DEBUG
 #include <stdio.h>
 #endif
@@ -7,6 +8,7 @@
 #include "vftr_hooks.h"
 #include "vftrace_state.h"
 #include "environment.h"
+#include "finalize.h"
 
 void vftr_initialize(void *func, void *caller) {
    // First step is to parse the relevant environment variables
@@ -32,6 +34,9 @@ void vftr_initialize(void *func, void *caller) {
       // assign the appropriate function hooks.
       vftr_set_enter_func_hook(vftr_function_entry);
       vftr_set_exit_func_hook(vftr_function_exit);
+
+      // set the finalize function to be executed at the termination of the program
+      atexit(vftr_finalize);
 
       // now that initializing is done the actual hook needs
       // to be called with the appropriate arguments
