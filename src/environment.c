@@ -199,43 +199,48 @@ void vftr_print_env_var(FILE *fp, env_var_t env_var) {
 }
 
 void vftr_print_env(FILE *fp, environment_t environment) {
-   vftr_print_env_var(fp, environment.vftrace_off);
-   vftr_print_env_var(fp, environment.do_sampling);
-   vftr_print_env_var(fp, environment.regions_precise);
-   vftr_print_env_var(fp, environment.output_directory);
-   vftr_print_env_var(fp, environment.logfile_basename);
-   vftr_print_env_var(fp, environment.logfile_for_ranks);
-   vftr_print_env_var(fp, environment.mpi_summary_for_ranks);
-   vftr_print_env_var(fp, environment.sampletime);
-   vftr_print_env_var(fp, environment.stoptime);
-   vftr_print_env_var(fp, environment.accurate_profile);
-   vftr_print_env_var(fp, environment.prof_truncate);
-   vftr_print_env_var(fp, environment.prof_truncate_cutoff);
-   vftr_print_env_var(fp, environment.mpi_log);
-   vftr_print_env_var(fp, environment.mpi_show_sync_time);
-   vftr_print_env_var(fp, environment.signals_off);
-   vftr_print_env_var(fp, environment.bufsize);
-   vftr_print_env_var(fp, environment.runtime_profile_funcs);
-   vftr_print_env_var(fp, environment.include_only_regex);
-   vftr_print_env_var(fp, environment.detail_until_cum_cycles);
-   vftr_print_env_var(fp, environment.scenario_file);
-   vftr_print_env_var(fp, environment.preciseregex);
-   vftr_print_env_var(fp, environment.print_stack_profile);
-   vftr_print_env_var(fp, environment.license_verbose);
-   vftr_print_env_var(fp, environment.print_stacks_for);
-   vftr_print_env_var(fp, environment.print_loadinfo_for);
-   vftr_print_env_var(fp, environment.strip_module_names);
-   vftr_print_env_var(fp, environment.create_html);
-   vftr_print_env_var(fp, environment.sort_profile_table);
-   vftr_print_env_var(fp, environment.show_overhead);
-   vftr_print_env_var(fp, environment.meminfo_method);
-   vftr_print_env_var(fp, environment.meminfo_stepsize);
-   vftr_print_env_var(fp, environment.print_env);
-   vftr_print_env_var(fp, environment.no_memtrace);
-   vftr_print_env_var(fp, environment.show_stacks_in_profile);
-   vftr_print_env_var(fp, environment.no_stack_normalization);
-   vftr_print_env_var(fp, environment.demangle_cpp);
-   vftr_print_env_var(fp, environment.show_startup);
+   if (environment.valid) {
+      vftr_print_env_var(fp, environment.vftrace_off);
+      vftr_print_env_var(fp, environment.do_sampling);
+      vftr_print_env_var(fp, environment.regions_precise);
+      vftr_print_env_var(fp, environment.output_directory);
+      vftr_print_env_var(fp, environment.logfile_basename);
+      vftr_print_env_var(fp, environment.logfile_for_ranks);
+      vftr_print_env_var(fp, environment.mpi_summary_for_ranks);
+      vftr_print_env_var(fp, environment.sampletime);
+      vftr_print_env_var(fp, environment.stoptime);
+      vftr_print_env_var(fp, environment.accurate_profile);
+      vftr_print_env_var(fp, environment.prof_truncate);
+      vftr_print_env_var(fp, environment.prof_truncate_cutoff);
+      vftr_print_env_var(fp, environment.mpi_log);
+      vftr_print_env_var(fp, environment.mpi_show_sync_time);
+      vftr_print_env_var(fp, environment.signals_off);
+      vftr_print_env_var(fp, environment.bufsize);
+      vftr_print_env_var(fp, environment.runtime_profile_funcs);
+      vftr_print_env_var(fp, environment.include_only_regex);
+      vftr_print_env_var(fp, environment.detail_until_cum_cycles);
+      vftr_print_env_var(fp, environment.scenario_file);
+      vftr_print_env_var(fp, environment.preciseregex);
+      vftr_print_env_var(fp, environment.print_stack_profile);
+      vftr_print_env_var(fp, environment.license_verbose);
+      vftr_print_env_var(fp, environment.print_stacks_for);
+      vftr_print_env_var(fp, environment.print_loadinfo_for);
+      vftr_print_env_var(fp, environment.strip_module_names);
+      vftr_print_env_var(fp, environment.create_html);
+      vftr_print_env_var(fp, environment.sort_profile_table);
+      vftr_print_env_var(fp, environment.show_overhead);
+      vftr_print_env_var(fp, environment.meminfo_method);
+      vftr_print_env_var(fp, environment.meminfo_stepsize);
+      vftr_print_env_var(fp, environment.print_env);
+      vftr_print_env_var(fp, environment.no_memtrace);
+      vftr_print_env_var(fp, environment.show_stacks_in_profile);
+      vftr_print_env_var(fp, environment.no_stack_normalization);
+      vftr_print_env_var(fp, environment.demangle_cpp);
+      vftr_print_env_var(fp, environment.show_startup);
+   } else {
+      fprintf(fp, "Environment is invalid!\n"
+                  "Not read yet, or already freed!\n");
+   }
 }
 
 environment_t vftr_read_environment() {

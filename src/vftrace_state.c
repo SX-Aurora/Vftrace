@@ -16,10 +16,12 @@
    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
+#include <stdbool.h>
 #include "vftrace_state.h"
 
 // main datatype to store everything 
 
 vftrace_t vftrace = {
+   .environment.valid = false,
    .state = undefined,
 };
