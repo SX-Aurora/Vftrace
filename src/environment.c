@@ -280,7 +280,7 @@ environment_t vftr_read_environment() {
    environment.valid = true;
 
 #if _DEBUG
-   fprintf(stderr, "Vftrace-Environment\n");
+   fprintf(stderr, "Vftrace-Environment:\n");
    vftr_print_env(stderr, environment);
 #endif
 
