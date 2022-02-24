@@ -5,7 +5,7 @@
 #include <string.h>
 #include <ctype.h>
 
-#include "environment_types.h"
+#include "environment.h"
 #include "regular_expressions.h"
 
 env_var_t vftr_read_env_int(char *env_name, int default_val) {

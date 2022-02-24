@@ -21,7 +21,7 @@
 
 #include <stdbool.h>
 
-#include "environment_types.h"
+#include "environment.h"
 #include "timer.h"
 
 // tracing state of vftrace
