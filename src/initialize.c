@@ -14,7 +14,7 @@
 
 void vftr_initialize(void *func, void *caller) {
    // First step is to initialize the reference timer
-   vftrace.reftimer = vftr_set_local_ref_time();
+   reftime_t reftime = vftr_set_local_ref_time();
 #ifdef _DEBUG
    fprintf(stderr, "Vftrace initilized at ");
    vftr_print_date_str(stderr);
