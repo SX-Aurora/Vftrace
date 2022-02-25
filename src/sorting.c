@@ -45,8 +45,7 @@ void vftr_radixsort_symboltable(unsigned int nsymb, symbol_t *symbols) {
       // sort the symbols into buckets base on thei ibit-th bit
       for (unsigned int i=0; i<nsymb; i++) {
          // extract the ibit-th bit of the i-th symbols address
-         unsigned long long tmpaddr = (unsigned long long) symbols[i].addr;
-         int bit = (tmpaddr >> ibit) & 1llu;
+         int bit = (symbols[i].addr >> ibit) & 1llu;
          // add the symbol to the selected bucket
          buckets[bit*nsymb+idx[bit]] = symbols[i];
          idx[bit]++;

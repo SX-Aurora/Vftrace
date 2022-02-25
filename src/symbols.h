@@ -2,7 +2,7 @@
 #define SYMBOLS_H
 
 typedef struct {
-   void *addr;
+   unsigned long long addr;
    char *name; /* Not de-mangled function name */
    int index; /* Section index */
 } symbol_t;

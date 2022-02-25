@@ -120,7 +120,7 @@ void vftr_free_librarylist(librarylist_t *librarylist_ptr) {
 
 void vftr_print_symbol_table(FILE *fp, symboltable_t symboltable) {
    for (unsigned int isym=0; isym<symboltable.nsymbols; isym++) {
-      fprintf(fp, "%d %p %s\n",
+      fprintf(fp, "%d 0x%llx %s\n",
               symboltable.symbols[isym].index,
               symboltable.symbols[isym].addr,
               symboltable.symbols[isym].name);
@@ -202,10 +202,12 @@ symboltable_t vftr_read_symbols() {
                int jsymb = nsymold + copiedsymbols;
                copiedsymbols++;
 #if defined(__ve__)
-               symboltable.symbols[jsymb].addr = (void*) (s.st_value);
+               symboltable.symbols[jsymb].addr =
+                  (unsigned long long) (s.st_value);
 #else
                off_t base = librarylist.libraries[ilib].base;
-               symboltable.symbols[jsymb].addr = (void*) (base + s.st_value);
+               symboltable.symbols[jsymb].addr =
+                  (unsigned long long) (base + s.st_value);
 #endif
                // Copy symbol name
                symboltable.symbols[jsymb].name = strdup(stringtab+s.st_name);
