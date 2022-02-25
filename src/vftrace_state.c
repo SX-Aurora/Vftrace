@@ -24,6 +24,8 @@
 
 vftrace_t vftrace = {
    .environment.valid = false,
-   .reftimer.valid = false,
-   .state = undefined,
+   .symboltable = {
+      .nsymbols = 0,
+      .symbols = NULL },
+   .state = undefined
 };

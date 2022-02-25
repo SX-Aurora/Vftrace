@@ -24,7 +24,7 @@ void vftr_finalize() {
 
 
    // free the symbol table
-   vftr_symboltable_free(&vftrace.symbols);
+   vftr_symboltable_free(&vftrace.symboltable);
 
    // free the environment to avoid memory leaks
    vftr_environment_free(&(vftrace.environment));
