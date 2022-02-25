@@ -19,7 +19,7 @@ int vftr_binary_search_uint64(int n, uint64_t *list, uint64_t value) {
 }
 
 int vftr_binary_search_symboltable(int nsymb, symbol_t *symbols,
-                                   unsigned long long address) {
+                                   uintptr_t address) {
    int low = 0;
    int high = nsymb -1;
    while (low <= high) {

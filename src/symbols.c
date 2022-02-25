@@ -203,11 +203,11 @@ symboltable_t vftr_read_symbols() {
                copiedsymbols++;
 #if defined(__ve__)
                symboltable.symbols[jsymb].addr =
-                  (unsigned long long) (s.st_value);
+                  (uintptr_t) (s.st_value);
 #else
                off_t base = librarylist.libraries[ilib].base;
                symboltable.symbols[jsymb].addr =
-                  (unsigned long long) (base + s.st_value);
+                  (uintptr_t) (base + s.st_value);
 #endif
                // Copy symbol name
                symboltable.symbols[jsymb].name = strdup(stringtab+s.st_name);
