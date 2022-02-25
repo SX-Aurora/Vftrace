@@ -1,6 +1,8 @@
 #ifndef SYMBOLS_H
 #define SYMBOLS_H
 
+#include <sys/types.h>
+
 typedef struct {
    unsigned long long addr;
    char *name; /* Not de-mangled function name */
