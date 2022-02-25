@@ -39,7 +39,7 @@ void vftr_radixsort_symboltable(unsigned int nsymb, symbol_t *symbols) {
    // use one array to store both buckets
    symbol_t *buckets = (symbol_t*) malloc(2*nsymb*sizeof(symbol_t));
    // loop over the bits of the symbols address which is (void*)
-   int nbits = 8*sizeof(void*);
+   int nbits = 8*sizeof(unsigned long long);
    for (int ibit=0; ibit<nbits; ibit++) {
       int idx[2] = {0,0};
       // sort the symbols into buckets base on thei ibit-th bit
