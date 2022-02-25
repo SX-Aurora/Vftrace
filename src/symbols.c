@@ -54,6 +54,17 @@ library_t vftr_parse_maps_line(char *line) {
    return library;
 }
 
+void vftr_print_library_list(FILE *fp, librarylist_t librarylist) {
+   fprintf(fp, "Found libraries:\n");
+   for (int ilib=0; ilib<librarylist.nlibraries; ilib++) {
+      fprintf(fp, "%s (base=%lu, offset=%lu)\n",
+              librarylist.libraries[ilib].path,
+              librarylist.libraries[ilib].base,
+              librarylist.libraries[ilib].offset);
+   }
+   fprintf(fp, "\n");
+}
+
 // read the different library paths from the applications map
 librarylist_t vftr_read_library_maps() {
    char *fmappath = "/proc/self/maps";
@@ -85,16 +96,13 @@ librarylist_t vftr_read_library_maps() {
                realloc(librarylist.libraries, librarylist.maxlibraries*sizeof(library_t));
          }
          librarylist.libraries[idx] = library;
-#ifdef _DEBUG
-         fprintf(stderr, "Found library p=%s (%lu,%lu)\n",
-                 librarylist.libraries[librarylist.nlibraries-1].path,
-                 librarylist.libraries[librarylist.nlibraries-1].base,
-                 librarylist.libraries[librarylist.nlibraries-1].offset);
-#endif
       }
    }
    free(lineptr);
    fclose(fmap);
+#ifdef _DEBUG
+   vftr_print_library_list(stderr, librarylist);
+#endif
    return librarylist;
 }
 
@@ -181,7 +189,6 @@ symboltable_t vftr_read_symbols() {
       int validSymbolCount = 0;
       vftr_elf_symbol_table_count(ElfSectionHeader, symtabidx, ElfSymbolTable,
                                   &symbolCount, &validSymbolCount);
-      printf("Nsymb: %d %d\n", symbolCount, validSymbolCount);
       if (validSymbolCount > 0) {
          // append the symbols from this library to the symboltable
          int nsymold = symboltable.nsymbols;
