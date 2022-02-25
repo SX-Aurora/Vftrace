@@ -6,6 +6,7 @@
 
 #include "symbols.h"
 #include "ElfFormat.h"
+#include "sorting.h"
 
 library_t vftr_parse_maps_line(char *line) {
    library_t library = {
@@ -213,6 +214,10 @@ symboltable_t vftr_read_symbols() {
       free(ElfSymbolTable);
       fclose(fp);
    }
+
+   // sort the symbol table for faster access lateron with a binary search
+   vftr_radixsort_symboltable(symboltable.nsymbols,
+                              symboltable.symbols);
 
    vftr_free_librarylist(&librarylist);
 #ifdef _DEBUG
