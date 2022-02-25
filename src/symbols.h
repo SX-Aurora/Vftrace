@@ -10,7 +10,7 @@ typedef struct {
 typedef struct {
    unsigned int nsymbols;
    symbol_t *symbols;
-} symbollist_t;
+} symboltable_t;
 
 // types to contain library paths
 typedef struct {
@@ -25,6 +25,8 @@ typedef struct {
    library_t *libraries;
 } librarylist_t;
 
-symbollist_t vftr_read_symbols();
+symboltable_t vftr_read_symbols();
+
+void vftr_symboltable_free(symboltable_t *symboltable_ptr);
 
 #endif

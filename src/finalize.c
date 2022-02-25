@@ -8,6 +8,7 @@
 #include "vftr_hooks.h"
 #include "vftrace_state.h"
 #include "environment.h"
+#include "symbols.h"
 
 void vftr_finalize() {
    // update the vftrace state
@@ -22,6 +23,8 @@ void vftr_finalize() {
 
 
 
+   // free the symbol table
+   vftr_symboltable_free(&vftrace.symbols);
 
    // free the environment to avoid memory leaks
    vftr_environment_free(&(vftrace.environment));

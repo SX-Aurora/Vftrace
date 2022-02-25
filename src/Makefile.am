@@ -46,6 +46,7 @@ libvftrace_la_SOURCES += vftrace_state.c \
 			 timer.c
 libvftrace_la_SOURCES += regular_expressions.c \
 			 environment.c \
+			 ElfFormat.c \
 			 symbols.c
 
 libvftrace_la_CFLAGS += -I${srcdir}/mpi/utils/ \
