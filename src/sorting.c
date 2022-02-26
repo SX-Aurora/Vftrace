@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
+#include "address_type.h"
 #include "symbols.h"
 
 // sorts a list of unsigned 64 bit integer with linear scaling radix sort

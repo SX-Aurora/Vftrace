@@ -1,10 +1,13 @@
 #ifndef SYMBOLS_H
 #define SYMBOLS_H
 
+#include <stdint.h>
 #include <sys/types.h>
 
+#include "address_type.h"
+
 typedef struct {
-   unsigned long long addr;
+   uintptr_t addr;
    char *name; /* Not de-mangled function name */
    int index; /* Section index */
 } symbol_t;

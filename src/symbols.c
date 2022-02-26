@@ -1,9 +1,11 @@
 #include <stdlib.h>
+#include <stdint.h>
 #include <stdio.h>
 
 #include <string.h>
 #include <elf.h>
 
+#include "address_type.h"
 #include "symbols.h"
 #include "ElfFormat.h"
 #include "sorting.h"
@@ -122,6 +124,7 @@ void vftr_print_symbol_table(FILE *fp, symboltable_t symboltable) {
    for (unsigned int isym=0; isym<symboltable.nsymbols; isym++) {
       fprintf(fp, "%d 0x%llx %s\n",
               symboltable.symbols[isym].index,
+              (unsigned long long int)
               symboltable.symbols[isym].addr,
               symboltable.symbols[isym].name);
    }

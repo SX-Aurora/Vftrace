@@ -24,6 +24,9 @@ AX_ENABLE_DEBUG
 # Check if C-compiler supports c99 standard
 AX_CHECK_C99_STD
 
+# check if the uintptr_t type is supported
+AX_CHECK_UINTPTR
+
 # Check if fortran is selected or not
 AX_ENABLE_FORTRAN
 
