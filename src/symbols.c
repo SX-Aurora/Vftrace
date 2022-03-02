@@ -46,7 +46,7 @@ library_t vftr_parse_maps_line(char *line) {
 #ifdef __ve__
    if (!strncmp(path, "/opt/nec/ve/veos/lib", 20)) {return library;}
 #endif
-   sscanf(base, "%ld", &(library.base));
+   library.base = strtoul(base, NULL, 16);
    library.path = strdup(path);
 #ifdef __VMAP_OFFSET
    library.offset = strtoul(offset, NULL, 16);
@@ -209,8 +209,9 @@ symboltable_t vftr_read_symbols() {
                   (uintptr_t) (s.st_value);
 #else
                off_t base = librarylist.libraries[ilib].base;
+               off_t offset = librarylist.libraries[ilib].offset;
                symboltable.symbols[jsymb].addr =
-                  (uintptr_t) (base + s.st_value);
+                  (uintptr_t) (s.st_value + base - offset);
 #endif
                // Copy symbol name
                symboltable.symbols[jsymb].name = strdup(stringtab+s.st_name);
