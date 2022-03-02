@@ -12,7 +12,7 @@
 #include "symbols.h"
 #include "finalize.h"
 
-void vftr_initialize(void *func, void *caller) {
+void vftr_initialize(void *func, void *call_site) {
    // First step is to initialize the reference timer
    reftime_t reftime = vftr_set_local_ref_time();
 #ifdef _DEBUG
@@ -47,6 +47,6 @@ void vftr_initialize(void *func, void *caller) {
 
       // now that initializing is done the actual hook needs
       // to be called with the appropriate arguments
-      vftr_function_entry(func, caller);
+      vftr_function_entry(func, call_site);
    }
 }

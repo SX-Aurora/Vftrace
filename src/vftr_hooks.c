@@ -18,8 +18,10 @@
 
 #include <stdbool.h>
 
-void vftr_function_entry(void *func, void *caller) {
+#include "vftrace_state.h"
+
+void vftr_function_entry(void *func, void *call_site) {
 }
 
-void vftr_function_exit(void *func, void *caller) {
+void vftr_function_exit(void *func, void *call_site) {
 }
