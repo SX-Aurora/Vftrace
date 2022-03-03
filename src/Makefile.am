@@ -43,8 +43,9 @@ libvftrace_la_SOURCES += cyghooks.c \
 libvftrace_la_SOURCES += vftrace_state.c \
 			 initialize.c \
 			 finalize.c \
-			 processes.c \
 			 stacks.c \
+			 processes.c \
+			 threads.c \
 			 timer.c
 libvftrace_la_SOURCES += regular_expressions.c \
 			 environment.c \
