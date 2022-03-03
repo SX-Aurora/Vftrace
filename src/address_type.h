@@ -5,6 +5,8 @@
 // default it to unsigned long long
 #ifndef _HAS_UINTPTR
 typedef unsigned long long int uintptr_t;
+#else
+#include <stdint.h>
 #endif
 
 #endif
