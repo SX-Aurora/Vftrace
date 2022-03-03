@@ -26,6 +26,15 @@ vftrace_t vftrace = {
    .environment.valid = false,
    .symboltable = {
       .nsymbols = 0,
-      .symbols = NULL },
+      .symbols = NULL
+   },
+   .process = {
+      .nprocesses = 1,
+      .processID = 0,
+      .stacktree = {
+         .nstacks = 0,
+         .stacks = NULL
+      },
+   },
    .state = undefined
 };

@@ -23,6 +23,7 @@
 
 #include "environment.h"
 #include "symbols.h"
+#include "processes.h"
 #include "timer.h"
 
 // tracing state of vftrace
@@ -37,6 +38,7 @@ typedef enum {
 typedef struct {
    environment_t environment; // set of all relevant environment variables
    symboltable_t symboltable; // list of function symbols
+   process_t process; // all of the dynamic process data
    state_t state; // current state of vftrace
 } vftrace_t;
 

@@ -38,6 +38,9 @@ void vftr_initialize(void *func, void *call_site) {
       // read the symbol table of the executable and its libraries
       vftrace.symboltable = vftr_read_symbols();
 
+      // initialize the dynamic process data
+      vftrace.process = vftr_new_process(reftime);
+
       // assign the appropriate function hooks to handle sampling.
       vftr_set_enter_func_hook(vftr_function_entry);
       vftr_set_exit_func_hook(vftr_function_exit);

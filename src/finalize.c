@@ -9,6 +9,7 @@
 #include "vftrace_state.h"
 #include "environment.h"
 #include "symbols.h"
+#include "processes.h"
 
 void vftr_finalize() {
    // update the vftrace state
@@ -22,6 +23,8 @@ void vftr_finalize() {
 
 
 
+   // free the dynamic process data
+   vftr_process_free(&vftrace.process);
 
    // free the symbol table
    vftr_symboltable_free(&vftrace.symboltable);
