@@ -13,8 +13,7 @@ typedef enum {
    threaded_region
 } stack_kind_t;
 
-typedef struct stack_type stack_t;
-struct stack_type {
+typedef struct {
    stack_kind_t stack_kind;
    // address of the function
    uintptr_t address;
@@ -32,7 +31,7 @@ struct stack_type {
    // only a pointer to the symbol table entry 
    // no need to deallocate
    char *name;
-};
+} stack_t;
 
 typedef struct {
    int nstacks;
