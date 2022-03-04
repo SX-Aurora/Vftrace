@@ -19,49 +19,50 @@ void vftr_stacktree_realloc(stacktree_t *stacktree_ptr) {
    *stacktree_ptr = stacktree;
 }
 
-void vftr_insert_callee(int *ncallees_ptr, stack_t *callee, stack_t ***callees_ptr) {
-   stack_t **callees = *callees_ptr;
-   int ncallees = *ncallees_ptr;
-   ncallees++;
-   if (ncallees == 1) {
-      callees = (stack_t**) malloc(sizeof(stack_t*));
-      callees[0] = callee;
-   } else {
-      stack_t **tmp_callees;
-      tmp_callees = (stack_t**) malloc(sizeof(stack_t*));
-      int insertidx = ncallees-1;
-      for (int idx=0; idx<ncallees-1; idx++) {
-         if (callee->address < callees[idx]->address) {
-            insertidx = idx;
-            break;
-         }
-         tmp_callees[idx] = callees[idx];
-      }
-      tmp_callees[insertidx] = callee;
-      for (int idx=insertidx; idx<ncallees-1; idx++) {
-         tmp_callees[idx+1] = callees[idx];
-      }
-
-      free(callees);
-      callees = tmp_callees;
+void vftr_stack_callees_realloc(stack_t *stack_ptr) {
+   stack_t stack = *stack_ptr;
+   while (stack.ncallees > stack.maxcallees) {
+      int maxcallees = stack.maxcallees*1.4+2;
+      stack.callees = (int*)
+         realloc(stack.callees, maxcallees*sizeof(int));
+      stack.maxcallees = maxcallees;
    }
-
-   *ncallees_ptr = ncallees;
-   *callees_ptr = callees;
+   *stack_ptr = stack;
 }
 
-stack_t *vftr_new_stack(stack_t *caller, stacktree_t *stacktree_ptr,
-                        symboltable_t symboltable, stack_kind_t stack_kind,
-                        uintptr_t address, bool precise) {
+void vftr_insert_callee(int calleeID, stack_t *caller) {
+   // append the callee to the list
+   int idx = caller->ncallees;
+   caller->ncallees++;
+   vftr_stack_callees_realloc(caller);
+   caller->callees[idx] = calleeID;
+   // move the new callee forward in the list until it is sorted again
+   for (int icallee=idx; icallee>0; icallee--) {
+      if (caller->callees[icallee] < caller->callees[icallee-1]) {
+         int tmpstack = caller->callees[icallee];
+         caller->callees[icallee] = caller->callees[icallee-1];
+         caller->callees[icallee-1] = tmpstack;
+      } else {
+         break;
+      }
+   }
+}
+
+int vftr_new_stack(int callerID, stacktree_t *stacktree_ptr,
+                   symboltable_t symboltable, stack_kind_t stack_kind,
+                   uintptr_t address, bool precise) {
    int stackID = stacktree_ptr->nstacks;
    stacktree_ptr->nstacks++;
    vftr_stacktree_realloc(stacktree_ptr);
+
+   stack_t *callerstack = stacktree_ptr->stacks+callerID;
 
    stack_t *stack = stacktree_ptr->stacks+stackID;
    stack->stack_kind = stack_kind;
    stack->address = address;
    stack->precise = precise;
-   stack->caller = caller;
+   stack->caller = callerstack->lid;
+   stack->maxcallees = 0;
    stack->ncallees = 0;
    stack->callees = NULL;
    stack->lid = stackID;
@@ -77,11 +78,11 @@ stack_t *vftr_new_stack(stack_t *caller, stacktree_t *stacktree_ptr,
       stack->name = "(UnknownFunctionName)";
    }
 
-   vftr_insert_callee(&(caller->ncallees),
-                      stack,
-                      &(caller->callees));
+   //printf("Caller: %s, ", caller->name);
+   //printf("Callee: %s\n", stack->name);
+   vftr_insert_callee(stack->lid, callerstack);
 
-   return stack;
+   return stack->lid;
 }
 
 stack_t vftr_first_stack() {
@@ -89,7 +90,8 @@ stack_t vftr_first_stack() {
    stack.stack_kind = init;
    stack.address = (uintptr_t) NULL;
    stack.precise = true;
-   stack.caller = NULL;
+   stack.caller = -1;
+   stack.maxcallees = 0;
    stack.ncallees = 0;
    stack.callees = NULL;
    stack.lid = 0;
@@ -99,16 +101,16 @@ stack_t vftr_first_stack() {
 }
 
 // recursively free the stack tree
-void vftr_stack_free(stack_t *stack_ptr) {
-   stack_t stack = *stack_ptr;
+void vftr_stack_free(stack_t *stacks_ptr, int stackID) {
+   stack_t stack = stacks_ptr[stackID];
    if (stack.ncallees > 0) {
       for (int icallee=0; icallee<stack.ncallees; icallee++) {
-         vftr_stack_free(stack.callees[icallee]);
+         vftr_stack_free(stacks_ptr, stack.callees[icallee]);
       }
       free(stack.callees);
       stack.callees = NULL;
    } 
-   *stack_ptr = stack;
+   stacks_ptr[stackID] = stack;
 }
 
 stacktree_t vftr_new_stacktree() {
@@ -124,7 +126,7 @@ stacktree_t vftr_new_stacktree() {
 void vftr_stacktree_free(stacktree_t *stacktree_ptr) {
    stacktree_t stacktree = *stacktree_ptr;
    if (stacktree.nstacks > 0) {
-      vftr_stack_free(stacktree.stacks+0);
+      vftr_stack_free(stacktree.stacks, 0);
       free(stacktree.stacks);
       stacktree.stacks = NULL;
       stacktree.nstacks = 0;
@@ -134,20 +136,21 @@ void vftr_stacktree_free(stacktree_t *stacktree_ptr) {
 }
 
 #ifdef _DEBUG
-void vftr_print_stack(int level, stack_t stack) {
+void vftr_print_stack(int level, stacktree_t stacktree, int stackid) {
    // first print the indentation
    for (int ilevel=0; ilevel<level; ilevel++) {
       printf("  ");
    }
+   stack_t stack = stacktree.stacks[stackid];
    printf("%s (%llx): id=%d\n", stack.name,
           (unsigned long long) stack.address, stack.lid);
    level++;
    for (int icallee=0; icallee<stack.ncallees; icallee++) {
-      vftr_print_stack(level, *(stack.callees[icallee]));
+      vftr_print_stack(level, stacktree, stack.callees[icallee]);
    }
 }
 
 void vftr_print_stacktree(stacktree_t stacktree) {
-   vftr_print_stack(0, stacktree.stacks[0]);
+   vftr_print_stack(0, stacktree, 0);
 }
 #endif

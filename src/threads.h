@@ -3,13 +3,11 @@
 
 #include <stdbool.h>
 
-#include "stacks.h"
-
 typedef struct thread_type thread_t;
 struct thread_type {
    int level;
    int thread_num;
-   stack_t *current_stack;
+   int current_stackID;
    bool master;
    thread_t *parent_thread;
    int maxsubthreads;
@@ -26,5 +24,7 @@ typedef struct {
 threadtree_t vftr_new_threadtree(stack_t *rootstack);
 
 void vftr_threadtree_free(threadtree_t *threadtree_ptr);
+
+thread_t *vftr_get_my_thread(threadtree_t threadtree);
 
 #endif

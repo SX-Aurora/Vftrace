@@ -1,6 +1,8 @@
 #ifndef STACKS_H
 #define STACKS_H
 
+#include <stdbool.h>
+
 #include "address_type.h"
 #include "symbols.h"
 
@@ -19,10 +21,11 @@ struct stack_type {
    // is this function measured precisely?
    bool precise;
    // pointer to calling stack
-   stack_t *caller;
+   int caller;
    // pointers to called functions 
+   int maxcallees;
    int ncallees;
-   stack_t **callees;
+   int *callees;
    // local and global stack-ID
    int lid, gid;
    // name of function on top of stack
@@ -37,12 +40,16 @@ typedef struct {
    stack_t *stacks;
 } stacktree_t;
 
-stack_t *vftr_new_stack(stack_t *caller, stacktree_t *stacktree_ptr,
-                        symboltable_t symboltable, stack_kind_t stack_kind,
-                        uintptr_t address, bool precise);
+int vftr_new_stack(int callerID, stacktree_t *stacktree_ptr,
+                   symboltable_t symboltable, stack_kind_t stack_kind,
+                   uintptr_t address, bool precise);
 
 stacktree_t vftr_new_stacktree();
 
 void vftr_stacktree_free(stacktree_t *stacktree_ptr);
+
+#ifdef _DEBUG
+void vftr_print_stacktree(stacktree_t stacktree);
+#endif
 
 #endif

@@ -8,7 +8,7 @@ thread_t vftr_new_masterthread(stack_t *rootstack_ptr) {
    thread_t thread;
    thread.level = 0;
    thread.thread_num = 0;
-   thread.current_stack = rootstack_ptr;
+   thread.current_stackID = rootstack_ptr->lid;
    thread.master = true;
    thread.parent_thread = NULL;
    thread.maxsubthreads = 0;

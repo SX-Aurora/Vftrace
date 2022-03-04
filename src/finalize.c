@@ -11,6 +11,11 @@
 #include "symbols.h"
 #include "processes.h"
 
+
+#include "stacks.h"
+
+
+
 void vftr_finalize() {
    // update the vftrace state
    vftrace.state = finalized;
@@ -24,6 +29,7 @@ void vftr_finalize() {
 
 
    // free the dynamic process data
+   vftr_print_stacktree(vftrace.process.stacktree);
    vftr_process_free(&vftrace.process);
 
    // free the symbol table

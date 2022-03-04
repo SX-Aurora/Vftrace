@@ -2,6 +2,7 @@
 
 #include "address_type.h"
 #include "symbols.h"
+#include "stacks.h"
 
 int vftr_binary_search_uint64(int n, uint64_t *list, uint64_t value) {
    int low = 0;
@@ -34,4 +35,18 @@ int vftr_binary_search_symboltable(int nsymb, symbol_t *symbols,
       }
    }
    return -1; // not found
+}
+
+int vftr_linear_search_callee(stack_t *stacks, int callerID, uintptr_t address) {
+   stack_t stack = stacks[callerID];
+   int calleeID = -1;
+   for (int icallee=0; icallee<stack.ncallees; icallee++) {
+      int stackID = stack.callees[icallee];
+      if (address == stacks[stackID].address) {
+         calleeID = stackID;
+         break;
+      }
+   }
+   
+   return calleeID;
 }
