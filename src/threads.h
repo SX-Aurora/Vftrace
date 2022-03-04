@@ -3,17 +3,16 @@
 
 #include <stdbool.h>
 
-typedef struct thread_type thread_t;
-struct thread_type {
+typedef struct {
    int level;
    int thread_num;
    int current_stackID;
    bool master;
-   thread_t *parent_thread;
+   int parent_thread;
    int maxsubthreads;
    int nsubthreads;
-   thread_t **subthreads;
-};
+   int *subthreads;
+} thread_t;
 
 typedef struct {
    int nthreads;
