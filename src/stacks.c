@@ -36,16 +36,6 @@ void vftr_insert_callee(int calleeID, stack_t *caller) {
    caller->ncallees++;
    vftr_stack_callees_realloc(caller);
    caller->callees[idx] = calleeID;
-   // move the new callee forward in the list until it is sorted again
-   for (int icallee=idx; icallee>0; icallee--) {
-      if (caller->callees[icallee] < caller->callees[icallee-1]) {
-         int tmpstack = caller->callees[icallee];
-         caller->callees[icallee] = caller->callees[icallee-1];
-         caller->callees[icallee-1] = tmpstack;
-      } else {
-         break;
-      }
-   }
 }
 
 int vftr_new_stack(int callerID, stacktree_t *stacktree_ptr,
