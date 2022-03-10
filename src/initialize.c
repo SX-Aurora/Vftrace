@@ -44,14 +44,14 @@ void vftr_initialize(void *func, void *call_site) {
       vftrace.process = vftr_new_process();
 
       // assign the appropriate function hooks to handle sampling.
-      vftr_set_enter_func_hook(vftr_function_hook_entry);
-      vftr_set_exit_func_hook(vftr_function_hook_exit);
+      vftr_set_enter_func_hook(vftr_function_entry);
+      vftr_set_exit_func_hook(vftr_function_exit);
 
       // set the finalize function to be executed at the termination of the program
       atexit(vftr_finalize);
 
       // now that initializing is done the actual hook needs
       // to be called with the appropriate arguments
-      vftr_function_hook_entry(func, call_site);
+      vftr_function_entry(func, call_site);
    }
 }

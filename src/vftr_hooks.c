@@ -16,7 +16,7 @@
    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-void vftr_function_hook_entry(void *func, void *call_site) {
+void vftr_function_entry(void *func, void *call_site) {
    // log function entry and exit time to estimate the overhead time
    //long long function_entry_time = vftr_get_runtime_usec();
 
@@ -39,7 +39,7 @@ void vftr_function_hook_entry(void *func, void *call_site) {
   // //printf(" %s\n", my_thread->current_stack->name);
 }
 
-void vftr_function_hook_exit(void *func, void *call_site) {
+void vftr_function_exit(void *func, void *call_site) {
    //thread_t *my_thread = vftr_get_my_thread(vftrace.process.threadtree);
    //stack_t *current_stack = vftrace.process.stacktree.stacks+my_thread->current_stackID;
    //printf("Thread %d: Leaving %s", my_thread->thread_num, my_thread->current_stack->name);
