@@ -16,37 +16,33 @@
    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-#include <stdbool.h>
+void vftr_function_hook_entry(void *func, void *call_site) {
+   // log function entry and exit time to estimate the overhead time
+   //long long function_entry_time = vftr_get_runtime_usec();
 
-#include "vftrace_state.h"
-#include "stacks.h"
-#include "threads.h"
-#include "search.h"
+   //thread_t *my_thread = vftr_get_my_thread(vftrace.process.threadtree);
+  // stack_t *current_stack = vftrace.process.stacktree.stacks+my_thread->current_stackID;
 
-void vftr_function_entry(void *func, void *call_site) {
-   thread_t *my_thread = vftr_get_my_thread(vftrace.process.threadtree);
-   stack_t *current_stack = vftrace.process.stacktree.stacks+my_thread->current_stackID;
-
-   int calleeID = vftr_linear_search_callee(vftrace.process.stacktree.stacks,
-                                            my_thread->current_stackID,
-                                            (uintptr_t) func);
-   //printf("Thread %d: %s calls", my_thread->thread_num, my_thread->current_stack->name);
-   if (calleeID < 0) {
-      my_thread->current_stackID =  vftr_new_stack(my_thread->current_stackID,
-                                                   &(vftrace.process.stacktree),
-                                                   vftrace.symboltable,
-                                                   function, (uintptr_t) func,
-                                                   true);
-   } else {
-      my_thread->current_stackID = calleeID;
-   }
-   //printf(" %s\n", my_thread->current_stack->name);
+  // int calleeID = vftr_linear_search_callee(vftrace.process.stacktree.stacks,
+  //                                          my_thread->current_stackID,
+  //                                          (uintptr_t) func);
+  // //printf("Thread %d: %s calls", my_thread->thread_num, my_thread->current_stack->name);
+  // if (calleeID < 0) {
+  //    my_thread->current_stackID =  vftr_new_stack(my_thread->current_stackID,
+  //                                                 &(vftrace.process.stacktree),
+  //                                                 vftrace.symboltable,
+  //                                                 function, (uintptr_t) func,
+  //                                                 true);
+  // } else {
+  //    my_thread->current_stackID = calleeID;
+  // }
+  // //printf(" %s\n", my_thread->current_stack->name);
 }
 
-void vftr_function_exit(void *func, void *call_site) {
-   thread_t *my_thread = vftr_get_my_thread(vftrace.process.threadtree);
-   stack_t *current_stack = vftrace.process.stacktree.stacks+my_thread->current_stackID;
+void vftr_function_hook_exit(void *func, void *call_site) {
+   //thread_t *my_thread = vftr_get_my_thread(vftrace.process.threadtree);
+   //stack_t *current_stack = vftrace.process.stacktree.stacks+my_thread->current_stackID;
    //printf("Thread %d: Leaving %s", my_thread->thread_num, my_thread->current_stack->name);
-   my_thread->current_stackID = current_stack->caller;
+   //my_thread->current_stackID = current_stack->caller;
    //printf(" for %s\n", my_thread->current_stack->name);
 }

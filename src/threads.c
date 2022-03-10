@@ -3,13 +3,14 @@
 
 #include "stacks.h"
 #include "threads.h"
+#include "threadstacks.h"
 
-thread_t vftr_new_masterthread(stack_t *rootstack_ptr) {
+thread_t vftr_new_masterthread() {
    thread_t thread;
    thread.level = 0;
    thread.thread_num = 0;
-   thread.current_stackID = rootstack_ptr->lid;
    thread.master = true;
+   thread.stacklist = vftr_new_threadstacklist();
    thread.parent_thread = -1;
    thread.maxsubthreads = 0;
    thread.nsubthreads = 0;
@@ -56,6 +57,7 @@ thread_t *vftr_get_my_thread(threadtree_t threadtree) {
 
 void vftr_thread_free(thread_t *threads_ptr, int threadID) {
    thread_t thread = threads_ptr[threadID];
+   vftr_threadstacklist_free(&(thread.stacklist));
    if (thread.nsubthreads > 0) {
       for (int ithread=0; ithread<thread.nsubthreads; ithread++) {
          vftr_thread_free(threads_ptr, thread.subthreads[ithread]);

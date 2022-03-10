@@ -4,6 +4,7 @@
 #include <time.h>
 #endif
 
+#include "timer.h"
 #include "off_hooks.h"
 #include "cyghooks.h"
 #include "vftr_hooks.h"
@@ -11,10 +12,11 @@
 #include "environment.h"
 #include "symbols.h"
 #include "finalize.h"
+#include "processes.h"
 
 void vftr_initialize(void *func, void *call_site) {
    // First step is to initialize the reference timer
-   reftime_t reftime = vftr_set_local_ref_time();
+   vftr_set_local_ref_time();
 #ifdef _DEBUG
    fprintf(stderr, "Vftrace initilized at ");
    vftr_print_date_str(stderr);
@@ -39,17 +41,17 @@ void vftr_initialize(void *func, void *call_site) {
       vftrace.symboltable = vftr_read_symbols();
 
       // initialize the dynamic process data
-      vftrace.process = vftr_new_process(reftime);
+      vftrace.process = vftr_new_process();
 
       // assign the appropriate function hooks to handle sampling.
-      vftr_set_enter_func_hook(vftr_function_entry);
-      vftr_set_exit_func_hook(vftr_function_exit);
+      vftr_set_enter_func_hook(vftr_function_hook_entry);
+      vftr_set_exit_func_hook(vftr_function_hook_exit);
 
       // set the finalize function to be executed at the termination of the program
       atexit(vftr_finalize);
 
       // now that initializing is done the actual hook needs
       // to be called with the appropriate arguments
-      vftr_function_entry(func, call_site);
+      vftr_function_hook_entry(func, call_site);
    }
 }

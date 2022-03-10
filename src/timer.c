@@ -5,8 +5,16 @@
 #include <time.h>
 #include <stdio.h>
 
-#include "timer.h"
+#include "timer_types.h"
 
+// reference time
+// One of the very few global variables
+// that is not part of the vftrace state construct
+reftime_t vftr_reference_time = {
+   .valid = false,
+   .timestamp = {0ll,0ll},
+   .cyclecount = 0ull
+};
 
 // CLOCK_MONOTONIC is not affected by NTP or system time changes.
 struct timespec vftr_get_timestamp() {
@@ -24,15 +32,15 @@ struct timespec vftr_get_timestamp() {
 
 // get the current time in micro seconds since
 // the reference time point
-long long vftr_get_runtime_usec(struct timespec reftimestamp) {
+long long vftr_get_runtime_usec() {
    // get the current time
    struct timespec timestamp = vftr_get_timestamp();
 
    // compute the time difference in microseconds
    // difference in second counter
-   long long delta_sec  = timestamp.tv_sec  - reftimestamp.tv_sec;
+   long long delta_sec  = timestamp.tv_sec  - vftr_reference_time.timestamp.tv_sec;
    // difference in nanosecond counter
-   long long delta_nsec = timestamp.tv_nsec - reftimestamp.tv_nsec;
+   long long delta_nsec = timestamp.tv_nsec - vftr_reference_time.timestamp.tv_nsec;
    // handle a possible carry over of nanoseconds
    if (delta_nsec < 0) {
       // add one second in nano seconds to the nano second difference
@@ -62,12 +70,12 @@ unsigned long long vftr_get_cycles() {
 
 // set the local reference time to which all 
 // timedifferences are measured
-reftime_t vftr_set_local_ref_time() {
+void vftr_set_local_ref_time() {
    reftime_t ref_timer;
    ref_timer.timestamp = vftr_get_timestamp();
    ref_timer.cyclecount = vftr_get_cycles();
    ref_timer.valid = true;
-   return ref_timer;
+   vftr_reference_time = ref_timer;
 }
 
 #ifdef _DEBUG

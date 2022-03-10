@@ -21,10 +21,9 @@
 
 #include <stdbool.h>
 
-#include "environment.h"
-#include "symbols.h"
-#include "processes.h"
-#include "timer.h"
+#include "environment_types.h"
+#include "symbol_types.h"
+#include "process_types.h"
 
 // tracing state of vftrace
 typedef enum {

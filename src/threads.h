@@ -3,24 +3,9 @@
 
 #include <stdbool.h>
 
-typedef struct {
-   int level;
-   int thread_num;
-   int current_stackID;
-   bool master;
-   int parent_thread;
-   int maxsubthreads;
-   int nsubthreads;
-   int *subthreads;
-} thread_t;
+#include "thread_types.h"
 
-typedef struct {
-   int nthreads;
-   int maxthreads;
-   thread_t *threads;
-} threadtree_t;
-
-threadtree_t vftr_new_threadtree(stack_t *rootstack);
+threadtree_t vftr_new_threadtree();
 
 void vftr_threadtree_free(threadtree_t *threadtree_ptr);
 

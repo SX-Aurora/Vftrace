@@ -3,11 +3,10 @@
 #include "threads.h"
 #include "timer.h"
 
-process_t vftr_new_process(reftime_t reftime) {
+process_t vftr_new_process() {
    process_t process;
    process.nprocesses = 1;
    process.processID = 0;
-   process.reftime = reftime;
    process.stacktree = vftr_new_stacktree();
    process.threadtree = vftr_new_threadtree(process.stacktree.stacks);
 
