@@ -46,6 +46,7 @@ libvftrace_la_SOURCES += vftrace_state.c \
 			 stacks.c \
 			 processes.c \
 			 threads.c \
+			 threadstacks.c \
 			 timer.c
 libvftrace_la_SOURCES += regular_expressions.c \
 			 environment.c \
