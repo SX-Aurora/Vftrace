@@ -53,7 +53,8 @@ libvftrace_la_SOURCES += regular_expressions.c \
 			 ElfFormat.c \
 			 symbols.c
 libvftrace_la_SOURCES += sorting.c \
-			 search.c
+			 search.c \
+			 realloc_consts.c
 
 libvftrace_la_CFLAGS += -I${srcdir}/mpi/utils/ \
 			${external_includes}

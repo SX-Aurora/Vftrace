@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
+#include "realloc_consts.h"
 #include "stacks.h"
 #include "threads.h"
 #include "threadstacks.h"
@@ -8,7 +9,7 @@
 void vftr_threadtree_realloc(threadtree_t *threadtree_ptr) {
    threadtree_t threadtree = *threadtree_ptr;
    while (threadtree.nthreads > threadtree.maxthreads) {
-      int maxthreads = threadtree.maxthreads*1.4+2;
+      int maxthreads = threadtree.maxthreads*vftr_realloc_rate+vftr_realloc_add;
       threadtree.threads = (thread_t*)
          realloc(threadtree.threads, maxthreads*sizeof(thread_t));
       threadtree.maxthreads = maxthreads;
@@ -19,7 +20,7 @@ void vftr_threadtree_realloc(threadtree_t *threadtree_ptr) {
 void vftr_thread_subthreads_realloc(thread_t *thread_ptr) {
    thread_t thread = *thread_ptr;
    while (thread.nsubthreads > thread.maxsubthreads) {
-      int maxsubthreads = thread.maxsubthreads*1.4+2;
+      int maxsubthreads = thread.maxsubthreads*vftr_realloc_rate+vftr_realloc_add;
       thread.subthreads = (int*)
          realloc(thread.subthreads, maxsubthreads*sizeof(int));
       thread.maxsubthreads = maxsubthreads;

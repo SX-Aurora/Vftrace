@@ -4,6 +4,7 @@
 #include <stdio.h>
 #endif
 
+#include "realloc_consts.h"
 #include "stacks.h"
 #include "symbols.h"
 #include "search.h"
@@ -11,7 +12,7 @@
 void vftr_stacktree_realloc(stacktree_t *stacktree_ptr) {
    stacktree_t stacktree = *stacktree_ptr;
    while (stacktree.nstacks > stacktree.maxstacks) {
-      int maxstacks = stacktree.maxstacks*1.4+2;
+      int maxstacks = stacktree.maxstacks*vftr_realloc_rate+vftr_realloc_add;
       stacktree.stacks = (stack_t*)
          realloc(stacktree.stacks, maxstacks*sizeof(stack_t));
       stacktree.maxstacks = maxstacks;
@@ -22,7 +23,7 @@ void vftr_stacktree_realloc(stacktree_t *stacktree_ptr) {
 void vftr_stack_callees_realloc(stack_t *stack_ptr) {
    stack_t stack = *stack_ptr;
    while (stack.ncallees > stack.maxcallees) {
-      int maxcallees = stack.maxcallees*1.4+2;
+      int maxcallees = stack.maxcallees*vftr_realloc_rate+vftr_realloc_add;
       stack.callees = (int*)
          realloc(stack.callees, maxcallees*sizeof(int));
       stack.maxcallees = maxcallees;

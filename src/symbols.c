@@ -5,6 +5,7 @@
 #include <string.h>
 #include <elf.h>
 
+#include "realloc_consts.h"
 #include "address_type.h"
 #include "symbols.h"
 #include "ElfFormat.h"
@@ -93,7 +94,7 @@ librarylist_t vftr_read_library_maps() {
          int idx = librarylist.nlibraries;
          librarylist.nlibraries++;
          if (librarylist.nlibraries > librarylist.maxlibraries) {
-            librarylist.maxlibraries = 1.4*(librarylist.maxlibraries+1);
+            librarylist.maxlibraries = librarylist.maxlibraries*vftr_realloc_rate+vftr_realloc_add;
             librarylist.libraries = (library_t*)
                realloc(librarylist.libraries, librarylist.maxlibraries*sizeof(library_t));
          }

@@ -3,6 +3,7 @@
 #include <stdio.h>
 #endif
 
+#include "realloc_consts.h"
 #include "thread_types.h"
 #include "threadstack_types.h"
 
@@ -11,7 +12,7 @@
 void vftr_threadstacklist_realloc(threadstacklist_t *stacklist_ptr) {
    threadstacklist_t stacklist = *stacklist_ptr;
    while (stacklist.nstacks > stacklist.maxstacks) {
-      int maxstacks = stacklist.maxstacks*1.4+2;
+      int maxstacks = stacklist.maxstacks*vftr_realloc_rate+vftr_realloc_add;
       stacklist.stacks = (threadstack_t*)
          realloc(stacklist.stacks, maxstacks*sizeof(threadstack_t));
       stacklist.maxstacks = maxstacks;
