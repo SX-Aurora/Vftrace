@@ -57,7 +57,6 @@ int vftr_new_stack(int callerID, stacktree_t *stacktree_ptr,
    stack->ncallees = 0;
    stack->callees = NULL;
    stack->lid = stackID;
-   stack->gid = -1;
 
    // search for the function in the symbol table
    int symbID = vftr_binary_search_symboltable(symboltable.nsymbols,
@@ -86,7 +85,6 @@ stack_t vftr_first_stack() {
    stack.ncallees = 0;
    stack.callees = NULL;
    stack.lid = 0;
-   stack.gid = -1;
    stack.name = "init";
    return stack;
 }

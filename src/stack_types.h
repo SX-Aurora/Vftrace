@@ -24,8 +24,8 @@ typedef struct {
    int maxcallees;
    int ncallees;
    int *callees;
-   // local and global stack-ID
-   int lid, gid;
+   // local stack ID
+   int lid;
    // name of function on top of stack
    // only a pointer to the symbol table entry 
    // no need to deallocate
