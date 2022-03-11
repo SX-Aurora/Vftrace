@@ -1,5 +1,5 @@
-#ifndef PROFILING_H
-#define PROFILING_H
+#ifndef PROFILING_TYPES_H
+#define PROFILING_TYPES_H
 
 typedef struct {
    long long entry;
@@ -14,12 +14,10 @@ typedef struct {
 typedef struct {
    // number of calls
    long long calls;
-   // cycles spend in the function (excluding subfunctions)
+   // cycles spend in the function (including subfunctions)
    long long cycles;
-   // time spend in the function (excluding subfunctions)
-   long long time_excl_usec;
    // time spend in the function (including subfunctions)
-   long long time_incl_usec;
+   long long time_usec;
 } callProfile_t;
 
 typedef struct {
