@@ -4,6 +4,7 @@
 #include <stdbool.h>
 
 #include "address_type.h"
+#include "profiling_types.h"
 
 typedef enum {
    init,
@@ -30,6 +31,8 @@ typedef struct {
    // only a pointer to the symbol table entry 
    // no need to deallocate
    char *name;
+   // profiling data
+   profile_t profiling;
 } stack_t;
 
 typedef struct {

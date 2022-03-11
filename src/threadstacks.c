@@ -6,7 +6,7 @@
 #include "realloc_consts.h"
 #include "thread_types.h"
 #include "threadstack_types.h"
-
+#include "profiling.h"
 #include "threadstacks.h"
 
 void vftr_threadstacklist_realloc(threadstacklist_t *stacklist_ptr) {
@@ -33,7 +33,7 @@ threadstacklist_t vftr_new_threadstacklist(int stackID) {
 
 void vftr_threadstack_free(threadstack_t *stack_ptr) {
    threadstack_t stack = *stack_ptr;
-   // TODO: free profiling data
+   vftr_profiling_free(&(stack.profiling));
    *stack_ptr = stack;
 }
 
@@ -43,7 +43,7 @@ void vftr_threadstack_push(int stackID, threadstacklist_t *stacklist_ptr) {
    stack.stackID = stackID;
    stack.recursion_depth = 0;
    // TODO: enable profiling
-   // stack.profiling = vftr_new_profiling();
+   stack.profiling = vftr_new_profiling();
    int idx = stacklist_ptr->nstacks;
    stacklist_ptr->nstacks++;
    vftr_threadstacklist_realloc(stacklist_ptr);
@@ -51,9 +51,8 @@ void vftr_threadstack_push(int stackID, threadstacklist_t *stacklist_ptr) {
 }
 
 threadstack_t vftr_threadstack_pop(threadstacklist_t *stacklist_ptr) {
-   int idx = stacklist_ptr->nstacks;
    stacklist_ptr->nstacks--;
-   return stacklist_ptr->stacks[idx];
+   return stacklist_ptr->stacks[stacklist_ptr->nstacks];
 }
 
 void vftr_threadstacklist_free(threadstacklist_t *stacklist_ptr) {
