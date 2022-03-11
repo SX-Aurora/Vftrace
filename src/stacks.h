@@ -2,6 +2,9 @@
 #define STACKS_H
 
 #include <stdbool.h>
+#ifdef _DEBUG
+#include <stdio.h>
+#endif
 
 #include "address_type.h"
 #include "symbol_types.h"
@@ -16,7 +19,7 @@ stacktree_t vftr_new_stacktree();
 void vftr_stacktree_free(stacktree_t *stacktree_ptr);
 
 #ifdef _DEBUG
-void vftr_print_stacktree(stacktree_t stacktree);
+void vftr_print_stacktree(FILE *fp, stacktree_t stacktree);
 #endif
 
 #endif

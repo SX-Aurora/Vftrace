@@ -126,21 +126,22 @@ void vftr_stacktree_free(stacktree_t *stacktree_ptr) {
 }
 
 #ifdef _DEBUG
-void vftr_print_stack(int level, stacktree_t stacktree, int stackid) {
+void vftr_print_stack(FILE *fp, int level, stacktree_t stacktree, int stackid) {
    // first print the indentation
    for (int ilevel=0; ilevel<level; ilevel++) {
-      printf("  ");
+      fprintf(fp, "  ");
    }
    stack_t stack = stacktree.stacks[stackid];
-   printf("%s (%llx): id=%d\n", stack.name,
-          (unsigned long long) stack.address, stack.lid);
+   fprintf(fp, "%s (%llx): id=%d\n", stack.name,
+           (unsigned long long) stack.address, stack.lid);
    level++;
    for (int icallee=0; icallee<stack.ncallees; icallee++) {
-      vftr_print_stack(level, stacktree, stack.callees[icallee]);
+      vftr_print_stack(fp, level, stacktree, stack.callees[icallee]);
    }
 }
 
-void vftr_print_stacktree(stacktree_t stacktree) {
-   vftr_print_stack(0, stacktree, 0);
+void vftr_print_stacktree(FILE *fp, stacktree_t stacktree) {
+   fprintf(fp, "Stacktree\n");
+   vftr_print_stack(fp, 0, stacktree, 0);
 }
 #endif

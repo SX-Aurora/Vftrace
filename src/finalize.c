@@ -29,7 +29,9 @@ void vftr_finalize() {
 
 
    // free the dynamic process data
-   vftr_print_stacktree(vftrace.process.stacktree);
+#ifdef _DEBUG
+   vftr_print_stacktree(stderr, vftrace.process.stacktree);
+#endif
    vftr_process_free(&vftrace.process);
 
    // free the symbol table

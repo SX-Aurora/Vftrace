@@ -16,4 +16,10 @@ threadstack_t vftr_threadstack_pop(threadstacklist_t *stacklist_ptr);
 
 void vftr_threadstacklist_free(threadstacklist_t *stacklist_ptr);
 
+threadstack_t *vftr_get_my_threadstack(thread_t *my_thread_ptr);
+
+#ifdef _DEBUG
+void vftr_print_threadstack(FILE *fp, threadstacklist_t stacklist);
+#endif
+
 #endif

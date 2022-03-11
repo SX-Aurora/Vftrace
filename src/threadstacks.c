@@ -1,4 +1,10 @@
 #include <stdlib.h>
+#ifdef _DEBUG
+#include <stdio.h>
+#endif
+
+#include "thread_types.h"
+#include "threadstack_types.h"
 
 #include "threadstacks.h"
 
@@ -61,3 +67,21 @@ void vftr_threadstacklist_free(threadstacklist_t *stacklist_ptr) {
 }
 
 
+#ifdef _DEBUG
+void vftr_print_threadstack(FILE *fp, threadstacklist_t stacklist) {
+   if (stacklist.nstacks == 0) {
+      fprintf(fp, "None");
+   } else {
+      fprintf(fp, "%d", stacklist.stacks[0].stackID);
+      if (stacklist.stacks[0].recursion_depth > 0) {
+         fprintf(fp, "(%d)", stacklist.stacks[0].recursion_depth);
+      }
+      for (int istack=1; istack<stacklist.nstacks; istack++) {
+         fprintf(fp, "->%d", stacklist.stacks[istack].stackID);
+         if (stacklist.stacks[istack].recursion_depth > 0) {
+            fprintf(fp, "(%d)", stacklist.stacks[istack].recursion_depth);
+         }
+      }
+   }
+}
+#endif

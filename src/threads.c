@@ -79,3 +79,25 @@ void vftr_threadtree_free(threadtree_t *threadtree_ptr) {
    }
    *threadtree_ptr = threadtree;
 }
+
+#ifdef _DEBUG
+void vftr_print_thread(FILE *fp, threadtree_t threadtree, int threadid) {
+   thread_t thread = threadtree.threads[threadid];
+   // first print the indentation
+   for (int ilevel=0; ilevel<thread.level; ilevel++) {
+      fprintf(fp, "  ");
+   }
+   fprintf(fp, "%d%s: ", thread.thread_num,
+           thread.master ? "m" : "");
+   vftr_print_threadstack(fp, thread.stacklist);
+   fprintf(fp, "\n");
+   for (int ithread=0; ithread<thread.nsubthreads; ithread++) {
+      vftr_print_thread(fp, threadtree, thread.subthreads[ithread]);
+   }
+}
+
+void vftr_print_threadtree(FILE *fp, threadtree_t threadtree) {
+   fprintf(fp, "Threadtree:\n");
+   vftr_print_thread(fp, threadtree, 0);
+}
+#endif
