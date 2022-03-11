@@ -3,7 +3,7 @@
 
 #include <stdbool.h>
 
-#include "threadstacks.h"
+#include "threadstack_types.h"
 
 typedef struct {
    int level;
@@ -11,6 +11,7 @@ typedef struct {
    bool master;
    threadstacklist_t stacklist;
    int parent_thread;
+   int threadID;
    int maxsubthreads;
    int nsubthreads;
    int *subthreads;

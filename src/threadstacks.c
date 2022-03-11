@@ -19,11 +19,14 @@ void vftr_threadstacklist_realloc(threadstacklist_t *stacklist_ptr) {
    *stacklist_ptr = stacklist;
 }
 
-threadstacklist_t vftr_new_threadstacklist() {
+threadstacklist_t vftr_new_threadstacklist(int stackID) {
    threadstacklist_t stacklist;
    stacklist.nstacks = 0;
    stacklist.maxstacks = 0;
    stacklist.stacks = NULL;
+   if (stackID >= 0) {
+      vftr_threadstack_push(stackID, &stacklist);
+   }
    return stacklist;
 }
 
@@ -66,6 +69,14 @@ void vftr_threadstacklist_free(threadstacklist_t *stacklist_ptr) {
    *stacklist_ptr = stacklist;
 }
 
+threadstack_t *vftr_get_my_threadstack(thread_t *my_thread_ptr) {
+   int idx = my_thread_ptr->stacklist.nstacks;
+   if (idx == 0) {
+      return NULL;
+   } else {
+      return my_thread_ptr->stacklist.stacks+idx-1;
+   }
+}
 
 #ifdef _DEBUG
 void vftr_print_threadstack(FILE *fp, threadstacklist_t stacklist) {
