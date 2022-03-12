@@ -66,6 +66,7 @@ check_PROGRAMS = radixsort_uint64 \
                   functions_3 \
                   functions_4 \
                   functions_5 \
+		  tables \
                   stacks_1 \
                   browse_1 \
 		  no_instrument_attribute
@@ -172,6 +173,10 @@ functions_4_LDFLAGS = $(AM_LDFLAGS)
 functions_5_SOURCES = $(srcdir)/functions_5.c
 functions_5_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
 functions_5_LDFLAGS = $(AM_LDFLAGS)
+
+tables_SOURCES = $(srcdir)/tables.c
+tables_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
+tables_LDFLAGS = $(AM_LDFLAGS)
 
 stacks_1_SOURCES = $(srcdir)/stacks_1.c
 stacks_1_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
