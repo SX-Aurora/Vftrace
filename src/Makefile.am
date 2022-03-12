@@ -55,6 +55,7 @@ libvftrace_la_SOURCES += regular_expressions.c \
 			 symbols.c
 libvftrace_la_SOURCES += sorting.c \
 			 search.c \
+			 tables.c \
 			 realloc_consts.c
 
 libvftrace_la_CFLAGS += -I${srcdir}/mpi/utils/ \
