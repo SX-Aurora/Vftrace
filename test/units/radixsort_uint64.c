@@ -6,7 +6,7 @@
 #include <mpi.h>
 #endif
 
-#include <vftr_sorting.h>
+#include <sorting.h>
 
 bool uint64_list_sorted(int n, uint64_t *list) {
    bool sorted = true;
