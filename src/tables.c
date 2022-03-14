@@ -126,33 +126,54 @@ int *vftr_compute_column_widths(int ncols, int nrows, column_t *coltypes, char *
 }
 
 // header and decorations
-void vftr_print_table_rule(FILE *fp, int ncols, int *widths) {
-   fprintf(fp, "+-");
+void vftr_print_table_hline(FILE *fp, int ncols, bool vlines[3], int *widths) {
+   char crosschars[3];
+   for (int ivline=0; ivline<3; ivline++) {
+      crosschars[ivline] = vlines[ivline] ? '+' : '-';
+   }
+   fprintf(fp, "%c-", crosschars[0]);
    for (int icol=0; icol<ncols; icol++) {
       for (int i=0; i<widths[icol]; i++) {
          fprintf(fp, "-");
       }
       if (icol == ncols-1) {
-         fprintf(fp,"-+\n");
+         fprintf(fp,"-%c\n", crosschars[2]);
       } else {
-         fprintf(fp,"-+-");
+         fprintf(fp,"-%c-", crosschars[1]);
       }
    }
 }
 
-void vftr_print_table_headers(FILE *fp, int ncols, int *widths, char **headers) {
-   fprintf(fp, "| ");
+void vftr_print_table_headers(FILE *fp, int ncols, int *widths,
+                              bool vlines[3], char *align,
+                              char **headers) {
+   char vlinechar[3];
+   for (int ivline=0; ivline<3; ivline++) {
+      vlinechar[ivline] = vlines[ivline] ? '|' : ' ';
+   }
+   fprintf(fp, "%c ", vlinechar[0]);
    for (int icol=0; icol<ncols; icol++) {
       int headerlen = strlen(headers[icol]);
-      int leftpad = (widths[icol] - headerlen) / 2;
+      int leftpad;
+      switch (align[icol]) {
+         case 'l':
+            leftpad = 0;
+            break;
+         case 'r':
+            leftpad = widths[icol] - headerlen;
+            break;
+         case 'c':
+         default:
+            leftpad = (widths[icol] - headerlen) / 2;
+      }
       int rightpad = widths[icol] - headerlen - leftpad;
       fprintf(fp, "%*s", leftpad, "");
       fprintf(fp, "%s", headers[icol]);
       fprintf(fp, "%*s", rightpad, "");
       if (icol == ncols-1) {
-         fprintf(fp," |\n");
+         fprintf(fp," %c\n", vlinechar[2]);
       } else {
-         fprintf(fp," | ");
+         fprintf(fp," %c ", vlinechar[1]);
       }
    }
 }
@@ -339,10 +360,18 @@ void vftr_print_table_bool(FILE *fp, int width, char *format, char align, bool v
    fprintf(fp, "%*s", rightpad, "");
 }
 
-void vftr_print_table_values(FILE *fp, int ncols, int nrows, column_t *coltypes, int *colwidths,
-                             char **formats, char *align, void **values) {
+void vftr_print_table_values(FILE *fp, int ncols, int nrows,
+                             column_t *coltypes, int *colwidths,
+                             char **formats, char *align,
+                             bool hlines, bool vlines[3],
+                             void **values) {
+   char vlinechars[3];
+   for (int ivline=0; ivline<3; ivline++) {
+      vlinechars[ivline] = vlines[ivline] ? '|' : ' ';
+   }
+
    for (int irow=0; irow<nrows; irow++) {
-      fprintf(fp, "|");
+      fprintf(fp, "%c", vlinechars[0]);
       for (int icol=0; icol<ncols; icol++) {
          fprintf(fp, " ");
          switch (coltypes[icol]) {
@@ -374,30 +403,39 @@ void vftr_print_table_values(FILE *fp, int ncols, int nrows, column_t *coltypes,
                vftr_print_table_bool(fp, colwidths[icol], formats[icol], align[icol], ((bool*)values[icol])[irow]);
                break;
          }
-         fprintf(fp, " |");
+
+         if (icol == ncols-1) {
+            fprintf(fp," %c\n", vlinechars[2]);
+         } else {
+            fprintf(fp," %c", vlinechars[1]);
+         }
       }
-      // linebeak at the end of a column
-      fprintf(fp, "\n");
+      if (hlines && irow < nrows-1) {
+         vftr_print_table_hline(fp, ncols, vlines, colwidths);
+      }
    }
 }
 
-void vftr_print_table(FILE *fp, int ncols, int nrows, bool rules[3],
+void vftr_print_table(FILE *fp, int ncols, int nrows,
+                      bool hlines[4], bool vlines[3], 
                       column_t *coltypes, char **headers,
-                      char **formats, char *align, void **value_lists) {
+                      char **formats,
+                      char *headeralign, char *align,
+                      void **value_lists) {
    // determine the width of each column
    int *colwidths = vftr_compute_column_widths(ncols, nrows, coltypes, headers,
                                                formats, value_lists);
 
    // print table headers
-   if (rules[0]) {vftr_print_table_rule(fp, ncols, colwidths);}
-   vftr_print_table_headers(fp, ncols, colwidths, headers);
-   if (rules[1]) {vftr_print_table_rule(fp, ncols, colwidths);}
+   if (hlines[0]) {vftr_print_table_hline(fp, ncols, vlines, colwidths);}
+   vftr_print_table_headers(fp, ncols, colwidths, vlines, headeralign, headers);
+   if (hlines[1]) {vftr_print_table_hline(fp, ncols, vlines, colwidths);}
 
    // print all the rows
    vftr_print_table_values(fp, ncols, nrows, coltypes,colwidths,
-                           formats, align, value_lists);
-   // print bottomrule
-   if (rules[2]) {vftr_print_table_rule(fp, ncols, colwidths);}
+                           formats, align, hlines[2], vlines, value_lists);
+   // print bottom hline
+   if (hlines[3]) {vftr_print_table_hline(fp, ncols, vlines, colwidths);}
 
    // free memory
    free(colwidths);

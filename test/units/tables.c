@@ -26,39 +26,52 @@ int main() {
       (void*) bool_arr};
 
    // print horizontal lines
-   bool rules[3] = {true, true, true};
+   bool hlines[4] = {true, true, false, true};
+   bool vlines[3] = {true, true, true};
    column_t types[9] = {col_char, col_string, col_int, col_long, col_longlong, col_float, col_double, col_longdouble, col_bool};
-   char *headers[9] = {"chars", "strings", "integers", "long hex integers", "ll integers", "floats", "doubles", "long doubles", "b    ools"};
+   char *headers[9] = {"chars", "strings", "integers", "long hex integers", "ll integers", "floats", "doubles", "long doubles", "bools"};
    char *formats[9] = {"char = %c", "%s", "%4d", "0x%06lx", "%6lld", "%3.1f", "%6.2lf", "%6.3llf", "val = %s"};
    char lalign[9] = {'l', 'l','l','l','l','l','l','l','l'};
+   char *hlalign = lalign;
    char calign[9] = {'c', 'c','c','c','c','c','c','c','c'};
+   char *hcalign = calign;
    char ralign[9] = {'r', 'r','r','r','r','r','r','r','r'};
+   char *hralign = ralign;
 
    vftr_print_table(stdout,
                     9,
                     5,
-                    rules,
+                    hlines, vlines,
                     types,
                     headers,
                     formats,
+                    hcalign,
                     lalign,
                     value_arrays);
+
+   fprintf(stdout, "\n");
+
    vftr_print_table(stdout,
                     9,
                     5,
-                    rules,
+                    hlines, vlines,
                     types,
                     headers,
                     formats,
+                    hlalign,
                     calign,
                     value_arrays);
+
+   fprintf(stdout, "\n");
+
    vftr_print_table(stdout,
                     9,
                     5,
-                    rules,
+                    hlines, vlines,
                     types,
                     headers,
                     formats,
+                    hlalign,
                     ralign,
                     value_arrays);
    return 0;

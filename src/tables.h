@@ -17,8 +17,11 @@ typedef enum {
    col_bool
 } column_t;
 
-void vftr_print_table(FILE *fp, int ncols, int nrows, bool rules[3],
+void vftr_print_table(FILE *fp, int ncols, int nrows,
+                      bool hlines[4], bool vlines[3],
                       column_t *coltypes, char **headers,
-                      char **formats, char *align, void **value_lists);
+                      char **formats,
+                      char *headeralign, char *align,
+                      void **value_lists);
 
 #endif
