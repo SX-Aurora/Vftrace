@@ -5,6 +5,7 @@
 #include <string.h>
 
 #include "tables.h"
+#include "misc_utils.h"
 
 // compute column widths
 int vftr_column_width_char(int nrows, char *header, char *format, char *values) {
@@ -82,7 +83,7 @@ int vftr_column_width_longdouble(int nrows, char *header, char *format, long dou
 int vftr_column_width_bool(int nrows, char *header, char *format, bool *values) {
    int width = strlen(header);
    for (int irow=0; irow<nrows; irow++) {
-      int tmpwidth = snprintf(NULL, 0, format, values[irow] ? "true" : "false");
+      int tmpwidth = snprintf(NULL, 0, format, vftr_bool_to_string(values[irow]));
       width = width > tmpwidth ? width : tmpwidth;
    }   
    return width;
@@ -339,9 +340,8 @@ void vftr_print_table_longdouble(FILE *fp, int width, char *format, char align, 
 }
 
 void vftr_print_table_bool(FILE *fp, int width, char *format, char align, bool value) {
-   char *valuestrings[2] = {"true", "false"};
-   int idx = value ? 0 : 1;
-   int nchars = snprintf(NULL, 0, format, valuestrings[idx]);
+   char *valuestring = vftr_bool_to_string(value);
+   int nchars = snprintf(NULL, 0, format, valuestring);
    int leftpad;
    switch (align) {
       case 'l':
@@ -356,7 +356,7 @@ void vftr_print_table_bool(FILE *fp, int width, char *format, char align, bool v
    }
    int rightpad = width - nchars - leftpad;
    fprintf(fp, "%*s", leftpad, "");
-   fprintf(fp, format, valuestrings[idx]);
+   fprintf(fp, format, valuestring);
    fprintf(fp, "%*s", rightpad, "");
 }
 

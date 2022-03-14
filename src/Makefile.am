@@ -30,8 +30,8 @@ lib_LTLIBRARIES = libvftrace.la
 
 libvftrace_la_SOURCES = 
 
-libvftrace_la_CPPFLAGS = -D_VERSION=${PACKAGE_VERSION} \
-			 -D_BUGREPORT=${PACKAGE_BUGREPORT}
+#libvftrace_la_CPPFLAGS = -D_VERSION=${PACKAGE_VERSION} \
+#			 -D_BUGREPORT=${PACKAGE_BUGREPORT}
 libvftrace_la_CFLAGS =
 libvftrace_la_CXXFLAGS =
 libvftrace_la_FCFLAGS =
@@ -55,6 +55,7 @@ libvftrace_la_SOURCES += regular_expressions.c \
 			 symbols.c
 libvftrace_la_SOURCES += sorting.c \
 			 search.c \
+			 misc_utils.c \
 			 tables.c \
 			 realloc_consts.c
 
