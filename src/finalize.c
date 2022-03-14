@@ -10,9 +10,8 @@
 #include "environment.h"
 #include "symbols.h"
 #include "processes.h"
-
-
 #include "stacks.h"
+#include "logfile.h"
 
 
 
@@ -25,6 +24,8 @@ void vftr_finalize() {
    fprintf(stderr, "\n");
 #endif
 
+   // write logfile
+   vftr_write_logfile(vftrace);
 
 
 
