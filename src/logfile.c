@@ -87,8 +87,15 @@ void vftr_write_logfile(vftrace_t vftrace) {
    char *logfilename = vftr_get_logfile_name(vftrace.environment,
                                              vftrace.process.processID,
                                              vftrace.process.nprocesses);
+   FILE *fp = fopen(logfilename, "w");
+   if (fp == NULL) {
+      fprintf(stderr, "Unable to open \"%s\" for writing.\n", logfilename);
+   }
+
+
 
    printf("logfilename: %s\n", logfilename);
 
+   fclose(fp);
    free(logfilename);
 }
