@@ -9,6 +9,9 @@
 
 #include "exe_info.h"
 #include "misc_utils.h"
+#include "timer_types.h"
+#include "license.h"
+#include "config.h"
 
 char *vftr_get_logfile_name(environment_t environment, int rankID, int nranks) {
    if (environment.logfile_basename.set) {
@@ -49,6 +52,20 @@ char *vftr_get_logfile_name(environment_t environment, int rankID, int nranks) {
    }
 }
 
+void vftr_write_logfile_header(FILE *fp, time_strings_t timestrings,
+                               environment_t environment) {
+   fprintf(fp, "%s\n", PACKAGE_STRING);
+   fprintf(fp, "Runtime profile for application:\n");
+   fprintf(fp, "Start Date: %s\n", timestrings.start_time);
+   fprintf(fp, "End Date:   %s\n\n", timestrings.end_time);
+   // print the full license if requested by the environment
+   if (environment.license_verbose.value.bool_val) {
+      vftr_print_licence(fp);
+   } else {
+      vftr_print_licence_short(fp, environment.license_verbose.name);
+   }
+}
+
 void vftr_write_logfile(vftrace_t vftrace) {
    char *logfilename = vftr_get_logfile_name(vftrace.environment,
                                              vftrace.process.processID,
@@ -56,11 +73,15 @@ void vftr_write_logfile(vftrace_t vftrace) {
    FILE *fp = fopen(logfilename, "w");
    if (fp == NULL) {
       fprintf(stderr, "Unable to open \"%s\" for writing.\n", logfilename);
+      return;
    }
 
+   vftr_write_logfile_header(fp, vftrace.timestrings,
+                             vftrace.environment);
 
 
-   printf("logfilename: %s\n", logfilename);
+
+
 
    fclose(fp);
    free(logfilename);

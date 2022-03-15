@@ -58,7 +58,8 @@ libvftrace_la_SOURCES += sorting.c \
 			 misc_utils.c \
 			 tables.c \
 			 exe_info.c \
-			 realloc_consts.c
+			 realloc_consts.c \
+			 license.c
 libvftrace_la_SOURCES += logfile.c
 
 libvftrace_la_CFLAGS += -I${srcdir}/mpi/utils/ \
