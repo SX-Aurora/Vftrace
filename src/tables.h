@@ -5,23 +5,33 @@
 #include <stdio.h>
 #include <stdbool.h>
 
-typedef enum {
-   col_char,
-   col_string,
-   col_int,
-   col_long,
-   col_longlong,
-   col_float,
-   col_double,
-   col_longdouble,
-   col_bool
-} column_t;
+#include "table_types.h"
 
-void vftr_print_table(FILE *fp, int ncols, int nrows,
-                      bool hlines[4], bool vlines[3],
-                      column_t *coltypes, char **headers,
-                      char **formats,
-                      char *headeralign, char *align,
-                      void **value_lists);
+void vftr_print_table(FILE *fp, table_t table);
+
+table_t vftr_new_table();
+
+void vftr_table_free(table_t *table_ptr);
+
+void vftr_table_set_nrows(table_t *table_ptr, int nrows);
+
+void vftr_table_add_column(table_t *table_ptr, column_kind kind,
+                           char *header, char *format,
+                           char headeralign, char align,
+                           void *values);
+
+void vftr_table_left_outline(table_t *table, bool value);
+
+void vftr_table_right_outline(table_t *table, bool value);
+
+void vftr_table_columns_separating_line(table_t *table, bool value);
+
+void vftr_table_top_outline(table_t *table, bool value);
+
+void vftr_table_bottom_outline(table_t *table, bool value);
+
+void vftr_table_header_separating_line(table_t *table, bool value);
+
+void vftr_table_rows_separating_line(table_t *table, bool value);
 
 #endif
