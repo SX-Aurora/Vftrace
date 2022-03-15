@@ -1,6 +1,5 @@
 #ifdef _DEBUG
 #include <stdio.h>
-#include "timer.h"
 #endif
 
 #include "off_hooks.h"
@@ -12,12 +11,13 @@
 #include "processes.h"
 #include "stacks.h"
 #include "logfile.h"
-
-
+#include "timer.h"
 
 void vftr_finalize() {
    // update the vftrace state
    vftrace.state = finalized;
+   // set end timer string
+   vftrace.timestrings.end_time = vftr_get_date_str();
 #ifdef _DEBUG
    fprintf(stderr, "Vftrace finalized at ");
    vftr_print_date_str(stderr);
@@ -40,6 +40,9 @@ void vftr_finalize() {
 
    // free the environment to avoid memory leaks
    vftr_environment_free(&(vftrace.environment));
+
+   // free the timer strings
+   vftr_timestrings_free(&(vftrace.timestrings));
 
    // redirect the function entry and exit hooks to deactivate them
    // use a dummy function that does nothing

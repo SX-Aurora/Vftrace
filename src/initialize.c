@@ -17,6 +17,7 @@
 void vftr_initialize(void *func, void *call_site) {
    // First step is to initialize the reference timer
    vftr_set_local_ref_time();
+
 #ifdef _DEBUG
    fprintf(stderr, "Vftrace initilized at ");
    vftr_print_date_str(stderr);
@@ -36,6 +37,9 @@ void vftr_initialize(void *func, void *call_site) {
    } else {
       // update the vftrace state
       vftrace.state = initialized;
+
+      // set start time string
+      vftrace.timestrings.start_time = vftr_get_date_str();
 
       // read the symbol table of the executable and its libraries
       vftrace.symboltable = vftr_read_symbols();

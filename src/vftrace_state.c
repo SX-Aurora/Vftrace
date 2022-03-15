@@ -37,5 +37,9 @@ vftrace_t vftrace = {
          .stacks = NULL
       },
    },
-   .state = undefined
+   .state = undefined,
+   .timestrings = {
+      .start_time = NULL,
+      .end_time = NULL
+   }
 };

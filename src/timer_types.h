@@ -11,4 +11,9 @@ typedef struct {
    unsigned long long cyclecount;
 } reftime_t;
 
+typedef struct {
+   char *start_time;
+   char *end_time;
+} time_strings_t;
+
 #endif

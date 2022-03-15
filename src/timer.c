@@ -78,8 +78,7 @@ void vftr_set_local_ref_time() {
    vftr_reference_time = ref_timer;
 }
 
-#ifdef _DEBUG
-void vftr_print_date_str(FILE *fp) {
+char *vftr_get_date_str() {
    time_t current_time = time(NULL);
    char *current_time_string = ctime(&current_time);
    // remove the linebreak at the end of the string
@@ -90,8 +89,26 @@ void vftr_print_date_str(FILE *fp) {
          *s = (*s == '\n' ? '\0' : *s);
          s++;
       }
-      fprintf(fp, "%s", timestr);
-      free(timestr);
+      return timestr;
    }
+   return NULL;
+}
+
+void vftr_timestrings_free(time_strings_t *timestrings) {
+   if (timestrings->start_time != NULL) {
+      free(timestrings->start_time);
+      timestrings->start_time = NULL;
+   }
+   if (timestrings->end_time != NULL) {
+      free(timestrings->end_time);
+      timestrings->end_time = NULL;
+   }
+}
+
+#ifdef _DEBUG
+void vftr_print_date_str(FILE *fp) {
+   char *timestr = vftr_get_date_str();
+   fprintf(fp, "%s", timestr);
+   free(timestr);
 }
 #endif
