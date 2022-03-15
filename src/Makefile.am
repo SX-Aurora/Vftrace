@@ -57,6 +57,7 @@ libvftrace_la_SOURCES += sorting.c \
 			 search.c \
 			 misc_utils.c \
 			 tables.c \
+			 exe_info.c \
 			 realloc_consts.c
 libvftrace_la_SOURCES += logfile.c
 
