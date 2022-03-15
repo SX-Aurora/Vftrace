@@ -28,8 +28,10 @@ int main() {
    // print horizontal lines
    bool hlines[4] = {true, true, false, true};
    bool vlines[3] = {true, true, true};
+   bool novlines[3] = {false, false, false};
    column_t types[9] = {col_char, col_string, col_int, col_long, col_longlong, col_float, col_double, col_longdouble, col_bool};
    char *headers[9] = {"chars", "strings", "integers", "long hex integers", "ll integers", "floats", "doubles", "long doubles", "bools"};
+   char *emptyheaders[9] = {NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL};
    char *formats[9] = {"char = %c", "%s", "%4d", "0x%06lx", "%6lld", "%3.1f", "%6.2lf", "%6.3llf", "val = %s"};
    char lalign[9] = {'l', 'l','l','l','l','l','l','l','l'};
    char *hlalign = lalign;
@@ -70,6 +72,19 @@ int main() {
                     hlines, vlines,
                     types,
                     headers,
+                    formats,
+                    hlalign,
+                    ralign,
+                    value_arrays);
+
+   fprintf(stdout, "\n");
+
+   vftr_print_table(stdout,
+                    9,
+                    5,
+                    hlines, novlines,
+                    types,
+                    emptyheaders,
                     formats,
                     hlalign,
                     ralign,

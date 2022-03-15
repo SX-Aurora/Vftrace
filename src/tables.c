@@ -9,7 +9,7 @@
 
 // compute column widths
 int vftr_column_width_char(int nrows, char *header, char *format, char *values) {
-   int width = strlen(header);
+   int width = header == NULL ? 0 : strlen(header);
    for (int irow=0; irow<nrows; irow++) {
       int tmpwidth = snprintf(NULL, 0, format, values[irow]);
       width = width > tmpwidth ? width : tmpwidth;
@@ -18,7 +18,7 @@ int vftr_column_width_char(int nrows, char *header, char *format, char *values) 
 }
 
 int vftr_column_width_string(int nrows, char *header, char *format, char **values) {
-   int width = strlen(header);
+   int width = header == NULL ? 0 : strlen(header);
    for (int irow=0; irow<nrows; irow++) {
       int tmpwidth = snprintf(NULL, 0, format, values[irow]);
       width = width > tmpwidth ? width : tmpwidth;
@@ -27,7 +27,7 @@ int vftr_column_width_string(int nrows, char *header, char *format, char **value
 }
 
 int vftr_column_width_int(int nrows, char *header, char *format, int*values) {
-   int width = strlen(header);
+   int width = header == NULL ? 0 : strlen(header);
    for (int irow=0; irow<nrows; irow++) {
       int tmpwidth = snprintf(NULL, 0, format, values[irow]);
       width = width > tmpwidth ? width : tmpwidth;
@@ -36,7 +36,7 @@ int vftr_column_width_int(int nrows, char *header, char *format, int*values) {
 }
 
 int vftr_column_width_long(int nrows, char *header, char *format, long *values) {
-   int width = strlen(header);
+   int width = header == NULL ? 0 : strlen(header);
    for (int irow=0; irow<nrows; irow++) {
       int tmpwidth = snprintf(NULL, 0, format, values[irow]);
       width = width > tmpwidth ? width : tmpwidth;
@@ -45,7 +45,7 @@ int vftr_column_width_long(int nrows, char *header, char *format, long *values) 
 }
 
 int vftr_column_width_longlong(int nrows, char *header, char *format, long long *values) {
-   int width = strlen(header);
+   int width = header == NULL ? 0 : strlen(header);
    for (int irow=0; irow<nrows; irow++) {
       int tmpwidth = snprintf(NULL, 0, format, values[irow]);
       width = width > tmpwidth ? width : tmpwidth;
@@ -54,7 +54,7 @@ int vftr_column_width_longlong(int nrows, char *header, char *format, long long 
 }
 
 int vftr_column_width_float(int nrows, char *header, char *format, float *values) {
-   int width = strlen(header);
+   int width = header == NULL ? 0 : strlen(header);
    for (int irow=0; irow<nrows; irow++) {
       int tmpwidth = snprintf(NULL, 0, format, values[irow]);
       width = width > tmpwidth ? width : tmpwidth;
@@ -63,7 +63,7 @@ int vftr_column_width_float(int nrows, char *header, char *format, float *values
 }
 
 int vftr_column_width_double(int nrows, char *header, char *format, double *values) {
-   int width = strlen(header);
+   int width = header == NULL ? 0 : strlen(header);
    for (int irow=0; irow<nrows; irow++) {
       int tmpwidth = snprintf(NULL, 0, format, values[irow]);
       width = width > tmpwidth ? width : tmpwidth;
@@ -72,7 +72,7 @@ int vftr_column_width_double(int nrows, char *header, char *format, double *valu
 }
 
 int vftr_column_width_longdouble(int nrows, char *header, char *format, long double *values) {
-   int width = strlen(header);
+   int width = header == NULL ? 0 : strlen(header);
    for (int irow=0; irow<nrows; irow++) {
       int tmpwidth = snprintf(NULL, 0, format, values[irow]);
       width = width > tmpwidth ? width : tmpwidth;
@@ -81,7 +81,7 @@ int vftr_column_width_longdouble(int nrows, char *header, char *format, long dou
 }
 
 int vftr_column_width_bool(int nrows, char *header, char *format, bool *values) {
-   int width = strlen(header);
+   int width = header == NULL ? 0 : strlen(header);
    for (int irow=0; irow<nrows; irow++) {
       int tmpwidth = snprintf(NULL, 0, format, vftr_bool_to_string(values[irow]));
       width = width > tmpwidth ? width : tmpwidth;
@@ -145,6 +145,14 @@ void vftr_print_table_hline(FILE *fp, int ncols, bool vlines[3], int *widths) {
    }
 }
 
+bool vftr_table_headers_are_empty(int ncols, char **headers) {
+   bool empty = true;
+   for (int icol=0; icol<ncols; icol++) {
+      empty = empty && headers[icol] == NULL;
+   }
+   return empty;
+}
+
 void vftr_print_table_headers(FILE *fp, int ncols, int *widths,
                               bool vlines[3], char *align,
                               char **headers) {
@@ -154,7 +162,7 @@ void vftr_print_table_headers(FILE *fp, int ncols, int *widths,
    }
    fprintf(fp, "%c ", vlinechar[0]);
    for (int icol=0; icol<ncols; icol++) {
-      int headerlen = strlen(headers[icol]);
+      int headerlen = headers[icol] == NULL ? 0 : strlen(headers[icol]);
       int leftpad;
       switch (align[icol]) {
          case 'l':
@@ -169,7 +177,7 @@ void vftr_print_table_headers(FILE *fp, int ncols, int *widths,
       }
       int rightpad = widths[icol] - headerlen - leftpad;
       fprintf(fp, "%*s", leftpad, "");
-      fprintf(fp, "%s", headers[icol]);
+      fprintf(fp, "%s", headers[icol] == NULL ? "" : headers[icol]);
       fprintf(fp, "%*s", rightpad, "");
       if (icol == ncols-1) {
          fprintf(fp," %c\n", vlinechar[2]);
@@ -428,8 +436,11 @@ void vftr_print_table(FILE *fp, int ncols, int nrows,
 
    // print table headers
    if (hlines[0]) {vftr_print_table_hline(fp, ncols, vlines, colwidths);}
-   vftr_print_table_headers(fp, ncols, colwidths, vlines, headeralign, headers);
-   if (hlines[1]) {vftr_print_table_hline(fp, ncols, vlines, colwidths);}
+   if (!vftr_table_headers_are_empty(ncols, headers)) {
+      // header is considered empty if it only contains null pointers;
+      vftr_print_table_headers(fp, ncols, colwidths, vlines, headeralign, headers);
+      if (hlines[1]) {vftr_print_table_hline(fp, ncols, vlines, colwidths);}
+   }
 
    // print all the rows
    vftr_print_table_values(fp, ncols, nrows, coltypes,colwidths,
