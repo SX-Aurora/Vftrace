@@ -17,6 +17,7 @@ void vftr_finalize() {
    // update the vftrace state
    vftrace.state = finalized;
    // set end timer string
+   long long int runtime = vftr_get_runtime_usec();
    vftrace.timestrings.end_time = vftr_get_date_str();
 #ifdef _DEBUG
    fprintf(stderr, "Vftrace finalized at ");
@@ -25,7 +26,7 @@ void vftr_finalize() {
 #endif
 
    // write logfile
-   vftr_write_logfile(vftrace);
+   vftr_write_logfile(vftrace, runtime);
 
 
 

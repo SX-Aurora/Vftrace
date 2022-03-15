@@ -78,10 +78,10 @@ void vftr_function_entry(void *func, void *call_site) {
    // increase callcount (this needs to be done regardless
    // whether it is recursive or not
    my_threadstack->profiling.callProf.calls++;
-   //my_threadstack->profiling.callProf.overhead_time_usec -= function_entry_time_begin;
 
    // No calls after this overhead handling!
-   //my_threadstack->profiling.callProf.overhead_time_usec += vftr_get_runtime_usec();
+   my_threadstack->profiling.callProf.overhead_time_usec -= function_entry_time_begin
+                                                            - vftr_get_runtime_usec();
 }
 
 void vftr_function_exit(void *func, void *call_site) {
@@ -95,8 +95,9 @@ void vftr_function_exit(void *func, void *call_site) {
       // simply decrement the recursion depth counter
       my_threadstack->recursion_depth--;
 
-      //// No calls after this overhead handling!
-      //my_threadstack->profiling.callProf.overhead_time_usec += vftr_get_runtime_usec();
+      // No calls after this overhead handling!
+      my_threadstack->profiling.callProf.overhead_time_usec -= function_exit_time_begin
+                                                               - vftr_get_runtime_usec();
    } else {
       // accumulate threadded profilig data
       // TODO: put in external function
@@ -109,5 +110,9 @@ void vftr_function_exit(void *func, void *call_site) {
       vftr_accumulate_profiling(my_thread->master,
                                 &(my_stack->profiling),
                                 &(function.profiling));
+      // No calls after this overhead handling
+      // TODO: OMP distinquish between master and other threads
+      my_stack->profiling.callProf.overhead_time_usec -= function_exit_time_begin
+                                                         - vftr_get_runtime_usec();
    }
 }

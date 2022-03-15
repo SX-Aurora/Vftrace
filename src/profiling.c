@@ -7,7 +7,7 @@ callProfile_t vftr_new_callprofiling() {
    callprof.calls = 0ll;
    callprof.cycles = 0ll;
    callprof.time_usec = 0ll;
-   //callprof.overhead_time_usec = 0ll;
+   callprof.overhead_time_usec = 0ll;
    return callprof;
 }
 
@@ -30,6 +30,7 @@ void vftr_accumulate_callprofiling(bool master, callProfile_t *stackprof,
    stackprof->calls += threadprof->calls;
    stackprof->cycles += threadprof->cycles;
    stackprof->time_usec += threadprof->time_usec;
+   stackprof->overhead_time_usec += threadprof->overhead_time_usec;
 }
 
 void vftr_accumulate_profiling(bool master, profile_t *stackprof,

@@ -12,6 +12,7 @@
 #include "timer_types.h"
 #include "license.h"
 #include "config.h"
+#include "log_profile.h"
 
 char *vftr_get_logfile_name(environment_t environment, int rankID, int nranks) {
    if (environment.logfile_basename.set) {
@@ -66,7 +67,25 @@ void vftr_write_logfile_header(FILE *fp, time_strings_t timestrings,
    }
 }
 
-void vftr_write_logfile(vftrace_t vftrace) {
+void vftr_write_logfile_summary(FILE *fp, vftrace_t vftrace, long long runtime) {
+   double runtime_sec = runtime * 1.0e-6;
+   double overhead_sec = vftr_total_overhead_usec(vftrace.process.stacktree)*1.0e-6;
+   double apptime_sec = runtime_sec - overhead_sec;
+   fprintf(fp, "\n------------------------------------------------------------\n");
+   fprintf(fp, "Nr. of MPI ranks      %8d\n",
+           vftrace.process.nprocesses);
+   fprintf(fp, "Total runtime:        %8.2f seconds\n", runtime_sec);
+   fprintf(fp, "Application time:     %8.2f seconds\n", apptime_sec);
+   fprintf(fp, "Overhead:             %8.2f seconds (%.2f%%)\n",
+           overhead_sec, 100.0 * overhead_sec / runtime_sec);
+   // TODO: Add Sampling overhead
+   // TODO: Add MPI overhead
+   // TODO: distinguish between overhead from threads and regular overhead
+   // TODO: Add Performance counters
+   fprintf(fp, "\n------------------------------------------------------------\n");
+}
+
+void vftr_write_logfile(vftrace_t vftrace, long long runtime) {
    char *logfilename = vftr_get_logfile_name(vftrace.environment,
                                              vftrace.process.processID,
                                              vftrace.process.nprocesses);
@@ -79,6 +98,7 @@ void vftr_write_logfile(vftrace_t vftrace) {
    vftr_write_logfile_header(fp, vftrace.timestrings,
                              vftrace.environment);
 
+   vftr_write_logfile_summary(fp, vftrace, runtime);
 
 
 

@@ -18,8 +18,8 @@ typedef struct {
    long long cycles;
    // time spend in the function (including subfunctions)
    long long time_usec;
-   //// accumulated overhead time
-   //long long overhead_time_usec;
+   // accumulated overhead time
+   long long overhead_time_usec;
 } callProfile_t;
 
 typedef struct {
