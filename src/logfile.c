@@ -100,15 +100,20 @@ void vftr_write_logfile_profile_table(FILE *fp, stacktree_t stacktree,
    free(caller_names);
 }
 
+FILE *vftr_open_logfile(char *filename) {
+   FILE *fp = fopen(filename, "w");
+   if (fp == NULL) {
+      perror(filename);
+      abort();
+   }
+   return fp;
+}
+
 void vftr_write_logfile(vftrace_t vftrace, long long runtime) {
    char *logfilename = vftr_get_logfile_name(vftrace.environment,
                                              vftrace.process.processID,
                                              vftrace.process.nprocesses);
-   FILE *fp = fopen(logfilename, "w");
-   if (fp == NULL) {
-      perror(logfilename);
-      abort();
-   }
+   FILE *fp = vftr_open_logfile(logfilename);
 
    vftr_write_logfile_header(fp, vftrace.timestrings,
                              vftrace.environment);
