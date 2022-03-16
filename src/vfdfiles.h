@@ -3,7 +3,7 @@
 
 #include "environment_types.h"
 
-#define VFD_VERSION 2
+#define VFD_VERSION 3
 
 // At the initialization of vftrace the mpi-rank and comm-size is
 // not known for paralle programs.
@@ -20,5 +20,7 @@ FILE *vftr_open_vfdfile(char *filename);
 char *vftr_attach_iobuffer_vfdfile(FILE *fp, environment_t environment);
 
 int vftr_rename_vfdfile(char *prelim_name, char *final_name);
+
+void vftr_write_incomplete_vfd_header(sampling_t *sampling);
 
 #endif

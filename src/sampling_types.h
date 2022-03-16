@@ -9,6 +9,7 @@ typedef struct {
    char *vfdfilename;
    FILE *vfdfilefp;
    char *iobuffer;
+   long long interval;
    long long nextsampletime;
    unsigned int function_samplecount;
    unsigned int message_samplecount;

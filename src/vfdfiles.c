@@ -6,8 +6,11 @@
 #include <assert.h>
 
 #include "environment_types.h"
+#include "vftrace_state.h"
 
 #include "filenames.h"
+#include "vfdfiles.h"
+#include "config.h"
 
 // At the initialization of vftrace the mpi-rank and comm-size is
 // not known for paralle programs.
@@ -70,6 +73,7 @@ char *vftr_attach_iobuffer_vfdfile(FILE *fp, environment_t environment) {
    bufsize *= 1024*1024;
    char *buffer = (char*) malloc(bufsize);
    assert(buffer);
+   memset((void*) buffer, 0, bufsize);
    int status = setvbuf(fp, buffer, _IOFBF, bufsize);
    assert(!status);
    return buffer;
@@ -81,4 +85,29 @@ int vftr_rename_vfdfile(char *prelim_name, char *final_name) {
       perror(final_name);
    }
    return error;
+}
+
+void vftr_write_incomplete_vfd_header(sampling_t *sampling) {
+   FILE *fp = sampling->vfdfilefp;
+
+   int vfd_version = VFD_VERSION;
+   fwrite(&vfd_version, sizeof(int), 1, fp);
+
+   char *package_string = PACKAGE_STRING;
+   int package_string_len = strlen(package_string)+1; // +1 for 0 terminator
+   fwrite(&package_string_len, sizeof(int), 1, fp);
+   fwrite(package_string, sizeof(char), package_string_len, fp);
+
+   // the datestrings will be written at the end. just reserver the space
+   // by creating a dummy datestring.
+   time_t date;
+   time(&date);
+   char *datestr = ctime(&date);
+   int datestr_len = strlen(datestr)+1;
+   fwrite(&datestr_len, sizeof(int), 1, fp);
+   // Write twice to reserve space for beginning time and end time string
+   fwrite(datestr, sizeof(char), datestr_len, fp);
+   fwrite(datestr, sizeof(char), datestr_len, fp);
+
+   fwrite(&(sampling->interval), sizeof(long long), 1, fp);
 }
