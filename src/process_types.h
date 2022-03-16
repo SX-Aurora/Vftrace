@@ -5,8 +5,8 @@
 #include "threads.h"
 
 typedef struct {
-   int nprocesses;
-   int processID;
+   unsigned int nprocesses;
+   unsigned int processID;
    stacktree_t stacktree;
    threadtree_t threadtree;
 } process_t;
