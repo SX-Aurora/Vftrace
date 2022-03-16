@@ -106,8 +106,8 @@ void vftr_write_logfile(vftrace_t vftrace, long long runtime) {
                                              vftrace.process.nprocesses);
    FILE *fp = fopen(logfilename, "w");
    if (fp == NULL) {
-      fprintf(stderr, "Unable to open \"%s\" for writing.\n", logfilename);
-      return;
+      perror(logfilename);
+      abort();
    }
 
    vftr_write_logfile_header(fp, vftrace.timestrings,
