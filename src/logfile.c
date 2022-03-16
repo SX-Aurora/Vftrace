@@ -1,58 +1,35 @@
 #include <stdlib.h>
 #include <stdio.h>
-
 #include <string.h>
-#include <libgen.h>
 
 #include "timer_types.h"
 #include "table_types.h"
 #include "environment_types.h"
 #include "vftrace_state.h"
 
-#include "exe_info.h"
-#include "misc_utils.h"
+#include "filenames.h"
 #include "license.h"
 #include "config.h"
 #include "log_profile.h"
 #include "tables.h"
 
 char *vftr_get_logfile_name(environment_t environment, int rankID, int nranks) {
-   if (environment.logfile_basename.set) {
-      // user defined logfile name
-      return strdup(environment.logfile_basename.value.string_val);
-   } else {
-      // default name constructed from executable name
-      char *exe_path = vftr_get_exectuable_path();
-      if (exe_path == NULL) {
-         return strdup("unknown");
-      } else {
-         // name will be <exe_name>_<rankID>.log
-         // exe_name:
-         char *exe_name = basename(exe_path);
-         int exe_name_len = strlen(exe_name);
-         // rankID (leading zeroes for nice sorting among ranks):
-         int ndigits = vftr_count_base_digits(nranks, 10);
-         int rankID_len = snprintf(NULL, 0, "%0*d", ndigits, rankID);
-         // extension .log
-         char *extension = ".log";
-         int extension_len = strlen(extension);
+   char *filename_base = vftr_create_filename_base(environment, rankID, nranks);
+   int filename_base_len = strlen(filename_base);
 
-         // construct pathname
-         int total_len = exe_name_len +
-                         1 + // underscore
-                         rankID_len +
-                         extension_len +
-                         1; // null terminator
-         char *logfile_name = (char*) malloc(total_len*sizeof(char));
-         strcpy(logfile_name, exe_name);
-         logfile_name[exe_name_len] = '_';
-         snprintf(logfile_name+exe_name_len+1, rankID_len+1, "%0*d", ndigits, rankID);
-         strcat(logfile_name, extension);
+   char *extension = ".log";
+   int extension_len = strlen(extension);
 
-         free(exe_path);
-         return logfile_name;
-      }
-   }
+   // construct logfile name
+   int total_len = filename_base_len +
+                   extension_len +
+                   1; // null terminator
+   char *logfile_name = (char*) malloc(total_len*sizeof(char));
+   strcpy(logfile_name, filename_base);
+   strcat(logfile_name, extension);
+
+   free(filename_base);
+   return logfile_name;
 }
 
 void vftr_write_logfile_header(FILE *fp, time_strings_t timestrings,
