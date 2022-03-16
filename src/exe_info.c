@@ -14,10 +14,12 @@ char *vftr_get_exectuable_path() {
 
    // read the commandline from file
    FILE *cmdlinefp = fopen(proccmd, "r");
-   free(proccmd);
    if (cmdlinefp == NULL) {
+      perror(proccmd);
+      free(proccmd);
       return NULL;
    } else {
+      free(proccmd);
       char *cmdline = NULL;
       size_t cmdline_len = 0;
       getline(&cmdline,&cmdline_len,cmdlinefp);
