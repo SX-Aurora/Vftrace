@@ -69,6 +69,7 @@ void vftr_finalize_sampling(sampling_t *sampling, environment_t environment,
                                              process.processID,
                                              process.nprocesses);
    status = vftr_rename_vfdfile(sampling->vfdfilename, vfdfilename);
+   free(vfdfilename);
 
    vftr_sampling_free(sampling);
 }
