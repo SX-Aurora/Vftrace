@@ -13,6 +13,7 @@
 #include "symbols.h"
 #include "finalize.h"
 #include "processes.h"
+#include "sampling.h"
 
 void vftr_initialize(void *func, void *call_site) {
    // First step is to initialize the reference timer
@@ -46,6 +47,9 @@ void vftr_initialize(void *func, void *call_site) {
 
       // initialize the dynamic process data
       vftrace.process = vftr_new_process();
+
+      // initialize possible sampling
+      vftrace.sampling = vftr_new_sampling(vftrace.environment);
 
       // assign the appropriate function hooks to handle sampling.
       vftr_set_enter_func_hook(vftr_function_entry);

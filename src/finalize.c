@@ -11,6 +11,7 @@
 #include "processes.h"
 #include "stacks.h"
 #include "logfile.h"
+#include "sampling.h"
 #include "timer.h"
 
 void vftr_finalize() {
@@ -27,6 +28,12 @@ void vftr_finalize() {
 
    // write logfile
    vftr_write_logfile(vftrace, runtime);
+
+   // finish sampling
+   vftr_finalize_sampling(&(vftrace.sampling), vftrace.environment,
+                          vftrace.process);
+
+
 
 
 

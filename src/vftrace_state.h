@@ -24,6 +24,7 @@
 #include "environment_types.h"
 #include "symbol_types.h"
 #include "process_types.h"
+#include "sampling_types.h"
 #include "timer_types.h"
 
 // tracing state of vftrace
@@ -40,6 +41,7 @@ typedef struct {
    symboltable_t symboltable; // list of function symbols
    process_t process; // all of the dynamic process data
    state_t state; // current state of vftrace
+   sampling_t sampling; // Filehandle and data required to handle vfd-file sampling
    time_strings_t timestrings; // start and end time in string form
 } vftrace_t;
 

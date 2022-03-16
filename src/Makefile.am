@@ -49,6 +49,7 @@ libvftrace_la_SOURCES += vftrace_state.c \
 			 threadstacks.c \
 			 profiling.c \
 			 log_profile.c \
+			 sampling.c \
 			 timer.c
 libvftrace_la_SOURCES += regular_expressions.c \
 			 environment.c \
@@ -62,7 +63,8 @@ libvftrace_la_SOURCES += sorting.c \
 			 filenames.c \
 			 realloc_consts.c \
 			 license.c
-libvftrace_la_SOURCES += logfile.c
+libvftrace_la_SOURCES += logfile.c \
+			 vfdfiles.c
 
 libvftrace_la_CFLAGS += -I${srcdir}/mpi/utils/ \
 			${external_includes}

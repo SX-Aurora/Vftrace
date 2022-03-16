@@ -38,6 +38,16 @@ vftrace_t vftrace = {
       },
    },
    .state = undefined,
+   .sampling = {
+      .do_sampling = false,
+      .vfdfilename = NULL,
+      .vfdfilefp = NULL,
+      .iobuffer = NULL,
+      .function_samplecount = 0,
+      .message_samplecount = 0,
+      .stacktable_offset = 0,
+      .samples_offset = 0
+   },
    .timestrings = {
       .start_time = NULL,
       .end_time = NULL
