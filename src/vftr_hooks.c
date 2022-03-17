@@ -26,6 +26,7 @@
 #include "threads.h"
 #include "threadstacks.h"
 #include "profiling.h"
+#include "sampling.h"
 #include "timer.h"
 
 void vftr_function_entry(void *func, void *call_site) {
@@ -58,6 +59,9 @@ void vftr_function_entry(void *func, void *call_site) {
       my_threadstack = vftr_update_threadstack(my_threadstack, my_thread,
                                                func_addr, &vftrace);
 
+      vftr_sample_function_entry(&(vftrace.sampling),
+                                 my_threadstack->stackID,
+                                 function_entry_time_begin);
 
 
       // accumulate profiling data
@@ -98,6 +102,8 @@ void vftr_function_exit(void *func, void *call_site) {
                                 &(my_stack->profiling),
                                 &(my_threadstack->profiling));
 
+      vftr_sample_function_exit(&(vftrace.sampling), my_threadstack->stackID,
+                                function_exit_time_begin);
 
       // No calls after this overhead handling
       // TODO: OMP distinquish between master and other threads

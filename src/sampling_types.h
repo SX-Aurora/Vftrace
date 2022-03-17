@@ -4,6 +4,12 @@
 #include <stdio.h>
 #include <stdbool.h>
 
+typedef enum {
+   samp_function_entry,
+   samp_function_exit,
+   samp_message
+} sample_kind;
+
 typedef struct {
    bool do_sampling;
    char *vfdfilename;

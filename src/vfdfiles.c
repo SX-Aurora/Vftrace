@@ -223,3 +223,11 @@ void vftr_write_vfd_stacks(sampling_t *sampling, stacktree_t stacktree) {
       }
    }
 }
+
+void vftr_write_vfd_function_sample(sampling_t *sampling, sample_kind kind,
+                                    int stackID, long long timestamp) {
+   FILE *fp = sampling->vfdfilefp;
+   fwrite(&kind, sizeof(sample_kind), 1, fp);
+   fwrite(&stackID, sizeof(int), 1, fp);
+   fwrite(&timestamp, sizeof(long long), 1, fp);
+}

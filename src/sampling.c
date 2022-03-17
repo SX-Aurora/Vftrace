@@ -83,3 +83,23 @@ void vftr_finalize_sampling(sampling_t *sampling,
       vftr_sampling_free(sampling);
    }
 }
+
+void vftr_sample_function_entry(sampling_t *sampling, int stackID, long long timestamp) {
+   if (timestamp > sampling->nextsampletime) {
+      vftr_write_vfd_function_sample(sampling, samp_function_entry,
+                                     stackID, timestamp);
+
+      sampling->function_samplecount++;
+      sampling->nextsampletime = timestamp + sampling->interval;
+   }
+}
+
+void vftr_sample_function_exit(sampling_t *sampling, int stackID, long long timestamp) {
+   if (timestamp > sampling->nextsampletime) {
+      vftr_write_vfd_function_sample(sampling, samp_function_exit,
+                                     stackID, timestamp);
+
+      sampling->function_samplecount++;
+      sampling->nextsampletime = timestamp + sampling->interval;
+   }
+}
