@@ -1,6 +1,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+#include <string.h>
+
 #include "vfd_types.h"
 
 
@@ -84,4 +86,64 @@ void print_vfd_header(FILE *fp, vfd_header_t vfd_header) {
    fprintf(fp, "Unique stacks:   %u\n", vfd_header.nstacks);
    fprintf(fp, "Stacks offset:   0x%lx\n", vfd_header.stacks_offset);
    fprintf(fp, "Sample offset:   0x%lx\n", vfd_header.samples_offset);
+}
+
+bool is_precise (char *s) {
+   return s[strlen(s)-1] == '*';
+}
+
+stack_t *read_stacklist(FILE *fp, long int stacks_offset,
+                        unsigned int nstacks) {
+   stack_t *stacklist = (stack_t*) malloc(nstacks*sizeof(stack_t));
+
+   // jump to the stacks
+   fseek(fp, stacks_offset, SEEK_SET);
+
+   // first function is the init with caller id -1
+   stacklist[0].ncallees = 0;
+   fread(&(stacklist[0].caller), sizeof(int), 1, fp);
+   int namelen;
+   fread(&namelen, sizeof(int), 1, fp);
+   stacklist[0].name = (char*) malloc(namelen*sizeof(char));
+   fread(stacklist[0].name, sizeof(char), namelen, fp);
+
+   // all other stacks
+   for (unsigned int istack=1; istack<nstacks; istack++) {
+      stacklist[istack].ncallees = 0;
+      fread(&(stacklist[istack].caller), sizeof(int), 1, fp);
+      // count the number of callees a function has
+      stacklist[stacklist[istack].caller].ncallees++;
+
+      // read the functions name
+      int namelen;
+      fread(&namelen, sizeof(int), 1, fp);
+      stacklist[istack].name = (char*) malloc(namelen*sizeof(char));
+      fread(stacklist[istack].name, sizeof(char), namelen, fp);
+
+      stacklist[istack].precise = is_precise(stacklist[istack].name);
+   }
+
+   // store all the caller callee connections
+   // missuse the ncallees value as counter
+   // Again the init function needs to be treated separately
+   stacklist[0].callees = (int*) malloc(stacklist[0].ncallees*sizeof(int));
+   stacklist[0].ncallees = 0;
+   for (unsigned int istack=1; istack<nstacks; istack++) {
+      stacklist[istack].callees = (int*) malloc(stacklist[istack].ncallees*sizeof(int));
+      stacklist[istack].ncallees = 0;
+      // register the current stack as callee of the caller
+      stack_t *caller = stacklist+stacklist[istack].caller;
+      caller->callees[caller->ncallees] = istack;
+      caller->ncallees++;
+   }
+
+   return stacklist;
+}
+
+void free_stacklist(unsigned int nstacks, stack_t *stacklist) {
+   for (unsigned int istack=0; istack<nstacks; istack++) {
+      free(stacklist[istack].name);
+      free(stacklist[istack].callees);
+   }
+   free(stacklist);
 }

@@ -14,7 +14,15 @@ int main(int argc, char **argv) {
    assert(fp);
 
    vfd_header_t vfd_header = read_vfd_header(fp);
-
    print_vfd_header(stdout, vfd_header);
+
+   stack_t *stacklist = read_stacklist(fp,
+                                       vfd_header.stacks_offset,
+                                       vfd_header.nstacks);
+
+
    free_vfd_header(&vfd_header);
+   free_stacklist(vfd_header.nstacks, stacklist);
+
+   fclose(fp);
 }

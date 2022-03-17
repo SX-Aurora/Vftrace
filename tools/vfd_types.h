@@ -26,6 +26,6 @@ typedef struct {
     int ncallees;
     int *callees;
     bool precise;
-} stack_entry_t;
+} stack_t;
 
 #endif
