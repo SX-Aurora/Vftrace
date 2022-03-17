@@ -10,6 +10,7 @@
 
 #include "filenames.h"
 #include "vfdfiles.h"
+#include "timer.h"
 #include "config.h"
 
 // At the initialization of vftrace the mpi-rank and comm-size is
@@ -90,6 +91,10 @@ int vftr_rename_vfdfile(char *prelim_name, char *final_name) {
 void vftr_write_incomplete_vfd_header(sampling_t *sampling) {
    FILE *fp = sampling->vfdfilefp;
 
+   unsigned int zerouint = 0;
+   double zerodouble = 0.0;
+   long long zerolonglong = 0;
+
    int vfd_version = VFD_VERSION;
    fwrite(&vfd_version, sizeof(int), 1, fp);
 
@@ -100,14 +105,90 @@ void vftr_write_incomplete_vfd_header(sampling_t *sampling) {
 
    // the datestrings will be written at the end. just reserver the space
    // by creating a dummy datestring.
-   time_t date;
-   time(&date);
-   char *datestr = ctime(&date);
+   char *datestr = vftr_get_date_str();
    int datestr_len = strlen(datestr)+1;
    fwrite(&datestr_len, sizeof(int), 1, fp);
    // Write twice to reserve space for beginning time and end time string
    fwrite(datestr, sizeof(char), datestr_len, fp);
    fwrite(datestr, sizeof(char), datestr_len, fp);
+   free(datestr);
 
+   // reserve some space to be filled in later
+   // sampling interval in usec
+   fwrite(&zerolonglong, sizeof(long long), 1, fp);
+   // number of processes
+   fwrite(&zerouint, sizeof(unsigned int), 1, fp);
+   // my process id
+   fwrite(&zerouint, sizeof(unsigned int), 1, fp);
+   // runtime in seconds
+   fwrite(&zerodouble, sizeof(double), 1, fp);
+   // sample count
+   fwrite(&zerouint, sizeof(unsigned int), 1, fp);
+   // message sample count
+   fwrite(&zerouint, sizeof(unsigned int), 1, fp);
+   // stacks count
+   fwrite(&zerouint, sizeof(unsigned int), 1, fp);
+   // samples offset
+   fwrite(&zerolonglong, sizeof(long int), 1, fp);
+   // stacks offset
+   fwrite(&zerolonglong, sizeof(long int), 1, fp);
+   // TODO: Add hardware scenarios
+
+   // Now the samples will come,
+   // so the current position is the sample offset
+   sampling->samples_offset = ftell(fp);
+}
+
+void vftr_update_vfd_header(sampling_t *sampling,
+                            process_t process,
+                            time_strings_t timestrings,
+                            double runtime) {
+   FILE *fp = sampling->vfdfilefp;
+   // jump to the beginning of the file
+   fseek(fp, 0, SEEK_SET);
+
+   // skip vfd-version
+   fseek(fp, sizeof(int), SEEK_CUR);
+
+   // skip package string
+   int package_string_len;
+   fread(&package_string_len, sizeof(int), 1, fp);
+   fseek(fp, package_string_len*sizeof(char), SEEK_CUR);
+
+   // write the date strings
+   int datestr_len;
+   fread(&datestr_len, sizeof(int), 1, fp);
+   // check if the datestring length is consistent (+1 for null terminator)
+   if ((size_t) (datestr_len) != strlen(timestrings.start_time)+1) {
+      fprintf(stderr, "Inconsistency in time string length!\n"
+              "VFD-start time string is not updated!\n");
+   } else {
+      fwrite(timestrings.start_time, sizeof(char), datestr_len, fp);
+   }
+   if ((size_t) (datestr_len) != strlen(timestrings.end_time)+1) {
+      fprintf(stderr, "Inconsistency in time string length!\n"
+              "VFD-end time string is not updated!\n");
+   } else {
+      fwrite(timestrings.end_time, sizeof(char), datestr_len, fp);
+   }
+
+   // reserve some space to be filled in later
+   // sampling interval in usec
    fwrite(&(sampling->interval), sizeof(long long), 1, fp);
+   // number of processes
+   fwrite(&(process.nprocesses), sizeof(unsigned int), 1, fp);
+   // my process id
+   fwrite(&(process.processID), sizeof(unsigned int), 1, fp);
+   // runtime in seconds
+   fwrite(&runtime, sizeof(double), 1, fp);
+   // sample count
+   fwrite(&(sampling->function_samplecount), sizeof(unsigned int), 1, fp);
+   // message sample count
+   fwrite(&(sampling->message_samplecount), sizeof(unsigned int), 1, fp);
+   // stacks count
+   fwrite(&(process.stacktree.nstacks), sizeof(unsigned int), 1, fp);
+   // samples offset
+   fwrite(&(sampling->samples_offset), sizeof(long long), 1, fp);
+   // stacks offset
+   fwrite(&(sampling->stacktable_offset), sizeof(long int), 1, fp);
 }

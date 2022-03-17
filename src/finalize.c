@@ -31,7 +31,8 @@ void vftr_finalize() {
 
    // finish sampling
    vftr_finalize_sampling(&(vftrace.sampling), vftrace.environment,
-                          vftrace.process);
+                          vftrace.process, vftrace.timestrings,
+                          (double) (runtime * 1.0e-6));
 
 
 

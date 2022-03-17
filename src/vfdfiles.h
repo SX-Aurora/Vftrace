@@ -2,6 +2,8 @@
 #define VFDFILES_H
 
 #include "environment_types.h"
+#include "process_types.h"
+#include "timer_types.h"
 
 #define VFD_VERSION 3
 
@@ -23,4 +25,8 @@ int vftr_rename_vfdfile(char *prelim_name, char *final_name);
 
 void vftr_write_incomplete_vfd_header(sampling_t *sampling);
 
+void vftr_update_vfd_header(sampling_t *sampling,
+                            process_t process,
+                            time_strings_t timestrings,
+                            double runtime);
 #endif

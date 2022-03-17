@@ -4,6 +4,7 @@
 #include "environment_types.h"
 #include "process_types.h"
 #include "sampling_types.h"
+#include "timer_types.h"
 
 #include "vfdfiles.h"
 
@@ -57,10 +58,12 @@ void vftr_sampling_free(sampling_t *sampling) {
    }
 }
 
-void vftr_finalize_sampling(sampling_t *sampling, environment_t environment,
-                            process_t process) {
+void vftr_finalize_sampling(sampling_t *sampling,
+                            environment_t environment, process_t process,
+                            time_strings_t timestrings, double runtime) {
    if (sampling->do_sampling) {
       // TODO: update vfdheader
+      vftr_update_vfd_header(sampling, process, timestrings, runtime);
    
    
       // Close the vfdfile

@@ -13,8 +13,8 @@ typedef struct {
    long long nextsampletime;
    unsigned int function_samplecount;
    unsigned int message_samplecount;
-   long long stacktable_offset;
-   long long samples_offset;
+   long int stacktable_offset;
+   long int samples_offset;
 } sampling_t;
 
 #endif
