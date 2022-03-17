@@ -6,8 +6,10 @@
 #include "realloc_consts.h"
 #include "thread_types.h"
 #include "threadstack_types.h"
+
 #include "profiling.h"
 #include "threadstacks.h"
+#include "search.h"
 
 void vftr_threadstacklist_realloc(threadstacklist_t *stacklist_ptr) {
    threadstacklist_t stacklist = *stacklist_ptr;
@@ -50,9 +52,9 @@ void vftr_threadstack_push(int stackID, threadstacklist_t *stacklist_ptr) {
    stacklist_ptr->stacks[idx] = stack;
 }
 
-threadstack_t vftr_threadstack_pop(threadstacklist_t *stacklist_ptr) {
+threadstack_t *vftr_threadstack_pop(threadstacklist_t *stacklist_ptr) {
    stacklist_ptr->nstacks--;
-   return stacklist_ptr->stacks[stacklist_ptr->nstacks];
+   return stacklist_ptr->stacks + stacklist_ptr->nstacks;
 }
 
 void vftr_threadstacklist_free(threadstacklist_t *stacklist_ptr) {
@@ -76,6 +78,29 @@ threadstack_t *vftr_get_my_threadstack(thread_t *my_thread_ptr) {
    } else {
       return my_thread_ptr->stacklist.stacks+idx-1;
    }
+}
+
+threadstack_t *vftr_update_threadstack(threadstack_t *my_threadstack,
+                                       thread_t *my_thread,
+                                       uintptr_t func_addr,
+                                       vftrace_t *vftrace) {
+   // search for the function in the stacks callees
+   int calleeID = vftr_linear_search_callee(vftrace->process.stacktree.stacks,
+                                            my_threadstack->stackID,
+                                            func_addr);
+   if (calleeID < 0) {
+      // if the function was not found, create a new stack entry
+      // and add its id to the callee list
+      calleeID = vftr_new_stack(my_threadstack->stackID,
+                                &(vftrace->process.stacktree),
+                                vftrace->symboltable,
+                                function, func_addr, 
+                                true);
+   }
+   // push the function onto the threads stacklist
+   vftr_threadstack_push(calleeID, &(my_thread->stacklist));
+   // update the threadstack pointer
+   return vftr_get_my_threadstack(my_thread);
 }
 
 #ifdef _DEBUG

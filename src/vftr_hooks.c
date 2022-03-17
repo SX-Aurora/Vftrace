@@ -27,7 +27,6 @@
 #include "threadstacks.h"
 #include "profiling.h"
 #include "timer.h"
-#include "search.h"
 
 void vftr_function_entry(void *func, void *call_site) {
    long long function_entry_time_begin = vftr_get_runtime_usec();
@@ -47,37 +46,25 @@ void vftr_function_entry(void *func, void *call_site) {
    // cast and store function address once, as it is needed multiple times
    uintptr_t func_addr = (uintptr_t) func;
 
+   // TODO: update performance and call counters as soon as implemented
    // check for recursion
    if (my_stack->address == func_addr) {
       // if recusive call, simply increas recursion depth count.
-      // TODO: update performance and call counters as soon as implemented
       my_threadstack->recursion_depth++;
+      my_threadstack->profiling.callProf.calls++;
    } else {
-      // search for the function in the stacks callees
-      int calleeID = vftr_linear_search_callee(vftrace.process.stacktree.stacks,
-                                               my_threadstack->stackID,
-                                               func_addr);
-      if (calleeID < 0) {
-         // if the function was not found, create a new stack entry
-         // and add its id to the callee list
-         calleeID = vftr_new_stack(my_threadstack->stackID,
-                                   &(vftrace.process.stacktree),
-                                   vftrace.symboltable,
-                                   function, (uintptr_t) func,
-                                   true);
-      }
-      // push the function onto the threads stacklist
-      vftr_threadstack_push(calleeID, &(my_thread->stacklist));
-      // update the threadstack pointer
-      my_threadstack = vftr_get_my_threadstack(my_thread);
+      // add possibly new functions to the stack
+      // and adjust the threadstack accordingly
+      my_threadstack = vftr_update_threadstack(my_threadstack, my_thread,
+                                               func_addr, &vftrace);
+
+
 
       // accumulate profiling data
       // TODO: put in external function
       my_threadstack->profiling.callProf.time_usec -= function_entry_time_begin;
+      my_threadstack->profiling.callProf.calls++;
    }
-   // increase callcount (this needs to be done regardless
-   // whether it is recursive or not
-   my_threadstack->profiling.callProf.calls++;
 
    // No calls after this overhead handling!
    my_threadstack->profiling.callProf.overhead_time_usec -= function_entry_time_begin
@@ -104,12 +91,14 @@ void vftr_function_exit(void *func, void *call_site) {
       my_threadstack->profiling.callProf.time_usec += function_exit_time_begin;
 
       // if not recursive pop the function from the threads stacklist
-      threadstack_t function = vftr_threadstack_pop(&(my_thread->stacklist));
+      my_threadstack = vftr_threadstack_pop(&(my_thread->stacklist));
 
-      stack_t *my_stack = vftrace.process.stacktree.stacks+function.stackID;
+      stack_t *my_stack = vftrace.process.stacktree.stacks+my_threadstack->stackID;
       vftr_accumulate_profiling(my_thread->master,
                                 &(my_stack->profiling),
-                                &(function.profiling));
+                                &(my_threadstack->profiling));
+
+
       // No calls after this overhead handling
       // TODO: OMP distinquish between master and other threads
       my_stack->profiling.callProf.overhead_time_usec -= function_exit_time_begin

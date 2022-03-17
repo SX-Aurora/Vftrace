@@ -7,6 +7,7 @@
 
 #include "thread_types.h"
 #include "threadstack_types.h"
+#include "vftrace_state.h"
 
 void vftr_threadstacklist_realloc(threadstacklist_t *stacklist_ptr);
 
@@ -17,11 +18,16 @@ void vftr_threadstack_free(threadstack_t *stack_ptr);
 // push a new callstack onto the threads local stack
 void vftr_threadstack_push(int stackID, threadstacklist_t *stacklist_ptr);
 
-threadstack_t vftr_threadstack_pop(threadstacklist_t *stacklist_ptr);
+threadstack_t *vftr_threadstack_pop(threadstacklist_t *stacklist_ptr);
 
 void vftr_threadstacklist_free(threadstacklist_t *stacklist_ptr);
 
 threadstack_t *vftr_get_my_threadstack(thread_t *my_thread_ptr);
+
+threadstack_t *vftr_update_threadstack(threadstack_t *my_threadstack,
+                                       thread_t *my_thread,
+                                       uintptr_t func_addr,
+                                       vftrace_t *vftrace);
 
 #ifdef _DEBUG
 void vftr_print_threadstack(FILE *fp, threadstacklist_t stacklist);
