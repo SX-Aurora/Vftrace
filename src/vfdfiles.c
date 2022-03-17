@@ -175,7 +175,6 @@ void vftr_update_vfd_header(sampling_t *sampling,
       fwrite(timestrings.end_time, sizeof(char), datestr_len, fp);
    }
 
-   // reserve some space to be filled in later
    // sampling interval in usec
    fwrite(&(sampling->interval), sizeof(long long), 1, fp);
    // number of processes
@@ -191,7 +190,7 @@ void vftr_update_vfd_header(sampling_t *sampling,
    // stacks count
    fwrite(&(process.stacktree.nstacks), sizeof(unsigned int), 1, fp);
    // samples offset
-   fwrite(&(sampling->samples_offset), sizeof(long long), 1, fp);
+   fwrite(&(sampling->samples_offset), sizeof(long int), 1, fp);
    // stacks offset
    fwrite(&(sampling->stacktable_offset), sizeof(long int), 1, fp);
 }
