@@ -6,6 +6,9 @@
 #include <assert.h>
 
 #include "environment_types.h"
+#include "process_types.h"
+#include "stack_types.h"
+#include "timer_types.h"
 #include "vftrace_state.h"
 
 #include "filenames.h"
@@ -191,4 +194,32 @@ void vftr_update_vfd_header(sampling_t *sampling,
    fwrite(&(sampling->samples_offset), sizeof(long long), 1, fp);
    // stacks offset
    fwrite(&(sampling->stacktable_offset), sizeof(long int), 1, fp);
+}
+
+void vftr_write_vfd_stacks(sampling_t *sampling, stacktree_t stacktree) {
+   FILE *fp = sampling->vfdfilefp;
+
+   // save the offset of where the stacktable begins
+   sampling->stacktable_offset = ftell(fp);
+
+   // to reconstruct the stacktree lateron
+   // it is sufficient to know:
+   // 1. index of the calling stack
+   // 2. the name of the function
+   for (int istack=0; istack<stacktree.nstacks; istack++) {
+      stack_t stack = stacktree.stacks[istack];
+      fwrite(&(stack.caller), sizeof(int), 1, fp);
+      // precisely sampled functions are marked
+      // with a '*' after their name
+      if (stack.precise) {
+         int namelen = strlen(stack.name) + 2; // +1 for '*' and +1 for null terminator
+         fwrite(&namelen, sizeof(int), 1, fp);
+         fwrite(stack.name, sizeof(char), namelen-2, fp);
+         fwrite("*", sizeof(char), 2, fp);
+      } else {
+         int namelen = strlen(stack.name) + 1; // +1 for null terminator
+         fwrite(&namelen, sizeof(int), 1, fp);
+         fwrite(stack.name, sizeof(char), namelen, fp);
+      }
+   }
 }

@@ -62,7 +62,7 @@ void vftr_finalize_sampling(sampling_t *sampling,
                             environment_t environment, process_t process,
                             time_strings_t timestrings, double runtime) {
    if (sampling->do_sampling) {
-      // TODO: update vfdheader
+      vftr_write_vfd_stacks(sampling, process.stacktree);
       vftr_update_vfd_header(sampling, process, timestrings, runtime);
    
    

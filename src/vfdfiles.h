@@ -29,4 +29,6 @@ void vftr_update_vfd_header(sampling_t *sampling,
                             process_t process,
                             time_strings_t timestrings,
                             double runtime);
+void vftr_write_vfd_stacks(sampling_t *sampling, stacktree_t stacktree);
+
 #endif
