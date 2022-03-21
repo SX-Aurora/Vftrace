@@ -14,4 +14,10 @@ stack_t *read_stacklist(FILE *fp, long int stacks_offset,
 
 void free_stacklist(unsigned int nstacks, stack_t *stacklist);
 
+void print_stacklist(FILE *fp, unsigned int nstacks, stack_t *stacklist);
+
+void print_samples(FILE *vfd_fp, FILE *fp_out,
+                   vfd_header_t vfd_header, stack_t *stacklist);
+
+
 #endif

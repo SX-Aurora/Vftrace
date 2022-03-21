@@ -4,39 +4,8 @@
 #include <string.h>
 
 #include "vfd_types.h"
+#include "sampling_types.h"
 
-
-#ifndef VFD_TYPES_H
-#define VFD_TYPES_H
-
-#include <stdbool.h>
-
-typedef struct {
-   int vfd_version;
-   char *package_string;
-   char *datestr_start;
-   char *datestr_end;
-   long long interval;
-   unsigned int nprocesses;
-   unsigned int processID;
-   double runtime;
-   unsigned int function_samplecount;
-   unsigned int message_samplecount;
-   unsigned int nstacks;
-   long int samples_offset;
-   long int stacks_offset;
-   // TODO: hardware counters
-} vfd_header_t;
-
-typedef struct {
-    char *name;
-    int caller;
-    int ncallees;
-    int *callees;
-    bool precise;
-} stack_entry_t;
-
-#endif
 vfd_header_t read_vfd_header(FILE *fp) {
    vfd_header_t header;
    fread(&(header.vfd_version), sizeof(int), 1, fp);
@@ -146,4 +115,58 @@ void free_stacklist(unsigned int nstacks, stack_t *stacklist) {
       free(stacklist[istack].callees);
    }
    free(stacklist);
+}
+
+void print_stack(FILE *fp, unsigned int istack, stack_t *stacklist) {
+   fprintf(fp, "%s", stacklist[istack].name);
+   if (stacklist[istack].caller >= 0) {
+      fprintf(fp, "<");
+      print_stack(fp, stacklist[istack].caller, stacklist);
+   }
+}
+
+void print_stacklist(FILE *fp, unsigned int nstacks, stack_t *stacklist) {
+   fprintf(fp, "Stacks list:\n");
+   for (unsigned int istack=0; istack<nstacks; istack++) {
+      fprintf(fp, "   %u: ", istack);
+      print_stack(fp, istack, stacklist);
+      fprintf(fp, "\n");
+   }
+}
+
+void print_function_sample(FILE *vfd_fp, FILE *fp_out,
+                           sample_kind kind, stack_t *stacklist) {
+   int stackID;
+   fread(&stackID, sizeof(int), 1, vfd_fp);
+   long long timestamp_usec;
+   fread(&timestamp_usec, sizeof(long long), 1, vfd_fp);
+   double timestamp = timestamp_usec*1.0e-6;
+
+   fprintf(fp_out, "%16.6f %s ", timestamp,
+           kind == samp_function_entry ? "call" : "exit");
+   print_stack(fp_out, stackID, stacklist);
+   fprintf(fp_out, "\n");
+}
+
+void print_samples(FILE *vfd_fp, FILE *fp_out,
+                   vfd_header_t vfd_header, stack_t *stacklist) {
+   fseek(vfd_fp, vfd_header.samples_offset, SEEK_SET);
+   fprintf(fp_out, "Stack and message samples:\n\n");
+
+   unsigned int nsamples = vfd_header.function_samplecount +
+                           vfd_header.message_samplecount;
+   for (unsigned int isample=0; isample<nsamples; isample++) {
+      sample_kind kind;
+      fread(&kind, sizeof(sample_kind), 1, vfd_fp);
+      switch (kind) {
+         case samp_function_entry:
+         case samp_function_exit:
+            print_function_sample(vfd_fp, fp_out, kind, stacklist);
+         break;
+         case samp_message:
+         break;
+         default:
+         break;
+      }
+   }
 }

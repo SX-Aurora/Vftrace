@@ -20,6 +20,10 @@ int main(int argc, char **argv) {
                                        vfd_header.stacks_offset,
                                        vfd_header.nstacks);
 
+   print_stacklist(stdout, vfd_header.nstacks, stacklist);
+
+   print_samples(fp, stdout, vfd_header, stacklist);
+
 
    free_vfd_header(&vfd_header);
    free_stacklist(vfd_header.nstacks, stacklist);
