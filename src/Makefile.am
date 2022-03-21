@@ -62,7 +62,8 @@ libvftrace_la_SOURCES += sorting.c \
 			 exe_info.c \
 			 filenames.c \
 			 realloc_consts.c \
-			 license.c
+			 license.c \
+			 hashing.c
 libvftrace_la_SOURCES += logfile.c \
 			 vfdfiles.c
 

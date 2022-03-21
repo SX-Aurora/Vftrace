@@ -1,6 +1,7 @@
 #ifndef STACK_TYPES_H
 #define STACK_TYPES_H
 
+#include <stdint.h>
 #include <stdbool.h>
 
 #include "address_type.h"
@@ -27,14 +28,17 @@ typedef struct {
    int *callees;
    // local stack ID
    int lid;
-   // global stack ID (is computed during stack normalization)
-   int gid;
    // name of function on top of stack
    // only a pointer to the symbol table entry 
    // no need to deallocate
    char *name;
    // profiling data
    profile_t profiling;
+   // Data that is filled in during finalization
+   // global stack ID (is computed during stack normalization)
+   int gid;
+   uint64_t hash;
+
 } stack_t;
 
 typedef struct {

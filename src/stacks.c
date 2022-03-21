@@ -8,6 +8,7 @@
 #include "stacks.h"
 #include "profiling.h"
 #include "symbols.h"
+#include "hashing.h"
 #include "search.h"
 
 void vftr_stacktree_realloc(stacktree_t *stacktree_ptr) {
@@ -131,6 +132,10 @@ void vftr_finalize_stacktree(stacktree_t *stacktree_ptr) {
    // exclusive time
    vftr_update_stacks_exclusive_time(stacktree_ptr->nstacks,
                                      stacktree_ptr->stacks);
+
+   // compute stack hashes for normalization
+   vftr_compute_stack_hashes(stacktree_ptr->nstacks,
+                             stacktree_ptr->stacks);
 }
 
 #ifdef _DEBUG
