@@ -151,7 +151,7 @@ void print_function_sample(FILE *vfd_fp, FILE *fp_out,
 void print_samples(FILE *vfd_fp, FILE *fp_out,
                    vfd_header_t vfd_header, stack_t *stacklist) {
    fseek(vfd_fp, vfd_header.samples_offset, SEEK_SET);
-   fprintf(fp_out, "Stack and message samples:\n\n");
+   fprintf(fp_out, "Stack and message samples:\n");
 
    unsigned int nsamples = vfd_header.function_samplecount +
                            vfd_header.message_samplecount;

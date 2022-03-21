@@ -8,7 +8,9 @@ bin_PROGRAMS = vftrace_vfd_dump
 #vftrace_mpi_table_crosscheck_SOURCES = vftrace_mpi_table_crosscheck.c
 #vftrace_mpi_stack_crosscheck_SOURCES = vftrace_mpi_stack_crosscheck.c
 
-vftrace_vfd_dump_SOURCES = vftrace_vfd_dump.c vfd_utils.c
+vftrace_vfd_dump_SOURCES = vftrace_vfd_dump.c \
+			   vfd_dump_cmd_options.c \
+			   vfd_utils.c
 vftrace_vfd_dump_CFLAGS = -I${srcdir}/../src/
 vftrace_vfd_dump_CFLAGS += -I${srcdir}/../src/mpi/utils/
 vftrace_vfd_dump_LDFLAGS = -L${top_builddir}/src/.libs -lvftrace -lm
