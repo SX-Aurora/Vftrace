@@ -18,6 +18,8 @@ stacktree_t vftr_new_stacktree();
 
 void vftr_stacktree_free(stacktree_t *stacktree_ptr);
 
+void vftr_finalize_stacktree(stacktree_t *stacktree_ptr);
+
 #ifdef _DEBUG
 void vftr_print_stacktree(FILE *fp, stacktree_t stacktree);
 #endif

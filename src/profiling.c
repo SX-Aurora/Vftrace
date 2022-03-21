@@ -1,12 +1,14 @@
 #include <stdbool.h>
 
 #include "profiling_types.h"
+#include "stack_types.h"
 
 callProfile_t vftr_new_callprofiling() {
    callProfile_t callprof;
    callprof.calls = 0ll;
    callprof.cycles = 0ll;
    callprof.time_usec = 0ll;
+   callprof.time_excl_usec = 0ll;
    callprof.overhead_time_usec = 0ll;
    return callprof;
 }
@@ -38,6 +40,20 @@ void vftr_accumulate_profiling(bool master, profile_t *stackprof,
    vftr_accumulate_callprofiling(master,
                                  &(stackprof->callProf),
                                  &(threadprof->callProf));
+}
+
+void vftr_update_stacks_exclusive_time(int nstacks, stack_t *stacks) {
+   // exclusive time for init is 0, therefore it does not need to be computed.
+   for (int istack=1; istack<nstacks; istack++) {
+      stack_t *mystack = stacks + istack;
+      long long exclusive_time = mystack->profiling.callProf.time_usec;
+      // subtract the time spent in the callees
+      for (int icallee=0; icallee<mystack->ncallees; icallee++) {
+         int calleeID = mystack->callees[icallee];
+         exclusive_time -= stacks[calleeID].profiling.callProf.time_usec;
+      }
+      mystack->profiling.callProf.time_excl_usec = exclusive_time;
+   }
 }
 
 void vftr_callprofiling_free(callProfile_t *callprof_ptr) {

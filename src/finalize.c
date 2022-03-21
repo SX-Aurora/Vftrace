@@ -26,6 +26,9 @@ void vftr_finalize() {
    fprintf(stderr, "\n");
 #endif
 
+   // finalize stacks
+   vftr_finalize_stacktree(&(vftrace.process.stacktree));
+
    // write logfile
    vftr_write_logfile(vftrace, runtime);
 

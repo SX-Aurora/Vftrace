@@ -126,6 +126,13 @@ void vftr_stacktree_free(stacktree_t *stacktree_ptr) {
    *stacktree_ptr = stacktree;
 }
 
+// fill in data that was not computed during runtime
+void vftr_finalize_stacktree(stacktree_t *stacktree_ptr) {
+   // exclusive time
+   vftr_update_stacks_exclusive_time(stacktree_ptr->nstacks,
+                                     stacktree_ptr->stacks);
+}
+
 #ifdef _DEBUG
 void vftr_print_stack(FILE *fp, int level, stacktree_t stacktree, int stackid) {
    // first print the indentation

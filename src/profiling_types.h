@@ -18,6 +18,9 @@ typedef struct {
    long long cycles;
    // time spend in the function (including subfunctions)
    long long time_usec;
+   // time spend in the function (excluding subfunctions)
+   // computed during final stack update
+   long long time_excl_usec;
    // accumulated overhead time
    long long overhead_time_usec;
 } callProfile_t;
