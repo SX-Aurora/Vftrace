@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 
-#include "address_type.h"
+#include "custom_types.h"
 #include "symbols.h"
 #include "stacks.h"
 

@@ -6,7 +6,7 @@
 #include <stdio.h>
 #endif
 
-#include "address_type.h"
+#include "custom_types.h"
 #include "symbol_types.h"
 #include "stack_types.h"
 

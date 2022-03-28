@@ -5,7 +5,7 @@
 #include <mpi.h>
 #endif
 
-#include <vftr_sorting.h>
+#include "sorting.h"
 
 bool int_list_sorted(int n, int *list) {
    bool sorted = true;

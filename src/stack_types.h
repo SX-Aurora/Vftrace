@@ -4,7 +4,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 
-#include "address_type.h"
+#include "custom_types.h"
 #include "profiling_types.h"
 
 typedef enum {

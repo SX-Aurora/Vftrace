@@ -6,7 +6,7 @@
 #include <elf.h>
 
 #include "realloc_consts.h"
-#include "address_type.h"
+#include "custom_types.h"
 #include "symbols.h"
 #include "ElfFormat.h"
 #include "sorting.h"

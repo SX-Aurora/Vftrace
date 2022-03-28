@@ -4,7 +4,7 @@
 #include <stdint.h>
 #include <sys/types.h>
 
-#include "address_type.h"
+#include "custom_types.h"
 
 typedef struct {
    uintptr_t addr;
