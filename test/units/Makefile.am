@@ -45,31 +45,31 @@ endif
 endif
 
 check_PROGRAMS = radixsort_uint64 \
-		  sort_integer_ascending \
-		  sort_integer_descending \
-		  sort_double_ascending \
-		  sort_double_descending \
-		  sort_double_copy_ascending \
-		  sort_double_copy_descending \
-                  symbols_1 \
-                  environment_1 \
-                  environment_2 \
-                  setup_1 \
-                  setup_2 \
-                  filewrite_1 \
-                  filewrite_2 \
-                  scenario_1 \
-                  scenario_2 \
-                  scenario_3 \
-                  functions_1 \
-                  functions_2 \
-                  functions_3 \
-                  functions_4 \
-                  functions_5 \
-		  tables \
-                  stacks_1 \
-                  browse_1 \
-		  no_instrument_attribute
+		 sort_integer_ascending \
+		 sort_integer_descending \
+		 sort_double_ascending \
+		 sort_double_descending \
+		 sort_double_copy_ascending \
+		 sort_double_copy_descending #\
+                 #symbols_1 \
+                 #environment_1 \
+                 #environment_2 \
+                 #setup_1 \
+                 #setup_2 \
+                 #filewrite_1 \
+                 #filewrite_2 \
+                 #scenario_1 \
+                 #scenario_2 \
+                 #scenario_3 \
+                 #functions_1 \
+                 #functions_2 \
+                 #functions_3 \
+                 #functions_4 \
+                 #functions_5 \
+		 #tables \
+                 #stacks_1 \
+                 #browse_1 \
+		 #no_instrument_attribute
 
 if WITH_MPI
 check_PROGRAMS += stacks_2 \
@@ -114,109 +114,109 @@ sort_double_copy_descending_SOURCES = $(srcdir)/sort_double_copy_descending.c
 sort_double_copy_descending_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
 sort_double_copy_descending_LDFLAGS = $(AM_LDFLAGS)
 
-symbols_1_SOURCES = $(srcdir)/symbols_1.c
-symbols_1_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
-symbols_1_LDFLAGS = $(AM_LDFLAGS)
-
-environment_1_SOURCES = $(srcdir)/environment_1.c
-environment_1_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
-environment_1_LDFLAGS = $(AM_LDFLAGS)
-
-environment_2_SOURCES = $(srcdir)/environment_2.c
-environment_2_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
-environment_2_LDFLAGS = $(AM_LDFLAGS)
-
-setup_1_SOURCES = $(srcdir)/setup_1.c
-setup_1_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
-setup_1_LDFLAGS = $(AM_LDFLAGS)
-
-setup_2_SOURCES = $(srcdir)/setup_2.c
-setup_2_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
-setup_2_LDFLAGS = $(AM_LDFLAGS)
-
-filewrite_1_SOURCES = $(srcdir)/filewrite_1.c
-filewrite_1_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
-filewrite_1_LDFLAGS = $(AM_LDFLAGS)
-
-filewrite_2_SOURCES = $(srcdir)/filewrite_2.c
-filewrite_2_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
-filewrite_2_LDFLAGS = $(AM_LDFLAGS)
-
-scenario_1_SOURCES = $(srcdir)/scenario_1.c
-scenario_1_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src -I$(top_srcdir)/external/tinyexpr
-scenario_1_LDFLAGS = $(AM_LDFLAGS)
-
-scenario_2_SOURCES = $(srcdir)/scenario_2.c
-scenario_2_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src -I$(top_srcdir)/external/tinyexpr
-scenario_2_LDFLAGS = $(AM_LDFLAGS)
-
-scenario_3_SOURCES = $(srcdir)/scenario_3.c
-scenario_3_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src -I$(top_srcdir)/external/tinyexpr
-scenario_3_LDFLAGS = $(AM_LDFLAGS)
-
-functions_1_SOURCES = $(srcdir)/functions_1.c
-functions_1_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
-functions_1_LDFLAGS = $(AM_LDFLAGS)
-
-functions_2_SOURCES = $(srcdir)/functions_2.c
-functions_2_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
-functions_2_LDFLAGS = $(AM_LDFLAGS)
-
-functions_3_SOURCES = $(srcdir)/functions_3.c
-functions_3_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
-functions_3_LDFLAGS = $(AM_LDFLAGS)
-
-functions_4_SOURCES = $(srcdir)/functions_4.c
-functions_4_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
-functions_4_LDFLAGS = $(AM_LDFLAGS)
-
-functions_5_SOURCES = $(srcdir)/functions_5.c
-functions_5_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
-functions_5_LDFLAGS = $(AM_LDFLAGS)
-
-tables_SOURCES = $(srcdir)/tables.c
-tables_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
-tables_LDFLAGS = $(AM_LDFLAGS)
-
-stacks_1_SOURCES = $(srcdir)/stacks_1.c
-stacks_1_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
-stacks_1_LDFLAGS = $(AM_LDFLAGS)
-
-if WITH_MPI
-stacks_2_SOURCES = $(srcdir)/stacks_2.c
-stacks_2_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
-stacks_2_LDFLAGS = $(AM_LDFLAGS)
-
-stacks_3_SOURCES = $(srcdir)/stacks_3.c
-stacks_3_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
-stacks_3_LDFLAGS = $(AM_LDFLAGS)
-
-no_mpi_init_C_SOURCES = $(srcdir)/no_mpi_init.c
-no_mpi_init_C_CFLAGS = $(AM_CFLAGS) -finstrument-functions
-no_mpi_init_C_LDFLAGS = $(AM_LDFLAGS)
-
-if ENABLE_FORTRAN
-no_mpi_init_F_SOURCES = $(srcdir)/no_mpi_init.F90
-no_mpi_init_F_FCFLAGS = $(AM_FFLAGS) -finstrument-functions
-no_mpi_init_F_LDFLAGS = $(AM_LDFLAGS)
-endif
-endif
-
-browse_1_SOURCES = $(srcdir)/browse_1.c
-browse_1_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
-browse_1_LDFLAGS = $(AM_LDFLAGS)
-
-no_instrument_attribute_SOURCES = $(srcdir)/no_instrument_attribute.c
-no_instrument_attribute_CFLAGS = $(AM_CFLAGS) -finstrument-functions
-no_instrument_attribute_LDFLAGS = $(AM_LDFLAGS)
-
-if ENABLE_HWC
-if ON_VECTOR_ENGINE
-sxhwc_1_SOURCES = $(srcdir)/sxhwc_1.c
-sxhwc_1_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
-sxhwc_1_LDFLAGS = $(AM_LDFLAGS)
-endif
-endif
+#symbols_1_SOURCES = $(srcdir)/symbols_1.c
+#symbols_1_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
+#symbols_1_LDFLAGS = $(AM_LDFLAGS)
+#
+#environment_1_SOURCES = $(srcdir)/environment_1.c
+#environment_1_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
+#environment_1_LDFLAGS = $(AM_LDFLAGS)
+#
+#environment_2_SOURCES = $(srcdir)/environment_2.c
+#environment_2_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
+#environment_2_LDFLAGS = $(AM_LDFLAGS)
+#
+#setup_1_SOURCES = $(srcdir)/setup_1.c
+#setup_1_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
+#setup_1_LDFLAGS = $(AM_LDFLAGS)
+#
+#setup_2_SOURCES = $(srcdir)/setup_2.c
+#setup_2_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
+#setup_2_LDFLAGS = $(AM_LDFLAGS)
+#
+#filewrite_1_SOURCES = $(srcdir)/filewrite_1.c
+#filewrite_1_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
+#filewrite_1_LDFLAGS = $(AM_LDFLAGS)
+#
+#filewrite_2_SOURCES = $(srcdir)/filewrite_2.c
+#filewrite_2_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
+#filewrite_2_LDFLAGS = $(AM_LDFLAGS)
+#
+#scenario_1_SOURCES = $(srcdir)/scenario_1.c
+#scenario_1_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src -I$(top_srcdir)/external/tinyexpr
+#scenario_1_LDFLAGS = $(AM_LDFLAGS)
+#
+#scenario_2_SOURCES = $(srcdir)/scenario_2.c
+#scenario_2_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src -I$(top_srcdir)/external/tinyexpr
+#scenario_2_LDFLAGS = $(AM_LDFLAGS)
+#
+#scenario_3_SOURCES = $(srcdir)/scenario_3.c
+#scenario_3_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src -I$(top_srcdir)/external/tinyexpr
+#scenario_3_LDFLAGS = $(AM_LDFLAGS)
+#
+#functions_1_SOURCES = $(srcdir)/functions_1.c
+#functions_1_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
+#functions_1_LDFLAGS = $(AM_LDFLAGS)
+#
+#functions_2_SOURCES = $(srcdir)/functions_2.c
+#functions_2_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
+#functions_2_LDFLAGS = $(AM_LDFLAGS)
+#
+#functions_3_SOURCES = $(srcdir)/functions_3.c
+#functions_3_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
+#functions_3_LDFLAGS = $(AM_LDFLAGS)
+#
+#functions_4_SOURCES = $(srcdir)/functions_4.c
+#functions_4_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
+#functions_4_LDFLAGS = $(AM_LDFLAGS)
+#
+#functions_5_SOURCES = $(srcdir)/functions_5.c
+#functions_5_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
+#functions_5_LDFLAGS = $(AM_LDFLAGS)
+#
+#tables_SOURCES = $(srcdir)/tables.c
+#tables_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
+#tables_LDFLAGS = $(AM_LDFLAGS)
+#
+#stacks_1_SOURCES = $(srcdir)/stacks_1.c
+#stacks_1_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
+#stacks_1_LDFLAGS = $(AM_LDFLAGS)
+#
+#if WITH_MPI
+#stacks_2_SOURCES = $(srcdir)/stacks_2.c
+#stacks_2_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
+#stacks_2_LDFLAGS = $(AM_LDFLAGS)
+#
+#stacks_3_SOURCES = $(srcdir)/stacks_3.c
+#stacks_3_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
+#stacks_3_LDFLAGS = $(AM_LDFLAGS)
+#
+#no_mpi_init_C_SOURCES = $(srcdir)/no_mpi_init.c
+#no_mpi_init_C_CFLAGS = $(AM_CFLAGS) -finstrument-functions
+#no_mpi_init_C_LDFLAGS = $(AM_LDFLAGS)
+#
+#if ENABLE_FORTRAN
+#no_mpi_init_F_SOURCES = $(srcdir)/no_mpi_init.F90
+#no_mpi_init_F_FCFLAGS = $(AM_FFLAGS) -finstrument-functions
+#no_mpi_init_F_LDFLAGS = $(AM_LDFLAGS)
+#endif
+#endif
+#
+#browse_1_SOURCES = $(srcdir)/browse_1.c
+#browse_1_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
+#browse_1_LDFLAGS = $(AM_LDFLAGS)
+#
+#no_instrument_attribute_SOURCES = $(srcdir)/no_instrument_attribute.c
+#no_instrument_attribute_CFLAGS = $(AM_CFLAGS) -finstrument-functions
+#no_instrument_attribute_LDFLAGS = $(AM_LDFLAGS)
+#
+#if ENABLE_HWC
+#if ON_VECTOR_ENGINE
+#sxhwc_1_SOURCES = $(srcdir)/sxhwc_1.c
+#sxhwc_1_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
+#sxhwc_1_LDFLAGS = $(AM_LDFLAGS)
+#endif
+#endif
 
 dist_check_SCRIPTS = radixsort_uint64.sh \
 		      sort_integer_ascending.sh \

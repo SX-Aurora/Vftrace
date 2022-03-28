@@ -3,8 +3,15 @@
 
 #include <stdint.h>
 #include <stdlib.h>
+#include <stdbool.h>
 
 #include "symbols.h"
+
+void vftr_sort_integer(int *list, int n, bool ascending);
+
+void vftr_sort_double(double *list, int n, bool ascending);
+
+void vftr_sort_double_copy (double *d_array, int n, bool ascending, double *d_copy);
 
 // sorts a list of unsigned 64 bit integer with linear scaling radix sort
 // one bit at a time
