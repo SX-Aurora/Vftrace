@@ -92,8 +92,6 @@ void vftr_compute_stack_hashes(int nstacks, stack_t *stacks) {
          stackstr_len += 1; // function seperator
          jstack = stacks[jstack].caller;
       }
-      // add space for the null terminator
-      stackstr_len ++;
 
       // realloc buffer if necessary
       if (stackstr_len > bufferlen) {
@@ -113,7 +111,6 @@ void vftr_compute_stack_hashes(int nstacks, stack_t *stacks) {
       }
       ptr--;
       *ptr = '\0';
-      printf("%d: %s\n", istack, buffer);
    }
    free(buffer);
 }
