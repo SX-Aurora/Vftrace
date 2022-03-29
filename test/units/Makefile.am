@@ -50,10 +50,10 @@ check_PROGRAMS = radixsort_uint64 \
 		 sort_double_ascending \
 		 sort_double_descending \
 		 sort_double_copy_ascending \
-		 sort_double_copy_descending #\
-                 #symbols_1 \
-                 #environment_1 \
-                 #environment_2 \
+		 sort_double_copy_descending \
+		 symbols_1 \
+                 environment_1 \
+                 environment_2 #\
                  #setup_1 \
                  #setup_2 \
                  #filewrite_1 \
@@ -114,18 +114,18 @@ sort_double_copy_descending_SOURCES = $(srcdir)/sort_double_copy_descending.c
 sort_double_copy_descending_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
 sort_double_copy_descending_LDFLAGS = $(AM_LDFLAGS)
 
-#symbols_1_SOURCES = $(srcdir)/symbols_1.c
-#symbols_1_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
-#symbols_1_LDFLAGS = $(AM_LDFLAGS)
-#
-#environment_1_SOURCES = $(srcdir)/environment_1.c
-#environment_1_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
-#environment_1_LDFLAGS = $(AM_LDFLAGS)
-#
-#environment_2_SOURCES = $(srcdir)/environment_2.c
-#environment_2_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
-#environment_2_LDFLAGS = $(AM_LDFLAGS)
-#
+symbols_1_SOURCES = $(srcdir)/symbols_1.c
+symbols_1_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
+symbols_1_LDFLAGS = $(AM_LDFLAGS)
+
+environment_1_SOURCES = $(srcdir)/environment_1.c
+environment_1_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
+environment_1_LDFLAGS = $(AM_LDFLAGS)
+
+environment_2_SOURCES = $(srcdir)/environment_2.c
+environment_2_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
+environment_2_LDFLAGS = $(AM_LDFLAGS)
+
 #setup_1_SOURCES = $(srcdir)/setup_1.c
 #setup_1_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
 #setup_1_LDFLAGS = $(AM_LDFLAGS)
