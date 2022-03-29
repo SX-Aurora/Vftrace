@@ -89,7 +89,8 @@ env_var_t vftr_read_env_bool(char *env_name, bool default_val) {
    env_var.name = env_name;
    env_var.value_string = getenv(env_name);
    if (env_var.value_string != NULL) {
-      char *s = env_var.value_string;
+      char *value_string = strdup(env_var.value_string);
+      char *s = value_string;
       while (*s != '\0') {
          *s = tolower(*s);
          s++;
@@ -102,6 +103,7 @@ env_var_t vftr_read_env_bool(char *env_name, bool default_val) {
          env_var.value.bool_val = false;
       }
       env_var.set = true;
+      free(value_string);
    } else {
       env_var.value.bool_val = default_val;
       env_var.set = false;
