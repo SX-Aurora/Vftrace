@@ -235,7 +235,6 @@ void vftr_print_env(FILE *fp, environment_t environment) {
       vftr_print_env_var(fp, environment.no_stack_normalization);
       vftr_print_env_var(fp, environment.demangle_cpp);
       vftr_print_env_var(fp, environment.show_startup);
-      printf("\n");
    } else {
       fprintf(fp, "Environment is invalid!\n"
                   "Not read yet, or already freed!\n");
