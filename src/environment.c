@@ -8,6 +8,15 @@
 #include "environment.h"
 #include "regular_expressions.h"
 
+env_var_t *vftr_get_env_var_ptr_by_idx(environment_t *environment, int idx) {
+   env_var_t *environment_arr = (env_var_t*) environment;
+   if (idx >= 0 && idx < environment->nenv_vars) {
+      return environment_arr+idx;
+   } else {
+      return NULL;
+   }
+}
+
 env_var_t vftr_read_env_int(char *env_name, int default_val) {
    env_var_t env_var;
    env_var.value_kind = env_int;
@@ -191,50 +200,19 @@ void vftr_print_env_var(FILE *fp, env_var_t env_var) {
                  env_var.value_string,
                  env_var.set ? "" : "(default)");
          break;
+      case env_none:
       default:
+         fprintf(fp, "Invalid environment variable type\n");
          break;
    }
 }
 
 void vftr_print_env(FILE *fp, environment_t environment) {
    if (environment.valid) {
-      vftr_print_env_var(fp, environment.vftrace_off);
-      vftr_print_env_var(fp, environment.do_sampling);
-      vftr_print_env_var(fp, environment.regions_precise);
-      vftr_print_env_var(fp, environment.output_directory);
-      vftr_print_env_var(fp, environment.logfile_basename);
-      vftr_print_env_var(fp, environment.logfile_for_ranks);
-      vftr_print_env_var(fp, environment.mpi_summary_for_ranks);
-      vftr_print_env_var(fp, environment.sampletime);
-      vftr_print_env_var(fp, environment.stoptime);
-      vftr_print_env_var(fp, environment.accurate_profile);
-      vftr_print_env_var(fp, environment.prof_truncate);
-      vftr_print_env_var(fp, environment.prof_truncate_cutoff);
-      vftr_print_env_var(fp, environment.mpi_log);
-      vftr_print_env_var(fp, environment.mpi_show_sync_time);
-      vftr_print_env_var(fp, environment.signals_off);
-      vftr_print_env_var(fp, environment.bufsize);
-      vftr_print_env_var(fp, environment.runtime_profile_funcs);
-      vftr_print_env_var(fp, environment.include_only_regex);
-      vftr_print_env_var(fp, environment.detail_until_cum_cycles);
-      vftr_print_env_var(fp, environment.scenario_file);
-      vftr_print_env_var(fp, environment.preciseregex);
-      vftr_print_env_var(fp, environment.print_stack_profile);
-      vftr_print_env_var(fp, environment.license_verbose);
-      vftr_print_env_var(fp, environment.print_stacks_for);
-      vftr_print_env_var(fp, environment.print_loadinfo_for);
-      vftr_print_env_var(fp, environment.strip_module_names);
-      vftr_print_env_var(fp, environment.create_html);
-      vftr_print_env_var(fp, environment.sort_profile_table);
-      vftr_print_env_var(fp, environment.show_overhead);
-      vftr_print_env_var(fp, environment.meminfo_method);
-      vftr_print_env_var(fp, environment.meminfo_stepsize);
-      vftr_print_env_var(fp, environment.print_env);
-      vftr_print_env_var(fp, environment.no_memtrace);
-      vftr_print_env_var(fp, environment.show_stacks_in_profile);
-      vftr_print_env_var(fp, environment.no_stack_normalization);
-      vftr_print_env_var(fp, environment.demangle_cpp);
-      vftr_print_env_var(fp, environment.show_startup);
+      for (int ienv=0; ienv<environment.nenv_vars; ienv++) {
+         vftr_print_env_var(fp,
+            *vftr_get_env_var_ptr_by_idx(&environment, ienv));
+      }
    } else {
       fprintf(fp, "Environment is invalid!\n"
                   "Not read yet, or already freed!\n");
@@ -280,6 +258,7 @@ environment_t vftr_read_environment() {
    environment.no_stack_normalization = vftr_read_env_bool("VFTR_NO_STACK_NORM", false);
    environment.demangle_cpp = vftr_read_env_bool("VFTR_DEMANGLE_CPP", false);
    environment.show_startup = vftr_read_env_bool("VFTR_SHOW_STARTUP", false);
+   environment.nenv_vars = 37;
    environment.valid = true;
 
 #if _DEBUG
@@ -290,33 +269,56 @@ environment_t vftr_read_environment() {
    return environment;
 }
 
+//// There might be mistyped Vftrace environment variables. Loop over all existing env variables,
+//// check if they match a Vftrace variable, and make an alternative suggestion if it is possibly mistyped.
+//void vftr_check_env_names(FILE *fp) {
+//   extern char **environ;
+//   char **s = environ;
+//   for (; *s; s++) {
+//     if (strstr(*s, "VFTR_")) {
+//       int best_ld, best_i;
+//       // There has to be strdup of s, because strtok modifies the first argument. This
+//       // points to the external environ, which is better not touched!
+//       char *var_name = strtok(strdup(*s), "=");
+//       vftr_find_best_match (var_name, &best_ld, &best_i);
+//       // best_ld == 0 -> Exact match.
+//       if (best_ld > 0)  {
+//         fprintf (fp, "Vftrace environment variable %s not known. Do you mean %s?\n",
+//                  var_name, vftr_env_variable_names[best_i]);
+//       }
+//     }
+//   }
+//}
+
+
 void vftr_env_var_free(env_var_t *env_var_ptr) {
    env_var_t env_var = *env_var_ptr;
-
-   switch (env_var.value_kind) {
-      case env_int:
-         break;
-      case env_long:
-         break;
-      case env_longlong:
-         break;
-      case env_float:
-         break;
-      case env_double:
-         break;
-      case env_bool:
-         break;
-      case env_string:
-         break;
-      case env_regex:
-         if (env_var.set) {
-            regfree(env_var.value.regex_val);
-            free(env_var.value.regex_val);
-            env_var.value.regex_val = NULL;
-         }
-         break;
-      default:
-         break;
+   if (env_var_ptr != NULL) {
+      switch (env_var.value_kind) {
+         case env_int:
+            break;
+         case env_long:
+            break;
+         case env_longlong:
+            break;
+         case env_float:
+            break;
+         case env_double:
+            break;
+         case env_bool:
+            break;
+         case env_string:
+            break;
+         case env_regex:
+            if (env_var.set) {
+               regfree(env_var.value.regex_val);
+               free(env_var.value.regex_val);
+               env_var.value.regex_val = NULL;
+            }
+            break;
+         default:
+            break;
+      }
    }
 }
 
@@ -324,42 +326,8 @@ void vftr_environment_free(environment_t *environment_ptr) {
    environment_t environment = *environment_ptr;
    if (environment.valid) {
       environment.valid = false;
-      vftr_env_var_free(&(environment.vftrace_off));
-      vftr_env_var_free(&(environment.do_sampling));
-      vftr_env_var_free(&(environment.regions_precise));
-      vftr_env_var_free(&(environment.output_directory));
-      vftr_env_var_free(&(environment.logfile_basename));
-      vftr_env_var_free(&(environment.logfile_for_ranks));
-      vftr_env_var_free(&(environment.mpi_summary_for_ranks));
-      vftr_env_var_free(&(environment.sampletime));
-      vftr_env_var_free(&(environment.stoptime));
-      vftr_env_var_free(&(environment.accurate_profile));
-      vftr_env_var_free(&(environment.prof_truncate));
-      vftr_env_var_free(&(environment.prof_truncate_cutoff));
-      vftr_env_var_free(&(environment.mpi_log));
-      vftr_env_var_free(&(environment.mpi_show_sync_time));
-      vftr_env_var_free(&(environment.signals_off));
-      vftr_env_var_free(&(environment.bufsize));
-      vftr_env_var_free(&(environment.runtime_profile_funcs));
-      vftr_env_var_free(&(environment.include_only_regex));
-      vftr_env_var_free(&(environment.detail_until_cum_cycles));
-      vftr_env_var_free(&(environment.scenario_file));
-      vftr_env_var_free(&(environment.preciseregex));
-      vftr_env_var_free(&(environment.print_stack_profile));
-      vftr_env_var_free(&(environment.license_verbose));
-      vftr_env_var_free(&(environment.print_stacks_for));
-      vftr_env_var_free(&(environment.print_loadinfo_for));
-      vftr_env_var_free(&(environment.strip_module_names));
-      vftr_env_var_free(&(environment.create_html));
-      vftr_env_var_free(&(environment.sort_profile_table));
-      vftr_env_var_free(&(environment.show_overhead));
-      vftr_env_var_free(&(environment.meminfo_method));
-      vftr_env_var_free(&(environment.meminfo_stepsize));
-      vftr_env_var_free(&(environment.print_env));
-      vftr_env_var_free(&(environment.no_memtrace));
-      vftr_env_var_free(&(environment.show_stacks_in_profile));
-      vftr_env_var_free(&(environment.no_stack_normalization));
-      vftr_env_var_free(&(environment.demangle_cpp));
-      vftr_env_var_free(&(environment.show_startup));
+      for (int ienv=0; ienv<environment_ptr->nenv_vars; ienv++) {
+         vftr_env_var_free(vftr_get_env_var_ptr_by_idx(environment_ptr, ienv));
+      }
    }
 }

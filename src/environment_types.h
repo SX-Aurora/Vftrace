@@ -6,6 +6,7 @@
 #include <regex.h>
 
 typedef enum {
+   env_none,
    env_int,
    env_long,
    env_longlong,
@@ -36,7 +37,9 @@ typedef struct {
 } env_var_t;
 
 typedef struct {
-   bool valid;
+   // in order to access the environment variables
+   // like an array by index, all non-environment variables
+   // need to be at the end of the struct!
    env_var_t vftrace_off;
    env_var_t do_sampling;
    env_var_t regions_precise;
@@ -74,6 +77,8 @@ typedef struct {
    env_var_t no_stack_normalization;
    env_var_t demangle_cpp;
    env_var_t show_startup;
+   bool valid;
+   int nenv_vars;
 } environment_t;
 
 #endif
