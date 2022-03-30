@@ -9,6 +9,8 @@ void vftr_print_env(FILE *fp, environment_t environment);
 
 environment_t vftr_read_environment();
 
+void vftr_check_env_names(FILE *fp, environment_t *environment_ptr);
+
 void vftr_environment_free(environment_t *environment_ptr);
 
 #endif

@@ -11,6 +11,7 @@
 #include "license.h"
 #include "config.h"
 #include "log_profile.h"
+#include "environment.h"
 #include "tables.h"
 
 char *vftr_get_logfile_name(environment_t environment, int rankID, int nranks) {
@@ -119,6 +120,11 @@ void vftr_write_logfile(vftrace_t vftrace, long long runtime) {
 
    vftr_write_logfile_header(fp, vftrace.timestrings,
                              vftrace.environment);
+
+   // print environment info
+   vftr_print_env(fp, vftrace.environment);
+   vftr_check_env_names(fp, &vftrace.environment);
+
 
    vftr_write_logfile_summary(fp, vftrace, runtime);
 

@@ -4,13 +4,15 @@
 
 #include <string.h>
 #include <ctype.h>
+#include <limits.h>
 
 #include "environment.h"
 #include "regular_expressions.h"
+#include "misc_utils.h"
 
-env_var_t *vftr_get_env_var_ptr_by_idx(environment_t *environment, int idx) {
-   env_var_t *environment_arr = (env_var_t*) environment;
-   if (idx >= 0 && idx < environment->nenv_vars) {
+env_var_t *vftr_get_env_var_ptr_by_idx(environment_t *environment_ptr, int idx) {
+   env_var_t *environment_arr = (env_var_t*) environment_ptr;
+   if (idx >= 0 && idx < environment_ptr->nenv_vars) {
       return environment_arr+idx;
    } else {
       return NULL;
@@ -269,27 +271,48 @@ environment_t vftr_read_environment() {
    return environment;
 }
 
-//// There might be mistyped Vftrace environment variables. Loop over all existing env variables,
-//// check if they match a Vftrace variable, and make an alternative suggestion if it is possibly mistyped.
-//void vftr_check_env_names(FILE *fp) {
-//   extern char **environ;
-//   char **s = environ;
-//   for (; *s; s++) {
-//     if (strstr(*s, "VFTR_")) {
-//       int best_ld, best_i;
-//       // There has to be strdup of s, because strtok modifies the first argument. This
-//       // points to the external environ, which is better not touched!
-//       char *var_name = strtok(strdup(*s), "=");
-//       vftr_find_best_match (var_name, &best_ld, &best_i);
-//       // best_ld == 0 -> Exact match.
-//       if (best_ld > 0)  {
-//         fprintf (fp, "Vftrace environment variable %s not known. Do you mean %s?\n",
-//                  var_name, vftr_env_variable_names[best_i]);
-//       }
-//     }
-//   }
-//}
+// Loop over all Vftrace environment variables. When LD is zero, we have an exact match
+// and we exit the subroutine to save time.
+void vftr_env_var_find_best_match(environment_t *environment_ptr,
+                                  char *var_name, int *best_ld,
+                                  int *best_idx) {
+   *best_ld = INT_MAX;
+   *best_idx = -1;
+   for (int ivar=0; ivar<environment_ptr->nenv_vars; ivar++) {
+      env_var_t *env_var = vftr_get_env_var_ptr_by_idx(environment_ptr, ivar);
+      int ld = vftr_levenshtein_distance(var_name,
+                                         env_var->name);
+      if (ld < *best_ld) {
+         *best_ld = ld;
+         *best_idx = ivar;
+      }
+      if (ld == 0) return;
+   }
+}
 
+// There might be mistyped Vftrace environment variables. Loop over all existing env variables,
+// check if they match a Vftrace variable, and make an alternative suggestion if it is possibly mistyped.
+void vftr_check_env_names(FILE *fp, environment_t *environment_ptr) {
+   extern char **environ;
+   char **s = environ;
+   for (; *s; s++) {
+      if (strstr(*s, "VFTR_")) {
+         // There has to be strdup of s, because strtok modifies the first argument. This
+         // points to the external environ, which is better not touched!
+         char *tmpstr = strdup(*s);
+         char *var_name = strtok(tmpstr, "=");
+         int best_ld, best_idx;
+         vftr_env_var_find_best_match(environment_ptr, var_name, &best_ld, &best_idx);
+         // best_ld == 0 -> Exact match.
+         if (best_ld > 0)  {
+            env_var_t *env_var = vftr_get_env_var_ptr_by_idx(environment_ptr, best_idx);
+            fprintf(fp, "Vftrace environment variable %s not known. Do you mean %s?\n",
+                    var_name, env_var->name);
+         }
+         free(tmpstr);
+      }
+   }
+}
 
 void vftr_env_var_free(env_var_t *env_var_ptr) {
    env_var_t env_var = *env_var_ptr;
