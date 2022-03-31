@@ -11,10 +11,9 @@
 int main(int argc, char **argv) {
 #if defined(_MPI)
   PMPI_Init(&argc, &argv);
-  //vftr_get_mpi_info(&vftr_mpirank, &vftr_mpisize);
-#else 
-  //vftr_mpirank = 0;
-  //vftr_mpisize = 1;
+#else
+  (void) argc;
+  (void) argv;
 #endif
   // The basic usage of the environment module:
   putenv("VFTR_OFF=yes");
