@@ -1,6 +1,8 @@
 #ifndef SYMBOLS_H
 #define SYMBOLS_H
 
+#include <stdio.h>
+
 #include "symbol_types.h"
 
 symboltable_t vftr_read_symbols();
