@@ -114,7 +114,8 @@ sort_double_copy_descending_SOURCES = $(srcdir)/sort_double_copy_descending.c
 sort_double_copy_descending_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
 sort_double_copy_descending_LDFLAGS = $(AM_LDFLAGS)
 
-symbols_1_SOURCES = $(srcdir)/symbols_1.c
+symbols_1_SOURCES = $(srcdir)/symbols_1.c \
+		    $(srcdir)/protofuncts.c
 symbols_1_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
 symbols_1_LDFLAGS = $(AM_LDFLAGS)
 
