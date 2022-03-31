@@ -1,35 +1,46 @@
-#include "vftr_environment.h"
-#include "vftr_filewrite.h"
-#include "vftr_setup.h"
+#include <stdlib.h>
+
+#include "environment_types.h"
+#include "environment.h"
+#include "logfile.h"
+#include "vfdfiles.h"
+
 #ifdef _MPI
 #include <mpi.h>
 #endif
 
-
-int main (int argc, char **argv) {
-
+int main(int argc, char **argv) {
 #if defined(_MPI)
-  PMPI_Init(&argc, &argv);
-  vftr_get_mpi_info (&vftr_mpirank, &vftr_mpisize);
+   PMPI_Init(&argc, &argv);
 #else 
-  vftr_mpirank = 0;
-  vftr_mpisize = 1;
+   (void) argc;
+   (void) argv;
 #endif
 
-  vftr_read_environment();
+   environment_t environment;
+   environment = vftr_read_environment();
+   vftr_environment_free(&environment);
 
   fprintf (stdout, "Check the creation of log and vfd file name\n");
+  char *logfile_name = NULL;
   int mpi_rank, mpi_size;
   mpi_rank = 0;
   mpi_size = 1;
-  fprintf (stdout, "logfile_name(%d, %d): %s\n", mpi_rank, mpi_size,
-  	 vftr_create_logfile_name(mpi_rank, mpi_size, "log"));
+
+  logfile_name = vftr_get_logfile_name(environment, mpi_rank, mpi_size);
+  fprintf(stdout, "logfile_name(%d, %d): %s\n", mpi_rank, mpi_size, logfile_name);
+  free(logfile_name);
+
   mpi_rank = 11;
   mpi_size = 111;
-  fprintf (stdout, "logfile_name(%d, %d): %s\n", mpi_rank, mpi_size,
-  	 vftr_create_logfile_name(mpi_rank, mpi_size, "log"));
-  fprintf (stdout, "logfile_name(%d, %d): %s\n", mpi_rank, mpi_size,
-  	 vftr_create_logfile_name(mpi_rank, mpi_size, "vfd"));
+
+  logfile_name = vftr_get_logfile_name(environment, mpi_rank, mpi_size);
+  fprintf(stdout, "logfile_name(%d, %d): %s\n", mpi_rank, mpi_size, logfile_name);
+  free(logfile_name);
+
+  logfile_name = vftr_get_vfdfile_name(environment, mpi_rank, mpi_size);
+  fprintf(stdout, "logfile_name(%d, %d): %s\n", mpi_rank, mpi_size, logfile_name);
+  free(logfile_name);
 
 #ifdef _MPI
   PMPI_Finalize();

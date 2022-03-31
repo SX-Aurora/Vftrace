@@ -52,9 +52,9 @@ check_PROGRAMS = radixsort_uint64 \
 		 sort_double_copy_ascending \
 		 sort_double_copy_descending \
 		 symbols_1 \
-                 environment_1 \
-                 environment_2 #\
-                 #filewrite_1 \
+		 environment_1 \
+		 environment_2 \
+		 filewrite_1 #\
                  #filewrite_2 \
                  #scenario_1 \
                  #scenario_2 \
@@ -125,10 +125,10 @@ environment_2_SOURCES = $(srcdir)/environment_2.c
 environment_2_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
 environment_2_LDFLAGS = $(AM_LDFLAGS)
 
-#filewrite_1_SOURCES = $(srcdir)/filewrite_1.c
-#filewrite_1_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
-#filewrite_1_LDFLAGS = $(AM_LDFLAGS)
-#
+filewrite_1_SOURCES = $(srcdir)/filewrite_1.c
+filewrite_1_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
+filewrite_1_LDFLAGS = $(AM_LDFLAGS)
+
 #filewrite_2_SOURCES = $(srcdir)/filewrite_2.c
 #filewrite_2_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
 #filewrite_2_LDFLAGS = $(AM_LDFLAGS)
