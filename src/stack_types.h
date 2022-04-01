@@ -35,10 +35,7 @@ typedef struct {
    // profiling data
    profile_t profiling;
    // Data that is filled in during finalization
-   // global stack ID (is computed during stack normalization)
-   int gid;
    uint64_t hash;
-
 } stack_t;
 
 typedef struct {
