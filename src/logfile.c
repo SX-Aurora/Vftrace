@@ -51,7 +51,7 @@ void vftr_write_logfile_summary(FILE *fp, vftrace_t vftrace, long long runtime) 
    double runtime_sec = runtime * 1.0e-6;
    double overhead_sec = vftr_total_overhead_usec(vftrace.process.stacktree)*1.0e-6;
    double apptime_sec = runtime_sec - overhead_sec;
-   fprintf(fp, "\n------------------------------------------------------------\n");
+   fprintf(fp, "------------------------------------------------------------\n");
 #ifdef _MPI
    fprintf(fp, "Nr. of MPI ranks      %8d\n",
            vftrace.process.nprocesses);
