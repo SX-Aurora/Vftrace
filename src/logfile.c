@@ -79,10 +79,10 @@ void vftr_write_logfile_profile_table(FILE *fp, stacktree_t stacktree,
    vftr_table_add_column(&table, col_int, "Calls", "%d", 'c', 'r', (void*) calls);
 
    double *excl_time = vftr_stack_exclusive_time_list(stacktree.nstacks, stacktree.stacks);
-   vftr_table_add_column(&table, col_double, "t_excl / s", "%.3f", 'c', 'r', (void*) excl_time);
+   vftr_table_add_column(&table, col_double, "t_excl/s", "%.3f", 'c', 'r', (void*) excl_time);
 
    double *incl_time = vftr_stack_inclusive_time_list(stacktree.nstacks, stacktree.stacks);
-   vftr_table_add_column(&table, col_double, "t_incl / s", "%.3f", 'c', 'r', (void*) incl_time);
+   vftr_table_add_column(&table, col_double, "t_incl/s", "%.3f", 'c', 'r', (void*) incl_time);
    
   // 
   // double *vftr_stack_overhead_time_list(int nstacks, stack_t *stacks);
