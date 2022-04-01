@@ -1,0 +1,8 @@
+Stacktree
+init (0): id=0, calls: 0, incl_time/s: 0.000000
+  func0 (1e240): id=1, calls: 0, incl_time/s: 0.000000
+    func3 (1e243): id=4, calls: 0, incl_time/s: 0.000000
+    func4 (1e244): id=5, calls: 0, incl_time/s: 0.000000
+      func5 (1e245): id=6, calls: 0, incl_time/s: 0.000000
+  func1 (1e241): id=2, calls: 0, incl_time/s: 0.000000
+    func2 (1e242): id=3, calls: 0, incl_time/s: 0.000000
