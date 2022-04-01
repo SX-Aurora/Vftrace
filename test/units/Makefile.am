@@ -52,6 +52,7 @@ check_PROGRAMS = radixsort_uint64 \
 		 sort_double_copy_ascending \
 		 sort_double_copy_descending \
 		 hashing \
+		 stackhashing \
 		 symbols_1 \
 		 environment_1 \
 		 environment_2 \
@@ -68,8 +69,9 @@ check_PROGRAMS = radixsort_uint64 \
 #		 no_instrument_attribute
 
 if WITH_MPI
-check_PROGRAMS += stacks_2 \
-		  stacks_3 \
+check_PROGRAMS += stacktree_parallel_1 \
+		  stacktree_parallel_2_1 \
+		  stacktree_parallel_2_2 \
 		  no_mpi_init_C
 if ENABLE_FORTRAN
 check_PROGRAMS += no_mpi_init_F
@@ -114,6 +116,11 @@ hashing_SOURCES = $(srcdir)/hashing.c
 hashing_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
 hashing_LDFLAGS = $(AM_LDFLAGS)
 
+stackhashing_SOURCES = $(srcdir)/stackhashing.c \
+		       $(srcdir)/dummysymboltable.c 
+stackhashing_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
+stackhashing_LDFLAGS = $(AM_LDFLAGS)
+
 symbols_1_SOURCES = $(srcdir)/symbols_1.c \
 		    $(srcdir)/protofuncts.c
 symbols_1_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
@@ -131,11 +138,30 @@ filewrite_1_SOURCES = $(srcdir)/filewrite_1.c
 filewrite_1_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
 filewrite_1_LDFLAGS = $(AM_LDFLAGS)
 
-stacktree_SOURCES = $(srcdir)/stacktree.c
+stacktree_SOURCES = $(srcdir)/stacktree.c \
+		    $(srcdir)/dummysymboltable.c
 stacktree_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
 stacktree_LDFLAGS = $(AM_LDFLAGS)
 
-stacklist_SOURCES = $(srcdir)/stacklist.c
+if WITH_MPI
+stacktree_parallel_1_SOURCES = $(srcdir)/stacktree_parallel_1.c \
+			       $(srcdir)/dummysymboltable.c
+stacktree_parallel_1_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
+stacktree_parallel_1_LDFLAGS = $(AM_LDFLAGS)
+
+stacktree_parallel_2_1_SOURCES = $(srcdir)/stacktree_parallel_2_1.c \
+				 $(srcdir)/dummysymboltable.c
+stacktree_parallel_2_1_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
+stacktree_parallel_2_1_LDFLAGS = $(AM_LDFLAGS)
+
+stacktree_parallel_2_2_SOURCES = $(srcdir)/stacktree_parallel_2_2.c \
+				 $(srcdir)/dummysymboltable.c
+stacktree_parallel_2_2_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
+stacktree_parallel_2_2_LDFLAGS = $(AM_LDFLAGS)
+endif
+
+stacklist_SOURCES = $(srcdir)/stacklist.c \
+		    $(srcdir)/dummysymboltable.c
 stacklist_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
 stacklist_LDFLAGS = $(AM_LDFLAGS)
 
@@ -159,26 +185,18 @@ stacklist_LDFLAGS = $(AM_LDFLAGS)
 #stacks_1_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
 #stacks_1_LDFLAGS = $(AM_LDFLAGS)
 
-#if WITH_MPI
-#stacks_2_SOURCES = $(srcdir)/stacks_2.c
-#stacks_2_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
-#stacks_2_LDFLAGS = $(AM_LDFLAGS)
-#
-#stacks_3_SOURCES = $(srcdir)/stacks_3.c
-#stacks_3_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
-#stacks_3_LDFLAGS = $(AM_LDFLAGS)
-#
-#no_mpi_init_C_SOURCES = $(srcdir)/no_mpi_init.c
-#no_mpi_init_C_CFLAGS = $(AM_CFLAGS) -finstrument-functions
-#no_mpi_init_C_LDFLAGS = $(AM_LDFLAGS)
-#
-#if ENABLE_FORTRAN
-#no_mpi_init_F_SOURCES = $(srcdir)/no_mpi_init.F90
-#no_mpi_init_F_FCFLAGS = $(AM_FFLAGS) -finstrument-functions
-#no_mpi_init_F_LDFLAGS = $(AM_LDFLAGS)
-#endif
-#endif
-#
+if WITH_MPI
+no_mpi_init_C_SOURCES = $(srcdir)/no_mpi_init.c
+no_mpi_init_C_CFLAGS = $(AM_CFLAGS) -finstrument-functions
+no_mpi_init_C_LDFLAGS = $(AM_LDFLAGS)
+
+if ENABLE_FORTRAN
+no_mpi_init_F_SOURCES = $(srcdir)/no_mpi_init.F90
+no_mpi_init_F_FCFLAGS = $(AM_FFLAGS) -finstrument-functions
+no_mpi_init_F_LDFLAGS = $(AM_LDFLAGS)
+endif
+endif
+
 #browse_1_SOURCES = $(srcdir)/browse_1.c
 #browse_1_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
 #browse_1_LDFLAGS = $(AM_LDFLAGS)
@@ -203,6 +221,7 @@ dist_check_SCRIPTS = radixsort_uint64.sh \
 		      sort_double_copy_ascending.sh \
 		      sort_double_copy_descending.sh \
 		      hashing.sh \
+		      stackhashing.sh \
                       symbols_1.sh \
                       environment_1.sh \
                       environment_2.sh \
@@ -223,8 +242,8 @@ endif
 endif
 
 if WITH_MPI
-dist_check_SCRIPTS += stacks_2.sh \
-		      stacks_3.sh \
+dist_check_SCRIPTS += stacktree_parallel_1.sh \
+		      stacktree_parallel_2.sh \
 		      no_mpi_init_C.sh
 if ENABLE_FORTRAN
 dist_check_SCRIPTS += no_mpi_init_F.sh

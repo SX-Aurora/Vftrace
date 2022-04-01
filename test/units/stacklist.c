@@ -8,22 +8,11 @@
 #include "stack_types.h"
 #include "stacks.h"
 
+#include "dummysymboltable.h"
+
 #ifdef _MPI
 #include <mpi.h>
 #endif
-
-void fill_symbol_table(symboltable_t *symboltable_ptr, uintptr_t baseaddr) {
-   for (unsigned int isym=0; isym<symboltable_ptr->nsymbols; isym++) {
-      symboltable_ptr->symbols[isym].addr = baseaddr+isym;
-      symboltable_ptr->symbols[isym].index = 0;
-   }
-   symboltable_ptr->symbols[0].name = "func0";
-   symboltable_ptr->symbols[1].name = "func1";
-   symboltable_ptr->symbols[2].name = "func2";
-   symboltable_ptr->symbols[3].name = "func3";
-   symboltable_ptr->symbols[4].name = "func4";
-   symboltable_ptr->symbols[5].name = "func5";
-}
 
 int main(int argc, char **argv) {
 #if defined(_MPI)
@@ -38,9 +27,7 @@ int main(int argc, char **argv) {
 
    // dummy symboltable
    uintptr_t addrs = 123456;
-   symboltable_t symboltable = {.nsymbols=6, .symbols=NULL};
-   symboltable.symbols = (symbol_t*) malloc(symboltable.nsymbols*sizeof(symbol_t));
-   fill_symbol_table(&symboltable, addrs);
+   symboltable_t symboltable = dummy_symbol_table(6, addrs);
 
    // build stacktree
    stacktree_t stacktree = vftr_new_stacktree();
@@ -61,7 +48,7 @@ int main(int argc, char **argv) {
 
    vftr_print_stacklist(stdout, stacktree);
 
-   free(symboltable.symbols);
+   free_dummy_symbol_table(&symboltable);
    vftr_stacktree_free(&stacktree);
    vftr_environment_free(&environment);
 #ifdef _MPI

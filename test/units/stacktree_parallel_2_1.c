@@ -9,18 +9,22 @@
 #include "stacks.h"
 
 #include "dummysymboltable.h"
-
-#ifdef _MPI
 #include <mpi.h>
-#endif
+
 
 int main(int argc, char **argv) {
-#if defined(_MPI)
-   PMPI_Init(&argc, &argv);
-#else 
-   (void) argc;
-   (void) argv;
-#endif
+   MPI_Init(&argc, &argv);
+
+   int nranks;
+   MPI_Comm_size(MPI_COMM_WORLD, &nranks);
+   if (nranks != 2) {
+      fprintf(stderr, "This test requires exacly two processes, "
+              "but was started with %d\n", nranks);
+      return 1;
+   }
+
+   int myrank;
+   MPI_Comm_rank(MPI_COMM_WORLD, &myrank);
 
    environment_t environment;
    environment = vftr_read_environment();
@@ -46,14 +50,11 @@ int main(int argc, char **argv) {
    int func7_idx = vftr_new_stack(func6_idx, &stacktree, symboltable, function,
                                   addrs+5, false);
 
-   vftr_print_stacktree(stdout, stacktree);
-
    free_dummy_symbol_table(&symboltable);
    vftr_stacktree_free(&stacktree);
    vftr_environment_free(&environment);
-#ifdef _MPI
+
    PMPI_Finalize();
-#endif
 
    return 0;
 }
