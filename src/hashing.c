@@ -111,6 +111,10 @@ void vftr_compute_stack_hashes(int nstacks, stack_t *stacks) {
       }
       ptr--;
       *ptr = '\0';
+
+      // compute the hash
+      stacks[istack].hash =
+         vftr_jenkins_murmur_64_hash(stackstr_len, (uint8_t*) buffer);
    }
    free(buffer);
 }
