@@ -51,6 +51,7 @@ check_PROGRAMS = radixsort_uint64 \
 		 sort_double_descending \
 		 sort_double_copy_ascending \
 		 sort_double_copy_descending \
+		 hashing \
 		 symbols_1 \
 		 environment_1 \
 		 environment_2 \
@@ -108,6 +109,10 @@ sort_double_copy_ascending_LDFLAGS = $(AM_LDFLAGS)
 sort_double_copy_descending_SOURCES = $(srcdir)/sort_double_copy_descending.c
 sort_double_copy_descending_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
 sort_double_copy_descending_LDFLAGS = $(AM_LDFLAGS)
+
+hashing_SOURCES = $(srcdir)/hashing.c
+hashing_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
+hashing_LDFLAGS = $(AM_LDFLAGS)
 
 symbols_1_SOURCES = $(srcdir)/symbols_1.c \
 		    $(srcdir)/protofuncts.c
@@ -197,6 +202,7 @@ dist_check_SCRIPTS = radixsort_uint64.sh \
 		      sort_double_descending.sh \
 		      sort_double_copy_ascending.sh \
 		      sort_double_copy_descending.sh \
+		      hashing.sh \
                       symbols_1.sh \
                       environment_1.sh \
                       environment_2.sh \
