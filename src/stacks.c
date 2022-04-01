@@ -138,7 +138,6 @@ void vftr_finalize_stacktree(stacktree_t *stacktree_ptr) {
                              stacktree_ptr->stacks);
 }
 
-#ifdef _DEBUG
 void vftr_print_stack(FILE *fp, int level, stacktree_t stacktree, int stackid) {
    // first print the indentation
    for (int ilevel=0; ilevel<level; ilevel++) {
@@ -163,4 +162,3 @@ void vftr_print_stacktree(FILE *fp, stacktree_t stacktree) {
    fprintf(fp, "Stacktree\n");
    vftr_print_stack(fp, 0, stacktree, 0);
 }
-#endif

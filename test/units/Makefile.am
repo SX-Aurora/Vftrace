@@ -54,18 +54,12 @@ check_PROGRAMS = radixsort_uint64 \
 		 symbols_1 \
 		 environment_1 \
 		 environment_2 \
-		 filewrite_1 #\
-                 #filewrite_2 \
+		 filewrite_1 \
+		 stacktree 
                  #scenario_1 \
                  #scenario_2 \
                  #scenario_3 \
-                 #functions_1 \
-                 #functions_2 \
-                 #functions_3 \
-                 #functions_4 \
-                 #functions_5 \
 		 #tables \
-                 #stacks_1 \
                  #browse_1 \
 		 #no_instrument_attribute
 
@@ -129,10 +123,10 @@ filewrite_1_SOURCES = $(srcdir)/filewrite_1.c
 filewrite_1_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
 filewrite_1_LDFLAGS = $(AM_LDFLAGS)
 
-#filewrite_2_SOURCES = $(srcdir)/filewrite_2.c
-#filewrite_2_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
-#filewrite_2_LDFLAGS = $(AM_LDFLAGS)
-#
+stacktree_SOURCES = $(srcdir)/stacktree.c
+stacktree_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
+stacktree_LDFLAGS = $(AM_LDFLAGS)
+
 #scenario_1_SOURCES = $(srcdir)/scenario_1.c
 #scenario_1_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src -I$(top_srcdir)/external/tinyexpr
 #scenario_1_LDFLAGS = $(AM_LDFLAGS)
@@ -144,26 +138,6 @@ filewrite_1_LDFLAGS = $(AM_LDFLAGS)
 #scenario_3_SOURCES = $(srcdir)/scenario_3.c
 #scenario_3_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src -I$(top_srcdir)/external/tinyexpr
 #scenario_3_LDFLAGS = $(AM_LDFLAGS)
-#
-#functions_1_SOURCES = $(srcdir)/functions_1.c
-#functions_1_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
-#functions_1_LDFLAGS = $(AM_LDFLAGS)
-#
-#functions_2_SOURCES = $(srcdir)/functions_2.c
-#functions_2_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
-#functions_2_LDFLAGS = $(AM_LDFLAGS)
-#
-#functions_3_SOURCES = $(srcdir)/functions_3.c
-#functions_3_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
-#functions_3_LDFLAGS = $(AM_LDFLAGS)
-#
-#functions_4_SOURCES = $(srcdir)/functions_4.c
-#functions_4_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
-#functions_4_LDFLAGS = $(AM_LDFLAGS)
-#
-#functions_5_SOURCES = $(srcdir)/functions_5.c
-#functions_5_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
-#functions_5_LDFLAGS = $(AM_LDFLAGS)
 #
 #tables_SOURCES = $(srcdir)/tables.c
 #tables_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
@@ -220,15 +194,10 @@ dist_check_SCRIPTS = radixsort_uint64.sh \
                       environment_1.sh \
                       environment_2.sh \
                       filewrite_1.sh \
-                      filewrite_2.sh \
+                      stacktree.sh \
                       scenario_1.sh \
                       scenario_2.sh \
                       scenario_3.sh \
-                      functions_1.sh \
-                      functions_2.sh \
-                      functions_3.sh \
-                      functions_4.sh \
-                      functions_5.sh \
                       stacks_1.sh \
                       browse_1.sh \
 		      no_instrument_attribute.sh

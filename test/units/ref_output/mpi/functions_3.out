@@ -1,7 +1,0 @@
-     0.000000    0  *init<
-     0.000000    1  *func2<init<
-     0.000000    2  *func3<init<
-     0.000000    3  *func4<func3<init<
-     0.000000    4  *func5<func2<init<
-     0.000000    5  *func6<func2<init<
-     0.000000    6  *func4<func6<func2<init<
