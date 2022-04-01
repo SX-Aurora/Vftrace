@@ -55,13 +55,16 @@ check_PROGRAMS = radixsort_uint64 \
 		 environment_1 \
 		 environment_2 \
 		 filewrite_1 \
-		 stacktree 
-                 #scenario_1 \
-                 #scenario_2 \
-                 #scenario_3 \
-		 #tables \
-                 #browse_1 \
-		 #no_instrument_attribute
+		 stacktree \
+		 stacklist
+#
+#                 scenario_1 \
+#                 scenario_2 \
+#                 scenario_3 \
+#		 tables \
+#                 browse_1 \
+#		 stacks_1 \
+#		 no_instrument_attribute
 
 if WITH_MPI
 check_PROGRAMS += stacks_2 \
@@ -127,6 +130,10 @@ stacktree_SOURCES = $(srcdir)/stacktree.c
 stacktree_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
 stacktree_LDFLAGS = $(AM_LDFLAGS)
 
+stacklist_SOURCES = $(srcdir)/stacklist.c
+stacklist_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
+stacklist_LDFLAGS = $(AM_LDFLAGS)
+
 #scenario_1_SOURCES = $(srcdir)/scenario_1.c
 #scenario_1_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src -I$(top_srcdir)/external/tinyexpr
 #scenario_1_LDFLAGS = $(AM_LDFLAGS)
@@ -146,7 +153,7 @@ stacktree_LDFLAGS = $(AM_LDFLAGS)
 #stacks_1_SOURCES = $(srcdir)/stacks_1.c
 #stacks_1_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
 #stacks_1_LDFLAGS = $(AM_LDFLAGS)
-#
+
 #if WITH_MPI
 #stacks_2_SOURCES = $(srcdir)/stacks_2.c
 #stacks_2_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
@@ -195,6 +202,7 @@ dist_check_SCRIPTS = radixsort_uint64.sh \
                       environment_2.sh \
                       filewrite_1.sh \
                       stacktree.sh \
+                      stacklist.sh \
                       scenario_1.sh \
                       scenario_2.sh \
                       scenario_3.sh \

@@ -1,4 +1,3 @@
-Stacktree
 init (0): id=0, calls: 0, incl_time/s: 0.000000
   func0 (1e240): id=1, calls: 0, incl_time/s: 0.000000
     func3 (1e243): id=4, calls: 0, incl_time/s: 0.000000

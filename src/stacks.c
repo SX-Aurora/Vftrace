@@ -138,7 +138,7 @@ void vftr_finalize_stacktree(stacktree_t *stacktree_ptr) {
                              stacktree_ptr->stacks);
 }
 
-void vftr_print_stack(FILE *fp, int level, stacktree_t stacktree, int stackid) {
+void vftr_print_stack_branch(FILE *fp, int level, stacktree_t stacktree, int stackid) {
    // first print the indentation
    for (int ilevel=0; ilevel<level; ilevel++) {
       fprintf(fp, "  ");
@@ -154,11 +154,26 @@ void vftr_print_stack(FILE *fp, int level, stacktree_t stacktree, int stackid) {
     
    level++;
    for (int icallee=0; icallee<stack.ncallees; icallee++) {
-      vftr_print_stack(fp, level, stacktree, stack.callees[icallee]);
+      vftr_print_stack_branch(fp, level, stacktree, stack.callees[icallee]);
    }
 }
 
 void vftr_print_stacktree(FILE *fp, stacktree_t stacktree) {
-   fprintf(fp, "Stacktree\n");
-   vftr_print_stack(fp, 0, stacktree, 0);
+   vftr_print_stack_branch(fp, 0, stacktree, 0);
+}
+
+void vftr_print_stack(FILE *fp, stacktree_t stacktree, int stackid) {
+   fprintf(fp, "%s", stacktree.stacks[stackid].name);
+   if (stacktree.stacks[stackid].caller >= 0) {
+      fprintf(fp, "<");
+      vftr_print_stack(fp, stacktree, stacktree.stacks[stackid].caller);
+   }
+}
+
+void vftr_print_stacklist(FILE *fp, stacktree_t stacktree) {
+   for (int istack=0; istack<stacktree.nstacks; istack++) {
+      fprintf(fp, "%u: ", istack);
+      vftr_print_stack(fp, stacktree, istack);
+      fprintf(fp, "\n");
+   }
 }
