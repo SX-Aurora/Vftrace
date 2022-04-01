@@ -1,9 +1,8 @@
-#ifdef _DEBUG
 #include <stdlib.h>
-#include <string.h>
-#endif
-#include <time.h>
 #include <stdio.h>
+
+#include <time.h>
+#include <string.h>
 
 #include "timer_types.h"
 
@@ -19,14 +18,7 @@ reftime_t vftr_reference_time = {
 // CLOCK_MONOTONIC is not affected by NTP or system time changes.
 struct timespec vftr_get_timestamp() {
    struct timespec timestamp;
-#ifdef _DEBUG
-   int error = clock_gettime(CLOCK_MONOTONIC, &timestamp);
-   if (error) {
-      perror("Vftrace (vftr_get_timestamp)");
-   }
-#else
    clock_gettime(CLOCK_MONOTONIC, &timestamp);
-#endif
    return timestamp;
 }
 
@@ -105,10 +97,8 @@ void vftr_timestrings_free(time_strings_t *timestrings) {
    }
 }
 
-#ifdef _DEBUG
 void vftr_print_date_str(FILE *fp) {
    char *timestr = vftr_get_date_str();
    fprintf(fp, "%s", timestr);
    free(timestr);
 }
-#endif

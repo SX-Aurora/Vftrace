@@ -1,7 +1,5 @@
 #include <stdlib.h>
-#ifdef _DEBUG
 #include <stdio.h>
-#endif
 
 #include "realloc_consts.h"
 #include "thread_types.h"
@@ -103,7 +101,6 @@ threadstack_t *vftr_update_threadstack(threadstack_t *my_threadstack,
    return vftr_get_my_threadstack(my_thread);
 }
 
-#ifdef _DEBUG
 void vftr_print_threadstack(FILE *fp, threadstacklist_t stacklist) {
    if (stacklist.nstacks == 0) {
       fprintf(fp, "None");
@@ -120,4 +117,3 @@ void vftr_print_threadstack(FILE *fp, threadstacklist_t stacklist) {
       }
    }
 }
-#endif

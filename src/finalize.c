@@ -1,7 +1,3 @@
-#ifdef _DEBUG
-#include <stdio.h>
-#endif
-
 #include "off_hooks.h"
 #include "cyghooks.h"
 #include "vftr_hooks.h"
@@ -20,11 +16,6 @@ void vftr_finalize() {
    // set end timer string
    long long int runtime = vftr_get_runtime_usec();
    vftrace.timestrings.end_time = vftr_get_date_str();
-#ifdef _DEBUG
-   fprintf(stderr, "Vftrace finalized at ");
-   vftr_print_date_str(stderr);
-   fprintf(stderr, "\n");
-#endif
 
    // finalize stacks
    vftr_finalize_stacktree(&(vftrace.process.stacktree));
@@ -42,9 +33,6 @@ void vftr_finalize() {
 
 
    // free the dynamic process data
-#ifdef _DEBUG
-   vftr_print_stacktree(stderr, vftrace.process.stacktree);
-#endif
    vftr_process_free(&vftrace.process);
 
    // free the symbol table

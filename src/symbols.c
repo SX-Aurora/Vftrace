@@ -103,9 +103,6 @@ librarylist_t vftr_read_library_maps() {
    }
    free(lineptr);
    fclose(fmap);
-#ifdef _DEBUG
-   vftr_print_library_list(stderr, librarylist);
-#endif
    return librarylist;
 }
 
@@ -160,9 +157,6 @@ symboltable_t vftr_read_symbols() {
                                                       ElfHeader,
                                                       ElfSectionHeader);
       if (strtabidx == -1) {
-#ifdef _DEBUG
-         fprintf(stderr, "No symbol string table in %s\n", librarylist.libraries[ilib].path);
-#endif
          free(ElfSectionHeader);
          free(header_strtab);
          fclose(fp);
@@ -174,9 +168,6 @@ symboltable_t vftr_read_symbols() {
                                                       ElfHeader,
                                                       ElfSectionHeader);
       if (symtabidx == -1) {
-#ifdef _DEBUG
-         fprintf(stderr, "No symbol table in %s\n", librarylist.libraries[ilib].path);
-#endif
          free(ElfSectionHeader);
          free(header_strtab);
          free(stringtab);
@@ -234,10 +225,6 @@ symboltable_t vftr_read_symbols() {
                               symboltable.symbols);
 
    vftr_free_librarylist(&librarylist);
-#ifdef _DEBUG
-   fprintf(stderr, "Elf-Symboltable:\n");
-   vftr_print_symbol_table(stderr, symboltable);
-#endif
    return symboltable;
 }
 

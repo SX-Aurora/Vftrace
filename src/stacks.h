@@ -2,9 +2,7 @@
 #define STACKS_H
 
 #include <stdbool.h>
-#ifdef _DEBUG
 #include <stdio.h>
-#endif
 
 #include "custom_types.h"
 #include "symbol_types.h"

@@ -1,9 +1,7 @@
 #ifndef TIMER_H
 #define TIMER_H
 
-#ifdef _DEBUG
 #include <stdio.h>
-#endif
 
 #include "timer_types.h"
 
@@ -22,8 +20,6 @@ char *vftr_get_date_str();
 
 void vftr_timestrings_free(time_strings_t *timestrings);
 
-#ifdef _DEBUG
 void vftr_print_date_str(FILE *fp);
-#endif
 
 #endif

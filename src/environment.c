@@ -263,11 +263,6 @@ environment_t vftr_read_environment() {
    environment.nenv_vars = 37;
    environment.valid = true;
 
-#if _DEBUG
-   fprintf(stderr, "Vftrace-Environment:\n");
-   vftr_print_env(stderr, environment);
-#endif
-
    return environment;
 }
 

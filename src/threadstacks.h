@@ -1,9 +1,7 @@
 #ifndef THREADSTACKS_H
 #define THREADSTACKS_H
 
-#ifdef _DEBUG
 #include <stdio.h>
-#endif
 
 #include "thread_types.h"
 #include "threadstack_types.h"
@@ -29,8 +27,6 @@ threadstack_t *vftr_update_threadstack(threadstack_t *my_threadstack,
                                        uintptr_t func_addr,
                                        vftrace_t *vftrace);
 
-#ifdef _DEBUG
 void vftr_print_threadstack(FILE *fp, threadstacklist_t stacklist);
-#endif
 
 #endif

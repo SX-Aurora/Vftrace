@@ -1,8 +1,5 @@
 #include <stdlib.h>
 #include <stdbool.h>
-#ifdef _DEBUG
-#include <stdio.h>
-#endif
 
 #include "realloc_consts.h"
 #include "stacks.h"
