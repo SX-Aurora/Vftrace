@@ -43,22 +43,34 @@ if USES_NEC_COMPILER
   AM_CFLAGS += -fopenmp
 endif
 endif
+check_PROGRAMS = 
+check_PROGRAMS += radixsort_uint64 \
+		  sort_integer_ascending \
+		  sort_integer_descending \
+		  sort_double_ascending \
+		  sort_double_descending \
+		  sort_double_copy_ascending \
+		  sort_double_copy_descending
 
-check_PROGRAMS = radixsort_uint64 \
-		 sort_integer_ascending \
-		 sort_integer_descending \
-		 sort_double_ascending \
-		 sort_double_descending \
-		 sort_double_copy_ascending \
-		 sort_double_copy_descending \
-		 hashing \
-		 stackhashing \
-		 symbols_1 \
-		 environment_1 \
-		 environment_2 \
-		 filewrite_1 \
-		 stacktree \
-		 stacklist
+check_PROGRAMS += symbols_1
+check_PROGRAMS += environment_1 \
+		  environment_2
+check_PROGRAMS += hashing \
+		  stackhashing \
+		  collatehashes
+if WITH_MPI
+check_PROGRAMS += collatehashes_parallel
+endif
+check_PROGRAMS += stacktree \
+		  stacklist
+if WITH_MPI
+check_PROGRAMS += stacktree_parallel_1 \
+		  stacktree_parallel_2_1 \
+		  stacktree_parallel_2_2
+endif
+
+
+check_PROGRAMS += filewrite_1
 #
 #                 scenario_1 \
 #                 scenario_2 \
@@ -69,10 +81,7 @@ check_PROGRAMS = radixsort_uint64 \
 #		 no_instrument_attribute
 
 if WITH_MPI
-check_PROGRAMS += stacktree_parallel_1 \
-		  stacktree_parallel_2_1 \
-		  stacktree_parallel_2_2 \
-		  no_mpi_init_C
+check_PROGRAMS += no_mpi_init_C
 if ENABLE_FORTRAN
 check_PROGRAMS += no_mpi_init_F
 endif
@@ -112,15 +121,6 @@ sort_double_copy_descending_SOURCES = $(srcdir)/sort_double_copy_descending.c
 sort_double_copy_descending_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
 sort_double_copy_descending_LDFLAGS = $(AM_LDFLAGS)
 
-hashing_SOURCES = $(srcdir)/hashing.c
-hashing_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
-hashing_LDFLAGS = $(AM_LDFLAGS)
-
-stackhashing_SOURCES = $(srcdir)/stackhashing.c \
-		       $(srcdir)/dummysymboltable.c 
-stackhashing_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
-stackhashing_LDFLAGS = $(AM_LDFLAGS)
-
 symbols_1_SOURCES = $(srcdir)/symbols_1.c \
 		    $(srcdir)/protofuncts.c
 symbols_1_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
@@ -134,6 +134,27 @@ environment_2_SOURCES = $(srcdir)/environment_2.c
 environment_2_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
 environment_2_LDFLAGS = $(AM_LDFLAGS)
 
+hashing_SOURCES = $(srcdir)/hashing.c
+hashing_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
+hashing_LDFLAGS = $(AM_LDFLAGS)
+
+stackhashing_SOURCES = $(srcdir)/stackhashing.c \
+		       $(srcdir)/dummysymboltable.c 
+stackhashing_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
+stackhashing_LDFLAGS = $(AM_LDFLAGS)
+
+collatehashes_SOURCES = $(srcdir)/collatehashes.c \
+		       $(srcdir)/dummysymboltable.c 
+collatehashes_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
+collatehashes_LDFLAGS = $(AM_LDFLAGS)
+
+if WITH_MPI
+collatehashes_parallel_SOURCES = $(srcdir)/collatehashes_parallel.c \
+				 $(srcdir)/dummysymboltable.c 
+collatehashes_parallel_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
+collatehashes_parallel_LDFLAGS = $(AM_LDFLAGS)
+endif
+
 filewrite_1_SOURCES = $(srcdir)/filewrite_1.c
 filewrite_1_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
 filewrite_1_LDFLAGS = $(AM_LDFLAGS)
@@ -142,6 +163,11 @@ stacktree_SOURCES = $(srcdir)/stacktree.c \
 		    $(srcdir)/dummysymboltable.c
 stacktree_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
 stacktree_LDFLAGS = $(AM_LDFLAGS)
+
+stacklist_SOURCES = $(srcdir)/stacklist.c \
+		    $(srcdir)/dummysymboltable.c
+stacklist_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
+stacklist_LDFLAGS = $(AM_LDFLAGS)
 
 if WITH_MPI
 stacktree_parallel_1_SOURCES = $(srcdir)/stacktree_parallel_1.c \
@@ -160,10 +186,6 @@ stacktree_parallel_2_2_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
 stacktree_parallel_2_2_LDFLAGS = $(AM_LDFLAGS)
 endif
 
-stacklist_SOURCES = $(srcdir)/stacklist.c \
-		    $(srcdir)/dummysymboltable.c
-stacklist_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
-stacklist_LDFLAGS = $(AM_LDFLAGS)
 
 #scenario_1_SOURCES = $(srcdir)/scenario_1.c
 #scenario_1_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src -I$(top_srcdir)/external/tinyexpr
@@ -213,27 +235,37 @@ endif
 #endif
 #endif
 
-dist_check_SCRIPTS = radixsort_uint64.sh \
+dist_check_SCRIPTS =
+dist_check_SCRIPTS += radixsort_uint64.sh \
 		      sort_integer_ascending.sh \
 		      sort_integer_descending.sh \
 		      sort_double_ascending.sh \
 		      sort_double_descending.sh \
 		      sort_double_copy_ascending.sh \
-		      sort_double_copy_descending.sh \
-		      hashing.sh \
+		      sort_double_copy_descending.sh
+dist_check_SCRIPTS += symbols_1.sh
+dist_check_SCRIPTS += environment_1.sh \
+		      environment_2.sh
+dist_check_SCRIPTS += hashing.sh \
 		      stackhashing.sh \
-                      symbols_1.sh \
-                      environment_1.sh \
-                      environment_2.sh \
-                      filewrite_1.sh \
-                      stacktree.sh \
-                      stacklist.sh \
-                      scenario_1.sh \
-                      scenario_2.sh \
-                      scenario_3.sh \
-                      stacks_1.sh \
-                      browse_1.sh \
-		      no_instrument_attribute.sh
+		      collatehashes.sh
+if WITH_MPI
+dist_check_SCRIPTS += collatehashes_parallel.sh
+endif
+dist_check_SCRIPTS += stacktree.sh \
+		      stacklist.sh
+if WITH_MPI
+dist_check_SCRIPTS += stacktree_parallel_1.sh \
+		      stacktree_parallel_2.sh
+
+endif
+dist_check_SCRIPTS += filewrite_1.sh
+#		     scenario_1.sh \
+#		     scenario_2.sh \
+#		     scenario_3.sh \
+#		     stacks_1.sh \
+#		     browse_1.sh \
+#		     no_instrument_attribute.sh
 
 if ENABLE_HWC
 if ON_VECTOR_ENGINE
@@ -242,9 +274,7 @@ endif
 endif
 
 if WITH_MPI
-dist_check_SCRIPTS += stacktree_parallel_1.sh \
-		      stacktree_parallel_2.sh \
-		      no_mpi_init_C.sh
+dist_check_SCRIPTS += no_mpi_init_C.sh
 if ENABLE_FORTRAN
 dist_check_SCRIPTS += no_mpi_init_F.sh
 endif
