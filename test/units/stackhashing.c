@@ -46,7 +46,7 @@ int main(int argc, char **argv) {
    int func7_idx = vftr_new_stack(func6_idx, &stacktree, symboltable, function,
                                   addrs+5, false);
 
-   vftr_compute_stack_hashes(stacktree.nstacks, stacktree.stacks);
+   vftr_compute_stack_hashes(&stacktree);
    for (int istack=0; istack<stacktree.nstacks; istack++) {
       printf("%d: %016lx\n", istack, stacktree.stacks[istack].hash);
    }

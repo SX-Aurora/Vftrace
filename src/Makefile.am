@@ -44,6 +44,8 @@ libvftrace_la_SOURCES += vftrace_state.c \
 			 initialize.c \
 			 finalize.c \
 			 stacks.c \
+			 collate_stacks.c \
+			 collate_hashes.c \
 			 processes.c \
 			 threads.c \
 			 threadstacks.c \

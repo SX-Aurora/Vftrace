@@ -7,6 +7,7 @@
 #include "symbols.h"
 #include "hashing.h"
 #include "search.h"
+#include "collate_stacks.h"
 
 void vftr_stacktree_realloc(stacktree_t *stacktree_ptr) {
    stacktree_t stacktree = *stacktree_ptr;
@@ -109,6 +110,8 @@ stacktree_t vftr_new_stacktree() {
    stacktree.nstacks = 1;
    vftr_stacktree_realloc(&stacktree);
    stacktree.stacks[0] = vftr_first_stack();
+   stacktree.ncollated_stacks = 0;
+   stacktree.collated_stacks = NULL;
    return stacktree;
 }
 
@@ -120,6 +123,8 @@ void vftr_stacktree_free(stacktree_t *stacktree_ptr) {
       stacktree.stacks = NULL;
       stacktree.nstacks = 0;
       stacktree.maxstacks = 0;
+      vftr_collated_stacktree_free(&(stacktree.ncollated_stacks),
+                                   &(stacktree.collated_stacks));
    }
    *stacktree_ptr = stacktree;
 }
@@ -130,9 +135,9 @@ void vftr_finalize_stacktree(stacktree_t *stacktree_ptr) {
    vftr_update_stacks_exclusive_time(stacktree_ptr->nstacks,
                                      stacktree_ptr->stacks);
 
-   // compute stack hashes for normalization
-   vftr_compute_stack_hashes(stacktree_ptr->nstacks,
-                             stacktree_ptr->stacks);
+   // collate stacks among all processes
+   // to get a global ordering of stacks
+   vftr_collate_stacks(stacktree_ptr);
 }
 
 void vftr_print_stack_branch(FILE *fp, int level, stacktree_t stacktree, int stackid) {

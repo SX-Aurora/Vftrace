@@ -7,6 +7,7 @@
 #include "symbols.h"
 #include "stack_types.h"
 #include "stacks.h"
+#include "collate_stacks.h"
 
 #include "dummysymboltable.h"
 #include <mpi.h>
@@ -65,6 +66,8 @@ int main(int argc, char **argv) {
       int func7_idx = vftr_new_stack(func3_idx, &stacktree, symboltable, function,
                                      addrs+5, false);
    }
+
+   //vftr_collate_stacks
 
    free_dummy_symbol_table(&symboltable);
    vftr_stacktree_free(&stacktree);

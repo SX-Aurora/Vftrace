@@ -6,6 +6,7 @@
 
 #include "custom_types.h"
 #include "profiling_types.h"
+#include "collated_stack_types.h"
 
 typedef enum {
    init,
@@ -42,6 +43,8 @@ typedef struct {
    int nstacks;
    int maxstacks;
    stack_t *stacks;
+   int ncollated_stacks;
+   collated_stack_t *collated_stacks;
 } stacktree_t;
 
 #endif
