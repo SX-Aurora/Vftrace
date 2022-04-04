@@ -80,7 +80,9 @@ uint64_t vftr_jenkins_murmur_64_hash(size_t length, const uint8_t* key) {
    return hash;
 }
 
-void vftr_compute_stack_hashes(int nstacks, stack_t *stacks) {
+void vftr_compute_stack_hashes(stacktree_t *stacktree_ptr) {
+   int nstacks = stacktree_ptr->nstacks;
+   stack_t *stacks = stacktree_ptr->stacks;
    int bufferlen = 128;
    char *buffer = (char*) malloc(bufferlen*sizeof(char));
    for (int istack=0; istack<nstacks; istack++) {
@@ -118,23 +120,3 @@ void vftr_compute_stack_hashes(int nstacks, stack_t *stacks) {
    }
    free(buffer);
 }
-
-void vftr_remove_multiple_hashes(int *n, uint64_t *hashlist) {
-   // first sort the list
-   vftr_radixsort_uint64(*n, hashlist);
-
-   // loop over the list
-   int j = 0;
-   for (int i=1; i<*n; i++) {
-      // if a duplicate is encountered skip it
-      if (hashlist[i] != hashlist[j]) {
-         j++;
-         hashlist[j] = hashlist[i];
-      }
-   }
-   *n=j+1;
-
-   return;
-}
-
-
