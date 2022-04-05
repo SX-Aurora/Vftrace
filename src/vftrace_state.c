@@ -34,8 +34,13 @@ vftrace_t vftrace = {
       .processID = 0,
       .stacktree = {
          .nstacks = 0,
+         .maxstacks = 0,
          .stacks = NULL
       },
+      .collated_stacktree = {
+         .nstacks = 0,
+         .stacks = 0
+      }
    },
    .state = undefined,
    .sampling = {

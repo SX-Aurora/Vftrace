@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
+#include "stack_types.h"
 #include "realloc_consts.h"
 #include "stacks.h"
 #include "profiling.h"
@@ -110,8 +111,6 @@ stacktree_t vftr_new_stacktree() {
    stacktree.nstacks = 1;
    vftr_stacktree_realloc(&stacktree);
    stacktree.stacks[0] = vftr_first_stack();
-   stacktree.ncollated_stacks = 0;
-   stacktree.collated_stacks = NULL;
    return stacktree;
 }
 
@@ -123,8 +122,6 @@ void vftr_stacktree_free(stacktree_t *stacktree_ptr) {
       stacktree.stacks = NULL;
       stacktree.nstacks = 0;
       stacktree.maxstacks = 0;
-      vftr_collated_stacktree_free(&(stacktree.ncollated_stacks),
-                                   &(stacktree.collated_stacks));
    }
    *stacktree_ptr = stacktree;
 }
@@ -174,7 +171,7 @@ void vftr_print_stack(FILE *fp, stacktree_t stacktree, int stackid) {
 
 void vftr_print_stacklist(FILE *fp, stacktree_t stacktree) {
    for (int istack=0; istack<stacktree.nstacks; istack++) {
-      fprintf(fp, "%u: ", istack);
+      fprintf(fp, "%d: ", istack);
       vftr_print_stack(fp, stacktree, istack);
       fprintf(fp, "\n");
    }

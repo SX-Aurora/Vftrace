@@ -7,6 +7,8 @@
 #include "symbols.h"
 #include "stack_types.h"
 #include "stacks.h"
+#include "collated_stack_types.h"
+#include "collate_stacks.h"
 
 #include "dummysymboltable.h"
 #include <mpi.h>
@@ -50,8 +52,10 @@ int main(int argc, char **argv) {
    int func7_idx = vftr_new_stack(func3_idx, &stacktree, symboltable, function,
                                   addrs+5, false);
 
+   collated_stacktree_t collated_stacktree = vftr_collate_stacks(&stacktree);
    free_dummy_symbol_table(&symboltable);
    vftr_stacktree_free(&stacktree);
+   vftr_collated_stacktree_free(&collated_stacktree);
    vftr_environment_free(&environment);
 
    PMPI_Finalize();

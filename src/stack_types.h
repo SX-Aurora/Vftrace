@@ -6,7 +6,6 @@
 
 #include "custom_types.h"
 #include "profiling_types.h"
-#include "collated_stack_types.h"
 
 typedef enum {
    init,
@@ -29,6 +28,8 @@ typedef struct {
    int *callees;
    // local stack ID
    int lid;
+   // global stack ID
+   int gid;
    // name of function on top of stack
    // only a pointer to the symbol table entry 
    // no need to deallocate
@@ -43,8 +44,6 @@ typedef struct {
    int nstacks;
    int maxstacks;
    stack_t *stacks;
-   int ncollated_stacks;
-   collated_stack_t *collated_stacks;
 } stacktree_t;
 
 #endif

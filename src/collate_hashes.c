@@ -142,3 +142,11 @@ hashlist_t vftr_collate_hashes(stacktree_t *stacktree_ptr) {
 
    return stackhashes;
 }
+
+void vftr_collated_hashlist_free(hashlist_t *hashlist) {
+   if (hashlist->nhashes > 0) {
+      free(hashlist->hashes);
+      hashlist->hashes = NULL;
+      hashlist->nhashes = 0;
+   }
+}

@@ -7,6 +7,7 @@
 #include "symbols.h"
 #include "stack_types.h"
 #include "stacks.h"
+#include "collated_stack_types.h"
 #include "collate_stacks.h"
 
 #include "dummysymboltable.h"
@@ -67,10 +68,14 @@ int main(int argc, char **argv) {
                                      addrs+5, false);
    }
 
-   //vftr_collate_stacks
+   collated_stacktree_t collated_stacktree = vftr_collate_stacks(&stacktree);
+   if (myrank == 0) {
+      vftr_print_collated_stacklist(stdout, collated_stacktree);
+   }
 
    free_dummy_symbol_table(&symboltable);
    vftr_stacktree_free(&stacktree);
+   vftr_collated_stacktree_free(&collated_stacktree);
    vftr_environment_free(&environment);
 
    PMPI_Finalize();
