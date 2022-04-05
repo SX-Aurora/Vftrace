@@ -1,14 +1,14 @@
 #include <stdlib.h>
 #include <stdio.h>
-#include <stdint.h>
 
+#include "environment_types.h"
+#include "environment.h"
 #include "symbol_types.h"
 #include "symbols.h"
 #include "stack_types.h"
 #include "stacks.h"
-#include "hashing.h"
-#include "collated_hash_types.h"
-#include "collate_hashes.h"
+#include "collated_stack_types.h"
+#include "collate_stacks.h"
 
 #include "dummysymboltable.h"
 
@@ -44,16 +44,13 @@ int main(int argc, char **argv) {
                                   addrs+4, false);
    int func7_idx = vftr_new_stack(func6_idx, &stacktree, symboltable, function,
                                   addrs+5, false);
-   vftr_compute_stack_hashes(&stacktree);
-   hashlist_t hashlist = vftr_collate_hashes(&stacktree);
 
-   for (int istack=0; istack<hashlist.nhashes; istack++) {
-      printf("%d: %016lx\n", istack, hashlist.hashes[istack]);
-   }
+   collated_stacktree_t collated_stacktree = vftr_collate_stacks(&stacktree);
+   vftr_print_collated_stacklist(stdout, collated_stacktree);
 
-   free(hashlist.hashes);
    free_dummy_symbol_table(&symboltable);
    vftr_stacktree_free(&stacktree);
+   vftr_collated_stacktree_free(&collated_stacktree);
 
 #ifdef _MPI
    PMPI_Finalize();

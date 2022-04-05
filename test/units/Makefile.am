@@ -61,13 +61,14 @@ check_PROGRAMS += hashing \
 if WITH_MPI
 check_PROGRAMS += collatehashes_parallel
 endif
+check_PROGRAMS += collatestacks
+if WITH_MPI
+check_PROGRAMS += collatestacks_parallel_1 \
+		  collatestacks_parallel_2_1 \
+		  collatestacks_parallel_2_2
+endif
 check_PROGRAMS += stacktree \
 		  stacklist
-if WITH_MPI
-check_PROGRAMS += collatestacks_1 \
-		  collatestacks_2_1 \
-		  collatestacks_2_2
-endif
 
 
 check_PROGRAMS += filewrite_1
@@ -155,6 +156,28 @@ collatehashes_parallel_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
 collatehashes_parallel_LDFLAGS = $(AM_LDFLAGS)
 endif
 
+collatestacks_SOURCES = $(srcdir)/collatestacks.c \
+			$(srcdir)/dummysymboltable.c
+collatestacks_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
+collatestacks_LDFLAGS = $(AM_LDFLAGS)
+
+if WITH_MPI
+collatestacks_parallel_1_SOURCES = $(srcdir)/collatestacks_parallel_1.c \
+			       $(srcdir)/dummysymboltable.c
+collatestacks_parallel_1_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
+collatestacks_parallel_1_LDFLAGS = $(AM_LDFLAGS)
+
+collatestacks_parallel_2_1_SOURCES = $(srcdir)/collatestacks_parallel_2_1.c \
+				 $(srcdir)/dummysymboltable.c
+collatestacks_parallel_2_1_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
+collatestacks_parallel_2_1_LDFLAGS = $(AM_LDFLAGS)
+
+collatestacks_parallel_2_2_SOURCES = $(srcdir)/collatestacks_parallel_2_2.c \
+				 $(srcdir)/dummysymboltable.c
+collatestacks_parallel_2_2_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
+collatestacks_parallel_2_2_LDFLAGS = $(AM_LDFLAGS)
+endif
+
 filewrite_1_SOURCES = $(srcdir)/filewrite_1.c
 filewrite_1_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
 filewrite_1_LDFLAGS = $(AM_LDFLAGS)
@@ -168,24 +191,6 @@ stacklist_SOURCES = $(srcdir)/stacklist.c \
 		    $(srcdir)/dummysymboltable.c
 stacklist_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
 stacklist_LDFLAGS = $(AM_LDFLAGS)
-
-if WITH_MPI
-collatestacks_1_SOURCES = $(srcdir)/collatestacks_1.c \
-			       $(srcdir)/dummysymboltable.c
-collatestacks_1_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
-collatestacks_1_LDFLAGS = $(AM_LDFLAGS)
-
-collatestacks_2_1_SOURCES = $(srcdir)/collatestacks_2_1.c \
-				 $(srcdir)/dummysymboltable.c
-collatestacks_2_1_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
-collatestacks_2_1_LDFLAGS = $(AM_LDFLAGS)
-
-collatestacks_2_2_SOURCES = $(srcdir)/collatestacks_2_2.c \
-				 $(srcdir)/dummysymboltable.c
-collatestacks_2_2_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
-collatestacks_2_2_LDFLAGS = $(AM_LDFLAGS)
-endif
-
 
 #scenario_1_SOURCES = $(srcdir)/scenario_1.c
 #scenario_1_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src -I$(top_srcdir)/external/tinyexpr
@@ -252,12 +257,13 @@ dist_check_SCRIPTS += hashing.sh \
 if WITH_MPI
 dist_check_SCRIPTS += collatehashes_parallel.sh
 endif
+dist_check_SCRIPTS += collatestacks.sh
+if WITH_MPI
+dist_check_SCRIPTS += collatestacks_parallel_1.sh \
+		      collatestacks_parallel_2.sh
+
 dist_check_SCRIPTS += stacktree.sh \
 		      stacklist.sh
-if WITH_MPI
-dist_check_SCRIPTS += collatestacks_1.sh \
-		      collatestacks_2.sh
-
 endif
 dist_check_SCRIPTS += filewrite_1.sh
 #		     scenario_1.sh \
