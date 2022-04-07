@@ -808,8 +808,8 @@ void vftr_set_proftab_column_formats (function_t **func_table,
         if (vftr_environment.show_stacks_in_profile->value) {
            vftr_prof_column_init ("Stack", NULL, 0, COL_CHAR_LEFT, SEP_MID, &(columns)[i_column++]);
         }
-        vftr_prof_column_init ("GPU Compute", NULL, 0, COL_DOUBLE, SEP_MID, &(columns)[i_column++]);
-        vftr_prof_column_init ("GPU Memcpy", NULL, 0, COL_DOUBLE, SEP_MID, &(columns)[i_column++]);
+        vftr_prof_column_init ("GPU Compute", NULL, 3, COL_DOUBLE, SEP_MID, &(columns)[i_column++]);
+        vftr_prof_column_init ("GPU Memcpy", NULL, 3, COL_DOUBLE, SEP_MID, &(columns)[i_column++]);
         vftr_prof_column_init ("Remarks", NULL, 0, COL_CHAR_RIGHT, SEP_LAST, &(columns)[i_column++]);
         int stat;
         long long t_sum = 0;
@@ -885,6 +885,9 @@ void vftr_set_proftab_column_formats (function_t **func_table,
                total_cuda_time_memcpy += (double)cuda_trace->t_acc_memcpy;
                cuda_trace = cuda_trace->next;
             }
+            // Convert ns -> s
+            total_cuda_time_compute /= 1e9;
+            total_cuda_time_memcpy /= 1e9;
             vftr_prof_column_set_n_chars (&total_cuda_time_compute, NULL, NULL, &(columns)[i_column++], &stat);
             vftr_prof_column_set_n_chars (&total_cuda_time_memcpy, NULL, NULL, &(columns)[i_column++], &stat);
 	}
@@ -1649,7 +1652,9 @@ void vftr_print_profile_line (FILE *fp_log, function_t *func, long long runtime_
       total_cuda_time_memcpy += (double)cuda_trace->t_acc_memcpy;
       cuda_trace = cuda_trace->next;
    }
-   //printf ("total_cuda_time: %lf\n", total_cuda_time);
+   // Convert ns -> s
+   total_cuda_time_compute /= 1e9;
+   total_cuda_time_memcpy /= 1e9;
    vftr_prof_column_print (fp_log, prof_columns[i_column++], &total_cuda_time_compute, NULL, NULL);
    vftr_prof_column_print (fp_log, prof_columns[i_column++], &total_cuda_time_memcpy, NULL, NULL);
    vftr_prof_column_print (fp_log, prof_columns[i_column++], vftr_get_remark_indices (remarks), NULL, NULL);
