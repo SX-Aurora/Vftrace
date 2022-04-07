@@ -321,9 +321,6 @@ void vftr_finalize() {
 
     long long finalize_time = vftr_get_runtime_usec();
 
-    //RuntimeApiTrace_t *cuda_traces; 
-    //vftr_cuda_flush_trace (&cuda_traces);
-    //displayTimestamps (cuda_traces);
     final_vftr_cuda();
 
     vftr_timer_end = true;

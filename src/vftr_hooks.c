@@ -48,27 +48,27 @@ bool vftr_profile_wanted = false;
 /**********************************************************************/
 
 void vftr_flush_cuda_events_to_func (function_t *func) {
-    RuntimeApiTrace_t *cuda_traces;
+    cupti_trace_t *cuda_traces;
     vftr_cuda_flush_trace (&cuda_traces);
     if (cuda_traces != NULL) {
       if (func->cuda_traces == NULL) {
          func->cuda_traces = cuda_traces; 
       } else {
-         RuntimeApiTrace_t *t1 = cuda_traces;
+         cupti_trace_t *t1 = cuda_traces;
          while (t1 != NULL) {
-            RuntimeApiTrace_t *t2 = func->cuda_traces;
+            cupti_trace_t *t2 = func->cuda_traces;
             while (true) {
                // The function obtained from vftr_cuda has not been registered for this function yet.
                if (t2 == NULL) {
-                  t2->next = (RuntimeApiTrace_t*) malloc (sizeof(RuntimeApiTrace_t));
+                  t2->next = (cupti_trace_t*) malloc (sizeof(cupti_trace_t));
                   t2 = t2->next;
-                  t2->functionName = t1->functionName;
+                  t2->func_name = t1->func_name;
                   t2->t_acc_compute = t1->t_acc_compute;
                   t2->t_acc_memcpy = t1->t_acc_memcpy;
                   t2->n_calls = t1->n_calls; 
                   break;
                }
-               if (!strcmp (t1->functionName, t2->functionName)) {
+               if (!strcmp (t1->func_name, t2->func_name)) {
                   t2->t_acc_compute += t1->t_acc_compute;
                   t2->t_acc_memcpy += t1->t_acc_memcpy;
                   t2->n_calls += t1->n_calls;
@@ -291,39 +291,6 @@ void vftr_function_exit () {
     func  = vftr_fstack;
 
     vftr_flush_cuda_events_to_func (func);
-    //RuntimeApiTrace_t *cuda_traces;
-    //vftr_cuda_flush_trace (&cuda_traces);
-    //if (cuda_traces != NULL) {
-    //  if (func->cuda_traces == NULL) {
-    //     func->cuda_traces = cuda_traces; 
-    //  } else {
-    //     RuntimeApiTrace_t *t1 = cuda_traces;
-    //     while (t1 != NULL) {
-    //        RuntimeApiTrace_t *t2 = func->cuda_traces;
-    //        while (true) {
-    //           // The function obtained from vftr_cuda has not been registered for this function yet.
-    //           if (t2 == NULL) {
-    //              t2->next = (RuntimeApiTrace_t*) malloc (sizeof(RuntimeApiTrace_t));
-    //              t2 = t2->next;
-    //              t2->functionName = t1->functionName;
-    //              t2->acc_time = t1->acc_time;
-    //              t2->n_calls = t1->n_calls; 
-    //              break;
-    //           }
-    //           if (!strcmp (t1->functionName, t2->functionName)) {
-    //              t2->acc_time += t1->acc_time;
-    //              t2->n_calls += t1->n_calls;
-    //              break;
-    //           } 
-    //           t2 = t2->next;
-    //        }      
-    //        t1 = t1->next;
-    //     }
-    //     free(cuda_traces);
-    //  }
-    //} else {
-    //  //printf ("func: %s - no CUDA events\n", func->name);
-    //}
 
     prof_current = &func->prof_current;
     prof_current->time_incl += func_exit_time;   /* Inclusive time */

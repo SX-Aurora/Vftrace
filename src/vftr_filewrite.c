@@ -879,7 +879,7 @@ void vftr_set_proftab_column_formats (function_t **func_table,
 	    }
             double total_cuda_time_compute = 0.0;
             double total_cuda_time_memcpy = 0.0;
-            RuntimeApiTrace_t *cuda_trace = func_table[i_func]->cuda_traces;
+            cupti_trace_t *cuda_trace = func_table[i_func]->cuda_traces;
             while (cuda_trace != NULL) {
                total_cuda_time_compute += (double)cuda_trace->t_acc_compute;
                total_cuda_time_memcpy += (double)cuda_trace->t_acc_memcpy;
@@ -1641,7 +1641,7 @@ void vftr_print_profile_line (FILE *fp_log, function_t *func, long long runtime_
    if (vftr_environment.show_stacks_in_profile->value) {
       vftr_prof_column_print (fp_log, prof_columns[i_column++], vftr_global_stack_strings[global_stack_id].s, NULL, NULL);
    }
-   RuntimeApiTrace_t *cuda_trace = func->cuda_traces;
+   cupti_trace_t *cuda_trace = func->cuda_traces;
    double total_cuda_time_compute = 0.0;
    double total_cuda_time_memcpy = 0.0;
    while (cuda_trace != NULL) {
