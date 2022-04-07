@@ -50,7 +50,8 @@ libvftrace_la_SOURCES = vftr_scenarios.c \
 	 	       vftr_environment.c \
 		       vftr_signals.c \
 		       vftr_browse.c \
-                       vftr_mallinfo.c
+                       vftr_mallinfo.c \
+                       vftr_cuda.c
 
 if ENABLE_FORTRAN
 libvftrace_la_SOURCES += vftrace_mod.F90
@@ -112,6 +113,9 @@ libvftrace_la_FCFLAGS += -fopenmp
 endif
 
 endif
+
+#libvftrace_la_LDFLAGS += "-L/home/cweiss/Vftrace/src/cuda -L/usr/local/cuda-11.2/lib64 -lvftr_cuda -lcupti_static -lcudart -lpthread -lrt -ldl" 
+libvftrace_la_LDFLAGS += "-L/usr/local/cuda-11.2/lib64 -lcupti" 
 
 libvftr_dlopen_la_SOURCES = vftr_dlopen.c
 

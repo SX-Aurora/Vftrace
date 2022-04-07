@@ -808,6 +808,8 @@ void vftr_set_proftab_column_formats (function_t **func_table,
         if (vftr_environment.show_stacks_in_profile->value) {
            vftr_prof_column_init ("Stack", NULL, 0, COL_CHAR_LEFT, SEP_MID, &(columns)[i_column++]);
         }
+        vftr_prof_column_init ("GPU Compute", NULL, 0, COL_DOUBLE, SEP_MID, &(columns)[i_column++]);
+        vftr_prof_column_init ("GPU Memcpy", NULL, 0, COL_DOUBLE, SEP_MID, &(columns)[i_column++]);
         vftr_prof_column_init ("Remarks", NULL, 0, COL_CHAR_RIGHT, SEP_LAST, &(columns)[i_column++]);
         int stat;
         long long t_sum = 0;
@@ -875,6 +877,16 @@ void vftr_set_proftab_column_formats (function_t **func_table,
             if (vftr_environment.show_stacks_in_profile->value) {
                vftr_prof_column_set_n_chars (vftr_global_stack_strings[global_id].s, NULL, NULL, &(columns)[i_column++], &stat);
 	    }
+            double total_cuda_time_compute = 0.0;
+            double total_cuda_time_memcpy = 0.0;
+            RuntimeApiTrace_t *cuda_trace = func_table[i_func]->cuda_traces;
+            while (cuda_trace != NULL) {
+               total_cuda_time_compute += (double)cuda_trace->t_acc_compute;
+               total_cuda_time_memcpy += (double)cuda_trace->t_acc_memcpy;
+               cuda_trace = cuda_trace->next;
+            }
+            vftr_prof_column_set_n_chars (&total_cuda_time_compute, NULL, NULL, &(columns)[i_column++], &stat);
+            vftr_prof_column_set_n_chars (&total_cuda_time_memcpy, NULL, NULL, &(columns)[i_column++], &stat);
 	}
 	columns[0].n_chars++;
 }
@@ -973,6 +985,7 @@ void vftr_proftab_print_header (FILE *fp, column_t *columns) {
         if (vftr_memtrace) n_columns += 1;
         if (vftr_max_allocated_fields > 0) n_columns += 2;
         if (vftr_environment.show_stacks_in_profile->value) n_columns += 1;
+        n_columns += 2;
       
         for (int i = 0; i < n_columns; i++) {
            vftr_column_print_header (fp, columns[i]);
@@ -1628,6 +1641,17 @@ void vftr_print_profile_line (FILE *fp_log, function_t *func, long long runtime_
    if (vftr_environment.show_stacks_in_profile->value) {
       vftr_prof_column_print (fp_log, prof_columns[i_column++], vftr_global_stack_strings[global_stack_id].s, NULL, NULL);
    }
+   RuntimeApiTrace_t *cuda_trace = func->cuda_traces;
+   double total_cuda_time_compute = 0.0;
+   double total_cuda_time_memcpy = 0.0;
+   while (cuda_trace != NULL) {
+      total_cuda_time_compute += (double)cuda_trace->t_acc_compute;
+      total_cuda_time_memcpy += (double)cuda_trace->t_acc_memcpy;
+      cuda_trace = cuda_trace->next;
+   }
+   //printf ("total_cuda_time: %lf\n", total_cuda_time);
+   vftr_prof_column_print (fp_log, prof_columns[i_column++], &total_cuda_time_compute, NULL, NULL);
+   vftr_prof_column_print (fp_log, prof_columns[i_column++], &total_cuda_time_memcpy, NULL, NULL);
    vftr_prof_column_print (fp_log, prof_columns[i_column++], vftr_get_remark_indices (remarks), NULL, NULL);
    fprintf (fp_log, "\n");
 }
@@ -1668,7 +1692,7 @@ void vftr_print_profile (FILE *fp_log, function_t **sorted_func_table, int n_fun
     int *func_indices = (int *)malloc (n_func_indices * sizeof(int));
     vftr_fill_func_indices_up_to_truncate (sorted_func_table, function_time, func_indices);
 
-    int n_columns = vftr_env_compute_n_columns ();
+    int n_columns = vftr_env_compute_n_columns () + 2;
     column_t *prof_columns = (column_t*) malloc (n_columns * sizeof(column_t));
     vftr_set_proftab_column_formats (sorted_func_table, function_time, prof_times.t_sec[SAMPLING_OVERHEAD],
 				     n_func_indices, func_indices, prof_columns);

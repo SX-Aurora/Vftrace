@@ -43,6 +43,7 @@
 #include "vftr_functions.h"
 #include "vftr_mallinfo.h"
 #include "vftr_allocate.h"
+#include "vftr_cuda.h"
 
 bool vftr_timer_end;
 
@@ -175,6 +176,7 @@ void vftr_initialize() {
     vftr_set_logfile_ranks();
     vftr_set_mpi_summary_ranks();
     vftr_assert_environment ();
+    setup_vftr_cuda();
 
     if (vftr_environment.show_startup->value) {
        vftr_print_startup_message(stdout);
@@ -318,6 +320,11 @@ void vftr_finalize() {
     vftr_set_end_date();
 
     long long finalize_time = vftr_get_runtime_usec();
+
+    //RuntimeApiTrace_t *cuda_traces; 
+    //vftr_cuda_flush_trace (&cuda_traces);
+    //displayTimestamps (cuda_traces);
+    final_vftr_cuda();
 
     vftr_timer_end = true;
 

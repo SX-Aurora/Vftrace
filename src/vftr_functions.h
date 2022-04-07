@@ -6,6 +6,8 @@
 #include <stdint.h>
 #include <stdbool.h>
 
+#include "vftr_cuda.h"
+
 typedef struct memProf {
    long long mem_entry;
    long long mem_exit;
@@ -57,6 +59,7 @@ typedef struct Function {
    uint64_t stackHash;
    long long overhead;
    bool open;
+   RuntimeApiTrace_t *cuda_traces;
 } function_t;
 
 void vftr_find_function_in_table (char *func_name, int **indices, int *n_indices, bool to_lower_case);
