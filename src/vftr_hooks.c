@@ -152,7 +152,7 @@ void vftr_function_entry (const char *s, void *addr, bool isPrecise) {
         return;
     }
 
-    vftr_flush_cuda_events_to_func (caller);
+    if (vftr_n_cuda_devices > 0) vftr_flush_cuda_events_to_func (caller);
 
     //
     // Check if the function is in the table
@@ -289,7 +289,7 @@ void vftr_function_exit () {
     cycles0 = vftr_get_cycles() - vftr_initcycles;
     func  = vftr_fstack;
 
-    vftr_flush_cuda_events_to_func (func);
+    if (vftr_n_cuda_devices > 0) vftr_flush_cuda_events_to_func (func);
 
     prof_current = &func->prof_current;
     prof_current->time_incl += func_exit_time;   /* Inclusive time */
