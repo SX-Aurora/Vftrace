@@ -500,12 +500,12 @@ void vftr_print_gpu_summary (FILE *fp) {
    }
 
    fprintf (fp, "\nCuda summary: \n");
-   fprintf (fp, "%*s | %*s | SID | Compute | Memcpy\n", slen_f_max, "Origin", slen_cuda_max, "CUDA");
+   fprintf (fp, "%*s | %*s | %5s | %10s | %10s\n", slen_f_max, "Origin", slen_cuda_max, "CUDA", "SID", "Compute", "Memcpy");
    for (int i = 0; i < vftr_stackscount; i++) {
        function_t *func = vftr_func_table[i];
        if (func->cuda_events != NULL) {
           function_t *func_orig = vftr_find_origin_of_cuda_function (func);
-          fprintf (fp, "%*s | %*s | %d | %lf | %lf\n", slen_f_max, func_orig->name, slen_cuda_max, func->cuda_events->func_name,
+          fprintf (fp, "%*s | %*s | %5d | %10.2f | %10.2f\n", slen_f_max, func_orig->name, slen_cuda_max, func->cuda_events->func_name,
                   func->gid, func->cuda_events->t_acc_compute, func->cuda_events->t_acc_memcpy);
        }
    }
