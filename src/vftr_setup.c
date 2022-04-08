@@ -392,6 +392,8 @@ void vftr_finalize() {
     if (f_html != NULL) {
        vftr_print_html_profile(f_html, sorted_func_table, n_functions_top, prof_times, n_display_functions, display_functions, vftr_get_runtime_usec());
     }
+
+    vftr_print_gpu_summary (vftr_log);
  
     if (vftr_profile_wanted && vftr_do_stack_normalization) {
         vftr_print_global_stacklist(vftr_log);

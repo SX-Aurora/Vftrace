@@ -469,3 +469,45 @@ double vftr_get_max_memory (function_t *func) {
 }
 
 /**********************************************************************/
+
+function_t *vftr_find_origin_of_cuda_function (function_t *f) {
+   function_t *f_orig = f;
+   while (strstr(f_orig->name, "cudaLaunchKernel") ||
+          strstr(f_orig->name, "_device_stub_") ||
+          !strcmp(f_orig->name, f->cuda_events->func_name)) {
+      f_orig = f_orig->return_to;
+   }
+   return f_orig;
+}
+
+void vftr_print_gpu_summary (FILE *fp) {
+   int n_cuda_events = 0;
+   int slen_f_max = 0;
+   int slen_cuda_max = 0;
+   for (int i = 0; i < vftr_stackscount; i++) {
+      if (vftr_func_table[i]->cuda_events != NULL) {
+         n_cuda_events++;
+         function_t *f_orig = vftr_find_origin_of_cuda_function (vftr_func_table[i]);
+         int s = strlen(f_orig->name);
+         slen_f_max = s > slen_f_max ? s : slen_f_max;
+         s = strlen(vftr_func_table[i]->cuda_events->func_name);
+         slen_cuda_max = s > slen_cuda_max ? s : slen_cuda_max;
+      }
+   }
+   if (n_cuda_events == 0) {
+      fprintf (fp, "Cuda summary: No events registered.\n");
+      return;
+   }
+
+   fprintf (fp, "\nCuda summary: \n");
+   fprintf (fp, "%*s | %*s | SID | Compute | Memcpy\n", slen_f_max, "Origin", slen_cuda_max, "CUDA");
+   for (int i = 0; i < vftr_stackscount; i++) {
+       function_t *func = vftr_func_table[i];
+       if (func->cuda_events != NULL) {
+          function_t *func_orig = vftr_find_origin_of_cuda_function (func);
+          fprintf (fp, "%*s | %*s | %d | %lf | %lf\n", slen_f_max, func_orig->name, slen_cuda_max, func->cuda_events->func_name,
+                  func->gid, func->cuda_events->t_acc_compute, func->cuda_events->t_acc_memcpy);
+       }
+   }
+   fprintf (fp, "\n");
+}
