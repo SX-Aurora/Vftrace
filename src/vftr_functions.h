@@ -100,6 +100,7 @@ void vftr_stackid_list_finalize ();
 void vftr_sample_vmrss (long long n_calls, bool is_entry, bool verbose, mem_prof_t *mem_prof);
 double vftr_get_max_memory (function_t *func);
 
+double vftr_get_total_cuda_time (int);
 void vftr_print_gpu_summary (FILE*);
 
 // test functions

@@ -176,7 +176,7 @@ void vftr_initialize() {
     vftr_set_logfile_ranks();
     vftr_set_mpi_summary_ranks();
     vftr_assert_environment ();
-    setup_vftr_cuda();
+    vftr_setup_cuda();
 
     if (vftr_environment.show_startup->value) {
        vftr_print_startup_message(stdout);
@@ -321,7 +321,7 @@ void vftr_finalize() {
 
     long long finalize_time = vftr_get_runtime_usec();
 
-    final_vftr_cuda();
+    vftr_final_cuda();
 
     vftr_timer_end = true;
 

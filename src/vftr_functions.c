@@ -474,6 +474,21 @@ double vftr_get_max_memory (function_t *func) {
 
 /**********************************************************************/
 
+double vftr_get_total_cuda_time (int type) {
+  double t = 0;
+  for (int i = 0; i < vftr_stackscount; i++) {
+     cuda_event_list_t *e = vftr_func_table[i]->cuda_events;
+     function_t *f = vftr_func_table[i];
+     while (e != NULL) {
+        t += e->t_acc[type];
+        e = e->next;
+     }
+  }
+  // Convert milliseconds -> seconds
+  return t / 1000;
+}
+/**********************************************************************/
+
 function_t *vftr_find_origin_of_cuda_function (function_t *f) {
    function_t *f_orig = f;
    while (strstr(f_orig->name, "cudaLaunchKernel") ||
@@ -483,6 +498,8 @@ function_t *vftr_find_origin_of_cuda_function (function_t *f) {
    }
    return f_orig;
 }
+
+/**********************************************************************/
 
 void vftr_print_gpu_summary (FILE *fp) {
    int n_cuda_events = 0;

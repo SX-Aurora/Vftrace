@@ -7,6 +7,9 @@
 CUpti_SubscriberHandle subscriber;
 cuda_event_list_t *events;
 
+int vftr_n_cuda_devices;
+struct cudaDeviceProp vftr_cuda_properties;
+
 // This callback is evoked at the start and end of a CUDA function.
 // We keep a list of trace elements, containing function names and runtime information,
 // which is being filled until the list is flushed by Vftrace.
@@ -66,20 +69,28 @@ void CUPTIAPI vftr_cuda_callback_events(void *userdata, CUpti_CallbackDomain dom
      cudaEventSynchronize(this_event->stop);
      float t;
      cudaEventElapsedTime(&t, this_event->start, this_event->stop);
-     if (cbid == CUPTI_RUNTIME_TRACE_CBID_cudaMemcpy_v3020) {
-        this_event->t_acc_memcpy += t;
-     } else {
-        this_event->t_acc_compute += t;
-     }
+     int type = cbid == CUPTI_RUNTIME_TRACE_CBID_cudaMemcpy_v3020 ? T_CUDA_MEMCP : T_CUDA_COMP;
+     //if (cbid == CUPTI_RUNTIME_TRACE_CBID_cudaMemcpy_v3020) {
+     //   this_event->t_acc_memcpy += t;
+     //} else {
+     //   this_event->t_acc_compute += t;
+     //}
+     this_event->t_acc[type] += t;
    }
    //printf ("Out CUPTI Callback!\n");
 
 }
 
-void setup_vftr_cuda () {
+void vftr_setup_cuda () {
+   cudaError_t ce = cudaGetDeviceCount(&vftr_n_cuda_devices);
+   if (ce != cudaSuccess) {
+       vftr_n_cuda_devices = 0; 
+   } else {
+       cudaGetDeviceProperties (&vftr_cuda_properties, 0);
+   }
+   events = NULL;
    cuptiSubscribe(&subscriber, (CUpti_CallbackFunc)vftr_cuda_callback_events, events);
    cuptiEnableDomain(1, subscriber, CUPTI_CB_DOMAIN_RUNTIME_API);
-   events = NULL;
 }
 
 void vftr_cuda_flush_events (cuda_event_list_t **t) {
@@ -114,6 +125,6 @@ void vftr_cuda_flush_events (cuda_event_list_t **t) {
   events = NULL;
 } 
 
-void final_vftr_cuda () {
+void vftr_final_cuda () {
    cuptiUnsubscribe(subscriber);
 }
