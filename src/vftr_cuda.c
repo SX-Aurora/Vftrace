@@ -18,7 +18,8 @@ void CUPTIAPI vftr_cuda_callback_events(void *userdata, CUpti_CallbackDomain dom
          cbid == CUPTI_RUNTIME_TRACE_CBID_cudaMemcpy_v3020)) return;
 
    // For cuda functions, we use the symbolName. Otherwise, the correct call name is in functionName.
-   const char *use_fun;
+   //const char *use_fun;
+   char *use_fun;
    if (cbid == CUPTI_RUNTIME_TRACE_CBID_cudaLaunch_v3020 || cbid == CUPTI_RUNTIME_TRACE_CBID_cudaLaunchKernel_v7000) {
      use_fun = cb_info->symbolName;
    } else {

@@ -449,7 +449,11 @@ void vftr_strip_all_module_names () {
 #ifdef _LIBERTY_AVAIL
 void vftr_demangle_all_func_names () {
   for (int i = 0; i < vftr_stackscount; i++) {
-    vftr_func_table[i]->name = vftr_demangle_cpp (vftr_func_table[i]->name);
+    function_t *f = vftr_func_table[i];
+    f->name = vftr_demangle_cpp (f->name);
+    if (f->cuda_events != NULL) {
+       f->cuda_events->func_name = vftr_demangle_cpp(f->cuda_events->func_name);
+    }
   }
 }
 #endif

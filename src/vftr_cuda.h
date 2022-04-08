@@ -7,7 +7,8 @@ void setup_vftr_cuda();
 void final_vftr_cuda();
 
 typedef struct cuda_event_list_st {
-  const char *func_name;
+  //const char *func_name;
+  char *func_name;
   int n_calls;
   uint64_t memcpy_bytes;
   float t_acc_compute;
