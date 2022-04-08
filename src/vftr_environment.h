@@ -101,6 +101,7 @@ typedef struct vftr_envs {
         env_var_bool_t *no_stack_normalization;
         env_var_bool_t *demangle_cpp;
         env_var_bool_t *show_startup;
+        env_var_bool_t *ignore_cuda;
 } vftr_envs_t;
 
 // The global container for environment variables.

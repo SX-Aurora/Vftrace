@@ -9,6 +9,7 @@ extern struct cudaDeviceProp vftr_cuda_properties;
 enum {T_CUDA_COMP, T_CUDA_MEMCP};
 
 void vftr_cuda_info();
+bool vftr_profile_cuda();
 void vftr_setup_cuda();
 void vftr_final_cuda();
 

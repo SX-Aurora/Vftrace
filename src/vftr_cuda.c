@@ -2,6 +2,7 @@
 #include <stdbool.h>
 #include <cupti.h>
 
+#include "vftr_environment.h"
 #include "vftr_cuda.h"
 
 CUpti_SubscriberHandle subscriber;
@@ -9,6 +10,14 @@ cuda_event_list_t *events;
 
 int vftr_n_cuda_devices;
 struct cudaDeviceProp vftr_cuda_properties;
+
+/**********************************************************************/
+
+bool vftr_profile_cuda () {
+   return vftr_n_cuda_devices > 0 && !vftr_environment.ignore_cuda->value;
+}
+
+/**********************************************************************/
 
 // This callback is evoked at the start and end of a CUDA function.
 // We keep a list of trace elements, containing function names and runtime information,
@@ -81,6 +90,8 @@ void CUPTIAPI vftr_cuda_callback_events(void *userdata, CUpti_CallbackDomain dom
 
 }
 
+/**********************************************************************/
+
 void vftr_setup_cuda () {
    cudaError_t ce = cudaGetDeviceCount(&vftr_n_cuda_devices);
    if (ce != cudaSuccess) {
@@ -92,6 +103,8 @@ void vftr_setup_cuda () {
    cuptiSubscribe(&subscriber, (CUpti_CallbackFunc)vftr_cuda_callback_events, events);
    cuptiEnableDomain(1, subscriber, CUPTI_CB_DOMAIN_RUNTIME_API);
 }
+
+/**********************************************************************/
 
 void vftr_cuda_flush_events (cuda_event_list_t **t) {
   *t = NULL;
@@ -124,6 +137,8 @@ void vftr_cuda_flush_events (cuda_event_list_t **t) {
   } 
   events = NULL;
 } 
+
+/**********************************************************************/
 
 void vftr_final_cuda () {
    cuptiUnsubscribe(subscriber);

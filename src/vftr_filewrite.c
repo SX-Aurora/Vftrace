@@ -808,7 +808,7 @@ void vftr_set_proftab_column_formats (function_t **func_table,
         if (vftr_environment.show_stacks_in_profile->value) {
            vftr_prof_column_init ("Stack", NULL, 0, COL_CHAR_LEFT, SEP_MID, &(columns)[i_column++]);
         }
-        if (vftr_n_cuda_devices > 0) {
+        if (vftr_profile_cuda()) {
            vftr_prof_column_init ("GPU Compute", NULL, 3, COL_DOUBLE, SEP_MID, &(columns)[i_column++]);
            vftr_prof_column_init ("GPU Memcpy", NULL, 3, COL_DOUBLE, SEP_MID, &(columns)[i_column++]);
         }
@@ -880,7 +880,7 @@ void vftr_set_proftab_column_formats (function_t **func_table,
                vftr_prof_column_set_n_chars (vftr_global_stack_strings[global_id].s, NULL, NULL, &(columns)[i_column++], &stat);
 	    }
     
-            if (vftr_n_cuda_devices > 0) {
+            if (vftr_profile_cuda()) {
                double total_cuda_time_compute = 0.0;
                double total_cuda_time_memcpy = 0.0;
                cuda_event_list_t *cuda_trace = func_table[i_func]->cuda_events;
@@ -993,7 +993,7 @@ void vftr_proftab_print_header (FILE *fp, column_t *columns) {
         if (vftr_memtrace) n_columns += 1;
         if (vftr_max_allocated_fields > 0) n_columns += 2;
         if (vftr_environment.show_stacks_in_profile->value) n_columns += 1;
-        if (vftr_n_cuda_devices > 0) n_columns += 2;
+        if (vftr_profile_cuda()) n_columns += 2;
       
         for (int i = 0; i < n_columns; i++) {
            vftr_column_print_header (fp, columns[i]);
@@ -1543,7 +1543,9 @@ void vftr_print_profile_summary (FILE *fp_log, function_t **func_table, double t
 #endif
 
     fprintf (fp_log, "\nNr. of CUDA devices: %d\n", vftr_n_cuda_devices);
-    if (vftr_n_cuda_devices > 0) {
+    if (vftr_environment.ignore_cuda->value) {
+       fprintf (fp_log, "  CUDA is not profiled due to environment variable VFTR_IGNORE_CUDA.\n");
+    } else if (vftr_n_cuda_devices > 0) {
        fprintf (fp_log, "  Total CUDA compute time: %8.3f seconds\n", vftr_get_total_cuda_time(T_CUDA_COMP));
        fprintf (fp_log, "  Total CUDA memcpy time: %8.3f seconds\n",  vftr_get_total_cuda_time(T_CUDA_MEMCP));
     }
@@ -1656,7 +1658,7 @@ void vftr_print_profile_line (FILE *fp_log, function_t *func, long long runtime_
       vftr_prof_column_print (fp_log, prof_columns[i_column++], vftr_global_stack_strings[global_stack_id].s, NULL, NULL);
    }
 
-   if (vftr_n_cuda_devices > 0) {
+   if (vftr_profile_cuda()) {
      cuda_event_list_t *cuda_trace = func->cuda_events;
      double total_cuda_time_compute = 0.0;
      double total_cuda_time_memcpy = 0.0;
@@ -1713,7 +1715,7 @@ void vftr_print_profile (FILE *fp_log, function_t **sorted_func_table, int n_fun
     vftr_fill_func_indices_up_to_truncate (sorted_func_table, function_time, func_indices);
 
     int n_columns = vftr_env_compute_n_columns ();
-    if (vftr_n_cuda_devices > 0) n_columns += 2;
+    if (vftr_profile_cuda()) n_columns += 2;
 
     column_t *prof_columns = (column_t*) malloc (n_columns * sizeof(column_t));
     vftr_set_proftab_column_formats (sorted_func_table, function_time, prof_times.t_sec[SAMPLING_OVERHEAD],
