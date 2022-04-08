@@ -32,8 +32,8 @@ void CUPTIAPI vftr_cuda_callback_events(void *userdata, CUpti_CallbackDomain dom
      events->func_name = use_fun;
      cudaEventCreate (&(events->start));
      cudaEventCreate (&(events->stop));
-     events->t_acc_compute = 0;
-     events->t_acc_memcpy = 0;
+     events->t_acc[T_CUDA_COMP] = 0;
+     events->t_acc[T_CUDA_MEMCP] = 0;
      events->n_calls = 0;
      events->memcpy_bytes = 0;
      events->next = NULL;
@@ -52,8 +52,8 @@ void CUPTIAPI vftr_cuda_callback_events(void *userdata, CUpti_CallbackDomain dom
       cudaEventCreate (&(this_event->stop));
       this_event->n_calls = 0;
       this_event->memcpy_bytes = 0;
-      this_event->t_acc_compute = 0;
-      this_event->t_acc_memcpy = 0;
+      this_event->t_acc[T_CUDA_COMP] = 0;
+      this_event->t_acc[T_CUDA_MEMCP] = 0;
       this_event->next = NULL;
    //} else {
    //   this_event = this_event->next;
@@ -97,8 +97,8 @@ void vftr_cuda_flush_events (cuda_event_list_t **t) {
         *t = (*t)->next;
      }   
      (*t)->func_name = this_event->func_name;
-     (*t)->t_acc_compute = this_event->t_acc_compute;
-     (*t)->t_acc_memcpy = this_event->t_acc_memcpy;
+     (*t)->t_acc[T_CUDA_COMP] = this_event->t_acc[T_CUDA_COMP];
+     (*t)->t_acc[T_CUDA_MEMCP] = this_event->t_acc[T_CUDA_MEMCP];
      (*t)->n_calls = this_event->n_calls;
      (*t)->next = NULL;
      this_event = this_event->next; 

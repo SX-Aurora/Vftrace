@@ -881,8 +881,8 @@ void vftr_set_proftab_column_formats (function_t **func_table,
             double total_cuda_time_memcpy = 0.0;
             cuda_event_list_t *cuda_trace = func_table[i_func]->cuda_events;
             while (cuda_trace != NULL) {
-               total_cuda_time_compute += (double)cuda_trace->t_acc_compute;
-               total_cuda_time_memcpy += (double)cuda_trace->t_acc_memcpy;
+               total_cuda_time_compute += (double)cuda_trace->t_acc[T_CUDA_COMP];
+               total_cuda_time_memcpy += (double)cuda_trace->t_acc[T_CUDA_MEMCP];
                cuda_trace = cuda_trace->next;
             }
             // Convert ns -> s
@@ -1648,8 +1648,8 @@ void vftr_print_profile_line (FILE *fp_log, function_t *func, long long runtime_
    double total_cuda_time_compute = 0.0;
    double total_cuda_time_memcpy = 0.0;
    while (cuda_trace != NULL) {
-      total_cuda_time_compute += (double)cuda_trace->t_acc_compute;
-      total_cuda_time_memcpy += (double)cuda_trace->t_acc_memcpy;
+      total_cuda_time_compute += (double)cuda_trace->t_acc[T_CUDA_COMP];
+      total_cuda_time_memcpy += (double)cuda_trace->t_acc[T_CUDA_MEMCP];
       cuda_trace = cuda_trace->next;
    }
    // Convert ns -> s

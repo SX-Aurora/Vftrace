@@ -63,13 +63,13 @@ void vftr_flush_cuda_events_to_func (function_t *func) {
                   t2 = (cuda_event_list_t*) malloc (sizeof(cuda_event_list_t));
                   t2->next = NULL;
                   t2->func_name = t1->func_name;
-                  t2->t_acc_compute = t1->t_acc_compute;
-                  t2->t_acc_memcpy = t1->t_acc_memcpy;
+                  t2->t_acc[T_CUDA_COMP] = t1->t_acc[T_CUDA_COMP];
+                  t2->t_acc[T_CUDA_MEMCP] = t1->t_acc[T_CUDA_MEMCP];
                   t2->n_calls = t1->n_calls; 
                   break;
                } else if (!strcmp (t1->func_name, t2->func_name)) {
-                  t2->t_acc_compute += t1->t_acc_compute;
-                  t2->t_acc_memcpy += t1->t_acc_memcpy;
+                  t2->t_acc[T_CUDA_COMP] += t1->t_acc[T_CUDA_COMP];
+                  t2->t_acc[T_CUDA_MEMCP] += t1->t_acc[T_CUDA_MEMCP];
                   t2->n_calls += t1->n_calls;
                   break;
                } 
