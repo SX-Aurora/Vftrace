@@ -48,27 +48,26 @@ bool vftr_profile_wanted = false;
 /**********************************************************************/
 
 void vftr_flush_cuda_events_to_func (function_t *func) {
-    cupti_trace_t *cuda_traces;
-    vftr_cuda_flush_trace (&cuda_traces);
-    if (cuda_traces != NULL) {
-      if (func->cuda_traces == NULL) {
-         func->cuda_traces = cuda_traces; 
+    cuda_event_list_t *cuda_events;
+    vftr_cuda_flush_events (&cuda_events);
+    if (cuda_events != NULL) {
+      if (func->cuda_events == NULL) {
+         func->cuda_events = cuda_events; 
       } else {
-         cupti_trace_t *t1 = cuda_traces;
+         cuda_event_list_t *t1 = cuda_events;
          while (t1 != NULL) {
-            cupti_trace_t *t2 = func->cuda_traces;
+            cuda_event_list_t *t2 = func->cuda_events;
             while (true) {
                // The function obtained from vftr_cuda has not been registered for this function yet.
                if (t2 == NULL) {
-                  t2->next = (cupti_trace_t*) malloc (sizeof(cupti_trace_t));
-                  t2 = t2->next;
+                  t2 = (cuda_event_list_t*) malloc (sizeof(cuda_event_list_t));
+                  t2->next = NULL;
                   t2->func_name = t1->func_name;
                   t2->t_acc_compute = t1->t_acc_compute;
                   t2->t_acc_memcpy = t1->t_acc_memcpy;
                   t2->n_calls = t1->n_calls; 
                   break;
-               }
-               if (!strcmp (t1->func_name, t2->func_name)) {
+               } else if (!strcmp (t1->func_name, t2->func_name)) {
                   t2->t_acc_compute += t1->t_acc_compute;
                   t2->t_acc_memcpy += t1->t_acc_memcpy;
                   t2->n_calls += t1->n_calls;
@@ -78,13 +77,13 @@ void vftr_flush_cuda_events_to_func (function_t *func) {
             }      
             t1 = t1->next;
          }
-         free(cuda_traces);
+         free(cuda_events);
       }
     } else {
       //printf ("func: %s - no CUDA events\n", func->name);
     }
-
 }
+
 /**********************************************************************/
 
 void vftr_print_stack_at_runtime (function_t *this_func, bool is_entry, bool time_to_sample) {

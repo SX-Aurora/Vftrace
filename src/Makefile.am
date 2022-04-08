@@ -115,7 +115,7 @@ endif
 endif
 
 #libvftrace_la_LDFLAGS += "-L/home/cweiss/Vftrace/src/cuda -L/usr/local/cuda-11.2/lib64 -lvftr_cuda -lcupti_static -lcudart -lpthread -lrt -ldl" 
-libvftrace_la_LDFLAGS += "-L/usr/local/cuda-11.2/lib64 -lcupti" 
+libvftrace_la_LDFLAGS += "-L/usr/local/cuda-11.2/lib64 -lcupti -lcudart" 
 
 libvftr_dlopen_la_SOURCES = vftr_dlopen.c
 

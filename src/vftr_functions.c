@@ -223,7 +223,7 @@ function_t *vftr_new_function(void *arg, const char *function_name, function_t *
       vftr_func_table_size = newsize;
    }
    func->overhead = 0;
-   func->cuda_traces = NULL;
+   func->cuda_events = NULL;
    vftr_func_table[vftr_stackscount++] = func;
 
    return func;

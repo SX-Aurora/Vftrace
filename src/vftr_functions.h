@@ -59,7 +59,7 @@ typedef struct Function {
    uint64_t stackHash;
    long long overhead;
    bool open;
-   cupti_trace_t *cuda_traces;
+   cuda_event_list_t *cuda_events;
 } function_t;
 
 void vftr_find_function_in_table (char *func_name, int **indices, int *n_indices, bool to_lower_case);
