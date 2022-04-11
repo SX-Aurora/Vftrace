@@ -91,6 +91,11 @@ libvftrace_la_CFLAGS += -D_LIBERTY_AVAIL
 libvftrace_la_LIBADD += -liberty
 endif
 
+if HAS_CUPTI
+libvftrace_la_CFLAGS += -D_CUPTI_AVAIL
+libvftrace_la_LIBADD += -lcupti -lcudart
+endif
+
 if USES_INTEL_COMPILER
 libvftrace_la_LDFLAGS += -lifcore
 endif
@@ -115,7 +120,7 @@ endif
 endif
 
 #libvftrace_la_LDFLAGS += "-L/home/cweiss/Vftrace/src/cuda -L/usr/local/cuda-11.2/lib64 -lvftr_cuda -lcupti_static -lcudart -lpthread -lrt -ldl" 
-libvftrace_la_LDFLAGS += "-L/usr/local/cuda-11.2/lib64 -lcupti -lcudart" 
+#libvftrace_la_LDFLAGS += "-L/usr/local/cuda-11.2/lib64 -lcupti -lcudart" 
 
 libvftr_dlopen_la_SOURCES = vftr_dlopen.c
 

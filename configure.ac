@@ -43,6 +43,8 @@ AX_ENABLE_OPENMP
 # Check for Papi library
 AX_PAPI_LIBRARY
 
+AX_CUPTI
+
 # Check of libiberty is available
 AX_LIBERTY
 

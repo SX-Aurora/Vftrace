@@ -1,15 +1,14 @@
 #include <stdio.h>
 #include <stdbool.h>
+#ifdef _CUPTI_AVAIL
 #include <cupti.h>
+#endif
 
 #include "vftr_environment.h"
 #include "vftr_cuda.h"
 
-CUpti_SubscriberHandle subscriber;
-cuda_event_list_t *events;
 
 int vftr_n_cuda_devices;
-struct cudaDeviceProp vftr_cuda_properties;
 
 /**********************************************************************/
 
@@ -18,6 +17,12 @@ bool vftr_profile_cuda () {
 }
 
 /**********************************************************************/
+
+#ifdef _CUPTI_AVAIL
+CUpti_SubscriberHandle subscriber;
+cuda_event_list_internal_t *events;
+struct cudaDeviceProp vftr_cuda_properties;
+
 
 // This callback is evoked at the start and end of a CUDA function.
 // We keep a list of trace elements, containing function names and runtime information,
@@ -40,7 +45,7 @@ void CUPTIAPI vftr_cuda_callback_events(void *userdata, CUpti_CallbackDomain dom
 
    // Init event list
    if (events == NULL) {
-     events = (cuda_event_list_t*) malloc (sizeof(cuda_event_list_t));
+     events = (cuda_event_list_internal_t*) malloc (sizeof(cuda_event_list_internal_t));
      events->func_name = use_fun;
      cudaEventCreate (&(events->start));
      cudaEventCreate (&(events->stop));
@@ -51,14 +56,14 @@ void CUPTIAPI vftr_cuda_callback_events(void *userdata, CUpti_CallbackDomain dom
      events->next = NULL;
    }
    
-   cuda_event_list_t *this_event = events;
+   cuda_event_list_internal_t *this_event = events;
    //printf ("In CUPTI Callback!\n");
 
    while (this_event != NULL && strcmp(this_event->func_name, use_fun)) {
       this_event = this_event->next;
    }
    if (this_event == NULL) {
-      this_event = (cuda_event_list_t*) malloc (sizeof(cuda_event_list_t));
+      this_event = (cuda_event_list_internal_t*) malloc (sizeof(cuda_event_list_internal_t));
       this_event->func_name = use_fun;
       cudaEventCreate (&(this_event->start));
       cudaEventCreate (&(this_event->stop));
@@ -90,6 +95,8 @@ void CUPTIAPI vftr_cuda_callback_events(void *userdata, CUpti_CallbackDomain dom
 
 }
 
+#endif
+
 /**********************************************************************/
 
 void vftr_setup_cuda () {
@@ -99,18 +106,21 @@ void vftr_setup_cuda () {
    } else {
        cudaGetDeviceProperties (&vftr_cuda_properties, 0);
    }
+#ifdef _CUPTI_AVAIL
    events = NULL;
    cuptiSubscribe(&subscriber, (CUpti_CallbackFunc)vftr_cuda_callback_events, events);
    cuptiEnableDomain(1, subscriber, CUPTI_CB_DOMAIN_RUNTIME_API);
+#endif
 }
 
 /**********************************************************************/
 
 void vftr_cuda_flush_events (cuda_event_list_t **t) {
   *t = NULL;
+#ifdef _CUPTI_AVAIL
   if (events == NULL) return;
   
-  cuda_event_list_t *this_event = events;
+  cuda_event_list_internal_t *this_event = events;
   cuda_event_list_t *t_orig;
   while (this_event != NULL) {
      if (*t == NULL) {
@@ -131,15 +141,18 @@ void vftr_cuda_flush_events (cuda_event_list_t **t) {
 
   this_event = events;
   while (this_event != NULL) {
-     cuda_event_list_t *t_next = this_event->next;
+     cuda_event_list_internal_t *t_next = this_event->next;
      free (this_event);
      this_event = t_next;
   } 
   events = NULL;
+#endif
 } 
 
 /**********************************************************************/
 
 void vftr_final_cuda () {
+#ifdef _CUPTI_AVAIL
    cuptiUnsubscribe(subscriber);
+#endif
 }
