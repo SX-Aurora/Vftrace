@@ -461,7 +461,7 @@ void vftr_read_environment () {
     vftr_environment.no_stack_normalization = vftr_read_env_bool ("VFTR_NO_STACK_NORM", false);
     vftr_environment.demangle_cpp = vftr_read_env_bool ("VFTR_DEMANGLE_CPP", false);
     vftr_environment.show_startup = vftr_read_env_bool ("VFTR_SHOW_STARTUP", false);
-    vftr_environment.ignore_cuda = vftr_read_env_bool ("IGNORE_CUDA", false);
+    vftr_environment.ignore_cuda = vftr_read_env_bool ("VFTR_IGNORE_CUDA", false);
 }
 
 /**********************************************************************/
