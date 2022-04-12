@@ -387,6 +387,8 @@ int vftr_profile_sorting_method () {
      return SORT_OVERHEAD_RELATIVE;
   } else if (!strcmp (s, "MEMTRACE")) {
      return SORT_MEMTRACE;
+  } else if (!strcmp (s, "CUDA")) {
+     return SORT_CUDA; 
   } else if (!strcmp (s, "NONE")) {
      return SORT_NONE;
   } else {
@@ -410,6 +412,8 @@ char *vftr_profile_sorting_method_string () {
       return "sorted by relative overhead time";
     case SORT_MEMTRACE:
       return "sorted by self-memory profile (VmRSS)";
+    case SORT_CUDA:
+      return "sorted by CUDA runtimes";
     case SORT_NONE:
       return "unsorted";
     default:
@@ -540,6 +544,10 @@ void vftr_assert_environment () {
 	   } else if (method == SORT_MEMTRACE && !vftr_environment.meminfo_method->set) {
                vftr_rank0_printf ("Warning: You specified VFTR_SORT_PROFILE_TABLE=MEMTRACE, but memtracing is not active. Defaulting to TIME_EXCL.\n");
                vftr_environment.sort_profile_table->value = "EXCL_TIME";
+           } else if (method == SORT_CUDA && vftr_environment.ignore_cuda->value) {
+               vftr_rank0_printf ("Warning: You specified VFTR_SORt_PROFILE_TABLE=CUDA, but you also"
+                                  "ignore CUDA profiling via VFTR_IGNORE_CUDA. Defaulting to"
+                                  " SORT_EXCL_TIME.\n");
            }
         } 
 

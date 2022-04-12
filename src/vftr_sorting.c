@@ -238,6 +238,40 @@ int vftr_compare_function_memtrace (const void *a1, const void *a2) {
 
 /**********************************************************************/
 
+int vftr_compare_function_cuda (const void *a1, const void *a2) {
+   function_t *f1 = *(function_t **)a1;
+   function_t *f2 = *(function_t **)a2;
+   if (!f2) return -1;
+   if (!f1) return 1;
+   if (!f2->cuda_events) return -1;
+   if (!f1->cuda_events) return 1;
+   double t_memcp_1 = f1->cuda_events->t_acc[T_CUDA_MEMCP];
+   double t_memcp_2 = f2->cuda_events->t_acc[T_CUDA_MEMCP];
+   double t_comp_1 = f1->cuda_events->t_acc[T_CUDA_COMP];
+   double t_comp_2 = f2->cuda_events->t_acc[T_CUDA_COMP];
+   if (t_memcp_1 > 0 && t_memcp_2 > 0) {
+      double diff = t_memcp_1 - t_memcp_2;
+      if (diff > 0) return -1;
+      if (diff < 0) return 1;
+   } else if (t_memcp_1 > 0 && t_memcp_2 == 0) {
+      return -1;
+   } else if (t_memcp_2 > 0 && t_memcp_1 == 0) {
+      return 1;
+   } else if (t_comp_1 > 0 && t_comp_2 > 0) {
+      double diff = t_memcp_1 - t_memcp_2;
+      if (diff > 0) return -1;
+      if (diff < 0) return 1;
+   } else if (t_comp_1 > 0 && t_comp_2 == 0) {
+      return -1;
+   } else if (t_comp_2 > 0 && t_comp_1 == 0) {
+      return 1;
+   } else {
+      return 0;
+   } 
+}
+
+/**********************************************************************/
+
 int vftr_compare_function_none (const void *a1, const void *a2) {
   return 0;
 }
@@ -261,6 +295,8 @@ int (*vftr_get_profile_compare_function()) (const void *, const void *) {
        return vftr_compare_function_overhead_relative;
     case SORT_MEMTRACE:
        return vftr_compare_function_memtrace;
+    case SORT_CUDA:
+       return vftr_compare_function_cuda;
     case SORT_NONE:
        return vftr_compare_function_none;
     default: 

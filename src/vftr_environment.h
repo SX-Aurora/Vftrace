@@ -109,7 +109,8 @@ extern vftr_envs_t vftr_environment;
 
 // These constants indicate how the final ASCII profile table is sorted.
 enum vftr_profile_sortings {SORT_EXCL_TIME, SORT_INCL_TIME, SORT_N_CALLS, SORT_STACK_ID,
-                            SORT_OVERHEAD, SORT_OVERHEAD_RELATIVE, SORT_MEMTRACE, SORT_NONE, SORT_INVALID}; 
+                            SORT_OVERHEAD, SORT_OVERHEAD_RELATIVE, SORT_MEMTRACE,
+                            SORT_CUDA, SORT_NONE, SORT_INVALID}; 
 
 extern int vftr_mpi_sum_rank_1;
 extern int vftr_mpi_sum_rank_2;
