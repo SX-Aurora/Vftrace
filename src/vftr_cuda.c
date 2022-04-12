@@ -90,6 +90,7 @@ void CUPTIAPI vftr_cuda_callback_events(void *userdata, CUpti_CallbackDomain dom
      //   this_event->t_acc_compute += t;
      //}
      this_event->t_acc[type] += t;
+     this_event->n_calls++;
    }
    //printf ("Out CUPTI Callback!\n");
 
