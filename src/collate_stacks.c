@@ -23,14 +23,14 @@ collated_stacktree_t vftr_new_collated_stacktree() {
 #ifdef _MPI
 void vftr_broadcast_collated_stacktree_root(collated_stacktree_t *stacktree_ptr) {
    int nranks;
-   MPI_Comm_size(MPI_COMM_WORLD, &nranks);
+   PMPI_Comm_size(MPI_COMM_WORLD, &nranks);
    int nstacks = stacktree_ptr->nstacks;
    // broadcasting the caller ids
    int *tmpintarr = (int*) malloc((nstacks+1)*sizeof(int));
    for (int istack=0; istack<nstacks; istack++) {
       tmpintarr[istack] = stacktree_ptr->stacks[istack].caller;
    }
-   MPI_Bcast(tmpintarr, nstacks, MPI_INT, 0, MPI_COMM_WORLD);
+   PMPI_Bcast(tmpintarr, nstacks, MPI_INT, 0, MPI_COMM_WORLD);
    // broadcasting the function names.
    // first the length of each name
    int totallen = 0;
@@ -41,7 +41,7 @@ void vftr_broadcast_collated_stacktree_root(collated_stacktree_t *stacktree_ptr)
    }
    // the total length is appended to the tmpintarr 
    tmpintarr[nstacks] = totallen;
-   MPI_Bcast(tmpintarr, nstacks+1, MPI_INT, 0, MPI_COMM_WORLD);
+   PMPI_Bcast(tmpintarr, nstacks+1, MPI_INT, 0, MPI_COMM_WORLD);
    char *tmpchararr = (char*) malloc(totallen*sizeof(char));
    char *charptr = tmpchararr;
    for (int istack=0; istack<nstacks; istack++) {
@@ -49,30 +49,30 @@ void vftr_broadcast_collated_stacktree_root(collated_stacktree_t *stacktree_ptr)
       charptr += tmpintarr[istack];
       charptr++; // null terminator should be copied by strcpy
    }
-   MPI_Bcast(tmpchararr, totallen, MPI_CHAR, 0, MPI_COMM_WORLD);
+   PMPI_Bcast(tmpchararr, totallen, MPI_CHAR, 0, MPI_COMM_WORLD);
    free(tmpintarr);
    free(tmpchararr);
 }
 
 void vftr_broadcast_collated_stacktree_receivers(collated_stacktree_t *stacktree_ptr) {
    int nranks;
-   MPI_Comm_size(MPI_COMM_WORLD, &nranks);
+   PMPI_Comm_size(MPI_COMM_WORLD, &nranks);
    int nstacks = stacktree_ptr->nstacks;
    // receiving the caller ids
    int *tmpintarr = (int*) malloc(nstacks+1*sizeof(int));
-   MPI_Bcast(tmpintarr, nstacks, MPI_INT, 0, MPI_COMM_WORLD);
+   PMPI_Bcast(tmpintarr, nstacks, MPI_INT, 0, MPI_COMM_WORLD);
    for (int istack=0; istack<nstacks; istack++) {
       stacktree_ptr->stacks[istack].caller = tmpintarr[istack];
    }
    // receiving the function names;
    // first the length of each name;
    int totallen = 0;
-   MPI_Bcast(tmpintarr, nstacks+1, MPI_INT, 0, MPI_COMM_WORLD);
+   PMPI_Bcast(tmpintarr, nstacks+1, MPI_INT, 0, MPI_COMM_WORLD);
    // the total length is appended to the tmpintarr 
    totallen = tmpintarr[nstacks];
    char *tmpchararr = (char*) malloc(totallen*sizeof(char));
    char *charptr = tmpchararr;
-   MPI_Bcast(tmpchararr, totallen, MPI_CHAR, 0, MPI_COMM_WORLD);
+   PMPI_Bcast(tmpchararr, totallen, MPI_CHAR, 0, MPI_COMM_WORLD);
    for (int istack=0; istack<nstacks; istack++) {
       stacktree_ptr->stacks[istack].name = strdup(charptr);
       charptr += tmpintarr[istack];
@@ -84,7 +84,7 @@ void vftr_broadcast_collated_stacktree_receivers(collated_stacktree_t *stacktree
 
 void vftr_broadcast_collated_stacktree(collated_stacktree_t *stacktree_ptr) {
    int nranks;
-   MPI_Comm_size(MPI_COMM_WORLD, &nranks);
+   PMPI_Comm_size(MPI_COMM_WORLD, &nranks);
    if (nranks > 1) {
       int myrank;
       PMPI_Comm_rank(MPI_COMM_WORLD, &myrank);
