@@ -65,7 +65,8 @@ check_PROGRAMS += collatestacks
 if WITH_MPI
 check_PROGRAMS += collatestacks_parallel_1 \
 		  collatestacks_parallel_2_1 \
-		  collatestacks_parallel_2_2
+		  collatestacks_parallel_2_2 \
+		  collatestacks_parallel_3
 endif
 check_PROGRAMS += stacktree \
 		  stacklist
@@ -176,6 +177,11 @@ collatestacks_parallel_2_2_SOURCES = $(srcdir)/collatestacks_parallel_2_2.c \
 				 $(srcdir)/dummysymboltable.c
 collatestacks_parallel_2_2_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
 collatestacks_parallel_2_2_LDFLAGS = $(AM_LDFLAGS)
+
+collatestacks_parallel_3_SOURCES = $(srcdir)/collatestacks_parallel_3.c \
+			       $(srcdir)/dummysymboltable.c
+collatestacks_parallel_3_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
+collatestacks_parallel_3_LDFLAGS = $(AM_LDFLAGS)
 endif
 
 filewrite_1_SOURCES = $(srcdir)/filewrite_1.c
@@ -260,8 +266,8 @@ endif
 dist_check_SCRIPTS += collatestacks.sh
 if WITH_MPI
 dist_check_SCRIPTS += collatestacks_parallel_1.sh \
-		      collatestacks_parallel_2.sh
-
+		      collatestacks_parallel_2.sh \
+		      collatestacks_parallel_3.sh
 dist_check_SCRIPTS += stacktree.sh \
 		      stacklist.sh
 endif

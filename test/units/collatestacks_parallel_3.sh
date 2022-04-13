@@ -1,6 +1,6 @@
 #!/bin/bash
 set -x
-test_name=collatestacks_parallel_1
+test_name=collatestacks_parallel_3
 output_file=${test_name}.out
 ref_file=${srcdir}/ref_output/${test_name}.out
 
