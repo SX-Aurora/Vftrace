@@ -1542,7 +1542,7 @@ void vftr_print_profile_summary (FILE *fp_log, function_t **func_table, double t
     }
 #endif
 
-    fprintf (fp_log, "\nNr. of CUDA devices: %d\n", vftr_n_cuda_devices);
+    fprintf (fp_log, "\nNr. of CUDA devices: %d (%s)\n", vftr_n_cuda_devices, vftr_cuda_properties.name);
     if (vftr_environment.ignore_cuda->value) {
        fprintf (fp_log, "  CUDA is not profiled due to environment variable VFTR_IGNORE_CUDA.\n");
     } else if (vftr_n_cuda_devices > 0) {
