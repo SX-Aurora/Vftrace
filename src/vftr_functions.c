@@ -521,15 +521,18 @@ void vftr_print_gpu_summary (FILE *fp) {
    }
 
    fprintf (fp, "\nCuda summary: \n");
-   fprintf (fp, "%*s | %*s | %5s | %6s | %10s | %10s\n", slen_f_max, "Origin", slen_cuda_max, "CUDA", "SID", "nCalls", "Compute", "Memcpy");
+   fprintf (fp, "%*s | %*s | %5s | %6s | %10s | %10s | %10s\n", slen_f_max, "Origin", slen_cuda_max, "CUDA", "SID", "nCalls", "Compute", "Memcpy[s]", "Memcpy[GiB]");
    for (int i = 0; i < slen_f_max + slen_cuda_max + 46; i++) fprintf (fp, "-"); 
    fprintf (fp, "\n");
    for (int i = 0; i < vftr_stackscount; i++) {
        function_t *func = vftr_func_table[i];
        if (func->cuda_events != NULL) {
           function_t *func_orig = vftr_find_origin_of_cuda_function (func);
-          fprintf (fp, "%*s | %*s | %5d | %6d | %10.2f | %10.2f\n", slen_f_max, func_orig->name, slen_cuda_max, func->cuda_events->func_name,
-                  func->gid, func->cuda_events->n_calls, func->cuda_events->t_acc[T_CUDA_COMP], func->cuda_events->t_acc[T_CUDA_MEMCP]);
+          fprintf (fp, "%*s | %*s(%d) | %5d | %6d | %10.5f | %10.5f | %10.2f\n", slen_f_max, func_orig->name, slen_cuda_max, func->cuda_events->func_name, func->cuda_events->cbid,
+                  func->gid, func->cuda_events->n_calls,
+                  (double)func->cuda_events->t_acc[T_CUDA_COMP] / 1000, // Convert ms -> s
+                  (double)func->cuda_events->t_acc[T_CUDA_MEMCP] / 1000,
+                  (double)func->cuda_events->memcpy_bytes / 1024 / 1024);
        }
    }
    fprintf (fp, "\n");

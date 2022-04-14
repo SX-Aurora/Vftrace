@@ -9,6 +9,7 @@
 
 
 int vftr_n_cuda_devices;
+int vftr_registered_cbids[406];
 
 /**********************************************************************/
 
@@ -29,10 +30,12 @@ struct cudaDeviceProp vftr_cuda_properties;
 // which is being filled until the list is flushed by Vftrace.
 void CUPTIAPI vftr_cuda_callback_events(void *userdata, CUpti_CallbackDomain domain,
                                         CUpti_CallbackId cbid, const CUpti_CallbackData *cb_info) {
+   vftr_registered_cbids[cbid]++;
    // We only trace four kind of events: The launch of Cuda itself, kernel launches, synchronizations and memcpys.
    if (!(cbid == CUPTI_RUNTIME_TRACE_CBID_cudaLaunch_v3020 ||
          cbid == CUPTI_RUNTIME_TRACE_CBID_cudaLaunchKernel_v7000 ||
-         cbid == CUPTI_RUNTIME_TRACE_CBID_cudaMemcpy_v3020)) return;
+         cbid == CUPTI_RUNTIME_TRACE_CBID_cudaMemcpy_v3020 ||
+         cbid == CUPTI_RUNTIME_TRACE_CBID_cudaMemcpyAsync_v3020)) return;
 
    // For cuda functions, we use the symbolName. Otherwise, the correct call name is in functionName.
    //const char *use_fun;
@@ -47,6 +50,7 @@ void CUPTIAPI vftr_cuda_callback_events(void *userdata, CUpti_CallbackDomain dom
    if (events == NULL) {
      events = (cuda_event_list_internal_t*) malloc (sizeof(cuda_event_list_internal_t));
      events->func_name = use_fun;
+     events->cbid = cbid;
      cudaEventCreate (&(events->start));
      cudaEventCreate (&(events->stop));
      events->t_acc[T_CUDA_COMP] = 0;
@@ -65,6 +69,7 @@ void CUPTIAPI vftr_cuda_callback_events(void *userdata, CUpti_CallbackDomain dom
    if (this_event == NULL) {
       this_event = (cuda_event_list_internal_t*) malloc (sizeof(cuda_event_list_internal_t));
       this_event->func_name = use_fun;
+      this_event->cbid = cbid;
       cudaEventCreate (&(this_event->start));
       cudaEventCreate (&(this_event->stop));
       this_event->n_calls = 0;
@@ -83,17 +88,16 @@ void CUPTIAPI vftr_cuda_callback_events(void *userdata, CUpti_CallbackDomain dom
      cudaEventSynchronize(this_event->stop);
      float t;
      cudaEventElapsedTime(&t, this_event->start, this_event->stop);
-     int type = cbid == CUPTI_RUNTIME_TRACE_CBID_cudaMemcpy_v3020 ? T_CUDA_MEMCP : T_CUDA_COMP;
-     //if (cbid == CUPTI_RUNTIME_TRACE_CBID_cudaMemcpy_v3020) {
-     //   this_event->t_acc_memcpy += t;
-     //} else {
-     //   this_event->t_acc_compute += t;
-     //}
+     int type = (cbid == CUPTI_RUNTIME_TRACE_CBID_cudaMemcpy_v3020 || cbid == CUPTI_RUNTIME_TRACE_CBID_cudaMemcpyAsync_v3020) ? T_CUDA_MEMCP : T_CUDA_COMP;
      this_event->t_acc[type] += t;
      this_event->n_calls++;
-   }
-   //printf ("Out CUPTI Callback!\n");
+     if (cbid == CUPTI_RUNTIME_TRACE_CBID_cudaMemcpy_v3020) {
+        this_event->memcpy_bytes += ((cudaMemcpy_v3020_params *)(cb_info->functionParams))->count;
+     } else if (cbid == CUPTI_RUNTIME_TRACE_CBID_cudaMemcpyAsync_v3020) {
+        this_event->memcpy_bytes += ((cudaMemcpyAsync_v3020_params *)(cb_info->functionParams))->count;
+     }
 
+   }
 }
 
 #endif
@@ -111,6 +115,10 @@ void vftr_setup_cuda () {
    events = NULL;
    cuptiSubscribe(&subscriber, (CUpti_CallbackFunc)vftr_cuda_callback_events, events);
    cuptiEnableDomain(1, subscriber, CUPTI_CB_DOMAIN_RUNTIME_API);
+
+   for (int i = 0; i < 406; i++) {
+      vftr_registered_cbids[i] = 0;
+   }
 #endif
 }
 
@@ -135,6 +143,8 @@ void vftr_cuda_flush_events (cuda_event_list_t **t) {
      (*t)->t_acc[T_CUDA_COMP] = this_event->t_acc[T_CUDA_COMP];
      (*t)->t_acc[T_CUDA_MEMCP] = this_event->t_acc[T_CUDA_MEMCP];
      (*t)->n_calls = this_event->n_calls;
+     (*t)->cbid = this_event->cbid;
+     (*t)->memcpy_bytes = this_event->memcpy_bytes;
      (*t)->next = NULL;
      this_event = this_event->next; 
   }
@@ -152,8 +162,19 @@ void vftr_cuda_flush_events (cuda_event_list_t **t) {
 
 /**********************************************************************/
 
+void vftr_print_registered_cbids (FILE *fp) {
+   fprintf (fp, "Registered CBIDs: \n");
+   for (int i = 0; i < 406; i++) {
+      fprintf (fp, "%d: %d\n", i, vftr_registered_cbids[i]); 
+   }
+}
+
+/**********************************************************************/
+
 void vftr_final_cuda () {
 #ifdef _CUPTI_AVAIL
    cuptiUnsubscribe(subscriber);
 #endif
 }
+
+/**********************************************************************/

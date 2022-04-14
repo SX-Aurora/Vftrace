@@ -393,7 +393,10 @@ void vftr_finalize() {
        vftr_print_html_profile(f_html, sorted_func_table, n_functions_top, prof_times, n_display_functions, display_functions, vftr_get_runtime_usec());
     }
 
-    if (vftr_profile_cuda()) vftr_print_gpu_summary (vftr_log);
+    if (vftr_profile_cuda()) {
+        vftr_print_gpu_summary (vftr_log);
+        vftr_print_registered_cbids (vftr_log);
+    }
  
     if (vftr_profile_wanted && vftr_do_stack_normalization) {
         vftr_print_global_stacklist(vftr_log);

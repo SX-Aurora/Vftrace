@@ -9,6 +9,7 @@ bool vftr_profile_cuda();
 
 typedef struct cuda_event_list_st {
   char *func_name;
+  int cbid;
   int n_calls;
   uint64_t memcpy_bytes;
   float t_acc[2];
@@ -22,6 +23,8 @@ void vftr_cuda_info();
 void vftr_setup_cuda();
 void vftr_final_cuda();
 
+void vftr_print_registered_cbids (FILE *);
+
 #ifdef _CUPTI_AVAIL
 #include <cuda_runtime_api.h>
 
@@ -30,6 +33,7 @@ extern struct cudaDeviceProp vftr_cuda_properties;
 typedef struct cuda_event_list_internal_st {
   //const char *func_name;
   char *func_name;
+  int cbid;
   int n_calls;
   uint64_t memcpy_bytes;
   float t_acc[2];
