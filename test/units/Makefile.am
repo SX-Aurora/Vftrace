@@ -32,17 +32,6 @@ if USES_NEC_MPI
 endif
 endif
 
-if ENABLE_OPENMP
-if USES_INTEL_COMPILER
-  AM_CFLAGS += -qopenmp
-endif
-if USES_GNU_COMPILER
-  AM_CFLAGS += -fopenmp
-endif
-if USES_NEC_COMPILER
-  AM_CFLAGS += -fopenmp
-endif
-endif
 check_PROGRAMS = 
 check_PROGRAMS += radixsort_uint64 \
 		  sort_integer_ascending \

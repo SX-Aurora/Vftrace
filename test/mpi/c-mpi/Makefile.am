@@ -28,19 +28,6 @@ if USES_NEC_MPI
   AM_LDFLAGS += -mpiprof
 endif
 
-if ENABLE_OPENMP
-if USES_INTEL_COMPILER
-  AM_CFLAGS += -qopenmp
-endif
-if USES_GNU_COMPILER
-  AM_CFLAGS += -fopenmp
-endif
-if USES_NEC_COMPILER
-  AM_CFLAGS += -fopenmp
-endif
-endif
-
-
 ################
 # System Tests #
 ################

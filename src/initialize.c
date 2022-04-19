@@ -46,6 +46,11 @@ void vftr_initialize(void *func, void *call_site) {
       vftr_set_enter_func_hook(vftr_function_entry);
       vftr_set_exit_func_hook(vftr_function_exit);
 
+      // trick the linker into including the omp callback symbols
+#ifdef _OMP
+      ompt_start_tool(0, NULL);
+#endif
+
       // set the finalize function to be executed at the termination of the program
       atexit(vftr_finalize);
 

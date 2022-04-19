@@ -26,6 +26,9 @@
 #include "process_types.h"
 #include "sampling_types.h"
 #include "timer_types.h"
+#ifdef _OMP
+#include "omp/omp_state_types.h"
+#endif
 
 // tracing state of vftrace
 typedef enum {
@@ -43,6 +46,9 @@ typedef struct {
    state_t state; // current state of vftrace
    sampling_t sampling; // Filehandle and data required to handle vfd-file sampling
    time_strings_t timestrings; // start and end time in string form
+#ifdef _OMP
+   omp_state_t omp_state;
+#endif
 } vftrace_t;
 
 extern vftrace_t vftrace;

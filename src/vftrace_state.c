@@ -58,5 +58,11 @@ vftrace_t vftrace = {
    .timestrings = {
       .start_time = NULL,
       .end_time = NULL
+   },
+   .omp_state = {
+      .tool_started = false,
+      .initialized = false,
+      .omp_version = 0,
+      .runtime_version = NULL,
    }
 };

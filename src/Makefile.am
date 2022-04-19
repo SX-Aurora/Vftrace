@@ -5,7 +5,9 @@ lib_LTLIBRARIES = libvftrace.la
 #include_HEADERS += vftrace.mod
 #endif
 
-#SUBDIRS = mpi
+SUBDIRS =
+libvftrace_la_LIBADD =
+#SUBDIRS += mpi
 #
 #external_includes = -I$(top_srcdir)/external/tinyexpr/ \
 #		    -I$(top_srcdir)/external/jsmn/
@@ -27,6 +29,11 @@ lib_LTLIBRARIES = libvftrace.la
 #endif
 #endif
 #endif
+
+if WITH_OMP
+SUBDIRS += omp
+libvftrace_la_LIBADD += omp/libvftr_omp.la
+endif
 
 libvftrace_la_SOURCES = 
 
@@ -91,6 +98,11 @@ libvftrace_la_CFLAGS += -D_MPI
 libvftrace_la_FCFLAGS += -D_MPI
 endif 
 
+if WITH_OMP
+libvftrace_la_CFLAGS += -D_OMP
+libvftrace_la_FCFLAGS += -D_OMP
+endif
+
 if HAS_LIBERTY
 libvftrace_la_CFLAGS += -D_LIBERTY_AVAIL
 #libvftrace_la_LIBADD += -liberty
@@ -100,24 +112,24 @@ if USES_INTEL_COMPILER
 libvftrace_la_LDFLAGS += -lifcore
 endif
 
-if ENABLE_OPENMP
-
-if USES_INTEL_COMPILER
-libvftrace_la_CFLAGS += -qopenmp
-libvftrace_la_FCFLAGS += -qopenmp
-endif
-
-if USES_GNU_COMPILER
-libvftrace_la_CFLAGS += -fopenmp
-libvftrace_la_FCFLAGS += -fopenmp
-endif
-
-if USES_NEC_COMPILER
-libvftrace_la_CFLAGS += -fopenmp
-libvftrace_la_FCFLAGS += -fopenmp
-endif
-
-endif
+#if ENABLE_OPENMP
+#
+#if USES_INTEL_COMPILER
+#libvftrace_la_CFLAGS += -qopenmp
+#libvftrace_la_FCFLAGS += -qopenmp
+#endif
+#
+#if USES_GNU_COMPILER
+#libvftrace_la_CFLAGS += -fopenmp
+#libvftrace_la_FCFLAGS += -fopenmp
+#endif
+#
+#if USES_NEC_COMPILER
+#libvftrace_la_CFLAGS += -fopenmp
+#libvftrace_la_FCFLAGS += -fopenmp
+#endif
+#
+#endif
 
 clean-local:
 	rm -f *.mod

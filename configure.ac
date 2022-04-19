@@ -43,11 +43,11 @@ AX_CHECK_VE
 # Check MPI
 AX_CHECK_MPI
 
+# Check OMP
+AX_CHECK_OPENMP
+
 # Enable hardware counters
 AX_ENABLE_HWC
-
-# Enable OpenMP bounces
-AX_ENABLE_OPENMP
 
 # Check for Papi library
 AX_PAPI_LIBRARY
@@ -101,11 +101,13 @@ AC_CONFIG_FILES([src/mpi/f2vftr/Makefile])
 AC_CONFIG_FILES([src/mpi/f-wrapper/Makefile])
 AC_CONFIG_FILES([src/mpi/f082vftr/Makefile])
 AC_CONFIG_FILES([src/mpi/f08-wrapper/Makefile])
+AC_CONFIG_FILES([src/omp/Makefile])
 AC_CONFIG_FILES([tools/Makefile])
 AC_CONFIG_FILES([hw_scenarios/Makefile])
 AC_CONFIG_FILES([test/Makefile])
 AC_CONFIG_FILES([test/units/Makefile])
 AC_CONFIG_FILES([test/user_functions/Makefile])
+AC_CONFIG_FILES([test/omp/Makefile])
 AC_CONFIG_FILES([test/mpi/Makefile])
 AC_CONFIG_FILES([test/mpi/c-mpi/Makefile])
 AC_CONFIG_FILES([test/mpi/f-mpi/Makefile])
