@@ -13,7 +13,6 @@
 #include "dummysymboltable.h"
 #include <mpi.h>
 
-
 int main(int argc, char **argv) {
    MPI_Init(&argc, &argv);
 
@@ -69,14 +68,16 @@ int main(int argc, char **argv) {
    }
 
    collated_stacktree_t collated_stacktree = vftr_collate_stacks(&stacktree);
-   for (int irank=0; irank<nranks; irank++) {
-      if (myrank == irank) {
-         vftr_print_collated_stacklist(stdout, collated_stacktree);
-         printf("\n");
-         fflush(stdout);
-      }
-      PMPI_Barrier(MPI_COMM_WORLD);
-   }
+
+#define FILENAME_BUFF_LEN 64
+   char filename[FILENAME_BUFF_LEN];
+   snprintf(filename, FILENAME_BUFF_LEN*sizeof(char),
+            "collatestacks_parallel_3_p%d.tmpout", myrank);
+   FILE *fp = fopen(filename, "w");
+   vftr_print_collated_stacklist(fp, collated_stacktree);
+   fprintf(fp,"\n");
+   fclose(fp);
+#undef FILENAME_BUFF_LEN
 
    free_dummy_symbol_table(&symboltable);
    vftr_stacktree_free(&stacktree);
