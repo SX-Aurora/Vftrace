@@ -67,16 +67,18 @@ int main(int argc, char **argv) {
 
    vftr_compute_stack_hashes(&stacktree);
    hashlist_t hashlist = vftr_collate_hashes(&stacktree);
-   for (int irank=0; irank<nranks; irank++) {
-      if (myrank == irank) {
-         for (int istack=0; istack<hashlist.nhashes; istack++) {
-            printf("%d: %016lx\n", istack, hashlist.hashes[istack]);
-         }
-         printf("\n");
-         fflush(stdout);
-      }
-      MPI_Barrier(MPI_COMM_WORLD);
+
+#define FILENAME_BUFF_LEN 64
+   char filename[FILENAME_BUFF_LEN];
+   snprintf(filename, FILENAME_BUFF_LEN*sizeof(char),
+            "collatehashes_parallel_p%d.tmpout", myrank);
+   FILE *fp = fopen(filename, "w");
+   for (int istack=0; istack<hashlist.nhashes; istack++) {
+      fprintf(fp, "%d: %016lx\n", istack, hashlist.hashes[istack]);
    }
+   fprintf(fp, "\n");
+   fclose(fp);
+#undef FILENAME_BUFF_LEN
 
    free(hashlist.hashes);
    free_dummy_symbol_table(&symboltable);
