@@ -41,13 +41,19 @@ AM_LDFLAGS = -L$(top_builddir)/src/.libs -lvftrace -lm
 ################
 # System Tests #
 ################
-check_PROGRAMS = start_tool
+check_PROGRAMS = start_tool \
+                 initialize
 		
 start_tool_SOURCES = $(srcdir)/start_tool.c
 start_tool_CFLAGS  = $(AM_CFLAGS)
 start_tool_LDFLAGS = $(AM_LDFLAGS)
 
-dist_noinst_SCRIPTS = start_tool.sh
+initialize_SOURCES = $(srcdir)/initialize.c
+initialize_CFLAGS  = $(AM_CFLAGS)
+initialize_LDFLAGS = $(AM_LDFLAGS)
+
+dist_noinst_SCRIPTS = start_tool.sh \
+                      initialize.sh
 
 TEST_EXTENSIONS = .sh
 SH_LOG_COMPILER = $(SHELL)
