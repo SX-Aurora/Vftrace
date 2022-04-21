@@ -6,7 +6,6 @@
 #include "vftrace_state.h"
 
 int main(int argc, char **argv) {
-
    #pragma omp parallel num_threads(2)
    {
       int nthreads = omp_get_num_threads();
