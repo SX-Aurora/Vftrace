@@ -20,8 +20,8 @@ ompt_start_tool_result_t *ompt_start_tool(unsigned int omp_version,
    if (omp_version == 0 && runtime_version == NULL) {return NULL;}
 
    omp_state.tool_started = true;
-   omp_state.start_tool_result.initialize = ompt_initialize_ptr;
-   omp_state.start_tool_result.finalize = ompt_finalize_ptr;
+   omp_state.start_tool_result.initialize = &ompt_initialize;
+   omp_state.start_tool_result.finalize = &ompt_finalize;
 
    vftrace.omp_state = omp_state;
    return &(vftrace.omp_state.start_tool_result);
