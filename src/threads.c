@@ -34,8 +34,11 @@ void vftr_thread_subthreads_realloc(thread_t *thread_ptr) {
 
 int vftr_new_thread(int parent_thread_id,
                     threadtree_t *threadtree_ptr) {
-   thread_t *parent_thread_ptr = threadtree_ptr->threads+parent_thread_id;
    thread_t thread;
+   thread.threadID = threadtree_ptr->nthreads;
+   threadtree_ptr->nthreads++;
+   vftr_threadtree_realloc(threadtree_ptr);
+   thread_t *parent_thread_ptr = threadtree_ptr->threads+parent_thread_id;
    thread.level = parent_thread_ptr->level+1;
    thread.thread_num = parent_thread_ptr->nsubthreads;
    thread.master = parent_thread_ptr->master && thread.thread_num == 0;
@@ -45,13 +48,12 @@ int vftr_new_thread(int parent_thread_id,
    thread.nsubthreads = 0;
    thread.subthreads = NULL;
    // add thread to threadtree
-   thread.threadID = threadtree_ptr->nthreads;
-   threadtree_ptr->nthreads++;
-   vftr_threadtree_realloc(threadtree_ptr);
    threadtree_ptr->threads[thread.threadID] = thread;
    // add it to the subthread list of the parent thread
    parent_thread_ptr->nsubthreads++;
+
    vftr_thread_subthreads_realloc(parent_thread_ptr);
+//printf("parent subthreads = %d\n", parent_thread_ptr->nsubthreads);
    parent_thread_ptr->subthreads[thread.thread_num] = thread.threadID;
 
    return thread.threadID;
@@ -71,7 +73,7 @@ thread_t vftr_new_masterthread() {
    return thread;
 }
 
-threadtree_t vftr_new_threadtree(stack_t *rootstack_ptr) {
+threadtree_t vftr_new_threadtree() {
    threadtree_t threadtree;
    threadtree.nthreads = 1;
    threadtree.maxthreads = 1;

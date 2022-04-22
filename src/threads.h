@@ -8,6 +8,9 @@
 
 threadtree_t vftr_new_threadtree();
 
+int vftr_new_thread(int parent_thread_id,
+                    threadtree_t *threadtree_ptr);
+
 void vftr_threadtree_free(threadtree_t *threadtree_ptr);
 
 int vftr_get_thread_level();
