@@ -3,7 +3,6 @@
 
 #include <omp.h>
 
-#include "vftrace_state.h"
 #include "threads.h"
 
 int main(int argc, char **argv) {
