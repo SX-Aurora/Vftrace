@@ -1,6 +1,10 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
+#ifdef _OMP
+#include <omp.h>
+#endif
+
 #include "realloc_consts.h"
 #include "stacks.h"
 #include "threads.h"
@@ -72,24 +76,33 @@ threadtree_t vftr_new_threadtree(stack_t *rootstack_ptr) {
    threadtree.nthreads = 1;
    threadtree.maxthreads = 1;
    threadtree.threads = (thread_t*) malloc(sizeof(thread_t));
-   threadtree.threads[0] = vftr_new_masterthread(rootstack_ptr);
+   threadtree.threads[0] = vftr_new_masterthread();
    return threadtree;
 }
 
 int vftr_get_thread_level() {
-   // TODO: use omp_get_level if OMP is active
+#ifdef _OMP
+   return omp_get_level();
+#else
    return 0;
+#endif
 }
 
 int vftr_get_thread_num() {
-   // TODO: use omp_get_thread_num if OMP is active
+#ifdef _OMP
+   return omp_get_thread_num();
+#else
    return 0;
+#endif
 }
 
 int vftr_get_ancestor_thread_num(int level) {
+#ifdef _OMP
+   return omp_get_ancestor_thread_num(level);
+#else
    (void) level;
-   // TODO: use omp_get_ancestor_thread_num(level) if OMP is active
    return 0;
+#endif
 }
 
 thread_t *vftr_get_my_thread(threadtree_t *threadtree_ptr) {
