@@ -39,9 +39,6 @@ void vftr_function_entry(void *func, void *call_site) {
    //       whether to inherit the parentthreads stack + the function, or 
    //       to inherit it as soon as a task is created. for non-OMP code the master
    //       thread is created with _init as lowest stacklist entry
-
-   vftr_print_threadtree(stderr, vftrace.process.threadtree);
-   vftr_print_stacktree(stderr, vftrace.process.stacktree);
    stack_t *my_stack = vftrace.process.stacktree.stacks+my_threadstack->stackID;
    
    // cast and store function address once, as it is needed multiple times
