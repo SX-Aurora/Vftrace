@@ -60,6 +60,7 @@ endif
 check_PROGRAMS += stacktree \
 		  stacklist
 
+check_PROGRAMS += threadtree
 
 check_PROGRAMS += filewrite_1
 #
@@ -187,6 +188,11 @@ stacklist_SOURCES = $(srcdir)/stacklist.c \
 stacklist_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
 stacklist_LDFLAGS = $(AM_LDFLAGS)
 
+threadtree_SOURCES = $(srcdir)/threadtree.c \
+		     $(srcdir)/dummysymboltable.c
+threadtree_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
+threadtree_LDFLAGS = $(AM_LDFLAGS)
+
 #scenario_1_SOURCES = $(srcdir)/scenario_1.c
 #scenario_1_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src -I$(top_srcdir)/external/tinyexpr
 #scenario_1_LDFLAGS = $(AM_LDFLAGS)
@@ -257,9 +263,10 @@ if WITH_MPI
 dist_check_SCRIPTS += collatestacks_parallel_1.sh \
 		      collatestacks_parallel_2.sh \
 		      collatestacks_parallel_3.sh
+endif
 dist_check_SCRIPTS += stacktree.sh \
 		      stacklist.sh
-endif
+dist_check_SCRIPTS += threadtree.sh
 dist_check_SCRIPTS += filewrite_1.sh
 #		     scenario_1.sh \
 #		     scenario_2.sh \
