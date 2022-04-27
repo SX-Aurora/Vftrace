@@ -148,32 +148,38 @@ collated_stacktree_t vftr_collate_stacks(stacktree_t *stacktree_ptr) {
 
    // fill in the locally known information
    // special treatment for init because it does not have a caller
-   {
-      int lid = 0;
-      stack_t *local_stack = stacktree_ptr->stacks+lid;
-      int gid = local2global_ID[lid];
-      collated_stack_t *global_stack = coll_stacktree.stacks+gid;
-      global_stack->local_stack = local_stack;
-      global_stack->gid = gid;
-      global_stack->caller = -1;
-      global_stack->name = strdup(local_stack->name);
-   }
-   for (int lid=1; lid<stacktree_ptr->nstacks; lid++) {
-      stack_t *local_stack = stacktree_ptr->stacks+lid;
-      int gid = local2global_ID[lid];
-      collated_stack_t *global_stack = coll_stacktree.stacks+gid;
-      global_stack->local_stack = local_stack;
-      global_stack->gid = gid;
-      global_stack->caller = local2global_ID[local_stack->caller];
-      global_stack->name = strdup(local_stack->name);
-   }
-
+   int myrank = 0;
 #ifdef _MPI
    int mpi_initialized;
    PMPI_Initialized(&mpi_initialized);
    if (mpi_initialized) {
-      int myrank = 0;
       PMPI_Comm_rank(MPI_COMM_WORLD, &myrank);
+   }
+#endif
+   if (myrank == 0) {
+      {
+         int lid = 0;
+         stack_t *local_stack = stacktree_ptr->stacks+lid;
+         int gid = local2global_ID[lid];
+         collated_stack_t *global_stack = coll_stacktree.stacks+gid;
+         global_stack->local_stack = local_stack;
+         global_stack->gid = gid;
+         global_stack->caller = -1;
+         global_stack->name = strdup(local_stack->name);
+      }
+      for (int lid=1; lid<stacktree_ptr->nstacks; lid++) {
+         stack_t *local_stack = stacktree_ptr->stacks+lid;
+         int gid = local2global_ID[lid];
+         collated_stack_t *global_stack = coll_stacktree.stacks+gid;
+         global_stack->local_stack = local_stack;
+         global_stack->gid = gid;
+         global_stack->caller = local2global_ID[local_stack->caller];
+         global_stack->name = strdup(local_stack->name);
+      }
+   }
+
+#ifdef _MPI
+   if (mpi_initialized) {
       if (myrank == 0) {
          // if there are multiple processes the table might still be missing entries
          int *missingstacks = (int*) malloc(coll_stacktree.nstacks*sizeof(int));
@@ -315,6 +321,9 @@ collated_stacktree_t vftr_collate_stacks(stacktree_t *stacktree_ptr) {
       vftr_broadcast_collated_stacktree(&coll_stacktree);
    }
 #endif
+
+   free(local2global_ID);
+   free(global2local_ID);
 
    return coll_stacktree;
 }

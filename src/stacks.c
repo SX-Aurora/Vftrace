@@ -131,10 +131,6 @@ void vftr_finalize_stacktree(stacktree_t *stacktree_ptr) {
    // exclusive time
    vftr_update_stacks_exclusive_time(stacktree_ptr->nstacks,
                                      stacktree_ptr->stacks);
-
-   // collate stacks among all processes
-   // to get a global ordering of stacks
-   vftr_collate_stacks(stacktree_ptr);
 }
 
 void vftr_print_stack_branch(FILE *fp, int level, stacktree_t stacktree, int stackid) {

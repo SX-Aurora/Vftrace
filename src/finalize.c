@@ -20,6 +20,11 @@ void vftr_finalize() {
    // finalize stacks
    vftr_finalize_stacktree(&(vftrace.process.stacktree));
 
+   // collate stacks among all processes
+   // to get a global ordering of stacks
+   vftrace.process.collated_stacktree =
+      vftr_collate_stacks(&(vftrace.process.stacktree));
+
    // write logfile
    vftr_write_logfile(vftrace, runtime);
 
