@@ -19,31 +19,26 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
-#include "initialize.h"
+#include "vftrace_state.h"
 
-// Define the function pointers which will be called by the hooks
-// On the first function entry vftrace will be initialized.
-// After that the function pointers will be redirected to the
-// actual hook functionality or a dummy function if vftrace is off.
-static void (*vftr_func_enter_hook_ptr)(void*, void*) = vftr_initialize;
-static void (*vftr_func_exit_hook_ptr)(void*, void*) = NULL;
+#include "initialize.h"
 
 // Define functions to redirect the function hooks, so to not make the 
 // function pointers globaly visible
 void vftr_set_enter_func_hook(void (*function_ptr)(void*,void*)) {
-   vftr_func_enter_hook_ptr = function_ptr;
+   vftrace.hooks.function_hooks.enter = function_ptr;
 }
 void vftr_set_exit_func_hook(void (*function_ptr)(void*,void*)) {
-   vftr_func_exit_hook_ptr = function_ptr;
+   vftrace.hooks.function_hooks.exit = function_ptr;
 }
 
 #if defined(__x86_64__) || defined(__ve__)
 void __cyg_profile_func_enter(void *func, void *call_site) {
-   vftr_func_enter_hook_ptr(func, call_site);
+   vftrace.hooks.function_hooks.enter(func, call_site);
 }
 
 void __cyg_profile_func_exit(void *func, void *call_site) {
-   vftr_func_exit_hook_ptr(func, call_site);
+   vftrace.hooks.function_hooks.exit(func, call_site);
 }
 #endif
 
@@ -51,10 +46,10 @@ void __cyg_profile_func_exit(void *func, void *call_site) {
 // The argument func is a pointer to a pointer instead of a pointer.
 void __cyg_profile_func_enter(void **func, void *call_site) {
    (void) call_site;
-   vftr_function_entry(NULL, *func, false);
+   vftrace.hooks.function_hooks.enter(*func, call_site);
 }
 
 void __cyg_profile_func_exit(void **func, void *call_site) {
-   vftr_func_exit_hook_ptr(*func, call_site);
+   vftrace.hooks.function_hooks.exit(*func, call_site);
 }
 #endif

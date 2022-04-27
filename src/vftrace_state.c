@@ -20,10 +20,17 @@
 #include <stdbool.h>
 
 #include "vftrace_state.h"
+#include "initialize.h"
 
 // main datatype to store everything 
 
 vftrace_t vftrace = {
+   .hooks = {
+      .function_hooks = {
+         .enter = &vftr_initialize,
+         .exit = NULL
+      }
+   },
    .environment.valid = false,
    .symboltable = {
       .nsymbols = 0,
@@ -65,6 +72,8 @@ vftrace_t vftrace = {
       .initialized = false,
       .omp_version = 0,
       .runtime_version = NULL,
+#endif
+#ifdef _MPI
 #endif
    }
 };

@@ -21,6 +21,7 @@
 
 #include <stdbool.h>
 
+#include "hook_types.h"
 #include "environment_types.h"
 #include "symbol_types.h"
 #include "process_types.h"
@@ -34,12 +35,14 @@
 typedef enum {
    undefined,
    off,
-   initialized,
-   finalized
+   on,
+   paused
 } state_t;
 
 // main datatype to store everything 
 typedef struct {
+   hooks_t hooks; // collection of function pointers
+                  // where vftrace intercepts the program flow
    environment_t environment; // set of all relevant environment variables
    symboltable_t symboltable; // list of function symbols
    process_t process; // all of the dynamic process data
@@ -48,6 +51,8 @@ typedef struct {
    time_strings_t timestrings; // start and end time in string form
 #ifdef _OMP
    omp_state_t omp_state;
+#endif
+#ifdef _MPI
 #endif
 } vftrace_t;
 

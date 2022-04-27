@@ -28,7 +28,7 @@ void vftr_initialize(void *func, void *call_site) {
       vftr_set_exit_func_hook(vftr_function_hook_off);
    } else {
       // update the vftrace state
-      vftrace.state = initialized;
+      vftrace.state = on;
 
       // set start time string
       vftrace.timestrings.start_time = vftr_get_date_str();
