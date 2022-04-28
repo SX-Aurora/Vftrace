@@ -78,21 +78,46 @@ threadstack_t *vftr_get_my_threadstack(thread_t *my_thread_ptr) {
    }
 }
 
-threadstack_t *vftr_update_threadstack(threadstack_t *my_threadstack,
-                                       thread_t *my_thread,
-                                       uintptr_t func_addr,
-                                       vftrace_t *vftrace) {
+threadstack_t *vftr_update_threadstack_function(threadstack_t *my_threadstack,
+                                                thread_t *my_thread,
+                                                uintptr_t func_addr,
+                                                vftrace_t *vftrace) {
    // search for the function in the stacks callees
    int calleeID = vftr_linear_search_callee(vftrace->process.stacktree.stacks,
                                             my_threadstack->stackID,
                                             func_addr);
    if (calleeID < 0) {
+      char *name = vftr_get_name_from_address(vftrace->symboltable, func_addr);
       // if the function was not found, create a new stack entry
       // and add its id to the callee list
       calleeID = vftr_new_stack(my_threadstack->stackID,
                                 &(vftrace->process.stacktree),
-                                vftrace->symboltable,
+                                name,
                                 function, func_addr, 
+                                true);
+   }
+   // push the function onto the threads stacklist
+   vftr_threadstack_push(calleeID, &(my_thread->stacklist));
+   // update the threadstack pointer
+   return vftr_get_my_threadstack(my_thread);
+}
+
+threadstack_t *vftr_update_threadstack_region(threadstack_t *my_threadstack,
+                                              thread_t *my_thread,
+                                              uintptr_t region_addr,
+                                              const char *name,
+                                              vftrace_t *vftrace) {
+   // search for the function in the stacks callees
+   int calleeID = vftr_linear_search_callee(vftrace->process.stacktree.stacks,
+                                            my_threadstack->stackID,
+                                            region_addr);
+   if (calleeID < 0) {
+      // if the function was not found, create a new stack entry
+      // and add its id to the callee list
+      calleeID = vftr_new_stack(my_threadstack->stackID,
+                                &(vftrace->process.stacktree),
+                                name,
+                                function, region_addr, 
                                 true);
    }
    // push the function onto the threads stacklist

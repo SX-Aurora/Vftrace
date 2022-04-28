@@ -43,7 +43,7 @@ void vftr_insert_callee(int calleeID, stack_t *caller) {
 }
 
 int vftr_new_stack(int callerID, stacktree_t *stacktree_ptr,
-                   symboltable_t symboltable, stack_kind_t stack_kind,
+                   const char *name, stack_kind_t stack_kind,
                    uintptr_t address, bool precise) {
    int stackID = stacktree_ptr->nstacks;
    stacktree_ptr->nstacks++;
@@ -61,15 +61,7 @@ int vftr_new_stack(int callerID, stacktree_t *stacktree_ptr,
    stack->callees = NULL;
    stack->lid = stackID;
 
-   // search for the function in the symbol table
-   int symbID = vftr_binary_search_symboltable(symboltable.nsymbols,
-                                               symboltable.symbols,
-                                               address);
-   if (symbID >= 0) {
-      stack->name = symboltable.symbols[symbID].name;
-   } else {
-      stack->name = "(UnknownFunctionName)";
-   }
+   stack->name = strdup(name);
 
    stack->profiling = vftr_new_profiling();
    vftr_insert_callee(stack->lid, callerstack);
@@ -87,7 +79,7 @@ stack_t vftr_first_stack() {
    stack.ncallees = 0;
    stack.callees = NULL;
    stack.lid = 0;
-   stack.name = "init";
+   stack.name = strdup("init");
    stack.profiling = vftr_new_profiling();
    return stack;
 }
@@ -103,6 +95,7 @@ void vftr_stack_free(stack_t *stacks_ptr, int stackID) {
       stack.callees = NULL;
       vftr_profiling_free(&(stack.profiling));
    } 
+   free(stack.name);
    stacks_ptr[stackID] = stack;
 }
 
@@ -198,11 +191,9 @@ char *vftr_get_stack_string(stacktree_t stacktree, int stackid) {
 }
 
 void vftr_print_stack(FILE *fp, stacktree_t stacktree, int stackid) {
-   fprintf(fp, "%s", stacktree.stacks[stackid].name);
-   if (stacktree.stacks[stackid].caller >= 0) {
-      fprintf(fp, "<");
-      vftr_print_stack(fp, stacktree, stacktree.stacks[stackid].caller);
-   }
+   char *stackstr = vftr_get_stack_string(stacktree, stackid);
+   fprintf(fp, "%s", stackstr);
+   free(stackstr);
 }
 
 void vftr_print_stacklist(FILE *fp, stacktree_t stacktree) {

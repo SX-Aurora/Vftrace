@@ -25,6 +25,7 @@ profile_t vftr_new_profiling() {
 // on the stack profile
 void vftr_accumulate_callprofiling(bool master, callProfile_t *stackprof,
                                    callProfile_t *threadprof) {
+   (void) master;
    // TODO: differentiate between master thread and others.
    // data from the other threads is accumulated seperately
    // so that the function time cannot be larger

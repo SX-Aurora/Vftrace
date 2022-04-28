@@ -22,10 +22,17 @@ void vftr_threadstacklist_free(threadstacklist_t *stacklist_ptr);
 
 threadstack_t *vftr_get_my_threadstack(thread_t *my_thread_ptr);
 
-threadstack_t *vftr_update_threadstack(threadstack_t *my_threadstack,
-                                       thread_t *my_thread,
-                                       uintptr_t func_addr,
-                                       vftrace_t *vftrace);
+threadstack_t *vftr_update_threadstack_function(threadstack_t *my_threadstack,
+                                                thread_t *my_thread,
+                                                uintptr_t func_addr,
+                                                vftrace_t *vftrace);
+
+threadstack_t *vftr_update_threadstack_region(threadstack_t *my_threadstack,
+                                              thread_t *my_thread,
+                                              uintptr_t region_addr,
+                                              const char *name,
+                                              vftrace_t *vftrace);
+
 
 void vftr_print_threadstack(FILE *fp, threadstacklist_t stacklist);
 

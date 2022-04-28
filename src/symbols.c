@@ -9,6 +9,7 @@
 #include "custom_types.h"
 #include "symbols.h"
 #include "ElfFormat.h"
+#include "search.h"
 #include "sorting.h"
 
 library_t vftr_parse_maps_line(char *line) {
@@ -237,5 +238,17 @@ void vftr_symboltable_free(symboltable_t *symboltable_ptr) {
       }
       free(symboltable.symbols);
       symboltable.nsymbols = 0;
+   }
+}
+
+char *vftr_get_name_from_address(symboltable_t symboltable,
+                                 uintptr_t address) {
+   int symbID = vftr_binary_search_symboltable(symboltable.nsymbols,
+                                               symboltable.symbols,
+                                               address);
+   if (symbID >= 0) {
+      return symboltable.symbols[symbID].name;
+   } else {
+      return "(UnknownFunctionName)";
    }
 }

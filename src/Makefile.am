@@ -1,34 +1,34 @@
 lib_LTLIBRARIES = libvftrace.la
 
-#include_HEADERS = vftrace.h
+include_HEADERS = vftrace.h
 #if ENABLE_FORTRAN
 #include_HEADERS += vftrace.mod
 #endif
 
 SUBDIRS =
 libvftrace_la_LIBADD =
-#SUBDIRS += mpi
-#
-#external_includes = -I$(top_srcdir)/external/tinyexpr/ \
-#		    -I$(top_srcdir)/external/jsmn/
-#
-## external libraries
-#libvftrace_la_LIBADD += ${top_builddir}/external/libtinyexpr.la
-#
-#libvftrace_la_LIBADD += mpi/utils/libvftr_mpi_utils.la
-#if WITH_MPI
-#libvftrace_la_LIBADD += mpi/vftr_mpi/libvftr_mpi.la
-#libvftrace_la_LIBADD += mpi/c-wrapper/libvftr_cmpiwrap.la \
-#			mpi/c2vftr/libvftr_mpi_c2vftr.la
-#if ENABLE_FORTRAN
-#libvftrace_la_LIBADD += mpi/f-wrapper/libvftr_fmpiwrap.la \
-#			mpi/f2vftr/libvftr_mpi_f2vftr.la
-#if ENABLE_FORTRAN08
-#libvftrace_la_LIBADD += mpi/f08-wrapper/libvftr_f08mpiwrap.la \
-#			mpi/f082vftr/libvftr_mpi_f082vftr.la
-#endif
-#endif
-#endif
+SUBDIRS += mpi
+
+external_includes = -I$(top_srcdir)/external/tinyexpr/ \
+		    -I$(top_srcdir)/external/jsmn/
+
+# external libraries
+libvftrace_la_LIBADD += ${top_builddir}/external/libtinyexpr.la
+
+libvftrace_la_LIBADD += mpi/utils/libvftr_mpi_utils.la
+if WITH_MPI
+libvftrace_la_LIBADD += mpi/vftr_mpi/libvftr_mpi.la
+libvftrace_la_LIBADD += mpi/c-wrapper/libvftr_cmpiwrap.la \
+			mpi/c2vftr/libvftr_mpi_c2vftr.la
+if ENABLE_FORTRAN
+libvftrace_la_LIBADD += mpi/f-wrapper/libvftr_fmpiwrap.la \
+			mpi/f2vftr/libvftr_mpi_f2vftr.la
+if ENABLE_FORTRAN08
+libvftrace_la_LIBADD += mpi/f08-wrapper/libvftr_f08mpiwrap.la \
+			mpi/f082vftr/libvftr_mpi_f082vftr.la
+endif
+endif
+endif
 
 if WITH_OMP
 SUBDIRS += omp
@@ -75,6 +75,7 @@ libvftrace_la_SOURCES += sorting.c \
 			 hashing.c
 libvftrace_la_SOURCES += logfile.c \
 			 vfdfiles.c
+libvftrace_la_SOURCES += user_regions.c
 
 libvftrace_la_CFLAGS += -I${srcdir}/mpi/utils/ \
 			${external_includes}

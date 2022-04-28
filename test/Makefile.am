@@ -1,5 +1,6 @@
-SUBDIRS = units
-#SUBDIRS += user_functions
+SUBDIRS =
+SUBDIRS += units
+SUBDIRS += user_functions
 if WITH_OMP
 SUBDIRS += omp
 endif

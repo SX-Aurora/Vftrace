@@ -64,99 +64,99 @@ dist_noinst_SCRIPTS = cregions1.sh \
 		      cregions2.sh \
 		      cregions3.sh \
 		      cregions4.sh
-if ENABLE_FORTRAN
-check_PROGRAMS += fregions1 \
-		  fregions2 \
-		  fregions3 \
-		  fregions4
-
-fregions1_SOURCES = $(srcdir)/fregions1.F90
-fregions1_FCFLAGS = $(AM_FCFLAGS)
-fregions1_LDFLAGS = $(AM_LDFLAGS)
-
-fregions2_SOURCES = $(srcdir)/fregions2.F90
-fregions2_FCFLAGS = $(AM_FCFLAGS)
-fregions2_LDFLAGS = $(AM_LDFLAGS)
-
-fregions3_SOURCES = $(srcdir)/fregions3.F90
-fregions3_FCFLAGS = $(AM_FCFLAGS)
-fregions3_LDFLAGS = $(AM_LDFLAGS)
-
-fregions4_SOURCES = $(srcdir)/fregions4.F90
-fregions4_FCFLAGS = $(AM_FCFLAGS)
-fregions4_LDFLAGS = $(AM_LDFLAGS)
-
-dist_noinst_SCRIPTS += fregions1.sh \
-		       fregions2.sh \
-		       fregions3.sh \
-		       fregions4.sh
-endif
-
-#############
-# get stack #
-#############
-if ENABLE_FORTRAN
-check_PROGRAMS += fget_stack
-
-fget_stack_SOURCES = $(srcdir)/fget_stack.F90
-fget_stack_FCFLAGS = $(AM_FCFLAGS)
-fget_stack_LDFLAGS = $(AM_LDFLAGS)
-
-dist_noinst_SCRIPTS += fget_stack.sh
-endif
-
-check_PROGRAMS += cget_stack
-
-cget_stack_SOURCES = $(srcdir)/cget_stack.c
-cget_stack_CFLAGS  = $(AM_CFLAGS)
-cget_stack_LDFLAGS = $(AM_LDFLAGS)
-
-dist_noinst_SCRIPTS += cget_stack.sh
-
-################
-# pause/resume #
-################
-check_PROGRAMS += cpause_resume
-
-cpause_resume_SOURCES = $(srcdir)/cpause_resume.c
-cpause_resume_CFLAGS  = $(AM_CFLAGS)
-cpause_resume_LDFLAGS = $(AM_LDFLAGS)
-
-dist_noinst_SCRIPTS += cpause_resume.sh
-
-if ENABLE_FORTRAN
-check_PROGRAMS += fpause_resume
-
-fpause_resume_SOURCES = $(srcdir)/fpause_resume.F90
-fpause_resume_FCFLAGS = $(AM_FCFLAGS)
-fpause_resume_LDFLAGS = $(AM_LDFLAGS)
-
-dist_noinst_SCRIPTS += fpause_resume.sh
-endif
-
-check_PROGRAMS += cshow_stack1 \
-                  cshow_stack2
-
-cshow_stack1_SOURCES = $(srcdir)/cshow_stack1.c
-cshow_stack1_CFLAGS = $(AM_CFLAGS)
-cshow_stack1_LDFLAGS = $(AM_LDFLAGS)
-
-cshow_stack2_SOURCES = $(srcdir)/cshow_stack2.c
-cshow_stack2_CFLAGS = $(AM_CFLAGS)
-cshow_stack2_LDFLAGS = $(AM_LDFLAGS)
-
-dist_noinst_SCRIPTS += cshow_stack1.sh \
-                       cshow_stack2.sh
-
-if ENABLE_FORTRAN
-check_PROGRAMS += fshow_stack1
-
-fshow_stack1_SOURCES = $(srcdir)/fshow_stack1.F90
-fshow_stack1_CFLAGS = $(AM_FCFLAGS)
-fshow_stack1_LDFLAGS = $(AM_LDFLAGS)
-
-dist_noinst_SCRIPTS += fshow_stack1.sh
-endif
+#if ENABLE_FORTRAN
+#check_PROGRAMS += fregions1 \
+#		  fregions2 \
+#		  fregions3 \
+#		  fregions4
+#
+#fregions1_SOURCES = $(srcdir)/fregions1.F90
+#fregions1_FCFLAGS = $(AM_FCFLAGS)
+#fregions1_LDFLAGS = $(AM_LDFLAGS)
+#
+#fregions2_SOURCES = $(srcdir)/fregions2.F90
+#fregions2_FCFLAGS = $(AM_FCFLAGS)
+#fregions2_LDFLAGS = $(AM_LDFLAGS)
+#
+#fregions3_SOURCES = $(srcdir)/fregions3.F90
+#fregions3_FCFLAGS = $(AM_FCFLAGS)
+#fregions3_LDFLAGS = $(AM_LDFLAGS)
+#
+#fregions4_SOURCES = $(srcdir)/fregions4.F90
+#fregions4_FCFLAGS = $(AM_FCFLAGS)
+#fregions4_LDFLAGS = $(AM_LDFLAGS)
+#
+#dist_noinst_SCRIPTS += fregions1.sh \
+#		       fregions2.sh \
+#		       fregions3.sh \
+#		       fregions4.sh
+#endif
+#
+##############
+## get stack #
+##############
+#if ENABLE_FORTRAN
+#check_PROGRAMS += fget_stack
+#
+#fget_stack_SOURCES = $(srcdir)/fget_stack.F90
+#fget_stack_FCFLAGS = $(AM_FCFLAGS)
+#fget_stack_LDFLAGS = $(AM_LDFLAGS)
+#
+#dist_noinst_SCRIPTS += fget_stack.sh
+#endif
+#
+#check_PROGRAMS += cget_stack
+#
+#cget_stack_SOURCES = $(srcdir)/cget_stack.c
+#cget_stack_CFLAGS  = $(AM_CFLAGS)
+#cget_stack_LDFLAGS = $(AM_LDFLAGS)
+#
+#dist_noinst_SCRIPTS += cget_stack.sh
+#
+#################
+## pause/resume #
+#################
+#check_PROGRAMS += cpause_resume
+#
+#cpause_resume_SOURCES = $(srcdir)/cpause_resume.c
+#cpause_resume_CFLAGS  = $(AM_CFLAGS)
+#cpause_resume_LDFLAGS = $(AM_LDFLAGS)
+#
+#dist_noinst_SCRIPTS += cpause_resume.sh
+#
+#if ENABLE_FORTRAN
+#check_PROGRAMS += fpause_resume
+#
+#fpause_resume_SOURCES = $(srcdir)/fpause_resume.F90
+#fpause_resume_FCFLAGS = $(AM_FCFLAGS)
+#fpause_resume_LDFLAGS = $(AM_LDFLAGS)
+#
+#dist_noinst_SCRIPTS += fpause_resume.sh
+#endif
+#
+#check_PROGRAMS += cshow_stack1 \
+#                  cshow_stack2
+#
+#cshow_stack1_SOURCES = $(srcdir)/cshow_stack1.c
+#cshow_stack1_CFLAGS = $(AM_CFLAGS)
+#cshow_stack1_LDFLAGS = $(AM_LDFLAGS)
+#
+#cshow_stack2_SOURCES = $(srcdir)/cshow_stack2.c
+#cshow_stack2_CFLAGS = $(AM_CFLAGS)
+#cshow_stack2_LDFLAGS = $(AM_LDFLAGS)
+#
+#dist_noinst_SCRIPTS += cshow_stack1.sh \
+#                       cshow_stack2.sh
+#
+#if ENABLE_FORTRAN
+#check_PROGRAMS += fshow_stack1
+#
+#fshow_stack1_SOURCES = $(srcdir)/fshow_stack1.F90
+#fshow_stack1_CFLAGS = $(AM_FCFLAGS)
+#fshow_stack1_LDFLAGS = $(AM_LDFLAGS)
+#
+#dist_noinst_SCRIPTS += fshow_stack1.sh
+#endif
 
 
 
