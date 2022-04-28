@@ -58,7 +58,8 @@ check_PROGRAMS += collatestacks_parallel_1 \
 		  collatestacks_parallel_3
 endif
 check_PROGRAMS += stacktree \
-		  stacklist
+		  stacklist \
+		  getstackstring
 
 check_PROGRAMS += threadtree
 
@@ -188,6 +189,11 @@ stacklist_SOURCES = $(srcdir)/stacklist.c \
 stacklist_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
 stacklist_LDFLAGS = $(AM_LDFLAGS)
 
+getstackstring_SOURCES = $(srcdir)/getstackstring.c \
+			 $(srcdir)/dummysymboltable.c
+getstackstring_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
+getstackstring_LDFLAGS = $(AM_LDFLAGS)
+
 threadtree_SOURCES = $(srcdir)/threadtree.c \
 		     $(srcdir)/dummysymboltable.c
 threadtree_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
@@ -265,7 +271,8 @@ dist_check_SCRIPTS += collatestacks_parallel_1.sh \
 		      collatestacks_parallel_3.sh
 endif
 dist_check_SCRIPTS += stacktree.sh \
-		      stacklist.sh
+		      stacklist.sh \
+		      getstackstring.sh
 dist_check_SCRIPTS += threadtree.sh
 dist_check_SCRIPTS += filewrite_1.sh
 #		     scenario_1.sh \

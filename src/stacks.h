@@ -22,4 +22,6 @@ void vftr_print_stacktree(FILE *fp, stacktree_t stacktree);
 
 void vftr_print_stacklist(FILE *fp, stacktree_t stacktree);
 
+char *vftr_get_stack_string(stacktree_t stacktree, int stackid);
+
 #endif

@@ -1,6 +1,8 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
+#include <string.h>
+
 #include "stack_types.h"
 #include "realloc_consts.h"
 #include "stacks.h"
@@ -155,6 +157,44 @@ void vftr_print_stack_branch(FILE *fp, int level, stacktree_t stacktree, int sta
 
 void vftr_print_stacktree(FILE *fp, stacktree_t stacktree) {
    vftr_print_stack_branch(fp, 0, stacktree, 0);
+}
+
+char *vftr_get_stack_string(stacktree_t stacktree, int stackid) {
+   int stringlen = 0;
+   int tmpstackid = stackid;
+   stringlen += strlen(stacktree.stacks[stackid].name);
+   stringlen ++; // function seperating character "<", or null terminator
+   while (stacktree.stacks[tmpstackid].caller >= 0) {
+      tmpstackid = stacktree.stacks[tmpstackid].caller;
+      stringlen += strlen(stacktree.stacks[tmpstackid].name);
+      stringlen ++; // function seperating character "<", or null terminator
+   }
+   char *stackstring = (char*) malloc(stringlen*sizeof(char));
+   // copy the chars one by one so there is no need to call strlen again.
+   // thus minimizing reading the same memory locations over and over again.
+   tmpstackid = stackid;
+   char *tmpname_ptr = stacktree.stacks[tmpstackid].name;
+   char *tmpstackstring_ptr = stackstring;
+   while (*tmpname_ptr != '\0') {
+      *tmpstackstring_ptr = *tmpname_ptr;
+      tmpstackstring_ptr++;
+      tmpname_ptr++;
+   }
+   while (stacktree.stacks[tmpstackid].caller >= 0) {
+      // add function name separating character
+      *tmpstackstring_ptr = '<';
+      tmpstackstring_ptr++;
+      tmpstackid = stacktree.stacks[tmpstackid].caller;
+      char *tmpname_ptr = stacktree.stacks[tmpstackid].name;
+      while (*tmpname_ptr != '\0') {
+         *tmpstackstring_ptr = *tmpname_ptr;
+         tmpstackstring_ptr++;
+         tmpname_ptr++;
+      }
+   }
+   // replace last char with a null terminator
+   *tmpstackstring_ptr = '\0';
+   return stackstring;
 }
 
 void vftr_print_stack(FILE *fp, stacktree_t stacktree, int stackid) {
