@@ -12,6 +12,8 @@
 #include "config.h"
 #include "log_profile.h"
 #include "environment.h"
+#include "stacks.h"
+#include "collate_stacks.h"
 #include "tables.h"
 
 char *vftr_get_logfile_name(environment_t environment, int rankID, int nranks) {
@@ -103,6 +105,41 @@ void vftr_write_logfile_profile_table(FILE *fp, stacktree_t stacktree,
    free(caller_names);
 }
 
+void vftr_write_logfile_global_stack_list(FILE *fp, collated_stacktree_t stacktree) {
+   fprintf(fp, "\nGlobal call stacks:\n");
+
+   table_t table = vftr_new_table();
+   vftr_table_set_nrows(&table, stacktree.nstacks);
+   vftr_table_left_outline(&table, false);
+   vftr_table_right_outline(&table, false);
+   vftr_table_columns_separating_line(&table, false);
+
+   // first column with the StackIDs
+   int *IDs = (int*) malloc(stacktree.nstacks*sizeof(int));
+   for (int istack=0; istack<stacktree.nstacks; istack++) {
+      IDs[istack] = istack;
+   }
+   vftr_table_add_column(&table, col_int, "ID", "STID%d", 'r', 'r', (void*) IDs);
+
+   // second column with the stack strings
+   char **stacks = (char**) malloc(stacktree.nstacks*sizeof(char*));
+   for (int istack=0; istack<stacktree.nstacks; istack++) {
+      stacks[istack] = vftr_get_collated_stack_string(stacktree, istack);
+   }
+   vftr_table_add_column(&table, col_string,
+                         "Call stack", "%s", 'r', 'l', (void*) stacks);
+
+   vftr_print_table(fp, table);
+
+   vftr_table_free(&table);
+   free(IDs);
+   for (int istack=0; istack<stacktree.nstacks; istack++) {
+      free(stacks[istack]);
+   }
+   free(stacks);
+
+}
+
 FILE *vftr_open_logfile(char *filename) {
    FILE *fp = fopen(filename, "w");
    if (fp == NULL) {
@@ -125,13 +162,12 @@ void vftr_write_logfile(vftrace_t vftrace, long long runtime) {
    vftr_print_env(fp, vftrace.environment);
    vftr_check_env_names(fp, &vftrace.environment);
 
-
    vftr_write_logfile_summary(fp, vftrace, runtime);
 
    vftr_write_logfile_profile_table(fp, vftrace.process.stacktree,
                                     vftrace.environment, runtime);
 
-
+   vftr_write_logfile_global_stack_list(fp, vftrace.process.collated_stacktree);
 
    fclose(fp);
    free(logfilename);
