@@ -339,12 +339,48 @@ void vftr_collated_stacktree_free(collated_stacktree_t *stacktree_ptr) {
    }
 }
 
-void vftr_print_collated_stack(FILE *fp, collated_stacktree_t stacktree, int stackid) {
-   fprintf(fp, "%s", stacktree.stacks[stackid].name);
-   if (stacktree.stacks[stackid].caller >= 0) {
-      fprintf(fp, "<");
-      vftr_print_collated_stack(fp, stacktree, stacktree.stacks[stackid].caller);
+char *vftr_get_collated_stack_string(collated_stacktree_t stacktree, int stackid) {
+   int stringlen = 0;
+   int tmpstackid = stackid;
+   stringlen += strlen(stacktree.stacks[stackid].name);
+   stringlen ++; // function seperating character "<", or null terminator
+   while (stacktree.stacks[tmpstackid].caller >= 0) {
+      tmpstackid = stacktree.stacks[tmpstackid].caller;
+      stringlen += strlen(stacktree.stacks[tmpstackid].name);
+      stringlen ++; // function seperating character "<", or null terminator
    }
+   char *stackstring = (char*) malloc(stringlen*sizeof(char));
+   // copy the chars one by one so there is no need to call strlen again.
+   // thus minimizing reading the same memory locations over and over again.
+   tmpstackid = stackid;
+   char *tmpname_ptr = stacktree.stacks[tmpstackid].name;
+   char *tmpstackstring_ptr = stackstring;
+   while (*tmpname_ptr != '\0') {
+      *tmpstackstring_ptr = *tmpname_ptr;
+      tmpstackstring_ptr++;
+      tmpname_ptr++;
+   }
+   while (stacktree.stacks[tmpstackid].caller >= 0) {
+      // add function name separating character
+      *tmpstackstring_ptr = '<';
+      tmpstackstring_ptr++;
+      tmpstackid = stacktree.stacks[tmpstackid].caller;
+      char *tmpname_ptr = stacktree.stacks[tmpstackid].name;
+      while (*tmpname_ptr != '\0') {
+         *tmpstackstring_ptr = *tmpname_ptr;
+         tmpstackstring_ptr++;
+         tmpname_ptr++;
+      }
+   }
+   // replace last char with a null terminator
+   *tmpstackstring_ptr = '\0';
+   return stackstring;
+}
+
+void vftr_print_collated_stack(FILE *fp, collated_stacktree_t stacktree, int stackid) {
+   char *stackstr = vftr_get_collated_stack_string(stacktree, stackid);
+   fprintf(fp, "%s", stackstr);
+   free(stackstr);
 }
 
 void vftr_print_collated_stacklist(FILE *fp, collated_stacktree_t stacktree) {
