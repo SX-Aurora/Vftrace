@@ -82,8 +82,6 @@ void vftr_flush_cuda_events_to_func (function_t *func) {
          }
          free(cuda_events);
       }
-    } else {
-      //printf ("func: %s - no CUDA events\n", func->name);
     }
 }
 

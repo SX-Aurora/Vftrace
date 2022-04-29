@@ -38,7 +38,6 @@ void CUPTIAPI vftr_cuda_callback_events(void *userdata, CUpti_CallbackDomain dom
          cbid == CUPTI_RUNTIME_TRACE_CBID_cudaMemcpyAsync_v3020)) return;
 
    // For cuda functions, we use the symbolName. Otherwise, the correct call name is in functionName.
-   //const char *use_fun;
    char *use_fun;
    if (cbid == CUPTI_RUNTIME_TRACE_CBID_cudaLaunch_v3020 || cbid == CUPTI_RUNTIME_TRACE_CBID_cudaLaunchKernel_v7000) {
      use_fun = cb_info->symbolName;
@@ -61,7 +60,6 @@ void CUPTIAPI vftr_cuda_callback_events(void *userdata, CUpti_CallbackDomain dom
    }
    
    cuda_event_list_internal_t *this_event = events;
-   //printf ("In CUPTI Callback!\n");
 
    while (this_event != NULL && strcmp(this_event->func_name, use_fun)) {
       this_event = this_event->next;
@@ -77,8 +75,6 @@ void CUPTIAPI vftr_cuda_callback_events(void *userdata, CUpti_CallbackDomain dom
       this_event->t_acc[T_CUDA_COMP] = 0;
       this_event->t_acc[T_CUDA_MEMCP] = 0;
       this_event->next = NULL;
-   //} else {
-   //   this_event = this_event->next;
    }
    
    if (cb_info->callbackSite == CUPTI_API_ENTER) {
