@@ -101,13 +101,13 @@ void CUPTIAPI vftr_cuda_callback_events(void *userdata, CUpti_CallbackDomain dom
 /**********************************************************************/
 
 void vftr_setup_cuda () {
+#if defined(_CUPTI_AVAIL)
    cudaError_t ce = cudaGetDeviceCount(&vftr_n_cuda_devices);
    if (ce != cudaSuccess) {
        vftr_n_cuda_devices = 0; 
    } else {
        cudaGetDeviceProperties (&vftr_cuda_properties, 0);
    }
-#ifdef _CUPTI_AVAIL
    events = NULL;
    cuptiSubscribe(&subscriber, (CUpti_CallbackFunc)vftr_cuda_callback_events, events);
    cuptiEnableDomain(1, subscriber, CUPTI_CB_DOMAIN_RUNTIME_API);
@@ -115,6 +115,8 @@ void vftr_setup_cuda () {
    for (int i = 0; i < 406; i++) {
       vftr_registered_cbids[i] = 0;
    }
+#else
+   vftr_n_cuda_devices = 0;
 #endif
 }
 
