@@ -32,10 +32,8 @@ libvftr_mpi_utils_la_SOURCES += sync_messages.c
 
 libvftr_mpi_utils_la_SOURCES += requests.c \
 				p2p_requests.c \
-				persistent_requests.c \
 				collective_requests.c \
-				onesided_requests.c \
-				clear_mpi_requests.c
+				onesided_requests.c
 
 endif
 

@@ -189,6 +189,7 @@ env_var_bool_t *vftr_read_env_bool (char *env_name, bool val_default) {
            var->value = false;
         }
  	var->set = true;
+        free(s_lower);
     } else {
 	var->value = val_default;
         var->set = false;

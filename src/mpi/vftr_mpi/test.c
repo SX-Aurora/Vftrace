@@ -18,7 +18,7 @@
 
 #include <mpi.h>
 
-#include "clear_mpi_requests.h"
+#include "requests.h"
   
 int vftr_MPI_Test(MPI_Request *request, int *flag, MPI_Status *status) {
    // do not call MPI_Test immediately!

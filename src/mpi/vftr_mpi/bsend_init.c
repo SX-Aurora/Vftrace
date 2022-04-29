@@ -19,7 +19,7 @@
 #include <mpi.h>
 
 #include "vftr_timer.h"
-#include "persistent_requests.h"
+#include "p2p_requests.h"
 
 int vftr_MPI_Bsend_init(const void *buf, int count, MPI_Datatype datatype,
                         int dest, int tag, MPI_Comm comm, MPI_Request *request) {
@@ -27,7 +27,7 @@ int vftr_MPI_Bsend_init(const void *buf, int count, MPI_Datatype datatype,
    int retVal = PMPI_Bsend_init(buf, count, datatype, dest, tag, comm, request);
 
    long long t2start = vftr_get_runtime_usec();
-   vftr_register_persistent_request(send, count, datatype, dest, tag, comm, *request);
+   vftr_register_pers_p2p_request(send, count, datatype, dest, tag, comm, *request);
    long long t2end = vftr_get_runtime_usec();
 
    vftr_mpi_overhead_usec += t2end - t2start;

@@ -26,14 +26,7 @@
 #include "vftr_timer.h"
 #include "vftr_filewrite.h"
 
-vftr_request_t *vftr_open_p2p_request_list = NULL;
-
-vftr_request_t *vftr_search_P2P_request(MPI_Request request) {
-   return vftr_search_request(vftr_open_p2p_request_list, request);
-}
-
-
-void vftr_register_P2P_request(vftr_direction dir, int count,
+void vftr_register_p2p_request(vftr_direction dir, int count,
                                MPI_Datatype type, int peer_rank, int tag,
                                MPI_Comm comm, MPI_Request request,
                                long long tstart) {
@@ -42,95 +35,90 @@ void vftr_register_P2P_request(vftr_direction dir, int count,
    // with no effect on communication at all
    if (peer_rank == MPI_PROC_NULL) {return;}
 
-   vftr_request_t *new_request = vftr_new_request(dir, 1, &count, &type, tag, comm, request, 0, NULL, tstart);
+   vftr_request_t *new_request = vftr_register_request(dir, 1, &count, &type, tag, comm, request, 0, NULL, tstart);
    new_request->rank[0] = peer_rank;
-
-   vftr_request_prepend(&vftr_open_p2p_request_list, new_request);
+   new_request->request_kind = p2p;
+   new_request->persistent = false;
 }
 
-void vftr_clear_completed_P2P_requests() {
-   // go through the complete list and check the request
-   vftr_request_t *current_request = vftr_open_p2p_request_list;
-   while (current_request != NULL) {
-      // Test if the current request is still ongoing or completed
-      // Note: MPI_Test is a destructive test. It will destroy the request
-      //       Thus, running with and without vftr can lead to different program executions
-      //       MPI_Request_get_status is a non destructive status check
-      MPI_Status tmpStatus;
-      int flag;
-      PMPI_Request_get_status(current_request->request,
-                              &flag,
-                              &tmpStatus);
+void vftr_register_pers_p2p_request(vftr_direction dir, int count,
+                                    MPI_Datatype type, int peer_rank, int tag,
+                                    MPI_Comm comm, MPI_Request request) {
+   // immediately return if peer is MPI_PROC_NULL as this is a dummy rank
+   // with no effect on communication at all
+   if (peer_rank == MPI_PROC_NULL) {return;}
 
-      // if the requested communication is finished write the communication out
-      // and remove the request from the request list
-      if (flag) {
-         // record the time when the communication is finished
-         // (might be to late, but thats as accurate as we can make it
-         //  without violating the MPI-Standard)
-         // Therefore: measures asynchronous communication with vftrace always
-         //            yields to small bandwidth.
-         long long tend = vftr_get_runtime_usec ();
+   vftr_request_t *new_request = vftr_register_request(dir, 1, &count, &type, tag, comm, request, 0, NULL, 0);
+   new_request->rank[0] = peer_rank;
+   new_request->request_kind = p2p;
+   new_request->persistent = true;
+   new_request->active = false;
+}
 
-         // extract rank and tag from the completed communication status
-         // (if necessary) this is to avoid errors with wildcard usage
-         if (current_request->tag == MPI_ANY_TAG) {
-            current_request->tag = tmpStatus.MPI_TAG;
-         }
-         if (current_request->rank[0] == MPI_ANY_SOURCE) {
-            current_request->rank[0] = tmpStatus.MPI_SOURCE;
-            current_request->rank[0] = vftr_local2global_rank(current_request->comm,
-                                                              current_request->rank[0]);
-         }
+void vftr_clear_completed_p2p_request(vftr_request_t *request) {
+   // Test if the current request is still ongoing or completed
+   // Note: MPI_Test is a destructive test. It will destroy the request
+   //       Thus, running with and without vftr can lead to different program executions
+   //       MPI_Request_get_status is a non destructive status check
+   MPI_Status tmpStatus;
+   int flag;
+   PMPI_Request_get_status(request->request,
+                           &flag,
+                           &tmpStatus);
 
-         // Get the actual amount of transferred data if it is a receive operation
-         // only if it was a point2point communication
-         if (current_request->dir == recv) {
-            int tmpcount;
-            PMPI_Get_count(&tmpStatus, current_request->type[0], &tmpcount);
-            if (tmpcount != MPI_UNDEFINED) {
-               current_request->count[0] = tmpcount;
-            }
-         }
-         // store the completed communication info to the outfile
-         if (vftr_environment.do_sampling->value) {
-            vftr_store_message_info(current_request->dir,
-                                    current_request->count[0],
-                                    current_request->type_idx[0],
-                                    current_request->type_size[0],
-                                    current_request->rank[0],
-                                    current_request->tag,
-                                    current_request->tstart,
-                                    tend,
-                                    current_request->callingstackID);
-         }
+   // if the requested communication is finished write the communication out
+   // and remove the request from the request list
+   if (flag) {
+      // record the time when the communication is finished
+      // (might be to late, but thats as accurate as we can make it
+      //  without violating the MPI-Standard)
+      // Therefore: measures asynchronous communication with vftrace always
+      //            yields to small bandwidth.
+      long long tend = vftr_get_runtime_usec ();
 
-         // Take the request out of the list and close the gap
-         vftr_remove_request(&vftr_open_p2p_request_list, current_request);
-
-         // create a temporary pointer to the current element to be used for deallocation
-         vftr_request_t * tmp_current_request = current_request;
-         // advance in list
-         current_request = current_request->next;
-         // if the request is marked for deallocation do so
-         if (tmp_current_request->marked_for_deallocation) {
-            PMPI_Request_free(&(tmp_current_request->request));
-         }
-         vftr_free_request(&tmp_current_request);
-      } else {
-         // advance in list
-         current_request = current_request->next;
+      // extract rank and tag from the completed communication status
+      // (if necessary) this is to avoid errors with wildcard usage
+      if (request->tag == MPI_ANY_TAG) {
+         request->tag = tmpStatus.MPI_TAG;
       }
-   } // end of while loop
-}
+      if (request->rank[0] == MPI_ANY_SOURCE) {
+         request->rank[0] = tmpStatus.MPI_SOURCE;
+         request->rank[0] = vftr_local2global_rank(request->comm,
+                                                           request->rank[0]);
+      }
 
-int vftr_number_of_open_p2p_requests() {
-   int nrequests = 0;
-   // go through the complete list and check the request
-   vftr_request_t *current_request = vftr_open_p2p_request_list;
-   while (current_request != NULL) {
-      nrequests++;
-      current_request = current_request->next;
+      // Get the actual amount of transferred data if it is a receive operation
+      // only if it was a point2point communication
+      if (request->dir == recv) {
+         int tmpcount;
+         PMPI_Get_count(&tmpStatus, request->type[0], &tmpcount);
+         if (tmpcount != MPI_UNDEFINED) {
+            request->count[0] = tmpcount;
+         }
+      }
+      // store the completed communication info to the outfile
+      if (vftr_environment.do_sampling->value) {
+         vftr_store_message_info(request->dir,
+                                 request->count[0],
+                                 request->type_idx[0],
+                                 request->type_size[0],
+                                 request->rank[0],
+                                 request->tag,
+                                 request->tstart,
+                                 tend,
+                                 request->callingstackID);
+      }
+
+      if (request->persistent) {
+         request->active = false;
+         if (request->marked_for_deallocation) {
+            PMPI_Request_free(&(request->request));
+         }
+      } else {
+         if (request->marked_for_deallocation) {
+            PMPI_Request_free(&(request->request));
+         }
+         vftr_remove_request(request);
+      }
    }
-   return nrequests;
 }

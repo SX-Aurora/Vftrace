@@ -38,7 +38,9 @@
 #include "vftr_pause.h"
 #include "vftr_timer.h"
 #include "vftr_stacks.h"
-#include "clear_mpi_requests.h"
+#ifdef _MPI
+#include "requests.h"
+#endif
 #include "vftr_sorting.h"
 #include "vftr_mallinfo.h"
 #include "vftr_cuda.h"

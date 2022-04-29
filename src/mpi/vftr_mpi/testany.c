@@ -22,7 +22,7 @@
 
 #include "request_utils.h"
 #include "status_utils.h"
-#include "clear_mpi_requests.h"
+#include "requests.h"
   
 int vftr_MPI_Testany(int count, MPI_Request array_of_requests[],
                      int *index, int *flag, MPI_Status *status) {

@@ -20,7 +20,7 @@
 
 #include <stdbool.h>
 
-#include "clear_mpi_requests.h"
+#include "requests.h"
   
 int vftr_MPI_Wait(MPI_Request *request, MPI_Status *status) {
    int retVal;
