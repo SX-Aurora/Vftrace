@@ -91,7 +91,7 @@ static struct argp argp = {possible_options,
 // easy interface to command line option parsing
 cmd_options_t parse_command_line_options(int argc, char **argv) {
    cmd_options_t options;
-   options.output_filename = "stderr";
+   options.output_filename = "stdout";
    options.vfd_filename = NULL;
    options.only_header = false;
    options.skip_samples = false;

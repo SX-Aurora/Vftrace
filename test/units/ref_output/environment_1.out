@@ -37,7 +37,7 @@ VFTR_DEMANGLE_CPP: false(default)
 VFTR_SHOW_STARTUP: false(default)
 ***************************
 VFTR_OFF: false
-VFTR_SAMPLING: false
+VFTR_SAMPLING: true
 VFTR_REGIONS_PRECISE: false
 VFTR_OUT_DIRECTORY: "foo/bar"
 VFTR_LOGFILE_BASENAME: (null)(default)
