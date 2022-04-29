@@ -1542,13 +1542,15 @@ void vftr_print_profile_summary (FILE *fp_log, function_t **func_table, double t
     }
 #endif
 
-    fprintf (fp_log, "\nNr. of CUDA devices: %d (%s)\n", vftr_n_cuda_devices, vftr_cuda_properties.name);
+#ifdef _CUPTI_AVAIL
     if (vftr_environment.ignore_cuda->value) {
        fprintf (fp_log, "  CUDA is not profiled due to environment variable VFTR_IGNORE_CUDA.\n");
     } else if (vftr_n_cuda_devices > 0) {
+       fprintf (fp_log, "\nNr. of CUDA devices: %d (%s)\n", vftr_n_cuda_devices, vftr_cuda_properties.name);
        fprintf (fp_log, "  Total CUDA compute time: %8.3f seconds\n", vftr_get_total_cuda_time(T_CUDA_COMP));
        fprintf (fp_log, "  Total CUDA memcpy time: %8.3f seconds\n",  vftr_get_total_cuda_time(T_CUDA_MEMCP));
     }
+#endif
 
     if (vftr_events_enabled) {
 	unsigned long long total_cycles = 0;
