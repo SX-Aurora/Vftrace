@@ -165,8 +165,9 @@ void vftr_cuda_flush_events (cuda_event_list_t **t) {
 void vftr_print_registered_cbids (FILE *fp) {
    fprintf (fp, "Registered CBIDs: \n");
    for (int i = 0; i < 406; i++) {
-      fprintf (fp, "%d: %d\n", i, vftr_registered_cbids[i]); 
+      if (vftr_registered_cbids[i] > 0) fprintf (fp, "%d: %d\n", i, vftr_registered_cbids[i]); 
    }
+   fprintf (fp, "\n");
 }
 
 /**********************************************************************/
