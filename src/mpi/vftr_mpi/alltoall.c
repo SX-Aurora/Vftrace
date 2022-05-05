@@ -19,7 +19,7 @@
 #include <mpi.h>
 
 #include "rank_translate.h"
-#include "vftr_timer.h"
+#include "timer.h"
 #include "sync_messages.h"
 
 int vftr_MPI_Alltoall(const void *sendbuf, int sendcount,
@@ -42,7 +42,7 @@ int vftr_MPI_Alltoall(const void *sendbuf, int sendcount,
    }
    long long t2end = vftr_get_runtime_usec();
 
-   vftr_mpi_overhead_usec += t2end - t2start;
+   //TODO: vftr_mpi_overhead_usec += t2end - t2start;
 
    return retVal;
 }
@@ -78,7 +78,7 @@ int vftr_MPI_Alltoall_inplace(const void *sendbuf, int sendcount,
    }
    long long t2end = vftr_get_runtime_usec();
 
-   vftr_mpi_overhead_usec += t2end - t2start;
+   //TODO: vftr_mpi_overhead_usec += t2end - t2start;
 
    return retVal;
 }
@@ -112,7 +112,7 @@ int vftr_MPI_Alltoall_intercom(const void *sendbuf, int sendcount,
    }
    long long t2end = vftr_get_runtime_usec();
 
-   vftr_mpi_overhead_usec += t2end - t2start;
+   //TODO: vftr_mpi_overhead_usec += t2end - t2start;
 
    return retVal;
 }
