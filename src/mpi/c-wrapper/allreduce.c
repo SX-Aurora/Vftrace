@@ -20,18 +20,12 @@
 #include <mpi.h>
 
 #include "mpi_logging.h"
-#include "vftr_regions.h"
-#include "vftr_environment.h"
 #include "allreduce_c2vftr.h"
 
 int MPI_Allreduce(const void *sendbuf, void *recvbuf, int count,
                   MPI_Datatype datatype, MPI_Op op, MPI_Comm comm) {
-   // Estimate synchronization time
-   if (vftr_environment.mpi_show_sync_time->value) {
-      vftr_internal_region_begin("MPI_Allreduce_sync");
-      PMPI_Barrier(comm);
-      vftr_internal_region_end("MPI_Allreduce_sync");
-   }
+
+   vftr_estimate_sync_time("MPI_Allreduce_sync", comm);
 
    if (vftr_no_mpi_logging()) {
       return PMPI_Allreduce(sendbuf, recvbuf, count, datatype, op, comm);
