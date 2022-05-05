@@ -1,5 +1,5 @@
-#ifndef INITIALIZE_H
-#define INITIALIZE_H
+#ifndef VFTR_INITIALIZE_H
+#define VFTR_INITIALIZE_H
 
 void vftr_initialize(void *func, void *call_site);
 

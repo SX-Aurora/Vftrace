@@ -7,7 +7,7 @@
 #include "vftrace_state.h"
 #include "environment.h"
 #include "symbols.h"
-#include "finalize.h"
+#include "vftr_finalize.h"
 #include "processes.h"
 #include "sampling.h"
 
