@@ -20,7 +20,7 @@
 
 #include <stdbool.h>
 
-#include "vftr_timer.h"
+#include "timer.h"
 #include "requests.h"
 #include "p2p_requests.h"
 #include "requests.h"
@@ -37,7 +37,7 @@ int vftr_MPI_Request_free(MPI_Request *request) {
    *request = MPI_REQUEST_NULL;
    long long t2end = vftr_get_runtime_usec();
 
-   vftr_mpi_overhead_usec += t2end - t2start;
+   //TODO: vftr_mpi_overhead_usec += t2end - t2start;
 
    return 0;
 }
