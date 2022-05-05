@@ -18,7 +18,7 @@
 
 #include <mpi.h>
 
-#include "vftr_timer.h"
+#include "timer.h"
 #include "sync_messages.h"
 
 int vftr_MPI_Fetch_and_op(const void *origin_addr, void *result_addr,
@@ -51,7 +51,7 @@ int vftr_MPI_Fetch_and_op(const void *origin_addr, void *result_addr,
 
    long long t2end = vftr_get_runtime_usec();
 
-   vftr_mpi_overhead_usec += t2end - t2start;
+   //TODO: vftr_mpi_overhead_usec += t2end - t2start;
 
    return retVal;
 }
