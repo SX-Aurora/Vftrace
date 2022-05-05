@@ -362,6 +362,9 @@ char *vftr_get_collated_stack_string(collated_stacktree_t stacktree, int stackid
    int tmpstackid = stackid;
    stringlen += strlen(stacktree.stacks[stackid].name);
    stringlen ++; // function seperating character "<", or null terminator
+   if (stacktree.stacks[tmpstackid].precise) {
+      stringlen ++; // '*' for indicating precise functions
+   }
    while (stacktree.stacks[tmpstackid].caller >= 0) {
       tmpstackid = stacktree.stacks[tmpstackid].caller;
       stringlen += strlen(stacktree.stacks[tmpstackid].name);
