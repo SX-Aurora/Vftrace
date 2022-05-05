@@ -20,13 +20,13 @@
 
 #include <stdlib.h>
 
+#include "vftrace_state.h"
 #include "rank_translate.h"
-#include "vftr_environment.h"
 #include "requests.h"
-#include "vftr_timer.h"
-#include "vftr_filewrite.h"
+#include "timer.h"
+#include "mpi_logging.h"
 
-void vftr_register_collective_request(vftr_direction dir, int nmsg, int *count,
+void vftr_register_collective_request(message_direction dir, int nmsg, int *count,
                                       MPI_Datatype *type, int *peer_rank,
                                       MPI_Comm comm, MPI_Request request,
                                       int n_tmp_ptr, void **tmp_ptrs,
@@ -77,7 +77,7 @@ void vftr_clear_completed_collective_request(vftr_request_t *request) {
 
       // Every rank should already be translated to the global rank
       // by the register routine
-      if (vftr_environment.do_sampling->value) {
+      if (vftrace.environment.do_sampling.value.bool_val) {
          for (int i=0; i<request->nmsg; i++) {
             // if a rank is -1 skip the registering, as
             // it is an invalid rank due to non periodic
