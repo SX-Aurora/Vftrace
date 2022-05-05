@@ -20,7 +20,7 @@
 
 #include <stdlib.h>
 
-#include "vftr_timer.h"
+#include "timer.h"
 #include "collective_requests.h"
 #include "rank_translate.h"
 
@@ -63,7 +63,7 @@ int vftr_MPI_Ibcast(void *buffer, int count, MPI_Datatype datatype,
    }
    long long t2end = vftr_get_runtime_usec();
 
-   vftr_mpi_overhead_usec += t2end - t2start;
+   //TODO: vftr_mpi_overhead_usec += t2end - t2start;
 
    return retVal;
 }
@@ -116,7 +116,7 @@ int vftr_MPI_Ibcast_intercom(void *buffer, int count, MPI_Datatype datatype,
    }
    long long t2end = vftr_get_runtime_usec();
 
-   vftr_mpi_overhead_usec += t2end - t2start;
+   //TODO: vftr_mpi_overhead_usec += t2end - t2start;
 
    return retVal;
 }
