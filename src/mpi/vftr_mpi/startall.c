@@ -18,7 +18,7 @@
 
 #include <mpi.h>
 
-#include "vftr_timer.h"
+#include "timer.h"
 #include "requests.h"
 
 int vftr_MPI_Startall(int count, MPI_Request *array_of_requests) {
@@ -31,7 +31,7 @@ int vftr_MPI_Startall(int count, MPI_Request *array_of_requests) {
    }
    long long t2end = vftr_get_runtime_usec();
 
-   vftr_mpi_overhead_usec += t2end - t2start;
+   //TODO: vftr_mpi_overhead_usec += t2end - t2start;
 
    return retVal;
 }
