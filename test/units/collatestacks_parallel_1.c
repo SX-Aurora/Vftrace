@@ -15,10 +15,10 @@
 
 
 int main(int argc, char **argv) {
-   MPI_Init(&argc, &argv);
+   PMPI_Init(&argc, &argv);
 
    int nranks;
-   MPI_Comm_size(MPI_COMM_WORLD, &nranks);
+   PMPI_Comm_size(MPI_COMM_WORLD, &nranks);
    if (nranks != 2) {
       fprintf(stderr, "This test requires exacly two processes, "
               "but was started with %d\n", nranks);
@@ -26,7 +26,7 @@ int main(int argc, char **argv) {
    }
 
    int myrank;
-   MPI_Comm_rank(MPI_COMM_WORLD, &myrank);
+   PMPI_Comm_rank(MPI_COMM_WORLD, &myrank);
 
    environment_t environment;
    environment = vftr_read_environment();
@@ -38,34 +38,47 @@ int main(int argc, char **argv) {
    // build stacktree
    stacktree_t stacktree = vftr_new_stacktree();
 
+   char *name;
    if (myrank == 0) {
       int func1_idx = 0;
-      int func2_idx = vftr_new_stack(func1_idx, &stacktree, symboltable, function,
-                                     addrs+0, false);
-      int func3_idx = vftr_new_stack(func1_idx, &stacktree, symboltable, function,
-                                     addrs+1, false);
-      int func4_idx = vftr_new_stack(func3_idx, &stacktree, symboltable, function,
-                                     addrs+2, false);
-      int func5_idx = vftr_new_stack(func2_idx, &stacktree, symboltable, function,
-                                     addrs+3, false);
-      int func6_idx = vftr_new_stack(func2_idx, &stacktree, symboltable, function,
-                                     addrs+4, false);
-      int func7_idx = vftr_new_stack(func6_idx, &stacktree, symboltable, function,
-                                     addrs+5, false);
+      name = vftr_get_name_from_address(symboltable, addrs+0);
+      int func2_idx = vftr_new_stack(func1_idx, &stacktree,
+                                     name, function, addrs+0, false);
+      name = vftr_get_name_from_address(symboltable, addrs+1);
+      int func3_idx = vftr_new_stack(func1_idx, &stacktree,
+                                     name, function, addrs+1, false);
+      name = vftr_get_name_from_address(symboltable, addrs+2);
+      int func4_idx = vftr_new_stack(func3_idx, &stacktree,
+                                     name, function, addrs+2, false);
+      name = vftr_get_name_from_address(symboltable, addrs+3);
+      int func5_idx = vftr_new_stack(func2_idx, &stacktree,
+                                     name, function, addrs+3, false);
+      name = vftr_get_name_from_address(symboltable, addrs+4);
+      int func6_idx = vftr_new_stack(func2_idx, &stacktree,
+                                     name, function, addrs+4, false);
+      name = vftr_get_name_from_address(symboltable, addrs+5);
+      int func7_idx = vftr_new_stack(func6_idx, &stacktree,
+                                     name, function, addrs+5, false);
    } else {
       int func1_idx = 0;
-      int func2_idx = vftr_new_stack(func1_idx, &stacktree, symboltable, function,
-                                     addrs+0, false);
-      int func3_idx = vftr_new_stack(func1_idx, &stacktree, symboltable, function,
-                                     addrs+1, false);
-      int func4_idx = vftr_new_stack(func2_idx, &stacktree, symboltable, function,
-                                     addrs+2, false);
-      int func5_idx = vftr_new_stack(func3_idx, &stacktree, symboltable, function,
-                                     addrs+2, false);
-      int func6_idx = vftr_new_stack(func4_idx, &stacktree, symboltable, function,
-                                     addrs+4, false);
-      int func7_idx = vftr_new_stack(func3_idx, &stacktree, symboltable, function,
-                                     addrs+5, false);
+      name = vftr_get_name_from_address(symboltable, addrs+0);
+      int func2_idx = vftr_new_stack(func1_idx, &stacktree,
+                                     name, function, addrs+0, false);
+      name = vftr_get_name_from_address(symboltable, addrs+1);
+      int func3_idx = vftr_new_stack(func1_idx, &stacktree,
+                                     name, function, addrs+1, false);
+      name = vftr_get_name_from_address(symboltable, addrs+2);
+      int func4_idx = vftr_new_stack(func2_idx, &stacktree,
+                                     name, function, addrs+2, false);
+      name = vftr_get_name_from_address(symboltable, addrs+2);
+      int func5_idx = vftr_new_stack(func3_idx, &stacktree,
+                                     name, function, addrs+2, false);
+      name = vftr_get_name_from_address(symboltable, addrs+4);
+      int func6_idx = vftr_new_stack(func4_idx, &stacktree,
+                                     name, function, addrs+4, false);
+      name = vftr_get_name_from_address(symboltable, addrs+5);
+      int func7_idx = vftr_new_stack(func3_idx, &stacktree,
+                                     name, function, addrs+5, false);
    }
 
    collated_stacktree_t collated_stacktree = vftr_collate_stacks(&stacktree);
