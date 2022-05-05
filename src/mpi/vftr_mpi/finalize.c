@@ -18,7 +18,7 @@
 
 #include <mpi.h>
 
-#include "vftr_setup.h"
+#include "vftr_finalize.h"
 #include "requests.h"
 
 int vftr_MPI_Finalize() {
