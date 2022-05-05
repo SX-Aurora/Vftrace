@@ -20,7 +20,7 @@
 #include <mpi.h>
 
 #include "rank_translate.h"
-#include "vftr_timer.h"
+#include "timer.h"
 #include "collective_requests.h"
 #include "cart_comms.h"
 
@@ -73,7 +73,7 @@ int vftr_MPI_Ineighbor_allgatherv_graph(const void *sendbuf, int sendcount,
    neighbors = NULL;
    long long t2end = vftr_get_runtime_usec();
 
-   vftr_mpi_overhead_usec += t2end - t2start;
+   //TODO: vftr_mpi_overhead_usec += t2end - t2start;
 
    return retVal;
 }
@@ -126,7 +126,7 @@ int vftr_MPI_Ineighbor_allgatherv_cart(const void *sendbuf, int sendcount,
    neighbors = NULL;
    long long t2end = vftr_get_runtime_usec();
 
-   vftr_mpi_overhead_usec += t2end - t2start;
+   //TODO: vftr_mpi_overhead_usec += t2end - t2start;
 
    return retVal;
 }
@@ -197,7 +197,7 @@ int vftr_MPI_Ineighbor_allgatherv_dist_graph(const void *sendbuf, int sendcount,
 
    long long t2end = vftr_get_runtime_usec();
 
-   vftr_mpi_overhead_usec += t2end - t2start;
+   //TODO: vftr_mpi_overhead_usec += t2end - t2start;
 
    return retVal;
 }
