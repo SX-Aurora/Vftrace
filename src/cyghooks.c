@@ -21,7 +21,7 @@
 
 #include "vftrace_state.h"
 
-#include "initialize.h"
+#include "vftr_initialize.h"
 
 // Define functions to redirect the function hooks, so to not make the 
 // function pointers globaly visible
