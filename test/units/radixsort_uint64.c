@@ -19,7 +19,7 @@ bool uint64_list_sorted(int n, uint64_t *list) {
 int main(int argc, char **argv) {
 
 #ifdef _MPI
-   MPI_Init(&argc, &argv);
+   PMPI_Init(&argc, &argv);
 #endif
 
    // require cmd-line argument
@@ -58,7 +58,7 @@ int main(int argc, char **argv) {
    list = NULL;
 
 #ifdef _MPI
-   MPI_Finalize();
+   PMPI_Finalize();
 #endif
 
    if (sorted_before) {
