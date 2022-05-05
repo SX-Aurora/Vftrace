@@ -30,6 +30,9 @@
 #ifdef _OMP
 #include "omp/omp_state_types.h"
 #endif
+#ifdef _MPI
+#include "mpi/utils/mpi_state_types.h"
+#endif
 
 // tracing state of vftrace
 typedef enum {
@@ -53,6 +56,7 @@ typedef struct {
    omp_state_t omp_state;
 #endif
 #ifdef _MPI
+   mpi_state_t mpi_state;
 #endif
 } vftrace_t;
 

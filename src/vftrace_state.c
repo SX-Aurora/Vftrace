@@ -20,7 +20,7 @@
 #include <stdbool.h>
 
 #include "vftrace_state.h"
-#include "initialize.h"
+#include "vftr_initialize.h"
 
 // main datatype to store everything 
 
@@ -62,18 +62,21 @@ vftrace_t vftrace = {
       .stacktable_offset = 0,
       .samples_offset = 0
    },
-   .timestrings = {
-      .start_time = NULL,
-      .end_time = NULL
 #ifdef _OMP
-   },
    .omp_state = {
       .tool_started = false,
       .initialized = false,
       .omp_version = 0,
       .runtime_version = NULL,
+   },
 #endif
 #ifdef _MPI
+   .mpi_state = {
+      .pcontrol_level = 1
+   },
 #endif
+   .timestrings = {
+      .start_time = NULL,
+      .end_time = NULL
    }
 };
