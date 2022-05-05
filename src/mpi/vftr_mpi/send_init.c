@@ -18,7 +18,7 @@
 
 #include <mpi.h>
 
-#include "vftr_timer.h"
+#include "timer.h"
 #include "p2p_requests.h"
 
 int vftr_MPI_Send_init(const void *buf, int count, MPI_Datatype datatype,
@@ -29,7 +29,7 @@ int vftr_MPI_Send_init(const void *buf, int count, MPI_Datatype datatype,
    vftr_register_pers_p2p_request(send, count, datatype, dest, tag, comm, *request);
    long long t2end = vftr_get_runtime_usec();
 
-   vftr_mpi_overhead_usec += t2end - t2start;
+   //TODO: vftr_mpi_overhead_usec += t2end - t2start;
 
    return retVal;
 }
