@@ -18,7 +18,7 @@
 
 #include <mpi.h>
 
-#include "vftr_timer.h"
+#include "timer.h"
 #include "onesided_requests.h"
 
 int vftr_MPI_Rget_accumulate(const void *origin_addr, int origin_count,
@@ -55,7 +55,7 @@ int vftr_MPI_Rget_accumulate(const void *origin_addr, int origin_count,
 
    long long t2end = vftr_get_runtime_usec();
 
-   vftr_mpi_overhead_usec += t2end - t2start;
+   //TODO: vftr_mpi_overhead_usec += t2end - t2start;
 
    return retVal;
 }
