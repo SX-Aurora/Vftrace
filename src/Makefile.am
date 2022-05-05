@@ -37,8 +37,8 @@ endif
 
 libvftrace_la_SOURCES = 
 
-#libvftrace_la_CPPFLAGS = -D_VERSION=${PACKAGE_VERSION} \
-#			 -D_BUGREPORT=${PACKAGE_BUGREPORT}
+libvftrace_la_CPPFLAGS = -D_VERSION=${PACKAGE_VERSION} \
+			 -D_BUGREPORT=${PACKAGE_BUGREPORT}
 libvftrace_la_CFLAGS =
 libvftrace_la_CXXFLAGS =
 libvftrace_la_FCFLAGS =
@@ -48,8 +48,8 @@ libvftrace_la_SOURCES += cyghooks.c \
 			 vftr_hooks.c \
 			 off_hooks.c
 libvftrace_la_SOURCES += vftrace_state.c \
-			 initialize.c \
-			 finalize.c \
+			 vftr_initialize.c \
+			 vftr_finalize.c \
 			 stacks.c \
 			 collate_stacks.c \
 			 collate_hashes.c \
