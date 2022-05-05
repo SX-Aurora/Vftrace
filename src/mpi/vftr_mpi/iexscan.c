@@ -18,7 +18,7 @@
 
 #include <mpi.h>
 
-#include "vftr_timer.h"
+#include "timer.h"
 #include "collective_requests.h"
 #include "mpi_buf_addr_const.h"
 
@@ -97,7 +97,7 @@ int vftr_MPI_Iexscan(const void *sendbuf, void *recvbuf, int count,
    }
    long long t2end = vftr_get_runtime_usec();
 
-   vftr_mpi_overhead_usec += t2end - t2start;
+   //TODO: vftr_mpi_overhead_usec += t2end - t2start;
 
    return retVal;
 }
