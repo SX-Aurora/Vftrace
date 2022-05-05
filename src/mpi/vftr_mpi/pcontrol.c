@@ -16,8 +16,7 @@
    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-// PControl level as required by the MPI-Standard for profiling interfaces
-int vftrace_Pcontrol_level = 1;
+#include "vftrace_state.h"
 
 // vftrace internal routine to control the profiling level
 int vftr_MPI_Pcontrol(const int level) {
@@ -26,7 +25,7 @@ int vftr_MPI_Pcontrol(const int level) {
    // lebel == 2 Buffers are flushed, which may be a no-op in some profilers
    // All other values have profile library defined effects and additional arguments
    if ((level >=0) && (level <=2)) {
-      vftrace_Pcontrol_level = level;
+      vftrace.mpi_state.pcontrol_level = level;
       return 0;
    }
 
