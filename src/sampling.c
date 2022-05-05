@@ -65,7 +65,6 @@ void vftr_finalize_sampling(sampling_t *sampling,
       vftr_write_vfd_stacks(sampling, process.stacktree);
       vftr_update_vfd_header(sampling, process, timestrings, runtime);
    
-   
       // Close the vfdfile
       int status = fclose(sampling->vfdfilefp);
       if (status != 0) {
