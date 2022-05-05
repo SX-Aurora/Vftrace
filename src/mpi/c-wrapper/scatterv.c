@@ -20,8 +20,6 @@
 #include <mpi.h>
 
 #include "mpi_logging.h"
-#include "vftr_regions.h"
-#include "vftr_environment.h"
 #include "scatterv_c2vftr.h"
 
 int MPI_Scatterv(const void *sendbuf, const int *sendcounts,
@@ -29,12 +27,9 @@ int MPI_Scatterv(const void *sendbuf, const int *sendcounts,
                  void *recvbuf, int recvcount,
                  MPI_Datatype recvtype,
                  int root, MPI_Comm comm) {
-   // Estimate synchronization time
-   if (vftr_environment.mpi_show_sync_time->value) {
-      vftr_internal_region_begin("MPI_Scatterv_sync");
-      PMPI_Barrier(comm);
-      vftr_internal_region_end("MPI_Scatterv_sync");
-   }
+
+   vftr_estimate_sync_time("MPI_Scatterv_sync", comm);
+
    if (vftr_no_mpi_logging()) {
       return PMPI_Scatterv(sendbuf, sendcounts, displs, sendtype,
                            recvbuf, recvcount, recvtype, root, comm);
