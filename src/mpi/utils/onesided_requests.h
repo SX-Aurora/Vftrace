@@ -21,7 +21,7 @@
 
 #include "requests.h"
 
-void vftr_register_onesided_request(vftr_direction dir, int count,
+void vftr_register_onesided_request(message_direction dir, int count,
                                     MPI_Datatype type, int peer_rank,
                                     MPI_Comm comm, MPI_Request request,
                                     long long tstart);
