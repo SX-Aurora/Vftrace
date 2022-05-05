@@ -21,7 +21,7 @@
 
 #include "requests.h"
 
-void vftr_register_collective_request(vftr_direction dir, int nmsg, int *count,
+void vftr_register_collective_request(message_direction dir, int nmsg, int *count,
                                       MPI_Datatype *type, int *peer_rank,
                                       MPI_Comm comm, MPI_Request request,
                                       int n_tmp_ptr, void **tmp_ptrs,
