@@ -18,29 +18,14 @@
 
 #include <mpi.h>
 
-#include "vftr_environment.h"
-#include "vftr_functions.h"
-#include "vftr_stacks.h"
-#include "vftr_setup.h"
-#include "vftr_hwcounters.h"
-#include "vftr_filewrite.h"
+#include "vftrace_state.h"
 
 int vftr_MPI_Init(int *argc, char ***argv) {
 
    int returnValue = PMPI_Init(argc, argv);
 
-   if (!vftr_off()) {
-      vftr_reset_counts(vftr_froots);
-      if (vftr_env_do_sampling()) {
-         vftr_prevsampletime = 0;
-         vftr_nextsampletime = 0ll;
-         vftr_function_samplecount = 0;
-         vftr_message_samplecount = 0;
-         vftr_prog_cycles = 0ll;
-
-         fseek (vftr_vfd_file, vftr_samples_offset, SEEK_SET);
-      }
-   }
+   PMPI_Comm_size(MPI_COMM_WORLD, &vftrace.process.nprocesses);
+   PMPI_Comm_rank(MPI_COMM_WORLD, &vftrace.process.processID);
 
    return returnValue;
 }
