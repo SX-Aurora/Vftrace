@@ -20,8 +20,6 @@
 #include <mpi.h>
 
 #include "mpi_logging.h"
-#include "vftr_regions.h"
-#include "vftr_environment.h"
 #include "gatherv_c2vftr.h"
 
 int MPI_Gatherv(const void *sendbuf, int sendcount,
@@ -29,12 +27,8 @@ int MPI_Gatherv(const void *sendbuf, int sendcount,
                 const int *recvcounts, const int *displs,
                 MPI_Datatype recvtype, int root,
                 MPI_Comm comm) {
-   // Estimate synchronization time
-   if (vftr_environment.mpi_show_sync_time->value) {
-      vftr_internal_region_begin("MPI_Gatherv_sync");
-      PMPI_Barrier(comm);
-      vftr_internal_region_end("MPI_Gatherv_sync");
-   }
+
+   vftr_estimate_sync_time("MPI_Gatherv_sync", comm);
 
    if (vftr_no_mpi_logging()) {
       return PMPI_Gatherv(sendbuf, sendcount, sendtype, recvbuf,
