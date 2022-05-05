@@ -20,20 +20,15 @@
 #include <mpi.h>
 
 #include "mpi_logging.h"
-#include "vftr_regions.h"
-#include "vftr_environment.h"
 #include "neighbor_allgatherv_c2vftr.h"
 
 int MPI_Neighbor_allgatherv(const void *sendbuf, int sendcount,
                             MPI_Datatype sendtype, void *recvbuf,
                             const int *recvcounts, const int *displs,
                             MPI_Datatype recvtype, MPI_Comm comm) {
-   // Estimate synchronization time
-   if (vftr_environment.mpi_show_sync_time->value) {
-      vftr_internal_region_begin("MPI_Neighbor_allgatherv_sync");
-      PMPI_Barrier(comm);
-      vftr_internal_region_end("MPI_Neighbor_allgatherv_sync");
-   }
+
+   vftr_estimate_sync_time("MPI_Neighbor_allgatherv_sync", comm);
+
    if (vftr_no_mpi_logging()) {
       return PMPI_Neighbor_allgatherv(sendbuf, sendcount, sendtype,
                                       recvbuf, recvcounts, displs, recvtype,
