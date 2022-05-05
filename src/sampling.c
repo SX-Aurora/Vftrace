@@ -83,20 +83,24 @@ void vftr_finalize_sampling(sampling_t *sampling,
    }
 }
 
-void vftr_sample_function_entry(sampling_t *sampling, int stackID, long long timestamp) {
-   if (sampling->do_sampling && timestamp > sampling->nextsampletime) {
+void vftr_sample_function_entry(sampling_t *sampling, stack_t stack,
+                                long long timestamp) {
+   if (sampling->do_sampling &&
+       (timestamp > sampling->nextsampletime || stack.precise)) {
       vftr_write_vfd_function_sample(sampling, samp_function_entry,
-                                     stackID, timestamp);
+                                     stack.lid, timestamp);
 
       sampling->function_samplecount++;
       sampling->nextsampletime = timestamp + sampling->interval;
    }
 }
 
-void vftr_sample_function_exit(sampling_t *sampling, int stackID, long long timestamp) {
-   if (sampling->do_sampling && timestamp > sampling->nextsampletime) {
+void vftr_sample_function_exit(sampling_t *sampling, stack_t stack,
+                               long long timestamp) {
+   if (sampling->do_sampling &&
+       (timestamp > sampling->nextsampletime || stack.precise)) {
       vftr_write_vfd_function_sample(sampling, samp_function_exit,
-                                     stackID, timestamp);
+                                     stack.lid, timestamp);
 
       sampling->function_samplecount++;
       sampling->nextsampletime = timestamp + sampling->interval;

@@ -5,6 +5,7 @@
 #include "sampling_types.h"
 #include "process_types.h"
 #include "timer_types.h"
+#include "stack_types.h"
 
 sampling_t vftr_new_sampling(environment_t environment);
 
@@ -14,10 +15,10 @@ void vftr_finalize_sampling(sampling_t *sampling,
                             time_strings_t timestrings,
                             double runtime);
 
-void vftr_sample_function_entry(sampling_t *sampling, int stackID,
+void vftr_sample_function_entry(sampling_t *sampling, stack_t stack,
                                 long long timestamp);
 
-void vftr_sample_function_exit(sampling_t *sampling, int stackID,
+void vftr_sample_function_exit(sampling_t *sampling, stack_t stack,
                                long long timestamp); 
 
 #endif

@@ -35,6 +35,8 @@ void vftr_initialize(void *func, void *call_site) {
 
       // read the symbol table of the executable and its libraries
       vftrace.symboltable = vftr_read_symbols();
+      vftr_symboltable_determine_preciseness(&(vftrace.symboltable),
+                                             vftrace.environment.preciseregex.value.regex_val);
 
       // initialize the dynamic process data
       vftrace.process = vftr_new_process();

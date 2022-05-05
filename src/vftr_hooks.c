@@ -55,9 +55,9 @@ void vftr_function_entry(void *func, void *call_site) {
       // and adjust the threadstack accordingly
       my_threadstack = vftr_update_threadstack_function(my_threadstack, my_thread,
                                                         func_addr, &vftrace);
-
+      stack_t *new_stack = vftrace.process.stacktree.stacks+my_threadstack->stackID;
       vftr_sample_function_entry(&(vftrace.sampling),
-                                 my_threadstack->stackID,
+                                 *new_stack,
                                  function_entry_time_begin);
 
 
@@ -99,7 +99,8 @@ void vftr_function_exit(void *func, void *call_site) {
                                 &(my_stack->profiling),
                                 &(my_threadstack->profiling));
 
-      vftr_sample_function_exit(&(vftrace.sampling), my_threadstack->stackID,
+      vftr_sample_function_exit(&(vftrace.sampling),
+                                *my_stack,
                                 function_exit_time_begin);
 
       // No calls after this overhead handling

@@ -41,9 +41,9 @@ void vftr_user_region_begin(const char *name, void *addr) {
       // and adjust the threadstack accordingly
       my_threadstack = vftr_update_threadstack_region(my_threadstack, my_thread,
                                                       region_addr, name, &vftrace);
- 
+      stack_t *new_stack = vftrace.process.stacktree.stacks+my_threadstack->stackID;
       vftr_sample_function_entry(&(vftrace.sampling),
-                                 my_threadstack->stackID,
+                                 *new_stack,
                                  region_begin_time_begin);
  
  
@@ -85,7 +85,8 @@ void vftr_user_region_end() {
                                 &(my_stack->profiling),
                                 &(my_threadstack->profiling));
 
-      vftr_sample_function_exit(&(vftrace.sampling), my_threadstack->stackID,
+      vftr_sample_function_exit(&(vftrace.sampling),
+                                *my_stack,
                                 function_end_time_begin);
 
       // No calls after this overhead handling

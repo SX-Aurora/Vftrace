@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+#include <string.h>
 #include "realloc_consts.h"
 #include "thread_types.h"
 #include "threadstack_types.h"
@@ -87,14 +88,15 @@ threadstack_t *vftr_update_threadstack_function(threadstack_t *my_threadstack,
                                             my_threadstack->stackID,
                                             func_addr);
    if (calleeID < 0) {
-      char *name = vftr_get_name_from_address(vftrace->symboltable, func_addr);
+      int symbID = vftr_get_symbID_from_address(vftrace->symboltable, func_addr);
+      char *name = vftr_get_name_from_symbID(vftrace->symboltable, symbID);
+      bool precise = vftr_get_preciseness_from_symbID(vftrace->symboltable, symbID);
       // if the function was not found, create a new stack entry
       // and add its id to the callee list
       calleeID = vftr_new_stack(my_threadstack->stackID,
                                 &(vftrace->process.stacktree),
-                                name,
-                                function, func_addr, 
-                                true);
+                                name, function, func_addr, 
+                                precise);
    }
    // push the function onto the threads stacklist
    vftr_threadstack_push(calleeID, &(my_thread->stacklist));
@@ -111,14 +113,15 @@ threadstack_t *vftr_update_threadstack_region(threadstack_t *my_threadstack,
    int calleeID = vftr_linear_search_callee(vftrace->process.stacktree.stacks,
                                             my_threadstack->stackID,
                                             region_addr);
-   if (calleeID < 0) {
+   if (calleeID < 0 ||
+       strcmp(vftrace->process.stacktree.stacks[calleeID].name, name)) {
       // if the function was not found, create a new stack entry
       // and add its id to the callee list
       calleeID = vftr_new_stack(my_threadstack->stackID,
                                 &(vftrace->process.stacktree),
                                 name,
                                 function, region_addr, 
-                                true);
+                                vftrace->environment.regions_precise.value.bool_val);
    }
    // push the function onto the threads stacklist
    vftr_threadstack_push(calleeID, &(my_thread->stacklist));
