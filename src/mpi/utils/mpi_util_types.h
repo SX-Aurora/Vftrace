@@ -25,10 +25,10 @@
 #include <mpi.h>
 #endif
 
-typedef enum vftr_direction_t {
+typedef enum {
    send,
    recv
-} vftr_direction;
+} message_direction;
 
 struct vftr_mpi_type_t {
 #ifdef _MPI
