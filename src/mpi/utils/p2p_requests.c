@@ -20,13 +20,13 @@
 
 #include <stdlib.h>
 
+#include "vftrace_state.h"
 #include "rank_translate.h"
-#include "vftr_environment.h"
 #include "requests.h"
-#include "vftr_timer.h"
-#include "vftr_filewrite.h"
+#include "timer.h"
+#include "mpi_logging.h"
 
-void vftr_register_p2p_request(vftr_direction dir, int count,
+void vftr_register_p2p_request(message_direction dir, int count,
                                MPI_Datatype type, int peer_rank, int tag,
                                MPI_Comm comm, MPI_Request request,
                                long long tstart) {
@@ -41,7 +41,7 @@ void vftr_register_p2p_request(vftr_direction dir, int count,
    new_request->persistent = false;
 }
 
-void vftr_register_pers_p2p_request(vftr_direction dir, int count,
+void vftr_register_pers_p2p_request(message_direction dir, int count,
                                     MPI_Datatype type, int peer_rank, int tag,
                                     MPI_Comm comm, MPI_Request request) {
    // immediately return if peer is MPI_PROC_NULL as this is a dummy rank
@@ -97,7 +97,7 @@ void vftr_clear_completed_p2p_request(vftr_request_t *request) {
          }
       }
       // store the completed communication info to the outfile
-      if (vftr_environment.do_sampling->value) {
+      if (vftrace.environment.do_sampling.value.bool_val) {
          vftr_store_message_info(request->dir,
                                  request->count[0],
                                  request->type_idx[0],
