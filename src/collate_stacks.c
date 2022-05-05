@@ -59,7 +59,7 @@ void vftr_broadcast_collated_stacktree_receivers(collated_stacktree_t *stacktree
    PMPI_Comm_size(MPI_COMM_WORLD, &nranks);
    int nstacks = stacktree_ptr->nstacks;
    // receiving the caller ids
-   int *tmpintarr = (int*) malloc(nstacks+1*sizeof(int));
+   int *tmpintarr = (int*) malloc((nstacks+1)*sizeof(int));
    PMPI_Bcast(tmpintarr, nstacks, MPI_INT, 0, MPI_COMM_WORLD);
    for (int istack=0; istack<nstacks; istack++) {
       stacktree_ptr->stacks[istack].caller = tmpintarr[istack];
