@@ -12,6 +12,13 @@
 #include "timer.h"
 
 void vftr_finalize() {
+   if (vftrace.state == off) {
+      // was already finalized
+      // Maybe by MPI_Finalize
+      // vftr_finalize was already registered by atexit
+      // before vftrace knew that this was an MPI-program
+      return;
+   }
    // update the vftrace state
    vftrace.state = off;
    // set end timer string
