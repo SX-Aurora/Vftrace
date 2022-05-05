@@ -21,7 +21,7 @@
 #include <stdlib.h>
 
 #include "rank_translate.h"
-#include "vftr_timer.h"
+#include "timer.h"
 #include "collective_requests.h"
 
 int vftr_MPI_Ialltoallw(const void *sendbuf, const int *sendcounts,
@@ -76,7 +76,7 @@ int vftr_MPI_Ialltoallw(const void *sendbuf, const int *sendcounts,
    peer_ranks = NULL;
    long long t2end = vftr_get_runtime_usec();
 
-   vftr_mpi_overhead_usec += t2end - t2start;
+   //TODO: vftr_mpi_overhead_usec += t2end - t2start;
 
    return retVal;
 }
@@ -141,7 +141,7 @@ int vftr_MPI_Ialltoallw_inplace(const void *sendbuf, const int *sendcounts,
    }
    long long t2end = vftr_get_runtime_usec();
 
-   vftr_mpi_overhead_usec += t2end - t2start;
+   //TODO: vftr_mpi_overhead_usec += t2end - t2start;
 
    return retVal;
 }
@@ -211,7 +211,7 @@ int vftr_MPI_Ialltoallw_intercom(const void *sendbuf, const int *sendcounts,
    peer_ranks = NULL;
    long long t2end = vftr_get_runtime_usec();
 
-   vftr_mpi_overhead_usec += t2end - t2start;
+   //TODO: vftr_mpi_overhead_usec += t2end - t2start;
 
    return retVal;
 }
