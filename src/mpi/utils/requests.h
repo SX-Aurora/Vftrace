@@ -41,7 +41,7 @@ typedef struct vftr_request_type {
    vftr_request_kind request_kind;
    MPI_Comm comm;
    int nmsg;
-   vftr_direction dir;
+   message_direction dir;
    int *count;
    MPI_Datatype *type;
    int *type_idx;
@@ -55,7 +55,7 @@ typedef struct vftr_request_type {
 } vftr_request_t;
 
 // create new request to be stored
-vftr_request_t* vftr_register_request(vftr_direction dir, int nmsg, int *count,
+vftr_request_t* vftr_register_request(message_direction dir, int nmsg, int *count,
                                       MPI_Datatype *type, int tag,
                                       MPI_Comm comm, MPI_Request request,
                                       int n_tmp_ptr, void **tmp_ptrs,
