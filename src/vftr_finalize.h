@@ -1,5 +1,5 @@
-#ifndef FINALIZE_H
-#define FINALIZE_H
+#ifndef VFTR_FINALIZE_H
+#define VFTR_FINALIZE_H
 
 void vftr_finalize();
 
