@@ -4,12 +4,15 @@
 #include <stdint.h>
 #include <sys/types.h>
 
+#include <stdbool.h>
+
 #include "custom_types.h"
 
 typedef struct {
    uintptr_t addr;
-   char *name; /* Not de-mangled function name */
-   int index; /* Section index */
+   char *name; // Not de-mangled function name
+   int index; // Section index
+   bool precise; // whether function is traced precisecly
 } symbol_t;
 
 typedef struct {

@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include <stdio.h>
+#include <stdbool.h>
 
 #include <string.h>
 #include <elf.h>
@@ -11,6 +12,7 @@
 #include "ElfFormat.h"
 #include "search.h"
 #include "sorting.h"
+#include "regular_expressions.h"
 
 library_t vftr_parse_maps_line(char *line) {
    library_t library = {
@@ -121,11 +123,12 @@ void vftr_free_librarylist(librarylist_t *librarylist_ptr) {
 
 void vftr_print_symbol_table(FILE *fp, symboltable_t symboltable) {
    for (unsigned int isym=0; isym<symboltable.nsymbols; isym++) {
-      fprintf(fp, "%d 0x%llx %s\n",
+      fprintf(fp, "%d 0x%llx %s%s\n",
               symboltable.symbols[isym].index,
               (unsigned long long int)
               symboltable.symbols[isym].addr,
-              symboltable.symbols[isym].name);
+              symboltable.symbols[isym].name,
+              symboltable.symbols[isym].precise ? "*" : "");
    }
    fprintf(fp, "\n");
 }
@@ -209,6 +212,9 @@ symboltable_t vftr_read_symbols() {
                // Copy symbol name
                symboltable.symbols[jsymb].name = strdup(stringtab+s.st_name);
                symboltable.symbols[jsymb].index = s.st_shndx;
+
+               // set precise value to default: false
+               symboltable.symbols[jsymb].precise = false;
             }
          }
          symboltable.nsymbols = nsymnew;
@@ -229,6 +235,27 @@ symboltable_t vftr_read_symbols() {
    return symboltable;
 }
 
+void vftr_symboltable_determine_preciseness(symboltable_t *symboltable_ptr,
+                                            regex_t *preciseregex) {
+#ifdef _MPI
+   regex_t *mpi_regex = vftr_compile_regexp("^MPI_[A-Z][a-z]*");
+#endif
+   for (unsigned int isym=0; isym<symboltable_ptr->nsymbols; isym++) {
+      char *name = symboltable_ptr->symbols[isym].name;
+      bool precise;
+      precise = vftr_pattern_match(preciseregex, name);
+#ifdef _MPI
+      precise = precise || vftr_pattern_match(mpi_regex, name);
+#endif
+      symboltable_ptr->symbols[isym].precise = precise;
+   }
+
+#ifdef _MPI
+   regfree(mpi_regex);
+   free(mpi_regex);
+#endif
+}
+
 void vftr_symboltable_free(symboltable_t *symboltable_ptr) {
    symboltable_t symboltable = *symboltable_ptr;
    if (symboltable.nsymbols > 0) {
@@ -241,14 +268,45 @@ void vftr_symboltable_free(symboltable_t *symboltable_ptr) {
    }
 }
 
+int vftr_get_symbID_from_address(symboltable_t symboltable,
+                                 uintptr_t address) {
+   return vftr_binary_search_symboltable(symboltable.nsymbols,
+                                         symboltable.symbols,
+                                         address);
+}
+
 char *vftr_get_name_from_address(symboltable_t symboltable,
                                  uintptr_t address) {
-   int symbID = vftr_binary_search_symboltable(symboltable.nsymbols,
-                                               symboltable.symbols,
-                                               address);
+   int symbID = vftr_get_symbID_from_address(symboltable,
+                                             address);
    if (symbID >= 0) {
       return symboltable.symbols[symbID].name;
    } else {
       return "(UnknownFunctionName)";
    }
+}
+
+char *vftr_get_name_from_symbID(symboltable_t symboltable,
+                                int symbID) {
+   if (symbID >= 0) {
+      return symboltable.symbols[symbID].name;
+   } else {
+      return "(UnknownFunctionName)";
+   }
+}
+
+bool vftr_get_preciseness_from_address(symboltable_t symboltable,
+                                       uintptr_t address) {
+   int symbID = vftr_get_symbID_from_address(symboltable,
+                                             address);
+   if (symbID >= 0) {
+      return symboltable.symbols[symbID].name;
+   } else {
+      return "(UnknownFunctionName)";
+   }
+}
+
+bool vftr_get_preciseness_from_symbID(symboltable_t symboltable,
+                                      int symbID) {
+   return symboltable.symbols[symbID].precise;
 }
