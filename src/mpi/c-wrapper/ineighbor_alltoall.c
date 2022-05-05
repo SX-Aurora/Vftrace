@@ -20,7 +20,6 @@
 #include <mpi.h>
 
 #include "mpi_logging.h"
-#include "vftr_regions.h"
 #include "ineighbor_alltoall_c2vftr.h"
 
 int MPI_Ineighbor_alltoall(const void *sendbuf, int sendcount,
