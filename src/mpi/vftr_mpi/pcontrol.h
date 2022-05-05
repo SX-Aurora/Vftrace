@@ -18,9 +18,6 @@
 #ifndef PCONTROL_H
 #define PCONTROL_H
 
-// PControl level as required by the MPI-Standard for profiling interfaces
-extern int vftrace_Pcontrol_level;
-
 // vftrace internal routine to control the profiling level
 int vftr_MPI_Pcontrol(const int level);
 
