@@ -12,6 +12,7 @@ typedef struct {
    stack_t *local_stack;
    // gloabl stackID
    int gid;
+   bool precise;
    int caller;
    // need a copy of the name for even for local functions
    // because functions from other processes might

@@ -73,7 +73,7 @@ stack_t vftr_first_stack() {
    stack_t stack;
    stack.stack_kind = init;
    stack.address = (uintptr_t) NULL;
-   stack.precise = true;
+   stack.precise = false;
    stack.caller = -1;
    stack.maxcallees = 0;
    stack.ncallees = 0;
@@ -161,6 +161,9 @@ char *vftr_get_stack_string(stacktree_t stacktree, int stackid) {
       tmpstackid = stacktree.stacks[tmpstackid].caller;
       stringlen += strlen(stacktree.stacks[tmpstackid].name);
       stringlen ++; // function seperating character "<", or null terminator
+      if (stacktree.stacks[tmpstackid].precise) {
+         stringlen ++; // '*' for indicating precise functions
+      }
    }
    char *stackstring = (char*) malloc(stringlen*sizeof(char));
    // copy the chars one by one so there is no need to call strlen again.
@@ -173,6 +176,10 @@ char *vftr_get_stack_string(stacktree_t stacktree, int stackid) {
       tmpstackstring_ptr++;
       tmpname_ptr++;
    }
+   if (stacktree.stacks[tmpstackid].precise) {
+      *tmpstackstring_ptr = '*';
+      tmpstackstring_ptr++;
+   }
    while (stacktree.stacks[tmpstackid].caller >= 0) {
       // add function name separating character
       *tmpstackstring_ptr = '<';
@@ -183,6 +190,10 @@ char *vftr_get_stack_string(stacktree_t stacktree, int stackid) {
          *tmpstackstring_ptr = *tmpname_ptr;
          tmpstackstring_ptr++;
          tmpname_ptr++;
+      }
+      if (stacktree.stacks[tmpstackid].precise) {
+         *tmpstackstring_ptr = '*';
+         tmpstackstring_ptr++;
       }
    }
    // replace last char with a null terminator

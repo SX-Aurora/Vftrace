@@ -31,6 +31,11 @@ void vftr_broadcast_collated_stacktree_root(collated_stacktree_t *stacktree_ptr)
       tmpintarr[istack] = stacktree_ptr->stacks[istack].caller;
    }
    PMPI_Bcast(tmpintarr, nstacks, MPI_INT, 0, MPI_COMM_WORLD);
+   // communicate the precise-tracing status for each function
+   for (int istack=0; istack<nstacks; istack++) {
+      tmpintarr[istack] = stacktree_ptr->stacks[istack].precise ? 1 : 0;
+   }
+   PMPI_Bcast(tmpintarr, nstacks, MPI_INT, 0, MPI_COMM_WORLD);
    // broadcasting the function names.
    // first the length of each name
    int totallen = 0;
@@ -63,6 +68,11 @@ void vftr_broadcast_collated_stacktree_receivers(collated_stacktree_t *stacktree
    PMPI_Bcast(tmpintarr, nstacks, MPI_INT, 0, MPI_COMM_WORLD);
    for (int istack=0; istack<nstacks; istack++) {
       stacktree_ptr->stacks[istack].caller = tmpintarr[istack];
+   }
+   // recive the precise-tracing status for each function
+   PMPI_Bcast(tmpintarr, nstacks, MPI_INT, 0, MPI_COMM_WORLD);
+   for (int istack=0; istack<nstacks; istack++) {
+      stacktree_ptr->stacks[istack].precise = tmpintarr[istack] == 1 ? true : false;
    }
    // receiving the function names;
    // first the length of each name;
@@ -113,6 +123,7 @@ collated_stacktree_t vftr_collate_stacks(stacktree_t *stacktree_ptr) {
    for (int istack=0; istack<coll_stacktree.nstacks; istack++) {
       coll_stacktree.stacks[istack].local_stack = NULL;
       coll_stacktree.stacks[istack].gid = istack;
+      coll_stacktree.stacks[istack].precise = false;
       coll_stacktree.stacks[istack].caller = -1;
       coll_stacktree.stacks[istack].name = NULL;
       coll_stacktree.stacks[istack].hash = hashlist.hashes[istack];
@@ -164,6 +175,7 @@ collated_stacktree_t vftr_collate_stacks(stacktree_t *stacktree_ptr) {
          collated_stack_t *global_stack = coll_stacktree.stacks+gid;
          global_stack->local_stack = local_stack;
          global_stack->gid = gid;
+         global_stack->precise = local_stack->precise;
          global_stack->caller = -1;
          global_stack->name = strdup(local_stack->name);
       }
@@ -173,6 +185,7 @@ collated_stacktree_t vftr_collate_stacks(stacktree_t *stacktree_ptr) {
          collated_stack_t *global_stack = coll_stacktree.stacks+gid;
          global_stack->local_stack = local_stack;
          global_stack->gid = gid;
+         global_stack->precise = local_stack->precise;
          global_stack->caller = local2global_ID[local_stack->caller];
          global_stack->name = strdup(local_stack->name);
       }
@@ -208,18 +221,19 @@ collated_stacktree_t vftr_collate_stacks(stacktree_t *stacktree_ptr) {
                // only proceed if the number of stacks is positive
                if (hasnmissing > 0) {
                    // Allocate space for the Stack information
-                   // globalIDs  -> 3*istack+0
-                   // returnID   -> 3*istack+1
-                   // NameLength -> 3*istack+2
-                   int *missingStackInfo = (int*) malloc(3*hasnmissing*sizeof(int));
+                   // globalIDs  -> 4*istack+0
+                   // returnID   -> 4*istack+1
+                   // NameLength -> 4*istack+2
+                   // precise    -> 4*istack+3
+                   int *missingStackInfo = (int*) malloc(4*hasnmissing*sizeof(int));
                    // Receive the found information from remote process
-                   PMPI_Recv(missingStackInfo, 3*hasnmissing, MPI_INT,
+                   PMPI_Recv(missingStackInfo, 4*hasnmissing, MPI_INT,
                              irank, 0, MPI_COMM_WORLD, &mystat);
    
                    // Create a buffer that contains all stack names in contatenated form
                    int sumlength = 0;
                    for (int istack=0; istack<hasnmissing; istack++) {
-                      sumlength += missingStackInfo[3*istack+2];
+                      sumlength += missingStackInfo[4*istack+2];
                    }
                    char *concatNames = (char*) malloc(sumlength*sizeof(char));
    
@@ -230,11 +244,13 @@ collated_stacktree_t vftr_collate_stacks(stacktree_t *stacktree_ptr) {
                    // Write all the gathered info to the global stackinfo
                    char *tmpstrptr = concatNames;
                    for (int istack=0; istack<hasnmissing; istack++) {
-                      int globID = missingStackInfo[3*istack+0];
-                      coll_stacktree.stacks[globID].caller = missingStackInfo[3*istack+1];
+                      int globID = missingStackInfo[4*istack+0];
+                      coll_stacktree.stacks[globID].caller = missingStackInfo[4*istack+1];
                       coll_stacktree.stacks[globID].name = strdup(tmpstrptr);
                       // next string
-                      tmpstrptr += missingStackInfo[3*istack+2];
+                      tmpstrptr += missingStackInfo[4*istack+2];
+                      // is precise ?
+                      coll_stacktree.stacks[globID].precise = missingStackInfo[4*istack+3] != 0;
                    }
    
                    free(concatNames);
@@ -270,39 +286,41 @@ collated_stacktree_t vftr_collate_stacks(stacktree_t *stacktree_ptr) {
             // only proceed if the number of stacks is positive
             if (hasnmissing > 0) {
                // Allocate space for the global IDs, return ID, and the name lengths
-               // globalIDs  -> 3*istack+0
-               // returnID   -> 3*istack+1
-               // NameLength -> 3*istack+2
-               int *missingStackInfo = (int*) malloc(3*hasnmissing*sizeof(int));
+               // globalIDs  -> 4*istack+0
+               // returnID   -> 4*istack+1
+               // NameLength -> 4*istack+2
+               // Precise    -> 4*istack+3
+               int *missingStackInfo = (int*) malloc(4*hasnmissing*sizeof(int));
                // Go through the stacks and record the needed information
                int imatch = 0;
                for (int istack=0; istack<nmissing; istack++) {
                   int globID = missingstacks[istack];
                   int locID = global2local_ID[globID];
                   if (locID >= 0) {
-                     missingStackInfo[3*imatch+0] = globID;
+                     missingStackInfo[4*imatch+0] = globID;
                      stack_t *local_stack = stacktree_ptr->stacks+locID;
-                     missingStackInfo[3*imatch+1] = local2global_ID[local_stack->caller];
+                     missingStackInfo[4*imatch+1] = local2global_ID[local_stack->caller];
                      // add one to length due to null terminator
-                     missingStackInfo[3*imatch+2] = strlen(local_stack->name) + 1;
+                     missingStackInfo[4*imatch+2] = strlen(local_stack->name) + 1;
+                     missingStackInfo[4*imatch+3] = local_stack->precise ? 1 : 0;
                      imatch++;
                   }
                }
                // Communicate the found information to process 0;
-               PMPI_Send(missingStackInfo, 3*hasnmissing, MPI_INT, 0, 0, MPI_COMM_WORLD);
+               PMPI_Send(missingStackInfo, 4*hasnmissing, MPI_INT, 0, 0, MPI_COMM_WORLD);
                // Create a buffer that contains all stack names in contatenated form
                int sumlength = 0;
                for (int istack=0; istack<hasnmissing; istack++) {
-                  sumlength += missingStackInfo[3*istack+2];
+                  sumlength += missingStackInfo[4*istack+2];
                }
                char *concatNames = (char*) malloc(sumlength*sizeof(char));
                // concatenate the names into one string
                char *tmpstrptr = concatNames;
                for (int istack=0; istack<hasnmissing; istack++) {
-                  int globID = missingStackInfo[3*istack+0];
+                  int globID = missingStackInfo[4*istack+0];
                   int locID = global2local_ID[globID];
                   strcpy(tmpstrptr, stacktree_ptr->stacks[locID].name);
-                  tmpstrptr += missingStackInfo[3*istack+2]-1;
+                  tmpstrptr += missingStackInfo[4*istack+2]-1;
                   // add null terminator
                   *tmpstrptr = '\0';
                   tmpstrptr++;
@@ -348,6 +366,9 @@ char *vftr_get_collated_stack_string(collated_stacktree_t stacktree, int stackid
       tmpstackid = stacktree.stacks[tmpstackid].caller;
       stringlen += strlen(stacktree.stacks[tmpstackid].name);
       stringlen ++; // function seperating character "<", or null terminator
+      if (stacktree.stacks[tmpstackid].precise) {
+         stringlen ++; // '*' for indicating precise functions
+      }
    }
    char *stackstring = (char*) malloc(stringlen*sizeof(char));
    // copy the chars one by one so there is no need to call strlen again.
@@ -360,6 +381,10 @@ char *vftr_get_collated_stack_string(collated_stacktree_t stacktree, int stackid
       tmpstackstring_ptr++;
       tmpname_ptr++;
    }
+   if (stacktree.stacks[tmpstackid].precise) {
+      *tmpstackstring_ptr = '*';
+      tmpstackstring_ptr++;
+   }
    while (stacktree.stacks[tmpstackid].caller >= 0) {
       // add function name separating character
       *tmpstackstring_ptr = '<';
@@ -370,6 +395,10 @@ char *vftr_get_collated_stack_string(collated_stacktree_t stacktree, int stackid
          *tmpstackstring_ptr = *tmpname_ptr;
          tmpstackstring_ptr++;
          tmpname_ptr++;
+      }
+      if (stacktree.stacks[tmpstackid].precise) {
+         *tmpstackstring_ptr = '*';
+         tmpstackstring_ptr++;
       }
    }
    // replace last char with a null terminator
