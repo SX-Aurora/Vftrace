@@ -21,7 +21,7 @@
 #include <stdlib.h>
 
 #include "rank_translate.h"
-#include "vftr_timer.h"
+#include "timer.h"
 #include "collective_requests.h"
 
 int vftr_MPI_Ireduce(const void *sendbuf, void *recvbuf, int count,
@@ -66,7 +66,7 @@ int vftr_MPI_Ireduce(const void *sendbuf, void *recvbuf, int count,
    }
    long long t2end = vftr_get_runtime_usec();
 
-   vftr_mpi_overhead_usec += t2end - t2start;
+   //TODO: vftr_mpi_overhead_usec += t2end - t2start;
 
    return retVal;
 }
@@ -123,7 +123,7 @@ int vftr_MPI_Ireduce_inplace(const void *sendbuf, void *recvbuf, int count,
    }
    long long t2end = vftr_get_runtime_usec();
 
-   vftr_mpi_overhead_usec += t2end - t2start;
+   //TODO: vftr_mpi_overhead_usec += t2end - t2start;
 
    return retVal;
 }
@@ -175,7 +175,7 @@ int vftr_MPI_Ireduce_intercom(const void *sendbuf, void *recvbuf, int count,
    }
    long long t2end = vftr_get_runtime_usec();
 
-   vftr_mpi_overhead_usec += t2end - t2start;
+   //TODO: vftr_mpi_overhead_usec += t2end - t2start;
 
    return retVal;
 }
