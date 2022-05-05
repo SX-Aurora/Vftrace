@@ -18,7 +18,7 @@
 
 #include <mpi.h>
 
-#include "vftr_timer.h"
+#include "timer.h"
 #include "sync_messages.h"
 
 int vftr_MPI_Recv(void *buf, int count, MPI_Datatype datatype,
@@ -40,7 +40,7 @@ int vftr_MPI_Recv(void *buf, int count, MPI_Datatype datatype,
    }
    long long t2end = vftr_get_runtime_usec();
 
-   vftr_mpi_overhead_usec += t2end - t2start;
+   //TODO: vftr_mpi_overhead_usec += t2end - t2start;
    
    return retVal;
 }
