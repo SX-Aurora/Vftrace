@@ -20,8 +20,6 @@
 #include <mpi.h>
 
 #include "mpi_logging.h"
-#include "vftr_regions.h"
-#include "vftr_environment.h"
 #include "neighbor_alltoallw_c2vftr.h"
 
 int MPI_Neighbor_alltoallw(const void *sendbuf, const int *sendcounts,
@@ -29,12 +27,9 @@ int MPI_Neighbor_alltoallw(const void *sendbuf, const int *sendcounts,
                            void *recvbuf, const int *recvcounts,
                            const MPI_Aint *rdispls, const MPI_Datatype *recvtypes,
                            MPI_Comm comm) {
-   // Estimate synchronization time
-   if (vftr_environment.mpi_show_sync_time->value) {
-      vftr_internal_region_begin("MPI_Neighbor_alltoallw_sync");
-      PMPI_Barrier(comm);
-      vftr_internal_region_end("MPI_Neighbor_alltoallw_sync");
-   }
+
+   vftr_estimate_sync_time("MPI_Neighbor_alltoallw_sync", comm);
+
    if (vftr_no_mpi_logging()) {
       return PMPI_Neighbor_alltoallw(sendbuf, sendcounts, sdispls, sendtypes,
                                      recvbuf, recvcounts, rdispls, recvtypes,
