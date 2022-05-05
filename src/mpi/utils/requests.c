@@ -25,13 +25,16 @@
 #include "p2p_requests.h"
 #include "onesided_requests.h"
 #include "collective_requests.h"
-#include "vftr_stacks.h"
+#include "stacks.h"
+#include "threads.h"
+#include "threadstacks.h"
+
 
 int vftr_open_request_list_length = 0;
 vftr_request_t *vftr_open_request_list = NULL;
 
 // create new request to be stored
-vftr_request_t* vftr_register_request(vftr_direction dir, int nmsg, int *count,
+vftr_request_t* vftr_register_request(message_direction dir, int nmsg, int *count,
                                       MPI_Datatype *type, int tag,
                                       MPI_Comm comm, MPI_Request request,
                                       int n_tmp_ptr, void **tmp_ptrs,
@@ -92,7 +95,11 @@ vftr_request_t* vftr_register_request(vftr_direction dir, int nmsg, int *count,
    // communications, only memory space is provided and is to be filled later.
    new_request->tag = tag;
    new_request->rank = (int*) malloc(sizeof(int)*nmsg);
-   new_request->callingstackID = vftr_fstack->id;
+   // Get the thread that called the function
+   thread_t *my_thread = vftr_get_my_thread(&(vftrace.process.threadtree));
+   threadstack_t *my_threadstack = vftr_get_my_threadstack(my_thread);
+
+   new_request->callingstackID = my_threadstack->stackID;
 
    // store temporary pointers used for mpi-communication
    new_request->n_tmp_ptr = n_tmp_ptr;
