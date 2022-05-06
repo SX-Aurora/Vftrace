@@ -26,7 +26,7 @@
 
 void vftr_MPI_Iallgatherv_f2vftr(void *sendbuf, MPI_Fint *sendcount,
                                  MPI_Fint *f_sendtype, void *recvbuf,
-                                 MPI_Fint *f_recvcounts, MPI_Fint *f_displs, 
+                                 MPI_Fint *f_recvcounts, MPI_Fint *f_displs,
                                  MPI_Fint *f_recvtype, MPI_Fint *f_comm,
                                  MPI_Fint *f_request, MPI_Fint *f_error) {
 
