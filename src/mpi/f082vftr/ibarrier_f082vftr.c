@@ -22,7 +22,7 @@
 #include <stdlib.h>
 
 #include "ibarrier.h"
-  
+
 void vftr_MPI_Ibarrier_f082vftr(MPI_Fint *f_comm, MPI_Fint *f_request,
                                 MPI_Fint *f_error) {
 
