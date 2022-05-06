@@ -44,7 +44,7 @@ void vftr_broadcast_collated_stacktree_root(collated_stacktree_t *stacktree_ptr)
       totallen += tmpintarr[istack];
       totallen += 1; // null terminator between all strings
    }
-   // the total length is appended to the tmpintarr 
+   // the total length is appended to the tmpintarr
    tmpintarr[nstacks] = totallen;
    PMPI_Bcast(tmpintarr, nstacks+1, MPI_INT, 0, MPI_COMM_WORLD);
    char *tmpchararr = (char*) malloc(totallen*sizeof(char));
@@ -78,7 +78,7 @@ void vftr_broadcast_collated_stacktree_receivers(collated_stacktree_t *stacktree
    // first the length of each name;
    int totallen = 0;
    PMPI_Bcast(tmpintarr, nstacks+1, MPI_INT, 0, MPI_COMM_WORLD);
-   // the total length is appended to the tmpintarr 
+   // the total length is appended to the tmpintarr
    totallen = tmpintarr[nstacks];
    char *tmpchararr = (char*) malloc(totallen*sizeof(char));
    char *charptr = tmpchararr;
@@ -115,7 +115,7 @@ collated_stacktree_t vftr_collate_stacks(stacktree_t *stacktree_ptr) {
 
    // collate hashes between processes
    hashlist_t hashlist = vftr_collate_hashes(stacktree_ptr);
-   
+
    // create empty collated stacktree
    coll_stacktree.nstacks = hashlist.nhashes;
    coll_stacktree.stacks = (collated_stack_t*)
@@ -207,7 +207,7 @@ collated_stacktree_t vftr_collate_stacks(stacktree_t *stacktree_ptr) {
                   nmissing++;
                }
             }
-   
+
             // Send to the selected process how many entries are still missing
             PMPI_Send(&nmissing, 1, MPI_INT, irank, 0, MPI_COMM_WORLD);
             // if at least one entry is missing proceed
@@ -229,18 +229,18 @@ collated_stacktree_t vftr_collate_stacks(stacktree_t *stacktree_ptr) {
                    // Receive the found information from remote process
                    PMPI_Recv(missingStackInfo, 4*hasnmissing, MPI_INT,
                              irank, 0, MPI_COMM_WORLD, &mystat);
-   
+
                    // Create a buffer that contains all stack names in contatenated form
                    int sumlength = 0;
                    for (int istack=0; istack<hasnmissing; istack++) {
                       sumlength += missingStackInfo[4*istack+2];
                    }
                    char *concatNames = (char*) malloc(sumlength*sizeof(char));
-   
+
                    // Receive the concatenated String
                    PMPI_Recv(concatNames, sumlength, MPI_CHAR,
                              irank, 0, MPI_COMM_WORLD, &mystat);
-   
+
                    // Write all the gathered info to the global stackinfo
                    char *tmpstrptr = concatNames;
                    for (int istack=0; istack<hasnmissing; istack++) {
@@ -252,10 +252,10 @@ collated_stacktree_t vftr_collate_stacks(stacktree_t *stacktree_ptr) {
                       // is precise ?
                       coll_stacktree.stacks[globID].precise = missingStackInfo[4*istack+3] != 0;
                    }
-   
+
                    free(concatNames);
                    free(missingStackInfo);
-   
+
                }
             }
          }
@@ -272,7 +272,7 @@ collated_stacktree_t vftr_collate_stacks(stacktree_t *stacktree_ptr) {
             int *missingstacks = (int*) malloc(nmissing*sizeof(int));
             // receiving the missing stacks
             PMPI_Recv(missingstacks, nmissing, MPI_INT, 0, 0, MPI_COMM_WORLD, &mystat);
-   
+
             // check how many of the missing stacks this process has infos about
             int hasnmissing = 0;
             for (int imissing=0; imissing<nmissing; imissing++) {
@@ -327,7 +327,7 @@ collated_stacktree_t vftr_collate_stacks(stacktree_t *stacktree_ptr) {
                }
                // communicate the concatenated string to process 0
                PMPI_Send(concatNames, sumlength, MPI_CHAR, 0, 0, MPI_COMM_WORLD);
-   
+
                // free everything. This should be all on the remote processes
                free(concatNames);
                free(missingStackInfo);
@@ -335,7 +335,7 @@ collated_stacktree_t vftr_collate_stacks(stacktree_t *stacktree_ptr) {
             free(missingstacks);
          }
       }
-   
+
       vftr_broadcast_collated_stacktree(&coll_stacktree);
    }
 #endif
