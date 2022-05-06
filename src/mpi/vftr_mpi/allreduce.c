@@ -35,7 +35,7 @@ int vftr_MPI_Allreduce(const void *sendbuf, void *recvbuf, int count,
    for (int i=0; i<size; i++) {
       vftr_store_sync_message_info(send, count, datatype, i, -1,
                                    comm, tstart, tend);
-      // The receive is not strictly true as every process receives only one 
+      // The receive is not strictly true as every process receives only one
       // data package, but due to the nature of a remote reduce
       // it is not possible to destinguish from whom.
       // There are three possibilities how to deal with this
@@ -51,7 +51,7 @@ int vftr_MPI_Allreduce(const void *sendbuf, void *recvbuf, int count,
    long long t2end = vftr_get_runtime_usec();
 
    //TODO: vftr_mpi_overhead_usec += t2end - t2start;
-  
+
    return retVal;
 }
 
@@ -72,7 +72,7 @@ int vftr_MPI_Allreduce_inplace(const void *sendbuf, void *recvbuf, int count,
    for (int i=0; i<rank; i++) {
       vftr_store_sync_message_info(send, count, datatype, i, -1,
                                    comm, tstart, tend);
-      // The receive is not strictly true as every process receives only one 
+      // The receive is not strictly true as every process receives only one
       // data package, but due to the nature of a remote reduce
       // it is not possible to destinguish from whom.
       // There are three possibilities how to deal with this
@@ -88,7 +88,7 @@ int vftr_MPI_Allreduce_inplace(const void *sendbuf, void *recvbuf, int count,
    for (int i=rank+1; i<size; i++) {
       vftr_store_sync_message_info(send, count, datatype, i, -1,
                                    comm, tstart, tend);
-      // The receive is not strictly true as every process receives only one 
+      // The receive is not strictly true as every process receives only one
       // data package, but due to the nature of a remote reduce
       // it is not possible to destinguish from whom.
       // There are three possibilities how to deal with this
@@ -104,7 +104,7 @@ int vftr_MPI_Allreduce_inplace(const void *sendbuf, void *recvbuf, int count,
    long long t2end = vftr_get_runtime_usec();
 
    //TODO: vftr_mpi_overhead_usec += t2end - t2start;
-  
+
    return retVal;
 }
 
@@ -128,7 +128,7 @@ int vftr_MPI_Allreduce_intercom(const void *sendbuf, void *recvbuf, int count,
       vftr_store_sync_message_info(send, count, datatype,
                                    global_peer_rank, -1, MPI_COMM_WORLD,
                                    tstart, tend);
-      // The receive is not strictly true as every process receives only one 
+      // The receive is not strictly true as every process receives only one
       // data package, but due to the nature of a remote reduce
       // it is not possible to destinguish from whom.
       // There are three possibilities how to deal with this
@@ -145,6 +145,6 @@ int vftr_MPI_Allreduce_intercom(const void *sendbuf, void *recvbuf, int count,
    long long t2end = vftr_get_runtime_usec();
 
    //TODO: vftr_mpi_overhead_usec += t2end - t2start;
-  
+
    return retVal;
 }
