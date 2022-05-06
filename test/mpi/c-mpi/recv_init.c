@@ -84,7 +84,7 @@ int main(int argc, char** argv) {
          MPI_Send(sbuffer, nints, MPI_INT, 0, my_rank, MPI_COMM_WORLD);
       }
    }
-   
+
    free(sbuffer);
    sbuffer=NULL;
 
