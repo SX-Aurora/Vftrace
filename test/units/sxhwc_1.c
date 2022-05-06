@@ -10,7 +10,7 @@ int main (int argc, char **argv) {
 #if defined(_MPI)
   PMPI_Init(&argc, &argv);
   vftr_get_mpi_info (&vftr_mpirank, &vftr_mpisize);
-#else 
+#else
   vftr_mpirank = 0;
   vftr_mpisize = 1;
 #endif
@@ -19,7 +19,7 @@ int main (int argc, char **argv) {
 
 #if defined(HAS_SXHWC)
 #define N_DIGITS 6
-  const char *sx_counter_names[16] = {"EX", "VX", "FPEC", "VE", "VECC", "L1MCC", 
+  const char *sx_counter_names[16] = {"EX", "VX", "FPEC", "VE", "VECC", "L1MCC",
   	"VE2", "VAREC", "VLDEC", "PCCC", "VLPC", "VLEC", "VLCME", "FMAEC", "PTCC", "TTCC"};
   int n = 100000;
   int n_iter = 1000;
@@ -30,7 +30,7 @@ int main (int argc, char **argv) {
   c2 = (long long *)malloc (16 * sizeof(long long));
   fprintf (stdout, "Checking reproducibility of SX Aurora hardware counters\n");
   fprintf (stdout, "Averaging over %d iterations\n", n_iter);
-  
+
   for (int i = 0; i < n; i++) {
   	x[i] = i;
   	y[i] = 0.5 * i;
@@ -45,7 +45,7 @@ int main (int argc, char **argv) {
   		c_diff[i][n] = c2[i] - c1[i];
   	}
   }
-  
+
   double c_avg[MAX_HWC_EVENTS];
   long long sum_c;
   for (int i = 0; i < 16; i++) {
@@ -59,7 +59,7 @@ int main (int argc, char **argv) {
   // the system. Therefore, the mean value is not reliable and is therefore not printed. We constrain
   // this output only to the hardware counters without a "C".
   fprintf (stdout, "%*s: %*d\n", N_DIGITS, sx_counter_names[0], N_DIGITS, (int)floor(c_avg[0])); // EX
-  fprintf (stdout, "%*s: %*d\n", N_DIGITS, sx_counter_names[1], N_DIGITS, (int)floor(c_avg[1])); // VX 
+  fprintf (stdout, "%*s: %*d\n", N_DIGITS, sx_counter_names[1], N_DIGITS, (int)floor(c_avg[1])); // VX
   fprintf (stdout, "%*s: %*d\n", N_DIGITS, sx_counter_names[3], N_DIGITS, (int)floor(c_avg[3])); // VE
   fprintf (stdout, "%*s: %*d\n", N_DIGITS, sx_counter_names[6], N_DIGITS, (int)floor(c_avg[6])); // VE2
   fprintf (stdout, "%*s: %*d\n", N_DIGITS, sx_counter_names[12], N_DIGITS, (int)floor(c_avg[12])); // VLCME
