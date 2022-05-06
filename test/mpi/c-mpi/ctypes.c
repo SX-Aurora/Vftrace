@@ -25,7 +25,7 @@ int main(int argc, char** argv) {
       return 1;
    }
 
-   // Messaging 
+   // Messaging
    if (my_rank == 0) {
       // sending rank
       char send_char;
