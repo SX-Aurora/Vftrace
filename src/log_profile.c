@@ -22,7 +22,7 @@ int *vftr_stack_calls_list(int nstacks, stack_t *stacks) {
 
 double *vftr_stack_inclusive_time_list(int nstacks, stack_t *stacks) {
    double *inclusive_time_list = (double*) malloc(nstacks*sizeof(double));
- 
+
    for (int istack=0; istack<nstacks; istack++) {
       inclusive_time_list[istack] = stacks[istack].profiling.callProf.time_usec;
       inclusive_time_list[istack] *= 1.0e-6;
@@ -44,7 +44,7 @@ double *vftr_stack_exclusive_time_list(int nstacks, stack_t *stacks) {
 
 double *vftr_stack_overhead_time_list(int nstacks, stack_t *stacks) {
    double *overhead_time_list = (double*) malloc(nstacks*sizeof(double));
- 
+
    for (int istack=0; istack<nstacks; istack++) {
       overhead_time_list[istack] = stacks[istack].profiling.callProf.overhead_time_usec;
       overhead_time_list[istack] *= 1.0e-6;
