@@ -41,7 +41,7 @@ int main(int argc, char** argv) {
    MPI_Comm int_comm;
    int local_leader = 0;
    int remote_leader = (1-color)*(comm_size+1)/2;
-   MPI_Intercomm_create(sub_comm, 
+   MPI_Intercomm_create(sub_comm,
                         local_leader,
                         MPI_COMM_WORLD,
                         remote_leader, 1,
