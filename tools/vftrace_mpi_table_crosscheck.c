@@ -52,7 +52,7 @@ int mpi_index (char *s) {
 		if (strstr (s, mpi_function_names[i])) return i;
 	}
 	return -1;
-}	
+}
 
 /**********************************************************************/
 
@@ -93,13 +93,13 @@ bool check_if_mpi_times_add_up (int n_log_files, double mpi_percentage[N_MPI_FUN
 
 // Check average, mininal and maximal time, which should be equal
 // for all ranks which participate in a collective call.
-	
+
 // We are not (yet) interested in which of the values might be the correct one,
 // we only check if they are all equal within a tolerance of 1%.
 
 bool check_if_global_times_match (int n_log_files, double t[N_MPI_FUNCS][n_log_files]) {
 	bool all_okay = true;
-	for (int i = 0; i < N_MPI_FUNCS; i++) {	
+	for (int i = 0; i < N_MPI_FUNCS; i++) {
 		// Local flag which checks that values for one MPI function match
 		bool all_okay_local = true;
 		double this_t = t[i][0];
@@ -119,7 +119,7 @@ bool check_if_global_times_match (int n_log_files, double t[N_MPI_FUNCS][n_log_f
 /**********************************************************************/
 
 bool check_t_avg (int n_log_files, double t[N_MPI_FUNCS][n_log_files], double t_avg[N_MPI_FUNCS][n_log_files]) {
-	bool all_okay = true;	
+	bool all_okay = true;
 	for (int i = 0; i < N_MPI_FUNCS; i++) {
 		bool all_okay_local = true;
 		double sum_t = 0.0;
@@ -146,11 +146,11 @@ bool check_t_avg (int n_log_files, double t[N_MPI_FUNCS][n_log_files], double t_
 	}
 	return all_okay;
 }
-		
+
 /**********************************************************************/
 
 bool check_t_min (int n_log_files, double t[N_MPI_FUNCS][n_log_files], double t_min[N_MPI_FUNCS][n_log_files]) {
-	bool all_okay = true;	
+	bool all_okay = true;
 	for (int i = 0; i < N_MPI_FUNCS; i++) {
 		bool all_okay_local = true;
 		double this_t_min = DBL_MAX;
@@ -158,7 +158,7 @@ bool check_t_min (int n_log_files, double t[N_MPI_FUNCS][n_log_files], double t_
 		int i0 = 0;
 		// MPI_Barrier is a bit cumbersome: Often, one rank has a very
 		// small registered time, so that the three digits are not
-		// sufficient to display it and it appears as zero. 
+		// sufficient to display it and it appears as zero.
 		// For this reason, we skip MPI_Barrier. If there might be issues
 		// with it, the user will have to check it separately.
 
@@ -166,7 +166,7 @@ bool check_t_min (int n_log_files, double t[N_MPI_FUNCS][n_log_files], double t_
 		while (t_min[i][i0] == 0.0) i0++;
 		for (int i_file = 0; i_file < n_log_files; i_file++) {
 			if (t[i][i_file] > 0.0 && t[i][i_file] < this_t_min) {
-				this_t_min = t[i][i_file]; 
+				this_t_min = t[i][i_file];
 				n++;
 			}
 		}
@@ -181,11 +181,11 @@ bool check_t_min (int n_log_files, double t[N_MPI_FUNCS][n_log_files], double t_
 	}
 	return all_okay;
 }
-		
+
 /**********************************************************************/
 
 bool check_t_max (int n_log_files, double t[N_MPI_FUNCS][n_log_files], double t_max[N_MPI_FUNCS][n_log_files]) {
-	bool all_okay = true;	
+	bool all_okay = true;
 	for (int i = 0; i < N_MPI_FUNCS; i++) {
 		bool all_okay_local = true;
 		double this_t_max = 0.0;
@@ -194,27 +194,27 @@ bool check_t_max (int n_log_files, double t[N_MPI_FUNCS][n_log_files], double t_
 		while (t_max[i][i0] == 0.0) i0++;
 		for (int i_file = 0; i_file < n_log_files; i_file++) {
 			if (t[i][i_file] > this_t_max) {
-				this_t_max = t[i][i_file]; 
+				this_t_max = t[i][i_file];
 				n++;
 			}
 		}
 		if (n > 0) {
 			all_okay_local = equal_within_tolerance (this_t_max, t_max[i][i0], 0.02);
-			if (!all_okay_local) printf ("Not okay: %s(%d) %lf %lf %lf\n", 
+			if (!all_okay_local) printf ("Not okay: %s(%d) %lf %lf %lf\n",
 			    mpi_function_names[i], i, this_t_max, t_max[i][i0], this_t_max / t_max[i][i0]);
 		}
 		all_okay &= all_okay_local;
 	}
 	return all_okay;
 }
-		
+
 /**********************************************************************/
 #define LINEBUFSIZE 256
 
 void check_each_time (FILE *fp, int n_calls_vftr[N_MPI_FUNCS], double t_tot[N_MPI_FUNCS], double t_tot_all,
 		      bool *all_calls_okay, bool *all_t_okay, bool *t_tot_okay) {
 	char line[LINEBUFSIZE];
-	int countdown = -1;	
+	int countdown = -1;
 	int n_calls, n_calls_tot[N_MPI_FUNCS];
 	double t_inc, t_inc_tot[N_MPI_FUNCS];
 	double this_t_tot = 0.0;
@@ -238,7 +238,7 @@ void check_each_time (FILE *fp, int n_calls_vftr[N_MPI_FUNCS], double t_tot[N_MP
 	      if (strstr(line, "----")) break;
 	      char *column;
 	      column = strtok (line, " "); // #Calls
-	      n_calls = atoi (column);	
+	      n_calls = atoi (column);
 	      column = strtok (NULL, " "); // Exclusive time, skip
 	      column = strtok (NULL, " "); // Inclusive time
 	      t_inc = atof (column);
@@ -256,7 +256,7 @@ void check_each_time (FILE *fp, int n_calls_vftr[N_MPI_FUNCS], double t_tot[N_MP
 	*all_calls_okay = true;
 	*all_t_okay = true;
 	for (int i = 0; i < N_MPI_FUNCS; i++) {
-	   *all_calls_okay &= (n_calls_tot[i] == n_calls_vftr[i]); 
+	   *all_calls_okay &= (n_calls_tot[i] == n_calls_vftr[i]);
 	   bool tmp = equal_for_n_digits (t_inc_tot[i], t_tot[i], 2);
 	   if (!tmp) {
 		printf ("Added and registered time are not equal(%d): %lf %lf\n",
@@ -288,8 +288,8 @@ bool check_if_imbalances_match (int n_log_files, double t[N_MPI_FUNCS][n_log_fil
 		for (int i_file = 0; i_file < n_log_files; i_file++) {
 			if (t[i][i_file] > 0.0) {
 				double d = fabs(t[i][i_file] - t_avg[i][i0]);
-				if (d > max_diff[i]) max_diff[i] = d;	
-			}	
+				if (d > max_diff[i]) max_diff[i] = d;
+			}
 		}
 		double this_imba = max_diff[i] / t_avg[i][i0] * 100.0;
 		for (int i_file = 0; i_file < n_log_files; i_file++) {
@@ -300,13 +300,13 @@ bool check_if_imbalances_match (int n_log_files, double t[N_MPI_FUNCS][n_log_fil
 			all_okay_local &= tmp;
 		}
 		all_okay &= all_okay_local;
-	}	
+	}
 	return all_okay;
 }
 /**********************************************************************/
 
 int main (int argc, char *argv[]) {
-	
+
 	// Read in all these fields from the MPI table in the given log files.
 	int n_log_files = argc - 1;
         double mpi_time[N_MPI_FUNCS][n_log_files];
@@ -322,7 +322,7 @@ int main (int argc, char *argv[]) {
 	for (int i = 0; i < N_MPI_FUNCS; i++) {
 		for (int j = 0; j < n_log_files; j++) {
 		        mpi_percentage[i][j] = 0.0;
-			n_calls[i][j] = 0;	
+			n_calls[i][j] = 0;
 			mpi_time[i][j] = 0.0;
 			t_avg[i][j] = 0.0;
 			t_min[i][j] = 0.0;
@@ -351,8 +351,8 @@ int main (int argc, char *argv[]) {
 			// before the actual profile starts.
 			if (strstr (line, "Total time")) {
 			   countdown = 4;
-			   column = strtok (line, " ");   
-			   int i = 0;	
+			   column = strtok (line, " ");
+			   int i = 0;
 			   while (i++ < 8) column = strtok (NULL, " ");
 			   t_tot[i_file - 1] = atof (column);
 			} else if (!prof_truncated && strstr (line, "Runtime profile")) {
@@ -363,10 +363,10 @@ int main (int argc, char *argv[]) {
 		   } else {
 		  	column = strtok (line, "|");
 			int index = mpi_index (column);
-			if (index < 0) {	
+			if (index < 0) {
 				all_mpi_functions_read = true;
 			} else {
-				column = strtok (NULL, "|");	
+				column = strtok (NULL, "|");
 				mpi_percentage[index][i_file - 1] = atof(column);
 				column = strtok (NULL, "|");
 				n_calls[index][i_file - 1] = atoi(column);
@@ -381,14 +381,14 @@ int main (int argc, char *argv[]) {
 				column = strtok (NULL, "|");
 				this_t[index][i_file - 1] = atof(column);
 			}
-		   }	
+		   }
 		   if (all_mpi_functions_read) {
 			countdown = -1;
 			all_mpi_functions_read = false;
 			break;
 		   }
 		}
-		fclose (fp);	
+		fclose (fp);
 	}
 
 	// All data has been read in. Now begin with the consistency checks.
@@ -405,7 +405,7 @@ int main (int argc, char *argv[]) {
 		printf ("Check if average time is reproudced: %s\n",
 			 check_t_avg (n_log_files, this_t, t_avg) ? "YES" : "NO");
 	}
-	
+
 	printf ("Check that minimum times match across all ranks:\n");
 	all_okay = check_if_global_times_match (n_log_files, t_min);
 	if (all_okay) {
@@ -413,7 +413,7 @@ int main (int argc, char *argv[]) {
 		printf ("Check if minimum time is reproudced: %s\n",
 			 check_t_min (n_log_files, this_t, t_min) ? "YES" : "NO");
 	}
-	
+
 	printf ("Check that maximum times match across all ranks:\n");
 	all_okay = check_if_global_times_match (n_log_files, t_max);
 	if (all_okay) {
@@ -437,8 +437,8 @@ int main (int argc, char *argv[]) {
 	   	n_calls_this_rank[i] = n_calls[i][i_file];
 	   	this_t_this_rank[i] = this_t[i][i_file];
 	   }
-	   bool all_calls_okay, all_t_okay, t_tot_okay;	
-	   check_each_time (fp, n_calls_this_rank, this_t_this_rank, t_tot[i_file],  
+	   bool all_calls_okay, all_t_okay, t_tot_okay;
+	   check_each_time (fp, n_calls_this_rank, this_t_this_rank, t_tot[i_file],
 	   		    &all_calls_okay, &all_t_okay, &t_tot_okay);
 	   printf ("Intra-file check for %s: ", argv[i_file + 1]);
 	   if (all_calls_okay && all_t_okay && t_tot_okay) {
@@ -455,6 +455,6 @@ int main (int argc, char *argv[]) {
 	printf ("Check imbalances: \n");
 	all_okay = check_if_imbalances_match (n_log_files, this_t, t_avg, imbalance);
 	if (all_okay) printf ("All okay\n");
-	
+
 	return 0;
 }
