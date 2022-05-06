@@ -32,7 +32,7 @@ int vftr_MPI_Sendrecv(const void *sendbuf, int sendcount,
                               recvbuf, recvcount, recvtype, source, recvtag,
                               comm, &tmpstatus);
    long long tend = vftr_get_runtime_usec();
-  
+
    long long t2start = tend;
    int rank;
    PMPI_Comm_rank(comm, &rank);
@@ -41,7 +41,7 @@ int vftr_MPI_Sendrecv(const void *sendbuf, int sendcount,
    vftr_store_sync_message_info(recv, recvcount, recvtype,
                                 tmpstatus.MPI_SOURCE, tmpstatus.MPI_TAG,
                                 comm, tstart, tend);
- 
+
    // handle the special case of MPI_STATUS_IGNORE
    if (status != MPI_STATUS_IGNORE) {
       status->MPI_SOURCE = tmpstatus.MPI_SOURCE;
@@ -51,6 +51,6 @@ int vftr_MPI_Sendrecv(const void *sendbuf, int sendcount,
    long long t2end = vftr_get_runtime_usec();
 
    //TODO: vftr_mpi_overhead_usec += t2end - t2start;
-  
+
    return retVal;
 }
