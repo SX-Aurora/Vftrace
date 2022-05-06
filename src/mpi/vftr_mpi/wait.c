@@ -21,7 +21,7 @@
 #include <stdbool.h>
 
 #include "requests.h"
-  
+
 int vftr_MPI_Wait(MPI_Request *request, MPI_Status *status) {
    int retVal;
 
