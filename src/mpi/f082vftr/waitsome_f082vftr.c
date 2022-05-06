@@ -22,7 +22,7 @@
 #include <stdlib.h>
 
 #include "waitsome.h"
-  
+
 void vftr_MPI_Waitsome_f082vftr(MPI_Fint *f_incount, MPI_Fint *f_array_of_requests,
                                 MPI_Fint *f_outcount, MPI_Fint *f_array_of_indices,
                                 MPI_F08_status *f_array_of_statuses, MPI_Fint *f_error) {
