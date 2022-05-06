@@ -16,7 +16,7 @@ int main (int argc, char **argv) {
 #if defined(_MPI)
   PMPI_Init(&argc, &argv);
   vftr_get_mpi_info (&vftr_mpirank, &vftr_mpisize);
-#else 
+#else
   vftr_mpirank = 0;
   vftr_mpisize = 1;
 #endif
@@ -27,7 +27,7 @@ int main (int argc, char **argv) {
   unsigned long long vftr_test_runtime = 0;
   function_t *func1 = vftr_new_function (NULL, "init", NULL, false);
   function_t *func2 = vftr_new_function ((void*)addrs, "func2", func1, false);
-  function_t *func3 = vftr_new_function ((void*)(addrs + 1), "func3", func1, false);	
+  function_t *func3 = vftr_new_function ((void*)(addrs + 1), "func3", func1, false);
   function_t *func4 = vftr_new_function ((void*)(addrs + 2), "func4", func3, false);
   function_t *func5 = vftr_new_function ((void*)(addrs + 3), "func5", func2, false);
   function_t *func6 = vftr_new_function ((void*)(addrs + 4), "func6", func2, false);
@@ -41,7 +41,7 @@ int main (int argc, char **argv) {
   		2 * vftr_func_table[i]->prof_current.time_excl;
   	vftr_test_runtime += vftr_func_table[i]->prof_current.time_excl;
   }
-  
+
   vftr_profile_wanted = true;
   vftr_mpisize = 1;
   vftr_overhead_usec = 0;
@@ -50,7 +50,7 @@ int main (int argc, char **argv) {
 #endif
   function_t **sorted_func_table = vftr_get_sorted_func_table();
   vftr_prof_times_t prof_times = vftr_get_application_times_all (vftr_test_runtime);
-  int n_func_indices = vftr_count_func_indices_up_to_truncate (sorted_func_table, 
+  int n_func_indices = vftr_count_func_indices_up_to_truncate (sorted_func_table,
                        prof_times.t_usec[TOTAL_TIME] - prof_times.t_usec[SAMPLING_OVERHEAD]);
   vftr_print_profile (stdout, sorted_func_table, n_func_indices, prof_times, 0, NULL);
 
