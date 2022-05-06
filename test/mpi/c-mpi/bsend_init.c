@@ -93,7 +93,7 @@ int main(int argc, char** argv) {
    }
 
    MPI_Buffer_detach(buffer, &bufsize);
-   
+
    free(sbuffer);
    sbuffer=NULL;
 
