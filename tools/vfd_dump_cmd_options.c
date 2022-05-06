@@ -24,13 +24,6 @@ static struct argp_option possible_options[] = {
       "output stream, or filename for output",
       0
    }, {
-      "vfd",
-      vfd_filename_ID,
-      "<file.vfd>",
-      0,
-      "vfd file from the vftrace profiler",
-      0
-   }, {
       "only_header",
       only_header_ID,
       0,
@@ -59,9 +52,6 @@ static error_t parse_cmd_options(int key, char *arg, struct argp_state *state) {
       case output_filename_ID:
          options->output_filename = arg;
          break;
-      case vfd_filename_ID:
-         options->vfd_filename = arg;
-         break;
       case only_header_ID:
          options->only_header = true;
          break;
@@ -69,9 +59,14 @@ static error_t parse_cmd_options(int key, char *arg, struct argp_state *state) {
          options->skip_samples = true;
          break;
       case ARGP_KEY_ARG:
-         if (state->arg_num > 0) {
+         if (state->arg_num == 0) {
+            options->vfd_filename = arg;
+         } else {
             argp_usage(state);
+            return ARGP_ERR_UNKNOWN;
          }
+         break;
+      case ARGP_KEY_ARGS:
          break;
       default:
          return ARGP_ERR_UNKNOWN;

@@ -14,7 +14,6 @@ typedef struct {
 
 enum cmd_opt_IDs {
    output_filename_ID = 1024,
-   vfd_filename_ID,
    only_header_ID,
    skip_samples_ID
 };
