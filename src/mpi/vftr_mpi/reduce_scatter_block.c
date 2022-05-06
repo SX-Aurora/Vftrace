@@ -28,7 +28,7 @@ int vftr_MPI_Reduce_scatter_block(const void *sendbuf, void *recvbuf, int recvco
    long long tstart = vftr_get_runtime_usec();
    int retVal = PMPI_Reduce_scatter_block(sendbuf, recvbuf, recvcount, datatype, op, comm);
    long long tend = vftr_get_runtime_usec();
-  
+
    long long t2start = tend;
    int size;
    PMPI_Comm_size(comm, &size);
@@ -68,7 +68,7 @@ int vftr_MPI_Reduce_scatter_block(const void *sendbuf, void *recvbuf, int recvco
    long long t2end = vftr_get_runtime_usec();
 
    //TODO: vftr_mpi_overhead_usec += t2end - t2start;
-  
+
    return retVal;
 }
 
@@ -79,7 +79,7 @@ int vftr_MPI_Reduce_scatter_block_inplace(const void *sendbuf, void *recvbuf,
    long long tstart = vftr_get_runtime_usec();
    int retVal = PMPI_Reduce_scatter_block(sendbuf, recvbuf, recvcount, datatype, op, comm);
    long long tend = vftr_get_runtime_usec();
-  
+
    long long t2start = tend;
    int size;
    PMPI_Comm_size(comm, &size);
@@ -122,7 +122,7 @@ int vftr_MPI_Reduce_scatter_block_inplace(const void *sendbuf, void *recvbuf,
    long long t2end = vftr_get_runtime_usec();
 
    //TODO: vftr_mpi_overhead_usec += t2end - t2start;
-  
+
    return retVal;
 }
 
@@ -133,7 +133,7 @@ int vftr_MPI_Reduce_scatter_block_intercom(const void *sendbuf, void *recvbuf,
    long long tstart = vftr_get_runtime_usec();
    int retVal = PMPI_Reduce_scatter_block(sendbuf, recvbuf, recvcount, datatype, op, comm);
    long long tend = vftr_get_runtime_usec();
-  
+
    long long t2start = tend;
    // determine if inter or intra communicator
    // Every process of group A performs the reduction within the group A
@@ -191,6 +191,6 @@ int vftr_MPI_Reduce_scatter_block_intercom(const void *sendbuf, void *recvbuf,
    long long t2end = vftr_get_runtime_usec();
 
    //TODO: vftr_mpi_overhead_usec += t2end - t2start;
-  
+
    return retVal;
 }
