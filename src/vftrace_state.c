@@ -22,7 +22,7 @@
 #include "vftrace_state.h"
 #include "vftr_initialize.h"
 
-// main datatype to store everything 
+// main datatype to store everything
 
 vftrace_t vftrace = {
    .hooks = {
