@@ -42,7 +42,7 @@ int main(int argc, char** argv) {
    MPI_Comm int_comm;
    int local_leader = 0;
    int remote_leader = (1-color)*(comm_size+1)/2;
-   MPI_Intercomm_create(sub_comm, 
+   MPI_Intercomm_create(sub_comm,
                         local_leader,
                         MPI_COMM_WORLD,
                         remote_leader, 1,
@@ -53,7 +53,7 @@ int main(int argc, char** argv) {
    int rootrank = 0;
    // allocating send/recv buffer
    int nints = atoi(argv[1])+my_rank;
-   
+
    int *sbuffer = (int*) malloc(nints*sizeof(int));
    for (int i=0; i<nints; i++) {sbuffer[i]=my_rank;}
    int *rbuffer = NULL;
