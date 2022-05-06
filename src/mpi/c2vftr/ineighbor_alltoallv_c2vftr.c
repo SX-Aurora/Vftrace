@@ -95,7 +95,7 @@ int vftr_MPI_Ineighbor_alltoallv_c2vftr(const void *sendbuf, const int *sendcoun
          break;
       case MPI_UNDEFINED:
       default:
-         // should never get here. 
+         // should never get here.
          // But if so, free the arrays
          free(tmp_sendcounts);
          free(tmp_sdispls);
