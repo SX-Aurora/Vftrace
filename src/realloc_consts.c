@@ -1,6 +1,6 @@
 // constants that determine the reallocation speed
 // of dynamic arrays in vftrace
-// 
+//
 // maxn = maxn*vftr_realloc_rate+vftr_realloc_add
 //
 // vftr_realloc_add needs to be > 0,
