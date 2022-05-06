@@ -22,7 +22,7 @@
 #include <stdlib.h>
 
 #include "testall.h"
-  
+
 void vftr_MPI_Testall_f2vftr(MPI_Fint *f_count, MPI_Fint *f_array_of_requests,
                              MPI_Fint *f_flag, MPI_Fint *f_array_of_statuses,
                              MPI_Fint *f_error) {
