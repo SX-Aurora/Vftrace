@@ -33,22 +33,22 @@ typedef struct stack_leaf {
 	char *function_name;
 	char *module_name;
 	struct stack_leaf *next_in_level;
-	struct stack_leaf *callee;	
+	struct stack_leaf *callee;
 	struct stack_leaf *origin;
 	double *entry_time;
 	double *time_spent;
-} stack_leaf_t;	
+} stack_leaf_t;
 
 static int n_vfds; // Number of vfd files which are read in
 
 /**********************************************************************/
 
-void evaluate_mpi_time (double *all_times, 
+void evaluate_mpi_time (double *all_times,
 			double *t_avg, double *t_min, double *t_max,
 			int *rank_min, int *rank_max, double *imbalance) {
 	*t_avg = 0.0;
 	*t_min = LONG_MAX;
-	*t_max = 0.0; 
+	*t_max = 0.0;
 	int n = 0;
 	for (int i = 0; i < n_vfds; i++) {
 		if (all_times[i] > 0) {
@@ -83,18 +83,18 @@ void set_orange () {
 }
 
 void set_green () {
-	printf ("\033[0;32m");	
+	printf ("\033[0;32m");
 }
 
 void reset_colors () {
-	printf ("\033[0m");	
+	printf ("\033[0m");
 }
 
 /**********************************************************************/
 
 void print_mpi_times (double t_avg, double t_min, double t_max,
 		      int rank_min, int rank_max, double imbalance) {
-	// MPI imbalances are highlighted in color 
+	// MPI imbalances are highlighted in color
 	printf (": MPI %4.3f %4.3f(%d) %4.3f(%d) ",
 		t_avg, t_min, rank_min, t_max, rank_max);
 	if (imbalance < 10) {
@@ -170,27 +170,27 @@ void create_new_leaf (stack_leaf_t **new_leaf, char *name, enum new_leaf_type le
 		(*new_leaf)->next_in_level = (stack_leaf_t*)malloc (sizeof(stack_leaf_t));
 		(*new_leaf)->next_in_level->function_name = strdup(name);
 		(*new_leaf)->next_in_level->module_name = "";
-		(*new_leaf)->next_in_level->next_in_level = NULL;	
+		(*new_leaf)->next_in_level->next_in_level = NULL;
 		(*new_leaf)->next_in_level->callee = NULL;
 		(*new_leaf)->next_in_level->origin = (stack_leaf_t*)malloc (sizeof(stack_leaf_t));
 		(*new_leaf)->next_in_level->origin = (*new_leaf)->origin;
 		(*new_leaf)->next_in_level->entry_time = (double*)malloc (n_vfds * sizeof(double));
-		(*new_leaf)->next_in_level->time_spent = (double*)malloc (n_vfds * sizeof(double));						
+		(*new_leaf)->next_in_level->time_spent = (double*)malloc (n_vfds * sizeof(double));
 		for (int i = 0; i < n_vfds; i++) {
 				(*new_leaf)->next_in_level->entry_time[i] = 0.0;
 				(*new_leaf)->next_in_level->time_spent[i] = 0.0;
 		}
 	} else if (leaf_type == CALLEE) {
 			(*new_leaf)->callee = (stack_leaf_t*) malloc (sizeof(stack_leaf_t));
-			(*new_leaf)->callee->function_name = strdup(name);	
+			(*new_leaf)->callee->function_name = strdup(name);
 			(*new_leaf)->callee->module_name = "";
 			(*new_leaf)->callee->next_in_level = NULL;
 			(*new_leaf)->callee->callee = NULL;
 			(*new_leaf)->callee->origin = (stack_leaf_t*)malloc (sizeof(stack_leaf_t));
 			(*new_leaf)->callee->origin = (*new_leaf)->origin;
-				
-			(*new_leaf)->callee->entry_time = (double*)malloc (n_vfds * sizeof(double));	
-			(*new_leaf)->callee->time_spent = (double*)malloc (n_vfds * sizeof(double));	
+
+			(*new_leaf)->callee->entry_time = (double*)malloc (n_vfds * sizeof(double));
+			(*new_leaf)->callee->time_spent = (double*)malloc (n_vfds * sizeof(double));
 			for (int i = 0; i < n_vfds; i++) {
 					(*new_leaf)->callee->entry_time[i] = 0.0;
 					(*new_leaf)->callee->time_spent[i] = 0.0;
@@ -241,19 +241,19 @@ void fill_into_stack_tree (stack_leaf_t **this_leaf, stack_entry_t *stacks,
 				} else {
 					(*this_leaf)->time_spent[i_vfd] += (stime - (*this_leaf)->entry_time[i_vfd]);
 				}
-			}	
+			}
 		} else {
 			create_new_leaf (this_leaf, stacks[stackID].name, CALLEE);
 			if (level == 0) {
 				if (sample_id == SID_ENTRY) {
-					(*this_leaf)->callee->entry_time[i_vfd] = stime;	
+					(*this_leaf)->callee->entry_time[i_vfd] = stime;
 				} else {
 					(*this_leaf)->callee->time_spent[i_vfd] += (stime - (*this_leaf)->callee->entry_time[i_vfd]);
 				}
 			}
 			*this_leaf = (*this_leaf)->callee;
 		}
-	}	
+	}
 }
 
 /**********************************************************************/
@@ -266,18 +266,18 @@ void show_progress (int i_vfd) {
 		next_display += (n_vfds / 4);
 	}
 }
-	
+
 /**********************************************************************/
 
 int main (int argc, char **argv) {
     FILE *fp;
-    int n_precise_functions; 
+    int n_precise_functions;
     char *filename, *search_func;
 
     vfd_header_t vfd_header;
     function_entry_t *precise_functions = NULL;
     stack_entry_t *stacks = NULL;
-	
+
     if (argc < 3) {
 	    printf ("Usage: show_function_stacks <vfd-file> <search_func>\n");
 	    return -1;
@@ -296,43 +296,43 @@ int main (int argc, char **argv) {
 	    filename = argv[i_vfd+1];
 	    fp = fopen (filename, "r");
 	    assert (fp);
-	
+
 	    // We are not interested in the VFD version here
 	    int dummy;
 	    fread (&dummy, 1, sizeof(int), fp);
 	    // From the header, we actually only need the stack and sample offset
 	    read_fileheader (&vfd_header, fp);
-	
+
 	    // We need the number of hardware scenarios, because when scanning the samples
 	    // and a message is encountered (sample_id == SID_MESSAGE), we need to scan over these
 	    // values in order to be synchronized. Also, we allocate the corresponding (dummy-)buffer
 	    fread (&(vfd_header.n_formulas), sizeof(int), 1, fp);
 	    fread (&(vfd_header.n_hw_obs), sizeof(int), 1, fp);
-            read_scenario_header (fp, vfd_header.n_hw_obs, vfd_header.n_formulas, false); 
-	    
+            read_scenario_header (fp, vfd_header.n_hw_obs, vfd_header.n_formulas, false);
+
 	    // Although not needed elsewhere here, we need the "precise_functions" array
 	    // because it is used inside of read_stacks to compute indices. Other routines
 	    // such as tracedump need it, so we keep it as an external field.
 	    n_precise_functions = 0;
 	    read_stacks (fp, &stacks, &precise_functions,
-			 vfd_header.stackscount, vfd_header.stacksoffset, 
+			 vfd_header.stackscount, vfd_header.stacksoffset,
 	                 &n_precise_functions, NULL);
-	
+
 	    for (int i = 0; i < vfd_header.stackscount; i++) {
 		if (stacks[i].precise) {
 			stacks[i].name = strip_trailing_asterisk(stacks[i].name);
 		}
 	    }
-	
+
 	    fseek (fp, vfd_header.sampleoffset, SEEK_SET);
-	
+
 	    bool has_been_warned = false;
-	
+
 	    for (int i = 0; i < vfd_header.samplecount; i++ ) {
 	        int sample_id;
-	
+
 	        fread (&sample_id, sizeof(int), 1, fp);
-	
+
 	        if (sample_id == SID_MESSAGE) {
 		    skip_mpi_message_sample (fp);
 	        } else if (sample_id == SID_ENTRY || sample_id == SID_EXIT) {
@@ -340,7 +340,7 @@ int main (int argc, char **argv) {
 		    long long sample_time, cycle_time;
 		    read_stack_sample (fp, vfd_header.n_hw_obs, &stack_id, &sample_time, NULL, &cycle_time);
 		    double sample_time_s = (double)sample_time * 1e-6;
-	
+
 		    if (!strcmp (stacks[stack_id].name, search_func)) {
 			if ((!stacks[stack_id].precise) && (!has_been_warned)) {
 				printf ("Attention: The function %s is not precise. \n"
@@ -350,7 +350,7 @@ int main (int argc, char **argv) {
 				has_been_warned = true;
 			}
 			fill_into_stack_tree (&stack_tree, stacks, stack_id,
-					      sample_id, sample_time_s, i_vfd);	
+					      sample_id, sample_time_s, i_vfd);
 
 		    }
 		} else {
@@ -358,8 +358,8 @@ int main (int argc, char **argv) {
 	            return 1;
 	        }
 	    }
-	
-	   
+
+
 	    fclose (fp);
 	    free (stacks);
 	    free (precise_functions);
