@@ -34,9 +34,9 @@ char *vftr_get_exectuable_path() {
             cmdline++;
          }
          cmdline++;
-      }   
+      }
 #endif
       fclose(cmdlinefp);
       return cmdline;
-   }   
+   }
 }
