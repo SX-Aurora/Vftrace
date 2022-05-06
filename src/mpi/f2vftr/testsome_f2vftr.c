@@ -22,13 +22,13 @@
 #include <stdlib.h>
 
 #include "testsome.h"
-  
+
 void vftr_MPI_Testsome_f2vftr(MPI_Fint *f_incount, MPI_Fint *f_array_of_requests,
                               MPI_Fint *f_outcount, MPI_Fint *f_array_of_indices,
                               MPI_Fint *f_array_of_statuses, MPI_Fint *f_error) {
 
    int c_incount = (int)(*f_incount);
-   MPI_Request *c_array_of_requests = (MPI_Request*) 
+   MPI_Request *c_array_of_requests = (MPI_Request*)
                                       malloc(c_incount*sizeof(MPI_Request));
    for (int ireq=0; ireq<c_incount; ireq++) {
       c_array_of_requests[ireq] = PMPI_Request_f2c(f_array_of_requests[ireq]);
@@ -42,7 +42,7 @@ void vftr_MPI_Testsome_f2vftr(MPI_Fint *f_incount, MPI_Fint *f_array_of_requests
 
    int c_error = vftr_MPI_Testsome(c_incount,
                                    c_array_of_requests,
-                                   &c_outcount, 
+                                   &c_outcount,
                                    c_array_of_indices,
                                    c_array_of_statuses);
 
