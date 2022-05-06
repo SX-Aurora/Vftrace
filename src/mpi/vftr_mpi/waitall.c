@@ -22,12 +22,12 @@
 #include <stdbool.h>
 
 #include "requests.h"
-  
+
 int vftr_MPI_Waitall(int count, MPI_Request array_of_requests[],
                      MPI_Status array_of_statuses[]) {
 
    if (count <= 0) {return MPI_SUCCESS;}
-   
+
    // loop while at least one request is not completed
    int *req_completed = (int*) malloc(count*sizeof(int));
    for (int ireq=0; ireq<count; ireq++) {
@@ -45,7 +45,7 @@ int vftr_MPI_Waitall(int count, MPI_Request array_of_requests[],
             PMPI_Request_get_status(array_of_requests[ireq],
                                     &tmpflag,
                                     MPI_STATUS_IGNORE);
-            // if not completed 
+            // if not completed
             req_completed[ireq] = tmpflag;
             if (!(req_completed[ireq])) {
                all_completed = false;
@@ -57,6 +57,6 @@ int vftr_MPI_Waitall(int count, MPI_Request array_of_requests[],
 
    free(req_completed);
    req_completed = NULL;
-   
+
    return PMPI_Waitall(count, array_of_requests, array_of_statuses);
 }
