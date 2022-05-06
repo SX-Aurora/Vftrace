@@ -33,7 +33,7 @@ char *vftr_create_filename_base(environment_t environment, int rankID, int nrank
    int rankID_len = snprintf(NULL, 0, "%0*d", ndigits, rankID);
 
    // construct filename base
-   int total_len = exe_name_len + 
+   int total_len = exe_name_len +
                    1 + // underscore
                    rankID_len +
                    1; // null terminator
