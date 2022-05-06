@@ -66,7 +66,7 @@ void vftr_MPI_Ireduce_scatter_block_f2vftr(void *sendbuf, void *recvbuf,
                                                   &c_request);
       }
    }
-           
+
    *f_error = (MPI_Fint) (c_error);
    *f_request = PMPI_Request_c2f(c_request);
 }
