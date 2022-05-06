@@ -43,7 +43,7 @@ vftr_request_t* vftr_register_request(message_direction dir, int nmsg, int *coun
    // search for the first invalidated request
    int invalid_request_id = -1;
    bool invalid_request = false;
-   while (invalid_request == false && 
+   while (invalid_request == false &&
           (invalid_request_id+1)<vftr_open_request_list_length) {
       invalid_request_id++;
       invalid_request = (!vftr_open_request_list[invalid_request_id].valid);
@@ -113,7 +113,7 @@ void vftr_clear_completed_requests() {
    for (int ireq=0; ireq<vftr_open_request_list_length; ireq++) {
       vftr_request_t *current_request = vftr_open_request_list+ireq;
       // only attempt to clear it if it is valid
-      if (current_request->valid && 
+      if (current_request->valid &&
           (!current_request->persistent ||
            (current_request->persistent && current_request->active))) {
          switch (current_request->request_kind) {
@@ -159,7 +159,7 @@ void vftr_remove_request(vftr_request_t *request) {
       request->type_size = NULL;
       free(request->rank);
       request->rank = NULL;
-   
+
       // free temporary pointers
       for (int ireq=0; ireq<request->n_tmp_ptr; ireq++) {
          free(*(request->tmp_ptrs+ireq));
