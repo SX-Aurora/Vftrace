@@ -12,7 +12,7 @@ long long vftr_get_runtime_usec();
 // get the number of elapsed clock counts
 unsigned long long vftr_get_cycles();
 
-// set the local reference time to which all 
+// set the local reference time to which all
 // timedifferences are measured
 void vftr_set_local_ref_time();
 
