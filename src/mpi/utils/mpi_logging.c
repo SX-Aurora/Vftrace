@@ -25,7 +25,7 @@
 // determine based on several criteria if
 // the communication should just be executed or also logged
 bool vftr_no_mpi_logging() {
-   return vftrace.mpi_state.pcontrol_level == 0 || 
+   return vftrace.mpi_state.pcontrol_level == 0 ||
           vftrace.state == off ||
           !vftrace.environment.mpi_log.value.bool_val ||
           vftrace.state == paused;
