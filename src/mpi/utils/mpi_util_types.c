@@ -112,10 +112,10 @@ struct vftr_mpi_type_t all_mpi_types[NVFTR_TYPES] = {
    {.mpi_type = MPI_C_LONG_DOUBLE_COMPLEX, .name = "MPI_C_LONG_DOUBLE_COMPLEX" },
    {.mpi_type = MPI_INTEGER,               .name = "MPI_INTEGER" },
    {.mpi_type = MPI_LOGICAL,               .name = "MPI_LOGICAL" },
-   {.mpi_type = MPI_REAL,                  .name = "MPI_REAL" }, 
-   {.mpi_type = MPI_DOUBLE_PRECISION,      .name = "MPI_DOUBLE_PRECISION" }, 
-   {.mpi_type = MPI_COMPLEX,               .name = "MPI_COMPLEX" }, 
-   {.mpi_type = MPI_CHARACTER,             .name = "MPI_CHARACTER" }, 
+   {.mpi_type = MPI_REAL,                  .name = "MPI_REAL" },
+   {.mpi_type = MPI_DOUBLE_PRECISION,      .name = "MPI_DOUBLE_PRECISION" },
+   {.mpi_type = MPI_COMPLEX,               .name = "MPI_COMPLEX" },
+   {.mpi_type = MPI_CHARACTER,             .name = "MPI_CHARACTER" },
    {.mpi_type = MPI_BYTE,                  .name = "MPI_BYTE" },
    {.mpi_type = MPI_PACKED,                .name = "MPI_PACKED" }
 };
