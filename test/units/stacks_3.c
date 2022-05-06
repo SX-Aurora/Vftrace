@@ -17,7 +17,7 @@ int main (int argc, char **argv) {
   vftr_read_environment();
 
   unsigned long long addrs[6];
-  function_t *func0 = vftr_new_function (NULL, "init", NULL, false);	
+  function_t *func0 = vftr_new_function (NULL, "init", NULL, false);
   if (vftr_mpirank == 0) {
   	function_t *func1 = vftr_new_function ((void*)addrs, "func1", func0, false);
   	function_t *func2 = vftr_new_function ((void*)(addrs + 1), "func2", func1, false);
