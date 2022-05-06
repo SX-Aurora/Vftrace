@@ -49,7 +49,7 @@ void print_vfd_header(FILE *vfd_fp, vfd_header_t vfd_header) {
    fprintf(vfd_fp, "Processes:       %u of %u\n", vfd_header.processID, vfd_header.nprocesses);
    fprintf(vfd_fp, "Sample interval: %12.6le seconds\n", vfd_header.interval*1.0e-6);
    fprintf(vfd_fp, "Job runtime:     %.3lf seconds\n", vfd_header.runtime);
-   fprintf(vfd_fp, "Samples:         %u\n", vfd_header.function_samplecount + 
+   fprintf(vfd_fp, "Samples:         %u\n", vfd_header.function_samplecount +
                                             vfd_header.message_samplecount);
    fprintf(vfd_fp, "   Function:     %u\n", vfd_header.function_samplecount );
    fprintf(vfd_fp, "   Messages:     %u\n", vfd_header.message_samplecount );
