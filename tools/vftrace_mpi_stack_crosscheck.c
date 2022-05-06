@@ -79,18 +79,18 @@ bool equal_within_tolerance (double val1, double val2, double tolerance) {
 
 int decompose_mpi_size (char *line) {
    char *token;
-   token = strtok (line, " ");	
+   token = strtok (line, " ");
    token = strtok (NULL, " ");
    token = strtok (NULL, " ");
-   return atoi(token); 
+   return atoi(token);
 }
 
 void decompose_stack_leaf_header (char *line, int *i_mpi, int *n_stacks) {
    char *token;
    int i = 0;
-   token = strtok (line, " "); 
+   token = strtok (line, " ");
    while (i++ < 4) token = strtok (NULL, " ");
-   *i_mpi = mpi_index(token); 
+   *i_mpi = mpi_index(token);
    token = strtok (NULL, " ");
    if (!token) {
       *n_stacks = 0;
@@ -114,7 +114,7 @@ void decompose_table_line (char *line, int *n_calls, double *t_excl, double *t_i
    *p_cum = atof (token);
    *func_name = strtok (NULL, " ");
    *caller_name = strtok (NULL, " ");
-   token = strtok (NULL, " ");	
+   token = strtok (NULL, " ");
    *stack_id = atoi(token);
 }
 
@@ -127,7 +127,7 @@ bool decompose_stack_line (char *line, double *t, int *n_calls, double *imba, in
    token = strtok (NULL, " ");
    *n_calls = atoi(token);
    token = strtok (NULL, " ");
-   *imba = atof(token); 
+   *imba = atof(token);
    token = strtok (NULL, " ");
    *stack_id = atoi(token);
    return true;
@@ -182,7 +182,7 @@ int main (int argc, char *argv[]) {
       int i_file = i - 1;
       char line[LINEBUFSIZE];
       int i_mpi;
-      // First pass:  Count stacks and register the file positions 
+      // First pass:  Count stacks and register the file positions
       while (!feof(fp)) {
 	 int n;
 	 long this_fp = ftell(fp);
@@ -210,7 +210,7 @@ int main (int argc, char *argv[]) {
 	    }
         }
         if (n_mpi_read == N_MPI_FUNCS) break;
-      }   
+      }
       long current_filepos = 0;
       int *this_stack_ids[N_MPI_FUNCS];
       int i_stack[N_MPI_FUNCS];
@@ -234,7 +234,7 @@ int main (int argc, char *argv[]) {
 	       all_imba[i_mpi][i_file][i_stack] = imba;
 	       all_stack_ids[i_mpi][i_file][i_stack] = stack_id;
 	    }
-        }	
+        }
         fgets (line, LINEBUFSIZE, fp);
 	if (n_stacks[i_mpi][i_file] > 0) {
 	 	int dummy;
@@ -259,7 +259,7 @@ int main (int argc, char *argv[]) {
      }
    }
    if (all_okay) printf ("ALL OKAY\n");
- 
+
    if (n_log_files != mpi_size) {
      printf ("The number of log files does not match the registered MPI size! ");
      printf ("Found %d log files, but there should be %d.\n", n_log_files, mpi_size);
@@ -295,7 +295,7 @@ int main (int argc, char *argv[]) {
          }
       }
    }
-      
+
    printf ("Check imbalances:\n");
    double *t_avg[N_MPI_FUNCS];
    double *max_diff[N_MPI_FUNCS];
