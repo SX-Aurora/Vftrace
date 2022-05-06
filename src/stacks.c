@@ -94,7 +94,7 @@ void vftr_stack_free(stack_t *stacks_ptr, int stackID) {
       free(stack.callees);
       stack.callees = NULL;
       vftr_profiling_free(&(stack.profiling));
-   } 
+   }
    free(stack.name);
    stacks_ptr[stackID] = stack;
 }
@@ -141,7 +141,7 @@ void vftr_print_stack_branch(FILE *fp, int level, stacktree_t stacktree, int sta
            stack.profiling.callProf.calls,
            stack.profiling.callProf.time_usec*1.0e-6);
 
-    
+
    level++;
    for (int icallee=0; icallee<stack.ncallees; icallee++) {
       vftr_print_stack_branch(fp, level, stacktree, stack.callees[icallee]);
