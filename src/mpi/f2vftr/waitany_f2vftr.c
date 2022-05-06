@@ -22,7 +22,7 @@
 #include <stdlib.h>
 
 #include "waitany.h"
-  
+
 void vftr_MPI_Waitany_f2vftr(MPI_Fint *f_count, MPI_Fint *f_array_of_requests,
                              MPI_Fint *f_index, MPI_Fint *f_status, MPI_Fint *f_error) {
 
