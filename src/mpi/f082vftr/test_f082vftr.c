@@ -22,7 +22,7 @@
 #include <stdlib.h>
 
 #include "test.h"
-  
+
 void vftr_MPI_Test_f082vftr(MPI_Fint *f_request, MPI_Fint *f_flag,
                             MPI_F08_status *f_status, MPI_Fint *f_error) {
 
