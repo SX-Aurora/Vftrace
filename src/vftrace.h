@@ -32,9 +32,9 @@ void vftrace_region_end(const char *name);
 
 //void vftrace_allocate (const char *name, int n);
 //
-//// obtain the stack string as char pointer
-//char *vftrace_get_stack();
-//
+// obtain the stack string as char pointer (needs deallocation after use)
+char *vftrace_get_stack();
+
 //// pause and resume sampling via vftrace in user code
 //void vftrace_pause();
 //void vftrace_resume();

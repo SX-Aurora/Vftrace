@@ -75,7 +75,8 @@ libvftrace_la_SOURCES += sorting.c \
 			 hashing.c
 libvftrace_la_SOURCES += logfile.c \
 			 vfdfiles.c
-libvftrace_la_SOURCES += user_regions.c
+libvftrace_la_SOURCES += user_regions.c \
+			 user_stack.c
 
 libvftrace_la_CFLAGS += -I${srcdir}/mpi/utils/ \
 			${external_includes}

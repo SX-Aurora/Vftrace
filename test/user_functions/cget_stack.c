@@ -7,7 +7,9 @@
 #include <vftrace.h>
 
 int fkt3() {
-   printf("%s\n", vftrace_get_stack());
+   char *stackstr = vftrace_get_stack();
+   printf("%s\n", stackstr);
+   free(stackstr);
    return 1;
 }
 int fkt2() {

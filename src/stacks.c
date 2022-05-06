@@ -152,7 +152,7 @@ void vftr_print_stacktree(FILE *fp, stacktree_t stacktree) {
    vftr_print_stack_branch(fp, 0, stacktree, 0);
 }
 
-char *vftr_get_stack_string(stacktree_t stacktree, int stackid) {
+int vftr_get_stack_string_length(stacktree_t stacktree, int stackid) {
    int stringlen = 0;
    int tmpstackid = stackid;
    stringlen += strlen(stacktree.stacks[stackid].name);
@@ -165,10 +165,15 @@ char *vftr_get_stack_string(stacktree_t stacktree, int stackid) {
 //         stringlen ++; // '*' for indicating precise functions
 //      }
    }
+   return stringlen;
+}
+
+char *vftr_get_stack_string(stacktree_t stacktree, int stackid) {
+   int stringlen = vftr_get_stack_string_length(stacktree, stackid);
    char *stackstring = (char*) malloc(stringlen*sizeof(char));
    // copy the chars one by one so there is no need to call strlen again.
    // thus minimizing reading the same memory locations over and over again.
-   tmpstackid = stackid;
+   int tmpstackid = stackid;
    char *tmpname_ptr = stacktree.stacks[tmpstackid].name;
    char *tmpstackstring_ptr = stackstring;
    while (*tmpname_ptr != '\0') {

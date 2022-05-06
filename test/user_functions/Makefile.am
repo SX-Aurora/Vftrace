@@ -64,7 +64,7 @@ dist_noinst_SCRIPTS = cregions1.sh \
 		      cregions2.sh \
 		      cregions3.sh \
 		      cregions4.sh
-#if ENABLE_FORTRAN
+if ENABLE_FORTRAN
 #check_PROGRAMS += fregions1 \
 #		  fregions2 \
 #		  fregions3 \
@@ -90,12 +90,12 @@ dist_noinst_SCRIPTS = cregions1.sh \
 #		       fregions2.sh \
 #		       fregions3.sh \
 #		       fregions4.sh
-#endif
-#
-##############
-## get stack #
-##############
-#if ENABLE_FORTRAN
+endif
+
+#############
+# get stack #
+#############
+if ENABLE_FORTRAN
 #check_PROGRAMS += fget_stack
 #
 #fget_stack_SOURCES = $(srcdir)/fget_stack.F90
@@ -103,16 +103,16 @@ dist_noinst_SCRIPTS = cregions1.sh \
 #fget_stack_LDFLAGS = $(AM_LDFLAGS)
 #
 #dist_noinst_SCRIPTS += fget_stack.sh
-#endif
-#
-#check_PROGRAMS += cget_stack
-#
-#cget_stack_SOURCES = $(srcdir)/cget_stack.c
-#cget_stack_CFLAGS  = $(AM_CFLAGS)
-#cget_stack_LDFLAGS = $(AM_LDFLAGS)
-#
-#dist_noinst_SCRIPTS += cget_stack.sh
-#
+endif
+
+check_PROGRAMS += cget_stack
+
+cget_stack_SOURCES = $(srcdir)/cget_stack.c
+cget_stack_CFLAGS  = $(AM_CFLAGS)
+cget_stack_LDFLAGS = $(AM_LDFLAGS)
+
+dist_noinst_SCRIPTS += cget_stack.sh
+
 #################
 ## pause/resume #
 #################
