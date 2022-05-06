@@ -47,7 +47,7 @@ int main(int argc, char** argv) {
 
    // Messaging
    MPI_Gatherv(sbuffer, nints, MPI_INT,
-               rbuffer, recvcounts, displs, MPI_INT, 
+               rbuffer, recvcounts, displs, MPI_INT,
                rootrank, MPI_COMM_WORLD);
    if (my_rank == rootrank) {
       printf("Gathering messages from all ranks on rank %d\n", my_rank);
