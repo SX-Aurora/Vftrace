@@ -22,7 +22,7 @@
 #include "mpi_buf_addr_const.h"
 #include "bcast.h"
 
-void vftr_MPI_Bcast_f2vftr(void *buffer, MPI_Fint *count, MPI_Fint *f_datatype, 
+void vftr_MPI_Bcast_f2vftr(void *buffer, MPI_Fint *count, MPI_Fint *f_datatype,
                            MPI_Fint *root, MPI_Fint *f_comm, MPI_Fint *f_error) {
 
    MPI_Datatype c_datatype = PMPI_Type_f2c(*f_datatype);
