@@ -19,7 +19,7 @@ typedef uint8_t uintdbl_t;
 typedef uint16_t uintdbl_t;
 #elif SIZEOF_DOUBLE == SIZEOF_UINT32_T
 typedef uint32_t uintdbl_t;
-#else 
+#else
 typedef uint64_t uintdbl_t;
 #endif
 
