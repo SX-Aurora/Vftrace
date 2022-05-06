@@ -45,7 +45,7 @@ int main(int argc, char** argv) {
    // Messaging
    MPI_Request myrequest;
    MPI_Igather(sbuffer, sendcount, sendtype,
-               rbuffer, nints, MPI_INT, 
+               rbuffer, nints, MPI_INT,
                rootrank, MPI_COMM_WORLD, &myrequest);
    if (my_rank == rootrank) {
       printf("Gathering messages from all ranks on rank %d\n", my_rank);
