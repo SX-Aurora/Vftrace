@@ -31,7 +31,7 @@ int vftr_MPI_Iallreduce(const void *sendbuf, void *recvbuf, int count,
    long long tstart = vftr_get_runtime_usec();
    int retVal = PMPI_Iallreduce(sendbuf, recvbuf, count, datatype, op, comm, request);
    long long tend = vftr_get_runtime_usec();
-  
+
    long long t2start = tend;
    int size;
    PMPI_Comm_size(comm, &size);
@@ -48,7 +48,7 @@ int vftr_MPI_Iallreduce(const void *sendbuf, void *recvbuf, int count,
    }
    vftr_register_collective_request(send, size, tmpcount, tmptype, peer_ranks,
                                     comm, *request, 0, NULL, tstart);
-   // The receive is not strictly true as every process receives only one 
+   // The receive is not strictly true as every process receives only one
    // data package, but due to the nature of a remote reduce
    // it is not possible to destinguish from whom.
    // There are three possibilities how to deal with this
@@ -70,7 +70,7 @@ int vftr_MPI_Iallreduce(const void *sendbuf, void *recvbuf, int count,
    long long t2end = vftr_get_runtime_usec();
 
    //TODO: vftr_mpi_overhead_usec += t2end - t2start;
-  
+
    return retVal;
 }
 
@@ -81,7 +81,7 @@ int vftr_MPI_Iallreduce_inplace(const void *sendbuf, void *recvbuf, int count,
    long long tstart = vftr_get_runtime_usec();
    int retVal = PMPI_Iallreduce(sendbuf, recvbuf, count, datatype, op, comm, request);
    long long tend = vftr_get_runtime_usec();
-  
+
    long long t2start = tend;
    int size;
    PMPI_Comm_size(comm, &size);
@@ -111,7 +111,7 @@ int vftr_MPI_Iallreduce_inplace(const void *sendbuf, void *recvbuf, int count,
       }
       vftr_register_collective_request(send, size-1, tmpcount, tmptype, peer_ranks,
                                        comm, *request, 0, NULL, tstart);
-      // The receive is not strictly true as every process receives only one 
+      // The receive is not strictly true as every process receives only one
       // data package, but due to the nature of a remote reduce
       // it is not possible to destinguish from whom.
       // There are three possibilities how to deal with this
@@ -134,7 +134,7 @@ int vftr_MPI_Iallreduce_inplace(const void *sendbuf, void *recvbuf, int count,
    long long t2end = vftr_get_runtime_usec();
 
    //TODO: vftr_mpi_overhead_usec += t2end - t2start;
-  
+
    return retVal;
 }
 
@@ -145,7 +145,7 @@ int vftr_MPI_Iallreduce_intercom(const void *sendbuf, void *recvbuf, int count,
    long long tstart = vftr_get_runtime_usec();
    int retVal = PMPI_Iallreduce(sendbuf, recvbuf, count, datatype, op, comm, request);
    long long tend = vftr_get_runtime_usec();
-  
+
    long long t2start = tend;
    // Every process of group A performs the reduction within the group A
    // and stores the result on everyp process of group B and vice versa
@@ -175,7 +175,7 @@ int vftr_MPI_Iallreduce_intercom(const void *sendbuf, void *recvbuf, int count,
       peer_ranks[i] = vftr_remote2global_rank(comm, i);
    }
 
-   // The receive is not strictly true as every process receives only one 
+   // The receive is not strictly true as every process receives only one
    // data package, but due to the nature of a remote reduce
    // it is not possible to destinguish from whom.
    // There are three possibilities how to deal with this
@@ -200,6 +200,6 @@ int vftr_MPI_Iallreduce_intercom(const void *sendbuf, void *recvbuf, int count,
    long long t2end = vftr_get_runtime_usec();
 
    //TODO: vftr_mpi_overhead_usec += t2end - t2start;
-  
+
    return retVal;
 }
