@@ -14,7 +14,7 @@ ompt_start_tool_result_t *ompt_start_tool(unsigned int omp_version,
    omp_state_t omp_state;
    omp_state.omp_version = omp_version;
    omp_state.runtime_version = runtime_version;
-   
+
    // return from dummy calls that are only done to trick the linker
    // to link all of the OMP-callback layers into the executable
    if (omp_version == 0 && runtime_version == NULL) {return NULL;}
