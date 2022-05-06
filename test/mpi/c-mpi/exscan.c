@@ -31,7 +31,7 @@ int main(int argc, char** argv) {
    }
 
    // Messaging
-   MPI_Exscan(sbuffer, rbuffer, nints, MPI_INT, 
+   MPI_Exscan(sbuffer, rbuffer, nints, MPI_INT,
               MPI_SUM, MPI_COMM_WORLD);
    printf("Scanning messages from all ranks on rank %d\n", my_rank);
 
