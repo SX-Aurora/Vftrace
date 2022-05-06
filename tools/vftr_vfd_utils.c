@@ -58,7 +58,7 @@ char *strip_trailing_asterisk (char *s) {
 
 /**********************************************************************/
 
-void read_stacks (FILE *fp, stack_entry_t **stacks, function_entry_t **precise_functions, 
+void read_stacks (FILE *fp, stack_entry_t **stacks, function_entry_t **precise_functions,
 		  unsigned int stacks_count, long stacks_offset,
                   int *n_precise_functions, long *max_fp) {
 
@@ -70,7 +70,7 @@ void read_stacks (FILE *fp, stack_entry_t **stacks, function_entry_t **precise_f
        *max_fp = ftell(fp);
     }
     fseek (fp, stacks_offset, SEEK_SET);
-    
+
     for (int i = 0; i < stacks_count; i++) {
 	int id, levels, caller, len;
         fread (&id, sizeof(int), 1, fp);
@@ -93,7 +93,7 @@ void read_stacks (FILE *fp, stack_entry_t **stacks, function_entry_t **precise_f
                     break;
                 }
             }
-	    
+
             if ((*stacks)[id].fun == -1 ) {
                 (*n_precise_functions)++;
                 if  (*n_precise_functions == 1) {
@@ -130,7 +130,7 @@ void print_fileheader (FILE *fp, vfd_header_t vfd_header) {
 
   fprintf (fp, "Version ID: %s\n", vfd_header.fileid    );
   fprintf (fp, "Date:       %s\n", datestring );
-  fprintf (fp, "MPI tasks:  rank=%d count=%d\n", vfd_header.task, vfd_header.tasks); 
+  fprintf (fp, "MPI tasks:  rank=%d count=%d\n", vfd_header.task, vfd_header.tasks);
   fprintf (fp, "OpenMP threads:  thread=%d count=%d\n", vfd_header.thread, vfd_header.threads);
   fprintf (fp, "Sample interval: %12.6le seconds\n", vfd_header.interval*1.0e-6);
   fprintf (fp, "Job runtime:   %.3lf seconds\n", vfd_header.runtime);
@@ -203,7 +203,7 @@ void read_mpi_message_sample (FILE *fp, int *direction, int *rank, int *type_ind
 
 /**********************************************************************/
 
-// Skip the given number of integers and long longs. 
+// Skip the given number of integers and long longs.
 // If the MPI VFD entry format changes one day, just adapt these parameters.
 void skip_mpi_message_sample (FILE *fp) {
 #define N_MPI_SAMPLE_INT 7
@@ -242,7 +242,7 @@ void skip_stack_sample (FILE *fp) {
 		long long dummy_l[N_STACK_SAMPLE_LONG];
 	       }dummy;
 	fread (&dummy, N_STACK_SAMPLE_INT * sizeof(int) + N_STACK_SAMPLE_LONG * sizeof(long long),
-	       1, fp);	
+	       1, fp);
 }
 
 /**********************************************************************/
