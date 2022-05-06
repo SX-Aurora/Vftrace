@@ -40,9 +40,9 @@ void vftr_mpi_cart_neighbor_ranks(MPI_Comm cart_comm,
          coords[idim]--;
          PMPI_Cart_rank(cart_comm, coords, neighbors+ineighbor);
          coords[idim]++;
-      }  
+      }
       ineighbor++;
-      
+
       neighbors[ineighbor] = -1;
       // check if the own coordinate is on the upper grid end.
       // if non-periodic then con't record the neighbors rank.
@@ -50,9 +50,9 @@ void vftr_mpi_cart_neighbor_ranks(MPI_Comm cart_comm,
          coords[idim]++;
          PMPI_Cart_rank(cart_comm, coords, neighbors+ineighbor);
          coords[idim]--;
-      }  
+      }
       ineighbor++;
-   }  
+   }
    // deallocate temporary arrays
    free(dims);
    free(periodic);
