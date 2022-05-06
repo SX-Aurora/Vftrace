@@ -24,7 +24,7 @@
 void vftr_MPI_Recv_f082vftr(void *buf, MPI_Fint *count, MPI_Fint *f_datatype,
                             MPI_Fint *source, MPI_Fint *tag, MPI_Fint *f_comm,
                             MPI_F08_status *f_status, MPI_Fint *f_error) {
-   
+
    MPI_Comm c_comm = PMPI_Comm_f2c(*f_comm);
    MPI_Datatype c_datatype = PMPI_Type_f2c(*f_datatype);
    MPI_Status c_status;
