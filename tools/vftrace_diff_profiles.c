@@ -32,7 +32,7 @@
 // It is the second last line in the file in total, followed by a line of dashes.
 // We go to the end of the file and read it backwards, until the first space (' ') is encountered. This signalises that
 // the next characters make up the stack ID. We cannot just check if a digit occurs, since these can also be
-// parts of function names appearing in the stack list. 
+// parts of function names appearing in the stack list.
 
 int read_n_stacks (FILE *fp) {
    char buf[2*LINEBUFSIZE + 1];
@@ -78,7 +78,7 @@ void decompose_table_line (char *line, int *n_calls, double *t_excl, double *t_i
    *p_cum = atof (token);
    *func_name = strtok (NULL, " ");
    *caller_name = strtok (NULL, " ");
-   token = strtok (NULL, " ");	
+   token = strtok (NULL, " ");
    *stack_id = atoi(token);
 }
 
@@ -89,7 +89,7 @@ void read_table (FILE *fp, double t[], int stack_pos[], char *func_names[],
    char line[LINEBUFSIZE];
    int countdown = -1;
    int i_t = 0;
-   while (!feof(fp)) {		
+   while (!feof(fp)) {
       fgets (line, LINEBUFSIZE, fp);
       if (countdown < 0)  {
          if (strstr(line, "Runtime profile for rank")) countdown = 4;
@@ -99,7 +99,7 @@ void read_table (FILE *fp, double t[], int stack_pos[], char *func_names[],
          if (strstr(line, "--------")) break;
          int n_calls, stack_id;
          double t_excl, t_incl, p_abs, p_cum;
-         char *func_name, *caller_name; 
+         char *func_name, *caller_name;
          decompose_table_line (line, &n_calls, &t_excl, &t_incl, &p_abs, &p_cum,
    			    &func_name, &caller_name, &stack_id);
    	 int n;
@@ -156,7 +156,7 @@ int main (int argc, char *argv[]) {
 
 	FILE *fp1 = fopen (argv[1], "r");
 	FILE *fp2 = fopen (argv[2], "r");
-	
+
 	int n_stacks_1 = read_n_stacks (fp1);
 	int n_stacks_2 = read_n_stacks (fp2);
 
@@ -190,7 +190,7 @@ int main (int argc, char *argv[]) {
 	int fmt_t = fmt_t0;
         int fmt_stackpos = strlen ("stackID");
         int fmt_func = strlen ("Function");
-	read_table (fp1, t1, stack_id_position_1, func_names_1, 
+	read_table (fp1, t1, stack_id_position_1, func_names_1,
 		    &fmt_t, &fmt_stackpos, &fmt_func);
 	read_table (fp2, t2, stack_id_position_2, func_names_2,
 		    &fmt_t, &fmt_stackpos, &fmt_func);
@@ -207,7 +207,7 @@ int main (int argc, char *argv[]) {
 	   if (t1[i1] > 0.0) {
 	      deltas[i]->t_diff_rel = deltas[i]->t_diff_abs / t1[stack_id_position_1[i]] * 100;
 	      n = vftr_count_digits_double (deltas[i]->t_diff_rel);
-	      if (n > fmt_rel) fmt_rel = n; 
+	      if (n > fmt_rel) fmt_rel = n;
 	   }
 	   deltas[i]->stack_id = i;
 	}
@@ -221,7 +221,7 @@ int main (int argc, char *argv[]) {
 		int i_t1 = stack_id_position_1[stack_id];
 		int i_t2 = stack_id_position_2[stack_id];
 		if (i_t1 > 0 && i_t2 > 0) {
-	           printf ("%*s  %*.5f  %*.5f  %*.3f  %*.3f  %*d\n", 
+	           printf ("%*s  %*.5f  %*.5f  %*.3f  %*.3f  %*d\n",
 		 	 fmt_func, func_names_1[stack_id], fmt_t, t1[i_t1], fmt_t, t2[i_t2],
 			 fmt_abs, deltas[i]->t_diff_abs, fmt_rel, deltas[i]->t_diff_rel,
 			 fmt_stackpos, stack_id);
@@ -230,6 +230,6 @@ int main (int argc, char *argv[]) {
 
 	fclose (fp1);
 	fclose (fp2);
-	
+
 	return 0;
 }
