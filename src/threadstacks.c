@@ -95,7 +95,7 @@ threadstack_t *vftr_update_threadstack_function(threadstack_t *my_threadstack,
       // and add its id to the callee list
       calleeID = vftr_new_stack(my_threadstack->stackID,
                                 &(vftrace->process.stacktree),
-                                name, function, func_addr, 
+                                name, function, func_addr,
                                 precise);
    }
    // push the function onto the threads stacklist
@@ -120,7 +120,7 @@ threadstack_t *vftr_update_threadstack_region(threadstack_t *my_threadstack,
       calleeID = vftr_new_stack(my_threadstack->stackID,
                                 &(vftrace->process.stacktree),
                                 name,
-                                function, region_addr, 
+                                function, region_addr,
                                 vftrace->environment.regions_precise.value.bool_val);
    }
    // push the function onto the threads stacklist
