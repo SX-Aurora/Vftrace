@@ -38,7 +38,7 @@ int main(int argc, char** argv) {
    // Messaging
    MPI_Request myrequest;
    MPI_Iscatter(sbuffer, nints, MPI_INT,
-                rbuffer, nints, MPI_INT, 
+                rbuffer, nints, MPI_INT,
                 rootrank, MPI_COMM_WORLD, &myrequest);
    if (my_rank == rootrank) {
       printf("Scattering messages from rank %d\n", my_rank);
