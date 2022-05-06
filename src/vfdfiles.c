@@ -48,7 +48,7 @@ char *vftr_get_vfdfile_name(environment_t environment, int rankID, int nranks) {
 
    char *extension = ".vfd";
    int extension_len = strlen(extension);
-   
+
    // construct preliminary vfdfile name
    int total_len = filename_base_len +
                    extension_len +
@@ -56,7 +56,7 @@ char *vftr_get_vfdfile_name(environment_t environment, int rankID, int nranks) {
    char *vfdfile_name = (char*) malloc(total_len*sizeof(char));
    strcpy(vfdfile_name, filename_base);
    strcat(vfdfile_name, extension);
-   
+
    free(filename_base);
    return vfdfile_name;
 }
