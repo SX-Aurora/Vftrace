@@ -28,7 +28,7 @@ void vftr_user_region_begin(const char *name, void *addr) {
    // cast and store region address once, as it is needed multiple times
    uintptr_t region_addr = (uintptr_t) addr;
    // TODO: update performance and call counters as soon as implemented
-   // check for recursion 
+   // check for recursion
    // need to check for same address and name.
    // if a dynamically created region is called recuresively
    // it might have the same address, but the name can differ
@@ -45,14 +45,14 @@ void vftr_user_region_begin(const char *name, void *addr) {
       vftr_sample_function_entry(&(vftrace.sampling),
                                  *new_stack,
                                  region_begin_time_begin);
- 
- 
+
+
       // accumulate profiling data
       // TODO: put in external function
       my_threadstack->profiling.callProf.time_usec -= region_begin_time_begin;
       my_threadstack->profiling.callProf.calls++;
    }
- 
+
    // No calls after this overhead handling!
    my_threadstack->profiling.callProf.overhead_time_usec -= region_begin_time_begin
                                                             - vftr_get_runtime_usec();
