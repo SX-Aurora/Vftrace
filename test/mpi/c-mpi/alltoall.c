@@ -31,7 +31,7 @@ int main(int argc, char** argv) {
 
    // Messaging cycle
    MPI_Alltoall(sbuffer, nints, MPI_INT,
-                rbuffer, nints, MPI_INT, 
+                rbuffer, nints, MPI_INT,
                 MPI_COMM_WORLD);
    printf("Communicating with all ranks\n");
 
