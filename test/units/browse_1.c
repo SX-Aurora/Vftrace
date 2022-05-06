@@ -11,14 +11,14 @@ int main (int argc, char **argv) {
 #if defined(_MPI)
   PMPI_Init(&argc, &argv);
   vftr_get_mpi_info (&vftr_mpirank, &vftr_mpisize);
-#else 
+#else
   vftr_mpirank = 0;
   vftr_mpisize = 1;
 #endif
 
   vftr_read_environment();
 
-  unsigned long long addrs[6];	
+  unsigned long long addrs[6];
   function_t *func1 = vftr_new_function (NULL, "init", NULL, false);
   function_t *func2 = vftr_new_function ((void*)addrs, "MAIN__", func1, false);
   function_t *func3 = vftr_new_function ((void*)(addrs + 1), "A", func1, false);
@@ -29,16 +29,16 @@ int main (int argc, char **argv) {
   for (int i = 0; i < vftr_stackscount; i++) {
   	vftr_func_table[i]->prof_current.calls = i + 1;
   }
-  
+
   int *stack_indices, *func_indices;
   int n_indices;
-  vftr_find_function_in_table ("C", &func_indices, &n_indices, false);	
+  vftr_find_function_in_table ("C", &func_indices, &n_indices, false);
   vftr_find_function_in_stack ("C", &stack_indices, &n_indices, false);
   stack_leaf_t *stack_tree = NULL;
   for (int i = 0;  i < n_indices; i++) {
   	// Why is n_functions_in_stack 2 instead of 3?
   	int n_functions_in_stack = 3;
-  	int *stack_ids = (int*)malloc (n_functions_in_stack * sizeof(int));	
+  	int *stack_ids = (int*)malloc (n_functions_in_stack * sizeof(int));
   	int stack_id = stack_indices[i];
   	int function_id = func_indices[i];
   	for (int j = 0; j < n_functions_in_stack; j++) {
