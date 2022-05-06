@@ -47,7 +47,7 @@ int main(int argc, char** argv) {
          MPI_Testall(comm_size-1, requests, &flag, statuses);
          if (flag) {
             printf("All sending requests are completed\n");
-         } else { 
+         } else {
             printf("Still open requests\n");
             sleep(1);
          }
