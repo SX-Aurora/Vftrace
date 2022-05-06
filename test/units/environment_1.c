@@ -32,7 +32,7 @@ int main(int argc, char **argv) {
   putenv("VFTR_OUT_DIRECTORY=\"foo/bar\"");
   putenv("VFTR_BUFSIZE=1234");
   putenv("VFTR_SAMPLETIME=12.34");
-  
+
   environment = vftr_read_environment();
   // TODO: vftr_assert_environment();
   vftr_print_env(stdout, environment);
