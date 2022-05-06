@@ -17,7 +17,7 @@
 int main(int argc, char **argv) {
 #if defined(_MPI)
    PMPI_Init(&argc, &argv);
-#else 
+#else
    (void) argc;
    (void) argv;
 #endif
