@@ -50,7 +50,7 @@ int main(int argc, char** argv) {
    // Messaging
    MPI_Request myrequest;
    MPI_Iscatterv(sbuffer, sendcounts, displs, MPI_INT,
-                 rbuffer, nints, MPI_INT, 
+                 rbuffer, nints, MPI_INT,
                  rootrank, MPI_COMM_WORLD, &myrequest);
    if (my_rank == rootrank) {
       printf("Scattering messages to all ranks from rank %d\n", my_rank);
