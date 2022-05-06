@@ -31,7 +31,7 @@ int main(int argc, char** argv) {
    // Messaging
    MPI_Request myrequest;
    MPI_Iallgather(sbuffer, 0, MPI_DATATYPE_NULL,
-                  rbuffer, nints, MPI_INT, 
+                  rbuffer, nints, MPI_INT,
                   MPI_COMM_WORLD, &myrequest);
    printf("Gathering messages from all ranks on rank %d\n", my_rank);
    MPI_Status mystatus;
