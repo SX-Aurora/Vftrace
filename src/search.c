@@ -47,6 +47,6 @@ int vftr_linear_search_callee(stack_t *stacks, int callerID, uintptr_t address) 
          break;
       }
    }
-   
+
    return calleeID;
 }
