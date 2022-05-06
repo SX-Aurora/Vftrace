@@ -35,7 +35,7 @@ int main(int argc, char** argv) {
 
    // Messaging cycle
    MPI_Request myrequest;
-   MPI_Ireduce(sbuffer, rbuffer, nints, MPI_INT, 
+   MPI_Ireduce(sbuffer, rbuffer, nints, MPI_INT,
                MPI_SUM, rootrank, MPI_COMM_WORLD,
                &myrequest);
    if (my_rank == rootrank) {
