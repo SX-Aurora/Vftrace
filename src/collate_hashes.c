@@ -64,7 +64,7 @@ hashlist_t vftr_collate_hashes(stacktree_t *stacktree_ptr) {
                   MPI_INT, // receive type
                   0, // root process
                   MPI_COMM_WORLD); // communicator
-   
+
       // get the sum of the number of stacks from each process
       int ntothashes = 0;
       if (myrank == 0) {
@@ -72,7 +72,7 @@ hashlist_t vftr_collate_hashes(stacktree_t *stacktree_ptr) {
             ntothashes += nhashes_list[irank];
          }
       }
-   
+
       // allocate buffer for all hashlists
       // and construct displacement vector
       uint64_t *allhashes = NULL;
@@ -85,7 +85,7 @@ hashlist_t vftr_collate_hashes(stacktree_t *stacktree_ptr) {
             displs[irank] = displs[irank-1] + nhashes_list[irank-1];
          }
       }
-   
+
       // Gather the list of hashes from every rank into one list
       PMPI_Gatherv(stackhashes.hashes, // send buffer
                    stackhashes.nhashes, // send count
@@ -100,19 +100,19 @@ hashlist_t vftr_collate_hashes(stacktree_t *stacktree_ptr) {
       if (myrank == 0) {
          vftr_remove_multiple_hashes(&ntothashes, allhashes);
       }
-   
+
       // distribute the new length to all ranks
       PMPI_Bcast(&ntothashes, // send/receive buffer
                  1, // send/receive count
                  MPI_INT, // send/receive type
                  0, // root process
                  MPI_COMM_WORLD); // communicator
-   
+
       // If the length has changed reallocate the local hash-list size
       // (Hash list size can only grow)
       stackhashes.hashes =
          (uint64_t*) realloc(stackhashes.hashes, ntothashes*sizeof(uint64_t));
-   
+
       // rank 0 copies the total hashlist to the hashlist
       // this makes the Bcast command easier
       if (myrank == 0) {
@@ -121,18 +121,18 @@ hashlist_t vftr_collate_hashes(stacktree_t *stacktree_ptr) {
          }
       }
       stackhashes.nhashes = ntothashes;
-   
+
       // distribute the hashlist to all ranks
       PMPI_Bcast(stackhashes.hashes, // send/receive buffer
                  ntothashes, // send/receive count
                  mpi_uint64, // send/receive type
                  0, // root process
                  MPI_COMM_WORLD); // communicator
-   
+
       // free the local resources
       // The custom MPI-type
       PMPI_Type_free(&mpi_uint64);
-   
+
       // The rank 0 exclusive arrays for the MPI-communication
       if (myrank == 0) {
          free(nhashes_list);
