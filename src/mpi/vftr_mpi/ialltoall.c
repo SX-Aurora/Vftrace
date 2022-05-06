@@ -31,7 +31,7 @@ int vftr_MPI_Ialltoall(const void *sendbuf, int sendcount,
    long long tstart = vftr_get_runtime_usec();
    int retVal = PMPI_Ialltoall(sendbuf, sendcount, sendtype, recvbuf,
                               recvcount, recvtype, comm, request);
-  
+
    long long t2start = vftr_get_runtime_usec();
    int size;
    PMPI_Comm_size(comm, &size);
@@ -129,10 +129,10 @@ int vftr_MPI_Ialltoall_intercom(const void *sendbuf, int sendcount,
    long long tstart = vftr_get_runtime_usec();
    int retVal = PMPI_Ialltoall(sendbuf, sendcount, sendtype, recvbuf,
                               recvcount, recvtype, comm, request);
-  
+
    long long t2start = vftr_get_runtime_usec();
-   // Every process of group A sends sendcount sendtmptype 
-   // to and receives recvcount recvtmptype from 
+   // Every process of group A sends sendcount sendtmptype
+   // to and receives recvcount recvtmptype from
    // every process in group Band vice versa.
    int size;
    PMPI_Comm_remote_size(comm, &size);
