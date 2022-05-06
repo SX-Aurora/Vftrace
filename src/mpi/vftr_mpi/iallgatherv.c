@@ -176,7 +176,7 @@ int vftr_MPI_Iallgatherv_intercom(const void *sendbuf, int sendcount,
       tmpcount[i] = sendcount;
       tmptype[i] = sendtype;
       // translate the i-th rank in the remote group to the global rank
-      peer_ranks[i] = vftr_remote2global_rank(comm, i); 
+      peer_ranks[i] = vftr_remote2global_rank(comm, i);
    }
    // Store tmp-pointers for delayed deallocation
    int n_tmp_ptr = 2;
@@ -193,7 +193,7 @@ int vftr_MPI_Iallgatherv_intercom(const void *sendbuf, int sendcount,
       tmpcount[i] = recvcounts[i];
       tmptype[i] = recvtype;
       // translate the i-th rank in the remote group to the global rank
-      peer_ranks[i] = vftr_remote2global_rank(comm, i); 
+      peer_ranks[i] = vftr_remote2global_rank(comm, i);
    }
    // Register request with MPI_COMM_WORLD as communicator
    // to prevent additional (and thus faulty rank translation)
