@@ -22,7 +22,7 @@
 #include <stdlib.h>
 
 #include "barrier.h"
-  
+
 void vftr_MPI_Barrier_f2vftr(MPI_Fint *f_comm, MPI_Fint *f_error) {
 
    MPI_Comm c_comm = PMPI_Comm_f2c(*f_comm);
