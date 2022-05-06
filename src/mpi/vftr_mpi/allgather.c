@@ -103,7 +103,7 @@ int vftr_MPI_Allgather_intercom(const void *sendbuf, int sendcount,
       int global_peer_rank = vftr_remote2global_rank(comm, i);
       // Store message info with MPI_COMM_WORLD as communicator
       // to prevent additional (and thus faulty rank translation)
-      vftr_store_sync_message_info(send, sendcount, sendtype, 
+      vftr_store_sync_message_info(send, sendcount, sendtype,
                                    global_peer_rank, -1, MPI_COMM_WORLD,
                                    tstart, tend);
       vftr_store_sync_message_info(recv, recvcount, recvtype,
