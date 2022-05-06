@@ -50,7 +50,7 @@ int vftr_MPI_Igatherv(const void *sendbuf, int sendcount,
       vftr_register_collective_request(send, 1, &sendcount, &sendtype, &root,
                                        comm, *request, n_tmp_ptr,
                                        tmp_ptrs, tstart);
-   
+
       // allocate memory for the temporary arrays
       // to register communication request
       int *tmprecvcounts = (int*) malloc(sizeof(int)*size);
