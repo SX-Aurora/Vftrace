@@ -30,7 +30,7 @@ int vftr_MPI_Allgatherv(const void *sendbuf, int sendcount,
    int retVal = PMPI_Allgatherv(sendbuf, sendcount, sendtype, recvbuf,
                                 recvcounts, displs, recvtype, comm);
    long long tend = vftr_get_runtime_usec();
-  
+
    long long t2start = tend;
    int size;
    PMPI_Comm_size(comm, &size);
@@ -43,7 +43,7 @@ int vftr_MPI_Allgatherv(const void *sendbuf, int sendcount,
    long long t2end = vftr_get_runtime_usec();
 
    //TODO: vftr_mpi_overhead_usec += t2end - t2start;
-  
+
    return retVal;
 }
 
@@ -55,7 +55,7 @@ int vftr_MPI_Allgatherv_inplace(const void *sendbuf, int sendcount,
    int retVal = PMPI_Allgatherv(sendbuf, sendcount, sendtype, recvbuf,
                                 recvcounts, displs, recvtype, comm);
    long long tend = vftr_get_runtime_usec();
-  
+
    long long t2start = tend;
    int size;
    PMPI_Comm_size(comm, &size);
@@ -80,7 +80,7 @@ int vftr_MPI_Allgatherv_inplace(const void *sendbuf, int sendcount,
    long long t2end = vftr_get_runtime_usec();
 
    //TODO: vftr_mpi_overhead_usec += t2end - t2start;
-  
+
    return retVal;
 }
 
@@ -92,7 +92,7 @@ int vftr_MPI_Allgatherv_intercom(const void *sendbuf, int sendcount,
    int retVal = PMPI_Allgatherv(sendbuf, sendcount, sendtype, recvbuf,
                                 recvcounts, displs, recvtype, comm);
    long long tend = vftr_get_runtime_usec();
-  
+
    long long t2start = tend;
    // Every process of group A sends sendcount data to and
    // receives recvcounts[i] data from the i-th process in group B
@@ -113,6 +113,6 @@ int vftr_MPI_Allgatherv_intercom(const void *sendbuf, int sendcount,
    long long t2end = vftr_get_runtime_usec();
 
    //TODO: vftr_mpi_overhead_usec += t2end - t2start;
-  
+
    return retVal;
 }
