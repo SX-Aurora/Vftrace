@@ -30,7 +30,7 @@
 
 // store message info for synchronous mpi-communication
 void vftr_store_sync_message_info(message_direction dir, int count, MPI_Datatype type,
-                                  int peer_rank, int tag, MPI_Comm comm, 
+                                  int peer_rank, int tag, MPI_Comm comm,
                                   long long tstart, long long tend) {
 
    // only continue if sampling and mpi_loggin is enabled
