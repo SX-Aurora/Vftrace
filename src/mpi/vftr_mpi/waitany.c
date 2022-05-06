@@ -23,11 +23,11 @@
 #include "request_utils.h"
 #include "status_utils.h"
 #include "requests.h"
-  
+
 int vftr_MPI_Waitany(int count, MPI_Request array_of_requests[],
                      int *index, MPI_Status *status) {
    if (count <= 0) {return MPI_SUCCESS;}
-   
+
    // First check if the request array contains at least one active handle
    bool activereqs = false;
    for (int ireq=0; ireq<count; ireq++) {
@@ -44,7 +44,7 @@ int vftr_MPI_Waitany(int count, MPI_Request array_of_requests[],
       }
       return MPI_SUCCESS;
    }
-   
+
    // loop until at least one communication of the requests is completed
    int retVal;
    int completed_req = false;
@@ -71,9 +71,9 @@ int vftr_MPI_Waitany(int count, MPI_Request array_of_requests[],
          }
       }
    }
-   
+
    // Properly set the request and status variable
    retVal = PMPI_Wait(array_of_requests+(*index), status);
-   
+
    return retVal;
 }
