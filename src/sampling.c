@@ -64,13 +64,13 @@ void vftr_finalize_sampling(sampling_t *sampling,
    if (sampling->do_sampling) {
       vftr_write_vfd_stacks(sampling, process.stacktree);
       vftr_update_vfd_header(sampling, process, timestrings, runtime);
-   
+
       // Close the vfdfile
       int status = fclose(sampling->vfdfilefp);
       if (status != 0) {
          perror(sampling->vfdfilename);
       }
-   
+
       // get the final filename and
       // move the preliminary file to its final location
       char *vfdfilename = vftr_get_vfdfile_name(environment,
@@ -78,7 +78,7 @@ void vftr_finalize_sampling(sampling_t *sampling,
                                                 process.nprocesses);
       status = vftr_rename_vfdfile(sampling->vfdfilename, vfdfilename);
       free(vfdfilename);
-   
+
       vftr_sampling_free(sampling);
    }
 }
