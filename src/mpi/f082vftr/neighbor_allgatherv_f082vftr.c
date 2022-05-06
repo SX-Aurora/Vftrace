@@ -25,7 +25,7 @@
 
 void vftr_MPI_Neighbor_allgatherv_f082vftr(void *sendbuf, MPI_Fint *sendcount,
                                            MPI_Fint *f_sendtype, void *recvbuf,
-                                           MPI_Fint *f_recvcounts, MPI_Fint *f_displs, 
+                                           MPI_Fint *f_recvcounts, MPI_Fint *f_displs,
                                            MPI_Fint *f_recvtype, MPI_Fint *f_comm,
                                            MPI_Fint *f_error) {
 
@@ -54,7 +54,7 @@ void vftr_MPI_Neighbor_allgatherv_f082vftr(void *sendbuf, MPI_Fint *sendcount,
                                          &sizeout, &weighted);
          break;
    }
- 
+
    int *c_recvcounts = (int*) malloc(sizein*sizeof(int));
    for (int i=0; i<sizein; i++) {
       c_recvcounts[i] = (int) f_recvcounts[i];
