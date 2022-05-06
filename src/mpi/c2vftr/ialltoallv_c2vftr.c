@@ -40,7 +40,7 @@ int vftr_MPI_Ialltoallv_c2vftr(const void *sendbuf, const int *sendcounts,
 
    int *tmp_sendcounts = NULL;
    int *tmp_sdispls = NULL;
-   // sendcounts and senddisplacements are ignored 
+   // sendcounts and senddisplacements are ignored
    // if sendbuffer is MPI_IN_PLACE
    if (!vftr_is_C_MPI_IN_PLACE(sendbuf)) {
       tmp_sendcounts = (int*) malloc(size*sizeof(int));
