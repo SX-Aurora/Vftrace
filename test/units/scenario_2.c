@@ -9,7 +9,7 @@ int main (int argc, char **argv) {
 #if defined(_MPI)
   PMPI_Init(&argc, &argv);
   vftr_get_mpi_info (&vftr_mpirank, &vftr_mpisize);
-#else 
+#else
   vftr_mpirank = 0;
   vftr_mpisize = 1;
 #endif
@@ -23,7 +23,7 @@ int main (int argc, char **argv) {
   if (fp_in == NULL) {
     printf ("Scenario file %s not found!\n", argv[1]);
     return 1;
-  } 
+  }
 
   vftr_read_scenario_file ("", fp_in);
   vftr_scenario_expr_counter_values[0] = 1.5; // c1
@@ -50,7 +50,7 @@ int main (int argc, char **argv) {
   fprintf (stdout, "%s: %lf\n", vftr_scenario_expr_formulas[6].name, vftr_scenario_expr_formulas[6].value);
   fprintf (stdout, "%s: %lf\n", vftr_scenario_expr_formulas[7].name, vftr_scenario_expr_formulas[7].value);
   fprintf (stdout, "%s: %lf\n", vftr_scenario_expr_formulas[8].name, vftr_scenario_expr_formulas[8].value);
-  
+
   fprintf (stdout, "Check that division by zero is protected: \n");
   vftr_scenario_expr_counter_values[1] = 0.0;
   vftr_scenario_expr_evaluate (3, 0.0, 0ll);
