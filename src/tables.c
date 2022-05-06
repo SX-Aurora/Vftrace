@@ -14,7 +14,7 @@ int vftr_column_width_char(int nrows, char *header, char *format, char *values) 
    for (int irow=0; irow<nrows; irow++) {
       int tmpwidth = snprintf(NULL, 0, format, values[irow]);
       width = width > tmpwidth ? width : tmpwidth;
-   }   
+   }
    return width;
 }
 
@@ -23,7 +23,7 @@ int vftr_column_width_string(int nrows, char *header, char *format, char **value
    for (int irow=0; irow<nrows; irow++) {
       int tmpwidth = snprintf(NULL, 0, format, values[irow]);
       width = width > tmpwidth ? width : tmpwidth;
-   }   
+   }
    return width;
 }
 
@@ -32,7 +32,7 @@ int vftr_column_width_int(int nrows, char *header, char *format, int*values) {
    for (int irow=0; irow<nrows; irow++) {
       int tmpwidth = snprintf(NULL, 0, format, values[irow]);
       width = width > tmpwidth ? width : tmpwidth;
-   }   
+   }
    return width;
 }
 
@@ -41,7 +41,7 @@ int vftr_column_width_long(int nrows, char *header, char *format, long *values) 
    for (int irow=0; irow<nrows; irow++) {
       int tmpwidth = snprintf(NULL, 0, format, values[irow]);
       width = width > tmpwidth ? width : tmpwidth;
-   }   
+   }
    return width;
 }
 
@@ -50,7 +50,7 @@ int vftr_column_width_longlong(int nrows, char *header, char *format, long long 
    for (int irow=0; irow<nrows; irow++) {
       int tmpwidth = snprintf(NULL, 0, format, values[irow]);
       width = width > tmpwidth ? width : tmpwidth;
-   }   
+   }
    return width;
 }
 
@@ -59,7 +59,7 @@ int vftr_column_width_float(int nrows, char *header, char *format, float *values
    for (int irow=0; irow<nrows; irow++) {
       int tmpwidth = snprintf(NULL, 0, format, values[irow]);
       width = width > tmpwidth ? width : tmpwidth;
-   }   
+   }
    return width;
 }
 
@@ -68,7 +68,7 @@ int vftr_column_width_double(int nrows, char *header, char *format, double *valu
    for (int irow=0; irow<nrows; irow++) {
       int tmpwidth = snprintf(NULL, 0, format, values[irow]);
       width = width > tmpwidth ? width : tmpwidth;
-   }   
+   }
    return width;
 }
 
@@ -86,7 +86,7 @@ int vftr_column_width_bool(int nrows, char *header, char *format, bool *values) 
    for (int irow=0; irow<nrows; irow++) {
       int tmpwidth = snprintf(NULL, 0, format, vftr_bool_to_string(values[irow]));
       width = width > tmpwidth ? width : tmpwidth;
-   }   
+   }
    return width;
 }
 
