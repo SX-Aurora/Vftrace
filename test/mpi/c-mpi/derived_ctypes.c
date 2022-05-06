@@ -53,7 +53,7 @@ int main(int argc, char** argv) {
    MPI_Type_create_struct(4, blocklength, displacements, types, &mpi_teststruct_t);
    MPI_Type_commit(&mpi_teststruct_t);
 
-   // Messaging 
+   // Messaging
    if (my_rank == 0) {
       // sending rank
       MPI_Send(srbuffer, nelem, mpi_teststruct_t, 1, 0, MPI_COMM_WORLD);
