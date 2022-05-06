@@ -109,7 +109,7 @@ int vftr_MPI_Ibcast_intercom(void *buffer, int count, MPI_Datatype datatype,
       ;
    } else {
       // All other processes must be located in group B
-      // root is the rank-id in group A Therefore no problems with 
+      // root is the rank-id in group A Therefore no problems with
       // rank translation should arise
       vftr_register_collective_request(recv, 1, &count, &datatype, &root,
                                        comm, *request, 0, NULL, tstart);
