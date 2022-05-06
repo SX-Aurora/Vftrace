@@ -14,7 +14,7 @@ int main(int argc, char** argv) {
    // Get rank of process
    int my_rank;
    MPI_Comm_rank(MPI_COMM_WORLD, &my_rank);
-   
+
    // require at least two processes
    if (comm_size < 2) {
       printf("At least two ranks are required\n");
@@ -72,7 +72,7 @@ int main(int argc, char** argv) {
          tmpcomparebuffer++;
       }
    }
-   
+
    MPI_Win_fence(0, window);
    MPI_Win_free(&window);
 
