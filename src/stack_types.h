@@ -22,7 +22,7 @@ typedef struct {
    bool precise;
    // pointer to calling stack
    int caller;
-   // pointers to called functions 
+   // pointers to called functions
    int maxcallees;
    int ncallees;
    int *callees;
@@ -31,7 +31,7 @@ typedef struct {
    // global stack ID
    int gid;
    // name of function on top of stack
-   // only a pointer to the symbol table entry 
+   // only a pointer to the symbol table entry
    // no need to deallocate
    char *name;
    // profiling data
