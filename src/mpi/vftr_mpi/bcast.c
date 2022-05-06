@@ -83,7 +83,7 @@ int vftr_MPI_Bcast_intercom(void *buffer, int count, MPI_Datatype datatype,
       ;
    } else {
       // All other processes must be located in group B
-      // root is the rank-id in group A Therefore no problems with 
+      // root is the rank-id in group A Therefore no problems with
       // rank translation should arise
       vftr_store_sync_message_info(recv, count, datatype,
                                    root, -1, comm, tstart, tend);
