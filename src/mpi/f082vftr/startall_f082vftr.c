@@ -22,7 +22,7 @@
 #include <stdlib.h>
 
 #include "startall.h"
-  
+
 void vftr_MPI_Startall_f082vftr(MPI_Fint *f_count, MPI_Fint *f_array_of_requests,
                                 MPI_Fint *f_error) {
 
