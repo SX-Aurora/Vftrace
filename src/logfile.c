@@ -85,8 +85,8 @@ void vftr_write_logfile_profile_table(FILE *fp, stacktree_t stacktree,
 
    double *incl_time = vftr_stack_inclusive_time_list(stacktree.nstacks, stacktree.stacks);
    vftr_table_add_column(&table, col_double, "t_incl/s", "%.3f", 'c', 'r', (void*) incl_time);
-   
-  // 
+
+  //
   // double *vftr_stack_overhead_time_list(int nstacks, stack_t *stacks);
 
    char **function_names = vftr_stack_function_name_list(stacktree.nstacks, stacktree.stacks);
