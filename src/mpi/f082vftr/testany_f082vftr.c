@@ -22,7 +22,7 @@
 #include <stdlib.h>
 
 #include "testany.h"
-  
+
 void vftr_MPI_Testany_f082vftr(MPI_Fint *f_count, MPI_Fint *f_array_of_requests,
                                MPI_Fint *f_index, MPI_Fint *f_flag, MPI_F08_status *f_status,
                                MPI_Fint *f_error) {
