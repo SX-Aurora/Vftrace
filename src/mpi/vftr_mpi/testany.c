@@ -23,7 +23,7 @@
 #include "request_utils.h"
 #include "status_utils.h"
 #include "requests.h"
-  
+
 int vftr_MPI_Testany(int count, MPI_Request array_of_requests[],
                      int *index, int *flag, MPI_Status *status) {
    // First check if the request array contains at least one active handle
