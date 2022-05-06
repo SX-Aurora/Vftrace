@@ -47,15 +47,15 @@ int main(int argc, char **argv) {
       stack_t *stacklist = read_stacklist(vfd_fp,
                                           vfd_header.stacks_offset,
                                           vfd_header.nstacks);
-   
+
       fprintf(out_fp, "\n");
       print_stacklist(out_fp, vfd_header.nstacks, stacklist);
-   
+
       if (!options.skip_samples) {
          fprintf(out_fp, "\n");
          print_samples(vfd_fp, out_fp, vfd_header, stacklist);
       }
-   
+
       free_stacklist(vfd_header.nstacks, stacklist);
    }
 
