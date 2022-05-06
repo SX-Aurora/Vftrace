@@ -19,6 +19,6 @@ void vftr_sample_function_entry(sampling_t *sampling, stack_t stack,
                                 long long timestamp);
 
 void vftr_sample_function_exit(sampling_t *sampling, stack_t stack,
-                               long long timestamp); 
+                               long long timestamp);
 
 #endif
