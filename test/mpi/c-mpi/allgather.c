@@ -32,7 +32,7 @@ int main(int argc, char** argv) {
 
    // Messaging cycle
    MPI_Allgather(sbuffer, nints, MPI_INT,
-                 rbuffer, nints, MPI_INT, 
+                 rbuffer, nints, MPI_INT,
                  MPI_COMM_WORLD);
    printf("Gathering messages from all ranks on rank %d\n", my_rank);
 
