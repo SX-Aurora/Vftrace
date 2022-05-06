@@ -30,7 +30,7 @@ int vftr_MPI_Scatter(const void *sendbuf, int sendcount,
    int retVal = PMPI_Scatter(sendbuf, sendcount, sendtype, recvbuf, recvcount,
                              recvtype, root, comm);
    long long tend = vftr_get_runtime_usec();
-  
+
    long long t2start = tend;
    // in intracommunicators the expected behaviour is to
    // bcast from root to all other processes in the communicator
@@ -53,7 +53,7 @@ int vftr_MPI_Scatter(const void *sendbuf, int sendcount,
    long long t2end = vftr_get_runtime_usec();
 
    //TODO: vftr_mpi_overhead_usec += t2end - t2start;
-  
+
    return retVal;
 }
 
@@ -65,7 +65,7 @@ int vftr_MPI_Scatter_inplace(const void *sendbuf, int sendcount,
    int retVal = PMPI_Scatter(sendbuf, sendcount, sendtype, recvbuf, recvcount,
                              recvtype, root, comm);
    long long tend = vftr_get_runtime_usec();
-  
+
    long long t2start = tend;
    // in intracommunicators the expected behaviour is to
    // bcast from root to all other processes in the communicator
@@ -90,7 +90,7 @@ int vftr_MPI_Scatter_inplace(const void *sendbuf, int sendcount,
    long long t2end = vftr_get_runtime_usec();
 
    //TODO: vftr_mpi_overhead_usec += t2end - t2start;
-  
+
    return retVal;
 }
 
@@ -102,7 +102,7 @@ int vftr_MPI_Scatter_intercom(const void *sendbuf, int sendcount,
    int retVal = PMPI_Scatter(sendbuf, sendcount, sendtype, recvbuf, recvcount,
                              recvtype, root, comm);
    long long tend = vftr_get_runtime_usec();
-  
+
    long long t2start = tend;
    // in intercommunicators the behaviour is more complicated
    // There are two groups A and B
@@ -135,6 +135,6 @@ int vftr_MPI_Scatter_intercom(const void *sendbuf, int sendcount,
    long long t2end = vftr_get_runtime_usec();
 
    //TODO: vftr_mpi_overhead_usec += t2end - t2start;
-  
+
    return retVal;
 }
