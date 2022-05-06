@@ -42,7 +42,7 @@ typedef enum {
    paused
 } state_t;
 
-// main datatype to store everything 
+// main datatype to store everything
 typedef struct {
    hooks_t hooks; // collection of function pointers
                   // where vftrace intercepts the program flow
