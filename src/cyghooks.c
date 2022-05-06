@@ -23,7 +23,7 @@
 
 #include "vftr_initialize.h"
 
-// Define functions to redirect the function hooks, so to not make the 
+// Define functions to redirect the function hooks, so to not make the
 // function pointers globaly visible
 void vftr_set_enter_func_hook(void (*function_ptr)(void*,void*)) {
    vftrace.hooks.function_hooks.enter = function_ptr;
