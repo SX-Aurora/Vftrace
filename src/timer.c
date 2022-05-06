@@ -60,7 +60,7 @@ unsigned long long vftr_get_cycles() {
    return cycles;
 }
 
-// set the local reference time to which all 
+// set the local reference time to which all
 // timedifferences are measured
 void vftr_set_local_ref_time() {
    reftime_t ref_timer;
