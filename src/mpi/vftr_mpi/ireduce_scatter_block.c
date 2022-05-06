@@ -30,7 +30,7 @@ int vftr_MPI_Ireduce_scatter_block(const void *sendbuf, void *recvbuf,
                                    MPI_Request *request) {
    long long tstart = vftr_get_runtime_usec();
    int retVal = PMPI_Ireduce_scatter_block(sendbuf, recvbuf, recvcount, datatype, op, comm, request);
-  
+
    long long t2start = vftr_get_runtime_usec();
    int size;
    PMPI_Comm_size(comm, &size);
@@ -104,7 +104,7 @@ int vftr_MPI_Ireduce_scatter_block_inplace(const void *sendbuf, void *recvbuf,
                                            MPI_Request *request) {
    long long tstart = vftr_get_runtime_usec();
    int retVal = PMPI_Ireduce_scatter_block(sendbuf, recvbuf, recvcount, datatype, op, comm, request);
-  
+
    long long t2start = vftr_get_runtime_usec();
    int size;
    PMPI_Comm_size(comm, &size);
@@ -176,7 +176,7 @@ int vftr_MPI_Ireduce_scatter_block_intercom(const void *sendbuf, void *recvbuf,
                                             MPI_Request *request) {
    long long tstart = vftr_get_runtime_usec();
    int retVal = PMPI_Ireduce_scatter_block(sendbuf, recvbuf, recvcount, datatype, op, comm, request);
-  
+
    long long t2start = vftr_get_runtime_usec();
    // Every process of group A performs the reduction within the group A
    // and stores the result on everyp process of group B and vice versa
@@ -216,7 +216,7 @@ int vftr_MPI_Ireduce_scatter_block_intercom(const void *sendbuf, void *recvbuf,
          // to prevent additional (and thus faulty rank translation)
          peer_ranks[i] = vftr_remote2global_rank(comm, i);
       }
-      // scattered message received by itself 
+      // scattered message received by itself
       tmpcount[remotesize] = recvcount;
       tmptype[remotesize] = datatype;
       // Register message info with MPI_COMM_WORLD as communicator
@@ -233,7 +233,7 @@ int vftr_MPI_Ireduce_scatter_block_intercom(const void *sendbuf, void *recvbuf,
          tmptype = NULL;
          free(peer_ranks);
          peer_ranks = NULL;
-   
+
          // allocate memory for the temporary arrays
          // to register communication request
          tmpcount = (int*) malloc(sizeof(int)*(size+1));
