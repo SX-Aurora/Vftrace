@@ -55,5 +55,5 @@ void vftr_store_message_info(message_direction dir, int count, int type_idx,
    fwrite(&tend, sizeof(long long), 1, fp);
    fwrite(&stackID, sizeof(int), 1, fp);
 
-   //vftr_message_samplecount++;
+   vftrace.sampling.message_samplecount++;
 }
