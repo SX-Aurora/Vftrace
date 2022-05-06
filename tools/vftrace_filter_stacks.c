@@ -44,12 +44,12 @@ static struct argp_option options[] = {
 
 static error_t parse_opt (int key, char *arg, struct argp_state *state) {
    struct arguments *arguments = state->input;
-   
+
    switch(key) {
       case 'i':
         arguments->imba_min = atof(arg);
         break;
-      case 'n': 
+      case 'n':
         arguments->n_calls_min = atoi(arg);
 	break;
       case 'o':
@@ -107,7 +107,7 @@ void read_stack_line (char *line, int *n_spaces, char **branch,
    *this_t = atof (strtok (NULL, " "));
    *n_calls = atoi (strtok (NULL, " "));
    *imba = atof (strtok (NULL, " "));
-   
+
 }
 
 /**********************************************************************/
@@ -153,7 +153,7 @@ void print_table_header (struct arguments arguments, char *func_name, int fmt_t,
       tmp += nw;
    }
    snprintf (tmp++, STACK_STRING_SIZE, ":");
-   *tmp = ' '; 
+   *tmp = ' ';
 
    printf ("\n");
    printf ("%s %*s %*s %*s\n", table_header, fmt_t, vftr_stacktree_headers[TIME],
