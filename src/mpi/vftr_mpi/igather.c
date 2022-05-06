@@ -67,7 +67,7 @@ int vftr_MPI_Igather(const void *sendbuf, int sendcount,
       tmprecvtype = NULL;
       free(tmppeer_ranks);
       tmppeer_ranks = NULL;
-      
+
    } else {
       vftr_register_collective_request(send, 1, &sendcount, &sendtype, &root,
                                        comm, *request, 0, NULL, tstart);
