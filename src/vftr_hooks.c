@@ -36,11 +36,11 @@ void vftr_function_entry(void *func, void *call_site) {
    thread_t *my_thread = vftr_get_my_thread(&(vftrace.process.threadtree));
    threadstack_t *my_threadstack = vftr_get_my_threadstack(my_thread);
    // TODO: when OMP support is implemented it must be checked
-   //       whether to inherit the parentthreads stack + the function, or 
+   //       whether to inherit the parentthreads stack + the function, or
    //       to inherit it as soon as a task is created. for non-OMP code the master
    //       thread is created with _init as lowest stacklist entry
    stack_t *my_stack = vftrace.process.stacktree.stacks+my_threadstack->stackID;
-   
+
    // cast and store function address once, as it is needed multiple times
    uintptr_t func_addr = (uintptr_t) func;
 
