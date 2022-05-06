@@ -73,7 +73,7 @@ void vftr_MPI_Reduce_scatter_f2vftr(void *sendbuf, void *recvbuf,
                                            c_comm);
       }
    }
-           
+
    free(c_recvcounts);
 
    *f_error = (MPI_Fint) (c_error);
