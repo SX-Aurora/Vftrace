@@ -56,7 +56,7 @@ int vftr_MPI_Exscan(const void *sendbuf, void *recvbuf, int count,
       //    hands the result to the next rank.
       //    This pattern will be recorded here,
       //    as it has less communication overall and seems more lightweight.
-      //    The actually used pattern might introduce optimizations or be a mixture of both patterns, 
+      //    The actually used pattern might introduce optimizations or be a mixture of both patterns,
       //    which cannot be considered here.
       //
       // 2. Rank 0 sends to ranks 1 to n
