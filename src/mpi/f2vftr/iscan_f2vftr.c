@@ -24,7 +24,7 @@
 
 void vftr_MPI_Iscan_f2vftr(void *sendbuf, void *recvbuf, MPI_Fint *count,
                            MPI_Fint *f_datatype, MPI_Fint *f_op,
-                           MPI_Fint *f_comm, MPI_Fint *f_request, 
+                           MPI_Fint *f_comm, MPI_Fint *f_request,
                            MPI_Fint *f_error) {
 
    MPI_Datatype c_datatype = PMPI_Type_f2c(*f_datatype);
