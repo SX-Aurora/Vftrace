@@ -27,11 +27,11 @@ int vftr_MPI_Recv(void *buf, int count, MPI_Datatype datatype,
    long long tstart = vftr_get_runtime_usec();
    int retVal = PMPI_Recv(buf, count, datatype, source, tag, comm, &tmpstatus);
    long long tend = vftr_get_runtime_usec();
-   
+
    long long t2start = tend;
    vftr_store_sync_message_info(recv, count, datatype, tmpstatus.MPI_SOURCE,
       tmpstatus.MPI_TAG, comm, tstart, tend);
-   
+
    // handle the special case of MPI_STATUS_IGNORE
    if (status != MPI_STATUS_IGNORE) {
       status->MPI_SOURCE = tmpstatus.MPI_SOURCE;
@@ -41,6 +41,6 @@ int vftr_MPI_Recv(void *buf, int count, MPI_Datatype datatype,
    long long t2end = vftr_get_runtime_usec();
 
    //TODO: vftr_mpi_overhead_usec += t2end - t2start;
-   
+
    return retVal;
 }
