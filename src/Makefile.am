@@ -1,4 +1,5 @@
 lib_LTLIBRARIES = libvftrace.la
+noinst_LTLIBRARIES = libvftr_pause.la
 
 include_HEADERS = vftrace.h
 #if ENABLE_FORTRAN
@@ -12,9 +13,12 @@ SUBDIRS += mpi
 external_includes = -I$(top_srcdir)/external/tinyexpr/ \
 		    -I$(top_srcdir)/external/jsmn/
 
+
 # external libraries
 libvftrace_la_LIBADD += ${top_builddir}/external/libtinyexpr.la
 
+#internal libraries
+libvftrace_la_LIBADD += libvftr_pause.la
 libvftrace_la_LIBADD += mpi/utils/libvftr_mpi_utils.la
 if WITH_MPI
 libvftrace_la_LIBADD += mpi/vftr_mpi/libvftr_mpi.la
@@ -46,7 +50,8 @@ libvftrace_la_LDFLAGS =
 
 libvftrace_la_SOURCES += cyghooks.c \
 			 vftr_hooks.c \
-			 off_hooks.c
+			 off_hooks.c \
+			 pause_hooks.c
 libvftrace_la_SOURCES += vftrace_state.c \
 			 vftr_initialize.c \
 			 vftr_finalize.c \
@@ -132,6 +137,10 @@ endif
 #endif
 #
 #endif
+
+libvftr_pause_la_SOURCES = pause.c
+libvftr_pause_la_CFLAGS = -finstrument-functions
+
 
 clean-local:
 	rm -f *.mod

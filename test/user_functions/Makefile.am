@@ -113,18 +113,18 @@ cget_stack_LDFLAGS = $(AM_LDFLAGS)
 
 dist_noinst_SCRIPTS += cget_stack.sh
 
-#################
-## pause/resume #
-#################
-#check_PROGRAMS += cpause_resume
-#
-#cpause_resume_SOURCES = $(srcdir)/cpause_resume.c
-#cpause_resume_CFLAGS  = $(AM_CFLAGS)
-#cpause_resume_LDFLAGS = $(AM_LDFLAGS)
-#
-#dist_noinst_SCRIPTS += cpause_resume.sh
-#
-#if ENABLE_FORTRAN
+################
+# pause/resume #
+################
+check_PROGRAMS += cpause_resume
+
+cpause_resume_SOURCES = $(srcdir)/cpause_resume.c
+cpause_resume_CFLAGS  = $(AM_CFLAGS)
+cpause_resume_LDFLAGS = $(AM_LDFLAGS)
+
+dist_noinst_SCRIPTS += cpause_resume.sh
+
+if ENABLE_FORTRAN
 #check_PROGRAMS += fpause_resume
 #
 #fpause_resume_SOURCES = $(srcdir)/fpause_resume.F90
@@ -132,8 +132,8 @@ dist_noinst_SCRIPTS += cget_stack.sh
 #fpause_resume_LDFLAGS = $(AM_LDFLAGS)
 #
 #dist_noinst_SCRIPTS += fpause_resume.sh
-#endif
-#
+endif
+
 #check_PROGRAMS += cshow_stack1 \
 #                  cshow_stack2
 #

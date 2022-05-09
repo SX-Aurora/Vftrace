@@ -238,8 +238,11 @@ symboltable_t vftr_read_symbols() {
 void vftr_symboltable_determine_preciseness(symboltable_t *symboltable_ptr,
                                             regex_t *preciseregex) {
 #ifdef _MPI
+   // regex to check for MPI functions
    regex_t *mpi_regex = vftr_compile_regexp("^MPI_[A-Z][a-z]*");
 #endif
+   // regex to check for the vftrace internal pause/resume functions
+   regex_t *pause_regex = vftr_compile_regexp("^vftrace_(pause|resume)$");
    for (unsigned int isym=0; isym<symboltable_ptr->nsymbols; isym++) {
       char *name = symboltable_ptr->symbols[isym].name;
       bool precise;
@@ -247,6 +250,7 @@ void vftr_symboltable_determine_preciseness(symboltable_t *symboltable_ptr,
 #ifdef _MPI
       precise = precise || vftr_pattern_match(mpi_regex, name);
 #endif
+      precise = precise || vftr_pattern_match(pause_regex, name);
       symboltable_ptr->symbols[isym].precise = precise;
    }
 
@@ -254,6 +258,8 @@ void vftr_symboltable_determine_preciseness(symboltable_t *symboltable_ptr,
    regfree(mpi_regex);
    free(mpi_regex);
 #endif
+   regfree(pause_regex);
+   free(pause_regex);
 }
 
 void vftr_symboltable_free(symboltable_t *symboltable_ptr) {

@@ -42,7 +42,8 @@ check_PROGRAMS += radixsort_uint64 \
 		  sort_double_copy_descending
 
 check_PROGRAMS += symbols_1 \
-		  symbols_precise
+		  symbols_precise \
+		  pauseresume_precise
 check_PROGRAMS += environment_1 \
 		  environment_2
 check_PROGRAMS += hashing \
@@ -124,6 +125,10 @@ symbols_precise_SOURCES = $(srcdir)/symbols_precise.c \
 	           $(srcdir)/protofuncts.c
 symbols_precise_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
 symbols_precise_LDFLAGS = $(AM_LDFLAGS)
+
+pauseresume_precise_SOURCES = $(srcdir)/pauseresume_precise.c
+pauseresume_precise_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
+pauseresume_precise_LDFLAGS = $(AM_LDFLAGS)
 
 environment_1_SOURCES = $(srcdir)/environment_1.c
 environment_1_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
@@ -262,7 +267,8 @@ dist_check_SCRIPTS += radixsort_uint64.sh \
 		      sort_double_copy_ascending.sh \
 		      sort_double_copy_descending.sh
 dist_check_SCRIPTS += symbols_1.sh \
-		      symbols_precise.sh
+		      symbols_precise.sh \
+		      pauseresume_precise.sh
 dist_check_SCRIPTS += environment_1.sh \
 		      environment_2.sh
 dist_check_SCRIPTS += hashing.sh \

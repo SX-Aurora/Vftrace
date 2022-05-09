@@ -35,10 +35,10 @@ void vftrace_region_end(const char *name);
 // obtain the stack string as char pointer (needs deallocation after use)
 char *vftrace_get_stack();
 
-//// pause and resume sampling via vftrace in user code
-//void vftrace_pause();
-//void vftrace_resume();
-//
+// pause and resume sampling via vftrace in user code
+void vftrace_pause();
+void vftrace_resume();
+
 //void vftrace_show_callstack();
 //int vftrace_get_stacktree_size();
 
