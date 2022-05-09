@@ -20,7 +20,6 @@ int fkt1() {
 }
 
 int main() {
-
 #ifdef _MPI
    MPI_Init(NULL, NULL);
 #endif

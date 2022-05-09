@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+#include <string.h>
 #include <unistd.h>
 
 char *vftr_get_exectuable_path() {
@@ -23,6 +24,8 @@ char *vftr_get_exectuable_path() {
       char *cmdline = NULL;
       size_t cmdline_len = 0;
       getline(&cmdline,&cmdline_len,cmdlinefp);
+      // store memory location for later dealloc
+      char *tmpcmdline = cmdline;
 #ifdef __ve__
       // get position where the actual command starts
       // skipping veexec and its options
@@ -36,6 +39,8 @@ char *vftr_get_exectuable_path() {
          cmdline++;
       }
 #endif
+      cmdline = strdup(cmdline);
+      free(tmpcmdline);
       fclose(cmdlinefp);
       return cmdline;
    }

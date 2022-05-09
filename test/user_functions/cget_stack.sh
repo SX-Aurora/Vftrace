@@ -10,9 +10,9 @@ export VFTR_PRECISE="fkt*"
 tmpfile=$(mktemp)
 
 if [ "x$HAS_MPI" == "xYES" ]; then
-   ${MPI_EXEC} ${MPI_OPTS} ${NP} ${nprocs} ./${vftr_binary} ${maxnreg} > ${tmpfile} || exit 1
+   ${MPI_EXEC} ${MPI_OPTS} ${NP} ${nprocs} ./${vftr_binary} > ${tmpfile} || exit 1
 else
-   ./${vftr_binary} ${maxnreg} > ${tmpfile} || exit 1
+   ./${vftr_binary} > ${tmpfile} || exit 1
 fi
 
 callstack=$(cat ${tmpfile})
