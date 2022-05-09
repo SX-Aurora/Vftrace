@@ -75,13 +75,6 @@ check_PROGRAMS += filewrite_1
 #		 stacks_1 \
 #		 no_instrument_attribute
 
-if WITH_MPI
-check_PROGRAMS += no_mpi_init_C
-if ENABLE_FORTRAN
-check_PROGRAMS += no_mpi_init_F
-endif
-endif
-
 if ENABLE_HWC
 if ON_VECTOR_ENGINE
 check_PROGRAMS += sxhwc_1
@@ -230,18 +223,6 @@ threadtree_LDFLAGS = $(AM_LDFLAGS)
 #stacks_1_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
 #stacks_1_LDFLAGS = $(AM_LDFLAGS)
 
-if WITH_MPI
-no_mpi_init_C_SOURCES = $(srcdir)/no_mpi_init.c
-no_mpi_init_C_CFLAGS = $(AM_CFLAGS) -finstrument-functions
-no_mpi_init_C_LDFLAGS = $(AM_LDFLAGS)
-
-if ENABLE_FORTRAN
-no_mpi_init_F_SOURCES = $(srcdir)/no_mpi_init.F90
-no_mpi_init_F_FCFLAGS = $(AM_FFLAGS) -finstrument-functions
-no_mpi_init_F_LDFLAGS = $(AM_LDFLAGS)
-endif
-endif
-
 #browse_1_SOURCES = $(srcdir)/browse_1.c
 #browse_1_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
 #browse_1_LDFLAGS = $(AM_LDFLAGS)
@@ -298,13 +279,6 @@ dist_check_SCRIPTS += filewrite_1.sh
 if ENABLE_HWC
 if ON_VECTOR_ENGINE
 dist_check_SCRIPTS += sxhwc_1.sh
-endif
-endif
-
-if WITH_MPI
-dist_check_SCRIPTS += no_mpi_init_C.sh
-if ENABLE_FORTRAN
-dist_check_SCRIPTS += no_mpi_init_F.sh
 endif
 endif
 
