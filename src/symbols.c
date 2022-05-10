@@ -13,6 +13,7 @@
 #include "search.h"
 #include "sorting.h"
 #include "regular_expressions.h"
+#include "misc_utils.h"
 
 library_t vftr_parse_maps_line(char *line) {
    library_t library = {
@@ -212,6 +213,8 @@ symboltable_t vftr_read_symbols() {
                // Copy symbol name
                symboltable.symbols[jsymb].name = strdup(stringtab+s.st_name);
                symboltable.symbols[jsymb].index = s.st_shndx;
+               // remove trailing fortran underscore
+               vftr_chop_trailing_char(symboltable.symbols[jsymb].name, '_');
 
                // set precise value to default: false
                symboltable.symbols[jsymb].precise = false;
