@@ -32,6 +32,11 @@
 void vftr_function_entry(void *func, void *call_site) {
    long long function_entry_time_begin = vftr_get_runtime_usec();
 
+#ifdef _MPI
+   // Check for completed MPI-requests
+   vftr_clear_completed_requests();
+#endif
+
    // Get the thread that called the function
    thread_t *my_thread = vftr_get_my_thread(&(vftrace.process.threadtree));
    threadstack_t *my_threadstack = vftr_get_my_threadstack(my_thread);
@@ -74,6 +79,11 @@ void vftr_function_entry(void *func, void *call_site) {
 
 void vftr_function_exit(void *func, void *call_site) {
    long long function_exit_time_begin = vftr_get_runtime_usec();
+
+#ifdef _MPI
+   // Check for completed MPI-requests
+   vftr_clear_completed_requests();
+#endif
 
    thread_t *my_thread = vftr_get_my_thread(&(vftrace.process.threadtree));
    threadstack_t *my_threadstack = vftr_get_my_threadstack(my_thread);

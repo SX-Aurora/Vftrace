@@ -110,25 +110,33 @@ vftr_request_t* vftr_register_request(message_direction dir, int nmsg, int *coun
 
 // clear the requests and log the messaging
 void vftr_clear_completed_requests() {
-   for (int ireq=0; ireq<vftr_open_request_list_length; ireq++) {
-      vftr_request_t *current_request = vftr_open_request_list+ireq;
-      // only attempt to clear it if it is valid
-      if (current_request->valid &&
-          (!current_request->persistent ||
-           (current_request->persistent && current_request->active))) {
-         switch (current_request->request_kind) {
-            case p2p:
-               vftr_clear_completed_p2p_request(current_request);
-               break;
-            case onesided:
-               vftr_clear_completed_onesided_request(current_request);
-               break;
-            case collective:
-               vftr_clear_completed_collective_request(current_request);
-               break;
-            default:
-               // TODO: Add error handling
-               ;
+   int mpi_isinit;
+   PMPI_Initialized(&mpi_isinit);
+   if (mpi_isinit) {
+      int mpi_isfinal;
+      PMPI_Finalized(&mpi_isfinal);
+      if (!mpi_isfinal) {
+         for (int ireq=0; ireq<vftr_open_request_list_length; ireq++) {
+            vftr_request_t *current_request = vftr_open_request_list+ireq;
+            // only attempt to clear it if it is valid
+            if (current_request->valid &&
+                (!current_request->persistent ||
+                 (current_request->persistent && current_request->active))) {
+               switch (current_request->request_kind) {
+                  case p2p:
+                     vftr_clear_completed_p2p_request(current_request);
+                     break;
+                  case onesided:
+                     vftr_clear_completed_onesided_request(current_request);
+                     break;
+                  case collective:
+                     vftr_clear_completed_collective_request(current_request);
+                     break;
+                  default:
+                     // TODO: Add error handling
+                     ;
+               }
+            }
          }
       }
    }
