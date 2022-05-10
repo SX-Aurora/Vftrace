@@ -9,4 +9,6 @@ char *vftr_bool_to_string(bool value);
 
 int vftr_levenshtein_distance(char *a, char *b);
 
+void vftr_chop_trailing_char(char *string, char trailing_char);
+
 #endif

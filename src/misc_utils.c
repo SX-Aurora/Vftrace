@@ -70,3 +70,21 @@ int vftr_levenshtein_distance(char *a, char *b) {
    free(lookup_table);
    return ld;
 }
+
+void vftr_chop_trailing_char(char *string, char trailing_char) {
+   char *strptr = string;
+   // move to the end of the string
+   while (*strptr != '\0') {
+      strptr++;
+   }
+   // move backwards eliminating the trailing character
+   // if it matches
+   while (strptr > string) {
+      strptr--;
+      if (*strptr == trailing_char) {
+         *strptr = '\0';
+      } else {
+         strptr = string;
+      }
+   }
+}
