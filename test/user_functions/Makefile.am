@@ -95,15 +95,15 @@ endif
 #############
 # get stack #
 #############
-#if ENABLE_FORTRAN
-#check_PROGRAMS += fget_stack
-#
-#fget_stack_SOURCES = $(srcdir)/fget_stack.F90
-#fget_stack_FCFLAGS = $(AM_FCFLAGS)
-#fget_stack_LDFLAGS = $(AM_LDFLAGS)
-#
-#dist_noinst_SCRIPTS += fget_stack.sh
-#endif
+if ENABLE_FORTRAN
+check_PROGRAMS += fget_stack
+
+fget_stack_SOURCES = $(srcdir)/fget_stack.F90
+fget_stack_FCFLAGS = $(AM_FCFLAGS)
+fget_stack_LDFLAGS = $(AM_LDFLAGS)
+
+dist_noinst_SCRIPTS += fget_stack.sh
+endif
 
 check_PROGRAMS += cget_stack
 
@@ -124,16 +124,16 @@ cpause_resume_LDFLAGS = $(AM_LDFLAGS)
 
 dist_noinst_SCRIPTS += cpause_resume.sh
 
-#if ENABLE_FORTRAN
-#check_PROGRAMS += fpause_resume
-#
-#fpause_resume_SOURCES = $(srcdir)/fpause_resume.F90
-#fpause_resume_FCFLAGS = $(AM_FCFLAGS)
-#fpause_resume_LDFLAGS = $(AM_LDFLAGS)
-#
-#dist_noinst_SCRIPTS += fpause_resume.sh
-#endif
-#
+if ENABLE_FORTRAN
+check_PROGRAMS += fpause_resume
+
+fpause_resume_SOURCES = $(srcdir)/fpause_resume.F90
+fpause_resume_FCFLAGS = $(AM_FCFLAGS)
+fpause_resume_LDFLAGS = $(AM_LDFLAGS)
+
+dist_noinst_SCRIPTS += fpause_resume.sh
+endif
+
 #check_PROGRAMS += cshow_stack1 \
 #                  cshow_stack2
 #
