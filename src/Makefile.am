@@ -2,9 +2,9 @@ lib_LTLIBRARIES = libvftrace.la
 noinst_LTLIBRARIES = libvftr_pause.la
 
 include_HEADERS = vftrace.h
-#if ENABLE_FORTRAN
-#include_HEADERS += vftrace.mod
-#endif
+if ENABLE_FORTRAN
+include_HEADERS += vftrace.mod
+endif
 
 SUBDIRS =
 libvftrace_la_LIBADD =
@@ -83,6 +83,9 @@ libvftrace_la_SOURCES += logfile.c \
 			 vfdfiles.c
 libvftrace_la_SOURCES += user_regions.c \
 			 user_stack.c
+if ENABLE_FORTRAN
+libvftrace_la_SOURCES += vftrace_mod.F90
+endif
 
 libvftrace_la_CFLAGS += -I${srcdir}/mpi/utils/ \
 			${external_includes}

@@ -65,37 +65,37 @@ dist_noinst_SCRIPTS = cregions1.sh \
 		      cregions3.sh \
 		      cregions4.sh
 if ENABLE_FORTRAN
-#check_PROGRAMS += fregions1 \
-#		  fregions2 \
-#		  fregions3 \
-#		  fregions4
-#
-#fregions1_SOURCES = $(srcdir)/fregions1.F90
-#fregions1_FCFLAGS = $(AM_FCFLAGS)
-#fregions1_LDFLAGS = $(AM_LDFLAGS)
-#
-#fregions2_SOURCES = $(srcdir)/fregions2.F90
-#fregions2_FCFLAGS = $(AM_FCFLAGS)
-#fregions2_LDFLAGS = $(AM_LDFLAGS)
-#
-#fregions3_SOURCES = $(srcdir)/fregions3.F90
-#fregions3_FCFLAGS = $(AM_FCFLAGS)
-#fregions3_LDFLAGS = $(AM_LDFLAGS)
-#
-#fregions4_SOURCES = $(srcdir)/fregions4.F90
-#fregions4_FCFLAGS = $(AM_FCFLAGS)
-#fregions4_LDFLAGS = $(AM_LDFLAGS)
-#
-#dist_noinst_SCRIPTS += fregions1.sh \
-#		       fregions2.sh \
-#		       fregions3.sh \
-#		       fregions4.sh
+check_PROGRAMS += fregions1 \
+		  fregions2 \
+		  fregions3 \
+		  fregions4
+
+fregions1_SOURCES = $(srcdir)/fregions1.F90
+fregions1_FCFLAGS = $(AM_FCFLAGS)
+fregions1_LDFLAGS = $(AM_LDFLAGS)
+
+fregions2_SOURCES = $(srcdir)/fregions2.F90
+fregions2_FCFLAGS = $(AM_FCFLAGS)
+fregions2_LDFLAGS = $(AM_LDFLAGS)
+
+fregions3_SOURCES = $(srcdir)/fregions3.F90
+fregions3_FCFLAGS = $(AM_FCFLAGS)
+fregions3_LDFLAGS = $(AM_LDFLAGS)
+
+fregions4_SOURCES = $(srcdir)/fregions4.F90
+fregions4_FCFLAGS = $(AM_FCFLAGS)
+fregions4_LDFLAGS = $(AM_LDFLAGS)
+
+dist_noinst_SCRIPTS += fregions1.sh \
+		       fregions2.sh \
+		       fregions3.sh \
+		       fregions4.sh
 endif
 
 #############
 # get stack #
 #############
-if ENABLE_FORTRAN
+#if ENABLE_FORTRAN
 #check_PROGRAMS += fget_stack
 #
 #fget_stack_SOURCES = $(srcdir)/fget_stack.F90
@@ -103,7 +103,7 @@ if ENABLE_FORTRAN
 #fget_stack_LDFLAGS = $(AM_LDFLAGS)
 #
 #dist_noinst_SCRIPTS += fget_stack.sh
-endif
+#endif
 
 check_PROGRAMS += cget_stack
 
@@ -124,7 +124,7 @@ cpause_resume_LDFLAGS = $(AM_LDFLAGS)
 
 dist_noinst_SCRIPTS += cpause_resume.sh
 
-if ENABLE_FORTRAN
+#if ENABLE_FORTRAN
 #check_PROGRAMS += fpause_resume
 #
 #fpause_resume_SOURCES = $(srcdir)/fpause_resume.F90
@@ -132,8 +132,8 @@ if ENABLE_FORTRAN
 #fpause_resume_LDFLAGS = $(AM_LDFLAGS)
 #
 #dist_noinst_SCRIPTS += fpause_resume.sh
-endif
-
+#endif
+#
 #check_PROGRAMS += cshow_stack1 \
 #                  cshow_stack2
 #
