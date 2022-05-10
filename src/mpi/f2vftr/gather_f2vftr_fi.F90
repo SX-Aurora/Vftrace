@@ -26,7 +26,7 @@ MODULE vftr_mpi_gather_f2vftr_fi
 
    PUBLIC :: vftr_MPI_Gather_f2vftr
 
-   INTERFACE 
+   INTERFACE
 
       SUBROUTINE vftr_MPI_Gather_f2vftr(SENDBUF, SENDCOUNT, F_SENDTYPE, &
                                      RECVBUF, RECVCOUNT, F_RECVTYPE, &

@@ -92,7 +92,7 @@ PROGRAM recv_init
       DO ireq = 1, comm_size-1
          CALL MPI_Request_free(myrequest(ireq), ierr);
       END DO
-   ELSE 
+   ELSE
       DO irun = 1, nruns
          WRITE(UNIT=OUTPUT_UNIT, FMT="(A,I4,A,I4)") "Sending messages from rank", my_rank
          CALL MPI_Send(sbuffer, nints, MPI_INTEGER, 0, my_rank, MPI_COMM_WORLD, ierr)

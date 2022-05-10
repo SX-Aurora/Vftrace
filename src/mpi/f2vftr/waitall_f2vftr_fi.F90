@@ -41,7 +41,7 @@ MODULE vftr_mpi_waitall_f2vftr_fi
 
    END INTERFACE
 
-#endif 
+#endif
 
 CONTAINS
 

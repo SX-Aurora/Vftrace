@@ -26,7 +26,7 @@ MODULE vftr_mpi_bcast_f082vftr_f08i
 
    PUBLIC :: vftr_MPI_Bcast_f082vftr
 
-   INTERFACE 
+   INTERFACE
 
       SUBROUTINE vftr_MPI_Bcast_f082vftr(buffer, count, f_datatype, &
                                          root, f_comm, f_error) &

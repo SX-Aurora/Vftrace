@@ -26,7 +26,7 @@ MODULE vftr_mpi_rsend_init_f082vftr_f08i
 
    PUBLIC :: vftr_MPI_Rsend_init_f082vftr
 
-   INTERFACE 
+   INTERFACE
 
       SUBROUTINE vftr_MPI_Rsend_init_f082vftr(buf, count, f_datatype, dest, tag, &
                                               f_comm, f_request, f_error) &

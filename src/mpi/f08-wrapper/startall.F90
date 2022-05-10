@@ -47,5 +47,5 @@ SUBROUTINE MPI_Startall_f08(count, array_of_requests, error)
 
 END SUBROUTINE MPI_Startall_f08
 
-#endif 
+#endif
 

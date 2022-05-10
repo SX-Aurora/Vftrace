@@ -58,7 +58,7 @@ PROGRAM ineighbor_alltoallv_graph
 
    ! create the cartesian communicator
    CALL MPI_Graph_create(MPI_COMM_WORLD, nnodes, index, edges, reorder, comm_graph, ierr)
-   
+
    CALL MPI_Graph_neighbors_count(comm_graph, my_rank, nneighbors, ierr)
    ALLOCATE(neighbors(nneighbors))
    CALL MPI_Graph_neighbors(comm_graph, my_rank, nneighbors, neighbors, ierr)

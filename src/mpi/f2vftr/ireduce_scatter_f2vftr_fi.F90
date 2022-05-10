@@ -26,7 +26,7 @@ MODULE vftr_mpi_ireduce_scatter_f2vftr_fi
 
    PUBLIC :: vftr_MPI_Ireduce_scatter_f2vftr
 
-   INTERFACE 
+   INTERFACE
 
       SUBROUTINE vftr_MPI_Ireduce_scatter_f2vftr(SENDBUF, RECVBUF, F_RECVCOUNTS, &
                                               F_DATATYPE, F_OP, F_COMM, &

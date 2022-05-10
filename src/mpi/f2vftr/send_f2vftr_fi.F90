@@ -26,7 +26,7 @@ MODULE vftr_mpi_send_f2vftr_fi
 
    PUBLIC :: vftr_MPI_Send_f2vftr
 
-   INTERFACE 
+   INTERFACE
 
       SUBROUTINE vftr_MPI_Send_f2vftr(BUF, COUNT, F_DATATYPE, DEST, TAG, F_COMM, F_ERROR) &
          BIND(C, name="vftr_MPI_Send_f2vftr")

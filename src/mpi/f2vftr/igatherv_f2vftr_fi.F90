@@ -26,7 +26,7 @@ MODULE vftr_mpi_igatherv_f2vftr_fi
 
    PUBLIC :: vftr_MPI_Igatherv_f2vftr
 
-   INTERFACE 
+   INTERFACE
 
       SUBROUTINE vftr_MPI_Igatherv_f2vftr(SENDBUF, SENDCOUNT, F_SENDTYPE, &
                                        RECVBUF, F_RECVCOUNTS, F_DISPLS, &

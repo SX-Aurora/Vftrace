@@ -26,7 +26,7 @@ MODULE vftr_mpi_allgather_f082vftr_f08i
 
    PUBLIC :: vftr_MPI_Allgather_f082vftr
 
-   INTERFACE 
+   INTERFACE
 
       SUBROUTINE vftr_MPI_Allgather_f082vftr(sendbuf, sendcount, f_sendtype, &
                                              recvbuf, recvcount, f_recvtype, &

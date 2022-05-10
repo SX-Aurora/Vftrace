@@ -46,7 +46,7 @@ MODULE vftr_mpi_compare_and_swap_f082vftr_f08i
 
    END INTERFACE
 
-#endif 
+#endif
 
 CONTAINS
 

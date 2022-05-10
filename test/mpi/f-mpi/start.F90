@@ -82,7 +82,7 @@ PROGRAM start
       DO ireq = 2, comm_size-1, 2
          CALL MPI_Wait(myrequest(ireq), mystat, ierr)
       END DO
-   ELSE 
+   ELSE
       WRITE(UNIT=OUTPUT_UNIT, FMT="(A,I4,A,I4)") "Receiving message from rank", 0
       CALL MPI_Recv(rbuffer, nints, MPI_INTEGER, 0, 0, MPI_COMM_WORLD, mystat, ierr)
       ! validate data

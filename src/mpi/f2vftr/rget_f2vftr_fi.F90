@@ -48,7 +48,7 @@ MODULE vftr_mpi_rget_f2vftr_fi
 
    END INTERFACE
 
-#endif 
+#endif
 
 CONTAINS
 

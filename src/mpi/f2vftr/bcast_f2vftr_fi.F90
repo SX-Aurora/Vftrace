@@ -26,7 +26,7 @@ MODULE vftr_mpi_bcast_f2vftr_fi
 
    PUBLIC :: vftr_MPI_Bcast_f2vftr
 
-   INTERFACE 
+   INTERFACE
 
       SUBROUTINE vftr_MPI_Bcast_f2vftr(BUFFER, COUNT, F_DATATYPE, &
                                     ROOT, F_COMM, F_ERROR) &

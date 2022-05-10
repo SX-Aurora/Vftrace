@@ -40,7 +40,7 @@ MODULE vftr_mpi_wait_f082vftr_f08i
 
    END INTERFACE
 
-#endif 
+#endif
 
 CONTAINS
 

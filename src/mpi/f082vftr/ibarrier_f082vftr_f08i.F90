@@ -38,7 +38,7 @@ MODULE vftr_mpi_ibarrier_f082vftr_f08i
 
    END INTERFACE
 
-#endif 
+#endif
 
 CONTAINS
 

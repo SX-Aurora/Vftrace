@@ -26,7 +26,7 @@ MODULE vftr_mpi_neighbor_allgatherv_f2vftr_fi
 
    PUBLIC :: vftr_MPI_Neighbor_allgatherv_f2vftr
 
-   INTERFACE 
+   INTERFACE
 
       SUBROUTINE vftr_MPI_Neighbor_allgatherv_f2vftr(SENDBUF, SENDCOUNT, F_SENDTYPE, &
                                                      RECVBUF, F_RECVCOUNTS, F_DISPLS, &

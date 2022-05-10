@@ -51,4 +51,4 @@ SUBROUTINE MPI_Testall_f08(count, array_of_requests, flag, array_of_statuses, er
 
 END SUBROUTINE MPI_Testall_f08
 
-#endif 
+#endif

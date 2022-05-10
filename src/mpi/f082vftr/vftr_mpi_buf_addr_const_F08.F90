@@ -15,7 +15,7 @@
 ! 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 #ifdef _MPI
- 
+
 MODULE mpi_buf_addr_const_F08
 
    IMPLICIT NONE

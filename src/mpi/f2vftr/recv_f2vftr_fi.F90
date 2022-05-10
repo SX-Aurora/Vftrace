@@ -26,7 +26,7 @@ MODULE vftr_mpi_recv_f2vftr_fi
 
    PUBLIC :: vftr_MPI_Recv_f2vftr
 
-   INTERFACE 
+   INTERFACE
 
       SUBROUTINE vftr_MPI_Recv_f2vftr(BUF, COUNT, F_DATATYPE, SOURCE, TAG, &
                                    F_COMM, F_STATUS, F_ERROR) &

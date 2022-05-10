@@ -26,7 +26,7 @@ MODULE vftr_mpi_iexscan_f2vftr_fi
 
    PUBLIC :: vftr_MPI_Iexscan_f2vftr
 
-   INTERFACE 
+   INTERFACE
 
       SUBROUTINE vftr_MPI_Iexscan_f2vftr(SENDBUF, RECVBUF, COUNT, F_DATATYPE, &
                                       F_OP, F_COMM, F_REQUEST, F_ERROR) &

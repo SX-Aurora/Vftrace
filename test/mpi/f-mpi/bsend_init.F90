@@ -91,7 +91,7 @@ PROGRAM bsend_init
       DO ireq = 1, comm_size-1
          CALL MPI_Request_free(myrequest(ireq), ierr);
       END DO
-   ELSE 
+   ELSE
       DO irun = 1, nruns
          rbuffer(:) = -1
          WRITE(UNIT=OUTPUT_UNIT, FMT="(A,I4,A,I4)") "Receiving message from rank", 0

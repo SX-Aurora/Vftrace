@@ -73,7 +73,7 @@ PROGRAM reduce_scatter_block_intercom
    ! Allocating send/recv buffer
    CALL GET_COMMAND_ARGUMENT(1,cmdargstr)
    READ(UNIT=cmdargstr, FMT=*) nints
-   
+
    count = sub_comm_size*sub_comm_remote_size*nints
    recvcount = count / sub_comm_size
    ALLOCATE(sbuffer(count))

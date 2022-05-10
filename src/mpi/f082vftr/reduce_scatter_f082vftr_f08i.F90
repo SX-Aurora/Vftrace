@@ -26,7 +26,7 @@ MODULE vftr_mpi_reduce_scatter_f082vftr_f08i
 
    PUBLIC :: vftr_MPI_Reduce_scatter_f082vftr
 
-   INTERFACE 
+   INTERFACE
 
       SUBROUTINE vftr_MPI_Reduce_scatter_f082vftr(sendbuf, recvbuf, f_recvcounts, &
                                                   f_datatype, f_op, f_comm, &

@@ -26,7 +26,7 @@ MODULE vftr_mpi_neighbor_alltoallw_f082vftr_f08i
 
    PUBLIC :: vftr_MPI_Neighbor_alltoallw_f082vftr
 
-   INTERFACE 
+   INTERFACE
 
       SUBROUTINE vftr_MPI_Neighbor_alltoallw_f082vftr(sendbuf, f_sendcounts, &
                                                       f_sdispls, f_sendtypes, &

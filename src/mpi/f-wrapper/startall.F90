@@ -36,5 +36,5 @@ SUBROUTINE MPI_Startall(COUNT, ARRAY_OREQUESTS, ERROR)
 
 END SUBROUTINE MPI_Startall
 
-#endif 
+#endif
 

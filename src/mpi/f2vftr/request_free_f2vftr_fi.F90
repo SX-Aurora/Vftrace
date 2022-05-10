@@ -37,7 +37,7 @@ MODULE vftr_mpi_request_free_f2vftr_fi
 
    END INTERFACE
 
-#endif 
+#endif
 
 CONTAINS
 

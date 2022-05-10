@@ -43,7 +43,7 @@ MODULE vftr_mpi_iprobe_f082vftr_f08i
 
    END INTERFACE
 
-#endif 
+#endif
 
 CONTAINS
 

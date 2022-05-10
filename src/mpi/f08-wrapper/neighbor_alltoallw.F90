@@ -84,13 +84,13 @@ SUBROUTINE MPI_Neighbor_alltoallw_f08(sendbuf, sendcounts, sdispls, sendtypes, &
       DO i = 1, sizein
          tmprecvtypes(i) = recvtypes(i)%MPI_VAL
       END DO
-   
+
       CALL vftr_MPI_Neighbor_alltoallw_f082vftr(sendbuf, sendcounts, &
                                                 sdispls, tmpsendtypes, &
                                                 recvbuf, recvcounts, &
                                                 rdispls, tmprecvtypes, &
                                                 comm%MPI_VAL, tmperror)
-   
+
       DEALLOCATE(tmpsendtypes)
       DEALLOCATE(tmprecvtypes)
    END IF

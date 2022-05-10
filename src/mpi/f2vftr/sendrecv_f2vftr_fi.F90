@@ -26,7 +26,7 @@ MODULE vftr_mpi_sendrecv_f2vftr_fi
 
    PUBLIC :: vftr_MPI_Sendrecv_f2vftr
 
-   INTERFACE 
+   INTERFACE
 
       SUBROUTINE vftr_MPI_Sendrecv_f2vftr(SENDBUF, SENDCOUNT, F_SENDTYPE, DEST, SENDTAG, &
                                        RECVBUF, RECVCOUNT, F_RECVTYPE, SOURCE, RECVTAG, &

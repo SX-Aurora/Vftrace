@@ -26,7 +26,7 @@ MODULE vftr_mpi_ibcast_f082vftr_f08i
 
    PUBLIC :: vftr_MPI_Ibcast_f082vftr
 
-   INTERFACE 
+   INTERFACE
 
       SUBROUTINE vftr_MPI_Ibcast_f082vftr(buffer, count, f_datatype, &
                                           root, f_comm, f_request, f_error) &

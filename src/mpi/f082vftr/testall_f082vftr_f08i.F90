@@ -44,7 +44,7 @@ MODULE vftr_mpi_testall_f082vftr_f08i
 
    END INTERFACE
 
-#endif 
+#endif
 
 CONTAINS
 

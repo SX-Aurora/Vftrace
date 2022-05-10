@@ -26,7 +26,7 @@ MODULE vftr_mpi_gatherv_f082vftr_f08i
 
    PUBLIC :: vftr_MPI_Gatherv_f082vftr
 
-   INTERFACE 
+   INTERFACE
 
       SUBROUTINE vftr_MPI_Gatherv_f082vftr(sendbuf, sendcount, f_sendtype, &
                                            recvbuf, f_recvcounts, f_displs, &

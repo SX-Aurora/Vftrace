@@ -55,7 +55,7 @@ PROGRAM probe
    IF (my_rank == 0) THEN
       WRITE(UNIT=OUTPUT_UNIT, FMT="(A,I4,A,I4)") "Sending message from rank ", my_rank, " to rank", 1
       CALL MPI_Send(sbuffer, nints, MPI_INTEGER, 1, 0, MPI_COMM_WORLD, ierr)
-   ELSE 
+   ELSE
       WRITE(UNIT=OUTPUT_UNIT, FMT="(A,I4,A,I4)") "Receiving message on rank ", my_rank, " from rank", 0
       CALL MPI_Probe(0, 0, MPI_COMM_WORLD, recvstatus, ierr)
       CALL MPI_Recv(rbuffer, nints, MPI_INTEGER, 0, 0, MPI_COMM_WORLD, recvstatus, ierr)

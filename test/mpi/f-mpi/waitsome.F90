@@ -9,7 +9,7 @@ PROGRAM waitsome
 
    INTEGER :: comm_size
    INTEGER :: my_rank
-   
+
    INTEGER :: nints = 0
    INTEGER, DIMENSION(:), ALLOCATABLE :: srbuffer
 
@@ -82,5 +82,5 @@ PROGRAM waitsome
    DEALLOCATE(srbuffer)
 
    CALL MPI_Finalize(ierr)
-   
+
 END PROGRAM waitsome

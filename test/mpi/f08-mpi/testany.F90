@@ -9,7 +9,7 @@ PROGRAM testany
 
    INTEGER :: comm_size
    INTEGER :: my_rank
-   
+
    INTEGER :: nints = 0
    INTEGER, DIMENSION(:), ALLOCATABLE :: srbuffer
 
@@ -68,7 +68,7 @@ PROGRAM testany
             CALL SLEEP(1)
          END IF
       END DO
-      DO ireq = 1, comm_size - 1 
+      DO ireq = 1, comm_size - 1
          IF (ireq /= idx) THEN
             CALL MPI_Wait(requests(ireq), mystat, ierr)
          END IF
@@ -82,5 +82,5 @@ PROGRAM testany
    DEALLOCATE(srbuffer)
 
    CALL MPI_Finalize(ierr)
-   
+
 END PROGRAM testany

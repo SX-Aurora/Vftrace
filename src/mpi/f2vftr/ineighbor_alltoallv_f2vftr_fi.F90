@@ -26,7 +26,7 @@ MODULE vftr_mpi_ineighbor_alltoallv_f2vftr_fi
 
    PUBLIC :: vftr_MPI_Ineighbor_alltoallv_f2vftr
 
-   INTERFACE 
+   INTERFACE
 
       SUBROUTINE vftr_MPI_Ineighbor_alltoallv_f2vftr(SENDBUF, F_SENDCOUNTS, &
                                                      F_SDISPLS, F_SENDTYPE, &

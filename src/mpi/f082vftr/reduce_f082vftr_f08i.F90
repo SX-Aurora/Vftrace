@@ -26,7 +26,7 @@ MODULE vftr_mpi_reduce_f082vftr_f08i
 
    PUBLIC :: vftr_MPI_Reduce_f082vftr
 
-   INTERFACE 
+   INTERFACE
 
       SUBROUTINE vftr_MPI_Reduce_f082vftr(sendbuf, recvbuf, count, f_datatype, &
                                           f_op, root, f_comm, f_error) &

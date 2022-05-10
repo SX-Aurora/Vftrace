@@ -70,7 +70,7 @@ PROGRAM send_recv
    END DO
 
 
-   
+
    ! Wait for completion of non-blocking receives
    DO ireq = 1, comm_size
       CALL MPI_Wait(myrequest(ireq), mystat, ierr)

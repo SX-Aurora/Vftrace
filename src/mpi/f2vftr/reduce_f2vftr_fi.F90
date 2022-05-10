@@ -26,7 +26,7 @@ MODULE vftr_mpi_reduce_f2vftr_fi
 
    PUBLIC :: vftr_MPI_Reduce_f2vftr
 
-   INTERFACE 
+   INTERFACE
 
       SUBROUTINE vftr_MPI_Reduce_f2vftr(SENDBUF, RECVBUF, COUNT, F_DATATYPE, &
                                      F_OP, ROOT, F_COMM, F_ERROR) &

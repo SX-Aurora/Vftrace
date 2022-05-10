@@ -26,7 +26,7 @@ MODULE vftr_mpi_ialltoallw_f2vftr_fi
 
    PUBLIC :: vftr_MPI_Ialltoallw_f2vftr
 
-   INTERFACE 
+   INTERFACE
 
       SUBROUTINE vftr_MPI_Ialltoallw_f2vftr(SENDBUF, F_SENDCOUNTS, F_SDISPLS, F_SENDTYPES, &
                                          RECVBUF, F_RECVCOUNTS, F_RDISPLS, F_RECVTYPES, &

@@ -50,4 +50,4 @@ SUBROUTINE MPI_Waitany_f08(count, array_of_requests, index, status, error)
 
 END SUBROUTINE MPI_Waitany_f08
 
-#endif 
+#endif

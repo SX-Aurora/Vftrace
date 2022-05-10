@@ -26,7 +26,7 @@ MODULE vftr_mpi_ssend_init_f2vftr_fi
 
    PUBLIC :: vftr_MPI_Ssend_init_f2vftr
 
-   INTERFACE 
+   INTERFACE
 
       SUBROUTINE vftr_MPI_Ssend_init_f2vftr(BUF, COUNT, F_DATATYPE, DEST, TAG, &
                                          F_COMM, F_REQUEST, F_ERROR) &

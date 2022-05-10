@@ -26,7 +26,7 @@ MODULE vftr_mpi_iscatterv_f082vftr_f08i
 
    PUBLIC :: vftr_MPI_Iscatterv_f082vftr
 
-   INTERFACE 
+   INTERFACE
 
       SUBROUTINE vftr_MPI_Iscatterv_f082vftr(sendbuf, f_sendcounts, f_displs, &
                                              f_sendtype, recvbuf, recvcount, &

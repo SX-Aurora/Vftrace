@@ -108,7 +108,7 @@ PROGRAM iallgatherv_intercom
    valid_data = .TRUE.
    DO irank = 0, sub_comm_remote_size - 1
       jrank = minpeerrank + irank
-      DO i = 1, recvcounts(irank+1) 
+      DO i = 1, recvcounts(irank+1)
          IF (rbuffer(i+displs(irank+1)) /= jrank) THEN
             WRITE(UNIT=OUTPUT_UNIT, FMT="(A,I4,A)") &
                "Rank ", my_rank, " received faulty data from rank", jrank
@@ -118,7 +118,7 @@ PROGRAM iallgatherv_intercom
       END DO
    END DO
    DEALLOCATE(rbuffer)
- 
+
    DEALLOCATE(recvcounts)
    DEALLOCATE(displs)
 

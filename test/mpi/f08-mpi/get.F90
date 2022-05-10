@@ -9,7 +9,7 @@ PROGRAM get
 
    INTEGER :: comm_size
    INTEGER :: my_rank
-   
+
    INTEGER :: nints = 0
    INTEGER, DIMENSION(:), ALLOCATABLE :: sbuffer
    INTEGER, DIMENSION(:,:), ALLOCATABLE :: rbuffer
@@ -93,6 +93,6 @@ PROGRAM get
    DEALLOCATE(rbuffer)
 
    CALL MPI_Finalize(ierr)
-   
+
    IF (.NOT.valid_data) STOP 1
 END PROGRAM get

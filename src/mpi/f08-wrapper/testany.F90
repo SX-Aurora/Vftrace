@@ -52,4 +52,4 @@ SUBROUTINE MPI_Testany_f08(count, array_of_requests, index, flag, status, error)
 
 END SUBROUTINE MPI_Testany_f08
 
-#endif 
+#endif

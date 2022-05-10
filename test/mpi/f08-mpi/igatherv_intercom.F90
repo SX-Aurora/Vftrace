@@ -130,7 +130,7 @@ PROGRAM igatherv_intercom
    IF (my_rank == 0) THEN
       DO irank = 0, sub_comm_remote_size - 1
          jrank = sub_comm_size + irank
-         DO i = 1, recvcounts(irank+1) 
+         DO i = 1, recvcounts(irank+1)
             IF (rbuffer(i+displs(irank+1)) /= jrank) THEN
                WRITE(UNIT=OUTPUT_UNIT, FMT="(A,I4,A)") &
                   "Rank ", my_rank, " received faulty data from rank", jrank

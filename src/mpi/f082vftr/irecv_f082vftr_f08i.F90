@@ -26,7 +26,7 @@ MODULE vftr_mpi_irecv_f082vftr_f08i
 
    PUBLIC :: vftr_MPI_Irecv_f082vftr
 
-   INTERFACE 
+   INTERFACE
 
       SUBROUTINE vftr_MPI_Irecv_f082vftr(buf, count, f_datatype, source, tag, &
                                          f_comm, f_request, f_error) &

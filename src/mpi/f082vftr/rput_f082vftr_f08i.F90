@@ -49,7 +49,7 @@ MODULE vftr_mpi_rput_f082vftr_f08i
 
    END INTERFACE
 
-#endif 
+#endif
 
 CONTAINS
 

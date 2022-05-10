@@ -9,7 +9,7 @@ PROGRAM rget_accumulate
 
    INTEGER :: comm_size
    INTEGER :: my_rank
-   
+
    INTEGER :: nints = 0
    INTEGER, DIMENSION(:), ALLOCATABLE :: originbuffer
    INTEGER, DIMENSION(:), ALLOCATABLE :: resultbuffer
@@ -124,6 +124,6 @@ PROGRAM rget_accumulate
    DEALLOCATE(targetbuffer)
 
    CALL MPI_Finalize(ierr)
-   
+
    IF (.NOT.valid_data) STOP 1
 END PROGRAM rget_accumulate

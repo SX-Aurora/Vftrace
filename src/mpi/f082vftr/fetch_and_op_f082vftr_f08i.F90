@@ -46,7 +46,7 @@ MODULE vftr_mpi_fetch_and_op_f082vftr_f08i
 
    END INTERFACE
 
-#endif 
+#endif
 
 CONTAINS
 

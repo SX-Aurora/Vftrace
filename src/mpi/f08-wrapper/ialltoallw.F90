@@ -60,7 +60,7 @@ SUBROUTINE MPI_Ialltoallw_f08(sendbuf, sendcounts, sdispls, sendtypes, &
       ELSE
          CALL PMPI_Comm_size(comm, comm_size, tmperror)
       END IF
-   
+
       ALLOCATE(tmpsendtypes(comm_size))
       ALLOCATE(tmprecvtypes(comm_size))
       DO i = 1, comm_size
@@ -69,11 +69,11 @@ SUBROUTINE MPI_Ialltoallw_f08(sendbuf, sendcounts, sdispls, sendtypes, &
       DO i = 1, comm_size
          tmprecvtypes(i) = recvtypes(i)%MPI_VAL
       END DO
-   
+
       CALL vftr_MPI_Ialltoallw_f082vftr(sendbuf, sendcounts, sdispls, tmpsendtypes, &
                                         recvbuf, recvcounts, rdispls, tmprecvtypes, &
                                         comm%MPI_VAL, request%MPI_VAL, tmperror)
-   
+
       DEALLOCATE(tmpsendtypes)
       DEALLOCATE(tmprecvtypes)
    END IF

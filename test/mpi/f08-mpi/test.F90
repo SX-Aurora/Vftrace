@@ -53,11 +53,11 @@ PROGRAM test
       ! send to every other rank
       CALL MPI_Isend(srbuffer, nints, MPI_INTEGER, 1, 0, MPI_COMM_WORLD, request, ierr)
       flag = .FALSE.
-      DO WHILE (.NOT. flag) 
+      DO WHILE (.NOT. flag)
          Call MPI_Test(request, flag, mystatus, ierr)
          IF (flag) THEN
             WRITE(UNIT=OUTPUT_UNIT, FMT="(A)") "Sending request is completed"
-         ELSE 
+         ELSE
             WRITE(UNIT=OUTPUT_UNIT, FMT="(A)") "Sending request is not completed"
             CALL SLEEP(1)
          END IF

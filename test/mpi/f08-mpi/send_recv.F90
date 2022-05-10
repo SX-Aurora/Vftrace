@@ -63,7 +63,7 @@ PROGRAM send_recv
                CALL MPI_Send(sbuffer, nints, MPI_INTEGER, recvrank, 0, MPI_COMM_WORLD, ierr)
             END IF
          END DO
-      ELSE 
+      ELSE
          WRITE(UNIT=OUTPUT_UNIT, FMT="(A,I4,A,I4)") "Receiving message on rank ", my_rank, " from rank", sendrank
          CALL MPI_Recv(rbuffer, nints, MPI_INTEGER, sendrank, 0, MPI_COMM_WORLD, recvstatus, ierr)
          ! validate data

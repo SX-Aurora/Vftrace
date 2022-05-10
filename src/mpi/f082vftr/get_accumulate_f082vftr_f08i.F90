@@ -52,7 +52,7 @@ MODULE vftr_mpi_get_accumulate_f082vftr_f08i
 
    END INTERFACE
 
-#endif 
+#endif
 
 CONTAINS
 
