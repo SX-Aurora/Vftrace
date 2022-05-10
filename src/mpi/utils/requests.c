@@ -21,17 +21,14 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
-#include "requests.h"
+#include "request_types.h"
 #include "p2p_requests.h"
 #include "onesided_requests.h"
 #include "collective_requests.h"
 #include "stacks.h"
 #include "threads.h"
 #include "threadstacks.h"
-
-
-int vftr_open_request_list_length = 0;
-vftr_request_t *vftr_open_request_list = NULL;
+#include "vftrace_state.h"
 
 // create new request to be stored
 vftr_request_t* vftr_register_request(message_direction dir, int nmsg, int *count,
@@ -44,21 +41,22 @@ vftr_request_t* vftr_register_request(message_direction dir, int nmsg, int *coun
    int invalid_request_id = -1;
    bool invalid_request = false;
    while (invalid_request == false &&
-          (invalid_request_id+1)<vftr_open_request_list_length) {
+          (invalid_request_id+1)<vftrace.mpi_state.nopen_requests) {
       invalid_request_id++;
-      invalid_request = (!vftr_open_request_list[invalid_request_id].valid);
+      invalid_request = (!vftrace.mpi_state.open_requests[invalid_request_id].valid);
    }
 
    // if no free spot was found reallocate
    if (!invalid_request) {
-      invalid_request_id = vftr_open_request_list_length;
-      vftr_open_request_list_length++;
-      vftr_open_request_list = (vftr_request_t*) realloc(vftr_open_request_list,
-                               vftr_open_request_list_length*sizeof(vftr_request_t));
+      invalid_request_id = vftrace.mpi_state.nopen_requests;
+      vftrace.mpi_state.nopen_requests++;
+      vftrace.mpi_state.open_requests = (vftr_request_t*)
+         realloc(vftrace.mpi_state.open_requests,
+                 vftrace.mpi_state.nopen_requests*sizeof(vftr_request_t));
    }
 
    // fill data into request
-   vftr_request_t *new_request = vftr_open_request_list+invalid_request_id;
+   vftr_request_t *new_request = vftrace.mpi_state.open_requests+invalid_request_id;
    new_request->valid     = true;
    new_request->request   = request;
    new_request->comm      = comm;
@@ -116,8 +114,8 @@ void vftr_clear_completed_requests() {
       int mpi_isfinal;
       PMPI_Finalized(&mpi_isfinal);
       if (!mpi_isfinal) {
-         for (int ireq=0; ireq<vftr_open_request_list_length; ireq++) {
-            vftr_request_t *current_request = vftr_open_request_list+ireq;
+         for (int ireq=0; ireq<vftrace.mpi_state.nopen_requests; ireq++) {
+            vftr_request_t *current_request = vftrace.mpi_state.open_requests+ireq;
             // only attempt to clear it if it is valid
             if (current_request->valid &&
                 (!current_request->persistent ||
@@ -180,10 +178,10 @@ void vftr_remove_request(vftr_request_t *request) {
 
 // deallocate entire request list
 void vftr_free_request_list() {
-   if (vftr_open_request_list_length > 0) {
-      vftr_open_request_list_length = 0;
-      free(vftr_open_request_list);
-      vftr_open_request_list = NULL;
+   if (vftrace.mpi_state.nopen_requests > 0) {
+      vftrace.mpi_state.nopen_requests = 0;
+      free(vftrace.mpi_state.open_requests);
+      vftrace.mpi_state.open_requests = NULL;
    }
 }
 
@@ -192,8 +190,8 @@ vftr_request_t *vftr_search_request(MPI_Request request) {
    // go through the complete list and check the request
    vftr_request_t *matching_request = NULL;
    int request_id = 0;
-   while (request_id < vftr_open_request_list_length && matching_request == NULL) {
-      vftr_request_t *tmprequest = vftr_open_request_list+request_id;
+   while (request_id < vftrace.mpi_state.nopen_requests && matching_request == NULL) {
+      vftr_request_t *tmprequest = vftrace.mpi_state.open_requests+request_id;
       if (tmprequest->request == request) {
          matching_request = tmprequest;
       } else {

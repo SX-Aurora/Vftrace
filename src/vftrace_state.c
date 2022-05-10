@@ -72,7 +72,9 @@ vftrace_t vftrace = {
 #endif
 #ifdef _MPI
    .mpi_state = {
-      .pcontrol_level = 1
+      .pcontrol_level = 1,
+      .nopen_requests = 0,
+      .open_requests = NULL
    },
 #endif
    .timestrings = {
