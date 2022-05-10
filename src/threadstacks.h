@@ -2,6 +2,7 @@
 #define THREADSTACKS_H
 
 #include <stdio.h>
+#include <stdbool.h>
 
 #include "thread_types.h"
 #include "threadstack_types.h"
@@ -31,7 +32,8 @@ threadstack_t *vftr_update_threadstack_region(threadstack_t *my_threadstack,
                                               thread_t *my_thread,
                                               uintptr_t region_addr,
                                               const char *name,
-                                              vftrace_t *vftrace);
+                                              vftrace_t *vftrace,
+                                              bool precise);
 
 
 void vftr_print_threadstack(FILE *fp, threadstacklist_t stacklist);

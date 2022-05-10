@@ -16,8 +16,10 @@
 #include "timer.h"
 #include "region_address.h"
 
-void vftr_user_region_begin(const char *name, void *addr) {
+void vftr_internal_region_begin(const char *name) {
    long long region_begin_time_begin = vftr_get_runtime_usec();
+   void *addr;
+   GET_REGION_ADDRESS(addr);
    // Get the thread that called the region
    thread_t *my_thread = vftr_get_my_thread(&(vftrace.process.threadtree));
    threadstack_t *my_threadstack = vftr_get_my_threadstack(my_thread);
@@ -41,10 +43,9 @@ void vftr_user_region_begin(const char *name, void *addr) {
    } else {
       // add possibly new region to the stack
       // and adjust the threadstack accordingly
-      bool precise = vftrace.environment.regions_precise.value.bool_val;
       my_threadstack = vftr_update_threadstack_region(my_threadstack, my_thread,
                                                       region_addr, name, &vftrace,
-                                                      precise);
+                                                      true);
       stack_t *new_stack = vftrace.process.stacktree.stacks+my_threadstack->stackID;
       vftr_sample_function_entry(&(vftrace.sampling),
                                  *new_stack,
@@ -62,7 +63,8 @@ void vftr_user_region_begin(const char *name, void *addr) {
                                                             - vftr_get_runtime_usec();
 }
 
-void vftr_user_region_end() {
+void vftr_internal_region_end(const char *name) {
+   (void) name;
    long long function_end_time_begin = vftr_get_runtime_usec();
 
    thread_t *my_thread = vftr_get_my_thread(&(vftrace.process.threadtree));
@@ -97,21 +99,5 @@ void vftr_user_region_end() {
       // TODO: OMP distinquish between master and other threads
       my_stack->profiling.callProf.overhead_time_usec -= function_end_time_begin
                                                          - vftr_get_runtime_usec();
-   }
-}
-
-//These regions are for users to be used only.
-void vftrace_region_begin(const char *name) {
-   if (vftrace.state == on) {
-      void *addr;
-      GET_REGION_ADDRESS(addr);
-      vftr_user_region_begin(name, addr);
-   }
-}
-
-void vftrace_region_end(const char *name) {
-   (void) name;
-   if (vftrace.state == on) {
-      vftr_user_region_end();
    }
 }

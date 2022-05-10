@@ -108,7 +108,8 @@ threadstack_t *vftr_update_threadstack_region(threadstack_t *my_threadstack,
                                               thread_t *my_thread,
                                               uintptr_t region_addr,
                                               const char *name,
-                                              vftrace_t *vftrace) {
+                                              vftrace_t *vftrace,
+                                              bool precise) {
    // search for the function in the stacks callees
    int calleeID = vftr_linear_search_callee(vftrace->process.stacktree.stacks,
                                             my_threadstack->stackID,
@@ -121,7 +122,7 @@ threadstack_t *vftr_update_threadstack_region(threadstack_t *my_threadstack,
                                 &(vftrace->process.stacktree),
                                 name,
                                 function, region_addr,
-                                vftrace->environment.regions_precise.value.bool_val);
+                                precise);
    }
    // push the function onto the threads stacklist
    vftr_threadstack_push(calleeID, &(my_thread->stacklist));

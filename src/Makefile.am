@@ -61,6 +61,7 @@ libvftrace_la_SOURCES += vftrace_state.c \
 			 processes.c \
 			 threads.c \
 			 threadstacks.c \
+			 internal_regions.c \
 			 profiling.c \
 			 log_profile.c \
 			 sampling.c \
@@ -144,4 +145,3 @@ libvftr_pause_la_CFLAGS = -finstrument-functions
 
 clean-local:
 	rm -f *.mod
-
