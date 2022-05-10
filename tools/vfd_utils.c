@@ -176,7 +176,7 @@ void print_message_sample(FILE *vfd_fp, FILE *out_fp) {
    fprintf(out_fp, "%16s count=%d type=%s(%iBytes) ",
            "", count, vftr_get_mpitype_string_from_idx(type_idx), type_size);
    fprintf(out_fp, "rate= %8.4lf MiB/s peer=%d tag=%d\n",
-           rate/(1024.0*1024.0), rank, tag);
+           rate, rank, tag);
    fprintf(out_fp, "%16.6f %s end\n",
            dtend, dir == send ? "send" : "recv");
 }
