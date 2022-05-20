@@ -32,9 +32,9 @@ library_t vftr_parse_maps_line(char *line) {
    if (permissions[2] != 'x') {return library;}
    char *offset = strtok(NULL, " ");
 #ifndef __VMAP_OFFSET
-   if (strncmp(offset, "00000000", 8)) {return library;}
+   if (strncmp(offset, "00000000", 8*sizeof(char))) {return library;}
 #endif
-   // skip over devide
+   // skip over device
    strtok(NULL," ");
    // skip over inode
    strtok(NULL," ");
