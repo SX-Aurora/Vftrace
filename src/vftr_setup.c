@@ -59,6 +59,9 @@ char *vftr_end_date;
 
 bool in_vftr_finalize;
 
+int lib_opened;
+char *dlopened_lib;
+
 void vftr_print_disclaimer_full (FILE *fp) {
     fprintf (fp, 
         "\nThis program is free software; you can redistribute it and/or modify\n"

@@ -26,9 +26,6 @@
 
 #include "vftr_dlopen.h"
 
-int lib_opened;
-char *dlopened_lib;
-
 static void (*real_dlopen)(const char *filename, int flag)=NULL;
 
 static void real_dlopen_init () {
