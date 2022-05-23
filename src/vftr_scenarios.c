@@ -136,18 +136,18 @@ void vftr_trim_trailing_white_spaces (char *s) {
 
 te_expr **expr;
 
-bool read_counters;
-bool read_observables;
-bool read_hwc_name;
-bool read_name;
-bool read_symbol;
-bool read_formula;
-bool read_runtime;
-bool read_protected;
-bool read_default;
-bool read_unit;
-bool read_header;
-bool read_decimal_places;
+bool vftr_read_counters;
+bool vftr_read_observables;
+bool vftr_read_hwc_name;
+bool vftr_read_name;
+bool vftr_read_symbol;
+bool vftr_read_formula;
+bool vftr_read_runtime;
+bool vftr_read_protected;
+bool vftr_read_default;
+bool vftr_read_unit;
+bool vftr_read_header;
+bool vftr_read_decimal_places;
 
 int vftr_read_json (const char *js, jsmntok_t *tok, size_t count) {
 	jsmntok_t *key;
@@ -155,68 +155,68 @@ int vftr_read_json (const char *js, jsmntok_t *tok, size_t count) {
 		return 1;
 	} else if (tok->type == JSMN_STRING) {
 		char *s = strndup(js + tok->start, tok->end - tok->start);
-		if (read_hwc_name) {
+		if (vftr_read_hwc_name) {
 			vftr_scenario_expr_counter_names[vftr_scenario_expr_n_vars] = strdup(s);
-			read_hwc_name = false;
-		} else if (read_counters && read_symbol) {
+			vftr_read_hwc_name = false;
+		} else if (vftr_read_counters && vftr_read_symbol) {
 			vftr_scenario_expr_vars[vftr_scenario_expr_n_vars] = strdup(s);
-			read_symbol = false;
+			vftr_read_symbol = false;
 			vftr_scenario_expr_n_vars++;
-		} else if (read_name) {
+		} else if (vftr_read_name) {
 			vftr_scenario_expr_formulas[vftr_scenario_expr_n_formulas++].name = strdup(s);
 			vftr_scenario_expr_formulas[vftr_scenario_expr_n_formulas-1].protected_values = NULL;
-			read_name = false;
-		} else if (read_formula) {
+			vftr_read_name = false;
+		} else if (vftr_read_formula) {
 			vftr_scenario_expr_formulas[vftr_scenario_expr_n_formulas-1].formula = strdup(s);		
-			read_formula = false;
-		} else if (read_runtime) {
+			vftr_read_formula = false;
+		} else if (vftr_read_runtime) {
 			if (!strcmp (s, "yes")) {
 				vftr_scenario_expr_formulas[vftr_scenario_expr_n_formulas-1].integrated = false;
 			}
-			read_runtime = false;	
-		} else if (read_protected) {
+			vftr_read_runtime = false;	
+		} else if (vftr_read_protected) {
 			vftr_scenario_expr_formulas[vftr_scenario_expr_n_formulas-1].protected_values = strdup(s);
-			read_protected = false;
-		} else if (read_default) {
+			vftr_read_protected = false;
+		} else if (vftr_read_default) {
 			sscanf (s, "%lf", &vftr_scenario_expr_formulas[vftr_scenario_expr_n_formulas-1].default_value);	
-			read_default = false;
-		} else if (read_unit) {
+			vftr_read_default = false;
+		} else if (vftr_read_unit) {
 			if (strcmp (s, "")) vftr_scenario_expr_format[vftr_scenario_expr_n_formulas-1].unit = strdup (s);
-			read_unit = false;
-		} else if (read_header) {
+			vftr_read_unit = false;
+		} else if (vftr_read_header) {
 			vftr_scenario_expr_format[vftr_scenario_expr_n_formulas-1].header = strdup(s);
-			read_header = false;
-		} else if (read_decimal_places) {
+			vftr_read_header = false;
+		} else if (vftr_read_decimal_places) {
 			vftr_scenario_expr_format[vftr_scenario_expr_n_formulas-1].decimal_places = atoi(s);
-			read_decimal_places = false;
+			vftr_read_decimal_places = false;
 		}
 
 		if (!strcmp (s, "counters")) {
-			read_counters = true;
-			read_observables = false;
+			vftr_read_counters = true;
+			vftr_read_observables = false;
 		} else if (!strcmp (s, "observables")) {
-			read_observables = true;
-			read_counters = false;
+			vftr_read_observables = true;
+			vftr_read_counters = false;
 		} else if (!strcmp (s, "hwc_name")) {
-			read_hwc_name = true;
+			vftr_read_hwc_name = true;
 		} else if (!strcmp (s, "name")) {
-			read_name = true;
+			vftr_read_name = true;
 		} else if (!strcmp (s, "symbol")) {
-			read_symbol = true;
+			vftr_read_symbol = true;
 		} else if (!strcmp (s, "formula")) {
-			read_formula = true;
+			vftr_read_formula = true;
 		} else if (!strcmp (s, "divide_by_runtime")) {
-			read_runtime = true;
+			vftr_read_runtime = true;
 		} else if (!strcmp (s, "protected")) {
-			read_protected = true;
+			vftr_read_protected = true;
 		} else if (!strcmp (s, "default")) {
-			read_default = true;
+			vftr_read_default = true;
 		} else if (!strcmp (s, "unit")) {
-			read_unit = true;
+			vftr_read_unit = true;
 		} else if (!strcmp (s, "decimal_places")) {
-			read_decimal_places = true;
+			vftr_read_decimal_places = true;
 		} else if (!strcmp (s, "header")) {
-			read_header = true;
+			vftr_read_header = true;
 		}
 		return 1;
 	} else if (tok->type == JSMN_OBJECT) {
@@ -251,13 +251,13 @@ int vftr_read_scenario_file (char *filename, FILE *fp_ext) {
 	size_t jslen = 0;
 	FILE *fp;
 
-	read_counters = 0;
-	read_observables = 0;
-	read_name = 0;
-	read_symbol = 0;
-	read_formula = 0;
-	read_protected = 0;
-	read_default = 0;
+	vftr_read_counters = 0;
+	vftr_read_observables = 0;
+	vftr_read_name = 0;
+	vftr_read_symbol = 0;
+	vftr_read_formula = 0;
+	vftr_read_protected = 0;
+	vftr_read_default = 0;
 
 	jsmn_init (&p);
 

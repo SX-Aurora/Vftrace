@@ -47,9 +47,6 @@ FILE *vftr_log = NULL;
 // Individual vftrace-internal file id
 char vftr_fileid[VFTR_FILEIDSIZE];
 
-// The next time step where a snapshot is written to the vfd file
-long long vftr_nextsampletime;
-
 // We only need this variable to create the .log and .vfd file names.
 // It is global because it must be created before MPI_Init is called.
 // This is because the program path is determined by opening the file

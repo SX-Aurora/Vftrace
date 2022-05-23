@@ -15,9 +15,6 @@ extern FILE *vftr_log;
 // Individual vftrace-internal file id
 extern char vftr_fileid[VFTR_FILEIDSIZE];
 
-// The next time step where a snapshot is written to the vfd file
-extern long long vftr_nextsampletime;
-
 extern char *vftr_program_path;
 
 // The basename of Vftrace log files

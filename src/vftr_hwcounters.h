@@ -33,11 +33,11 @@ extern long long vftr_prog_cycles;
 #define MAX_EVENTS                   (MAX_HWC_EVENTS+10)
 
 #if defined(HAS_SXHWC)
-#define vftr_read_counters vftr_read_counters_sx
+#define VFTR_READ_COUNTERS vftr_read_counters_sx
 #elif defined(HAS_PAPI)
-#define vftr_read_counters vftr_read_counters_papi
+#define VFTR_READ_COUNTERS vftr_read_counters_papi
 #else
-#define vftr_read_counters vftr_read_counters_dummy
+#define VFTR_READ_COUNTERS vftr_read_counters_dummy
 #endif
 
 extern long long vftr_echwc[MAX_HWC_EVENTS];
@@ -46,7 +46,7 @@ int vftr_init_hwc (char *scenario_file);
 void vftr_init_hwc_memtrace();
 int vftr_stop_hwc ();
 
-void vftr_read_counters (long long *event);
+void VFTR_READ_COUNTERS (long long *event);
 void vftr_papi_counter (char *name);
 void vftr_sx_counter (char *name, int id);
 
