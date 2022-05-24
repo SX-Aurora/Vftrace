@@ -38,7 +38,7 @@ AX_CHECK_VE
 AX_ENABLE_MPI
 
 # Check OMP
-AX_CHECK_OPENMP
+AX_ENABLE_OPENMP
 
 # Enable hardware counters
 AX_ENABLE_HWC

@@ -31,7 +31,7 @@ AM_CFLAGS += -D_MPI
 AM_FCFLAGS += -D_MPI
 endif 
 
-if WITH_OMP
+if ENABLE_OMP
 AM_CFLAGS += -D_OMP
 AM_FCFLAGS += -D_OMP
 endif

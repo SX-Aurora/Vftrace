@@ -34,7 +34,7 @@ endif
 endif
 endif
 
-if WITH_OMP
+if ENABLE_OMP
 SUBDIRS += omp
 libvftrace_la_LIBADD += omp/libvftr_omp.la
 endif
@@ -105,7 +105,7 @@ libvftrace_la_CFLAGS += -D_MPI
 libvftrace_la_FCFLAGS += -D_MPI
 endif 
 
-if WITH_OMP
+if ENABLE_OMP
 libvftrace_la_CFLAGS += -D_OMP
 libvftrace_la_FCFLAGS += -D_OMP
 endif

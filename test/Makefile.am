@@ -1,7 +1,7 @@
 SUBDIRS =
 SUBDIRS += units
 SUBDIRS += user_functions
-if WITH_OMP
+if ENABLE_OMP
 SUBDIRS += omp
 endif
 
