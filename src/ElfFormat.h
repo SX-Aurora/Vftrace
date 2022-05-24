@@ -7,6 +7,8 @@
 
 Elf64_Ehdr vftr_read_elf_header(FILE *fp);
 
+Elf64_Phdr *vftr_read_elf_program_header(FILE *fp, Elf64_Ehdr ElfHeader);
+
 Elf64_Shdr *vftr_read_elf_section_header(FILE *fp, Elf64_Ehdr ElfHeader);
 
 char *vftr_read_elf_header_string_table(FILE *fp, Elf64_Ehdr ElfHeader,

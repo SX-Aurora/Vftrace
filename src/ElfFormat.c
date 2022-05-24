@@ -14,6 +14,21 @@ Elf64_Ehdr vftr_read_elf_header(FILE *fp) {
    return ElfHeader;
 }
 
+Elf64_Phdr *vftr_read_elf_program_header(FILE *fp, Elf64_Ehdr ElfHeader) {
+   Elf64_Phdr *ElfProgramHeader = NULL;
+   int nProgramHeaderEntries = ElfHeader.e_phnum;
+   size_t programHeaderSize = nProgramHeaderEntries*sizeof(Elf64_Phdr);
+   ElfProgramHeader = (Elf64_Phdr*) malloc(programHeaderSize);
+   fseek(fp, ElfHeader.e_phoff, SEEK_SET);
+   size_t read_bytes = fread(ElfProgramHeader, 1,
+                             programHeaderSize, fp);
+   if (read_bytes != programHeaderSize) {
+      perror("Reading Elf program headers");
+      abort();
+   }
+   return ElfProgramHeader;
+}
+
 Elf64_Shdr *vftr_read_elf_section_header(FILE *fp, Elf64_Ehdr ElfHeader) {
    Elf64_Shdr *ElfSectionHeader = NULL;
    int nSectionHeaderEntries = ElfHeader.e_shnum;

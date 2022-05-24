@@ -33,9 +33,6 @@ AX_CHECK_UINTPTR
 # Check if fortran is selected or not
 AX_ENABLE_FORTRAN
 
-# Check if elf-symbols align with function pointers
-AX_CHECK_VMAP_OFFSET
-
 # Check if on VE or VH (x86)
 AX_CHECK_VE
 ################################

@@ -42,6 +42,7 @@ check_PROGRAMS += radixsort_uint64 \
 		  sort_double_copy_descending
 check_PROGRAMS += chop_chars
 check_PROGRAMS += symbols_1 \
+		  symbols_2 \
 		  symbols_precise \
 		  pauseresume_precise
 check_PROGRAMS += environment_1 \
@@ -117,6 +118,10 @@ symbols_1_SOURCES = $(srcdir)/symbols_1.c \
 		    $(srcdir)/protofuncts.c
 symbols_1_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
 symbols_1_LDFLAGS = $(AM_LDFLAGS)
+
+symbols_2_SOURCES = $(srcdir)/symbols_2.c
+symbols_2_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
+symbols_2_LDFLAGS = $(AM_LDFLAGS)
 
 symbols_precise_SOURCES = $(srcdir)/symbols_precise.c \
 	           $(srcdir)/protofuncts.c
@@ -253,6 +258,7 @@ dist_check_SCRIPTS += radixsort_uint64.sh \
 		      sort_double_copy_descending.sh
 dist_check_SCRIPTS += chop_chars.sh
 dist_check_SCRIPTS += symbols_1.sh \
+		      symbols_2.sh \
 		      symbols_precise.sh \
 		      pauseresume_precise.sh
 dist_check_SCRIPTS += environment_1.sh \
