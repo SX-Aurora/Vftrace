@@ -24,7 +24,6 @@ AC_DEFUN([AX_ENABLE_FORTRAN], [
    AM_CONDITIONAL([ENABLE_FORTRAN], [test "$enable_fortran" = "yes"])
    AC_MSG_RESULT([$enable_fortran])
 
-
    AC_ARG_ENABLE(
       [fortran08],
       [AS_HELP_STRING([--enable-fortran08], [enable fortran08 interfaces for vftrace [default=yes]])],
