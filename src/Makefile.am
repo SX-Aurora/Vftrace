@@ -100,10 +100,6 @@ libvftrace_la_CFLAGS += -DHAS_PAPI
 endif
 endif
 
-if VMAP_OFFSET
-libvftrace_la_CFLAGS += -D__VMAP_OFFSET
-endif
-
 if WITH_MPI
 libvftrace_la_CFLAGS += -D_MPI
 libvftrace_la_FCFLAGS += -D_MPI
