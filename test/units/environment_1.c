@@ -19,7 +19,7 @@ int main(int argc, char **argv) {
   putenv("VFTR_OFF=yes");
   environment_t environment;
   environment = vftr_read_environment();
-  // TODO: vftr_assert_environment();
+  vftr_environment_assert(stderr, environment);
   vftr_print_env(stdout, environment);
   vftr_environment_free(&environment);
 
@@ -34,7 +34,7 @@ int main(int argc, char **argv) {
   putenv("VFTR_SAMPLETIME=12.34");
 
   environment = vftr_read_environment();
-  // TODO: vftr_assert_environment();
+  vftr_environment_assert(stderr, environment);
   vftr_print_env(stdout, environment);
   vftr_environment_free(&environment);
 

@@ -13,4 +13,6 @@ void vftr_check_env_names(FILE *fp, environment_t *environment_ptr);
 
 void vftr_environment_free(environment_t *environment_ptr);
 
+void vftr_environment_assert(FILE *fp, environment_t environment);
+
 #endif
