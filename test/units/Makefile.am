@@ -1,4 +1,4 @@
-if WITH_MPI
+if ENABLE_MPI
 if USES_OPEN_MPI
    AM_TESTS_ENVIRONMENT=. $(top_srcdir)/test/environment/set_openmpi.sh;
 else
@@ -25,7 +25,7 @@ AM_CFLAGS = -I$(top_srcdir)/src/ -I$(top_srcdir)/src/mpi/utils/
 
 AM_LDFLAGS = -L$(top_builddir)/src/.libs -lvftrace -lm
 
-if WITH_MPI
+if ENABLE_MPI
   AM_CFLAGS += -D_MPI
 if USES_NEC_MPI
   AM_LDFLAGS += -mpiprof
@@ -50,11 +50,11 @@ check_PROGRAMS += environment_1 \
 check_PROGRAMS += hashing \
 		  stackhashing \
 		  collatehashes
-if WITH_MPI
+if ENABLE_MPI
 check_PROGRAMS += collatehashes_parallel
 endif
 check_PROGRAMS += collatestacks
-if WITH_MPI
+if ENABLE_MPI
 check_PROGRAMS += collatestacks_parallel_1 \
 		  collatestacks_parallel_2_1 \
 		  collatestacks_parallel_2_2 \
@@ -154,7 +154,7 @@ collatehashes_SOURCES = $(srcdir)/collatehashes.c \
 collatehashes_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
 collatehashes_LDFLAGS = $(AM_LDFLAGS)
 
-if WITH_MPI
+if ENABLE_MPI
 collatehashes_parallel_SOURCES = $(srcdir)/collatehashes_parallel.c \
 				 $(srcdir)/dummysymboltable.c 
 collatehashes_parallel_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
@@ -166,7 +166,7 @@ collatestacks_SOURCES = $(srcdir)/collatestacks.c \
 collatestacks_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
 collatestacks_LDFLAGS = $(AM_LDFLAGS)
 
-if WITH_MPI
+if ENABLE_MPI
 collatestacks_parallel_1_SOURCES = $(srcdir)/collatestacks_parallel_1.c \
 			       $(srcdir)/dummysymboltable.c
 collatestacks_parallel_1_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
@@ -266,11 +266,11 @@ dist_check_SCRIPTS += environment_1.sh \
 dist_check_SCRIPTS += hashing.sh \
 		      stackhashing.sh \
 		      collatehashes.sh
-if WITH_MPI
+if ENABLE_MPI
 dist_check_SCRIPTS += collatehashes_parallel.sh
 endif
 dist_check_SCRIPTS += collatestacks.sh
-if WITH_MPI
+if ENABLE_MPI
 dist_check_SCRIPTS += collatestacks_parallel_1.sh \
 		      collatestacks_parallel_2.sh \
 		      collatestacks_parallel_3.sh

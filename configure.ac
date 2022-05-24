@@ -35,7 +35,7 @@ AX_CHECK_VE
 ################################
 
 # Check MPI
-AX_CHECK_MPI
+AX_ENABLE_MPI
 
 # Check OMP
 AX_CHECK_OPENMP

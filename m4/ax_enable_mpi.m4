@@ -11,19 +11,23 @@
 #   This macro checks if MPI support is wanted and available
 #
 
-AC_DEFUN([AX_CHECK_MPI], [
+AC_DEFUN([AX_ENABLE_MPI], [
    AC_PREREQ(2.50)
-   AC_ARG_WITH([mpi],
-      [AS_HELP_STRING([--with-mpi],
-         [compile with MPI support. If none is found,
-            MPI is not used. Default: no])])
-   AM_CONDITIONAL([WITH_MPI], [test "x$with_mpi" = "xyes"])
+   AC_ARG_ENABLE([mpi],
+      [AS_HELP_STRING([--enable-mpi], [enable MPI profiling layer. [default=no]])],
+      [enable_mpi_present="yes"],
+      [enable_mpi_present="no"])
+   AC_MSG_CHECKING([whether MPI is enabled])
+   # if the option is not given, resort to default (no)
+   AS_IF([test "x$enable_mpi_present" = "xno"], [enable_mpi=no])
+   AM_CONDITIONAL([ENABLE_MPI], [test "x$enable_mpi" = "xyes"])
+   AC_MSG_RESULT([$enable_mpi])
 
    # NEC_MPI for x86 links mpi_mem and not mpi
    # Check which one is required and use that one
    # in further tests
    AM_COND_IF(
-      [WITH_MPI],
+      [ENABLE_MPI],
       [AC_LANG(C)
        AC_CHECK_LIB(
           [mpi_mem],
@@ -34,7 +38,7 @@ AC_DEFUN([AX_CHECK_MPI], [
    
    # check if compiler supports C-MPI
    AM_COND_IF(
-      [WITH_MPI],
+      [ENABLE_MPI],
       [AC_LANG(C)
        AC_CHECK_LIB(
           [${mpi_lib_name}],
@@ -46,7 +50,7 @@ AC_DEFUN([AX_CHECK_MPI], [
    AM_COND_IF(
       [ENABLE_FORTRAN],
       [AM_COND_IF(
-         [WITH_MPI],
+         [ENABLE_MPI],
          [AC_LANG(Fortran)
           AC_CHECK_LIB(
              [${mpi_lib_name}],
@@ -55,7 +59,7 @@ AC_DEFUN([AX_CHECK_MPI], [
              [AC_MSG_FAILURE([unable to find Fortran-MPI])])])])
 
    # Check for MPI-vendor
-   AM_COND_IF([WITH_MPI], [
+   AM_COND_IF([ENABLE_MPI], [
       # OpenMPI
       AC_MSG_CHECKING([whether OpenMPI is used])
       if test "x$(mpirun --version 2> /dev/null | grep "Open MPI" | wc -l)" = "x1" ; then
@@ -71,7 +75,7 @@ AC_DEFUN([AX_CHECK_MPI], [
    # and the old one deprecated.
    # We need the flag as some mpi-tests require four processes
    # which can be problematic on systems with few cores
-   AM_COND_IF([WITH_MPI], [
+   AM_COND_IF([ENABLE_MPI], [
       AM_COND_IF([USES_OPEN_MPI], [
          AC_MSG_CHECKING([OpenMPI version])
          ompi_version="$(mpirun --version 2> /dev/null | head -n 1 | awk '{print $NF}')"
@@ -82,7 +86,7 @@ AC_DEFUN([AX_CHECK_MPI], [
    AM_CONDITIONAL([OMPI_VERSION_LT5],
                   [test "x$ompi_version_lt5" = "xyes"])
 
-   AM_COND_IF([WITH_MPI], [
+   AM_COND_IF([ENABLE_MPI], [
       # NEC-MPI
       AC_MSG_CHECKING([whether NEC-MPI is used])
       if test "x$(mpirun --version 2> /dev/null | grep "NEC MPI" | wc -l)" = "x1" ; then
@@ -94,7 +98,7 @@ AC_DEFUN([AX_CHECK_MPI], [
    AM_CONDITIONAL([USES_NEC_MPI],
                   [test "x$uses_nec_mpi" = "xyes"])
 
-   AM_COND_IF([WITH_MPI], [
+   AM_COND_IF([ENABLE_MPI], [
       # IntelMPI
       AC_MSG_CHECKING([whether IntelMPI is used])
       if test "x$(mpirun --version 2> /dev/null | grep "Intel MPI" | wc -l)" = "x1" ; then
@@ -112,7 +116,7 @@ AC_DEFUN([AX_CHECK_MPI], [
       [ENABLE_FORTRAN],
       [AC_LANG(Fortran)
        AM_COND_IF(
-          [WITH_MPI],
+          [ENABLE_MPI],
           [AC_MSG_CHECKING([whether MPI-F90 supports TS29113])
            AC_RUN_IFELSE(
              [AC_LANG_SOURCE([[
@@ -131,7 +135,7 @@ END PROGRAM test]])],
    AM_COND_IF(
       [ENABLE_FORTRAN],
       [AM_COND_IF(
-         [WITH_MPI],
+         [ENABLE_MPI],
          [AC_MSG_CHECKING([whether MPI-F08 supports TS29113])
           AC_RUN_IFELSE(
             [AC_LANG_SOURCE([[

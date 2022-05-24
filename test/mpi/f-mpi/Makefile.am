@@ -1,4 +1,4 @@
-if WITH_MPI
+if ENABLE_MPI
 if USES_OPEN_MPI
    AM_TESTS_ENVIRONMENT=. $(top_srcdir)/test/environment/set_openmpi.sh;
 else

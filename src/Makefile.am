@@ -20,7 +20,7 @@ libvftrace_la_LIBADD += ${top_builddir}/external/libtinyexpr.la
 #internal libraries
 libvftrace_la_LIBADD += libvftr_pause.la
 libvftrace_la_LIBADD += mpi/utils/libvftr_mpi_utils.la
-if WITH_MPI
+if ENABLE_MPI
 libvftrace_la_LIBADD += mpi/vftr_mpi/libvftr_mpi.la
 libvftrace_la_LIBADD += mpi/c-wrapper/libvftr_cmpiwrap.la \
 			mpi/c2vftr/libvftr_mpi_c2vftr.la
@@ -100,7 +100,7 @@ libvftrace_la_CFLAGS += -DHAS_PAPI
 endif
 endif
 
-if WITH_MPI
+if ENABLE_MPI
 libvftrace_la_CFLAGS += -D_MPI
 libvftrace_la_FCFLAGS += -D_MPI
 endif 

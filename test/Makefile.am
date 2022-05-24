@@ -5,6 +5,6 @@ if WITH_OMP
 SUBDIRS += omp
 endif
 
-if WITH_MPI 
+if ENABLE_MPI 
 SUBDIRS += mpi
 endif

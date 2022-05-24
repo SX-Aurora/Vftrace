@@ -21,7 +21,7 @@ AC_DEFUN([AX_ENABLE_FORTRAN], [
    AC_MSG_CHECKING([whether Fortran is enabled])
    # if the option is not given, resort to default (yes)
    AS_IF([test "x$enable_fortran_present" = "xno"], [enable_fortran="yes"])
-   AM_CONDITIONAL([ENABLE_FORTRAN], [test "$enable_fortran" = "yes"])
+   AM_CONDITIONAL([ENABLE_FORTRAN], [test "x$enable_fortran" = "xyes"])
    AC_MSG_RESULT([$enable_fortran])
 
    AC_ARG_ENABLE(
@@ -37,6 +37,6 @@ AC_DEFUN([AX_ENABLE_FORTRAN], [
       [ENABLE_FORTRAN],
       [],
       [enable_fortran08="no"])
-   AM_CONDITIONAL([ENABLE_FORTRAN08], [test "$enable_fortran08" = "yes"])
+   AM_CONDITIONAL([ENABLE_FORTRAN08], [test "x$enable_fortran08" = "xyes"])
    AC_MSG_RESULT([$enable_fortran])
 ])

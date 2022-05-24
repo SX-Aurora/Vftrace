@@ -1,4 +1,4 @@
-if WITH_MPI
+if ENABLE_MPI
 if USES_OPEN_MPI
    AM_TESTS_ENVIRONMENT=. $(top_srcdir)/test/environment/set_openmpi.sh;
 else
@@ -26,7 +26,7 @@ AM_CFLAGS += -I$(top_srcdir)/src/ -I$(top_srcdir)/src/omp/
 
 AM_FCFLAGS = -O3 -finstrument-functions
 
-if WITH_MPI
+if ENABLE_MPI
 AM_CFLAGS += -D_MPI
 AM_FCFLAGS += -D_MPI
 endif 

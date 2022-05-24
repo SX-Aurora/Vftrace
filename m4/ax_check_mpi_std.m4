@@ -14,7 +14,7 @@
 AC_DEFUN([AX_CHECK_MPI_STD], [
    AC_PREREQ(2.50)
    mpi_version=none
-   AM_COND_IF([WITH_MPI],[
+   AM_COND_IF([ENABLE_MPI],[
       AC_MSG_CHECKING([which MPI-standard])
       AC_LANG(C)
       for maj_ver in 1 2 3 4;
@@ -36,57 +36,57 @@ AC_DEFUN([AX_CHECK_MPI_STD], [
       AC_MSG_RESULT([$mpi_version])])
    AM_CONDITIONAL([VALID_MPI_VERSION],
                   [test "x$mpi_version" != "xnone"])
-   AM_COND_IF([WITH_MPI],[
+   AM_COND_IF([ENABLE_MPI],[
       AM_COND_IF([VALID_MPI_VERSION],
                  [],
                  [AC_MSG_ERROR([Unable to determine supported MPI-standard!])])])
 
-   AM_COND_IF([WITH_MPI],[AX_COMPARE_VERSION([$mpi_version],[ge],[1.0],
+   AM_COND_IF([ENABLE_MPI],[AX_COMPARE_VERSION([$mpi_version],[ge],[1.0],
       [has_mpi_std_1_0=yes],
       [has_mpi_std_1_0=no])])
    AM_CONDITIONAL([HAS_MPI_STD_1_0], [test "x$has_mpi_std_1_0" = "xyes"])
 
-   AM_COND_IF([WITH_MPI],[AX_COMPARE_VERSION([$mpi_version],[ge],[1.1],
+   AM_COND_IF([ENABLE_MPI],[AX_COMPARE_VERSION([$mpi_version],[ge],[1.1],
       [has_mpi_std_1_1=yes],
       [has_mpi_std_1_1=no])])
    AM_CONDITIONAL([HAS_MPI_STD_1_1], [test "x$has_mpi_std_1_1" = "xyes"])
 
-   AM_COND_IF([WITH_MPI],[AX_COMPARE_VERSION([$mpi_version],[ge],[1.2],
+   AM_COND_IF([ENABLE_MPI],[AX_COMPARE_VERSION([$mpi_version],[ge],[1.2],
       [has_mpi_std_1_2=yes],
       [has_mpi_std_1_2=no])])
    AM_CONDITIONAL([HAS_MPI_STD_1_2], [test "x$has_mpi_std_1_2" = "xyes"])
 
-   AM_COND_IF([WITH_MPI],[AX_COMPARE_VERSION([$mpi_version],[ge],[1.3],
+   AM_COND_IF([ENABLE_MPI],[AX_COMPARE_VERSION([$mpi_version],[ge],[1.3],
       [has_mpi_std_1_3=yes],
       [has_mpi_std_1_3=no])])
    AM_CONDITIONAL([HAS_MPI_STD_1_3], [test "x$has_mpi_std_1_3" = "xyes"])
 
-   AM_COND_IF([WITH_MPI],[AX_COMPARE_VERSION([$mpi_version],[ge],[2.0],
+   AM_COND_IF([ENABLE_MPI],[AX_COMPARE_VERSION([$mpi_version],[ge],[2.0],
       [has_mpi_std_2_0=yes],
       [has_mpi_std_2_0=no])])
    AM_CONDITIONAL([HAS_MPI_STD_2_0], [test "x$has_mpi_std_2_0" = "xyes"])
 
-   AM_COND_IF([WITH_MPI],[AX_COMPARE_VERSION([$mpi_version],[ge],[2.1],
+   AM_COND_IF([ENABLE_MPI],[AX_COMPARE_VERSION([$mpi_version],[ge],[2.1],
       [has_mpi_std_2_1=yes],
       [has_mpi_std_2_1=no])])
    AM_CONDITIONAL([HAS_MPI_STD_2_1], [test "x$has_mpi_std_2_1" = "xyes"])
 
-   AM_COND_IF([WITH_MPI],[AX_COMPARE_VERSION([$mpi_version],[ge],[2.2],
+   AM_COND_IF([ENABLE_MPI],[AX_COMPARE_VERSION([$mpi_version],[ge],[2.2],
       [has_mpi_std_2_2=yes],
       [has_mpi_std_2_2=no])])
    AM_CONDITIONAL([HAS_MPI_STD_2_2], [test "x$has_mpi_std_2_2" = "xyes"])
 
-   AM_COND_IF([WITH_MPI],[AX_COMPARE_VERSION([$mpi_version],[ge],[3.0],
+   AM_COND_IF([ENABLE_MPI],[AX_COMPARE_VERSION([$mpi_version],[ge],[3.0],
       [has_mpi_std_3_0=yes],
       [has_mpi_std_3_0=no])])
    AM_CONDITIONAL([HAS_MPI_STD_3_0], [test "x$has_mpi_std_3_0" = "xyes"])
 
-   AM_COND_IF([WITH_MPI],[AX_COMPARE_VERSION([$mpi_version],[ge],[3.1],
+   AM_COND_IF([ENABLE_MPI],[AX_COMPARE_VERSION([$mpi_version],[ge],[3.1],
       [has_mpi_std_3_1=yes],
       [has_mpi_std_3_1=no])])
    AM_CONDITIONAL([HAS_MPI_STD_3_1], [test "x$has_mpi_std_1_1" = "xyes"])
 
-   AM_COND_IF([WITH_MPI],[AX_COMPARE_VERSION([$mpi_version],[ge],[4.0],
+   AM_COND_IF([ENABLE_MPI],[AX_COMPARE_VERSION([$mpi_version],[ge],[4.0],
       [has_mpi_std_4_0=yes],
       [has_mpi_std_4_0=no])])
    AM_CONDITIONAL([HAS_MPI_STD_4_0], [test "x$has_mpi_std_4_0" = "xyes"])

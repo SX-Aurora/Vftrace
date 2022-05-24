@@ -2,7 +2,7 @@ noinst_LTLIBRARIES = libvftr_mpi_utils.la
 
 libvftr_mpi_utils_la_SOURCES = mpi_util_types.c
 
-if WITH_MPI
+if ENABLE_MPI
 libvftr_mpi_utils_la_SOURCES += mpi_logging.c \
 				mpi_buf_addr_const.c \
 				sync_time.c
@@ -39,7 +39,7 @@ endif
 
 libvftr_mpi_utils_la_CFLAGS =
 libvftr_mpi_utils_la_FCFLAGS =
-if WITH_MPI
+if ENABLE_MPI
 libvftr_mpi_utils_la_CFLAGS += -D_MPI
 libvftr_mpi_utils_la_FCFLAGS +=
 endif

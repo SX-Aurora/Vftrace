@@ -21,6 +21,6 @@ AC_DEFUN([AX_ENABLE_HWC], [
    AC_MSG_CHECKING([whether hardware counters are enabled])
    # if the option is not given, resort to default (no)
    AS_IF([test "x$enable_hwc_present" = "xno"], [enable_hwc="no"])
-   AM_CONDITIONAL([ENABLE_HWC], [test "$enable_hwc" = "yes"])
+   AM_CONDITIONAL([ENABLE_HWC], [test "x$enable_hwc" = "xyes"])
    AC_MSG_RESULT([$enable_hwc])
 ])

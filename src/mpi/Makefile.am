@@ -1,6 +1,6 @@
 SUBDIRS = utils
 
-if WITH_MPI
+if ENABLE_MPI
 SUBDIRS +=vftr_mpi
 
 SUBDIRS += c2vftr \

@@ -1,4 +1,4 @@
-if WITH_MPI
+if ENABLE_MPI
 if USES_OPEN_MPI
    AM_TESTS_ENVIRONMENT=. $(top_srcdir)/test/environment/set_openmpi.sh;
 else
@@ -28,7 +28,7 @@ AM_FCFLAGS += -I$(top_builddir)/src/
 
 AM_LDFLAGS = -L$(top_builddir)/src/.libs -lvftrace -lm
 
-if WITH_MPI
+if ENABLE_MPI
   AM_CFLAGS += -D_MPI
   AM_FCFLAGS += -D_MPI
 endif
