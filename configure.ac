@@ -21,8 +21,8 @@ AM_PROG_CC_C_O
 # Check if C-compiler supports c99 standard
 AX_CHECK_C99_STD
 
-# Check some sizeof values
-AX_SIZEOF_TYPES
+## Check some sizeof values
+#AX_SIZEOF_TYPES
 
 # check if the uintptr_t type is supported
 AX_CHECK_UINTPTR
