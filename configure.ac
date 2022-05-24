@@ -18,9 +18,6 @@ LT_INIT
 AM_PROG_CC_C_O
 # WO_PROG_COMPILERS()
 ################################
-# Enable debugging output
-AX_ENABLE_DEBUG
-
 # Check if C-compiler supports c99 standard
 AX_CHECK_C99_STD
 
