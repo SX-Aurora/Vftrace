@@ -209,15 +209,12 @@ symboltable_t vftr_read_symbols() {
             if (ELF64_ST_TYPE(s.st_info) == STT_FUNC && s.st_value) {
                int jsymb = nsymold + copiedsymbols;
                copiedsymbols++;
-#if defined(__ve__)
-               symboltable.symbols[jsymb].addr =
-                  (uintptr_t) (s.st_value);
-#else
+               // apply all offsets to the addresses
+               // in order to match them with the called addresses
                off_t lbase = librarylist.libraries[ilib].base;
                off_t loffset = librarylist.libraries[ilib].offset;
                symboltable.symbols[jsymb].addr =
                   (uintptr_t) (s.st_value + lbase - loffset + elf_offset - elf_vaddr);
-#endif
                // Copy symbol name
                symboltable.symbols[jsymb].name = strdup(stringtab+s.st_name);
                symboltable.symbols[jsymb].index = s.st_shndx;
