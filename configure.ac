@@ -44,7 +44,7 @@ AX_ENABLE_OPENMP
 AX_ENABLE_HWC
 
 # Check for Papi library
-AX_PAPI_LIBRARY
+AX_WITH_PAPI_LIBRARY
 
 # Check of libiberty is available
 AX_LIBERTY
