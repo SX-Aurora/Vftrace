@@ -24,14 +24,16 @@ vfd_header_t read_vfd_header(FILE *vfd_fp) {
    fread(header.datestr_end, sizeof(char), datestr_len, vfd_fp);
 
    fread(&(header.interval), sizeof(long long), 1, vfd_fp);
-   fread(&(header.nprocesses), sizeof(unsigned int), 1, vfd_fp);
-   fread(&(header.processID), sizeof(unsigned int), 1, vfd_fp);
+   fread(&(header.nprocesses), sizeof(int), 1, vfd_fp);
+   fread(&(header.processID), sizeof(int), 1, vfd_fp);
+   fread(&(header.nthreads), sizeof(int), 1, vfd_fp);
    fread(&(header.runtime), sizeof(double), 1, vfd_fp);
    fread(&(header.function_samplecount), sizeof(unsigned int), 1, vfd_fp);
    fread(&(header.message_samplecount), sizeof(unsigned int), 1, vfd_fp);
    fread(&(header.nstacks), sizeof(unsigned int), 1, vfd_fp);
    fread(&(header.samples_offset), sizeof(long int), 1, vfd_fp);
    fread(&(header.stacks_offset), sizeof(long int), 1, vfd_fp);
+   fread(&(header.threadtree_offset), sizeof(long int), 1, vfd_fp);
 
    return header;
 }
@@ -46,7 +48,8 @@ void print_vfd_header(FILE *vfd_fp, vfd_header_t vfd_header) {
    fprintf(vfd_fp, "Version ID:      %s\n", vfd_header.package_string);
    fprintf(vfd_fp, "Start Date:      %s\n", vfd_header.datestr_start);
    fprintf(vfd_fp, "End Date:        %s\n", vfd_header.datestr_end);
-   fprintf(vfd_fp, "Processes:       %u of %u\n", vfd_header.processID, vfd_header.nprocesses);
+   fprintf(vfd_fp, "Processes:       %d of %d\n", vfd_header.processID, vfd_header.nprocesses);
+   fprintf(vfd_fp, "Threads:         %d\n", vfd_header.nthreads);
    fprintf(vfd_fp, "Sample interval: %12.6le seconds\n", vfd_header.interval*1.0e-6);
    fprintf(vfd_fp, "Job runtime:     %.3lf seconds\n", vfd_header.runtime);
    fprintf(vfd_fp, "Samples:         %u\n", vfd_header.function_samplecount +
@@ -56,6 +59,7 @@ void print_vfd_header(FILE *vfd_fp, vfd_header_t vfd_header) {
    fprintf(vfd_fp, "Unique stacks:   %u\n", vfd_header.nstacks);
    fprintf(vfd_fp, "Stacks offset:   0x%lx\n", vfd_header.stacks_offset);
    fprintf(vfd_fp, "Sample offset:   0x%lx\n", vfd_header.samples_offset);
+   fprintf(vfd_fp, "Thread offset:   0x%lx\n", vfd_header.threadtree_offset);
 }
 
 bool is_precise (char *s) {
@@ -96,15 +100,20 @@ stack_t *read_stacklist(FILE *vfd_fp, long int stacks_offset,
    // store all the caller callee connections
    // missuse the ncallees value as counter
    // Again the init function needs to be treated separately
-   stacklist[0].callees = (int*) malloc(stacklist[0].ncallees*sizeof(int));
-   stacklist[0].ncallees = 0;
-   for (unsigned int istack=1; istack<nstacks; istack++) {
-      stacklist[istack].callees = (int*) malloc(stacklist[istack].ncallees*sizeof(int));
-      stacklist[istack].ncallees = 0;
-      // register the current stack as callee of the caller
-      stack_t *caller = stacklist+stacklist[istack].caller;
-      caller->callees[caller->ncallees] = istack;
-      caller->ncallees++;
+   if (stacklist[0].ncallees > 0) {
+      stacklist[0].callees = (int*) malloc(stacklist[0].ncallees*sizeof(int));
+      stacklist[0].ncallees = 0;
+      for (unsigned int istack=1; istack<nstacks; istack++) {
+         if (stacklist[istack].ncallees > 0) {
+            stacklist[istack].callees =
+               (int*) malloc(stacklist[istack].ncallees*sizeof(int));
+            stacklist[istack].ncallees = 0;
+         }
+         // register the current stack as callee of the caller
+         stack_t *caller = stacklist+stacklist[istack].caller;
+         caller->callees[caller->ncallees] = istack;
+         caller->ncallees++;
+      }
    }
 
    return stacklist;
@@ -113,7 +122,9 @@ stack_t *read_stacklist(FILE *vfd_fp, long int stacks_offset,
 void free_stacklist(unsigned int nstacks, stack_t *stacklist) {
    for (unsigned int istack=0; istack<nstacks; istack++) {
       free(stacklist[istack].name);
-      free(stacklist[istack].callees);
+      if (stacklist[istack].ncallees > 0) {
+         free(stacklist[istack].callees);
+      }
    }
    free(stacklist);
 }
@@ -133,6 +144,81 @@ void print_stacklist(FILE *out_fp, unsigned int nstacks, stack_t *stacklist) {
       print_stack(out_fp, istack, stacklist);
       fprintf(out_fp, "\n");
    }
+}
+
+thread_t *read_threadtree(FILE *vfd_fp, long int threadtree_offset,
+                          int nthreads) {
+   thread_t *threadtree = (thread_t*) malloc(nthreads*sizeof(thread_t));
+
+   // jump to the threadtree
+   fseek(vfd_fp, threadtree_offset, SEEK_SET);
+
+   // first thread is the root thread with parent id -1
+   threadtree[0].nchildren = 0;
+   fread(&(threadtree[0].parent_thread), sizeof(int), 1, vfd_fp);
+   threadtree[0].children = NULL;
+   threadtree[0].level = 0;
+   threadtree[0].threadID = 0;
+
+   // all other threads
+   for (int ithread=1; ithread<nthreads; ithread++) {
+      threadtree[0].threadID = ithread;
+      threadtree[ithread].nchildren = 0;
+      int parent_thread = 0;
+      fread(&parent_thread, sizeof(int), 1, vfd_fp);
+      threadtree[ithread].parent_thread = parent_thread;
+      // increment the number of children the parent has
+      threadtree[parent_thread].nchildren++;
+      // set the level
+      threadtree[ithread].level = threadtree[parent_thread].level + 1;
+   }
+
+   // store all parent--children relationships
+   // missuse the nchildren as counter
+   // Again the root thread needs to be treated separately
+   if (threadtree[0].nchildren > 0) {
+      threadtree[0].children = (int*) malloc(threadtree[0].nchildren*sizeof(int));
+      threadtree[0].nchildren = 0;
+      for (int ithread=1; ithread<nthreads; ithread++) {
+         if (threadtree[ithread].nchildren > 0) {
+            threadtree[ithread].children =
+               (int*) malloc(threadtree[ithread].nchildren*sizeof(int));
+            threadtree[ithread].nchildren = 0;
+         }
+         // register the current thread as child of the parent
+         thread_t *parent = threadtree+threadtree[ithread].parent_thread;
+         parent->children[parent->nchildren] = ithread;
+         parent->nchildren++;
+      }
+   }
+
+   return threadtree;
+}
+
+void free_threadtree(int nthreads, thread_t *threadtree) {
+   for (int ithread=0; ithread<nthreads; ithread++) {
+      if (threadtree[ithread].nchildren > 0) {
+         free(threadtree[ithread].children);
+      }
+   }
+   free(threadtree);
+}
+
+void print_thread(FILE *out_fp, int ithread, thread_t *threadtree) {
+   thread_t *thread = threadtree+ithread;
+   // print level dependent indentation
+   for (int ilevel=0; ilevel<thread->level; ilevel++) {
+      fprintf(out_fp, "  ");
+   }
+   fprintf(out_fp, "%d\n", thread->threadID);
+   for (int ichild=0; ichild<thread->nchildren; ichild++) {
+      print_thread(out_fp, thread->children[ichild], threadtree);
+   }
+}
+
+void print_threadtree(FILE *out_fp, thread_t *threadtree) {
+   fprintf(out_fp, "Threadtree:\n");
+   print_thread(out_fp, 0, threadtree);
 }
 
 void print_function_sample(FILE *vfd_fp, FILE *out_fp,

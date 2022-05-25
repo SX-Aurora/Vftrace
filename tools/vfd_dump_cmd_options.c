@@ -38,6 +38,13 @@ static struct argp_option possible_options[] = {
       "do not print the samples",
       0
    }, {
+      "show_threadtree",
+      show_threadtree_ID,
+      0,
+      0,
+      "print the threadtree",
+      0
+   }, {
       0
    }
 };
@@ -57,6 +64,9 @@ static error_t parse_cmd_options(int key, char *arg, struct argp_state *state) {
          break;
       case skip_samples_ID:
          options->skip_samples = true;
+         break;
+      case show_threadtree_ID:
+         options->show_threadtree = true;
          break;
       case ARGP_KEY_ARG:
          if (state->arg_num == 0) {
@@ -90,6 +100,7 @@ cmd_options_t parse_command_line_options(int argc, char **argv) {
    options.vfd_filename = NULL;
    options.only_header = false;
    options.skip_samples = false;
+   options.show_threadtree = false;
 
    // actually parse the arguments
    argp_parse(&argp, argc, argv, 0, 0, &options);

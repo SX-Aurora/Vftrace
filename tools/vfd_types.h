@@ -9,14 +9,16 @@ typedef struct {
    char *datestr_start;
    char *datestr_end;
    long long interval;
-   unsigned int nprocesses;
-   unsigned int processID;
+   int nprocesses;
+   int processID;
+   int nthreads;
    double runtime;
    unsigned int function_samplecount;
    unsigned int message_samplecount;
    unsigned int nstacks;
    long int samples_offset;
    long int stacks_offset;
+   long int threadtree_offset;
    // TODO: hardware counters
 } vfd_header_t;
 
@@ -27,5 +29,13 @@ typedef struct {
     int *callees;
     bool precise;
 } stack_t;
+
+typedef struct {
+   int threadID;
+   int parent_thread;
+   int nchildren;
+   int *children;
+   int level;
+} thread_t;
 
 #endif

@@ -94,6 +94,7 @@ int vftr_rename_vfdfile(char *prelim_name, char *final_name) {
 void vftr_write_incomplete_vfd_header(sampling_t *sampling) {
    FILE *fp = sampling->vfdfilefp;
 
+   int zeroint = 0;
    unsigned int zerouint = 0;
    double zerodouble = 0.0;
    long long zerolonglong = 0;
@@ -120,9 +121,11 @@ void vftr_write_incomplete_vfd_header(sampling_t *sampling) {
    // sampling interval in usec
    fwrite(&zerolonglong, sizeof(long long), 1, fp);
    // number of processes
-   fwrite(&zerouint, sizeof(unsigned int), 1, fp);
+   fwrite(&zeroint, sizeof(int), 1, fp);
    // my process id
-   fwrite(&zerouint, sizeof(unsigned int), 1, fp);
+   fwrite(&zeroint, sizeof(int), 1, fp);
+   // number of threads
+   fwrite(&zeroint, sizeof(int), 1, fp);
    // runtime in seconds
    fwrite(&zerodouble, sizeof(double), 1, fp);
    // sample count
@@ -134,6 +137,8 @@ void vftr_write_incomplete_vfd_header(sampling_t *sampling) {
    // samples offset
    fwrite(&zerolonglong, sizeof(long int), 1, fp);
    // stacks offset
+   fwrite(&zerolonglong, sizeof(long int), 1, fp);
+   // threadtree offset
    fwrite(&zerolonglong, sizeof(long int), 1, fp);
    // TODO: Add hardware scenarios
 
@@ -178,9 +183,11 @@ void vftr_update_vfd_header(sampling_t *sampling,
    // sampling interval in usec
    fwrite(&(sampling->interval), sizeof(long long), 1, fp);
    // number of processes
-   fwrite(&(process.nprocesses), sizeof(unsigned int), 1, fp);
+   fwrite(&(process.nprocesses), sizeof(int), 1, fp);
    // my process id
-   fwrite(&(process.processID), sizeof(unsigned int), 1, fp);
+   fwrite(&(process.processID), sizeof(int), 1, fp);
+   // number of threads
+   fwrite(&(process.threadtree.nthreads), sizeof(int), 1, fp);
    // runtime in seconds
    fwrite(&runtime, sizeof(double), 1, fp);
    // sample count
@@ -193,6 +200,8 @@ void vftr_update_vfd_header(sampling_t *sampling,
    fwrite(&(sampling->samples_offset), sizeof(long int), 1, fp);
    // stacks offset
    fwrite(&(sampling->stacktable_offset), sizeof(long int), 1, fp);
+   // threadtree offset
+   fwrite(&(sampling->threadtree_offset), sizeof(long int), 1, fp);
 }
 
 void vftr_write_vfd_stacks(sampling_t *sampling, stacktree_t stacktree) {
@@ -220,6 +229,21 @@ void vftr_write_vfd_stacks(sampling_t *sampling, stacktree_t stacktree) {
          fwrite(&namelen, sizeof(int), 1, fp);
          fwrite(stack.name, sizeof(char), namelen, fp);
       }
+   }
+}
+
+void vftr_write_vfd_threadtree(sampling_t *sampling, threadtree_t threadtree) {
+   FILE *fp = sampling->vfdfilefp;
+
+   // save the offset of where the threadtree begins
+   sampling->threadtree_offset = ftell(fp);
+
+   // to reconstruct the stacktree later on
+   // it is sufficien to know the index
+   // of the parent thread
+   for (int ithread=0; ithread<threadtree.nthreads; ithread++) {
+      thread_t thread = threadtree.threads[ithread];
+      fwrite(&(thread.parent_thread), sizeof(int), 1, fp);
    }
 }
 

@@ -21,6 +21,7 @@ typedef struct {
    unsigned int message_samplecount;
    long int stacktable_offset;
    long int samples_offset;
+   long int threadtree_offset;
 } sampling_t;
 
 #endif

@@ -16,6 +16,13 @@ void free_stacklist(unsigned int nstacks, stack_t *stacklist);
 
 void print_stacklist(FILE *fp, unsigned int nstacks, stack_t *stacklist);
 
+thread_t *read_threadtree(FILE *vfd_fp, long int threadtree_offset,
+                          int nthreads);
+
+void free_threadtree(int nthreads, thread_t *threadtree);
+
+void print_threadtree(FILE *out_fp, thread_t *threadtree);
+
 void print_samples(FILE *vfd_fp, FILE *fp_out,
                    vfd_header_t vfd_header, stack_t *stacklist);
 

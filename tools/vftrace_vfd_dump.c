@@ -44,10 +44,18 @@ int main(int argc, char **argv) {
    print_vfd_header(out_fp, vfd_header);
 
    if (!options.only_header) {
+      if (options.show_threadtree) {
+         thread_t *threadtree = read_threadtree(vfd_fp,
+                                                vfd_header.threadtree_offset,
+                                                vfd_header.nthreads);
+         fprintf(out_fp, "\n");
+         print_threadtree(out_fp, threadtree);
+         free_threadtree(vfd_header.nthreads, threadtree);
+      }
+
       stack_t *stacklist = read_stacklist(vfd_fp,
                                           vfd_header.stacks_offset,
                                           vfd_header.nstacks);
-
       fprintf(out_fp, "\n");
       print_stacklist(out_fp, vfd_header.nstacks, stacklist);
 
