@@ -152,4 +152,7 @@ END PROGRAM test]])],
 
    # Check Supported MPI-Standard
    AX_CHECK_MPI_STD
+
+   # Check for required profiling flags
+   AX_CHECK_MPI_PROF_FLAGS
 ])

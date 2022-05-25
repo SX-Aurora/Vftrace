@@ -115,27 +115,8 @@ libvftrace_la_CFLAGS += -D_LIBERTY_AVAIL
 #libvftrace_la_LIBADD += -liberty
 endif
 
-if USES_INTEL_COMPILER
-libvftrace_la_LDFLAGS += -lifcore
-endif
-
-#if ENABLE_OPENMP
-#
 #if USES_INTEL_COMPILER
-#libvftrace_la_CFLAGS += -qopenmp
-#libvftrace_la_FCFLAGS += -qopenmp
-#endif
-#
-#if USES_GNU_COMPILER
-#libvftrace_la_CFLAGS += -fopenmp
-#libvftrace_la_FCFLAGS += -fopenmp
-#endif
-#
-#if USES_NEC_COMPILER
-#libvftrace_la_CFLAGS += -fopenmp
-#libvftrace_la_FCFLAGS += -fopenmp
-#endif
-#
+#libvftrace_la_LDFLAGS += -lifcore
 #endif
 
 libvftr_pause_la_SOURCES = pause.c
