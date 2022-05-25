@@ -77,6 +77,14 @@ dist_noinst_SCRIPTS += thread_num.sh \
                        thread_level.sh \
                        ancestor_thread_num.sh
 
+check_PROGRAMS += threadtree
+
+threadtree_SOURCES = $(srcdir)/threadtree.c
+threadtree_CFLAGS  = $(AM_CFLAGS)
+threadtree_LDFLAGS = $(AM_LDFLAGS)
+
+dist_noinst_SCRIPTS += threadtree.sh
+
 TEST_EXTENSIONS = .sh
 SH_LOG_COMPILER = $(SHELL)
 
