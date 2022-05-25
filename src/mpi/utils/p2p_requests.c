@@ -106,7 +106,8 @@ void vftr_clear_completed_p2p_request(vftr_request_t *request) {
                                  request->tag,
                                  request->tstart,
                                  tend,
-                                 request->callingstackID);
+                                 request->callingstackID,
+                                 request->callingthreadID);
       }
 
       if (request->persistent) {

@@ -167,12 +167,14 @@ void print_message_sample(FILE *vfd_fp, FILE *out_fp) {
    fread(&tend, sizeof(long long), 1, vfd_fp);
    int stackID;
    fread(&stackID, sizeof(int), 1, vfd_fp);
+   int threadID;
+   fread(&threadID, sizeof(int), 1, vfd_fp);
    double dtstart = tstart*1.0e-6;
    double dtend = tend*1.0e-6;
    double rate = (count * type_size) / ((dtend - dtstart)*1024.0*1024.0);
 
-   fprintf(out_fp, "%16.6f %s in stackID %d\n",
-           dtstart, dir == send ? "send" : "recv", stackID);
+   fprintf(out_fp, "%16.6f %s in stackID %d from threadID %d\n",
+           dtstart, dir == send ? "send" : "recv", stackID, threadID);
    fprintf(out_fp, "%16s count=%d type=%s(%iBytes) ",
            "", count, vftr_get_mpitype_string_from_idx(type_idx), type_size);
    fprintf(out_fp, "rate= %8.4lf MiB/s peer=%d tag=%d\n",

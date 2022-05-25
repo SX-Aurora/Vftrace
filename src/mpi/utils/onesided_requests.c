@@ -74,7 +74,8 @@ void vftr_clear_completed_onesided_request(vftr_request_t *request) {
                                  request->tag,
                                  request->tstart,
                                  tend,
-                                 request->callingstackID);
+                                 request->callingstackID,
+                                 request->callingthreadID);
       }
 
       // Take the request out of the list

@@ -98,6 +98,7 @@ vftr_request_t* vftr_register_request(message_direction dir, int nmsg, int *coun
    threadstack_t *my_threadstack = vftr_get_my_threadstack(my_thread);
 
    new_request->callingstackID = my_threadstack->stackID;
+   new_request->callingthreadID = my_thread->threadID;
 
    // store temporary pointers used for mpi-communication
    new_request->n_tmp_ptr = n_tmp_ptr;

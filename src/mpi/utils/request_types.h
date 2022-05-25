@@ -50,6 +50,7 @@ typedef struct vftr_request_type {
    int tag;
    long long tstart;
    int callingstackID;
+   int callingthreadID;
    int n_tmp_ptr;
    void **tmp_ptrs;
 } vftr_request_t;

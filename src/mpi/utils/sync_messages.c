@@ -73,7 +73,8 @@ void vftr_store_sync_message_info(message_direction dir, int count, MPI_Datatype
 
       vftr_store_message_info(dir, count, type_idx, type_size,
                               rank, tag, tstart, tend,
-                              my_threadstack->stackID);
+                              my_threadstack->stackID,
+                              my_thread->threadID);
    }
 
    return;

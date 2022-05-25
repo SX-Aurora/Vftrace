@@ -40,7 +40,7 @@ int vftr_no_mpi_logging_int() {
 void vftr_store_message_info(message_direction dir, int count, int type_idx,
                              int type_size, int rank, int tag,
                              long long tstart, long long tend,
-                             int stackID) {
+                             int stackID, int threadID) {
 
    FILE *fp = vftrace.sampling.vfdfilefp;
    sample_kind kind = samp_message;
@@ -54,6 +54,7 @@ void vftr_store_message_info(message_direction dir, int count, int type_idx,
    fwrite(&tstart, sizeof(long long), 1, fp);
    fwrite(&tend, sizeof(long long), 1, fp);
    fwrite(&stackID, sizeof(int), 1, fp);
+   fwrite(&threadID, sizeof(int), 1, fp);
 
    vftrace.sampling.message_samplecount++;
 }

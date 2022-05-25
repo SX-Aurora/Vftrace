@@ -91,7 +91,8 @@ void vftr_clear_completed_collective_request(vftr_request_t *request) {
                                        request->tag,
                                        request->tstart,
                                        tend,
-                                       request->callingstackID);
+                                       request->callingstackID,
+                                       request->callingthreadID);
             }
          }
       }

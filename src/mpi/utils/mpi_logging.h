@@ -34,6 +34,6 @@ int vftr_no_mpi_logging_int();
 void vftr_store_message_info(message_direction dir, int count, int type_idx,
                              int type_size, int rank, int tag,
                              long long tstart, long long tend,
-                             int stackID);
+                             int stackID, int threadID);
 
 #endif
