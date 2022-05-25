@@ -130,9 +130,6 @@ void vftr_clear_completed_requests() {
                   case collective:
                      vftr_clear_completed_collective_request(current_request);
                      break;
-                  default:
-                     // TODO: Add error handling
-                     ;
                }
             }
          }
