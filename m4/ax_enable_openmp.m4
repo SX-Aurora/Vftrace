@@ -73,11 +73,4 @@ AC_DEFUN([AX_ENABLE_OPENMP], [
        AC_CHECK_FUNC([omp_get_thread_num],
           [],
           [AC_MSG_FAILURE([Unable to find OpenMP functions!])])])
-
-   AM_COND_IF(
-      [ENABLE_OMP],
-      [AC_LANG(C)
-       AC_CHECK_FUNC([ompt_set_callback],
-          [],
-          [AC_MSG_FAILURE([Unable to find OpenMPT functions!])])])
 ])
