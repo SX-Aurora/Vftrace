@@ -41,6 +41,7 @@ AC_PREREQ(2.50)
 
 # miscellaneous
    AC_CHECK_SIZEOF([bool], [], [#include <stdbool.h>])
+   AC_CHECK_SIZEOF([void], [], [#include <stdlib.h>])
 
 # integer pointer
    AC_CHECK_SIZEOF([char *])
@@ -70,5 +71,6 @@ AC_PREREQ(2.50)
 
 # miscellaneous pointer
    AC_CHECK_SIZEOF([bool *], [], [#include <stdbool.h>])
+   AC_CHECK_SIZEOF([void *], [], [#include <stdlib.h>])
 
 ])

@@ -2,13 +2,20 @@
 #define CUSTOM_TYPES_H
 
 #include "config.h"
+#include <stdint.h>
 
 // in the unlikely event that the c-compiler does not support the uintptr_t type
-// default it to unsigned long long
+// define it to match a unsigned int of same size as a void pointer
 #ifndef _HAS_UINTPTR
-typedef unsigned long long int uintptr_t;
+#if SIZEOF_VOID_P == SIZEOF_UINT8_T
+typedef uint8_t uintptr_t;
+#elif SIZEOF_VOID_P == SIZEOF_UINT16_T
+typedef uint16_t uintptr_t;
+#elif SIZEOF_VOID_P == SIZEOF_UINT32_T
+typedef uint32_t uintptr_t;
 #else
-#include <stdint.h>
+typedef uint64_t uintptr_t;
+#endif
 #endif
 
 // create an integer type that is large enough to hold a double
