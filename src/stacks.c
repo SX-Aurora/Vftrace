@@ -79,8 +79,10 @@ stack_t vftr_first_stack() {
    stack.ncallees = 0;
    stack.callees = NULL;
    stack.lid = 0;
+   stack.gid = 0;
    stack.name = strdup("init");
    stack.profiling = vftr_new_profiling();
+   stack.hash = 0;
    return stack;
 }
 
