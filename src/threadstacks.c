@@ -108,6 +108,7 @@ threadstack_t *vftr_update_threadstack_region(threadstack_t *my_threadstack,
                                               thread_t *my_thread,
                                               uintptr_t region_addr,
                                               const char *name,
+                                              stack_kind_t stack_kind,
                                               vftrace_t *vftrace,
                                               bool precise) {
    // search for the function in the stacks callees
@@ -121,7 +122,8 @@ threadstack_t *vftr_update_threadstack_region(threadstack_t *my_threadstack,
       calleeID = vftr_new_stack(my_threadstack->stackID,
                                 &(vftrace->process.stacktree),
                                 name,
-                                function, region_addr,
+                                stack_kind,
+                                region_addr,
                                 precise);
    }
    // push the function onto the threads stacklist

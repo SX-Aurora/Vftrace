@@ -43,7 +43,8 @@ void vftr_user_region_begin(const char *name, void *addr) {
       // and adjust the threadstack accordingly
       bool precise = vftrace.environment.regions_precise.value.bool_val;
       my_threadstack = vftr_update_threadstack_region(my_threadstack, my_thread,
-                                                      region_addr, name, &vftrace,
+                                                      region_addr, name,
+                                                      user_region, &vftrace,
                                                       precise);
       stack_t *new_stack = vftrace.process.stacktree.stacks+my_threadstack->stackID;
       vftr_sample_function_entry(&(vftrace.sampling),

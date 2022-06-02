@@ -11,7 +11,8 @@ typedef enum {
    init,
    function,
    user_region,
-   threaded_region
+   omp_region,
+   internal_region
 } stack_kind_t;
 
 typedef struct {

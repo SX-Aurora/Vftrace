@@ -44,6 +44,7 @@ void vftr_omp_region_begin(const char *name, void *addr) {
       // and adjust the threadstack accordingly
       my_threadstack = vftr_update_threadstack_region(my_threadstack, my_thread,
                                                       region_addr, nameaddr,
+                                                      omp_region,
                                                       &vftrace, true);
       stack_t *new_stack = vftrace.process.stacktree.stacks+my_threadstack->stackID;
       vftr_sample_function_entry(&(vftrace.sampling),
