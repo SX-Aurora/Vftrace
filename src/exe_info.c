@@ -23,7 +23,11 @@ char *vftr_get_exectuable_path() {
       free(proccmd);
       char *cmdline = NULL;
       size_t cmdline_len = 0;
-      getline(&cmdline,&cmdline_len,cmdlinefp);
+      ssize_t read_bytes = getline(&cmdline,&cmdline_len,cmdlinefp);
+      if (read_bytes < 0) {
+         perror("Error");
+         return NULL;
+      }
       // store memory location for later dealloc
       char *tmpcmdline = cmdline;
 #ifdef __ve__
