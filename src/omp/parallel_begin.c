@@ -3,6 +3,8 @@
 #include <omp.h>
 #include <omp-tools.h>
 
+#include "omp_regions.h"
+
 static void vftr_ompt_callback_parallel_begin(ompt_data_t *encountering_task_data,
                                               const ompt_frame_t *encountering_task_frame,
                                               ompt_data_t *parallel_data,
@@ -10,6 +12,7 @@ static void vftr_ompt_callback_parallel_begin(ompt_data_t *encountering_task_dat
                                               int flags, const void *codeptr_ra) {
    fprintf(stderr, "starting parallel addr: %p, req_par: %d\n",
           codeptr_ra, requested_parallelism);
+   vftr_omp_region_begin("omp_parallel_region", codeptr_ra);
 }
 
 void vftr_register_ompt_callback_parallel_begin(ompt_set_callback_t ompt_set_callback) {
