@@ -6,7 +6,7 @@
 #include "threads.h"
 #include "vftrace_state.h"
 
-int fnk1() {
+void fnk1(void) {
    #pragma omp parallel num_threads(2)
    {
       int threadnum = vftr_get_thread_num();
