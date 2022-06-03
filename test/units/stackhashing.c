@@ -7,6 +7,7 @@
 #include "symbols.h"
 #include "stack_types.h"
 #include "stacks.h"
+#include "hashing.h"
 
 #include "dummysymboltable.h"
 
