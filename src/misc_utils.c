@@ -90,7 +90,7 @@ void vftr_chop_trailing_char(char *string, char trailing_char) {
    }
 }
 
-char *vftr_combine_string_and_address(char *str, void *addr) {
+char *vftr_combine_string_and_address(const char *str, const void *addr) {
    int length = 0;
    length += strlen(str);
    length += snprintf(NULL, 0, "_%p", addr);

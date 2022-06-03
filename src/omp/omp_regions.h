@@ -3,7 +3,7 @@
 
 #include <stdlib.h>
 
-void vftr_omp_region_begin(const char *name, void *addr);
+void vftr_omp_region_begin(const char *name, const void *addr);
 
 void vftr_omp_region_end();
 

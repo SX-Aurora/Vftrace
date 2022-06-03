@@ -16,7 +16,7 @@
 #include "timer.h"
 #include "misc_utils.h"
 
-void vftr_omp_region_begin(const char *name, void *addr) {
+void vftr_omp_region_begin(const char *name, const void *addr) {
    long long region_begin_time_begin = vftr_get_runtime_usec();
    // Get the thread that called the region
    thread_t *my_thread = vftr_get_my_thread(&(vftrace.process.threadtree));
