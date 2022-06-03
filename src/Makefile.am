@@ -88,6 +88,7 @@ libvftrace_la_SOURCES += vftrace_mod.F90
 endif
 
 libvftrace_la_CFLAGS += -I${srcdir}/mpi/utils/ \
+			-I${srcdir}/omp/ \
 			${external_includes}
 
 if ENABLE_HWC

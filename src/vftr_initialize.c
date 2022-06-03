@@ -1,5 +1,9 @@
 #include <stdlib.h>
 
+#ifdef _OMP
+#include "start_tool.h"
+#endif
+
 #include "timer.h"
 #include "off_hooks.h"
 #include "cyghooks.h"
@@ -50,7 +54,7 @@ void vftr_initialize(void *func, void *call_site) {
 
       // trick the linker into including the omp callback symbols
 #ifdef _OMP
-      ompt_start_tool(0, NULL);
+      (void) ompt_start_tool(0, NULL);
 #endif
 
       // set the finalize function to be executed at the termination of the program
