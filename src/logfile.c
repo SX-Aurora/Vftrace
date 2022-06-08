@@ -77,22 +77,22 @@ void vftr_write_logfile_profile_table(FILE *fp, stacktree_t stacktree,
    table_t table = vftr_new_table();
    vftr_table_set_nrows(&table, stacktree.nstacks);
 
-   int *calls = vftr_stack_calls_list(stacktree.nstacks, stacktree.stacks);
+   int *calls = vftr_stack_calls_list(stacktree);
    vftr_table_add_column(&table, col_int, "Calls", "%d", 'c', 'r', (void*) calls);
 
-   double *excl_time = vftr_stack_exclusive_time_list(stacktree.nstacks, stacktree.stacks);
+   double *excl_time = vftr_stack_exclusive_time_list(stacktree);
    vftr_table_add_column(&table, col_double, "t_excl/s", "%.3f", 'c', 'r', (void*) excl_time);
 
-   double *incl_time = vftr_stack_inclusive_time_list(stacktree.nstacks, stacktree.stacks);
+   double *incl_time = vftr_stack_inclusive_time_list(stacktree);
    vftr_table_add_column(&table, col_double, "t_incl/s", "%.3f", 'c', 'r', (void*) incl_time);
 
   //
   // double *vftr_stack_overhead_time_list(int nstacks, stack_t *stacks);
 
-   char **function_names = vftr_stack_function_name_list(stacktree.nstacks, stacktree.stacks);
+   char **function_names = vftr_stack_function_name_list(stacktree);
    vftr_table_add_column(&table, col_string, "Function", "%s", 'c', 'r', (void*) function_names);
 
-   char **caller_names = vftr_stack_caller_name_list(stacktree.nstacks, stacktree.stacks);
+   char **caller_names = vftr_stack_caller_name_list(stacktree);
    vftr_table_add_column(&table, col_string, "Caller", "%s", 'c', 'r', (void*) caller_names);
 
    vftr_print_table(fp, table);

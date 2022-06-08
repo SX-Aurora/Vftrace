@@ -1,22 +1,19 @@
 #ifndef PROFILING_H
 #define PROFILING_H
 
-#include <stdbool.h>
+#include <stdlib.h>
 
+#include "thread_types.h"
 #include "profiling_types.h"
-#include "stack_types.h"
 
-callProfile_t vftr_new_callprofiling();
+int vftr_new_profile(int threadID, profilelist_t *profilelist_ptr);
 
-profile_t vftr_new_profiling();
+void vftr_profile_free(profile_t* profiles_ptr, int profID);
 
-void vftr_accumulate_profiling(bool master, profile_t *stackprof,
-                               profile_t *threadprof);
+profilelist_t vftr_new_profilelist();
 
-void vftr_callprofiling_free(callProfile_t *callprof_ptr);
+void vftr_profilelist_free(profilelist_t *profilelist_ptr);
 
-void vftr_update_stacks_exclusive_time(int nstacks, stack_t *stacks);
-
-void vftr_profiling_free(profile_t *prof_ptr);
+profile_t *vftr_get_my_profile(stack_t *stack, thread_t *thread);
 
 #endif

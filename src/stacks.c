@@ -7,6 +7,7 @@
 #include "realloc_consts.h"
 #include "stacks.h"
 #include "profiling.h"
+#include "callprofiling.h"
 #include "symbols.h"
 #include "hashing.h"
 #include "search.h"
@@ -63,7 +64,7 @@ int vftr_new_stack(int callerID, stacktree_t *stacktree_ptr,
 
    stack->name = strdup(name);
 
-   stack->profiling = vftr_new_profiling();
+   stack->profiling = vftr_new_profilelist();
    vftr_insert_callee(stack->lid, callerstack);
 
    return stack->lid;
@@ -81,7 +82,8 @@ stack_t vftr_first_stack() {
    stack.lid = 0;
    stack.gid = 0;
    stack.name = strdup("init");
-   stack.profiling = vftr_new_profiling();
+   stack.profiling = vftr_new_profilelist();
+   vftr_new_profile(0, &(stack.profiling));
    stack.hash = 0;
    return stack;
 }
@@ -95,8 +97,8 @@ void vftr_stack_free(stack_t *stacks_ptr, int stackID) {
       }
       free(stack.callees);
       stack.callees = NULL;
-      vftr_profiling_free(&(stack.profiling));
    }
+   vftr_profilelist_free(&(stack.profiling));
    free(stack.name);
    stacks_ptr[stackID] = stack;
 }
@@ -136,14 +138,10 @@ void vftr_print_stack_branch(FILE *fp, int level, stacktree_t stacktree, int sta
       fprintf(fp, "  ");
    }
    stack_t stack = stacktree.stacks[stackid];
-   fprintf(fp, "%s (%llx): id=%d, calls: %lld, incl_time/s: %lf\n",
+   fprintf(fp, "%s (%llx): id=%d\n",
            stack.name,
            (unsigned long long) stack.address,
-           stack.lid,
-           stack.profiling.callProf.calls,
-           stack.profiling.callProf.time_usec*1.0e-6);
-
-
+           stack.lid);
    level++;
    for (int icallee=0; icallee<stack.ncallees; icallee++) {
       vftr_print_stack_branch(fp, level, stacktree, stack.callees[icallee]);

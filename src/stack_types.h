@@ -36,7 +36,7 @@ typedef struct {
    // no need to deallocate
    char *name;
    // profiling data
-   profile_t profiling;
+   profilelist_t profiling;
    // Data that is filled in during finalization
    uint64_t hash;
 } stack_t;

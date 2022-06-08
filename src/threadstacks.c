@@ -6,7 +6,6 @@
 #include "thread_types.h"
 #include "threadstack_types.h"
 
-#include "profiling.h"
 #include "threadstacks.h"
 #include "search.h"
 
@@ -34,7 +33,6 @@ threadstacklist_t vftr_new_threadstacklist(int stackID) {
 
 void vftr_threadstack_free(threadstack_t *stack_ptr) {
    threadstack_t stack = *stack_ptr;
-   vftr_profiling_free(&(stack.profiling));
    *stack_ptr = stack;
 }
 
@@ -43,8 +41,6 @@ void vftr_threadstack_push(int stackID, threadstacklist_t *stacklist_ptr) {
    threadstack_t stack;
    stack.stackID = stackID;
    stack.recursion_depth = 0;
-   // TODO: enable profiling
-   stack.profiling = vftr_new_profiling();
    int idx = stacklist_ptr->nstacks;
    stacklist_ptr->nstacks++;
    vftr_threadstacklist_realloc(stacklist_ptr);

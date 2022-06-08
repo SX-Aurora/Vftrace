@@ -1,33 +1,20 @@
 #ifndef PROFILING_TYPES_H
 #define PROFILING_TYPES_H
 
-typedef struct {
-   long long entry;
-   long long exit;
-   long long max;
-   long long next_entry;
-   long long next_exit;
-   int tolerance;
-   int increment;
-} memoryProfile_t;
+#include "callprofiling_types.h"
+#include "overheadprofiling_types.h"
 
 typedef struct {
-   // number of calls
-   long long calls;
-   // cycles spend in the function (including subfunctions)
-   long long cycles;
-   // time spend in the function (including subfunctions)
-   long long time_usec;
-   // time spend in the function (excluding subfunctions)
-   // computed during final stack update
-   long long time_excl_usec;
-   // accumulated overhead time
-   long long overhead_time_usec;
-} callProfile_t;
-
-typedef struct {
+   int threadID;
    callProfile_t callProf;
-   //memoryProfile_t memProf;
+   overheadProfile_t overheadProf;
 } profile_t;
+
+// each thread gets their own profile during runtime
+typedef struct {
+   int nprofiles;
+   int maxprofiles;
+   profile_t* profiles;
+} profilelist_t;
 
 #endif

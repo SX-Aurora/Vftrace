@@ -5,16 +5,16 @@
 
 long long vftr_total_overhead_usec(stacktree_t stacktree);
 
-int *vftr_stack_calls_list(int nstacks, stack_t *stacks);
+int *vftr_stack_calls_list(stacktree_t stacktree);
 
-double *vftr_stack_inclusive_time_list(int nstacks, stack_t *stacks);
+double *vftr_stack_inclusive_time_list(stacktree_t stacktree);
 
-double *vftr_stack_exclusive_time_list(int nstacks, stack_t *stacks);
+double *vftr_stack_exclusive_time_list(stacktree_t stacktree);
 
-double *vftr_stack_overhead_time_list(int nstacks, stack_t *stacks);
+double *vftr_stack_overhead_time_list(stacktree_t stacktree);
 
-char **vftr_stack_function_name_list(int nstacks, stack_t *stacks);
+char **vftr_stack_function_name_list(stacktree_t stacktree);
 
-char **vftr_stack_caller_name_list(int nstacks, stack_t *stacks);
+char **vftr_stack_caller_name_list(stacktree_t stacktree);
 
 #endif

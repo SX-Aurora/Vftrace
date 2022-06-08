@@ -1,66 +1,95 @@
-#include <stdbool.h>
+#include <stdlib.h>
 
+#include "vftrace_state.h"
+#include "thread_types.h"
 #include "profiling_types.h"
-#include "stack_types.h"
+#include "realloc_consts.h"
 
-callProfile_t vftr_new_callprofiling() {
-   callProfile_t callprof;
-   callprof.calls = 0ll;
-   callprof.cycles = 0ll;
-   callprof.time_usec = 0ll;
-   callprof.time_excl_usec = 0ll;
-   callprof.overhead_time_usec = 0ll;
-   return callprof;
-}
+#include "callprofiling.h"
+#include "overheadprofiling.h"
 
-profile_t vftr_new_profiling() {
-   profile_t prof;
-   prof.callProf = vftr_new_callprofiling();
-   // TODO: include mem profiling
-   // TODO: include hardware counter events
-   return prof;
-}
-
-// accumulate the seperately collected threadprofiling data
-// on the stack profile
-void vftr_accumulate_callprofiling(bool master, callProfile_t *stackprof,
-                                   callProfile_t *threadprof) {
-   (void) master;
-   // TODO: differentiate between master thread and others.
-   // data from the other threads is accumulated seperately
-   // so that the function time cannot be larger
-   // than the execution time of the program
-   stackprof->calls += threadprof->calls;
-   stackprof->cycles += threadprof->cycles;
-   stackprof->time_usec += threadprof->time_usec;
-   stackprof->overhead_time_usec += threadprof->overhead_time_usec;
-}
-
-void vftr_accumulate_profiling(bool master, profile_t *stackprof,
-                               profile_t *threadprof) {
-   vftr_accumulate_callprofiling(master,
-                                 &(stackprof->callProf),
-                                 &(threadprof->callProf));
-}
-
-void vftr_update_stacks_exclusive_time(int nstacks, stack_t *stacks) {
-   // exclusive time for init is 0, therefore it does not need to be computed.
-   for (int istack=1; istack<nstacks; istack++) {
-      stack_t *mystack = stacks + istack;
-      long long exclusive_time = mystack->profiling.callProf.time_usec;
-      // subtract the time spent in the callees
-      for (int icallee=0; icallee<mystack->ncallees; icallee++) {
-         int calleeID = mystack->callees[icallee];
-         exclusive_time -= stacks[calleeID].profiling.callProf.time_usec;
-      }
-      mystack->profiling.callProf.time_excl_usec = exclusive_time;
+void vftr_profilelist_realloc(profilelist_t *profilelist_ptr) {
+   profilelist_t profilelist = *profilelist_ptr;
+   while (profilelist.nprofiles > profilelist.maxprofiles) {
+      int maxprofiles = profilelist.maxprofiles*vftr_realloc_rate+vftr_realloc_add;
+      profilelist.profiles = (profile_t*)
+         realloc(profilelist.profiles, maxprofiles*sizeof(profile_t));
+      profilelist.maxprofiles = maxprofiles;
    }
+   *profilelist_ptr = profilelist;
 }
 
-void vftr_callprofiling_free(callProfile_t *callprof_ptr) {
-   (void) callprof_ptr;
+int vftr_new_profile(int threadID, profilelist_t *profilelist_ptr) {
+   int profID = profilelist_ptr->nprofiles;
+   profilelist_ptr->nprofiles++;
+   vftr_profilelist_realloc(profilelist_ptr);
+
+   // insert the new profile in such a way that they are sorted by their threadIDs
+   for (int iprof=(profID-1); iprof>=0; iprof--) {
+      if (threadID < profilelist_ptr->profiles[iprof].threadID) {
+         profilelist_ptr->profiles[iprof+1] = profilelist_ptr->profiles[iprof];
+         profID--;
+      } else {
+         break;
+      }
+   }
+
+   profile_t *profile = profilelist_ptr->profiles+profID;
+   profile->threadID = threadID;
+   profile->callProf = vftr_new_callprofiling();
+   profile->overheadProf = vftr_new_overheadprofiling();
+   // TODO: Add other profiles
+
+   return profID;
 }
 
-void vftr_profiling_free(profile_t *prof_ptr) {
-   (void) prof_ptr;
+void vftr_profile_free(profile_t* profiles_ptr, int profID) {
+   profile_t *profile_ptr = profiles_ptr+profID;
+   vftr_callprofiling_free(&(profile_ptr->callProf));
+   vftr_overheadprofiling_free(&(profile_ptr->overheadProf));
+   // TODO: add other profiles
+}
+
+profilelist_t vftr_new_profilelist() {
+   profilelist_t profilelist;
+   profilelist.nprofiles = 0;
+   profilelist.maxprofiles = 0;
+   profilelist.profiles = NULL;
+   return profilelist;
+}
+
+void vftr_profilelist_free(profilelist_t *profilelist_ptr) {
+   profilelist_t profilelist = *profilelist_ptr;
+   if (profilelist.nprofiles > 0) {
+      for (int iprof=0; iprof<profilelist.nprofiles; iprof++) {
+         vftr_profile_free(profilelist.profiles, iprof);
+      }
+      free(profilelist.profiles);
+      profilelist.profiles = NULL;
+      profilelist.nprofiles = 0;
+      profilelist.maxprofiles = 0;
+   }
+   *profilelist_ptr = profilelist;
+}
+
+profile_t *vftr_get_my_profile(stack_t *stack,
+                               thread_t *thread) {
+   profilelist_t *profilelist_ptr = &(stack->profiling);
+   // search for the profile matrhing the threadID
+   // TODO: binary search?
+   int profID = -1;
+   for (int iprof=0; iprof<profilelist_ptr->nprofiles; iprof++) {
+      profile_t *prof = profilelist_ptr->profiles+iprof;
+      if (thread->threadID == prof->threadID) {
+         profID = iprof;
+         break;
+      }
+   }
+   // if no matching profile is found create one
+   // and update the profID
+   if (profID == -1) {
+      profID = vftr_new_profile(thread->threadID, profilelist_ptr);
+   }
+
+   return profilelist_ptr->profiles+profID;
 }

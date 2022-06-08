@@ -1,0 +1,10 @@
+Thread: 0 calls: 0, cycles: 0, time(incl/excl): 0/0
+Thread: 1 calls: 1, cycles: 42, time(incl/excl): 137/0
+Thread: 2 calls: 4, cycles: 84, time(incl/excl): 274/0
+Thread: 3 calls: 9, cycles: 126, time(incl/excl): 411/0
+Thread: 4 calls: 16, cycles: 168, time(incl/excl): 548/0
+Thread: 5 calls: 25, cycles: 210, time(incl/excl): 685/0
+Thread: 6 calls: 36, cycles: 252, time(incl/excl): 822/0
+Thread: 7 calls: 49, cycles: 294, time(incl/excl): 959/0
+Thread: 8 calls: 64, cycles: 336, time(incl/excl): 1096/0
+Thread: 9 calls: 81, cycles: 378, time(incl/excl): 1233/0

@@ -1,0 +1,44 @@
+#ifndef PROFILING_TYPES_H
+#define PROFILING_TYPES_H
+
+typedef struct {
+   long long entry;
+   long long exit;
+   long long max;
+   long long next_entry;
+   long long next_exit;
+   int tolerance;
+   int increment;
+} memoryProfile_t;
+
+typedef struct {
+   // number of calls
+   long long calls;
+   // cycles spend in the function (including subfunctions)
+   long long cycles;
+   // time spend in the function (including subfunctions)
+   long long time_usec;
+   // time spend in the function (excluding subfunctions)
+   // computed during final stack update
+   long long time_excl_usec;
+   // accumulated overhead time
+   long long overhead_time_usec;
+} callProfile_t;
+
+#ifdef _MPI
+typedef struct {
+   // number of send or received bytes
+   long long send_bytes;
+   long long recv_bytes;
+} mpiProfile_t;
+#endif
+
+typedef struct {
+   callProfile_t callProf;
+   //memoryProfile_t memProf;
+#ifdef _MPI
+   mpiProfile_t mpiProf;
+#endif
+} profile_t;
+
+#endif

@@ -6,7 +6,6 @@
 typedef struct {
    int stackID;
    int recursion_depth;
-   profile_t profiling;
 } threadstack_t;
 
 typedef struct {
