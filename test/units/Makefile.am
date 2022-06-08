@@ -32,6 +32,10 @@ if USES_NEC_MPI
 endif
 endif
 
+if ENABLE_OMP
+  AM_CFLAGS += -D_OMP
+endif
+
 check_PROGRAMS = 
 check_PROGRAMS += radixsort_uint64 \
 		  sort_integer_ascending \

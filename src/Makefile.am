@@ -125,6 +125,5 @@ endif
 libvftr_pause_la_SOURCES = pause.c
 libvftr_pause_la_CFLAGS = -finstrument-functions
 
-
 clean-local:
 	rm -f *.mod
