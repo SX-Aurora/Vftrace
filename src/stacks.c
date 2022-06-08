@@ -128,8 +128,7 @@ void vftr_stacktree_free(stacktree_t *stacktree_ptr) {
 // fill in data that was not computed during runtime
 void vftr_finalize_stacktree(stacktree_t *stacktree_ptr) {
    // exclusive time
-   vftr_update_stacks_exclusive_time(stacktree_ptr->nstacks,
-                                     stacktree_ptr->stacks);
+   vftr_update_stacks_exclusive_time(stacktree_ptr);
 }
 
 void vftr_print_stack_branch(FILE *fp, int level, stacktree_t stacktree, int stackid) {

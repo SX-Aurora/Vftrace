@@ -17,7 +17,7 @@ void vftr_accumulate_callprofiling(callProfile_t *prof,
 
 void vftr_callprofiling_free(callProfile_t *callprof_ptr);
 
-void vftr_update_stacks_exclusive_time(int nstacks, stack_t *stacks);
+void vftr_update_stacks_exclusive_time(stacktree_t *stacktree_ptr);
 
 void vftr_print_callprofiling(FILE *fp, callProfile_t callprof);
 

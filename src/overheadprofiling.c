@@ -1,6 +1,9 @@
 #include <stdbool.h>
 
 #include "vftrace_state.h"
+#include "threads.h"
+#include "threadstacks.h"
+#include "profiling.h"
 #include "overheadprofiling_types.h"
 
 overheadProfile_t vftr_new_overheadprofiling() {

@@ -22,18 +22,37 @@ void vftr_accumulate_callprofiling(callProfile_t *prof,
    prof->time_usec += time_usec;
 }
 
-void vftr_update_stacks_exclusive_time(int nstacks, stack_t *stacks) {
-//TODO    // exclusive time for init is 0, therefore it does not need to be computed.
-//TODO    for (int istack=1; istack<nstacks; istack++) {
-//TODO       stack_t *mystack = stacks + istack;
-//TODO       long long exclusive_time = mystack->profiling.callProf.time_usec;
-//TODO       // subtract the time spent in the callees
-//TODO       for (int icallee=0; icallee<mystack->ncallees; icallee++) {
-//TODO          int calleeID = mystack->callees[icallee];
-//TODO          exclusive_time -= stacks[calleeID].profiling.callProf.time_usec;
-//TODO       }
-//TODO       mystack->profiling.callProf.time_excl_usec = exclusive_time;
-//TODO    }
+void vftr_update_stacks_exclusive_time(stacktree_t *stacktree_ptr) {
+   int nstacks = stacktree_ptr->nstacks;
+   stack_t *stacks = stacktree_ptr->stacks;
+   // exclusive time for init is 0, therefore it does not need to be computed.
+   for (int istack=1; istack<nstacks; istack++) {
+      stack_t *mystack = stacks + istack;
+      // need to go over the calling profiles threadwise
+      for (int iprof=0; iprof<mystack->profiling.nprofiles; iprof++) {
+         profile_t *myprof = mystack->profiling.profiles+iprof;
+         myprof->callProf.time_excl_usec = myprof->callProf.time_usec;
+         // subtract the time spent in the callees
+         for (int icallee=0; icallee<mystack->ncallees; icallee++) {
+            int calleeID = mystack->callees[icallee];
+            stack_t *calleestack = stacks+calleeID;
+            // search for a thread matching profile in the callee profiles
+            int calleprofID = -1;
+            for (int jprof=0; jprof<calleestack->profiling.nprofiles; jprof++) {
+               profile_t *calleeprof = calleestack->profiling.profiles+jprof;
+               if (myprof->threadID == calleeprof->threadID) {
+                  calleprofID = jprof;
+                  break;
+               }
+            }
+            // a matching callee profile was found
+            if (calleprofID >= 0) {
+               profile_t *calleeprof = calleestack->profiling.profiles+calleprofID;
+               myprof->callProf.time_excl_usec -= calleeprof->callProf.time_usec;
+            }
+         }
+      }
+   }
 }
 
 void vftr_callprofiling_free(callProfile_t *callprof_ptr) {

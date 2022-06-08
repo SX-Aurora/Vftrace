@@ -64,7 +64,8 @@ check_PROGRAMS += stacktree \
 		  stacklist \
 		  getstackstring
 
-check_PROGRAMS += profilelist
+check_PROGRAMS += profilelist \
+		  exclusive_times
 
 check_PROGRAMS += threadtree
 
@@ -213,6 +214,11 @@ profilelist_SOURCES = $(srcdir)/profilelist.c
 profilelist_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
 profilelist_LDFLAGS = $(AM_LDFLAGS)
 
+exclusive_times_SOURCES = $(srcdir)/exclusive_times.c \
+			  $(srcdir)/dummysymboltable.c
+exclusive_times_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
+exclusive_times_LDFLAGS = $(AM_LDFLAGS)
+
 threadtree_SOURCES = $(srcdir)/threadtree.c \
 		     $(srcdir)/dummysymboltable.c
 threadtree_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
@@ -284,7 +290,8 @@ endif
 dist_check_SCRIPTS += stacktree.sh \
 		      stacklist.sh \
 		      getstackstring.sh
-dist_check_SCRIPTS += profilelist.sh
+dist_check_SCRIPTS += profilelist.sh \
+		      exclusive_times.sh
 dist_check_SCRIPTS += threadtree.sh
 dist_check_SCRIPTS += filewrite_1.sh
 #		     scenario_1.sh \
