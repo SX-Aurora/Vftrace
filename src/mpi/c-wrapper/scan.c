@@ -20,6 +20,7 @@
 #include <mpi.h>
 
 #include "mpi_logging.h"
+#include "sync_time.h"
 #include "scan_c2vftr.h"
 
 int MPI_Scan(const void *sendbuf, void *recvbuf, int count,
