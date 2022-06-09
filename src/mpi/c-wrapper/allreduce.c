@@ -20,6 +20,7 @@
 #include <mpi.h>
 
 #include "mpi_logging.h"
+#include "sync_time.h"
 #include "allreduce_c2vftr.h"
 
 int MPI_Allreduce(const void *sendbuf, void *recvbuf, int count,
