@@ -19,8 +19,8 @@
 #ifdef _MPI
 #include <mpi.h>
 
-#include "sync_time.h"
 #include "mpi_logging.h"
+#include "sync_time.h"
 #include "bcast_c2vftr.h"
 
 int MPI_Bcast(void *buffer, int count, MPI_Datatype datatype,
