@@ -83,7 +83,7 @@ void vftr_clear_completed_collective_request(vftr_request_t *request) {
             // it is an invalid rank due to non periodic
             // cartesian communicators.
             if (request->rank[i] != -1) {
-               vftr_store_message_info(request->dir,
+               vftr_write_message_info(request->dir,
                                        request->count[i],
                                        request->type_idx[i],
                                        request->type_size[i],

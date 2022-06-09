@@ -96,9 +96,9 @@ void vftr_clear_completed_p2p_request(vftr_request_t *request) {
             request->count[0] = tmpcount;
          }
       }
-      // store the completed communication info to the outfile
+      // write the completed communication info to the vfd-file
       if (vftrace.environment.do_sampling.value.bool_val) {
-         vftr_store_message_info(request->dir,
+         vftr_write_message_info(request->dir,
                                  request->count[0],
                                  request->type_idx[0],
                                  request->type_size[0],

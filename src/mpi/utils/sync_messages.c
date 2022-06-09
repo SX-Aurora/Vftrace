@@ -65,13 +65,13 @@ void vftr_store_sync_message_info(message_direction dir, int count, MPI_Datatype
    // TODO: activate
    //vftr_log_message_info(dir, count, type_idx, type_size, rank, tag, tstart, tend);
 
-   // store message in vfd-file
+   // write message info to vfd-file
    if (vftrace.environment.do_sampling.value.bool_val) {
       // Get the thread that called the function
       thread_t *my_thread = vftr_get_my_thread(&(vftrace.process.threadtree));
       threadstack_t *my_threadstack = vftr_get_my_threadstack(my_thread);
 
-      vftr_store_message_info(dir, count, type_idx, type_size,
+      vftr_write_message_info(dir, count, type_idx, type_size,
                               rank, tag, tstart, tend,
                               my_threadstack->stackID,
                               my_thread->threadID);

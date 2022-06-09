@@ -64,9 +64,9 @@ void vftr_clear_completed_onesided_request(vftr_request_t *request) {
 
       // Every rank should already be translated to the global rank
       // by the register routine
-      // store the completed communication info to the outfile
+      // write the completed communication info to the vfd-file
       if (vftrace.environment.do_sampling.value.bool_val) {
-         vftr_store_message_info(request->dir,
+         vftr_write_message_info(request->dir,
                                  request->count[0],
                                  request->type_idx[0],
                                  request->type_size[0],
