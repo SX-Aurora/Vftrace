@@ -21,6 +21,15 @@
 #include <stdlib.h>
 
 #include "rank_translate.h"
+#include "thread_types.h"
+#include "threads.h"
+#include "threadstack_types.h"
+#include "threadstacks.h"
+#include "stack_types.h"
+#include "stacks.h"
+#include "profiling_types.h"
+#include "profiling.h"
+#include "overheadprofiling.h"
 #include "timer.h"
 #include "collective_requests.h"
 
@@ -67,9 +76,14 @@ int vftr_MPI_Iallreduce(const void *sendbuf, void *recvbuf, int count,
    tmptype = NULL;
    free(peer_ranks);
    peer_ranks = NULL;
+
+   thread_t *my_thread = vftr_get_my_thread(&(vftrace.process.threadtree));
+   threadstack_t *my_threadstack = vftr_get_my_threadstack(my_thread);
+   stack_t *my_stack = vftrace.process.stacktree.stacks+my_threadstack->stackID;
+   profile_t *my_profile = vftr_get_my_profile(my_stack, my_thread);
    long long t2end = vftr_get_runtime_usec();
 
-   //TODO: vftr_mpi_overhead_usec += t2end - t2start;
+   vftr_accumulate_mpi_overheadprofiling(&(my_profile->overheadProf), t2end-t2start);
 
    return retVal;
 }
@@ -131,9 +145,14 @@ int vftr_MPI_Iallreduce_inplace(const void *sendbuf, void *recvbuf, int count,
       free(peer_ranks);
       peer_ranks = NULL;
    }
+
+   thread_t *my_thread = vftr_get_my_thread(&(vftrace.process.threadtree));
+   threadstack_t *my_threadstack = vftr_get_my_threadstack(my_thread);
+   stack_t *my_stack = vftrace.process.stacktree.stacks+my_threadstack->stackID;
+   profile_t *my_profile = vftr_get_my_profile(my_stack, my_thread);
    long long t2end = vftr_get_runtime_usec();
 
-   //TODO: vftr_mpi_overhead_usec += t2end - t2start;
+   vftr_accumulate_mpi_overheadprofiling(&(my_profile->overheadProf), t2end-t2start);
 
    return retVal;
 }
@@ -197,9 +216,14 @@ int vftr_MPI_Iallreduce_intercom(const void *sendbuf, void *recvbuf, int count,
    tmptype = NULL;
    free(peer_ranks);
    peer_ranks = NULL;
+
+   thread_t *my_thread = vftr_get_my_thread(&(vftrace.process.threadtree));
+   threadstack_t *my_threadstack = vftr_get_my_threadstack(my_thread);
+   stack_t *my_stack = vftrace.process.stacktree.stacks+my_threadstack->stackID;
+   profile_t *my_profile = vftr_get_my_profile(my_stack, my_thread);
    long long t2end = vftr_get_runtime_usec();
 
-   //TODO: vftr_mpi_overhead_usec += t2end - t2start;
+   vftr_accumulate_mpi_overheadprofiling(&(my_profile->overheadProf), t2end-t2start);
 
    return retVal;
 }
