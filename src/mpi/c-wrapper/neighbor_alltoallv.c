@@ -20,6 +20,7 @@
 #include <mpi.h>
 
 #include "mpi_logging.h"
+#include "sync_time.h"
 #include "neighbor_alltoallv_c2vftr.h"
 
 int MPI_Neighbor_alltoallv(const void *sendbuf, const int *sendcounts,
