@@ -20,6 +20,7 @@
 #include <mpi.h>
 
 #include "mpi_logging.h"
+#include "sync_time.h"
 #include "gather_c2vftr.h"
 
 int MPI_Gather(const void *sendbuf, int sendcount,
