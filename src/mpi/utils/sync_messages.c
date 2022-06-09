@@ -23,10 +23,16 @@
 #include "mpi_logging.h"
 #include "mpi_util_types.h"
 #include "rank_translate.h"
+#include "stack_types.h"
+#include "thread_types.h"
+#include "threadstack_types.h"
+#include "profiling_types.h"
+#include "mpiprofiling_types.h"
 #include "stacks.h"
 #include "threads.h"
 #include "threadstacks.h"
-
+#include "profiling.h"
+#include "mpiprofiling.h"
 
 // store message info for synchronous mpi-communication
 void vftr_store_sync_message_info(message_direction dir, int count, MPI_Datatype type,
@@ -61,16 +67,20 @@ void vftr_store_sync_message_info(message_direction dir, int count, MPI_Datatype
       type_size = 0;
    }
 
+   // Get the thread that called the function
+   thread_t *my_thread = vftr_get_my_thread(&(vftrace.process.threadtree));
+   threadstack_t *my_threadstack = vftr_get_my_threadstack(my_thread);
+   stack_t *my_stack = vftrace.process.stacktree.stacks+my_threadstack->stackID;
+   profile_t *my_profile = vftr_get_my_profile(my_stack, my_thread);
+
    // accumulate information for later use in the log file statistics
-   // TODO: activate
-   //vftr_log_message_info(dir, count, type_idx, type_size, rank, tag, tstart, tend);
+   vftr_accumulate_message_info(&(my_profile->mpiProf),
+                                dir, count,
+                                type_idx, type_size,
+                                rank, tag, tstart, tend);
 
    // write message info to vfd-file
    if (vftrace.environment.do_sampling.value.bool_val) {
-      // Get the thread that called the function
-      thread_t *my_thread = vftr_get_my_thread(&(vftrace.process.threadtree));
-      threadstack_t *my_threadstack = vftr_get_my_threadstack(my_thread);
-
       vftr_write_message_info(dir, count, type_idx, type_size,
                               rank, tag, tstart, tend,
                               my_threadstack->stackID,

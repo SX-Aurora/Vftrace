@@ -4,6 +4,7 @@ libvftr_mpi_utils_la_SOURCES = mpi_util_types.c
 
 if ENABLE_MPI
 libvftr_mpi_utils_la_SOURCES += mpi_logging.c \
+				mpiprofiling.c \
 				mpi_buf_addr_const.c \
 				sync_time.c
 

@@ -30,6 +30,9 @@
 #include "overheadprofiling.h"
 #include "sampling.h"
 #include "timer.h"
+#ifdef _MPI
+#include "requests.h"
+#endif
 
 void vftr_function_entry(void *func, void *call_site) {
    (void) call_site;

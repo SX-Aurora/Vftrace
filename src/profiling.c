@@ -7,6 +7,7 @@
 
 #include "callprofiling.h"
 #include "overheadprofiling.h"
+#include "mpiprofiling.h"
 
 void vftr_profilelist_realloc(profilelist_t *profilelist_ptr) {
    profilelist_t profilelist = *profilelist_ptr;
@@ -38,6 +39,9 @@ int vftr_new_profile(int threadID, profilelist_t *profilelist_ptr) {
    profile->threadID = threadID;
    profile->callProf = vftr_new_callprofiling();
    profile->overheadProf = vftr_new_overheadprofiling();
+#ifdef _MPI
+   profile->mpiProf = vftr_new_mpiprofiling();
+#endif
    // TODO: Add other profiles
 
    return profID;
@@ -47,6 +51,9 @@ void vftr_profile_free(profile_t* profiles_ptr, int profID) {
    profile_t *profile_ptr = profiles_ptr+profID;
    vftr_callprofiling_free(&(profile_ptr->callProf));
    vftr_overheadprofiling_free(&(profile_ptr->overheadProf));
+#ifdef _MPI
+   vftr_mpiprofiling_free(&(profile_ptr->mpiProf));
+#endif
    // TODO: add other profiles
 }
 
