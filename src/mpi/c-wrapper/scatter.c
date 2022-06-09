@@ -20,6 +20,7 @@
 #include <mpi.h>
 
 #include "mpi_logging.h"
+#include "sync_time.h"
 #include "scatter_c2vftr.h"
 
 int MPI_Scatter(const void *sendbuf, int sendcount,
