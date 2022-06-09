@@ -1,5 +1,4 @@
 #include <stdio.h>
-#include <stdbool.h>
 
 #include "callprofiling_types.h"
 #include "stack_types.h"
