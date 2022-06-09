@@ -20,6 +20,7 @@
 #include <mpi.h>
 
 #include "mpi_logging.h"
+#include "sync_time.h"
 #include "neighbor_allgather_c2vftr.h"
 
 int MPI_Neighbor_allgather(const void *sendbuf, int sendcount,
