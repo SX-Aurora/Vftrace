@@ -20,6 +20,7 @@
 #include <mpi.h>
 
 #include "mpi_logging.h"
+#include "sync_time.h"
 #include "reduce_scatter_block_c2vftr.h"
 
 int MPI_Reduce_scatter_block(const void *sendbuf, void *recvbuf,
