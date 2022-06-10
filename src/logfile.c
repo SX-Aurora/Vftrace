@@ -15,6 +15,8 @@
 #include "stacks.h"
 #include "collate_stacks.h"
 #include "tables.h"
+#include "overheadprofiling_types.h"
+#include "overheadprofiling.h"
 
 char *vftr_get_logfile_name(environment_t environment, int rankID, int nranks) {
    char *filename_base = vftr_create_filename_base(environment, rankID, nranks);
@@ -49,24 +51,74 @@ void vftr_write_logfile_header(FILE *fp, time_strings_t timestrings,
    }
 }
 
-void vftr_write_logfile_summary(FILE *fp, vftrace_t vftrace, long long runtime) {
+void vftr_write_logfile_summary(FILE *fp, process_t process, long long runtime) {
    double runtime_sec = runtime * 1.0e-6;
-   double overhead_sec = vftr_total_overhead_usec(vftrace.process.stacktree)*1.0e-6;
-   double apptime_sec = runtime_sec - overhead_sec;
-   fprintf(fp, "------------------------------------------------------------\n");
+
+   // get the different accumulated overheads
+   // The application runtime is the runtime minus the
+   // sum of all overheads on the master thread
+   long long total_master_overhead = 0ll;
+   int nthreads = process.threadtree.nthreads;
+   long long *hook_overheads = vftr_get_total_hook_overhead(process.stacktree, nthreads);
 #ifdef _MPI
-   fprintf(fp, "Nr. of MPI ranks      %8d\n",
-           vftrace.process.nprocesses);
+   long long *mpi_overheads = vftr_get_total_mpi_overhead(process.stacktree, nthreads);
 #endif
-   fprintf(fp, "Total runtime:        %8.2f seconds\n", runtime_sec);
-   fprintf(fp, "Application time:     %8.2f seconds\n", apptime_sec);
-   fprintf(fp, "Overhead:             %8.2f seconds (%.2f%%)\n",
-           overhead_sec, 100.0 * overhead_sec / runtime_sec);
-   // TODO: Add Sampling overhead
-   // TODO: Add MPI overhead
-   // TODO: distinguish between overhead from threads and regular overhead
-   // TODO: Add Performance counters
-   fprintf(fp, "------------------------------------------------------------\n");
+#ifdef _OMP
+   long long *omp_overheads = vftr_get_total_omp_overhead(process.stacktree, nthreads);
+#endif
+   for (int ithread=0; ithread<nthreads; ithread++) {
+      if (process.threadtree.threads[ithread].master) {
+         total_master_overhead += hook_overheads[ithread];
+#ifdef _MPI
+         total_master_overhead += mpi_overheads[ithread];
+#endif
+#ifdef _OMP
+         total_master_overhead += omp_overheads[ithread];
+#endif
+      }
+   }
+   double total_master_overhead_sec = total_master_overhead*1.0e-6;
+   double apptime_sec = runtime_sec - total_master_overhead_sec;
+
+   fprintf(fp, "\n");
+#ifdef _MPI
+   fprintf(fp, "Nr. of MPI ranks:     %8d\n", process.nprocesses);
+#endif
+#ifdef _OMP
+   fprintf(fp, "Nr. of OMP threads:   %8d\n", nthreads);
+#endif
+   fprintf(fp, "Total runtime:        %8.2lf s\n", runtime_sec);
+   fprintf(fp, "Application time:     %8.2lf s\n", apptime_sec);
+   fprintf(fp, "Overhead:             %8.2lf s\n", total_master_overhead_sec);
+   if (nthreads == 1) {
+      fprintf(fp, "   Function hooks:    %8.2lf s\n", hook_overheads[0]*1.0e-6);
+#ifdef _MPI
+      fprintf(fp, "   MPI wrappers:      %8.2lf s\n", mpi_overheads[0]*1.0e-6);
+#endif
+#ifdef _OMP
+      fprintf(fp, "   OMP callbacks:     %8.2lf s\n", omp_overheads[0]*1.0e-6);
+#endif
+   } else {
+      fprintf(fp, "   Function hooks:\n");
+      for (int ithread=0; ithread<nthreads; ithread++) {
+         fprintf(fp, "      Thread %d:      %8.2lf s\n",
+                 ithread, hook_overheads[ithread]*1.0e-6);
+      }
+#ifdef _MPI
+      fprintf(fp, "   MPI wrappers:\n");
+      for (int ithread=0; ithread<nthreads; ithread++) {
+         fprintf(fp, "      Thread %d:      %8.2lf s\n",
+                 ithread, mpi_overheads[ithread]*1.0e-6);
+      }
+#endif
+#ifdef _OMP
+      fprintf(fp, "   OMP callbacks:\n");
+      for (int ithread=0; ithread<nthreads; ithread++) {
+         fprintf(fp, "      Thread %d:      %8.2lf s\n",
+                 ithread, omp_overheads[ithread]*1.0e-6);
+      }
+#endif
+   }
 }
 
 void vftr_write_logfile_profile_table(FILE *fp, stacktree_t stacktree,
@@ -162,7 +214,7 @@ void vftr_write_logfile(vftrace_t vftrace, long long runtime) {
    vftr_print_env(fp, vftrace.environment);
    vftr_check_env_names(fp, &vftrace.environment);
 
-   vftr_write_logfile_summary(fp, vftrace, runtime);
+   vftr_write_logfile_summary(fp, vftrace.process, runtime);
 
    vftr_write_logfile_profile_table(fp, vftrace.process.stacktree,
                                     vftrace.environment, runtime);

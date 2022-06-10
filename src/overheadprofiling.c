@@ -1,8 +1,11 @@
+#include <stdlib.h>
 #include <stdbool.h>
 
 #include "vftrace_state.h"
 #include "threads.h"
 #include "threadstacks.h"
+#include "stack_types.h"
+#include "stacks.h"
 #include "profiling.h"
 #include "overheadprofiling_types.h"
 
@@ -23,10 +26,50 @@ void vftr_accumulate_hook_overheadprofiling(overheadProfile_t *prof,
    prof->hook_usec += overhead_usec;
 }
 
+long long *vftr_get_total_hook_overhead(stacktree_t stacktree, int nthreads) {
+   // accumulate the hook overhead for each thread separately
+   long long *overheads_usec = (long long*) malloc(nthreads*sizeof(long long));
+   for (int ithread=0; ithread<nthreads; ithread++) {
+      overheads_usec[ithread] = 0ll;
+   }
+
+   int nstacks = stacktree.nstacks;
+   for (int istack=0; istack<nstacks; istack++) {
+      stack_t *stack = stacktree.stacks+istack;
+      int nprofs = stack->profiling.nprofiles;
+      for (int iprof=0; iprof<nprofs; iprof++) {
+         profile_t *prof = stack->profiling.profiles+iprof;
+         int threadID = prof->threadID;
+         overheads_usec[threadID] += prof->overheadProf.hook_usec;
+      }
+   }
+   return overheads_usec;
+}
+
 #ifdef _MPI
 void vftr_accumulate_mpi_overheadprofiling(overheadProfile_t *prof,
                                            long long overhead_usec) {
    prof->mpi_usec += overhead_usec;
+}
+
+long long *vftr_get_total_mpi_overhead(stacktree_t stacktree, int nthreads) {
+   // accumulate the mpi overhead for each thread separately
+   long long *overheads_usec = (long long*) malloc(nthreads*sizeof(long long));
+   for (int ithread=0; ithread<nthreads; ithread++) {
+      overheads_usec[ithread] = 0ll;
+   }
+
+   int nstacks = stacktree.nstacks;
+   for (int istack=0; istack<nstacks; istack++) {
+      stack_t *stack = stacktree.stacks+istack;
+      int nprofs = stack->profiling.nprofiles;
+      for (int iprof=0; iprof<nprofs; iprof++) {
+         profile_t *prof = stack->profiling.profiles+iprof;
+         int threadID = prof->threadID;
+         overheads_usec[threadID] += prof->overheadProf.mpi_usec;
+      }
+   }
+   return overheads_usec;
 }
 #endif
 
@@ -34,6 +77,26 @@ void vftr_accumulate_mpi_overheadprofiling(overheadProfile_t *prof,
 void vftr_accumulate_omp_overheadprofiling(overheadProfile_t *prof,
                                            long long overhead_usec) {
    prof->omp_usec += overhead_usec;
+}
+
+long long *vftr_get_total_omp_overhead(stacktree_t stacktree, int nthreads) {
+   // accumulate the omp overhead for each thread separately
+   long long *overheads_usec = (long long*) malloc(nthreads*sizeof(long long));
+   for (int ithread=0; ithread<nthreads; ithread++) {
+      overheads_usec[ithread] = 0ll;
+   }
+
+   int nstacks = stacktree.nstacks;
+   for (int istack=0; istack<nstacks; istack++) {
+      stack_t *stack = stacktree.stacks+istack;
+      int nprofs = stack->profiling.nprofiles;
+      for (int iprof=0; iprof<nprofs; iprof++) {
+         profile_t *prof = stack->profiling.profiles+iprof;
+         int threadID = prof->threadID;
+         overheads_usec[threadID] += prof->overheadProf.omp_usec;
+      }
+   }
+   return overheads_usec;
 }
 #endif
 

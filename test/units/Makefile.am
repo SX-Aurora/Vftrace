@@ -69,7 +69,14 @@ check_PROGRAMS += stacktree \
 		  getstackstring
 
 check_PROGRAMS += profilelist \
-		  exclusive_times
+		  exclusive_times \
+		  total_hook_overhead
+if ENABLE_MPI
+check_PROGRAMS += total_mpi_overhead
+endif
+if ENABLE_OMP
+check_PROGRAMS += total_omp_overhead
+endif
 
 check_PROGRAMS += threadtree
 
@@ -223,6 +230,25 @@ exclusive_times_SOURCES = $(srcdir)/exclusive_times.c \
 exclusive_times_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
 exclusive_times_LDFLAGS = $(AM_LDFLAGS)
 
+total_hook_overhead_SOURCES = $(srcdir)/total_hook_overhead.c \
+			      $(srcdir)/dummysymboltable.c
+total_hook_overhead_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
+total_hook_overhead_LDFLAGS = $(AM_LDFLAGS)
+
+if ENABLE_MPI
+total_mpi_overhead_SOURCES = $(srcdir)/total_mpi_overhead.c \
+			     $(srcdir)/dummysymboltable.c
+total_mpi_overhead_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
+total_mpi_overhead_LDFLAGS = $(AM_LDFLAGS)
+endif
+
+if ENABLE_OMP
+total_omp_overhead_SOURCES = $(srcdir)/total_omp_overhead.c \
+			     $(srcdir)/dummysymboltable.c
+total_omp_overhead_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
+total_omp_overhead_LDFLAGS = $(AM_LDFLAGS)
+endif
+
 threadtree_SOURCES = $(srcdir)/threadtree.c \
 		     $(srcdir)/dummysymboltable.c
 threadtree_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
@@ -295,7 +321,14 @@ dist_check_SCRIPTS += stacktree.sh \
 		      stacklist.sh \
 		      getstackstring.sh
 dist_check_SCRIPTS += profilelist.sh \
-		      exclusive_times.sh
+		      exclusive_times.sh \
+		      total_hook_overhead.sh
+if ENABLE_MPI
+dist_check_SCRIPTS += total_mpi_overhead.sh
+endif
+if ENABLE_OMP
+dist_check_SCRIPTS += total_omp_overhead.sh
+endif
 dist_check_SCRIPTS += threadtree.sh
 dist_check_SCRIPTS += filewrite_1.sh
 #		     scenario_1.sh \
