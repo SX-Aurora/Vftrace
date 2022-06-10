@@ -1,11 +1,11 @@
 Threadtree:
-0m: 0
-  0m: None
-    0m: None
-  1: None
-    0: None
-      0: None
-    1: None
-  2: None
-    0: None
-  3: None
+   0m
+     0m
+       0m
+     1
+       0
+         0
+       1
+     2
+       0
+     3

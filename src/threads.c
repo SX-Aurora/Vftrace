@@ -155,6 +155,20 @@ void vftr_print_thread(FILE *fp, threadtree_t threadtree, int threadid) {
    for (int ilevel=0; ilevel<thread.level; ilevel++) {
       fprintf(fp, "  ");
    }
+   fprintf(fp, "%4d%s", thread.thread_num,
+           thread.master ? "m" : "");
+   fprintf(fp, "\n");
+   for (int ithread=0; ithread<thread.nsubthreads; ithread++) {
+      vftr_print_thread(fp, threadtree, thread.subthreads[ithread]);
+   }
+}
+
+void vftr_print_current_thread(FILE *fp, threadtree_t threadtree, int threadid) {
+   thread_t thread = threadtree.threads[threadid];
+   // first print the indentation
+   for (int ilevel=0; ilevel<thread.level; ilevel++) {
+      fprintf(fp, "  ");
+   }
    fprintf(fp, "%d%s: ", thread.thread_num,
            thread.master ? "m" : "");
    vftr_print_threadstack(fp, thread.stacklist);
