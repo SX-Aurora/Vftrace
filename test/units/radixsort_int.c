@@ -1,11 +1,13 @@
 #include <stdlib.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <stdbool.h>
 #ifdef _MPI
 #include <mpi.h>
 #endif
 
-#include "sorting.h"
+#include <sorting.h>
+#include "bad_rng.h"
 
 bool int_list_sorted(int n, int *list) {
    bool sorted = true;
@@ -23,7 +25,7 @@ int main(int argc, char **argv) {
 
    // require cmd-line argument
    if (argc < 2) {
-      printf("./sort_integer_ascending <listsize>\n");
+      printf("./radixsort_int <listsize>\n");
       return 1;
    }
 
@@ -34,17 +36,16 @@ int main(int argc, char **argv) {
       return 1;
    }
    int *list = (int*) malloc(n*sizeof(int));
-   srand(137);
-   list[0] = 1;
-   list[1] = 0;
-   for (int i=2; i<n; i++) {
-      list[i] = -2*(rand()-RAND_MAX/2);
+   bool sorted_before = true;
+   while (sorted_before) {
+      for (int i=0; i<n; i++) {
+         list[i] = random_int();
+      }
+      sorted_before = int_list_sorted(n, list);
    }
-
-   bool sorted_before = int_list_sorted(n, list);
    printf("sorted before: %s\n", sorted_before ? "true" : "false");
 
-   vftr_sort_integer(list, n, true);
+   vftr_radixsort_int(n, list);
 
    bool sorted_after = int_list_sorted(n, list);
    printf("sorted after: %s\n", sorted_after ? "true" : "false");
@@ -66,4 +67,3 @@ int main(int argc, char **argv) {
       return 0;
    }
 }
-

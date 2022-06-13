@@ -8,6 +8,7 @@ endif
 
 SUBDIRS =
 libvftrace_la_LIBADD =
+SUBDIRS += sorting
 SUBDIRS += mpi
 
 external_includes = -I$(top_srcdir)/external/tinyexpr/ \
@@ -19,6 +20,7 @@ libvftrace_la_LIBADD += ${top_builddir}/external/libtinyexpr.la
 
 #internal libraries
 libvftrace_la_LIBADD += libvftr_pause.la
+libvftrace_la_LIBADD += sorting/libvftr_sorting.la
 libvftrace_la_LIBADD += mpi/utils/libvftr_mpi_utils.la
 if ENABLE_MPI
 libvftrace_la_LIBADD += mpi/vftr_mpi/libvftr_mpi.la
@@ -72,8 +74,7 @@ libvftrace_la_SOURCES += regular_expressions.c \
 			 environment.c \
 			 ElfFormat.c \
 			 symbols.c
-libvftrace_la_SOURCES += sorting.c \
-			 search.c \
+libvftrace_la_SOURCES += search.c \
 			 misc_utils.c \
 			 tables.c \
 			 exe_info.c \
@@ -91,6 +92,7 @@ endif
 
 libvftrace_la_CFLAGS += -I${srcdir}/mpi/utils/ \
 			-I${srcdir}/omp/ \
+			-I${srcdir}/sorting \
 			${external_includes}
 
 if ENABLE_HWC

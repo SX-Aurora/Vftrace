@@ -1,5 +1,5 @@
 #!/bin/bash
-vftr_binary=sort_integer_ascending
+vftr_binary=radixsort_int
 
 listsize=$(bc <<< "32*${RANDOM}+128")
 if [ "x$HAS_MPI" == "xYES" ]; then

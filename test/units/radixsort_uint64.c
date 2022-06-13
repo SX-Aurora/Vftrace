@@ -7,6 +7,7 @@
 #endif
 
 #include <sorting.h>
+#include "bad_rng.h"
 
 bool uint64_list_sorted(int n, uint64_t *list) {
    bool sorted = true;
@@ -35,18 +36,13 @@ int main(int argc, char **argv) {
       return 1;
    }
    uint64_t *list = (uint64_t*) malloc(n*sizeof(uint64_t));
-   list[0] = 0xbbb439e77d8b3c8f;
-   for (int i=1; i<n; i++) {
-      list[i] = list[i-1]<<1;
-      if (i%3 == 0) {
-         list[i] += 1;
+   bool sorted_before = true;
+   while (sorted_before) {
+      for (int i=0; i<n; i++) {
+         list[i] = random_uint64();
       }
-      if (i%5 == 0) {
-         list[i] += 1;
-      }
+      sorted_before = uint64_list_sorted(n, list);
    }
-
-   bool sorted_before = uint64_list_sorted(n, list);
    printf("sorted before: %s\n", sorted_before ? "true" : "false");
 
    vftr_radixsort_uint64(n, list);

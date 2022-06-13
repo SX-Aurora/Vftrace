@@ -1,11 +1,13 @@
 #include <stdlib.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <stdbool.h>
 #ifdef _MPI
 #include <mpi.h>
 #endif
 
-#include "sorting.h"
+#include <sorting.h>
+#include "bad_rng.h"
 
 bool double_list_sorted(int n, double *list) {
    bool sorted = true;
@@ -23,7 +25,7 @@ int main(int argc, char **argv) {
 
    // require cmd-line argument
    if (argc < 2) {
-      printf("./sort_double_ascending <listsize>\n");
+      printf("./radixsort_double <listsize>\n");
       return 1;
    }
 
@@ -34,18 +36,23 @@ int main(int argc, char **argv) {
       return 1;
    }
    double *list = (double*) malloc(n*sizeof(double));
-   srand(137);
-   list[0] = 1.0;
-   list[1] = 0.0;
-   for (int i=2; i<n; i++) {
-      list[i] = -2.0*(rand()-RAND_MAX/2);
+   bool sorted_before = true;
+   while (sorted_before) {
+      for (int i=0; i<n; i++) {
+         list[i] = random_double();
+      }
+      sorted_before = double_list_sorted(n, list);
    }
-
-   bool sorted_before = double_list_sorted(n, list);
+   for (int i=0; i<n; i++) {
+      printf("%le\n", list[i]);
+   }
    printf("sorted before: %s\n", sorted_before ? "true" : "false");
 
-   vftr_sort_double(list, n, true);
+   vftr_radixsort_double(n, list);
 
+   for (int i=0; i<n; i++) {
+      printf("%le\n", list[i]);
+   }
    bool sorted_after = double_list_sorted(n, list);
    printf("sorted after: %s\n", sorted_after ? "true" : "false");
 
@@ -66,4 +73,3 @@ int main(int argc, char **argv) {
       return 0;
    }
 }
-

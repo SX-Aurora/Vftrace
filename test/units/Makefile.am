@@ -37,13 +37,10 @@ if ENABLE_OMP
 endif
 
 check_PROGRAMS = 
-check_PROGRAMS += radixsort_uint64 \
-		  sort_integer_ascending \
-		  sort_integer_descending \
-		  sort_double_ascending \
-		  sort_double_descending \
-		  sort_double_copy_ascending \
-		  sort_double_copy_descending
+check_PROGRAMS += radixsort_int \
+		  radixsort_uint64 \
+		  radixsort_longlong \
+		  radixsort_double
 check_PROGRAMS += chop_chars
 check_PROGRAMS += symbols_1 \
 		  symbols_2 \
@@ -96,36 +93,28 @@ check_PROGRAMS += sxhwc_1
 endif
 endif
 
-radixsort_uint64_SOURCES = $(srcdir)/radixsort_uint64.c
-radixsort_uint64_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
+radixsort_int_SOURCES = $(srcdir)/radixsort_int.c \
+			$(srcdir)/bad_rng.c
+radixsort_int_CFLAGS = $(AM_CFLAGS) -I$(top_srcdir)/src/sorting/
+radixsort_int_LDFLAGS = $(AM_LDFLAGS)
+
+radixsort_uint64_SOURCES = $(srcdir)/radixsort_uint64.c \
+			   $(srcdir)/bad_rng.c
+radixsort_uint64_CFLAGS = $(AM_CFLAGS) -I$(top_srcdir)/src/sorting/
 radixsort_uint64_LDFLAGS = $(AM_LDFLAGS)
 
-sort_integer_ascending_SOURCES = $(srcdir)/sort_integer_ascending.c
-sort_integer_ascending_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
-sort_integer_ascending_LDFLAGS = $(AM_LDFLAGS)
+radixsort_longlong_SOURCES = $(srcdir)/radixsort_longlong.c \
+			   $(srcdir)/bad_rng.c
+radixsort_longlong_CFLAGS = $(AM_CFLAGS) -I$(top_srcdir)/src/sorting/
+radixsort_longlong_LDFLAGS = $(AM_LDFLAGS)
 
-sort_integer_descending_SOURCES = $(srcdir)/sort_integer_descending.c
-sort_integer_descending_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
-sort_integer_descending_LDFLAGS = $(AM_LDFLAGS)
-
-sort_double_ascending_SOURCES = $(srcdir)/sort_double_ascending.c
-sort_double_ascending_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
-sort_double_ascending_LDFLAGS = $(AM_LDFLAGS)
-
-sort_double_descending_SOURCES = $(srcdir)/sort_double_descending.c
-sort_double_descending_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
-sort_double_descending_LDFLAGS = $(AM_LDFLAGS)
-
-sort_double_copy_ascending_SOURCES = $(srcdir)/sort_double_copy_ascending.c
-sort_double_copy_ascending_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
-sort_double_copy_ascending_LDFLAGS = $(AM_LDFLAGS)
-
-sort_double_copy_descending_SOURCES = $(srcdir)/sort_double_copy_descending.c
-sort_double_copy_descending_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
-sort_double_copy_descending_LDFLAGS = $(AM_LDFLAGS)
+radixsort_double_SOURCES = $(srcdir)/radixsort_double.c \
+			   $(srcdir)/bad_rng.c
+radixsort_double_CFLAGS = $(AM_CFLAGS) -I$(top_srcdir)/src/sorting/
+radixsort_double_LDFLAGS = $(AM_LDFLAGS)
 
 chop_chars_SOURCES = $(srcdir)/chop_chars.c
-chop_chars_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
+chop_chars_CFLAGS = $(AM_CFLAGS)
 chop_chars_LDFLAGS = $(AM_LDFLAGS)
 
 symbols_1_SOURCES = $(srcdir)/symbols_1.c \
@@ -291,13 +280,10 @@ threadtree_LDFLAGS = $(AM_LDFLAGS)
 #endif
 
 dist_check_SCRIPTS =
-dist_check_SCRIPTS += radixsort_uint64.sh \
-		      sort_integer_ascending.sh \
-		      sort_integer_descending.sh \
-		      sort_double_ascending.sh \
-		      sort_double_descending.sh \
-		      sort_double_copy_ascending.sh \
-		      sort_double_copy_descending.sh
+dist_check_SCRIPTS += radixsort_int.sh \
+		      radixsort_uint64.sh# \
+		      radixsort_longlong.sh \
+		      radixsort_double.sh
 dist_check_SCRIPTS += chop_chars.sh
 dist_check_SCRIPTS += symbols_1.sh \
 		      symbols_2.sh \
