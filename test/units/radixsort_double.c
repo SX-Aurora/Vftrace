@@ -43,16 +43,10 @@ int main(int argc, char **argv) {
       }
       sorted_before = double_list_sorted(n, list);
    }
-   for (int i=0; i<n; i++) {
-      printf("%le\n", list[i]);
-   }
    printf("sorted before: %s\n", sorted_before ? "true" : "false");
 
    vftr_radixsort_double(n, list);
 
-   for (int i=0; i<n; i++) {
-      printf("%le\n", list[i]);
-   }
    bool sorted_after = double_list_sorted(n, list);
    printf("sorted after: %s\n", sorted_after ? "true" : "false");
 
