@@ -38,9 +38,13 @@ endif
 
 check_PROGRAMS = 
 check_PROGRAMS += radixsort_int \
+		  radixsort_perm_int \
 		  radixsort_uint64 \
+		  radixsort_perm_uint64 \
 		  radixsort_longlong \
-		  radixsort_double
+		  radixsort_perm_longlong \
+		  radixsort_double \
+		  radixsort_perm_double
 check_PROGRAMS += chop_chars
 check_PROGRAMS += symbols_1 \
 		  symbols_2 \
@@ -98,20 +102,40 @@ radixsort_int_SOURCES = $(srcdir)/radixsort_int.c \
 radixsort_int_CFLAGS = $(AM_CFLAGS) -I$(top_srcdir)/src/sorting/
 radixsort_int_LDFLAGS = $(AM_LDFLAGS)
 
+radixsort_perm_int_SOURCES = $(srcdir)/radixsort_perm_int.c \
+			     $(srcdir)/bad_rng.c
+radixsort_perm_int_CFLAGS = $(AM_CFLAGS) -I$(top_srcdir)/src/sorting/
+radixsort_perm_int_LDFLAGS = $(AM_LDFLAGS)
+
 radixsort_uint64_SOURCES = $(srcdir)/radixsort_uint64.c \
 			   $(srcdir)/bad_rng.c
 radixsort_uint64_CFLAGS = $(AM_CFLAGS) -I$(top_srcdir)/src/sorting/
 radixsort_uint64_LDFLAGS = $(AM_LDFLAGS)
 
+radixsort_perm_uint64_SOURCES = $(srcdir)/radixsort_perm_uint64.c \
+				$(srcdir)/bad_rng.c
+radixsort_perm_uint64_CFLAGS = $(AM_CFLAGS) -I$(top_srcdir)/src/sorting/
+radixsort_perm_uint64_LDFLAGS = $(AM_LDFLAGS)
+
 radixsort_longlong_SOURCES = $(srcdir)/radixsort_longlong.c \
-			   $(srcdir)/bad_rng.c
+			     $(srcdir)/bad_rng.c
 radixsort_longlong_CFLAGS = $(AM_CFLAGS) -I$(top_srcdir)/src/sorting/
 radixsort_longlong_LDFLAGS = $(AM_LDFLAGS)
+
+radixsort_perm_longlong_SOURCES = $(srcdir)/radixsort_perm_longlong.c \
+				  $(srcdir)/bad_rng.c
+radixsort_perm_longlong_CFLAGS = $(AM_CFLAGS) -I$(top_srcdir)/src/sorting/
+radixsort_perm_longlong_LDFLAGS = $(AM_LDFLAGS)
 
 radixsort_double_SOURCES = $(srcdir)/radixsort_double.c \
 			   $(srcdir)/bad_rng.c
 radixsort_double_CFLAGS = $(AM_CFLAGS) -I$(top_srcdir)/src/sorting/
 radixsort_double_LDFLAGS = $(AM_LDFLAGS)
+
+radixsort_perm_double_SOURCES = $(srcdir)/radixsort_perm_double.c \
+				$(srcdir)/bad_rng.c
+radixsort_perm_double_CFLAGS = $(AM_CFLAGS) -I$(top_srcdir)/src/sorting/
+radixsort_perm_double_LDFLAGS = $(AM_LDFLAGS)
 
 chop_chars_SOURCES = $(srcdir)/chop_chars.c
 chop_chars_CFLAGS = $(AM_CFLAGS)
@@ -281,9 +305,13 @@ threadtree_LDFLAGS = $(AM_LDFLAGS)
 
 dist_check_SCRIPTS =
 dist_check_SCRIPTS += radixsort_int.sh \
-		      radixsort_uint64.sh# \
+		      radixsort_perm_int.sh \
+		      radixsort_uint64.sh \
+		      radixsort_perm_uint64.sh \
 		      radixsort_longlong.sh \
-		      radixsort_double.sh
+		      radixsort_perm_longlong.sh \
+		      radixsort_double.sh \
+		      radixsort_perm_double.sh
 dist_check_SCRIPTS += chop_chars.sh
 dist_check_SCRIPTS += symbols_1.sh \
 		      symbols_2.sh \
