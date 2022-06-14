@@ -3,8 +3,6 @@
 
 #include "stack_types.h"
 
-long long vftr_total_overhead_usec(stacktree_t stacktree);
-
 int *vftr_stack_calls_list(stacktree_t stacktree);
 
 double *vftr_stack_inclusive_time_list(stacktree_t stacktree);

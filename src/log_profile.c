@@ -3,19 +3,6 @@
 #include "stack_types.h"
 #include "table_types.h"
 
-long long vftr_total_overhead_usec(stacktree_t stacktree) {
-   long long overhead = 0;
-   for (int istack=0; istack<stacktree.nstacks; istack++) {
-      stack_t *stack_ptr = stacktree.stacks + istack;
-      for (int iprof=0; iprof<stack_ptr->profiling.nprofiles; iprof++) {
-         profile_t *prof_ptr = stack_ptr->profiling.profiles+iprof;
-         overhead += prof_ptr->overheadProf.hook_usec;
-         // TODO: Add MPI and OMP overhead
-      }
-   }
-   return overhead;
-}
-
 int *vftr_stack_calls_list(stacktree_t stacktree) {
    int nstacks = stacktree.nstacks;
    int *calls_list = (int*) malloc(nstacks*sizeof(int));
