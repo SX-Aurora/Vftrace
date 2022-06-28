@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <stdint.h>
+#include <stdbool.h>
 
 #include "stack_types.h"
 #include "collated_hash_types.h"
