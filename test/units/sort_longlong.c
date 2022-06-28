@@ -9,10 +9,16 @@
 #include <sorting.h>
 #include "bad_rng.h"
 
-bool int_list_sorted(int n, int *list) {
+bool longlong_list_sorted(int n, long long *list, bool ascending) {
    bool sorted = true;
-   for (int i=1; i<n; i++) {
-      sorted = sorted && (list[i-1] <= list[i]);
+   if (ascending) {
+      for (int i=1; i<n; i++) {
+         sorted = sorted && (list[i-1] <= list[i]);
+      }
+   } else {
+      for (int i=1; i<n; i++) {
+         sorted = sorted && (list[i-1] >= list[i]);
+      }
    }
    return sorted;
 }
@@ -24,43 +30,36 @@ int main(int argc, char **argv) {
 #endif
 
    // require cmd-line argument
-   if (argc < 2) {
-      printf("./radixsort_perm_int <listsize>\n");
+   if (argc < 3) {
+      printf("./sort_longlong <listsize> <ascending>\n");
       return 1;
    }
 
-   // allocating send/recv buffer
    int n = atoi(argv[1]);
    if (n < 2) {
       printf("listsize needs to be integer >= 2\n");
       return 1;
    }
-   int *list = (int*) malloc(n*sizeof(int));
-   int *list2 = (int*) malloc(n*sizeof(int));
+
+   int ascending_int = atoi(argv[2]);
+   bool ascending = ascending_int ? true : false;
+
+   long long *list = (long long*) malloc(n*sizeof(long long));
    bool sorted_before = true;
    while (sorted_before) {
       for (int i=0; i<n; i++) {
-         list[i] = random_int();
-         list2[i] = list[i];
+         list[i] = random_longlong();
       }
-      sorted_before = int_list_sorted(n, list);
+      sorted_before = longlong_list_sorted(n, list, ascending);
    }
    printf("sorted before: %s\n", sorted_before ? "true" : "false");
 
-   int *perm = NULL;
-   vftr_radixsort_perm_int(n, list, &perm);
+   vftr_sort_longlong(n, list, ascending);
 
-   bool sorted_after = int_list_sorted(n, list);
+   bool sorted_after = longlong_list_sorted(n, list, ascending);
    printf("sorted after: %s\n", sorted_after ? "true" : "false");
 
-   vftr_apply_perm_int(n, list2, perm);
-
-   bool sorted_other_list = int_list_sorted(n, list2);
-   printf("other list sorted: %s\n", sorted_other_list ? "true" : "false");
-
    free(list);
-   free(list2);
-   free(perm);
    list = NULL;
 
 #ifdef _MPI
@@ -72,9 +71,6 @@ int main(int argc, char **argv) {
       return 1;
    } else if (!sorted_after) {
       printf("Array was not properly sorted\n");
-      return 1;
-   } else if (!sorted_other_list) {
-      printf("Other list not properly sorted with permutation\n");
       return 1;
    } else {
       return 0;

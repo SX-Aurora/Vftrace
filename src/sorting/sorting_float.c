@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <stdbool.h>
 
 #include "custom_types.h"
 #include "sort_utils.h"
@@ -14,12 +15,12 @@
 #endif
 #endif
 
-#define MAKE_RADIXSORT_NAME(x) vftr_radixsort_ ## x
+#define MAKE_RADIXSORT_NAME(x) vftr_sort_ ## x
 #define RADIXSORT_NAME(typestr) MAKE_RADIXSORT_NAME(typestr)
 
 // sorts a list of floats with linear scaling radix sort
 // one bit at a time
-void RADIXSORT_NAME(TYPESTR)(int n, TYPE *list) {
+void RADIXSORT_NAME(TYPESTR)(int n, TYPE *list, bool ascending) {
    // create the buckets for sorting
    // use one array to store both buckets
    TYPE *buckets = (TYPE*) malloc(2*n*sizeof(TYPE));
@@ -38,10 +39,12 @@ void RADIXSORT_NAME(TYPESTR)(int n, TYPE *list) {
       }
       // copy the presorted numbers back to the original list
       for (int i=0; i<idx[0]; i++) {
-         list[i] = buckets[0*n+i];
+         int bi = 0*n+i;
+         list[i] = buckets[bi];
       }
       for (int i=0; i<idx[1]; i++) {
-         list[idx[0]+i] = buckets[1*n+i];
+         int bi = 1*n+i;
+         list[idx[0]+i] = buckets[bi];
       }
    }
 
@@ -59,22 +62,35 @@ void RADIXSORT_NAME(TYPESTR)(int n, TYPE *list) {
    // copy the presorted numbers back to the original list
    // The negative numbers are sorted inverse due
    // to their bit pattern representation (IEEE754)
-   for (int i=0; i<idx[1]; i++) {
-      list[idx[1]-i-1] = buckets[1*n+i];
-   }
-   for (int i=0; i<idx[0]; i++) {
-      list[idx[1]+i] = buckets[0*n+i];
+   if (ascending) {
+      for (int i=0; i<idx[1]; i++) {
+         int bi = 1*n+idx[1]-i-1;
+         list[i] = buckets[bi];
+      }
+      for (int i=0; i<idx[0]; i++) {
+         int bi = 0*n+i;
+         list[idx[1]+i] = buckets[bi];
+      }
+   } else {
+      for (int i=0; i<idx[0]; i++) {
+         int bi = 0*n+idx[0]-i-1;
+         list[i] = buckets[bi];
+      }
+      for (int i=0; i<idx[1]; i++) {
+         int bi = 1*n+i;
+         list[idx[0]+i] = buckets[bi];
+      }
    }
    free(buckets);
 }
 
-#define MAKE_RADIXSORT_PERM_NAME(x) vftr_radixsort_perm_ ## x
+#define MAKE_RADIXSORT_PERM_NAME(x) vftr_sort_perm_ ## x
 #define RADIXSORT_PERM_NAME(typestr) MAKE_RADIXSORT_PERM_NAME(typestr)
 
 // sorts a list of floats with linear scaling radix sort
 // one bit at a time
 // Record the sorting process in a permutation for later use
-void RADIXSORT_PERM_NAME(TYPESTR)(int n, TYPE *list, int **perm_ptr) {
+void RADIXSORT_PERM_NAME(TYPESTR)(int n, TYPE *list, int **perm_ptr, bool ascending) {
    // create a unity permutation to record sorting process
    int *perm = vftr_create_unityperm(n);
    // create the buckets for sorting
@@ -121,49 +137,30 @@ void RADIXSORT_PERM_NAME(TYPESTR)(int n, TYPE *list, int **perm_ptr) {
    // copy the presorted numbers back to the original list
    // The negative numbers are sorted inverse due
    // to their bit pattern representation (IEEE754)
-   for (int i=0; i<idx[1]; i++) {
-      list[idx[1]-i-1] = buckets[1*n+i];
-      perm[idx[1]-i-1] = pbuckets[1*n+i];
-   }
-   for (int i=0; i<idx[0]; i++) {
-      list[idx[1]+i] = buckets[0*n+i];
-      perm[idx[1]+i] = pbuckets[0*n+i];
-   }
+   if (ascending) {
+      for (int i=0; i<idx[1]; i++) {
+         int bi = 1*n+idx[1]-i-1;
+         list[i] = buckets[bi];
+         perm[i] = pbuckets[bi];
+      }
+      for (int i=0; i<idx[0]; i++) {
+         int bi = 0*n+i;
+         list[idx[1]+i] = buckets[bi];
+         perm[idx[1]+i] = pbuckets[bi];
+      }
+   } else {
+      for (int i=0; i<idx[0]; i++) {
+         int bi = 0*n+idx[0]-i-1;
+         list[i] = buckets[bi];
+         perm[i] = pbuckets[bi];
+      }
+      for (int i=0; i<idx[1]; i++) {
+         int bi = 1*n+i;
+         list[idx[0]+i] = buckets[bi];
+         perm[idx[0]+i] = pbuckets[bi];
+      }
+   }  
    free(buckets);
    free(pbuckets);
    *perm_ptr = perm;
-}
-
-#define MAKE_APPLY_PERM_NAME(x) vftr_apply_perm_ ## x
-#define APPLY_PERM_NAME(typestr) MAKE_APPLY_PERM_NAME(typestr)
-void APPLY_PERM_NAME(TYPESTR)(int n, TYPE *list, int *perm) {
-   for (int i=0; i<n; i++) {
-      if (perm[i] > 0) {
-         TYPE tmp = list[i];
-         list[i] = list[perm[i]];
-         perm[i] *= -1;
-         int next = -perm[i];
-         int prev = i;
-         while (next != i) {
-            prev = next;
-            list[next] = list[perm[next]];
-            perm[next] *= -1;
-            next = -perm[next];
-         }
-         list[prev] = tmp;
-      }
-   }
-   for (int i=0; i<n; i++) {
-      perm[i] *= -1;
-   }
-
-   // Technically faster, but consumes more memory
-//   TYPE *tmplist = (TYPE*) malloc(n*sizeof(TYPE));
-//   for (int i=0; i<n; i++) {
-//      tmplist[i] = list[perm[i]];
-//   }
-//   for (int i=0; i<n; i++) {
-//      list[i] = tmplist[i];
-//   }
-//   free(tmplist);
 }

@@ -9,10 +9,16 @@
 #include <sorting.h>
 #include "bad_rng.h"
 
-bool longlong_list_sorted(int n, long long *list) {
+bool uint8_list_sorted(int n, uint8_t *list, bool ascending) {
    bool sorted = true;
-   for (int i=1; i<n; i++) {
-      sorted = sorted && (list[i-1] <= list[i]);
+   if (ascending) {
+      for (int i=1; i<n; i++) {
+         sorted = sorted && (list[i-1] <= list[i]);
+      }
+   } else {
+      for (int i=1; i<n; i++) {
+         sorted = sorted && (list[i-1] >= list[i]);
+      }
    }
    return sorted;
 }
@@ -24,30 +30,33 @@ int main(int argc, char **argv) {
 #endif
 
    // require cmd-line argument
-   if (argc < 2) {
-      printf("./radixsort_longlong <listsize>\n");
+   if (argc < 3) {
+      printf("./sort_uint8 <listsize> <ascending>\n");
       return 1;
    }
 
-   // allocating send/recv buffer
    int n = atoi(argv[1]);
    if (n < 2) {
       printf("listsize needs to be integer >= 2\n");
       return 1;
    }
-   long long *list = (long long*) malloc(n*sizeof(long long));
+
+   int ascending_int = atoi(argv[2]);
+   bool ascending = ascending_int ? true : false;
+
+   uint8_t *list = (uint8_t*) malloc(n*sizeof(uint8_t));
    bool sorted_before = true;
    while (sorted_before) {
       for (int i=0; i<n; i++) {
-         list[i] = random_longlong();
+         list[i] = random_uint8();
       }
-      sorted_before = longlong_list_sorted(n, list);
+      sorted_before = uint8_list_sorted(n, list, ascending);
    }
    printf("sorted before: %s\n", sorted_before ? "true" : "false");
 
-   vftr_radixsort_longlong(n, list);
+   vftr_sort_uint8(n, list, ascending);
 
-   bool sorted_after = longlong_list_sorted(n, list);
+   bool sorted_after = uint8_list_sorted(n, list, ascending);
    printf("sorted after: %s\n", sorted_after ? "true" : "false");
 
    free(list);
@@ -67,4 +76,3 @@ int main(int argc, char **argv) {
       return 0;
    }
 }
-

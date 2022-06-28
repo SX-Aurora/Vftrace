@@ -9,10 +9,16 @@
 #include <sorting.h>
 #include "bad_rng.h"
 
-bool longlong_list_sorted(int n, long long *list) {
+bool longlong_list_sorted(int n, long long *list, bool ascending) {
    bool sorted = true;
-   for (int i=1; i<n; i++) {
-      sorted = sorted && (list[i-1] <= list[i]);
+   if (ascending) {
+      for (int i=1; i<n; i++) {
+         sorted = sorted && (list[i-1] <= list[i]);
+      }
+   } else {
+      for (int i=1; i<n; i++) {
+         sorted = sorted && (list[i-1] >= list[i]);
+      }
    }
    return sorted;
 }
@@ -24,17 +30,20 @@ int main(int argc, char **argv) {
 #endif
 
    // require cmd-line argument
-   if (argc < 2) {
-      printf("./radixsort_perm_longlong <listsize>\n");
+   if (argc < 3) {
+      printf("./sort_perm_longlong <listsize> <ascending>\n");
       return 1;
    }
 
-   // allocating send/recv buffer
    int n = atoi(argv[1]);
    if (n < 2) {
       printf("listsize needs to be integer >= 2\n");
       return 1;
    }
+
+   int ascending_int = atoi(argv[2]);
+   bool ascending = ascending_int ? true : false;
+
    long long *list = (long long*) malloc(n*sizeof(long long));
    long long *list2 = (long long*) malloc(n*sizeof(long long));
    bool sorted_before = true;
@@ -43,19 +52,19 @@ int main(int argc, char **argv) {
          list[i] = random_longlong();
          list2[i] = list[i];
       }
-      sorted_before = longlong_list_sorted(n, list);
+      sorted_before = longlong_list_sorted(n, list, ascending);
    }
    printf("sorted before: %s\n", sorted_before ? "true" : "false");
 
    int *perm = NULL;
-   vftr_radixsort_perm_longlong(n, list, &perm);
+   vftr_sort_perm_longlong(n, list, &perm, ascending);
 
-   bool sorted_after = longlong_list_sorted(n, list);
+   bool sorted_after = longlong_list_sorted(n, list, ascending);
    printf("sorted after: %s\n", sorted_after ? "true" : "false");
 
    vftr_apply_perm_longlong(n, list2, perm);
 
-   bool sorted_other_list = longlong_list_sorted(n, list2);
+   bool sorted_other_list = longlong_list_sorted(n, list2, ascending);
    printf("other list sorted: %s\n", sorted_other_list ? "true" : "false");
 
    free(list);

@@ -3,8 +3,8 @@
 #include "custom_types.h"
 #include "symbols.h"
 
-// sort the symboltable with a linear scaling radixsort
-void vftr_radixsort_symboltable(unsigned int nsymb, symbol_t *symbols) {
+// sort the symboltable with a linear scaling sort
+void vftr_sort_symboltable(unsigned int nsymb, symbol_t *symbols) {
    // create the fuckets for sorting
    // use one array to store both buckets
    symbol_t *buckets = (symbol_t*) malloc(2*nsymb*sizeof(symbol_t));

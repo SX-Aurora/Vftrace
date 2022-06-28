@@ -237,8 +237,8 @@ symboltable_t vftr_read_symbols() {
    }
 
    // sort the symbol table for faster access lateron with a binary search
-   vftr_radixsort_symboltable(symboltable.nsymbols,
-                              symboltable.symbols);
+   vftr_sort_symboltable(symboltable.nsymbols,
+                         symboltable.symbols);
 
    vftr_free_librarylist(&librarylist);
    return symboltable;

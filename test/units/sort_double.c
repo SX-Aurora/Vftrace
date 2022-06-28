@@ -9,10 +9,16 @@
 #include <sorting.h>
 #include "bad_rng.h"
 
-bool uint64_list_sorted(int n, uint64_t *list) {
+bool double_list_sorted(int n, double *list, bool ascending) {
    bool sorted = true;
-   for (int i=1; i<n; i++) {
-      sorted = sorted && (list[i-1] <= list[i]);
+   if (ascending) {
+      for (int i=1; i<n; i++) {
+         sorted = sorted && (list[i-1] <= list[i]);
+      }
+   } else {
+      for (int i=1; i<n; i++) {
+         sorted = sorted && (list[i-1] >= list[i]);
+      }
    }
    return sorted;
 }
@@ -24,30 +30,33 @@ int main(int argc, char **argv) {
 #endif
 
    // require cmd-line argument
-   if (argc < 2) {
-      printf("./radixsort_uint64 <listsize>\n");
+   if (argc < 3) {
+      printf("./sort_double <listsize> <ascending>\n");
       return 1;
    }
 
-   // allocating send/recv buffer
    int n = atoi(argv[1]);
    if (n < 2) {
       printf("listsize needs to be integer >= 2\n");
       return 1;
    }
-   uint64_t *list = (uint64_t*) malloc(n*sizeof(uint64_t));
+
+   int ascending_int = atoi(argv[2]);
+   bool ascending = ascending_int ? true : false;
+
+   double *list = (double*) malloc(n*sizeof(double));
    bool sorted_before = true;
    while (sorted_before) {
       for (int i=0; i<n; i++) {
-         list[i] = random_uint64();
+         list[i] = random_double();
       }
-      sorted_before = uint64_list_sorted(n, list);
+      sorted_before = double_list_sorted(n, list, ascending);
    }
    printf("sorted before: %s\n", sorted_before ? "true" : "false");
 
-   vftr_radixsort_uint64(n, list);
+   vftr_sort_double(n, list, ascending);
 
-   bool sorted_after = uint64_list_sorted(n, list);
+   bool sorted_after = double_list_sorted(n, list, ascending);
    printf("sorted after: %s\n", sorted_after ? "true" : "false");
 
    free(list);
@@ -67,4 +76,3 @@ int main(int argc, char **argv) {
       return 0;
    }
 }
-
