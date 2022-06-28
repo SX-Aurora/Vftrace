@@ -6,7 +6,6 @@
 callProfile_t vftr_new_callprofiling() {
    callProfile_t prof;
    prof.calls = 0ll;
-   prof.cycles = 0ll;
    prof.time_usec = 0ll;
    prof.time_excl_usec = 0ll;
    return prof;
@@ -14,10 +13,8 @@ callProfile_t vftr_new_callprofiling() {
 
 void vftr_accumulate_callprofiling(callProfile_t *prof,
                                    int calls,
-                                   long long cycles,
                                    long long time_usec) {
    prof->calls += calls;
-   prof->cycles += cycles;
    prof->time_usec += time_usec;
 }
 
@@ -59,7 +56,6 @@ void vftr_callprofiling_free(callProfile_t *callprof_ptr) {
 }
 
 void vftr_print_callprofiling(FILE *fp, callProfile_t callprof) {
-   fprintf(fp, "calls: %lld, cycles: %lld, time(incl/excl): %lld/%lld\n",
-           callprof.calls, callprof.cycles,
-           callprof.time_usec, callprof.time_excl_usec);
+   fprintf(fp, "calls: %lld, time(incl/excl): %lld/%lld\n",
+           callprof.calls, callprof.time_usec, callprof.time_excl_usec);
 }

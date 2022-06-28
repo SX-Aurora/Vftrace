@@ -12,7 +12,6 @@ callProfile_t vftr_new_callprofiling();
 
 void vftr_accumulate_callprofiling(callProfile_t *prof,
                                    int calls,
-                                   long long cycles,
                                    long long time_usec);
 
 void vftr_callprofiling_free(callProfile_t *callprof_ptr);

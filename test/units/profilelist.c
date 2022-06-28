@@ -27,18 +27,16 @@ int main(int argc, char **argv) {
 
    // build stacktree
    stacktree_t stacktree = vftr_new_stacktree();
-#define NTHREADS 10
-   int threads[NTHREADS] = {4,8,1,5,6,7,0,9,3,2};
-   for (int ithread=0; ithread<NTHREADS; ithread++) {
+   int nthreads = 10;
+   for (int ithread=0; ithread<nthreads; ithread++) {
       vftr_new_profile(ithread, &(stacktree.stacks[0].profiling));
       profile_t *profile = stacktree.stacks[0].profiling.profiles+ithread;
       vftr_accumulate_callprofiling(&(profile->callProf),
                                     ithread*ithread, // calls
-                                    42*ithread, // cycles
                                     137*ithread);
    }
 
-   for (int ithread=0; ithread<NTHREADS; ithread++) {
+   for (int ithread=0; ithread<nthreads; ithread++) {
       fprintf(stdout, "Thread: %d ", ithread);
       profile_t *profile = stacktree.stacks[0].profiling.profiles+ithread;
       vftr_print_callprofiling(stdout, profile->callProf);

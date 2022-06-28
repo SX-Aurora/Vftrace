@@ -4,8 +4,6 @@
 typedef struct {
    // number of calls
    long long calls;
-   // cycles spend in the function (including subfunctions)
-   long long cycles;
    // time spend in the function (including subfunctions)
    long long time_usec;
    // time spend in the function (excluding subfunctions)

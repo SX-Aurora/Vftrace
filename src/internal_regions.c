@@ -44,7 +44,7 @@ void vftr_internal_region_begin(const char *name) {
       // If this is reached, something went seriously wrong.
       // if recusive call, simply increas recursion depth count.
       my_threadstack->recursion_depth++;
-      vftr_accumulate_callprofiling(&(my_profile->callProf), 1, 0, 0);
+      vftr_accumulate_callprofiling(&(my_profile->callProf), 1, 0);
    } else {
       // add possibly new region to the stack
       // and adjust the threadstack accordingly
@@ -61,8 +61,7 @@ void vftr_internal_region_begin(const char *name) {
 
       // accumulate profiling data
       vftr_accumulate_callprofiling(&(my_profile->callProf),
-                                    1, 0, // TODO: include cycles
-                                    -region_begin_time_begin);
+                                    1, -region_begin_time_begin);
    }
 
    // No calls after this overhead handling!
@@ -86,8 +85,7 @@ void vftr_internal_region_end(const char *name) {
    } else {
       // accumulate threadded profiling data
       vftr_accumulate_callprofiling(&(my_profile->callProf),
-                                    0, 0, // TODO: include cycles
-                                    region_end_time_begin);
+                                    0, region_end_time_begin);
 
       // if not recursive pop the function from the threads stacklist
       my_threadstack = vftr_threadstack_pop(&(my_thread->stacklist));
