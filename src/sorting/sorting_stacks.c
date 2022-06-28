@@ -23,7 +23,10 @@ stack_t **vftr_sort_stacks_for_prof(environment_t environment,
    char *env_val = environment.sort_profile_table.value.string_val;
    bool ascending = false;
    if (!strcmp(env_val, "NONE")) {
-      perm = vftr_create_unityperm(nstacks);
+      for (int istack=0; istack<nstacks; istack++) {
+         stack_t *stack = stacktree.stacks+istack;
+         stackvals[istack] += stack->lid;
+      }
       ascending = true;
    } else if (!strcmp(env_val, "TIME_EXCL")) {
       for (int istack=0; istack<nstacks; istack++) {

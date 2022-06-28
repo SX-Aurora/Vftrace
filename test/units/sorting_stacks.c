@@ -13,6 +13,8 @@
 #include "callprofiling.h"
 #include "overheadprofiling_types.h"
 #include "overheadprofiling.h"
+#include "collated_stack_types.h"
+#include "collate_stacks.h"
 #include "sorting.h"
 
 #include "dummysymboltable.h"
@@ -148,6 +150,8 @@ int main(int argc, char **argv) {
    vftr_accumulate_hook_overheadprofiling(&(profile->overheadProf), 262144);
 
    vftr_update_stacks_exclusive_time(&stacktree);
+   // collate stacks to get the global ID
+   collated_stacktree_t collated_stacktree = vftr_collate_stacks(&stacktree);
 
    stack_t **stackptrs = vftr_sort_stacks_for_prof(environment, stacktree);
 
@@ -155,21 +159,21 @@ int main(int argc, char **argv) {
       stack_t *stack = stackptrs[istack];
       int stackID = stack->lid;
       char *stackstr = vftr_get_stack_string(stacktree, stackID);
-      fprintf(stdout, "%d: %s\n", stackID, stackstr);
+      fprintf(stdout, "%d(g%d): %s\n", stackID, stack->gid, stackstr);
       free(stackstr);
       int nprofs=stack->profiling.nprofiles;
       for (int ithread=0; ithread<nprofs; ithread++) {
          fprintf(stdout, "   Thread: %d (%d)", ithread,
                  stack->profiling.profiles[ithread].threadID);
          profile_t *profile = stack->profiling.profiles+ithread;
-         fprintf(stdout, " Overhead: %8lld ", profile->overheadProf.hook_usec);
+         fprintf(stdout, " Overhead: %8lld, ", profile->overheadProf.hook_usec);
          vftr_print_callprofiling(stdout, profile->callProf);
       }
    }
 
-
    free_dummy_symbol_table(&symboltable);
    vftr_stacktree_free(&stacktree);
+   vftr_collated_stacktree_free(&collated_stacktree);
    vftr_environment_free(&environment);
 #ifdef _MPI
    PMPI_Finalize();
