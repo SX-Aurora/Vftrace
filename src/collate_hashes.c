@@ -12,7 +12,7 @@
 
 void vftr_remove_multiple_hashes(int *n, uint64_t *hashlist) {
    // first sort the list
-   vftr_radixsort_uint64(*n, hashlist);
+   vftr_sort_uint64(*n, hashlist, true);
 
    // loop over the list
    int j = 0;
@@ -141,10 +141,10 @@ hashlist_t vftr_collate_hashes(stacktree_t *stacktree_ptr) {
          free(allhashes);
       }
    } else {
-      vftr_radixsort_uint64(stackhashes.nhashes, stackhashes.hashes);
+      vftr_sort_uint64(stackhashes.nhashes, stackhashes.hashes, true);
    }
 #else
-   vftr_radixsort_uint64(stackhashes.nhashes, stackhashes.hashes);
+   vftr_sort_uint64(stackhashes.nhashes, stackhashes.hashes, true);
 #endif
 
    return stackhashes;

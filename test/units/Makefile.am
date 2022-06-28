@@ -37,14 +37,21 @@ if ENABLE_OMP
 endif
 
 check_PROGRAMS = 
-check_PROGRAMS += radixsort_int \
-		  radixsort_perm_int \
-		  radixsort_uint64 \
-		  radixsort_perm_uint64 \
-		  radixsort_longlong \
-		  radixsort_perm_longlong \
-		  radixsort_double \
-		  radixsort_perm_double
+check_PROGRAMS += sort_int8 \
+		  sort_perm_int8 \
+		  sort_uint8 \
+		  sort_perm_uint8 \
+		  sort_float \
+		  sort_perm_float \
+		  sort_int8 \
+                  sort_perm_int8 \
+                  sort_uint8 \
+                  sort_perm_uint8 \
+                  sort_float \
+                  sort_perm_float \
+		  sort_uint64 \
+		  sort_longlong \
+		  sort_double
 check_PROGRAMS += chop_chars
 check_PROGRAMS += symbols_1 \
 		  symbols_2 \
@@ -78,6 +85,7 @@ endif
 if ENABLE_OMP
 check_PROGRAMS += total_omp_overhead
 endif
+check_PROGRAMS += sorting_stacks
 
 check_PROGRAMS += threadtree
 
@@ -97,45 +105,51 @@ check_PROGRAMS += sxhwc_1
 endif
 endif
 
-radixsort_int_SOURCES = $(srcdir)/radixsort_int.c \
-			$(srcdir)/bad_rng.c
-radixsort_int_CFLAGS = $(AM_CFLAGS) -I$(top_srcdir)/src/sorting/
-radixsort_int_LDFLAGS = $(AM_LDFLAGS)
 
-radixsort_perm_int_SOURCES = $(srcdir)/radixsort_perm_int.c \
-			     $(srcdir)/bad_rng.c
-radixsort_perm_int_CFLAGS = $(AM_CFLAGS) -I$(top_srcdir)/src/sorting/
-radixsort_perm_int_LDFLAGS = $(AM_LDFLAGS)
+sort_int8_SOURCES = $(srcdir)/sort_int8.c \
+			 $(srcdir)/bad_rng.c
+sort_int8_CFLAGS = $(AM_CFLAGS) -I$(top_srcdir)/src/sorting/
+sort_int8_LDFLAGS = $(AM_LDFLAGS)
 
-radixsort_uint64_SOURCES = $(srcdir)/radixsort_uint64.c \
+sort_perm_int8_SOURCES = $(srcdir)/sort_perm_int8.c \
+			      $(srcdir)/bad_rng.c
+sort_perm_int8_CFLAGS = $(AM_CFLAGS) -I$(top_srcdir)/src/sorting/
+sort_perm_int8_LDFLAGS = $(AM_LDFLAGS)
+
+sort_uint8_SOURCES = $(srcdir)/sort_uint8.c \
+			  $(srcdir)/bad_rng.c
+sort_uint8_CFLAGS = $(AM_CFLAGS) -I$(top_srcdir)/src/sorting/
+sort_uint8_LDFLAGS = $(AM_LDFLAGS)
+
+sort_perm_uint8_SOURCES = $(srcdir)/sort_perm_uint8.c \
+			       $(srcdir)/bad_rng.c
+sort_perm_uint8_CFLAGS = $(AM_CFLAGS) -I$(top_srcdir)/src/sorting/
+sort_perm_uint8_LDFLAGS = $(AM_LDFLAGS)
+
+sort_float_SOURCES = $(srcdir)/sort_float.c \
+			  $(srcdir)/bad_rng.c
+sort_float_CFLAGS = $(AM_CFLAGS) -I$(top_srcdir)/src/sorting/
+sort_float_LDFLAGS = $(AM_LDFLAGS)
+
+sort_perm_float_SOURCES = $(srcdir)/sort_perm_float.c \
+			       $(srcdir)/bad_rng.c
+sort_perm_float_CFLAGS = $(AM_CFLAGS) -I$(top_srcdir)/src/sorting/
+sort_perm_float_LDFLAGS = $(AM_LDFLAGS)
+
+sort_uint64_SOURCES = $(srcdir)/sort_uint64.c \
 			   $(srcdir)/bad_rng.c
-radixsort_uint64_CFLAGS = $(AM_CFLAGS) -I$(top_srcdir)/src/sorting/
-radixsort_uint64_LDFLAGS = $(AM_LDFLAGS)
+sort_uint64_CFLAGS = $(AM_CFLAGS) -I$(top_srcdir)/src/sorting/
+sort_uint64_LDFLAGS = $(AM_LDFLAGS)
 
-radixsort_perm_uint64_SOURCES = $(srcdir)/radixsort_perm_uint64.c \
-				$(srcdir)/bad_rng.c
-radixsort_perm_uint64_CFLAGS = $(AM_CFLAGS) -I$(top_srcdir)/src/sorting/
-radixsort_perm_uint64_LDFLAGS = $(AM_LDFLAGS)
-
-radixsort_longlong_SOURCES = $(srcdir)/radixsort_longlong.c \
+sort_longlong_SOURCES = $(srcdir)/sort_longlong.c \
 			     $(srcdir)/bad_rng.c
-radixsort_longlong_CFLAGS = $(AM_CFLAGS) -I$(top_srcdir)/src/sorting/
-radixsort_longlong_LDFLAGS = $(AM_LDFLAGS)
+sort_longlong_CFLAGS = $(AM_CFLAGS) -I$(top_srcdir)/src/sorting/
+sort_longlong_LDFLAGS = $(AM_LDFLAGS)
 
-radixsort_perm_longlong_SOURCES = $(srcdir)/radixsort_perm_longlong.c \
-				  $(srcdir)/bad_rng.c
-radixsort_perm_longlong_CFLAGS = $(AM_CFLAGS) -I$(top_srcdir)/src/sorting/
-radixsort_perm_longlong_LDFLAGS = $(AM_LDFLAGS)
-
-radixsort_double_SOURCES = $(srcdir)/radixsort_double.c \
+sort_double_SOURCES = $(srcdir)/sort_double.c \
 			   $(srcdir)/bad_rng.c
-radixsort_double_CFLAGS = $(AM_CFLAGS) -I$(top_srcdir)/src/sorting/
-radixsort_double_LDFLAGS = $(AM_LDFLAGS)
-
-radixsort_perm_double_SOURCES = $(srcdir)/radixsort_perm_double.c \
-				$(srcdir)/bad_rng.c
-radixsort_perm_double_CFLAGS = $(AM_CFLAGS) -I$(top_srcdir)/src/sorting/
-radixsort_perm_double_LDFLAGS = $(AM_LDFLAGS)
+sort_double_CFLAGS = $(AM_CFLAGS) -I$(top_srcdir)/src/sorting/
+sort_double_LDFLAGS = $(AM_LDFLAGS)
 
 chop_chars_SOURCES = $(srcdir)/chop_chars.c
 chop_chars_CFLAGS = $(AM_CFLAGS)
@@ -262,6 +276,11 @@ total_omp_overhead_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
 total_omp_overhead_LDFLAGS = $(AM_LDFLAGS)
 endif
 
+sorting_stacks_SOURCES = $(srcdir)/sorting_stacks.c \
+                         $(srcdir)/dummysymboltable.c
+sorting_stacks_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src -I$(top_srcdir)/src/sorting/
+sorting_stacks_LDFLAGS = $(AM_LDFLAGS)
+
 threadtree_SOURCES = $(srcdir)/threadtree.c \
 		     $(srcdir)/dummysymboltable.c
 threadtree_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
@@ -304,14 +323,15 @@ threadtree_LDFLAGS = $(AM_LDFLAGS)
 #endif
 
 dist_check_SCRIPTS =
-dist_check_SCRIPTS += radixsort_int.sh \
-		      radixsort_perm_int.sh \
-		      radixsort_uint64.sh \
-		      radixsort_perm_uint64.sh \
-		      radixsort_longlong.sh \
-		      radixsort_perm_longlong.sh \
-		      radixsort_double.sh \
-		      radixsort_perm_double.sh
+dist_check_SCRIPTS += sort_int8.sh \
+		      sort_perm_int8.sh \
+		      sort_uint8.sh \
+		      sort_perm_uint8.sh \
+		      sort_float.sh \
+		      sort_perm_float.sh \
+		      sort_uint64.sh \
+		      sort_longlong.sh \
+		      sort_double.sh
 dist_check_SCRIPTS += chop_chars.sh
 dist_check_SCRIPTS += symbols_1.sh \
 		      symbols_2.sh \
@@ -343,6 +363,12 @@ endif
 if ENABLE_OMP
 dist_check_SCRIPTS += total_omp_overhead.sh
 endif
+dist_check_SCRIPTS += sorting_stacks_none.sh \
+		      sorting_stacks_calls.sh \
+		      sorting_stacks_overhead.sh \
+		      sorting_stacks_stackid.sh \
+		      sorting_stacks_texcl.sh \
+		      sorting_stacks_tincl.sh
 dist_check_SCRIPTS += threadtree.sh
 dist_check_SCRIPTS += filewrite_1.sh
 #		     scenario_1.sh \

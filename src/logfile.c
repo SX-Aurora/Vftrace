@@ -219,6 +219,8 @@ void vftr_write_logfile(vftrace_t vftrace, long long runtime) {
    vftr_write_logfile_profile_table(fp, vftrace.process.stacktree,
                                     vftrace.environment, runtime);
 
+
+
    vftr_write_logfile_global_stack_list(fp, vftrace.process.collated_stacktree);
 
    fclose(fp);
