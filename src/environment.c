@@ -233,15 +233,12 @@ environment_t vftr_read_environment() {
    environment.sampletime = vftr_read_env_double("VFTR_SAMPLETIME", 0.005);
    environment.stoptime = vftr_read_env_longlong("VFTR_STOPTIME", 7ll*24ll*60ll*60ll);
    environment.accurate_profile = vftr_read_env_bool("VFTR_ACCURATE_PROFILE", false);
-   environment.prof_truncate = vftr_read_env_bool("VFTR_PROF_TRUNCATE", true);
-   environment.prof_truncate_cutoff = vftr_read_env_double("VFTR_PROF_TRUNCATE_CUTOFF", 98.0);
    environment.mpi_log = vftr_read_env_bool("VFTR_MPI_LOG", false);
    environment.mpi_show_sync_time = vftr_read_env_bool("VFTR_MPI_SHOW_SYNC_TIME", false);
    environment.signals_off = vftr_read_env_bool("VFTR_SIGNALS_OFF", true);
    environment.bufsize = vftr_read_env_int("VFTR_BUFSIZE", 8);
    environment.runtime_profile_funcs = vftr_read_env_regex("VFTR_RUNTIME_PROFILE_FUNCS", NULL);
    environment.include_only_regex = vftr_read_env_regex("VFTR_INCLUDE_ONLY", NULL);
-   environment.detail_until_cum_cycles = vftr_read_env_double("VFTR_DETAIL_UNTIL_CUM_CYCLES", 90.0);
    environment.scenario_file = vftr_read_env_string("VFTR_SCENARIO_FILE", NULL);
    environment.preciseregex = vftr_read_env_regex("VFTR_PRECISE", NULL);
    environment.print_stack_profile = vftr_read_env_regex("VFTR_PRINT_STACK_PROFILE", NULL);
@@ -257,10 +254,9 @@ environment_t vftr_read_environment() {
    environment.print_env = vftr_read_env_bool("VFTR_PRINT_ENVIRONMENT", false);
    environment.no_memtrace = vftr_read_env_bool("VFTR_NO_MEMTRACE", false);
    environment.show_stacks_in_profile = vftr_read_env_bool("VFTR_SHOW_STACKS_IN_PROFILE", false);
-   environment.no_stack_normalization = vftr_read_env_bool("VFTR_NO_STACK_NORM", false);
    environment.demangle_cpp = vftr_read_env_bool("VFTR_DEMANGLE_CPP", false);
    environment.show_startup = vftr_read_env_bool("VFTR_SHOW_STARTUP", false);
-   environment.nenv_vars = 37;
+   environment.nenv_vars = 33;
    environment.valid = true;
 
    return environment;
@@ -405,20 +401,6 @@ void vftr_environment_assert_accurate_profile(FILE *fp, env_var_t accurate_profi
    (void) accurate_profile;
 }
 
-void vftr_environment_assert_prof_truncate(FILE *fp, env_var_t prof_truncate) {
-   (void) fp;
-   (void) prof_truncate;
-}
-
-void vftr_environment_assert_prof_truncate_cutoff(FILE *fp,
-                                                  env_var_t prof_truncate_cutoff) {
-   if (prof_truncate_cutoff.value.double_val < 0.0 ||
-       prof_truncate_cutoff.value.double_val > 100.0) {
-      fprintf(fp, "Warning: \"%s\" needs to be > 0.0 and < 100.0, but is %f.\n",
-              prof_truncate_cutoff.name, prof_truncate_cutoff.value.double_val);
-   }
-}
-
 void vftr_environment_assert_mpi_log(FILE *fp, env_var_t mpi_log) {
    (void) fp;
    (void) mpi_log;
@@ -451,12 +433,6 @@ void vftr_environment_assert_runtime_profile_funcs(FILE *fp,
 void vftr_environment_assert_include_only_regex(FILE *fp, env_var_t include_only_regex) {
    (void) fp;
    (void) include_only_regex;
-}
-
-void vftr_environment_assert_detail_until_cum_cycles(FILE *fp,
-                                                     env_var_t detail_until_cum_cycles) {
-   (void) fp;
-   (void) detail_until_cum_cycles;
 }
 
 void vftr_environment_assert_scenario_file(FILE *fp, env_var_t scenario_file) {
@@ -536,12 +512,6 @@ void vftr_environment_assert_show_stacks_in_profile(FILE *fp,
    (void) show_stacks_in_profile;
 }
 
-void vftr_environment_assert_no_stack_normalization(FILE *fp,
-                                                    env_var_t no_stack_normalization) {
-   (void) fp;
-   (void) no_stack_normalization;
-}
-
 void vftr_environment_assert_demangle_cpp(FILE *fp, env_var_t demangle_cpp) {
    (void) fp;
    (void) demangle_cpp;
@@ -563,15 +533,12 @@ void vftr_environment_assert(FILE *fp, environment_t environment) {
    vftr_environment_assert_sampletime(fp, environment.sampletime);
    vftr_environment_assert_stoptime(fp, environment.stoptime);
    vftr_environment_assert_accurate_profile(fp, environment.accurate_profile);
-   vftr_environment_assert_prof_truncate(fp, environment.prof_truncate);
-   vftr_environment_assert_prof_truncate_cutoff(fp, environment.prof_truncate_cutoff);
    vftr_environment_assert_mpi_log(fp, environment.mpi_log);
    vftr_environment_assert_mpi_show_sync_time(fp, environment.mpi_show_sync_time);
    vftr_environment_assert_signals_off(fp, environment.signals_off);
    vftr_environment_assert_bufsize(fp, environment.bufsize);
    vftr_environment_assert_runtime_profile_funcs(fp, environment.runtime_profile_funcs);
    vftr_environment_assert_include_only_regex(fp, environment.include_only_regex);
-   vftr_environment_assert_detail_until_cum_cycles(fp, environment.detail_until_cum_cycles);
    vftr_environment_assert_scenario_file(fp, environment.scenario_file);
    vftr_environment_assert_preciseregex(fp, environment.preciseregex);
    vftr_environment_assert_print_stack_profile(fp, environment.print_stack_profile);
@@ -587,7 +554,6 @@ void vftr_environment_assert(FILE *fp, environment_t environment) {
    vftr_environment_assert_print_env(fp, environment.print_env);
    vftr_environment_assert_no_memtrace(fp, environment.no_memtrace);
    vftr_environment_assert_show_stacks_in_profile(fp, environment.show_stacks_in_profile);
-   vftr_environment_assert_no_stack_normalization(fp, environment.no_stack_normalization);
    vftr_environment_assert_demangle_cpp(fp, environment.demangle_cpp);
    vftr_environment_assert_show_startup(fp, environment.show_startup);
 }

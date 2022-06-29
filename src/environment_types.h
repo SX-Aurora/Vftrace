@@ -50,15 +50,12 @@ typedef struct {
    env_var_t sampletime;
    env_var_t stoptime;
    env_var_t accurate_profile;
-   env_var_t prof_truncate;
-   env_var_t prof_truncate_cutoff;
    env_var_t mpi_log;
    env_var_t mpi_show_sync_time;
    env_var_t signals_off;
    env_var_t bufsize;
    env_var_t runtime_profile_funcs;
    env_var_t include_only_regex;
-   env_var_t detail_until_cum_cycles;
    env_var_t scenario_file;
    env_var_t preciseregex;
    env_var_t print_stack_profile;
@@ -74,7 +71,6 @@ typedef struct {
    env_var_t print_env;
    env_var_t no_memtrace;
    env_var_t show_stacks_in_profile;
-   env_var_t no_stack_normalization;
    env_var_t demangle_cpp;
    env_var_t show_startup;
    bool valid;

@@ -1,2 +1,2 @@
 Vftrace environment variable VFTR_OF not known. Do you mean VFTR_OFF?
-Vftrace environment variable VFTR_TRUNCATE not known. Do you mean VFTR_PROF_TRUNCATE?
+Vftrace environment variable VFTR_SMPLING not known. Do you mean VFTR_SAMPLING?

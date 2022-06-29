@@ -19,7 +19,7 @@ int main (int argc, char **argv) {
 
   // Check if the environment advisor works
   putenv ("VFTR_OF=yes"); // Should be VFTR_OFF
-  putenv ("VFTR_TRUNCATE=yes"); // Should be VFTR_PROF_TRUNCATE
+  putenv ("VFTR_SMPLING=yes"); // Should be VFTR_PROF_TRUNCATE
 
   environment_t environment;
   environment = vftr_read_environment();
