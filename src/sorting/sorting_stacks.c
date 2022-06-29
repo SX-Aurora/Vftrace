@@ -74,6 +74,7 @@ stack_t **vftr_sort_stacks_for_prof(environment_t environment,
 
    // sorting and saving the permutation
    vftr_sort_perm_longlong(nstacks, stackvals, &perm, ascending);
+   free(stackvals);
 
    // create the stackpointer list
    stack_t **stackptrs = (stack_t**) malloc(nstacks*sizeof(stack_t*));
