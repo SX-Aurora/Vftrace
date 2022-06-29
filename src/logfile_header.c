@@ -10,7 +10,6 @@
 #include "filenames.h"
 #include "license.h"
 #include "config.h"
-#include "log_profile.h"
 #include "environment.h"
 #include "stacks.h"
 #include "collate_stacks.h"
