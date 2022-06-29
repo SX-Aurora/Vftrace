@@ -67,7 +67,6 @@ libvftrace_la_SOURCES += vftrace_state.c \
 			 profiling.c \
 			 overheadprofiling.c \
 			 callprofiling.c \
-			 log_profile.c \
 			 sampling.c \
 			 timer.c
 libvftrace_la_SOURCES += regular_expressions.c \
