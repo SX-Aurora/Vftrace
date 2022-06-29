@@ -250,7 +250,7 @@ environment_t vftr_read_environment() {
    environment.print_loadinfo_for = vftr_read_env_string("VFTR_PRINT_LOADINFO_FOR", NULL);
    environment.strip_module_names = vftr_read_env_bool("VFTR_STRIP_MODULE_NAMES", false);
    environment.create_html = vftr_read_env_bool("VFTR_CREATE_HTML", false);
-   environment.sort_profile_table = vftr_read_env_string("VFTR_SORT_PROFILE_TABLE", "EXCL_TIME");
+   environment.sort_profile_table = vftr_read_env_string("VFTR_SORT_PROFILE_TABLE", "TIME_EXCL");
    environment.show_overhead = vftr_read_env_bool("VFTR_SHOW_FUNCTION_OVERHEAD", false);
    environment.meminfo_method = vftr_read_env_string("VFTR_MEMINFO_METHOD", "");
    environment.meminfo_stepsize = vftr_read_env_int("VFTR_MEMINFO_STEPSIZE", 1000);
