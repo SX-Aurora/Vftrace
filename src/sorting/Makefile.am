@@ -4,6 +4,12 @@ libvftr_sorting_la_SOURCES = sort_utils.c \
 			     sorting_symboltable.c \
 			     sorting_stacks.c
 libvftr_sorting_la_CFLAGS = -I${srcdir}/../
+if ENABLE_MPI
+libvftr_sorting_la_CFLAGS += -D_MPI -I${srcdir}/../mpi/utils/
+endif
+if ENABLE_OMP
+libvftr_sorting_la_CFLAGS += -D_OMP -I${srcdir}/../omp/
+endif
 
 noinst_LTLIBRARIES += libvftr_sorting_int8.la
 libvftr_sorting_la_LIBADD += libvftr_sorting_int8.la
@@ -54,3 +60,9 @@ noinst_LTLIBRARIES += libvftr_apply_perm_stackptr.la
 libvftr_sorting_la_LIBADD += libvftr_apply_perm_stackptr.la
 libvftr_apply_perm_stackptr_la_SOURCES = apply_perm.c
 libvftr_apply_perm_stackptr_la_CFLAGS = -DTYPE="stack_t *" -DTYPESTR="stackptr" -I${srcdir}/../
+if ENABLE_MPI
+libvftr_apply_perm_stackptr_la_CFLAGS += -D_MPI -I${srcdir}/../mpi/utils/
+endif
+if ENABLE_OMP
+libvftr_apply_perm_stackptr_la_CFLAGS += -D_OMP -I${srcdir}/../omp/
+endif
