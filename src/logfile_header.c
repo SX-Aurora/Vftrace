@@ -99,4 +99,5 @@ void vftr_write_logfile_summary(FILE *fp, process_t process, long long runtime) 
       }
 #endif
    }
+   free(hook_overheads);
 }
