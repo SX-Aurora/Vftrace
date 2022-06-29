@@ -5,7 +5,6 @@ nprocs=1
 maxnreg=$(bc <<< "${RANDOM}%5+5")
 
 export VFTR_SAMPLING="Yes"
-export VFTR_PROF_TRUNCATE="no"
 export VFTR_REGIONS_PRECISE="yes"
 export VFTR_LOGFILE_BASENAME=$vftr_binary
 

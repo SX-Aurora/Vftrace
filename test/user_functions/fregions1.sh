@@ -6,7 +6,6 @@ vftr_binary=fregions1
 nprocs=1
 
 export VFTR_SAMPLING="Yes"
-export VFTR_PROF_TRUNCATE="no"
 export VFTR_REGIONS_PRECISE="yes"
 export VFTR_LOGFILE_BASENAME=$vftr_binary
 

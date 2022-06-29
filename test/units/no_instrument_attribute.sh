@@ -1,6 +1,5 @@
 #!/bin/bash
 set -x
-export VFTR_PROF_TRUNCATE=no
 
 test_name=no_instrument_attribute
 

@@ -7,7 +7,6 @@ ntrials=1
 export VFTR_SAMPLING="No"
 export VFTR_MPI_LOG="No"
 export VFTR_MPI_SHOW_SYNC_TIME="Yes"
-export VFTR_PROF_TRUNCATE="No"
 export VFTR_LOGFILE_FOR_RANKS="all"
 
 for itrial in $(seq 1 1 ${ntrials});

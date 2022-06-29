@@ -4,7 +4,6 @@ vftr_binary=fget_stack
 nprocs=1
 
 export VFTR_SAMPLING="Yes"
-export VFTR_PROF_TRUNCATE="no"
 export VFTR_PRECISE="fkt*"
 
 tmpfile=$(mktemp)
