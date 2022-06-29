@@ -141,4 +141,6 @@ void vftr_write_logfile_profile_table(FILE *fp, stacktree_t stacktree,
    free(function_names);
    free(caller_names);
    free(stack_IDs);
+
+   free(sorted_stacks);
 }
