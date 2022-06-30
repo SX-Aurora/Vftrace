@@ -86,6 +86,7 @@ if ENABLE_OMP
 check_PROGRAMS += total_omp_overhead
 endif
 check_PROGRAMS += sorting_stacks
+check_PROGRAMS += print_prof_table
 
 check_PROGRAMS += threadtree
 
@@ -281,6 +282,11 @@ sorting_stacks_SOURCES = $(srcdir)/sorting_stacks.c \
 sorting_stacks_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src -I$(top_srcdir)/src/sorting/
 sorting_stacks_LDFLAGS = $(AM_LDFLAGS)
 
+print_prof_table_SOURCES = $(srcdir)/print_prof_table.c \
+			   $(srcdir)/dummysymboltable.c
+print_prof_table_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
+print_prof_table_LDFLAGS = $(AM_LDFLAGS)
+
 threadtree_SOURCES = $(srcdir)/threadtree.c \
 		     $(srcdir)/dummysymboltable.c
 threadtree_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
@@ -369,6 +375,7 @@ dist_check_SCRIPTS += sorting_stacks_none.sh \
 		      sorting_stacks_stackid.sh \
 		      sorting_stacks_texcl.sh \
 		      sorting_stacks_tincl.sh
+dist_check_SCRIPTS += print_prof_table.sh
 dist_check_SCRIPTS += threadtree.sh
 dist_check_SCRIPTS += filewrite_1.sh
 #		     scenario_1.sh \

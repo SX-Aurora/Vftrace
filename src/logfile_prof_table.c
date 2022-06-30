@@ -38,12 +38,13 @@ double *vftr_stack_inclusive_time_list(int nstacks, stack_t **stack_ptrs) {
 
    for (int istack=0; istack<nstacks; istack++) {
       stack_t *stack_ptr = stack_ptrs[istack];
-      profile_t *prof_ptr = stack_ptr->profiling.profiles;
-      inclusive_time_list[istack] = prof_ptr->callProf.time_usec;
+      inclusive_time_list[istack] = 0.0;
+      for (int iprof=0; iprof<stack_ptr->profiling.nprofiles; iprof++) {
+         profile_t *prof_ptr = stack_ptr->profiling.profiles+iprof;
+         inclusive_time_list[istack] += prof_ptr->callProf.time_usec;
+      }
       inclusive_time_list[istack] *= 1.0e-6;
    }
-   // the init function has as inclusive time the inclusive time of main
-   inclusive_time_list[0] = inclusive_time_list[1];
    return inclusive_time_list;
 }
 
@@ -52,8 +53,11 @@ double *vftr_stack_exclusive_time_list(int nstacks, stack_t **stack_ptrs) {
 
    for (int istack=0; istack<nstacks; istack++) {
       stack_t *stack_ptr = stack_ptrs[istack];
-      profile_t *prof_ptr = stack_ptr->profiling.profiles;
-      exclusive_time_list[istack] = prof_ptr->callProf.time_excl_usec;
+      exclusive_time_list[istack] = 0.0;
+      for (int iprof=0; iprof<stack_ptr->profiling.nprofiles; iprof++) {
+         profile_t *prof_ptr = stack_ptr->profiling.profiles+iprof;
+         exclusive_time_list[istack] += prof_ptr->callProf.time_excl_usec;
+      }
       exclusive_time_list[istack] *= 1.0e-6;
    }
    return exclusive_time_list;
@@ -64,15 +68,19 @@ double *vftr_stack_exclusive_time_percentage_list(int nstacks, stack_t **stack_p
    long long total_time = 0ll;
    for (int istack=0; istack<nstacks; istack++) {
       stack_t *stack_ptr = stack_ptrs[istack];
-      profile_t *prof_ptr = stack_ptr->profiling.profiles;
-      total_time += prof_ptr->callProf.time_excl_usec;
+      for (int iprof=0; iprof<stack_ptr->profiling.nprofiles; iprof++) {
+         profile_t *prof_ptr = stack_ptr->profiling.profiles+iprof;
+         total_time += prof_ptr->callProf.time_excl_usec;
+      }
    }
+   double invtotal_time = 100.0/total_time;
    for (int istack=0; istack<nstacks; istack++) {
       stack_t *stack_ptr = stack_ptrs[istack];
-      profile_t *prof_ptr = stack_ptr->profiling.profiles;
-      percent_list[istack] = ((double) prof_ptr->callProf.time_excl_usec) /
-                             ((double) total_time);
-      percent_list[istack] *= 100.0;
+      for (int iprof=0; iprof<stack_ptr->profiling.nprofiles; iprof++) {
+         profile_t *prof_ptr = stack_ptr->profiling.profiles+iprof;
+         percent_list[istack] += prof_ptr->callProf.time_excl_usec;
+      }
+      percent_list[istack] *= invtotal_time;
    }
    return percent_list;
 }
