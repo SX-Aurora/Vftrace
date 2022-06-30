@@ -76,6 +76,7 @@ double *vftr_stack_exclusive_time_percentage_list(int nstacks, stack_t **stack_p
    double invtotal_time = 100.0/total_time;
    for (int istack=0; istack<nstacks; istack++) {
       stack_t *stack_ptr = stack_ptrs[istack];
+      percent_list[istack] = 0.0;
       for (int iprof=0; iprof<stack_ptr->profiling.nprofiles; iprof++) {
          profile_t *prof_ptr = stack_ptr->profiling.profiles+iprof;
          percent_list[istack] += prof_ptr->callProf.time_excl_usec;
