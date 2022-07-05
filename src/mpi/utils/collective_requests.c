@@ -21,10 +21,16 @@
 #include <stdlib.h>
 
 #include "vftrace_state.h"
+#include "stack_types.h"
+#include "thread_types.h"
+#include "threadstack_types.h"
+#include "profiling_types.h"
 #include "rank_translate.h"
 #include "requests.h"
 #include "timer.h"
 #include "mpi_logging.h"
+#include "profiling.h"
+#include "mpiprofiling.h"
 
 void vftr_register_collective_request(message_direction dir, int nmsg, int *count,
                                       MPI_Datatype *type, int *peer_rank,
@@ -75,8 +81,28 @@ void vftr_clear_completed_collective_request(vftr_request_t *request) {
       //            yields to small bandwidth.
       long long tend = vftr_get_runtime_usec ();
 
+      // Get the thread that called the function
+      thread_t *my_thread = vftrace.process.threadtree.threads+request->callingthreadID;
+      stack_t *my_stack = vftrace.process.stacktree.stacks+request->callingstackID;
+      profile_t *my_profile = vftr_get_my_profile(my_stack, my_thread);
+
       // Every rank should already be translated to the global rank
       // by the register routine
+      for (int i=0; i<request->nmsg; i++) {
+         // if a rank is -1 skip the registering, as
+         // it is an invalid rank due to non periodic
+         // cartesian communicators.
+         if (request->rank[i] != -1) {
+            vftr_accumulate_message_info(&(my_profile->mpiProf),
+                                         request->dir,
+                                         request->count[i],
+                                         request->type_idx[i],
+                                         request->type_size[i],
+                                         request->rank[i],
+                                         request->tag,
+                                         request->tstart, tend);
+         }
+      }
       if (vftrace.environment.do_sampling.value.bool_val) {
          for (int i=0; i<request->nmsg; i++) {
             // if a rank is -1 skip the registering, as
