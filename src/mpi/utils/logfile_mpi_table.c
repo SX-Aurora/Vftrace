@@ -45,7 +45,11 @@ double *vftr_logfile_mpi_table_average_send_bytes_list(int nstacks, stack_t **st
          avg_send_bytes_list[istack] += prof_ptr->mpiProf.send_bytes;
          nmessages += prof_ptr->mpiProf.nsendmessages;
       }
-      avg_send_bytes_list[istack] /= nmessages;
+      if (nmessages > 0) {
+         avg_send_bytes_list[istack] /= nmessages;
+      } else {
+         avg_send_bytes_list[istack] = 0.0;
+      }
    }
    return avg_send_bytes_list;
 }
