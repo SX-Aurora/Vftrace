@@ -21,10 +21,16 @@
 #include <stdlib.h>
 
 #include "vftrace_state.h"
+#include "stack_types.h"
+#include "thread_types.h"
+#include "threadstack_types.h"
+#include "profiling_types.h"
 #include "rank_translate.h"
 #include "requests.h"
 #include "timer.h"
 #include "mpi_logging.h"
+#include "profiling.h"
+#include "mpiprofiling.h"
 
 void vftr_register_onesided_request(message_direction dir, int count,
                                     MPI_Datatype type, int peer_rank,
@@ -64,6 +70,20 @@ void vftr_clear_completed_onesided_request(vftr_request_t *request) {
 
       // Every rank should already be translated to the global rank
       // by the register routine
+      // Get the thread that called the function
+      thread_t *my_thread = vftrace.process.threadtree.threads+request->callingthreadID;
+      stack_t *my_stack = vftrace.process.stacktree.stacks+request->callingstackID;
+      profile_t *my_profile = vftr_get_my_profile(my_stack, my_thread);
+
+      // accumulate information for later use in the log file statistics
+      vftr_accumulate_message_info(&(my_profile->mpiProf),
+                                   request->dir,
+                                   request->count[0],
+                                   request->type_idx[0],
+                                   request->type_size[0],
+                                   request->rank[0],
+                                   request->tag,
+                                   request->tstart, tend);
       // write the completed communication info to the vfd-file
       if (vftrace.environment.do_sampling.value.bool_val) {
          vftr_write_message_info(request->dir,
