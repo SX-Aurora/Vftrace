@@ -6,6 +6,7 @@
 #include "symbols.h"
 #include "processes.h"
 #include "stacks.h"
+#include "threadstacks.h"
 #include "collate_stacks.h"
 #include "logfile.h"
 #include "sampling.h"
@@ -26,6 +27,17 @@ void vftr_finalize() {
    long long int runtime = vftr_get_runtime_usec();
    vftrace.timestrings.end_time = vftr_get_date_str();
 
+   // in case finalize was not called from the threadstacks root
+   // the threadstack needs to be poped completely
+   thread_t *my_thread = vftr_get_my_thread(&(vftrace.process.threadtree));
+   threadstack_t *my_threadstack = vftr_get_my_threadstack(my_thread);
+   while (my_threadstack->stackID > 0) {
+      vftr_function_exit(NULL, NULL);
+      my_thread = vftr_get_my_thread(&(vftrace.process.threadtree));
+      my_threadstack = vftr_get_my_threadstack(my_thread);
+   }
+
+
    // finalize stacks
    vftr_finalize_stacktree(&(vftrace.process.stacktree));
 
@@ -41,10 +53,6 @@ void vftr_finalize() {
    vftr_finalize_sampling(&(vftrace.sampling), vftrace.environment,
                           vftrace.process, vftrace.timestrings,
                           (double) (runtime * 1.0e-6));
-
-
-
-
 
    // free the dynamic process data
    vftr_process_free(&vftrace.process);
