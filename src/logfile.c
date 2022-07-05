@@ -9,6 +9,7 @@
 #include "environment.h"
 #include "logfile_header.h"
 #include "logfile_prof_table.h"
+#include "logfile_mpi_table.h"
 #include "logfile_stacklist.h"
 
 char *vftr_get_logfile_name(environment_t environment, int rankID, int nranks) {
@@ -56,6 +57,11 @@ void vftr_write_logfile(vftrace_t vftrace, long long runtime) {
 
    vftr_write_logfile_profile_table(fp, vftrace.process.stacktree,
                                     vftrace.environment);
+
+#ifdef _MPI
+   vftr_write_logfile_mpi_table(fp, vftrace.process.stacktree,
+                                vftrace.environment);
+#endif
 
 
 

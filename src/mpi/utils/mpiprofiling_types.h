@@ -3,7 +3,8 @@
 
 typedef struct {
    // number of messages
-   long long nmessages;
+   long long nsendmessages;
+   long long nrecvmessages;
    // amount of bytes send/recv by this stack
    long long send_bytes;
    long long recv_bytes;

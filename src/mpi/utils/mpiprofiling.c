@@ -3,7 +3,8 @@
 
 mpiProfile_t vftr_new_mpiprofiling() {
    mpiProfile_t prof;
-   prof.nmessages = 0ll;
+   prof.nsendmessages = 0ll;
+   prof.nrecvmessages = 0ll;
    prof.send_bytes = 0ll;
    prof.recv_bytes = 0ll;
    prof.acc_send_bw = 0.0;
@@ -21,18 +22,17 @@ void vftr_accumulate_message_info(mpiProfile_t *prof_ptr,
    (void) type_idx;
    (void) rank;
    (void) tag;
-   (void) tstart;
-   (void) tend;
 
    int nbytes = count * type_size;
    long long time = tend - tstart;
-   double bw = nbytes * 1.0e-6 / time;
+   double bw = nbytes * 1.0e6 / time;
 
-   prof_ptr->nmessages++;
    if (dir == send) {
+      prof_ptr->nsendmessages++;
       prof_ptr->send_bytes += nbytes;
       prof_ptr->acc_send_bw += bw;
    } else {
+      prof_ptr->nrecvmessages++;
       prof_ptr->recv_bytes += nbytes;
       prof_ptr->acc_recv_bw += bw;
    }
