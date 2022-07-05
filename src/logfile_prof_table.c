@@ -19,7 +19,7 @@
 #include "overheadprofiling.h"
 #include "sorting.h"
 
-int *vftr_stack_calls_list(int nstacks, stack_t **stack_ptrs) {
+int *vftr_logfile_prof_table_stack_calls_list(int nstacks, stack_t **stack_ptrs) {
    int *calls_list = (int*) malloc(nstacks*sizeof(int));
 
    for (int istack=0; istack<nstacks; istack++) {
@@ -33,7 +33,7 @@ int *vftr_stack_calls_list(int nstacks, stack_t **stack_ptrs) {
    return calls_list;
 }
 
-double *vftr_stack_inclusive_time_list(int nstacks, stack_t **stack_ptrs) {
+double *vftr_logfile_prof_table_stack_inclusive_time_list(int nstacks, stack_t **stack_ptrs) {
    double *inclusive_time_list = (double*) malloc(nstacks*sizeof(double));
 
    for (int istack=0; istack<nstacks; istack++) {
@@ -48,7 +48,7 @@ double *vftr_stack_inclusive_time_list(int nstacks, stack_t **stack_ptrs) {
    return inclusive_time_list;
 }
 
-double *vftr_stack_exclusive_time_list(int nstacks, stack_t **stack_ptrs) {
+double *vftr_logfile_prof_table_stack_exclusive_time_list(int nstacks, stack_t **stack_ptrs) {
    double *exclusive_time_list = (double*) malloc(nstacks*sizeof(double));
 
    for (int istack=0; istack<nstacks; istack++) {
@@ -63,7 +63,7 @@ double *vftr_stack_exclusive_time_list(int nstacks, stack_t **stack_ptrs) {
    return exclusive_time_list;
 }
 
-double *vftr_stack_exclusive_time_percentage_list(int nstacks, stack_t **stack_ptrs) {
+double *vftr_logfile_prof_table_stack_exclusive_time_percentage_list(int nstacks, stack_t **stack_ptrs) {
    double *percent_list = (double*) malloc(nstacks*sizeof(double));
    long long total_time = 0ll;
    for (int istack=0; istack<nstacks; istack++) {
@@ -86,7 +86,7 @@ double *vftr_stack_exclusive_time_percentage_list(int nstacks, stack_t **stack_p
    return percent_list;
 }
 
-//double *vftr_stack_overhead_time_list(int nstacks, stack_t **stack_ptrs) {
+//double *vftr_logfile_prof_table_stack_overhead_time_list(int nstacks, stack_t **stack_ptrs) {
 //   double *overhead_time_list = (double*) malloc(nstacks*sizeof(double));
 //
 //   for (int istack=0; istack<nstacks; istack++) {
@@ -98,7 +98,7 @@ double *vftr_stack_exclusive_time_percentage_list(int nstacks, stack_t **stack_p
 //   return overhead_time_list;
 //}
 
-char **vftr_stack_function_name_list(int nstacks, stack_t **stack_ptrs) {
+char **vftr_logfile_prof_table_stack_function_name_list(int nstacks, stack_t **stack_ptrs) {
    char **name_list = (char**) malloc(nstacks*sizeof(char*));
    for (int istack=0; istack<nstacks; istack++) {
       stack_t *stack_ptr = stack_ptrs[istack];
@@ -107,7 +107,7 @@ char **vftr_stack_function_name_list(int nstacks, stack_t **stack_ptrs) {
    return name_list;
 }
 
-char **vftr_stack_caller_name_list(stacktree_t stacktree, stack_t **stack_ptrs) {
+char **vftr_logfile_prof_table_stack_caller_name_list(stacktree_t stacktree, stack_t **stack_ptrs) {
    int nstacks = stacktree.nstacks;
    char **name_list = (char**) malloc(nstacks*sizeof(char*));
    // the init function is never called
@@ -123,7 +123,7 @@ char **vftr_stack_caller_name_list(stacktree_t stacktree, stack_t **stack_ptrs) 
    return name_list;
 }
 
-int *vftr_stack_stackID_list(int nstacks, stack_t **stack_ptrs) {
+int *vftr_logfile_prof_table_stack_stackID_list(int nstacks, stack_t **stack_ptrs) {
    int *id_list = (int*) malloc(nstacks*sizeof(int));
    for (int istack=0; istack<nstacks; istack++) {
       stack_t *stack_ptr = stack_ptrs[istack];
@@ -143,25 +143,25 @@ void vftr_write_logfile_profile_table(FILE *fp, stacktree_t stacktree,
    table_t table = vftr_new_table();
    vftr_table_set_nrows(&table, stacktree.nstacks);
 
-   int *calls = vftr_stack_calls_list(stacktree.nstacks, sorted_stacks);
+   int *calls = vftr_logfile_prof_table_stack_calls_list(stacktree.nstacks, sorted_stacks);
    vftr_table_add_column(&table, col_int, "Calls", "%d", 'c', 'r', (void*) calls);
 
-   double *excl_time = vftr_stack_exclusive_time_list(stacktree.nstacks, sorted_stacks);
+   double *excl_time = vftr_logfile_prof_table_stack_exclusive_time_list(stacktree.nstacks, sorted_stacks);
    vftr_table_add_column(&table, col_double, "t_excl/s", "%.3f", 'c', 'r', (void*) excl_time);
 
-   double *excl_timer_perc = vftr_stack_exclusive_time_percentage_list(stacktree.nstacks, sorted_stacks);
+   double *excl_timer_perc = vftr_logfile_prof_table_stack_exclusive_time_percentage_list(stacktree.nstacks, sorted_stacks);
    vftr_table_add_column(&table, col_double, "t_excl/%", "%.1f", 'c', 'r', (void*) excl_timer_perc);
 
-   double *incl_time = vftr_stack_inclusive_time_list(stacktree.nstacks, sorted_stacks);
+   double *incl_time = vftr_logfile_prof_table_stack_inclusive_time_list(stacktree.nstacks, sorted_stacks);
    vftr_table_add_column(&table, col_double, "t_incl/s", "%.3f", 'c', 'r', (void*) incl_time);
 
-   char **function_names = vftr_stack_function_name_list(stacktree.nstacks, sorted_stacks);
+   char **function_names = vftr_logfile_prof_table_stack_function_name_list(stacktree.nstacks, sorted_stacks);
    vftr_table_add_column(&table, col_string, "Function", "%s", 'c', 'r', (void*) function_names);
 
-   char **caller_names = vftr_stack_caller_name_list(stacktree, sorted_stacks);
+   char **caller_names = vftr_logfile_prof_table_stack_caller_name_list(stacktree, sorted_stacks);
    vftr_table_add_column(&table, col_string, "Caller", "%s", 'c', 'r', (void*) caller_names);
 
-   int *stack_IDs = vftr_stack_stackID_list(stacktree.nstacks, sorted_stacks);
+   int *stack_IDs = vftr_logfile_prof_table_stack_stackID_list(stacktree.nstacks, sorted_stacks);
    vftr_table_add_column(&table, col_int, "ID", "%d", 'c', 'r', (void*) stack_IDs);
 
    vftr_print_table(fp, table);
