@@ -91,5 +91,7 @@ int main(int argc, char **argv) {
    vftr_collated_stacktree_free(&collated_stacktree);
    vftr_environment_free(&environment);
 
+   PMPI_Finalize();
+
    return 0;
 }
