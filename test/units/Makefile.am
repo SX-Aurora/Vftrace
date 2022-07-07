@@ -93,7 +93,7 @@ endif
 
 check_PROGRAMS += threadtree
 
-check_PROGRAMS += filewrite_1
+check_PROGRAMS += filenames
 #
 #                 scenario_1 \
 #                 scenario_2 \
@@ -233,9 +233,9 @@ collatestacks_parallel_3_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
 collatestacks_parallel_3_LDFLAGS = $(AM_LDFLAGS)
 endif
 
-filewrite_1_SOURCES = $(srcdir)/filewrite_1.c
-filewrite_1_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
-filewrite_1_LDFLAGS = $(AM_LDFLAGS)
+filenames_SOURCES = $(srcdir)/filenames.c
+filenames_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
+filenames_LDFLAGS = $(AM_LDFLAGS)
 
 stacktree_SOURCES = $(srcdir)/stacktree.c \
 		    $(srcdir)/dummysymboltable.c
@@ -388,7 +388,7 @@ if ENABLE_MPI
 dist_check_SCRIPTS += print_mpi_table.sh
 endif
 dist_check_SCRIPTS += threadtree.sh
-dist_check_SCRIPTS += filewrite_1.sh
+dist_check_SCRIPTS += filenames.sh
 #		     scenario_1.sh \
 #		     scenario_2.sh \
 #		     scenario_3.sh \

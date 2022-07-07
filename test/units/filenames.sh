@@ -1,9 +1,9 @@
 #!/bin/bash
 
 set -x
-vftr_binary=filewrite_1
+vftr_binary=filenames
 export VFTR_LOGFILE_BASENAME=$vftr_binary
-outfile=filewrite_1.out
+outfile=${vftr_binary}.out
 ref_file=${srcdir}/ref_output/$outfile
 
 rm -f $outfile
