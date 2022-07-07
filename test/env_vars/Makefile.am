@@ -37,15 +37,25 @@ if ENABLE_OMP
 endif
 
 check_PROGRAMS = 
+dist_check_SCRIPTS =
+
 check_PROGRAMS += parse_and_print
 
 parse_and_print_SOURCES = $(srcdir)/parse_and_print.c
 parse_and_print_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
 parse_and_print_LDFLAGS = $(AM_LDFLAGS)
 
-dist_check_SCRIPTS =
 dist_check_SCRIPTS += defaults.sh \
 		      advisor.sh
+
+check_PROGRAMS += vftr_off
+
+vftr_off_SOURCES = $(srcdir)/little_tasks.c
+vftr_off_CFLAGS = $(AM_CFLAGS) -finstrument-functions
+vftr_off_LDFLAGS = $(AM_LDFLAGS)
+
+dist_check_SCRIPTS += vftr_off.sh
+
 
 TEST_EXTENSIONS = .sh
 SH_LOG_COMPILER = $(SHELL)
