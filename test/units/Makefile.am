@@ -57,8 +57,6 @@ check_PROGRAMS += symbols_1 \
 		  symbols_2 \
 		  symbols_precise \
 		  pauseresume_precise
-check_PROGRAMS += environment_1 \
-		  environment_2
 check_PROGRAMS += hashing \
 		  stackhashing \
 		  collatehashes
@@ -176,14 +174,6 @@ symbols_precise_LDFLAGS = $(AM_LDFLAGS)
 pauseresume_precise_SOURCES = $(srcdir)/pauseresume_precise.c
 pauseresume_precise_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
 pauseresume_precise_LDFLAGS = $(AM_LDFLAGS)
-
-environment_1_SOURCES = $(srcdir)/environment_1.c
-environment_1_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
-environment_1_LDFLAGS = $(AM_LDFLAGS)
-
-environment_2_SOURCES = $(srcdir)/environment_2.c
-environment_2_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
-environment_2_LDFLAGS = $(AM_LDFLAGS)
 
 hashing_SOURCES = $(srcdir)/hashing.c
 hashing_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
@@ -351,8 +341,6 @@ dist_check_SCRIPTS += symbols_1.sh \
 		      symbols_2.sh \
 		      symbols_precise.sh \
 		      pauseresume_precise.sh
-dist_check_SCRIPTS += environment_1.sh \
-		      environment_2.sh
 dist_check_SCRIPTS += hashing.sh \
 		      stackhashing.sh \
 		      collatehashes.sh

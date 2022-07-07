@@ -1,7 +1,7 @@
 #!/bin/bash
 set -x
-test_name=environment_1
-output_file=$test_name.out
+test_name=parse_and_print
+output_file=defaults.out
 ref_file=${srcdir}/ref_output/$output_file
 
 rm -f $outfile
