@@ -59,7 +59,7 @@ libvftr_apply_perm_float_la_CFLAGS = -DTYPE="float" -DTYPESTR="float" -I${srcdir
 noinst_LTLIBRARIES += libvftr_apply_perm_stackptr.la
 libvftr_sorting_la_LIBADD += libvftr_apply_perm_stackptr.la
 libvftr_apply_perm_stackptr_la_SOURCES = apply_perm.c
-libvftr_apply_perm_stackptr_la_CFLAGS = -DTYPE="stack_t *" -DTYPESTR="stackptr" -I${srcdir}/../
+libvftr_apply_perm_stackptr_la_CFLAGS = -DTYPE="stack_t*" -DTYPESTR="stackptr" -I${srcdir}/../
 if ENABLE_MPI
 libvftr_apply_perm_stackptr_la_CFLAGS += -D_MPI -I${srcdir}/../mpi/utils/
 endif
