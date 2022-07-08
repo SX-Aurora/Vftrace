@@ -63,8 +63,8 @@ int largest_prime(int n) {
 }
 
 int main(int argc, char **argv) {
-#if defined(_MPI)
-  PMPI_Init(&argc, &argv);
+#ifdef _MPI
+  MPI_Init(&argc, &argv);
 #else
   (void) argc;
   (void) argv;
@@ -87,7 +87,7 @@ int main(int argc, char **argv) {
 
 
 #ifdef _MPI
-  PMPI_Finalize();
+  MPI_Finalize();
 #endif
 
   return 0;
