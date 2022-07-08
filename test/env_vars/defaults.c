@@ -18,7 +18,6 @@ int main(int argc, char **argv) {
   environment_t environment;
   environment = vftr_read_environment();
   vftr_environment_assert(stderr, environment);
-  vftr_check_env_names(stdout, &environment);
   vftr_print_env(stdout, environment);
   vftr_environment_free(&environment);
 

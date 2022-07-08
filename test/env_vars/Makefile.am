@@ -39,11 +39,16 @@ endif
 check_PROGRAMS = 
 dist_check_SCRIPTS =
 
-check_PROGRAMS += parse_and_print
+check_PROGRAMS += defaults \
+		  advisor
 
-parse_and_print_SOURCES = $(srcdir)/parse_and_print.c
-parse_and_print_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
-parse_and_print_LDFLAGS = $(AM_LDFLAGS)
+defaults_SOURCES = $(srcdir)/defaults.c
+defaults_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
+defaults_LDFLAGS = $(AM_LDFLAGS)
+
+advisor_SOURCES = $(srcdir)/advisor.c
+advisor_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
+advisor_LDFLAGS = $(AM_LDFLAGS)
 
 dist_check_SCRIPTS += defaults.sh \
 		      advisor.sh

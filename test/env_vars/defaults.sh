@@ -1,6 +1,6 @@
 #!/bin/bash
 set -x
-test_name=parse_and_print
+test_name=defaults
 output_file=defaults.out
 ref_file=${srcdir}/ref_output/$output_file
 

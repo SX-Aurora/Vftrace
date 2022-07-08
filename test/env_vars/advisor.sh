@@ -1,6 +1,6 @@
 #!/bin/bash
 set -x
-vftr_binary=parse_and_print
+vftr_binary=advisor
 outfile=advisor.out
 ref_file=${srcdir}/ref_output/$output_file
 
