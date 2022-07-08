@@ -56,7 +56,8 @@ dist_check_SCRIPTS += defaults.sh \
 check_PROGRAMS += vftr_off \
 		  vftr_sampling \
 		  vftr_regions_precise \
-		  vftr_out_directory
+		  vftr_out_directory \
+		  vftr_logfile_basename
 
 vftr_off_SOURCES = $(srcdir)/little_tasks.c
 vftr_off_CFLAGS = $(AM_CFLAGS) -finstrument-functions
@@ -74,10 +75,15 @@ vftr_out_directory_SOURCES = $(srcdir)/little_tasks.c
 vftr_out_directory_CFLAGS = $(AM_CFLAGS) -finstrument-functions
 vftr_out_directory_LDFLAGS = $(AM_LDFLAGS)
 
+vftr_logfile_basename_SOURCES = $(srcdir)/little_tasks.c
+vftr_logfile_basename_CFLAGS = $(AM_CFLAGS) -finstrument-functions
+vftr_logfile_basename_LDFLAGS = $(AM_LDFLAGS)
+
 dist_check_SCRIPTS += vftr_off.sh \
 		      vftr_sampling.sh \
 		      vftr_regions_precise.sh \
-		      vftr_out_directory.sh
+		      vftr_out_directory.sh \
+		      vftr_logfile_basename.sh
 
 TEST_EXTENSIONS = .sh
 SH_LOG_COMPILER = $(SHELL)
