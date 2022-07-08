@@ -20,7 +20,7 @@ rm ${tmpfile}
 refstack=""
 for i in $(seq 1 1 3);
 do
-   refstack="fkt${i}<${refstack}"
+   refstack="fkt${i}\*<${refstack}"
 done
 
 echo "Callstack: ${callstack}"

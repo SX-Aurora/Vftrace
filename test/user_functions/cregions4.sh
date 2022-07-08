@@ -22,7 +22,7 @@ do
    stackstr=""
    for istack in $(seq 1 1 ${ireg});
    do
-      stackstr="user-region-${istack}<${stackstr}"
+      stackstr="user-region-${istack}[*]<${stackstr}"
    done
 
    inprof=$(cat ${vftr_binary}_0.log | \

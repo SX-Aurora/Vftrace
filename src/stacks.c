@@ -160,9 +160,9 @@ int vftr_get_stack_string_length(stacktree_t stacktree, int stackid) {
       tmpstackid = stacktree.stacks[tmpstackid].caller;
       stringlen += strlen(stacktree.stacks[tmpstackid].name);
       stringlen ++; // function seperating character "<", or null terminator
-//      if (stacktree.stacks[tmpstackid].precise) {
-//         stringlen ++; // '*' for indicating precise functions
-//      }
+      if (stacktree.stacks[tmpstackid].precise) {
+         stringlen ++; // '*' for indicating precise functions
+      }
    }
    return stringlen;
 }
@@ -180,10 +180,10 @@ char *vftr_get_stack_string(stacktree_t stacktree, int stackid) {
       tmpstackstring_ptr++;
       tmpname_ptr++;
    }
-//   if (stacktree.stacks[tmpstackid].precise) {
-//      *tmpstackstring_ptr = '*';
-//      tmpstackstring_ptr++;
-//   }
+   if (stacktree.stacks[tmpstackid].precise) {
+      *tmpstackstring_ptr = '*';
+      tmpstackstring_ptr++;
+   }
    while (stacktree.stacks[tmpstackid].caller >= 0) {
       // add function name separating character
       *tmpstackstring_ptr = '<';
@@ -195,10 +195,10 @@ char *vftr_get_stack_string(stacktree_t stacktree, int stackid) {
          tmpstackstring_ptr++;
          tmpname_ptr++;
       }
-//      if (stacktree.stacks[tmpstackid].precise) {
-//         *tmpstackstring_ptr = '*';
-//         tmpstackstring_ptr++;
-//      }
+      if (stacktree.stacks[tmpstackid].precise) {
+         *tmpstackstring_ptr = '*';
+         tmpstackstring_ptr++;
+      }
    }
    // replace last char with a null terminator
    *tmpstackstring_ptr = '\0';

@@ -22,14 +22,14 @@ fi
 diff ${output_file} ${ref_file} || exit 1
 
 if [ -f ${logfile} ] ; then
-   nreg=$(cat ${logfile} | grep "MyRegion" | wc -l)
-   if [ ${nreg} -ne "2" ] ; then
-      echo "Expected \"MyRegion\" to appear twice in logfile. Found it ${nreg} times!"
+   nreg=$(cat ${logfile} | grep "MyRegion<" | wc -l)
+   if [ ${nreg} -ne "0" ] ; then
+      echo "Expected \"MyRegion<\" to not appear in logfile. Found it ${nreg} times!"
       exit 1;
    fi
-   nprecreg=$(cat ${logfile} | grep "MyRegion\*" | wc -l)
-   if [ ${nprecreg} -ne 2 ] ; then
-      echo "Expected \"MyRegion*\" to appear twice in logfile. Found it ${nreg} times!"
+   nprecreg=$(cat ${logfile} | grep "MyRegion\*<" | wc -l)
+   if [ ${nprecreg} -ne "1" ] ; then
+      echo "Expected \"MyRegion*<\" to appear once in logfile. Found it ${nreg} times!"
       exit 1;
    fi
 else
@@ -54,14 +54,14 @@ fi
 diff ${output_file} ${ref_file} || exit 1
 
 if [ -f ${logfile} ] ; then
-   nreg=$(cat ${logfile} | grep "MyRegion" | wc -l)
-   if [ ${nreg} -ne "2" ] ; then
-      echo "Expected \"MyRegion\" to appear twice in logfile. Found it ${nreg} times!"
+   nreg=$(cat ${logfile} | grep "MyRegion<" | wc -l)
+   if [ ${nreg} -ne "1" ] ; then
+      echo "Expected \"MyRegion\" to appear once in logfile. Found it ${nreg} times!"
       exit 1;
    fi
-   nprecreg=$(cat ${logfile} | grep "MyRegion\*" | wc -l)
-   if [ ${nprecreg} -ne 0 ] ; then
-      echo "Expected \"MyRegion*\" not appear in logfile. Found it ${nreg} times!"
+   nprecreg=$(cat ${logfile} | grep "MyRegion\*<" | wc -l)
+   if [ ${nprecreg} -ne "0" ] ; then
+      echo "Expected \"MyRegion*\" not to appear in logfile. Found it ${nreg} times!"
       exit 1;
    fi
 else
