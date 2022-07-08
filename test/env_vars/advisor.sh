@@ -15,4 +15,4 @@ else
   ./${vftr_binary} > $outfile || exit 1
 fi
 
-diff $ref_file $outfile
+diff $ref_file $outfile || exit 1

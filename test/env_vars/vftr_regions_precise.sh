@@ -19,7 +19,7 @@ else
    ./${test_name} > ${output_file} || exit 1
 fi
 
-diff ${output_file} ${ref_file}
+diff ${output_file} ${ref_file} || exit 1
 
 if [ -f ${logfile} ] ; then
    nreg=$(cat ${logfile} | grep "MyRegion" | wc -l)
@@ -51,7 +51,7 @@ else
    ./${test_name} > ${output_file} || exit 1
 fi
 
-diff ${output_file} ${ref_file}
+diff ${output_file} ${ref_file} || exit 1
 
 if [ -f ${logfile} ] ; then
    nreg=$(cat ${logfile} | grep "MyRegion" | wc -l)
