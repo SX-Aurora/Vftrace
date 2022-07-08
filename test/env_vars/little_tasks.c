@@ -3,6 +3,10 @@
 #include <stdbool.h>
 #include <math.h>
 
+#ifdef _REGIONS
+#include <vftrace.h>
+#endif
+
 #ifdef _MPI
 #include <mpi.h>
 #endif
@@ -75,6 +79,11 @@ int main(int argc, char **argv) {
 
   // largest prime below 5e6
   printf("prime: %d\n", largest_prime(1000000));
+
+#ifdef _REGIONS
+  vftrace_region_begin("MyRegion");
+  vftrace_region_end("MyRegion");
+#endif
 
 
 #ifdef _MPI

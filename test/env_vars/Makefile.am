@@ -54,7 +54,8 @@ dist_check_SCRIPTS += defaults.sh \
 		      advisor.sh
 
 check_PROGRAMS += vftr_off \
-		  vftr_sampling
+		  vftr_sampling \
+		  vftr_regions_precise
 
 vftr_off_SOURCES = $(srcdir)/little_tasks.c
 vftr_off_CFLAGS = $(AM_CFLAGS) -finstrument-functions
@@ -64,8 +65,13 @@ vftr_sampling_SOURCES = $(srcdir)/little_tasks.c
 vftr_sampling_CFLAGS = $(AM_CFLAGS) -finstrument-functions
 vftr_sampling_LDFLAGS = $(AM_LDFLAGS)
 
+vftr_regions_precise_SOURCES = $(srcdir)/little_tasks.c
+vftr_regions_precise_CFLAGS = $(AM_CFLAGS) -finstrument-functions -D_REGIONS
+vftr_regions_precise_LDFLAGS = $(AM_LDFLAGS)
+
 dist_check_SCRIPTS += vftr_off.sh \
-		      vftr_sampling.sh
+		      vftr_sampling.sh \
+		      vftr_regions_precise.sh
 
 
 TEST_EXTENSIONS = .sh

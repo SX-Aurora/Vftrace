@@ -45,10 +45,21 @@ void vftr_user_region_begin(const char *name, void *addr) {
       // add possibly new region to the stack
       // and adjust the threadstack accordingly
       bool precise = vftrace.environment.regions_precise.value.bool_val;
+      // Append an asterisk to the name to indicate preciseness in the log/vfd
+      char *tmpname = name;
+      if (precise) {
+         int namelen = strlen(name)+2;
+         tmpname = (char*) malloc(namelen*sizeof(char));
+         strcpy(tmpname, name);
+         strcat(tmpname, "*");
+      }
       my_threadstack = vftr_update_threadstack_region(my_threadstack, my_thread,
-                                                      region_addr, name,
+                                                      region_addr, tmpname,
                                                       user_region, &vftrace,
                                                       precise);
+      if (precise) {
+         free(tmpname);
+      }
       stack_t *my_new_stack = vftrace.process.stacktree.stacks+my_threadstack->stackID;
       my_profile = vftr_get_my_profile(my_new_stack, my_thread);
 
