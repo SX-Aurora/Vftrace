@@ -72,13 +72,13 @@ int main(int argc, char **argv) {
 
   // collatz conjecture
   // longest chain below 1e6
-  printf("collatz: %d\n", collatz_max_steps(1000000));
+  printf("collatz: %d\n", collatz_max_steps(10000));
 
   // pythagoras
   printf("pythagoras: %d\n", pythagoras(10000));
 
   // largest prime below 5e6
-  printf("prime: %d\n", largest_prime(1000000));
+  printf("prime: %d\n", largest_prime(10000));
 
 #ifdef _REGIONS
   vftrace_region_begin("MyRegion");
