@@ -10,6 +10,10 @@
 #include "exe_info.h"
 
 char *vftr_create_filename_base(environment_t environment, int rankID, int nranks) {
+   char *out_dir = NULL;
+   out_dir = strdup(environment.output_directory.value.string_val);
+   int out_dir_len = strlen(out_dir);
+
    char *exe_name = NULL;
    if (environment.logfile_basename.set) {
       // user defined logfile name
@@ -33,15 +37,21 @@ char *vftr_create_filename_base(environment_t environment, int rankID, int nrank
    int rankID_len = snprintf(NULL, 0, "%0*d", ndigits, rankID);
 
    // construct filename base
-   int total_len = exe_name_len +
+   int total_len = out_dir_len +
+                   1 + // folder separating slash
+                   exe_name_len +
                    1 + // underscore
                    rankID_len +
                    1; // null terminator
    char *filename_base = (char*) malloc(total_len*sizeof(char));
-   strcpy(filename_base, exe_name);
-   filename_base[exe_name_len] = '_';
-   snprintf(filename_base+exe_name_len+1, rankID_len+1, "%0*d", ndigits, rankID);
+   strcpy(filename_base, out_dir);
+   strcat(filename_base, "/");
+   strcat(filename_base, exe_name);
+   filename_base[out_dir_len+1+exe_name_len] = '_';
+   snprintf(out_dir_len+1+filename_base+exe_name_len+1, rankID_len+1,
+            "%0*d", ndigits, rankID);
 
    free(exe_name);
+   free(out_dir);
    return filename_base;
 }
