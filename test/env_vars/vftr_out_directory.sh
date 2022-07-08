@@ -1,7 +1,7 @@
 #!/bin/bash
 set -x
-test_name=vftr_regions_precise
-output_file=vftr_regions_precise.out
+test_name=vftr_out_directory
+output_file=vftr_out_directory.out
 ref_file=${srcdir}/ref_output/little_tasks.out
 logfile=${test_name}_0.log
 vfdfile=${test_name}_0.vfd
