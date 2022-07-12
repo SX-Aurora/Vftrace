@@ -1,8 +1,8 @@
 #!/bin/bash
 set -x
 test_name=vftr_sampling
-output_file=little_tasks.out
-ref_file=${srcdir}/ref_output/${output_file}
+output_file=vftr_sampling.out
+ref_file=${srcdir}/ref_output/little_tasks.out
 logfile=${test_name}_0.log
 vfdfile=${test_name}_0.vfd
 
