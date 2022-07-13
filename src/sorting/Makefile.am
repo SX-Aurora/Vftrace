@@ -16,6 +16,11 @@ libvftr_sorting_la_LIBADD += libvftr_sorting_int8.la
 libvftr_sorting_int8_la_SOURCES = sorting_stdtypes.c
 libvftr_sorting_int8_la_CFLAGS = -DTYPE="int8_t" -DTYPESTR="int8"
 
+noinst_LTLIBRARIES += libvftr_sorting_int.la
+libvftr_sorting_la_LIBADD += libvftr_sorting_int.la
+libvftr_sorting_int_la_SOURCES = sorting_stdtypes.c
+libvftr_sorting_int_la_CFLAGS = -DTYPE="int" -DTYPESTR="int"
+
 noinst_LTLIBRARIES += libvftr_sorting_uint8.la
 libvftr_sorting_la_LIBADD += libvftr_sorting_uint8.la
 libvftr_sorting_uint8_la_SOURCES = sorting_stdtypes.c

@@ -12,6 +12,7 @@
 // sorts a list of integers with linear scaling radix sort
 // one bit at a time
 void vftr_sort_int8(int n, int8_t *list, bool ascending);
+void vftr_sort_int(int n, int *list, bool ascending);
 void vftr_sort_longlong(int n, long long *list, bool ascending);
 
 // sorts a list of integers with linear scaling radix sort
