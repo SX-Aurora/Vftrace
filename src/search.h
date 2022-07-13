@@ -9,6 +9,8 @@
 
 int vftr_binary_search_uint64(int n, uint64_t *list, uint64_t value);
 
+int vftr_binary_search_int(int n, int *list, int value);
+
 int vftr_binary_search_symboltable(int nsymb, symbol_t *symbols,
                                    uintptr_t address);
 
