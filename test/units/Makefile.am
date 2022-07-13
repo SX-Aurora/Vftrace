@@ -52,7 +52,8 @@ check_PROGRAMS += sort_int8 \
 		  sort_uint64 \
 		  sort_longlong \
 		  sort_double
-check_PROGRAMS += chop_chars
+check_PROGRAMS += chop_chars \
+		  range_expand
 check_PROGRAMS += symbols_1 \
 		  symbols_2 \
 		  symbols_precise \
@@ -154,8 +155,12 @@ sort_double_CFLAGS = $(AM_CFLAGS) -I$(top_srcdir)/src/sorting/
 sort_double_LDFLAGS = $(AM_LDFLAGS)
 
 chop_chars_SOURCES = $(srcdir)/chop_chars.c
-chop_chars_CFLAGS = $(AM_CFLAGS)
+chop_chars_CFLAGS = $(AM_CFLAGS) -I$(top_srcdir)/src/
 chop_chars_LDFLAGS = $(AM_LDFLAGS)
+
+range_expand_SOURCES = $(srcdir)/range_expand.c
+range_expand_CFLAGS = $(AM_CFLAGS) -I$(top_srcdir)/src/
+range_expand_LDFLAGS = $(AM_LDFLAGS)
 
 symbols_1_SOURCES = $(srcdir)/symbols_1.c \
 		    $(srcdir)/protofuncts.c
@@ -336,7 +341,8 @@ dist_check_SCRIPTS += sort_int8.sh \
 		      sort_uint64.sh \
 		      sort_longlong.sh \
 		      sort_double.sh
-dist_check_SCRIPTS += chop_chars.sh
+dist_check_SCRIPTS += chop_chars.sh \
+		      range_expand.sh
 dist_check_SCRIPTS += symbols_1.sh \
 		      symbols_2.sh \
 		      symbols_precise.sh \
