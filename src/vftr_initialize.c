@@ -37,6 +37,10 @@ void vftr_initialize(void *func, void *call_site) {
       // set start time string
       vftrace.timestrings.start_time = vftr_get_date_str();
 
+      // check environment sanity
+      vftr_environment_assert(stderr, vftrace.environment);
+      vftr_check_env_names(stderr, &(vftrace.environment));
+
       // read the symbol table of the executable and its libraries
       vftrace.symboltable = vftr_read_symbols();
       vftr_symboltable_determine_preciseness(&(vftrace.symboltable),
