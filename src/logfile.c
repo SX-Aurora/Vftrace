@@ -12,6 +12,24 @@
 #include "logfile_mpi_table.h"
 #include "logfile_stacklist.h"
 
+#include "range_expand.h"
+
+static bool vftr_rang_needs_logfile(environment_t environment, int rank) {
+   char *rangestr = environment.logfile_for_ranks.value.string_val;
+   if (!strcmp(rangestr, "all")) {
+      return true;
+   }
+   int nranks = 0;
+   int *ranklist = vftr_expand_rangelist(rangestr, &nranks);
+   int idx = vftr_binary_search_int(nranks, ranklist, rank);
+   free(ranklist);
+   if (idx == -1) {
+      return false;
+   } else {
+      return true;
+   }
+}
+
 char *vftr_get_logfile_name(environment_t environment, int rankID, int nranks) {
    char *filename_base = vftr_create_filename_base(environment, rankID, nranks);
    int filename_base_len = strlen(filename_base);
@@ -41,6 +59,10 @@ FILE *vftr_open_logfile(char *filename) {
 }
 
 void vftr_write_logfile(vftrace_t vftrace, long long runtime) {
+   if (!vftr_rang_needs_logfile(vftrace.environment, vftrace.process.processID)) {
+      return;
+   }
+
    char *logfilename = vftr_get_logfile_name(vftrace.environment,
                                              vftrace.process.processID,
                                              vftrace.process.nprocesses);
