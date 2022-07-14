@@ -27,7 +27,7 @@ int collatz_max_steps(long long nmax) {
    return max_steps;
 }
 
-int pythagoras(int n) {
+int pythagorean_triples(int n) {
    int largest = 0;
    for (int a=1; a<n; a++) {
       for (int b=a; b<n; b++) {
@@ -72,13 +72,23 @@ int main(int argc, char **argv) {
 
   // collatz conjecture
   // longest chain below 1e6
-  printf("collatz: %d\n", collatz_max_steps(10000));
-
+  int collatz = collatz_max_steps(100);
   // pythagoras
-  printf("pythagoras: %d\n", pythagoras(10000));
-
+  int pythagoras = pythagorean_triples(100);
   // largest prime below 5e6
-  printf("prime: %d\n", largest_prime(10000));
+  int prime = largest_prime(100);
+
+#ifdef _MPI
+  int myrank;
+  MPI_Comm_rank(MPI_COMM_WORLD, &myrank);
+  if (myrank == 0) {
+#endif
+  printf("collatz: %d\n", collatz);
+  printf("pythagoras: %d\n", pythagoras);
+  printf("prime: %d\n", prime);
+#ifdef _MPI
+  }
+#endif
 
 #ifdef _REGIONS
   vftrace_region_begin("MyRegion");
