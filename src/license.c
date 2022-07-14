@@ -3,5 +3,5 @@
 void vftr_print_licence(FILE *fp) {
    fprintf(fp,
            "This is free software with ABSOLUTELY NO WARRANTY.\n"
-           "For details see \"LICENCE\" file which comes with the source code\n\n");
+           "For details see \"LICENCE\" file which comes with the source code\n");
 }

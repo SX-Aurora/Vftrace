@@ -209,8 +209,8 @@ void vftr_print_env_var(FILE *fp, env_var_t env_var) {
    }
 }
 
-void vftr_print_env(FILE *fp, environment_t environment) {
-   if (environment.valid) {
+void vftr_print_environment(FILE *fp, environment_t environment) {
+   if (environment.valid && environment.print_environment.value.bool_val) {
       for (int ienv=0; ienv<environment.nenv_vars; ienv++) {
          vftr_print_env_var(fp,
             *vftr_get_env_var_ptr_by_idx(&environment, ienv));
@@ -241,7 +241,7 @@ environment_t vftr_read_environment() {
    environment.strip_module_names = vftr_read_env_bool("VFTR_STRIP_MODULE_NAMES", false);
    environment.sort_profile_table = vftr_read_env_string("VFTR_SORT_PROFILE_TABLE", "TIME_EXCL");
    environment.show_overhead = vftr_read_env_bool("VFTR_SHOW_FUNCTION_OVERHEAD", false);
-   environment.print_env = vftr_read_env_bool("VFTR_PRINT_ENVIRONMENT", false);
+   environment.print_environment = vftr_read_env_bool("VFTR_PRINT_ENVIRONMENT", true);
    environment.callpath_in_profile = vftr_read_env_bool("VFTR_CALLPATH_IN_PROFILE", false);
    environment.demangle_cpp = vftr_read_env_bool("VFTR_DEMANGLE_CPP", false);
    environment.nenv_vars = 21;
@@ -432,9 +432,9 @@ void vftr_environment_assert_show_overhead(FILE *fp, env_var_t show_overhead) {
    (void) show_overhead;
 }
 
-void vftr_environment_assert_print_env(FILE *fp, env_var_t print_env) {
+void vftr_environment_assert_print_environment(FILE *fp, env_var_t print_environment) {
    (void) fp;
-   (void) print_env;
+   (void) print_environment;
 }
 
 void vftr_environment_assert_callpath_in_profile(FILE *fp,
@@ -467,7 +467,7 @@ void vftr_environment_assert(FILE *fp, environment_t environment) {
    vftr_environment_assert_strip_module_names(fp, environment.strip_module_names);
    vftr_environment_assert_sort_profile_table(fp, environment.sort_profile_table);
    vftr_environment_assert_show_overhead(fp, environment.show_overhead);
-   vftr_environment_assert_print_env(fp, environment.print_env);
+   vftr_environment_assert_print_environment(fp, environment.print_environment);
    vftr_environment_assert_callpath_in_profile(fp, environment.callpath_in_profile);
    vftr_environment_assert_demangle_cpp(fp, environment.demangle_cpp);
 }

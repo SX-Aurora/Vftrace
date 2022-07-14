@@ -5,7 +5,7 @@
 
 #include "environment_types.h"
 
-void vftr_print_env(FILE *fp, environment_t environment);
+void vftr_print_environment(FILE *fp, environment_t environment);
 
 environment_t vftr_read_environment();
 

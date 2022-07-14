@@ -70,10 +70,6 @@ void vftr_write_logfile(vftrace_t vftrace, long long runtime) {
 
    vftr_write_logfile_header(fp, vftrace.timestrings);
 
-   // print environment info
-   vftr_print_env(fp, vftrace.environment);
-   vftr_check_env_names(fp, &vftrace.environment);
-
    vftr_write_logfile_summary(fp, vftrace.process, runtime);
 
    vftr_write_logfile_profile_table(fp, vftrace.process.stacktree,
@@ -87,6 +83,9 @@ void vftr_write_logfile(vftrace_t vftrace, long long runtime) {
 
 
    vftr_write_logfile_global_stack_list(fp, vftrace.process.collated_stacktree);
+
+   // print environment info
+   vftr_print_environment(fp, vftrace.environment);
 
    fclose(fp);
    free(logfilename);

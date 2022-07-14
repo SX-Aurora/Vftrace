@@ -32,6 +32,7 @@ void vftr_write_logfile_global_stack_list(FILE *fp, collated_stacktree_t stacktr
                          "Call stack", "%s", 'r', 'l', (void*) stacks);
 
    vftr_print_table(fp, table);
+   fprintf(fp, "\n");
 
    vftr_table_free(&table);
    free(IDs);

@@ -58,7 +58,7 @@ typedef struct {
    env_var_t strip_module_names;
    env_var_t sort_profile_table;
    env_var_t show_overhead;
-   env_var_t print_env;
+   env_var_t print_environment;
    env_var_t callpath_in_profile;
    env_var_t demangle_cpp;
    bool valid;
