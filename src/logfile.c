@@ -11,7 +11,7 @@
 #include "logfile_prof_table.h"
 #include "logfile_mpi_table.h"
 #include "logfile_stacklist.h"
-
+#include "search.h"
 #include "range_expand.h"
 
 static bool vftr_rang_needs_logfile(environment_t environment, int rank) {
@@ -68,8 +68,7 @@ void vftr_write_logfile(vftrace_t vftrace, long long runtime) {
                                              vftrace.process.nprocesses);
    FILE *fp = vftr_open_logfile(logfilename);
 
-   vftr_write_logfile_header(fp, vftrace.timestrings,
-                             vftrace.environment);
+   vftr_write_logfile_header(fp, vftrace.timestrings);
 
    // print environment info
    vftr_print_env(fp, vftrace.environment);

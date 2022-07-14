@@ -6,10 +6,8 @@
 
 #include "timer_types.h"
 #include "process_types.h"
-#include "environment_types.h"
 
-void vftr_write_logfile_header(FILE *fp, time_strings_t timestrings,
-                               environment_t environment);
+void vftr_write_logfile_header(FILE *fp, time_strings_t timestrings);
 
 void vftr_write_logfile_summary(FILE *fp, process_t process, long long runtime);
 

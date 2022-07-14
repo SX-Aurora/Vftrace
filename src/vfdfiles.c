@@ -72,7 +72,7 @@ FILE *vftr_open_vfdfile(char *filename) {
 
 char *vftr_attach_iobuffer_vfdfile(FILE *fp, environment_t environment) {
    // the environment variable gets the size in MB.
-   size_t bufsize = environment.bufsize.value.int_val;
+   size_t bufsize = environment.vfd_bufsize.value.int_val;
    // it is needed in bytes
    bufsize *= 1024*1024;
    char *buffer = (char*) malloc(bufsize);

@@ -17,18 +17,12 @@
 #include "overheadprofiling_types.h"
 #include "overheadprofiling.h"
 
-void vftr_write_logfile_header(FILE *fp, time_strings_t timestrings,
-                               environment_t environment) {
+void vftr_write_logfile_header(FILE *fp, time_strings_t timestrings) {
    fprintf(fp, "%s\n", PACKAGE_STRING);
    fprintf(fp, "Runtime profile for application:\n");
    fprintf(fp, "Start Date: %s\n", timestrings.start_time);
    fprintf(fp, "End Date:   %s\n\n", timestrings.end_time);
-   // print the full license if requested by the environment
-   if (environment.license_verbose.value.bool_val) {
-      vftr_print_licence(fp);
-   } else {
-      vftr_print_licence_short(fp, environment.license_verbose.name);
-   }
+   vftr_print_licence(fp);
 }
 
 void vftr_write_logfile_summary(FILE *fp, process_t process, long long runtime) {

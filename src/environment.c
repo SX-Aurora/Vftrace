@@ -225,38 +225,26 @@ environment_t vftr_read_environment() {
    environment_t environment;
    environment.vftrace_off = vftr_read_env_bool("VFTR_OFF", false);
    environment.do_sampling = vftr_read_env_bool("VFTR_SAMPLING", false);
-   environment.regions_precise = vftr_read_env_bool("VFTR_REGIONS_PRECISE", true);
    environment.output_directory = vftr_read_env_string("VFTR_OUT_DIRECTORY", ".");
    environment.logfile_basename = vftr_read_env_string("VFTR_LOGFILE_BASENAME", NULL);
    environment.logfile_for_ranks = vftr_read_env_string("VFTR_LOGFILE_FOR_RANKS", "0");
-   environment.mpi_summary_for_ranks = vftr_read_env_string("VFTR_MPI_SUMMARY_FOR_RANKS", "");
+   environment.ranks_in_mpi_profile = vftr_read_env_string("VFTR_RANKS_IN_MPI_PROFILE", "all");
    environment.sampletime = vftr_read_env_double("VFTR_SAMPLETIME", 0.005);
-   environment.stoptime = vftr_read_env_longlong("VFTR_STOPTIME", 7ll*24ll*60ll*60ll);
-   environment.accurate_profile = vftr_read_env_bool("VFTR_ACCURATE_PROFILE", false);
    environment.mpi_log = vftr_read_env_bool("VFTR_MPI_LOG", false);
    environment.mpi_show_sync_time = vftr_read_env_bool("VFTR_MPI_SHOW_SYNC_TIME", false);
-   environment.signals_off = vftr_read_env_bool("VFTR_SIGNALS_OFF", true);
-   environment.bufsize = vftr_read_env_int("VFTR_BUFSIZE", 8);
-   environment.runtime_profile_funcs = vftr_read_env_regex("VFTR_RUNTIME_PROFILE_FUNCS", NULL);
+   environment.vfd_bufsize = vftr_read_env_int("VFTR_VFD_BUFSIZE", 8);
    environment.include_only_regex = vftr_read_env_regex("VFTR_INCLUDE_ONLY", NULL);
    environment.scenario_file = vftr_read_env_string("VFTR_SCENARIO_FILE", NULL);
    environment.preciseregex = vftr_read_env_regex("VFTR_PRECISE", NULL);
    environment.print_stack_profile = vftr_read_env_regex("VFTR_PRINT_STACK_PROFILE", NULL);
-   environment.license_verbose = vftr_read_env_bool("VFTR_LICENSE_VERBOSE", false);
    environment.print_stacks_for = vftr_read_env_string("VFTR_PRINT_STACKS_FOR", NULL);
-   environment.print_loadinfo_for = vftr_read_env_string("VFTR_PRINT_LOADINFO_FOR", NULL);
    environment.strip_module_names = vftr_read_env_bool("VFTR_STRIP_MODULE_NAMES", false);
-   environment.create_html = vftr_read_env_bool("VFTR_CREATE_HTML", false);
    environment.sort_profile_table = vftr_read_env_string("VFTR_SORT_PROFILE_TABLE", "TIME_EXCL");
    environment.show_overhead = vftr_read_env_bool("VFTR_SHOW_FUNCTION_OVERHEAD", false);
-   environment.meminfo_method = vftr_read_env_string("VFTR_MEMINFO_METHOD", "");
-   environment.meminfo_stepsize = vftr_read_env_int("VFTR_MEMINFO_STEPSIZE", 1000);
    environment.print_env = vftr_read_env_bool("VFTR_PRINT_ENVIRONMENT", false);
-   environment.no_memtrace = vftr_read_env_bool("VFTR_NO_MEMTRACE", false);
-   environment.show_stacks_in_profile = vftr_read_env_bool("VFTR_SHOW_STACKS_IN_PROFILE", false);
+   environment.callpath_in_profile = vftr_read_env_bool("VFTR_CALLPATH_IN_PROFILE", false);
    environment.demangle_cpp = vftr_read_env_bool("VFTR_DEMANGLE_CPP", false);
-   environment.show_startup = vftr_read_env_bool("VFTR_SHOW_STARTUP", false);
-   environment.nenv_vars = 33;
+   environment.nenv_vars = 21;
    environment.valid = true;
 
    return environment;
@@ -357,11 +345,6 @@ void vftr_environment_assert_do_sampling(FILE *fp, env_var_t do_sampling) {
    (void) do_sampling;
 }
 
-void vftr_environment_assert_regions_precise(FILE *fp, env_var_t regions_precise) {
-   (void) fp;
-   (void) regions_precise;
-}
-
 void vftr_environment_assert_output_directory(FILE *fp, env_var_t output_directory) {
    (void) fp;
    (void) output_directory;
@@ -377,9 +360,10 @@ void vftr_environment_assert_logfile_for_ranks(FILE *fp, env_var_t logfile_for_r
    (void) logfile_for_ranks;
 }
 
-void vftr_environment_assert_mpi_summary_for_ranks(FILE *fp, env_var_t mpi_summary_for_ranks) {
+void vftr_environment_assert_ranks_in_mpi_profile(FILE *fp,
+                                                  env_var_t ranks_in_mpi_profile) {
    (void) fp;
-   (void) mpi_summary_for_ranks;
+   (void) ranks_in_mpi_profile;
 }
 
 void vftr_environment_assert_sampletime(FILE *fp, env_var_t sampletime) {
@@ -387,18 +371,6 @@ void vftr_environment_assert_sampletime(FILE *fp, env_var_t sampletime) {
       fprintf(fp, "Warning: \"%s\" needs to be > 0.0, but is %f.\n",
               sampletime.name, sampletime.value.double_val);
    }
-}
-
-void vftr_environment_assert_stoptime(FILE *fp, env_var_t stoptime) {
-   if (stoptime.value.longlong_val <= 0) {
-      fprintf(fp, "Warning: \"%s\" needs to be > 0, but is %lld.\n",
-              stoptime.name, stoptime.value.longlong_val);
-   }
-}
-
-void vftr_environment_assert_accurate_profile(FILE *fp, env_var_t accurate_profile) {
-   (void) fp;
-   (void) accurate_profile;
 }
 
 void vftr_environment_assert_mpi_log(FILE *fp, env_var_t mpi_log) {
@@ -412,22 +384,11 @@ void vftr_environment_assert_mpi_show_sync_time(FILE *fp,
    (void) mpi_show_sync_time;
 }
 
-void vftr_environment_assert_signals_off(FILE *fp, env_var_t signals_off) {
-   (void) fp;
-   (void) signals_off;
-}
-
-void vftr_environment_assert_bufsize(FILE *fp, env_var_t bufsize) {
-   if (bufsize.value.int_val <= 0) {
+void vftr_environment_assert_vfd_bufsize(FILE *fp, env_var_t vfd_bufsize) {
+   if (vfd_bufsize.value.int_val <= 0) {
       fprintf(fp, "Warning: \"%s\" needs to be > 0, but is %d\n",
-              bufsize.name, bufsize.value.int_val);
+              vfd_bufsize.name, vfd_bufsize.value.int_val);
    }
-}
-
-void vftr_environment_assert_runtime_profile_funcs(FILE *fp,
-                                                   env_var_t runtime_profile_funcs) {
-   (void) fp;
-   (void) runtime_profile_funcs;
 }
 
 void vftr_environment_assert_include_only_regex(FILE *fp, env_var_t include_only_regex) {
@@ -451,29 +412,14 @@ void vftr_environment_assert_print_stack_profile(FILE *fp,
    (void) print_stack_profile;
 }
 
-void vftr_environment_assert_license_verbose(FILE *fp, env_var_t license_verbose) {
-   (void) fp;
-   (void) license_verbose;
-}
-
 void vftr_environment_assert_print_stacks_for(FILE *fp, env_var_t print_stacks_for) {
    (void) fp;
    (void) print_stacks_for;
 }
 
-void vftr_environment_assert_print_loadinfo_for(FILE *fp, env_var_t print_loadinfo_for) {
-   (void) fp;
-   (void) print_loadinfo_for;
-}
-
 void vftr_environment_assert_strip_module_names(FILE *fp, env_var_t strip_module_names) {
    (void) fp;
    (void) strip_module_names;
-}
-
-void vftr_environment_assert_create_html(FILE *fp, env_var_t create_html) {
-   (void) fp;
-   (void) create_html;
 }
 
 void vftr_environment_assert_sort_profile_table(FILE *fp, env_var_t sort_profile_table) {
@@ -486,30 +432,15 @@ void vftr_environment_assert_show_overhead(FILE *fp, env_var_t show_overhead) {
    (void) show_overhead;
 }
 
-void vftr_environment_assert_meminfo_method(FILE *fp, env_var_t meminfo_method) {
-   (void) fp;
-   (void) meminfo_method;
-}
-
-void vftr_environment_assert_meminfo_stepsize(FILE *fp, env_var_t meminfo_stepsize) {
-   (void) fp;
-   (void) meminfo_stepsize;
-}
-
 void vftr_environment_assert_print_env(FILE *fp, env_var_t print_env) {
    (void) fp;
    (void) print_env;
 }
 
-void vftr_environment_assert_no_memtrace(FILE *fp, env_var_t no_memtrace) {
+void vftr_environment_assert_callpath_in_profile(FILE *fp,
+                                                 env_var_t callpath_in_profile) {
    (void) fp;
-   (void) no_memtrace;
-}
-
-void vftr_environment_assert_show_stacks_in_profile(FILE *fp,
-                                                    env_var_t show_stacks_in_profile) {
-   (void) fp;
-   (void) show_stacks_in_profile;
+   (void) callpath_in_profile;
 }
 
 void vftr_environment_assert_demangle_cpp(FILE *fp, env_var_t demangle_cpp) {
@@ -517,43 +448,26 @@ void vftr_environment_assert_demangle_cpp(FILE *fp, env_var_t demangle_cpp) {
    (void) demangle_cpp;
 }
 
-void vftr_environment_assert_show_startup(FILE *fp, env_var_t show_startup) {
-   (void) fp;
-   (void) show_startup;
-}
-
 void vftr_environment_assert(FILE *fp, environment_t environment) {
    vftr_environment_assert_vftrace_off(fp, environment.vftrace_off);
    vftr_environment_assert_do_sampling(fp, environment.do_sampling);
-   vftr_environment_assert_regions_precise(fp, environment.regions_precise);
    vftr_environment_assert_output_directory(fp, environment.output_directory);
    vftr_environment_assert_logfile_basename(fp, environment.logfile_basename);
    vftr_environment_assert_logfile_for_ranks(fp, environment.logfile_for_ranks);
-   vftr_environment_assert_mpi_summary_for_ranks(fp, environment.mpi_summary_for_ranks);
+   vftr_environment_assert_ranks_in_mpi_profile(fp, environment.ranks_in_mpi_profile);
    vftr_environment_assert_sampletime(fp, environment.sampletime);
-   vftr_environment_assert_stoptime(fp, environment.stoptime);
-   vftr_environment_assert_accurate_profile(fp, environment.accurate_profile);
    vftr_environment_assert_mpi_log(fp, environment.mpi_log);
    vftr_environment_assert_mpi_show_sync_time(fp, environment.mpi_show_sync_time);
-   vftr_environment_assert_signals_off(fp, environment.signals_off);
-   vftr_environment_assert_bufsize(fp, environment.bufsize);
-   vftr_environment_assert_runtime_profile_funcs(fp, environment.runtime_profile_funcs);
+   vftr_environment_assert_vfd_bufsize(fp, environment.vfd_bufsize);
    vftr_environment_assert_include_only_regex(fp, environment.include_only_regex);
    vftr_environment_assert_scenario_file(fp, environment.scenario_file);
    vftr_environment_assert_preciseregex(fp, environment.preciseregex);
    vftr_environment_assert_print_stack_profile(fp, environment.print_stack_profile);
-   vftr_environment_assert_license_verbose(fp, environment.license_verbose);
    vftr_environment_assert_print_stacks_for(fp, environment.print_stacks_for);
-   vftr_environment_assert_print_loadinfo_for(fp, environment.print_loadinfo_for);
    vftr_environment_assert_strip_module_names(fp, environment.strip_module_names);
-   vftr_environment_assert_create_html(fp, environment.create_html);
    vftr_environment_assert_sort_profile_table(fp, environment.sort_profile_table);
    vftr_environment_assert_show_overhead(fp, environment.show_overhead);
-   vftr_environment_assert_meminfo_method(fp, environment.meminfo_method);
-   vftr_environment_assert_meminfo_stepsize(fp, environment.meminfo_stepsize);
    vftr_environment_assert_print_env(fp, environment.print_env);
-   vftr_environment_assert_no_memtrace(fp, environment.no_memtrace);
-   vftr_environment_assert_show_stacks_in_profile(fp, environment.show_stacks_in_profile);
+   vftr_environment_assert_callpath_in_profile(fp, environment.callpath_in_profile);
    vftr_environment_assert_demangle_cpp(fp, environment.demangle_cpp);
-   vftr_environment_assert_show_startup(fp, environment.show_startup);
 }

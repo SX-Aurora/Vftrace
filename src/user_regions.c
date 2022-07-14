@@ -44,7 +44,7 @@ void vftr_user_region_begin(const char *name, void *addr) {
    } else {
       // add possibly new region to the stack
       // and adjust the threadstack accordingly
-      bool precise = vftrace.environment.regions_precise.value.bool_val;
+      bool precise = true;
       my_threadstack = vftr_update_threadstack_region(my_threadstack, my_thread,
                                                       region_addr, name,
                                                       user_region, &vftrace,
