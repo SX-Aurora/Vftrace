@@ -397,8 +397,9 @@ void vftr_environment_assert_ranks_in_mpi_profile(FILE *fp,
 
 void vftr_environment_assert_sampletime(FILE *fp, env_var_t sampletime) {
    if (sampletime.value.double_val <= 0.0) {
-      fprintf(fp, "Warning: \"%s\" needs to be > 0.0, but is %f.\n",
-              sampletime.name, sampletime.value.double_val);
+      fprintf(fp, "Warning: \"%s\" with a value smaller or equal to 0 "
+              "will sample every event.\n",
+              sampletime.name);
    }
 }
 
