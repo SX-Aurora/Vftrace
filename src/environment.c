@@ -8,6 +8,7 @@
 
 #include "environment.h"
 #include "regular_expressions.h"
+#include "range_expand.h"
 #include "misc_utils.h"
 
 env_var_t *vftr_get_env_var_ptr_by_idx(environment_t *environment_ptr, int idx) {
@@ -356,8 +357,22 @@ void vftr_environment_assert_logfile_basename(FILE *fp, env_var_t logfile_basena
 }
 
 void vftr_environment_assert_logfile_for_ranks(FILE *fp, env_var_t logfile_for_ranks) {
-   (void) fp;
-   (void) logfile_for_ranks;
+   char *rangelist = logfile_for_ranks.value.string_val;
+   if (strcmp(rangelist, "all")) {
+      int nvals = 0;
+      int *exp_list = vftr_expand_rangelist(rangelist, &nvals);
+      if (nvals == 0 || exp_list == NULL) {
+         fprintf(fp, "Warning: Unable to properly parse given list for \"%s\".\n",
+                 rangelist);
+      }
+      for (int i=0; i<nvals; i++) {
+         if (exp_list[i] < 0) {
+            fprintf(fp, "Warning: %s=%s results in negative rank values.",
+                    logfile_for_ranks.name, rangelist);
+         }
+      }
+      free(exp_list);
+   }
 }
 
 void vftr_environment_assert_ranks_in_mpi_profile(FILE *fp,

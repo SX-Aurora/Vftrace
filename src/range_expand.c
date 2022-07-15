@@ -20,7 +20,7 @@ static void vftr_remove_duplicates(int *n, int *list) {
    *n = j;
 }
 
-int vftr_char_count_in_string(char c, char *string) {
+static int vftr_char_count_in_string(char c, char *string) {
    int count = 0;
    while (*string != '\0') {
       count += *string == c;
@@ -54,7 +54,7 @@ static bool vftr_is_valid_number(char *string) {
    return valid;
 }
 
-void vftr_start_endval_in_range(char *orange, int *startval, int *endval) {
+static void vftr_start_endval_in_range(char *orange, int *startval, int *endval) {
    const char *hyphen = "-";
    char *range = strdup(orange);
    char *token = NULL;
