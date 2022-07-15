@@ -26,7 +26,7 @@ void vftr_write_logfile_global_stack_list(FILE *fp, collated_stacktree_t stacktr
    // second column with the stack strings
    char **stacks = (char**) malloc(stacktree.nstacks*sizeof(char*));
    for (int istack=0; istack<stacktree.nstacks; istack++) {
-      stacks[istack] = vftr_get_collated_stack_string(stacktree, istack);
+      stacks[istack] = vftr_get_collated_stack_string(stacktree, istack, false);
    }
    vftr_table_add_column(&table, col_string,
                          "Call stack", "%s", 'r', 'l', (void*) stacks);

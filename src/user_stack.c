@@ -15,7 +15,7 @@ int vftrace_get_stack_string_length() {
    //       to inherit it as soon as a task is created. for non-OMP code the master
    //       thread is created with _init as lowest stacklist entry
    return vftr_get_stack_string_length(vftrace.process.stacktree,
-                                       my_threadstack->stackID);
+                                       my_threadstack->stackID, false);
 }
 
 char *vftrace_get_stack() {
@@ -27,5 +27,5 @@ char *vftrace_get_stack() {
    //       to inherit it as soon as a task is created. for non-OMP code the master
    //       thread is created with _init as lowest stacklist entry
    return vftr_get_stack_string(vftrace.process.stacktree,
-                                my_threadstack->stackID);
+                                my_threadstack->stackID, false);
 }

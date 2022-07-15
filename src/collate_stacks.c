@@ -357,7 +357,8 @@ void vftr_collated_stacktree_free(collated_stacktree_t *stacktree_ptr) {
    }
 }
 
-char *vftr_get_collated_stack_string(collated_stacktree_t stacktree, int stackid) {
+char *vftr_get_collated_stack_string(collated_stacktree_t stacktree,
+                                     int stackid, bool show_precise) {
    int stringlen = 0;
    int tmpstackid = stackid;
    stringlen += strlen(stacktree.stacks[stackid].name);
@@ -369,7 +370,7 @@ char *vftr_get_collated_stack_string(collated_stacktree_t stacktree, int stackid
       tmpstackid = stacktree.stacks[tmpstackid].caller;
       stringlen += strlen(stacktree.stacks[tmpstackid].name);
       stringlen ++; // function seperating character "<", or null terminator
-      if (stacktree.stacks[tmpstackid].precise) {
+      if (show_precise && stacktree.stacks[tmpstackid].precise) {
          stringlen ++; // '*' for indicating precise functions
       }
    }
@@ -384,7 +385,7 @@ char *vftr_get_collated_stack_string(collated_stacktree_t stacktree, int stackid
       tmpstackstring_ptr++;
       tmpname_ptr++;
    }
-   if (stacktree.stacks[tmpstackid].precise) {
+   if (show_precise && stacktree.stacks[tmpstackid].precise) {
       *tmpstackstring_ptr = '*';
       tmpstackstring_ptr++;
    }
@@ -399,7 +400,7 @@ char *vftr_get_collated_stack_string(collated_stacktree_t stacktree, int stackid
          tmpstackstring_ptr++;
          tmpname_ptr++;
       }
-      if (stacktree.stacks[tmpstackid].precise) {
+      if (show_precise && stacktree.stacks[tmpstackid].precise) {
          *tmpstackstring_ptr = '*';
          tmpstackstring_ptr++;
       }
@@ -410,7 +411,7 @@ char *vftr_get_collated_stack_string(collated_stacktree_t stacktree, int stackid
 }
 
 void vftr_print_collated_stack(FILE *fp, collated_stacktree_t stacktree, int stackid) {
-   char *stackstr = vftr_get_collated_stack_string(stacktree, stackid);
+   char *stackstr = vftr_get_collated_stack_string(stacktree, stackid, false);
    fprintf(fp, "%s", stackstr);
    free(stackstr);
 }

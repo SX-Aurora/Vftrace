@@ -151,7 +151,7 @@ void vftr_print_stacktree(FILE *fp, stacktree_t stacktree) {
    vftr_print_stack_branch(fp, 0, stacktree, 0);
 }
 
-int vftr_get_stack_string_length(stacktree_t stacktree, int stackid) {
+int vftr_get_stack_string_length(stacktree_t stacktree, int stackid, bool show_precise) {
    int stringlen = 0;
    int tmpstackid = stackid;
    stringlen += strlen(stacktree.stacks[stackid].name);
@@ -160,15 +160,15 @@ int vftr_get_stack_string_length(stacktree_t stacktree, int stackid) {
       tmpstackid = stacktree.stacks[tmpstackid].caller;
       stringlen += strlen(stacktree.stacks[tmpstackid].name);
       stringlen ++; // function seperating character "<", or null terminator
-      if (stacktree.stacks[tmpstackid].precise) {
+      if (show_precise && stacktree.stacks[tmpstackid].precise) {
          stringlen ++; // '*' for indicating precise functions
       }
    }
    return stringlen;
 }
 
-char *vftr_get_stack_string(stacktree_t stacktree, int stackid) {
-   int stringlen = vftr_get_stack_string_length(stacktree, stackid);
+char *vftr_get_stack_string(stacktree_t stacktree, int stackid, bool show_precise) {
+   int stringlen = vftr_get_stack_string_length(stacktree, stackid, show_precise);
    char *stackstring = (char*) malloc(stringlen*sizeof(char));
    // copy the chars one by one so there is no need to call strlen again.
    // thus minimizing reading the same memory locations over and over again.
@@ -180,7 +180,7 @@ char *vftr_get_stack_string(stacktree_t stacktree, int stackid) {
       tmpstackstring_ptr++;
       tmpname_ptr++;
    }
-   if (stacktree.stacks[tmpstackid].precise) {
+   if (show_precise && stacktree.stacks[tmpstackid].precise) {
       *tmpstackstring_ptr = '*';
       tmpstackstring_ptr++;
    }
@@ -195,7 +195,7 @@ char *vftr_get_stack_string(stacktree_t stacktree, int stackid) {
          tmpstackstring_ptr++;
          tmpname_ptr++;
       }
-      if (stacktree.stacks[tmpstackid].precise) {
+      if (show_precise && stacktree.stacks[tmpstackid].precise) {
          *tmpstackstring_ptr = '*';
          tmpstackstring_ptr++;
       }
@@ -206,7 +206,7 @@ char *vftr_get_stack_string(stacktree_t stacktree, int stackid) {
 }
 
 void vftr_print_stack(FILE *fp, stacktree_t stacktree, int stackid) {
-   char *stackstr = vftr_get_stack_string(stacktree, stackid);
+   char *stackstr = vftr_get_stack_string(stacktree, stackid, false);
    fprintf(fp, "%s", stackstr);
    free(stackstr);
 }

@@ -114,7 +114,7 @@ int main(int argc, char **argv) {
    vftr_print_stacktree(stdout, stacktree);
    fprintf(stdout, "\n");
    for (int istack=0; istack<stacktree.nstacks; istack++) {
-      char *stackstr = vftr_get_stack_string(stacktree, istack);
+      char *stackstr = vftr_get_stack_string(stacktree, istack, false);
       fprintf(stdout, "%d: %s\n", istack, stackstr);
       free(stackstr);
       int nprofs=stacktree.stacks[istack].profiling.nprofiles;

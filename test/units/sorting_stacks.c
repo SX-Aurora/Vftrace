@@ -158,7 +158,7 @@ int main(int argc, char **argv) {
    for (int istack=0; istack<stacktree.nstacks; istack++) {
       stack_t *stack = stackptrs[istack];
       int stackID = stack->lid;
-      char *stackstr = vftr_get_stack_string(stacktree, stackID);
+      char *stackstr = vftr_get_stack_string(stacktree, stackID, false);
       fprintf(stdout, "%d(g%d): %s\n", stackID, stack->gid, stackstr);
       free(stackstr);
       int nprofs=stack->profiling.nprofiles;
