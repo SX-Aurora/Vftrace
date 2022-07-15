@@ -464,8 +464,22 @@ void vftr_environment_assert_strip_module_names(FILE *fp, env_var_t strip_module
 }
 
 void vftr_environment_assert_sort_profile_table(FILE *fp, env_var_t sort_profile_table) {
-   (void) fp;
-   (void) sort_profile_table;
+   char *sort_str = sort_profile_table.value.string_val;
+   int nvalid_str = 6;
+   char *valid_str[] = {"TIME_EXCL", "TIME_INCL", "CALLS",
+                        "STACK_ID", "OVERHEAD", "NONE"};
+   bool valid = false;
+   for (int istr=0; istr<nvalid_str; istr++) {
+      valid = valid || !strcmp(sort_str, valid_str[istr]);
+   }
+   if (!valid) {
+      fprintf(fp, "Warning: %s was set to \"%s\", but only valid options are:",
+              sort_profile_table.name, sort_str);
+      for (int istr=0; istr<nvalid_str-1; istr++) {
+         fprintf(fp, " \"%s\",", valid_str[istr]);
+      }
+      fprintf(fp, " and \"%s\".\n", valid_str[nvalid_str-1]);
+   }
 }
 
 void vftr_environment_assert_show_overhead(FILE *fp, env_var_t show_overhead) {
