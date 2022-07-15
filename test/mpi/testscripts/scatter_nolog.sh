@@ -6,7 +6,6 @@ ntrials=1
 
 export VFTR_SAMPLING="Yes"
 export VFTR_MPI_LOG="No"
-export VFTR_PRECISE="MPI_*|mpi_*"
 
 for itrial in $(seq 1 1 ${ntrials});
 do
