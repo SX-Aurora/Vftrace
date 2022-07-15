@@ -4,6 +4,7 @@
 
 #include <string.h>
 #include <ctype.h>
+#include <unistd.h>
 #include <limits.h>
 
 #include "environment.h"
@@ -427,8 +428,18 @@ void vftr_environment_assert_include_only_regex(FILE *fp, env_var_t include_only
 }
 
 void vftr_environment_assert_scenario_file(FILE *fp, env_var_t scenario_file) {
-   (void) fp;
-   (void) scenario_file;
+   if (scenario_file.set) {
+      char *scn_file = scenario_file.value.string_val;
+      if (strlen(scn_file) == 0) {
+         fprintf(fp, "Warning: %s set, but to an empty value.\n",
+                 scenario_file.name);
+      } else {
+         if (access(scn_file, F_OK) != 0) {
+            fprintf(fp, "Warning: %s is set to %s, but file could not be found\n",
+                    scenario_file.name, scenario_file.value.string_val);
+         }
+      }
+   }
 }
 
 void vftr_environment_assert_preciseregex(FILE *fp, env_var_t preciseregex) {

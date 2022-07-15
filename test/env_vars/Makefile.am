@@ -66,7 +66,8 @@ check_PROGRAMS += vftr_off \
 		  vftr_logfile_for_ranks \
 		  vftr_logfile_for_ranks_assert \
 		  vftr_ranks_in_mpi_profile_assert \
-		  vftr_sampletime_assert
+		  vftr_sampletime_assert \
+		  vftr_scenario_file_assert
 
 vftr_off_SOURCES = $(srcdir)/little_tasks.c
 vftr_off_CFLAGS = $(AM_CFLAGS) -finstrument-functions
@@ -100,6 +101,10 @@ vftr_sampletime_assert_SOURCES = $(srcdir)/little_tasks.c
 vftr_sampletime_assert_CFLAGS = $(AM_CFLAGS) -finstrument-functions
 vftr_sampletime_assert_LDFLAGS = $(AM_LDFLAGS)
 
+vftr_scenario_file_assert_SOURCES = $(srcdir)/little_tasks.c
+vftr_scenario_file_assert_CFLAGS = $(AM_CFLAGS) -finstrument-functions
+vftr_scenario_file_assert_LDFLAGS = $(AM_LDFLAGS)
+
 dist_check_SCRIPTS += vftr_off.sh \
 		      vftr_sampling.sh \
 		      vftr_out_directory.sh \
@@ -107,7 +112,8 @@ dist_check_SCRIPTS += vftr_off.sh \
 		      vftr_logfile_for_ranks.sh \
 		      vftr_logfile_for_ranks_assert.sh \
 		      vftr_ranks_in_mpi_profile_assert.sh \
-		      vftr_sampletime_assert.sh
+		      vftr_sampletime_assert.sh \
+		      vftr_scenario_file_assert.sh
 
 TEST_EXTENSIONS = .sh
 SH_LOG_COMPILER = $(SHELL)
