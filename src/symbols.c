@@ -248,7 +248,8 @@ void vftr_symboltable_determine_preciseness(symboltable_t *symboltable_ptr,
                                             regex_t *preciseregex) {
 #ifdef _MPI
    // regex to check for MPI functions
-   regex_t *mpi_regex = vftr_compile_regexp("^MPI_[A-Z][a-z]*");
+   // Case insensitivity is needed for Fortran
+   regex_t *mpi_regex = vftr_compile_regexp("^(MPI|mpi)_[A-Za-z]*");
 #endif
    // regex to check for the vftrace internal pause/resume functions
    regex_t *pause_regex = vftr_compile_regexp("^vftrace_(pause|resume)$");
