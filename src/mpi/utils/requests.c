@@ -175,11 +175,11 @@ void vftr_remove_request(vftr_request_t *request) {
 }
 
 // deallocate entire request list
-void vftr_free_request_list() {
-   if (vftrace.mpi_state.nopen_requests > 0) {
-      vftrace.mpi_state.nopen_requests = 0;
-      free(vftrace.mpi_state.open_requests);
-      vftrace.mpi_state.open_requests = NULL;
+void vftr_free_request_list(mpi_state_t *mpi_state) {
+   if (mpi_state->nopen_requests > 0) {
+      mpi_state->nopen_requests = 0;
+      free(mpi_state->open_requests);
+      mpi_state->open_requests = NULL;
    }
 }
 

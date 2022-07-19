@@ -3,7 +3,6 @@ set -x
 test_name=vftr_ranks_in_mpi_profile_assert
 output_file=${test_name}.out
 error_file=${test_name}.err
-ref_file=${srcdir}/ref_output/little_tasks.out
 nranks=1
 
 function run_binary() {
@@ -26,7 +25,6 @@ function rm_outfiles() {
 
 rm_outfiles
 run_binary
-diff ${output_file} ${ref_file} || exit 1
 cat ${error_file}
 nwarn=$(grep "Warning" ${error_file} | wc -l)
 if [ "${nwarn}" -ne 0 ] ; then

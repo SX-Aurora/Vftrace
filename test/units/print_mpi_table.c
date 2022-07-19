@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <stdbool.h>
 
 #include "environment_types.h"
 #include "environment.h"
@@ -13,9 +14,11 @@
 #include "callprofiling.h"
 #include "overheadprofiling_types.h"
 #include "overheadprofiling.h"
+#include "mpi_state_types.h"
 #include "collated_stack_types.h"
 #include "collate_stacks.h"
 #include "logfile_mpi_table.h"
+#include "mpiprofiling.h"
 
 #include "dummysymboltable.h"
 
@@ -26,6 +29,13 @@ int main(int argc, char **argv) {
 
    environment_t environment;
    environment = vftr_read_environment();
+
+   int ranklist[] = {0,1};
+   mpi_state_t mpi_state = {
+      .nprof_ranks = 2,
+      .prof_ranks = ranklist,
+      .my_rank_in_prof=true
+   };
 
    // dummy symboltable
    uintptr_t addrs = 123456;
@@ -55,16 +65,20 @@ int main(int argc, char **argv) {
                                   name, function, addrs+1, false);
    iprof = vftr_new_profile(2,&(stacktree.stacks[func3_idx].profiling));
    profile = stacktree.stacks[func3_idx].profiling.profiles+iprof;
-   vftr_accumulate_message_info(&(profile->mpiProf), send, 100,
-                                0, 4, 1, 0, 1000000, 2000000);
-   vftr_accumulate_message_info(&(profile->mpiProf), send, 50,
-                                0, 4, 1, 0, 1000000, 2000000);
-   vftr_accumulate_message_info(&(profile->mpiProf), recv, 27,
-                                0, 8, 1, 0, 1000000, 3000000);
+   vftr_accumulate_message_info(&(profile->mpiProf), mpi_state,
+                                send, 100, 0, 4, 1, 0,
+                                1000000, 2000000);
+   vftr_accumulate_message_info(&(profile->mpiProf), mpi_state,
+                                send, 50, 0, 4, 1, 0,
+                                1000000, 2000000);
+   vftr_accumulate_message_info(&(profile->mpiProf), mpi_state,
+                                recv, 27, 0, 8, 1, 0,
+                                1000000, 3000000);
    iprof = vftr_new_profile(3,&(stacktree.stacks[func3_idx].profiling));
    profile = stacktree.stacks[func3_idx].profiling.profiles+iprof;
-   vftr_accumulate_message_info(&(profile->mpiProf), send, 137,
-                                0, 4, 1, 0, 1000000, 4000000);
+   vftr_accumulate_message_info(&(profile->mpiProf), mpi_state,
+                                send, 137, 0, 4, 1, 0,
+                                1000000, 4000000);
 
    // 3: func2<func0<init
    name = vftr_get_name_from_address(symboltable, addrs+2);
@@ -78,8 +92,9 @@ int main(int argc, char **argv) {
                                   name, function, addrs+3, false);
    iprof = vftr_new_profile(1,&(stacktree.stacks[func5_idx].profiling));
    profile = stacktree.stacks[func5_idx].profiling.profiles+iprof;
-   vftr_accumulate_message_info(&(profile->mpiProf), send, 42,
-                                0, 4, 1, 0, 1000000,9000000);
+   vftr_accumulate_message_info(&(profile->mpiProf), mpi_state,
+                                send, 42, 0, 4, 1, 0,
+                                1000000,9000000);
 
    // collate stacks to get the global ID
    collated_stacktree_t collated_stacktree = vftr_collate_stacks(&stacktree);

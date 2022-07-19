@@ -7,7 +7,9 @@
 
 #include "callprofiling.h"
 #include "overheadprofiling.h"
+#ifdef _MPI
 #include "mpiprofiling.h"
+#endif
 
 void vftr_profilelist_realloc(profilelist_t *profilelist_ptr) {
    profilelist_t profilelist = *profilelist_ptr;

@@ -1,0 +1,28 @@
+0: scounts =  1  1  1  1
+0: sdispls =  0  1  2  3
+0: sbuffer =  0  0  0  0
+0: rcounts =  1  2  4  8
+0: rdispls =  0  1  3  7
+0: rbuffer =  0  1  1  2  2  2  2  3  3  3  3  3  3  3  3
+
+1: scounts =  2  2  2  2
+1: sdispls =  0  2  4  6
+1: sbuffer =  1  1  1  1  1  1  1  1
+1: rcounts =  1  2  4  8
+1: rdispls =  0  1  3  7
+1: rbuffer =  0  1  1  2  2  2  2  3  3  3  3  3  3  3  3
+
+2: scounts =  4  4  4  4
+2: sdispls =  0  4  8 12
+2: sbuffer =  2  2  2  2  2  2  2  2  2  2  2  2  2  2  2  2
+2: rcounts =  1  2  4  8
+2: rdispls =  0  1  3  7
+2: rbuffer =  0  1  1  2  2  2  2  3  3  3  3  3  3  3  3
+
+3: scounts =  8  8  8  8
+3: sdispls =  0  8 16 24
+3: sbuffer =  3  3  3  3  3  3  3  3  3  3  3  3  3  3  3  3  3  3  3  3  3  3  3  3  3  3  3  3  3  3  3  3
+3: rcounts =  1  2  4  8
+3: rdispls =  0  1  3  7
+3: rbuffer =  0  1  1  2  2  2  2  3  3  3  3  3  3  3  3
+

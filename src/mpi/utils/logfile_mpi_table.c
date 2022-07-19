@@ -221,7 +221,13 @@ void vftr_write_logfile_mpi_table(FILE *fp, stacktree_t stacktree,
    stack_t **selected_stacks =
       vftr_logfile_mpi_table_get_relevant_stacks(nrows, stacktree);
 
-   fprintf(fp, "\nCommunication profile\n");
+   fprintf(fp, "\nCommunication profile");
+   if (environment.ranks_in_mpi_profile.set) {
+      fprintf(fp, " for ranks: %s\n",
+              environment.ranks_in_mpi_profile.value.string_val);
+   } else {
+      fprintf(fp, "\n");
+   }
 
    table_t table = vftr_new_table();
    vftr_table_set_nrows(&table, nrows);

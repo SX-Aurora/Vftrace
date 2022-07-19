@@ -22,6 +22,7 @@
 #include <mpi.h>
 
 #include "request_types.h"
+#include "mpi_state_types.h"
 #include "mpi_util_types.h"
 
 // create new request to be stored
@@ -39,7 +40,7 @@ void vftr_activate_pers_request(MPI_Request request, long long tstart);
 void vftr_remove_request(vftr_request_t *request);
 
 // deallocate entire request list
-void vftr_free_request_list();
+void vftr_free_request_list(mpi_state_t *mpi_state);
 
 // find a specific request in the request list.
 vftr_request_t *vftr_search_request(MPI_Request request);

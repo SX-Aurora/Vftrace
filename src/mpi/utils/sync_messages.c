@@ -75,6 +75,7 @@ void vftr_store_sync_message_info(message_direction dir, int count, MPI_Datatype
 
    // accumulate information for later use in the log file statistics
    vftr_accumulate_message_info(&(my_profile->mpiProf),
+                                vftrace.mpi_state,
                                 dir, count,
                                 type_idx, type_size,
                                 rank, tag, tstart, tend);

@@ -74,7 +74,10 @@ vftrace_t vftrace = {
    .mpi_state = {
       .pcontrol_level = 1,
       .nopen_requests = 0,
-      .open_requests = NULL
+      .open_requests = NULL,
+      .nprof_ranks = 0,
+      .prof_ranks = NULL,
+      .my_rank_in_prof = false
    },
 #endif
    .timestrings = {

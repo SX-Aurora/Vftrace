@@ -77,6 +77,7 @@ void vftr_clear_completed_onesided_request(vftr_request_t *request) {
 
       // accumulate information for later use in the log file statistics
       vftr_accumulate_message_info(&(my_profile->mpiProf),
+                                   vftrace.mpi_state,
                                    request->dir,
                                    request->count[0],
                                    request->type_idx[0],
