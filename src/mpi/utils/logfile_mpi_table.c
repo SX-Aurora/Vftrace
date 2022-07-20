@@ -160,6 +160,17 @@ char **vftr_logfile_mpi_table_stack_caller_name_list(int nstacks, stacktree_t st
    return name_list;
 }
 
+char **vftr_logfile_mpi_table_callpath_list(int nstacks, stack_t **stack_ptrs,
+                                            stacktree_t stacktree) {
+   char **path_list = (char**) malloc(nstacks*sizeof(char*));
+   for (int istack=0; istack<nstacks; istack++) {
+      stack_t *stack_ptr = stack_ptrs[istack];
+      int stackid = stack_ptr->lid;
+      path_list[istack] = vftr_get_stack_string(stacktree, stackid, false);
+   }
+   return path_list;
+}
+
 int *vftr_logfile_mpi_table_stack_globalstackID_list(int nstacks, stack_t **stack_ptrs) {
    int *id_list = (int*) malloc(nstacks*sizeof(int));
    int listidx = 0;
@@ -215,7 +226,7 @@ stack_t **vftr_logfile_mpi_table_get_relevant_stacks(int nrows,
 }
 
 void vftr_write_logfile_mpi_table(FILE *fp, stacktree_t stacktree,
-                                      environment_t environment) {
+                                  environment_t environment) {
    int nrows = vftr_logfile_mpi_table_nrows(stacktree);
    // TODO: sort something
    stack_t **selected_stacks =
@@ -259,6 +270,14 @@ void vftr_write_logfile_mpi_table(FILE *fp, stacktree_t stacktree,
    int *stack_IDs = vftr_logfile_mpi_table_stack_globalstackID_list(nrows, selected_stacks);
    vftr_table_add_column(&table, col_int, "ID", "%d", 'c', 'r', (void*) stack_IDs);
 
+   char **path_list=NULL;
+   if (environment.callpath_in_mpi_profile.value.bool_val) {
+      path_list = vftr_logfile_mpi_table_callpath_list(nrows,
+                                                       selected_stacks,
+                                                       stacktree);
+      vftr_table_add_column(&table, col_string, "Callpath", "%s", 'c', 'r', (void*) path_list);
+   }
+
    vftr_print_table(fp, table);
 
    vftr_table_free(&table);
@@ -271,6 +290,12 @@ void vftr_write_logfile_mpi_table(FILE *fp, stacktree_t stacktree,
    free(function_names);
    free(caller_names);
    free(stack_IDs);
+   if (environment.callpath_in_profile.value.bool_val) {
+      for (int irow=0; irow<nrows; irow++) {
+         free(path_list[irow]);
+      }
+      free(path_list);
+   }
 
    free(selected_stacks);
 }

@@ -245,8 +245,9 @@ environment_t vftr_read_environment() {
    environment.show_overhead = vftr_read_env_bool("VFTR_SHOW_FUNCTION_OVERHEAD", false);
    environment.print_environment = vftr_read_env_bool("VFTR_PRINT_ENVIRONMENT", true);
    environment.callpath_in_profile = vftr_read_env_bool("VFTR_CALLPATH_IN_PROFILE", false);
+   environment.callpath_in_mpi_profile = vftr_read_env_bool("VFTR_CALLPATH_IN_MPI_PROFILE", false);
    environment.demangle_cpp = vftr_read_env_bool("VFTR_DEMANGLE_CPP", false);
-   environment.nenv_vars = 21;
+   environment.nenv_vars = 22;
    environment.valid = true;
 
    return environment;
@@ -530,5 +531,6 @@ void vftr_environment_assert(FILE *fp, environment_t environment) {
    vftr_environment_assert_show_overhead(fp, environment.show_overhead);
    vftr_environment_assert_print_environment(fp, environment.print_environment);
    vftr_environment_assert_callpath_in_profile(fp, environment.callpath_in_profile);
+   vftr_environment_assert_callpath_in_mpi_profile(fp, environment.callpath_in_mpi_profile);
    vftr_environment_assert_demangle_cpp(fp, environment.demangle_cpp);
 }
