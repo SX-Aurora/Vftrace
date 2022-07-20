@@ -2,6 +2,7 @@
 #include <stdio.h>
 
 #include <string.h>
+#include <libgen.h>
 
 #ifdef _MPI
 #include <mpi.h>
@@ -48,7 +49,7 @@ int main(int argc, char** argv) {
                  rbuffer, rcounts, rdispls, MPI_INT,
                  MPI_COMM_WORLD);
 
-   char *exename = argv[0];
+   char *exename = basename(argv[0]);
    int exename_len = strlen(exename);
    int tmpoutname_len = exename_len + strlen("_p.tmpout") + 10;
    char *tmpoutname = (char*) malloc(tmpoutname_len*sizeof(char));
