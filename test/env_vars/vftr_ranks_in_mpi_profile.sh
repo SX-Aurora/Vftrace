@@ -7,15 +7,19 @@ nranks=4
 
 function run_binary() {
    if [ "x$HAS_MPI" == "xYES" ]; then
-      ${MPI_EXEC} ${MPI_OPTS} ${NP} ${nranks} ./${test_name} \
-         > ${output_file} || exit 1
+      ${MPI_EXEC} ${MPI_OPTS} ${NP} ${nranks} ./${test_name} || exit 1
    else
-      ./${test_name} > ${output_file} || exit 1
+      ./${test_name} || exit 1
    fi
+   cat ${test_name}_p0.tmpout > ${output_file}
+   for i in $(seq 1 1 $(bc <<< "${nranks}-1"));
+   do
+      cat ${test_name}_p${i}.tmpout >> ${output_file}
+   done
 }
 
 function rm_outfiles() {
-   for file in ${output_file} ${test_name}_*.log ${test_name}_*.vfd;
+   for file in ${output_file} ${test_name}_*.log ${test_name}_p*.tmpout ${test_name}_*.vfd;
    do
       if [ -f ${file} ] ; then
          rm ${file}

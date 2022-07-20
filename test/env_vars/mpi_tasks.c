@@ -1,6 +1,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+#include <string.h>
+
 #ifdef _MPI
 #include <mpi.h>
 #endif
@@ -46,37 +48,39 @@ int main(int argc, char** argv) {
                  rbuffer, rcounts, rdispls, MPI_INT,
                  MPI_COMM_WORLD);
 
-   for (int irank=0; irank<comm_size; irank++) {
-      if (my_rank == irank) {
-         printf("%1d: scounts =", my_rank);
-         for (int i=0; i<comm_size; i++) {
-            printf(" %2d", scounts[i]);
-         } printf("\n");
-         printf("%1d: sdispls =", my_rank);
-         for (int i=0; i<comm_size; i++) {
-            printf(" %2d", sdispls[i]);
-         } printf("\n");
-         printf("%1d: sbuffer =", my_rank);
-         for (int i=0; i<nstot; i++) {
-            printf(" %2d", sbuffer[i]);
-         } printf("\n");
-         printf("%1d: rcounts =", my_rank);
-         for (int i=0; i<comm_size; i++) {
-            printf(" %2d", rcounts[i]);
-         } printf("\n");
-         printf("%1d: rdispls =", my_rank);
-         for (int i=0; i<comm_size; i++) {
-            printf(" %2d", rdispls[i]);
-         } printf("\n");
-         printf("%1d: rbuffer =", my_rank);
-         for (int i=0; i<nrtot; i++) {
-            printf(" %2d", rbuffer[i]);
-         } printf("\n");
-         printf("\n");
-      }
-      fflush(stdout);
-      MPI_Barrier(MPI_COMM_WORLD);
-   }
+   char *exename = argv[0];
+   int exename_len = strlen(exename);
+   int tmpoutname_len = exename_len + strlen("_p.tmpout") + 10;
+   char *tmpoutname = (char*) malloc(tmpoutname_len*sizeof(char));
+   snprintf(tmpoutname, tmpoutname_len,
+            "%s_p%d.tmpout", exename, my_rank);
+   FILE *fp = fopen(tmpoutname, "w");
+   fprintf(fp, "%1d: scounts =", my_rank);
+   for (int i=0; i<comm_size; i++) {
+      fprintf(fp, " %2d", scounts[i]);
+   } fprintf(fp, "\n");
+   fprintf(fp, "%1d: sdispls =", my_rank);
+   for (int i=0; i<comm_size; i++) {
+      fprintf(fp, " %2d", sdispls[i]);
+   } fprintf(fp, "\n");
+   fprintf(fp, "%1d: sbuffer =", my_rank);
+   for (int i=0; i<nstot; i++) {
+      fprintf(fp, " %2d", sbuffer[i]);
+   } fprintf(fp, "\n");
+   fprintf(fp, "%1d: rcounts =", my_rank);
+   for (int i=0; i<comm_size; i++) {
+      fprintf(fp, " %2d", rcounts[i]);
+   } fprintf(fp, "\n");
+   fprintf(fp, "%1d: rdispls =", my_rank);
+   for (int i=0; i<comm_size; i++) {
+      fprintf(fp, " %2d", rdispls[i]);
+   } fprintf(fp, "\n");
+   fprintf(fp, "%1d: rbuffer =", my_rank);
+   for (int i=0; i<nrtot; i++) {
+      fprintf(fp, " %2d", rbuffer[i]);
+   } fprintf(fp, "\n");
+   fprintf(fp, "\n");
+   fclose(fp);
 
    free(sbuffer);
    sbuffer=NULL;

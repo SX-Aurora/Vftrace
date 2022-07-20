@@ -12,10 +12,15 @@ function run_binary() {
    else
       ./${test_name} > ${output_file} 2> ${error_file} || exit 1
    fi
+   cat ${test_name}_p0.tmpout > ${output_file}
+   for i in $(seq 1 1 $(bc <<< "${nranks}-1"));
+   do
+      cat ${test_name}_p${i}.tmpout >> ${output_file}
+   done
 }
 
 function rm_outfiles() {
-   for file in ${output_file} ${error_file} ${test_name}_*.log ${test_name}_*.vfd;
+   for file in ${output_file} ${error_file} ${test_name}_*.log ${test_name}_p*.tmpout ${test_name}_*.vfd;
    do
       if [ -f ${file} ] ; then
          rm ${file}
