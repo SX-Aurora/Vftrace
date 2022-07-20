@@ -15,7 +15,7 @@ done
 
 export VFTR_OFF="yes"
 
-if [ "x$HAS_MPI" == "xYES" ]; then
+if [ "x${HAS_MPI}" == "xYES" ]; then
    ${MPI_EXEC} ${MPI_OPTS} ${NP} 1 ./${test_name} > ${output_file} || exit 1
 else
    ./${test_name} > ${output_file} || exit 1

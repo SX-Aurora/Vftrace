@@ -7,7 +7,7 @@ ref_file=${srcdir}/ref_output/${test_name}_texcl.out
 rm -f ${output_file}
 
 export VFTR_SORT_PROFILE_TABLE="TIME_EXCL"
-if [ "x$HAS_MPI" == "xYES" ]; then
+if [ "x${HAS_MPI}" == "xYES" ]; then
    ${MPI_EXEC} ${MPI_OPTS} ${NP} 1 ./${test_name} > ${output_file} || exit 1
 else
    ./${test_name} > ${output_file} || exit 1

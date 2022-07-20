@@ -6,7 +6,7 @@ error_file=${test_name}.err
 nranks=1
 
 function run_binary() {
-   if [ "x$HAS_MPI" == "xYES" ]; then
+   if [ "x${HAS_MPI}" == "xYES" ]; then
       ${MPI_EXEC} ${MPI_OPTS} ${NP} ${nranks} ./${test_name} \
          > ${output_file} 2> ${error_file} || exit 1
    else

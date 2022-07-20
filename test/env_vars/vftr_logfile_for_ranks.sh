@@ -4,7 +4,7 @@ test_name=vftr_logfile_for_ranks
 output_file=vftr_logfile_for_ranks.out
 ref_file=${srcdir}/ref_output/little_tasks.out
 nranks=1
-if [ "x$HAS_MPI" == "xYES" ]; then
+if [ "x${HAS_MPI}" == "xYES" ]; then
    nranks=4
 fi
 
@@ -18,7 +18,7 @@ function rm_outfiles() {
 }
 
 function run_binary() {
-   if [ "x$HAS_MPI" == "xYES" ]; then
+   if [ "x${HAS_MPI}" == "xYES" ]; then
       ${MPI_EXEC} ${MPI_OPTS} ${NP} ${nranks} ./${test_name} > ${output_file} || exit 1
    else
       ./${test_name} > ${output_file} || exit 1
@@ -59,7 +59,7 @@ do
    check_logfile_exists "${irank}"
 done
 
-if [ "x$HAS_MPI" == "xYES" ]; then
+if [ "x${HAS_MPI}" == "xYES" ]; then
    export VFTR_LOGFILE_FOR_RANKS="1,3"
    rm_outfiles
    run_binary

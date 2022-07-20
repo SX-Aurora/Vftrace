@@ -6,7 +6,7 @@ ref_file=${srcdir}/ref_output/mpi_tasks.out
 nranks=4
 
 function run_binary() {
-   if [ "x$HAS_MPI" == "xYES" ]; then
+   if [ "x${HAS_MPI}" == "xYES" ]; then
       ${MPI_EXEC} ${MPI_OPTS} ${NP} ${nranks} ./${test_name} || exit 1
    else
       ./${test_name} || exit 1
@@ -106,7 +106,7 @@ function check_mpi_communication_consistency() {
    done
 }
 
-if [ "x$HAS_MPI" == "xYES" ]; then
+if [ "x${HAS_MPI}" == "xYES" ]; then
    export VFTR_MPI_LOG="yes"
    export VFTR_LOGFILE_FOR_RANKS="all"
 

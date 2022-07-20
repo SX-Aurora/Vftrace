@@ -30,7 +30,7 @@ do
             ipeer=0
             for jrank in $(seq ${minsendrank} 1 ${maxsendrank});
             do
-               tmpnb=$(bc <<< "$nb+${jrank}")
+               tmpnb=$(bc <<< "${nb}+${jrank}")
                ((ipeer+=1))
                # Validate receiving
                # Get actually used message size

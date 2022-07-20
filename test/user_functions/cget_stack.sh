@@ -5,7 +5,7 @@ nprocs=1
 
 tmpfile=$(mktemp)
 
-if [ "x$HAS_MPI" == "xYES" ]; then
+if [ "x${HAS_MPI}" == "xYES" ]; then
    ${MPI_EXEC} ${MPI_OPTS} ${NP} ${nprocs} ./${vftr_binary} > ${tmpfile} || exit 1
 else
    ./${vftr_binary} > ${tmpfile} || exit 1

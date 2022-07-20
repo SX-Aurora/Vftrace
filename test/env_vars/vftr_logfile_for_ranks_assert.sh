@@ -7,7 +7,7 @@ ref_file=${srcdir}/ref_output/little_tasks.out
 nranks=1
 
 function run_binary() {
-   if [ "x$HAS_MPI" == "xYES" ]; then
+   if [ "x${HAS_MPI}" == "xYES" ]; then
       ${MPI_EXEC} ${MPI_OPTS} ${NP} ${nranks} ./${test_name} \
          > ${output_file} 2> ${error_file} || exit 1
    else

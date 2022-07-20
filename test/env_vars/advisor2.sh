@@ -11,13 +11,13 @@ rm -f ${outfile} ${errfile} ${errfile}_sorted
 export VFTR_OF=yes # Should be VFTR_OFF
 export VFTR_SMPLING=yes # Should be VFTR_SAMPLING
 
-if [ "x$HAS_MPI" == "xYES" ]; then
-  ${MPI_EXEC} ${MPI_OPTS} ${NP} 1 ./${vftr_binary} > $outfile 2> $errfile || exit 1
+if [ "x${HAS_MPI}" == "xYES" ]; then
+  ${MPI_EXEC} ${MPI_OPTS} ${NP} 1 ./${vftr_binary} > ${outfile} 2> ${errfile} || exit 1
 else
-  ./${vftr_binary} > $outfile 2> $errfile || exit 1
+  ./${vftr_binary} > ${outfile} 2> ${errfile} || exit 1
 fi
 
 
 cat ${errfile} | sort > ${errfile}_sorted
-diff $ref_outfile $outfile || exit 1
-diff $ref_errfile ${errfile}_sorted || exit 1
+diff ${ref_outfile} ${outfile} || exit 1
+diff ${ref_errfile} ${errfile}_sorted || exit 1
