@@ -4,7 +4,7 @@ vftr_binary=advisor
 outfile=advisor.out
 ref_file=${srcdir}/ref_output/$output_file
 
-rm -f $outfile
+rm -f ${outfile} ${outfile}_sorted
 
 export VFTR_OF=yes # Should be VFTR_OFF
 export VFTR_SMPLING=yes # Should be VFTR_SAMPLING
@@ -15,4 +15,5 @@ else
   ./${vftr_binary} > $outfile || exit 1
 fi
 
-diff $ref_file $outfile || exit 1
+cat ${outfile} | sort > ${outfile}_sorted
+diff ${ref_file} ${outfile}_sorted || exit 1
