@@ -498,6 +498,12 @@ void vftr_environment_assert_callpath_in_profile(FILE *fp,
    (void) callpath_in_profile;
 }
 
+void vftr_environment_assert_callpath_in_mpi_profile(FILE *fp,
+                                                     env_var_t callpath_in_mpi_profile) {
+   (void) fp;
+   (void) callpath_in_mpi_profile;
+}
+
 void vftr_environment_assert_demangle_cpp(FILE *fp, env_var_t demangle_cpp) {
    (void) fp;
    (void) demangle_cpp;
