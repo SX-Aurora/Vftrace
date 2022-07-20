@@ -141,7 +141,6 @@ char **vftr_logfile_prof_table_callpath_list(int nstacks, stack_t **stack_ptrs,
       path_list[istack] = vftr_get_stack_string(stacktree, stackid, false);
    }
    return path_list;
-
 }
 
 void vftr_write_logfile_profile_table(FILE *fp, stacktree_t stacktree,
