@@ -2,7 +2,7 @@
 set -x
 vftr_binary=advisor
 outfile=advisor.out
-ref_file=${srcdir}/ref_output/$output_file
+ref_file=${srcdir}/ref_output/${outfile}
 
 rm -f ${outfile} ${outfile}_sorted
 
