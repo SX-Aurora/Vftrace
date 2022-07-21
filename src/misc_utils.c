@@ -90,6 +90,25 @@ void vftr_chop_trailing_char(char *string, char trailing_char) {
    }
 }
 
+void vftr_trim_left_with_delimiter(char *string, char *delim) {
+   if (string == NULL ||
+       delim == NULL ||
+       strlen(string) == 0 ||
+       strlen(delim)== 0) {
+      return;
+   }
+   char *substring = strstr(string, delim);
+   if (substring != NULL) {
+      substring += strlen(delim);
+      while (*substring != '\0') {
+         *string = *substring;
+         string++;
+         substring++;
+      }
+      *string = '\0';
+   }
+}
+
 char *vftr_combine_string_and_address(const char *str, const void *addr) {
    int length = 0;
    length += strlen(str);

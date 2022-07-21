@@ -53,6 +53,7 @@ check_PROGRAMS += sort_int8 \
 		  sort_longlong \
 		  sort_double
 check_PROGRAMS += chop_chars \
+		  trim_left_delimiter \
 		  range_expand
 check_PROGRAMS += symbols_1 \
 		  symbols_2 \
@@ -157,6 +158,10 @@ sort_double_LDFLAGS = $(AM_LDFLAGS)
 chop_chars_SOURCES = $(srcdir)/chop_chars.c
 chop_chars_CFLAGS = $(AM_CFLAGS) -I$(top_srcdir)/src/
 chop_chars_LDFLAGS = $(AM_LDFLAGS)
+
+trim_left_delimiter_SOURCES = $(srcdir)/trim_left_delimiter.c
+trim_left_delimiter_CFLAGS = $(AM_CFLAGS) -I$(top_srcdir)/src/
+trim_left_delimiter_LDFLAGS = $(AM_LDFLAGS)
 
 range_expand_SOURCES = $(srcdir)/range_expand.c
 range_expand_CFLAGS = $(AM_CFLAGS) -I$(top_srcdir)/src/
@@ -342,6 +347,7 @@ dist_check_SCRIPTS += sort_int8.sh \
 		      sort_longlong.sh \
 		      sort_double.sh
 dist_check_SCRIPTS += chop_chars.sh \
+		      trim_left_delimiter.sh \
 		      range_expand.sh
 dist_check_SCRIPTS += symbols_1.sh \
 		      symbols_2.sh \
