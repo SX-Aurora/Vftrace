@@ -22,11 +22,14 @@ endif
 AM_TESTS_ENVIRONMENT+=. $(top_srcdir)/test/environment/unset_vftr_env.sh;
 
 AM_CFLAGS = -I$(top_srcdir)/src/
-
+AM_FCFLAGS = -I$(top_srcdir)/src/
 AM_LDFLAGS = -L$(top_builddir)/src/.libs -lvftrace -lm
 
 if ENABLE_MPI
   AM_CFLAGS += -D_MPI
+if ENABLE_FORTRAN
+  AM_FCFLAGS += -D_MPI
+endif
 if USES_NEC_MPI
   AM_LDFLAGS += -mpiprof
 endif
@@ -34,6 +37,9 @@ endif
 
 if ENABLE_OMP
   AM_CFLAGS += -D_OMP
+if ENABLE_FORTRAN
+  AM_FCFLAGS += -D_OMP
+endif
 endif
 
 check_PROGRAMS = 
@@ -126,6 +132,16 @@ dist_check_SCRIPTS += vftr_off.sh \
 		      vftr_sampletime_assert.sh \
 		      vftr_scenario_file_assert.sh \
 		      vftr_sort_profile_table_assert.sh
+
+if ENABLE_FORTRAN
+check_PROGRAMS += vftr_strip_module_names
+
+vftr_strip_module_names_SOURCES = $(srcdir)/little_ftasks.F90
+vftr_strip_module_names_FCFLAGS = $(AM_FCFLAGS) -finstrument-functions
+vftr_strip_module_names_LDFLAGS = $(AM_LDFLAGS)
+
+dist_check_SCRIPTS += vftr_strip_module_names.sh
+endif
 
 TEST_EXTENSIONS = .sh
 SH_LOG_COMPILER = $(SHELL)
