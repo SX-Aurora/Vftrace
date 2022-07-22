@@ -62,4 +62,6 @@ typedef struct {
 
 extern vftrace_t vftrace;
 
+unsigned long long vftr_sizeof_vftrace_t(vftrace_t vftrace_state);
+
 #endif

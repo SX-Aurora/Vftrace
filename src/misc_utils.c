@@ -118,3 +118,17 @@ char *vftr_combine_string_and_address(const char *str, const void *addr) {
    snprintf(combistring, length, "%s_%p", str, addr);
    return combistring;
 }
+
+char *vftr_byte_unit(unsigned long long size) {
+   int i=0;
+   while (size > 1024) {
+      size /= 1024;
+      i++;
+   }
+   int nunits = 9;
+   char *units[] = {"B", "KiB", "MiB", "GiB", "TiB", "PiB", "EiB", "ZiB", "YiB"};
+   if (i < nunits) {
+      return strdup(units[i]);
+   }
+   return strdup("Unknown Unit");
+}

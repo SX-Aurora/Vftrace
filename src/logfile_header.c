@@ -16,6 +16,7 @@
 #include "tables.h"
 #include "overheadprofiling_types.h"
 #include "overheadprofiling.h"
+#include "misc_utils.h"
 
 void vftr_write_logfile_header(FILE *fp, time_strings_t timestrings) {
    fprintf(fp, "%s\n", PACKAGE_STRING);
@@ -25,7 +26,9 @@ void vftr_write_logfile_header(FILE *fp, time_strings_t timestrings) {
    vftr_print_licence(fp);
 }
 
-void vftr_write_logfile_summary(FILE *fp, process_t process, long long runtime) {
+void vftr_write_logfile_summary(FILE *fp, process_t process,
+                                unsigned long long vftrace_size,
+                                long long runtime) {
    double runtime_sec = runtime * 1.0e-6;
 
    // get the different accumulated overheads
@@ -93,5 +96,12 @@ void vftr_write_logfile_summary(FILE *fp, process_t process, long long runtime) 
       }
 #endif
    }
+
+   char *unit = vftr_byte_unit(vftrace_size);
+   double vftrace_size_double = (double) vftrace_size;
+   while (vftrace_size_double > 1024.0) {vftrace_size_double /= 1024;}
+   fprintf(fp, "Vftrace used memory:   %7.2lf %s\n", vftrace_size_double, unit);
+   free(unit);
+
    free(hook_overheads);
 }

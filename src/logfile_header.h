@@ -9,6 +9,8 @@
 
 void vftr_write_logfile_header(FILE *fp, time_strings_t timestrings);
 
-void vftr_write_logfile_summary(FILE *fp, process_t process, long long runtime);
+void vftr_write_logfile_summary(FILE *fp, process_t process,
+                                unsigned long long vftrace_size,
+                                long long runtime);
 
 #endif

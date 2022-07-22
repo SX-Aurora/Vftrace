@@ -15,4 +15,6 @@ void vftr_trim_left_with_delimiter(char *string, char *delim);
 
 char *vftr_combine_string_and_address(const char *str, const void *addr);
 
+char *vftr_byte_unit(unsigned long long size);
+
 #endif

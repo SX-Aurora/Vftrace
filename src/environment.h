@@ -5,6 +5,8 @@
 
 #include "environment_types.h"
 
+env_var_t *vftr_get_env_var_ptr_by_idx(environment_t *environment_ptr, int idx);
+
 void vftr_print_environment(FILE *fp, environment_t environment);
 
 environment_t vftr_read_environment();
