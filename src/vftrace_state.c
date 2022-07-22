@@ -294,8 +294,9 @@ unsigned long long vftr_sizeof_omp_state_t(omp_state_t omp_state) {
 
 #ifdef _MPI
 unsigned long long vftr_sizeof_mpi_state_t(mpi_state_t mpi_state) {
-   (void) mpi_state;
-   return sizeof(mpi_state_t);
+   unsigned long long size = sizeof(mpi_state);
+   size += mpi_state.nopen_requests*sizeof(vftr_request_t);
+   return siz;
 }
 #endif
 
