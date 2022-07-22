@@ -45,6 +45,9 @@ void vftr_initialize(void *func, void *call_site) {
       vftrace.symboltable = vftr_read_symbols();
       vftr_symboltable_determine_preciseness(&(vftrace.symboltable),
                                              vftrace.environment.preciseregex.value.regex_val);
+      vftr_symboltable_strip_fortran_module_name(&(vftrace.symboltable),
+                                                 vftrace.environment.strip_module_names.value.bool_val);
+
 
       // initialize the dynamic process data
       vftrace.process = vftr_new_process();

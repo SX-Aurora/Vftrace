@@ -2,6 +2,7 @@
 #define SYMBOLS_H
 
 #include <stdio.h>
+#include <stdbool.h>
 
 #include "symbol_types.h"
 #include "environment_types.h"
@@ -14,6 +15,9 @@ void vftr_print_symbol_table(FILE *fp, symboltable_t symboltable);
 
 void vftr_symboltable_determine_preciseness(symboltable_t *symboltable_ptr,
                                             regex_t *preciseregex);
+
+void vftr_symboltable_strip_fortran_module_name(symboltable_t *symboltable_ptr,
+                                                bool strip_module_names);
 
 int vftr_get_symbID_from_address(symboltable_t symboltable,
                                  uintptr_t address);

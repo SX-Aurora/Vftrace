@@ -272,6 +272,25 @@ void vftr_symboltable_determine_preciseness(symboltable_t *symboltable_ptr,
    free(pause_regex);
 }
 
+void vftr_symboltable_strip_fortran_module_name(symboltable_t *symboltable_ptr,
+                                                bool strip_module_names) {
+   if (strip_module_names) {
+      int nmodule_delimiters = 3;
+      char *module_delimiters[] = {
+         "_MOD_", // gfortran
+         "_MP_",  // nfort
+         "_mp_"  // ifort
+      };
+
+      for (unsigned int isym=0; isym<symboltable_ptr->nsymbols; isym++) {
+         char *name = symboltable_ptr->symbols[isym].name;
+         for (int idelim=0; idelim<nmodule_delimiters; idelim++) {
+            vftr_trim_left_with_delimiter(name, module_delimiters[idelim]);
+         }
+      }
+   }
+}
+
 void vftr_symboltable_free(symboltable_t *symboltable_ptr) {
    symboltable_t symboltable = *symboltable_ptr;
    if (symboltable.nsymbols > 0) {
