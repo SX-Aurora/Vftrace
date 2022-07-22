@@ -85,7 +85,7 @@ PROGRAM test
 #ifdef _MPI
    INTEGER :: myrank
    INTEGER :: ierr
-   MPI_Init(ierr)
+   CALL MPI_Init(ierr)
 #endif
 
    collatz = collatz_max_steps(100)
@@ -93,7 +93,7 @@ PROGRAM test
    prime = largest_prime(100)
 
 #ifdef _MPI
-   MPI_Comm_rank(MPI_COMM_WORLD, myrank, ierr)
+   CALL MPI_Comm_rank(MPI_COMM_WORLD, myrank, ierr)
    IF (myrank == 0) THEN
 #endif
       WRITE(OUTPUT_UNIT, '(A,I3)') "collatz: ", collatz
@@ -104,6 +104,6 @@ PROGRAM test
 #endif
 
 #ifdef _MPI
-   MPI_Finalize(ierr)
+   CALL MPI_Finalize(ierr)
 #endif
 END PROGRAM test
