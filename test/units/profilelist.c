@@ -29,7 +29,7 @@ int main(int argc, char **argv) {
    stacktree_t stacktree = vftr_new_stacktree();
    int nthreads = 10;
    for (int ithread=0; ithread<nthreads; ithread++) {
-      vftr_new_profile(ithread, &(stacktree.stacks[0].profiling));
+      vftr_new_profile_in_list(ithread, &(stacktree.stacks[0].profiling));
       profile_t *profile = stacktree.stacks[0].profiling.profiles+ithread;
       vftr_accumulate_callprofiling(&(profile->callProf),
                                     ithread*ithread, // calls

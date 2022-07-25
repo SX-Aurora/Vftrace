@@ -10,7 +10,7 @@ process_t vftr_new_process() {
    process.processID = 0;
    process.stacktree = vftr_new_stacktree();
    process.threadtree = vftr_new_threadtree(process.stacktree.stacks);
-   process.collated_stacktree = vftr_new_collated_stacktree();
+   process.collated_stacktree = vftr_new_empty_collated_stacktree();
 
    return process;
 }

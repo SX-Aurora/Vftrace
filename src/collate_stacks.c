@@ -6,18 +6,38 @@
 #endif
 
 #include "stack_types.h"
+#include "profiling_types.h"
 #include "collated_hash_types.h"
 #include "collated_stack_types.h"
 
 #include "hashing.h"
 #include "collate_hashes.h"
 #include "search.h"
+#include "profiling.h"
 
-collated_stacktree_t vftr_new_collated_stacktree() {
+collated_stacktree_t vftr_new_empty_collated_stacktree() {
    collated_stacktree_t stacktree;
    stacktree.nstacks = 0;
    stacktree.stacks = NULL;
    return stacktree;
+}
+
+collated_stacktree_t vftr_new_collated_stacktree(hashlist_t hashlist) {
+   // create empty collated stacktree
+   collated_stacktree_t coll_stacktree;
+   coll_stacktree.nstacks = hashlist.nhashes;
+   coll_stacktree.stacks = (collated_stack_t*)
+      malloc(coll_stacktree.nstacks*sizeof(collated_stack_t));
+   for (int istack=0; istack<coll_stacktree.nstacks; istack++) {
+      coll_stacktree.stacks[istack].local_stack = NULL;
+      coll_stacktree.stacks[istack].gid = istack;
+      coll_stacktree.stacks[istack].precise = false;
+      coll_stacktree.stacks[istack].caller = -1;
+      coll_stacktree.stacks[istack].name = NULL;
+      coll_stacktree.stacks[istack].hash = hashlist.hashes[istack];
+      coll_stacktree.stacks[istack].profile = vftr_new_profile(0);
+   }
+   return coll_stacktree;
 }
 
 #ifdef _MPI
@@ -108,8 +128,6 @@ void vftr_broadcast_collated_stacktree(collated_stacktree_t *stacktree_ptr) {
 #endif
 
 collated_stacktree_t vftr_collate_stacks(stacktree_t *stacktree_ptr) {
-   collated_stacktree_t coll_stacktree;
-
    // first compute the hashes for all stacks
    vftr_compute_stack_hashes(stacktree_ptr);
 
@@ -117,17 +135,7 @@ collated_stacktree_t vftr_collate_stacks(stacktree_t *stacktree_ptr) {
    hashlist_t hashlist = vftr_collate_hashes(stacktree_ptr);
 
    // create empty collated stacktree
-   coll_stacktree.nstacks = hashlist.nhashes;
-   coll_stacktree.stacks = (collated_stack_t*)
-      malloc(coll_stacktree.nstacks*sizeof(collated_stack_t));
-   for (int istack=0; istack<coll_stacktree.nstacks; istack++) {
-      coll_stacktree.stacks[istack].local_stack = NULL;
-      coll_stacktree.stacks[istack].gid = istack;
-      coll_stacktree.stacks[istack].precise = false;
-      coll_stacktree.stacks[istack].caller = -1;
-      coll_stacktree.stacks[istack].name = NULL;
-      coll_stacktree.stacks[istack].hash = hashlist.hashes[istack];
-   }
+   collated_stacktree_t coll_stacktree = vftr_new_collated_stacktree(hashlist);
 
    // build a lookup table each to translate local2global and global2local
    int *local2global_ID = (int*) malloc(stacktree_ptr->nstacks*sizeof(int));
@@ -350,6 +358,7 @@ void vftr_collated_stacktree_free(collated_stacktree_t *stacktree_ptr) {
    if (stacktree_ptr->nstacks > 0) {
       for (int istack=0; istack<stacktree_ptr->nstacks; istack++) {
          free(stacktree_ptr->stacks[istack].name);
+         vftr_profile_free(&(stacktree_ptr->stacks[istack].profile), 0);
       }
       free(stacktree_ptr->stacks);
       stacktree_ptr->stacks = NULL;

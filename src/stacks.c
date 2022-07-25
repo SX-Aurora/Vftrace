@@ -83,7 +83,7 @@ stack_t vftr_first_stack() {
    stack.gid = 0;
    stack.name = strdup("init");
    stack.profiling = vftr_new_profilelist();
-   vftr_new_profile(0, &(stack.profiling));
+   vftr_new_profile_in_list(0, &(stack.profiling));
    stack.hash = 0;
    return stack;
 }

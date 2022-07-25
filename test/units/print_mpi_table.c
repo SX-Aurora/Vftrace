@@ -54,7 +54,7 @@ int main(int argc, char **argv) {
    name = vftr_get_name_from_address(symboltable, addrs+0);
    int func2_idx = vftr_new_stack(func1_idx, &stacktree,
                                   name, function, addrs+0, false);
-   iprof = vftr_new_profile(0,&(stacktree.stacks[func2_idx].profiling));
+   iprof = vftr_new_profile_in_list(0,&(stacktree.stacks[func2_idx].profiling));
    profile = stacktree.stacks[func2_idx].profiling.profiles+iprof;
    //vftr_accumulate_callprofiling(&(profile->callProf), 1, 1000000);
 
@@ -63,7 +63,7 @@ int main(int argc, char **argv) {
    name = vftr_get_name_from_address(symboltable, addrs+1);
    int func3_idx = vftr_new_stack(func2_idx, &stacktree,
                                   name, function, addrs+1, false);
-   iprof = vftr_new_profile(2,&(stacktree.stacks[func3_idx].profiling));
+   iprof = vftr_new_profile_in_list(2,&(stacktree.stacks[func3_idx].profiling));
    profile = stacktree.stacks[func3_idx].profiling.profiles+iprof;
    vftr_accumulate_message_info(&(profile->mpiProf), mpi_state,
                                 send, 100, 0, 4, 1, 0,
@@ -74,7 +74,7 @@ int main(int argc, char **argv) {
    vftr_accumulate_message_info(&(profile->mpiProf), mpi_state,
                                 recv, 27, 0, 8, 1, 0,
                                 1000000, 3000000);
-   iprof = vftr_new_profile(3,&(stacktree.stacks[func3_idx].profiling));
+   iprof = vftr_new_profile_in_list(3,&(stacktree.stacks[func3_idx].profiling));
    profile = stacktree.stacks[func3_idx].profiling.profiles+iprof;
    vftr_accumulate_message_info(&(profile->mpiProf), mpi_state,
                                 send, 137, 0, 4, 1, 0,
@@ -84,13 +84,13 @@ int main(int argc, char **argv) {
    name = vftr_get_name_from_address(symboltable, addrs+2);
    int func4_idx = vftr_new_stack(func2_idx, &stacktree,
                                   name, function, addrs+2, false);
-   iprof = vftr_new_profile(0,&(stacktree.stacks[func4_idx].profiling));
+   iprof = vftr_new_profile_in_list(0,&(stacktree.stacks[func4_idx].profiling));
 
    // 4: func3<func2<func0<init
    name = vftr_get_name_from_address(symboltable, addrs+3);
    int func5_idx = vftr_new_stack(func4_idx, &stacktree,
                                   name, function, addrs+3, false);
-   iprof = vftr_new_profile(1,&(stacktree.stacks[func5_idx].profiling));
+   iprof = vftr_new_profile_in_list(1,&(stacktree.stacks[func5_idx].profiling));
    profile = stacktree.stacks[func5_idx].profiling.profiles+iprof;
    vftr_accumulate_message_info(&(profile->mpiProf), mpi_state,
                                 send, 42, 0, 4, 1, 0,

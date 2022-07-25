@@ -4,7 +4,7 @@
 #include "stack_types.h"
 #include "collated_stack_types.h"
 
-collated_stacktree_t vftr_new_collated_stacktree();
+collated_stacktree_t vftr_new_empty_collated_stacktree();
 
 collated_stacktree_t vftr_collate_stacks(stacktree_t *stacktree_ptr);
 

@@ -22,7 +22,19 @@ void vftr_profilelist_realloc(profilelist_t *profilelist_ptr) {
    *profilelist_ptr = profilelist;
 }
 
-int vftr_new_profile(int threadID, profilelist_t *profilelist_ptr) {
+profile_t vftr_new_profile(int threadID) {
+   profile_t profile;
+   profile.threadID = threadID;
+   profile.callProf = vftr_new_callprofiling();
+   profile.overheadProf = vftr_new_overheadprofiling();
+#ifdef _MPI
+   profile.mpiProf = vftr_new_mpiprofiling();
+#endif
+   // TODO: Add other profiles
+   return profile;
+}
+
+int vftr_new_profile_in_list(int threadID, profilelist_t *profilelist_ptr) {
    int profID = profilelist_ptr->nprofiles;
    profilelist_ptr->nprofiles++;
    vftr_profilelist_realloc(profilelist_ptr);
@@ -38,13 +50,7 @@ int vftr_new_profile(int threadID, profilelist_t *profilelist_ptr) {
    }
 
    profile_t *profile = profilelist_ptr->profiles+profID;
-   profile->threadID = threadID;
-   profile->callProf = vftr_new_callprofiling();
-   profile->overheadProf = vftr_new_overheadprofiling();
-#ifdef _MPI
-   profile->mpiProf = vftr_new_mpiprofiling();
-#endif
-   // TODO: Add other profiles
+   *profile = vftr_new_profile(threadID);
 
    return profID;
 }
@@ -97,7 +103,7 @@ profile_t *vftr_get_my_profile(stack_t *stack,
    // if no matching profile is found create one
    // and update the profID
    if (profID == -1) {
-      profID = vftr_new_profile(thread->threadID, profilelist_ptr);
+      profID = vftr_new_profile_in_list(thread->threadID, profilelist_ptr);
    }
 
    return profilelist_ptr->profiles+profID;

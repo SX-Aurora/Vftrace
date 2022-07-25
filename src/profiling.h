@@ -6,7 +6,9 @@
 #include "thread_types.h"
 #include "profiling_types.h"
 
-int vftr_new_profile(int threadID, profilelist_t *profilelist_ptr);
+profile_t vftr_new_profile(int threadID);
+
+int vftr_new_profile_in_list(int threadID, profilelist_t *profilelist_ptr);
 
 void vftr_profile_free(profile_t* profiles_ptr, int profID);
 
