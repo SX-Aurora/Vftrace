@@ -85,12 +85,17 @@ void vftr_compute_stack_hashes(stacktree_t *stacktree_ptr) {
    stack_t *stacks = stacktree_ptr->stacks;
    int bufferlen = 128;
    char *buffer = (char*) malloc(bufferlen*sizeof(char));
+
+   // size of an address printed in hexadecimal with some decoration
+   // e.g. (0x563d48737d058460) is 20 chars
+   int addrstringsize = 2*sizeof(long int) + 4;
    for (int istack=0; istack<nstacks; istack++) {
       // first figure out the length of the stack string
       int stackstr_len = 0;
       int jstack = istack;
       while (jstack >= 0) {
          stackstr_len += strlen(stacks[jstack].name);
+         stackstr_len += addrstringsize;
          stackstr_len += 1; // function seperator
          jstack = stacks[jstack].caller;
       }
@@ -107,6 +112,10 @@ void vftr_compute_stack_hashes(stacktree_t *stacktree_ptr) {
       while (jstack >= 0) {
          strcpy(ptr, stacks[jstack].name);
          ptr += strlen(stacks[jstack].name);
+         snprintf(ptr, addrstringsize+1,
+                  "(0x%0*lx)", (int) (2*sizeof(long int)),
+                  (long int) stacks[jstack].address);
+         ptr += addrstringsize;
          *ptr = '<';
          ptr++;
          jstack = stacks[jstack].caller;
