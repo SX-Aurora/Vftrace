@@ -288,6 +288,17 @@ unsigned long long vftr_sizeof_sampling_t(sampling_t sampling) {
    return sizeof(sampling_t);
 }
 
+unsigned long long vftr_sizeof_time_strings_t(time_strings_t time_strings) {
+   unsigned long long size = sizeof(time_strings_t);
+   if (time_strings.start_time != NULL) {
+      size += strlen(time_strings.start_time);
+   }
+   if (time_strings.end_time != NULL) {
+      size += strlen(time_strings.end_time);
+   }
+   return size;
+}
+
 #ifdef _OMP
 unsigned long long vftr_sizeof_omp_state_t(omp_state_t omp_state) {
    (void) omp_state;
@@ -320,6 +331,7 @@ unsigned long long vftr_sizeof_vftrace_t(vftrace_t vftrace_state) {
    size -= sizeof(sampling_t);
    size += vftr_sizeof_sampling_t(vftrace_state.sampling);
    size -= sizeof(time_strings_t);
+   size += vftr_sizeof_time_strings_t(vftrace_state.timestrings);
 #ifdef _OMP
    size -= sizeof(omp_state_t);
    size += vftr_sizeof_omp_state_t(vftrace_state.omp_state);
