@@ -8,6 +8,7 @@ AC_CONFIG_MACRO_DIRS([m4])
 AM_INIT_AUTOMAKE([-Wall -Werror foreign no-dependencies subdir-objects])
 AC_PROG_CC
 AC_PROG_FC
+AC_PROG_CXX
 AC_FC_SRCEXT(F90)
 AC_ENABLE_SHARED
 AM_PROG_AR
