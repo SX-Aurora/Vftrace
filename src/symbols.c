@@ -330,18 +330,14 @@ char *vftr_get_name_from_symbID(symboltable_t symboltable,
    }
 }
 
+bool vftr_get_preciseness_from_symbID(symboltable_t symboltable,
+                                      int symbID) {
+   return symboltable.symbols[symbID].precise;
+}
+
 bool vftr_get_preciseness_from_address(symboltable_t symboltable,
                                        uintptr_t address) {
    int symbID = vftr_get_symbID_from_address(symboltable,
                                              address);
-   if (symbID >= 0) {
-      return symboltable.symbols[symbID].name;
-   } else {
-      return "(UnknownFunctionName)";
-   }
-}
-
-bool vftr_get_preciseness_from_symbID(symboltable_t symboltable,
-                                      int symbID) {
-   return symboltable.symbols[symbID].precise;
+   return vftr_get_preciseness_from_symbID(symboltable, symbID);
 }
