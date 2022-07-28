@@ -70,8 +70,9 @@ void vftr_write_logfile(vftrace_t vftrace, long long runtime) {
 
    vftr_write_logfile_header(fp, vftrace.timestrings);
 
+   long long vftrace_size = vftr_sizeof_vftrace_t(vftrace);
    vftr_write_logfile_summary(fp, vftrace.process,
-                              vftr_sizeof_vftrace_t(vftrace), runtime);
+                              vftrace_size, runtime);
 
    vftr_write_logfile_profile_table(fp, vftrace.process.stacktree,
                                     vftrace.environment);
