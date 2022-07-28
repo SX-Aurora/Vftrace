@@ -8,7 +8,6 @@
 typedef struct {
    bool valid;
    struct timespec timestamp;
-   unsigned long long cyclecount;
 } reftime_t;
 
 typedef struct {

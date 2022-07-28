@@ -12,7 +12,6 @@
 reftime_t vftr_reference_time = {
    .valid = false,
    .timestamp = {0ll,0ll},
-   .cyclecount = 0ull
 };
 
 // CLOCK_MONOTONIC is not affected by NTP or system time changes.
@@ -44,28 +43,27 @@ long long vftr_get_runtime_usec() {
    return 1000000l*delta_sec + delta_nsec/1000l;
 }
 
-// get the number of elapsed clock counts
-unsigned long long vftr_get_cycles() {
-   unsigned long long cycles = 0ull;
-#if defined (__ve__)
-// On SX Aurora, we obtain the number of elapsed cycles by reading the usrcc register
-// using the smir command. In earlier versions, lhm.l was used. However, this yields
-// VH clock counts, which is not the correct measure to compute e.g. the vector time.
-   asm volatile ("smir %0, %usrcc" : "=r"(cycles));
-#elif defined (__x86_64__)
-      unsigned int a, d;
-      asm volatile("rdtsc" : "=a" (a), "=d" (d));
-      cycles = ((unsigned long long)a) | (((unsigned long long)d) << 32);
-#endif
-   return cycles;
-}
+//// get the number of elapsed clock counts
+//unsigned long long vftr_get_cycles() {
+//   unsigned long long cycles = 0ull;
+//#if defined (__ve__)
+//// On SX Aurora, we obtain the number of elapsed cycles by reading the usrcc register
+//// using the smir command. In earlier versions, lhm.l was used. However, this yields
+//// VH clock counts, which is not the correct measure to compute e.g. the vector time.
+//   asm volatile ("smir %0, %usrcc" : "=r"(cycles));
+//#elif defined (__x86_64__)
+//      unsigned int a, d;
+//      asm volatile("rdtsc" : "=a" (a), "=d" (d));
+//      cycles = ((unsigned long long)a) | (((unsigned long long)d) << 32);
+//#endif
+//   return cycles;
+//}
 
 // set the local reference time to which all
 // timedifferences are measured
 void vftr_set_local_ref_time() {
    reftime_t ref_timer;
    ref_timer.timestamp = vftr_get_timestamp();
-   ref_timer.cyclecount = vftr_get_cycles();
    ref_timer.valid = true;
    vftr_reference_time = ref_timer;
 }
