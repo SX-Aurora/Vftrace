@@ -210,7 +210,9 @@ unsigned long long vftr_sizeof_stacktree_t(stacktree_t stacktree) {
 unsigned long long vftr_sizeof_collated_stack_t(collated_stack_t stack) {
    unsigned long long size = sizeof(collated_stack_t);
    size += vftr_sizeof_profile_t(stack.profile);
-   size += strlen(stack.name)*sizeof(char);
+   if (stack.name != NULL) {
+      size += strlen(stack.name)*sizeof(char);
+   }
    return size;
 }
 
