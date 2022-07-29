@@ -13,6 +13,7 @@
 
 AC_DEFUN([AX_SIZEOF_TYPES], [
 AC_PREREQ(2.50)
+   AC_LANG(C)
 # integers
    AC_CHECK_SIZEOF([char])
    AC_CHECK_SIZEOF([unsigned char])

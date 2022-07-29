@@ -22,6 +22,8 @@ AM_PROG_CC_C_O
 # Check if C-compiler supports c99 standard
 AX_CHECK_C99_STD
 
+AX_CHECK_CXX_STDFLAG
+
 # Check some sizeof values
 AX_SIZEOF_TYPES
 
