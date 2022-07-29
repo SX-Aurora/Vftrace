@@ -23,6 +23,7 @@ AM_TESTS_ENVIRONMENT+=. $(top_srcdir)/test/environment/unset_vftr_env.sh;
 
 AM_CFLAGS = -I$(top_srcdir)/src/
 AM_FCFLAGS = -I$(top_srcdir)/src/
+AM_CXXFLAGS = -I$(top_srcdir)/src/
 AM_LDFLAGS = -L$(top_builddir)/src/.libs -lvftrace -lm
 
 if ENABLE_MPI
@@ -141,6 +142,16 @@ vftr_strip_module_names_FCFLAGS = $(AM_FCFLAGS) -finstrument-functions
 vftr_strip_module_names_LDFLAGS = $(AM_LDFLAGS)
 
 dist_check_SCRIPTS += vftr_strip_module_names.sh
+endif
+
+if HAS_LIBERTY
+check_PROGRAMS += vftr_demangle_cxx
+
+vftr_demangle_cxx_SOURCES = $(srcdir)/little_cxxtasks.cpp
+vftr_demangle_cxx_CXXFLAGS = $(AM_CXXFLAGS) -finstrument-functions
+vftr_demangle_cxx_LDFLAGS = $(AM_LDFLAGS) -liberty
+
+dist_check_SCRIPTS += vftr_demangle_cxx.sh
 endif
 
 TEST_EXTENSIONS = .sh

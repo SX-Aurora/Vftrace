@@ -5,6 +5,10 @@
 
 #include <string.h>
 #include <elf.h>
+#include <ctype.h>
+#ifdef _LIBERTY
+#include <demangle.h>
+#endif
 
 #include "realloc_consts.h"
 #include "custom_types.h"
@@ -290,6 +294,72 @@ void vftr_symboltable_strip_fortran_module_name(symboltable_t *symboltable_ptr,
       }
    }
 }
+
+#ifdef _LIBERTY
+
+void vftr_has_control_character (char *s, int *pos, int *char_num) {
+   char *p = s;
+   *pos = -1;
+   if (char_num != NULL) {
+      *char_num = -1;
+   }
+   int count = 0;
+   while (*p != '\0') {
+      if (iscntrl(*p) && *p != '\n') {
+         *pos = count;
+         if (char_num != NULL) {
+            *char_num = *p;
+         }
+         break;
+       }
+      count++;
+      p++;
+   }
+}
+
+char *vftr_demangle_cxx(char *name) {
+   char *demangled_name = cplus_demangle(name, 0);
+
+   if (demangled_name == NULL) {
+      // Not a C++ symbol
+      return strdup(name);
+   }
+ 
+   // The output of cplus_demangle has been observed to sometimes include
+   // non-ASCII control characters. These can lead to problems later in Vftrace.
+   // Therefore, the demangled name is ignored.
+   int has_control_char;
+   vftr_has_control_character (demangled_name, &has_control_char, NULL);
+   if (has_control_char >= 0) {
+      free(demangled_name);
+      return strdup(name); 
+   }
+   
+   // demangled symbols contain <type> strings
+   char *ptr = demangled_name;
+   while (*ptr != '\0') {
+      if (*ptr == '<') {
+         *ptr = '\0';
+      } else {
+         ptr++;
+      }
+   }
+   
+   return demangled_name;
+}
+
+void vftr_symboltable_demangle_cxx_name(symboltable_t *symboltable_ptr,
+                                        bool demangle_cxx) {
+   if (demangle_cxx) {
+      for (unsigned int isym=0; isym<symboltable_ptr->nsymbols; isym++) {
+         char *name = symboltable_ptr->symbols[isym].name;
+         char *demang_name = vftr_demangle_cxx(name);
+         free(symboltable_ptr->symbols[isym].name);
+         symboltable_ptr->symbols[isym].name = demang_name;
+      }
+   }
+}
+#endif
 
 void vftr_symboltable_free(symboltable_t *symboltable_ptr) {
    symboltable_t symboltable = *symboltable_ptr;

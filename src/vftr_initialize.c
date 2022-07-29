@@ -47,6 +47,10 @@ void vftr_initialize(void *func, void *call_site) {
                                              vftrace.environment.preciseregex.value.regex_val);
       vftr_symboltable_strip_fortran_module_name(&(vftrace.symboltable),
                                                  vftrace.environment.strip_module_names.value.bool_val);
+#ifdef _LIBERTY
+      vftr_symboltable_demangle_cxx_name(&(vftrace.symboltable),
+                                         vftrace.environment.demangle_cxx.value.bool_val);
+#endif
 
 
       // initialize the dynamic process data

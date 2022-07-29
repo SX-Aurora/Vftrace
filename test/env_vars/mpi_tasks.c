@@ -102,6 +102,9 @@ int main(int argc, char** argv) {
    rdispls=NULL;
 
    MPI_Finalize();
+#else
+   (void) argc;
+   (void) argv;
 #endif
 
    return 0;

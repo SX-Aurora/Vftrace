@@ -246,7 +246,7 @@ environment_t vftr_read_environment() {
    environment.print_environment = vftr_read_env_bool("VFTR_PRINT_ENVIRONMENT", true);
    environment.callpath_in_profile = vftr_read_env_bool("VFTR_CALLPATH_IN_PROFILE", false);
    environment.callpath_in_mpi_profile = vftr_read_env_bool("VFTR_CALLPATH_IN_MPI_PROFILE", false);
-   environment.demangle_cpp = vftr_read_env_bool("VFTR_DEMANGLE_CPP", false);
+   environment.demangle_cxx = vftr_read_env_bool("VFTR_DEMANGLE_CXX", false);
    environment.nenv_vars = 22;
    environment.valid = true;
 
@@ -505,9 +505,9 @@ void vftr_environment_assert_callpath_in_mpi_profile(FILE *fp,
    (void) callpath_in_mpi_profile;
 }
 
-void vftr_environment_assert_demangle_cpp(FILE *fp, env_var_t demangle_cpp) {
+void vftr_environment_assert_demangle_cxx(FILE *fp, env_var_t demangle_cxx) {
    (void) fp;
-   (void) demangle_cpp;
+   (void) demangle_cxx;
 }
 
 void vftr_environment_assert(FILE *fp, environment_t environment) {
@@ -532,5 +532,5 @@ void vftr_environment_assert(FILE *fp, environment_t environment) {
    vftr_environment_assert_print_environment(fp, environment.print_environment);
    vftr_environment_assert_callpath_in_profile(fp, environment.callpath_in_profile);
    vftr_environment_assert_callpath_in_mpi_profile(fp, environment.callpath_in_mpi_profile);
-   vftr_environment_assert_demangle_cpp(fp, environment.demangle_cpp);
+   vftr_environment_assert_demangle_cxx(fp, environment.demangle_cxx);
 }

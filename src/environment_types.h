@@ -61,7 +61,7 @@ typedef struct {
    env_var_t print_environment;
    env_var_t callpath_in_profile;
    env_var_t callpath_in_mpi_profile;
-   env_var_t demangle_cpp;
+   env_var_t demangle_cxx;
    bool valid;
    int nenv_vars;
 } environment_t;
