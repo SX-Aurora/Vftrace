@@ -131,6 +131,42 @@ void vftr_print_symbol_table(FILE *fp, symboltable_t symboltable) {
    fprintf(fp, "\n");
 }
 
+// merge two previously sorted symbol tables into one
+symboltable_t vftr_merge_symbol_tables(symboltable_t symtabA, symboltable_t symtabB) {
+   symboltable_t symboltable;
+   symboltable.nsymbols = symtabA.nsymbols + symtabB.nsymbols;
+   symboltable.symbols = (symbol_t*) malloc(symboltable.nsymbols*sizeof(symbol_t));
+
+   unsigned int idxA = 0;
+   unsigned int idxB = 0;
+   unsigned int idxS = 0;
+
+   while (idxA < symtabA.nsymbols && idxB < symtabB.nsymbols) {
+      if (symtabA.symbols[idxA].addr <= symtabB.symbols[idxB].addr) {
+         symboltable.symbols[idxS] = symtabA.symbols[idxA];
+         idxA++;
+      } else {
+         symboltable.symbols[idxS] = symtabB.symbols[idxB];
+         idxB++;
+      }
+      idxS++;
+   }
+
+   while (idxA < symtabA.nsymbols) {
+      symboltable.symbols[idxS] = symtabA.symbols[idxA];
+      idxA++;
+      idxS++;
+   }
+
+   while (idxB < symtabB.nsymbols) {
+      symboltable.symbols[idxS] = symtabB.symbols[idxB];
+      idxA++;
+      idxS++;
+   }
+
+   return symboltable;
+}
+
 symboltable_t vftr_read_symbols() {
    // get all library paths that belong to the program
    librarylist_t librarylist = vftr_read_library_maps();
