@@ -442,7 +442,10 @@ char *vftr_get_name_from_symbID(symboltable_t symboltable,
 
 bool vftr_get_preciseness_from_symbID(symboltable_t symboltable,
                                       int symbID) {
-   return symboltable.symbols[symbID].precise;
+   bool precise = symbID > 0;
+   precise = precise && (unsigned int) symbID < symboltable.nsymbols;
+   precise = precise && symboltable.symbols[symbID].precise;
+   return precise;
 }
 
 bool vftr_get_preciseness_from_address(symboltable_t symboltable,
