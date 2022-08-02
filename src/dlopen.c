@@ -1,8 +1,15 @@
 #define _GNU_SOURCE
 
 #include <stdlib.h>
+#include <stdio.h>
 
+#include <link.h>
 #include <dlfcn.h>
+
+#include "vftrace_state.h"
+#include "symbol_types.h"
+#include "symbols.h"
+#include "sorting.h"
 
 static void* (*real_dlopen)(const char *filename, int flag) = NULL;
 
@@ -20,10 +27,33 @@ void *dlopen(const char *filename, int flag) {
    // load the library
    void *libhandle = real_dlopen(filename, flag);
    // TODO: use dlinfo to get absolute filename from handle
-   // TODO: read the symboltable
-   // TODO: check preciseness
-   // TODO: strip fortran module names
-   // TODO: cxx demangling
-   // TODO: merge with big symbol table
+   struct link_map *lib_linkmap_ptr = NULL;
+   dlinfo(libhandle, RTLD_DI_LINKMAP, &lib_linkmap_ptr);
+
+   while (lib_linkmap_ptr != NULL) {
+      library_t dynlib = {
+         .base = lib_linkmap_ptr->l_addr,
+         .offset = 0,
+         .path = lib_linkmap_ptr->l_name
+      };
+      symboltable_t dynsymtab = vftr_read_symbols_from_library(dynlib);
+      if (dynsymtab.nsymbols > 0) {
+         vftr_sort_symboltable(dynsymtab.nsymbols, dynsymtab.symbols);
+         vftr_symboltable_determine_preciseness(
+            &dynsymtab,
+            vftrace.environment.preciseregex.value.regex_val);
+         vftr_symboltable_strip_fortran_module_name(
+            &dynsymtab,
+            vftrace.environment.strip_module_names.value.bool_val);
+   #ifdef _LIBERTY
+         vftr_symboltable_demangle_cxx_name(
+            &dynsymtab,
+            vftrace.environment.demangle_cxx.value.bool_val);
+   #endif
+         vftr_merge_symbol_tables(&(vftrace.symboltable), dynsymtab);
+         free(dynsymtab.symbols);
+      }
+      lib_linkmap_ptr = lib_linkmap_ptr->l_next;
+   }
    return libhandle;
 }
