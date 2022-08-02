@@ -7,6 +7,11 @@
 #include "symbol_types.h"
 #include "environment_types.h"
 
+void vftr_merge_symbol_tables(symboltable_t *symtabA_ptr,
+                              symboltable_t symtabB);
+
+symboltable_t vftr_read_symbols_from_library(library_t library);
+
 symboltable_t vftr_read_symbols();
 
 void vftr_symboltable_free(symboltable_t *symboltable_ptr);
