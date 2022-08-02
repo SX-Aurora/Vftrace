@@ -164,9 +164,119 @@ void vftr_merge_symbol_tables(symboltable_t *symtabA_ptr,
 
    while (idxB < symtabB.nsymbols) {
       symboltable.symbols[idxS] = symtabB.symbols[idxB];
-      idxA++;
+      idxB++;
       idxS++;
    }
+   
+   if (symtabA.symbols != NULL) {
+      free(symtabA.symbols);
+   }
+   symtabA_ptr->nsymbols = symboltable.nsymbols;
+   symtabA_ptr->symbols = symboltable.symbols;
+}
+
+
+symboltable_t vftr_read_symbols_from_library(library_t library) {
+   symboltable_t symboltable = {
+      .nsymbols = 0,
+      .symbols = NULL,
+   };
+   FILE *fp = fopen(library.path, "r");
+   if (fp == NULL) {
+      perror(library.path);
+      abort();
+   }
+   Elf64_Ehdr ElfHeader = vftr_read_elf_header(fp);
+   Elf64_Phdr *ElfProgramHeader =
+      vftr_read_elf_program_header(fp, ElfHeader);
+   // Offset of the segment in the file image.
+   Elf64_Off elf_offset = 0;
+   // Virtual address of the segment in memory.
+   Elf64_Addr elf_vaddr = 0;
+   for (int iheader=0; iheader<ElfHeader.e_phnum; iheader++) {
+      // We only care for the segment containing the program header itself
+      if ((ElfProgramHeader+iheader)->p_type == 0x00000006) {
+         elf_offset = (ElfProgramHeader+iheader)->p_offset;
+         elf_vaddr = (ElfProgramHeader+iheader)->p_vaddr;
+         break;
+      }
+   }
+   Elf64_Shdr *ElfSectionHeader = vftr_read_elf_section_header(fp, ElfHeader);
+   char *header_strtab = vftr_read_elf_header_string_table(fp, ElfHeader,
+                                                           ElfSectionHeader);
+   if (header_strtab == NULL) {
+      free(ElfProgramHeader);
+      free(ElfSectionHeader);
+      fclose(fp);
+      return symboltable;
+   }
+   int strtabidx = vftr_get_elf_string_table_index(header_strtab,
+                                                   ElfHeader,
+                                                   ElfSectionHeader);
+   if (strtabidx == -1) {
+      free(ElfProgramHeader);
+      free(ElfSectionHeader);
+      free(header_strtab);
+      fclose(fp);
+      return symboltable;
+   }
+   char *stringtab = vftr_read_elf_symbol_string_table(fp, ElfSectionHeader,
+                                                       strtabidx);
+   int symtabidx = vftr_get_elf_symbol_table_index(header_strtab,
+                                                   ElfHeader,
+                                                   ElfSectionHeader);
+   if (symtabidx == -1) {
+      free(ElfProgramHeader);
+      free(ElfSectionHeader);
+      free(header_strtab);
+      free(stringtab);
+      fclose(fp);
+      return symboltable;
+   }
+
+   Elf64_Sym *ElfSymbolTable = vftr_read_elf_symbol_table(fp, ElfSectionHeader,
+                                                          symtabidx);
+
+   int symbolCount = 0;
+   int validSymbolCount = 0;
+   vftr_elf_symbol_table_count(ElfSectionHeader, symtabidx, ElfSymbolTable,
+                               &symbolCount, &validSymbolCount);
+   if (validSymbolCount > 0) {
+      // append the symbols from this library to the symboltable
+      int nsymbols = validSymbolCount;
+      symboltable.symbols = (symbol_t*)
+         malloc(nsymbols*sizeof(symbol_t));
+      int copiedsymbols = 0;
+      for (int isymb=0; isymb<symbolCount; isymb++) {
+         Elf64_Sym s = ElfSymbolTable[isymb];
+         if (ELF64_ST_TYPE(s.st_info) == STT_FUNC && s.st_value) {
+            int jsymb = copiedsymbols;
+            copiedsymbols++;
+            // apply all offsets to the addresses
+            // in order to match them with the called addresses
+            off_t lbase = library.base;
+            off_t loffset = library.offset;
+            symboltable.symbols[jsymb].addr =
+               (uintptr_t) (s.st_value + lbase - loffset + elf_offset - elf_vaddr);
+            // Copy symbol name
+            symboltable.symbols[jsymb].name = strdup(stringtab+s.st_name);
+            symboltable.symbols[jsymb].index = s.st_shndx;
+            // remove trailing fortran underscore
+            vftr_chop_trailing_char(symboltable.symbols[jsymb].name, '_');
+
+            // set precise value to default: false
+            symboltable.symbols[jsymb].precise = false;
+         }
+      }
+      symboltable.nsymbols = nsymbols;
+   }
+
+   free(ElfProgramHeader);
+   free(ElfSectionHeader);
+   free(header_strtab);
+   free(stringtab);
+   free(ElfSymbolTable);
+   fclose(fp);
 
    return symboltable;
 }
@@ -181,108 +291,17 @@ symboltable_t vftr_read_symbols() {
    };
    // loop over all libraries and get their symbol tables
    for (int ilib=0; ilib<librarylist.nlibraries; ilib++) {
-      FILE *fp = fopen(librarylist.libraries[ilib].path, "r");
-      if (fp == NULL) {
-         perror(librarylist.libraries[ilib].path);
-         abort();
-      }
-      Elf64_Ehdr ElfHeader = vftr_read_elf_header(fp);
-      Elf64_Phdr *ElfProgramHeader =
-         vftr_read_elf_program_header(fp, ElfHeader);
-      // Offset of the segment in the file image.
-      Elf64_Off elf_offset = 0;
-      // Virtual address of the segment in memory.
-      Elf64_Addr elf_vaddr = 0;
-      for (int iheader=0; iheader<ElfHeader.e_phnum; iheader++) {
-         // We only care for the segment containing the program header itself
-         if ((ElfProgramHeader+iheader)->p_type == 0x00000006) {
-            elf_offset = (ElfProgramHeader+iheader)->p_offset;
-            elf_vaddr = (ElfProgramHeader+iheader)->p_vaddr;
-            break;
-         }
-      }
-      Elf64_Shdr *ElfSectionHeader = vftr_read_elf_section_header(fp, ElfHeader);
-      char *header_strtab = vftr_read_elf_header_string_table(fp, ElfHeader,
-                                                              ElfSectionHeader);
-      if (header_strtab == NULL) {
-         free(ElfProgramHeader);
-         free(ElfSectionHeader);
-         fclose(fp);
-         continue;
-      }
-      int strtabidx = vftr_get_elf_string_table_index(header_strtab,
-                                                      ElfHeader,
-                                                      ElfSectionHeader);
-      if (strtabidx == -1) {
-         free(ElfProgramHeader);
-         free(ElfSectionHeader);
-         free(header_strtab);
-         fclose(fp);
-         continue;
-      }
-      char *stringtab = vftr_read_elf_symbol_string_table(fp, ElfSectionHeader,
-                                                          strtabidx);
-      int symtabidx = vftr_get_elf_symbol_table_index(header_strtab,
-                                                      ElfHeader,
-                                                      ElfSectionHeader);
-      if (symtabidx == -1) {
-         free(ElfProgramHeader);
-         free(ElfSectionHeader);
-         free(header_strtab);
-         free(stringtab);
-         fclose(fp);
-         continue;
-      }
+      library_t library = librarylist.libraries[ilib];
+      symboltable_t tmpsymtab = vftr_read_symbols_from_library(library);
+      // sort the symbol table for faster access lateron with a binary search
+      vftr_sort_symboltable(tmpsymtab.nsymbols,
+                            tmpsymtab.symbols);
 
-      Elf64_Sym *ElfSymbolTable = vftr_read_elf_symbol_table(fp, ElfSectionHeader,
-                                                             symtabidx);
-
-      int symbolCount = 0;
-      int validSymbolCount = 0;
-      vftr_elf_symbol_table_count(ElfSectionHeader, symtabidx, ElfSymbolTable,
-                                  &symbolCount, &validSymbolCount);
-      if (validSymbolCount > 0) {
-         // append the symbols from this library to the symboltable
-         int nsymold = symboltable.nsymbols;
-         int nsymnew = nsymold + validSymbolCount;
-         symboltable.symbols = (symbol_t*)
-            realloc(symboltable.symbols, nsymnew*sizeof(symbol_t));
-         int copiedsymbols = 0;
-         for (int isymb=0; isymb<symbolCount; isymb++) {
-            Elf64_Sym s = ElfSymbolTable[isymb];
-            if (ELF64_ST_TYPE(s.st_info) == STT_FUNC && s.st_value) {
-               int jsymb = nsymold + copiedsymbols;
-               copiedsymbols++;
-               // apply all offsets to the addresses
-               // in order to match them with the called addresses
-               off_t lbase = librarylist.libraries[ilib].base;
-               off_t loffset = librarylist.libraries[ilib].offset;
-               symboltable.symbols[jsymb].addr =
-                  (uintptr_t) (s.st_value + lbase - loffset + elf_offset - elf_vaddr);
-               // Copy symbol name
-               symboltable.symbols[jsymb].name = strdup(stringtab+s.st_name);
-               symboltable.symbols[jsymb].index = s.st_shndx;
-               // remove trailing fortran underscore
-               vftr_chop_trailing_char(symboltable.symbols[jsymb].name, '_');
-
-               // set precise value to default: false
-               symboltable.symbols[jsymb].precise = false;
-            }
-         }
-         symboltable.nsymbols = nsymnew;
+      vftr_merge_symbol_tables(&symboltable, tmpsymtab);
+      if (tmpsymtab.nsymbols > 0) {
+         free(tmpsymtab.symbols);
       }
-
-      free(ElfProgramHeader);
-      free(ElfSectionHeader);
-      free(header_strtab);
-      free(stringtab);
-      free(ElfSymbolTable);
-      fclose(fp);
    }
-
-   // sort the symbol table for faster access lateron with a binary search
-   vftr_sort_symboltable(symboltable.nsymbols,
-                         symboltable.symbols);
 
    vftr_free_librarylist(&librarylist);
    return symboltable;
