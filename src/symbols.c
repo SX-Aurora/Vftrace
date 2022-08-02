@@ -167,7 +167,7 @@ void vftr_merge_symbol_tables(symboltable_t *symtabA_ptr,
       idxB++;
       idxS++;
    }
-   
+
    if (symtabA.symbols != NULL) {
       free(symtabA.symbols);
    }
@@ -383,7 +383,7 @@ char *vftr_demangle_cxx(char *name) {
       // Not a C++ symbol
       return strdup(name);
    }
- 
+
    // The output of cplus_demangle has been observed to sometimes include
    // non-ASCII control characters. These can lead to problems later in Vftrace.
    // Therefore, the demangled name is ignored.
@@ -391,9 +391,9 @@ char *vftr_demangle_cxx(char *name) {
    vftr_has_control_character (demangled_name, &has_control_char, NULL);
    if (has_control_char >= 0) {
       free(demangled_name);
-      return strdup(name); 
+      return strdup(name);
    }
-   
+
    // demangled symbols contain <type> strings
    char *ptr = demangled_name;
    while (*ptr != '\0') {
@@ -403,7 +403,7 @@ char *vftr_demangle_cxx(char *name) {
          ptr++;
       }
    }
-   
+
    return demangled_name;
 }
 

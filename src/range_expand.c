@@ -80,7 +80,7 @@ int *vftr_expand_rangelist(char *olist, int *nvals_ptr) {
    // walk through other tokens
    for (int itoken=1; itoken<ntokens; itoken++) {
       tokens[itoken] = strtok(NULL, komma);
-   }   
+   }
    int ninlist = 0;
    for (int itoken=0; itoken<ntokens; itoken++) {
       if (vftr_is_valid_number(tokens[itoken])) {
@@ -96,7 +96,7 @@ int *vftr_expand_rangelist(char *olist, int *nvals_ptr) {
          *nvals_ptr = 0;
          return NULL;
       }
-   }   
+   }
 
    int *exp_list = (int*) malloc(ninlist*sizeof(int));
    int ival = 0;
@@ -112,8 +112,8 @@ int *vftr_expand_rangelist(char *olist, int *nvals_ptr) {
             exp_list[ival] = jval;
             ival++;
          }
-      }   
-   }   
+      }
+   }
 
    free(list);
    free(tokens);

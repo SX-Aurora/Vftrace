@@ -8,6 +8,6 @@
 #include "environment_types.h"
 
 void vftr_write_logfile_profile_table(FILE *fp, stacktree_t stacktree,
-                                      environment_t environment); 
+                                      environment_t environment);
 
 #endif

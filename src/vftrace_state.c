@@ -94,7 +94,7 @@ unsigned long long vftr_sizeof_function_hook_t(function_hook_t function_hooks) {
 }
 
 unsigned long long vftr_sizeof_hooks_t(hooks_t hooks) {
-   unsigned long long size = sizeof(hooks_t); 
+   unsigned long long size = sizeof(hooks_t);
    // need to subtract the size of the types themselves (padding remains)
    // in order to not double count with the function calls
    size -= sizeof(function_hook_t);
