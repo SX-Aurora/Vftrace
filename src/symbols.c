@@ -132,7 +132,11 @@ void vftr_print_symbol_table(FILE *fp, symboltable_t symboltable) {
 }
 
 // merge two previously sorted symbol tables into one
-symboltable_t vftr_merge_symbol_tables(symboltable_t symtabA, symboltable_t symtabB) {
+void vftr_merge_symbol_tables(symboltable_t *symtabA_ptr,
+                              symboltable_t symtabB) {
+   if (symtabB.nsymbols == 0) {return;}
+
+   symboltable_t symtabA = *symtabA_ptr;
    symboltable_t symboltable;
    symboltable.nsymbols = symtabA.nsymbols + symtabB.nsymbols;
    symboltable.symbols = (symbol_t*) malloc(symboltable.nsymbols*sizeof(symbol_t));
