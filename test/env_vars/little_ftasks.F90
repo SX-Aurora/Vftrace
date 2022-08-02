@@ -36,7 +36,7 @@ CONTAINS
       DO a = 1, n-1
          DO b = a, n-1
             csq = a*a + b*b
-            c = INT(SQRT(1.0*csq))
+            c = INT(SQRT(1.0d0*csq)+0.5d0)
             IF (c*c == csq .AND. csq > largest) THEN
                largest = csq
             END IF

@@ -32,7 +32,7 @@ int pythagorean_triples(int n) {
    for (int a=1; a<n; a++) {
       for (int b=a; b<n; b++) {
          int csq = a*a + b*b;
-         int c = (int) sqrt(csq);
+         int c = (int) (sqrt(csq)+0.5);
          if (c*c == csq && csq > largest) {
             largest = csq;
          }
