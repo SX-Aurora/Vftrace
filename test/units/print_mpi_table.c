@@ -56,7 +56,6 @@ int main(int argc, char **argv) {
                                   name, function, addrs+0, false);
    iprof = vftr_new_profile_in_list(0,&(stacktree.stacks[func2_idx].profiling));
    profile = stacktree.stacks[func2_idx].profiling.profiles+iprof;
-   //vftr_accumulate_callprofiling(&(profile->callProf), 1, 1000000);
 
 
    // 2: func1<func0<init
