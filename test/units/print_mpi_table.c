@@ -12,8 +12,6 @@
 #include "profiling.h"
 #include "callprofiling_types.h"
 #include "callprofiling.h"
-#include "overheadprofiling_types.h"
-#include "overheadprofiling.h"
 #include "mpi_state_types.h"
 #include "collated_stack_types.h"
 #include "collate_stacks.h"

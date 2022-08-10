@@ -29,4 +29,6 @@ void vftr_overheadprofiling_free(overheadProfile_t *overheadprof_ptr);
 
 overheadProfile_t *vftr_get_my_overheadProfile(vftrace_t vftrace);
 
+void vftr_print_overheadprofiling(FILE *fp, overheadProfile_t overheadprof);
+
 #endif

@@ -1,5 +1,7 @@
 #include <stdlib.h>
 
+#include <string.h>
+
 #ifdef _MPI
 #include <mpi.h>
 #endif
@@ -44,7 +46,7 @@ static void vftr_collate_callprofiles_on_root(collated_stacktree_t *collstacktre
       long long calls;
       long long time_usec;
       long long time_excl_usec;
-      long long overhead_usec
+      long long overhead_usec;
    } callProfile_transfer_t;
 
    int nblocks = 2;
@@ -59,6 +61,7 @@ static void vftr_collate_callprofiles_on_root(collated_stacktree_t *collstacktre
 
    if (myrank > 0) {
       // every rank fills their sendbuffer
+      int nprofiles = stacktree_ptr->nstacks;
       callProfile_transfer_t *sendbuf = (callProfile_transfer_t*)
          malloc(nprofiles*sizeof(callProfile_transfer_t));
       for (int istack=0; istack<nprofiles; istack++) {
@@ -128,7 +131,8 @@ void vftr_collate_callprofiles(collated_stacktree_t *collstacktree_ptr,
                                int *nremote_profiles) {
    vftr_collate_callprofiles_root_self(collstacktree_ptr, stacktree_ptr);
 #ifdef _MPI
-   vftr_collate_callprofiles_on_root(collstacktree_ptr, stacktree_ptr);
+   vftr_collate_callprofiles_on_root(collstacktree_ptr, stacktree_ptr,
+                                     myrank, nranks, nremote_profiles);
 #else
    (void) myrank;
    (void) nranks;

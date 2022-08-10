@@ -29,7 +29,7 @@
 #include "stacks.h"
 #include "profiling_types.h"
 #include "profiling.h"
-#include "overheadprofiling.h"
+#include "mpiprofiling.h"
 #include "timer.h"
 #include "collective_requests.h"
 
@@ -107,7 +107,7 @@ int vftr_MPI_Ireduce_scatter_block(const void *sendbuf, void *recvbuf,
    profile_t *my_profile = vftr_get_my_profile(my_stack, my_thread);
    long long t2end = vftr_get_runtime_usec();
 
-   vftr_accumulate_mpi_overheadprofiling(&(my_profile->overheadProf), t2end-t2start);
+   vftr_accumulate_mpiprofiling_overhead(&(my_profile->mpiProf), t2end-t2start);
 
    return retVal;
 }
@@ -184,7 +184,7 @@ int vftr_MPI_Ireduce_scatter_block_inplace(const void *sendbuf, void *recvbuf,
    profile_t *my_profile = vftr_get_my_profile(my_stack, my_thread);
    long long t2end = vftr_get_runtime_usec();
 
-   vftr_accumulate_mpi_overheadprofiling(&(my_profile->overheadProf), t2end-t2start);
+   vftr_accumulate_mpiprofiling_overhead(&(my_profile->mpiProf), t2end-t2start);
 
    return retVal;
 }
@@ -303,7 +303,7 @@ int vftr_MPI_Ireduce_scatter_block_intercom(const void *sendbuf, void *recvbuf,
    profile_t *my_profile = vftr_get_my_profile(my_stack, my_thread);
    long long t2end = vftr_get_runtime_usec();
 
-   vftr_accumulate_mpi_overheadprofiling(&(my_profile->overheadProf), t2end-t2start);
+   vftr_accumulate_mpiprofiling_overhead(&(my_profile->mpiProf), t2end-t2start);
 
    return retVal;
 }

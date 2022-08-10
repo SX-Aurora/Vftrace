@@ -28,7 +28,7 @@
 #include "stacks.h"
 #include "profiling_types.h"
 #include "profiling.h"
-#include "overheadprofiling.h"
+#include "mpiprofiling.h"
 #include "timer.h"
 #include "requests.h"
 #include "p2p_requests.h"
@@ -51,7 +51,7 @@ int vftr_MPI_Request_free(MPI_Request *request) {
    profile_t *my_profile = vftr_get_my_profile(my_stack, my_thread);
    long long t2end = vftr_get_runtime_usec();
 
-   vftr_accumulate_mpi_overheadprofiling(&(my_profile->overheadProf), t2end-t2start);
+   vftr_accumulate_mpiprofiling_overhead(&(my_profile->mpiProf), t2end-t2start);
 
    return 0;
 }

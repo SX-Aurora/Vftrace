@@ -111,3 +111,19 @@ overheadProfile_t *vftr_get_my_overheadProfile(vftrace_t vftrace) {
    profile_t *my_profile = vftr_get_my_profile(my_stack, my_thread);
    return &(my_profile->overheadProf);
 }
+
+void vftr_print_overheadprofiling(FILE *fp, overheadProfile_t overheadprof) {
+   fprintf(fp, "hooks: %lld, mpi: %lld, omp: %lld\n",
+           overheadprof.hook_usec,
+#ifdef _MPI
+           overheadprof.mpi_usec,
+#else
+           0ll,
+#endif
+#ifdef _OMP
+           overheadprof.omp_usec,
+#else
+           0ll
+#endif
+         );
+}

@@ -16,8 +16,6 @@
 #include "stacks.h"
 #include "collate_stacks.h"
 #include "tables.h"
-#include "overheadprofiling_types.h"
-#include "overheadprofiling.h"
 //#include "sorting.h"
 
 int *vftr_logfile_mpi_table_nmessages_list(int nstacks, stack_t **stack_ptrs) {

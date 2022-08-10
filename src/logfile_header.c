@@ -16,6 +16,7 @@
 #include "profiling_types.h"
 #include "profiling.h"
 #include "callprofiling.h"
+#include "mpiprofiling.h"
 #include "tables.h"
 #include "misc_utils.h"
 
@@ -105,4 +106,10 @@ void vftr_write_logfile_summary(FILE *fp, process_t process,
    free(unit);
 
    free(call_overheads);
+#ifdef _MPI
+   free(mpi_overheads);
+#endif
+#ifdef _OMP
+   free(omp_overheads);
+#endif
 }

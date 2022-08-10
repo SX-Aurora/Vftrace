@@ -8,6 +8,7 @@
 #include "process_types.h"
 #include "environment_types.h"
 #include "mpi_util_types.h"
+#include "mpiprofiling_types.h"
 
 #include "range_expand.h"
 #include "search.h"
@@ -21,6 +22,7 @@ mpiProfile_t vftr_new_mpiprofiling() {
    prof.acc_send_bw = 0.0;
    prof.acc_recv_bw = 0.0;
    prof.total_time_usec = 0ll;
+   prof.overhead_usec = 0ll;
 
    return prof;
 }
@@ -61,6 +63,11 @@ void vftr_accumulate_message_info(mpiProfile_t *prof_ptr,
    }
 }
 
+void vftr_accumulate_mpiprofiling_overhead(mpiProfile_t *prof,
+                                           long long overhead_usec) {
+   prof->overhead_usec += overhead_usec;
+}
+
 void vftr_mpiprofiling_free(mpiProfile_t *prof_ptr) {
    (void) prof_ptr;
 }
@@ -92,4 +99,24 @@ void vftr_free_profiled_ranks_list(mpi_state_t *mpi_state) {
       mpi_state->prof_ranks = NULL;
       mpi_state->my_rank_in_prof = false;
    }
+}
+
+long long *vftr_get_total_mpi_overhead(stacktree_t stacktree, int nthreads) {
+   // accumulate the mpi overhead for each thread separately
+   long long *overheads_usec = (long long*) malloc(nthreads*sizeof(long long));
+   for (int ithread=0; ithread<nthreads; ithread++) {
+      overheads_usec[ithread] = 0ll;
+   }
+
+   int nstacks = stacktree.nstacks;
+   for (int istack=0; istack<nstacks; istack++) {
+      stack_t *stack = stacktree.stacks+istack;
+      int nprofs = stack->profiling.nprofiles;
+      for (int iprof=0; iprof<nprofs; iprof++) {
+         profile_t *prof = stack->profiling.profiles+iprof;
+         int threadID = prof->threadID;
+         overheads_usec[threadID] += prof->mpiProf.overhead_usec;
+      }
+   }
+   return overheads_usec;
 }
