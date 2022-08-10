@@ -61,7 +61,7 @@ stack_t **vftr_sort_stacks_for_prof(environment_t environment,
          int nprofs = stack->profiling.nprofiles;
          for (int iprof=0; iprof<nprofs; iprof++) {
             profile_t *prof = stack->profiling.profiles+iprof;
-            stackvals[istack] += prof->overheadProf.hook_usec;
+            stackvals[istack] += prof->callProf.overhead_usec;
          }
       }
    } else {

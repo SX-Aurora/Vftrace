@@ -13,7 +13,6 @@
 #include "callprofiling.h"
 #include "collated_stack_types.h"
 #include "collate_stacks.h"
-#include "sorting.h"
 
 #include "dummysymboltable.h"
 
@@ -28,9 +27,6 @@ int main(int argc, char **argv) {
    (void) argc;
    (void) argv;
 #endif
-
-   environment_t environment;
-   environment = vftr_read_environment();
 
    // dummy symboltable
    uintptr_t addrs = 123456;
@@ -151,28 +147,18 @@ int main(int argc, char **argv) {
    // collate stacks to get the global ID
    collated_stacktree_t collated_stacktree = vftr_collate_stacks(&stacktree);
 
-   stack_t **stackptrs = vftr_sort_stacks_for_prof(environment, stacktree);
-
-   for (int istack=0; istack<stacktree.nstacks; istack++) {
-      stack_t *stack = stackptrs[istack];
-      int stackID = stack->lid;
-      char *stackstr = vftr_get_stack_string(stacktree, stackID, false);
-      fprintf(stdout, "%d(g%d): %s\n", stackID, stack->gid, stackstr);
+   for (int istack=0; istack<collated_stacktree.nstacks; istack++) {
+      char *stackstr = vftr_get_collated_stack_string(collated_stacktree, istack, false);
+      fprintf(stdout, "%s:\n   ", stackstr);
+      vftr_print_callprofiling(stdout,
+         collated_stacktree.stacks[istack].profile.callProf);
       free(stackstr);
-      int nprofs=stack->profiling.nprofiles;
-      for (int ithread=0; ithread<nprofs; ithread++) {
-         fprintf(stdout, "   Thread: %d (%d)", ithread,
-                 stack->profiling.profiles[ithread].threadID);
-         profile_t *profile = stack->profiling.profiles+ithread;
-         fprintf(stdout, " Overhead: %8lld, ", profile->callProf.overhead_usec);
-         vftr_print_callprofiling(stdout, profile->callProf);
-      }
    }
 
    free_dummy_symbol_table(&symboltable);
    vftr_stacktree_free(&stacktree);
    vftr_collated_stacktree_free(&collated_stacktree);
-   vftr_environment_free(&environment);
+
 #ifdef _MPI
    PMPI_Finalize();
 #endif

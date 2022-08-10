@@ -8,7 +8,6 @@
 #include "stacks.h"
 #include "threadstacks.h"
 #include "collate_stacks.h"
-#include "collate_profiles.h"
 #include "logfile.h"
 #include "sampling.h"
 #include "timer.h"
@@ -46,7 +45,6 @@ void vftr_finalize() {
    // to get a global ordering of stacks
    vftrace.process.collated_stacktree =
       vftr_collate_stacks(&(vftrace.process.stacktree));
-   vftr_collate_profiles(&(vftrace.process.collated_stacktree));
 
    // write logfile
    vftr_write_logfile(vftrace, runtime);

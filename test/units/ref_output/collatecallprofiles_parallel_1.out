@@ -1,0 +1,20 @@
+func2<func1<init:
+   calls: 5, time(incl/excl): 15/15
+func4<func2<func0<init:
+   calls: 3, time(incl/excl): 15/15
+func1<init:
+   calls: 6, time(incl/excl): 60/48
+func2<func0<init:
+   calls: 2, time(incl/excl): 7/3
+func5<func1<init:
+   calls: 1, time(incl/excl): 2/2
+func3<func0<init:
+   calls: 3, time(incl/excl): 8/8
+init:
+   calls: 2, time(incl/excl): 40/0
+func0<init:
+   calls: 8, time(incl/excl): 80/54
+func4<func0<init:
+   calls: 3, time(incl/excl): 15/13
+func5<func4<func0<init:
+   calls: 1, time(incl/excl): 2/2

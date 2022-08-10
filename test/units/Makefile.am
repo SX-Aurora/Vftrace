@@ -72,13 +72,20 @@ check_PROGRAMS += collatestacks_parallel_1 \
 		  collatestacks_parallel_2_2 \
 		  collatestacks_parallel_3
 endif
+check_PROGRAMS += collatecallprofiles
+if ENABLE_MPI
+check_PROGRAMS += collatecallprofiles_parallel_1 \
+		  collatecallprofiles_parallel_2_1 \
+		  collatecallprofiles_parallel_2_2
+endif
+
 check_PROGRAMS += stacktree \
 		  stacklist \
 		  getstackstring
 
 check_PROGRAMS += profilelist \
 		  exclusive_times \
-		  total_hook_overhead
+		  total_call_overhead
 if ENABLE_MPI
 check_PROGRAMS += total_mpi_overhead
 endif
@@ -233,6 +240,28 @@ collatestacks_parallel_3_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
 collatestacks_parallel_3_LDFLAGS = $(AM_LDFLAGS)
 endif
 
+collatecallprofiles_SOURCES = $(srcdir)/collatecallprofiles.c \
+			      $(srcdir)/dummysymboltable.c
+collatecallprofiles_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
+collatecallprofiles_LDFLAGS = $(AM_LDFLAGS)
+
+if ENABLE_MPI
+collatecallprofiles_parallel_1_SOURCES = $(srcdir)/collatecallprofiles_parallel_1.c \
+					 $(srcdir)/dummysymboltable.c
+collatecallprofiles_parallel_1_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
+collatecallprofiles_parallel_1_LDFLAGS = $(AM_LDFLAGS)
+
+collatecallprofiles_parallel_2_1_SOURCES = $(srcdir)/collatecallprofiles_parallel_2_1.c \
+					   $(srcdir)/dummysymboltable.c
+collatecallprofiles_parallel_2_1_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
+collatecallprofiles_parallel_2_1_LDFLAGS = $(AM_LDFLAGS)
+
+collatecallprofiles_parallel_2_2_SOURCES = $(srcdir)/collatecallprofiles_parallel_2_2.c \
+					   $(srcdir)/dummysymboltable.c
+collatecallprofiles_parallel_2_2_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
+collatecallprofiles_parallel_2_2_LDFLAGS = $(AM_LDFLAGS)
+endif
+
 filenames_SOURCES = $(srcdir)/filenames.c
 filenames_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
 filenames_LDFLAGS = $(AM_LDFLAGS)
@@ -261,10 +290,10 @@ exclusive_times_SOURCES = $(srcdir)/exclusive_times.c \
 exclusive_times_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
 exclusive_times_LDFLAGS = $(AM_LDFLAGS)
 
-total_hook_overhead_SOURCES = $(srcdir)/total_hook_overhead.c \
+total_call_overhead_SOURCES = $(srcdir)/total_call_overhead.c \
 			      $(srcdir)/dummysymboltable.c
-total_hook_overhead_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
-total_hook_overhead_LDFLAGS = $(AM_LDFLAGS)
+total_call_overhead_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
+total_call_overhead_LDFLAGS = $(AM_LDFLAGS)
 
 if ENABLE_MPI
 total_mpi_overhead_SOURCES = $(srcdir)/total_mpi_overhead.c \
@@ -365,12 +394,18 @@ dist_check_SCRIPTS += collatestacks_parallel_1.sh \
 		      collatestacks_parallel_2.sh \
 		      collatestacks_parallel_3.sh
 endif
+dist_check_SCRIPTS += collatecallprofiles.sh
+if ENABLE_MPI
+dist_check_SCRIPTS += collatecallprofiles_parallel_1.sh \
+		      collatecallprofiles_parallel_2.sh
+endif
+
 dist_check_SCRIPTS += stacktree.sh \
 		      stacklist.sh \
 		      getstackstring.sh
 dist_check_SCRIPTS += profilelist.sh \
 		      exclusive_times.sh \
-		      total_hook_overhead.sh
+		      total_call_overhead.sh
 if ENABLE_MPI
 dist_check_SCRIPTS += total_mpi_overhead.sh
 endif

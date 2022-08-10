@@ -13,7 +13,6 @@
 #include "threadstacks.h"
 #include "profiling.h"
 #include "callprofiling.h"
-#include "overheadprofiling.h"
 #include "sampling.h"
 #include "timer.h"
 #include "region_address.h"
@@ -65,7 +64,7 @@ void vftr_internal_region_begin(const char *name) {
    }
 
    // No calls after this overhead handling!
-   vftr_accumulate_hook_overheadprofiling(&(my_profile->overheadProf),
+   vftr_accumulate_callprofiling_overhead(&(my_profile->callProf),
       vftr_get_runtime_usec() - region_begin_time_begin);
 }
 
@@ -100,7 +99,7 @@ void vftr_internal_region_end(const char *name) {
 
    }
    // No calls after this overhead handling
-   vftr_accumulate_hook_overheadprofiling(
-      &(my_profile->overheadProf),
+   vftr_accumulate_callprofiling_overhead(
+      &(my_profile->callProf),
       vftr_get_runtime_usec() - region_end_time_begin);
 }

@@ -1,13 +1,20 @@
+#include <stdlib.h>
 #include <stdio.h>
 
 #include "callprofiling_types.h"
+#include "collated_stack_types.h"
 #include "stack_types.h"
+
+#ifdef _MPI
+#include <mpi.h>
+#endif
 
 callProfile_t vftr_new_callprofiling() {
    callProfile_t prof;
    prof.calls = 0ll;
    prof.time_usec = 0ll;
    prof.time_excl_usec = 0ll;
+   prof.overhead_usec = 0ll;
    return prof;
 }
 
@@ -16,6 +23,11 @@ void vftr_accumulate_callprofiling(callProfile_t *prof,
                                    long long time_usec) {
    prof->calls += calls;
    prof->time_usec += time_usec;
+}
+
+void vftr_accumulate_callprofiling_overhead(callProfile_t *prof,
+                                            long long overhead_usec) {
+   prof->overhead_usec += overhead_usec;
 }
 
 void vftr_update_stacks_exclusive_time(stacktree_t *stacktree_ptr) {
@@ -51,11 +63,32 @@ void vftr_update_stacks_exclusive_time(stacktree_t *stacktree_ptr) {
    }
 }
 
+long long *vftr_get_total_call_overhead(stacktree_t stacktree, int nthreads) {
+   // accumulate the hook overhead for each thread separately
+   long long *overheads_usec = (long long*) malloc(nthreads*sizeof(long long));
+   for (int ithread=0; ithread<nthreads; ithread++) {
+      overheads_usec[ithread] = 0ll;
+   }
+
+   int nstacks = stacktree.nstacks;
+   for (int istack=0; istack<nstacks; istack++) {
+      stack_t *stack = stacktree.stacks+istack;
+      int nprofs = stack->profiling.nprofiles;
+      for (int iprof=0; iprof<nprofs; iprof++) {
+         profile_t *prof = stack->profiling.profiles+iprof;
+         int threadID = prof->threadID;
+         overheads_usec[threadID] += prof->callProf.overhead_usec;
+      }
+   }
+   return overheads_usec;
+}
+
 void vftr_callprofiling_free(callProfile_t *callprof_ptr) {
    (void) callprof_ptr;
 }
 
 void vftr_print_callprofiling(FILE *fp, callProfile_t callprof) {
-   fprintf(fp, "calls: %lld, time(incl/excl): %lld/%lld\n",
-           callprof.calls, callprof.time_usec, callprof.time_excl_usec);
+   fprintf(fp, "calls: %lld, time(incl/excl): %lld/%lld (overhead: %lld)\n",
+           callprof.calls, callprof.time_usec, callprof.time_excl_usec,
+           callprof.overhead_usec);
 }

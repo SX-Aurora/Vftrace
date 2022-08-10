@@ -153,11 +153,6 @@ unsigned long long vftr_sizeof_mpiProfile_t(mpiProfile_t mpiProf) {
 }
 #endif
 
-unsigned long long vftr_sizeof_overheadProfile_t(overheadProfile_t overheadProf) {
-   (void) overheadProf;
-   return sizeof(overheadProfile_t);
-}
-
 unsigned long long vftr_sizeof_profile_t(profile_t profile) {
    unsigned long long size = sizeof(profile_t);
    size -= sizeof(callProfile_t);
@@ -166,8 +161,6 @@ unsigned long long vftr_sizeof_profile_t(profile_t profile) {
    size -= sizeof(mpiProfile_t);
    size += vftr_sizeof_mpiProfile_t(profile.mpiProf);
 #endif
-   size -= sizeof(overheadProfile_t);
-   size += vftr_sizeof_overheadProfile_t(profile.overheadProf);
    return size;
 }
 

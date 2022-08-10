@@ -60,13 +60,13 @@ libvftrace_la_SOURCES += vftrace_state.c \
 			 stacks.c \
 			 collate_stacks.c \
 			 collate_profiles.c \
+			 collate_callprofiles.c \
 			 collate_hashes.c \
 			 processes.c \
 			 threads.c \
 			 threadstacks.c \
 			 internal_regions.c \
 			 profiling.c \
-			 overheadprofiling.c \
 			 callprofiling.c \
 			 sampling.c \
 			 timer.c

@@ -1,0 +1,14 @@
+func2<func1<init:
+   calls: 2, time(incl/excl): 7/7 (overhead: 3072)
+func1<init:
+   calls: 3, time(incl/excl): 30/23 (overhead: 899)
+func3<func0<init:
+   calls: 3, time(incl/excl): 8/8 (overhead: 28672)
+init:
+   calls: 1, time(incl/excl): 20/0 (overhead: 0)
+func0<init:
+   calls: 6, time(incl/excl): 60/37 (overhead: 126)
+func4<func0<init:
+   calls: 3, time(incl/excl): 15/13 (overhead: 229376)
+func5<func4<func0<init:
+   calls: 1, time(incl/excl): 2/2 (overhead: 262144)

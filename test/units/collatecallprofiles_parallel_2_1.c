@@ -1,36 +1,33 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#include "environment_types.h"
-#include "environment.h"
 #include "symbol_types.h"
 #include "symbols.h"
 #include "stack_types.h"
 #include "stacks.h"
+#include "collated_stack_types.h"
+#include "collate_stacks.h"
 #include "profiling_types.h"
 #include "profiling.h"
 #include "callprofiling_types.h"
 #include "callprofiling.h"
-#include "collated_stack_types.h"
-#include "collate_stacks.h"
-#include "sorting.h"
-
 #include "dummysymboltable.h"
-
-#ifdef _MPI
 #include <mpi.h>
-#endif
+
 
 int main(int argc, char **argv) {
-#if defined(_MPI)
    PMPI_Init(&argc, &argv);
-#else
-   (void) argc;
-   (void) argv;
-#endif
 
-   environment_t environment;
-   environment = vftr_read_environment();
+   int nranks;
+   PMPI_Comm_size(MPI_COMM_WORLD, &nranks);
+   if (nranks != 2) {
+      fprintf(stderr, "This test requires exacly two processes, "
+              "but was started with %d\n", nranks);
+      return 1;
+   }
+
+   int myrank;
+   PMPI_Comm_rank(MPI_COMM_WORLD, &myrank);
 
    // dummy symboltable
    uintptr_t addrs = 123456;
@@ -146,36 +143,25 @@ int main(int argc, char **argv) {
    profile = stacktree.stacks[func7_idx].profiling.profiles+iprof;
    vftr_accumulate_callprofiling(&(profile->callProf), 1, 2);
    vftr_accumulate_callprofiling_overhead(&(profile->callProf), 262144);
-
+   
    vftr_update_stacks_exclusive_time(&stacktree);
-   // collate stacks to get the global ID
+
    collated_stacktree_t collated_stacktree = vftr_collate_stacks(&stacktree);
-
-   stack_t **stackptrs = vftr_sort_stacks_for_prof(environment, stacktree);
-
-   for (int istack=0; istack<stacktree.nstacks; istack++) {
-      stack_t *stack = stackptrs[istack];
-      int stackID = stack->lid;
-      char *stackstr = vftr_get_stack_string(stacktree, stackID, false);
-      fprintf(stdout, "%d(g%d): %s\n", stackID, stack->gid, stackstr);
-      free(stackstr);
-      int nprofs=stack->profiling.nprofiles;
-      for (int ithread=0; ithread<nprofs; ithread++) {
-         fprintf(stdout, "   Thread: %d (%d)", ithread,
-                 stack->profiling.profiles[ithread].threadID);
-         profile_t *profile = stack->profiling.profiles+ithread;
-         fprintf(stdout, " Overhead: %8lld, ", profile->callProf.overhead_usec);
-         vftr_print_callprofiling(stdout, profile->callProf);
+   if (myrank == 0) {
+      for (int istack=0; istack<collated_stacktree.nstacks; istack++) {
+         char *stackstr = vftr_get_collated_stack_string(collated_stacktree, istack, false);
+         fprintf(stdout, "%s:\n   ", stackstr);
+         vftr_print_callprofiling(stdout,
+            collated_stacktree.stacks[istack].profile.callProf);
+         free(stackstr);
       }
    }
 
    free_dummy_symbol_table(&symboltable);
    vftr_stacktree_free(&stacktree);
    vftr_collated_stacktree_free(&collated_stacktree);
-   vftr_environment_free(&environment);
-#ifdef _MPI
+
    PMPI_Finalize();
-#endif
 
    return 0;
 }

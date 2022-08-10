@@ -28,6 +28,7 @@ AM_LDFLAGS = -L$(top_builddir)/src/.libs -lvftrace -lm
 
 if ENABLE_MPI
   AM_CFLAGS += -D_MPI
+  AM_CXXFLAGS += -D_MPI
 if ENABLE_FORTRAN
   AM_FCFLAGS += -D_MPI
 endif
@@ -38,6 +39,7 @@ endif
 
 if ENABLE_OMP
   AM_CFLAGS += -D_OMP
+  AM_CXXFLAGS += -D_OMP
 if ENABLE_FORTRAN
   AM_FCFLAGS += -D_OMP
 endif

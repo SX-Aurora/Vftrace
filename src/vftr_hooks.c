@@ -27,7 +27,6 @@
 #include "threadstacks.h"
 #include "profiling.h"
 #include "callprofiling.h"
-#include "overheadprofiling.h"
 #include "sampling.h"
 #include "timer.h"
 #ifdef _MPI
@@ -80,7 +79,7 @@ void vftr_function_entry(void *func, void *call_site) {
    }
 
    // No calls after this overhead handling!
-   vftr_accumulate_hook_overheadprofiling(&(my_profile->overheadProf),
+   vftr_accumulate_callprofiling_overhead(&(my_profile->callProf),
       vftr_get_runtime_usec() - function_entry_time_begin);
 }
 
@@ -120,7 +119,7 @@ void vftr_function_exit(void *func, void *call_site) {
                                 function_exit_time_begin);
    }
    // No calls after this overhead handling
-   vftr_accumulate_hook_overheadprofiling(
-      &(my_profile->overheadProf),
+   vftr_accumulate_callprofiling_overhead(
+      &(my_profile->callProf),
       vftr_get_runtime_usec() - function_exit_time_begin);
 }

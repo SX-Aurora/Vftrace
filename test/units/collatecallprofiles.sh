@@ -1,6 +1,6 @@
 #!/bin/bash
 set -x
-test_name=total_hook_overhead
+test_name=collatecallprofiles
 output_file=${test_name}.out
 ref_file=${srcdir}/ref_output/${test_name}.out
 

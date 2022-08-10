@@ -9,6 +9,8 @@ typedef struct {
    // time spend in the function (excluding subfunctions)
    // computed during final stack update
    long long time_excl_usec;
+   // calloverhead induced by vftrace stack bookkeeping
+   long long overhead_usec;
 } callProfile_t;
 
 #endif
