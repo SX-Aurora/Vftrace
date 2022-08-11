@@ -7,14 +7,14 @@
 
 #include "filenames.h"
 #include "environment.h"
-#include "logfile_header.h"
-#include "logfile_prof_table.h"
-#include "logfile_mpi_table.h"
-#include "logfile_stacklist.h"
+#include "ranklogfile_header.h"
+#include "ranklogfile_prof_table.h"
+#include "ranklogfile_mpi_table.h"
+#include "ranklogfile_stacklist.h"
 #include "search.h"
 #include "range_expand.h"
 
-static bool vftr_rank_needs_logfile(environment_t environment, int rank) {
+static bool vftr_rank_needs_ranklogfile(environment_t environment, int rank) {
    char *rangestr = environment.logfile_for_ranks.value.string_val;
    if (!strcmp(rangestr, "all")) {
       return true;
@@ -33,7 +33,7 @@ static bool vftr_rank_needs_logfile(environment_t environment, int rank) {
    }
 }
 
-char *vftr_get_logfile_name(environment_t environment, int rankID, int nranks) {
+char *vftr_get_ranklogfile_name(environment_t environment, int rankID, int nranks) {
    char *filename_base = vftr_create_filename_base(environment, rankID, nranks);
    int filename_base_len = strlen(filename_base);
 
@@ -52,7 +52,7 @@ char *vftr_get_logfile_name(environment_t environment, int rankID, int nranks) {
    return logfile_name;
 }
 
-FILE *vftr_open_logfile(char *filename) {
+FILE *vftr_open_ranklogfile(char *filename) {
    FILE *fp = fopen(filename, "w");
    if (fp == NULL) {
       perror(filename);
@@ -61,33 +61,31 @@ FILE *vftr_open_logfile(char *filename) {
    return fp;
 }
 
-void vftr_write_logfile(vftrace_t vftrace, long long runtime) {
-   if (!vftr_rank_needs_logfile(vftrace.environment, vftrace.process.processID)) {
+void vftr_write_ranklogfile(vftrace_t vftrace, long long runtime) {
+   if (!vftr_rank_needs_ranklogfile(vftrace.environment, vftrace.process.processID)) {
       return;
    }
 
-   char *logfilename = vftr_get_logfile_name(vftrace.environment,
-                                             vftrace.process.processID,
-                                             vftrace.process.nprocesses);
-   FILE *fp = vftr_open_logfile(logfilename);
+   char *logfilename = vftr_get_ranklogfile_name(vftrace.environment,
+                                                 vftrace.process.processID,
+                                                 vftrace.process.nprocesses);
+   FILE *fp = vftr_open_ranklogfile(logfilename);
 
-   vftr_write_logfile_header(fp, vftrace.timestrings);
+   vftr_write_ranklogfile_header(fp, vftrace.timestrings);
 
    long long vftrace_size = vftr_sizeof_vftrace_t(vftrace);
-   vftr_write_logfile_summary(fp, vftrace.process,
-                              vftrace_size, runtime);
+   vftr_write_ranklogfile_summary(fp, vftrace.process,
+                                  vftrace_size, runtime);
 
-   vftr_write_logfile_profile_table(fp, vftrace.process.stacktree,
-                                    vftrace.environment);
+   vftr_write_ranklogfile_profile_table(fp, vftrace.process.stacktree,
+                                        vftrace.environment);
 
 #ifdef _MPI
-   vftr_write_logfile_mpi_table(fp, vftrace.process.stacktree,
-                                vftrace.environment);
+   vftr_write_ranklogfile_mpi_table(fp, vftrace.process.stacktree,
+                                    vftrace.environment);
 #endif
 
-
-
-   vftr_write_logfile_global_stack_list(fp, vftrace.process.collated_stacktree);
+   vftr_write_ranklogfile_global_stack_list(fp, vftrace.process.collated_stacktree);
 
    // print environment info
    vftr_print_environment(fp, vftrace.environment);

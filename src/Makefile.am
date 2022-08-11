@@ -84,10 +84,10 @@ libvftrace_la_SOURCES += search.c \
 			 realloc_consts.c \
 			 license.c \
 			 hashing.c
-libvftrace_la_SOURCES += logfile.c \
-			 logfile_header.c \
-			 logfile_prof_table.c \
-			 logfile_stacklist.c \
+libvftrace_la_SOURCES += ranklogfile.c \
+			 ranklogfile_header.c \
+			 ranklogfile_prof_table.c \
+			 ranklogfile_stacklist.c \
 			 vfdfiles.c
 libvftrace_la_SOURCES += user_regions.c \
 			 user_stack.c

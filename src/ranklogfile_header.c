@@ -20,7 +20,7 @@
 #include "tables.h"
 #include "misc_utils.h"
 
-void vftr_write_logfile_header(FILE *fp, time_strings_t timestrings) {
+void vftr_write_ranklogfile_header(FILE *fp, time_strings_t timestrings) {
    fprintf(fp, "%s\n", PACKAGE_STRING);
    fprintf(fp, "Runtime profile for application:\n");
    fprintf(fp, "Start Date: %s\n", timestrings.start_time);
@@ -28,9 +28,9 @@ void vftr_write_logfile_header(FILE *fp, time_strings_t timestrings) {
    vftr_print_licence(fp);
 }
 
-void vftr_write_logfile_summary(FILE *fp, process_t process,
-                                unsigned long long vftrace_size,
-                                long long runtime) {
+void vftr_write_ranklogfile_summary(FILE *fp, process_t process,
+                                    unsigned long long vftrace_size,
+                                    long long runtime) {
    double runtime_sec = runtime * 1.0e-6;
 
    // get the different accumulated overheads

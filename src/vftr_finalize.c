@@ -8,7 +8,7 @@
 #include "stacks.h"
 #include "threadstacks.h"
 #include "collate_stacks.h"
-#include "logfile.h"
+#include "ranklogfile.h"
 #include "sampling.h"
 #include "timer.h"
 
@@ -46,8 +46,8 @@ void vftr_finalize() {
    vftrace.process.collated_stacktree =
       vftr_collate_stacks(&(vftrace.process.stacktree));
 
-   // write logfile
-   vftr_write_logfile(vftrace, runtime);
+   // write logfile for individual ranks
+   vftr_write_ranklogfile(vftrace, runtime);
 
    // finish sampling
    vftr_finalize_sampling(&(vftrace.sampling), vftrace.environment,

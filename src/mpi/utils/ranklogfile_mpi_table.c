@@ -18,7 +18,7 @@
 #include "tables.h"
 //#include "sorting.h"
 
-int *vftr_logfile_mpi_table_nmessages_list(int nstacks, stack_t **stack_ptrs) {
+int *vftr_ranklogfile_mpi_table_nmessages_list(int nstacks, stack_t **stack_ptrs) {
    int *nmessages_list = (int*) malloc(nstacks*sizeof(int));
    for (int istack=0; istack<nstacks; istack++) {
       stack_t *stack_ptr = stack_ptrs[istack];
@@ -32,7 +32,7 @@ int *vftr_logfile_mpi_table_nmessages_list(int nstacks, stack_t **stack_ptrs) {
    return nmessages_list;
 }
 
-double *vftr_logfile_mpi_table_average_send_bytes_list(int nstacks, stack_t **stack_ptrs) {
+double *vftr_ranklogfile_mpi_table_average_send_bytes_list(int nstacks, stack_t **stack_ptrs) {
    double *avg_send_bytes_list = (double*) malloc(nstacks*sizeof(double));
    for (int istack=0; istack<nstacks; istack++) {
       stack_t *stack_ptr = stack_ptrs[istack];
@@ -52,7 +52,7 @@ double *vftr_logfile_mpi_table_average_send_bytes_list(int nstacks, stack_t **st
    return avg_send_bytes_list;
 }
 
-double *vftr_logfile_mpi_table_average_recv_bytes_list(int nstacks, stack_t **stack_ptrs) {
+double *vftr_ranklogfile_mpi_table_average_recv_bytes_list(int nstacks, stack_t **stack_ptrs) {
    double *avg_recv_bytes_list = (double*) malloc(nstacks*sizeof(double));
    for (int istack=0; istack<nstacks; istack++) {
       stack_t *stack_ptr = stack_ptrs[istack];
@@ -72,7 +72,7 @@ double *vftr_logfile_mpi_table_average_recv_bytes_list(int nstacks, stack_t **st
    return avg_recv_bytes_list;
 }
 
-double *vftr_logfile_mpi_table_average_send_bw_list(int nstacks, stack_t **stack_ptrs) {
+double *vftr_ranklogfile_mpi_table_average_send_bw_list(int nstacks, stack_t **stack_ptrs) {
    double *avg_send_bw_list = (double*) malloc(nstacks*sizeof(double));
    for (int istack=0; istack<nstacks; istack++) {
       stack_t *stack_ptr = stack_ptrs[istack];
@@ -92,7 +92,7 @@ double *vftr_logfile_mpi_table_average_send_bw_list(int nstacks, stack_t **stack
    return avg_send_bw_list;
 }
 
-double *vftr_logfile_mpi_table_average_recv_bw_list(int nstacks, stack_t **stack_ptrs) {
+double *vftr_ranklogfile_mpi_table_average_recv_bw_list(int nstacks, stack_t **stack_ptrs) {
    double *avg_recv_bw_list = (double*) malloc(nstacks*sizeof(double));
    for (int istack=0; istack<nstacks; istack++) {
       stack_t *stack_ptr = stack_ptrs[istack];
@@ -112,7 +112,7 @@ double *vftr_logfile_mpi_table_average_recv_bw_list(int nstacks, stack_t **stack
    return avg_recv_bw_list;
 }
 
-double *vftr_logfile_mpi_table_average_comm_time_list(int nstacks, stack_t **stack_ptrs) {
+double *vftr_ranklogfile_mpi_table_average_comm_time_list(int nstacks, stack_t **stack_ptrs) {
    double *avg_comm_time_list = (double*) malloc(nstacks*sizeof(double));
    for (int istack=0; istack<nstacks; istack++) {
       stack_t *stack_ptr = stack_ptrs[istack];
@@ -134,7 +134,7 @@ double *vftr_logfile_mpi_table_average_comm_time_list(int nstacks, stack_t **sta
    return avg_comm_time_list;
 }
 
-char **vftr_logfile_mpi_table_stack_function_name_list(int nstacks, stack_t **stack_ptrs) {
+char **vftr_ranklogfile_mpi_table_stack_function_name_list(int nstacks, stack_t **stack_ptrs) {
    char **name_list = (char**) malloc(nstacks*sizeof(char*));
    for (int istack=0; istack<nstacks; istack++) {
       stack_t *stack_ptr = stack_ptrs[istack];
@@ -143,7 +143,7 @@ char **vftr_logfile_mpi_table_stack_function_name_list(int nstacks, stack_t **st
    return name_list;
 }
 
-char **vftr_logfile_mpi_table_stack_caller_name_list(int nstacks, stacktree_t stacktree,
+char **vftr_ranklogfile_mpi_table_stack_caller_name_list(int nstacks, stacktree_t stacktree,
                                                      stack_t **stack_ptrs) {
    char **name_list = (char**) malloc(nstacks*sizeof(char*));
    for (int istack=0; istack<nstacks; istack++) {
@@ -158,7 +158,7 @@ char **vftr_logfile_mpi_table_stack_caller_name_list(int nstacks, stacktree_t st
    return name_list;
 }
 
-char **vftr_logfile_mpi_table_callpath_list(int nstacks, stack_t **stack_ptrs,
+char **vftr_ranklogfile_mpi_table_callpath_list(int nstacks, stack_t **stack_ptrs,
                                             stacktree_t stacktree) {
    char **path_list = (char**) malloc(nstacks*sizeof(char*));
    for (int istack=0; istack<nstacks; istack++) {
@@ -169,7 +169,7 @@ char **vftr_logfile_mpi_table_callpath_list(int nstacks, stack_t **stack_ptrs,
    return path_list;
 }
 
-int *vftr_logfile_mpi_table_stack_globalstackID_list(int nstacks, stack_t **stack_ptrs) {
+int *vftr_ranklogfile_mpi_table_stack_globalstackID_list(int nstacks, stack_t **stack_ptrs) {
    int *id_list = (int*) malloc(nstacks*sizeof(int));
    int listidx = 0;
    for (int istack=0; istack<nstacks; istack++) {
@@ -187,7 +187,7 @@ int *vftr_logfile_mpi_table_stack_globalstackID_list(int nstacks, stack_t **stac
    return id_list;
 }
 
-int vftr_logfile_mpi_table_nrows(stacktree_t stacktree) {
+int vftr_ranklogfile_mpi_table_nrows(stacktree_t stacktree) {
    int nstacks = stacktree.nstacks;
    int nrows = 0;
    for (int istack=0; istack<nstacks; istack++) {
@@ -204,7 +204,7 @@ int vftr_logfile_mpi_table_nrows(stacktree_t stacktree) {
    return nrows;
 }
 
-stack_t **vftr_logfile_mpi_table_get_relevant_stacks(int nrows,
+stack_t **vftr_ranklogfile_mpi_table_get_relevant_stacks(int nrows,
                                                      stacktree_t stacktree) {
    stack_t **selected_stacks = (stack_t**) malloc(nrows*sizeof(stack_t));
    int irow = 0;
@@ -223,12 +223,12 @@ stack_t **vftr_logfile_mpi_table_get_relevant_stacks(int nrows,
    return selected_stacks;
 }
 
-void vftr_write_logfile_mpi_table(FILE *fp, stacktree_t stacktree,
+void vftr_write_ranklogfile_mpi_table(FILE *fp, stacktree_t stacktree,
                                   environment_t environment) {
-   int nrows = vftr_logfile_mpi_table_nrows(stacktree);
+   int nrows = vftr_ranklogfile_mpi_table_nrows(stacktree);
    // TODO: sort something
    stack_t **selected_stacks =
-      vftr_logfile_mpi_table_get_relevant_stacks(nrows, stacktree);
+      vftr_ranklogfile_mpi_table_get_relevant_stacks(nrows, stacktree);
 
    fprintf(fp, "\nCommunication profile");
    if (environment.ranks_in_mpi_profile.set) {
@@ -241,36 +241,36 @@ void vftr_write_logfile_mpi_table(FILE *fp, stacktree_t stacktree,
    table_t table = vftr_new_table();
    vftr_table_set_nrows(&table, nrows);
 
-   int *nmessages = vftr_logfile_mpi_table_nmessages_list(nrows, selected_stacks);
+   int *nmessages = vftr_ranklogfile_mpi_table_nmessages_list(nrows, selected_stacks);
    vftr_table_add_column(&table, col_int, "Messages", "%d", 'c', 'r', (void*) nmessages);
 
-   double *avg_send_bytes = vftr_logfile_mpi_table_average_send_bytes_list(nrows, selected_stacks);
+   double *avg_send_bytes = vftr_ranklogfile_mpi_table_average_send_bytes_list(nrows, selected_stacks);
    vftr_table_add_column(&table, col_double, "avg send size/B", "%.3e", 'c', 'r', (void*) avg_send_bytes);
 
-   double *avg_recv_bytes = vftr_logfile_mpi_table_average_recv_bytes_list(nrows, selected_stacks);
+   double *avg_recv_bytes = vftr_ranklogfile_mpi_table_average_recv_bytes_list(nrows, selected_stacks);
    vftr_table_add_column(&table, col_double, "avg recv size/B", "%.3e", 'c', 'r', (void*) avg_recv_bytes);
 
-   double *avg_send_bw = vftr_logfile_mpi_table_average_send_bw_list(nrows, selected_stacks);
+   double *avg_send_bw = vftr_ranklogfile_mpi_table_average_send_bw_list(nrows, selected_stacks);
    vftr_table_add_column(&table, col_double, "avg send BW/B/s", "%.3le", 'c', 'r', (void*) avg_send_bw);
 
-   double *avg_recv_bw = vftr_logfile_mpi_table_average_recv_bw_list(nrows, selected_stacks);
+   double *avg_recv_bw = vftr_ranklogfile_mpi_table_average_recv_bw_list(nrows, selected_stacks);
    vftr_table_add_column(&table, col_double, "avg recv BW/B/s", "%.3le", 'c', 'r', (void*) avg_recv_bw);
 
-   double *avg_comm_time = vftr_logfile_mpi_table_average_comm_time_list(nrows, selected_stacks);
+   double *avg_comm_time = vftr_ranklogfile_mpi_table_average_comm_time_list(nrows, selected_stacks);
    vftr_table_add_column(&table, col_double, "avg comm time/s", "%.3le", 'c', 'r', (void*) avg_comm_time);
 
-   char **function_names = vftr_logfile_mpi_table_stack_function_name_list(nrows, selected_stacks);
+   char **function_names = vftr_ranklogfile_mpi_table_stack_function_name_list(nrows, selected_stacks);
    vftr_table_add_column(&table, col_string, "Function", "%s", 'c', 'r', (void*) function_names);
 
-   char **caller_names = vftr_logfile_mpi_table_stack_caller_name_list(nrows, stacktree, selected_stacks);
+   char **caller_names = vftr_ranklogfile_mpi_table_stack_caller_name_list(nrows, stacktree, selected_stacks);
    vftr_table_add_column(&table, col_string, "Caller", "%s", 'c', 'r', (void*) caller_names);
 
-   int *stack_IDs = vftr_logfile_mpi_table_stack_globalstackID_list(nrows, selected_stacks);
+   int *stack_IDs = vftr_ranklogfile_mpi_table_stack_globalstackID_list(nrows, selected_stacks);
    vftr_table_add_column(&table, col_int, "ID", "%d", 'c', 'r', (void*) stack_IDs);
 
    char **path_list=NULL;
    if (environment.callpath_in_mpi_profile.value.bool_val) {
-      path_list = vftr_logfile_mpi_table_callpath_list(nrows,
+      path_list = vftr_ranklogfile_mpi_table_callpath_list(nrows,
                                                        selected_stacks,
                                                        stacktree);
       vftr_table_add_column(&table, col_string, "Callpath", "%s", 'c', 'r', (void*) path_list);

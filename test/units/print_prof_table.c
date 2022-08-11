@@ -13,7 +13,7 @@
 #include "callprofiling.h"
 #include "collated_stack_types.h"
 #include "collate_stacks.h"
-#include "logfile_prof_table.h"
+#include "ranklogfile_prof_table.h"
 
 #include "dummysymboltable.h"
 
@@ -151,7 +151,7 @@ int main(int argc, char **argv) {
    // collate stacks to get the global ID
    collated_stacktree_t collated_stacktree = vftr_collate_stacks(&stacktree);
 
-   vftr_write_logfile_profile_table(stdout, stacktree, environment);
+   vftr_write_ranklogfile_profile_table(stdout, stacktree, environment);
 
    free_dummy_symbol_table(&symboltable);
    vftr_stacktree_free(&stacktree);

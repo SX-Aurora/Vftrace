@@ -2,7 +2,7 @@
 
 #include "environment_types.h"
 #include "environment.h"
-#include "logfile.h"
+#include "ranklogfile.h"
 #include "vfdfiles.h"
 
 #ifdef _MPI
@@ -27,14 +27,14 @@ int main(int argc, char **argv) {
   mpi_rank = 0;
   mpi_size = 1;
 
-  logfile_name = vftr_get_logfile_name(environment, mpi_rank, mpi_size);
+  logfile_name = vftr_get_ranklogfile_name(environment, mpi_rank, mpi_size);
   fprintf(stdout, "logfile_name(%d, %d): %s\n", mpi_rank, mpi_size, logfile_name);
   free(logfile_name);
 
   mpi_rank = 11;
   mpi_size = 111;
 
-  logfile_name = vftr_get_logfile_name(environment, mpi_rank, mpi_size);
+  logfile_name = vftr_get_ranklogfile_name(environment, mpi_rank, mpi_size);
   fprintf(stdout, "logfile_name(%d, %d): %s\n", mpi_rank, mpi_size, logfile_name);
   free(logfile_name);
 
