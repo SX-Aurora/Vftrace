@@ -54,6 +54,16 @@ if [ "${nwarn}" -ne 0 ] ; then
    exit 1
 fi
 
+export VFTR_LOGFILE_FOR_RANKS="none"
+rm_outfiles
+run_binary
+cat ${error_file}
+nwarn=$(grep "Warning" ${error_file} | wc -l)
+if [ "${nwarn}" -ne 0 ] ; then
+   echo "Expected no warning for environment assertion"
+   exit 1
+fi
+
 export VFTR_LOGFILE_FOR_RANKS="nonsense"
 rm_outfiles
 run_binary

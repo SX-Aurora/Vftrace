@@ -50,6 +50,15 @@ do
    check_logfile_notexists "${irank}"
 done
 
+export VFTR_LOGFILE_FOR_RANKS="none"
+rm_outfiles
+run_binary
+diff ${output_file} ${ref_file} || exit 1
+for irank in $(seq 0 1 $(bc <<< "${nranks}-1"));
+do
+   check_logfile_notexists "${irank}"
+done
+
 export VFTR_LOGFILE_FOR_RANKS="all"
 rm_outfiles
 run_binary

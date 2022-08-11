@@ -14,10 +14,13 @@
 #include "search.h"
 #include "range_expand.h"
 
-static bool vftr_rang_needs_logfile(environment_t environment, int rank) {
+static bool vftr_rank_needs_logfile(environment_t environment, int rank) {
    char *rangestr = environment.logfile_for_ranks.value.string_val;
    if (!strcmp(rangestr, "all")) {
       return true;
+   }
+   if (!strcmp(rangestr, "none")) {
+      return false;
    }
    int nranks = 0;
    int *ranklist = vftr_expand_rangelist(rangestr, &nranks);
@@ -59,7 +62,7 @@ FILE *vftr_open_logfile(char *filename) {
 }
 
 void vftr_write_logfile(vftrace_t vftrace, long long runtime) {
-   if (!vftr_rang_needs_logfile(vftrace.environment, vftrace.process.processID)) {
+   if (!vftr_rank_needs_logfile(vftrace.environment, vftrace.process.processID)) {
       return;
    }
 

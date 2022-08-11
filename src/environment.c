@@ -360,7 +360,11 @@ void vftr_environment_assert_logfile_basename(FILE *fp, env_var_t logfile_basena
 
 void vftr_environment_assert_logfile_for_ranks(FILE *fp, env_var_t logfile_for_ranks) {
    char *rangelist = logfile_for_ranks.value.string_val;
-   if (strcmp(rangelist, "all")) {
+   if (!strcmp(rangelist, "all")) {
+      ;
+   } else if (!strcmp(rangelist, "none")) {
+      ;
+   } else {
       int nvals = 0;
       int *exp_list = vftr_expand_rangelist(rangelist, &nvals);
       if (nvals == 0 || exp_list == NULL) {
