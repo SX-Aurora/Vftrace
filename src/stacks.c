@@ -44,7 +44,8 @@ void vftr_insert_callee(int calleeID, stack_t *caller) {
 }
 
 int vftr_new_stack(int callerID, stacktree_t *stacktree_ptr,
-                   const char *name, stack_kind_t stack_kind,
+                   const char *name, const char *cleanname,
+                   stack_kind_t stack_kind,
                    uintptr_t address, bool precise) {
    int stackID = stacktree_ptr->nstacks;
    stacktree_ptr->nstacks++;
@@ -63,6 +64,7 @@ int vftr_new_stack(int callerID, stacktree_t *stacktree_ptr,
    stack->lid = stackID;
 
    stack->name = strdup(name);
+   stack->cleanname = strdup(cleanname);
 
    stack->profiling = vftr_new_profilelist();
    vftr_insert_callee(stack->lid, callerstack);
@@ -82,6 +84,7 @@ stack_t vftr_first_stack() {
    stack.lid = 0;
    stack.gid = 0;
    stack.name = strdup("init");
+   stack.cleanname = strdup(stack.name);
    stack.profiling = vftr_new_profilelist();
    vftr_new_profile_in_list(0, &(stack.profiling));
    stack.hash = 0;
@@ -100,6 +103,7 @@ void vftr_stack_free(stack_t *stacks_ptr, int stackID) {
    }
    vftr_profilelist_free(&(stack.profiling));
    free(stack.name);
+   free(stack.cleanname);
    stacks_ptr[stackID] = stack;
 }
 
@@ -154,11 +158,11 @@ void vftr_print_stacktree(FILE *fp, stacktree_t stacktree) {
 int vftr_get_stack_string_length(stacktree_t stacktree, int stackid, bool show_precise) {
    int stringlen = 0;
    int tmpstackid = stackid;
-   stringlen += strlen(stacktree.stacks[stackid].name);
+   stringlen += strlen(stacktree.stacks[stackid].cleanname);
    stringlen ++; // function seperating character "<", or null terminator
    while (stacktree.stacks[tmpstackid].caller >= 0) {
       tmpstackid = stacktree.stacks[tmpstackid].caller;
-      stringlen += strlen(stacktree.stacks[tmpstackid].name);
+      stringlen += strlen(stacktree.stacks[tmpstackid].cleanname);
       stringlen ++; // function seperating character "<", or null terminator
       if (show_precise && stacktree.stacks[tmpstackid].precise) {
          stringlen ++; // '*' for indicating precise functions
@@ -173,7 +177,7 @@ char *vftr_get_stack_string(stacktree_t stacktree, int stackid, bool show_precis
    // copy the chars one by one so there is no need to call strlen again.
    // thus minimizing reading the same memory locations over and over again.
    int tmpstackid = stackid;
-   char *tmpname_ptr = stacktree.stacks[tmpstackid].name;
+   char *tmpname_ptr = stacktree.stacks[tmpstackid].cleanname;
    char *tmpstackstring_ptr = stackstring;
    while (*tmpname_ptr != '\0') {
       *tmpstackstring_ptr = *tmpname_ptr;
@@ -189,7 +193,7 @@ char *vftr_get_stack_string(stacktree_t stacktree, int stackid, bool show_precis
       *tmpstackstring_ptr = '<';
       tmpstackstring_ptr++;
       tmpstackid = stacktree.stacks[tmpstackid].caller;
-      char *tmpname_ptr = stacktree.stacks[tmpstackid].name;
+      char *tmpname_ptr = stacktree.stacks[tmpstackid].cleanname;
       while (*tmpname_ptr != '\0') {
          *tmpstackstring_ptr = *tmpname_ptr;
          tmpstackstring_ptr++;

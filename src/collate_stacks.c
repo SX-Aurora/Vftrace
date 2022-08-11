@@ -186,7 +186,7 @@ collated_stacktree_t vftr_collate_stacks(stacktree_t *stacktree_ptr) {
          global_stack->gid = gid;
          global_stack->precise = local_stack->precise;
          global_stack->caller = -1;
-         global_stack->name = strdup(local_stack->name);
+         global_stack->name = strdup(local_stack->cleanname);
       }
       for (int lid=1; lid<stacktree_ptr->nstacks; lid++) {
          stack_t *local_stack = stacktree_ptr->stacks+lid;
@@ -196,7 +196,7 @@ collated_stacktree_t vftr_collate_stacks(stacktree_t *stacktree_ptr) {
          global_stack->gid = gid;
          global_stack->precise = local_stack->precise;
          global_stack->caller = local2global_ID[local_stack->caller];
-         global_stack->name = strdup(local_stack->name);
+         global_stack->name = strdup(local_stack->cleanname);
       }
    }
 
@@ -310,7 +310,7 @@ collated_stacktree_t vftr_collate_stacks(stacktree_t *stacktree_ptr) {
                      stack_t *local_stack = stacktree_ptr->stacks+locID;
                      missingStackInfo[4*imatch+1] = local2global_ID[local_stack->caller];
                      // add one to length due to null terminator
-                     missingStackInfo[4*imatch+2] = strlen(local_stack->name) + 1;
+                     missingStackInfo[4*imatch+2] = strlen(local_stack->cleanname) + 1;
                      missingStackInfo[4*imatch+3] = local_stack->precise ? 1 : 0;
                      imatch++;
                   }
@@ -328,7 +328,7 @@ collated_stacktree_t vftr_collate_stacks(stacktree_t *stacktree_ptr) {
                for (int istack=0; istack<hasnmissing; istack++) {
                   int globID = missingStackInfo[4*istack+0];
                   int locID = global2local_ID[globID];
-                  strcpy(tmpstrptr, stacktree_ptr->stacks[locID].name);
+                  strcpy(tmpstrptr, stacktree_ptr->stacks[locID].cleanname);
                   tmpstrptr += missingStackInfo[4*istack+2]-1;
                   // add null terminator
                   *tmpstrptr = '\0';

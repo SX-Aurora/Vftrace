@@ -86,12 +86,13 @@ threadstack_t *vftr_update_threadstack_function(threadstack_t *my_threadstack,
    if (calleeID < 0) {
       int symbID = vftr_get_symbID_from_address(vftrace->symboltable, func_addr);
       char *name = vftr_get_name_from_symbID(vftrace->symboltable, symbID);
+      char *cleanname = vftr_get_cleanname_from_symbID(vftrace->symboltable, symbID);
       bool precise = vftr_get_preciseness_from_symbID(vftrace->symboltable, symbID);
       // if the function was not found, create a new stack entry
       // and add its id to the callee list
       calleeID = vftr_new_stack(my_threadstack->stackID,
                                 &(vftrace->process.stacktree),
-                                name, function, func_addr,
+                                name, cleanname, function, func_addr,
                                 precise);
    }
    // push the function onto the threads stacklist
@@ -117,7 +118,7 @@ threadstack_t *vftr_update_threadstack_region(threadstack_t *my_threadstack,
       // and add its id to the callee list
       calleeID = vftr_new_stack(my_threadstack->stackID,
                                 &(vftrace->process.stacktree),
-                                name,
+                                name, name,
                                 stack_kind,
                                 region_addr,
                                 precise);

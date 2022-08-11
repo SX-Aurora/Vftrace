@@ -220,14 +220,14 @@ void vftr_write_vfd_stacks(sampling_t *sampling, stacktree_t stacktree) {
       // precisely sampled functions are marked
       // with a '*' after their name
       if (stack.precise) {
-         int namelen = strlen(stack.name) + 2; // +1 for '*' and +1 for null terminator
+         int namelen = strlen(stack.cleanname) + 2; // +1 for '*' and +1 for null terminator
          fwrite(&namelen, sizeof(int), 1, fp);
-         fwrite(stack.name, sizeof(char), namelen-2, fp);
+         fwrite(stack.cleanname, sizeof(char), namelen-2, fp);
          fwrite("*", sizeof(char), 2, fp);
       } else {
-         int namelen = strlen(stack.name) + 1; // +1 for null terminator
+         int namelen = strlen(stack.cleanname) + 1; // +1 for null terminator
          fwrite(&namelen, sizeof(int), 1, fp);
-         fwrite(stack.name, sizeof(char), namelen, fp);
+         fwrite(stack.cleanname, sizeof(char), namelen, fp);
       }
    }
 }

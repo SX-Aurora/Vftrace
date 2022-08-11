@@ -32,9 +32,9 @@ typedef struct {
    // global stack ID
    int gid;
    // name of function on top of stack
-   // only a pointer to the symbol table entry
-   // no need to deallocate
    char *name;
+   // cleaned (module striped, or demangled) name
+   char *cleanname;
    // profiling data
    profilelist_t profiling;
    // Data that is filled in during finalization

@@ -10,7 +10,8 @@
 
 typedef struct {
    uintptr_t addr;
-   char *name; // (de-mangled) function name
+   char *name; // function name
+   char *cleanname; // de-mangled/striped function name
    int index; // Section index
    bool precise; // whether function is traced precisecly
 } symbol_t;

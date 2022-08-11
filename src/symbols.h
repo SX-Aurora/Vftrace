@@ -35,6 +35,12 @@ char *vftr_get_name_from_address(symboltable_t symboltable,
 char *vftr_get_name_from_symbID(symboltable_t symboltable,
                                 int symbID);
 
+char *vftr_get_cleanname_from_address(symboltable_t symboltable,
+                                      uintptr_t address);
+
+char *vftr_get_cleanname_from_symbID(symboltable_t symboltable,
+                                     int symbID);
+
 bool vftr_get_preciseness_from_address(symboltable_t symboltable,
                                        uintptr_t address);
 

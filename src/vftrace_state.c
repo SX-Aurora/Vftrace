@@ -130,6 +130,7 @@ unsigned long long vftr_sizeof_environment_t(environment_t environment) {
 unsigned long long vftr_sizeof_symbol_t(symbol_t symbol) {
    unsigned long long size = sizeof(symbol);
    size += strlen(symbol.name)*sizeof(char);
+   size += strlen(symbol.cleanname)*sizeof(char);
    return size;
 }
 
@@ -181,6 +182,7 @@ unsigned long long vftr_sizeof_profilelist_t(profilelist_t profiling) {
 unsigned long long vftr_sizeof_stack_t(stack_t stack) {
    unsigned long long size = sizeof(stack_t);
    size += strlen(stack.name)*sizeof(char);
+   size += strlen(stack.cleanname)*sizeof(char);
    size -= sizeof(profilelist_t);
    size += vftr_sizeof_profilelist_t(stack.profiling);
    return size;

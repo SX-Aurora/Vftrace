@@ -9,7 +9,8 @@
 #include "stack_types.h"
 
 int vftr_new_stack(int callerID, stacktree_t *stacktree_ptr,
-                   const char *name, stack_kind_t stack_kind,
+                   const char *name, const char *cleanname,
+                   stack_kind_t stack_kind,
                    uintptr_t address, bool precise);
 
 stacktree_t vftr_new_stacktree();

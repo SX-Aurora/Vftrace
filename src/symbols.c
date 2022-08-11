@@ -125,7 +125,7 @@ void vftr_print_symbol_table(FILE *fp, symboltable_t symboltable) {
               symboltable.symbols[isym].index,
               (unsigned long long int)
               symboltable.symbols[isym].addr,
-              symboltable.symbols[isym].name,
+              symboltable.symbols[isym].cleanname,
               symboltable.symbols[isym].precise ? "*" : "");
    }
    fprintf(fp, "\n");
@@ -263,6 +263,8 @@ symboltable_t vftr_read_symbols_from_library(library_t library) {
             symboltable.symbols[jsymb].index = s.st_shndx;
             // remove trailing fortran underscore
             vftr_chop_trailing_char(symboltable.symbols[jsymb].name, '_');
+            symboltable.symbols[jsymb].cleanname =
+               strdup(symboltable.symbols[jsymb].name);
 
             // set precise value to default: false
             symboltable.symbols[jsymb].precise = false;
@@ -317,7 +319,7 @@ void vftr_symboltable_determine_preciseness(symboltable_t *symboltable_ptr,
    // regex to check for the vftrace internal pause/resume functions
    regex_t *pause_regex = vftr_compile_regexp("^vftrace_(pause|resume)$");
    for (unsigned int isym=0; isym<symboltable_ptr->nsymbols; isym++) {
-      char *name = symboltable_ptr->symbols[isym].name;
+      char *name = symboltable_ptr->symbols[isym].cleanname;
       bool precise;
       precise = vftr_pattern_match(preciseregex, name);
 #ifdef _MPI
@@ -346,7 +348,7 @@ void vftr_symboltable_strip_fortran_module_name(symboltable_t *symboltable_ptr,
       };
 
       for (unsigned int isym=0; isym<symboltable_ptr->nsymbols; isym++) {
-         char *name = symboltable_ptr->symbols[isym].name;
+         char *name = symboltable_ptr->symbols[isym].cleanname;
          for (int idelim=0; idelim<nmodule_delimiters; idelim++) {
             vftr_trim_left_with_delimiter(name, module_delimiters[idelim]);
          }
@@ -411,10 +413,10 @@ void vftr_symboltable_demangle_cxx_name(symboltable_t *symboltable_ptr,
                                         bool demangle_cxx) {
    if (demangle_cxx) {
       for (unsigned int isym=0; isym<symboltable_ptr->nsymbols; isym++) {
-         char *name = symboltable_ptr->symbols[isym].name;
+         char *name = symboltable_ptr->symbols[isym].cleanname;
          char *demang_name = vftr_demangle_cxx(name);
-         free(symboltable_ptr->symbols[isym].name);
-         symboltable_ptr->symbols[isym].name = demang_name;
+         free(symboltable_ptr->symbols[isym].cleanname);
+         symboltable_ptr->symbols[isym].cleanname = demang_name;
       }
    }
 }
@@ -426,6 +428,8 @@ void vftr_symboltable_free(symboltable_t *symboltable_ptr) {
       for (unsigned int isym=0; isym<symboltable.nsymbols; isym++) {
          free(symboltable.symbols[isym].name);
          symboltable.symbols[isym].name = NULL;
+         free(symboltable.symbols[isym].cleanname);
+         symboltable.symbols[isym].cleanname = NULL;
       }
       free(symboltable.symbols);
       symboltable.nsymbols = 0;
@@ -454,6 +458,26 @@ char *vftr_get_name_from_symbID(symboltable_t symboltable,
                                 int symbID) {
    if (symbID >= 0) {
       return symboltable.symbols[symbID].name;
+   } else {
+      return "(UnknownFunctionName)";
+   }
+}
+
+char *vftr_get_cleanname_from_address(symboltable_t symboltable,
+                                      uintptr_t address) {
+   int symbID = vftr_get_symbID_from_address(symboltable,
+                                             address);
+   if (symbID >= 0) {
+      return symboltable.symbols[symbID].cleanname;
+   } else {
+      return "(UnknownFunctionName)";
+   }
+}
+
+char *vftr_get_cleanname_from_symbID(symboltable_t symboltable,
+                                     int symbID) {
+   if (symbID >= 0) {
+      return symboltable.symbols[symbID].cleanname;
    } else {
       return "(UnknownFunctionName)";
    }

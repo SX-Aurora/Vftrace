@@ -100,7 +100,7 @@ char **vftr_logfile_prof_table_stack_function_name_list(int nstacks, stack_t **s
    char **name_list = (char**) malloc(nstacks*sizeof(char*));
    for (int istack=0; istack<nstacks; istack++) {
       stack_t *stack_ptr = stack_ptrs[istack];
-      name_list[istack] = stack_ptr->name;
+      name_list[istack] = stack_ptr->cleanname;
    }
    return name_list;
 }
@@ -113,7 +113,7 @@ char **vftr_logfile_prof_table_stack_caller_name_list(stacktree_t stacktree, sta
       stack_t *stack_ptr = stack_ptrs[istack];
       int callerID = stack_ptr->caller;
       if (callerID >= 0) {
-         name_list[istack] = stacktree.stacks[callerID].name;
+         name_list[istack] = stacktree.stacks[callerID].cleanname;
       } else {
          name_list[istack] = "----";
       }
