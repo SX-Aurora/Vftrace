@@ -83,6 +83,19 @@ long long *vftr_get_total_call_overhead(stacktree_t stacktree, int nthreads) {
    return overheads_usec;
 }
 
+long long vftr_get_total_collated_call_overhead(collated_stacktree_t stacktree) {
+   // accumulate the hook overhead for each thread separately
+   long long overheads_usec = 0ll;
+
+   int nstacks = stacktree.nstacks;
+   for (int istack=0; istack<nstacks; istack++) {
+      collated_stack_t *stack = stacktree.stacks+istack;
+      profile_t *prof = &(stack->profile);
+      overheads_usec += prof->callProf.overhead_usec;
+   }
+   return overheads_usec;
+}
+
 void vftr_callprofiling_free(callProfile_t *callprof_ptr) {
    (void) callprof_ptr;
 }
