@@ -33,8 +33,15 @@ char *vftr_create_filename_base(environment_t environment, int rankID, int nrank
    int exe_name_len = strlen(exe_name);
 
    // rankID (leading zeroes for nice sorting among ranks):
-   int ndigits = vftr_count_base_digits(nranks, 10);
-   int rankID_len = snprintf(NULL, 0, "%0*d", ndigits, rankID);
+   int ndigits = 0;
+   int rankID_len = 0;
+   char *allstr = "all";
+   if (rankID < 0) {
+      rankID_len = strlen(allstr);
+   } else {
+      ndigits = vftr_count_base_digits(nranks, 10);
+      rankID_len = snprintf(NULL, 0, "%0*d", ndigits, rankID);
+   }
 
    // construct filename base
    int total_len = out_dir_len +
@@ -48,8 +55,13 @@ char *vftr_create_filename_base(environment_t environment, int rankID, int nrank
    strcat(filename_base, "/");
    strcat(filename_base, exe_name);
    filename_base[out_dir_len+1+exe_name_len] = '_';
-   snprintf(out_dir_len+1+filename_base+exe_name_len+1, rankID_len+1,
-            "%0*d", ndigits, rankID);
+   if (rankID < 0) {
+      snprintf(out_dir_len+1+filename_base+exe_name_len+1, rankID_len+1,
+               "%*s", ndigits, allstr);
+   } else {
+      snprintf(out_dir_len+1+filename_base+exe_name_len+1, rankID_len+1,
+               "%0*d", ndigits, rankID);
+   }
 
    free(exe_name);
    free(out_dir);
