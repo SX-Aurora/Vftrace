@@ -27,6 +27,7 @@
 #include "process_types.h"
 #include "sampling_types.h"
 #include "timer_types.h"
+#include "size_types.h"
 #ifdef _OMP
 #include "omp/omp_state_types.h"
 #endif
@@ -58,6 +59,7 @@ typedef struct {
 #ifdef _MPI
    mpi_state_t mpi_state;
 #endif
+   vftr_size_t size;
 } vftrace_t;
 
 extern vftrace_t vftrace;

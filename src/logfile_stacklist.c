@@ -7,7 +7,7 @@
 #include "collate_stacks.h"
 #include "tables.h"
 
-void vftr_write_ranklogfile_global_stack_list(FILE *fp, collated_stacktree_t stacktree) {
+void vftr_write_logfile_global_stack_list(FILE *fp, collated_stacktree_t stacktree) {
    fprintf(fp, "\nGlobal call stacks:\n");
 
    table_t table = vftr_new_table();

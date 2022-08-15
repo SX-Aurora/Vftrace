@@ -58,10 +58,12 @@ libvftrace_la_SOURCES += vftrace_state.c \
 			 vftr_initialize.c \
 			 vftr_finalize.c \
 			 stacks.c \
+			 collate_ranks.c \
 			 collate_stacks.c \
 			 collate_profiles.c \
 			 collate_callprofiles.c \
 			 collate_hashes.c \
+			 collate_vftr_size.c \
 			 processes.c \
 			 threads.c \
 			 threadstacks.c \
@@ -84,10 +86,13 @@ libvftrace_la_SOURCES += search.c \
 			 realloc_consts.c \
 			 license.c \
 			 hashing.c
-libvftrace_la_SOURCES += ranklogfile.c \
+libvftrace_la_SOURCES += logfile.c \
+			 logfile_header.c \
+			 logfile_prof_table.c \
+			 logfile_stacklist.c \
+			 ranklogfile.c \
 			 ranklogfile_header.c \
 			 ranklogfile_prof_table.c \
-			 ranklogfile_stacklist.c \
 			 vfdfiles.c
 libvftrace_la_SOURCES += user_regions.c \
 			 user_stack.c

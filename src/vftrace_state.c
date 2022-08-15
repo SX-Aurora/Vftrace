@@ -85,6 +85,10 @@ vftrace_t vftrace = {
    .timestrings = {
       .start_time = NULL,
       .end_time = NULL
+   },
+   .size = {
+      .rank_wise = 0ll,
+      .total = 0ll
    }
 };
 
@@ -309,6 +313,11 @@ unsigned long long vftr_sizeof_mpi_state_t(mpi_state_t mpi_state) {
 }
 #endif
 
+unsigned long long vftr_sizeof_vftr_size_t(vftr_size_t size) {
+   (void) size;
+   return sizeof(vftr_size_t);
+}
+
 unsigned long long vftr_sizeof_vftrace_t(vftrace_t vftrace_state) {
    unsigned long long size = sizeof(vftrace_t);
    // need to subtract the size of the types themselves (padding remains)
@@ -335,5 +344,7 @@ unsigned long long vftr_sizeof_vftrace_t(vftrace_t vftrace_state) {
    size -= sizeof(mpi_state_t);
    size += vftr_sizeof_mpi_state_t(vftrace_state.mpi_state);
 #endif
+   size -= sizeof(vftr_size_t);
+   size += vftr_sizeof_vftr_size_t(vftrace_state.size);
    return size;
 }

@@ -7,7 +7,8 @@
 #include "processes.h"
 #include "stacks.h"
 #include "threadstacks.h"
-#include "collate_stacks.h"
+#include "collate_ranks.h"
+#include "logfile.h"
 #include "ranklogfile.h"
 #include "sampling.h"
 #include "timer.h"
@@ -41,11 +42,13 @@ void vftr_finalize() {
    // finalize stacks
    vftr_finalize_stacktree(&(vftrace.process.stacktree));
 
-   // collate stacks among all processes
+   // collate stacks and other information
+   // among all processes
    // to get a global ordering of stacks
-   vftrace.process.collated_stacktree =
-      vftr_collate_stacks(&(vftrace.process.stacktree));
+   vftr_collate_ranks(&vftrace);
 
+   // write summary logfile for all ranks
+   vftr_write_logfile(vftrace, runtime);
    // write logfile for individual ranks
    vftr_write_ranklogfile(vftrace, runtime);
 
