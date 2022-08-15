@@ -34,4 +34,6 @@ void vftr_free_profiled_ranks_list(mpi_state_t *mpi_state);
 
 long long *vftr_get_total_mpi_overhead(stacktree_t stacktree, int nthreads);
 
+long long *vftr_get_total_collated_mpi_overhead(collated_stacktree_t stacktree);
+
 #endif
