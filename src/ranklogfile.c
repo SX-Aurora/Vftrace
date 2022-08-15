@@ -10,7 +10,7 @@
 #include "ranklogfile_header.h"
 #include "ranklogfile_prof_table.h"
 #include "ranklogfile_mpi_table.h"
-#include "ranklogfile_stacklist.h"
+#include "logfile_stacklist.h"
 #include "search.h"
 #include "range_expand.h"
 
@@ -73,9 +73,8 @@ void vftr_write_ranklogfile(vftrace_t vftrace, long long runtime) {
 
    vftr_write_ranklogfile_header(fp, vftrace.timestrings);
 
-   long long vftrace_size = vftr_sizeof_vftrace_t(vftrace);
    vftr_write_ranklogfile_summary(fp, vftrace.process,
-                                  vftrace_size, runtime);
+                                  vftrace.size, runtime);
 
    vftr_write_ranklogfile_profile_table(fp, vftrace.process.stacktree,
                                         vftrace.environment);
@@ -85,7 +84,7 @@ void vftr_write_ranklogfile(vftrace_t vftrace, long long runtime) {
                                     vftrace.environment);
 #endif
 
-   vftr_write_ranklogfile_global_stack_list(fp, vftrace.process.collated_stacktree);
+   vftr_write_logfile_global_stack_list(fp, vftrace.process.collated_stacktree);
 
    // print environment info
    vftr_print_environment(fp, vftrace.environment);

@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 
+#include "size_types.h"
 #include "timer_types.h"
 #include "table_types.h"
 #include "environment_types.h"
@@ -29,7 +30,7 @@ void vftr_write_ranklogfile_header(FILE *fp, time_strings_t timestrings) {
 }
 
 void vftr_write_ranklogfile_summary(FILE *fp, process_t process,
-                                    unsigned long long vftrace_size,
+                                    vftr_size_t vftrace_size,
                                     long long runtime) {
    double runtime_sec = runtime * 1.0e-6;
 
@@ -99,8 +100,8 @@ void vftr_write_ranklogfile_summary(FILE *fp, process_t process,
 #endif
    }
 
-   char *unit = vftr_byte_unit(vftrace_size);
-   double vftrace_size_double = (double) vftrace_size;
+   char *unit = vftr_byte_unit(vftrace_size.rank_wise);
+   double vftrace_size_double = (double) vftrace_size.rank_wise;
    while (vftrace_size_double > 1024.0) {vftrace_size_double /= 1024;}
    fprintf(fp, "Vftrace used memory:   %7.2lf %s\n", vftrace_size_double, unit);
    free(unit);
