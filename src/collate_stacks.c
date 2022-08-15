@@ -14,7 +14,6 @@
 #include "collate_hashes.h"
 #include "search.h"
 #include "profiling.h"
-#include "collate_profiles.h"
 
 collated_stacktree_t vftr_new_empty_collated_stacktree() {
    collated_stacktree_t stacktree;
@@ -351,8 +350,6 @@ collated_stacktree_t vftr_collate_stacks(stacktree_t *stacktree_ptr) {
 
    free(local2global_ID);
    free(global2local_ID);
-
-   vftr_collate_profiles(&coll_stacktree, stacktree_ptr);
 
    return coll_stacktree;
 }
