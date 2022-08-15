@@ -2,6 +2,7 @@
 #include <stdlib.h>
 
 #include "stack_types.h"
+#include "collated_stack_types.h"
 
 #define MAKE_APPLY_PERM_NAME(x) vftr_apply_perm_ ## x
 #define APPLY_PERM_NAME(typestr) MAKE_APPLY_PERM_NAME(typestr)

@@ -2,7 +2,8 @@ noinst_LTLIBRARIES = libvftr_sorting.la
 libvftr_sorting_la_LIBADD =
 libvftr_sorting_la_SOURCES = sort_utils.c \
 			     sorting_symboltable.c \
-			     sorting_stacks.c
+			     sorting_stacks.c \
+			     sorting_collated_stacks.c
 libvftr_sorting_la_CFLAGS = -I${srcdir}/../
 if ENABLE_MPI
 libvftr_sorting_la_CFLAGS += -D_MPI -I${srcdir}/../mpi/utils/
@@ -64,7 +65,16 @@ libvftr_apply_perm_float_la_CFLAGS = -DTYPE="float" -DTYPESTR="float" -I${srcdir
 noinst_LTLIBRARIES += libvftr_apply_perm_stackptr.la
 libvftr_sorting_la_LIBADD += libvftr_apply_perm_stackptr.la
 libvftr_apply_perm_stackptr_la_SOURCES = apply_perm.c
-libvftr_apply_perm_stackptr_la_CFLAGS = -DTYPE="stack_t*" -DTYPESTR="stackptr" -I${srcdir}/../
+libvftr_apply_perm_stackptr_la_CFLAGS = -DTYPE="stack_t*" -DTYPESTR="stackptr" \
+					-I${srcdir}/../
+
+noinst_LTLIBRARIES += libvftr_apply_perm_collated_stackptr.la
+libvftr_sorting_la_LIBADD += libvftr_apply_perm_collated_stackptr.la
+libvftr_apply_perm_collated_stackptr_la_SOURCES = apply_perm.c
+libvftr_apply_perm_collated_stackptr_la_CFLAGS = -DTYPE="collated_stack_t*" \
+						 -DTYPESTR="collated_stackptr" \
+						 -I${srcdir}/../
+
 if ENABLE_MPI
 libvftr_apply_perm_stackptr_la_CFLAGS += -D_MPI -I${srcdir}/../mpi/utils/
 endif

@@ -7,6 +7,7 @@
 
 #include "symbols.h"
 #include "stack_types.h"
+#include "collated_stack_types.h"
 #include "environment_types.h"
 
 // sorts a list of integers with linear scaling radix sort
@@ -51,5 +52,10 @@ void vftr_sort_symboltable(unsigned int nsymb, symbol_t *symbols);
 void vftr_apply_perm_stackptr(int n, stack_t **list, int *perm);
 stack_t **vftr_sort_stacks_for_prof(environment_t environment,
                                     stacktree_t stacktree);
+
+// sort the collated stacks based on a set environment variable
+void vftr_apply_perm_collated_stackptr(int n, collated_stack_t **list, int *perm);
+collated_stack_t **vftr_sort_collated_stacks_for_prof(environment_t environment,
+                                                      collated_stacktree_t stacktree);
 
 #endif

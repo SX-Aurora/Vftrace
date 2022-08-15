@@ -92,7 +92,8 @@ endif
 if ENABLE_OMP
 check_PROGRAMS += total_omp_overhead
 endif
-check_PROGRAMS += sorting_stacks
+check_PROGRAMS += sorting_stacks \
+		  sorting_collated_stacks
 check_PROGRAMS += print_prof_table
 if ENABLE_MPI
 check_PROGRAMS += print_mpi_table
@@ -314,6 +315,11 @@ sorting_stacks_SOURCES = $(srcdir)/sorting_stacks.c \
 sorting_stacks_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src -I$(top_srcdir)/src/sorting/
 sorting_stacks_LDFLAGS = $(AM_LDFLAGS)
 
+sorting_collated_stacks_SOURCES = $(srcdir)/sorting_collated_stacks.c \
+				  $(srcdir)/dummysymboltable.c
+sorting_collated_stacks_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src -I$(top_srcdir)/src/sorting/
+sorting_collated_stacks_LDFLAGS = $(AM_LDFLAGS)
+
 print_prof_table_SOURCES = $(srcdir)/print_prof_table.c \
 			   $(srcdir)/dummysymboltable.c
 print_prof_table_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
@@ -418,6 +424,12 @@ dist_check_SCRIPTS += sorting_stacks_none.sh \
 		      sorting_stacks_stackid.sh \
 		      sorting_stacks_texcl.sh \
 		      sorting_stacks_tincl.sh
+dist_check_SCRIPTS += sorting_collated_stacks_none.sh \
+		      sorting_collated_stacks_calls.sh \
+		      sorting_collated_stacks_overhead.sh \
+		      sorting_collated_stacks_stackid.sh \
+		      sorting_collated_stacks_texcl.sh \
+		      sorting_collated_stacks_tincl.sh
 dist_check_SCRIPTS += print_prof_table.sh
 if ENABLE_MPI
 dist_check_SCRIPTS += print_mpi_table.sh
