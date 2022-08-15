@@ -13,6 +13,7 @@
 #include "callprofiling.h"
 #include "collated_stack_types.h"
 #include "collate_stacks.h"
+#include "collate_profiles.h"
 
 #include "dummysymboltable.h"
 
@@ -146,6 +147,7 @@ int main(int argc, char **argv) {
    vftr_update_stacks_exclusive_time(&stacktree);
    // collate stacks to get the global ID
    collated_stacktree_t collated_stacktree = vftr_collate_stacks(&stacktree);
+   vftr_collate_profiles(&collated_stacktree, &stacktree);
 
    for (int istack=0; istack<collated_stacktree.nstacks; istack++) {
       char *stackstr = vftr_get_collated_stack_string(collated_stacktree, istack, false);

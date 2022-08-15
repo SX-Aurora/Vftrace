@@ -12,6 +12,9 @@
 #include "callprofiling_types.h"
 #include "callprofiling.h"
 #include "dummysymboltable.h"
+#include "collated_stack_types.h"
+#include "collate_stacks.h"
+#include "collate_profiles.h"
 #include <mpi.h>
 
 
@@ -237,6 +240,8 @@ int main(int argc, char **argv) {
    vftr_update_stacks_exclusive_time(&stacktree);
 
    collated_stacktree_t collated_stacktree = vftr_collate_stacks(&stacktree);
+   vftr_collate_profiles(&collated_stacktree, &stacktree);
+
    if (myrank == 0) {
       for (int istack=0; istack<collated_stacktree.nstacks; istack++) {
          char *stackstr = vftr_get_collated_stack_string(collated_stacktree, istack, false);
