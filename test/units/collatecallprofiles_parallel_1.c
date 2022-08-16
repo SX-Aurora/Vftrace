@@ -5,8 +5,6 @@
 #include "symbols.h"
 #include "stack_types.h"
 #include "stacks.h"
-#include "collated_stack_types.h"
-#include "collate_stacks.h"
 #include "profiling_types.h"
 #include "profiling.h"
 #include "callprofiling_types.h"
@@ -16,7 +14,6 @@
 #include "collate_stacks.h"
 #include "collate_profiles.h"
 #include <mpi.h>
-
 
 int main(int argc, char **argv) {
    PMPI_Init(&argc, &argv);
