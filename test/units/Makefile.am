@@ -78,6 +78,12 @@ check_PROGRAMS += collatecallprofiles_parallel_1 \
 		  collatecallprofiles_parallel_2_1 \
 		  collatecallprofiles_parallel_2_2
 endif
+if ENABLE_MPI
+check_PROGRAMS += collatempiprofiles \
+		  collatempiprofiles_parallel_1 \
+		  collatempiprofiles_parallel_2_1 \
+		  collatempiprofiles_parallel_2_2
+endif
 
 check_PROGRAMS += stacktree \
 		  stacklist \
@@ -263,6 +269,29 @@ collatecallprofiles_parallel_2_2_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
 collatecallprofiles_parallel_2_2_LDFLAGS = $(AM_LDFLAGS)
 endif
 
+if ENABLE_MPI
+collatempiprofiles_SOURCES = $(srcdir)/collatempiprofiles.c \
+			     $(srcdir)/dummysymboltable.c
+collatempiprofiles_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
+collatempiprofiles_LDFLAGS = $(AM_LDFLAGS)
+
+collatempiprofiles_parallel_1_SOURCES = $(srcdir)/collatempiprofiles_parallel_1.c \
+					$(srcdir)/dummysymboltable.c
+collatempiprofiles_parallel_1_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
+collatempiprofiles_parallel_1_LDFLAGS = $(AM_LDFLAGS)
+
+collatempiprofiles_parallel_2_1_SOURCES = $(srcdir)/collatempiprofiles_parallel_2_1.c \
+					  $(srcdir)/dummysymboltable.c
+collatempiprofiles_parallel_2_1_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
+collatempiprofiles_parallel_2_1_LDFLAGS = $(AM_LDFLAGS)
+
+collatempiprofiles_parallel_2_2_SOURCES = $(srcdir)/collatempiprofiles_parallel_2_2.c \
+					  $(srcdir)/dummysymboltable.c
+collatempiprofiles_parallel_2_2_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
+collatempiprofiles_parallel_2_2_LDFLAGS = $(AM_LDFLAGS)
+endif
+
+
 filenames_SOURCES = $(srcdir)/filenames.c
 filenames_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
 filenames_LDFLAGS = $(AM_LDFLAGS)
@@ -404,6 +433,12 @@ dist_check_SCRIPTS += collatecallprofiles.sh
 if ENABLE_MPI
 dist_check_SCRIPTS += collatecallprofiles_parallel_1.sh \
 		      collatecallprofiles_parallel_2.sh
+endif
+
+if ENABLE_MPI
+dist_check_SCRIPTS += collatempiprofiles.sh \
+		      collatempiprofiles_parallel_1.sh \
+		      collatempiprofiles_parallel_2.sh
 endif
 
 dist_check_SCRIPTS += stacktree.sh \

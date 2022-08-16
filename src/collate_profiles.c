@@ -7,6 +7,9 @@
 #include "stack_types.h"
 #include "collated_stack_types.h"
 #include "collate_callprofiles.h"
+#ifdef _MPI
+#include "collate_mpiprofiles.h"
+#endif
 
 void vftr_collate_profiles(collated_stacktree_t *collstacktree_ptr,
                            stacktree_t *stacktree_ptr) {
@@ -37,7 +40,11 @@ void vftr_collate_profiles(collated_stacktree_t *collstacktree_ptr,
 #endif
 
    vftr_collate_callprofiles(collstacktree_ptr, stacktree_ptr,
-         myrank, nranks, nremote_profiles);
+                             myrank, nranks, nremote_profiles);
+#ifdef _MPI
+   vftr_collate_mpiprofiles(collstacktree_ptr, stacktree_ptr,
+                            myrank, nranks, nremote_profiles);
+#endif
 
    free(nremote_profiles);
 }
