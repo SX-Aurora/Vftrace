@@ -132,3 +132,11 @@ long long vftr_get_total_collated_mpi_overhead(collated_stacktree_t stacktree) {
    }
    return overheads_usec;
 }
+
+void vftr_print_mpiprofiling(FILE *fp, mpiProfile_t mpiprof) {
+   fprintf(fp, "nmsg: %lld/%lld, msgsize: %lld/%lld\n",
+           mpiprof.nsendmessages,
+           mpiprof.nrecvmessages,
+           mpiprof.send_bytes,
+           mpiprof.recv_bytes);
+}
