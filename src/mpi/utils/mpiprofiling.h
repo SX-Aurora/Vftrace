@@ -1,6 +1,8 @@
 #ifndef MPIPROFILING_H
 #define MPIPROFILING_H
 
+#include <stdio.h>
+
 #include "mpi_util_types.h"
 #include "mpiprofiling_types.h"
 #ifdef _MPI
@@ -30,10 +32,13 @@ void vftr_create_profiled_ranks_list(environment_t environment,
                                      mpi_state_t *mpi_state);
 
 void vftr_free_profiled_ranks_list(mpi_state_t *mpi_state);
+
+void vftr_print_mpiprofiling(FILE *fp, mpiProfile_t mpiprof);
+
 #endif
 
 long long *vftr_get_total_mpi_overhead(stacktree_t stacktree, int nthreads);
 
-long long *vftr_get_total_collated_mpi_overhead(collated_stacktree_t stacktree);
+long long vftr_get_total_collated_mpi_overhead(collated_stacktree_t stacktree);
 
 #endif

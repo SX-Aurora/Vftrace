@@ -121,7 +121,7 @@ long long *vftr_get_total_mpi_overhead(stacktree_t stacktree, int nthreads) {
    return overheads_usec;
 }
 
-long long *vftr_get_total_collated_mpi_overhead(collated_stacktree_t stacktree) {
+long long vftr_get_total_collated_mpi_overhead(collated_stacktree_t stacktree) {
    long long overheads_usec = 0ll;
 
    int nstacks = stacktree.nstacks;
