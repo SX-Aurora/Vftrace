@@ -13,7 +13,7 @@ else
    ./${vftr_binary} ${maxnreg} || exit 1
 fi
 
-cat ${vftr_binary}_0.log
+cat ${vftr_binary}_all.log
 
 for ireg in $(seq 1 1 ${maxnreg});
 do
@@ -24,7 +24,7 @@ do
       stackstr="user-region-${istack}<${stackstr}"
    done
 
-   inprof=$(cat ${vftr_binary}_0.log | \
+   inprof=$(cat ${vftr_binary}_all.log | \
             grep " ${stackstr}" | \
             wc -l)
    if [ "${inprof}" -ne "1" ] ; then

@@ -3,7 +3,7 @@ set -x
 test_name=vftr_out_directory
 output_file=vftr_out_directory.out
 ref_file=${srcdir}/ref_output/little_tasks.out
-logfile=${test_name}_0.log
+logfile=${test_name}_all.log
 vfdfile=${test_name}_0.vfd
 
 for file in ${output_file} ${logfile} ${vfdfile};
@@ -29,7 +29,7 @@ fi
 outdir="$(pwd)/testoutdir/"
 mkdir -p ${outdir}
 export VFTR_OUT_DIRECTORY=${outdir}
-logfile="${outdir}/${test_name}_0.log"
+logfile="${outdir}/${test_name}_all.log"
 vfdfile="${outdir}/${test_name}_0.vfd"
 for file in ${output_file} ${logfile} ${vfdfile};
 do

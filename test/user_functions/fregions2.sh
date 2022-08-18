@@ -12,9 +12,9 @@ else
    ./${vftr_binary} || exit 1
 fi
 
-cat ${vftr_binary}_0.log
+cat ${vftr_binary}_all.log
 
-inprof=$(cat ${vftr_binary}_0.log | \
+inprof=$(cat ${vftr_binary}_all.log | \
          grep "user-region-1" | \
          wc -l)
 if [ "${inprof}" -ne "2" ] ; then

@@ -1,7 +1,7 @@
 #!/bin/bash
 set -x
 vftr_binary=vftr_demangle_cxx
-logfile=${vftr_binary}_0.log
+logfile=${vftr_binary}_all.log
 
 if [ -f ${logfile} ] ; then
    rm ${logfile}

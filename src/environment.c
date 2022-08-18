@@ -229,7 +229,7 @@ environment_t vftr_read_environment() {
    environment.do_sampling = vftr_read_env_bool("VFTR_SAMPLING", false);
    environment.output_directory = vftr_read_env_string("VFTR_OUT_DIRECTORY", ".");
    environment.logfile_basename = vftr_read_env_string("VFTR_LOGFILE_BASENAME", NULL);
-   environment.logfile_for_ranks = vftr_read_env_string("VFTR_LOGFILE_FOR_RANKS", "0");
+   environment.logfile_for_ranks = vftr_read_env_string("VFTR_LOGFILE_FOR_RANKS", "none");
    environment.ranks_in_mpi_profile = vftr_read_env_string("VFTR_RANKS_IN_MPI_PROFILE", "all");
    environment.sampletime = vftr_read_env_double("VFTR_SAMPLETIME", 0.005);
    environment.mpi_log = vftr_read_env_bool("VFTR_MPI_LOG", false);

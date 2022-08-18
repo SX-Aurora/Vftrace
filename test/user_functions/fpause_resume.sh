@@ -12,10 +12,10 @@ else
    ./${vftr_binary} ${maxnreg} || exit 1
 fi
 
-cat ${vftr_binary}_0.log
+cat ${vftr_binary}_all.log
 
 # check for existance of fkt1
-inprof=$(cat ${vftr_binary}_0.log | \
+inprof=$(cat ${vftr_binary}_all.log | \
          grep " fkt1" | \
          wc -l)
 if [ "${inprof}" -ne "2" ] ; then
@@ -23,7 +23,7 @@ if [ "${inprof}" -ne "2" ] ; then
    exit 1;
 fi
 # check for existance of fkt2
-inprof=$(cat ${vftr_binary}_0.log | \
+inprof=$(cat ${vftr_binary}_all.log | \
          grep " fkt2" | \
          wc -l)
 if [ "${inprof}" -gt "0" ] ; then
@@ -31,7 +31,7 @@ if [ "${inprof}" -gt "0" ] ; then
    exit 1;
 fi
 # check for existance of fkt3
-inprof=$(cat ${vftr_binary}_0.log | \
+inprof=$(cat ${vftr_binary}_all.log | \
          grep " fkt3" | \
          wc -l)
 if [ "${inprof}" -ne "2" ] ; then
@@ -39,7 +39,7 @@ if [ "${inprof}" -ne "2" ] ; then
    exit 1;
 fi
 # check for existance of vftrace_pause
-inprof=$(cat ${vftr_binary}_0.log | \
+inprof=$(cat ${vftr_binary}_all.log | \
          grep " vftrace_pause" | \
          wc -l)
 if [ "${inprof}" -ne "2" ] ; then

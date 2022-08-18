@@ -3,7 +3,7 @@ set -x
 test_name=vftr_logfile_basename
 output_file=vftr_logfile_basename.out
 ref_file=${srcdir}/ref_output/little_tasks.out
-logfile=${test_name}_0.log
+logfile=${test_name}_all.log
 vfdfile=${test_name}_0.vfd
 
 for file in ${output_file} ${logfile} ${vfdfile};
@@ -28,7 +28,7 @@ fi
 
 testbasename="TestBasename"
 export VFTR_LOGFILE_BASENAME=${testbasename}
-logfile="${testbasename}_0.log"
+logfile="${testbasename}_all.log"
 vfdfile="${testbasename}_0.vfd"
 for file in ${output_file} ${logfile} ${vfdfile};
 do

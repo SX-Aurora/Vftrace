@@ -3,7 +3,7 @@ set -x
 test_name=vftr_strip_module_names
 output_file=${test_name}.out
 ref_file=${srcdir}/ref_output/little_tasks.out
-logfile=${test_name}_0.log
+logfile=${test_name}_all.log
 vfdfile=${test_name}_0.vfd
 
 for file in ${output_file} ${logfile} ${vfdfile};

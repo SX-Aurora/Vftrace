@@ -44,8 +44,8 @@ function check_logfile_notexists() {
 rm_outfiles
 run_binary
 diff ${output_file} ${ref_file} || exit 1
-check_logfile_exists "0"
-for irank in $(seq 1 1 $(bc <<< "${nranks}-1"));
+check_logfile_exists "all"
+for irank in $(seq 0 1 $(bc <<< "${nranks}-1"));
 do
    check_logfile_notexists "${irank}"
 done
@@ -54,6 +54,7 @@ export VFTR_LOGFILE_FOR_RANKS="none"
 rm_outfiles
 run_binary
 diff ${output_file} ${ref_file} || exit 1
+check_logfile_exists "all"
 for irank in $(seq 0 1 $(bc <<< "${nranks}-1"));
 do
    check_logfile_notexists "${irank}"
@@ -63,6 +64,7 @@ export VFTR_LOGFILE_FOR_RANKS="all"
 rm_outfiles
 run_binary
 diff ${output_file} ${ref_file} || exit 1
+check_logfile_exists "all"
 for irank in $(seq 0 1 $(bc <<< "${nranks}-1"));
 do
    check_logfile_exists "${irank}"
@@ -73,6 +75,7 @@ if [ "x${HAS_MPI}" == "xYES" ]; then
    rm_outfiles
    run_binary
    diff ${output_file} ${ref_file} || exit 1
+   check_logfile_exists "all"
    check_logfile_notexists "0"
    check_logfile_exists "1"
    check_logfile_notexists "2"
@@ -82,6 +85,7 @@ if [ "x${HAS_MPI}" == "xYES" ]; then
    rm_outfiles
    run_binary
    diff ${output_file} ${ref_file} || exit 1
+   check_logfile_exists "all"
    check_logfile_exists "0"
    check_logfile_exists "1"
    check_logfile_exists "2"
@@ -91,6 +95,7 @@ if [ "x${HAS_MPI}" == "xYES" ]; then
    rm_outfiles
    run_binary
    diff ${output_file} ${ref_file} || exit 1
+   check_logfile_exists "all"
    check_logfile_exists "0"
    check_logfile_notexists "1"
    check_logfile_exists "2"
