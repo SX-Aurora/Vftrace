@@ -9,6 +9,7 @@
 #include "environment.h"
 #include "logfile_header.h"
 #include "logfile_prof_table.h"
+#include "logfile_mpi_table.h"
 #include "logfile_stacklist.h"
 #include "search.h"
 #include "range_expand.h"
@@ -56,10 +57,10 @@ void vftr_write_logfile(vftrace_t vftrace, long long runtime) {
    vftr_write_logfile_profile_table(fp, vftrace.process.collated_stacktree,
                                     vftrace.environment);
 
-//#ifdef _MPI
-//   vftr_write_logfile_mpi_table(fp, vftrace.process.stacktree,
-//                                    vftrace.environment);
-//#endif
+#ifdef _MPI
+   vftr_write_logfile_mpi_table(fp, vftrace.process.collated_stacktree,
+                                vftrace.environment);
+#endif
 
    vftr_write_logfile_global_stack_list(fp, vftrace.process.collated_stacktree);
 
