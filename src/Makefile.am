@@ -7,7 +7,6 @@ include_HEADERS += vftrace.mod
 endif
 
 SUBDIRS =
-libvftrace_la_LIBADD =
 SUBDIRS += sorting
 SUBDIRS += mpi
 
@@ -16,6 +15,7 @@ external_includes = -I$(top_srcdir)/external/tinyexpr/ \
 
 
 # external libraries
+libvftrace_la_LIBADD =
 libvftrace_la_LIBADD += ${top_builddir}/external/libtinyexpr.la
 
 #internal libraries
@@ -127,7 +127,7 @@ endif
 
 if HAS_LIBERTY
 libvftrace_la_CFLAGS += -D_LIBERTY
-libvftrace_la_LIBADD += -liberty
+#libvftrace_la_LIBADD += -liberty
 endif
 
 #if USES_INTEL_COMPILER
