@@ -14,7 +14,7 @@ do
    ${MPI_EXEC} ${MPI_OPTS} ${NP} ${nprocs} ./${vftr_binary} ${nb} || exit 1
 
    for irank in $(seq 0 1 $(bc <<< "${nprocs}-1"));
-   do  
+   do
       ../../../tools/vftrace_vfd_dump ${vftr_binary}_${irank}.vfd
       # Count the logs
       count=$(../../../tools/vftrace_vfd_dump ${vftr_binary}_${irank}.vfd | \
@@ -23,6 +23,6 @@ do
       if [[ "${count}" -ne "0" ]] ; then
          echo "Message logging found on rank ${irank}, although it should be disabled!"
          exit 1;
-      fi  
+      fi
    done
 done
