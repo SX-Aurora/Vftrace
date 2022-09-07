@@ -21,6 +21,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
+#include "self_profile.h"
 #include "request_types.h"
 #include "p2p_requests.h"
 #include "onesided_requests.h"
@@ -36,7 +37,7 @@ vftr_request_t* vftr_register_request(message_direction dir, int nmsg, int *coun
                                       MPI_Comm comm, MPI_Request request,
                                       int n_tmp_ptr, void **tmp_ptrs,
                                       long long tstart) {
-
+   SELF_PROFILE_START_FUNCTION;
    // search for the first invalidated request
    int invalid_request_id = -1;
    bool invalid_request = false;
@@ -104,10 +105,13 @@ vftr_request_t* vftr_register_request(message_direction dir, int nmsg, int *coun
    new_request->n_tmp_ptr = n_tmp_ptr;
    new_request->tmp_ptrs = tmp_ptrs;
 
+   SELF_PROFILE_END_FUNCTION;
    return new_request;
 }
 
 // clear the requests and log the messaging
+// This function is not self profiled, as it is called continously by MPI_Wait*
+// Thus distorting the self-profile.
 void vftr_clear_completed_requests() {
    int mpi_isinit;
    PMPI_Initialized(&mpi_isinit);
@@ -139,6 +143,7 @@ void vftr_clear_completed_requests() {
 }
 
 void vftr_activate_pers_request(MPI_Request request, long long tstart) {
+   SELF_PROFILE_START_FUNCTION;
    // search for request in open request list
    vftr_request_t *matching_request = vftr_search_request(request);
    if (matching_request != NULL) {
@@ -146,10 +151,12 @@ printf("activating request to peer %d\n", matching_request->rank[0]);
       matching_request->active = true;
       matching_request->tstart = tstart;
    }
+   SELF_PROFILE_END_FUNCTION;
 }
 
 // remove a request
 void vftr_remove_request(vftr_request_t *request) {
+   SELF_PROFILE_START_FUNCTION;
    if (request->valid) {
       request->valid = false;
       request->request = MPI_REQUEST_NULL;
@@ -172,19 +179,23 @@ void vftr_remove_request(vftr_request_t *request) {
       free(request->tmp_ptrs);
       request->tmp_ptrs = NULL;
    }
+   SELF_PROFILE_END_FUNCTION;
 }
 
 // deallocate entire request list
 void vftr_free_request_list(mpi_state_t *mpi_state) {
+   SELF_PROFILE_START_FUNCTION;
    if (mpi_state->nopen_requests > 0) {
       mpi_state->nopen_requests = 0;
       free(mpi_state->open_requests);
       mpi_state->open_requests = NULL;
    }
+   SELF_PROFILE_END_FUNCTION;
 }
 
 // find a specific request in the request list.
 vftr_request_t *vftr_search_request(MPI_Request request) {
+   SELF_PROFILE_START_FUNCTION;
    // go through the complete list and check the request
    vftr_request_t *matching_request = NULL;
    int request_id = 0;
@@ -196,5 +207,6 @@ vftr_request_t *vftr_search_request(MPI_Request request) {
          request_id++;
       }
    }
+   SELF_PROFILE_END_FUNCTION;
    return matching_request;
 }
