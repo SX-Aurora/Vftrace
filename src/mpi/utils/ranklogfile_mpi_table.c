@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 
+#include "self_profile.h"
 #include "timer_types.h"
 #include "table_types.h"
 #include "environment_types.h"
@@ -225,6 +226,7 @@ stack_t **vftr_ranklogfile_mpi_table_get_relevant_stacks(int nrows,
 
 void vftr_write_ranklogfile_mpi_table(FILE *fp, stacktree_t stacktree,
                                   environment_t environment) {
+   SELF_PROFILE_START_FUNCTION;
    int nrows = vftr_ranklogfile_mpi_table_nrows(stacktree);
    // TODO: sort something
    stack_t **selected_stacks =
@@ -296,4 +298,5 @@ void vftr_write_ranklogfile_mpi_table(FILE *fp, stacktree_t stacktree,
    }
 
    free(selected_stacks);
+   SELF_PROFILE_END_FUNCTION;
 }
