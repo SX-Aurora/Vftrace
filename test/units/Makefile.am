@@ -21,8 +21,8 @@ else
 endif
 AM_TESTS_ENVIRONMENT+=. $(top_srcdir)/test/environment/unset_vftr_env.sh;
 
+AM_CPPFLAGS =
 AM_CFLAGS = -I$(top_srcdir)/src/ -I$(top_srcdir)/src/mpi/utils/
-
 AM_LDFLAGS = -L$(top_builddir)/src/.libs -lvftrace -lm
 
 if ENABLE_MPI
@@ -34,6 +34,10 @@ endif
 
 if ENABLE_OMP
   AM_CFLAGS += -D_OMP
+endif
+
+if SELF_PROFILING
+  AM_CPPFLAGS += -D_SELF_PROFILE_VFTRACE
 endif
 
 check_PROGRAMS = 
