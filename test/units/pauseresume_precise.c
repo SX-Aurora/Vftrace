@@ -4,6 +4,7 @@
 
 #include <string.h>
 
+#include "self_profile.h"
 #include "symbol_types.h"
 #include "symbols.h"
 #include "misc_utils.h"
@@ -16,6 +17,7 @@
 #endif
 
 int main(int argc, char **argv) {
+   INIT_SELF_PROF_VFTRACE;
 #if defined(_MPI)
    PMPI_Init(&argc, &argv);
 #else
@@ -77,5 +79,6 @@ int main(int argc, char **argv) {
 #endif
 
    bool result = all_symbs_found && preciseness_correct;
+   FINALIZE_SELF_PROF_VFTRACE;
    return result ? 0 : 1;
 }
