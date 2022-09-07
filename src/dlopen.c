@@ -6,6 +6,7 @@
 #include <link.h>
 #include <dlfcn.h>
 
+#include "self_profile.h"
 #include "vftrace_state.h"
 #include "symbol_types.h"
 #include "symbols.h"
@@ -21,6 +22,7 @@ static void set_real_dlopen() {
 }
 
 void *dlopen(const char *filename, int flag) {
+   SELF_PROFILE_START_FUNCTION;
    if (real_dlopen == NULL) {
       set_real_dlopen();
    }
@@ -55,5 +57,6 @@ void *dlopen(const char *filename, int flag) {
       }
       lib_linkmap_ptr = lib_linkmap_ptr->l_next;
    }
+   SELF_PROFILE_END_FUNCTION;
    return libhandle;
 }
