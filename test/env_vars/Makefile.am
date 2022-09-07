@@ -21,6 +21,7 @@ else
 endif
 AM_TESTS_ENVIRONMENT+=. $(top_srcdir)/test/environment/unset_vftr_env.sh;
 
+AM_CPPFLAGS =
 AM_CFLAGS = -I$(top_srcdir)/src/
 AM_FCFLAGS = -I$(top_srcdir)/src/
 AM_CXXFLAGS = -I$(top_srcdir)/src/
@@ -43,6 +44,10 @@ if ENABLE_OMP
 if ENABLE_FORTRAN
   AM_FCFLAGS += -D_OMP
 endif
+endif
+
+if SELF_PROFILING
+   AM_CPPFLAGS += -D_SELF_PROFILE_VFTRACE
 endif
 
 check_PROGRAMS = 
