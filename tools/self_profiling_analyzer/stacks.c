@@ -12,7 +12,8 @@ int search_callee(stack_t *stacks, int callerID, char *name) {
    int calleeID = -1;
    for (int icallee=0; icallee<stack.ncallees; icallee++) {
       int stackID = stack.callees[icallee];
-      if (strcmp(name, stack.name) == 0) {
+      stack_t calleestack = stacks[stackID];
+      if (strcmp(name, calleestack.name) == 0) {
          calleeID = stackID;
          break;
       }
