@@ -20,6 +20,7 @@
 
 #include <stdlib.h>
 
+#include "self_profile.h"
 #include "vftrace_state.h"
 #include "stack_types.h"
 #include "thread_types.h"
@@ -37,7 +38,7 @@ void vftr_register_collective_request(message_direction dir, int nmsg, int *coun
                                       MPI_Comm comm, MPI_Request request,
                                       int n_tmp_ptr, void **tmp_ptrs,
                                       long long tstart) {
-
+   SELF_PROFILE_START_FUNCTION;
    vftr_request_t *new_request = vftr_register_request(dir, nmsg, count, type, -1, comm, request, n_tmp_ptr, tmp_ptrs, tstart);
    int isintercom;
    PMPI_Comm_test_inter(comm, &isintercom);
@@ -59,6 +60,7 @@ void vftr_register_collective_request(message_direction dir, int nmsg, int *coun
    }
    new_request->request_kind = collective;
    new_request->persistent = false;
+   SELF_PROFILE_END_FUNCTION;
 }
 
 void vftr_clear_completed_collective_request(vftr_request_t *request) {
