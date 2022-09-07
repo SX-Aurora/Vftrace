@@ -18,11 +18,14 @@
 
 #include <mpi.h>
 
+#include "self_profile.h"
+
 // Translate a rank from a local group to the global rank
 int vftr_local2global_rank(MPI_Comm comm, int local_rank) {
-
+   SELF_PROFILE_START_FUNCTION;
    // no translation of ranks neccessary as it is already in the global group
    if (comm == MPI_COMM_WORLD) {
+      SELF_PROFILE_END_FUNCTION;
       return local_rank;
    }
 
@@ -43,14 +46,16 @@ int vftr_local2global_rank(MPI_Comm comm, int local_rank) {
                               &local_rank,   // addr of local rank variable
                               global_group,  // group to translate rank to
                               &global_rank); // addr of global rank variable
+   SELF_PROFILE_END_FUNCTION;
    return global_rank;
 }
 
 // Translate a rank from a remote group to the global rank
 int vftr_remote2global_rank(MPI_Comm comm, int remote_rank) {
-
+   SELF_PROFILE_START_FUNCTION;
    // no translation of ranks neccessary as it is already in the global group
    if (comm == MPI_COMM_WORLD) {
+      SELF_PROFILE_END_FUNCTION;
       return remote_rank;
    }
 
@@ -71,5 +76,6 @@ int vftr_remote2global_rank(MPI_Comm comm, int remote_rank) {
                               &remote_rank,  // addr of remote rank variable
                               global_group,  // group to translate rank to
                               &global_rank); // addr of global rank variable
+   SELF_PROFILE_END_FUNCTION;
    return global_rank;
 }
