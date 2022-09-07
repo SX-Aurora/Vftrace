@@ -62,7 +62,9 @@ int main(int argc, char **argv) {
       }
       current_stack = sidx;
    }
+
    finalize_stacktree(&stacktree);
+   stack_t **sortedstacklist = sort_stacks_by_excl_time(stacktree);
 
    fprintf(stdout, "\n");
    fprintf(stdout, "Functionlist:\n");
@@ -72,11 +74,12 @@ int main(int argc, char **argv) {
    print_stacktree(stdout, stacktree);
    fprintf(stdout, "\n");
    fprintf(stdout, "Stacklist:\n");
-   print_stacklist(stdout, stacktree);
+   print_sorted_stacklist(stdout, sortedstacklist, stacktree);
 
    fclose(stream);
    free(line);
 
+   free(sortedstacklist);
    free_functionlist(&functionlist);
    free_stacktree(&stacktree);
    exit(EXIT_SUCCESS);

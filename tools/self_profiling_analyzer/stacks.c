@@ -140,6 +140,34 @@ void finalize_stacktree(stacktree_t *stacktree_ptr) {
    update_stacks_exclusive_time(stacktree_ptr);
 }
 
+void qsort_stacklist(int n, stack_t **stacklist) {
+   if (n < 2) return;
+   stack_t *pivot = stacklist[n/2];
+   int left, right;
+   for (left=0, right=n-1; ; left++, right--) {
+      while (stacklist[left]->time_excl_usec > pivot->time_excl_usec) left++;
+      while (stacklist[right]->time_excl_usec < pivot->time_excl_usec) right--;
+      if (left >= right) break;
+      stack_t *temp = stacklist[left];
+      stacklist[left] = stacklist[right];
+      stacklist[right] = temp;
+   }
+   qsort_stacklist(left, stacklist);
+   qsort_stacklist(n-left, stacklist+left);
+}
+
+stack_t **sort_stacks_by_excl_time(stacktree_t stacktree) {
+   int nstacks = stacktree.nstacks;
+   stack_t **stacklist = (stack_t**) malloc(nstacks*sizeof(stack_t));
+   for (int istack=0; istack<nstacks; istack++) {
+      stacklist[istack] = stacktree.stacks+istack;
+   }
+
+   qsort_stacklist(nstacks, stacklist);
+
+   return stacklist;
+}
+
 void print_stack_branch(FILE *fp, int level, stacktree_t stacktree, int stackid) {
    // first print the indentation
    for (int ilevel=0; ilevel<level; ilevel++) {
@@ -216,6 +244,17 @@ void print_stacklist(FILE *fp, stacktree_t stacktree) {
    for (int istack=0; istack<stacktree.nstacks; istack++) {
       fprintf(fp, "%4d", istack);
       print_stack(fp, stacktree, istack);
+      fprintf(fp, "\n");
+   }
+}
+
+void print_sorted_stacklist(FILE *fp, stack_t **sortedstacklist,
+                            stacktree_t stacktree) {
+   fprintf(fp, "# ID    Calls    incl-time/s    excl-time/s Stack\n");
+   for (int istack=0; istack<stacktree.nstacks; istack++) {
+      int stackid = sortedstacklist[istack]->id;
+      fprintf(fp, "%4d", stackid);
+      print_stack(fp, stacktree, stackid);
       fprintf(fp, "\n");
    }
 }

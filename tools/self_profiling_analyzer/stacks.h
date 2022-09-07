@@ -29,6 +29,8 @@ void update_stacks_exclusive_time(stacktree_t *stacktree_ptr);
 
 void finalize_stacktree(stacktree_t *stacktree_ptr);
 
+stack_t **sort_stacks_by_excl_time(stacktree_t stacktree);
+
 void print_stack_branch(FILE *fp, int level, stacktree_t stacktree, int stackid);
 
 void print_stacktree(FILE *fp, stacktree_t stacktree);
@@ -40,5 +42,8 @@ char *get_stack_string(stacktree_t stacktree, int stackid);
 void print_stack(FILE *fp, stacktree_t stacktree, int stackid);
 
 void print_stacklist(FILE *fp, stacktree_t stacktree);
+
+void print_sorted_stacklist(FILE *fp, stack_t **sortedstacklist,
+                            stacktree_t stacktree);
 
 #endif
