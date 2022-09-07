@@ -46,6 +46,9 @@ AX_ENABLE_OPENMP
 # Enable hardware counters
 AX_ENABLE_HWC
 
+# Check for Self-profiling
+AX_ENABLE_SELF_PROFILING
+
 # Check for Papi library
 AX_WITH_PAPI_LIBRARY
 
