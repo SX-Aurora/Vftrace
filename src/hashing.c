@@ -4,6 +4,7 @@
 
 #include <string.h>
 
+#include "self_profile.h"
 #include "stack_types.h"
 #include "sorting.h"
 
@@ -81,6 +82,7 @@ uint64_t vftr_jenkins_murmur_64_hash(size_t length, const uint8_t* key) {
 }
 
 void vftr_compute_stack_hashes(stacktree_t *stacktree_ptr) {
+   SELF_PROFILE_START_FUNCTION;
    int nstacks = stacktree_ptr->nstacks;
    stack_t *stacks = stacktree_ptr->stacks;
    int bufferlen = 128;
@@ -136,4 +138,5 @@ void vftr_compute_stack_hashes(stacktree_t *stacktree_ptr) {
          vftr_jenkins_murmur_64_hash(stackstr_len, (uint8_t*) buffer);
    }
    free(buffer);
+   SELF_PROFILE_END_FUNCTION;
 }
