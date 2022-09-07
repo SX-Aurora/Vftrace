@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+#include "self_profile.h"
 #include "symbol_types.h"
 #include "symbols.h"
 #include "stack_types.h"
@@ -20,6 +21,7 @@
 #include <mpi.h>
 
 int main(int argc, char **argv) {
+   INIT_SELF_PROF_VFTRACE;
    PMPI_Init(&argc, &argv);
 
    // dummy mpi_state
@@ -123,5 +125,6 @@ int main(int argc, char **argv) {
 
    PMPI_Finalize();
 
+   FINALIZE_SELF_PROF_VFTRACE;
    return 0;
 }
