@@ -3,6 +3,7 @@
 
 #include <string.h>
 
+#include "self_profile.h"
 #include "stack_types.h"
 #include "realloc_consts.h"
 #include "stacks.h"
@@ -14,6 +15,7 @@
 #include "collate_stacks.h"
 
 void vftr_stacktree_realloc(stacktree_t *stacktree_ptr) {
+   SELF_PROFILE_START_FUNCTION;
    stacktree_t stacktree = *stacktree_ptr;
    while (stacktree.nstacks > stacktree.maxstacks) {
       int maxstacks = stacktree.maxstacks*vftr_realloc_rate+vftr_realloc_add;
@@ -22,9 +24,11 @@ void vftr_stacktree_realloc(stacktree_t *stacktree_ptr) {
       stacktree.maxstacks = maxstacks;
    }
    *stacktree_ptr = stacktree;
+   SELF_PROFILE_END_FUNCTION;
 }
 
 void vftr_stack_callees_realloc(stack_t *stack_ptr) {
+   SELF_PROFILE_START_FUNCTION;
    stack_t stack = *stack_ptr;
    while (stack.ncallees > stack.maxcallees) {
       int maxcallees = stack.maxcallees*vftr_realloc_rate+vftr_realloc_add;
@@ -33,20 +37,24 @@ void vftr_stack_callees_realloc(stack_t *stack_ptr) {
       stack.maxcallees = maxcallees;
    }
    *stack_ptr = stack;
+   SELF_PROFILE_END_FUNCTION;
 }
 
 void vftr_insert_callee(int calleeID, stack_t *caller) {
+   SELF_PROFILE_START_FUNCTION;
    // append the callee to the list
    int idx = caller->ncallees;
    caller->ncallees++;
    vftr_stack_callees_realloc(caller);
    caller->callees[idx] = calleeID;
+   SELF_PROFILE_END_FUNCTION;
 }
 
 int vftr_new_stack(int callerID, stacktree_t *stacktree_ptr,
                    const char *name, const char *cleanname,
                    stack_kind_t stack_kind,
                    uintptr_t address, bool precise) {
+   SELF_PROFILE_START_FUNCTION;
    int stackID = stacktree_ptr->nstacks;
    stacktree_ptr->nstacks++;
    vftr_stacktree_realloc(stacktree_ptr);
@@ -69,6 +77,7 @@ int vftr_new_stack(int callerID, stacktree_t *stacktree_ptr,
    stack->profiling = vftr_new_profilelist();
    vftr_insert_callee(stack->lid, callerstack);
 
+   SELF_PROFILE_END_FUNCTION;
    return stack->lid;
 }
 
@@ -108,16 +117,19 @@ void vftr_stack_free(stack_t *stacks_ptr, int stackID) {
 }
 
 stacktree_t vftr_new_stacktree() {
+   SELF_PROFILE_START_FUNCTION;
    stacktree_t stacktree;
    stacktree.maxstacks = 0;
    stacktree.stacks = NULL;
    stacktree.nstacks = 1;
    vftr_stacktree_realloc(&stacktree);
    stacktree.stacks[0] = vftr_first_stack();
+   SELF_PROFILE_END_FUNCTION;
    return stacktree;
 }
 
 void vftr_stacktree_free(stacktree_t *stacktree_ptr) {
+   SELF_PROFILE_START_FUNCTION;
    stacktree_t stacktree = *stacktree_ptr;
    if (stacktree.nstacks > 0) {
       vftr_stack_free(stacktree.stacks, 0);
@@ -127,12 +139,15 @@ void vftr_stacktree_free(stacktree_t *stacktree_ptr) {
       stacktree.maxstacks = 0;
    }
    *stacktree_ptr = stacktree;
+   SELF_PROFILE_END_FUNCTION;
 }
 
 // fill in data that was not computed during runtime
 void vftr_finalize_stacktree(stacktree_t *stacktree_ptr) {
+   SELF_PROFILE_START_FUNCTION;
    // exclusive time
    vftr_update_stacks_exclusive_time(stacktree_ptr);
+   SELF_PROFILE_END_FUNCTION;
 }
 
 void vftr_print_stack_branch(FILE *fp, int level, stacktree_t stacktree, int stackid) {
@@ -152,7 +167,9 @@ void vftr_print_stack_branch(FILE *fp, int level, stacktree_t stacktree, int sta
 }
 
 void vftr_print_stacktree(FILE *fp, stacktree_t stacktree) {
+   SELF_PROFILE_START_FUNCTION;
    vftr_print_stack_branch(fp, 0, stacktree, 0);
+   SELF_PROFILE_END_FUNCTION;
 }
 
 int vftr_get_stack_string_length(stacktree_t stacktree, int stackid, bool show_precise) {
@@ -216,9 +233,11 @@ void vftr_print_stack(FILE *fp, stacktree_t stacktree, int stackid) {
 }
 
 void vftr_print_stacklist(FILE *fp, stacktree_t stacktree) {
+   SELF_PROFILE_START_FUNCTION;
    for (int istack=0; istack<stacktree.nstacks; istack++) {
       fprintf(fp, "%d: ", istack);
       vftr_print_stack(fp, stacktree, istack);
       fprintf(fp, "\n");
    }
+   SELF_PROFILE_END_FUNCTION;
 }
