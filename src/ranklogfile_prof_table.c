@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 
+#include "self_profile.h"
 #include "timer_types.h"
 #include "table_types.h"
 #include "environment_types.h"
@@ -143,7 +144,7 @@ char **vftr_ranklogfile_prof_table_callpath_list(int nstacks, stack_t **stack_pt
 
 void vftr_write_ranklogfile_profile_table(FILE *fp, stacktree_t stacktree,
                                       environment_t environment) {
-
+   SELF_PROFILE_START_FUNCTION;
    // first sort the stacktree according to the set environment variables
    stack_t **sorted_stacks = vftr_sort_stacks_for_prof(environment, stacktree);
 
@@ -199,4 +200,5 @@ void vftr_write_ranklogfile_profile_table(FILE *fp, stacktree_t stacktree,
    }
 
    free(sorted_stacks);
+   SELF_PROFILE_END_FUNCTION;
 }
