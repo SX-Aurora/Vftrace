@@ -4,6 +4,7 @@
 
 #include <string.h>
 
+#include "self_profile.h"
 #include "symbol_types.h"
 #include "symbols.h"
 #include "misc_utils.h"
@@ -17,6 +18,7 @@ int testfunction(int a) {
 }
 
 int main(int argc, char **argv) {
+   INIT_SELF_PROF_VFTRACE;
 
 #if defined(_MPI)
    PMPI_Init(&argc, &argv);
@@ -67,5 +69,6 @@ int main(int argc, char **argv) {
    PMPI_Finalize();
 #endif
 
+   FINALIZE_SELF_PROF_VFTRACE;
    return address_matches && name_matches ? 0 : 1;
 }
