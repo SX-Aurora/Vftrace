@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+#include "self_profile.h"
 #include "environment_types.h"
 #include "environment.h"
 #include "symbol_types.h"
@@ -14,6 +15,7 @@
 #include <mpi.h>
 
 int main(int argc, char **argv) {
+   INIT_SELF_PROF_VFTRACE;
    PMPI_Init(&argc, &argv);
 
    int nranks;
@@ -99,5 +101,6 @@ int main(int argc, char **argv) {
 
    PMPI_Finalize();
 
+   FINALIZE_SELF_PROF_VFTRACE;
    return 0;
 }
