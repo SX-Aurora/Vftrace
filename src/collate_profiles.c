@@ -4,6 +4,7 @@
 #include <mpi.h>
 #endif
 
+#include "self_profile.h"
 #include "stack_types.h"
 #include "collated_stack_types.h"
 #include "collate_callprofiles.h"
@@ -13,6 +14,7 @@
 
 void vftr_collate_profiles(collated_stacktree_t *collstacktree_ptr,
                            stacktree_t *stacktree_ptr) {
+   SELF_PROFILE_START_FUNCTION;
    int myrank;
    int nranks;
    int nprofiles = stacktree_ptr->nstacks;
@@ -47,4 +49,5 @@ void vftr_collate_profiles(collated_stacktree_t *collstacktree_ptr,
 #endif
 
    free(nremote_profiles);
+   SELF_PROFILE_END_FUNCTION;
 }
