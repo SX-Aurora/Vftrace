@@ -205,8 +205,8 @@ char *get_stack_string(stacktree_t stacktree, int stackid) {
 void print_stack(FILE *fp, stacktree_t stacktree, int stackid) {
    char *stackstr = get_stack_string(stacktree, stackid);
    fprintf(fp, " %8d", stacktree.stacks[stackid].ncalls);
-   fprintf(fp, " %14.6lf", 1.0e-6*stacktree.stacks[stackid].time_excl_usec);
    fprintf(fp, " %14.6lf", 1.0e-6*stacktree.stacks[stackid].time_usec);
+   fprintf(fp, " %14.6lf", 1.0e-6*stacktree.stacks[stackid].time_excl_usec);
    fprintf(fp, " %s", stackstr);
    free(stackstr);
 }
