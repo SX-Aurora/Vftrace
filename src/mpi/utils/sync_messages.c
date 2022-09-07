@@ -18,6 +18,7 @@
 
 #include <mpi.h>
 
+#include "self_profile.h"
 #include "vftrace_state.h"
 #include "mpi_logging.h"
 #include "mpi_logging.h"
@@ -38,13 +39,19 @@
 void vftr_store_sync_message_info(message_direction dir, int count, MPI_Datatype type,
                                   int peer_rank, int tag, MPI_Comm comm,
                                   long long tstart, long long tend) {
-
+   SELF_PROFILE_START_FUNCTION;
    // only continue if sampling and mpi_loggin is enabled
-   if (vftr_no_mpi_logging()) return;
+   if (vftr_no_mpi_logging()) {
+      SELF_PROFILE_END_FUNCTION;
+      return;
+   }
 
    // immediately return if peer is MPI_PROC_NULL as this is a dummy rank
    // with no effect on communication at all
-   if (peer_rank == MPI_PROC_NULL) {return;}
+   if (peer_rank == MPI_PROC_NULL) {
+      SELF_PROFILE_END_FUNCTION;
+      return;
+   }
 
    // translate rank to global in case the communicator is not global
    int rank = peer_rank;
@@ -88,5 +95,5 @@ void vftr_store_sync_message_info(message_direction dir, int count, MPI_Datatype
                               my_thread->threadID);
    }
 
-   return;
+   SELF_PROFILE_END_FUNCTION;
 }
