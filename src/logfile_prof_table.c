@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 
+#include "self_profile.h"
 #include "timer_types.h"
 #include "table_types.h"
 #include "environment_types.h"
@@ -124,7 +125,7 @@ char **vftr_logfile_prof_table_callpath_list(int nstacks, collated_stack_t **sta
 
 void vftr_write_logfile_profile_table(FILE *fp, collated_stacktree_t stacktree,
                                       environment_t environment) {
-
+   SELF_PROFILE_START_FUNCTION;
    // first sort the stacktree according to the set environment variables
    collated_stack_t **sorted_stacks = vftr_sort_collated_stacks_for_prof(environment, stacktree);
 
@@ -180,4 +181,5 @@ void vftr_write_logfile_profile_table(FILE *fp, collated_stacktree_t stacktree,
    }
 
    free(sorted_stacks);
+   SELF_PROFILE_END_FUNCTION;
 }
