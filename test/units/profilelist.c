@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+#include "self_profile.h"
 #include "environment_types.h"
 #include "environment.h"
 #include "stack_types.h"
@@ -15,6 +16,7 @@
 #endif
 
 int main(int argc, char **argv) {
+   INIT_SELF_PROF_VFTRACE;
 #if defined(_MPI)
    PMPI_Init(&argc, &argv);
 #else
@@ -48,5 +50,6 @@ int main(int argc, char **argv) {
    PMPI_Finalize();
 #endif
 
+   FINALIZE_SELF_PROF_VFTRACE;
    return 0;
 }
