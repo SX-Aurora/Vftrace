@@ -20,9 +20,12 @@
 
 #include <mpi.h>
 
+#include "self_profile.h"
+
 void vftr_mpi_cart_neighbor_ranks(MPI_Comm cart_comm,
                                   int *nneighbors_ptr,
                                   int **neighbors_ptr) {
+   SELF_PROFILE_START_FUNCTION;
    int ndims;
    PMPI_Cartdim_get(cart_comm, &ndims);
    int *dims = (int*) malloc(ndims*sizeof(int));
@@ -60,4 +63,5 @@ void vftr_mpi_cart_neighbor_ranks(MPI_Comm cart_comm,
    // assign result pointers
    *nneighbors_ptr = nneighbors;
    *neighbors_ptr = neighbors;
+   SELF_PROFILE_END_FUNCTION;
 }
