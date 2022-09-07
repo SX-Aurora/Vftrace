@@ -20,6 +20,7 @@
 
 #include <stdlib.h>
 
+#include "self_profile.h"
 #include "vftrace_state.h"
 #include "stack_types.h"
 #include "thread_types.h"
@@ -36,15 +37,19 @@ void vftr_register_onesided_request(message_direction dir, int count,
                                     MPI_Datatype type, int peer_rank,
                                     MPI_Comm comm, MPI_Request request,
                                     long long tstart) {
-
+   SELF_PROFILE_START_FUNCTION;
    // immediately return if peer is MPI_PROC_NULL as this is a dummy rank
    // with no effect on communication at all
-   if (peer_rank == MPI_PROC_NULL) {return;}
+   if (peer_rank == MPI_PROC_NULL) {
+      SELF_PROFILE_END_FUNCTION;
+      return;
+   }
 
    vftr_request_t *new_request = vftr_register_request(dir, 1, &count, &type, -1, comm, request, 0, NULL, tstart);
    new_request->rank[0] = vftr_local2global_rank(comm, peer_rank);
    new_request->request_kind = onesided;
    new_request->persistent = false;
+   SELF_PROFILE_END_FUNCTION;
 }
 
 void vftr_clear_completed_onesided_request(vftr_request_t *request) {
