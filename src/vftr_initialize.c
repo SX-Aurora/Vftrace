@@ -4,6 +4,7 @@
 #include "start_tool.h"
 #endif
 
+#include "self_profile.h"
 #include "timer.h"
 #include "off_hooks.h"
 #include "cyghooks.h"
@@ -16,6 +17,8 @@
 #include "sampling.h"
 
 void vftr_initialize(void *func, void *call_site) {
+   INIT_SELF_PROF_VFTRACE;
+   SELF_PROFILE_START_FUNCTION;
    // First step is to initialize the reference timer
    vftr_set_local_ref_time();
 
@@ -30,6 +33,8 @@ void vftr_initialize(void *func, void *call_site) {
       // set the function hooks to a dummy function that does nothing
       vftr_set_enter_func_hook(vftr_function_hook_off);
       vftr_set_exit_func_hook(vftr_function_hook_off);
+      SELF_PROFILE_END_FUNCTION;
+      FINALIZE_SELF_PROF_VFTRACE;
    } else {
       // update the vftrace state
       vftrace.state = on;
@@ -74,6 +79,7 @@ void vftr_initialize(void *func, void *call_site) {
 
       // now that initializing is done the actual hook needs
       // to be called with the appropriate arguments
+      SELF_PROFILE_END_FUNCTION;
       vftr_function_entry(func, call_site);
    }
 }
