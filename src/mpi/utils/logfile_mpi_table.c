@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 
+#include "self_profile.h"
 #include "timer_types.h"
 #include "table_types.h"
 #include "environment_types.h"
@@ -198,6 +199,7 @@ collated_stack_t **vftr_logfile_mpi_table_get_relevant_collated_stacks(
 
 void vftr_write_logfile_mpi_table(FILE *fp, collated_stacktree_t stacktree,
                                   environment_t environment) {
+   SELF_PROFILE_START_FUNCTION;
    int nrows = vftr_logfile_mpi_table_nrows(stacktree);
    // TODO: sort something
    collated_stack_t **selected_stacks =
@@ -269,4 +271,5 @@ void vftr_write_logfile_mpi_table(FILE *fp, collated_stacktree_t stacktree,
    }
 
    free(selected_stacks);
+   SELF_PROFILE_END_FUNCTION;
 }
