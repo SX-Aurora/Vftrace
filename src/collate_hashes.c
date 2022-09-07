@@ -2,6 +2,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 
+#include "self_profile.h"
 #include "stack_types.h"
 #include "collated_hash_types.h"
 #include "sorting.h"
@@ -11,6 +12,7 @@
 #endif
 
 void vftr_remove_multiple_hashes(int *n, uint64_t *hashlist) {
+   SELF_PROFILE_START_FUNCTION;
    // first sort the list
    vftr_sort_uint64(*n, hashlist, true);
 
@@ -24,11 +26,11 @@ void vftr_remove_multiple_hashes(int *n, uint64_t *hashlist) {
       }
    }
    *n=j+1;
-
-   return;
+   SELF_PROFILE_END_FUNCTION;
 }
 
 hashlist_t vftr_collate_hashes(stacktree_t *stacktree_ptr) {
+   SELF_PROFILE_START_FUNCTION;
    hashlist_t stackhashes;
    stackhashes.nhashes = stacktree_ptr->nstacks;
    // fill a local list of stack hashes
@@ -147,6 +149,7 @@ hashlist_t vftr_collate_hashes(stacktree_t *stacktree_ptr) {
    vftr_sort_uint64(stackhashes.nhashes, stackhashes.hashes, true);
 #endif
 
+   SELF_PROFILE_END_FUNCTION;
    return stackhashes;
 }
 
