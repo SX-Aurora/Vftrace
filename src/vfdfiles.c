@@ -5,6 +5,7 @@
 #include <unistd.h>
 #include <assert.h>
 
+#include "self_profile.h"
 #include "environment_types.h"
 #include "process_types.h"
 #include "stack_types.h"
@@ -23,6 +24,7 @@
 // In the finalization it will be moved to its proper name
 // <basename>_<mpi-rank>.vfd
 char *vftr_get_preliminary_vfdfile_name(environment_t environment) {
+   SELF_PROFILE_START_FUNCTION;
    int pid = getpid();
    char *filename_base = vftr_create_filename_base(environment, pid, pid);
    int filename_base_len = strlen(filename_base);
@@ -39,10 +41,12 @@ char *vftr_get_preliminary_vfdfile_name(environment_t environment) {
    strcat(vfdfile_name, extension);
 
    free(filename_base);
+   SELF_PROFILE_END_FUNCTION;
    return vfdfile_name;
 }
 
 char *vftr_get_vfdfile_name(environment_t environment, int rankID, int nranks) {
+   SELF_PROFILE_START_FUNCTION;
    char *filename_base = vftr_create_filename_base(environment, rankID, nranks);
    int filename_base_len = strlen(filename_base);
 
@@ -58,6 +62,7 @@ char *vftr_get_vfdfile_name(environment_t environment, int rankID, int nranks) {
    strcat(vfdfile_name, extension);
 
    free(filename_base);
+   SELF_PROFILE_END_FUNCTION;
    return vfdfile_name;
 }
 
@@ -84,14 +89,17 @@ char *vftr_attach_iobuffer_vfdfile(FILE *fp, environment_t environment) {
 }
 
 int vftr_rename_vfdfile(char *prelim_name, char *final_name) {
+   SELF_PROFILE_START_FUNCTION;
    int error = rename(prelim_name, final_name);
    if (error != 0) {
       perror(final_name);
    }
+   SELF_PROFILE_END_FUNCTION;
    return error;
 }
 
 void vftr_write_incomplete_vfd_header(sampling_t *sampling) {
+   SELF_PROFILE_START_FUNCTION;
    FILE *fp = sampling->vfdfilefp;
 
    int zeroint = 0;
@@ -145,12 +153,14 @@ void vftr_write_incomplete_vfd_header(sampling_t *sampling) {
    // Now the samples will come,
    // so the current position is the sample offset
    sampling->samples_offset = ftell(fp);
+   SELF_PROFILE_END_FUNCTION;
 }
 
 void vftr_update_vfd_header(sampling_t *sampling,
                             process_t process,
                             time_strings_t timestrings,
                             double runtime) {
+   SELF_PROFILE_START_FUNCTION;
    FILE *fp = sampling->vfdfilefp;
    // jump to the beginning of the file
    fseek(fp, 0, SEEK_SET);
@@ -202,9 +212,11 @@ void vftr_update_vfd_header(sampling_t *sampling,
    fwrite(&(sampling->stacktable_offset), sizeof(long int), 1, fp);
    // threadtree offset
    fwrite(&(sampling->threadtree_offset), sizeof(long int), 1, fp);
+   SELF_PROFILE_END_FUNCTION;
 }
 
 void vftr_write_vfd_stacks(sampling_t *sampling, stacktree_t stacktree) {
+   SELF_PROFILE_START_FUNCTION;
    FILE *fp = sampling->vfdfilefp;
 
    // save the offset of where the stacktable begins
@@ -230,9 +242,11 @@ void vftr_write_vfd_stacks(sampling_t *sampling, stacktree_t stacktree) {
          fwrite(stack.cleanname, sizeof(char), namelen, fp);
       }
    }
+   SELF_PROFILE_END_FUNCTION;
 }
 
 void vftr_write_vfd_threadtree(sampling_t *sampling, threadtree_t threadtree) {
+   SELF_PROFILE_START_FUNCTION;
    FILE *fp = sampling->vfdfilefp;
 
    // save the offset of where the threadtree begins
@@ -245,12 +259,15 @@ void vftr_write_vfd_threadtree(sampling_t *sampling, threadtree_t threadtree) {
       thread_t thread = threadtree.threads[ithread];
       fwrite(&(thread.parent_thread), sizeof(int), 1, fp);
    }
+   SELF_PROFILE_END_FUNCTION;
 }
 
 void vftr_write_vfd_function_sample(sampling_t *sampling, sample_kind kind,
                                     int stackID, long long timestamp) {
+   SELF_PROFILE_START_FUNCTION;
    FILE *fp = sampling->vfdfilefp;
    fwrite(&kind, sizeof(sample_kind), 1, fp);
    fwrite(&stackID, sizeof(int), 1, fp);
    fwrite(&timestamp, sizeof(long long), 1, fp);
+   SELF_PROFILE_END_FUNCTION;
 }
