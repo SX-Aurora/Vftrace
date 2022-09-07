@@ -3,6 +3,7 @@
 
 #include <string.h>
 
+#include "self_profile.h"
 #include "stack_types.h"
 #include "thread_types.h"
 #include "threadstack_types.h"
@@ -18,6 +19,7 @@
 #include "region_address.h"
 
 void vftr_internal_region_begin(const char *name) {
+   SELF_PROFILE_START_FUNCTION;
    long long region_begin_time_begin = vftr_get_runtime_usec();
    void *addr;
    GET_REGION_ADDRESS(addr);
@@ -66,9 +68,11 @@ void vftr_internal_region_begin(const char *name) {
    // No calls after this overhead handling!
    vftr_accumulate_callprofiling_overhead(&(my_profile->callProf),
       vftr_get_runtime_usec() - region_begin_time_begin);
+   SELF_PROFILE_END_FUNCTION;
 }
 
 void vftr_internal_region_end(const char *name) {
+   SELF_PROFILE_START_FUNCTION;
    (void) name;
    long long region_end_time_begin = vftr_get_runtime_usec();
 
@@ -102,4 +106,5 @@ void vftr_internal_region_end(const char *name) {
    vftr_accumulate_callprofiling_overhead(
       &(my_profile->callProf),
       vftr_get_runtime_usec() - region_end_time_begin);
+   SELF_PROFILE_END_FUNCTION;
 }
