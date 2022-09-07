@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 
+#include "self_profile.h"
 #include "environment_types.h"
 #include "vftrace_state.h"
 
@@ -62,7 +63,9 @@ FILE *vftr_open_ranklogfile(char *filename) {
 }
 
 void vftr_write_ranklogfile(vftrace_t vftrace, long long runtime) {
+   SELF_PROFILE_START_FUNCTION;
    if (!vftr_rank_needs_ranklogfile(vftrace.environment, vftrace.process.processID)) {
+      SELF_PROFILE_END_FUNCTION;
       return;
    }
 
@@ -91,4 +94,5 @@ void vftr_write_ranklogfile(vftrace_t vftrace, long long runtime) {
 
    fclose(fp);
    free(logfilename);
+   SELF_PROFILE_END_FUNCTION;
 }
