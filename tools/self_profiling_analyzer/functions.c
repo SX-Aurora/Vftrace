@@ -25,7 +25,7 @@ void free_function(function_t *function_ptr) {
 }
 
 void print_function(FILE *fp, function_t function) {
-   fprintf(fp, "%d: %s\n",
+   fprintf(fp, "%4d: %s\n",
            function.id,
            function.name);
 }
