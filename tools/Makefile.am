@@ -1,3 +1,8 @@
+SUBDIRS =
+if SELF_PROFILING
+SUBDIRS += self_profiling_analyzer
+endif
+
 bin_PROGRAMS = vftrace_vfd_dump 
 #	       vftrace_show_function_stacks \
 #	       vftrace_mpi_table_crosscheck \
