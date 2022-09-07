@@ -5,6 +5,7 @@
 #include <mpi.h>
 #endif
 
+#include "self_profile.h"
 #include "stack_types.h"
 #include "profiling_types.h"
 #include "collated_hash_types.h"
@@ -23,6 +24,7 @@ collated_stacktree_t vftr_new_empty_collated_stacktree() {
 }
 
 collated_stacktree_t vftr_new_collated_stacktree(hashlist_t hashlist) {
+   SELF_PROFILE_START_FUNCTION;
    // create empty collated stacktree
    collated_stacktree_t coll_stacktree;
    coll_stacktree.nstacks = hashlist.nhashes;
@@ -37,11 +39,13 @@ collated_stacktree_t vftr_new_collated_stacktree(hashlist_t hashlist) {
       coll_stacktree.stacks[istack].hash = hashlist.hashes[istack];
       coll_stacktree.stacks[istack].profile = vftr_new_profile(0);
    }
+   SELF_PROFILE_END_FUNCTION;
    return coll_stacktree;
 }
 
 #ifdef _MPI
 void vftr_broadcast_collated_stacktree_root(collated_stacktree_t *stacktree_ptr) {
+   SELF_PROFILE_START_FUNCTION;
    int nranks;
    PMPI_Comm_size(MPI_COMM_WORLD, &nranks);
    int nstacks = stacktree_ptr->nstacks;
@@ -77,9 +81,11 @@ void vftr_broadcast_collated_stacktree_root(collated_stacktree_t *stacktree_ptr)
    PMPI_Bcast(tmpchararr, totallen, MPI_CHAR, 0, MPI_COMM_WORLD);
    free(tmpintarr);
    free(tmpchararr);
+   SELF_PROFILE_END_FUNCTION;
 }
 
 void vftr_broadcast_collated_stacktree_receivers(collated_stacktree_t *stacktree_ptr) {
+   SELF_PROFILE_START_FUNCTION;
    int nranks;
    PMPI_Comm_size(MPI_COMM_WORLD, &nranks);
    int nstacks = stacktree_ptr->nstacks;
@@ -110,9 +116,11 @@ void vftr_broadcast_collated_stacktree_receivers(collated_stacktree_t *stacktree
    }
    free(tmpintarr);
    free(tmpchararr);
+   SELF_PROFILE_END_FUNCTION;
 }
 
 void vftr_broadcast_collated_stacktree(collated_stacktree_t *stacktree_ptr) {
+   SELF_PROFILE_START_FUNCTION;
    int nranks;
    PMPI_Comm_size(MPI_COMM_WORLD, &nranks);
    if (nranks > 1) {
@@ -124,10 +132,12 @@ void vftr_broadcast_collated_stacktree(collated_stacktree_t *stacktree_ptr) {
          vftr_broadcast_collated_stacktree_receivers(stacktree_ptr);
       }
    }
+   SELF_PROFILE_END_FUNCTION;
 }
 #endif
 
 collated_stacktree_t vftr_collate_stacks(stacktree_t *stacktree_ptr) {
+   SELF_PROFILE_START_FUNCTION;
    // first compute the hashes for all stacks
    vftr_compute_stack_hashes(stacktree_ptr);
 
@@ -351,10 +361,12 @@ collated_stacktree_t vftr_collate_stacks(stacktree_t *stacktree_ptr) {
    free(local2global_ID);
    free(global2local_ID);
 
+   SELF_PROFILE_END_FUNCTION;
    return coll_stacktree;
 }
 
 void vftr_collated_stacktree_free(collated_stacktree_t *stacktree_ptr) {
+   SELF_PROFILE_START_FUNCTION;
    if (stacktree_ptr->nstacks > 0) {
       for (int istack=0; istack<stacktree_ptr->nstacks; istack++) {
          free(stacktree_ptr->stacks[istack].name);
@@ -364,10 +376,12 @@ void vftr_collated_stacktree_free(collated_stacktree_t *stacktree_ptr) {
       stacktree_ptr->stacks = NULL;
       stacktree_ptr->nstacks = 0;
    }
+   SELF_PROFILE_END_FUNCTION;
 }
 
 char *vftr_get_collated_stack_string(collated_stacktree_t stacktree,
                                      int stackid, bool show_precise) {
+   SELF_PROFILE_START_FUNCTION;
    int stringlen = 0;
    int tmpstackid = stackid;
    stringlen += strlen(stacktree.stacks[stackid].name);
@@ -416,19 +430,24 @@ char *vftr_get_collated_stack_string(collated_stacktree_t stacktree,
    }
    // replace last char with a null terminator
    *tmpstackstring_ptr = '\0';
+   SELF_PROFILE_END_FUNCTION;
    return stackstring;
 }
 
 void vftr_print_collated_stack(FILE *fp, collated_stacktree_t stacktree, int stackid) {
+   SELF_PROFILE_START_FUNCTION;
    char *stackstr = vftr_get_collated_stack_string(stacktree, stackid, false);
    fprintf(fp, "%s", stackstr);
    free(stackstr);
+   SELF_PROFILE_END_FUNCTION;
 }
 
 void vftr_print_collated_stacklist(FILE *fp, collated_stacktree_t stacktree) {
+   SELF_PROFILE_START_FUNCTION;
    for (int istack=0; istack<stacktree.nstacks; istack++) {
       fprintf(fp, "%u: ", istack);
       vftr_print_collated_stack(fp, stacktree, istack);
       fprintf(fp, "\n");
    }
+   SELF_PROFILE_END_FUNCTION;
 }
