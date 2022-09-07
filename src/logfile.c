@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 
+#include "self_profile.h"
 #include "environment_types.h"
 #include "vftrace_state.h"
 
@@ -43,8 +44,12 @@ FILE *vftr_open_logfile(char *filename) {
 }
 
 void vftr_write_logfile(vftrace_t vftrace, long long runtime) {
+   SELF_PROFILE_START_FUNCTION;
    // only process 0 writes the summary logfile
-   if (vftrace.process.processID != 0) {return;}
+   if (vftrace.process.processID != 0) {
+      SELF_PROFILE_END_FUNCTION;
+      return;
+   }
 
    char *logfilename = vftr_get_logfile_name(vftrace.environment);
    FILE *fp = vftr_open_logfile(logfilename);
@@ -69,4 +74,5 @@ void vftr_write_logfile(vftrace_t vftrace, long long runtime) {
 
    fclose(fp);
    free(logfilename);
+   SELF_PROFILE_END_FUNCTION;
 }
