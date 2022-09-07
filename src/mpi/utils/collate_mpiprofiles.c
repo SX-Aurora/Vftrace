@@ -3,12 +3,14 @@
 #include <string.h>
 #include <mpi.h>
 
+#include "self_profile.h"
 #include "mpiprofiling_types.h"
 #include "collated_stack_types.h"
 #include "stack_types.h"
 
 static void vftr_collate_mpiprofiles_root_self(collated_stacktree_t *collstacktree_ptr,
                                                stacktree_t *stacktree_ptr) {
+   SELF_PROFILE_START_FUNCTION;
    for (int istack=0; istack<stacktree_ptr->nstacks; istack++) {
       stack_t *stack = stacktree_ptr->stacks+istack;
       int icollstack = stack->gid;
@@ -38,12 +40,14 @@ static void vftr_collate_mpiprofiles_root_self(collated_stacktree_t *collstacktr
          collmpiprof->overhead_usec += mpiprof->overhead_usec;
       }
    }
+   SELF_PROFILE_END_FUNCTION;
 }
 
 static void vftr_collate_mpiprofiles_on_root(collated_stacktree_t *collstacktree_ptr,
                                              stacktree_t *stacktree_ptr,
                                              int myrank, int nranks,
                                              int *nremote_profiles) {
+   SELF_PROFILE_START_FUNCTION;
    // define datatypes required for collating mpiprofiles
    typedef struct {
       int gid;
@@ -146,13 +150,16 @@ static void vftr_collate_mpiprofiles_on_root(collated_stacktree_t *collstacktree
    }
 
    PMPI_Type_free(&mpiProfile_transfer_mpi_t);
+   SELF_PROFILE_END_FUNCTION;
 }
 
 void vftr_collate_mpiprofiles(collated_stacktree_t *collstacktree_ptr,
                               stacktree_t *stacktree_ptr,
                               int myrank, int nranks,
                               int *nremote_profiles) {
+   SELF_PROFILE_START_FUNCTION;
    vftr_collate_mpiprofiles_root_self(collstacktree_ptr, stacktree_ptr);
    vftr_collate_mpiprofiles_on_root(collstacktree_ptr, stacktree_ptr,
                                     myrank, nranks, nremote_profiles);
+   SELF_PROFILE_END_FUNCTION;
 }
