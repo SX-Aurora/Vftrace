@@ -10,6 +10,7 @@
 #include <demangle.h>
 #endif
 
+#include "self_profile.h"
 #include "realloc_consts.h"
 #include "custom_types.h"
 #include "symbols.h"
@@ -71,6 +72,7 @@ void vftr_print_library_list(FILE *fp, librarylist_t librarylist) {
 
 // read the different library paths from the applications map
 librarylist_t vftr_read_library_maps() {
+   SELF_PROFILE_START_FUNCTION;
    char *fmappath = "/proc/self/maps";
    FILE *fmap = fopen(fmappath, "r");
    if (fmap == NULL) {
@@ -104,10 +106,12 @@ librarylist_t vftr_read_library_maps() {
    }
    free(lineptr);
    fclose(fmap);
+   SELF_PROFILE_END_FUNCTION;
    return librarylist;
 }
 
 void vftr_free_librarylist(librarylist_t *librarylist_ptr) {
+   SELF_PROFILE_START_FUNCTION;
    librarylist_t librarylist = *librarylist_ptr;
    if (librarylist.nlibraries > 0) {
       for (int ilib=0; ilib<librarylist.nlibraries; ilib++) {
@@ -117,9 +121,11 @@ void vftr_free_librarylist(librarylist_t *librarylist_ptr) {
       free(librarylist.libraries);
       librarylist.libraries = NULL;
    }
+   SELF_PROFILE_END_FUNCTION;
 }
 
 void vftr_print_symbol_table(FILE *fp, symboltable_t symboltable) {
+   SELF_PROFILE_START_FUNCTION;
    for (unsigned int isym=0; isym<symboltable.nsymbols; isym++) {
       fprintf(fp, "%d 0x%llx %s%s\n",
               symboltable.symbols[isym].index,
@@ -129,11 +135,13 @@ void vftr_print_symbol_table(FILE *fp, symboltable_t symboltable) {
               symboltable.symbols[isym].precise ? "*" : "");
    }
    fprintf(fp, "\n");
+   SELF_PROFILE_END_FUNCTION;
 }
 
 // merge two previously sorted symbol tables into one
 void vftr_merge_symbol_tables(symboltable_t *symtabA_ptr,
                               symboltable_t symtabB) {
+   SELF_PROFILE_START_FUNCTION;
    if (symtabB.nsymbols == 0) {return;}
 
    symboltable_t symtabA = *symtabA_ptr;
@@ -173,6 +181,7 @@ void vftr_merge_symbol_tables(symboltable_t *symtabA_ptr,
    }
    symtabA_ptr->nsymbols = symboltable.nsymbols;
    symtabA_ptr->symbols = symboltable.symbols;
+   SELF_PROFILE_END_FUNCTION;
 }
 
 
@@ -284,6 +293,7 @@ symboltable_t vftr_read_symbols_from_library(library_t library) {
 }
 
 symboltable_t vftr_read_symbols() {
+   SELF_PROFILE_START_FUNCTION;
    // get all library paths that belong to the program
    librarylist_t librarylist = vftr_read_library_maps();
 
@@ -306,11 +316,13 @@ symboltable_t vftr_read_symbols() {
    }
 
    vftr_free_librarylist(&librarylist);
+   SELF_PROFILE_END_FUNCTION;
    return symboltable;
 }
 
 void vftr_symboltable_determine_preciseness(symboltable_t *symboltable_ptr,
                                             regex_t *preciseregex) {
+   SELF_PROFILE_START_FUNCTION;
 #ifdef _MPI
    // regex to check for MPI functions
    // Case insensitivity is needed for Fortran
@@ -335,10 +347,12 @@ void vftr_symboltable_determine_preciseness(symboltable_t *symboltable_ptr,
 #endif
    regfree(pause_regex);
    free(pause_regex);
+   SELF_PROFILE_END_FUNCTION;
 }
 
 void vftr_symboltable_strip_fortran_module_name(symboltable_t *symboltable_ptr,
                                                 bool strip_module_names) {
+   SELF_PROFILE_START_FUNCTION;
    if (strip_module_names) {
       int nmodule_delimiters = 3;
       char *module_delimiters[] = {
@@ -354,6 +368,7 @@ void vftr_symboltable_strip_fortran_module_name(symboltable_t *symboltable_ptr,
          }
       }
    }
+   SELF_PROFILE_END_FUNCTION;
 }
 
 #ifdef _LIBERTY
@@ -411,6 +426,7 @@ char *vftr_demangle_cxx(char *name) {
 
 void vftr_symboltable_demangle_cxx_name(symboltable_t *symboltable_ptr,
                                         bool demangle_cxx) {
+   SELF_PROFILE_START_FUNCTION;
    if (demangle_cxx) {
       for (unsigned int isym=0; isym<symboltable_ptr->nsymbols; isym++) {
          char *name = symboltable_ptr->symbols[isym].cleanname;
@@ -419,10 +435,12 @@ void vftr_symboltable_demangle_cxx_name(symboltable_t *symboltable_ptr,
          symboltable_ptr->symbols[isym].cleanname = demang_name;
       }
    }
+   SELF_PROFILE_END_FUNCTION;
 }
 #endif
 
 void vftr_symboltable_free(symboltable_t *symboltable_ptr) {
+   SELF_PROFILE_START_FUNCTION;
    symboltable_t symboltable = *symboltable_ptr;
    if (symboltable.nsymbols > 0) {
       for (unsigned int isym=0; isym<symboltable.nsymbols; isym++) {
@@ -434,13 +452,17 @@ void vftr_symboltable_free(symboltable_t *symboltable_ptr) {
       free(symboltable.symbols);
       symboltable.nsymbols = 0;
    }
+   SELF_PROFILE_END_FUNCTION;
 }
 
 int vftr_get_symbID_from_address(symboltable_t symboltable,
                                  uintptr_t address) {
-   return vftr_binary_search_symboltable(symboltable.nsymbols,
-                                         symboltable.symbols,
-                                         address);
+   SELF_PROFILE_START_FUNCTION;
+   int symbID =vftr_binary_search_symboltable(symboltable.nsymbols,
+                                              symboltable.symbols,
+                                              address);
+   SELF_PROFILE_END_FUNCTION;
+   return symbID;
 }
 
 char *vftr_get_name_from_address(symboltable_t symboltable,
@@ -493,7 +515,10 @@ bool vftr_get_preciseness_from_symbID(symboltable_t symboltable,
 
 bool vftr_get_preciseness_from_address(symboltable_t symboltable,
                                        uintptr_t address) {
+   SELF_PROFILE_START_FUNCTION;
    int symbID = vftr_get_symbID_from_address(symboltable,
                                              address);
-   return vftr_get_preciseness_from_symbID(symboltable, symbID);
+   bool preciseness = vftr_get_preciseness_from_symbID(symboltable, symbID);
+   SELF_PROFILE_END_FUNCTION;
+   return preciseness;
 }
