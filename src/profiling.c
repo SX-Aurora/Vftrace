@@ -1,5 +1,6 @@
 #include <stdlib.h>
 
+#include "self_profile.h"
 #include "vftrace_state.h"
 #include "thread_types.h"
 #include "profiling_types.h"
@@ -11,6 +12,7 @@
 #endif
 
 void vftr_profilelist_realloc(profilelist_t *profilelist_ptr) {
+   SELF_PROFILE_START_FUNCTION;
    profilelist_t profilelist = *profilelist_ptr;
    while (profilelist.nprofiles > profilelist.maxprofiles) {
       int maxprofiles = profilelist.maxprofiles*vftr_realloc_rate+vftr_realloc_add;
@@ -19,6 +21,7 @@ void vftr_profilelist_realloc(profilelist_t *profilelist_ptr) {
       profilelist.maxprofiles = maxprofiles;
    }
    *profilelist_ptr = profilelist;
+   SELF_PROFILE_END_FUNCTION;
 }
 
 profile_t vftr_new_profile(int threadID) {
@@ -33,6 +36,7 @@ profile_t vftr_new_profile(int threadID) {
 }
 
 int vftr_new_profile_in_list(int threadID, profilelist_t *profilelist_ptr) {
+   SELF_PROFILE_START_FUNCTION;
    int profID = profilelist_ptr->nprofiles;
    profilelist_ptr->nprofiles++;
    vftr_profilelist_realloc(profilelist_ptr);
@@ -50,6 +54,7 @@ int vftr_new_profile_in_list(int threadID, profilelist_t *profilelist_ptr) {
    profile_t *profile = profilelist_ptr->profiles+profID;
    *profile = vftr_new_profile(threadID);
 
+   SELF_PROFILE_END_FUNCTION;
    return profID;
 }
 
@@ -86,6 +91,7 @@ void vftr_profilelist_free(profilelist_t *profilelist_ptr) {
 
 profile_t *vftr_get_my_profile(stack_t *stack,
                                thread_t *thread) {
+   SELF_PROFILE_START_FUNCTION;
    profilelist_t *profilelist_ptr = &(stack->profiling);
    // search for the profile matrhing the threadID
    // TODO: binary search?
@@ -103,5 +109,6 @@ profile_t *vftr_get_my_profile(stack_t *stack,
       profID = vftr_new_profile_in_list(thread->threadID, profilelist_ptr);
    }
 
+   SELF_PROFILE_END_FUNCTION;
    return profilelist_ptr->profiles+profID;
 }
