@@ -20,6 +20,7 @@
 #include <stdbool.h>
 #include <string.h>
 
+#include "self_profile.h"
 #include "vftrace_state.h"
 #include "vftr_initialize.h"
 #include "environment.h"
@@ -319,6 +320,7 @@ unsigned long long vftr_sizeof_vftr_size_t(vftr_size_t size) {
 }
 
 unsigned long long vftr_sizeof_vftrace_t(vftrace_t vftrace_state) {
+   SELF_PROFILE_START_FUNCTION;
    unsigned long long size = sizeof(vftrace_t);
    // need to subtract the size of the types themselves (padding remains)
    // in order to not double count with the function calls
@@ -346,5 +348,6 @@ unsigned long long vftr_sizeof_vftrace_t(vftrace_t vftrace_state) {
 #endif
    size -= sizeof(vftr_size_t);
    size += vftr_sizeof_vftr_size_t(vftrace_state.size);
+   SELF_PROFILE_END_FUNCTION;
    return size;
 }
