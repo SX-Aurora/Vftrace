@@ -5,12 +5,14 @@
 #include <omp.h>
 #endif
 
+#include "self_profile.h"
 #include "realloc_consts.h"
 #include "stacks.h"
 #include "threads.h"
 #include "threadstacks.h"
 
 void vftr_threadtree_realloc(threadtree_t *threadtree_ptr) {
+   SELF_PROFILE_START_FUNCTION;
    threadtree_t threadtree = *threadtree_ptr;
    while (threadtree.nthreads > threadtree.maxthreads) {
       int maxthreads = threadtree.maxthreads*vftr_realloc_rate+vftr_realloc_add;
@@ -19,9 +21,11 @@ void vftr_threadtree_realloc(threadtree_t *threadtree_ptr) {
       threadtree.maxthreads = maxthreads;
    }
    *threadtree_ptr = threadtree;
+   SELF_PROFILE_END_FUNCTION;
 }
 
 void vftr_thread_subthreads_realloc(thread_t *thread_ptr) {
+   SELF_PROFILE_START_FUNCTION;
    thread_t thread = *thread_ptr;
    while (thread.nsubthreads > thread.maxsubthreads) {
       int maxsubthreads = thread.maxsubthreads*vftr_realloc_rate+vftr_realloc_add;
@@ -30,10 +34,12 @@ void vftr_thread_subthreads_realloc(thread_t *thread_ptr) {
       thread.maxsubthreads = maxsubthreads;
    }
    *thread_ptr = thread;
+   SELF_PROFILE_END_FUNCTION;
 }
 
 int vftr_new_thread(int parent_thread_id,
                     threadtree_t *threadtree_ptr) {
+   SELF_PROFILE_START_FUNCTION;
    thread_t thread;
    thread.threadID = threadtree_ptr->nthreads;
    threadtree_ptr->nthreads++;
@@ -53,9 +59,9 @@ int vftr_new_thread(int parent_thread_id,
    parent_thread_ptr->nsubthreads++;
 
    vftr_thread_subthreads_realloc(parent_thread_ptr);
-//printf("parent subthreads = %d\n", parent_thread_ptr->nsubthreads);
    parent_thread_ptr->subthreads[thread.thread_num] = thread.threadID;
 
+   SELF_PROFILE_END_FUNCTION;
    return thread.threadID;
 }
 
@@ -74,40 +80,52 @@ thread_t vftr_new_masterthread() {
 }
 
 threadtree_t vftr_new_threadtree() {
+   SELF_PROFILE_START_FUNCTION;
    threadtree_t threadtree;
    threadtree.nthreads = 1;
    threadtree.maxthreads = 1;
    threadtree.threads = (thread_t*) malloc(sizeof(thread_t));
    threadtree.threads[0] = vftr_new_masterthread();
+   SELF_PROFILE_END_FUNCTION;
    return threadtree;
 }
 
 int vftr_get_thread_level() {
+   SELF_PROFILE_START_FUNCTION;
 #ifdef _OMP
-   return omp_get_level();
+   int level = omp_get_level();
 #else
-   return 0;
+   int level = 0;
 #endif
+   SELF_PROFILE_END_FUNCTION;
+   return level;
 }
 
 int vftr_get_thread_num() {
+   SELF_PROFILE_START_FUNCTION;
 #ifdef _OMP
-   return omp_get_thread_num();
+   int thread_num = omp_get_thread_num();
 #else
-   return 0;
+   int thread_num = 0;
 #endif
+   SELF_PROFILE_END_FUNCTION;
+   return thread_num;
 }
 
 int vftr_get_ancestor_thread_num(int level) {
+   SELF_PROFILE_START_FUNCTION;
 #ifdef _OMP
-   return omp_get_ancestor_thread_num(level);
+   int ancestor_thread_num = omp_get_ancestor_thread_num(level);
 #else
    (void) level;
-   return 0;
+   int ancestor_thread_num = 0;
 #endif
+   SELF_PROFILE_END_FUNCTION;
+   return ancestor_thread_num;
 }
 
 thread_t *vftr_get_my_thread(threadtree_t *threadtree_ptr) {
+   SELF_PROFILE_START_FUNCTION;
    int level = vftr_get_thread_level();
    thread_t *my_thread = threadtree_ptr->threads;
    // navigate through the thread tree until my thread is found
@@ -121,6 +139,7 @@ thread_t *vftr_get_my_thread(threadtree_t *threadtree_ptr) {
       }
       my_thread = threadtree_ptr->threads+threadID;
    }
+   SELF_PROFILE_END_FUNCTION;
    return my_thread;
 }
 
@@ -138,6 +157,7 @@ void vftr_thread_free(thread_t *threads_ptr, int threadID) {
 }
 
 void vftr_threadtree_free(threadtree_t *threadtree_ptr) {
+   SELF_PROFILE_START_FUNCTION;
    threadtree_t threadtree = *threadtree_ptr;
    if (threadtree.nthreads > 0) {
       vftr_thread_free(threadtree.threads, 0);
@@ -147,6 +167,7 @@ void vftr_threadtree_free(threadtree_t *threadtree_ptr) {
       threadtree.maxthreads = 0;
    }
    *threadtree_ptr = threadtree;
+   SELF_PROFILE_END_FUNCTION;
 }
 
 void vftr_print_thread(FILE *fp, threadtree_t threadtree, int threadid) {
