@@ -134,6 +134,11 @@ endif
 #libvftrace_la_LDFLAGS += -lifcore
 #endif
 
+if SELF_PROFILING
+libvftrace_la_CPPFLAGS += -D_SELF_PROFILE_VFTRACE
+libvftrace_la_SOURCES += self_profile.c
+endif
+
 libvftr_pause_la_SOURCES = pause.c
 libvftr_pause_la_CFLAGS = -finstrument-functions
 
