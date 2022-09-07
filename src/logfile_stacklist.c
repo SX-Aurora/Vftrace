@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+#include "self_profile.h"
 #include "table_types.h"
 #include "collated_stack_types.h"
 
@@ -8,6 +9,7 @@
 #include "tables.h"
 
 void vftr_write_logfile_global_stack_list(FILE *fp, collated_stacktree_t stacktree) {
+   SELF_PROFILE_START_FUNCTION;
    fprintf(fp, "\nGlobal call stacks:\n");
 
    table_t table = vftr_new_table();
@@ -40,5 +42,5 @@ void vftr_write_logfile_global_stack_list(FILE *fp, collated_stacktree_t stacktr
       free(stacks[istack]);
    }
    free(stacks);
-
+   SELF_PROFILE_END_FUNCTION;
 }
