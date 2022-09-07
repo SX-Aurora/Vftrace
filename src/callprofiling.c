@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+#include "self_profile.h"
 #include "callprofiling_types.h"
 #include "collated_stack_types.h"
 #include "stack_types.h"
@@ -31,6 +32,7 @@ void vftr_accumulate_callprofiling_overhead(callProfile_t *prof,
 }
 
 void vftr_update_stacks_exclusive_time(stacktree_t *stacktree_ptr) {
+   SELF_PROFILE_START_FUNCTION;
    int nstacks = stacktree_ptr->nstacks;
    stack_t *stacks = stacktree_ptr->stacks;
    // exclusive time for init is 0, therefore it does not need to be computed.
@@ -61,9 +63,11 @@ void vftr_update_stacks_exclusive_time(stacktree_t *stacktree_ptr) {
          }
       }
    }
+   SELF_PROFILE_END_FUNCTION;
 }
 
 long long *vftr_get_total_call_overhead(stacktree_t stacktree, int nthreads) {
+   SELF_PROFILE_START_FUNCTION;
    // accumulate the hook overhead for each thread separately
    long long *overheads_usec = (long long*) malloc(nthreads*sizeof(long long));
    for (int ithread=0; ithread<nthreads; ithread++) {
@@ -80,10 +84,12 @@ long long *vftr_get_total_call_overhead(stacktree_t stacktree, int nthreads) {
          overheads_usec[threadID] += prof->callProf.overhead_usec;
       }
    }
+   SELF_PROFILE_END_FUNCTION;
    return overheads_usec;
 }
 
 long long vftr_get_total_collated_call_overhead(collated_stacktree_t stacktree) {
+   SELF_PROFILE_START_FUNCTION;
    // accumulate the hook overhead for each thread separately
    long long overheads_usec = 0ll;
 
@@ -93,6 +99,7 @@ long long vftr_get_total_collated_call_overhead(collated_stacktree_t stacktree) 
       profile_t *prof = &(stack->profile);
       overheads_usec += prof->callProf.overhead_usec;
    }
+   SELF_PROFILE_END_FUNCTION;
    return overheads_usec;
 }
 
