@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 
+#include "self_profile.h"
 #include "size_types.h"
 #include "timer_types.h"
 #include "table_types.h"
@@ -22,16 +23,19 @@
 #include "misc_utils.h"
 
 void vftr_write_logfile_header(FILE *fp, time_strings_t timestrings) {
+   SELF_PROFILE_START_FUNCTION;
    fprintf(fp, "%s\n", PACKAGE_STRING);
    fprintf(fp, "Runtime profile for application:\n");
    fprintf(fp, "Start Date: %s\n", timestrings.start_time);
    fprintf(fp, "End Date:   %s\n\n", timestrings.end_time);
    vftr_print_licence(fp);
+   SELF_PROFILE_END_FUNCTION;
 }
 
 void vftr_write_logfile_summary(FILE *fp, process_t process,
                                     vftr_size_t vftrace_size,
                                     long long runtime) {
+   SELF_PROFILE_START_FUNCTION;
    double runtime_sec = runtime * 1.0e-6;
 
    // The application runtime is the runtime minus the
@@ -76,4 +80,5 @@ void vftr_write_logfile_summary(FILE *fp, process_t process,
    while (vftrace_size_double > 1024.0) {vftrace_size_double /= 1024;}
    fprintf(fp, "Vftrace used memory:   %7.2lf %s\n", vftrace_size_double, unit);
    free(unit);
+   SELF_PROFILE_END_FUNCTION;
 }
