@@ -1,3 +1,4 @@
+#include "self_profile.h"
 #include "off_hooks.h"
 #include "cyghooks.h"
 #include "vftr_hooks.h"
@@ -21,6 +22,7 @@ void vftr_finalize() {
       // before vftrace knew that this was an MPI-program
       return;
    }
+   SELF_PROFILE_START_FUNCTION;
 
    // update the vftrace state
    vftrace.state = off;
@@ -73,4 +75,7 @@ void vftr_finalize() {
    // use a dummy function that does nothing
    vftr_set_enter_func_hook(vftr_function_hook_off);
    vftr_set_exit_func_hook(vftr_function_hook_off);
+
+   SELF_PROFILE_END_FUNCTION;
+   FINALIZE_SELF_PROF_VFTRACE;
 }
