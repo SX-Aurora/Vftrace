@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdbool.h>
 
+#include "self_profile.h"
 #include "environment_types.h"
 #include "environment.h"
 #include "symbol_types.h"
@@ -25,6 +26,7 @@
 #include <mpi.h>
 
 int main(int argc, char **argv) {
+   INIT_SELF_PROF_VFTRACE;
    PMPI_Init(&argc, &argv);
 
    environment_t environment;
@@ -109,5 +111,6 @@ int main(int argc, char **argv) {
 
    PMPI_Finalize();
 
+   FINALIZE_SELF_PROF_VFTRACE;
    return 0;
 }
