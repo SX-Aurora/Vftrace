@@ -7,6 +7,7 @@
 #include <unistd.h>
 #include <limits.h>
 
+#include "self_profile.h"
 #include "environment.h"
 #include "regular_expressions.h"
 #include "range_expand.h"
@@ -224,6 +225,7 @@ void vftr_print_environment(FILE *fp, environment_t environment) {
 }
 
 environment_t vftr_read_environment() {
+   SELF_PROFILE_START_FUNCTION;
    environment_t environment;
    environment.vftrace_off = vftr_read_env_bool("VFTR_OFF", false);
    environment.do_sampling = vftr_read_env_bool("VFTR_SAMPLING", false);
@@ -249,7 +251,7 @@ environment_t vftr_read_environment() {
    environment.demangle_cxx = vftr_read_env_bool("VFTR_DEMANGLE_CXX", false);
    environment.nenv_vars = 22;
    environment.valid = true;
-
+   SELF_PROFILE_END_FUNCTION;
    return environment;
 }
 
@@ -258,6 +260,7 @@ environment_t vftr_read_environment() {
 void vftr_env_var_find_best_match(environment_t *environment_ptr,
                                   char *var_name, int *best_ld,
                                   int *best_idx) {
+   SELF_PROFILE_START_FUNCTION;
    *best_ld = INT_MAX;
    *best_idx = -1;
    for (int ivar=0; ivar<environment_ptr->nenv_vars; ivar++) {
@@ -268,13 +271,18 @@ void vftr_env_var_find_best_match(environment_t *environment_ptr,
          *best_ld = ld;
          *best_idx = ivar;
       }
-      if (ld == 0) return;
+      if (ld == 0) {
+         SELF_PROFILE_END_FUNCTION;
+         return;
+      }
    }
+   SELF_PROFILE_END_FUNCTION;
 }
 
 // There might be mistyped Vftrace environment variables. Loop over all existing env variables,
 // check if they match a Vftrace variable, and make an alternative suggestion if it is possibly mistyped.
 void vftr_check_env_names(FILE *fp, environment_t *environment_ptr) {
+   SELF_PROFILE_START_FUNCTION;
    extern char **environ;
    char **s = environ;
    for (; *s; s++) {
@@ -294,6 +302,7 @@ void vftr_check_env_names(FILE *fp, environment_t *environment_ptr) {
          free(tmpstr);
       }
    }
+   SELF_PROFILE_END_FUNCTION;
 }
 
 void vftr_env_var_free(env_var_t *env_var_ptr) {
@@ -328,6 +337,7 @@ void vftr_env_var_free(env_var_t *env_var_ptr) {
 }
 
 void vftr_environment_free(environment_t *environment_ptr) {
+   SELF_PROFILE_START_FUNCTION;
    environment_t environment = *environment_ptr;
    if (environment.valid) {
       environment.valid = false;
@@ -335,6 +345,7 @@ void vftr_environment_free(environment_t *environment_ptr) {
          vftr_env_var_free(vftr_get_env_var_ptr_by_idx(environment_ptr, ienv));
       }
    }
+   SELF_PROFILE_END_FUNCTION;
 }
 
 // Attempt to check the user supplied environment values for soundness
@@ -515,6 +526,7 @@ void vftr_environment_assert_demangle_cxx(FILE *fp, env_var_t demangle_cxx) {
 }
 
 void vftr_environment_assert(FILE *fp, environment_t environment) {
+   SELF_PROFILE_START_FUNCTION;
    vftr_environment_assert_vftrace_off(fp, environment.vftrace_off);
    vftr_environment_assert_do_sampling(fp, environment.do_sampling);
    vftr_environment_assert_output_directory(fp, environment.output_directory);
@@ -537,4 +549,5 @@ void vftr_environment_assert(FILE *fp, environment_t environment) {
    vftr_environment_assert_callpath_in_profile(fp, environment.callpath_in_profile);
    vftr_environment_assert_callpath_in_mpi_profile(fp, environment.callpath_in_mpi_profile);
    vftr_environment_assert_demangle_cxx(fp, environment.demangle_cxx);
+   SELF_PROFILE_END_FUNCTION;
 }
