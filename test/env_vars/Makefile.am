@@ -165,3 +165,5 @@ TEST_EXTENSIONS = .sh
 SH_LOG_COMPILER = $(SHELL)
 
 TESTS = $(dist_check_SCRIPTS)
+
+CLEANFILES = vftrace_self_profile-*

@@ -499,3 +499,5 @@ if ON_VECTOR_ENGINE
 XFAIL_TESTS += sxhwc_1.sh
 endif
 endif
+
+CLEANFILES = vftrace_self_profile-*

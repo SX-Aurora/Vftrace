@@ -137,5 +137,4 @@ libvftr_f08mpiwrap_la_FCFLAGS += -I${builddir}/../utils/
 libvftr_f08mpiwrap_la_FCFLAGS += -I${builddir}/../f082vftr/
 libvftr_f08mpiwrap_la_FCFLAGS += -D_MPI
 
-clean-local:
-	rm -f *.mod
+CLEANFILES = *.mod

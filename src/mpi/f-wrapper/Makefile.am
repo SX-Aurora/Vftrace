@@ -169,5 +169,4 @@ libvftr_fmpiwrap_la_FCFLAGS += -I${builddir}/../f2vftr/ \
 			       -I${builddir}/../utils/
 libvftr_fmpiwrap_la_FCFLAGS += -finstrument-functions
 
-clean-local:
-	rm -f *.mod
+CLEANFILES = *.mod
