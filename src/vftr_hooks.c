@@ -17,6 +17,7 @@
 */
 #include <stdio.h>
 
+#include "self_profile.h"
 #include "stack_types.h"
 #include "thread_types.h"
 #include "threadstack_types.h"
@@ -34,6 +35,7 @@
 #endif
 
 void vftr_function_entry(void *func, void *call_site) {
+   SELF_PROFILE_START_FUNCTION;
    (void) call_site;
    long long function_entry_time_begin = vftr_get_runtime_usec();
 
@@ -81,9 +83,11 @@ void vftr_function_entry(void *func, void *call_site) {
    // No calls after this overhead handling!
    vftr_accumulate_callprofiling_overhead(&(my_profile->callProf),
       vftr_get_runtime_usec() - function_entry_time_begin);
+   SELF_PROFILE_END_FUNCTION;
 }
 
 void vftr_function_exit(void *func, void *call_site) {
+   SELF_PROFILE_START_FUNCTION;
    (void) func;
    (void) call_site;
    long long function_exit_time_begin = vftr_get_runtime_usec();
@@ -122,4 +126,5 @@ void vftr_function_exit(void *func, void *call_site) {
    vftr_accumulate_callprofiling_overhead(
       &(my_profile->callProf),
       vftr_get_runtime_usec() - function_exit_time_begin);
+   SELF_PROFILE_END_FUNCTION;
 }
