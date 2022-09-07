@@ -4,9 +4,11 @@
 #include <mpi.h>
 #endif
 
+#include "self_profile.h"
 #include "vftrace_state.h"
 
 void vftr_collate_vftr_size(vftrace_t *vftrace) {
+   SELF_PROFILE_START_FUNCTION;
    vftrace->size.rank_wise = vftr_sizeof_vftrace_t(*vftrace);
 #ifdef _MPI
    MPI_Reduce(&(vftrace->size.rank_wise),
@@ -19,4 +21,5 @@ void vftr_collate_vftr_size(vftrace_t *vftrace) {
 #else
    vftrace->size.total = vftrace->size.rank_wise;
 #endif
+   SELF_PROFILE_END_FUNCTION;
 }
