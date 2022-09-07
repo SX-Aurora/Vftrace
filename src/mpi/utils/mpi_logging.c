@@ -18,6 +18,7 @@
 
 #include <stdbool.h>
 
+#include "self_profile.h"
 #include "vftrace_state.h"
 #include "sampling_types.h"
 #include "mpi_util_types.h"
@@ -41,7 +42,7 @@ void vftr_write_message_info(message_direction dir, int count, int type_idx,
                              int type_size, int rank, int tag,
                              long long tstart, long long tend,
                              int stackID, int threadID) {
-
+   SELF_PROFILE_START_FUNCTION;
    FILE *fp = vftrace.sampling.vfdfilefp;
    sample_kind kind = samp_message;
    fwrite(&kind, sizeof(sample_kind), 1, fp);
@@ -57,4 +58,5 @@ void vftr_write_message_info(message_direction dir, int count, int type_idx,
    fwrite(&threadID, sizeof(int), 1, fp);
 
    vftrace.sampling.message_samplecount++;
+   SELF_PROFILE_END_FUNCTION;
 }
