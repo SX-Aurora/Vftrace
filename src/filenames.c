@@ -6,10 +6,12 @@
 
 #include "environment_types.h"
 
+#include "self_profile.h"
 #include "misc_utils.h"
 #include "exe_info.h"
 
 char *vftr_create_filename_base(environment_t environment, int rankID, int nranks) {
+   SELF_PROFILE_START_FUNCTION;
    char *out_dir = NULL;
    out_dir = strdup(environment.output_directory.value.string_val);
    int out_dir_len = strlen(out_dir);
@@ -65,5 +67,6 @@ char *vftr_create_filename_base(environment_t environment, int rankID, int nrank
 
    free(exe_name);
    free(out_dir);
+   SELF_PROFILE_END_FUNCTION;
    return filename_base;
 }
