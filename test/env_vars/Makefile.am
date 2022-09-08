@@ -73,8 +73,10 @@ dist_check_SCRIPTS += defaults.sh \
 		      advisor.sh \
 		      advisor2.sh
 
-check_PROGRAMS += vftr_off \
-		  vftr_sampling \
+if !SELF_PROFILING
+check_PROGRAMS += vftr_off
+endif
+check_PROGRAMS += vftr_sampling \
 		  vftr_out_directory \
 		  vftr_logfile_basename \
 		  vftr_logfile_for_ranks \
@@ -129,8 +131,10 @@ vftr_sort_profile_table_assert_SOURCES = $(srcdir)/little_tasks.c
 vftr_sort_profile_table_assert_CFLAGS = $(AM_CFLAGS) -finstrument-functions
 vftr_sort_profile_table_assert_LDFLAGS = $(AM_LDFLAGS)
 
-dist_check_SCRIPTS += vftr_off.sh \
-		      vftr_sampling.sh \
+if !SELF_PROFILING
+dist_check_SCRIPTS += vftr_off.sh
+endif
+dist_check_SCRIPTS += vftr_sampling.sh \
 		      vftr_out_directory.sh \
 		      vftr_logfile_basename.sh \
 		      vftr_logfile_for_ranks.sh \
