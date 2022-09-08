@@ -125,7 +125,6 @@ void vftr_free_librarylist(librarylist_t *librarylist_ptr) {
 }
 
 void vftr_print_symbol_table(FILE *fp, symboltable_t symboltable) {
-   SELF_PROFILE_START_FUNCTION;
    for (unsigned int isym=0; isym<symboltable.nsymbols; isym++) {
       fprintf(fp, "%d 0x%llx %s%s\n",
               symboltable.symbols[isym].index,
@@ -135,14 +134,16 @@ void vftr_print_symbol_table(FILE *fp, symboltable_t symboltable) {
               symboltable.symbols[isym].precise ? "*" : "");
    }
    fprintf(fp, "\n");
-   SELF_PROFILE_END_FUNCTION;
 }
 
 // merge two previously sorted symbol tables into one
 void vftr_merge_symbol_tables(symboltable_t *symtabA_ptr,
                               symboltable_t symtabB) {
    SELF_PROFILE_START_FUNCTION;
-   if (symtabB.nsymbols == 0) {return;}
+   if (symtabB.nsymbols == 0) {
+      SELF_PROFILE_END_FUNCTION;
+      return;
+   }
 
    symboltable_t symtabA = *symtabA_ptr;
    symboltable_t symboltable;
@@ -186,6 +187,7 @@ void vftr_merge_symbol_tables(symboltable_t *symtabA_ptr,
 
 
 symboltable_t vftr_read_symbols_from_library(library_t library) {
+   SELF_PROFILE_START_FUNCTION;
    symboltable_t symboltable = {
       .nsymbols = 0,
       .symbols = NULL,
@@ -217,6 +219,7 @@ symboltable_t vftr_read_symbols_from_library(library_t library) {
       free(ElfProgramHeader);
       free(ElfSectionHeader);
       fclose(fp);
+      SELF_PROFILE_END_FUNCTION;
       return symboltable;
    }
    int strtabidx = vftr_get_elf_string_table_index(header_strtab,
@@ -227,6 +230,7 @@ symboltable_t vftr_read_symbols_from_library(library_t library) {
       free(ElfSectionHeader);
       free(header_strtab);
       fclose(fp);
+      SELF_PROFILE_END_FUNCTION;
       return symboltable;
    }
    char *stringtab = vftr_read_elf_symbol_string_table(fp, ElfSectionHeader,
@@ -240,6 +244,7 @@ symboltable_t vftr_read_symbols_from_library(library_t library) {
       free(header_strtab);
       free(stringtab);
       fclose(fp);
+      SELF_PROFILE_END_FUNCTION;
       return symboltable;
    }
 
@@ -289,6 +294,7 @@ symboltable_t vftr_read_symbols_from_library(library_t library) {
    free(ElfSymbolTable);
    fclose(fp);
 
+   SELF_PROFILE_END_FUNCTION;
    return symboltable;
 }
 
@@ -458,9 +464,9 @@ void vftr_symboltable_free(symboltable_t *symboltable_ptr) {
 int vftr_get_symbID_from_address(symboltable_t symboltable,
                                  uintptr_t address) {
    SELF_PROFILE_START_FUNCTION;
-   int symbID =vftr_binary_search_symboltable(symboltable.nsymbols,
-                                              symboltable.symbols,
-                                              address);
+   int symbID = vftr_binary_search_symboltable(symboltable.nsymbols,
+                                               symboltable.symbols,
+                                               address);
    SELF_PROFILE_END_FUNCTION;
    return symbID;
 }
@@ -515,10 +521,8 @@ bool vftr_get_preciseness_from_symbID(symboltable_t symboltable,
 
 bool vftr_get_preciseness_from_address(symboltable_t symboltable,
                                        uintptr_t address) {
-   SELF_PROFILE_START_FUNCTION;
    int symbID = vftr_get_symbID_from_address(symboltable,
                                              address);
    bool preciseness = vftr_get_preciseness_from_symbID(symboltable, symbID);
-   SELF_PROFILE_END_FUNCTION;
    return preciseness;
 }
