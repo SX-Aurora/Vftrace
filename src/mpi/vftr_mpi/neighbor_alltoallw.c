@@ -19,6 +19,7 @@
 
 #include <mpi.h>
 
+#include "self_profile.h"
 #include "rank_translate.h"
 #include "thread_types.h"
 #include "threads.h"
@@ -44,6 +45,7 @@ int vftr_MPI_Neighbor_alltoallw_graph(const void *sendbuf, const int *sendcounts
                                         comm);
    long long tend = vftr_get_runtime_usec();
 
+   SELF_PROFILE_START_FUNCTION;
    long long t2start = vftr_get_runtime_usec();
    int rank;
    PMPI_Comm_rank(comm, &rank);
@@ -72,6 +74,7 @@ int vftr_MPI_Neighbor_alltoallw_graph(const void *sendbuf, const int *sendcounts
 
    vftr_accumulate_mpiprofiling_overhead(&(my_profile->mpiProf), t2end-t2start);
 
+   SELF_PROFILE_END_FUNCTION;
    return retVal;
 }
 
@@ -86,6 +89,7 @@ int vftr_MPI_Neighbor_alltoallw_cart(const void *sendbuf, const int *sendcounts,
                                         comm);
    long long tend = vftr_get_runtime_usec();
 
+   SELF_PROFILE_START_FUNCTION;
    long long t2start = vftr_get_runtime_usec();
    int rank;
    PMPI_Comm_rank(comm, &rank);
@@ -117,6 +121,7 @@ int vftr_MPI_Neighbor_alltoallw_cart(const void *sendbuf, const int *sendcounts,
 
    vftr_accumulate_mpiprofiling_overhead(&(my_profile->mpiProf), t2end-t2start);
 
+   SELF_PROFILE_END_FUNCTION;
    return retVal;
 }
 
@@ -131,6 +136,7 @@ int vftr_MPI_Neighbor_alltoallw_dist_graph(const void *sendbuf, const int *sendc
                                         comm);
    long long tend = vftr_get_runtime_usec();
 
+   SELF_PROFILE_START_FUNCTION;
    long long t2start = vftr_get_runtime_usec();
    // first obtain the distributed graph info for this process
    int ninneighbors;
@@ -175,5 +181,6 @@ int vftr_MPI_Neighbor_alltoallw_dist_graph(const void *sendbuf, const int *sendc
 
    vftr_accumulate_mpiprofiling_overhead(&(my_profile->mpiProf), t2end-t2start);
 
+   SELF_PROFILE_END_FUNCTION;
    return retVal;
 }
