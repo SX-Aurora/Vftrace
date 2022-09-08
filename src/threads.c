@@ -144,6 +144,7 @@ thread_t *vftr_get_my_thread(threadtree_t *threadtree_ptr) {
 }
 
 void vftr_thread_free(thread_t *threads_ptr, int threadID) {
+   SELF_PROFILE_START_FUNCTION;
    thread_t thread = threads_ptr[threadID];
    vftr_threadstacklist_free(&(thread.stacklist));
    if (thread.nsubthreads > 0) {
@@ -154,6 +155,7 @@ void vftr_thread_free(thread_t *threads_ptr, int threadID) {
       thread.subthreads = NULL;
    }
    threads_ptr[threadID] = thread;
+   SELF_PROFILE_END_FUNCTION;
 }
 
 void vftr_threadtree_free(threadtree_t *threadtree_ptr) {
