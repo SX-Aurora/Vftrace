@@ -20,12 +20,14 @@
 
 #include <stdbool.h>
 
+#include "self_profile.h"
 #include "request_utils.h"
 #include "status_utils.h"
 #include "requests.h"
 
 int vftr_MPI_Testany(int count, MPI_Request array_of_requests[],
                      int *index, int *flag, MPI_Status *status) {
+   SELF_PROFILE_START_FUNCTION;
    // First check if the request array contains at least one active handle
    bool activereqs = false;
    for (int ireq=0; ireq<count; ireq++) {
@@ -41,6 +43,7 @@ int vftr_MPI_Testany(int count, MPI_Request array_of_requests[],
       if (status != MPI_STATUS_IGNORE) {
          vftr_empty_mpi_status(status);
       }
+      SELF_PROFILE_END_FUNCTION;
       return MPI_SUCCESS;
    }
 
@@ -67,5 +70,6 @@ int vftr_MPI_Testany(int count, MPI_Request array_of_requests[],
       }
    }
 
+   SELF_PROFILE_END_FUNCTION;
    return retVal;
 }
