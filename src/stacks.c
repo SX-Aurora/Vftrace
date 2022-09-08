@@ -82,6 +82,7 @@ int vftr_new_stack(int callerID, stacktree_t *stacktree_ptr,
 }
 
 stack_t vftr_first_stack() {
+   SELF_PROFILE_START_FUNCTION;
    stack_t stack;
    stack.stack_kind = init;
    stack.address = (uintptr_t) NULL;
@@ -97,6 +98,7 @@ stack_t vftr_first_stack() {
    stack.profiling = vftr_new_profilelist();
    vftr_new_profile_in_list(0, &(stack.profiling));
    stack.hash = 0;
+   SELF_PROFILE_END_FUNCTION;
    return stack;
 }
 
@@ -167,9 +169,7 @@ void vftr_print_stack_branch(FILE *fp, int level, stacktree_t stacktree, int sta
 }
 
 void vftr_print_stacktree(FILE *fp, stacktree_t stacktree) {
-   SELF_PROFILE_START_FUNCTION;
    vftr_print_stack_branch(fp, 0, stacktree, 0);
-   SELF_PROFILE_END_FUNCTION;
 }
 
 int vftr_get_stack_string_length(stacktree_t stacktree, int stackid, bool show_precise) {
@@ -233,11 +233,9 @@ void vftr_print_stack(FILE *fp, stacktree_t stacktree, int stackid) {
 }
 
 void vftr_print_stacklist(FILE *fp, stacktree_t stacktree) {
-   SELF_PROFILE_START_FUNCTION;
    for (int istack=0; istack<stacktree.nstacks; istack++) {
       fprintf(fp, "%d: ", istack);
       vftr_print_stack(fp, stacktree, istack);
       fprintf(fp, "\n");
    }
-   SELF_PROFILE_END_FUNCTION;
 }
