@@ -21,12 +21,16 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
+#include "self_profile.h"
 #include "requests.h"
 
 int vftr_MPI_Waitall(int count, MPI_Request array_of_requests[],
                      MPI_Status array_of_statuses[]) {
-
-   if (count <= 0) {return MPI_SUCCESS;}
+   SELF_PROFILE_START_FUNCTION;
+   if (count <= 0) {
+      SELF_PROFILE_END_FUNCTION;
+      return MPI_SUCCESS;
+   }
 
    // loop while at least one request is not completed
    int *req_completed = (int*) malloc(count*sizeof(int));
@@ -58,5 +62,7 @@ int vftr_MPI_Waitall(int count, MPI_Request array_of_requests[],
    free(req_completed);
    req_completed = NULL;
 
-   return PMPI_Waitall(count, array_of_requests, array_of_statuses);
+   int retVal = PMPI_Waitall(count, array_of_requests, array_of_statuses);
+   SELF_PROFILE_END_FUNCTION;
+   return retVal;
 }
