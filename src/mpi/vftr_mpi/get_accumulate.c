@@ -18,6 +18,7 @@
 
 #include <mpi.h>
 
+#include "self_profile.h"
 #include "thread_types.h"
 #include "threads.h"
 #include "threadstack_types.h"
@@ -42,6 +43,7 @@ int vftr_MPI_Get_accumulate(const void *origin_addr, int origin_count,
                                     target_datatype, op, win);
    long long tend = vftr_get_runtime_usec();
 
+   SELF_PROFILE_START_FUNCTION;
    long long t2start = tend;
    // Need to figure out the partner rank in a known communicator to store info
    MPI_Group local_group;
@@ -71,5 +73,6 @@ int vftr_MPI_Get_accumulate(const void *origin_addr, int origin_count,
 
    vftr_accumulate_mpiprofiling_overhead(&(my_profile->mpiProf), t2end-t2start);
 
+   SELF_PROFILE_END_FUNCTION;
    return retVal;
 }
