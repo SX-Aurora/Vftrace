@@ -31,7 +31,7 @@ int vftr_MPI_Test(MPI_Request *request, int *flag, MPI_Status *status) {
    if (*flag) {
       // Communication is done.
       // Clear finished communications from the open request list
-      vftr_clear_completed_requests();
+      vftr_clear_completed_requests_from_test();
       // Now that the danger of deleating needed requests is banned
       // actually call MPI_Test
       retVal = PMPI_Test(request, flag, status);

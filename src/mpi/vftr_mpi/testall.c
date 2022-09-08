@@ -45,7 +45,7 @@ int vftr_MPI_Testall(int count, MPI_Request array_of_requests[],
       *flag = (*flag) && tmpflag;
    }
    // clear completed communications from the list of open requests
-   vftr_clear_completed_requests();
+   vftr_clear_completed_requests_from_test();
 
    if (flag) {
    // If all communications are completed

@@ -34,6 +34,9 @@ vftr_request_t* vftr_register_request(message_direction dir, int nmsg, int *coun
 
 // clear the requests and log the messaging
 void vftr_clear_completed_requests();
+void vftr_clear_completed_requests_from_hooks();
+void vftr_clear_completed_requests_from_test();
+void vftr_clear_completed_requests_from_wait();
 
 void vftr_activate_pers_request(MPI_Request request, long long tstart);
 

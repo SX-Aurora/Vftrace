@@ -61,7 +61,7 @@ int vftr_MPI_Waitany(int count, MPI_Request array_of_requests[],
          // either the communication is completed, or not
          // other communications might be completed in the background
          // clear those from the list of open requests
-         vftr_clear_completed_requests();
+         vftr_clear_completed_requests_from_wait();
          // if this request corresponds to a completed communication
          // leave the loop
          if (flag) {

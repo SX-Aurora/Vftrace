@@ -52,7 +52,7 @@ int vftr_MPI_Waitall(int count, MPI_Request array_of_requests[],
             }
          }
       }
-      vftr_clear_completed_requests();
+      vftr_clear_completed_requests_from_wait();
    }
 
    free(req_completed);

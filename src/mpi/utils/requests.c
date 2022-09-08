@@ -110,36 +110,48 @@ vftr_request_t* vftr_register_request(message_direction dir, int nmsg, int *coun
 }
 
 // clear the requests and log the messaging
-// This function is not self profiled, as it is called continously by MPI_Wait*
-// Thus distorting the self-profile.
 void vftr_clear_completed_requests() {
+   for (int ireq=0; ireq<vftrace.mpi_state.nopen_requests; ireq++) {
+      vftr_request_t *current_request = vftrace.mpi_state.open_requests+ireq;
+      // only attempt to clear it if it is valid
+      if (current_request->valid &&
+          (!current_request->persistent ||
+           (current_request->persistent && current_request->active))) {
+         switch (current_request->request_kind) {
+            case p2p:
+               vftr_clear_completed_p2p_request(current_request);
+               break;
+            case onesided:
+               vftr_clear_completed_onesided_request(current_request);
+               break;
+            case collective:
+               vftr_clear_completed_collective_request(current_request);
+               break;
+         }
+      }
+   }
+}
+
+void vftr_clear_completed_requests_from_hooks() {
+   SELF_PROFILE_START_FUNCTION;
    int mpi_isinit;
    PMPI_Initialized(&mpi_isinit);
    if (mpi_isinit) {
       int mpi_isfinal;
       PMPI_Finalized(&mpi_isfinal);
       if (!mpi_isfinal) {
-         for (int ireq=0; ireq<vftrace.mpi_state.nopen_requests; ireq++) {
-            vftr_request_t *current_request = vftrace.mpi_state.open_requests+ireq;
-            // only attempt to clear it if it is valid
-            if (current_request->valid &&
-                (!current_request->persistent ||
-                 (current_request->persistent && current_request->active))) {
-               switch (current_request->request_kind) {
-                  case p2p:
-                     vftr_clear_completed_p2p_request(current_request);
-                     break;
-                  case onesided:
-                     vftr_clear_completed_onesided_request(current_request);
-                     break;
-                  case collective:
-                     vftr_clear_completed_collective_request(current_request);
-                     break;
-               }
-            }
-         }
+         vftr_clear_completed_requests();
       }
    }
+   SELF_PROFILE_END_FUNCTION;
+}
+
+void vftr_clear_completed_requests_from_test() {
+   vftr_clear_completed_requests();
+}
+
+void vftr_clear_completed_requests_from_wait() {
+   vftr_clear_completed_requests();
 }
 
 void vftr_activate_pers_request(MPI_Request request, long long tstart) {

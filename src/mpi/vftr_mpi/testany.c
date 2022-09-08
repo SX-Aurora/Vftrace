@@ -58,7 +58,7 @@ int vftr_MPI_Testany(int count, MPI_Request array_of_requests[],
          // record the index of the completed communication
          *index = ireq;
          // clear completed communication from the list of open requests
-         vftr_clear_completed_requests();
+         vftr_clear_completed_requests_from_test();
          // Mark the request as inactive, or deallocate it.
          retVal = PMPI_Test(array_of_requests+ireq,
                             flag,

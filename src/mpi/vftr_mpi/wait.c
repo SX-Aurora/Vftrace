@@ -35,7 +35,7 @@ int vftr_MPI_Wait(MPI_Request *request, MPI_Status *status) {
       // either the communication is completed, or not
       // other communications might be completed in the background
       // clear those from the list of open requests
-      vftr_clear_completed_requests();
+      vftr_clear_completed_requests_from_wait();
    }
    // Properly set the request and status variable
    retVal = PMPI_Wait(request, status);

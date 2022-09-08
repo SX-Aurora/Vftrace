@@ -41,7 +41,7 @@ void vftr_function_entry(void *func, void *call_site) {
 
 #ifdef _MPI
    // Check for completed MPI-requests
-   vftr_clear_completed_requests();
+   vftr_clear_completed_requests_from_hooks();
 #endif
 
    // Get the thread that called the function
@@ -94,7 +94,7 @@ void vftr_function_exit(void *func, void *call_site) {
 
 #ifdef _MPI
    // Check for completed MPI-requests
-   vftr_clear_completed_requests();
+   vftr_clear_completed_requests_from_hooks();
 #endif
 
    thread_t *my_thread = vftr_get_my_thread(&(vftrace.process.threadtree));

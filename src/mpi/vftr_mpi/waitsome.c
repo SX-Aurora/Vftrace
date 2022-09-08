@@ -73,7 +73,7 @@ int vftr_MPI_Waitsome(int incount, MPI_Request array_of_requests[],
             (*outcount)++;
             array_of_indices[(*outcount)-1] = ireq;
             // remove completed communications from the list of open requests
-            vftr_clear_completed_requests();
+            vftr_clear_completed_requests_from_wait();
             // Mark the request as inactive, or deallocate it.
             if (array_of_statuses == MPI_STATUSES_IGNORE) {
                tmpretVal = PMPI_Wait(array_of_requests+ireq,
