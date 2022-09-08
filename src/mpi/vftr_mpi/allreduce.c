@@ -18,6 +18,7 @@
 
 #include <mpi.h>
 
+#include "self_profile.h"
 #include "rank_translate.h"
 #include "thread_types.h"
 #include "threads.h"
@@ -38,6 +39,7 @@ int vftr_MPI_Allreduce(const void *sendbuf, void *recvbuf, int count,
    int retVal = PMPI_Allreduce(sendbuf, recvbuf, count, datatype, op, comm);
    long long tend = vftr_get_runtime_usec();
 
+   SELF_PROFILE_START_FUNCTION;
    long long t2start = tend;
    int size;
    PMPI_Comm_size(comm, &size);
@@ -66,6 +68,7 @@ int vftr_MPI_Allreduce(const void *sendbuf, void *recvbuf, int count,
 
    vftr_accumulate_mpiprofiling_overhead(&(my_profile->mpiProf), t2end-t2start);
 
+   SELF_PROFILE_END_FUNCTION;
    return retVal;
 }
 
@@ -76,6 +79,7 @@ int vftr_MPI_Allreduce_inplace(const void *sendbuf, void *recvbuf, int count,
    int retVal = PMPI_Allreduce(sendbuf, recvbuf, count, datatype, op, comm);
    long long tend = vftr_get_runtime_usec();
 
+   SELF_PROFILE_START_FUNCTION;
    long long t2start = tend;
    int size;
    PMPI_Comm_size(comm, &size);
@@ -124,6 +128,7 @@ int vftr_MPI_Allreduce_inplace(const void *sendbuf, void *recvbuf, int count,
 
    vftr_accumulate_mpiprofiling_overhead(&(my_profile->mpiProf), t2end-t2start);
 
+   SELF_PROFILE_END_FUNCTION;
    return retVal;
 }
 
@@ -134,6 +139,7 @@ int vftr_MPI_Allreduce_intercom(const void *sendbuf, void *recvbuf, int count,
    int retVal = PMPI_Allreduce(sendbuf, recvbuf, count, datatype, op, comm);
    long long tend = vftr_get_runtime_usec();
 
+   SELF_PROFILE_START_FUNCTION;
    long long t2start = tend;
    // Every process of group A performs the reduction within the group A
    // and stores the result on everyp process of group B and vice versa
@@ -170,5 +176,6 @@ int vftr_MPI_Allreduce_intercom(const void *sendbuf, void *recvbuf, int count,
 
    vftr_accumulate_mpiprofiling_overhead(&(my_profile->mpiProf), t2end-t2start);
 
+   SELF_PROFILE_END_FUNCTION;
    return retVal;
 }
