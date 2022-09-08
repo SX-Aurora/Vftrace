@@ -17,9 +17,11 @@
 #include "profiling.h"
 
 collated_stacktree_t vftr_new_empty_collated_stacktree() {
+   SELF_PROFILE_START_FUNCTION;
    collated_stacktree_t stacktree;
    stacktree.nstacks = 0;
    stacktree.stacks = NULL;
+   SELF_PROFILE_END_FUNCTION;
    return stacktree;
 }
 
@@ -435,19 +437,15 @@ char *vftr_get_collated_stack_string(collated_stacktree_t stacktree,
 }
 
 void vftr_print_collated_stack(FILE *fp, collated_stacktree_t stacktree, int stackid) {
-   SELF_PROFILE_START_FUNCTION;
    char *stackstr = vftr_get_collated_stack_string(stacktree, stackid, false);
    fprintf(fp, "%s", stackstr);
    free(stackstr);
-   SELF_PROFILE_END_FUNCTION;
 }
 
 void vftr_print_collated_stacklist(FILE *fp, collated_stacktree_t stacktree) {
-   SELF_PROFILE_START_FUNCTION;
    for (int istack=0; istack<stacktree.nstacks; istack++) {
       fprintf(fp, "%u: ", istack);
       vftr_print_collated_stack(fp, stacktree, istack);
       fprintf(fp, "\n");
    }
-   SELF_PROFILE_END_FUNCTION;
 }
