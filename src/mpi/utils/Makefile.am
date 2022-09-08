@@ -10,7 +10,8 @@ libvftr_mpi_utils_la_SOURCES += mpi_logging.c \
 				logfile_mpi_table.c \
 				ranklogfile_mpi_table.c \
 				mpi_buf_addr_const.c \
-				sync_time.c
+				sync_time.c \
+				sleep.c
 
 libvftr_mpi_utils_la_SOURCES += cart_comms.c
 
