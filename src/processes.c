@@ -1,3 +1,4 @@
+#include "self_profile.h"
 #include "processes.h"
 #include "stacks.h"
 #include "collate_stacks.h"
@@ -5,6 +6,7 @@
 #include "timer.h"
 
 process_t vftr_new_process() {
+   SELF_PROFILE_START_FUNCTION;
    process_t process;
    process.nprocesses = 1;
    process.processID = 0;
@@ -12,12 +14,15 @@ process_t vftr_new_process() {
    process.threadtree = vftr_new_threadtree(process.stacktree.stacks);
    process.collated_stacktree = vftr_new_empty_collated_stacktree();
 
+   SELF_PROFILE_END_FUNCTION;
    return process;
 }
 
 void vftr_process_free(process_t *process_ptr) {
+   SELF_PROFILE_START_FUNCTION;
    process_t process = *process_ptr;
    vftr_stacktree_free(&(process.stacktree));
    vftr_threadtree_free(&(process.threadtree));
    vftr_collated_stacktree_free(&(process.collated_stacktree));
+   SELF_PROFILE_END_FUNCTION;
 }
