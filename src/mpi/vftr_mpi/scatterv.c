@@ -18,6 +18,7 @@
 
 #include <mpi.h>
 
+#include "self_profile.h"
 #include "rank_translate.h"
 #include "thread_types.h"
 #include "threads.h"
@@ -41,6 +42,7 @@ int vftr_MPI_Scatterv(const void *sendbuf, const int *sendcounts,
                               recvbuf, recvcount, recvtype, root, comm);
    long long tend = vftr_get_runtime_usec();
 
+   SELF_PROFILE_START_FUNCTION;
    long long t2start = tend;
    // in intracommunicators the expected behaviour is to
    // bcast from root to all other processes in the communicator
@@ -69,6 +71,7 @@ int vftr_MPI_Scatterv(const void *sendbuf, const int *sendcounts,
 
    vftr_accumulate_mpiprofiling_overhead(&(my_profile->mpiProf), t2end-t2start);
 
+   SELF_PROFILE_END_FUNCTION;
    return retVal;
 }
 
@@ -82,6 +85,7 @@ int vftr_MPI_Scatterv_inplace(const void *sendbuf, const int *sendcounts,
                               recvbuf, recvcount, recvtype, root, comm);
    long long tend = vftr_get_runtime_usec();
 
+   SELF_PROFILE_START_FUNCTION;
    long long t2start = tend;
    // in intracommunicators the expected behaviour is to
    // bcast from root to all other processes in the communicator
@@ -112,6 +116,7 @@ int vftr_MPI_Scatterv_inplace(const void *sendbuf, const int *sendcounts,
 
    vftr_accumulate_mpiprofiling_overhead(&(my_profile->mpiProf), t2end-t2start);
 
+   SELF_PROFILE_END_FUNCTION;
    return retVal;
 }
 
@@ -125,6 +130,7 @@ int vftr_MPI_Scatterv_intercom(const void *sendbuf, const int *sendcounts,
                               recvbuf, recvcount, recvtype, root, comm);
    long long tend = vftr_get_runtime_usec();
 
+   SELF_PROFILE_START_FUNCTION;
    long long t2start = tend;
    // in intercommunicators the behaviour is more complicated
    // There are two groups A and B
@@ -163,5 +169,6 @@ int vftr_MPI_Scatterv_intercom(const void *sendbuf, const int *sendcounts,
 
    vftr_accumulate_mpiprofiling_overhead(&(my_profile->mpiProf), t2end-t2start);
 
+   SELF_PROFILE_END_FUNCTION;
    return retVal;
 }
