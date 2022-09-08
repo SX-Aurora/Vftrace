@@ -4,6 +4,7 @@
 
 #include <string.h>
 
+#include "self_profile.h"
 #include "table_types.h"
 #include "tables.h"
 #include "misc_utils.h"
@@ -430,6 +431,7 @@ void vftr_print_table_values(FILE *fp, table_t table, int *colwidths) {
 }
 
 void vftr_print_table(FILE *fp, table_t table) {
+   SELF_PROFILE_START_FUNCTION;
    // determine the width of each column
    int *colwidths = vftr_compute_column_widths(table.ncols, table.nrows, table.columns);
 
@@ -456,6 +458,7 @@ void vftr_print_table(FILE *fp, table_t table) {
 
    // free memory
    free(colwidths);
+   SELF_PROFILE_END_FUNCTION;
 }
 
 column_t vftr_new_column() {
