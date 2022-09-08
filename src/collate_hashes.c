@@ -154,9 +154,11 @@ hashlist_t vftr_collate_hashes(stacktree_t *stacktree_ptr) {
 }
 
 void vftr_collated_hashlist_free(hashlist_t *hashlist) {
+   SELF_PROFILE_START_FUNCTION;
    if (hashlist->nhashes > 0) {
       free(hashlist->hashes);
       hashlist->hashes = NULL;
       hashlist->nhashes = 0;
    }
+   SELF_PROFILE_END_FUNCTION;
 }
