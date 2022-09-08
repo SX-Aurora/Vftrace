@@ -11,6 +11,7 @@
 #include "overheadprofiling_types.h"
 
 overheadProfile_t vftr_new_overheadprofiling() {
+   SELF_PROFILE_START_FUNCTION;
    overheadProfile_t prof;
    prof.hook_usec = 0ll;
 #ifdef _MPI
@@ -19,6 +20,7 @@ overheadProfile_t vftr_new_overheadprofiling() {
 #ifdef _OMP
    prof.omp_usec = 0ll;
 #endif
+   SELF_PROFILE_END_FUNCTION;
    return prof;
 }
 
