@@ -20,9 +20,11 @@
 
 #include <stdbool.h>
 
+#include "self_profile.h"
 #include "requests.h"
 
 int vftr_MPI_Wait(MPI_Request *request, MPI_Status *status) {
+   SELF_PROFILE_START_FUNCTION;
    int retVal;
 
    // loop until the communication corresponding to the request is completed
@@ -40,5 +42,6 @@ int vftr_MPI_Wait(MPI_Request *request, MPI_Status *status) {
    // Properly set the request and status variable
    retVal = PMPI_Wait(request, status);
 
+   SELF_PROFILE_END_FUNCTION;
    return retVal;
 }
