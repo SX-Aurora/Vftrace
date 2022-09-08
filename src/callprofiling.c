@@ -11,11 +11,13 @@
 #endif
 
 callProfile_t vftr_new_callprofiling() {
+   SELF_PROFILE_START_FUNCTION;
    callProfile_t prof;
    prof.calls = 0ll;
    prof.time_usec = 0ll;
    prof.time_excl_usec = 0ll;
    prof.overhead_usec = 0ll;
+   SELF_PROFILE_END_FUNCTION;
    return prof;
 }
 
@@ -104,7 +106,9 @@ long long vftr_get_total_collated_call_overhead(collated_stacktree_t stacktree) 
 }
 
 void vftr_callprofiling_free(callProfile_t *callprof_ptr) {
+   SELF_PROFILE_START_FUNCTION;
    (void) callprof_ptr;
+   SELF_PROFILE_END_FUNCTION;
 }
 
 void vftr_print_callprofiling(FILE *fp, callProfile_t callprof) {
