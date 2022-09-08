@@ -1,3 +1,4 @@
+
 /*
    This file is part of Vftrace.
 
@@ -20,6 +21,7 @@
 
 #include <stdlib.h>
 
+#include "self_profile.h"
 #include "thread_types.h"
 #include "threads.h"
 #include "threadstack_types.h"
@@ -37,6 +39,7 @@ int vftr_MPI_Ibcast(void *buffer, int count, MPI_Datatype datatype,
                    int root, MPI_Comm comm, MPI_Request *request) {
    long long tstart = vftr_get_runtime_usec();
    int retVal = PMPI_Ibcast(buffer, count, datatype, root, comm, request);
+   SELF_PROFILE_START_FUNCTION;
    long long t2start = vftr_get_runtime_usec();
    // in intracommunicators the expected behaviour is to
    // gather from root to all other processes in the communicator
@@ -79,6 +82,7 @@ int vftr_MPI_Ibcast(void *buffer, int count, MPI_Datatype datatype,
 
    vftr_accumulate_mpiprofiling_overhead(&(my_profile->mpiProf), t2end-t2start);
 
+   SELF_PROFILE_END_FUNCTION;
    return retVal;
 }
 
@@ -86,6 +90,7 @@ int vftr_MPI_Ibcast_intercom(void *buffer, int count, MPI_Datatype datatype,
                              int root, MPI_Comm comm, MPI_Request *request) {
    long long tstart = vftr_get_runtime_usec();
    int retVal = PMPI_Ibcast(buffer, count, datatype, root, comm, request);
+   SELF_PROFILE_START_FUNCTION;
    long long t2start = vftr_get_runtime_usec();
    // in intercommunicators the behaviour is more complicated
    // There are two groups A and B
@@ -137,5 +142,6 @@ int vftr_MPI_Ibcast_intercom(void *buffer, int count, MPI_Datatype datatype,
 
    vftr_accumulate_mpiprofiling_overhead(&(my_profile->mpiProf), t2end-t2start);
 
+   SELF_PROFILE_END_FUNCTION;
    return retVal;
 }
