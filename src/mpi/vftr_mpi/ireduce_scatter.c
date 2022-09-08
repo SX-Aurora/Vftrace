@@ -20,6 +20,7 @@
 
 #include <mpi.h>
 
+#include "self_profile.h"
 #include "rank_translate.h"
 #include "thread_types.h"
 #include "threads.h"
@@ -40,6 +41,7 @@ int vftr_MPI_Ireduce_scatter(const void *sendbuf, void *recvbuf,
    long long tstart = vftr_get_runtime_usec();
    int retVal = PMPI_Ireduce_scatter(sendbuf, recvbuf, recvcounts, datatype, op, comm, request);
 
+   SELF_PROFILE_START_FUNCTION;
    long long t2start = vftr_get_runtime_usec();
    int size;
    PMPI_Comm_size(comm, &size);
@@ -123,6 +125,7 @@ int vftr_MPI_Ireduce_scatter(const void *sendbuf, void *recvbuf,
 
    vftr_accumulate_mpiprofiling_overhead(&(my_profile->mpiProf), t2end-t2start);
 
+   SELF_PROFILE_END_FUNCTION;
    return retVal;
 }
 
@@ -133,6 +136,7 @@ int vftr_MPI_Ireduce_scatter_inplace(const void *sendbuf, void *recvbuf,
    long long tstart = vftr_get_runtime_usec();
    int retVal = PMPI_Ireduce_scatter(sendbuf, recvbuf, recvcounts, datatype, op, comm, request);
 
+   SELF_PROFILE_START_FUNCTION;
    long long t2start = vftr_get_runtime_usec();
    int size;
    PMPI_Comm_size(comm, &size);
@@ -213,6 +217,7 @@ int vftr_MPI_Ireduce_scatter_inplace(const void *sendbuf, void *recvbuf,
 
    vftr_accumulate_mpiprofiling_overhead(&(my_profile->mpiProf), t2end-t2start);
 
+   SELF_PROFILE_END_FUNCTION;
    return retVal;
 }
 
@@ -223,6 +228,7 @@ int vftr_MPI_Ireduce_scatter_intercom(const void *sendbuf, void *recvbuf,
    long long tstart = vftr_get_runtime_usec();
    int retVal = PMPI_Ireduce_scatter(sendbuf, recvbuf, recvcounts, datatype, op, comm, request);
 
+   SELF_PROFILE_START_FUNCTION;
    long long t2start = vftr_get_runtime_usec();
    // Every process of group A performs the reduction within the group A
    // and stores the result on everyp process of group B and vice versa
@@ -345,5 +351,6 @@ int vftr_MPI_Ireduce_scatter_intercom(const void *sendbuf, void *recvbuf,
 
    vftr_accumulate_mpiprofiling_overhead(&(my_profile->mpiProf), t2end-t2start);
 
+   SELF_PROFILE_END_FUNCTION;
    return retVal;
 }
