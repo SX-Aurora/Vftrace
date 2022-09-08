@@ -260,7 +260,6 @@ environment_t vftr_read_environment() {
 void vftr_env_var_find_best_match(environment_t *environment_ptr,
                                   char *var_name, int *best_ld,
                                   int *best_idx) {
-   SELF_PROFILE_START_FUNCTION;
    *best_ld = INT_MAX;
    *best_idx = -1;
    for (int ivar=0; ivar<environment_ptr->nenv_vars; ivar++) {
@@ -272,11 +271,9 @@ void vftr_env_var_find_best_match(environment_t *environment_ptr,
          *best_idx = ivar;
       }
       if (ld == 0) {
-         SELF_PROFILE_END_FUNCTION;
          return;
       }
    }
-   SELF_PROFILE_END_FUNCTION;
 }
 
 // There might be mistyped Vftrace environment variables. Loop over all existing env variables,
