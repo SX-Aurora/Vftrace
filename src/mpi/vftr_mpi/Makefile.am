@@ -1,5 +1,6 @@
 noinst_LTLIBRARIES = libvftr_mpi.la
 
+libvftr_mpi_la_CPPFLAGS =
 libvftr_mpi_la_SOURCES = 
 
 if HAS_MPI_STD_1_0
@@ -168,6 +169,10 @@ endif
 libvftr_mpi_la_CFLAGS =
 
 libvftr_mpi_la_CFLAGS +=-D_MPI
+
+if SELF_PROFILING
+libvftr_mpi_la_CPPFLAGS += -D_SELF_PROFILE_VFTRACE
+endif
 
 libvftr_mpi_la_CFLAGS += -I${srcdir}/../utils/
 libvftr_mpi_la_CFLAGS += -I${srcdir}/../../
