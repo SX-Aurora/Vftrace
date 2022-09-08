@@ -20,13 +20,18 @@
 
 #include <stdbool.h>
 
+#include "self_profile.h"
 #include "request_utils.h"
 #include "status_utils.h"
 #include "requests.h"
 
 int vftr_MPI_Waitany(int count, MPI_Request array_of_requests[],
                      int *index, MPI_Status *status) {
-   if (count <= 0) {return MPI_SUCCESS;}
+   SELF_PROFILE_START_FUNCTION;
+   if (count <= 0) {
+      SELF_PROFILE_END_FUNCTION;
+      return MPI_SUCCESS;
+   }
 
    // First check if the request array contains at least one active handle
    bool activereqs = false;
@@ -42,6 +47,7 @@ int vftr_MPI_Waitany(int count, MPI_Request array_of_requests[],
       if (status == MPI_STATUS_IGNORE) {
          vftr_empty_mpi_status(status);
       }
+      SELF_PROFILE_END_FUNCTION;
       return MPI_SUCCESS;
    }
 
@@ -75,5 +81,6 @@ int vftr_MPI_Waitany(int count, MPI_Request array_of_requests[],
    // Properly set the request and status variable
    retVal = PMPI_Wait(array_of_requests+(*index), status);
 
+   SELF_PROFILE_END_FUNCTION;
    return retVal;
 }
