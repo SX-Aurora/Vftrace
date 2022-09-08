@@ -18,6 +18,7 @@
 
 #include <mpi.h>
 
+#include "self_profile.h"
 #include "thread_types.h"
 #include "threads.h"
 #include "threadstack_types.h"
@@ -37,6 +38,7 @@ int vftr_MPI_Exscan(const void *sendbuf, void *recvbuf, int count,
    int retVal = PMPI_Exscan(sendbuf, recvbuf, count, datatype, op, comm);
    long long tend = vftr_get_runtime_usec();
 
+   SELF_PROFILE_START_FUNCTION;
    long long t2start = tend;
    // Only intra-communicators, as the standard specifically states
    // that the scan operation is invalid for intercommunicators
@@ -105,5 +107,6 @@ int vftr_MPI_Exscan(const void *sendbuf, void *recvbuf, int count,
 
    vftr_accumulate_mpiprofiling_overhead(&(my_profile->mpiProf), t2end-t2start);
 
+   SELF_PROFILE_END_FUNCTION;
    return retVal;
 }
