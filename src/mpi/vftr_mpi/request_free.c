@@ -20,6 +20,7 @@
 
 #include <stdbool.h>
 
+#include "self_profile.h"
 #include "thread_types.h"
 #include "threads.h"
 #include "threadstack_types.h"
@@ -35,8 +36,8 @@
 #include "requests.h"
 
 int vftr_MPI_Request_free(MPI_Request *request) {
-
-   long long t2start= vftr_get_runtime_usec();
+   SELF_PROFILE_START_FUNCTION;
+   long long t2start = vftr_get_runtime_usec();
    vftr_request_t *matched_request = vftr_search_request(*request);
    if (matched_request != NULL) {
          matched_request->marked_for_deallocation = true;
@@ -53,5 +54,7 @@ int vftr_MPI_Request_free(MPI_Request *request) {
 
    vftr_accumulate_mpiprofiling_overhead(&(my_profile->mpiProf), t2end-t2start);
 
-   return 0;
+   int retVal = 0;
+   SELF_PROFILE_END_FUNCTION;
+   return retVal;
 }
