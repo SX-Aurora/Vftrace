@@ -20,6 +20,7 @@
 
 #include <stdlib.h>
 
+#include "self_profile.h"
 #include "rank_translate.h"
 #include "thread_types.h"
 #include "threads.h"
@@ -42,6 +43,7 @@ int vftr_MPI_Iscatterv(const void *sendbuf, const int *sendcounts,
    int retVal = PMPI_Iscatterv(sendbuf, sendcounts, displs, sendtype,
                               recvbuf, recvcount, recvtype, root, comm, request);
 
+   SELF_PROFILE_START_FUNCTION;
    long long t2start = vftr_get_runtime_usec();
    // determine if inter or intra communicator
    int isintercom;
@@ -96,6 +98,7 @@ int vftr_MPI_Iscatterv(const void *sendbuf, const int *sendcounts,
 
    vftr_accumulate_mpiprofiling_overhead(&(my_profile->mpiProf), t2end-t2start);
 
+   SELF_PROFILE_END_FUNCTION;
    return retVal;
 }
 
@@ -108,6 +111,7 @@ int vftr_MPI_Iscatterv_inplace(const void *sendbuf, const int *sendcounts,
    int retVal = PMPI_Iscatterv(sendbuf, sendcounts, displs, sendtype,
                               recvbuf, recvcount, recvtype, root, comm, request);
 
+   SELF_PROFILE_START_FUNCTION;
    long long t2start = vftr_get_runtime_usec();
    // determine if inter or intra communicator
    int isintercom;
@@ -170,6 +174,7 @@ int vftr_MPI_Iscatterv_inplace(const void *sendbuf, const int *sendcounts,
 
    vftr_accumulate_mpiprofiling_overhead(&(my_profile->mpiProf), t2end-t2start);
 
+   SELF_PROFILE_END_FUNCTION;
    return retVal;
 }
 
@@ -182,6 +187,7 @@ int vftr_MPI_Iscatterv_intercom(const void *sendbuf, const int *sendcounts,
    int retVal = PMPI_Iscatterv(sendbuf, sendcounts, displs, sendtype,
                               recvbuf, recvcount, recvtype, root, comm, request);
 
+   SELF_PROFILE_START_FUNCTION;
    long long t2start = vftr_get_runtime_usec();
    // in intercommunicators the behaviour is more complicated
    // There are two groups A and B
@@ -238,5 +244,6 @@ int vftr_MPI_Iscatterv_intercom(const void *sendbuf, const int *sendcounts,
 
    vftr_accumulate_mpiprofiling_overhead(&(my_profile->mpiProf), t2end-t2start);
 
+   SELF_PROFILE_END_FUNCTION;
    return retVal;
 }
