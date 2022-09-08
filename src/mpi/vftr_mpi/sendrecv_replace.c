@@ -18,6 +18,7 @@
 
 #include <mpi.h>
 
+#include "self_profile.h"
 #include "thread_types.h"
 #include "threads.h"
 #include "threadstack_types.h"
@@ -39,6 +40,7 @@ int vftr_MPI_Sendrecv_replace(void *buf, int count, MPI_Datatype datatype,
                                       source, recvtag, comm, &tmpstatus);
    long long tend = vftr_get_runtime_usec();
 
+   SELF_PROFILE_START_FUNCTION;
    long long t2start = tend;
    int rank;
    PMPI_Comm_rank(comm, &rank);
@@ -63,5 +65,6 @@ int vftr_MPI_Sendrecv_replace(void *buf, int count, MPI_Datatype datatype,
 
    vftr_accumulate_mpiprofiling_overhead(&(my_profile->mpiProf), t2end-t2start);
 
+   SELF_PROFILE_END_FUNCTION;
    return retVal;
 }
