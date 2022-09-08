@@ -18,9 +18,11 @@
 
 #include <mpi.h>
 
+#include "self_profile.h"
 #include "requests.h"
 
 int vftr_MPI_Test(MPI_Request *request, int *flag, MPI_Status *status) {
+   SELF_PROFILE_START_FUNCTION;
    // do not call MPI_Test immediately!
    // If the communication is successfull MPI_Test destroys the Reqeust
    // Hence, no chance of properly clearing the communication
@@ -37,5 +39,6 @@ int vftr_MPI_Test(MPI_Request *request, int *flag, MPI_Status *status) {
       retVal = PMPI_Test(request, flag, status);
    }
 
+   SELF_PROFILE_END_FUNCTION;
    return retVal;
 }
