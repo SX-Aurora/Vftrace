@@ -20,6 +20,7 @@
 
 #include <stdlib.h>
 
+#include "self_profile.h"
 #include "rank_translate.h"
 #include "thread_types.h"
 #include "threads.h"
@@ -41,6 +42,7 @@ int vftr_MPI_Ialltoall(const void *sendbuf, int sendcount,
    int retVal = PMPI_Ialltoall(sendbuf, sendcount, sendtype, recvbuf,
                               recvcount, recvtype, comm, request);
 
+   SELF_PROFILE_START_FUNCTION;
    long long t2start = vftr_get_runtime_usec();
    int size;
    PMPI_Comm_size(comm, &size);
@@ -81,6 +83,7 @@ int vftr_MPI_Ialltoall(const void *sendbuf, int sendcount,
 
    vftr_accumulate_mpiprofiling_overhead(&(my_profile->mpiProf), t2end-t2start);
 
+   SELF_PROFILE_END_FUNCTION;
    return retVal;
 }
 
@@ -91,6 +94,7 @@ int vftr_MPI_Ialltoall_inplace(const void *sendbuf, int sendcount,
    long long tstart = vftr_get_runtime_usec();
    int retVal = PMPI_Ialltoall(sendbuf, sendcount, sendtype, recvbuf,
                               recvcount, recvtype, comm, request);
+   SELF_PROFILE_START_FUNCTION;
    long long t2start = vftr_get_runtime_usec();
    int size;
    PMPI_Comm_size(comm, &size);
@@ -138,6 +142,7 @@ int vftr_MPI_Ialltoall_inplace(const void *sendbuf, int sendcount,
 
    vftr_accumulate_mpiprofiling_overhead(&(my_profile->mpiProf), t2end-t2start);
 
+   SELF_PROFILE_END_FUNCTION;
    return retVal;
 }
 
@@ -149,6 +154,7 @@ int vftr_MPI_Ialltoall_intercom(const void *sendbuf, int sendcount,
    int retVal = PMPI_Ialltoall(sendbuf, sendcount, sendtype, recvbuf,
                               recvcount, recvtype, comm, request);
 
+   SELF_PROFILE_START_FUNCTION;
    long long t2start = vftr_get_runtime_usec();
    // Every process of group A sends sendcount sendtmptype
    // to and receives recvcount recvtmptype from
@@ -198,5 +204,6 @@ int vftr_MPI_Ialltoall_intercom(const void *sendbuf, int sendcount,
 
    vftr_accumulate_mpiprofiling_overhead(&(my_profile->mpiProf), t2end-t2start);
 
+   SELF_PROFILE_END_FUNCTION;
    return retVal;
 }
