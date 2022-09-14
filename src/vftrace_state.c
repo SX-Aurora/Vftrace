@@ -170,6 +170,17 @@ unsigned long long vftr_sizeof_profile_t(profile_t profile) {
    return size;
 }
 
+unsigned long long vftr_sizeof_collated_profile_t(collated_profile_t profile) {
+   unsigned long long size = sizeof(profile_t);
+   size -= sizeof(callProfile_t);
+   size += vftr_sizeof_callProfile_t(profile.callProf);
+#ifdef _MPI
+   size -= sizeof(mpiProfile_t);
+   size += vftr_sizeof_mpiProfile_t(profile.mpiProf);
+#endif
+   return size;
+}
+
 unsigned long long vftr_sizeof_profilelist_t(profilelist_t profiling) {
    unsigned long long size = sizeof(profilelist_t);
    // it is important to distinguish between used profiles
@@ -209,7 +220,7 @@ unsigned long long vftr_sizeof_stacktree_t(stacktree_t stacktree) {
 
 unsigned long long vftr_sizeof_collated_stack_t(collated_stack_t stack) {
    unsigned long long size = sizeof(collated_stack_t);
-   size += vftr_sizeof_profile_t(stack.profile);
+   size += vftr_sizeof_collated_profile_t(stack.profile);
    if (stack.name != NULL) {
       size += strlen(stack.name)*sizeof(char);
    }

@@ -98,7 +98,7 @@ long long vftr_get_total_collated_call_overhead(collated_stacktree_t stacktree) 
    int nstacks = stacktree.nstacks;
    for (int istack=0; istack<nstacks; istack++) {
       collated_stack_t *stack = stacktree.stacks+istack;
-      profile_t *prof = &(stack->profile);
+      collated_profile_t *prof = &(stack->profile);
       overheads_usec += prof->callProf.overhead_usec;
    }
    SELF_PROFILE_END_FUNCTION;

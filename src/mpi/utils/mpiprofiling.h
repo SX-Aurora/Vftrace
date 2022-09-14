@@ -9,6 +9,7 @@
 #include "mpi_state_types.h"
 #endif
 #include "process_types.h"
+#include "environment_types.h"
 
 mpiProfile_t vftr_new_mpiprofiling();
 

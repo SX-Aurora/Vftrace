@@ -69,6 +69,7 @@ libvftrace_la_SOURCES += vftrace_state.c \
 			 threadstacks.c \
 			 internal_regions.c \
 			 profiling.c \
+			 collated_profiling.c \
 			 callprofiling.c \
 			 sampling.c \
 			 timer.c

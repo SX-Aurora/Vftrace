@@ -6,13 +6,13 @@
 #include <stdbool.h>
 
 #include "stack_types.h"
-#include "profiling_types.h"
+#include "collated_profiling_types.h"
 
 typedef struct {
    // local stack
    stack_t *local_stack;
    // profiling data for collective logfile
-   profile_t profile;
+   collated_profile_t profile;
    // gloabl stackID
    int gid;
    bool precise;
