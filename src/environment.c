@@ -245,11 +245,12 @@ environment_t vftr_read_environment() {
    environment.strip_module_names = vftr_read_env_bool("VFTR_STRIP_MODULE_NAMES", false);
    environment.sort_profile_table = vftr_read_env_string("VFTR_SORT_PROFILE_TABLE", "TIME_EXCL");
    environment.show_overhead = vftr_read_env_bool("VFTR_SHOW_FUNCTION_OVERHEAD", false);
+   environment.show_calltime_imbalances = vftr_read_env_bool("VFTR_SHOW_CALLTIME_IMBALANCES", false);
    environment.print_environment = vftr_read_env_bool("VFTR_PRINT_ENVIRONMENT", true);
    environment.callpath_in_profile = vftr_read_env_bool("VFTR_CALLPATH_IN_PROFILE", false);
    environment.callpath_in_mpi_profile = vftr_read_env_bool("VFTR_CALLPATH_IN_MPI_PROFILE", false);
    environment.demangle_cxx = vftr_read_env_bool("VFTR_DEMANGLE_CXX", false);
-   environment.nenv_vars = 22;
+   environment.nenv_vars = 23;
    environment.valid = true;
    SELF_PROFILE_END_FUNCTION;
    return environment;
@@ -500,6 +501,11 @@ void vftr_environment_assert_show_overhead(FILE *fp, env_var_t show_overhead) {
    (void) show_overhead;
 }
 
+void vftr_environment_assert_show_calltime_imbalances(FILE *fp, env_var_t show_calltime_imbalances) {
+   (void) fp;
+   (void) show_calltime_imbalances;
+}
+
 void vftr_environment_assert_print_environment(FILE *fp, env_var_t print_environment) {
    (void) fp;
    (void) print_environment;
@@ -542,6 +548,7 @@ void vftr_environment_assert(FILE *fp, environment_t environment) {
    vftr_environment_assert_strip_module_names(fp, environment.strip_module_names);
    vftr_environment_assert_sort_profile_table(fp, environment.sort_profile_table);
    vftr_environment_assert_show_overhead(fp, environment.show_overhead);
+   vftr_environment_assert_show_calltime_imbalances(fp, environment.show_calltime_imbalances);
    vftr_environment_assert_print_environment(fp, environment.print_environment);
    vftr_environment_assert_callpath_in_profile(fp, environment.callpath_in_profile);
    vftr_environment_assert_callpath_in_mpi_profile(fp, environment.callpath_in_mpi_profile);
