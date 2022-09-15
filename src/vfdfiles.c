@@ -170,12 +170,19 @@ void vftr_update_vfd_header(sampling_t *sampling,
 
    // skip package string
    int package_string_len;
-   fread(&package_string_len, sizeof(int), 1, fp);
+   size_t read_elems = 0;
+   read_elems = fread(&package_string_len, sizeof(int), 1, fp);
+   if (read_elems != 1) {
+      fprintf(stderr, "Error in reading package string len of vfd-file\n");
+   }
    fseek(fp, package_string_len*sizeof(char), SEEK_CUR);
 
    // write the date strings
    int datestr_len;
-   fread(&datestr_len, sizeof(int), 1, fp);
+   read_elems = fread(&datestr_len, sizeof(int), 1, fp);
+   if (read_elems != 1) {
+      fprintf(stderr, "Error in reading datastr_len of vfd-file\n");
+   }
    // check if the datestring length is consistent (+1 for null terminator)
    if ((size_t) (datestr_len) != strlen(timestrings.start_time)+1) {
       fprintf(stderr, "Inconsistency in time string length!\n"

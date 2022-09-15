@@ -9,31 +9,100 @@
 
 vfd_header_t read_vfd_header(FILE *vfd_fp) {
    vfd_header_t header;
-   fread(&(header.vfd_version), sizeof(int), 1, vfd_fp);
+   size_t read_elems;
+   read_elems = fread(&(header.vfd_version), sizeof(int), 1, vfd_fp);
+   if (read_elems != 1) {
+      fprintf(stderr, "Error in reading vfd_version from vfd-file header\n");
+      abort();
+   }
 
    int package_string_len;
-   fread(&package_string_len, sizeof(int), 1, vfd_fp);
+   read_elems = fread(&package_string_len, sizeof(int), 1, vfd_fp);
+   if (read_elems != 1) {
+      fprintf(stderr, "Error in reading package_string_len from vfd-file header\n");
+      abort();
+   }
    header.package_string = (char*) malloc(package_string_len*sizeof(char));
-   fread(header.package_string, sizeof(char), package_string_len, vfd_fp);
+   read_elems = fread(header.package_string, sizeof(char), package_string_len, vfd_fp);
+   if (read_elems != (size_t)package_string_len) {
+      fprintf(stderr, "Error in reading vfd_version from vfd-file header\n");
+      abort();
+   }
 
    int datestr_len;
-   fread(&datestr_len, sizeof(int), 1, vfd_fp);
+   read_elems = fread(&datestr_len, sizeof(int), 1, vfd_fp);
+   if (read_elems != 1) {
+      fprintf(stderr, "Error in reading datestr_len from vfd-file header\n");
+      abort();
+   }
    header.datestr_start = (char*) malloc(datestr_len*sizeof(char));
-   fread(header.datestr_start, sizeof(char), datestr_len, vfd_fp);
+   read_elems = fread(header.datestr_start, sizeof(char), datestr_len, vfd_fp);
+   if (read_elems != (size_t)datestr_len) {
+      fprintf(stderr, "Error in reading datestr_start from vfd-file header\n");
+      abort();
+   }
    header.datestr_end= (char*) malloc(datestr_len*sizeof(char));
-   fread(header.datestr_end, sizeof(char), datestr_len, vfd_fp);
+   read_elems = fread(header.datestr_end, sizeof(char), datestr_len, vfd_fp);
+   if (read_elems != (size_t)datestr_len) {
+      fprintf(stderr, "Error in reading datestr_end from vfd-file header\n");
+      abort();
+   }
 
-   fread(&(header.interval), sizeof(long long), 1, vfd_fp);
-   fread(&(header.nprocesses), sizeof(int), 1, vfd_fp);
-   fread(&(header.processID), sizeof(int), 1, vfd_fp);
-   fread(&(header.nthreads), sizeof(int), 1, vfd_fp);
-   fread(&(header.runtime), sizeof(double), 1, vfd_fp);
-   fread(&(header.function_samplecount), sizeof(unsigned int), 1, vfd_fp);
-   fread(&(header.message_samplecount), sizeof(unsigned int), 1, vfd_fp);
-   fread(&(header.nstacks), sizeof(unsigned int), 1, vfd_fp);
-   fread(&(header.samples_offset), sizeof(long int), 1, vfd_fp);
-   fread(&(header.stacks_offset), sizeof(long int), 1, vfd_fp);
-   fread(&(header.threadtree_offset), sizeof(long int), 1, vfd_fp);
+   read_elems = fread(&(header.interval), sizeof(long long), 1, vfd_fp);
+   if (read_elems != 1) {
+      fprintf(stderr, "Error in reading interval from vfd-file header\n");
+      abort();
+   }
+   read_elems = fread(&(header.nprocesses), sizeof(int), 1, vfd_fp);
+   if (read_elems != 1) {
+      fprintf(stderr, "Error in reading nprocesses from vfd-file header\n");
+      abort();
+   }
+   read_elems = fread(&(header.processID), sizeof(int), 1, vfd_fp);
+   if (read_elems != 1) {
+      fprintf(stderr, "Error in reading processID from vfd-file header\n");
+      abort();
+   }
+   read_elems = fread(&(header.nthreads), sizeof(int), 1, vfd_fp);
+   if (read_elems != 1) {
+      fprintf(stderr, "Error in reading nthreads from vfd-file header\n");
+      abort();
+   }
+   read_elems = fread(&(header.runtime), sizeof(double), 1, vfd_fp);
+   if (read_elems != 1) {
+      fprintf(stderr, "Error in reading runtime from vfd-file header\n");
+      abort();
+   }
+   read_elems = fread(&(header.function_samplecount), sizeof(unsigned int), 1, vfd_fp);
+   if (read_elems != 1) {
+      fprintf(stderr, "Error in reading function_samplecount from vfd-file header\n");
+      abort();
+   }
+   read_elems = fread(&(header.message_samplecount), sizeof(unsigned int), 1, vfd_fp);
+   if (read_elems != 1) {
+      fprintf(stderr, "Error in reading message_samplecount from vfd-file header\n");
+      abort();
+   }
+   read_elems = fread(&(header.nstacks), sizeof(unsigned int), 1, vfd_fp);
+   if (read_elems != 1) {
+      fprintf(stderr, "Error in reading nstacks from vfd-file header\n");
+      abort();
+   }
+   read_elems = fread(&(header.samples_offset), sizeof(long int), 1, vfd_fp);
+   if (read_elems != 1) {
+      fprintf(stderr, "Error in reading samples_offset from vfd-file header\n");
+      abort();
+   }
+   read_elems = fread(&(header.stacks_offset), sizeof(long int), 1, vfd_fp);
+   if (read_elems != 1) {
+      fprintf(stderr, "Error in reading stacks_offset from vfd-file header\n");
+      abort();
+   }
+   read_elems = fread(&(header.threadtree_offset), sizeof(long int), 1, vfd_fp);
+   if (read_elems != 1) {
+      fprintf(stderr, "Error in reading threadtree_offset from vfd-file header\n");
+      abort();
+   }
 
    return header;
 }
@@ -75,24 +144,52 @@ stack_t *read_stacklist(FILE *vfd_fp, long int stacks_offset,
 
    // first function is the init with caller id -1
    stacklist[0].ncallees = 0;
-   fread(&(stacklist[0].caller), sizeof(int), 1, vfd_fp);
+   size_t read_elems;
+   read_elems = fread(&(stacklist[0].caller), sizeof(int), 1, vfd_fp);
+   if (read_elems != 1) {
+      fprintf(stderr, "Error in reading first stacklist caller\n");
+      abort();
+   }
    int namelen;
-   fread(&namelen, sizeof(int), 1, vfd_fp);
+   read_elems = fread(&namelen, sizeof(int), 1, vfd_fp);
+   if (read_elems != 1) {
+      fprintf(stderr, "Error in reading first stacks namelen\n");
+      abort();
+   }
    stacklist[0].name = (char*) malloc(namelen*sizeof(char));
-   fread(stacklist[0].name, sizeof(char), namelen, vfd_fp);
+   read_elems = fread(stacklist[0].name, sizeof(char), namelen, vfd_fp);
+   if (read_elems != (size_t)namelen) {
+      fprintf(stderr, "Error in reading first stacks name\n");
+      abort();
+   }
 
    // all other stacks
    for (unsigned int istack=1; istack<nstacks; istack++) {
       stacklist[istack].ncallees = 0;
-      fread(&(stacklist[istack].caller), sizeof(int), 1, vfd_fp);
+      read_elems = fread(&(stacklist[istack].caller), sizeof(int), 1, vfd_fp);
+      if (read_elems != 1) {
+         fprintf(stderr, "Error in reading caller of stack %d from vfd-file\n",
+                 istack);
+         abort();
+      }
       // count the number of callees a function has
       stacklist[stacklist[istack].caller].ncallees++;
 
       // read the functions name
       int namelen;
-      fread(&namelen, sizeof(int), 1, vfd_fp);
+      read_elems = fread(&namelen, sizeof(int), 1, vfd_fp);
+      if (read_elems != 1) {
+         fprintf(stderr, "Error in reading namelen of stack %d from vfd-file\n",
+                 istack);
+         abort();
+      }
       stacklist[istack].name = (char*) malloc(namelen*sizeof(char));
-      fread(stacklist[istack].name, sizeof(char), namelen, vfd_fp);
+      read_elems = fread(stacklist[istack].name, sizeof(char), namelen, vfd_fp);
+      if (read_elems != (size_t)namelen) {
+         fprintf(stderr, "Error in reading name of stack %d from vfd-file\n",
+                 istack);
+         abort();
+      }
 
       stacklist[istack].precise = is_precise(stacklist[istack].name);
    }
@@ -155,17 +252,28 @@ thread_t *read_threadtree(FILE *vfd_fp, long int threadtree_offset,
 
    // first thread is the root thread with parent id -1
    threadtree[0].nchildren = 0;
-   fread(&(threadtree[0].parent_thread), sizeof(int), 1, vfd_fp);
+   size_t read_elems;
+   read_elems = fread(&(threadtree[0].parent_thread), sizeof(int), 1, vfd_fp);
+   if (read_elems != 1) {
+      fprintf(stderr, "Error in reading parent_thread of thread %d from vfd-file\n",
+              0);
+      abort();
+   }
    threadtree[0].children = NULL;
    threadtree[0].level = 0;
    threadtree[0].threadID = 0;
 
    // all other threads
    for (int ithread=1; ithread<nthreads; ithread++) {
-      threadtree[0].threadID = ithread;
+      threadtree[ithread].threadID = ithread;
       threadtree[ithread].nchildren = 0;
       int parent_thread = 0;
-      fread(&parent_thread, sizeof(int), 1, vfd_fp);
+      read_elems = fread(&parent_thread, sizeof(int), 1, vfd_fp);
+      if (read_elems != 1) {
+         fprintf(stderr, "Error in reading parent_thread of thread %d from vfd-file\n",
+                 ithread);
+         abort();
+      }
       threadtree[ithread].parent_thread = parent_thread;
       // increment the number of children the parent has
       threadtree[parent_thread].nchildren++;
@@ -224,9 +332,18 @@ void print_threadtree(FILE *out_fp, thread_t *threadtree) {
 void print_function_sample(FILE *vfd_fp, FILE *out_fp,
                            sample_kind kind, stack_t *stacklist) {
    int stackID;
-   fread(&stackID, sizeof(int), 1, vfd_fp);
+   size_t read_elems;
+   read_elems = fread(&stackID, sizeof(int), 1, vfd_fp);
+   if (read_elems != 1) {
+      fprintf(stderr, "Error in reading stackID from function_sample from vfd-file\n");
+      abort();
+   }
    long long timestamp_usec;
-   fread(&timestamp_usec, sizeof(long long), 1, vfd_fp);
+   read_elems = fread(&timestamp_usec, sizeof(long long), 1, vfd_fp);
+   if (read_elems != 1) {
+      fprintf(stderr, "Error in reading timestamp from function_sample from vfd-file\n");
+      abort();
+   }
    double timestamp = timestamp_usec*1.0e-6;
 
    fprintf(out_fp, "%16.6f %s ", timestamp,
@@ -237,24 +354,65 @@ void print_function_sample(FILE *vfd_fp, FILE *out_fp,
 
 void print_message_sample(FILE *vfd_fp, FILE *out_fp) {
    message_direction dir;
-   fread(&dir, sizeof(message_direction), 1, vfd_fp);
+   size_t read_elems;
+   read_elems = fread(&dir, sizeof(message_direction), 1, vfd_fp);
+   if (read_elems != 1) {
+      fprintf(stderr, "Error in reading direction from message_sample from vfd-file\n");
+      abort();
+   }
    int rank;
-   fread(&rank, sizeof(int), 1, vfd_fp);
+   read_elems = fread(&rank, sizeof(int), 1, vfd_fp);
+   if (read_elems != 1) {
+      fprintf(stderr, "Error in reading rank from message_sample from vfd-file\n");
+      abort();
+   }
    int type_idx;
-   fread(&type_idx, sizeof(int), 1, vfd_fp);
+   read_elems = fread(&type_idx, sizeof(int), 1, vfd_fp);
+   if (read_elems != 1) {
+      fprintf(stderr, "Error in reading type index from message_sample from vfd-file\n");
+      abort();
+   }
    int count;
-   fread(&count, sizeof(int), 1, vfd_fp);
+   read_elems = fread(&count, sizeof(int), 1, vfd_fp);
+   if (read_elems != 1) {
+      fprintf(stderr, "Error in reading count from message_sample from vfd-file\n");
+      abort();
+   }
    int type_size;
-   fread(&type_size, sizeof(int), 1, vfd_fp);
+   read_elems = fread(&type_size, sizeof(int), 1, vfd_fp);
+   if (read_elems != 1) {
+      fprintf(stderr, "Error in reading type size from message_sample from vfd-file\n");
+      abort();
+   }
    int tag;
-   fread(&tag, sizeof(int), 1, vfd_fp);
+   read_elems = fread(&tag, sizeof(int), 1, vfd_fp);
+   if (read_elems != 1) {
+      fprintf(stderr, "Error in reading tag from message_sample from vfd-file\n");
+      abort();
+   }
    long long tstart, tend;
-   fread(&tstart, sizeof(long long), 1, vfd_fp);
-   fread(&tend, sizeof(long long), 1, vfd_fp);
+   read_elems = fread(&tstart, sizeof(long long), 1, vfd_fp);
+   if (read_elems != 1) {
+      fprintf(stderr, "Error in reading starting timestamp from message_sample from vfd-file\n");
+      abort();
+   }
+   read_elems = fread(&tend, sizeof(long long), 1, vfd_fp);
+   if (read_elems != 1) {
+      fprintf(stderr, "Error in reading ending timestamp from message_sample from vfd-file\n");
+      abort();
+   }
    int stackID;
-   fread(&stackID, sizeof(int), 1, vfd_fp);
+   read_elems = fread(&stackID, sizeof(int), 1, vfd_fp);
+   if (read_elems != 1) {
+      fprintf(stderr, "Error in reading stackID from message_sample from vfd-file\n");
+      abort();
+   }
    int threadID;
-   fread(&threadID, sizeof(int), 1, vfd_fp);
+   read_elems = fread(&threadID, sizeof(int), 1, vfd_fp);
+   if (read_elems != 1) {
+      fprintf(stderr, "Error in reading threadID from message_sample from vfd-file\n");
+      abort();
+   }
    double dtstart = tstart*1.0e-6;
    double dtend = tend*1.0e-6;
    double rate = (count * type_size) / ((dtend - dtstart)*1024.0*1024.0);
@@ -278,7 +436,12 @@ void print_samples(FILE *vfd_fp, FILE *out_fp,
                            vfd_header.message_samplecount;
    for (unsigned int isample=0; isample<nsamples; isample++) {
       sample_kind kind;
-      fread(&kind, sizeof(sample_kind), 1, vfd_fp);
+      size_t read_elems;
+      read_elems = fread(&kind, sizeof(sample_kind), 1, vfd_fp);
+      if (read_elems != 1) {
+         fprintf(stderr, "Error in reading sample kind from vfd-file\n");
+         abort();
+      }
       switch (kind) {
          case samp_function_entry:
          case samp_function_exit:
