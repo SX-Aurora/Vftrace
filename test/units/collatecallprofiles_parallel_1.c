@@ -10,6 +10,8 @@
 #include "profiling.h"
 #include "callprofiling_types.h"
 #include "callprofiling.h"
+#include "collated_callprofiling_types.h"
+#include "collated_callprofiling.h"
 #include "dummysymboltable.h"
 #include "collated_stack_types.h"
 #include "collate_stacks.h"
@@ -245,7 +247,7 @@ int main(int argc, char **argv) {
       for (int istack=0; istack<collated_stacktree.nstacks; istack++) {
          char *stackstr = vftr_get_collated_stack_string(collated_stacktree, istack, false);
          fprintf(stdout, "%s:\n   ", stackstr);
-         vftr_print_callprofiling(stdout,
+         vftr_print_collated_callprofiling(stdout,
             collated_stacktree.stacks[istack].profile.callProf);
          free(stackstr);
       }

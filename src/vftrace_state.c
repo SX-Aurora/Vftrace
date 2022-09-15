@@ -152,6 +152,11 @@ unsigned long long vftr_sizeof_callProfile_t(callProfile_t callProf) {
    return sizeof(callProfile_t);
 }
 
+unsigned long long vftr_sizeof_collated_callProfile_t(collated_callProfile_t callProf) {
+   (void) callProf;
+   return sizeof(collated_callProfile_t);
+}
+
 #ifdef _MPI
 unsigned long long vftr_sizeof_mpiProfile_t(mpiProfile_t mpiProf) {
    (void) mpiProf;
@@ -172,8 +177,8 @@ unsigned long long vftr_sizeof_profile_t(profile_t profile) {
 
 unsigned long long vftr_sizeof_collated_profile_t(collated_profile_t profile) {
    unsigned long long size = sizeof(profile_t);
-   size -= sizeof(callProfile_t);
-   size += vftr_sizeof_callProfile_t(profile.callProf);
+   size -= sizeof(collated_profile_t);
+   size += vftr_sizeof_collated_callProfile_t(profile.callProf);
 #ifdef _MPI
    size -= sizeof(mpiProfile_t);
    size += vftr_sizeof_mpiProfile_t(profile.mpiProf);

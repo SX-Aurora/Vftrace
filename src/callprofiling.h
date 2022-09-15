@@ -5,7 +5,6 @@
 
 #include "callprofiling_types.h"
 #include "stack_types.h"
-#include "collated_stack_types.h"
 
 #include "callprofiling.h"
 
@@ -22,12 +21,8 @@ void vftr_update_stacks_exclusive_time(stacktree_t *stacktree_ptr);
 
 long long *vftr_get_total_call_overhead(stacktree_t stacktree, int nthreads);
 
-long long vftr_get_total_collated_call_overhead(collated_stacktree_t stacktree);
-
 void vftr_callprofiling_free(callProfile_t *callprof_ptr);
 
 void vftr_print_callprofiling(FILE *fp, callProfile_t callprof);
-
-void vftr_collate_callprofiles(collated_stacktree_t *stacktree_ptr);
 
 #endif

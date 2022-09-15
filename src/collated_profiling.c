@@ -3,7 +3,7 @@
 #include "self_profile.h"
 #include "collated_profiling_types.h"
 
-#include "callprofiling.h"
+#include "collated_callprofiling.h"
 #ifdef _MPI
 #include "mpiprofiling.h"
 #endif
@@ -11,7 +11,7 @@
 collated_profile_t vftr_new_collated_profile() {
    SELF_PROFILE_START_FUNCTION;
    collated_profile_t profile;
-   profile.callProf = vftr_new_callprofiling();
+   profile.callProf = vftr_new_collated_callprofiling();
 #ifdef _MPI
    profile.mpiProf = vftr_new_mpiprofiling();
 #endif
@@ -22,7 +22,7 @@ collated_profile_t vftr_new_collated_profile() {
 
 void vftr_collated_profile_free(collated_profile_t* profile_ptr) {
    SELF_PROFILE_START_FUNCTION;
-   vftr_callprofiling_free(&(profile_ptr->callProf));
+   vftr_collated_callprofiling_free(&(profile_ptr->callProf));
 #ifdef _MPI
    vftr_mpiprofiling_free(&(profile_ptr->mpiProf));
 #endif

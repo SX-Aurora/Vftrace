@@ -17,7 +17,7 @@
 #include "collate_stacks.h"
 #include "profiling_types.h"
 #include "profiling.h"
-#include "callprofiling.h"
+#include "collated_callprofiling.h"
 #include "mpiprofiling.h"
 #include "tables.h"
 #include "misc_utils.h"

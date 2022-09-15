@@ -7,7 +7,7 @@
 #endif
 
 #include "self_profile.h"
-#include "callprofiling_types.h"
+#include "collated_callprofiling_types.h"
 #include "collated_stack_types.h"
 #include "stack_types.h"
 
@@ -19,7 +19,7 @@ static void vftr_collate_callprofiles_root_self(collated_stacktree_t *collstackt
       int icollstack = stack->gid;
 
       collated_stack_t *collstack = collstacktree_ptr->stacks+icollstack;
-      callProfile_t *collcallprof = &(collstack->profile.callProf);
+      collated_callProfile_t *collcallprof = &(collstack->profile.callProf);
 
       collcallprof->calls = 0ll;
       collcallprof->time_usec = 0ll;
@@ -114,7 +114,7 @@ static void vftr_collate_callprofiles_on_root(collated_stacktree_t *collstacktre
          for (int iprof=0; iprof<nprofiles; iprof++) {
             int gid = recvbuf[iprof].gid;
             collated_stack_t *collstack = collstacktree_ptr->stacks+gid;
-            callProfile_t *collcallprof = &(collstack->profile.callProf);
+            collated_callProfile_t *collcallprof = &(collstack->profile.callProf);
      
             collcallprof->calls += recvbuf[iprof].calls;
             collcallprof->time_usec += recvbuf[iprof].time_usec;

@@ -12,6 +12,8 @@
 #include "profiling.h"
 #include "callprofiling_types.h"
 #include "callprofiling.h"
+#include "collated_callprofiling_types.h"
+#include "collated_callprofiling.h"
 #include "collated_stack_types.h"
 #include "collate_stacks.h"
 #include "collate_profiles.h"
@@ -165,7 +167,7 @@ int main(int argc, char **argv) {
       fprintf(stdout, "%d: %s\n", stackID, stackstr);
       free(stackstr);
       fprintf(stdout, " Overhead: %8lld, ", stack->profile.callProf.overhead_usec);
-      vftr_print_callprofiling(stdout, stack->profile.callProf);
+      vftr_print_collated_callprofiling(stdout, stack->profile.callProf);
    }
 
    free_dummy_symbol_table(&symboltable);
