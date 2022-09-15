@@ -66,6 +66,25 @@ double *vftr_logfile_prof_table_stack_exclusive_time_percentage_list(int nstacks
    return percent_list;
 }
 
+double *vftr_logfile_prof_table_imbalances_list(int nstacks, collated_stack_t **stack_ptrs) {
+   double *imbalances_list = (double*) malloc(nstacks*sizeof(double));
+   for (int istack=0; istack<nstacks; istack++) {
+      collated_stack_t *stack_ptr = stack_ptrs[istack];
+      imbalances_list[istack] = stack_ptr->profile.callProf.max_imbalance;
+   }
+   return imbalances_list;
+}
+
+int *vftr_logfile_prof_table_imbalance_ranks_list(int nstacks,
+                                                  collated_stack_t **stack_ptrs) {
+   int *imbalance_ranks_list = (int*) malloc(nstacks*sizeof(int));
+   for (int istack=0; istack<nstacks; istack++) {
+      collated_stack_t *stack_ptr = stack_ptrs[istack];
+      imbalance_ranks_list[istack] = stack_ptr->profile.callProf.max_imbalance_on_rank;
+   }
+   return imbalance_ranks_list;
+}
+
 //double *vftr_logfile_prof_table_stack_overhead_time_list(int nstacks, collated_stack_t **stack_ptrs) {
 //   double *overhead_time_list = (double*) malloc(nstacks*sizeof(double));
 //
@@ -146,6 +165,16 @@ void vftr_write_logfile_profile_table(FILE *fp, collated_stacktree_t stacktree,
    double *incl_time = vftr_logfile_prof_table_stack_inclusive_time_list(stacktree.nstacks, sorted_stacks);
    vftr_table_add_column(&table, col_double, "t_incl/s", "%.3f", 'c', 'r', (void*) incl_time);
 
+   double *imbalances_list = NULL;
+   int *imbalance_ranks_list = NULL;
+   if (environment.show_calltime_imbalances.value.bool_val) {
+      imbalances_list = vftr_logfile_prof_table_imbalances_list(stacktree.nstacks, sorted_stacks);
+      vftr_table_add_column(&table, col_double, "Imbalances/\%", "%6.2f", 'c', 'r', (void*) imbalances_list);
+
+      imbalance_ranks_list = vftr_logfile_prof_table_imbalance_ranks_list(stacktree.nstacks, sorted_stacks);
+      vftr_table_add_column(&table, col_int, "on rank", "%d", 'c', 'r', (void*) imbalance_ranks_list);
+   }
+
    char **function_names = vftr_logfile_prof_table_stack_function_name_list(stacktree.nstacks, sorted_stacks);
    vftr_table_add_column(&table, col_string, "Function", "%s", 'c', 'r', (void*) function_names);
 
@@ -170,6 +199,10 @@ void vftr_write_logfile_profile_table(FILE *fp, collated_stacktree_t stacktree,
    free(excl_time);
    free(excl_timer_perc);
    free(incl_time);
+   if (environment.show_calltime_imbalances.value.bool_val) {
+      free(imbalances_list);
+      free(imbalance_ranks_list);
+   }
    free(function_names);
    free(caller_names);
    free(stack_IDs);

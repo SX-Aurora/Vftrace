@@ -17,6 +17,14 @@ collated_callProfile_t vftr_new_collated_callprofiling() {
    prof.time_usec = 0ll;
    prof.time_excl_usec = 0ll;
    prof.overhead_usec = 0ll;
+   prof.on_nranks = 0;
+   prof.max_on_rank = 0;
+   prof.min_on_rank = 0;
+   prof.average_time_usec = 0ll;
+   prof.max_time_usec = 0ll;
+   prof.min_time_usec = 0ll;
+   prof.max_imbalance = 0.0;
+   prof.max_imbalance_on_rank = 0;
    SELF_PROFILE_END_FUNCTION;
    return prof;
 }

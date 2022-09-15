@@ -1,6 +1,7 @@
 #include <stdlib.h>
 
 #include <string.h>
+#include <math.h>
 
 #ifdef _MPI
 #include <mpi.h>
@@ -34,6 +35,15 @@ static void vftr_collate_callprofiles_root_self(collated_stacktree_t *collstackt
          collcallprof->time_excl_usec += callprof->time_excl_usec;
          collcallprof->overhead_usec += callprof->overhead_usec;
       }
+
+      // call time imbalances info
+      collcallprof->on_nranks = 1;
+      collcallprof->max_on_rank = 0;
+      collcallprof->min_on_rank = 0;
+      collcallprof->average_time_usec = collcallprof->time_excl_usec;
+      collcallprof->max_time_usec = collcallprof->time_excl_usec;
+      collcallprof->min_time_usec = collcallprof->time_excl_usec;
+
    }
    SELF_PROFILE_END_FUNCTION;
 }
@@ -120,6 +130,20 @@ static void vftr_collate_callprofiles_on_root(collated_stacktree_t *collstacktre
             collcallprof->time_usec += recvbuf[iprof].time_usec;
             collcallprof->time_excl_usec += recvbuf[iprof].time_excl_usec;
             collcallprof->overhead_usec += recvbuf[iprof].overhead_usec;
+
+            // collect call time imbalances info
+            if (recvbuf[iprof].time_excl_usec > 0) {
+               collcallprof->on_nranks++;
+               collcallprof->average_time_usec += recvbuf[iprof].time_excl_usec;
+               // search for min and max values
+               if (recvbuf[iprof].time_excl_usec > collcallprof->max_time_usec) {
+                  collcallprof->max_on_rank = irank;
+                  collcallprof->max_time_usec = recvbuf[iprof].time_excl_usec;
+               } else if (recvbuf[iprof].time_excl_usec < collcallprof->min_time_usec) {
+                  collcallprof->min_on_rank = irank;
+                  collcallprof->min_time_usec = recvbuf[iprof].time_excl_usec;
+               }
+            }
          }
       }
       free(recvbuf);
@@ -130,6 +154,31 @@ static void vftr_collate_callprofiles_on_root(collated_stacktree_t *collstacktre
 }
 #endif
 
+void vftr_compute_callprofile_imbalances(collated_stacktree_t *collstacktree_ptr) {
+   for (int istack=0; istack<collstacktree_ptr->nstacks; istack++) {
+      collated_stack_t *stack_ptr = collstacktree_ptr->stacks+istack;
+      collated_callProfile_t *collcallProf_ptr = &(stack_ptr->profile.callProf);
+      if (collcallProf_ptr->average_time_usec > 0) {
+         collcallProf_ptr->average_time_usec /= collcallProf_ptr->on_nranks;
+         double diff_from_max = llabs(collcallProf_ptr->max_time_usec
+                                      - collcallProf_ptr->average_time_usec);
+         double diff_from_min = llabs(collcallProf_ptr->min_time_usec
+                                      - collcallProf_ptr->average_time_usec);
+         if (diff_from_max > diff_from_min) {
+            collcallProf_ptr->max_imbalance = 100.0*diff_from_max;
+            collcallProf_ptr->max_imbalance /= collcallProf_ptr->average_time_usec;
+            collcallProf_ptr->max_imbalance_on_rank = collcallProf_ptr->max_on_rank;
+         } else {
+            collcallProf_ptr->max_imbalance = 100.0*diff_from_min;
+            collcallProf_ptr->max_imbalance /= collcallProf_ptr->average_time_usec;
+            collcallProf_ptr->max_imbalance_on_rank = collcallProf_ptr->min_on_rank;
+         }
+      } else {
+         collcallProf_ptr->max_imbalance = 0.0;
+         collcallProf_ptr->max_imbalance_on_rank = 0;
+      }
+   }
+}
 void vftr_collate_callprofiles(collated_stacktree_t *collstacktree_ptr,
                                stacktree_t *stacktree_ptr,
                                int myrank, int nranks,
@@ -144,5 +193,6 @@ void vftr_collate_callprofiles(collated_stacktree_t *collstacktree_ptr,
    (void) nranks;
    (void) nremote_profiles;
 #endif
+   vftr_compute_callprofile_imbalances(collstacktree_ptr);
    SELF_PROFILE_END_FUNCTION;
 }
