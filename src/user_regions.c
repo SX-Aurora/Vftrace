@@ -90,8 +90,8 @@ void vftr_user_region_end() {
       // if not recursive pop the function from the threads stacklist
       my_threadstack = vftr_threadstack_pop(&(my_thread->stacklist));
 
-      stack_t *my_new_stack = vftrace.process.stacktree.stacks+my_threadstack->stackID;
-      profile_t *my_new_profile = vftr_get_my_profile(my_new_stack, my_thread);
+      // TODO stack_t *my_new_stack = vftrace.process.stacktree.stacks+my_threadstack->stackID;
+      // TODO profile_t *my_new_profile = vftr_get_my_profile(my_new_stack, my_thread);
 
       // TODO Add accumulation of profiling data
       vftr_sample_function_exit(&(vftrace.sampling),
