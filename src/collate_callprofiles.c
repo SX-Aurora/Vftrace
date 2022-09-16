@@ -1,7 +1,6 @@
 #include <stdlib.h>
 
 #include <string.h>
-#include <math.h>
 
 #ifdef _MPI
 #include <mpi.h>
@@ -160,10 +159,12 @@ void vftr_compute_callprofile_imbalances(collated_stacktree_t *collstacktree_ptr
       collated_callProfile_t *collcallProf_ptr = &(stack_ptr->profile.callProf);
       if (collcallProf_ptr->average_time_usec > 0) {
          collcallProf_ptr->average_time_usec /= collcallProf_ptr->on_nranks;
-         double diff_from_max = llabs(collcallProf_ptr->max_time_usec
-                                      - collcallProf_ptr->average_time_usec);
-         double diff_from_min = llabs(collcallProf_ptr->min_time_usec
-                                      - collcallProf_ptr->average_time_usec);
+         double diff_from_max = collcallProf_ptr->max_time_usec
+                                - collcallProf_ptr->average_time_usec;
+         diff_from_max = diff_from_max < 0 ? -diff_from_max : diff_from_max;
+         double diff_from_min = collcallProf_ptr->min_time_usec
+                                - collcallProf_ptr->average_time_usec;
+         diff_from_min = diff_from_min < 0 ? -diff_from_min : diff_from_min;
          if (diff_from_max > diff_from_min) {
             collcallProf_ptr->max_imbalance = 100.0*diff_from_max;
             collcallProf_ptr->max_imbalance /= collcallProf_ptr->average_time_usec;
