@@ -82,6 +82,12 @@ check_PROGRAMS += collatecallprofiles_parallel_1 \
 		  collatecallprofiles_parallel_2_1 \
 		  collatecallprofiles_parallel_2_2
 endif
+check_PROGRAMS += calltime_imbalances
+if ENABLE_MPI
+check_PROGRAMS += calltime_imbalances_parallel_1 \
+		  calltime_imbalances_parallel_2_1 \
+		  calltime_imbalances_parallel_2_2
+endif
 if ENABLE_MPI
 check_PROGRAMS += collatempiprofiles \
 		  collatempiprofiles_parallel_1 \
@@ -273,6 +279,28 @@ collatecallprofiles_parallel_2_2_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
 collatecallprofiles_parallel_2_2_LDFLAGS = $(AM_LDFLAGS)
 endif
 
+calltime_imbalances_SOURCES = $(srcdir)/calltime_imbalances.c \
+			      $(srcdir)/dummysymboltable.c
+calltime_imbalances_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
+calltime_imbalances_LDFLAGS = $(AM_LDFLAGS)
+
+if ENABLE_MPI
+calltime_imbalances_parallel_1_SOURCES = $(srcdir)/calltime_imbalances_parallel_1.c \
+					 $(srcdir)/dummysymboltable.c
+calltime_imbalances_parallel_1_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
+calltime_imbalances_parallel_1_LDFLAGS = $(AM_LDFLAGS)
+
+calltime_imbalances_parallel_2_1_SOURCES = $(srcdir)/calltime_imbalances_parallel_2_1.c \
+					   $(srcdir)/dummysymboltable.c
+calltime_imbalances_parallel_2_1_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
+calltime_imbalances_parallel_2_1_LDFLAGS = $(AM_LDFLAGS)
+
+calltime_imbalances_parallel_2_2_SOURCES = $(srcdir)/calltime_imbalances_parallel_2_2.c \
+					   $(srcdir)/dummysymboltable.c
+calltime_imbalances_parallel_2_2_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
+calltime_imbalances_parallel_2_2_LDFLAGS = $(AM_LDFLAGS)
+endif
+
 if ENABLE_MPI
 collatempiprofiles_SOURCES = $(srcdir)/collatempiprofiles.c \
 			     $(srcdir)/dummysymboltable.c
@@ -437,6 +465,12 @@ dist_check_SCRIPTS += collatecallprofiles.sh
 if ENABLE_MPI
 dist_check_SCRIPTS += collatecallprofiles_parallel_1.sh \
 		      collatecallprofiles_parallel_2.sh
+endif
+
+dist_check_SCRIPTS += calltime_imbalances.sh
+if ENABLE_MPI
+dist_check_SCRIPTS += calltime_imbalances_parallel_1.sh \
+		      calltime_imbalances_parallel_2.sh
 endif
 
 if ENABLE_MPI
