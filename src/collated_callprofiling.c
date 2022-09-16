@@ -55,3 +55,11 @@ void vftr_print_collated_callprofiling(FILE *fp, collated_callProfile_t callprof
            callprof.calls, callprof.time_usec, callprof.time_excl_usec,
            callprof.overhead_usec);
 }
+
+void vftr_print_calltime_imbalances(FILE *fp, collated_callProfile_t callprof) {
+   fprintf(fp, "avg: %lldus, min/max=%lldus(on %d)/%lldus(on %d), imb=%6.2lf%% on %d\n",
+           callprof.average_time_usec,
+           callprof.max_time_usec, callprof.max_on_rank,
+           callprof.min_time_usec, callprof.min_on_rank,
+           callprof.max_imbalance, callprof.max_imbalance_on_rank);
+}

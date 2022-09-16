@@ -15,4 +15,6 @@ void vftr_collated_callprofiling_free(collated_callProfile_t *callprof_ptr);
 
 void vftr_print_collated_callprofiling(FILE *fp, collated_callProfile_t callprof);
 
+void vftr_print_calltime_imbalances(FILE *fp, collated_callProfile_t callprof);
+
 #endif
