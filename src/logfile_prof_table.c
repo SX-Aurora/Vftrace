@@ -169,7 +169,7 @@ void vftr_write_logfile_profile_table(FILE *fp, collated_stacktree_t stacktree,
    int *imbalance_ranks_list = NULL;
    if (environment.show_calltime_imbalances.value.bool_val) {
       imbalances_list = vftr_logfile_prof_table_imbalances_list(stacktree.nstacks, sorted_stacks);
-      vftr_table_add_column(&table, col_double, "Imbalances/\%", "%6.2f", 'c', 'r', (void*) imbalances_list);
+      vftr_table_add_column(&table, col_double, "Imbalances/%", "%6.2f", 'c', 'r', (void*) imbalances_list);
 
       imbalance_ranks_list = vftr_logfile_prof_table_imbalance_ranks_list(stacktree.nstacks, sorted_stacks);
       vftr_table_add_column(&table, col_int, "on rank", "%d", 'c', 'r', (void*) imbalance_ranks_list);
