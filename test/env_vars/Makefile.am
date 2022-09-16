@@ -85,7 +85,8 @@ check_PROGRAMS += vftr_sampling \
 		  vftr_ranks_in_mpi_profile_assert \
 		  vftr_sampletime_assert \
 		  vftr_scenario_file_assert \
-		  vftr_sort_profile_table_assert
+		  vftr_sort_profile_table_assert \
+		  vftr_show_calltime_imbalances
 
 vftr_off_SOURCES = $(srcdir)/little_tasks.c
 vftr_off_CFLAGS = $(AM_CFLAGS) -finstrument-functions
@@ -131,6 +132,10 @@ vftr_sort_profile_table_assert_SOURCES = $(srcdir)/little_tasks.c
 vftr_sort_profile_table_assert_CFLAGS = $(AM_CFLAGS) -finstrument-functions
 vftr_sort_profile_table_assert_LDFLAGS = $(AM_LDFLAGS)
 
+vftr_show_calltime_imbalances_SOURCES = $(srcdir)/little_tasks.c
+vftr_show_calltime_imbalances_CFLAGS = $(AM_CFLAGS) -finstrument-functions
+vftr_show_calltime_imbalances_LDFLAGS = $(AM_LDFLAGS)
+
 if !SELF_PROFILING
 dist_check_SCRIPTS += vftr_off.sh
 endif
@@ -143,7 +148,8 @@ dist_check_SCRIPTS += vftr_sampling.sh \
 		      vftr_ranks_in_mpi_profile_assert.sh \
 		      vftr_sampletime_assert.sh \
 		      vftr_scenario_file_assert.sh \
-		      vftr_sort_profile_table_assert.sh
+		      vftr_sort_profile_table_assert.sh \
+		      vftr_show_calltime_imbalances.sh
 
 if ENABLE_FORTRAN
 check_PROGRAMS += vftr_strip_module_names
