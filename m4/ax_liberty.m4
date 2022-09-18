@@ -22,5 +22,6 @@ AC_DEFUN([AX_LIBERTY], [
                                [has_demangle=yes],
                                [has_demangle=no])])
    AM_CONDITIONAL([HAS_LIBERTY], [test "x$has_demangle" = "xyes"])
+   AM_COND_IF([HAS_LIBERTY], [AX_APPEND_FLAG([-liberty], [LDFLAGS])])
 ])
 
