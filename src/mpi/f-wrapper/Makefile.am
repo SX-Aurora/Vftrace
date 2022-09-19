@@ -6,6 +6,9 @@ if HAS_MPI_STD_1_0
 libvftr_fmpiwrap_la_SOURCES += init.F90 \
 			       finalize.F90
 endif
+if HAS_MPI_STD_2_1
+libvftr_fmpiwrap_la_SOURCES += init_thread.F90
+endif
 
 ##################
 # point to point #
