@@ -57,8 +57,8 @@ void vftr_write_logfile_summary(FILE *fp, process_t process,
 #ifdef _OMP
       total_master_overhead += omp_overhead;
 #endif
-   double total_master_overhead_sec = total_master_overhead*1.0e-6/process.nprocesses;
-   double apptime_sec = runtime_sec - total_master_overhead_sec;
+   double total_master_overhead_sec = total_master_overhead*1.0e-6;
+   double apptime_sec = runtime_sec - total_master_overhead_sec/process.nprocesses;
 
    fprintf(fp, "\n");
 #ifdef _MPI
