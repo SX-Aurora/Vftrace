@@ -3,6 +3,7 @@ noinst_LTLIBRARIES = libvftr_f08mpiwrap.la
 libvftr_f08mpiwrap_la_SOURCES =
 
 libvftr_f08mpiwrap_la_SOURCES += init.F90 \
+				 init_thread.F90 \
 				 finalize.F90
 
 ##################
