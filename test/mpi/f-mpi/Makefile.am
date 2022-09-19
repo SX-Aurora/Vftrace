@@ -35,6 +35,10 @@ check_PROGRAMS = init_finalize_1 \
 		 init_finalize_2 \
 		 init_finalize_3 \
 		 init_finalize_4 \
+		 init_thread_finalize_1 \
+		 init_thread_finalize_2 \
+		 init_thread_finalize_3 \
+		 init_thread_finalize_4 \
 		 ftypes \
 		 derived_ftypes \
 		 pcontrol
@@ -55,6 +59,22 @@ init_finalize_4_SOURCES = $(srcdir)/init_finalize.F90
 init_finalize_4_FCFLAGS = $(AM_FCFLAGS)
 init_finalize_4_LDFLAGS = $(AM_LDFLAGS)
 
+init_thread_finalize_1_SOURCES = $(srcdir)/init_thread_finalize.F90
+init_thread_finalize_1_FCFLAGS = $(AM_FCFLAGS)
+init_thread_finalize_1_LDFLAGS = $(AM_LDFLAGS)
+
+init_thread_finalize_2_SOURCES = $(srcdir)/init_thread_finalize.F90
+init_thread_finalize_2_FCFLAGS = $(AM_FCFLAGS)
+init_thread_finalize_2_LDFLAGS = $(AM_LDFLAGS)
+
+init_thread_finalize_3_SOURCES = $(srcdir)/init_thread_finalize.F90
+init_thread_finalize_3_FCFLAGS = $(AM_FCFLAGS)
+init_thread_finalize_3_LDFLAGS = $(AM_LDFLAGS)
+
+init_thread_finalize_4_SOURCES = $(srcdir)/init_thread_finalize.F90
+init_thread_finalize_4_FCFLAGS = $(AM_FCFLAGS)
+init_thread_finalize_4_LDFLAGS = $(AM_LDFLAGS)
+
 ftypes_SOURCES = $(srcdir)/ftypes.F90
 ftypes_FCFLAGS = $(AM_FCFLAGS)
 ftypes_LDFLAGS = $(AM_LDFLAGS)
@@ -71,6 +91,10 @@ dist_noinst_SCRIPTS = init_finalize-1.sh \
                       init_finalize-2.sh \
                       init_finalize-3.sh \
                       init_finalize-4.sh \
+		      init_thread_finalize-1.sh \
+                      init_thread_finalize-2.sh \
+                      init_thread_finalize-3.sh \
+                      init_thread_finalize-4.sh \
 		      ftypes.sh \
 		      derived_ftypes.sh \
 		      pcontrol.sh

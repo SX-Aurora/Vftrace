@@ -1,0 +1,1 @@
+../testscripts/init_thread_finalize-1.sh
