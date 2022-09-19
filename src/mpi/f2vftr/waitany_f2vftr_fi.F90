@@ -29,7 +29,7 @@ MODULE vftr_mpi_waitany_f2vftr_fi
    INTERFACE
 
       SUBROUTINE vftr_MPI_Waitany_f2vftr(F_COUNT, F_ARRAY_OF_REQUESTS, &
-                                      F_INDEX, F_STATUS, F_ERROR) &
+                                         F_INDEX, F_STATUS, F_ERROR) &
          BIND(C, name="vftr_MPI_Waitany_f2vftr")
          USE mpi, ONLY: MPI_STATUS_SIZE
          IMPLICIT NONE
