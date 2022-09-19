@@ -1,8 +1,10 @@
 noinst_LTLIBRARIES = libvftr_mpi_f082vftr.la
 
 libvftr_mpi_f082vftr_la_SOURCES  = init_f082vftr.c \
+				   init_thread_f082vftr.c \
                                    finalize_f082vftr.c
 libvftr_mpi_f082vftr_la_SOURCES += init_f082vftr_f08i.F90 \
+				   init_thread_f082vftr_f08i.F90 \
                                    finalize_f082vftr_f08i.F90
 
 ##################
