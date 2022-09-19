@@ -71,7 +71,7 @@ void vftr_clear_completed_onesided_request(vftr_request_t *request) {
       //  without violating the MPI-Standard)
       // Therefore: measures asynchronous communication with vftrace always
       //            yields to small bandwidth.
-      long long tend = vftr_get_runtime_usec ();
+      long long tend = vftr_get_runtime_nsec ();
 
       // Every rank should already be translated to the global rank
       // by the register routine

@@ -21,7 +21,7 @@ sampling_t vftr_new_sampling(environment_t environment) {
       sampling.vfdfilefp = vftr_open_vfdfile(sampling.vfdfilename);
       sampling.iobuffer = vftr_attach_iobuffer_vfdfile(sampling.vfdfilefp,
                                                        environment);
-      sampling.interval = (long long) (environment.sampletime.value.double_val*1.0e6);
+      sampling.interval = (long long) (environment.sampletime.value.double_val*1.0e9);
       sampling.nextsampletime = 0;
       sampling.function_samplecount = 0;
       sampling.message_samplecount = 0;

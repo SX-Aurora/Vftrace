@@ -38,12 +38,12 @@ int vftr_MPI_Iallgather(const void *sendbuf, int sendcount,
                         MPI_Datatype sendtype, void *recvbuf,
                         int recvcount, MPI_Datatype recvtype,
                         MPI_Comm comm, MPI_Request *request) {
-   long long tstart = vftr_get_runtime_usec();
+   long long tstart = vftr_get_runtime_nsec();
    int retVal = PMPI_Iallgather(sendbuf, sendcount, sendtype, recvbuf,
                                 recvcount, recvtype, comm, request);
 
    SELF_PROFILE_START_FUNCTION;
-   long long t2start = vftr_get_runtime_usec();
+   long long t2start = vftr_get_runtime_nsec();
    int size;
    PMPI_Comm_size(comm, &size);
    // allocate memory for the temporary arrays
@@ -79,7 +79,7 @@ int vftr_MPI_Iallgather(const void *sendbuf, int sendcount,
    threadstack_t *my_threadstack = vftr_get_my_threadstack(my_thread);
    stack_t *my_stack = vftrace.process.stacktree.stacks+my_threadstack->stackID;
    profile_t *my_profile = vftr_get_my_profile(my_stack, my_thread);
-   long long t2end = vftr_get_runtime_usec();
+   long long t2end = vftr_get_runtime_nsec();
 
    vftr_accumulate_mpiprofiling_overhead(&(my_profile->mpiProf), t2end-t2start);
 
@@ -91,12 +91,12 @@ int vftr_MPI_Iallgather_inplace(const void *sendbuf, int sendcount,
                                 MPI_Datatype sendtype, void *recvbuf,
                                 int recvcount, MPI_Datatype recvtype,
                                 MPI_Comm comm, MPI_Request *request) {
-   long long tstart = vftr_get_runtime_usec();
+   long long tstart = vftr_get_runtime_nsec();
    int retVal = PMPI_Iallgather(sendbuf, sendcount, sendtype, recvbuf,
                                 recvcount, recvtype, comm, request);
 
    SELF_PROFILE_START_FUNCTION;
-   long long t2start = vftr_get_runtime_usec();
+   long long t2start = vftr_get_runtime_nsec();
    int size;
    PMPI_Comm_size(comm, &size);
    if (size > 1) {
@@ -143,7 +143,7 @@ int vftr_MPI_Iallgather_inplace(const void *sendbuf, int sendcount,
    threadstack_t *my_threadstack = vftr_get_my_threadstack(my_thread);
    stack_t *my_stack = vftrace.process.stacktree.stacks+my_threadstack->stackID;
    profile_t *my_profile = vftr_get_my_profile(my_stack, my_thread);
-   long long t2end = vftr_get_runtime_usec();
+   long long t2end = vftr_get_runtime_nsec();
 
    vftr_accumulate_mpiprofiling_overhead(&(my_profile->mpiProf), t2end-t2start);
 
@@ -155,12 +155,12 @@ int vftr_MPI_Iallgather_intercom(const void *sendbuf, int sendcount,
                                  MPI_Datatype sendtype, void *recvbuf,
                                  int recvcount, MPI_Datatype recvtype,
                                  MPI_Comm comm, MPI_Request *request) {
-   long long tstart = vftr_get_runtime_usec();
+   long long tstart = vftr_get_runtime_nsec();
    int retVal = PMPI_Iallgather(sendbuf, sendcount, sendtype, recvbuf,
                                 recvcount, recvtype, comm, request);
 
    SELF_PROFILE_START_FUNCTION;
-   long long t2start = vftr_get_runtime_usec();
+   long long t2start = vftr_get_runtime_nsec();
    // Every process of group A sends sendcount data to and
    // receives recvcount data from every process in group B and
    // vice versa
@@ -205,7 +205,7 @@ int vftr_MPI_Iallgather_intercom(const void *sendbuf, int sendcount,
    threadstack_t *my_threadstack = vftr_get_my_threadstack(my_thread);
    stack_t *my_stack = vftrace.process.stacktree.stacks+my_threadstack->stackID;
    profile_t *my_profile = vftr_get_my_profile(my_stack, my_thread);
-   long long t2end = vftr_get_runtime_usec();
+   long long t2end = vftr_get_runtime_nsec();
 
    vftr_accumulate_mpiprofiling_overhead(&(my_profile->mpiProf), t2end-t2start);
 

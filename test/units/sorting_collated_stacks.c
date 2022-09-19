@@ -166,7 +166,7 @@ int main(int argc, char **argv) {
       char *stackstr = vftr_get_collated_stack_string(collated_stacktree, stackID, false);
       fprintf(stdout, "%d: %s\n", stackID, stackstr);
       free(stackstr);
-      fprintf(stdout, " Overhead: %8lld, ", stack->profile.callProf.overhead_usec);
+      fprintf(stdout, " Overhead: %8lld, ", stack->profile.callProf.overhead_nsec);
       vftr_print_collated_callprofiling(stdout, stack->profile.callProf);
    }
 

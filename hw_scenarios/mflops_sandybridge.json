@@ -20,7 +20,7 @@
   "observables": [
     {
       "name": "AVX Vector single",
-      "formula": "f1 * 8 * 1e-6 / runtime",
+      "formula": "f1 * 8 * 1e-9 / runtime",
       "protected": "runtime",
       "default": "0",
       "format": [{
@@ -32,7 +32,7 @@
     },
     {
       "name": "AVX Vector double",
-      "formula": "f2 * 4 * 1e-6 / runtime",
+      "formula": "f2 * 4 * 1e-9 / runtime",
       "protected": "runtime",
       "default": "0",
       "format": [{
@@ -44,7 +44,7 @@
     },
     {
       "name": "SSE Vector single",
-      "formula": "f3 * 4 * 1e-6 / runtime",
+      "formula": "f3 * 4 * 1e-9 / runtime",
       "protected": "runtime",
       "default": "0",
       "format": [{
@@ -56,7 +56,7 @@
     },
     {
       "name": "SSE Vector double",
-      "formula": "f4 * 1e-6 * 2 / runtime",
+      "formula": "f4 * 1e-9 * 2 / runtime",
       "protected": "runtime",
       "default": "0",
       "format": [{

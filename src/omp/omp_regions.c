@@ -19,7 +19,7 @@
 #include "misc_utils.h"
 
 void vftr_omp_region_begin(const char *name, const void *addr) {
-   long long region_begin_time_begin = vftr_get_runtime_usec();
+   long long region_begin_time_begin = vftr_get_runtime_nsec();
    // Get the thread that called the region
    thread_t *my_thread = vftr_get_my_thread(&(vftrace.process.threadtree));
    threadstack_t *my_threadstack = vftr_get_my_threadstack(my_thread);
@@ -64,11 +64,11 @@ void vftr_omp_region_begin(const char *name, const void *addr) {
 
    // No calls after this overhead handling!
    vftr_accumulate_omp_overheadprofiling(&(my_profile->overheadProf),
-      vftr_get_runtime_usec() - region_begin_time_begin);
+      vftr_get_runtime_nsec() - region_begin_time_begin);
 }
 
 void vftr_omp_region_end() {
-   long long region_end_time_begin = vftr_get_runtime_usec();
+   long long region_end_time_begin = vftr_get_runtime_nsec();
 
    thread_t *my_thread = vftr_get_my_thread(&(vftrace.process.threadtree));
    threadstack_t *my_threadstack = vftr_get_my_threadstack(my_thread);
@@ -99,5 +99,5 @@ void vftr_omp_region_end() {
    // No calls after this overhead handling
    vftr_accumulate_omp_overheadprofiling(
       &(my_profile->overheadProf),
-      vftr_get_runtime_usec() - region_end_time_begin);
+      vftr_get_runtime_nsec() - region_end_time_begin);
 }

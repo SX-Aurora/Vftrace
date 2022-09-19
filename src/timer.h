@@ -7,7 +7,7 @@
 
 // get the current time in micro seconds since
 // the reference time point
-long long vftr_get_runtime_usec();
+long long vftr_get_runtime_nsec();
 
 // get the number of elapsed clock counts
 unsigned long long vftr_get_cycles();

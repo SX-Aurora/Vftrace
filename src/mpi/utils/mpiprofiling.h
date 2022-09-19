@@ -26,7 +26,7 @@ void vftr_accumulate_message_info(mpiProfile_t *prof_ptr,
                                   long long tend);
 
 void vftr_accumulate_mpiprofiling_overhead(mpiProfile_t *prof,
-                                           long long overhead_usec);
+                                           long long overhead_nsec);
 
 void vftr_create_profiled_ranks_list(environment_t environment,
                                      process_t process,

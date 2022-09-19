@@ -34,9 +34,9 @@
 int vftr_MPI_Exscan(const void *sendbuf, void *recvbuf, int count,
                     MPI_Datatype datatype, MPI_Op op, MPI_Comm comm) {
 
-   long long tstart = vftr_get_runtime_usec();
+   long long tstart = vftr_get_runtime_nsec();
    int retVal = PMPI_Exscan(sendbuf, recvbuf, count, datatype, op, comm);
-   long long tend = vftr_get_runtime_usec();
+   long long tend = vftr_get_runtime_nsec();
 
    SELF_PROFILE_START_FUNCTION;
    long long t2start = tend;
@@ -103,7 +103,7 @@ int vftr_MPI_Exscan(const void *sendbuf, void *recvbuf, int count,
    threadstack_t *my_threadstack = vftr_get_my_threadstack(my_thread);
    stack_t *my_stack = vftrace.process.stacktree.stacks+my_threadstack->stackID;
    profile_t *my_profile = vftr_get_my_profile(my_stack, my_thread);
-   long long t2end = vftr_get_runtime_usec();
+   long long t2end = vftr_get_runtime_nsec();
 
    vftr_accumulate_mpiprofiling_overhead(&(my_profile->mpiProf), t2end-t2start);
 

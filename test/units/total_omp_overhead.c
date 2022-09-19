@@ -128,12 +128,12 @@ int main(int argc, char **argv) {
    vftr_accumulate_omp_overheadprofiling(&(profile->overheadProf), 262144);
 
    int nthreads = 6;
-   long long *omp_overheads_usec = vftr_get_total_omp_overhead(stacktree, nthreads);
+   long long *omp_overheads_nsec = vftr_get_total_omp_overhead(stacktree, nthreads);
    fprintf(stdout, "   OMP Overheads\n");
    for (int i=0; i<nthreads; i++) {
-      fprintf(stdout, "      Thread %d: %lld\n", i, omp_overheads_usec[i]);
+      fprintf(stdout, "      Thread %d: %lld\n", i, omp_overheads_nsec[i]);
    }
-   free(omp_overheads_usec);
+   free(omp_overheads_nsec);
 
    free_dummy_symbol_table(&symboltable);
    vftr_stacktree_free(&stacktree);

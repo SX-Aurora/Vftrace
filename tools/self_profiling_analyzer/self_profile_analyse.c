@@ -56,8 +56,8 @@ int main(int argc, char **argv) {
          stack_t *stack = &(stacktree.stacks[sidx]);
          stack->t_leave.tv_sec = event.t_sec;
          stack->t_leave.tv_nsec = event.t_nsec;
-         long long delta_t_usec = time_diff_usec(stack->t_enter, stack->t_leave);
-         stack->time_usec += delta_t_usec;
+         long long delta_t_nsec = time_diff_nsec(stack->t_enter, stack->t_leave);
+         stack->time_nsec += delta_t_nsec;
          sidx =  stacktree.stacks[current_stack].caller;
       }
       current_stack = sidx;

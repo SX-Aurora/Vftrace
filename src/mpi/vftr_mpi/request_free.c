@@ -37,7 +37,7 @@
 
 int vftr_MPI_Request_free(MPI_Request *request) {
    SELF_PROFILE_START_FUNCTION;
-   long long t2start = vftr_get_runtime_usec();
+   long long t2start = vftr_get_runtime_nsec();
    vftr_request_t *matched_request = vftr_search_request(*request);
    if (matched_request != NULL) {
          matched_request->marked_for_deallocation = true;
@@ -50,7 +50,7 @@ int vftr_MPI_Request_free(MPI_Request *request) {
    threadstack_t *my_threadstack = vftr_get_my_threadstack(my_thread);
    stack_t *my_stack = vftrace.process.stacktree.stacks+my_threadstack->stackID;
    profile_t *my_profile = vftr_get_my_profile(my_stack, my_thread);
-   long long t2end = vftr_get_runtime_usec();
+   long long t2end = vftr_get_runtime_nsec();
 
    vftr_accumulate_mpiprofiling_overhead(&(my_profile->mpiProf), t2end-t2start);
 

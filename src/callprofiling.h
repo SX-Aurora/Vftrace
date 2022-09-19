@@ -12,10 +12,10 @@ callProfile_t vftr_new_callprofiling();
 
 void vftr_accumulate_callprofiling(callProfile_t *prof,
                                    int calls,
-                                   long long time_usec);
+                                   long long time_nsec);
 
 void vftr_accumulate_callprofiling_overhead(callProfile_t *prof,
-                                            long long overhead_usec);
+                                            long long overhead_nsec);
 
 void vftr_update_stacks_exclusive_time(stacktree_t *stacktree_ptr);
 

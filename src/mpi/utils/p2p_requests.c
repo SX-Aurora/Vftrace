@@ -90,7 +90,7 @@ void vftr_clear_completed_p2p_request(vftr_request_t *request) {
       //  without violating the MPI-Standard)
       // Therefore: measures asynchronous communication with vftrace always
       //            yields to small bandwidth.
-      long long tend = vftr_get_runtime_usec ();
+      long long tend = vftr_get_runtime_nsec ();
 
       // extract rank and tag from the completed communication status
       // (if necessary) this is to avoid errors with wildcard usage

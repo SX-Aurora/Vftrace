@@ -339,7 +339,7 @@ int main (int argc, char **argv) {
 	            int stack_id;
 		    long long sample_time, cycle_time;
 		    read_stack_sample (fp, vfd_header.n_hw_obs, &stack_id, &sample_time, NULL, &cycle_time);
-		    double sample_time_s = (double)sample_time * 1e-6;
+		    double sample_time_s = (double)sample_time * 1e-9;
 
 		    if (!strcmp (stacks[stack_id].name, search_func)) {
 			if ((!stacks[stack_id].precise) && (!has_been_warned)) {

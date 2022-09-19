@@ -27,7 +27,7 @@ void vftr_finalize() {
    // update the vftrace state
    vftrace.state = off;
    // set end timer string
-   long long int runtime = vftr_get_runtime_usec();
+   long long int runtime = vftr_get_runtime_nsec();
    vftrace.timestrings.end_time = vftr_get_date_str();
 
    // in case finalize was not called from the threadstacks root
@@ -57,7 +57,7 @@ void vftr_finalize() {
    // finish sampling
    vftr_finalize_sampling(&(vftrace.sampling), vftrace.environment,
                           vftrace.process, vftrace.timestrings,
-                          (double) (runtime * 1.0e-6));
+                          (double) (runtime * 1.0e-9));
 
    // free the dynamic process data
    vftr_process_free(&vftrace.process);

@@ -22,8 +22,8 @@ mpiProfile_t vftr_new_mpiprofiling() {
    prof.recv_bytes = 0ll;
    prof.acc_send_bw = 0.0;
    prof.acc_recv_bw = 0.0;
-   prof.total_time_usec = 0ll;
-   prof.overhead_usec = 0ll;
+   prof.total_time_nsec = 0ll;
+   prof.overhead_nsec = 0ll;
 
    return prof;
 }
@@ -50,7 +50,7 @@ void vftr_accumulate_message_info(mpiProfile_t *prof_ptr,
    if (vftr_should_accumulate_message_info(mpi_state, rank)) {
       int nbytes = count * type_size;
       long long time = tend - tstart;
-      double bw = nbytes * 1.0e6 / time;
+      double bw = nbytes * 1.0e9 / time;
 
       if (dir == send) {
          prof_ptr->nsendmessages++;
@@ -61,14 +61,14 @@ void vftr_accumulate_message_info(mpiProfile_t *prof_ptr,
          prof_ptr->recv_bytes += nbytes;
          prof_ptr->acc_recv_bw += bw;
       }
-      prof_ptr->total_time_usec += time;
+      prof_ptr->total_time_nsec += time;
    }
    SELF_PROFILE_END_FUNCTION;
 }
 
 void vftr_accumulate_mpiprofiling_overhead(mpiProfile_t *prof,
-                                           long long overhead_usec) {
-   prof->overhead_usec += overhead_usec;
+                                           long long overhead_nsec) {
+   prof->overhead_nsec += overhead_nsec;
 }
 
 void vftr_mpiprofiling_free(mpiProfile_t *prof_ptr) {
@@ -111,9 +111,9 @@ void vftr_free_profiled_ranks_list(mpi_state_t *mpi_state) {
 long long *vftr_get_total_mpi_overhead(stacktree_t stacktree, int nthreads) {
    SELF_PROFILE_START_FUNCTION;
    // accumulate the mpi overhead for each thread separately
-   long long *overheads_usec = (long long*) malloc(nthreads*sizeof(long long));
+   long long *overheads_nsec = (long long*) malloc(nthreads*sizeof(long long));
    for (int ithread=0; ithread<nthreads; ithread++) {
-      overheads_usec[ithread] = 0ll;
+      overheads_nsec[ithread] = 0ll;
    }
 
    int nstacks = stacktree.nstacks;
@@ -123,25 +123,25 @@ long long *vftr_get_total_mpi_overhead(stacktree_t stacktree, int nthreads) {
       for (int iprof=0; iprof<nprofs; iprof++) {
          profile_t *prof = stack->profiling.profiles+iprof;
          int threadID = prof->threadID;
-         overheads_usec[threadID] += prof->mpiProf.overhead_usec;
+         overheads_nsec[threadID] += prof->mpiProf.overhead_nsec;
       }
    }
    SELF_PROFILE_END_FUNCTION;
-   return overheads_usec;
+   return overheads_nsec;
 }
 
 long long vftr_get_total_collated_mpi_overhead(collated_stacktree_t stacktree) {
    SELF_PROFILE_START_FUNCTION;
-   long long overheads_usec = 0ll;
+   long long overheads_nsec = 0ll;
 
    int nstacks = stacktree.nstacks;
    for (int istack=0; istack<nstacks; istack++) {
       collated_stack_t *stack = stacktree.stacks+istack;
       collated_profile_t *prof = &(stack->profile);
-      overheads_usec += prof->mpiProf.overhead_usec;
+      overheads_nsec += prof->mpiProf.overhead_nsec;
    }
    SELF_PROFILE_END_FUNCTION;
-   return overheads_usec;
+   return overheads_nsec;
 }
 
 void vftr_print_mpiprofiling(FILE *fp, mpiProfile_t mpiprof) {

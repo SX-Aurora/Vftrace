@@ -17,7 +17,7 @@
   "observables": [
     {
       "name": "Vector performance",
-      "formula": "c1 * 1e-6",
+      "formula": "c1 * 1e-9",
       "divide_by_runtime": "yes",
       "default": "1.234"
     },

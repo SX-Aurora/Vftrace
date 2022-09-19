@@ -21,13 +21,13 @@ struct timespec vftr_get_timestamp() {
    return timestamp;
 }
 
-// get the current time in micro seconds since
+// get the current time in nano seconds since
 // the reference time point
-long long vftr_get_runtime_usec() {
+long long vftr_get_runtime_nsec() {
    // get the current time
    struct timespec timestamp = vftr_get_timestamp();
 
-   // compute the time difference in microseconds
+   // compute the time difference in nanoseconds
    // difference in second counter
    long long delta_sec  = timestamp.tv_sec  - vftr_reference_time.timestamp.tv_sec;
    // difference in nanosecond counter
@@ -36,11 +36,11 @@ long long vftr_get_runtime_usec() {
    if (delta_nsec < 0) {
       // add one second in nano seconds to the nano second difference
       delta_nsec += 1000000000l;
-      // substract one second in microseconds from microsecond difference
+      // substract one second from the second difference 
       delta_sec -= 1l;
    }
    // return the amount of microseconds since the local reference time
-   return 1000000l*delta_sec + delta_nsec/1000l;
+   return 1000000000l*delta_sec + delta_nsec;
 }
 
 //// get the number of elapsed clock counts

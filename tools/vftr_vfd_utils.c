@@ -132,7 +132,7 @@ void print_fileheader (FILE *fp, vfd_header_t vfd_header) {
   fprintf (fp, "Date:       %s\n", datestring );
   fprintf (fp, "MPI tasks:  rank=%d count=%d\n", vfd_header.task, vfd_header.tasks);
   fprintf (fp, "OpenMP threads:  thread=%d count=%d\n", vfd_header.thread, vfd_header.threads);
-  fprintf (fp, "Sample interval: %12.6le seconds\n", vfd_header.interval*1.0e-6);
+  fprintf (fp, "Sample interval: %12.6le seconds\n", vfd_header.interval*1.0e-9);
   fprintf (fp, "Job runtime:   %.3lf seconds\n", vfd_header.runtime);
   fprintf (fp, "Samples:       %d\n", vfd_header.samplecount );
   fprintf (fp, "   Function:   %d\n", vfd_header.function_samplecount );
@@ -194,8 +194,8 @@ void read_mpi_message_sample (FILE *fp, int *direction, int *rank, int *type_ind
 	fread (&t_start, sizeof(long long), 1, fp);
 	fread (&t_stop, sizeof(long long), 1, fp);
 // Convert microseconds to seconds
-	*dt_start = t_start * 1.0e-6;
-	*dt_stop = t_stop * 1.0e-6;
+	*dt_start = t_start * 1.0e-9;
+	*dt_stop = t_stop * 1.0e-9;
 // Normalize to Megabytes.
 	*rate = (*count) * (*type_size) / (*dt_stop - *dt_start) / (1024.0 * 1024.0);
         fread (callingStackID, sizeof(int), 1, fp);

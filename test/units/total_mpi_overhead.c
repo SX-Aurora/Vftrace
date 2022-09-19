@@ -129,12 +129,12 @@ int main(int argc, char **argv) {
    vftr_accumulate_mpiprofiling_overhead(&(profile->mpiProf), 262144);
 
    int nthreads = 6;
-   long long *mpi_overheads_usec = vftr_get_total_mpi_overhead(stacktree, nthreads);
+   long long *mpi_overheads_nsec = vftr_get_total_mpi_overhead(stacktree, nthreads);
    fprintf(stdout, "   MPI Overheads\n");
    for (int i=0; i<nthreads; i++) {
-      fprintf(stdout, "      Thread %d: %lld\n", i, mpi_overheads_usec[i]);
+      fprintf(stdout, "      Thread %d: %lld\n", i, mpi_overheads_nsec[i]);
    }
-   free(mpi_overheads_usec);
+   free(mpi_overheads_nsec);
 
    free_dummy_symbol_table(&symboltable);
    vftr_stacktree_free(&stacktree);

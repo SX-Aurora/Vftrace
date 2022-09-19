@@ -38,11 +38,11 @@ int vftr_MPI_Ireduce_scatter_block(const void *sendbuf, void *recvbuf,
                                    int recvcount, MPI_Datatype datatype,
                                    MPI_Op op, MPI_Comm comm,
                                    MPI_Request *request) {
-   long long tstart = vftr_get_runtime_usec();
+   long long tstart = vftr_get_runtime_nsec();
    int retVal = PMPI_Ireduce_scatter_block(sendbuf, recvbuf, recvcount, datatype, op, comm, request);
 
    SELF_PROFILE_START_FUNCTION;
-   long long t2start = vftr_get_runtime_usec();
+   long long t2start = vftr_get_runtime_nsec();
    int size;
    PMPI_Comm_size(comm, &size);
    int rank;
@@ -107,7 +107,7 @@ int vftr_MPI_Ireduce_scatter_block(const void *sendbuf, void *recvbuf,
    threadstack_t *my_threadstack = vftr_get_my_threadstack(my_thread);
    stack_t *my_stack = vftrace.process.stacktree.stacks+my_threadstack->stackID;
    profile_t *my_profile = vftr_get_my_profile(my_stack, my_thread);
-   long long t2end = vftr_get_runtime_usec();
+   long long t2end = vftr_get_runtime_nsec();
 
    vftr_accumulate_mpiprofiling_overhead(&(my_profile->mpiProf), t2end-t2start);
 
@@ -119,11 +119,11 @@ int vftr_MPI_Ireduce_scatter_block_inplace(const void *sendbuf, void *recvbuf,
                                            int recvcount, MPI_Datatype datatype,
                                            MPI_Op op, MPI_Comm comm,
                                            MPI_Request *request) {
-   long long tstart = vftr_get_runtime_usec();
+   long long tstart = vftr_get_runtime_nsec();
    int retVal = PMPI_Ireduce_scatter_block(sendbuf, recvbuf, recvcount, datatype, op, comm, request);
 
    SELF_PROFILE_START_FUNCTION;
-   long long t2start = vftr_get_runtime_usec();
+   long long t2start = vftr_get_runtime_nsec();
    int size;
    PMPI_Comm_size(comm, &size);
    int rank;
@@ -186,7 +186,7 @@ int vftr_MPI_Ireduce_scatter_block_inplace(const void *sendbuf, void *recvbuf,
    threadstack_t *my_threadstack = vftr_get_my_threadstack(my_thread);
    stack_t *my_stack = vftrace.process.stacktree.stacks+my_threadstack->stackID;
    profile_t *my_profile = vftr_get_my_profile(my_stack, my_thread);
-   long long t2end = vftr_get_runtime_usec();
+   long long t2end = vftr_get_runtime_nsec();
 
    vftr_accumulate_mpiprofiling_overhead(&(my_profile->mpiProf), t2end-t2start);
 
@@ -198,11 +198,11 @@ int vftr_MPI_Ireduce_scatter_block_intercom(const void *sendbuf, void *recvbuf,
                                             int recvcount, MPI_Datatype datatype,
                                             MPI_Op op, MPI_Comm comm,
                                             MPI_Request *request) {
-   long long tstart = vftr_get_runtime_usec();
+   long long tstart = vftr_get_runtime_nsec();
    int retVal = PMPI_Ireduce_scatter_block(sendbuf, recvbuf, recvcount, datatype, op, comm, request);
 
    SELF_PROFILE_START_FUNCTION;
-   long long t2start = vftr_get_runtime_usec();
+   long long t2start = vftr_get_runtime_nsec();
    // Every process of group A performs the reduction within the group A
    // and stores the result on everyp process of group B and vice versa
    //
@@ -307,7 +307,7 @@ int vftr_MPI_Ireduce_scatter_block_intercom(const void *sendbuf, void *recvbuf,
    threadstack_t *my_threadstack = vftr_get_my_threadstack(my_thread);
    stack_t *my_stack = vftrace.process.stacktree.stacks+my_threadstack->stackID;
    profile_t *my_profile = vftr_get_my_profile(my_stack, my_thread);
-   long long t2end = vftr_get_runtime_usec();
+   long long t2end = vftr_get_runtime_nsec();
 
    vftr_accumulate_mpiprofiling_overhead(&(my_profile->mpiProf), t2end-t2start);
 

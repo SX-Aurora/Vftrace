@@ -24,8 +24,8 @@ static void vftr_collate_mpiprofiles_root_self(collated_stacktree_t *collstacktr
       collmpiprof->recv_bytes = 0ll;
       collmpiprof->acc_send_bw = 0.0;
       collmpiprof->acc_recv_bw = 0.0;
-      collmpiprof->total_time_usec = 0ll;
-      collmpiprof->overhead_usec = 0ll;
+      collmpiprof->total_time_nsec = 0ll;
+      collmpiprof->overhead_nsec = 0ll;
 
       for (int iprof=0; iprof<stack->profiling.nprofiles; iprof++) {
          mpiProfile_t *mpiprof = &(stack->profiling.profiles[iprof].mpiProf);
@@ -36,8 +36,8 @@ static void vftr_collate_mpiprofiles_root_self(collated_stacktree_t *collstacktr
          collmpiprof->recv_bytes += mpiprof->recv_bytes;
          collmpiprof->acc_send_bw += mpiprof->acc_send_bw;
          collmpiprof->acc_recv_bw += mpiprof->acc_recv_bw;
-         collmpiprof->total_time_usec += mpiprof->total_time_usec;
-         collmpiprof->overhead_usec += mpiprof->overhead_usec;
+         collmpiprof->total_time_nsec += mpiprof->total_time_nsec;
+         collmpiprof->overhead_nsec += mpiprof->overhead_nsec;
       }
    }
    SELF_PROFILE_END_FUNCTION;
@@ -55,8 +55,8 @@ static void vftr_collate_mpiprofiles_on_root(collated_stacktree_t *collstacktree
       long long nrecvmessages;
       long long send_bytes;
       long long recv_bytes;
-      long long total_time_usec;
-      long long overhead_usec;
+      long long total_time_nsec;
+      long long overhead_nsec;
       double acc_send_bw;
       double acc_recv_bw;
    } mpiProfile_transfer_t;
@@ -84,8 +84,8 @@ static void vftr_collate_mpiprofiles_on_root(collated_stacktree_t *collstacktree
          sendbuf[istack].nrecvmessages = 0ll;
          sendbuf[istack].send_bytes = 0ll;
          sendbuf[istack].recv_bytes = 0ll;
-         sendbuf[istack].total_time_usec = 0ll;
-         sendbuf[istack].overhead_usec = 0ll;
+         sendbuf[istack].total_time_nsec = 0ll;
+         sendbuf[istack].overhead_nsec = 0ll;
          sendbuf[istack].acc_send_bw = 0.0;
          sendbuf[istack].acc_recv_bw = 0.0;
       }
@@ -103,8 +103,8 @@ static void vftr_collate_mpiprofiles_on_root(collated_stacktree_t *collstacktree
             sendbuf[istack].recv_bytes += mpiprof.recv_bytes;
             sendbuf[istack].acc_send_bw += mpiprof.acc_send_bw;
             sendbuf[istack].acc_recv_bw += mpiprof.acc_recv_bw;
-            sendbuf[istack].total_time_usec += mpiprof.total_time_usec;
-            sendbuf[istack].overhead_usec += mpiprof.overhead_usec;
+            sendbuf[istack].total_time_nsec += mpiprof.total_time_nsec;
+            sendbuf[istack].overhead_nsec += mpiprof.overhead_nsec;
 
          }
       }
@@ -142,8 +142,8 @@ static void vftr_collate_mpiprofiles_on_root(collated_stacktree_t *collstacktree
             collmpiprof->recv_bytes += recvbuf[iprof].recv_bytes;
             collmpiprof->acc_send_bw += recvbuf[iprof].acc_send_bw;
             collmpiprof->acc_recv_bw += recvbuf[iprof].acc_recv_bw;
-            collmpiprof->total_time_usec += recvbuf[iprof].total_time_usec;
-            collmpiprof->overhead_usec += recvbuf[iprof].overhead_usec;
+            collmpiprof->total_time_nsec += recvbuf[iprof].total_time_nsec;
+            collmpiprof->overhead_nsec += recvbuf[iprof].overhead_nsec;
          }
       }
       free(recvbuf);

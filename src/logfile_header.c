@@ -36,7 +36,7 @@ void vftr_write_logfile_summary(FILE *fp, process_t process,
                                     vftr_size_t vftrace_size,
                                     long long runtime) {
    SELF_PROFILE_START_FUNCTION;
-   double runtime_sec = runtime * 1.0e-6;
+   double runtime_sec = runtime * 1.0e-9;
 
    // The application runtime is the runtime minus the
    long long total_master_overhead = 0ll;
@@ -57,7 +57,7 @@ void vftr_write_logfile_summary(FILE *fp, process_t process,
 #ifdef _OMP
       total_master_overhead += omp_overhead;
 #endif
-   double total_master_overhead_sec = total_master_overhead*1.0e-6;
+   double total_master_overhead_sec = total_master_overhead*1.0e-9;
    double apptime_sec = runtime_sec - total_master_overhead_sec/process.nprocesses;
 
    fprintf(fp, "\n");
@@ -69,14 +69,14 @@ void vftr_write_logfile_summary(FILE *fp, process_t process,
    fprintf(fp, "Overhead:             %8.2lf s\n",
            total_master_overhead_sec/process.nprocesses);
    fprintf(fp, "   Function hooks:    %8.2lf s\n",
-           call_overhead*1.0e-6/process.nprocesses);
+           call_overhead*1.0e-9/process.nprocesses);
 #ifdef _MPI
    fprintf(fp, "   MPI wrappers:      %8.2lf s\n",
-           mpi_overhead*1.0e-6/process.nprocesses);
+           mpi_overhead*1.0e-9/process.nprocesses);
 #endif
 #ifdef _OMP
    fprintf(fp, "   OMP callbacks:     %8.2lf s\n",
-           omp_overhead*1.0e-6/process.nprocesses);
+           omp_overhead*1.0e-9/process.nprocesses);
 #endif
 
    char *unit = vftr_byte_unit(vftrace_size.total);

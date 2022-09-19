@@ -36,7 +36,7 @@ void vftr_write_ranklogfile_summary(FILE *fp, process_t process,
                                     vftr_size_t vftrace_size,
                                     long long runtime) {
    SELF_PROFILE_START_FUNCTION;
-   double runtime_sec = runtime * 1.0e-6;
+   double runtime_sec = runtime * 1.0e-9;
 
    // get the different accumulated overheads
    // The application runtime is the runtime minus the
@@ -61,7 +61,7 @@ void vftr_write_ranklogfile_summary(FILE *fp, process_t process,
 #endif
       }
    }
-   double total_master_overhead_sec = total_master_overhead*1.0e-6;
+   double total_master_overhead_sec = total_master_overhead*1.0e-9;
    double apptime_sec = runtime_sec - total_master_overhead_sec;
 
    fprintf(fp, "\n");
@@ -75,31 +75,31 @@ void vftr_write_ranklogfile_summary(FILE *fp, process_t process,
    fprintf(fp, "Application time:     %8.2lf s\n", apptime_sec);
    fprintf(fp, "Overhead:             %8.2lf s\n", total_master_overhead_sec);
    if (nthreads == 1) {
-      fprintf(fp, "   Function hooks:    %8.2lf s\n", call_overheads[0]*1.0e-6);
+      fprintf(fp, "   Function hooks:    %8.2lf s\n", call_overheads[0]*1.0e-9);
 #ifdef _MPI
-      fprintf(fp, "   MPI wrappers:      %8.2lf s\n", mpi_overheads[0]*1.0e-6);
+      fprintf(fp, "   MPI wrappers:      %8.2lf s\n", mpi_overheads[0]*1.0e-9);
 #endif
 #ifdef _OMP
-      fprintf(fp, "   OMP callbacks:     %8.2lf s\n", omp_overheads[0]*1.0e-6);
+      fprintf(fp, "   OMP callbacks:     %8.2lf s\n", omp_overheads[0]*1.0e-9);
 #endif
    } else {
       fprintf(fp, "   Function hooks:\n");
       for (int ithread=0; ithread<nthreads; ithread++) {
          fprintf(fp, "      Thread %d:      %8.2lf s\n",
-                 ithread, call_overheads[ithread]*1.0e-6);
+                 ithread, call_overheads[ithread]*1.0e-9);
       }
 #ifdef _MPI
       fprintf(fp, "   MPI wrappers:\n");
       for (int ithread=0; ithread<nthreads; ithread++) {
          fprintf(fp, "      Thread %d:      %8.2lf s\n",
-                 ithread, mpi_overheads[ithread]*1.0e-6);
+                 ithread, mpi_overheads[ithread]*1.0e-9);
       }
 #endif
 #ifdef _OMP
       fprintf(fp, "   OMP callbacks:\n");
       for (int ithread=0; ithread<nthreads; ithread++) {
          fprintf(fp, "      Thread %d:      %8.2lf s\n",
-                 ithread, omp_overheads[ithread]*1.0e-6);
+                 ithread, omp_overheads[ithread]*1.0e-9);
       }
 #endif
    }

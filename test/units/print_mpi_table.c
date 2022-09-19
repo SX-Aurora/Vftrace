@@ -48,7 +48,7 @@ int main(int argc, char **argv) {
    // 0: init
    int iprof = 0;
    profile_t *profile = stacktree.stacks[0].profiling.profiles+0;
-   vftr_accumulate_callprofiling(&(profile->callProf), 1, 1);
+   vftr_accumulate_callprofiling(&(profile->callProf), 1, 1000ll);
 
    char *name;
    int func1_idx = 0;
@@ -68,18 +68,18 @@ int main(int argc, char **argv) {
    profile = stacktree.stacks[func3_idx].profiling.profiles+iprof;
    vftr_accumulate_message_info(&(profile->mpiProf), mpi_state,
                                 send, 100, 0, 4, 1, 0,
-                                1000000, 2000000);
+                                1000000000ll, 2000000000ll);
    vftr_accumulate_message_info(&(profile->mpiProf), mpi_state,
                                 send, 50, 0, 4, 1, 0,
-                                1000000, 2000000);
+                                1000000000ll, 2000000000ll);
    vftr_accumulate_message_info(&(profile->mpiProf), mpi_state,
                                 recv, 27, 0, 8, 1, 0,
-                                1000000, 3000000);
+                                1000000000ll, 3000000000ll);
    iprof = vftr_new_profile_in_list(3,&(stacktree.stacks[func3_idx].profiling));
    profile = stacktree.stacks[func3_idx].profiling.profiles+iprof;
    vftr_accumulate_message_info(&(profile->mpiProf), mpi_state,
                                 send, 137, 0, 4, 1, 0,
-                                1000000, 4000000);
+                                1000000000ll, 4000000000ll);
 
    // 3: func2<func0<init
    name = vftr_get_name_from_address(symboltable, addrs+2);
@@ -95,7 +95,7 @@ int main(int argc, char **argv) {
    profile = stacktree.stacks[func5_idx].profiling.profiles+iprof;
    vftr_accumulate_message_info(&(profile->mpiProf), mpi_state,
                                 send, 42, 0, 4, 1, 0,
-                                1000000,9000000);
+                                1000000000ll, 9000000000ll);
 
    // collate stacks to get the global ID
    collated_stacktree_t collated_stacktree = vftr_collate_stacks(&stacktree);

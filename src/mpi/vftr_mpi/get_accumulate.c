@@ -36,12 +36,12 @@ int vftr_MPI_Get_accumulate(const void *origin_addr, int origin_count,
                             int result_count, MPI_Datatype result_datatype,
                             int target_rank, MPI_Aint target_disp, int target_count,
                             MPI_Datatype target_datatype, MPI_Op op, MPI_Win win) {
-   long long tstart = vftr_get_runtime_usec();
+   long long tstart = vftr_get_runtime_nsec();
    int retVal = PMPI_Get_accumulate(origin_addr, origin_count, origin_datatype,
                                     result_addr, result_count, result_datatype,
                                     target_rank, target_disp, target_count,
                                     target_datatype, op, win);
-   long long tend = vftr_get_runtime_usec();
+   long long tend = vftr_get_runtime_nsec();
 
    SELF_PROFILE_START_FUNCTION;
    long long t2start = tend;
@@ -69,7 +69,7 @@ int vftr_MPI_Get_accumulate(const void *origin_addr, int origin_count,
    threadstack_t *my_threadstack = vftr_get_my_threadstack(my_thread);
    stack_t *my_stack = vftrace.process.stacktree.stacks+my_threadstack->stackID;
    profile_t *my_profile = vftr_get_my_profile(my_stack, my_thread);
-   long long t2end = vftr_get_runtime_usec();
+   long long t2end = vftr_get_runtime_nsec();
 
    vftr_accumulate_mpiprofiling_overhead(&(my_profile->mpiProf), t2end-t2start);
 

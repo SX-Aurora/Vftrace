@@ -38,13 +38,13 @@ int vftr_MPI_Neighbor_alltoall_graph(const void *sendbuf, int sendcount,
                                      MPI_Datatype sendtype, void *recvbuf,
                                      int recvcount, MPI_Datatype recvtype,
                                      MPI_Comm comm) {
-   long long tstart = vftr_get_runtime_usec();
+   long long tstart = vftr_get_runtime_nsec();
    int retVal = PMPI_Neighbor_alltoall(sendbuf, sendcount, sendtype, recvbuf,
                                        recvcount, recvtype, comm);
-   long long tend = vftr_get_runtime_usec();
+   long long tend = vftr_get_runtime_nsec();
 
    SELF_PROFILE_START_FUNCTION;
-   long long t2start = vftr_get_runtime_usec();
+   long long t2start = vftr_get_runtime_nsec();
    int rank;
    PMPI_Comm_rank(comm, &rank);
    int nneighbors;
@@ -66,7 +66,7 @@ int vftr_MPI_Neighbor_alltoall_graph(const void *sendbuf, int sendcount,
    threadstack_t *my_threadstack = vftr_get_my_threadstack(my_thread);
    stack_t *my_stack = vftrace.process.stacktree.stacks+my_threadstack->stackID;
    profile_t *my_profile = vftr_get_my_profile(my_stack, my_thread);
-   long long t2end = vftr_get_runtime_usec();
+   long long t2end = vftr_get_runtime_nsec();
 
    vftr_accumulate_mpiprofiling_overhead(&(my_profile->mpiProf), t2end-t2start);
 
@@ -78,13 +78,13 @@ int vftr_MPI_Neighbor_alltoall_cart(const void *sendbuf, int sendcount,
                                     MPI_Datatype sendtype, void *recvbuf,
                                     int recvcount, MPI_Datatype recvtype,
                                     MPI_Comm comm) {
-   long long tstart = vftr_get_runtime_usec();
+   long long tstart = vftr_get_runtime_nsec();
    int retVal = PMPI_Neighbor_alltoall(sendbuf, sendcount, sendtype, recvbuf,
                                        recvcount, recvtype, comm);
-   long long tend = vftr_get_runtime_usec();
+   long long tend = vftr_get_runtime_nsec();
 
    SELF_PROFILE_START_FUNCTION;
-   long long t2start = vftr_get_runtime_usec();
+   long long t2start = vftr_get_runtime_nsec();
    int rank;
    PMPI_Comm_rank(comm, &rank);
    int nneighbors;
@@ -109,7 +109,7 @@ int vftr_MPI_Neighbor_alltoall_cart(const void *sendbuf, int sendcount,
    threadstack_t *my_threadstack = vftr_get_my_threadstack(my_thread);
    stack_t *my_stack = vftrace.process.stacktree.stacks+my_threadstack->stackID;
    profile_t *my_profile = vftr_get_my_profile(my_stack, my_thread);
-   long long t2end = vftr_get_runtime_usec();
+   long long t2end = vftr_get_runtime_nsec();
 
    vftr_accumulate_mpiprofiling_overhead(&(my_profile->mpiProf), t2end-t2start);
 
@@ -121,13 +121,13 @@ int vftr_MPI_Neighbor_alltoall_dist_graph(const void *sendbuf, int sendcount,
                                           MPI_Datatype sendtype, void *recvbuf,
                                           int recvcount, MPI_Datatype recvtype,
                                           MPI_Comm comm) {
-   long long tstart = vftr_get_runtime_usec();
+   long long tstart = vftr_get_runtime_nsec();
    int retVal = PMPI_Neighbor_alltoall(sendbuf, sendcount, sendtype, recvbuf,
                                        recvcount, recvtype, comm);
-   long long tend = vftr_get_runtime_usec();
+   long long tend = vftr_get_runtime_nsec();
 
    SELF_PROFILE_START_FUNCTION;
-   long long t2start = vftr_get_runtime_usec();
+   long long t2start = vftr_get_runtime_nsec();
    // first obtain the distributed graph info for this process
    int ninneighbors;
    int noutneighbors;
@@ -165,7 +165,7 @@ int vftr_MPI_Neighbor_alltoall_dist_graph(const void *sendbuf, int sendcount,
    threadstack_t *my_threadstack = vftr_get_my_threadstack(my_thread);
    stack_t *my_stack = vftrace.process.stacktree.stacks+my_threadstack->stackID;
    profile_t *my_profile = vftr_get_my_profile(my_stack, my_thread);
-   long long t2end = vftr_get_runtime_usec();
+   long long t2end = vftr_get_runtime_nsec();
 
    vftr_accumulate_mpiprofiling_overhead(&(my_profile->mpiProf), t2end-t2start);
 

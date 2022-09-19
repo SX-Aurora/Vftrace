@@ -40,9 +40,9 @@ double *vftr_ranklogfile_prof_table_stack_inclusive_time_list(int nstacks, stack
       inclusive_time_list[istack] = 0.0;
       for (int iprof=0; iprof<stack_ptr->profiling.nprofiles; iprof++) {
          profile_t *prof_ptr = stack_ptr->profiling.profiles+iprof;
-         inclusive_time_list[istack] += prof_ptr->callProf.time_usec;
+         inclusive_time_list[istack] += prof_ptr->callProf.time_nsec;
       }
-      inclusive_time_list[istack] *= 1.0e-6;
+      inclusive_time_list[istack] *= 1.0e-9;
    }
    return inclusive_time_list;
 }
@@ -55,9 +55,9 @@ double *vftr_ranklogfile_prof_table_stack_exclusive_time_list(int nstacks, stack
       exclusive_time_list[istack] = 0.0;
       for (int iprof=0; iprof<stack_ptr->profiling.nprofiles; iprof++) {
          profile_t *prof_ptr = stack_ptr->profiling.profiles+iprof;
-         exclusive_time_list[istack] += prof_ptr->callProf.time_excl_usec;
+         exclusive_time_list[istack] += prof_ptr->callProf.time_excl_nsec;
       }
-      exclusive_time_list[istack] *= 1.0e-6;
+      exclusive_time_list[istack] *= 1.0e-9;
    }
    return exclusive_time_list;
 }
@@ -69,7 +69,7 @@ double *vftr_ranklogfile_prof_table_stack_exclusive_time_percentage_list(int nst
       stack_t *stack_ptr = stack_ptrs[istack];
       for (int iprof=0; iprof<stack_ptr->profiling.nprofiles; iprof++) {
          profile_t *prof_ptr = stack_ptr->profiling.profiles+iprof;
-         total_time += prof_ptr->callProf.time_excl_usec;
+         total_time += prof_ptr->callProf.time_excl_nsec;
       }
    }
    double invtotal_time = 100.0/total_time;
@@ -78,7 +78,7 @@ double *vftr_ranklogfile_prof_table_stack_exclusive_time_percentage_list(int nst
       percent_list[istack] = 0.0;
       for (int iprof=0; iprof<stack_ptr->profiling.nprofiles; iprof++) {
          profile_t *prof_ptr = stack_ptr->profiling.profiles+iprof;
-         percent_list[istack] += prof_ptr->callProf.time_excl_usec;
+         percent_list[istack] += prof_ptr->callProf.time_excl_nsec;
       }
       percent_list[istack] *= invtotal_time;
    }
@@ -91,8 +91,8 @@ double *vftr_ranklogfile_prof_table_stack_exclusive_time_percentage_list(int nst
 //   for (int istack=0; istack<nstacks; istack++) {
 //      stack_t *stack_ptr = stack_ptrs[istack];
 //      profile_t *prof_ptr = stack_ptr->profiling.profiles;
-//      overhead_time_list[istack] = prof_ptr->overheadProf.hook_usec;
-//      overhead_time_list[istack] *= 1.0e-6;
+//      overhead_time_list[istack] = prof_ptr->overheadProf.hook_nsec;
+//      overhead_time_list[istack] *= 1.0e-9;
 //   }
 //   return overhead_time_list;
 //}

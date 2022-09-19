@@ -22,26 +22,26 @@ static void vftr_collate_callprofiles_root_self(collated_stacktree_t *collstackt
       collated_callProfile_t *collcallprof = &(collstack->profile.callProf);
 
       collcallprof->calls = 0ll;
-      collcallprof->time_usec = 0ll;
-      collcallprof->time_excl_usec = 0ll;
-      collcallprof->overhead_usec = 0ll;
+      collcallprof->time_nsec = 0ll;
+      collcallprof->time_excl_nsec = 0ll;
+      collcallprof->overhead_nsec = 0ll;
 
       for (int iprof=0; iprof<stack->profiling.nprofiles; iprof++) {
          callProfile_t *callprof = &(stack->profiling.profiles[iprof].callProf);
    
          collcallprof->calls += callprof->calls;
-         collcallprof->time_usec += callprof->time_usec;
-         collcallprof->time_excl_usec += callprof->time_excl_usec;
-         collcallprof->overhead_usec += callprof->overhead_usec;
+         collcallprof->time_nsec += callprof->time_nsec;
+         collcallprof->time_excl_nsec += callprof->time_excl_nsec;
+         collcallprof->overhead_nsec += callprof->overhead_nsec;
       }
 
       // call time imbalances info
       collcallprof->on_nranks = 1;
       collcallprof->max_on_rank = 0;
       collcallprof->min_on_rank = 0;
-      collcallprof->average_time_usec = collcallprof->time_excl_usec;
-      collcallprof->max_time_usec = collcallprof->time_excl_usec;
-      collcallprof->min_time_usec = collcallprof->time_excl_usec;
+      collcallprof->average_time_nsec = collcallprof->time_excl_nsec;
+      collcallprof->max_time_nsec = collcallprof->time_excl_nsec;
+      collcallprof->min_time_nsec = collcallprof->time_excl_nsec;
 
    }
    SELF_PROFILE_END_FUNCTION;
@@ -57,9 +57,9 @@ static void vftr_collate_callprofiles_on_root(collated_stacktree_t *collstacktre
    typedef struct {
       int gid;
       long long calls;
-      long long time_usec;
-      long long time_excl_usec;
-      long long overhead_usec;
+      long long time_nsec;
+      long long time_excl_nsec;
+      long long overhead_nsec;
    } callProfile_transfer_t;
 
    int nblocks = 2;
@@ -80,9 +80,9 @@ static void vftr_collate_callprofiles_on_root(collated_stacktree_t *collstacktre
       for (int istack=0; istack<nprofiles; istack++) {
          sendbuf[istack].gid = 0;
          sendbuf[istack].calls = 0ll;
-         sendbuf[istack].time_usec = 0ll;
-         sendbuf[istack].time_excl_usec = 0ll;
-         sendbuf[istack].overhead_usec = 0ll;
+         sendbuf[istack].time_nsec = 0ll;
+         sendbuf[istack].time_excl_nsec = 0ll;
+         sendbuf[istack].overhead_nsec = 0ll;
       }
       for (int istack=0; istack<nprofiles; istack++) {
          stack_t *mystack = stacktree_ptr->stacks+istack;
@@ -92,9 +92,9 @@ static void vftr_collate_callprofiles_on_root(collated_stacktree_t *collstacktre
             profile_t *myprof = mystack->profiling.profiles+iprof;
             callProfile_t callprof = myprof->callProf;
             sendbuf[istack].calls += callprof.calls;
-            sendbuf[istack].time_usec += callprof.time_usec;
-            sendbuf[istack].time_excl_usec += callprof.time_excl_usec;
-            sendbuf[istack].overhead_usec += callprof.overhead_usec;
+            sendbuf[istack].time_nsec += callprof.time_nsec;
+            sendbuf[istack].time_excl_nsec += callprof.time_excl_nsec;
+            sendbuf[istack].overhead_nsec += callprof.overhead_nsec;
          }
       }
       PMPI_Send(sendbuf, nprofiles,
@@ -126,21 +126,21 @@ static void vftr_collate_callprofiles_on_root(collated_stacktree_t *collstacktre
             collated_callProfile_t *collcallprof = &(collstack->profile.callProf);
      
             collcallprof->calls += recvbuf[iprof].calls;
-            collcallprof->time_usec += recvbuf[iprof].time_usec;
-            collcallprof->time_excl_usec += recvbuf[iprof].time_excl_usec;
-            collcallprof->overhead_usec += recvbuf[iprof].overhead_usec;
+            collcallprof->time_nsec += recvbuf[iprof].time_nsec;
+            collcallprof->time_excl_nsec += recvbuf[iprof].time_excl_nsec;
+            collcallprof->overhead_nsec += recvbuf[iprof].overhead_nsec;
 
             // collect call time imbalances info
-            if (recvbuf[iprof].time_excl_usec > 0) {
+            if (recvbuf[iprof].time_excl_nsec > 0) {
                collcallprof->on_nranks++;
-               collcallprof->average_time_usec += recvbuf[iprof].time_excl_usec;
+               collcallprof->average_time_nsec += recvbuf[iprof].time_excl_nsec;
                // search for min and max values
-               if (recvbuf[iprof].time_excl_usec > collcallprof->max_time_usec) {
+               if (recvbuf[iprof].time_excl_nsec > collcallprof->max_time_nsec) {
                   collcallprof->max_on_rank = irank;
-                  collcallprof->max_time_usec = recvbuf[iprof].time_excl_usec;
-               } else if (recvbuf[iprof].time_excl_usec < collcallprof->min_time_usec) {
+                  collcallprof->max_time_nsec = recvbuf[iprof].time_excl_nsec;
+               } else if (recvbuf[iprof].time_excl_nsec < collcallprof->min_time_nsec) {
                   collcallprof->min_on_rank = irank;
-                  collcallprof->min_time_usec = recvbuf[iprof].time_excl_usec;
+                  collcallprof->min_time_nsec = recvbuf[iprof].time_excl_nsec;
                }
             }
          }
@@ -157,21 +157,21 @@ void vftr_compute_callprofile_imbalances(collated_stacktree_t *collstacktree_ptr
    for (int istack=0; istack<collstacktree_ptr->nstacks; istack++) {
       collated_stack_t *stack_ptr = collstacktree_ptr->stacks+istack;
       collated_callProfile_t *collcallProf_ptr = &(stack_ptr->profile.callProf);
-      if (collcallProf_ptr->average_time_usec > 0) {
-         collcallProf_ptr->average_time_usec /= collcallProf_ptr->on_nranks;
-         double diff_from_max = collcallProf_ptr->max_time_usec
-                                - collcallProf_ptr->average_time_usec;
+      if (collcallProf_ptr->average_time_nsec > 0) {
+         collcallProf_ptr->average_time_nsec /= collcallProf_ptr->on_nranks;
+         double diff_from_max = collcallProf_ptr->max_time_nsec
+                                - collcallProf_ptr->average_time_nsec;
          diff_from_max = diff_from_max < 0 ? -diff_from_max : diff_from_max;
-         double diff_from_min = collcallProf_ptr->min_time_usec
-                                - collcallProf_ptr->average_time_usec;
+         double diff_from_min = collcallProf_ptr->min_time_nsec
+                                - collcallProf_ptr->average_time_nsec;
          diff_from_min = diff_from_min < 0 ? -diff_from_min : diff_from_min;
          if (diff_from_max > diff_from_min) {
             collcallProf_ptr->max_imbalance = 100.0*diff_from_max;
-            collcallProf_ptr->max_imbalance /= collcallProf_ptr->average_time_usec;
+            collcallProf_ptr->max_imbalance /= collcallProf_ptr->average_time_nsec;
             collcallProf_ptr->max_imbalance_on_rank = collcallProf_ptr->max_on_rank;
          } else {
             collcallProf_ptr->max_imbalance = 100.0*diff_from_min;
-            collcallProf_ptr->max_imbalance /= collcallProf_ptr->average_time_usec;
+            collcallProf_ptr->max_imbalance /= collcallProf_ptr->average_time_nsec;
             collcallProf_ptr->max_imbalance_on_rank = collcallProf_ptr->min_on_rank;
          }
       } else {

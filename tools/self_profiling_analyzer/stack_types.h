@@ -14,8 +14,8 @@ typedef struct {
    int *callees;
    // profiling
    int ncalls;
-   long long time_usec;
-   long long time_excl_usec;
+   long long time_nsec;
+   long long time_excl_nsec;
    struct timespec t_enter;
    struct timespec t_leave;
 } stack_t;

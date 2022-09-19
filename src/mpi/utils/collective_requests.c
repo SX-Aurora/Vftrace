@@ -81,7 +81,7 @@ void vftr_clear_completed_collective_request(vftr_request_t *request) {
       //  without violating the MPI-Standard)
       // Therefore: measures asynchronous communication with vftrace always
       //            yields to small bandwidth.
-      long long tend = vftr_get_runtime_usec ();
+      long long tend = vftr_get_runtime_nsec ();
 
       // Get the thread that called the function
       thread_t *my_thread = vftrace.process.threadtree.threads+request->callingthreadID;

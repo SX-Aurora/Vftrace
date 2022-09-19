@@ -20,7 +20,7 @@
   "observables": [
     {
       "name": "Scalar",
-      "formula": "f1 * 1e-6 / runtime",
+      "formula": "f1 * 1e-9 / runtime",
       "protected": "runtime",
       "default": "0",
       "format": [{
@@ -30,7 +30,7 @@
     },
     {
       "name": "Vector 128b_packed",
-      "formula": "f2 * 2 * 1e-6 / runtime",
+      "formula": "f2 * 2 * 1e-9 / runtime",
       "protected": "runtime",
       "default": "0",
       "format": [{
@@ -40,7 +40,7 @@
     },
     {
       "name": "Vector 256b_packed",
-      "formula": "f3 * 4 * 1e-6 / runtime",
+      "formula": "f3 * 4 * 1e-9 / runtime",
       "protected": "runtime",
       "default": "0",
       "format": [{

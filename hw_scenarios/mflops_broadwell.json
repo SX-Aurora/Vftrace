@@ -20,7 +20,7 @@
   "observables": [
     {
       "name": "Scalar single",
-      "formula": "f1 * 1e-6 / runtime",
+      "formula": "f1 * 1e-9 / runtime",
       "protected": "runtime",
       "default": "0",
       "format": [{
@@ -30,7 +30,7 @@
     },
     {
       "name": "Vector single",
-      "formula": "f2 * 8 * 1e-6 / runtime",
+      "formula": "f2 * 8 * 1e-9 / runtime",
       "protected": "runtime",
       "default": "0",
       "format": [{
@@ -40,7 +40,7 @@
     },
     {
       "name": "Scalar double",
-      "formula": "f3 * 1e-6 / runtime",
+      "formula": "f3 * 1e-9 / runtime",
       "protected": "runtime",
       "default": "0",
       "format": [{
@@ -50,7 +50,7 @@
     },
     {
       "name": "Vector double",
-      "formula": "f4 * 4 * 1e-6 / runtime",
+      "formula": "f4 * 4 * 1e-9 / runtime",
       "protected": "runtime",
       "default": "0",
       "format": [{

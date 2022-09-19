@@ -67,8 +67,8 @@ int new_stack(int callerID, char *name, stacktree_t *stacktree_ptr) {
 
    stack->name = name;
    stack->ncalls = 0;
-   stack->time_usec = 0;
-   stack->time_excl_usec = 0;
+   stack->time_nsec = 0;
+   stack->time_excl_nsec = 0;
 
    insert_callee(stack->id, callerstack);
 
@@ -84,8 +84,8 @@ stack_t first_stack(char *name) {
    stack.ncallees = 0;
    stack.callees = NULL;
    stack.ncalls = 0;
-   stack.time_usec = 0;
-   stack.time_excl_usec = 0;
+   stack.time_nsec = 0;
+   stack.time_excl_nsec = 0;
    return stack;
 }
 
@@ -126,11 +126,11 @@ void update_stacks_exclusive_time(stacktree_t *stacktree_ptr) {
    // exclusive time for init is 0, therefore it does not need to be computed.
    for (int istack=1; istack<nstacks; istack++) {
       stack_t *mystack = stacks + istack;
-      mystack->time_excl_usec = mystack->time_usec;
+      mystack->time_excl_nsec = mystack->time_nsec;
       for (int icallee=0; icallee<mystack->ncallees; icallee++) {
          int calleeID = mystack->callees[icallee];
          stack_t *calleestack = stacks+calleeID;
-         mystack->time_excl_usec -= calleestack->time_usec;
+         mystack->time_excl_nsec -= calleestack->time_nsec;
       }
    }
 }
@@ -145,8 +145,8 @@ void qsort_stacklist(int n, stack_t **stacklist) {
    stack_t *pivot = stacklist[n/2];
    int left, right;
    for (left=0, right=n-1; ; left++, right--) {
-      while (stacklist[left]->time_excl_usec > pivot->time_excl_usec) left++;
-      while (stacklist[right]->time_excl_usec < pivot->time_excl_usec) right--;
+      while (stacklist[left]->time_excl_nsec > pivot->time_excl_nsec) left++;
+      while (stacklist[right]->time_excl_nsec < pivot->time_excl_nsec) right--;
       if (left >= right) break;
       stack_t *temp = stacklist[left];
       stacklist[left] = stacklist[right];
@@ -233,8 +233,8 @@ char *get_stack_string(stacktree_t stacktree, int stackid) {
 void print_stack(FILE *fp, stacktree_t stacktree, int stackid) {
    char *stackstr = get_stack_string(stacktree, stackid);
    fprintf(fp, " %8d", stacktree.stacks[stackid].ncalls);
-   fprintf(fp, " %14.6lf", 1.0e-6*stacktree.stacks[stackid].time_usec);
-   fprintf(fp, " %14.6lf", 1.0e-6*stacktree.stacks[stackid].time_excl_usec);
+   fprintf(fp, " %14.6lf", 1.0e-9*stacktree.stacks[stackid].time_nsec);
+   fprintf(fp, " %14.6lf", 1.0e-9*stacktree.stacks[stackid].time_excl_nsec);
    fprintf(fp, " %s", stackstr);
    free(stackstr);
 }

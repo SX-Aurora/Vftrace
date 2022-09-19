@@ -130,12 +130,12 @@ int main(int argc, char **argv) {
    vftr_accumulate_callprofiling_overhead(&(profile->callProf), 262144);
 
    int nthreads = 6;
-   long long *call_overheads_usec = vftr_get_total_call_overhead(stacktree, nthreads);
+   long long *call_overheads_nsec = vftr_get_total_call_overhead(stacktree, nthreads);
    fprintf(stdout, "   Call Overheads\n");
    for (int i=0; i<nthreads; i++) {
-      fprintf(stdout, "      Thread %d: %lld\n", i, call_overheads_usec[i]);
+      fprintf(stdout, "      Thread %d: %lld\n", i, call_overheads_nsec[i]);
    }
-   free(call_overheads_usec);
+   free(call_overheads_nsec);
 
    free_dummy_symbol_table(&symboltable);
    vftr_stacktree_free(&stacktree);

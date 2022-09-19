@@ -99,12 +99,12 @@ double *vftr_logfile_mpi_table_average_comm_time_list(int nstacks, collated_stac
       collated_stack_t *stack_ptr = stack_ptrs[istack];
       avg_comm_time_list[istack] = 0.0;
       collated_profile_t *prof_ptr = &(stack_ptr->profile);
-      long long tot_time = prof_ptr->mpiProf.total_time_usec;
+      long long tot_time = prof_ptr->mpiProf.total_time_nsec;
       int nmessages = 0;
       nmessages += prof_ptr->mpiProf.nsendmessages;
       nmessages += prof_ptr->mpiProf.nrecvmessages;
       if (nmessages > 0) {
-         avg_comm_time_list[istack] = tot_time * 1.0e-6/((double)nmessages);
+         avg_comm_time_list[istack] = tot_time * 1.0e-9/((double)nmessages);
       } else {
          avg_comm_time_list[istack] = 0.0;
       }

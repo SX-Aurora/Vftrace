@@ -67,9 +67,9 @@ In these `vftr_MPI`-functions the communication is executed by calling the corre
       if (vftrace_Pcontrol_level == 0) {
          return PMPI_Send(buf, count, datatype, dest, tag, comm);
       } else {
-         long long tstart = vftr_get_runtime_usec();
+         long long tstart = vftr_get_runtime_nsec();
          int retVal = PMPI_Send(buf, count, datatype, dest, tag, comm);
-         long long tend = vftr_get_runtime_usec();
+         long long tend = vftr_get_runtime_nsec();
    
          vftr_store_sync_message_info(send, count, datatype, dest, tag, comm, tstart, tend);
    

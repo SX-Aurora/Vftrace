@@ -20,7 +20,7 @@
 
 void vftr_user_region_begin(const char *name, void *addr) {
    SELF_PROFILE_START_FUNCTION;
-   long long region_begin_time_begin = vftr_get_runtime_usec();
+   long long region_begin_time_begin = vftr_get_runtime_nsec();
    // Get the thread that called the region
    thread_t *my_thread = vftr_get_my_thread(&(vftrace.process.threadtree));
    threadstack_t *my_threadstack = vftr_get_my_threadstack(my_thread);
@@ -65,13 +65,13 @@ void vftr_user_region_begin(const char *name, void *addr) {
 
    // No calls after this overhead handling!
    vftr_accumulate_callprofiling_overhead(&(my_profile->callProf),
-      vftr_get_runtime_usec() - region_begin_time_begin);
+      vftr_get_runtime_nsec() - region_begin_time_begin);
    SELF_PROFILE_END_FUNCTION;
 }
 
 void vftr_user_region_end() {
    SELF_PROFILE_START_FUNCTION;
-   long long region_end_time_begin = vftr_get_runtime_usec();
+   long long region_end_time_begin = vftr_get_runtime_nsec();
 
    thread_t *my_thread = vftr_get_my_thread(&(vftrace.process.threadtree));
    threadstack_t *my_threadstack = vftr_get_my_threadstack(my_thread);
@@ -102,7 +102,7 @@ void vftr_user_region_end() {
    // No calls after this overhead handling
    vftr_accumulate_callprofiling_overhead(
       &(my_profile->callProf),
-      vftr_get_runtime_usec() - region_end_time_begin);
+      vftr_get_runtime_nsec() - region_end_time_begin);
    SELF_PROFILE_END_FUNCTION;
 }
 

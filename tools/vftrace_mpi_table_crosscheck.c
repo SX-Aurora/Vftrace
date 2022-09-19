@@ -133,7 +133,7 @@ bool check_t_avg (int n_log_files, double t[N_MPI_FUNCS][n_log_files], double t_
 		if (n > 0) {
 			// We accept two percent of deviation, since in Vftrace, the average is
 			// computed using the integer (long long) number of microseconds,
-			// multiplied by 1e-6, whereas here, we already have floating point
+			// multiplied by 1e-9, whereas here, we already have floating point
 			// numbers.
 			double this_t_avg = sum_t / n;
 			all_okay_local = equal_within_tolerance (this_t_avg, t_avg[i][0], 0.02);

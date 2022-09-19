@@ -12,8 +12,8 @@ typedef struct {
    double acc_send_bw;
    double acc_recv_bw;
    // accumulated communication time
-   long long total_time_usec;
+   long long total_time_nsec;
    // overhead from vftrace MPI-book keeping
-   long long overhead_usec;
+   long long overhead_nsec;
 } mpiProfile_t;
 #endif

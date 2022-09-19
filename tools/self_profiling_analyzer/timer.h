@@ -3,6 +3,6 @@
 
 #include <time.h>
 
-long long time_diff_usec(struct timespec t_start, struct timespec t_end);
+long long time_diff_nsec(struct timespec t_start, struct timespec t_end);
 
 #endif

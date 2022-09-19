@@ -166,7 +166,7 @@ int main(int argc, char **argv) {
          fprintf(stdout, "   Thread: %d (%d)", ithread,
                  stack->profiling.profiles[ithread].threadID);
          profile_t *profile = stack->profiling.profiles+ithread;
-         fprintf(stdout, " Overhead: %8lld, ", profile->callProf.overhead_usec);
+         fprintf(stdout, " Overhead: %8lld, ", profile->callProf.overhead_nsec);
          vftr_print_callprofiling(stdout, profile->callProf);
       }
    }

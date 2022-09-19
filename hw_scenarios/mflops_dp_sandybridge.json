@@ -20,7 +20,7 @@
   "observables": [
     {
       "name": "AVX Vector double",
-      "formula": "f1 * 4 * 1e-6 / runtime",
+      "formula": "f1 * 4 * 1e-9 / runtime",
       "protected": "runtime",
       "default": "0",
       "format": [{
@@ -30,7 +30,7 @@
     },
     {
       "name": "SSE Vector double",
-      "formula": "f2 * 2 * 1e-6 / runtime",
+      "formula": "f2 * 2 * 1e-9 / runtime",
       "protected": "runtime",
       "default": "0",
       "format": [{
@@ -40,7 +40,7 @@
     },
     {
       "name": "SSE Scalar double",
-      "formula": "f3 * 1e-6 / runtime",
+      "formula": "f3 * 1e-9 / runtime",
       "protected": "runtime",
       "default": "0",
       "format": [{

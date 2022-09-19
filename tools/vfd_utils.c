@@ -119,7 +119,7 @@ void print_vfd_header(FILE *vfd_fp, vfd_header_t vfd_header) {
    fprintf(vfd_fp, "End Date:        %s\n", vfd_header.datestr_end);
    fprintf(vfd_fp, "Processes:       %d of %d\n", vfd_header.processID, vfd_header.nprocesses);
    fprintf(vfd_fp, "Threads:         %d\n", vfd_header.nthreads);
-   fprintf(vfd_fp, "Sample interval: %12.6le seconds\n", vfd_header.interval*1.0e-6);
+   fprintf(vfd_fp, "Sample interval: %12.6le seconds\n", vfd_header.interval*1.0e-9);
    fprintf(vfd_fp, "Job runtime:     %.3lf seconds\n", vfd_header.runtime);
    fprintf(vfd_fp, "Samples:         %u\n", vfd_header.function_samplecount +
                                             vfd_header.message_samplecount);
@@ -338,13 +338,13 @@ void print_function_sample(FILE *vfd_fp, FILE *out_fp,
       fprintf(stderr, "Error in reading stackID from function_sample from vfd-file\n");
       abort();
    }
-   long long timestamp_usec;
-   read_elems = fread(&timestamp_usec, sizeof(long long), 1, vfd_fp);
+   long long timestamp_nsec;
+   read_elems = fread(&timestamp_nsec, sizeof(long long), 1, vfd_fp);
    if (read_elems != 1) {
       fprintf(stderr, "Error in reading timestamp from function_sample from vfd-file\n");
       abort();
    }
-   double timestamp = timestamp_usec*1.0e-6;
+   double timestamp = timestamp_nsec*1.0e-9;
 
    fprintf(out_fp, "%16.6f %s ", timestamp,
            kind == samp_function_entry ? "call" : "exit");
@@ -413,8 +413,8 @@ void print_message_sample(FILE *vfd_fp, FILE *out_fp) {
       fprintf(stderr, "Error in reading threadID from message_sample from vfd-file\n");
       abort();
    }
-   double dtstart = tstart*1.0e-6;
-   double dtend = tend*1.0e-6;
+   double dtstart = tstart*1.0e-9;
+   double dtend = tend*1.0e-9;
    double rate = (count * type_size) / ((dtend - dtstart)*1024.0*1024.0);
 
    fprintf(out_fp, "%16.6f %s in stackID %d from threadID %d\n",
