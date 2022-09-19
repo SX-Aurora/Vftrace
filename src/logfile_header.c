@@ -57,7 +57,7 @@ void vftr_write_logfile_summary(FILE *fp, process_t process,
 #ifdef _OMP
       total_master_overhead += omp_overhead;
 #endif
-   double total_master_overhead_sec = total_master_overhead*1.0e-6;
+   double total_master_overhead_sec = total_master_overhead*1.0e-6/process.nprocesses;
    double apptime_sec = runtime_sec - total_master_overhead_sec;
 
    fprintf(fp, "\n");
@@ -66,13 +66,17 @@ void vftr_write_logfile_summary(FILE *fp, process_t process,
 #endif
    fprintf(fp, "Total runtime:        %8.2lf s\n", runtime_sec);
    fprintf(fp, "Application time:     %8.2lf s\n", apptime_sec);
-   fprintf(fp, "Overhead:             %8.2lf s\n", total_master_overhead_sec);
-   fprintf(fp, "   Function hooks:    %8.2lf s\n", call_overhead*1.0e-6);
+   fprintf(fp, "Overhead:             %8.2lf s\n",
+           total_master_overhead_sec/process.nprocesses);
+   fprintf(fp, "   Function hooks:    %8.2lf s\n",
+           call_overhead*1.0e-6/process.nprocesses);
 #ifdef _MPI
-   fprintf(fp, "   MPI wrappers:      %8.2lf s\n", mpi_overhead*1.0e-6);
+   fprintf(fp, "   MPI wrappers:      %8.2lf s\n",
+           mpi_overhead*1.0e-6/process.nprocesses);
 #endif
 #ifdef _OMP
-   fprintf(fp, "   OMP callbacks:     %8.2lf s\n", omp_overhead*1.0e-6);
+   fprintf(fp, "   OMP callbacks:     %8.2lf s\n",
+           omp_overhead*1.0e-6/process.nprocesses);
 #endif
 
    char *unit = vftr_byte_unit(vftrace_size.total);
