@@ -35,6 +35,10 @@ check_PROGRAMS = init_finalize_1 \
 		 init_finalize_2 \
 		 init_finalize_3 \
 		 init_finalize_4 \
+		 init_thread_finalize_1 \
+		 init_thread_finalize_2 \
+		 init_thread_finalize_3 \
+		 init_thread_finalize_4 \
 		 ctypes \
 		 derived_ctypes \
 		 pcontrol
@@ -55,6 +59,22 @@ init_finalize_4_SOURCES = $(srcdir)/init_finalize.c
 init_finalize_4_CFLAGS  = $(AM_CFLAGS)
 init_finalize_4_LDFLAGS = $(AM_LDFLAGS)
 
+init_thread_finalize_1_SOURCES = $(srcdir)/init_thread_finalize.c
+init_thread_finalize_1_CFLAGS  = $(AM_CFLAGS)
+init_thread_finalize_1_LDFLAGS = $(AM_LDFLAGS)
+
+init_thread_finalize_2_SOURCES = $(srcdir)/init_thread_finalize.c
+init_thread_finalize_2_CFLAGS  = $(AM_CFLAGS)
+init_thread_finalize_2_LDFLAGS = $(AM_LDFLAGS)
+
+init_thread_finalize_3_SOURCES = $(srcdir)/init_thread_finalize.c
+init_thread_finalize_3_CFLAGS  = $(AM_CFLAGS)
+init_thread_finalize_3_LDFLAGS = $(AM_LDFLAGS)
+
+init_thread_finalize_4_SOURCES = $(srcdir)/init_thread_finalize.c
+init_thread_finalize_4_CFLAGS  = $(AM_CFLAGS)
+init_thread_finalize_4_LDFLAGS = $(AM_LDFLAGS)
+
 ctypes_SOURCES = $(srcdir)/ctypes.c
 ctypes_CFLAGS  = $(AM_CFLAGS)
 ctypes_LDFLAGS = $(AM_LDFLAGS)
@@ -68,9 +88,13 @@ pcontrol_CFLAGS  = $(AM_CFLAGS)
 pcontrol_LDFLAGS = $(AM_LDFLAGS)
 
 dist_noinst_SCRIPTS = init_finalize-1.sh \
-                      init_finalize-2.sh \
-                      init_finalize-3.sh \
-                      init_finalize-4.sh \
+		      init_finalize-2.sh \
+		      init_finalize-3.sh \
+		      init_finalize-4.sh \
+		      init_thread_finalize-1.sh \
+		      init_thread_finalize-2.sh \
+		      init_thread_finalize-3.sh \
+		      init_thread_finalize-4.sh \
 		      ctypes.sh \
 		      derived_ctypes.sh \
 		      pcontrol.sh
