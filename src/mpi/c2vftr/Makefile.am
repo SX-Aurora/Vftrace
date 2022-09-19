@@ -6,6 +6,9 @@ if HAS_MPI_STD_1_0
 libvftr_mpi_c2vftr_la_SOURCES += init_c2vftr.c \
 				 finalize_c2vftr.c
 endif
+if HAS_MPI_STD_2_1
+libvftr_mpi_c2vftr_la_SOURCES += init_thread_c2vftr.c
+endif
 
 ##################
 # point to point #
