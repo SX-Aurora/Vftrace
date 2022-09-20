@@ -4,11 +4,13 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <unistd.h>
+#include <string.h>
 #include <time.h>
 
 #ifdef _SELF_PROFILE_VFTRACE
 extern char *vftr_self_prof_filename;
 extern FILE *vftr_self_prof_iohandle;
+extern char *vftr_self_prof_iobuffer;
 
 #define GET_SELF_PROF_FILENAME \
    do { \
@@ -25,6 +27,12 @@ extern FILE *vftr_self_prof_iohandle;
    do { \
       vftr_self_prof_iohandle = \
          fopen(vftr_self_prof_filename, "w"); \
+      size_t bufsize = 256*1024*1024; \
+      vftr_self_prof_iobuffer = (char*) malloc(bufsize); \
+      memset((void*) vftr_self_prof_iobuffer, 0, bufsize); \
+      int status = setvbuf(vftr_self_prof_iohandle, \
+                           vftr_self_prof_iobuffer, \
+                           _IOFBF, bufsize); \
    } while(0)
 
 #define INIT_SELF_PROF_VFTRACE \
@@ -46,6 +54,8 @@ extern FILE *vftr_self_prof_iohandle;
       if (vftr_self_prof_iohandle != NULL) { \
          fclose(vftr_self_prof_iohandle); \
          vftr_self_prof_iohandle = NULL; \
+         free(vftr_self_prof_iobuffer); \
+         vftr_self_prof_iobuffer = NULL; \
       } \
    } while(0)
    
