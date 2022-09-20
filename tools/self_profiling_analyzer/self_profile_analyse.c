@@ -28,12 +28,10 @@ int main(int argc, char **argv) {
 
 
    char *line = NULL;
-   size_t len = 0;
    int nread = 0;
-   while ((nread = getline(&line, &len, stream)) != -1) {
-      //printf("%s", line);
-      event_t event = event_from_line(line);
-      print_event(stdout, event);
+   event_t event;
+   while ((nread = get_event(&event, stream)) != -1) {
+      // print_event(stdout, event);
       // get function index
       int fidx = function_index_from_functionlist_by_name(event.name, &functionlist);
       // get stack index
@@ -60,6 +58,7 @@ int main(int argc, char **argv) {
          stack->time_nsec += delta_t_nsec;
          sidx =  stacktree.stacks[current_stack].caller;
       }
+      free(event.name);
       current_stack = sidx;
    }
 

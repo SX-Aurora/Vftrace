@@ -69,25 +69,37 @@ extern char *vftr_self_prof_iobuffer;
    struct timespec timestamp; \
    clock_gettime(CLOCK_MONOTONIC, &timestamp);
 
+#define SELF_PROFILE_WRITE_FUNCTION_NAME \
+   do { \
+      char *tmpptr = __FUNCTION__; \
+      while (*tmpptr) { \
+         putc(*tmpptr, vftr_self_prof_iohandle); \
+         tmpptr++; \
+      } \
+      putc('\0', vftr_self_prof_iohandle); \
+   } while(0)
+
+#define SELF_PROFILE_WRITE_TIMESTAMP \
+   do { \
+      fwrite(&timestamp, \
+             sizeof(struct timespec), 1, \
+             vftr_self_prof_iohandle); \
+   } while(0)
+
 #define SELF_PROFILE_START_FUNCTION \
    do { \
       GET_TIMESTAMP; \
-      fprintf(vftr_self_prof_iohandle, \
-              "Enter: %s at %ld s %ld ns\n", \
-              __FUNCTION__, \
-              timestamp.tv_sec, \
-              timestamp.tv_nsec); \
+      putc('E', vftr_self_prof_iohandle); \
+      SELF_PROFILE_WRITE_FUNCTION_NAME; \
+      SELF_PROFILE_WRITE_TIMESTAMP; \
    } while(0)
-   
 
 #define SELF_PROFILE_END_FUNCTION \
    do { \
       GET_TIMESTAMP; \
-      fprintf(vftr_self_prof_iohandle, \
-              "Leave: %s at %ld s %ld ns\n", \
-              __FUNCTION__, \
-              timestamp.tv_sec, \
-              timestamp.tv_nsec); \
+      putc('L', vftr_self_prof_iohandle); \
+      SELF_PROFILE_WRITE_FUNCTION_NAME; \
+      SELF_PROFILE_WRITE_TIMESTAMP; \
    } while(0)
 
 #else

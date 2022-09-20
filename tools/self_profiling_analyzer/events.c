@@ -2,36 +2,47 @@
 #include <stdio.h>
 
 #include <string.h>
+#include <time.h>
 
 #include "event_types.h"
 
-event_t event_from_line(char *line) {
-   event_t event;
-   // get the action
-   char *token = strtok(line, " ");
-   if (strcmp(token, "Enter:") == 0) {
-      event.action = enter;
-   } else if (strcmp(token, "Leave:") == 0) {
-      event.action = leave;
+int get_event(event_t *event, FILE *stream) {
+   int nread = 1;
+   int character = getc(stream);
+   if (character == EOF) {
+      return -1;
+   }
+   if (character == 'E') {
+      event->action = enter;
+   } else if (character == 'L') {
+      event->action = leave;
    } else {
-      fprintf(stderr, "Unknown action %s\n", token);
+      fprintf(stderr, "Unknown action %c\n", character);
       abort();
    }
-   // get function name
-   token = strtok(NULL, " ");
-   event.name = token;
-   // skip "at"
-   token = strtok(NULL, " ");
-   // get seconds
-   token = strtok(NULL, " ");
-   event.t_sec = atoll(token);
-   // skip "s"
-   token = strtok(NULL, " ");
-   // get nanoseconds
-   token = strtok(NULL, " ");
-   event.t_nsec = atoll(token);
+   // get current file pointer position
+   long int current_pos = ftell(stream);
+   int namelen = 1; // one for null pointer
+   while ((character = getc(stream)) != '\0') {
+      namelen++;
+   }
+   if (fseek(stream, current_pos, SEEK_SET)) {
+      fprintf(stderr, "Cound not adjust filepointer to %ld\n",
+              current_pos);
+      abort();
+   }
+   event->name = (char*) malloc(namelen*sizeof(char));
+   for (int i=0; i<namelen; i++) {
+      event->name[i] = getc(stream);
+      nread++;
+   }
 
-   return event;
+   struct timespec timestamp;
+   nread += fread(&timestamp, 1, sizeof(struct timespec), stream);
+   event->t_sec = timestamp.tv_sec;
+   event->t_nsec = timestamp.tv_nsec;
+
+   return nread;
 }
 
 void print_event(FILE *fp, event_t event) {
