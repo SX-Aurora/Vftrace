@@ -56,9 +56,7 @@ void vftr_finalize() {
 
    // finish sampling
    // add the sampling of leaving init to the vfd-file
-   vftr_sample_function_exit(&(vftrace.sampling),
-                             vftrace.process.stacktree.stacks[0],
-                             runtime);
+   vftr_sample_init_function_exit(&(vftrace.sampling), runtime);
    vftr_finalize_sampling(&(vftrace.sampling), vftrace.environment,
                           vftrace.process, vftrace.timestrings,
                           (double) (runtime * 1.0e-9));

@@ -119,3 +119,15 @@ void vftr_sample_function_exit(sampling_t *sampling, stack_t stack,
    }
    SELF_PROFILE_END_FUNCTION;
 }
+
+void vftr_sample_init_function_exit(sampling_t *sampling, long long timestamp) {
+   SELF_PROFILE_START_FUNCTION;
+   if (sampling->do_sampling) {
+      vftr_write_vfd_function_sample(sampling, samp_function_exit,
+                                     0, timestamp);
+
+      sampling->function_samplecount++;
+      sampling->nextsampletime = timestamp + sampling->interval;
+   }
+   SELF_PROFILE_END_FUNCTION;
+}
