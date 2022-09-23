@@ -55,6 +55,10 @@ void vftr_finalize() {
    vftr_write_ranklogfile(vftrace, runtime);
 
    // finish sampling
+   // add the sampling of leaving init to the vfd-file
+   vftr_sample_function_exit(&(vftrace.sampling),
+                             vftrace.process.stacktree.stacks[0],
+                             runtime);
    vftr_finalize_sampling(&(vftrace.sampling), vftrace.environment,
                           vftrace.process, vftrace.timestrings,
                           (double) (runtime * 1.0e-9));
