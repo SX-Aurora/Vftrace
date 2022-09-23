@@ -68,6 +68,7 @@ void vftr_finalize_sampling(sampling_t *sampling,
                             time_strings_t timestrings, double runtime) {
    SELF_PROFILE_START_FUNCTION;
    if (sampling->do_sampling) {
+      // finish the header of the vfd-file
       vftr_write_vfd_stacks(sampling, process.stacktree);
       vftr_write_vfd_threadtree(sampling, process.threadtree);
       vftr_update_vfd_header(sampling, process, timestrings, runtime);
