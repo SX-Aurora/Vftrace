@@ -52,7 +52,7 @@ vftrace_t vftrace = {
          .stacks = 0
       }
    },
-   .state = undefined,
+   .state = uninitialized,
    .sampling = {
       .do_sampling = false,
       .vfdfilename = NULL,

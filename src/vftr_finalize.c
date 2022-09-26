@@ -15,7 +15,7 @@
 #include "timer.h"
 
 void vftr_finalize() {
-   if (vftrace.state == off || vftrace.state == undefined) {
+   if (vftrace.state == off || vftrace.state == uninitialized) {
       // was already finalized
       // Maybe by MPI_Finalize
       // vftr_finalize was already registered by atexit

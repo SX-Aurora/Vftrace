@@ -37,7 +37,7 @@
 
 // tracing state of vftrace
 typedef enum {
-   undefined,
+   uninitialized,
    off,
    on,
    paused
