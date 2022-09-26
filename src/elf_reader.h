@@ -1,5 +1,5 @@
-#ifndef ELF_FORMAT_H
-#define ELF_FORMAT_H
+#ifndef ELF_READER_H
+#define ELF_READER_H
 
 #include <stdio.h>
 

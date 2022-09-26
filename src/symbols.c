@@ -14,7 +14,7 @@
 #include "realloc_consts.h"
 #include "custom_types.h"
 #include "symbols.h"
-#include "ElfFormat.h"
+#include "elf_reader.h"
 #include "search.h"
 #include "sorting.h"
 #include "regular_expressions.h"
