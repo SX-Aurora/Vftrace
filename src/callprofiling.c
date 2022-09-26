@@ -9,9 +9,9 @@
 #include <mpi.h>
 #endif
 
-callProfile_t vftr_new_callprofiling() {
+callprofile_t vftr_new_callprofiling() {
    SELF_PROFILE_START_FUNCTION;
-   callProfile_t prof;
+   callprofile_t prof;
    prof.calls = 0ll;
    prof.time_nsec = 0ll;
    prof.time_excl_nsec = 0ll;
@@ -20,14 +20,14 @@ callProfile_t vftr_new_callprofiling() {
    return prof;
 }
 
-void vftr_accumulate_callprofiling(callProfile_t *prof,
+void vftr_accumulate_callprofiling(callprofile_t *prof,
                                    int calls,
                                    long long time_nsec) {
    prof->calls += calls;
    prof->time_nsec += time_nsec;
 }
 
-void vftr_accumulate_callprofiling_overhead(callProfile_t *prof,
+void vftr_accumulate_callprofiling_overhead(callprofile_t *prof,
                                             long long overhead_nsec) {
    prof->overhead_nsec += overhead_nsec;
 }
@@ -42,7 +42,7 @@ void vftr_update_stacks_exclusive_time(stacktree_t *stacktree_ptr) {
       // need to go over the calling profiles threadwise
       for (int iprof=0; iprof<mystack->profiling.nprofiles; iprof++) {
          profile_t *myprof = mystack->profiling.profiles+iprof;
-         myprof->callProf.time_excl_nsec = myprof->callProf.time_nsec;
+         myprof->callprof.time_excl_nsec = myprof->callprof.time_nsec;
          // subtract the time spent in the callees
          for (int icallee=0; icallee<mystack->ncallees; icallee++) {
             int calleeID = mystack->callees[icallee];
@@ -59,7 +59,7 @@ void vftr_update_stacks_exclusive_time(stacktree_t *stacktree_ptr) {
             // a matching callee profile was found
             if (calleprofID >= 0) {
                profile_t *calleeprof = calleestack->profiling.profiles+calleprofID;
-               myprof->callProf.time_excl_nsec -= calleeprof->callProf.time_nsec;
+               myprof->callprof.time_excl_nsec -= calleeprof->callprof.time_nsec;
             }
          }
       }
@@ -82,20 +82,20 @@ long long *vftr_get_total_call_overhead(stacktree_t stacktree, int nthreads) {
       for (int iprof=0; iprof<nprofs; iprof++) {
          profile_t *prof = stack->profiling.profiles+iprof;
          int threadID = prof->threadID;
-         overheads_nsec[threadID] += prof->callProf.overhead_nsec;
+         overheads_nsec[threadID] += prof->callprof.overhead_nsec;
       }
    }
    SELF_PROFILE_END_FUNCTION;
    return overheads_nsec;
 }
 
-void vftr_callprofiling_free(callProfile_t *callprof_ptr) {
+void vftr_callprofiling_free(callprofile_t *callprof_ptr) {
    SELF_PROFILE_START_FUNCTION;
    (void) callprof_ptr;
    SELF_PROFILE_END_FUNCTION;
 }
 
-void vftr_print_callprofiling(FILE *fp, callProfile_t callprof) {
+void vftr_print_callprofiling(FILE *fp, callprofile_t callprof) {
    fprintf(fp, "calls: %lld, time(incl/excl): %lld/%lld (overhead: %lld)\n",
            callprof.calls, callprof.time_nsec, callprof.time_excl_nsec,
            callprof.overhead_nsec);

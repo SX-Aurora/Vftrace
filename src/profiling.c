@@ -28,9 +28,9 @@ profile_t vftr_new_profile(int threadID) {
    SELF_PROFILE_START_FUNCTION;
    profile_t profile;
    profile.threadID = threadID;
-   profile.callProf = vftr_new_callprofiling();
+   profile.callprof = vftr_new_callprofiling();
 #ifdef _MPI
-   profile.mpiProf = vftr_new_mpiprofiling();
+   profile.mpiprof = vftr_new_mpiprofiling();
 #endif
    // TODO: Add other profiles
    SELF_PROFILE_END_FUNCTION;
@@ -63,9 +63,9 @@ int vftr_new_profile_in_list(int threadID, profilelist_t *profilelist_ptr) {
 void vftr_profile_free(profile_t* profiles_ptr, int profID) {
    SELF_PROFILE_START_FUNCTION;
    profile_t *profile_ptr = profiles_ptr+profID;
-   vftr_callprofiling_free(&(profile_ptr->callProf));
+   vftr_callprofiling_free(&(profile_ptr->callprof));
 #ifdef _MPI
-   vftr_mpiprofiling_free(&(profile_ptr->mpiProf));
+   vftr_mpiprofiling_free(&(profile_ptr->mpiprof));
 #endif
    // TODO: add other profiles
    SELF_PROFILE_END_FUNCTION;

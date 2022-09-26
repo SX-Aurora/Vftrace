@@ -33,7 +33,7 @@ int main(int argc, char **argv) {
    for (int ithread=0; ithread<nthreads; ithread++) {
       vftr_new_profile_in_list(ithread, &(stacktree.stacks[0].profiling));
       profile_t *profile = stacktree.stacks[0].profiling.profiles+ithread;
-      vftr_accumulate_callprofiling(&(profile->callProf),
+      vftr_accumulate_callprofiling(&(profile->callprof),
                                     ithread*ithread, // calls
                                     137*ithread);
    }
@@ -41,7 +41,7 @@ int main(int argc, char **argv) {
    for (int ithread=0; ithread<nthreads; ithread++) {
       fprintf(stdout, "Thread: %d ", ithread);
       profile_t *profile = stacktree.stacks[0].profiling.profiles+ithread;
-      vftr_print_callprofiling(stdout, profile->callProf);
+      vftr_print_callprofiling(stdout, profile->callprof);
    }
 
    vftr_stacktree_free(&stacktree);

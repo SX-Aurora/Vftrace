@@ -96,7 +96,7 @@ int vftr_MPI_Iscatterv(const void *sendbuf, const int *sendcounts,
    profile_t *my_profile = vftr_get_my_profile(my_stack, my_thread);
    long long t2end = vftr_get_runtime_nsec();
 
-   vftr_accumulate_mpiprofiling_overhead(&(my_profile->mpiProf), t2end-t2start);
+   vftr_accumulate_mpiprofiling_overhead(&(my_profile->mpiprof), t2end-t2start);
 
    SELF_PROFILE_END_FUNCTION;
    return retVal;
@@ -172,7 +172,7 @@ int vftr_MPI_Iscatterv_inplace(const void *sendbuf, const int *sendcounts,
    profile_t *my_profile = vftr_get_my_profile(my_stack, my_thread);
    long long t2end = vftr_get_runtime_nsec();
 
-   vftr_accumulate_mpiprofiling_overhead(&(my_profile->mpiProf), t2end-t2start);
+   vftr_accumulate_mpiprofiling_overhead(&(my_profile->mpiprof), t2end-t2start);
 
    SELF_PROFILE_END_FUNCTION;
    return retVal;
@@ -242,7 +242,7 @@ int vftr_MPI_Iscatterv_intercom(const void *sendbuf, const int *sendcounts,
    profile_t *my_profile = vftr_get_my_profile(my_stack, my_thread);
    long long t2end = vftr_get_runtime_nsec();
 
-   vftr_accumulate_mpiprofiling_overhead(&(my_profile->mpiProf), t2end-t2start);
+   vftr_accumulate_mpiprofiling_overhead(&(my_profile->mpiprof), t2end-t2start);
 
    SELF_PROFILE_END_FUNCTION;
    return retVal;

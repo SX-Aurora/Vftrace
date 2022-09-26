@@ -10,9 +10,9 @@
 #include "profiling.h"
 #include "overheadprofiling_types.h"
 
-overheadProfile_t vftr_new_overheadprofiling() {
+overheadprofile_t vftr_new_overheadprofiling() {
    SELF_PROFILE_START_FUNCTION;
-   overheadProfile_t prof;
+   overheadprofile_t prof;
    prof.hook_nsec = 0ll;
 #ifdef _MPI
    prof.mpi_nsec = 0ll;
@@ -24,7 +24,7 @@ overheadProfile_t vftr_new_overheadprofiling() {
    return prof;
 }
 
-void vftr_accumulate_hook_overheadprofiling(overheadProfile_t *prof,
+void vftr_accumulate_hook_overheadprofiling(overheadprofile_t *prof,
                                             long long overhead_nsec) {
    prof->hook_nsec += overhead_nsec;
 }
@@ -44,7 +44,7 @@ long long *vftr_get_total_hook_overhead(stacktree_t stacktree, int nthreads) {
       for (int iprof=0; iprof<nprofs; iprof++) {
          profile_t *prof = stack->profiling.profiles+iprof;
          int threadID = prof->threadID;
-         overheads_nsec[threadID] += prof->overheadProf.hook_nsec;
+         overheads_nsec[threadID] += prof->overheadprof.hook_nsec;
       }
    }
    SELF_PROFILE_END_FUNCTION;
@@ -52,7 +52,7 @@ long long *vftr_get_total_hook_overhead(stacktree_t stacktree, int nthreads) {
 }
 
 #ifdef _MPI
-void vftr_accumulate_mpi_overheadprofiling(overheadProfile_t *prof,
+void vftr_accumulate_mpi_overheadprofiling(overheadprofile_t *prof,
                                            long long overhead_nsec) {
    prof->mpi_nsec += overhead_nsec;
 }
@@ -72,7 +72,7 @@ long long *vftr_get_total_mpi_overhead(stacktree_t stacktree, int nthreads) {
       for (int iprof=0; iprof<nprofs; iprof++) {
          profile_t *prof = stack->profiling.profiles+iprof;
          int threadID = prof->threadID;
-         overheads_nsec[threadID] += prof->overheadProf.mpi_nsec;
+         overheads_nsec[threadID] += prof->overheadprof.mpi_nsec;
       }
    }
    SELF_PROFILE_END_FUNCTION;
@@ -81,7 +81,7 @@ long long *vftr_get_total_mpi_overhead(stacktree_t stacktree, int nthreads) {
 #endif
 
 #ifdef _OMP
-void vftr_accumulate_omp_overheadprofiling(overheadProfile_t *prof,
+void vftr_accumulate_omp_overheadprofiling(overheadprofile_t *prof,
                                            long long overhead_nsec) {
    prof->omp_nsec += overhead_nsec;
 }
@@ -101,7 +101,7 @@ long long *vftr_get_total_omp_overhead(stacktree_t stacktree, int nthreads) {
       for (int iprof=0; iprof<nprofs; iprof++) {
          profile_t *prof = stack->profiling.profiles+iprof;
          int threadID = prof->threadID;
-         overheads_nsec[threadID] += prof->overheadProf.omp_nsec;
+         overheads_nsec[threadID] += prof->overheadprof.omp_nsec;
       }
    }
    SELF_PROFILE_END_FUNCTION;
@@ -109,21 +109,21 @@ long long *vftr_get_total_omp_overhead(stacktree_t stacktree, int nthreads) {
 }
 #endif
 
-void vftr_overheadprofiling_free(overheadProfile_t *overheadprof_ptr) {
+void vftr_overheadprofiling_free(overheadprofile_t *overheadprof_ptr) {
    (void) overheadprof_ptr;
 }
 
-overheadProfile_t *vftr_get_my_overheadProfile(vftrace_t vftrace) {
+overheadprofile_t *vftr_get_my_overheadprofile(vftrace_t vftrace) {
    SELF_PROFILE_START_FUNCTION;
    thread_t *my_thread = vftr_get_my_thread(&(vftrace.process.threadtree));
    threadstack_t *my_threadstack = vftr_get_my_threadstack(my_thread);
    stack_t *my_stack = vftrace.process.stacktree.stacks+my_threadstack->stackID;
    profile_t *my_profile = vftr_get_my_profile(my_stack, my_thread);
    SELF_PROFILE_END_FUNCTION;
-   return &(my_profile->overheadProf);
+   return &(my_profile->overheadprof);
 }
 
-void vftr_print_overheadprofiling(FILE *fp, overheadProfile_t overheadprof) {
+void vftr_print_overheadprofiling(FILE *fp, overheadprofile_t overheadprof) {
    SELF_PROFILE_START_FUNCTION;
    fprintf(fp, "hooks: %lld, mpi: %lld, omp: %lld\n",
            overheadprof.hook_nsec,

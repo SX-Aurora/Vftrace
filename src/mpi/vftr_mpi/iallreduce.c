@@ -85,7 +85,7 @@ int vftr_MPI_Iallreduce(const void *sendbuf, void *recvbuf, int count,
    profile_t *my_profile = vftr_get_my_profile(my_stack, my_thread);
    long long t2end = vftr_get_runtime_nsec();
 
-   vftr_accumulate_mpiprofiling_overhead(&(my_profile->mpiProf), t2end-t2start);
+   vftr_accumulate_mpiprofiling_overhead(&(my_profile->mpiprof), t2end-t2start);
 
    SELF_PROFILE_END_FUNCTION;
    return retVal;
@@ -156,7 +156,7 @@ int vftr_MPI_Iallreduce_inplace(const void *sendbuf, void *recvbuf, int count,
    profile_t *my_profile = vftr_get_my_profile(my_stack, my_thread);
    long long t2end = vftr_get_runtime_nsec();
 
-   vftr_accumulate_mpiprofiling_overhead(&(my_profile->mpiProf), t2end-t2start);
+   vftr_accumulate_mpiprofiling_overhead(&(my_profile->mpiprof), t2end-t2start);
 
    SELF_PROFILE_END_FUNCTION;
    return retVal;
@@ -229,7 +229,7 @@ int vftr_MPI_Iallreduce_intercom(const void *sendbuf, void *recvbuf, int count,
    profile_t *my_profile = vftr_get_my_profile(my_stack, my_thread);
    long long t2end = vftr_get_runtime_nsec();
 
-   vftr_accumulate_mpiprofiling_overhead(&(my_profile->mpiProf), t2end-t2start);
+   vftr_accumulate_mpiprofiling_overhead(&(my_profile->mpiprof), t2end-t2start);
 
    SELF_PROFILE_END_FUNCTION;
    return retVal;

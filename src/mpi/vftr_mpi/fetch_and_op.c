@@ -67,7 +67,7 @@ int vftr_MPI_Fetch_and_op(const void *origin_addr, void *result_addr,
    profile_t *my_profile = vftr_get_my_profile(my_stack, my_thread);
    long long t2end = vftr_get_runtime_nsec();
 
-   vftr_accumulate_mpiprofiling_overhead(&(my_profile->mpiProf), t2end-t2start);
+   vftr_accumulate_mpiprofiling_overhead(&(my_profile->mpiprof), t2end-t2start);
 
    SELF_PROFILE_END_FUNCTION;
    return retVal;

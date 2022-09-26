@@ -11,12 +11,12 @@
 #include "process_types.h"
 #include "environment_types.h"
 
-mpiProfile_t vftr_new_mpiprofiling();
+mpiprofile_t vftr_new_mpiprofiling();
 
-void vftr_mpiprofiling_free(mpiProfile_t *prof_ptr);
+void vftr_mpiprofiling_free(mpiprofile_t *prof_ptr);
 
 #ifdef _MPI
-void vftr_accumulate_message_info(mpiProfile_t *prof_ptr,
+void vftr_accumulate_message_info(mpiprofile_t *prof_ptr,
                                   mpi_state_t mpi_state,
                                   message_direction dir,
                                   long long count,
@@ -25,7 +25,7 @@ void vftr_accumulate_message_info(mpiProfile_t *prof_ptr,
                                   long long tstart,
                                   long long tend);
 
-void vftr_accumulate_mpiprofiling_overhead(mpiProfile_t *prof,
+void vftr_accumulate_mpiprofiling_overhead(mpiprofile_t *prof,
                                            long long overhead_nsec);
 
 void vftr_create_profiled_ranks_list(environment_t environment,
@@ -34,7 +34,7 @@ void vftr_create_profiled_ranks_list(environment_t environment,
 
 void vftr_free_profiled_ranks_list(mpi_state_t *mpi_state);
 
-void vftr_print_mpiprofiling(FILE *fp, mpiProfile_t mpiprof);
+void vftr_print_mpiprofiling(FILE *fp, mpiprofile_t mpiprof);
 
 #endif
 

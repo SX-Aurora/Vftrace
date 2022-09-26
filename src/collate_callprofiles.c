@@ -19,7 +19,7 @@ static void vftr_collate_callprofiles_root_self(collated_stacktree_t *collstackt
       int icollstack = stack->gid;
 
       collated_stack_t *collstack = collstacktree_ptr->stacks+icollstack;
-      collated_callProfile_t *collcallprof = &(collstack->profile.callProf);
+      collated_callprofile_t *collcallprof = &(collstack->profile.callprof);
 
       collcallprof->calls = 0ll;
       collcallprof->time_nsec = 0ll;
@@ -27,7 +27,7 @@ static void vftr_collate_callprofiles_root_self(collated_stacktree_t *collstackt
       collcallprof->overhead_nsec = 0ll;
 
       for (int iprof=0; iprof<stack->profiling.nprofiles; iprof++) {
-         callProfile_t *callprof = &(stack->profiling.profiles[iprof].callProf);
+         callprofile_t *callprof = &(stack->profiling.profiles[iprof].callprof);
    
          collcallprof->calls += callprof->calls;
          collcallprof->time_nsec += callprof->time_nsec;
@@ -60,23 +60,23 @@ static void vftr_collate_callprofiles_on_root(collated_stacktree_t *collstacktre
       long long time_nsec;
       long long time_excl_nsec;
       long long overhead_nsec;
-   } callProfile_transfer_t;
+   } callprofile_transfer_t;
 
    int nblocks = 2;
    const int blocklengths[] = {1,4};
    const MPI_Aint displacements[] = {0, sizeof(int)};
    const MPI_Datatype types[] = {MPI_INT, MPI_LONG_LONG_INT};
-   MPI_Datatype callProfile_transfer_mpi_t;
+   MPI_Datatype callprofile_transfer_mpi_t;
    PMPI_Type_create_struct(nblocks, blocklengths,
                            displacements, types,
-                           &callProfile_transfer_mpi_t);
-   PMPI_Type_commit(&callProfile_transfer_mpi_t);
+                           &callprofile_transfer_mpi_t);
+   PMPI_Type_commit(&callprofile_transfer_mpi_t);
 
    if (myrank > 0) {
       // every rank fills their sendbuffer
       int nprofiles = stacktree_ptr->nstacks;
-      callProfile_transfer_t *sendbuf = (callProfile_transfer_t*)
-         malloc(nprofiles*sizeof(callProfile_transfer_t));
+      callprofile_transfer_t *sendbuf = (callprofile_transfer_t*)
+         malloc(nprofiles*sizeof(callprofile_transfer_t));
       for (int istack=0; istack<nprofiles; istack++) {
          sendbuf[istack].gid = 0;
          sendbuf[istack].calls = 0ll;
@@ -90,7 +90,7 @@ static void vftr_collate_callprofiles_on_root(collated_stacktree_t *collstacktre
          // need to go over the calling profiles threadwise
          for (int iprof=0; iprof<mystack->profiling.nprofiles; iprof++) {
             profile_t *myprof = mystack->profiling.profiles+iprof;
-            callProfile_t callprof = myprof->callProf;
+            callprofile_t callprof = myprof->callprof;
             sendbuf[istack].calls += callprof.calls;
             sendbuf[istack].time_nsec += callprof.time_nsec;
             sendbuf[istack].time_excl_nsec += callprof.time_excl_nsec;
@@ -98,7 +98,7 @@ static void vftr_collate_callprofiles_on_root(collated_stacktree_t *collstacktre
          }
       }
       PMPI_Send(sendbuf, nprofiles,
-                callProfile_transfer_mpi_t,
+                callprofile_transfer_mpi_t,
                 0, myrank,
                 MPI_COMM_WORLD);
       free(sendbuf);
@@ -109,21 +109,21 @@ static void vftr_collate_callprofiles_on_root(collated_stacktree_t *collstacktre
                        nremote_profiles[irank] :
                        maxprofiles;
       }
-      callProfile_transfer_t *recvbuf = (callProfile_transfer_t*)
-         malloc(maxprofiles*sizeof(callProfile_transfer_t));
-      memset(recvbuf, 0, maxprofiles*sizeof(callProfile_transfer_t));
+      callprofile_transfer_t *recvbuf = (callprofile_transfer_t*)
+         malloc(maxprofiles*sizeof(callprofile_transfer_t));
+      memset(recvbuf, 0, maxprofiles*sizeof(callprofile_transfer_t));
       for (int irank=1; irank<nranks; irank++) {
          int nprofiles = nremote_profiles[irank];
          MPI_Status status;
          PMPI_Recv(recvbuf, nprofiles,
-                   callProfile_transfer_mpi_t,
+                   callprofile_transfer_mpi_t,
                    irank, irank,
                    MPI_COMM_WORLD,
                    &status);
          for (int iprof=0; iprof<nprofiles; iprof++) {
             int gid = recvbuf[iprof].gid;
             collated_stack_t *collstack = collstacktree_ptr->stacks+gid;
-            collated_callProfile_t *collcallprof = &(collstack->profile.callProf);
+            collated_callprofile_t *collcallprof = &(collstack->profile.callprof);
      
             collcallprof->calls += recvbuf[iprof].calls;
             collcallprof->time_nsec += recvbuf[iprof].time_nsec;
@@ -148,7 +148,7 @@ static void vftr_collate_callprofiles_on_root(collated_stacktree_t *collstacktre
       free(recvbuf);
    }
 
-   PMPI_Type_free(&callProfile_transfer_mpi_t);
+   PMPI_Type_free(&callprofile_transfer_mpi_t);
    SELF_PROFILE_END_FUNCTION;
 }
 #endif
@@ -156,27 +156,27 @@ static void vftr_collate_callprofiles_on_root(collated_stacktree_t *collstacktre
 void vftr_compute_callprofile_imbalances(collated_stacktree_t *collstacktree_ptr) {
    for (int istack=0; istack<collstacktree_ptr->nstacks; istack++) {
       collated_stack_t *stack_ptr = collstacktree_ptr->stacks+istack;
-      collated_callProfile_t *collcallProf_ptr = &(stack_ptr->profile.callProf);
-      if (collcallProf_ptr->average_time_nsec > 0) {
-         collcallProf_ptr->average_time_nsec /= collcallProf_ptr->on_nranks;
-         double diff_from_max = collcallProf_ptr->max_time_nsec
-                                - collcallProf_ptr->average_time_nsec;
+      collated_callprofile_t *collcallprof_ptr = &(stack_ptr->profile.callprof);
+      if (collcallprof_ptr->average_time_nsec > 0) {
+         collcallprof_ptr->average_time_nsec /= collcallprof_ptr->on_nranks;
+         double diff_from_max = collcallprof_ptr->max_time_nsec
+                                - collcallprof_ptr->average_time_nsec;
          diff_from_max = diff_from_max < 0 ? -diff_from_max : diff_from_max;
-         double diff_from_min = collcallProf_ptr->min_time_nsec
-                                - collcallProf_ptr->average_time_nsec;
+         double diff_from_min = collcallprof_ptr->min_time_nsec
+                                - collcallprof_ptr->average_time_nsec;
          diff_from_min = diff_from_min < 0 ? -diff_from_min : diff_from_min;
          if (diff_from_max > diff_from_min) {
-            collcallProf_ptr->max_imbalance = 100.0*diff_from_max;
-            collcallProf_ptr->max_imbalance /= collcallProf_ptr->average_time_nsec;
-            collcallProf_ptr->max_imbalance_on_rank = collcallProf_ptr->max_on_rank;
+            collcallprof_ptr->max_imbalance = 100.0*diff_from_max;
+            collcallprof_ptr->max_imbalance /= collcallprof_ptr->average_time_nsec;
+            collcallprof_ptr->max_imbalance_on_rank = collcallprof_ptr->max_on_rank;
          } else {
-            collcallProf_ptr->max_imbalance = 100.0*diff_from_min;
-            collcallProf_ptr->max_imbalance /= collcallProf_ptr->average_time_nsec;
-            collcallProf_ptr->max_imbalance_on_rank = collcallProf_ptr->min_on_rank;
+            collcallprof_ptr->max_imbalance = 100.0*diff_from_min;
+            collcallprof_ptr->max_imbalance /= collcallprof_ptr->average_time_nsec;
+            collcallprof_ptr->max_imbalance_on_rank = collcallprof_ptr->min_on_rank;
          }
       } else {
-         collcallProf_ptr->max_imbalance = 0.0;
-         collcallProf_ptr->max_imbalance_on_rank = 0;
+         collcallprof_ptr->max_imbalance = 0.0;
+         collcallprof_ptr->max_imbalance_on_rank = 0;
       }
    }
 }

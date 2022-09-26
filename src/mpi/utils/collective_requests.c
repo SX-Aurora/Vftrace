@@ -95,7 +95,7 @@ void vftr_clear_completed_collective_request(vftr_request_t *request) {
          // it is an invalid rank due to non periodic
          // cartesian communicators.
          if (request->rank[i] != -1) {
-            vftr_accumulate_message_info(&(my_profile->mpiProf),
+            vftr_accumulate_message_info(&(my_profile->mpiprof),
                                          vftrace.mpi_state,
                                          request->dir,
                                          request->count[i],

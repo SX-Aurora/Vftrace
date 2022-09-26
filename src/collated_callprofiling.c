@@ -10,9 +10,9 @@
 #include <mpi.h>
 #endif
 
-collated_callProfile_t vftr_new_collated_callprofiling() {
+collated_callprofile_t vftr_new_collated_callprofiling() {
    SELF_PROFILE_START_FUNCTION;
-   collated_callProfile_t prof;
+   collated_callprofile_t prof;
    prof.calls = 0ll;
    prof.time_nsec = 0ll;
    prof.time_excl_nsec = 0ll;
@@ -38,25 +38,25 @@ long long vftr_get_total_collated_call_overhead(collated_stacktree_t stacktree) 
    for (int istack=0; istack<nstacks; istack++) {
       collated_stack_t *stack = stacktree.stacks+istack;
       collated_profile_t *prof = &(stack->profile);
-      overheads_nsec += prof->callProf.overhead_nsec;
+      overheads_nsec += prof->callprof.overhead_nsec;
    }
    SELF_PROFILE_END_FUNCTION;
    return overheads_nsec;
 }
 
-void vftr_collated_callprofiling_free(collated_callProfile_t *callprof_ptr) {
+void vftr_collated_callprofiling_free(collated_callprofile_t *callprof_ptr) {
    SELF_PROFILE_START_FUNCTION;
    (void) callprof_ptr;
    SELF_PROFILE_END_FUNCTION;
 }
 
-void vftr_print_collated_callprofiling(FILE *fp, collated_callProfile_t callprof) {
+void vftr_print_collated_callprofiling(FILE *fp, collated_callprofile_t callprof) {
    fprintf(fp, "calls: %lld, time(incl/excl): %lld/%lld (overhead: %lld)\n",
            callprof.calls, callprof.time_nsec, callprof.time_excl_nsec,
            callprof.overhead_nsec);
 }
 
-void vftr_print_calltime_imbalances(FILE *fp, collated_callProfile_t callprof) {
+void vftr_print_calltime_imbalances(FILE *fp, collated_callprofile_t callprof) {
    fprintf(fp, "avg: %lldus, min/max=%lldus(on %d)/%lldus(on %d), imb=%6.2lf%% on %d\n",
            callprof.average_time_nsec,
            callprof.max_time_nsec, callprof.max_on_rank,

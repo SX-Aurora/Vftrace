@@ -65,24 +65,24 @@ int main(int argc, char **argv) {
                                   name, name, function, addrs+0, false);
    iprof = vftr_new_profile_in_list(0,&(stacktree.stacks[func2_idx].profiling));
    profile = stacktree.stacks[func2_idx].profiling.profiles+iprof;
-   vftr_accumulate_message_info(&(profile->mpiProf), mpi_state, send,
+   vftr_accumulate_message_info(&(profile->mpiprof), mpi_state, send,
                                 2, 0, (int) sizeof(char),
                                 1, 0, 0, 1);
-   vftr_accumulate_message_info(&(profile->mpiProf), mpi_state, recv,
+   vftr_accumulate_message_info(&(profile->mpiprof), mpi_state, recv,
                                 4, 0, (int) sizeof(char),
                                 1, 0, 0, 1);
-   vftr_accumulate_message_info(&(profile->mpiProf), mpi_state, send,
+   vftr_accumulate_message_info(&(profile->mpiprof), mpi_state, send,
                                 8, 0, (int) sizeof(char),
                                 1, 0, 0, 1);
-   vftr_accumulate_message_info(&(profile->mpiProf), mpi_state, recv,
+   vftr_accumulate_message_info(&(profile->mpiprof), mpi_state, recv,
                                 16, 0, (int) sizeof(char),
                                 1, 0, 0, 1);
    iprof = vftr_new_profile_in_list(1,&(stacktree.stacks[func2_idx].profiling));
    profile = stacktree.stacks[func2_idx].profiling.profiles+iprof;
-   vftr_accumulate_message_info(&(profile->mpiProf), mpi_state, send,
+   vftr_accumulate_message_info(&(profile->mpiprof), mpi_state, send,
                                 32, 0, (int) sizeof(char),
                                 1, 0, 0, 1);
-   vftr_accumulate_message_info(&(profile->mpiProf), mpi_state, recv,
+   vftr_accumulate_message_info(&(profile->mpiprof), mpi_state, recv,
                                 64, 0, (int) sizeof(char),
                                 1, 0, 0, 1);
    
@@ -92,10 +92,10 @@ int main(int argc, char **argv) {
                                   name, name, function, addrs+1, false);
    iprof = vftr_new_profile_in_list(0,&(stacktree.stacks[func3_idx].profiling));
    profile = stacktree.stacks[func3_idx].profiling.profiles+iprof;
-   vftr_accumulate_message_info(&(profile->mpiProf), mpi_state, send,
+   vftr_accumulate_message_info(&(profile->mpiprof), mpi_state, send,
                                 128, 0, (int) sizeof(char),
                                 1, 0, 0, 1);
-   vftr_accumulate_message_info(&(profile->mpiProf), mpi_state, recv,
+   vftr_accumulate_message_info(&(profile->mpiprof), mpi_state, recv,
                                 256, 0, (int) sizeof(char),
                                 1, 0, 0, 1);
    
@@ -105,16 +105,16 @@ int main(int argc, char **argv) {
                                   name, name, function, addrs+2, false);
    iprof = vftr_new_profile_in_list(1,&(stacktree.stacks[func4_idx].profiling));
    profile = stacktree.stacks[func4_idx].profiling.profiles+iprof;
-   vftr_accumulate_message_info(&(profile->mpiProf), mpi_state, send,
+   vftr_accumulate_message_info(&(profile->mpiprof), mpi_state, send,
                                 512, 0, (int) sizeof(char),
                                 1, 0, 0, 1);
-   vftr_accumulate_message_info(&(profile->mpiProf), mpi_state, recv,
+   vftr_accumulate_message_info(&(profile->mpiprof), mpi_state, recv,
                                 1024, 0, (int) sizeof(char),
                                 1, 0, 0, 1);
-   vftr_accumulate_message_info(&(profile->mpiProf), mpi_state, send,
+   vftr_accumulate_message_info(&(profile->mpiprof), mpi_state, send,
                                 2048, 0, (int) sizeof(char),
                                 1, 0, 0, 1);
-   vftr_accumulate_message_info(&(profile->mpiProf), mpi_state, recv,
+   vftr_accumulate_message_info(&(profile->mpiprof), mpi_state, recv,
                                 4096, 0, (int) sizeof(char),
                                 1, 0, 0, 1);
 
@@ -129,7 +129,7 @@ int main(int argc, char **argv) {
          char *stackstr = vftr_get_collated_stack_string(collated_stacktree, istack, false);
          fprintf(stdout, "%s:\n   ", stackstr);
          vftr_print_mpiprofiling(stdout,
-            collated_stacktree.stacks[istack].profile.mpiProf);
+            collated_stacktree.stacks[istack].profile.mpiprof);
          free(stackstr);
       }
    }

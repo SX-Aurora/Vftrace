@@ -61,7 +61,7 @@ void vftr_function_entry(void *func, void *call_site) {
    if (my_stack->address == func_addr) {
       // if recusive call, simply increas recursion depth count.
       my_threadstack->recursion_depth++;
-      vftr_accumulate_callprofiling(&(my_profile->callProf), 1, 0);
+      vftr_accumulate_callprofiling(&(my_profile->callprof), 1, 0);
    } else {
       // add possibly new functions to the stack
       // and adjust the threadstack accordingly
@@ -76,12 +76,12 @@ void vftr_function_entry(void *func, void *call_site) {
 
 
       // accumulate call profiling data
-      vftr_accumulate_callprofiling(&(my_profile->callProf),
+      vftr_accumulate_callprofiling(&(my_profile->callprof),
                                     1, -function_entry_time_begin);
    }
 
    // No calls after this overhead handling!
-   vftr_accumulate_callprofiling_overhead(&(my_profile->callProf),
+   vftr_accumulate_callprofiling_overhead(&(my_profile->callprof),
       vftr_get_runtime_nsec() - function_entry_time_begin);
    SELF_PROFILE_END_FUNCTION;
 }
@@ -108,7 +108,7 @@ void vftr_function_exit(void *func, void *call_site) {
       my_threadstack->recursion_depth--;
    } else {
       // accumulate threadded profiling data
-      vftr_accumulate_callprofiling(&(my_profile->callProf),
+      vftr_accumulate_callprofiling(&(my_profile->callprof),
                                     0, function_exit_time_begin);
 
       // if not recursive pop the function from the threads stacklist
@@ -124,7 +124,7 @@ void vftr_function_exit(void *func, void *call_site) {
    }
    // No calls after this overhead handling
    vftr_accumulate_callprofiling_overhead(
-      &(my_profile->callProf),
+      &(my_profile->callprof),
       vftr_get_runtime_nsec() - function_exit_time_begin);
    SELF_PROFILE_END_FUNCTION;
 }

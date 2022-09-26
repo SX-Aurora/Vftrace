@@ -25,22 +25,22 @@ collated_stack_t **vftr_sort_collated_stacks_for_prof(environment_t environment,
    if (!strcmp(env_val, "TIME_EXCL")) {
       for (int istack=0; istack<nstacks; istack++) {
          collated_stack_t *stack = stacktree.stacks+istack;
-         stackvals[istack] += stack->profile.callProf.time_excl_nsec;
+         stackvals[istack] += stack->profile.callprof.time_excl_nsec;
       }
    } else if (!strcmp(env_val, "TIME_INCL")) {
       for (int istack=0; istack<nstacks; istack++) {
          collated_stack_t *stack = stacktree.stacks+istack;
-         stackvals[istack] += stack->profile.callProf.time_nsec;
+         stackvals[istack] += stack->profile.callprof.time_nsec;
       }
    } else if (!strcmp(env_val, "CALLS")) {
       for (int istack=0; istack<nstacks; istack++) {
          collated_stack_t *stack = stacktree.stacks+istack;
-         stackvals[istack] += stack->profile.callProf.calls;
+         stackvals[istack] += stack->profile.callprof.calls;
       }
    } else if (!strcmp(env_val, "OVERHEAD")) {
       for (int istack=0; istack<nstacks; istack++) {
          collated_stack_t *stack = stacktree.stacks+istack;
-         stackvals[istack] += stack->profile.callProf.overhead_nsec;
+         stackvals[istack] += stack->profile.callprof.overhead_nsec;
       }
    } else {
       // if (!strcmp(env_val, "NONE"))

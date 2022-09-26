@@ -14,8 +14,8 @@
 #include "range_expand.h"
 #include "search.h"
 
-mpiProfile_t vftr_new_mpiprofiling() {
-   mpiProfile_t prof;
+mpiprofile_t vftr_new_mpiprofiling() {
+   mpiprofile_t prof;
    prof.nsendmessages = 0ll;
    prof.nrecvmessages = 0ll;
    prof.send_bytes = 0ll;
@@ -36,7 +36,7 @@ static bool vftr_should_accumulate_message_info(mpi_state_t mpi_state, int rank)
    return should;
 }
 
-void vftr_accumulate_message_info(mpiProfile_t *prof_ptr,
+void vftr_accumulate_message_info(mpiprofile_t *prof_ptr,
                                   mpi_state_t mpi_state,
                                   message_direction dir,
                                   long long count,
@@ -66,12 +66,12 @@ void vftr_accumulate_message_info(mpiProfile_t *prof_ptr,
    SELF_PROFILE_END_FUNCTION;
 }
 
-void vftr_accumulate_mpiprofiling_overhead(mpiProfile_t *prof,
+void vftr_accumulate_mpiprofiling_overhead(mpiprofile_t *prof,
                                            long long overhead_nsec) {
    prof->overhead_nsec += overhead_nsec;
 }
 
-void vftr_mpiprofiling_free(mpiProfile_t *prof_ptr) {
+void vftr_mpiprofiling_free(mpiprofile_t *prof_ptr) {
    (void) prof_ptr;
 }
 
@@ -123,7 +123,7 @@ long long *vftr_get_total_mpi_overhead(stacktree_t stacktree, int nthreads) {
       for (int iprof=0; iprof<nprofs; iprof++) {
          profile_t *prof = stack->profiling.profiles+iprof;
          int threadID = prof->threadID;
-         overheads_nsec[threadID] += prof->mpiProf.overhead_nsec;
+         overheads_nsec[threadID] += prof->mpiprof.overhead_nsec;
       }
    }
    SELF_PROFILE_END_FUNCTION;
@@ -138,13 +138,13 @@ long long vftr_get_total_collated_mpi_overhead(collated_stacktree_t stacktree) {
    for (int istack=0; istack<nstacks; istack++) {
       collated_stack_t *stack = stacktree.stacks+istack;
       collated_profile_t *prof = &(stack->profile);
-      overheads_nsec += prof->mpiProf.overhead_nsec;
+      overheads_nsec += prof->mpiprof.overhead_nsec;
    }
    SELF_PROFILE_END_FUNCTION;
    return overheads_nsec;
 }
 
-void vftr_print_mpiprofiling(FILE *fp, mpiProfile_t mpiprof) {
+void vftr_print_mpiprofiling(FILE *fp, mpiprofile_t mpiprof) {
    fprintf(fp, "nmsg: %lld/%lld, msgsize: %lld/%lld\n",
            mpiprof.nsendmessages,
            mpiprof.nrecvmessages,

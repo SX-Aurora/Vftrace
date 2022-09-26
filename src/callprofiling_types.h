@@ -11,6 +11,6 @@ typedef struct {
    long long time_excl_nsec;
    // calloverhead induced by vftrace stack bookkeeping
    long long overhead_nsec;
-} callProfile_t;
+} callprofile_t;
 
 #endif

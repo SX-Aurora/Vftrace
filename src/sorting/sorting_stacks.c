@@ -28,7 +28,7 @@ stack_t **vftr_sort_stacks_for_prof(environment_t environment,
          int nprofs = stack->profiling.nprofiles;
          for (int iprof=0; iprof<nprofs; iprof++) {
             profile_t *prof = stack->profiling.profiles+iprof;
-            stackvals[istack] += prof->callProf.time_excl_nsec;
+            stackvals[istack] += prof->callprof.time_excl_nsec;
          }
       }
    } else if (!strcmp(env_val, "TIME_INCL")) {
@@ -37,7 +37,7 @@ stack_t **vftr_sort_stacks_for_prof(environment_t environment,
          int nprofs = stack->profiling.nprofiles;
          for (int iprof=0; iprof<nprofs; iprof++) {
             profile_t *prof = stack->profiling.profiles+iprof;
-            stackvals[istack] += prof->callProf.time_nsec;
+            stackvals[istack] += prof->callprof.time_nsec;
          }
       }
    } else if (!strcmp(env_val, "CALLS")) {
@@ -46,7 +46,7 @@ stack_t **vftr_sort_stacks_for_prof(environment_t environment,
          int nprofs = stack->profiling.nprofiles;
          for (int iprof=0; iprof<nprofs; iprof++) {
             profile_t *prof = stack->profiling.profiles+iprof;
-            stackvals[istack] += prof->callProf.calls;
+            stackvals[istack] += prof->callprof.calls;
          }
       }
    } else if (!strcmp(env_val, "STACK_ID")) {
@@ -61,7 +61,7 @@ stack_t **vftr_sort_stacks_for_prof(environment_t environment,
          int nprofs = stack->profiling.nprofiles;
          for (int iprof=0; iprof<nprofs; iprof++) {
             profile_t *prof = stack->profiling.profiles+iprof;
-            stackvals[istack] += prof->callProf.overhead_nsec;
+            stackvals[istack] += prof->callprof.overhead_nsec;
          }
       }
    } else {

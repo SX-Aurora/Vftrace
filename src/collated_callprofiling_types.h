@@ -20,6 +20,6 @@ typedef struct {
    long long min_time_nsec;
    double max_imbalance;
    int max_imbalance_on_rank;
-} collated_callProfile_t;
+} collated_callprofile_t;
 
 #endif

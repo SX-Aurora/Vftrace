@@ -8,9 +8,9 @@
 
 typedef struct {
    int threadID;
-   callProfile_t callProf;
+   callprofile_t callprof;
 #ifdef _MPI
-   mpiProfile_t mpiProf;
+   mpiprofile_t mpiprof;
 #endif
 } profile_t;
 

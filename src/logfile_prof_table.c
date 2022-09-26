@@ -23,7 +23,7 @@ int *vftr_logfile_prof_table_stack_calls_list(int nstacks, collated_stack_t **st
 
    for (int istack=0; istack<nstacks; istack++) {
       collated_stack_t *stack_ptr = stack_ptrs[istack];
-      calls_list[istack] = stack_ptr->profile.callProf.calls;
+      calls_list[istack] = stack_ptr->profile.callprof.calls;
    }
    return calls_list;
 }
@@ -33,7 +33,7 @@ double *vftr_logfile_prof_table_stack_inclusive_time_list(int nstacks, collated_
 
    for (int istack=0; istack<nstacks; istack++) {
       collated_stack_t *stack_ptr = stack_ptrs[istack];
-      inclusive_time_list[istack] = stack_ptr->profile.callProf.time_nsec;
+      inclusive_time_list[istack] = stack_ptr->profile.callprof.time_nsec;
       inclusive_time_list[istack] *= 1.0e-9;
    }
    return inclusive_time_list;
@@ -44,7 +44,7 @@ double *vftr_logfile_prof_table_stack_exclusive_time_list(int nstacks, collated_
 
    for (int istack=0; istack<nstacks; istack++) {
       collated_stack_t *stack_ptr = stack_ptrs[istack];
-      exclusive_time_list[istack] = stack_ptr->profile.callProf.time_excl_nsec;
+      exclusive_time_list[istack] = stack_ptr->profile.callprof.time_excl_nsec;
       exclusive_time_list[istack] *= 1.0e-9;
    }
    return exclusive_time_list;
@@ -55,12 +55,12 @@ double *vftr_logfile_prof_table_stack_exclusive_time_percentage_list(int nstacks
    long long total_time = 0ll;
    for (int istack=0; istack<nstacks; istack++) {
       collated_stack_t *stack_ptr = stack_ptrs[istack];
-      total_time += stack_ptr->profile.callProf.time_excl_nsec;
+      total_time += stack_ptr->profile.callprof.time_excl_nsec;
    }
    double invtotal_time = 100.0/total_time;
    for (int istack=0; istack<nstacks; istack++) {
       collated_stack_t *stack_ptr = stack_ptrs[istack];
-      percent_list[istack] = stack_ptr->profile.callProf.time_excl_nsec;
+      percent_list[istack] = stack_ptr->profile.callprof.time_excl_nsec;
       percent_list[istack] *= invtotal_time;
    }
    return percent_list;
@@ -70,7 +70,7 @@ double *vftr_logfile_prof_table_imbalances_list(int nstacks, collated_stack_t **
    double *imbalances_list = (double*) malloc(nstacks*sizeof(double));
    for (int istack=0; istack<nstacks; istack++) {
       collated_stack_t *stack_ptr = stack_ptrs[istack];
-      imbalances_list[istack] = stack_ptr->profile.callProf.max_imbalance;
+      imbalances_list[istack] = stack_ptr->profile.callprof.max_imbalance;
    }
    return imbalances_list;
 }
@@ -80,7 +80,7 @@ int *vftr_logfile_prof_table_imbalance_ranks_list(int nstacks,
    int *imbalance_ranks_list = (int*) malloc(nstacks*sizeof(int));
    for (int istack=0; istack<nstacks; istack++) {
       collated_stack_t *stack_ptr = stack_ptrs[istack];
-      imbalance_ranks_list[istack] = stack_ptr->profile.callProf.max_imbalance_on_rank;
+      imbalance_ranks_list[istack] = stack_ptr->profile.callprof.max_imbalance_on_rank;
    }
    return imbalance_ranks_list;
 }
@@ -91,7 +91,7 @@ int *vftr_logfile_prof_table_imbalance_ranks_list(int nstacks,
 //   for (int istack=0; istack<nstacks; istack++) {
 //      collated_stack_t *stack_ptr = stack_ptrs[istack];
 //      profile_t *prof_ptr = stack_ptr->profiling.profiles;
-//      overhead_time_list[istack] = prof_ptr->overheadProf.hook_nsec;
+//      overhead_time_list[istack] = prof_ptr->overheadprof.hook_nsec;
 //      overhead_time_list[istack] *= 1.0e-9;
 //   }
 //   return overhead_time_list;

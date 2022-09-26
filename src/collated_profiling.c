@@ -11,9 +11,9 @@
 collated_profile_t vftr_new_collated_profile() {
    SELF_PROFILE_START_FUNCTION;
    collated_profile_t profile;
-   profile.callProf = vftr_new_collated_callprofiling();
+   profile.callprof = vftr_new_collated_callprofiling();
 #ifdef _MPI
-   profile.mpiProf = vftr_new_mpiprofiling();
+   profile.mpiprof = vftr_new_mpiprofiling();
 #endif
    // TODO: Add other profiles
    SELF_PROFILE_END_FUNCTION;
@@ -22,9 +22,9 @@ collated_profile_t vftr_new_collated_profile() {
 
 void vftr_collated_profile_free(collated_profile_t* profile_ptr) {
    SELF_PROFILE_START_FUNCTION;
-   vftr_collated_callprofiling_free(&(profile_ptr->callProf));
+   vftr_collated_callprofiling_free(&(profile_ptr->callprof));
 #ifdef _MPI
-   vftr_mpiprofiling_free(&(profile_ptr->mpiProf));
+   vftr_mpiprofiling_free(&(profile_ptr->mpiprof));
 #endif
    // TODO: add other profiles
    SELF_PROFILE_END_FUNCTION;

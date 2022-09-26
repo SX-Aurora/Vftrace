@@ -41,7 +41,7 @@ void vftr_user_region_begin(const char *name, void *addr) {
    if (my_stack->address == region_addr && !strcmp(name, my_stack->name)) {
       // if recusive call, simply increas recursion depth count.
       my_threadstack->recursion_depth++;
-      vftr_accumulate_callprofiling(&(my_profile->callProf), 1, 0);
+      vftr_accumulate_callprofiling(&(my_profile->callprof), 1, 0);
    } else {
       // add possibly new region to the stack
       // and adjust the threadstack accordingly
@@ -59,12 +59,12 @@ void vftr_user_region_begin(const char *name, void *addr) {
 
 
       // accumulate profiling data
-      vftr_accumulate_callprofiling(&(my_profile->callProf),
+      vftr_accumulate_callprofiling(&(my_profile->callprof),
                                     1, -region_begin_time_begin);
    }
 
    // No calls after this overhead handling!
-   vftr_accumulate_callprofiling_overhead(&(my_profile->callProf),
+   vftr_accumulate_callprofiling_overhead(&(my_profile->callprof),
       vftr_get_runtime_nsec() - region_begin_time_begin);
    SELF_PROFILE_END_FUNCTION;
 }
@@ -84,7 +84,7 @@ void vftr_user_region_end() {
       my_threadstack->recursion_depth--;
    } else {
       // accumulate threadded profiling data
-      vftr_accumulate_callprofiling(&(my_profile->callProf),
+      vftr_accumulate_callprofiling(&(my_profile->callprof),
                                     0, region_end_time_begin);
 
       // if not recursive pop the function from the threads stacklist
@@ -101,7 +101,7 @@ void vftr_user_region_end() {
    }
    // No calls after this overhead handling
    vftr_accumulate_callprofiling_overhead(
-      &(my_profile->callProf),
+      &(my_profile->callprof),
       vftr_get_runtime_nsec() - region_end_time_begin);
    SELF_PROFILE_END_FUNCTION;
 }

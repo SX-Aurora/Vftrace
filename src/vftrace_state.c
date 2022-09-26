@@ -147,30 +147,30 @@ unsigned long long vftr_sizeof_symboltable_t(symboltable_t symboltable) {
    return size;
 }
 
-unsigned long long vftr_sizeof_callProfile_t(callProfile_t callProf) {
-   (void) callProf;
-   return sizeof(callProfile_t);
+unsigned long long vftr_sizeof_callprofile_t(callprofile_t callprof) {
+   (void) callprof;
+   return sizeof(callprofile_t);
 }
 
-unsigned long long vftr_sizeof_collated_callProfile_t(collated_callProfile_t callProf) {
-   (void) callProf;
-   return sizeof(collated_callProfile_t);
+unsigned long long vftr_sizeof_collated_callprofile_t(collated_callprofile_t callprof) {
+   (void) callprof;
+   return sizeof(collated_callprofile_t);
 }
 
 #ifdef _MPI
-unsigned long long vftr_sizeof_mpiProfile_t(mpiProfile_t mpiProf) {
-   (void) mpiProf;
-   return sizeof(mpiProfile_t);
+unsigned long long vftr_sizeof_mpiprofile_t(mpiprofile_t mpiprof) {
+   (void) mpiprof;
+   return sizeof(mpiprofile_t);
 }
 #endif
 
 unsigned long long vftr_sizeof_profile_t(profile_t profile) {
    unsigned long long size = sizeof(profile_t);
-   size -= sizeof(callProfile_t);
-   size += vftr_sizeof_callProfile_t(profile.callProf);
+   size -= sizeof(callprofile_t);
+   size += vftr_sizeof_callprofile_t(profile.callprof);
 #ifdef _MPI
-   size -= sizeof(mpiProfile_t);
-   size += vftr_sizeof_mpiProfile_t(profile.mpiProf);
+   size -= sizeof(mpiprofile_t);
+   size += vftr_sizeof_mpiprofile_t(profile.mpiprof);
 #endif
    return size;
 }
@@ -178,10 +178,10 @@ unsigned long long vftr_sizeof_profile_t(profile_t profile) {
 unsigned long long vftr_sizeof_collated_profile_t(collated_profile_t profile) {
    unsigned long long size = sizeof(profile_t);
    size -= sizeof(collated_profile_t);
-   size += vftr_sizeof_collated_callProfile_t(profile.callProf);
+   size += vftr_sizeof_collated_callprofile_t(profile.callprof);
 #ifdef _MPI
-   size -= sizeof(mpiProfile_t);
-   size += vftr_sizeof_mpiProfile_t(profile.mpiProf);
+   size -= sizeof(mpiprofile_t);
+   size += vftr_sizeof_mpiprofile_t(profile.mpiprof);
 #endif
    return size;
 }

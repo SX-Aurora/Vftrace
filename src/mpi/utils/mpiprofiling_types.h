@@ -15,5 +15,5 @@ typedef struct {
    long long total_time_nsec;
    // overhead from vftrace MPI-book keeping
    long long overhead_nsec;
-} mpiProfile_t;
+} mpiprofile_t;
 #endif

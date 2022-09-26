@@ -7,9 +7,9 @@
 #endif
 
 typedef struct {
-   collated_callProfile_t callProf;
+   collated_callprofile_t callprof;
 #ifdef _MPI
-   mpiProfile_t mpiProf;
+   mpiprofile_t mpiprof;
 #endif
 } collated_profile_t;
 

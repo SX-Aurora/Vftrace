@@ -26,8 +26,8 @@ int *vftr_ranklogfile_mpi_table_nmessages_list(int nstacks, stack_t **stack_ptrs
       nmessages_list[istack] = 0;
       for (int iprof=0; iprof<stack_ptr->profiling.nprofiles; iprof++) {
          profile_t *prof_ptr = stack_ptr->profiling.profiles+iprof;
-         nmessages_list[istack] += prof_ptr->mpiProf.nsendmessages;
-         nmessages_list[istack] += prof_ptr->mpiProf.nrecvmessages;
+         nmessages_list[istack] += prof_ptr->mpiprof.nsendmessages;
+         nmessages_list[istack] += prof_ptr->mpiprof.nrecvmessages;
       }
    }
    return nmessages_list;
@@ -41,8 +41,8 @@ double *vftr_ranklogfile_mpi_table_average_send_bytes_list(int nstacks, stack_t 
       int nmessages = 0;
       for (int iprof=0; iprof<stack_ptr->profiling.nprofiles; iprof++) {
          profile_t *prof_ptr = stack_ptr->profiling.profiles+iprof;
-         avg_send_bytes_list[istack] += prof_ptr->mpiProf.send_bytes;
-         nmessages += prof_ptr->mpiProf.nsendmessages;
+         avg_send_bytes_list[istack] += prof_ptr->mpiprof.send_bytes;
+         nmessages += prof_ptr->mpiprof.nsendmessages;
       }
       if (nmessages > 0) {
          avg_send_bytes_list[istack] /= nmessages;
@@ -61,8 +61,8 @@ double *vftr_ranklogfile_mpi_table_average_recv_bytes_list(int nstacks, stack_t 
       int nmessages = 0;
       for (int iprof=0; iprof<stack_ptr->profiling.nprofiles; iprof++) {
          profile_t *prof_ptr = stack_ptr->profiling.profiles+iprof;
-         avg_recv_bytes_list[istack] += prof_ptr->mpiProf.recv_bytes;
-         nmessages += prof_ptr->mpiProf.nrecvmessages;
+         avg_recv_bytes_list[istack] += prof_ptr->mpiprof.recv_bytes;
+         nmessages += prof_ptr->mpiprof.nrecvmessages;
       }
       if (nmessages > 0) {
          avg_recv_bytes_list[istack] /= nmessages;
@@ -81,8 +81,8 @@ double *vftr_ranklogfile_mpi_table_average_send_bw_list(int nstacks, stack_t **s
       int nmessages = 0;
       for (int iprof=0; iprof<stack_ptr->profiling.nprofiles; iprof++) {
          profile_t *prof_ptr = stack_ptr->profiling.profiles+iprof;
-         avg_send_bw_list[istack] += prof_ptr->mpiProf.acc_send_bw;
-         nmessages += prof_ptr->mpiProf.nsendmessages;
+         avg_send_bw_list[istack] += prof_ptr->mpiprof.acc_send_bw;
+         nmessages += prof_ptr->mpiprof.nsendmessages;
       }
       if (nmessages > 0) {
          avg_send_bw_list[istack] /= nmessages;
@@ -101,8 +101,8 @@ double *vftr_ranklogfile_mpi_table_average_recv_bw_list(int nstacks, stack_t **s
       int nmessages = 0;
       for (int iprof=0; iprof<stack_ptr->profiling.nprofiles; iprof++) {
          profile_t *prof_ptr = stack_ptr->profiling.profiles+iprof;
-         avg_recv_bw_list[istack] += prof_ptr->mpiProf.acc_recv_bw;
-         nmessages += prof_ptr->mpiProf.nrecvmessages;
+         avg_recv_bw_list[istack] += prof_ptr->mpiprof.acc_recv_bw;
+         nmessages += prof_ptr->mpiprof.nrecvmessages;
       }
       if (nmessages > 0) {
          avg_recv_bw_list[istack] /= nmessages;
@@ -122,9 +122,9 @@ double *vftr_ranklogfile_mpi_table_average_comm_time_list(int nstacks, stack_t *
       long long tot_time = 0;
       for (int iprof=0; iprof<stack_ptr->profiling.nprofiles; iprof++) {
          profile_t *prof_ptr = stack_ptr->profiling.profiles+iprof;
-         tot_time += prof_ptr->mpiProf.total_time_nsec;
-         nmessages += prof_ptr->mpiProf.nsendmessages;
-         nmessages += prof_ptr->mpiProf.nrecvmessages;
+         tot_time += prof_ptr->mpiprof.total_time_nsec;
+         nmessages += prof_ptr->mpiprof.nsendmessages;
+         nmessages += prof_ptr->mpiprof.nrecvmessages;
       }
       if (nmessages > 0) {
          avg_comm_time_list[istack] = tot_time * 1.0e-9/((double)nmessages);
@@ -177,8 +177,8 @@ int *vftr_ranklogfile_mpi_table_stack_globalstackID_list(int nstacks, stack_t **
       stack_t *stack_ptr = stack_ptrs[istack];
       for (int iprof=0; iprof<stack_ptr->profiling.nprofiles; iprof++) {
          profile_t *prof_ptr = stack_ptr->profiling.profiles+iprof;
-         if (prof_ptr->mpiProf.nsendmessages > 0 ||
-             prof_ptr->mpiProf.nrecvmessages > 0) {
+         if (prof_ptr->mpiprof.nsendmessages > 0 ||
+             prof_ptr->mpiprof.nrecvmessages > 0) {
             id_list[istack] = stack_ptr->gid;
             listidx++;
             break;
@@ -195,8 +195,8 @@ int vftr_ranklogfile_mpi_table_nrows(stacktree_t stacktree) {
       stack_t *stack_ptr = stacktree.stacks+istack;
       for (int iprof=0; iprof<stack_ptr->profiling.nprofiles; iprof++) {
          profile_t *prof_ptr = stack_ptr->profiling.profiles+iprof;
-         if (prof_ptr->mpiProf.nsendmessages > 0 ||
-             prof_ptr->mpiProf.nrecvmessages > 0) {
+         if (prof_ptr->mpiprof.nsendmessages > 0 ||
+             prof_ptr->mpiprof.nrecvmessages > 0) {
             nrows++;
             break;
          }
@@ -213,8 +213,8 @@ stack_t **vftr_ranklogfile_mpi_table_get_relevant_stacks(int nrows,
       stack_t *stack_ptr = stacktree.stacks+istack;
       for (int iprof=0; iprof<stack_ptr->profiling.nprofiles; iprof++) {
          profile_t *prof_ptr = stack_ptr->profiling.profiles+iprof;
-         if (prof_ptr->mpiProf.nsendmessages > 0 ||
-             prof_ptr->mpiProf.nrecvmessages > 0) {
+         if (prof_ptr->mpiprof.nsendmessages > 0 ||
+             prof_ptr->mpiprof.nrecvmessages > 0) {
             selected_stacks[irow] = stack_ptr;
             irow++;
             break;
