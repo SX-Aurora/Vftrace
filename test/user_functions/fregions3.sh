@@ -1,8 +1,13 @@
 #!/bin/bash
 
+source ${srcdir}/../environment/filenames.sh
+
 vftr_binary=fregions3
 nprocs=1
 maxnreg=$(bc <<< "${RANDOM}%5+5")
+
+logfile=$(get_logfile_name ${vftr_binary} "all")
+vfdfile=$(get_vfdfile_name ${vftr_binary} "0")
 
 export VFTR_SAMPLING="Yes"
 export VFTR_REGIONS_PRECISE="yes"
@@ -13,11 +18,11 @@ else
    ./${vftr_binary} ${maxnreg} || exit 1
 fi
 
-cat ${vftr_binary}_all.log
+cat ${logfile}
 
 for ireg in $(seq 1 1 ${maxnreg});
 do
-   inprof=$(cat ${vftr_binary}_all.log | \
+   inprof=$(cat ${logfile} | \
             grep "user-region-${ireg}" | \
             wc -l)
    if [ "${inprof}" -ne "2" ] ; then
@@ -27,11 +32,11 @@ do
 done
 
 
-../../tools/vftrace_vfd_dump ${vftr_binary}_0.vfd
+../../tools/vftrace_vfd_dump ${vfdfile}
 
 for ireg in $(seq 1 1 ${maxnreg});
 do
-   ncalls=$(../../tools/vftrace_vfd_dump ${vftr_binary}_0.vfd | \
+   ncalls=$(../../tools/vftrace_vfd_dump ${vfdfile} | \
             grep "call user-region-${ireg}" | \
             wc -l)
    if [ "${ncalls}" -ne "1" ] ; then
@@ -39,7 +44,7 @@ do
       exit 1;
    fi
    
-   nexits=$(../../tools/vftrace_vfd_dump ${vftr_binary}_0.vfd | \
+   nexits=$(../../tools/vftrace_vfd_dump ${vfdfile} | \
             grep "exit user-region-${ireg}" | \
             wc -l)
    

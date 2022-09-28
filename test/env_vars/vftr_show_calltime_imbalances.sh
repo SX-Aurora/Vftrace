@@ -1,20 +1,15 @@
 #!/bin/bash
+
+source ${srcdir}/../environment/filenames.sh
+
 set -x
 test_name=vftr_show_calltime_imbalances
 output_file=${test_name}.out
-logfile=${test_name}_all.log
 ref_file=${srcdir}/ref_output/little_tasks.out
 imbalances_header=" Imbalances/% | on rank "
 nranks=1
 
-function rm_outfiles() {
-   for file in ${output_file} ${test_name}_*.log ${test_name}_*.vfd;
-   do
-      if [ -f ${file} ] ; then
-         rm ${file}
-      fi
-   done
-}
+logfile=$(get_logfile_name $test_name "all")
 
 function run_binary() {
    if [ "x${HAS_MPI}" == "xYES" ]; then
@@ -24,18 +19,10 @@ function run_binary() {
    fi
 }
 
-function check_logfile_exists() {
-   logfile="${test_name}_$1.log"
-   if [ ! -f ${logfile} ] ; then
-      echo "Could not find logfile \"${logfile}\"!"
-      exit 1
-   fi
-}
-
-rm_outfiles
+rm_outfiles $output_file "" $test_name
 run_binary
 diff ${output_file} ${ref_file} || exit 1
-check_logfile_exists "all"
+check_file_exists $logfile
 in_header=$(grep ${imbalances_header} ${logfile} | wc -l)
 if [ "${in_header}" -ne "0" ] ; then
    echo "Found calltime imbalances in profile table although they should not be there!"
@@ -43,10 +30,10 @@ if [ "${in_header}" -ne "0" ] ; then
 fi
 
 export VFTR_SHOW_CALLTIME_IMBALANCES="on"
-rm_outfiles
+rm_outfiles $output_file "" $test_name
 run_binary
 diff ${output_file} ${ref_file} || exit 1
-check_logfile_exists "all"
+check_file_exists $logfile
 in_header=$(grep ${imbalances_header} ${logfile} | wc -l)
 if [ "${in_header}" -ne "1" ] ; then
    echo "Could not find calltime imbalances in profile table although they should be there!"

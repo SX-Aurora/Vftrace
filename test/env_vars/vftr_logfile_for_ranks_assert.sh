@@ -1,4 +1,6 @@
 #!/bin/bash
+
+source ${srcdir}/../environment/filenames.sh
 set -x
 test_name=vftr_logfile_for_ranks_assert
 output_file=${test_name}.out
@@ -15,16 +17,8 @@ function run_binary() {
    fi
 }
 
-function rm_outfiles() {
-   for file in ${output_file} ${error_file} ${test_name}_*.log ${test_name}_*.vfd;
-   do
-      if [ -f ${file} ] ; then
-         rm ${file}
-      fi
-   done
-}
 
-rm_outfiles
+rm_outfiles $output_file $error_file $test_name
 run_binary
 diff ${output_file} ${ref_file} || exit 1
 cat ${error_file}
@@ -35,7 +29,7 @@ if [ "${nwarn}" -ne 0 ] ; then
 fi
 
 export VFTR_LOGFILE_FOR_RANKS="3-5,7,8,15-120,40-65"
-rm_outfiles
+rm_outfiles $output_file $error_file $test_name
 run_binary
 cat ${error_file}
 nwarn=$(grep "Warning" ${error_file} | wc -l)
@@ -45,7 +39,7 @@ if [ "${nwarn}" -ne 0 ] ; then
 fi
 
 export VFTR_LOGFILE_FOR_RANKS="all"
-rm_outfiles
+rm_outfiles $output_file $error_file $test_name
 run_binary
 cat ${error_file}
 nwarn=$(grep "Warning" ${error_file} | wc -l)
@@ -55,7 +49,7 @@ if [ "${nwarn}" -ne 0 ] ; then
 fi
 
 export VFTR_LOGFILE_FOR_RANKS="none"
-rm_outfiles
+rm_outfiles $output_file $error_file $test_name
 run_binary
 cat ${error_file}
 nwarn=$(grep "Warning" ${error_file} | wc -l)
@@ -65,7 +59,7 @@ if [ "${nwarn}" -ne 0 ] ; then
 fi
 
 export VFTR_LOGFILE_FOR_RANKS="nonsense"
-rm_outfiles
+rm_outfiles $output_file $error_file $test_name
 run_binary
 cat ${error_file}
 nwarn=$(grep "Warning" ${error_file} | wc -l)
@@ -75,7 +69,7 @@ if [ "${nwarn}" -ne 1 ] ; then
 fi
 
 export VFTR_LOGFILE_FOR_RANKS="1-2,3,-5-6,17"
-rm_outfiles
+rm_outfiles $output_file $error_file $test_name
 run_binary
 cat ${error_file}
 nwarn=$(grep "Warning" ${error_file} | wc -l)

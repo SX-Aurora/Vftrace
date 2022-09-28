@@ -1,7 +1,12 @@
 #!/bin/bash
 
+source ${srcdir}/../environment/filenames.sh
+
 vftr_binary=fregions2
 nprocs=1
+
+logfile=$(get_logfile_name ${vftr_binary} "all")
+vfdfile=$(get_vfdfile_name ${vftr_binary} "0")
 
 export VFTR_SAMPLING="Yes"
 export VFTR_REGIONS_PRECISE="yes"
@@ -12,9 +17,9 @@ else
    ./${vftr_binary} || exit 1
 fi
 
-cat ${vftr_binary}_all.log
+cat ${logfile}
 
-inprof=$(cat ${vftr_binary}_all.log | \
+inprof=$(cat ${logfile} | \
          grep "user-region-1" | \
          wc -l)
 if [ "${inprof}" -ne "2" ] ; then
@@ -23,9 +28,9 @@ if [ "${inprof}" -ne "2" ] ; then
 fi
 
 
-../../tools/vftrace_vfd_dump ${vftr_binary}_0.vfd
+../../tools/vftrace_vfd_dump ${vfdfile}
 
-ncalls=$(../../tools/vftrace_vfd_dump ${vftr_binary}_0.vfd | \
+ncalls=$(../../tools/vftrace_vfd_dump ${vfdfile} | \
          grep "call user-region-1" | \
          wc -l)
 if [ "${ncalls}" -ne "1" ] ; then
@@ -33,7 +38,7 @@ if [ "${ncalls}" -ne "1" ] ; then
    exit 1;
 fi
 
-nexits=$(../../tools/vftrace_vfd_dump ${vftr_binary}_0.vfd | \
+nexits=$(../../tools/vftrace_vfd_dump ${vfdfile} | \
          grep "exit user-region-1" | \
          wc -l)
 

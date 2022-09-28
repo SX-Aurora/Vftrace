@@ -11,6 +11,7 @@ AC_PROG_FC
 AC_PROG_CXX
 AC_FC_SRCEXT(F90)
 AC_ENABLE_SHARED
+AX_ENABLE_SHARED
 AM_PROG_AR
 # Enable per-target flags for C
 # According to the documentation, this should be obsolete

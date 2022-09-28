@@ -136,6 +136,10 @@ endif
 #libvftrace_la_LDFLAGS += -lifcore
 #endif
 
+if ENABLE_SHARED
+libvftrace_la_LIBADD += -ldl
+endif
+
 if SELF_PROFILING
 libvftrace_la_CPPFLAGS += -D_SELF_PROFILE_VFTRACE
 libvftrace_la_SOURCES += self_profile.c
