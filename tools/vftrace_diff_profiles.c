@@ -20,42 +20,21 @@
 #include <stdio.h>
 #include <stdbool.h>
 #include <string.h>
-#include <ctype.h>
-
 #include <math.h>
 
-#include "vftr_fileutils.h"
+#include "regular_expressions.h"
 
 #define LINEBUFSIZE 4096
 
-// The number of stacks is obtained by reading the last line of the stack table at the end of the log file.
-// It is the second last line in the file in total, followed by a line of dashes.
-// We go to the end of the file and read it backwards, until the first space (' ') is encountered. This signalises that
-// the next characters make up the stack ID. We cannot just check if a digit occurs, since these can also be
-// parts of function names appearing in the stack list.
-
+// We loop through the file and search for lines starting with "  STID[0-9]".
+// Each one of them indicates a stack tree element.
 int read_n_stacks (FILE *fp) {
-   char buf[2*LINEBUFSIZE + 1];
-   fseek (fp, -2*LINEBUFSIZE, SEEK_END);
-   int size = fread (buf, sizeof(char), 2*LINEBUFSIZE, fp);
-   int i = size;
-   int decimal_place = 1;
+   char buf[LINEBUFSIZE];
    int n_stacks = 0;
-   bool read_number = false;
-   while (i >= 0) {
-       if (!read_number) {
-	  // We found the space, next we read the stack ID
-   	  read_number = buf[i] == ' ';
-       } else {
-	  // As long as the character is a digit, we add it up at the corresponding decimal place (we are reading the number backwards).
-          if (isdigit(buf[i])) {
-   	     n_stacks += (buf[i] - '0') * decimal_place; // -'0' converts the character to an integer.
-   	     decimal_place *= 10;
-          } else {
-   	     break; // Number has been read, exit the loop.
-          }
-       }
-       i--;
+   regex_t *r = vftr_compile_regexp("^[ \t]+STID[0-9]*");
+   
+   while (fgets(buf, LINEBUFSIZE, fp)) {
+      if (vftr_pattern_match(r, buf)) n_stacks++;
    }
    rewind (fp);
    return n_stacks;
@@ -63,52 +42,67 @@ int read_n_stacks (FILE *fp) {
 
 /**********************************************************************/
 
-void decompose_table_line (char *line, int *n_calls, double *t_excl, double *t_incl, double *p_abs, double *p_cum,
-			   char **func_name, char **caller_name, int *stack_id) {
+// The standard table columns are | Calls | t_excl | t_incl | Function | Caller | ID |
+void decompose_table_line (char *line, int *n_calls, double *t_excl, double *t_incl,
+			   char **func_name, int *stack_id) {
    char *token;
-   token = strtok (line, " ");
+   token = strtok (line, "|");
    *n_calls = atoi(token);
-   token = strtok (NULL, " ");
+   token = strtok (NULL, "|");
    *t_excl = atof (token);
-   token = strtok (NULL, " ");
+   token = strtok (NULL, "|");
    *t_incl = atof (token);
-   token = strtok (NULL, " ");
-   *p_abs = atof (token);
-   token = strtok (NULL, " ");
-   *p_cum = atof (token);
+   // Skip all the spaces in front of the function name
+   token = strtok (NULL, "|");
    *func_name = strtok (NULL, " ");
-   *caller_name = strtok (NULL, " ");
-   token = strtok (NULL, " ");
+   // Caller name, unused in this program
+   char *caller_name = strtok (NULL, "|");
+   token = strtok (NULL, "|");
    *stack_id = atoi(token);
 }
 
 /**********************************************************************/
 
-void read_table (FILE *fp, double t[], int stack_pos[], char *func_names[],
-		 int *fmt_t, int *fmt_stackpos, int *fmt_func) {
+// Helper functions for string formatting
+int count_digits_long (long long value) {
+  if (value == 0) {
+     return 1;
+  } else {
+     int count = 0;
+     for (int c = value; c > 0; c /= 10) {
+           count++;
+     }
+     return count;
+  }
+}
+
+int count_digits_int (int value) {
+  return count_digits_long ((long long )value);
+}
+
+int count_digits_double (double value) {
+  return count_digits_long ((long long)floor(value));
+}
+
+/**********************************************************************/
+
+void read_table (FILE *fp, double t[], int stack_pos[], char *func_names[]) {
    char line[LINEBUFSIZE];
    int countdown = -1;
    int i_t = 0;
-   while (!feof(fp)) {
-      fgets (line, LINEBUFSIZE, fp);
+   while (fgets(line, LINEBUFSIZE, fp)) {
       if (countdown < 0)  {
-         if (strstr(line, "Runtime profile for rank")) countdown = 4;
+         // Do not match the "Runtime profile for application: " in the header
+         if (!strcmp(line, "Runtime profile\n")) countdown = 3;
       } else if (countdown > 0) {
          countdown--;
       } else {
+         // End of profile table. Finish parsing.
          if (strstr(line, "--------")) break;
          int n_calls, stack_id;
-         double t_excl, t_incl, p_abs, p_cum;
-         char *func_name, *caller_name;
-         decompose_table_line (line, &n_calls, &t_excl, &t_incl, &p_abs, &p_cum,
-   			    &func_name, &caller_name, &stack_id);
-   	 int n;
-	 n = strlen (func_name);
-	 if (n > *fmt_func) *fmt_func = n;
-	 n = vftr_count_digits_double (t_incl);
-	 if (n > *fmt_t) *fmt_t = n;
-	 n = vftr_count_digits_int (stack_id);
-	 if (n > *fmt_stackpos) *fmt_stackpos = n;
+         double t_excl, t_incl;
+         char *func_name;
+         decompose_table_line (line, &n_calls, &t_excl, &t_incl, &func_name, &stack_id);
          t[i_t] = t_incl;
 	 func_names[stack_id] = strdup(func_name);
          stack_pos[stack_id] = i_t;
@@ -119,6 +113,7 @@ void read_table (FILE *fp, double t[], int stack_pos[], char *func_names[],
 
 /**********************************************************************/
 
+// Store the difference of a function pair, identified by its stack ID.
 typedef struct delta {
 	double t_diff_abs;
 	double t_diff_rel;
@@ -146,11 +141,59 @@ int sort_by_relative_time (const void *a1, const void *a2) {
 
 /**********************************************************************/
 
+void display_table (int n_stacks, delta_t **deltas, double *t1, double *t2,
+                    int *stack_id_position_1, int *stack_id_position_2, char **func_names) {
+        // Determine maximal string length for table formatting
+        int smax = 0;
+        for (int i = 0; i < n_stacks; i++) {
+           int stack_id = deltas[i]->stack_id;
+           int slen = strlen(func_names[stack_id]);
+           if (slen > smax) smax = slen;
+        }
+        int nmax_t1 = strlen("T1[s]");
+        int nmax_t2 = strlen("T2[s]");
+        int nmax_tdiff = strlen("T_diff[s]");
+        int nmax_tdiff_rel = nmax_tdiff; 
+        int nmax_stack_id = strlen("stackID");
+        for (int i = 0; i < n_stacks; i++) {
+           int stack_id = deltas[i]->stack_id;
+           int i_t1 = stack_id_position_1[stack_id];
+           int i_t2 = stack_id_position_2[stack_id];
+           if (i_t1 > 0) {
+              int n = count_digits_double (t1[i_t1]) + 3;
+              if (n > nmax_t1) nmax_t1 = n;
+           }  
+           if (i_t2 > 0) {
+              int n = count_digits_double (t2[i_t2]) + 3;
+              if (n > nmax_t2) nmax_t2 = n;
+           } 
+           int ndiff = count_digits_double(deltas[i]->t_diff_abs) + 3;
+           if (ndiff > nmax_tdiff) nmax_tdiff = ndiff;
+        }
+
+
+	printf ("%*s T1[s] T2[s] T_diff[s] T_diff[%] stackID\n", smax, "Function");
+	for (int i = 0; i < n_stacks; i++) {
+		int stack_id = deltas[i]->stack_id;
+		int i_t1 = stack_id_position_1[stack_id];
+		int i_t2 = stack_id_position_2[stack_id];
+		if (i_t1 > 0 && i_t2 > 0) {
+		   printf ("%*s %*.2f %*.2f %*.2f %*.2f %*d\n", 
+                           smax, func_names[stack_id],
+                           nmax_t1, t1[i_t1], nmax_t2, t2[i_t2],
+                           nmax_tdiff, deltas[i]->t_diff_abs,
+                           nmax_tdiff_rel, deltas[i]->t_diff_rel,
+                           nmax_stack_id, stack_id);
+		}
+	}
+}
+
+/**********************************************************************/
 
 int main (int argc, char *argv[]) {
 
 	if (argc < 3) {
-		printf ("Need two arguments\n");
+		printf ("Need two Vftrace profile files to compare as input!\n");
 		return -1;
 	}
 
@@ -158,10 +201,10 @@ int main (int argc, char *argv[]) {
 	FILE *fp2 = fopen (argv[2], "r");
 
 	int n_stacks_1 = read_n_stacks (fp1);
-	int n_stacks_2 = read_n_stacks (fp2);
+        int n_stacks_2 = read_n_stacks (fp2);
 
 	if (n_stacks_1 != n_stacks_2) {
-	   printf ("Nr. of stacks do not match: %d %d\n", n_stacks_1, n_stacks_2);
+	   printf ("Nr. of stacks does not match: %d %d\n", n_stacks_1, n_stacks_2);
 	   return -1;
 	}
 
@@ -186,50 +229,28 @@ int main (int argc, char *argv[]) {
 	   deltas[i]->stack_id = -1;
 	}
 
-	int fmt_t0 = strlen ("Tx[s]");
-	int fmt_t = fmt_t0;
-        int fmt_stackpos = strlen ("stackID");
-        int fmt_func = strlen ("Function");
-	read_table (fp1, t1, stack_id_position_1, func_names_1,
-		    &fmt_t, &fmt_stackpos, &fmt_func);
-	read_table (fp2, t2, stack_id_position_2, func_names_2,
-		    &fmt_t, &fmt_stackpos, &fmt_func);
-	if (fmt_t0 + 6 > fmt_t) fmt_t += 6;
+        // In the profile table, functions with the same stack ID do not need
+        // to be on the same position. The arrays stack_id_position indicate
+        // at which position in the profile table a given stack id can be found.
+	read_table (fp1, t1, stack_id_position_1, func_names_1);
+	read_table (fp2, t2, stack_id_position_2, func_names_2);
+	
+	// Logfiles aren't needed any more.
+	fclose (fp1);
+	fclose (fp2);
 
-	int fmt_abs = strlen ("T_diff[s]");
-	int fmt_rel = strlen ("T_diff[%]");
 	for (int i = 0; i < n_stacks_1; i++) {
 	   int i1 = stack_id_position_1[i];
 	   int i2 = stack_id_position_2[i];
 	   deltas[i]->t_diff_abs = t1[i1] - t2[i2];
-	   int n = vftr_count_digits_double (deltas[i]->t_diff_abs);
-	   if (n > fmt_abs) fmt_abs = n;
 	   if (t1[i1] > 0.0) {
 	      deltas[i]->t_diff_rel = deltas[i]->t_diff_abs / t1[stack_id_position_1[i]] * 100;
-	      n = vftr_count_digits_double (deltas[i]->t_diff_rel);
-	      if (n > fmt_rel) fmt_rel = n;
 	   }
 	   deltas[i]->stack_id = i;
 	}
 
 	qsort (deltas, (size_t)n_stacks_1, sizeof(double*), sort_by_absolute_time);
-
-	printf ("%*s  %*s  %*s  %*s  %*s  %*s\n", fmt_func, "Function", fmt_t, "T1[s]",
-		fmt_t, "T2[s]", fmt_abs, "T_diff[s]", fmt_rel, "T_diff[%]", fmt_stackpos, "stackID");
-	for (int i = 0; i < n_stacks_1; i++) {
-		int stack_id = deltas[i]->stack_id;
-		int i_t1 = stack_id_position_1[stack_id];
-		int i_t2 = stack_id_position_2[stack_id];
-		if (i_t1 > 0 && i_t2 > 0) {
-	           printf ("%*s  %*.5f  %*.5f  %*.3f  %*.3f  %*d\n",
-		 	 fmt_func, func_names_1[stack_id], fmt_t, t1[i_t1], fmt_t, t2[i_t2],
-			 fmt_abs, deltas[i]->t_diff_abs, fmt_rel, deltas[i]->t_diff_rel,
-			 fmt_stackpos, stack_id);
-		}
-	}
-
-	fclose (fp1);
-	fclose (fp2);
+        display_table (n_stacks_1, deltas, t1, t2, stack_id_position_1, stack_id_position_2, func_names_1);
 
 	return 0;
 }
