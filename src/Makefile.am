@@ -77,8 +77,7 @@ libvftrace_la_SOURCES += vftrace_state.c \
 libvftrace_la_SOURCES += regular_expressions.c \
 			 environment.c \
 			 elf_reader.c \
-			 symbols.c \
-			 dlopen.c
+			 symbols.c
 libvftrace_la_SOURCES += search.c \
 			 misc_utils.c \
 			 range_expand.c \
