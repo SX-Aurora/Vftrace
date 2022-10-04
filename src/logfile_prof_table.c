@@ -200,6 +200,7 @@ void vftr_write_logfile_profile_table(FILE *fp, collated_stacktree_t stacktree,
    char **caller_names = vftr_logfile_prof_table_stack_caller_name_list(stacktree, sorted_stacks);
    vftr_table_add_column(&table, col_string, "Caller", "%s", 'c', 'r', (void*) caller_names);
 
+#ifdef _CUPTI
    printf ("Add GPU: \n");
    fflush(stdout);
    float *t_gpu_compute = vftr_logfile_prof_table_stack_cupti_time_list (stacktree.nstacks, sorted_stacks);
@@ -210,6 +211,7 @@ void vftr_write_logfile_profile_table(FILE *fp, collated_stacktree_t stacktree,
    printf ("\n");
    vftr_table_add_column(&table, col_string, "tgpu", "%.2f", 'c', 'r', (void*)t_gpu_compute);
    printf ("Table added!\n");
+#endif
 
    int *stack_IDs = vftr_logfile_prof_table_stack_stackID_list(stacktree.nstacks, sorted_stacks);
    vftr_table_add_column(&table, col_int, "ID", "%d", 'c', 'r', (void*) stack_IDs);
