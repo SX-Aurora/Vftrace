@@ -172,7 +172,7 @@ unsigned long long vftr_sizeof_mpiprofile_t(mpiprofile_t mpiprof) {
 
 #ifdef _CUPTI
 unsigned long long vftr_sizeof_cuptiprofile_t(cuptiprofile_t cuptiprof) {
-   return sizeof(cuptiprofile_t*);
+   return sizeof(cuptiprofile_t);
 }
 #endif
 
