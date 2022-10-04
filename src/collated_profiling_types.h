@@ -15,7 +15,7 @@ typedef struct {
    mpiprofile_t mpiprof;
 #endif
 #ifdef _CUPTI
-   cuptiprofile_t *cuptiprof;
+   cuptiprofile_t cuptiprof;
 #endif
 } collated_profile_t;
 
