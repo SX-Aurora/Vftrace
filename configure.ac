@@ -44,6 +44,9 @@ AX_ENABLE_MPI
 # Check OMP
 AX_ENABLE_OPENMP
 
+# Check CUPTI GPU profiling interface
+AX_ENABLE_CUPTI
+
 # Enable hardware counters
 AX_ENABLE_HWC
 
@@ -74,6 +77,7 @@ AC_CONFIG_FILES([src/mpi/f-wrapper/Makefile])
 AC_CONFIG_FILES([src/mpi/f082vftr/Makefile])
 AC_CONFIG_FILES([src/mpi/f08-wrapper/Makefile])
 AC_CONFIG_FILES([src/omp/Makefile])
+AC_CONFIG_FILES([src/cupti/Makefile])
 AC_CONFIG_FILES([tools/Makefile])
 AC_CONFIG_FILES([tools/self_profiling_analyzer/Makefile])
 AC_CONFIG_FILES([hw_scenarios/Makefile])

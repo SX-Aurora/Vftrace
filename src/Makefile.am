@@ -41,6 +41,11 @@ SUBDIRS += omp
 libvftrace_la_LIBADD += omp/libvftr_omp.la
 endif
 
+if ENABLE_CUPTI
+SUBDIRS += cupti
+libvftrace_la_LIBADD += cupti/libvftr_cupti.la
+endif
+
 libvftrace_la_SOURCES = 
 
 libvftrace_la_CPPFLAGS = -D_VERSION=${PACKAGE_VERSION} \
@@ -103,6 +108,7 @@ endif
 
 libvftrace_la_CFLAGS += -I${srcdir}/mpi/utils/ \
 			-I${srcdir}/omp/ \
+                        -I${srcdir}/cupti/ \
 			-I${srcdir}/sorting \
 			${external_includes}
 
@@ -124,6 +130,11 @@ endif
 if ENABLE_OMP
 libvftrace_la_CFLAGS += -D_OMP
 libvftrace_la_FCFLAGS += -D_OMP
+endif
+
+if ENABLE_CUPTI
+libvftrace_la_CFLAGS += -D_CUPTI
+libvftrace_la_LDFLAGS += -L/usr/local/cuda-11.2/lib64 -lcupti -lcudart
 endif
 
 if HAS_LIBERTY

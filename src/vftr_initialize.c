@@ -4,6 +4,10 @@
 #include "start_tool.h"
 #endif
 
+#ifdef _CUPTI
+#include "cupti.h"
+#endif
+
 #include "self_profile.h"
 #include "timer.h"
 #include "off_hooks.h"
@@ -72,6 +76,10 @@ void vftr_initialize(void *func, void *call_site) {
 #ifdef _OMP
       // omp callback symbols
       (void) ompt_start_tool(0, NULL);
+#endif
+
+#ifdef _CUPTI
+      (void) cupti_initialize();
 #endif
 
       // set the finalize function to be executed at the termination of the program

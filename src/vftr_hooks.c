@@ -33,6 +33,9 @@
 #ifdef _MPI
 #include "requests.h"
 #endif
+#ifdef _CUPTI
+#include "hook_interface.h"
+#endif
 
 void vftr_function_entry(void *func, void *call_site) {
    SELF_PROFILE_START_FUNCTION;
@@ -53,6 +56,11 @@ void vftr_function_entry(void *func, void *call_site) {
    //       thread is created with _init as lowest stacklist entry
    stack_t *my_stack = vftrace.process.stacktree.stacks+my_threadstack->stackID;
    profile_t *my_profile = vftr_get_my_profile(my_stack, my_thread);
+
+#ifdef _CUPTI
+   vftr_accumulate_cupti_events (my_profile);
+#endif
+
 
    // cast and store function address once, as it is needed multiple times
    uintptr_t func_addr = (uintptr_t) func;

@@ -28,6 +28,17 @@ int *vftr_logfile_prof_table_stack_calls_list(int nstacks, collated_stack_t **st
    return calls_list;
 }
 
+float *vftr_logfile_prof_table_stack_cupti_time_list (int nstacks, collated_stack_t **stack_ptrs) {
+   float *tcompute_list = (float*)malloc(nstacks*sizeof(float));
+   
+   for (int istack = 0; istack < nstacks; istack++) {
+      collated_stack_t *stack_ptr = stack_ptrs[istack];
+      //tcompute_list[istack] = stack_ptr->profile.cuptiprof.t_compute;
+      tcompute_list[istack] = 0;
+   }
+   return tcompute_list;
+}
+
 double *vftr_logfile_prof_table_stack_inclusive_time_list(int nstacks, collated_stack_t **stack_ptrs) {
    double *inclusive_time_list = (double*) malloc(nstacks*sizeof(double));
 
@@ -142,6 +153,14 @@ char **vftr_logfile_prof_table_callpath_list(int nstacks, collated_stack_t **sta
    return path_list;
 }
 
+void vftr_foo (collated_stacktree_t stacktree) {
+   int nstacks = stacktree.nstacks;
+   printf ("Where is stacktree: 0x%lx, 0x%lx\n", &stacktree, &stacktree.stacks[0]);
+   for (int istack=0; istack<nstacks; istack++) {
+      printf ("FOO %d: %d 0x%lx\n", istack, stacktree.stacks[istack].caller, &stacktree.stacks[istack].caller);
+   }
+}
+
 void vftr_write_logfile_profile_table(FILE *fp, collated_stacktree_t stacktree,
                                       environment_t environment) {
    SELF_PROFILE_START_FUNCTION;
@@ -180,6 +199,17 @@ void vftr_write_logfile_profile_table(FILE *fp, collated_stacktree_t stacktree,
 
    char **caller_names = vftr_logfile_prof_table_stack_caller_name_list(stacktree, sorted_stacks);
    vftr_table_add_column(&table, col_string, "Caller", "%s", 'c', 'r', (void*) caller_names);
+
+   printf ("Add GPU: \n");
+   fflush(stdout);
+   float *t_gpu_compute = vftr_logfile_prof_table_stack_cupti_time_list (stacktree.nstacks, sorted_stacks);
+   printf ("t_compute: %d\n", stacktree.nstacks);
+   for (int i = 0; i < stacktree.nstacks; i++) {
+      printf ("%f ", t_gpu_compute[i]);
+   }
+   printf ("\n");
+   vftr_table_add_column(&table, col_string, "tgpu", "%.2f", 'c', 'r', (void*)t_gpu_compute);
+   printf ("Table added!\n");
 
    int *stack_IDs = vftr_logfile_prof_table_stack_stackID_list(stacktree.nstacks, sorted_stacks);
    vftr_table_add_column(&table, col_int, "ID", "%d", 'c', 'r', (void*) stack_IDs);

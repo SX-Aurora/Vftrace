@@ -40,7 +40,7 @@ collated_stacktree_t vftr_new_collated_stacktree(hashlist_t hashlist) {
       coll_stacktree.stacks[istack].caller = -1;
       coll_stacktree.stacks[istack].name = NULL;
       coll_stacktree.stacks[istack].hash = hashlist.hashes[istack];
-      coll_stacktree.stacks[istack].profile = vftr_new_collated_profile(0);
+      coll_stacktree.stacks[istack].profile = vftr_new_collated_profile();
    }
    SELF_PROFILE_END_FUNCTION;
    return coll_stacktree;

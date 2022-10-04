@@ -5,12 +5,18 @@
 #ifdef _MPI
 #include "mpiprofiling_types.h"
 #endif
+#ifdef _CUPTI
+#include "cuptiprofiling_types.h"
+#endif
 
 typedef struct {
    int threadID;
    callprofile_t callprof;
 #ifdef _MPI
    mpiprofile_t mpiprof;
+#endif
+#ifdef _CUPTI
+   cuptiprofile_t cuptiprof;
 #endif
 } profile_t;
 
