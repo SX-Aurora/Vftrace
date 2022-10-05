@@ -4,27 +4,22 @@ AC_DEFUN([AX_ENABLE_CUPTI], [
    AC_ARG_WITH([cupti],
                [AC_HELP_STRING([--with-cupti=DIR],
                                [CUPTI installation directory. Enables CUDA or OpenCL profiling.])],
-               [
-               if test "x$with_cupti" = "xyes" ; then
-                  if test -z "$with_cupti_lib" ; then
-                     LDFLAGS="-lcupti $LDFLAGS"
-                  fi
-               else
-                  if test -z "$with_cupti_inc" ; then
-                     CFLAGS="-I$withval/include $CPPFLAGS"
-                  fi
-                  if test -z "$with_cupti_lib" ; then
-                     LDFLAGS="-L$withval/lib64 -lcupti $LDFLAGS"
-                  fi
-               fi
-               enable_cupti=yes
-               ],
-               [
-               if test -z "$with_cupti_inc" -a -z "$with_cupti_lib" ; then
-                  enable_cupti=no
-               fi])
+
+	       [with_cupti_present="yes"],
+	       [with_cupti_present="no"]
+   )
   
-   AM_CONDITIONAL([ENABLE_CUPTI], [test "$enable_cupti" = "yes"])
+   AC_MSG_CHECKING([whether Cupti is supported])
+   AM_CONDITIONAL([ENABLE_CUPTI], [test "$with_cupti_present" = "yes"])
+   AC_MSG_RESULT(${with_cupti_present})
+   AM_COND_IF([ENABLE_CUPTI],
+      [AX_APPEND_FLAG([-L${with_cupti}/lib64], [LDFLAGS])])
+   AM_COND_IF([ENABLE_CUPTI],
+       [AX_APPEND_FLAG([-lcupti], [LDFLAGS])])
+   AM_COND_IF([ENABLE_CUPTI],
+       [AX_APPEND_FLAG([-I${with_cupti}/include], [CFLAGS])])
+   AM_COND_IF([ENABLE_CUPTI],
+       [AX_APPEND_FLAG([-I${with_cupti}/include], [CPPFLAGS])])
    AM_COND_IF([ENABLE_CUPTI],
       [AC_CHECK_LIB([cupti],
           [cuptiSubscribe], ,
