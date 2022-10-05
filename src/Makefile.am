@@ -134,7 +134,6 @@ endif
 
 if ENABLE_CUPTI
 libvftrace_la_CFLAGS += -D_CUPTI
-libvftrace_la_LDFLAGS += -L/usr/local/cuda-11.2/lib64 -lcupti -lcudart
 endif
 
 if HAS_LIBERTY

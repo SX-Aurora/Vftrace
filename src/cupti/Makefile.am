@@ -10,6 +10,3 @@ libvftr_cupti_la_SOURCES += initialize.c \
                             collate_cuptiprofiles.c
 
 libvftr_cupti_la_CFLAGS = -I${srcdir}/../ -D_CUPTI
-
-libvftr_cupti_la_LDFLAGS = -L/usr/local/cuda-11.2/lib64 -lcupti -lcudart
-

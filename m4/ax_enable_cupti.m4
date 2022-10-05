@@ -27,4 +27,8 @@ AC_DEFUN([AX_ENABLE_CUPTI], [
    AM_COND_IF([ENABLE_CUPTI],
       [AC_CHECK_HEADER([cupti.h], ,
           [AC_MSG_FAILURE([unable to find CUPTI headers])])])
+   AM_COND_IF([ENABLE_CUPTI],
+      [AC_CHECK_LIB([cudart],
+          [cudaGetDeviceCount], ,
+          [AC_MSG_FAILURE([unable to find CudaRT library])])])
 ])
