@@ -400,8 +400,7 @@ void vftr_has_control_character (char *s, int *pos, int *char_num) {
 }
 
 char *vftr_demangle_cxx(char *name) {
-   //char *demangled_name = cplus_demangle(name, 0);
-   char *demangled_name = NULL;
+   char *demangled_name = cplus_demangle(name, 0);
 
    if (demangled_name == NULL) {
       // Not a C++ symbol
