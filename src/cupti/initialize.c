@@ -12,19 +12,18 @@ int cupti_initialize () {
   ce = cudaGetDeviceCount(&n_devices);
   if (ce != cudaSuccess) {
       vftrace.cupti_state.n_devices = 0;
+      vftrace.cupti_state.event_buffer = NULL;
       return -1;
-  }
-
-  cupti_state_t cupti_state;
-  cupti_state.n_devices = n_devices;
-  cupti_state.event_buffer = NULL;
+  } else {
+      vftrace.cupti_state.n_devices = n_devices;
+      vftrace.cupti_state.event_buffer = NULL;
 
   
-  CUpti_SubscriberHandle subscriber; 
-  ce = cuptiSubscribe(&subscriber, (CUpti_CallbackFunc)cupti_event_callback, cupti_state.event_buffer);
-  printf ("Subscribe: %d\n", ce == cudaSuccess);
-  ce = cuptiEnableDomain(1, subscriber, CUPTI_CB_DOMAIN_RUNTIME_API);
-  printf ("Enabled: %d\n", ce == cudaSuccess);
-  vftrace.cupti_state = cupti_state;
-  return 0;
+      CUpti_SubscriberHandle subscriber; 
+      ce = cuptiSubscribe(&subscriber, 
+                          (CUpti_CallbackFunc)cupti_event_callback,
+                          vftrace.cupti_state.event_buffer);
+      ce = cuptiEnableDomain(1, subscriber, CUPTI_CB_DOMAIN_RUNTIME_API);
+      return 0;
+  }
 }

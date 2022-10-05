@@ -153,14 +153,6 @@ char **vftr_logfile_prof_table_callpath_list(int nstacks, collated_stack_t **sta
    return path_list;
 }
 
-void vftr_foo (collated_stacktree_t stacktree) {
-   int nstacks = stacktree.nstacks;
-   printf ("Where is stacktree: 0x%lx, 0x%lx\n", &stacktree, &stacktree.stacks[0]);
-   for (int istack=0; istack<nstacks; istack++) {
-      printf ("FOO %d: %d 0x%lx\n", istack, stacktree.stacks[istack].caller, &stacktree.stacks[istack].caller);
-   }
-}
-
 void vftr_write_logfile_profile_table(FILE *fp, collated_stacktree_t stacktree,
                                       environment_t environment) {
    SELF_PROFILE_START_FUNCTION;
@@ -201,16 +193,10 @@ void vftr_write_logfile_profile_table(FILE *fp, collated_stacktree_t stacktree,
    vftr_table_add_column(&table, col_string, "Caller", "%s", 'c', 'r', (void*) caller_names);
 
 #ifdef _CUPTI
-   printf ("Add GPU: \n");
-   fflush(stdout);
-   float *t_gpu_compute = vftr_logfile_prof_table_stack_cupti_time_list (stacktree.nstacks, sorted_stacks);
-   printf ("t_compute: %d\n", stacktree.nstacks);
-   for (int i = 0; i < stacktree.nstacks; i++) {
-      printf ("%f ", t_gpu_compute[i]);
+   if (vftrace.cupti_state.n_devices > 0) {
+      float *t_gpu_compute = vftr_logfile_prof_table_stack_cupti_time_list (stacktree.nstacks, sorted_stacks);
+      vftr_table_add_column(&table, col_string, "tgpu", "%.2f", 'c', 'r', (void*)t_gpu_compute);
    }
-   printf ("\n");
-   vftr_table_add_column(&table, col_string, "tgpu", "%.2f", 'c', 'r', (void*)t_gpu_compute);
-   printf ("Table added!\n");
 #endif
 
    int *stack_IDs = vftr_logfile_prof_table_stack_stackID_list(stacktree.nstacks, sorted_stacks);

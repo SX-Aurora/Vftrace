@@ -6,7 +6,6 @@
 
 typedef struct {
    int n_devices;
-   //CUpti_SubscriberHandle subscriber;
    cupti_event_list_t *event_buffer;
 } cupti_state_t;
 #endif
