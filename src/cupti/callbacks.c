@@ -45,8 +45,7 @@ void CUPTIAPI cupti_event_callback (void *userdata, CUpti_CallbackDomain domain,
       cudaEventSynchronize(cuptiprof->stop);
       float t;
       cudaEventElapsedTime(&t, cuptiprof->start, cuptiprof->stop);
-      int type = (cbid == CUPTI_RUNTIME_TRACE_CBID_cudaMemcpy_v3020
-               || cbid == CUPTI_RUNTIME_TRACE_CBID_cudaMemcpyAsync_v3020) ? T_CUDA_MEMCP : T_CUDA_COMP;
+
       if (cuptiprof->events == NULL) {
           cuptiprof->events = new_cupti_event (use_fun, cbid, t, 0);
       } else {

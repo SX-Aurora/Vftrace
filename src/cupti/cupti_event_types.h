@@ -5,7 +5,6 @@
 #include <cuda_runtime_api.h>
 
 typedef struct cupti_event_list_st {
-   int stack_id;
    char *func_name;
    int cbid;
    int n_calls;
@@ -14,6 +13,6 @@ typedef struct cupti_event_list_st {
    struct cupti_event_list_st *next;
 } cupti_event_list_t;
 
-enum {T_CUDA_COMP, T_CUDA_MEMCP};
+enum {T_CUPTI_COMP, T_CUPTI_MEMCP, T_CUPTI_OTHER};
 
 #endif
