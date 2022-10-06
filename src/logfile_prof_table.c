@@ -28,17 +28,6 @@ int *vftr_logfile_prof_table_stack_calls_list(int nstacks, collated_stack_t **st
    return calls_list;
 }
 
-float *vftr_logfile_prof_table_stack_cupti_time_list (int nstacks, collated_stack_t **stack_ptrs) {
-   float *tcompute_list = (float*)malloc(nstacks*sizeof(float));
-   
-   for (int istack = 0; istack < nstacks; istack++) {
-      collated_stack_t *stack_ptr = stack_ptrs[istack];
-      //tcompute_list[istack] = stack_ptr->profile.cuptiprof.t_compute;
-      tcompute_list[istack] = 0;
-   }
-   return tcompute_list;
-}
-
 double *vftr_logfile_prof_table_stack_inclusive_time_list(int nstacks, collated_stack_t **stack_ptrs) {
    double *inclusive_time_list = (double*) malloc(nstacks*sizeof(double));
 
@@ -153,6 +142,15 @@ char **vftr_logfile_prof_table_callpath_list(int nstacks, collated_stack_t **sta
    return path_list;
 }
 
+float *vftr_logfile_prof_table_stack_cupti_time_list (int nstacks, collated_stack_t **stack_ptrs) {
+   float *tcompute_list = (float*)malloc(nstacks*sizeof(float));
+   for (int istack = 0; istack < nstacks; istack++) {
+      collated_stack_t *stack_ptr = stack_ptrs[istack];
+      tcompute_list[istack] = stack_ptr->profile.cuptiprof.t_compute;
+   }
+   return tcompute_list;
+}
+
 void vftr_write_logfile_profile_table(FILE *fp, collated_stacktree_t stacktree,
                                       environment_t environment) {
    SELF_PROFILE_START_FUNCTION;
@@ -195,7 +193,7 @@ void vftr_write_logfile_profile_table(FILE *fp, collated_stacktree_t stacktree,
 #ifdef _CUPTI
    if (vftrace.cupti_state.n_devices > 0) {
       float *t_gpu_compute = vftr_logfile_prof_table_stack_cupti_time_list (stacktree.nstacks, sorted_stacks);
-      vftr_table_add_column(&table, col_string, "tgpu", "%.2f", 'c', 'r', (void*)t_gpu_compute);
+      vftr_table_add_column(&table, col_float, "tgpu", "%.2f", 'c', 'r', (void*)t_gpu_compute);
    }
 #endif
 

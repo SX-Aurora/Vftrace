@@ -142,6 +142,18 @@ char **vftr_ranklogfile_prof_table_callpath_list(int nstacks, stack_t **stack_pt
    return path_list;
 }
 
+float *vftr_ranklogfile_prof_table_stack_cupti_time_list (int nstacks, stack_t **stack_ptrs) {
+   float *tcompute_list = (float*)malloc(nstacks*sizeof(float));
+   for (int istack = 0; istack < nstacks; istack++) {
+      stack_t *stack_ptr = stack_ptrs[istack];
+      for (int iprof = 0; iprof < stack_ptr->profiling.nprofiles; iprof++) {
+         profile_t *prof_ptr = stack_ptr->profiling.profiles + iprof;
+         tcompute_list[istack] = prof_ptr->cuptiprof.t_compute;
+      }
+   }
+   return tcompute_list;
+}
+
 void vftr_write_ranklogfile_profile_table(FILE *fp, stacktree_t stacktree,
                                       environment_t environment) {
    SELF_PROFILE_START_FUNCTION;
@@ -170,6 +182,13 @@ void vftr_write_ranklogfile_profile_table(FILE *fp, stacktree_t stacktree,
 
    char **caller_names = vftr_ranklogfile_prof_table_stack_caller_name_list(stacktree, sorted_stacks);
    vftr_table_add_column(&table, col_string, "Caller", "%s", 'c', 'r', (void*) caller_names);
+
+#ifdef _CUPTI
+   if (vftrace.cupti_state.n_devices > 0) {
+      float *t_gpu_compute = vftr_ranklogfile_prof_table_stack_cupti_time_list (stacktree.nstacks, sorted_stacks);
+      vftr_table_add_column(&table, col_float, "tgpu", "%.2f", 'c', 'r', (void*)t_gpu_compute);
+   }
+#endif
 
    int *stack_IDs = vftr_ranklogfile_prof_table_stack_stackID_list(stacktree.nstacks, sorted_stacks);
    vftr_table_add_column(&table, col_int, "ID", "%d", 'c', 'r', (void*) stack_IDs);
