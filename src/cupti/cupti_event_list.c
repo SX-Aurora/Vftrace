@@ -21,16 +21,23 @@ void acc_cupti_event (cupti_event_list_t *event, float t_ms, uint64_t memcpy_byt
    event->memcpy_bytes += memcpy_bytes;
 }
 
-bool cupti_event_is_compute (cupti_event_list_t *event) {
-   return event->cbid == CUPTI_RUNTIME_TRACE_CBID_cudaLaunch_v3020
-       || event->cbid == CUPTI_RUNTIME_TRACE_CBID_cudaLaunchKernel_v7000;
+bool cupti_event_belongs_to_class (cupti_event_list_t *event, int cbid_class) {
+   bool is_compute =  event->cbid == CUPTI_RUNTIME_TRACE_CBID_cudaLaunch_v3020
+                   || event->cbid == CUPTI_RUNTIME_TRACE_CBID_cudaLaunchKernel_v7000;
+   bool is_memcpy = event->cbid == CUPTI_RUNTIME_TRACE_CBID_cudaMemcpy_v3020
+                 || event->cbid == CUPTI_RUNTIME_TRACE_CBID_cudaMemcpyAsync_v3020;
+   bool is_other = !is_compute && !is_memcpy;
+
+   switch (cbid_class) {
+      case T_CUPTI_COMP:
+         return is_compute;
+      case T_CUPTI_MEMCP:
+         return is_memcpy;
+      case T_CUPTI_OTHER:
+         return is_other;
+      default:
+         return false; 
+   }
 }
 
-bool cupti_event_is_memcpy (cupti_event_list_t *event) {
-   return event->cbid == CUPTI_RUNTIME_TRACE_CBID_cudaMemcpy_v3020
-       || event->cbid == CUPTI_RUNTIME_TRACE_CBID_cudaMemcpyAsync_v3020;
-}
 
-bool cupti_event_is_other (cupti_event_list_t *event) {
-   return !cupti_event_is_compute(event) && !cupti_event_is_memcpy(event);
-}

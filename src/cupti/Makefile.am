@@ -4,7 +4,7 @@ libvftr_cupti_la_SOURCES =
 
 libvftr_cupti_la_SOURCES += initialize.c \
                             callbacks.c \
-                            cupti_events.c \
+                            cupti_event_list.c \
                             cuptiprofiling.c \
                             collate_cuptiprofiles.c \
 			    gpu_info.c

@@ -19,7 +19,8 @@
 #include "sorting.h"
 
 #ifdef _CUPTI
-#include "cupti_events.h"
+#include "cupti_event_types.h"
+#include "cupti_event_list.h"
 #endif
 
 int *vftr_logfile_prof_table_stack_calls_list(int nstacks, collated_stack_t **stack_ptrs) {

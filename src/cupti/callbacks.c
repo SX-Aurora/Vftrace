@@ -11,7 +11,7 @@
 #include "threadstacks.h"
 #include "profiling.h"
 
-#include "cupti_events.h"
+#include "cupti_event_list.h"
 
 #define CUPTI_RUNTIME_TRACE_CBID_cudaLaunch_v3020 13
 #define CUPTI_RUNTIME_TRACE_CBID_cudaLaunchKernel_v7000 211
