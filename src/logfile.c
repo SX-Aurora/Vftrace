@@ -14,6 +14,9 @@
 #include "logfile_stacklist.h"
 #include "search.h"
 #include "range_expand.h"
+#ifdef _CUPTI
+#include "gpu_info.h"
+#endif
 
 char *vftr_get_logfile_name(environment_t environment) {
    char *filename_base = vftr_create_filename_base(environment, -1, 1);
@@ -58,6 +61,10 @@ void vftr_write_logfile(vftrace_t vftrace, long long runtime) {
 
    vftr_write_logfile_summary(fp, vftrace.process,
                               vftrace.size, runtime);
+
+#ifdef _CUPTI
+   vftr_write_gpu_info (fp, vftrace.cupti_state.n_devices);
+#endif
 
    vftr_write_logfile_profile_table(fp, vftrace.process.collated_stacktree,
                                     vftrace.environment);

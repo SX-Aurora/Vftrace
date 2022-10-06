@@ -4,7 +4,6 @@
 #include <stdint.h>
 
 typedef struct {
-   //char *cupti_object_name;
    int n_calls;
    float t_compute;
    float t_memcpy;

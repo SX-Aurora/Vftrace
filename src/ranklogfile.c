@@ -14,6 +14,10 @@
 #include "logfile_stacklist.h"
 #include "search.h"
 #include "range_expand.h"
+#ifdef _CUPTI
+#include "gpu_info.h"
+#endif
+
 
 static bool vftr_rank_needs_ranklogfile(environment_t environment, int rank) {
    char *rangestr = environment.logfile_for_ranks.value.string_val;
@@ -78,6 +82,10 @@ void vftr_write_ranklogfile(vftrace_t vftrace, long long runtime) {
 
    vftr_write_ranklogfile_summary(fp, vftrace.process,
                                   vftrace.size, runtime);
+
+#ifdef _CUPTI
+   vftr_write_gpu_info (fp, vftrace.cupti_state.n_devices);
+#endif
 
    vftr_write_ranklogfile_profile_table(fp, vftrace.process.stacktree,
                                         vftrace.environment);
