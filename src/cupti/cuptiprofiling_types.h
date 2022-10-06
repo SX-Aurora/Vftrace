@@ -2,11 +2,13 @@
 #define CUPTIPROFILING_TYPES_H
 
 #include <stdint.h>
+#include <cuda_runtime_api.h>
+
+#include "cupti_event_types.h"
 
 typedef struct {
-   int n_calls;
-   float t_compute;
-   float t_memcpy;
-   uint64_t copied_bytes;  
+   cupti_event_list_t *events;
+   cudaEvent_t start;
+   cudaEvent_t stop;
 } cuptiprofile_t;
 #endif

@@ -33,9 +33,6 @@
 #ifdef _MPI
 #include "requests.h"
 #endif
-#ifdef _CUPTI
-#include "hook_interface.h"
-#endif
 
 void vftr_function_entry(void *func, void *call_site) {
    SELF_PROFILE_START_FUNCTION;
@@ -58,7 +55,6 @@ void vftr_function_entry(void *func, void *call_site) {
    profile_t *my_profile = vftr_get_my_profile(my_stack, my_thread);
 
 #ifdef _CUPTI
-   vftr_accumulate_cupti_events (my_profile);
 #endif
 
 

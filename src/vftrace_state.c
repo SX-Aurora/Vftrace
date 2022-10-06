@@ -76,7 +76,6 @@ vftrace_t vftrace = {
 #ifdef _CUPTI
    .cupti_state = {
       .n_devices = 0,
-      .event_buffer = NULL,
    },
 #endif
 #ifdef _MPI

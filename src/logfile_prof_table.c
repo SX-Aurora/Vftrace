@@ -18,6 +18,10 @@
 #include "tables.h"
 #include "sorting.h"
 
+#ifdef _CUPTI
+#include "cupti_events.h"
+#endif
+
 int *vftr_logfile_prof_table_stack_calls_list(int nstacks, collated_stack_t **stack_ptrs) {
    int *calls_list = (int*) malloc(nstacks*sizeof(int));
 
@@ -142,14 +146,21 @@ char **vftr_logfile_prof_table_callpath_list(int nstacks, collated_stack_t **sta
    return path_list;
 }
 
+#ifdef _CUPTI
 float *vftr_logfile_prof_table_stack_cupti_time_list (int nstacks, collated_stack_t **stack_ptrs) {
    float *tcompute_list = (float*)malloc(nstacks*sizeof(float));
    for (int istack = 0; istack < nstacks; istack++) {
       collated_stack_t *stack_ptr = stack_ptrs[istack];
-      tcompute_list[istack] = stack_ptr->profile.cuptiprof.t_compute;
+      cupti_event_list_t *events = stack_ptr->profile.cuptiprof.events;
+      tcompute_list[istack] = 0;
+      while (events != NULL) {
+         if (cupti_event_is_compute(events)) tcompute_list[istack] += events->t_ms / 1000;
+         events = events->next;
+      }
    }
    return tcompute_list;
 }
+#endif
 
 void vftr_write_logfile_profile_table(FILE *fp, collated_stacktree_t stacktree,
                                       environment_t environment) {
