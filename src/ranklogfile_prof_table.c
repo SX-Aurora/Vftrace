@@ -201,6 +201,10 @@ void vftr_write_ranklogfile_profile_table(FILE *fp, stacktree_t stacktree,
 
       float *t_gpu_memcpy = vftr_ranklogfile_prof_table_stack_cupti_time_list (stacktree.nstacks, sorted_stacks, T_CUPTI_MEMCP);
       vftr_table_add_column(&table, col_float, "tmem", "%.2f", 'c', 'r', (void*)t_gpu_memcpy);
+
+      float *t_gpu_other = vftr_ranklogfile_prof_table_stack_cupti_time_list (stacktree.nstacks, sorted_stacks, T_CUPTI_OTHER);
+      vftr_table_add_column(&table, col_float, "tother", "%.2f", 'c', 'r', (void*)t_gpu_other);
+
    }
 #endif
 
