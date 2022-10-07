@@ -1,5 +1,5 @@
 #include <cuda_runtime_api.h>
-#include <cupti_runtime_cbid.h>
+#include <cupti.h>
 
 #include "thread_types.h"
 #include "threadstack_types.h"
@@ -12,6 +12,26 @@
 #include "profiling.h"
 
 #include "cupti_event_list.h"
+
+void get_memory_info (CUpti_CallbackId cbid, const CUpti_CallbackData *cb_info,
+                    int *mem_dir, size_t *copied_bytes) {
+
+   if (cbid != CUPTI_RUNTIME_TRACE_CBID_cudaMemcpy_v3020 &&
+       cbid != CUPTI_RUNTIME_TRACE_CBID_cudaMemcpyAsync_v3020) {
+          *mem_dir = CUPTI_NOCOPY;
+          *copied_bytes = 0;
+   } else {
+      enum cudaMemcpyKind kind;
+      if (cbid == CUPTI_RUNTIME_TRACE_CBID_cudaMemcpy_v3020) {
+         *copied_bytes = (size_t)((cudaMemcpy_v3020_params*)(cb_info->functionParams))->count;
+         kind = ((cudaMemcpy_v3020_params*)(cb_info->functionParams))->kind;
+      } else {
+         *copied_bytes = (size_t)((cudaMemcpyAsync_v3020_params*)(cb_info->functionParams))->count;
+         kind = ((cudaMemcpyAsync_v3020_params*)(cb_info->functionParams))->kind;
+      }
+      *mem_dir = kind == cudaMemcpyHostToDevice ? CUPTI_COPY_IN : CUPTI_COPY_OUT;
+   }
+}
 
 void CUPTIAPI cupti_event_callback (void *userdata, CUpti_CallbackDomain domain,
                                     CUpti_CallbackId cbid, const CUpti_CallbackData *cb_info) {
@@ -43,17 +63,21 @@ void CUPTIAPI cupti_event_callback (void *userdata, CUpti_CallbackDomain domain,
          func_name = cb_info->functionName;
       }
 
+      int mem_dir;
+      size_t copied_bytes;
+      get_memory_info (cbid, cb_info, &mem_dir, &copied_bytes);
+
       if (cuptiprof->events == NULL) {
-          cuptiprof->events = new_cupti_event (func_name, cbid, t, 0);
+          cuptiprof->events = new_cupti_event (func_name, cbid, t, mem_dir, copied_bytes);
       } else {
           cupti_event_list_t *this_event = cuptiprof->events;
           while (this_event->next != NULL && strcmp(this_event->func_name, func_name)) {
               this_event = this_event->next; 
           }
           if (this_event == NULL) {
-              this_event = new_cupti_event (func_name, cbid, t, 0);
+              this_event = new_cupti_event (func_name, cbid, t, mem_dir, copied_bytes);
           } else {
-              acc_cupti_event (this_event, t, 0);
+              acc_cupti_event (this_event, t, mem_dir, copied_bytes);
           }
       }
    }

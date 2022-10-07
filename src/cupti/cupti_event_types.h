@@ -9,10 +9,11 @@ typedef struct cupti_event_list_st {
    int cbid;
    int n_calls;
    float t_ms;
-   uint64_t memcpy_bytes; 
+   size_t memcpy_bytes[2];
    struct cupti_event_list_st *next;
 } cupti_event_list_t;
 
 enum {T_CUPTI_COMP, T_CUPTI_MEMCP, T_CUPTI_OTHER};
+enum {CUPTI_NOCOPY=-1,CUPTI_COPY_IN=0, CUPTI_COPY_OUT=1};
 
 #endif
