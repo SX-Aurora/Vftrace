@@ -19,7 +19,6 @@
 #include "sorting.h"
 
 #ifdef _CUPTI
-#include "cupti_event_types.h"
 #include "cupti_event_list.h"
 #endif
 
@@ -148,14 +147,14 @@ char **vftr_logfile_prof_table_callpath_list(int nstacks, collated_stack_t **sta
 }
 
 #ifdef _CUPTI
-float *vftr_logfile_prof_table_stack_cupti_time_list (int nstacks, collated_stack_t **stack_ptrs, int cbid_class) {
+float *vftr_logfile_prof_table_stack_cupti_time_list (int nstacks, collated_stack_t **stack_ptrs) {
    float *t_list = (float*)malloc(nstacks*sizeof(float));
    for (int istack = 0; istack < nstacks; istack++) {
       collated_stack_t *stack_ptr = stack_ptrs[istack];
       cupti_event_list_t *events = stack_ptr->profile.cuptiprof.events;
       t_list[istack] = 0;
       while (events != NULL) {
-         if (vftr_cupti_event_belongs_to_class (events, cbid_class)) t_list[istack] += events->t_ms / 1000;
+         t_list[istack] += events->t_ms / 1000;
          events = events->next;
       }
    }
@@ -206,14 +205,8 @@ void vftr_write_logfile_profile_table(FILE *fp, collated_stacktree_t stacktree,
 
 #ifdef _CUPTI
    if (vftrace.cupti_state.n_devices > 0) {
-      float *t_gpu_compute = vftr_logfile_prof_table_stack_cupti_time_list (stacktree.nstacks, sorted_stacks, T_CUPTI_COMP);
-      vftr_table_add_column(&table, col_float, "tgpu", "%.2f", 'c', 'r', (void*)t_gpu_compute);
-
-      float *t_gpu_memcpy = vftr_logfile_prof_table_stack_cupti_time_list (stacktree.nstacks, sorted_stacks, T_CUPTI_MEMCP);
-      vftr_table_add_column(&table, col_float, "tmem", "%.2f", 'c', 'r', (void*)t_gpu_memcpy);
-
-      float *t_gpu_other = vftr_logfile_prof_table_stack_cupti_time_list (stacktree.nstacks, sorted_stacks, T_CUPTI_OTHER);
-      vftr_table_add_column(&table, col_float, "tother", "%.2f", 'c', 'r', (void*)t_gpu_other);
+      float *t_gpu = vftr_logfile_prof_table_stack_cupti_time_list (stacktree.nstacks, sorted_stacks);
+      vftr_table_add_column(&table, col_float, "t_gpu/s", "%.2f", 'c', 'r', (void*)t_gpu);
    }
 #endif
 
