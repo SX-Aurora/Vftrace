@@ -4,8 +4,8 @@
 #include "cupti_event_types.h"
 #include "vftrace_state.h"
 
-cupti_event_list_t *new_cupti_event (char *func_name, int cbid, float t_ms,
-                                     int mem_dir, size_t memcpy_bytes) {
+cupti_event_list_t *vftr_new_cupti_event (char *func_name, int cbid, float t_ms,
+                                          int mem_dir, size_t memcpy_bytes) {
    cupti_event_list_t *new_event = (cupti_event_list_t*)malloc(sizeof(cupti_event_list_t));   
    new_event->func_name = func_name;
    new_event->cbid = cbid;
@@ -22,13 +22,13 @@ cupti_event_list_t *new_cupti_event (char *func_name, int cbid, float t_ms,
    return new_event;
 }
 
-void acc_cupti_event (cupti_event_list_t *event, float t_ms, int mem_dir, size_t memcpy_bytes) {
+void vftr_accumulate_cupti_event (cupti_event_list_t *event, float t_ms, int mem_dir, size_t memcpy_bytes) {
    event->n_calls++;
    event->t_ms += t_ms;
    if (mem_dir != CUPTI_NOCOPY) event->memcpy_bytes[mem_dir] += memcpy_bytes;
 }
 
-bool cupti_event_belongs_to_class (cupti_event_list_t *event, int cbid_class) {
+bool vftr_cupti_event_belongs_to_class (cupti_event_list_t *event, int cbid_class) {
    bool is_compute =  event->cbid == CUPTI_RUNTIME_TRACE_CBID_cudaLaunch_v3020
                    || event->cbid == CUPTI_RUNTIME_TRACE_CBID_cudaLaunchKernel_v7000;
    bool is_memcpy = event->cbid == CUPTI_RUNTIME_TRACE_CBID_cudaMemcpy_v3020

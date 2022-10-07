@@ -40,9 +40,9 @@ void vftr_write_logfile_cupti_table(FILE *fp, collated_stacktree_t stacktree) {
           stackids_with_cupti_data[i] = istack;
           calls[i] = this_event->n_calls;
           cbids[i] = this_event->cbid;
-          t_compute[i] = cupti_event_belongs_to_class (this_event, T_CUPTI_COMP) ? this_event->t_ms / 1000 : 0;
-          t_memcpy[i] = cupti_event_belongs_to_class (this_event, T_CUPTI_MEMCP) ? this_event->t_ms / 1000 : 0;
-          t_other[i] = cupti_event_belongs_to_class (this_event, T_CUPTI_OTHER) ? this_event->t_ms / 1000 : 0;
+          t_compute[i] = vftr_cupti_event_belongs_to_class (this_event, T_CUPTI_COMP) ? this_event->t_ms / 1000 : 0;
+          t_memcpy[i] = vftr_cupti_event_belongs_to_class (this_event, T_CUPTI_MEMCP) ? this_event->t_ms / 1000 : 0;
+          t_other[i] = vftr_cupti_event_belongs_to_class (this_event, T_CUPTI_OTHER) ? this_event->t_ms / 1000 : 0;
           total_t_compute += t_compute[i];
           total_t_memcpy += t_memcpy[i];
           total_t_other += t_other[i];

@@ -157,7 +157,7 @@ float *vftr_ranklogfile_prof_table_stack_cupti_time_list (int nstacks, stack_t *
       cupti_event_list_t *events = prof_ptr->cuptiprof.events;
       tcompute_list[istack] = 0;
       while (events != NULL) {
-         if (cupti_event_belongs_to_class(events, cbid_class)) tcompute_list[istack] += events->t_ms / 1000;
+         if (vftr_cupti_event_belongs_to_class(events, cbid_class)) tcompute_list[istack] += events->t_ms / 1000;
          events = events->next;
       }
    }
