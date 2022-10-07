@@ -16,6 +16,7 @@
 #include "range_expand.h"
 #ifdef _CUPTI
 #include "gpu_info.h"
+#include "logfile_cupti_table.h"
 #endif
 
 char *vftr_get_logfile_name(environment_t environment) {
@@ -72,6 +73,10 @@ void vftr_write_logfile(vftrace_t vftrace, long long runtime) {
 #ifdef _MPI
    vftr_write_logfile_mpi_table(fp, vftrace.process.collated_stacktree,
                                 vftrace.environment);
+#endif
+
+#ifdef _CUPTI
+   vftr_write_logfile_cupti_table(fp, vftrace.process.collated_stacktree);
 #endif
 
    vftr_write_logfile_global_stack_list(fp, vftrace.process.collated_stacktree);

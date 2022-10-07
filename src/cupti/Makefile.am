@@ -7,6 +7,7 @@ libvftr_cupti_la_SOURCES += initialize.c \
                             cupti_event_list.c \
                             cuptiprofiling.c \
                             collate_cuptiprofiles.c \
-			    gpu_info.c
+			    gpu_info.c \
+                            logfile_cupti_table.c
 
 libvftr_cupti_la_CFLAGS = -I${srcdir}/../ -D_CUPTI
