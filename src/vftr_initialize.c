@@ -5,7 +5,7 @@
 #endif
 
 #ifdef _CUPTI
-#include "cupti.h"
+#include "cupti_init_final.h"
 #endif
 
 #include "self_profile.h"
@@ -79,9 +79,7 @@ void vftr_initialize(void *func, void *call_site) {
 #endif
 
 #ifdef _CUPTI
-      if (cupti_initialize() != 0) {
-	printf ("No devices found. No GPU profile will be generated\n");
-      }
+      cupti_initialize();
 #endif
 
       // set the finalize function to be executed at the termination of the program

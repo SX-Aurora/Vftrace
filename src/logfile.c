@@ -64,7 +64,11 @@ void vftr_write_logfile(vftrace_t vftrace, long long runtime) {
                               vftrace.size, runtime);
 
 #ifdef _CUPTI
-   vftr_write_gpu_info (fp, vftrace.cupti_state.n_devices);
+   if (vftrace.cupti_state.n_devices > 0) {
+      vftr_write_gpu_info (fp, vftrace.cupti_state.n_devices);
+   } else {
+      fprintf (fp, "CUPTI: The interface is enabled, but no GPU devices were found.\n");
+   }
 #endif
 
    vftr_write_logfile_profile_table(fp, vftrace.process.collated_stacktree,
