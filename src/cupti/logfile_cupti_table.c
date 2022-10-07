@@ -25,6 +25,8 @@ void vftr_write_logfile_cupti_table(FILE *fp, collated_stacktree_t stacktree) {
    float *t_compute = (float*)malloc(n_stackids_with_cupti_data*sizeof(float));
    float *t_memcpy = (float*)malloc(n_stackids_with_cupti_data*sizeof(float));
    float *t_other = (float*)malloc(n_stackids_with_cupti_data*sizeof(float));
+   size_t *memcpy_in = (size_t*)malloc(n_stackids_with_cupti_data*sizeof(size_t));
+   size_t *memcpy_out = (size_t*)malloc(n_stackids_with_cupti_data*sizeof(size_t));
    char **names = (char**)malloc(n_stackids_with_cupti_data*sizeof(char*));
    char **callers = (char**)malloc(n_stackids_with_cupti_data*sizeof(char*));
 
@@ -46,6 +48,8 @@ void vftr_write_logfile_cupti_table(FILE *fp, collated_stacktree_t stacktree) {
           total_t_compute += t_compute[i];
           total_t_memcpy += t_memcpy[i];
           total_t_other += t_other[i];
+          memcpy_in[i] = this_event->memcpy_bytes[CUPTI_COPY_IN];
+          memcpy_out[i] = this_event->memcpy_bytes[CUPTI_COPY_OUT];
 #ifdef _LIBERTY
           names[i] = vftr_demangle_cxx(this_event->func_name);
 #else
@@ -68,6 +72,8 @@ void vftr_write_logfile_cupti_table(FILE *fp, collated_stacktree_t stacktree) {
    vftr_table_add_column (&table, col_float, "t_compute[s]", "%.2f", 'c', 'r', (void*)t_compute);
    vftr_table_add_column (&table, col_float, "t_memcpy[s]", "%.2f", 'c', 'r', (void*)t_memcpy);
    vftr_table_add_column (&table, col_float, "t_other[s]", "%.2f", 'c', 'r', (void*)t_other);
+   vftr_table_add_column (&table, col_long, "Host->Device[B]", "%ld", 'c', 'r', (void*)memcpy_in);
+   vftr_table_add_column (&table, col_long, "Device->Host[B]", "%ld", 'c', 'r', (void*)memcpy_out);
  
    fprintf (fp, "\n--CUDA summary--\n");
    fprintf (fp, "Total time: %.2f s\n", total_t_compute + total_t_memcpy + total_t_other);
@@ -81,6 +87,8 @@ void vftr_write_logfile_cupti_table(FILE *fp, collated_stacktree_t stacktree) {
    free(t_compute);
    free(t_memcpy);
    free(t_other);
+   free(memcpy_in);
+   free(memcpy_out);
    free(calls);
    free(cbids);
    free(names);
