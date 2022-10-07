@@ -71,11 +71,14 @@ void CUPTIAPI vftr_cupti_event_callback (void *userdata, CUpti_CallbackDomain do
           cuptiprof->events = vftr_new_cupti_event (func_name, cbid, t, mem_dir, copied_bytes);
       } else {
           cupti_event_list_t *this_event = cuptiprof->events;
-          while (this_event->next != NULL && strcmp(this_event->func_name, func_name)) {
+          cupti_event_list_t *prev_event = this_event;
+          while (this_event != NULL && strcmp(this_event->func_name, func_name)) {
+              prev_event = this_event;
               this_event = this_event->next; 
           }
           if (this_event == NULL) {
               this_event = vftr_new_cupti_event (func_name, cbid, t, mem_dir, copied_bytes);
+              prev_event->next = this_event;
           } else {
               vftr_accumulate_cupti_event (this_event, t, mem_dir, copied_bytes);
           }
