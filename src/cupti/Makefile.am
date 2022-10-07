@@ -11,3 +11,7 @@ libvftr_cupti_la_SOURCES += cupti_init_final.c \
                             logfile_cupti_table.c
 
 libvftr_cupti_la_CFLAGS = -I${srcdir}/../ -D_CUPTI
+
+#if HAS_LIBERTY
+libvftr_cupti_la_CFLAGS += -D_LIBERTY
+#endif

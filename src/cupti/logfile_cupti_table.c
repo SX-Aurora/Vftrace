@@ -1,5 +1,6 @@
 #include <stdio.h>
 
+#include "symbols.h"
 #include "tables.h"
 #include "collated_stack_types.h"
 
@@ -45,7 +46,11 @@ void vftr_write_logfile_cupti_table(FILE *fp, collated_stacktree_t stacktree) {
           total_t_compute += t_compute[i];
           total_t_memcpy += t_memcpy[i];
           total_t_other += t_other[i];
+#ifdef _LIBERTY
+          names[i] = vftr_demangle_cxx(this_event->func_name);
+#else
           names[i] = this_event->func_name;
+#endif
           callers[i] = this_stack.name;
           i++;
           this_event = this_event->next;
