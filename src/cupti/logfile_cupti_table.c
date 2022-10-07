@@ -65,8 +65,8 @@ void vftr_write_logfile_cupti_table(FILE *fp, collated_stacktree_t stacktree) {
    vftr_table_set_nrows(&table, n_stackids_with_cupti_data);
 
    vftr_table_add_column (&table, col_int, "SID", "%d", 'c', 'r', (void*)stackids_with_cupti_data);
-   vftr_table_add_column (&table, col_string, "Caller", "%s", 'c', 'r', (void*)callers);
    vftr_table_add_column (&table, col_string, "cudaName", "%s", 'c', 'r', (void*)names);
+   vftr_table_add_column (&table, col_string, "Caller", "%s", 'c', 'r', (void*)callers);
    vftr_table_add_column (&table, col_int, "CBID", "%d", 'c', 'r', (void*)cbids);
    vftr_table_add_column (&table, col_int, "#Calls", "%d", 'c', 'r', (void*)calls);
    vftr_table_add_column (&table, col_float, "t_compute[s]", "%.2f", 'c', 'r', (void*)t_compute);
