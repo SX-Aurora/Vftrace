@@ -16,6 +16,7 @@
 #include "range_expand.h"
 #ifdef _CUPTI
 #include "gpu_info.h"
+#include "ranklogfile_cupti_table.h"
 #endif
 
 
@@ -84,7 +85,11 @@ void vftr_write_ranklogfile(vftrace_t vftrace, long long runtime) {
                                   vftrace.size, runtime);
 
 #ifdef _CUPTI
-   vftr_write_gpu_info (fp, vftrace.cupti_state.n_devices);
+   if (vftrace.cupti_state.n_devices > 0) {
+      vftr_write_gpu_info (fp, vftrace.cupti_state.n_devices);
+   } else {
+      fprintf (fp, "CUPTI: The interface is enabled, but no GPU devices were found.\n");
+   }
 #endif
 
    vftr_write_ranklogfile_profile_table(fp, vftrace.process.stacktree,
@@ -93,6 +98,10 @@ void vftr_write_ranklogfile(vftrace_t vftrace, long long runtime) {
 #ifdef _MPI
    vftr_write_ranklogfile_mpi_table(fp, vftrace.process.stacktree,
                                     vftrace.environment);
+#endif
+
+#ifdef _CUPTI
+   vftr_write_ranklogfile_cupti_table(fp, vftrace.process.stacktree);
 #endif
 
    vftr_write_logfile_global_stack_list(fp, vftrace.process.collated_stacktree);
