@@ -2,6 +2,8 @@ noinst_LTLIBRARIES = libvftr_omp.la
 
 libvftr_omp_la_SOURCES =
 
+libvftr_omp_la_SOURCES += ompprofiling.c \
+			  collate_ompprofiles.c
 libvftr_omp_la_SOURCES += omp_regions.c
 
 libvftr_omp_la_SOURCES += start_tool.c \

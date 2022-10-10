@@ -13,14 +13,13 @@ generate_function () {
    if [[ ${l} == ${lmax} ]] ; then
       echo "   return 1+i;"
    else
-      echo ";"
       local lc=$(bc <<< "${l}+1")
       local mc1=$(bc <<< "${m}*2")
       local mc2=$(bc <<< "${mc1}+1")
       echo "   return" \
            "$(generate_function_name ${func_name} ${lc} ${mc1})(i)" \
            "+" \
-           "$(generate_function_name ${func_name} ${lc} ${mc1})(i)" \
+           "$(generate_function_name ${func_name} ${lc} ${mc2})(i)" \
            ";"
    fi
    echo "}"

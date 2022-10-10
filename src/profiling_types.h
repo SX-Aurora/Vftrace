@@ -5,6 +5,9 @@
 #ifdef _MPI
 #include "mpiprofiling_types.h"
 #endif
+#ifdef _OMP
+#include "ompprofiling_types.h"
+#endif
 #ifdef _CUPTI
 #include "cuptiprofiling_types.h"
 #endif
@@ -14,6 +17,9 @@ typedef struct {
    callprofile_t callprof;
 #ifdef _MPI
    mpiprofile_t mpiprof;
+#endif
+#ifdef _OMP
+   ompprofile_t ompprof;
 #endif
 #ifdef _CUPTI
    cuptiprofile_t cuptiprof;

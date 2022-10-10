@@ -8,7 +8,10 @@
 static void vftr_ompt_callback_parallel_end(ompt_data_t *parallel_data,
                                             ompt_data_t *encountering_task_data,
                                             int flags, const void *codeptr_ra) {
-   fprintf(stderr, "ending parallel region\n");
+   (void) parallel_data;
+   (void) encountering_task_data;
+   (void) flags;
+   (void) codeptr_ra;
    vftr_omp_region_end();
 }
 
