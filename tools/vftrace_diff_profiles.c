@@ -172,7 +172,7 @@ void display_table (int n_stacks, delta_t **deltas, double *t1, double *t2,
         }
 
 
-	printf ("%*s T1[s] T2[s] T_diff[s] T_diff[%] stackID\n", smax, "Function");
+	printf ("%*s T1[s] T2[s] T_diff[s] T_diff[%%] stackID\n", smax, "Function");
 	for (int i = 0; i < n_stacks; i++) {
 		int stack_id = deltas[i]->stack_id;
 		int i_t1 = stack_id_position_1[stack_id];
