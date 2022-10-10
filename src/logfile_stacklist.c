@@ -31,7 +31,7 @@ void vftr_write_logfile_global_stack_list(FILE *fp, collated_stacktree_t stacktr
       stacks[istack] = vftr_get_collated_stack_string(stacktree, istack, false);
    }
    vftr_table_add_column(&table, col_string,
-                         "Call stack", "%s", 'r', 'l', (void*) stacks);
+                         "Call stack", "%s", 'l', 'l', (void*) stacks);
 
    vftr_print_table(fp, table);
    fprintf(fp, "\n");
