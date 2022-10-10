@@ -104,3 +104,45 @@ void vftr_write_logfile_cupti_table(FILE *fp, collated_stacktree_t stacktree) {
    free(callers);
    free(stackids_with_cupti_data);
 }
+
+void vftr_write_cbid_names (FILE *fp, collated_stacktree_t stacktree) {
+   int n_different_cbids = 0;
+   int *cbids_found = (int*)malloc(stacktree.nstacks * sizeof(int));
+   char **cbid_names = (char**)malloc(stacktree.nstacks * sizeof(char*));
+   for (int istack = 0; istack < stacktree.nstacks; istack++) {
+      collated_stack_t this_stack = stacktree.stacks[istack];
+      cupti_event_list_t *this_event = this_stack.profile.cuptiprof.events;
+      while (this_event != NULL) {
+         bool cbid_present = false;
+         for (int icbid = 0; icbid < n_different_cbids; icbid++) {
+            if (cbids_found[icbid] == this_event->cbid) {
+               cbid_present = true;
+               break;
+            }
+         }
+         if (!cbid_present) {
+            cbids_found[n_different_cbids] = this_event->cbid;
+            cuptiGetCallbackName (CUPTI_CB_DOMAIN_RUNTIME_API, this_event->cbid, 
+                                  &cbid_names[n_different_cbids]);
+            n_different_cbids++;
+         }
+         this_event = this_event->next;
+      }
+   }
+
+   table_t table = vftr_new_table();
+   vftr_table_set_nrows (&table, n_different_cbids);
+   vftr_table_left_outline (&table, false);
+   vftr_table_right_outline (&table, false);
+   vftr_table_columns_separating_line (&table, false);
+  
+   vftr_table_add_column(&table, col_int, "CBID", "%d", 'c', 'r', (void*)cbids_found); 
+   vftr_table_add_column(&table, col_string, "Name", "%s", 'c', 'l', (void*)cbid_names);
+
+   fprintf (fp, "\nCUPTI CBID names: \n");
+   vftr_print_table(fp, table);
+   vftr_table_free(&table);
+
+   free(cbids_found);
+   free(cbid_names);
+}
