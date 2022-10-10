@@ -47,6 +47,9 @@ AX_ENABLE_OPENMP
 # Check CUPTI GPU profiling interface
 AX_ENABLE_CUPTI
 
+# Check for dlopen
+AX_ENABLE_DYNLIB_TRACING
+
 # Enable hardware counters
 AX_ENABLE_HWC
 

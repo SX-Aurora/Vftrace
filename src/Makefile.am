@@ -106,6 +106,10 @@ if ENABLE_FORTRAN
 libvftrace_la_SOURCES += vftrace_mod.F90
 endif
 
+if ENABLE_DYNLIB_TRACING
+libvftrace_la_SOURCES += dlopen.c
+endif
+
 libvftrace_la_CFLAGS += -I${srcdir}/mpi/utils/ \
 			-I${srcdir}/omp/ \
                         -I${srcdir}/cupti/ \
