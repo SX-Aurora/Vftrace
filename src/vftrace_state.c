@@ -73,6 +73,11 @@ vftrace_t vftrace = {
       .runtime_version = NULL,
    },
 #endif
+#ifdef _CUPTI
+   .cupti_state = {
+      .n_devices = 0,
+   },
+#endif
 #ifdef _MPI
    .mpi_state = {
       .pcontrol_level = 1,
@@ -164,6 +169,12 @@ unsigned long long vftr_sizeof_mpiprofile_t(mpiprofile_t mpiprof) {
 }
 #endif
 
+#ifdef _CUPTI
+unsigned long long vftr_sizeof_cuptiprofile_t(cuptiprofile_t cuptiprof) {
+   return sizeof(cuptiprofile_t);
+}
+#endif
+
 unsigned long long vftr_sizeof_profile_t(profile_t profile) {
    unsigned long long size = sizeof(profile_t);
    size -= sizeof(callprofile_t);
@@ -171,6 +182,10 @@ unsigned long long vftr_sizeof_profile_t(profile_t profile) {
 #ifdef _MPI
    size -= sizeof(mpiprofile_t);
    size += vftr_sizeof_mpiprofile_t(profile.mpiprof);
+#endif
+#ifdef _CUPTI
+   size -= sizeof(cuptiprofile_t);
+   size += vftr_sizeof_cuptiprofile_t(profile.cuptiprof);
 #endif
    return size;
 }
@@ -182,6 +197,10 @@ unsigned long long vftr_sizeof_collated_profile_t(collated_profile_t profile) {
 #ifdef _MPI
    size -= sizeof(mpiprofile_t);
    size += vftr_sizeof_mpiprofile_t(profile.mpiprof);
+#endif
+#ifdef _CUPTI
+   size -= sizeof(cuptiprofile_t);
+   size += vftr_sizeof_cuptiprofile_t(profile.cuptiprof);
 #endif
    return size;
 }
@@ -330,6 +349,12 @@ unsigned long long vftr_sizeof_mpi_state_t(mpi_state_t mpi_state) {
 }
 #endif
 
+#ifdef _CUPTI
+unsigned long long vftr_sizeof_cupti_state_t(cupti_state_t cupti_state) {
+   return sizeof(cupti_state_t);
+}
+#endif
+
 unsigned long long vftr_sizeof_vftr_size_t(vftr_size_t size) {
    (void) size;
    return sizeof(vftr_size_t);
@@ -361,6 +386,10 @@ unsigned long long vftr_sizeof_vftrace_t(vftrace_t vftrace_state) {
 #ifdef _MPI
    size -= sizeof(mpi_state_t);
    size += vftr_sizeof_mpi_state_t(vftrace_state.mpi_state);
+#endif
+#ifdef _CUPTI
+   size -= sizeof(cupti_state_t);
+   size += vftr_sizeof_cupti_state_t(vftrace_state.cupti_state);
 #endif
    size -= sizeof(vftr_size_t);
    size += vftr_sizeof_vftr_size_t(vftrace_state.size);

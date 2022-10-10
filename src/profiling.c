@@ -13,6 +13,9 @@
 #ifdef _OMP
 #include "ompprofiling.h"
 #endif
+#ifdef _CUPTI
+#include "cuptiprofiling.h"
+#endif
 
 void vftr_profilelist_realloc(profilelist_t *profilelist_ptr) {
    SELF_PROFILE_START_FUNCTION;
@@ -37,6 +40,9 @@ profile_t vftr_new_profile(int threadID) {
 #endif
 #ifdef _OMP
    profile.ompprof = vftr_new_ompprofiling();
+#endif
+#ifdef _CUPTI
+   profile.cuptiprof = vftr_new_cuptiprofiling();
 #endif
    // TODO: Add other profiles
    SELF_PROFILE_END_FUNCTION;

@@ -1,11 +1,12 @@
 #!/bin/bash
+
+source ${srcdir}/../environment/filenames.sh
+
 set -x
 vftr_binary=vftr_demangle_cxx
-logfile=${vftr_binary}_all.log
+logfile=$(get_logfile_name ${vftr_binary} "all")
 
-if [ -f ${logfile} ] ; then
-   rm ${logfile}
-fi
+rm -f ${logfile}
 
 if [ "x${HAS_MPI}" == "xYES" ]; then
    ${MPI_EXEC} ${MPI_OPTS} ${NP} 1 ./${vftr_binary} || exit 1
@@ -25,9 +26,7 @@ do
 done
 
 export VFTR_DEMANGLE_CXX="yes"
-if [ -f ${logfile} ] ; then
-   rm ${logfile}
-fi
+rm -f ${logfile}
 
 if [ "x${HAS_MPI}" == "xYES" ]; then
    ${MPI_EXEC} ${MPI_OPTS} ${NP} 1 ./${vftr_binary} || exit 1

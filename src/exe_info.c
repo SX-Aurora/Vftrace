@@ -4,7 +4,7 @@
 #include <string.h>
 #include <unistd.h>
 
-char *vftr_get_exectuable_path() {
+char *vftr_get_executable_path() {
    // get the file that contains
    // the commandline for this process
    int pid = getpid();

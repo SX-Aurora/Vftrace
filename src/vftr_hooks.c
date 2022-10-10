@@ -54,6 +54,10 @@ void vftr_function_entry(void *func, void *call_site) {
    stack_t *my_stack = vftrace.process.stacktree.stacks+my_threadstack->stackID;
    profile_t *my_profile = vftr_get_my_profile(my_stack, my_thread);
 
+#ifdef _CUPTI
+#endif
+
+
    // cast and store function address once, as it is needed multiple times
    uintptr_t func_addr = (uintptr_t) func;
 

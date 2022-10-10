@@ -41,6 +41,11 @@ SUBDIRS += omp
 libvftrace_la_LIBADD += omp/libvftr_omp.la
 endif
 
+if ENABLE_CUPTI
+SUBDIRS += cupti
+libvftrace_la_LIBADD += cupti/libvftr_cupti.la
+endif
+
 libvftrace_la_SOURCES = 
 
 libvftrace_la_CPPFLAGS = -D_VERSION=${PACKAGE_VERSION} \
@@ -77,8 +82,7 @@ libvftrace_la_SOURCES += vftrace_state.c \
 libvftrace_la_SOURCES += regular_expressions.c \
 			 environment.c \
 			 elf_reader.c \
-			 symbols.c \
-			 dlopen.c
+			 symbols.c
 libvftrace_la_SOURCES += search.c \
 			 misc_utils.c \
 			 range_expand.c \
@@ -104,6 +108,7 @@ endif
 
 libvftrace_la_CFLAGS += -I${srcdir}/mpi/utils/ \
 			-I${srcdir}/omp/ \
+                        -I${srcdir}/cupti/ \
 			-I${srcdir}/sorting \
 			${external_includes}
 
@@ -127,6 +132,10 @@ libvftrace_la_CFLAGS += -D_OMP
 libvftrace_la_FCFLAGS += -D_OMP
 endif
 
+if ENABLE_CUPTI
+libvftrace_la_CFLAGS += -D_CUPTI
+endif
+
 if HAS_LIBERTY
 libvftrace_la_CFLAGS += -D_LIBERTY
 #libvftrace_la_LIBADD += -liberty
@@ -135,6 +144,10 @@ endif
 #if USES_INTEL_COMPILER
 #libvftrace_la_LDFLAGS += -lifcore
 #endif
+
+if ENABLE_SHARED
+libvftrace_la_LIBADD += -ldl
+endif
 
 if SELF_PROFILING
 libvftrace_la_CPPFLAGS += -D_SELF_PROFILE_VFTRACE

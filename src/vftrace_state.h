@@ -31,6 +31,9 @@
 #ifdef _OMP
 #include "omp/omp_state_types.h"
 #endif
+#ifdef _CUPTI
+#include "cupti/cupti_state_types.h"
+#endif
 #ifdef _MPI
 #include "mpi/utils/mpi_state_types.h"
 #endif
@@ -55,6 +58,9 @@ typedef struct {
    time_strings_t timestrings; // start and end time in string form
 #ifdef _OMP
    omp_state_t omp_state;
+#endif
+#ifdef _CUPTI
+   cupti_state_t cupti_state;
 #endif
 #ifdef _MPI
    mpi_state_t mpi_state;

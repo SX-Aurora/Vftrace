@@ -18,6 +18,10 @@
 #include "tables.h"
 #include "sorting.h"
 
+#ifdef _CUPTI
+#include "cupti_event_list.h"
+#endif
+
 int *vftr_logfile_prof_table_stack_calls_list(int nstacks, collated_stack_t **stack_ptrs) {
    int *calls_list = (int*) malloc(nstacks*sizeof(int));
 
@@ -142,6 +146,24 @@ char **vftr_logfile_prof_table_callpath_list(int nstacks, collated_stack_t **sta
    return path_list;
 }
 
+#ifdef _CUPTI
+float *vftr_logfile_prof_table_stack_cupti_time_list (int nstacks, collated_stack_t **stack_ptrs) {
+   float *t_list = (float*)malloc(nstacks*sizeof(float));
+   for (int istack = 0; istack < nstacks; istack++) {
+      collated_stack_t *stack_ptr = stack_ptrs[istack];
+      cupti_event_list_t *events = stack_ptr->profile.cuptiprof.events;
+      t_list[istack] = 0;
+      while (events != NULL) {
+         t_list[istack] += events->t_ms / 1000;
+         events = events->next;
+      }
+   }
+   return t_list;
+}
+
+
+#endif
+
 void vftr_write_logfile_profile_table(FILE *fp, collated_stacktree_t stacktree,
                                       environment_t environment) {
    SELF_PROFILE_START_FUNCTION;
@@ -180,6 +202,13 @@ void vftr_write_logfile_profile_table(FILE *fp, collated_stacktree_t stacktree,
 
    char **caller_names = vftr_logfile_prof_table_stack_caller_name_list(stacktree, sorted_stacks);
    vftr_table_add_column(&table, col_string, "Caller", "%s", 'c', 'r', (void*) caller_names);
+
+#ifdef _CUPTI
+   if (vftrace.cupti_state.n_devices > 0) {
+      float *t_gpu = vftr_logfile_prof_table_stack_cupti_time_list (stacktree.nstacks, sorted_stacks);
+      vftr_table_add_column(&table, col_float, "t_gpu/s", "%.2f", 'c', 'r', (void*)t_gpu);
+   }
+#endif
 
    int *stack_IDs = vftr_logfile_prof_table_stack_stackID_list(stacktree.nstacks, sorted_stacks);
    vftr_table_add_column(&table, col_int, "ID", "%d", 'c', 'r', (void*) stack_IDs);

@@ -23,8 +23,13 @@ void vftr_symboltable_determine_preciseness(symboltable_t *symboltable_ptr,
 
 void vftr_symboltable_strip_fortran_module_name(symboltable_t *symboltable_ptr,
                                                 bool strip_module_names);
+
+#ifdef _LIBERTY
+char *vftr_demangle_cxx (char *name);
+
 void vftr_symboltable_demangle_cxx_name(symboltable_t *symboltable_ptr,
                                         bool demangle_cxx);
+#endif
 
 int vftr_get_symbID_from_address(symboltable_t symboltable,
                                  uintptr_t address);

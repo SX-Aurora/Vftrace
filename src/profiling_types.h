@@ -8,6 +8,9 @@
 #ifdef _OMP
 #include "ompprofiling_types.h"
 #endif
+#ifdef _CUPTI
+#include "cuptiprofiling_types.h"
+#endif
 
 typedef struct {
    int threadID;
@@ -17,6 +20,9 @@ typedef struct {
 #endif
 #ifdef _OMP
    ompprofile_t ompprof;
+#endif
+#ifdef _CUPTI
+   cuptiprofile_t cuptiprof;
 #endif
 } profile_t;
 

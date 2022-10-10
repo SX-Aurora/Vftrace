@@ -14,6 +14,9 @@
 #ifdef _OMP
 #include "collate_ompprofiles.h"
 #endif
+#ifdef _CUPTI
+#include "collate_cuptiprofiles.h"
+#endif
 
 void vftr_collate_profiles(collated_stacktree_t *collstacktree_ptr,
                            stacktree_t *stacktree_ptr) {
@@ -54,6 +57,11 @@ void vftr_collate_profiles(collated_stacktree_t *collstacktree_ptr,
 #ifdef _OMP
    vftr_collate_ompprofiles(collstacktree_ptr, stacktree_ptr,
                             myrank, nranks, nremote_profiles);
+#endif
+
+#ifdef _CUPTI
+   vftr_collate_cuptiprofiles(collstacktree_ptr, stacktree_ptr,
+                              myrank, nranks, nremote_profiles);
 #endif
 
    free(nremote_profiles);

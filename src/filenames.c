@@ -22,7 +22,7 @@ char *vftr_create_filename_base(environment_t environment, int rankID, int nrank
       exe_name = strdup(environment.logfile_basename.value.string_val);
    } else {
       // default name constructed from executable name
-      char *exe_path = vftr_get_exectuable_path();
+      char *exe_path = vftr_get_executable_path();
       if (exe_path == NULL) {
          exe_name = strdup("unknown");
       } else {

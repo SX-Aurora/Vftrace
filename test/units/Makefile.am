@@ -34,6 +34,10 @@ if USES_NEC_MPI
 endif
 endif
 
+if ENABLE_CUPTI
+  AM_CFLAGS += -D_CUPTI -I$(top_srcdir)/src/cupti
+endif
+
 if ENABLE_OMP
   AM_CFLAGS += -D_OMP
 endif

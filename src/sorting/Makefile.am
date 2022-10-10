@@ -11,6 +11,9 @@ endif
 if ENABLE_OMP
 libvftr_sorting_la_CFLAGS += -D_OMP -I${srcdir}/../omp/
 endif
+if ENABLE_CUPTI
+libvftr_sorting_la_CFLAGS += -D_CUPTI -I${srcdir}/../cupti
+endif
 
 noinst_LTLIBRARIES += libvftr_sorting_int8.la
 libvftr_sorting_la_LIBADD += libvftr_sorting_int8.la
