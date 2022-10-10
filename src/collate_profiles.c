@@ -11,6 +11,9 @@
 #ifdef _MPI
 #include "collate_mpiprofiles.h"
 #endif
+#ifdef _OMP
+#include "collate_ompprofiles.h"
+#endif
 
 void vftr_collate_profiles(collated_stacktree_t *collstacktree_ptr,
                            stacktree_t *stacktree_ptr) {
@@ -45,6 +48,11 @@ void vftr_collate_profiles(collated_stacktree_t *collstacktree_ptr,
                              myrank, nranks, nremote_profiles);
 #ifdef _MPI
    vftr_collate_mpiprofiles(collstacktree_ptr, stacktree_ptr,
+                            myrank, nranks, nremote_profiles);
+#endif
+
+#ifdef _OMP
+   vftr_collate_ompprofiles(collstacktree_ptr, stacktree_ptr,
                             myrank, nranks, nremote_profiles);
 #endif
 

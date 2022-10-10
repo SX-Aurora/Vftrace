@@ -10,8 +10,8 @@ static void vftr_ompt_callback_parallel_begin(ompt_data_t *encountering_task_dat
                                               ompt_data_t *parallel_data,
                                               unsigned int requested_parallelism,
                                               int flags, const void *codeptr_ra) {
-   fprintf(stderr, "starting parallel addr: %p, req_par: %d\n",
-          codeptr_ra, requested_parallelism);
+//   fprintf(stderr, "starting parallel addr: %p, req_par: %d\n",
+//          codeptr_ra, requested_parallelism);
    vftr_omp_region_begin("omp_parallel_region", codeptr_ra);
 }
 

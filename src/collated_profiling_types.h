@@ -5,11 +5,17 @@
 #ifdef _MPI
 #include "mpiprofiling_types.h"
 #endif
+#ifdef _OMP
+#include "ompprofiling_types.h"
+#endif
 
 typedef struct {
    collated_callprofile_t callprof;
 #ifdef _MPI
    mpiprofile_t mpiprof;
+#endif
+#ifdef _OMP
+   ompprofile_t ompprof;
 #endif
 } collated_profile_t;
 

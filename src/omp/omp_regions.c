@@ -3,6 +3,7 @@
 
 #include <string.h>
 
+#include "self_profile.h"
 #include "stack_types.h"
 #include "thread_types.h"
 #include "threadstack_types.h"
@@ -13,12 +14,12 @@
 #include "threadstacks.h"
 #include "profiling.h"
 #include "callprofiling.h"
-#include "overheadprofiling.h"
 #include "sampling.h"
 #include "timer.h"
 #include "misc_utils.h"
 
-void vftr_omp_region_begin(const char *name, const void *addr) {
+void vftr_omp_region_begin(const char *name, void *addr) {
+   SELF_PROFILE_START_FUNCTION;
    long long region_begin_time_begin = vftr_get_runtime_nsec();
    // Get the thread that called the region
    thread_t *my_thread = vftr_get_my_thread(&(vftrace.process.threadtree));
@@ -47,8 +48,8 @@ void vftr_omp_region_begin(const char *name, const void *addr) {
       // and adjust the threadstack accordingly
       my_threadstack = vftr_update_threadstack_region(my_threadstack, my_thread,
                                                       region_addr, nameaddr,
-                                                      omp_region,
-                                                      &vftrace, true);
+                                                      omp_region, &vftrace,
+                                                      true);
       stack_t *my_new_stack = vftrace.process.stacktree.stacks+my_threadstack->stackID;
       my_profile = vftr_get_my_profile(my_new_stack, my_thread);
 
@@ -63,11 +64,14 @@ void vftr_omp_region_begin(const char *name, const void *addr) {
    free(nameaddr);
 
    // No calls after this overhead handling!
-   vftr_accumulate_omp_overheadprofiling(&(my_profile->overheadprof),
+   vftr_accumulate_callprofiling_overhead(&(my_profile->callprof),
       vftr_get_runtime_nsec() - region_begin_time_begin);
+   SELF_PROFILE_END_FUNCTION;
 }
 
-void vftr_omp_region_end() {
+void vftr_omp_region_end(const char *name) {
+   SELF_PROFILE_START_FUNCTION;
+   (void) name;
    long long region_end_time_begin = vftr_get_runtime_nsec();
 
    thread_t *my_thread = vftr_get_my_thread(&(vftrace.process.threadtree));
@@ -97,7 +101,8 @@ void vftr_omp_region_end() {
 
    }
    // No calls after this overhead handling
-   vftr_accumulate_omp_overheadprofiling(
-      &(my_profile->overheadprof),
+   vftr_accumulate_callprofiling_overhead(
+      &(my_profile->callprof),
       vftr_get_runtime_nsec() - region_end_time_begin);
+   SELF_PROFILE_END_FUNCTION;
 }

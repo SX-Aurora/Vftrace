@@ -10,6 +10,9 @@
 #ifdef _MPI
 #include "mpiprofiling.h"
 #endif
+#ifdef _OMP
+#include "ompprofiling.h"
+#endif
 
 void vftr_profilelist_realloc(profilelist_t *profilelist_ptr) {
    SELF_PROFILE_START_FUNCTION;
@@ -31,6 +34,9 @@ profile_t vftr_new_profile(int threadID) {
    profile.callprof = vftr_new_callprofiling();
 #ifdef _MPI
    profile.mpiprof = vftr_new_mpiprofiling();
+#endif
+#ifdef _OMP
+   profile.ompprof = vftr_new_ompprofiling();
 #endif
    // TODO: Add other profiles
    SELF_PROFILE_END_FUNCTION;
@@ -66,6 +72,9 @@ void vftr_profile_free(profile_t* profiles_ptr, int profID) {
    vftr_callprofiling_free(&(profile_ptr->callprof));
 #ifdef _MPI
    vftr_mpiprofiling_free(&(profile_ptr->mpiprof));
+#endif
+#ifdef _OMP
+   vftr_ompprofiling_free(&(profile_ptr->ompprof));
 #endif
    // TODO: add other profiles
    SELF_PROFILE_END_FUNCTION;

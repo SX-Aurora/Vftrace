@@ -1,4 +1,7 @@
 #!/bin/bash
+
+set -x
+
 test_name=thread_num
 output_file=${test_name}.out
 ref_file=${srcdir}/ref_output/${test_name}.out

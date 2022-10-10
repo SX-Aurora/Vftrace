@@ -19,6 +19,7 @@
 #include "profiling.h"
 #include "callprofiling.h"
 #include "mpiprofiling.h"
+#include "ompprofiling.h"
 #include "tables.h"
 #include "misc_utils.h"
 
