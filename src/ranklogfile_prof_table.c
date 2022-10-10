@@ -18,10 +18,6 @@
 #include "tables.h"
 #include "sorting.h"
 
-#ifdef _CUPTI
-#include "cupti_event_types.h"
-#endif
-
 int *vftr_ranklogfile_prof_table_stack_calls_list(int nstacks, stack_t **stack_ptrs) {
    int *calls_list = (int*) malloc(nstacks*sizeof(int));
 
@@ -146,24 +142,6 @@ char **vftr_ranklogfile_prof_table_callpath_list(int nstacks, stack_t **stack_pt
    return path_list;
 }
 
-#ifdef _CUPTI
-float *vftr_ranklogfile_prof_table_stack_cupti_time_list (int nstacks, stack_t **stack_ptrs) {
-   float *tcompute_list = (float*)malloc(nstacks*sizeof(float));
-   for (int istack = 0; istack < nstacks; istack++) {
-      stack_t *stack_ptr = stack_ptrs[istack];
-      // CUPTI is only supported for one thread (iprof = 0)
-      profile_t *prof_ptr = stack_ptr->profiling.profiles;
-      cupti_event_list_t *events = prof_ptr->cuptiprof.events;
-      tcompute_list[istack] = 0;
-      while (events != NULL) {
-         tcompute_list[istack] += events->t_ms / 1000;
-         events = events->next;
-      }
-   }
-   return tcompute_list;
-}
-#endif
-
 void vftr_write_ranklogfile_profile_table(FILE *fp, stacktree_t stacktree,
                                       environment_t environment) {
    SELF_PROFILE_START_FUNCTION;
@@ -192,13 +170,6 @@ void vftr_write_ranklogfile_profile_table(FILE *fp, stacktree_t stacktree,
 
    char **caller_names = vftr_ranklogfile_prof_table_stack_caller_name_list(stacktree, sorted_stacks);
    vftr_table_add_column(&table, col_string, "Caller", "%s", 'c', 'r', (void*) caller_names);
-
-#ifdef _CUPTI
-   if (vftrace.cupti_state.n_devices > 0) {
-      float *t_gpu = vftr_ranklogfile_prof_table_stack_cupti_time_list (stacktree.nstacks, sorted_stacks);
-      vftr_table_add_column(&table, col_float, "t_gpu/s", "%.2f", 'c', 'r', (void*)t_gpu);
-   }
-#endif
 
    int *stack_IDs = vftr_ranklogfile_prof_table_stack_stackID_list(stacktree.nstacks, sorted_stacks);
    vftr_table_add_column(&table, col_int, "ID", "%d", 'c', 'r', (void*) stack_IDs);
