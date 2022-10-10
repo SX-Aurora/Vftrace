@@ -15,7 +15,7 @@
 #include "search.h"
 #include "range_expand.h"
 #ifdef _CUPTI
-#include "ranklogfile_cupti_table.h"
+#include "cupti_ranklogfile.h"
 #endif
 
 

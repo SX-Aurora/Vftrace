@@ -7,8 +7,9 @@ libvftr_cupti_la_SOURCES += cupti_init_final.c \
                             cupti_event_list.c \
                             cuptiprofiling.c \
                             collate_cuptiprofiles.c \
-                            logfile_cupti_table.c \
-                            ranklogfile_cupti_table.c
+                            cupti_logfile.c \
+                            cupti_ranklogfile.c \
+                            cupti_utils.c
 
 libvftr_cupti_la_CFLAGS = -I${srcdir}/../ -D_CUPTI
 

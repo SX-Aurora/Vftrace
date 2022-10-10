@@ -15,7 +15,7 @@
 #include "search.h"
 #include "range_expand.h"
 #ifdef _CUPTI
-#include "logfile_cupti_table.h"
+#include "cupti_logfile.h"
 #endif
 
 char *vftr_get_logfile_name(environment_t environment) {

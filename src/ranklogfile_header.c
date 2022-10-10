@@ -23,6 +23,11 @@
 #include "tables.h"
 #include "misc_utils.h"
 
+#ifdef _CUPTI
+#include "cupti_ranklogfile.h"
+#endif
+
+
 void vftr_write_ranklogfile_header(FILE *fp, time_strings_t timestrings) {
    SELF_PROFILE_START_FUNCTION;
    fprintf(fp, "%s\n", PACKAGE_STRING);
@@ -104,6 +109,16 @@ void vftr_write_ranklogfile_summary(FILE *fp, process_t process,
       }
 #endif
    }
+
+#ifdef _CUPTI
+   float total_compute_sec, total_memcpy_sec, total_other_sec;
+   vftr_get_total_cupti_times_for_ranklogfile (process.stacktree,
+                                               &total_compute_sec, &total_memcpy_sec, &total_other_sec);
+   fprintf (fp, "Total CUDA time:      %8.2f s\n", total_compute_sec + total_memcpy_sec + total_other_sec);
+   fprintf (fp, "   Compute:           %8.2f s\n", total_compute_sec);
+   fprintf (fp, "   Memcpy:            %8.2f s\n", total_memcpy_sec);
+   fprintf (fp, "   Other:             %8.2f s\n", total_other_sec);
+#endif
 
    char *unit = vftr_byte_unit(vftrace_size.rank_wise);
    double vftrace_size_double = (double) vftrace_size.rank_wise;

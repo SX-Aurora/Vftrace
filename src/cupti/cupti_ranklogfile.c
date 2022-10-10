@@ -2,22 +2,22 @@
 
 #include "symbols.h"
 #include "tables.h"
-#include "collated_stack_types.h"
-#include "vftrace_state.h"
+#include "stack_types.h"
 
 #include "cuptiprofiling_types.h"
 #include "cupti_event_list.h"
-#include "logfile_cupti_table.h"
+#include "cupti_utils.h"
 
-void vftr_get_total_cupti_times (collated_stacktree_t stacktree, 
-                                 float *tot_compute_s, float *tot_memcpy_s, float *tot_other_s) {
+void vftr_get_total_cupti_times_for_ranklogfile (stacktree_t stacktree, 
+                                             float *tot_compute_s, float *tot_memcpy_s, float *tot_other_s) {
    *tot_compute_s = 0;
    *tot_memcpy_s = 0;
    *tot_other_s = 0;
 
    for (int istack = 0; istack < stacktree.nstacks; istack++) {
-      collated_stack_t this_stack = stacktree.stacks[istack];
-      cupti_event_list_t *this_event = this_stack.profile.cuptiprof.events;
+      stack_t this_stack = stacktree.stacks[istack];
+      profile_t *this_profile = this_stack.profiling.profiles;
+      cupti_event_list_t *this_event = this_profile->cuptiprof.events;
       while (this_event != NULL) {
          if (vftr_cupti_event_belongs_to_class (this_event, T_CUPTI_COMP)) *tot_compute_s += this_event->t_ms / 1000;
          if (vftr_cupti_event_belongs_to_class (this_event, T_CUPTI_MEMCP)) *tot_memcpy_s += this_event->t_ms / 1000;
@@ -27,45 +27,13 @@ void vftr_get_total_cupti_times (collated_stacktree_t stacktree,
    }
 }
 
-void vftr_show_used_gpu_info (FILE *fp) {
-   struct cudaDeviceProp prop;
-   int n_gpus = vftrace.cupti_state.n_devices;
-   char *gpu_names[n_gpus];
-   
-   for (int i = 0; i < n_gpus; i++) {
-      cudaGetDeviceProperties (&prop, i);
-      gpu_names[i] = prop.name;
-   }
-
-   bool all_gpu_same = true;
-   for (int i = 0; i < n_gpus; i++) {
-      if (strcmp(gpu_names[i], prop.name)) {
-	  all_gpu_same = false;
-          break;
-      }
-   }
-
-   fprintf (fp, "\n");
-   
-   if (all_gpu_same) {
-      fprintf (fp, "Using %d GPUs: %s\n", n_gpus, prop.name);
-   } else {
-      fprintf (fp, "Using %d GPUs: \n", n_gpus);
-      for (int i = 0; i < n_gpus; i++) {
-         fprintf (fp, "   %d: %s\n", i, gpu_names[i]);
-      }
-   }
-   
-   char *visible_devices = getenv("CUDA_VISIBLE_DEVICES");
-   fprintf (fp, "Visible GPUs: %s\n", visible_devices == NULL ? "all" : visible_devices);
-   
-}
-
-void vftr_write_logfile_cupti_table(FILE *fp, collated_stacktree_t stacktree) {
+void vftr_write_ranklogfile_cupti_table(FILE *fp, stacktree_t stacktree) {
    int n_stackids_with_cupti_data = 0;
    for (int istack = 0; istack < stacktree.nstacks; istack++) {
-      collated_stack_t this_stack = stacktree.stacks[istack];
-      cupti_event_list_t *this_event = this_stack.profile.cuptiprof.events;
+      stack_t this_stack = stacktree.stacks[istack];
+      // CUPTI only supported for one thread, thus there is only one profile.
+      profile_t *this_profile = this_stack.profiling.profiles;
+      cupti_event_list_t *this_event = this_profile->cuptiprof.events;
       while (this_event != NULL) {
           n_stackids_with_cupti_data++;
           this_event = this_event->next;
@@ -85,8 +53,9 @@ void vftr_write_logfile_cupti_table(FILE *fp, collated_stacktree_t stacktree) {
 
    int i = 0;
    for (int istack = 0; istack < stacktree.nstacks; istack++) {
-      collated_stack_t this_stack = stacktree.stacks[istack];
-      cupti_event_list_t *this_event = this_stack.profile.cuptiprof.events;
+      stack_t this_stack = stacktree.stacks[istack];
+      profile_t *this_profile = this_stack.profiling.profiles;
+      cupti_event_list_t *this_event = this_profile->cuptiprof.events;
       while (this_event != NULL) {
           stackids_with_cupti_data[i] = istack;
           calls[i] = this_event->n_calls;
@@ -137,4 +106,5 @@ void vftr_write_logfile_cupti_table(FILE *fp, collated_stacktree_t stacktree) {
    free(names);
    free(callers);
    free(stackids_with_cupti_data);
+
 }
