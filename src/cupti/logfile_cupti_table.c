@@ -3,12 +3,65 @@
 #include "symbols.h"
 #include "tables.h"
 #include "collated_stack_types.h"
+#include "vftrace_state.h"
 
 #include "cuptiprofiling_types.h"
 #include "cupti_event_list.h"
+#include "logfile_cupti_table.h"
+
+void vftr_get_total_cupti_times (collated_stacktree_t stacktree, 
+                                 float *tot_compute_s, float *tot_memcpy_s, float *tot_other_s) {
+   *tot_compute_s = 0;
+   *tot_memcpy_s = 0;
+   *tot_other_s = 0;
+
+   for (int istack = 0; istack < stacktree.nstacks; istack++) {
+      collated_stack_t this_stack = stacktree.stacks[istack];
+      cupti_event_list_t *this_event = this_stack.profile.cuptiprof.events;
+      while (this_event != NULL) {
+         if (vftr_cupti_event_belongs_to_class (this_event, T_CUPTI_COMP)) *tot_compute_s += this_event->t_ms / 1000;
+         if (vftr_cupti_event_belongs_to_class (this_event, T_CUPTI_MEMCP)) *tot_memcpy_s += this_event->t_ms / 1000;
+         if (vftr_cupti_event_belongs_to_class (this_event, T_CUPTI_OTHER)) *tot_other_s += this_event->t_ms / 1000;
+         this_event = this_event->next;
+      }
+   }
+}
+
+void vftr_show_used_gpu_info (FILE *fp) {
+   struct cudaDeviceProp prop;
+   int n_gpus = vftrace.cupti_state.n_devices;
+   char *gpu_names[n_gpus];
+   
+   for (int i = 0; i < n_gpus; i++) {
+      cudaGetDeviceProperties (&prop, i);
+      gpu_names[i] = prop.name;
+   }
+
+   bool all_gpu_same = true;
+   for (int i = 0; i < n_gpus; i++) {
+      if (strcmp(gpu_names[i], prop.name)) {
+	  all_gpu_same = false;
+          break;
+      }
+   }
+
+   fprintf (fp, "\n");
+   
+   if (all_gpu_same) {
+      fprintf (fp, "Using %d GPUs: %s\n", n_gpus, prop.name);
+   } else {
+      fprintf (fp, "Using %d GPUs: \n", n_gpus);
+      for (int i = 0; i < n_gpus; i++) {
+         fprintf (fp, "   %d: %s\n", i, gpu_names[i]);
+      }
+   }
+   
+   char *visible_devices = getenv("CUDA_VISIBLE_DEVICES");
+   fprintf (fp, "Visible GPUs: %s\n", visible_devices == NULL ? "all" : visible_devices);
+   
+}
 
 void vftr_write_logfile_cupti_table(FILE *fp, collated_stacktree_t stacktree) {
-
    int n_stackids_with_cupti_data = 0;
    for (int istack = 0; istack < stacktree.nstacks; istack++) {
       collated_stack_t this_stack = stacktree.stacks[istack];
@@ -30,10 +83,6 @@ void vftr_write_logfile_cupti_table(FILE *fp, collated_stacktree_t stacktree) {
    char **names = (char**)malloc(n_stackids_with_cupti_data*sizeof(char*));
    char **callers = (char**)malloc(n_stackids_with_cupti_data*sizeof(char*));
 
-   float total_t_compute = 0;
-   float total_t_memcpy = 0;
-   float total_t_other = 0;
-
    int i = 0;
    for (int istack = 0; istack < stacktree.nstacks; istack++) {
       collated_stack_t this_stack = stacktree.stacks[istack];
@@ -45,9 +94,6 @@ void vftr_write_logfile_cupti_table(FILE *fp, collated_stacktree_t stacktree) {
           t_compute[i] = vftr_cupti_event_belongs_to_class (this_event, T_CUPTI_COMP) ? this_event->t_ms / 1000 : 0;
           t_memcpy[i] = vftr_cupti_event_belongs_to_class (this_event, T_CUPTI_MEMCP) ? this_event->t_ms / 1000 : 0;
           t_other[i] = vftr_cupti_event_belongs_to_class (this_event, T_CUPTI_OTHER) ? this_event->t_ms / 1000 : 0;
-          total_t_compute += t_compute[i];
-          total_t_memcpy += t_memcpy[i];
-          total_t_other += t_other[i];
           memcpy_in[i] = this_event->memcpy_bytes[CUPTI_COPY_IN];
           memcpy_out[i] = this_event->memcpy_bytes[CUPTI_COPY_OUT];
 #ifdef _LIBERTY
@@ -74,12 +120,9 @@ void vftr_write_logfile_cupti_table(FILE *fp, collated_stacktree_t stacktree) {
    vftr_table_add_column (&table, col_float, "t_other[s]", "%.2f", 'c', 'r', (void*)t_other);
    vftr_table_add_column (&table, col_long, "Host->Device[B]", "%ld", 'c', 'r', (void*)memcpy_in);
    vftr_table_add_column (&table, col_long, "Device->Host[B]", "%ld", 'c', 'r', (void*)memcpy_out);
- 
-   fprintf (fp, "\n--CUDA summary--\n");
-   fprintf (fp, "Total time: %.2f s\n", total_t_compute + total_t_memcpy + total_t_other);
-   fprintf (fp, "   Compute: %.2f s\n", total_t_compute);
-   fprintf (fp, "    Memcpy: %.2f s\n", total_t_memcpy);
-   fprintf (fp, "     Other: %.2f s\n", total_t_other);
+
+   fprintf (fp, "\n--Cuda Summary--\n");
+   vftr_show_used_gpu_info (fp);
    fprintf (fp, "\n");
    vftr_print_table(fp, table); 
 

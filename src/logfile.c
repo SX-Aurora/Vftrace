@@ -15,7 +15,6 @@
 #include "search.h"
 #include "range_expand.h"
 #ifdef _CUPTI
-#include "gpu_info.h"
 #include "logfile_cupti_table.h"
 #endif
 
@@ -63,14 +62,6 @@ void vftr_write_logfile(vftrace_t vftrace, long long runtime) {
    vftr_write_logfile_summary(fp, vftrace.process,
                               vftrace.size, runtime);
 
-#ifdef _CUPTI
-   if (vftrace.cupti_state.n_devices > 0) {
-      vftr_write_gpu_info (fp, vftrace.cupti_state.n_devices);
-   } else {
-      fprintf (fp, "CUPTI: The interface is enabled, but no GPU devices were found.\n");
-   }
-#endif
-
    vftr_write_logfile_profile_table(fp, vftrace.process.collated_stacktree,
                                     vftrace.environment);
 
@@ -80,7 +71,11 @@ void vftr_write_logfile(vftrace_t vftrace, long long runtime) {
 #endif
 
 #ifdef _CUPTI
-   vftr_write_logfile_cupti_table(fp, vftrace.process.collated_stacktree);
+   if (vftrace.cupti_state.n_devices == 0) {
+      fprintf (fp, "CUPTI: The interface is enabled, but no GPU devices were found.\n");
+   } else {
+      vftr_write_logfile_cupti_table(fp, vftrace.process.collated_stacktree);
+   }
 #endif
 
    vftr_write_logfile_global_stack_list(fp, vftrace.process.collated_stacktree);
