@@ -247,19 +247,19 @@ void vftr_write_ranklogfile_mpi_table(FILE *fp, stacktree_t stacktree,
    vftr_table_add_column(&table, col_int, "Messages", "%d", 'c', 'r', (void*) nmessages);
 
    double *avg_send_bytes = vftr_ranklogfile_mpi_table_average_send_bytes_list(nrows, selected_stacks);
-   vftr_table_add_column(&table, col_double, "avg send size/B", "%.3e", 'c', 'r', (void*) avg_send_bytes);
+   vftr_table_add_column(&table, col_double, "avg send size[B]", "%.3e", 'c', 'r', (void*) avg_send_bytes);
 
    double *avg_recv_bytes = vftr_ranklogfile_mpi_table_average_recv_bytes_list(nrows, selected_stacks);
-   vftr_table_add_column(&table, col_double, "avg recv size/B", "%.3e", 'c', 'r', (void*) avg_recv_bytes);
+   vftr_table_add_column(&table, col_double, "avg recv size[B]", "%.3e", 'c', 'r', (void*) avg_recv_bytes);
 
    double *avg_send_bw = vftr_ranklogfile_mpi_table_average_send_bw_list(nrows, selected_stacks);
-   vftr_table_add_column(&table, col_double, "avg send BW/B/s", "%.3le", 'c', 'r', (void*) avg_send_bw);
+   vftr_table_add_column(&table, col_double, "avg send BW[B/s]", "%.3le", 'c', 'r', (void*) avg_send_bw);
 
    double *avg_recv_bw = vftr_ranklogfile_mpi_table_average_recv_bw_list(nrows, selected_stacks);
-   vftr_table_add_column(&table, col_double, "avg recv BW/B/s", "%.3le", 'c', 'r', (void*) avg_recv_bw);
+   vftr_table_add_column(&table, col_double, "avg recv BW[B/s]", "%.3le", 'c', 'r', (void*) avg_recv_bw);
 
    double *avg_comm_time = vftr_ranklogfile_mpi_table_average_comm_time_list(nrows, selected_stacks);
-   vftr_table_add_column(&table, col_double, "avg comm time/s", "%.3le", 'c', 'r', (void*) avg_comm_time);
+   vftr_table_add_column(&table, col_double, "avg comm time[s]", "%.3le", 'c', 'r', (void*) avg_comm_time);
 
    char **function_names = vftr_ranklogfile_mpi_table_stack_function_name_list(nrows, selected_stacks);
    vftr_table_add_column(&table, col_string, "Function", "%s", 'c', 'r', (void*) function_names);

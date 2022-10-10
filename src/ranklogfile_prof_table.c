@@ -157,13 +157,13 @@ void vftr_write_ranklogfile_profile_table(FILE *fp, stacktree_t stacktree,
    vftr_table_add_column(&table, col_int, "Calls", "%d", 'c', 'r', (void*) calls);
 
    double *excl_time = vftr_ranklogfile_prof_table_stack_exclusive_time_list(stacktree.nstacks, sorted_stacks);
-   vftr_table_add_column(&table, col_double, "t_excl/s", "%.3f", 'c', 'r', (void*) excl_time);
+   vftr_table_add_column(&table, col_double, "t_excl[s]", "%.3f", 'c', 'r', (void*) excl_time);
 
    double *excl_timer_perc = vftr_ranklogfile_prof_table_stack_exclusive_time_percentage_list(stacktree.nstacks, sorted_stacks);
-   vftr_table_add_column(&table, col_double, "t_excl/%", "%.1f", 'c', 'r', (void*) excl_timer_perc);
+   vftr_table_add_column(&table, col_double, "t_excl[%]", "%.1f", 'c', 'r', (void*) excl_timer_perc);
 
    double *incl_time = vftr_ranklogfile_prof_table_stack_inclusive_time_list(stacktree.nstacks, sorted_stacks);
-   vftr_table_add_column(&table, col_double, "t_incl/s", "%.3f", 'c', 'r', (void*) incl_time);
+   vftr_table_add_column(&table, col_double, "t_incl[s]", "%.3f", 'c', 'r', (void*) incl_time);
 
    char **function_names = vftr_ranklogfile_prof_table_stack_function_name_list(stacktree.nstacks, sorted_stacks);
    vftr_table_add_column(&table, col_string, "Function", "%s", 'c', 'r', (void*) function_names);
