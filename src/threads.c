@@ -133,7 +133,7 @@ thread_t *vftr_get_my_thread(threadtree_t *threadtree_ptr) {
       int thread_num = vftr_get_ancestor_thread_num(ilevel);
       int threadID = my_thread->nsubthreads;
       // if the thread does not exist yet, add and null it.
-      while (thread_num > my_thread->nsubthreads) {
+      while (threadID > my_thread->nsubthreads) {
          threadID = vftr_new_thread(my_thread->threadID,
                                     threadtree_ptr);
       }
