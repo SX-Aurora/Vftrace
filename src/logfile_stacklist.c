@@ -23,7 +23,7 @@ void vftr_write_logfile_global_stack_list(FILE *fp, collated_stacktree_t stacktr
    for (int istack=0; istack<stacktree.nstacks; istack++) {
       IDs[istack] = istack;
    }
-   vftr_table_add_column(&table, col_int, "ID", "STID%d", 'r', 'r', (void*) IDs);
+   vftr_table_add_column(&table, col_int, "STID", "STID%d", 'r', 'r', (void*) IDs);
 
    // second column with the stack strings
    char **stacks = (char**) malloc(stacktree.nstacks*sizeof(char*));

@@ -172,7 +172,7 @@ void vftr_write_ranklogfile_profile_table(FILE *fp, stacktree_t stacktree,
    vftr_table_add_column(&table, col_string, "Caller", "%s", 'c', 'r', (void*) caller_names);
 
    int *stack_IDs = vftr_ranklogfile_prof_table_stack_stackID_list(stacktree.nstacks, sorted_stacks);
-   vftr_table_add_column(&table, col_int, "ID", "%d", 'c', 'r', (void*) stack_IDs);
+   vftr_table_add_column(&table, col_int, "STID", "%d", 'c', 'r', (void*) stack_IDs);
 
    char **path_list = NULL;
    if (environment.callpath_in_profile.value.bool_val) {
