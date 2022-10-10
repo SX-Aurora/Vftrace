@@ -19,7 +19,7 @@ generate_function () {
       echo "   return" \
            "$(generate_function_name ${func_name} ${lc} ${mc1})(i)" \
            "+" \
-           "$(generate_function_name ${func_name} ${lc} ${mc1})(i)" \
+           "$(generate_function_name ${func_name} ${lc} ${mc2})(i)" \
            ";"
    fi
    echo "}"
