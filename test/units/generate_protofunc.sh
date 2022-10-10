@@ -13,7 +13,6 @@ generate_function () {
    if [[ ${l} == ${lmax} ]] ; then
       echo "   return 1+i;"
    else
-      echo ";"
       local lc=$(bc <<< "${l}+1")
       local mc1=$(bc <<< "${m}*2")
       local mc2=$(bc <<< "${mc1}+1")
