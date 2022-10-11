@@ -104,6 +104,10 @@ void vftr_write_ranklogfile(vftrace_t vftrace, long long runtime) {
    // print environment info
    vftr_print_environment(fp, vftrace.environment);
 
+#ifdef _CUPTI
+   vftr_write_ranklogfile_cbid_names (fp, vftrace.process.stacktree);
+#endif
+
    fclose(fp);
    free(logfilename);
    SELF_PROFILE_END_FUNCTION;

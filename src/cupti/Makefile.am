@@ -4,7 +4,6 @@ libvftr_cupti_la_SOURCES =
 
 libvftr_cupti_la_SOURCES += cupti_init_final.c \
                             callbacks.c \
-                            cupti_event_list.c \
                             cuptiprofiling.c \
                             collate_cuptiprofiles.c \
                             cupti_logfile.c \

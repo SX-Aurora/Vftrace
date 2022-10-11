@@ -5,8 +5,8 @@
 #include "collated_stack_types.h"
 #include "vftrace_state.h"
 
+#include "callbacks.h"
 #include "cuptiprofiling_types.h"
-#include "cupti_event_list.h"
 #include "cupti_utils.h"
 
 void vftr_get_total_cupti_times_for_logfile (collated_stacktree_t stacktree, 
@@ -17,12 +17,13 @@ void vftr_get_total_cupti_times_for_logfile (collated_stacktree_t stacktree,
 
    for (int istack = 0; istack < stacktree.nstacks; istack++) {
       collated_stack_t this_stack = stacktree.stacks[istack];
-      cupti_event_list_t *this_event = this_stack.profile.cuptiprof.events;
-      while (this_event != NULL) {
-         if (vftr_cupti_event_belongs_to_class (this_event, T_CUPTI_COMP)) *tot_compute_s += this_event->t_ms / 1000;
-         if (vftr_cupti_event_belongs_to_class (this_event, T_CUPTI_MEMCP)) *tot_memcpy_s += this_event->t_ms / 1000;
-         if (vftr_cupti_event_belongs_to_class (this_event, T_CUPTI_OTHER)) *tot_other_s += this_event->t_ms / 1000;
-         this_event = this_event->next;
+      cuptiprofile_t cuptiprof = this_stack.profile.cuptiprof;
+      if (vftr_cupti_cbid_belongs_to_class (cuptiprof.cbid, T_CUPTI_COMP)) {
+            *tot_compute_s += (float)cuptiprof.t_vftr / 1e9;
+      } else if (vftr_cupti_cbid_belongs_to_class (cuptiprof.cbid, T_CUPTI_MEMCP)) {
+            *tot_memcpy_s += (float)cuptiprof.t_vftr / 1e9;
+      } else if (vftr_cupti_cbid_belongs_to_class (cuptiprof.cbid, T_CUPTI_OTHER)) {
+            *tot_other_s += (float)cuptiprof.t_vftr / 1e9;
       }
    }
 }
@@ -31,10 +32,8 @@ void vftr_write_logfile_cupti_table(FILE *fp, collated_stacktree_t stacktree) {
    int n_stackids_with_cupti_data = 0;
    for (int istack = 0; istack < stacktree.nstacks; istack++) {
       collated_stack_t this_stack = stacktree.stacks[istack];
-      cupti_event_list_t *this_event = this_stack.profile.cuptiprof.events;
-      while (this_event != NULL) {
+      if (this_stack.profile.cuptiprof.cbid != 0) {
           n_stackids_with_cupti_data++;
-          this_event = this_event->next;
       } 
    }
 
@@ -52,24 +51,24 @@ void vftr_write_logfile_cupti_table(FILE *fp, collated_stacktree_t stacktree) {
    int i = 0;
    for (int istack = 0; istack < stacktree.nstacks; istack++) {
       collated_stack_t this_stack = stacktree.stacks[istack];
-      cupti_event_list_t *this_event = this_stack.profile.cuptiprof.events;
-      while (this_event != NULL) {
+      cuptiprofile_t cuptiprof = this_stack.profile.cuptiprof;
+      if (cuptiprof.cbid != 0) {
           stackids_with_cupti_data[i] = istack;
-          calls[i] = this_event->n_calls;
-          cbids[i] = this_event->cbid;
-          t_compute[i] = vftr_cupti_event_belongs_to_class (this_event, T_CUPTI_COMP) ? this_event->t_ms / 1000 : 0;
-          t_memcpy[i] = vftr_cupti_event_belongs_to_class (this_event, T_CUPTI_MEMCP) ? this_event->t_ms / 1000 : 0;
-          t_other[i] = vftr_cupti_event_belongs_to_class (this_event, T_CUPTI_OTHER) ? this_event->t_ms / 1000 : 0;
-          memcpy_in[i] = this_event->memcpy_bytes[CUPTI_COPY_IN];
-          memcpy_out[i] = this_event->memcpy_bytes[CUPTI_COPY_OUT];
+          calls[i] = cuptiprof.n_calls;
+          cbids[i] = cuptiprof.cbid;
+          t_compute[i] = vftr_cupti_cbid_belongs_to_class (cuptiprof.cbid, T_CUPTI_COMP) ? cuptiprof.t_vftr / 1e9 : 0;
+          t_memcpy[i] = vftr_cupti_cbid_belongs_to_class (cuptiprof.cbid, T_CUPTI_MEMCP) ? cuptiprof.t_vftr / 1e9 : 0;
+          t_other[i] = vftr_cupti_cbid_belongs_to_class (cuptiprof.cbid, T_CUPTI_OTHER) ? cuptiprof.t_vftr / 1e9 : 0;
+
+          memcpy_in[i] = cuptiprof.memcpy_bytes[CUPTI_COPY_IN];
+          memcpy_out[i] = cuptiprof.memcpy_bytes[CUPTI_COPY_OUT];
 #ifdef _LIBERTY
-          names[i] = vftr_demangle_cxx(this_event->func_name);
+          names[i] = vftr_demangle_cxx(this_stack.name);
 #else
-          names[i] = this_event->func_name;
+          names[i] = this_stack.name;
 #endif
           callers[i] = this_stack.name;
           i++;
-          this_event = this_event->next;
       }
    }
 
@@ -105,28 +104,25 @@ void vftr_write_logfile_cupti_table(FILE *fp, collated_stacktree_t stacktree) {
    free(stackids_with_cupti_data);
 }
 
-void vftr_write_cbid_names (FILE *fp, collated_stacktree_t stacktree) {
+void vftr_write_logfile_cbid_names (FILE *fp, collated_stacktree_t stacktree) {
    int n_different_cbids = 0;
    int *cbids_found = (int*)malloc(stacktree.nstacks * sizeof(int));
    char **cbid_names = (char**)malloc(stacktree.nstacks * sizeof(char*));
    for (int istack = 0; istack < stacktree.nstacks; istack++) {
       collated_stack_t this_stack = stacktree.stacks[istack];
-      cupti_event_list_t *this_event = this_stack.profile.cuptiprof.events;
-      while (this_event != NULL) {
-         bool cbid_present = false;
-         for (int icbid = 0; icbid < n_different_cbids; icbid++) {
-            if (cbids_found[icbid] == this_event->cbid) {
-               cbid_present = true;
-               break;
-            }
-         }
-         if (!cbid_present) {
-            cbids_found[n_different_cbids] = this_event->cbid;
-            cuptiGetCallbackName (CUPTI_CB_DOMAIN_RUNTIME_API, this_event->cbid, 
-                                  &cbid_names[n_different_cbids]);
-            n_different_cbids++;
-         }
-         this_event = this_event->next;
+      cuptiprofile_t cuptiprof = this_stack.profile.cuptiprof;
+      bool cbid_present = false;
+      for (int icbid = 0; icbid < n_different_cbids; icbid++) {
+          if (cbids_found[icbid] == cuptiprof.cbid) {
+             cbid_present = true;
+             break;
+          }
+      }
+      if (!cbid_present) {
+         cbids_found[n_different_cbids] = cuptiprof.cbid;
+         cuptiGetCallbackName (CUPTI_CB_DOMAIN_RUNTIME_API, cuptiprof.cbid,
+                               &cbid_names[n_different_cbids]);
+         n_different_cbids++;
       }
    }
 

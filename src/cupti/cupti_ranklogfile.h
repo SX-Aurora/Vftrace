@@ -6,4 +6,6 @@ void vftr_get_total_cupti_times_for_ranklogfile (stacktree_t stacktree,
 
 void vftr_write_ranklogfile_cupti_table(FILE *fp, stacktree_t stacktree);
 
+void vftr_write_ranklogfile_cbid_names (FILE *fp, stacktree_t stacktree);
+
 #endif

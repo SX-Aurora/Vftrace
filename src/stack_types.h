@@ -12,6 +12,7 @@ typedef enum {
    function,
    user_region,
    omp_region,
+   cupti_region,
    internal_region
 } stack_kind_t;
 

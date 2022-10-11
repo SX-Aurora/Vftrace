@@ -84,7 +84,7 @@ void vftr_write_logfile(vftrace_t vftrace, long long runtime) {
    vftr_print_environment(fp, vftrace.environment);
 
 #ifdef _CUPTI
-   vftr_write_cbid_names (fp, vftrace.process.collated_stacktree);
+   vftr_write_logfile_cbid_names (fp, vftrace.process.collated_stacktree);
 #endif
 
    fclose(fp);

@@ -85,18 +85,6 @@ int *vftr_logfile_prof_table_imbalance_ranks_list(int nstacks,
    return imbalance_ranks_list;
 }
 
-//double *vftr_logfile_prof_table_stack_overhead_time_list(int nstacks, collated_stack_t **stack_ptrs) {
-//   double *overhead_time_list = (double*) malloc(nstacks*sizeof(double));
-//
-//   for (int istack=0; istack<nstacks; istack++) {
-//      collated_stack_t *stack_ptr = stack_ptrs[istack];
-//      profile_t *prof_ptr = stack_ptr->profiling.profiles;
-//      overhead_time_list[istack] = prof_ptr->overheadprof.hook_nsec;
-//      overhead_time_list[istack] *= 1.0e-9;
-//   }
-//   return overhead_time_list;
-//}
-
 char **vftr_logfile_prof_table_stack_function_name_list(int nstacks, collated_stack_t **stack_ptrs) {
    char **name_list = (char**) malloc(nstacks*sizeof(char*));
    for (int istack=0; istack<nstacks; istack++) {
