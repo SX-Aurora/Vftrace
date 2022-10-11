@@ -11,7 +11,7 @@
 #include "threads.h"
 #include "threadstacks.h"
 #include "profiling.h"
-#include "region_address.h"
+#include "callprofiling.h"
 
 #include "cuptiprofiling.h"
 #include "callbacks.h"
@@ -58,8 +58,8 @@ void vftr_cupti_region_begin (int cbid, const CUpti_CallbackData *cb_info) {
    my_profile = vftr_get_my_profile(my_new_stack, my_thread);
    cuptiprofile_t *cuptiprof = &my_profile->cuptiprof;
    long long region_begin_time = vftr_get_runtime_nsec();
-   vftr_accumulate_cuptiprofiling (cuptiprof, cbid, 1,
-                                   -region_begin_time, 0, CUPTI_NOCOPY, 0);
+   vftr_accumulate_cuptiprofiling (cuptiprof, cbid, 1, 0, CUPTI_NOCOPY, 0);
+   vftr_accumulate_callprofiling (&(my_profile->callprof), 1, -region_begin_time);
 
    cudaEventRecord(cuptiprof->start, 0);
 }
@@ -83,7 +83,8 @@ void vftr_cupti_region_end (int cbid, const CUpti_CallbackData *cb_info) {
    size_t copied_bytes;
    vftr_get_cupti_memory_info (cbid, cb_info, &mem_dir, &copied_bytes);
 
-   vftr_accumulate_cuptiprofiling(cuptiprof, cbid, 0, region_end_time, t, mem_dir, copied_bytes);
+   vftr_accumulate_cuptiprofiling(cuptiprof, cbid, 0, t, mem_dir, copied_bytes);
+   vftr_accumulate_callprofiling(&(my_profile->callprof), 0, region_end_time);
    (void)vftr_threadstack_pop(&(my_thread->stacklist));
 
 }

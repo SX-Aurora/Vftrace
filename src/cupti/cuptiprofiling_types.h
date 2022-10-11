@@ -10,7 +10,6 @@ typedef struct {
    int cbid;
    int n_calls;
    float t_ms;
-   long long t_vftr;
    size_t memcpy_bytes[2];
 } cuptiprofile_t;
 #endif

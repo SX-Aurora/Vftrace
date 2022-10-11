@@ -20,11 +20,11 @@ void vftr_get_total_cupti_times_for_logfile (collated_stacktree_t stacktree,
       collated_stack_t this_stack = stacktree.stacks[istack];
       cuptiprofile_t cuptiprof = this_stack.profile.cuptiprof;
       if (vftr_cupti_cbid_belongs_to_class (cuptiprof.cbid, T_CUPTI_COMP)) {
-            *tot_compute_s += (float)cuptiprof.t_vftr / 1e9;
+            *tot_compute_s += (float)cuptiprof.t_ms / 1000;
       } else if (vftr_cupti_cbid_belongs_to_class (cuptiprof.cbid, T_CUPTI_MEMCP)) {
-            *tot_memcpy_s += (float)cuptiprof.t_vftr / 1e9;
+            *tot_memcpy_s += (float)cuptiprof.t_ms / 1000;
       } else if (vftr_cupti_cbid_belongs_to_class (cuptiprof.cbid, T_CUPTI_OTHER)) {
-            *tot_other_s += (float)cuptiprof.t_vftr / 1e9;
+            *tot_other_s += (float)cuptiprof.t_ms / 1000;
       }
    }
 }
@@ -57,9 +57,9 @@ void vftr_write_logfile_cupti_table(FILE *fp, collated_stacktree_t stacktree) {
           stackids_with_cupti_data[i] = istack;
           calls[i] = cuptiprof.n_calls;
           cbids[i] = cuptiprof.cbid;
-          t_compute[i] = vftr_cupti_cbid_belongs_to_class (cuptiprof.cbid, T_CUPTI_COMP) ? cuptiprof.t_vftr / 1e9 : 0;
-          t_memcpy[i] = vftr_cupti_cbid_belongs_to_class (cuptiprof.cbid, T_CUPTI_MEMCP) ? cuptiprof.t_vftr / 1e9 : 0;
-          t_other[i] = vftr_cupti_cbid_belongs_to_class (cuptiprof.cbid, T_CUPTI_OTHER) ? cuptiprof.t_vftr / 1e9 : 0;
+          t_compute[i] = vftr_cupti_cbid_belongs_to_class (cuptiprof.cbid, T_CUPTI_COMP) ? cuptiprof.t_ms / 1000 : 0;
+          t_memcpy[i] = vftr_cupti_cbid_belongs_to_class (cuptiprof.cbid, T_CUPTI_MEMCP) ? cuptiprof.t_ms / 1000 : 0;
+          t_other[i] = vftr_cupti_cbid_belongs_to_class (cuptiprof.cbid, T_CUPTI_OTHER) ? cuptiprof.t_ms / 1000 : 0;
 
           memcpy_in[i] = cuptiprof.memcpy_bytes[CUPTI_COPY_IN];
           memcpy_out[i] = cuptiprof.memcpy_bytes[CUPTI_COPY_OUT];
@@ -81,9 +81,9 @@ void vftr_write_logfile_cupti_table(FILE *fp, collated_stacktree_t stacktree) {
    vftr_table_add_column (&table, col_string, "Caller", "%s", 'c', 'r', (void*)callers);
    vftr_table_add_column (&table, col_int, "CBID", "%d", 'c', 'r', (void*)cbids);
    vftr_table_add_column (&table, col_int, "#Calls", "%d", 'c', 'r', (void*)calls);
-   vftr_table_add_column (&table, col_float, "t_compute[s]", "%.2f", 'c', 'r', (void*)t_compute);
-   vftr_table_add_column (&table, col_float, "t_memcpy[s]", "%.2f", 'c', 'r', (void*)t_memcpy);
-   vftr_table_add_column (&table, col_float, "t_other[s]", "%.2f", 'c', 'r', (void*)t_other);
+   vftr_table_add_column (&table, col_float, "t_compute[s]", "%.3f", 'c', 'r', (void*)t_compute);
+   vftr_table_add_column (&table, col_float, "t_memcpy[s]", "%.3f", 'c', 'r', (void*)t_memcpy);
+   vftr_table_add_column (&table, col_float, "t_other[s]", "%.3f", 'c', 'r', (void*)t_other);
    vftr_table_add_column (&table, col_long, "Host->Device[B]", "%ld", 'c', 'r', (void*)memcpy_in);
    vftr_table_add_column (&table, col_long, "Device->Host[B]", "%ld", 'c', 'r', (void*)memcpy_out);
 
