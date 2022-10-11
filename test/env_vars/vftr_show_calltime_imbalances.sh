@@ -6,7 +6,7 @@ set -x
 test_name=vftr_show_calltime_imbalances
 output_file=${test_name}.out
 ref_file=${srcdir}/ref_output/little_tasks.out
-imbalances_header=" Imbalances/% | on rank "
+imbalances_header=" Imbalances\[%\] | on rank "
 nranks=1
 
 logfile=$(get_logfile_name $test_name "all")
