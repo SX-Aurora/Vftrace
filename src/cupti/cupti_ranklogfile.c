@@ -19,11 +19,11 @@ void vftr_get_total_cupti_times_for_ranklogfile (stacktree_t stacktree, float *t
       cuptiprofile_t cuptiprof = this_stack.profiling.profiles[0].cuptiprof;
       if (vftr_cupti_cbid_belongs_to_class (cuptiprof.cbid, T_CUPTI_COMP))  {
             *tot_compute_s += (float)cuptiprof.t_vftr / 1e9;
-      }
-      if (vftr_cupti_cbid_belongs_to_class (cuptiprof.cbid, T_CUPTI_MEMCP)) 
+      } else if (vftr_cupti_cbid_belongs_to_class (cuptiprof.cbid, T_CUPTI_MEMCP)) {
             *tot_memcpy_s += (float)cuptiprof.t_vftr / 1e9;
-      if (vftr_cupti_cbid_belongs_to_class (cuptiprof.cbid, T_CUPTI_OTHER)) 
+      } else if (vftr_cupti_cbid_belongs_to_class (cuptiprof.cbid, T_CUPTI_OTHER)) {
             *tot_other_s += (float)cuptiprof.t_vftr / 1e9;
+      }
    }
 }
 
