@@ -108,6 +108,7 @@ void vftr_write_logfile_cbid_names (FILE *fp, collated_stacktree_t stacktree) {
    for (int istack = 0; istack < stacktree.nstacks; istack++) {
       collated_stack_t this_stack = stacktree.stacks[istack];
       cuptiprofile_t cuptiprof = this_stack.profile.cuptiprof;
+      if (cuptiprof.cbid == 0) continue;
       bool cbid_present = false;
       for (int icbid = 0; icbid < n_different_cbids; icbid++) {
           if (cbids_found[icbid] == cuptiprof.cbid) {
