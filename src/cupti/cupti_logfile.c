@@ -47,7 +47,6 @@ void vftr_write_logfile_cupti_table(FILE *fp, collated_stacktree_t stacktree) {
    size_t *memcpy_in = (size_t*)malloc(n_stackids_with_cupti_data*sizeof(size_t));
    size_t *memcpy_out = (size_t*)malloc(n_stackids_with_cupti_data*sizeof(size_t));
    char **names = (char**)malloc(n_stackids_with_cupti_data*sizeof(char*));
-   char **callers = (char**)malloc(n_stackids_with_cupti_data*sizeof(char*));
 
    int i = 0;
    for (int istack = 0; istack < stacktree.nstacks; istack++) {
@@ -68,7 +67,6 @@ void vftr_write_logfile_cupti_table(FILE *fp, collated_stacktree_t stacktree) {
 #else
           names[i] = this_stack.name;
 #endif
-          callers[i] = this_stack.name;
           i++;
       }
    }
@@ -78,7 +76,6 @@ void vftr_write_logfile_cupti_table(FILE *fp, collated_stacktree_t stacktree) {
 
    vftr_table_add_column (&table, col_int, "STID", "%d", 'c', 'r', (void*)stackids_with_cupti_data);
    vftr_table_add_column (&table, col_string, "cudaName", "%s", 'c', 'r', (void*)names);
-   vftr_table_add_column (&table, col_string, "Caller", "%s", 'c', 'r', (void*)callers);
    vftr_table_add_column (&table, col_int, "CBID", "%d", 'c', 'r', (void*)cbids);
    vftr_table_add_column (&table, col_int, "#Calls", "%d", 'c', 'r', (void*)calls);
    vftr_table_add_column (&table, col_float, "t_compute[s]", "%.3f", 'c', 'r', (void*)t_compute);
@@ -101,7 +98,6 @@ void vftr_write_logfile_cupti_table(FILE *fp, collated_stacktree_t stacktree) {
    free(calls);
    free(cbids);
    free(names);
-   free(callers);
    free(stackids_with_cupti_data);
 }
 
