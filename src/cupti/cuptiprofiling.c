@@ -21,8 +21,6 @@ void vftr_accumulate_cuptiprofiling (cuptiprofile_t *prof, int cbid, int n_calls
                                      float t_ms, int mem_dir, uint64_t memcpy_bytes) {
    prof->cbid = cbid;
    prof->n_calls += n_calls;
-   if (cbid == 211) printf ("Accumulate 211: %lld %f %d\n", t_vftr, t_ms,
-                            vftr_cupti_cbid_belongs_to_class (cbid, T_CUPTI_COMP));
    prof->t_vftr += t_vftr;
    prof->t_ms += t_ms;
    if (mem_dir != CUPTI_NOCOPY) prof->memcpy_bytes[mem_dir] += memcpy_bytes;
