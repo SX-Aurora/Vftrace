@@ -121,7 +121,8 @@ if ENABLE_MPI
 check_PROGRAMS += print_mpi_table
 endif
 
-check_PROGRAMS += threadtree
+check_PROGRAMS += threadlist \
+		  threadtree
 
 check_PROGRAMS += filenames
 #
@@ -397,6 +398,11 @@ print_mpi_table_SOURCES = $(srcdir)/print_mpi_table.c \
 print_mpi_table_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
 print_mpi_table_LDFLAGS = $(AM_LDFLAGS)
 
+threadlist_SOURCES = $(srcdir)/threadlist.c \
+		     $(srcdir)/dummysymboltable.c
+threadlist_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
+threadlist_LDFLAGS = $(AM_LDFLAGS)
+
 threadtree_SOURCES = $(srcdir)/threadtree.c \
 		     $(srcdir)/dummysymboltable.c
 threadtree_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
@@ -513,7 +519,8 @@ dist_check_SCRIPTS += print_prof_table.sh
 if ENABLE_MPI
 dist_check_SCRIPTS += print_mpi_table.sh
 endif
-dist_check_SCRIPTS += threadtree.sh
+dist_check_SCRIPTS += threadlist.sh \
+		      threadtree.sh
 dist_check_SCRIPTS += filenames.sh
 #		     scenario_1.sh \
 #		     scenario_2.sh \

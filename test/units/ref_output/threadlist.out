@@ -1,0 +1,10 @@
+   0: parent=-, lvl=0, subthreads=1,2,4,9
+   1: parent=0, lvl=1, subthreads=8
+   2: parent=0, lvl=1, subthreads=3,7
+   3: parent=2, lvl=2, subthreads=5
+   4: parent=0, lvl=1, subthreads=6
+   5: parent=3, lvl=3
+   6: parent=4, lvl=2
+   7: parent=2, lvl=2
+   8: parent=1, lvl=2
+   9: parent=0, lvl=1
