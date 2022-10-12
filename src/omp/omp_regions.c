@@ -55,6 +55,10 @@ void vftr_omp_region_begin(const char *name, void *addr) {
                                                       region_addr, name,
                                                       omp_region, &vftrace,
                                                       true);
+      // OMP regions move the thread level up by one
+      // Therefore the next subthread level needs to be clean
+      vftr_thread_subthreads_reset(&(vftrace.process.threadtree), my_thread->threadID);
+
       stack_t *my_new_stack = vftrace.process.stacktree.stacks+my_threadstack->stackID;
       my_profile = vftr_get_my_profile(my_new_stack, my_thread);
 

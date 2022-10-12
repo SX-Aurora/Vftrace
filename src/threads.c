@@ -90,6 +90,18 @@ threadtree_t vftr_new_threadtree() {
    return threadtree;
 }
 
+void vftr_thread_subthreads_reset(threadtree_t *threadtree_ptr, int threadID) {
+   thread_t *my_thread = threadtree_ptr->threads+threadID;
+   threadstack_t *my_threadstack = vftr_get_my_threadstack(my_thread);
+   int nsubthreads = my_thread->nsubthreads;
+   for (int isubthread=0; isubthread<nsubthreads; isubthread++) {
+      int subthreadID = my_thread->subthreads[isubthread];
+      thread_t *thread = threadtree_ptr->threads+subthreadID;
+      thread->stacklist.nstacks = 0;
+      vftr_threadstack_push(my_threadstack->stackID, &(thread->stacklist));
+   }
+}
+
 int vftr_get_thread_level() {
    SELF_PROFILE_START_FUNCTION;
 #ifdef _OMP
