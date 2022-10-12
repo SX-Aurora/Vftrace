@@ -17,10 +17,16 @@
 #include "sampling.h"
 #include "timer.h"
 #include "misc_utils.h"
+#ifdef _OMP
+#include <omp.h>
+#endif
 
 void vftr_omp_region_begin(const char *name, void *addr) {
    SELF_PROFILE_START_FUNCTION;
    long long region_begin_time_begin = vftr_get_runtime_nsec();
+#ifdef _OMP
+   omp_set_lock(&(vftrace.process.threadlock));
+#endif
    // Get the thread that called the region
    thread_t *my_thread = vftr_get_my_thread(&(vftrace.process.threadtree));
    threadstack_t *my_threadstack = vftr_get_my_threadstack(my_thread);
@@ -61,11 +67,13 @@ void vftr_omp_region_begin(const char *name, void *addr) {
       vftr_accumulate_callprofiling(&(my_profile->callprof),
                                     1, -region_begin_time_begin);
    }
-   free(nameaddr);
 
    // No calls after this overhead handling!
    vftr_accumulate_callprofiling_overhead(&(my_profile->callprof),
       vftr_get_runtime_nsec() - region_begin_time_begin);
+#ifdef _OMP
+   omp_unset_lock(&(vftrace.process.threadlock));
+#endif
    SELF_PROFILE_END_FUNCTION;
 }
 
@@ -73,6 +81,9 @@ void vftr_omp_region_end(const char *name) {
    SELF_PROFILE_START_FUNCTION;
    (void) name;
    long long region_end_time_begin = vftr_get_runtime_nsec();
+#ifdef _OMP
+   omp_set_lock(&(vftrace.process.threadlock));
+#endif
 
    thread_t *my_thread = vftr_get_my_thread(&(vftrace.process.threadtree));
    threadstack_t *my_threadstack = vftr_get_my_threadstack(my_thread);
@@ -104,5 +115,8 @@ void vftr_omp_region_end(const char *name) {
    vftr_accumulate_callprofiling_overhead(
       &(my_profile->callprof),
       vftr_get_runtime_nsec() - region_end_time_begin);
+#ifdef _OMP
+   omp_unset_lock(&(vftrace.process.threadlock));
+#endif
    SELF_PROFILE_END_FUNCTION;
 }
