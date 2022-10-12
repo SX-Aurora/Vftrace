@@ -217,3 +217,23 @@ void vftr_print_threadtree(FILE *fp, threadtree_t threadtree) {
    fprintf(fp, "Threadtree:\n");
    vftr_print_thread(fp, threadtree, 0);
 }
+
+void vftr_print_threadlist(FILE *fp, threadtree_t threadtree) {
+   for (int ithread=0; ithread<threadtree.nthreads; ithread++) {
+      thread_t *thread = threadtree.threads+ithread;
+      fprintf(fp, "%4d:", thread->threadID);
+      if (thread->parent_thread >= 0) {
+         fprintf(fp, " parent=%d", thread->parent_thread);
+      } else {
+         fprintf(fp, " parent=-");
+      }
+      fprintf(fp, ", lvl=%d", thread->level);
+      if (thread->nsubthreads > 0)  {
+         fprintf(fp, ", subthreads=%d", thread->subthreads[0]);
+         for (int isubthread=1; isubthread<thread->nsubthreads; isubthread++) {
+            fprintf(fp, ",%d", thread->subthreads[isubthread]);
+         }
+      }
+      fprintf(fp, "\n");
+   }
+}
