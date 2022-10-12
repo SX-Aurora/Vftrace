@@ -18,10 +18,6 @@
 #include "tables.h"
 #include "sorting.h"
 
-#ifdef _CUPTI
-#include "cupti_event_list.h"
-#endif
-
 int *vftr_logfile_prof_table_stack_calls_list(int nstacks, collated_stack_t **stack_ptrs) {
    int *calls_list = (int*) malloc(nstacks*sizeof(int));
 
@@ -89,18 +85,6 @@ int *vftr_logfile_prof_table_imbalance_ranks_list(int nstacks,
    return imbalance_ranks_list;
 }
 
-//double *vftr_logfile_prof_table_stack_overhead_time_list(int nstacks, collated_stack_t **stack_ptrs) {
-//   double *overhead_time_list = (double*) malloc(nstacks*sizeof(double));
-//
-//   for (int istack=0; istack<nstacks; istack++) {
-//      collated_stack_t *stack_ptr = stack_ptrs[istack];
-//      profile_t *prof_ptr = stack_ptr->profiling.profiles;
-//      overhead_time_list[istack] = prof_ptr->overheadprof.hook_nsec;
-//      overhead_time_list[istack] *= 1.0e-9;
-//   }
-//   return overhead_time_list;
-//}
-
 char **vftr_logfile_prof_table_stack_function_name_list(int nstacks, collated_stack_t **stack_ptrs) {
    char **name_list = (char**) malloc(nstacks*sizeof(char*));
    for (int istack=0; istack<nstacks; istack++) {
@@ -146,24 +130,6 @@ char **vftr_logfile_prof_table_callpath_list(int nstacks, collated_stack_t **sta
    return path_list;
 }
 
-#ifdef _CUPTI
-float *vftr_logfile_prof_table_stack_cupti_time_list (int nstacks, collated_stack_t **stack_ptrs) {
-   float *t_list = (float*)malloc(nstacks*sizeof(float));
-   for (int istack = 0; istack < nstacks; istack++) {
-      collated_stack_t *stack_ptr = stack_ptrs[istack];
-      cupti_event_list_t *events = stack_ptr->profile.cuptiprof.events;
-      t_list[istack] = 0;
-      while (events != NULL) {
-         t_list[istack] += events->t_ms / 1000;
-         events = events->next;
-      }
-   }
-   return t_list;
-}
-
-
-#endif
-
 void vftr_write_logfile_profile_table(FILE *fp, collated_stacktree_t stacktree,
                                       environment_t environment) {
    SELF_PROFILE_START_FUNCTION;
@@ -179,19 +145,19 @@ void vftr_write_logfile_profile_table(FILE *fp, collated_stacktree_t stacktree,
    vftr_table_add_column(&table, col_int, "Calls", "%d", 'c', 'r', (void*) calls);
 
    double *excl_time = vftr_logfile_prof_table_stack_exclusive_time_list(stacktree.nstacks, sorted_stacks);
-   vftr_table_add_column(&table, col_double, "t_excl/s", "%.3f", 'c', 'r', (void*) excl_time);
+   vftr_table_add_column(&table, col_double, "t_excl[s]", "%.3f", 'c', 'r', (void*) excl_time);
 
    double *excl_timer_perc = vftr_logfile_prof_table_stack_exclusive_time_percentage_list(stacktree.nstacks, sorted_stacks);
-   vftr_table_add_column(&table, col_double, "t_excl/%", "%.1f", 'c', 'r', (void*) excl_timer_perc);
+   vftr_table_add_column(&table, col_double, "t_excl[%]", "%.1f", 'c', 'r', (void*) excl_timer_perc);
 
    double *incl_time = vftr_logfile_prof_table_stack_inclusive_time_list(stacktree.nstacks, sorted_stacks);
-   vftr_table_add_column(&table, col_double, "t_incl/s", "%.3f", 'c', 'r', (void*) incl_time);
+   vftr_table_add_column(&table, col_double, "t_incl[s]", "%.3f", 'c', 'r', (void*) incl_time);
 
    double *imbalances_list = NULL;
    int *imbalance_ranks_list = NULL;
    if (environment.show_calltime_imbalances.value.bool_val) {
       imbalances_list = vftr_logfile_prof_table_imbalances_list(stacktree.nstacks, sorted_stacks);
-      vftr_table_add_column(&table, col_double, "Imbalances/%", "%6.2f", 'c', 'r', (void*) imbalances_list);
+      vftr_table_add_column(&table, col_double, "Imbalances[%]", "%6.2f", 'c', 'r', (void*) imbalances_list);
 
       imbalance_ranks_list = vftr_logfile_prof_table_imbalance_ranks_list(stacktree.nstacks, sorted_stacks);
       vftr_table_add_column(&table, col_int, "on rank", "%d", 'c', 'r', (void*) imbalance_ranks_list);
@@ -203,15 +169,8 @@ void vftr_write_logfile_profile_table(FILE *fp, collated_stacktree_t stacktree,
    char **caller_names = vftr_logfile_prof_table_stack_caller_name_list(stacktree, sorted_stacks);
    vftr_table_add_column(&table, col_string, "Caller", "%s", 'c', 'r', (void*) caller_names);
 
-#ifdef _CUPTI
-   if (vftrace.cupti_state.n_devices > 0) {
-      float *t_gpu = vftr_logfile_prof_table_stack_cupti_time_list (stacktree.nstacks, sorted_stacks);
-      vftr_table_add_column(&table, col_float, "t_gpu/s", "%.2f", 'c', 'r', (void*)t_gpu);
-   }
-#endif
-
    int *stack_IDs = vftr_logfile_prof_table_stack_stackID_list(stacktree.nstacks, sorted_stacks);
-   vftr_table_add_column(&table, col_int, "ID", "%d", 'c', 'r', (void*) stack_IDs);
+   vftr_table_add_column(&table, col_int, "STID", "%d", 'c', 'r', (void*) stack_IDs);
 
    char **path_list = NULL;
    if (environment.callpath_in_profile.value.bool_val) {

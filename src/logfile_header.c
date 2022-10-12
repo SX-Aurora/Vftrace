@@ -23,6 +23,10 @@
 #include "tables.h"
 #include "misc_utils.h"
 
+#ifdef _CUPTI
+#include "cupti_logfile.h"
+#endif
+
 void vftr_write_logfile_header(FILE *fp, time_strings_t timestrings) {
    SELF_PROFILE_START_FUNCTION;
    fprintf(fp, "%s\n", PACKAGE_STRING);
@@ -78,6 +82,16 @@ void vftr_write_logfile_summary(FILE *fp, process_t process,
 #ifdef _OMP
    fprintf(fp, "   OMP callbacks:     %8.2lf s\n",
            omp_overhead*1.0e-9/process.nprocesses);
+#endif
+
+#ifdef _CUPTI
+   float total_compute_sec, total_memcpy_sec, total_other_sec;
+   vftr_get_total_cupti_times_for_logfile (process.collated_stacktree,
+                                           &total_compute_sec, &total_memcpy_sec, &total_other_sec);
+   fprintf (fp, "Total CUDA time:      %8.2f s\n", total_compute_sec + total_memcpy_sec + total_other_sec);
+   fprintf (fp, "   Compute:           %8.2f s\n", total_compute_sec);
+   fprintf (fp, "   Memcpy:            %8.2f s\n", total_memcpy_sec);
+   fprintf (fp, "   Other:             %8.2f s\n", total_other_sec);
 #endif
 
    char *unit = vftr_byte_unit(vftrace_size.total);

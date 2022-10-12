@@ -4,11 +4,12 @@
 #include <stdint.h>
 #include <cuda_runtime_api.h>
 
-#include "cupti_event_types.h"
-
 typedef struct {
-   cupti_event_list_t *events;
    cudaEvent_t start;
    cudaEvent_t stop;
+   int cbid;
+   int n_calls;
+   float t_ms;
+   size_t memcpy_bytes[2];
 } cuptiprofile_t;
 #endif
