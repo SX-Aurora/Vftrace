@@ -48,7 +48,9 @@ int vftr_new_thread(int parent_thread_id,
    thread.level = parent_thread_ptr->level+1;
    thread.thread_num = parent_thread_ptr->nsubthreads;
    thread.master = parent_thread_ptr->master && thread.thread_num == 0;
-   thread.stacklist = vftr_new_threadstacklist(-1);
+   // inherit stackID from parent thread
+   threadstack_t *parent_threadstack = vftr_get_my_threadstack(parent_thread_ptr);
+   thread.stacklist = vftr_new_threadstacklist(parent_threadstack->stackID);
    thread.parent_thread = parent_thread_ptr->threadID;
    thread.maxsubthreads = 0;
    thread.nsubthreads = 0;
