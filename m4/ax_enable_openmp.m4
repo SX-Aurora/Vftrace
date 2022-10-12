@@ -16,14 +16,20 @@
 AC_DEFUN([AX_ENABLE_OPENMP], [
    AC_PREREQ(2.50)
    AC_ARG_ENABLE([openmp],
-      [AS_HELP_STRING([--enable-openmp], [enable OpenMP profiling layer. [default=no]])],
+      [AS_HELP_STRING([--enable-openmp], [enable OpenMP profiling layer (currently disabled). [default=no]])],
+      #[AS_HELP_STRING([--enable-openmp], [enable OpenMP profiling layer. [default=no]])],
       [enable_openmp_present="yes"],
       [enable_openmp_present="no"])
    AC_MSG_CHECKING([whether OpenMP is enabled])
    # if the option is not given, resort to default (no)
    AS_IF([test "x$enable_openmp_present" = "xno"], [enable_openmp="no"])
+# OMP is disabled for now.
+# So far no OMP implementation exists with a usable ompt_callback system.
+# A few issues were posted to llvm github, but not answered, nor fixed yet.
+enable_openmp="no"
    AM_CONDITIONAL([ENABLE_OMP], [test "x$enable_openmp" = "xyes"])
    AC_MSG_RESULT([$enable_openmp])
+
 
    # check which compile flag is accepted by the C-compiler
    AM_COND_IF(
