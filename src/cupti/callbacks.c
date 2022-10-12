@@ -51,7 +51,7 @@ void vftr_cupti_region_begin (int cbid, const CUpti_CallbackData *cb_info) {
 
    // Cuda calls are not recursive
    my_threadstack = vftr_update_threadstack_region (my_threadstack, my_thread,
-                                                    (void*)cb_info, func_name,
+                                                    (void*)cbid, func_name,
                                                     cupti_region, &vftrace, false);
 
    stack_t *my_new_stack = vftrace.process.stacktree.stacks + my_threadstack->stackID;
