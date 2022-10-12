@@ -141,18 +141,22 @@ int vftr_get_ancestor_thread_num(int level) {
 thread_t *vftr_get_my_thread(threadtree_t *threadtree_ptr) {
    SELF_PROFILE_START_FUNCTION;
    int level = vftr_get_thread_level();
-   thread_t *my_thread = threadtree_ptr->threads;
+   int parent_threadID = -1;
+   int threadID = 0;
+   thread_t *thread = threadtree_ptr->threads+threadID;
+   thread_t *parent_thread = NULL;
    // navigate through the thread tree until my thread is found
-   for (int ilevel=1; ilevel<level; ilevel++) {
+   for (int ilevel=1; ilevel<=level; ilevel++) {
+      parent_threadID = threadID;
       int thread_num = vftr_get_ancestor_thread_num(ilevel);
-      int threadID = my_thread->nsubthreads;
-      // if the thread does not exist yet, add and null it.
-      while (threadID > my_thread->nsubthreads) {
-         threadID = vftr_new_thread(my_thread->threadID,
+      while (thread_num >= (threadtree_ptr->threads+parent_threadID)->nsubthreads) {
+         threadID = vftr_new_thread(parent_threadID,
                                     threadtree_ptr);
       }
-      my_thread = threadtree_ptr->threads+threadID;
+      parent_thread = threadtree_ptr->threads+parent_threadID;
+      threadID = parent_thread->subthreads[thread_num];
    }
+   thread_t *my_thread = threadtree_ptr->threads+threadID;
    SELF_PROFILE_END_FUNCTION;
    return my_thread;
 }
