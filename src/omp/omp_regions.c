@@ -112,8 +112,8 @@ void vftr_omp_region_end(const char *name) {
       vftr_sample_function_exit(&(vftrace.sampling),
                                 *my_stack,
                                 region_end_time_begin);
-
    }
+
    // No calls after this overhead handling
    vftr_accumulate_callprofiling_overhead(
       &(my_profile->callprof),
