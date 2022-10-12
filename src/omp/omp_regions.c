@@ -39,13 +39,12 @@ void vftr_omp_region_begin(const char *name, void *addr) {
 
    // cast and store region address once, as it is needed multiple times
    uintptr_t region_addr = (uintptr_t) addr;
-   char *nameaddr = vftr_combine_string_and_address(name, addr);
    // TODO: update performance and call counters as soon as implemented
    // check for recursion
    // need to check for same address and name.
    // if a dynamically created region is called recuresively
    // it might have the same address, but the name can differ
-   if (my_stack->address == region_addr && !strcmp(nameaddr, my_stack->name)) {
+   if (my_stack->address == region_addr && !strcmp(name, my_stack->name)) {
       // if recusive call, simply increas recursion depth count.
       my_threadstack->recursion_depth++;
       vftr_accumulate_callprofiling(&(my_profile->callprof), 1, 0);
@@ -53,7 +52,7 @@ void vftr_omp_region_begin(const char *name, void *addr) {
       // add possibly new region to the stack
       // and adjust the threadstack accordingly
       my_threadstack = vftr_update_threadstack_region(my_threadstack, my_thread,
-                                                      region_addr, nameaddr,
+                                                      region_addr, name,
                                                       omp_region, &vftrace,
                                                       true);
       stack_t *my_new_stack = vftrace.process.stacktree.stacks+my_threadstack->stackID;
