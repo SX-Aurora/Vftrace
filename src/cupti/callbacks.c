@@ -98,8 +98,7 @@ void CUPTIAPI vftr_cupti_event_callback (void *userdata,
    if (cbid == CUPTI_RUNTIME_TRACE_CBID_cudaEventRecord_v3020
     || cbid == CUPTI_RUNTIME_TRACE_CBID_cudaEventSynchronize_v3020
     || cbid == CUPTI_RUNTIME_TRACE_CBID_cudaEventElapsedTime_v3020
-    || cbid == CUPTI_RUNTIME_TRACE_CBID_cudaEventCreate_v3020
-    || cbid == CUPTI_RUNTIME_TRACE_CBID_cudaGetDeviceProperties_v3020) return;
+    || cbid == CUPTI_RUNTIME_TRACE_CBID_cudaEventCreate_v3020) return;
 
    if (cb_info->callbackSite == CUPTI_API_ENTER) {
       vftr_cupti_region_begin (cbid, cb_info);

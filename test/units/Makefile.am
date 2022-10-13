@@ -266,7 +266,7 @@ collatestacks_parallel_3_LDFLAGS = $(AM_LDFLAGS)
 endif
 
 collatecallprofiles_SOURCES = $(srcdir)/collatecallprofiles.c \
-			      $(srcdir)/dummysymboltable.c
+			      $(srcdir)/dummy_stacktree.c
 collatecallprofiles_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
 collatecallprofiles_LDFLAGS = $(AM_LDFLAGS)
 
@@ -288,7 +288,7 @@ collatecallprofiles_parallel_2_2_LDFLAGS = $(AM_LDFLAGS)
 endif
 
 calltime_imbalances_SOURCES = $(srcdir)/calltime_imbalances.c \
-			      $(srcdir)/dummysymboltable.c
+			      $(srcdir)/dummy_stacktree.c
 calltime_imbalances_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
 calltime_imbalances_LDFLAGS = $(AM_LDFLAGS)
 
@@ -356,12 +356,12 @@ profilelist_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
 profilelist_LDFLAGS = $(AM_LDFLAGS)
 
 exclusive_times_SOURCES = $(srcdir)/exclusive_times.c \
-			  $(srcdir)/dummysymboltable.c
+			  $(srcdir)/dummy_stacktree.c
 exclusive_times_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
 exclusive_times_LDFLAGS = $(AM_LDFLAGS)
 
 total_call_overhead_SOURCES = $(srcdir)/total_call_overhead.c \
-			      $(srcdir)/dummysymboltable.c
+			      $(srcdir)/dummy_stacktree.c
 total_call_overhead_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
 total_call_overhead_LDFLAGS = $(AM_LDFLAGS)
 
@@ -380,17 +380,18 @@ total_omp_overhead_LDFLAGS = $(AM_LDFLAGS)
 endif
 
 sorting_stacks_SOURCES = $(srcdir)/sorting_stacks.c \
-                         $(srcdir)/dummysymboltable.c
+                         $(srcdir)/dummy_stacktree.c
 sorting_stacks_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src -I$(top_srcdir)/src/sorting/
 sorting_stacks_LDFLAGS = $(AM_LDFLAGS)
 
 sorting_collated_stacks_SOURCES = $(srcdir)/sorting_collated_stacks.c \
-				  $(srcdir)/dummysymboltable.c
+				  $(srcdir)/dummy_stacktree.c
 sorting_collated_stacks_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src -I$(top_srcdir)/src/sorting/
 sorting_collated_stacks_LDFLAGS = $(AM_LDFLAGS)
 
 print_prof_table_SOURCES = $(srcdir)/print_prof_table.c \
-			   $(srcdir)/dummysymboltable.c
+			   $(srcdir)/dummysymboltable.c \
+                           $(srcdir)/dummy_stacktree.c
 print_prof_table_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
 print_prof_table_LDFLAGS = $(AM_LDFLAGS)
 

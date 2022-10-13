@@ -3,6 +3,7 @@
 #include "symbols.h"
 #include "tables.h"
 #include "stack_types.h"
+#include "sorting.h"
 
 #include "callbacks.h"
 #include "cuptiprofiling_types.h"
@@ -29,10 +30,12 @@ void vftr_get_total_cupti_times_for_ranklogfile (stacktree_t stacktree, float *t
 
 void vftr_write_ranklogfile_cupti_table(FILE *fp, stacktree_t stacktree) {
    int n_stackids_with_cupti_data = 0;
+
+   stack_t **sorted_stacks = vftr_sort_stacks_for_cupti (stacktree);
+
    for (int istack = 0; istack < stacktree.nstacks; istack++) {
-      stack_t this_stack = stacktree.stacks[istack];
       // CUPTI only supported for one thread, thus there is only one profile.
-      profile_t *this_profile = this_stack.profiling.profiles;
+      profile_t *this_profile = sorted_stacks[istack]->profiling.profiles;
       if (this_profile->cuptiprof.cbid != 0) n_stackids_with_cupti_data++;
    }
 
@@ -48,8 +51,8 @@ void vftr_write_ranklogfile_cupti_table(FILE *fp, stacktree_t stacktree) {
 
    int i = 0;
    for (int istack = 0; istack < stacktree.nstacks; istack++) {
-      stack_t this_stack = stacktree.stacks[istack];
-      profile_t *this_profile = this_stack.profiling.profiles;
+      stack_t *this_stack = sorted_stacks[istack];
+      profile_t *this_profile = this_stack->profiling.profiles;
       cuptiprofile_t cuptiprof = this_profile->cuptiprof;
 
       int cbid = cuptiprof.cbid;
@@ -57,13 +60,13 @@ void vftr_write_ranklogfile_cupti_table(FILE *fp, stacktree_t stacktree) {
       stackids_with_cupti_data[i] = istack;
       calls[i] = cuptiprof.n_calls;
       cbids[i] = cbid;
-      t_compute[i] = vftr_cupti_cbid_belongs_to_class (cbids, T_CUPTI_COMP) ? cuptiprof.t_ms / 1000 : 0;
-      t_memcpy[i] = vftr_cupti_cbid_belongs_to_class (cbids, T_CUPTI_MEMCP) ? cuptiprof.t_ms / 1000 : 0;
-      t_other[i] = vftr_cupti_cbid_belongs_to_class (cbids, T_CUPTI_OTHER) ? cuptiprof.t_ms / 1000 : 0;
+      t_compute[i] = vftr_cupti_cbid_belongs_to_class (cbids[i], T_CUPTI_COMP) ? cuptiprof.t_ms / 1000 : 0;
+      t_memcpy[i] = vftr_cupti_cbid_belongs_to_class (cbids[i], T_CUPTI_MEMCP) ? cuptiprof.t_ms / 1000 : 0;
+      t_other[i] = vftr_cupti_cbid_belongs_to_class (cbids[i], T_CUPTI_OTHER) ? cuptiprof.t_ms / 1000 : 0;
       memcpy_in[i] = cuptiprof.memcpy_bytes[CUPTI_COPY_IN];
       memcpy_out[i] = cuptiprof.memcpy_bytes[CUPTI_COPY_OUT];
 #ifdef _LIBERTY
-      names[i] = vftr_demangle_cxx(this_stack.name);
+      names[i] = vftr_demangle_cxx(this_stack->name);
 #else
       names[i] = this_stack.name;
 #endif
