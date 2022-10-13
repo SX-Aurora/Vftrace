@@ -54,5 +54,6 @@ if SELF_PROFILING
 libvftr_mpi_utils_la_CPPFLAGS += -D_SELF_PROFILE_VFTRACE
 endif
 
-libvftr_mpi_utils_la_CFLAGS += -I${srcdir}/../../
+libvftr_mpi_utils_la_CFLAGS += -I${srcdir}/../../ \
+			       -I${srcdir}/../../sorting/
 libvftr_mpi_utils_la_CFLAGS += -I${srcdir}/../vftr_mpi/

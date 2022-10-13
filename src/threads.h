@@ -21,6 +21,10 @@ int vftr_get_ancestor_thread_num(int level);
 
 thread_t *vftr_get_my_thread(threadtree_t *threadtree_ptr);
 
+void vftr_thread_subthreads_reset(threadtree_t *threadtree_ptr, int threadID);
+
 void vftr_print_threadtree(FILE *fp, threadtree_t threadtree);
+
+void vftr_print_threadlist(FILE *fp, threadtree_t threadtree);
 
 #endif

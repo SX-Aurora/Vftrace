@@ -62,7 +62,7 @@ check_PROGRAMS += thread_num \
                   ancestor_thread_num
 
 thread_num_SOURCES = $(srcdir)/thread_num.c
-thread_num_CFLAGS  = $(AM_CFLAGS)
+thread_num_CFLAGS  = $(AM_CFLAGS) -finstrument-functions
 thread_num_LDFLAGS = $(AM_LDFLAGS)
 
 thread_level_SOURCES = $(srcdir)/thread_level.c
@@ -80,7 +80,7 @@ dist_noinst_SCRIPTS += thread_num.sh \
 check_PROGRAMS += threadtree
 
 threadtree_SOURCES = $(srcdir)/threadtree.c
-threadtree_CFLAGS  = $(AM_CFLAGS)
+threadtree_CFLAGS  = $(AM_CFLAGS) -finstrument-functions
 threadtree_LDFLAGS = $(AM_LDFLAGS)
 
 dist_noinst_SCRIPTS += threadtree.sh

@@ -48,7 +48,9 @@ int vftr_new_thread(int parent_thread_id,
    thread.level = parent_thread_ptr->level+1;
    thread.thread_num = parent_thread_ptr->nsubthreads;
    thread.master = parent_thread_ptr->master && thread.thread_num == 0;
-   thread.stacklist = vftr_new_threadstacklist(-1);
+   // inherit stackID from parent thread
+   threadstack_t *parent_threadstack = vftr_get_my_threadstack(parent_thread_ptr);
+   thread.stacklist = vftr_new_threadstacklist(parent_threadstack->stackID);
    thread.parent_thread = parent_thread_ptr->threadID;
    thread.maxsubthreads = 0;
    thread.nsubthreads = 0;
@@ -90,6 +92,18 @@ threadtree_t vftr_new_threadtree() {
    return threadtree;
 }
 
+void vftr_thread_subthreads_reset(threadtree_t *threadtree_ptr, int threadID) {
+   thread_t *my_thread = threadtree_ptr->threads+threadID;
+   threadstack_t *my_threadstack = vftr_get_my_threadstack(my_thread);
+   int nsubthreads = my_thread->nsubthreads;
+   for (int isubthread=0; isubthread<nsubthreads; isubthread++) {
+      int subthreadID = my_thread->subthreads[isubthread];
+      thread_t *thread = threadtree_ptr->threads+subthreadID;
+      thread->stacklist.nstacks = 0;
+      vftr_threadstack_push(my_threadstack->stackID, &(thread->stacklist));
+   }
+}
+
 int vftr_get_thread_level() {
    SELF_PROFILE_START_FUNCTION;
 #ifdef _OMP
@@ -127,18 +141,22 @@ int vftr_get_ancestor_thread_num(int level) {
 thread_t *vftr_get_my_thread(threadtree_t *threadtree_ptr) {
    SELF_PROFILE_START_FUNCTION;
    int level = vftr_get_thread_level();
-   thread_t *my_thread = threadtree_ptr->threads;
+   int parent_threadID = -1;
+   int threadID = 0;
+   thread_t *thread = threadtree_ptr->threads+threadID;
+   thread_t *parent_thread = NULL;
    // navigate through the thread tree until my thread is found
-   for (int ilevel=1; ilevel<level; ilevel++) {
+   for (int ilevel=1; ilevel<=level; ilevel++) {
+      parent_threadID = threadID;
       int thread_num = vftr_get_ancestor_thread_num(ilevel);
-      int threadID = my_thread->nsubthreads;
-      // if the thread does not exist yet, add and null it.
-      while (thread_num > my_thread->nsubthreads) {
-         threadID = vftr_new_thread(my_thread->threadID,
+      while (thread_num >= (threadtree_ptr->threads+parent_threadID)->nsubthreads) {
+         threadID = vftr_new_thread(parent_threadID,
                                     threadtree_ptr);
       }
-      my_thread = threadtree_ptr->threads+threadID;
+      parent_thread = threadtree_ptr->threads+parent_threadID;
+      threadID = parent_thread->subthreads[thread_num];
    }
+   thread_t *my_thread = threadtree_ptr->threads+threadID;
    SELF_PROFILE_END_FUNCTION;
    return my_thread;
 }
@@ -204,4 +222,24 @@ void vftr_print_current_thread(FILE *fp, threadtree_t threadtree, int threadid) 
 void vftr_print_threadtree(FILE *fp, threadtree_t threadtree) {
    fprintf(fp, "Threadtree:\n");
    vftr_print_thread(fp, threadtree, 0);
+}
+
+void vftr_print_threadlist(FILE *fp, threadtree_t threadtree) {
+   for (int ithread=0; ithread<threadtree.nthreads; ithread++) {
+      thread_t *thread = threadtree.threads+ithread;
+      fprintf(fp, "%4d:", thread->threadID);
+      if (thread->parent_thread >= 0) {
+         fprintf(fp, " parent=%d", thread->parent_thread);
+      } else {
+         fprintf(fp, " parent=-");
+      }
+      fprintf(fp, ", lvl=%d", thread->level);
+      if (thread->nsubthreads > 0)  {
+         fprintf(fp, ", subthreads=%d", thread->subthreads[0]);
+         for (int isubthread=1; isubthread<thread->nsubthreads; isubthread++) {
+            fprintf(fp, ",%d", thread->subthreads[isubthread]);
+         }
+      }
+      fprintf(fp, "\n");
+   }
 }

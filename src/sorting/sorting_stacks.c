@@ -90,3 +90,109 @@ stack_t **vftr_sort_stacks_for_prof(environment_t environment,
 
    return stackptrs;
 }
+
+#ifdef _MPI
+void vftr_sort_stacks_for_mpiprof(environment_t environment,
+                                  int nselected_stacks,
+                                  stack_t **selected_stacks) {
+   // Depending on the environment variable create a list of that value
+   // (summing over the thread individual profiles)
+   // sort it and store the permutation to sort a pointerlist pointing
+   // to the stacks themselves
+   int *perm = NULL;
+   long long *stackvals = (long long*) malloc(nselected_stacks*sizeof(long long));
+   for (int istack=0; istack<nselected_stacks; istack++) {
+      stackvals[istack] = 0ll;
+   }
+   char *env_val = environment.sort_mpi_table.value.string_val;
+   bool ascending = false;
+   if (!strcmp(env_val, "MESSAGES")) {
+      for (int istack=0; istack<nselected_stacks; istack++) {
+         stack_t *stack = selected_stacks[istack];
+         int nprofs = stack->profiling.nprofiles;
+         for (int iprof=0; iprof<nprofs; iprof++) {
+            profile_t *prof = stack->profiling.profiles+iprof;
+            stackvals[istack] += prof->mpiprof.nsendmessages;
+            stackvals[istack] += prof->mpiprof.nrecvmessages;
+         }
+      }
+   } else if (!strcmp(env_val, "SEND_SIZE")) {
+      for (int istack=0; istack<nselected_stacks; istack++) {
+         stack_t *stack = selected_stacks[istack];
+         int nprofs = stack->profiling.nprofiles;
+         for (int iprof=0; iprof<nprofs; iprof++) {
+            profile_t *prof = stack->profiling.profiles+iprof;
+            long long avg_send_bytes = prof->mpiprof.send_bytes /
+                                       prof->mpiprof.nsendmessages;
+            stackvals[istack] += avg_send_bytes;
+         }
+      }
+   } else if (!strcmp(env_val, "RECV_SIZE")) {
+      for (int istack=0; istack<nselected_stacks; istack++) {
+         stack_t *stack = selected_stacks[istack];
+         int nprofs = stack->profiling.nprofiles;
+         for (int iprof=0; iprof<nprofs; iprof++) {
+            profile_t *prof = stack->profiling.profiles+iprof;
+            long long avg_recv_bytes = prof->mpiprof.recv_bytes /
+                                       prof->mpiprof.nrecvmessages;
+            stackvals[istack] += avg_recv_bytes;
+         }
+      }
+   } else if (!strcmp(env_val, "SEND_BW")) {
+      for (int istack=0; istack<nselected_stacks; istack++) {
+         stack_t *stack = selected_stacks[istack];
+         int nprofs = stack->profiling.nprofiles;
+         for (int iprof=0; iprof<nprofs; iprof++) {
+            profile_t *prof = stack->profiling.profiles+iprof;
+            long long avg_recv_bw = prof->mpiprof.acc_send_bw /
+                                    prof->mpiprof.nsendmessages;
+            stackvals[istack] = avg_recv_bw;
+         }
+      }
+   } else if (!strcmp(env_val, "RECV_BW")) {
+      for (int istack=0; istack<nselected_stacks; istack++) {
+         stack_t *stack = selected_stacks[istack];
+         int nprofs = stack->profiling.nprofiles;
+         for (int iprof=0; iprof<nprofs; iprof++) {
+            profile_t *prof = stack->profiling.profiles+iprof;
+            long long avg_recv_bw = prof->mpiprof.acc_recv_bw /
+                                    prof->mpiprof.nrecvmessages;
+            stackvals[istack] = avg_recv_bw;
+         }
+      }
+   } else if (!strcmp(env_val, "COMM_TIME")) {
+      for (int istack=0; istack<nselected_stacks; istack++) {
+         stack_t *stack = selected_stacks[istack];
+         int nprofs = stack->profiling.nprofiles;
+         for (int iprof=0; iprof<nprofs; iprof++) {
+            profile_t *prof = stack->profiling.profiles+iprof;
+            long long avg_comm_time = prof->mpiprof.total_time_nsec /
+               (prof->mpiprof.nsendmessages + prof->mpiprof.nrecvmessages);
+            stackvals[istack] = avg_comm_time;
+         }
+      }
+   } else if (!strcmp(env_val, "STACK_ID")) {
+      for (int istack=0; istack<nselected_stacks; istack++) {
+         stack_t *stack = selected_stacks[istack];
+         stackvals[istack] = stack->gid;
+      }
+      ascending = true;
+   } else {
+      // if (!strcmp(env_val, "NONE"))
+      for (int istack=0; istack<nselected_stacks; istack++) {
+         stack_t *stack = selected_stacks[istack];
+         stackvals[istack] += stack->lid;
+      }
+      ascending = true;
+   }
+
+   // sorting and saving the permutation
+   vftr_sort_perm_longlong(nselected_stacks, stackvals, &perm, ascending);
+   free(stackvals);
+
+   // apply the permutation to the stackpointer list,
+   // so the stacks are sorted in the same way the slected value is.
+   vftr_apply_perm_stackptr(nselected_stacks, selected_stacks, perm);
+   free(perm);
+}
+#endif
