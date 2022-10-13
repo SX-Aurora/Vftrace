@@ -1,6 +1,6 @@
 #!/bin/bash
 set -x
-test_name=vftr_sort_profile_table_assert
+test_name=vftr_sort_mpi_table_assert
 output_file=${test_name}.out
 error_file=${test_name}.err
 ref_file=${srcdir}/ref_output/little_tasks.out
@@ -34,9 +34,9 @@ if [ "${nwarn}" -ne 0 ] ; then
    exit 1
 fi
 
-for sort_str in TIME_EXCL TIME_INCL CALLS STACK_ID OVERHEAD NONE
+for sort_str in MESSAGES SEND_SIZE RECV_SIZE SEND_BW SEND_BW COMM_TIME STACK_ID NONE
 do
-   export VFTR_SORT_PROFILE_TABLE="${sort_str}"
+   export VFTR_SORT_MPI_TABLE="${sort_str}"
    rm_outfiles
    run_binary
    cat ${error_file}
@@ -47,7 +47,7 @@ do
    fi
 done
 
-export VFTR_SORT_PROFILE_TABLE="NONSENSE"
+export VFTR_SORT_MPI_TABLE="NONSENSE"
 rm_outfiles
 run_binary
 cat ${error_file}
