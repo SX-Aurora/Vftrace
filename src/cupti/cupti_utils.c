@@ -26,7 +26,9 @@ void vftr_show_used_gpu_info (FILE *fp) {
 
    fprintf (fp, "\n");
    
-   if (all_gpu_same) {
+   if (n_gpus == 0) {
+      fprintf (fp, "No GPUs available\n");
+   } else if (all_gpu_same) {
       fprintf (fp, "Using %d GPUs: %s\n", n_gpus, prop.name);
    } else {
       fprintf (fp, "Using %d GPUs: \n", n_gpus);
@@ -35,9 +37,10 @@ void vftr_show_used_gpu_info (FILE *fp) {
       }
    }
    
-   char *visible_devices = getenv("CUDA_VISIBLE_DEVICES");
-   fprintf (fp, "Visible GPUs: %s\n", visible_devices == NULL ? "all" : visible_devices);
-   
+   if (n_gpus > 0) {
+      char *visible_devices = getenv("CUDA_VISIBLE_DEVICES");
+      fprintf (fp, "Visible GPUs: %s\n", visible_devices == NULL ? "all" : visible_devices);
+   }
 }
 
 bool vftr_cupti_cbid_belongs_to_class (int cbid, int cbid_class) {

@@ -9,3 +9,7 @@ endif
 if ENABLE_MPI 
 SUBDIRS += mpi
 endif
+
+if ENABLE_CUPTI
+SUBDIRS += cupti
+endif

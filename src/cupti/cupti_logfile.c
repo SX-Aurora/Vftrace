@@ -100,10 +100,6 @@ void vftr_write_logfile_cupti_table(FILE *fp, collated_stacktree_t stacktree) {
    free(cbids);
    free(names);
    free(stackids_with_cupti_data);
-   for (int i = 0; i < stacktree.nstacks; i++) {
-      free(sorted_stacks[i]);
-   }
-   free(sorted_stacks);
 }
 
 void vftr_write_logfile_cbid_names (FILE *fp, collated_stacktree_t stacktree) {
