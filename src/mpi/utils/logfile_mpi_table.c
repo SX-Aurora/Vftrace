@@ -17,7 +17,7 @@
 #include "stacks.h"
 #include "collate_stacks.h"
 #include "tables.h"
-//#include "sorting.h"
+#include "sorting.h"
 
 int *vftr_logfile_mpi_table_nmessages_list(int nstacks, collated_stack_t **stack_ptrs) {
    int *nmessages_list = (int*) malloc(nstacks*sizeof(int));
@@ -201,9 +201,9 @@ void vftr_write_logfile_mpi_table(FILE *fp, collated_stacktree_t stacktree,
                                   environment_t environment) {
    SELF_PROFILE_START_FUNCTION;
    int nrows = vftr_logfile_mpi_table_nrows(stacktree);
-   // TODO: sort something
    collated_stack_t **selected_stacks =
       vftr_logfile_mpi_table_get_relevant_collated_stacks(nrows, stacktree);
+   vftr_sort_collated_stacks_for_mpiprof(environment, nrows, selected_stacks);
 
    fprintf(fp, "\nCommunication profile");
    if (environment.ranks_in_mpi_profile.set) {

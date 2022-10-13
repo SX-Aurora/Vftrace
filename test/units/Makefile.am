@@ -118,7 +118,8 @@ check_PROGRAMS += sorting_stacks \
 		  sorting_collated_stacks
 check_PROGRAMS += print_prof_table
 if ENABLE_MPI
-check_PROGRAMS += print_mpi_table
+check_PROGRAMS += print_mpi_table \
+		  sorting_mpi_table
 endif
 
 check_PROGRAMS += threadlist \
@@ -398,6 +399,11 @@ print_mpi_table_SOURCES = $(srcdir)/print_mpi_table.c \
 print_mpi_table_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
 print_mpi_table_LDFLAGS = $(AM_LDFLAGS)
 
+sorting_mpi_table_SOURCES = $(srcdir)/sorting_mpi_table.c \
+			    $(srcdir)/dummysymboltable.c
+sorting_mpi_table_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src -I$(top_srcdir)/src/sorting/
+sorting_mpi_table_LDFLAGS = $(AM_LDFLAGS)
+
 threadlist_SOURCES = $(srcdir)/threadlist.c \
 		     $(srcdir)/dummysymboltable.c
 threadlist_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
@@ -518,6 +524,14 @@ dist_check_SCRIPTS += sorting_collated_stacks_none.sh \
 dist_check_SCRIPTS += print_prof_table.sh
 if ENABLE_MPI
 dist_check_SCRIPTS += print_mpi_table.sh
+dist_check_SCRIPTS += sorting_mpi_table_none.sh \
+		      sorting_mpi_table_messages.sh \
+		      sorting_mpi_table_sendsize.sh \
+		      sorting_mpi_table_recvsize.sh \
+		      sorting_mpi_table_sendbw.sh \
+		      sorting_mpi_table_recvbw.sh \
+		      sorting_mpi_table_commtime.sh \
+		      sorting_mpi_table_stackid.sh
 endif
 dist_check_SCRIPTS += threadlist.sh \
 		      threadtree.sh

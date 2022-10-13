@@ -52,6 +52,14 @@ void vftr_sort_symboltable(unsigned int nsymb, symbol_t *symbols);
 void vftr_apply_perm_stackptr(int n, stack_t **list, int *perm);
 stack_t **vftr_sort_stacks_for_prof(environment_t environment,
                                     stacktree_t stacktree);
+#ifdef _MPI
+void vftr_sort_collated_stacks_for_mpiprof(environment_t environment,
+                                           int nselected_stacks,
+                                           collated_stack_t **selected_stacks);
+void vftr_sort_stacks_for_mpiprof(environment_t environment,
+                                  int nselected_stacks,
+                                  stack_t **selected_stacks);
+#endif
 
 // sort the collated stacks based on a set environment variable
 void vftr_apply_perm_collated_stackptr(int n, collated_stack_t **list, int *perm);
