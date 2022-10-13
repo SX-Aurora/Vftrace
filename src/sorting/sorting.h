@@ -61,6 +61,10 @@ void vftr_sort_stacks_for_mpiprof(environment_t environment,
                                   stack_t **selected_stacks);
 #endif
 
+#ifdef _CUPTI
+stack_t **vftr_sort_stacks_for_cupti (stacktree_t stacktree);
+#endif
+
 // sort the collated stacks based on a set environment variable
 void vftr_apply_perm_collated_stackptr(int n, collated_stack_t **list, int *perm);
 collated_stack_t **vftr_sort_collated_stacks_for_prof(environment_t environment,

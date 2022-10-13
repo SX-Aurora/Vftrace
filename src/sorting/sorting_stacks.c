@@ -196,3 +196,33 @@ void vftr_sort_stacks_for_mpiprof(environment_t environment,
    free(perm);
 }
 #endif
+
+#ifdef _CUPTI
+   stack_t **vftr_sort_stacks_for_cupti (stacktree_t stacktree) {
+     int nstacks = stacktree.nstacks;
+
+     float *stackvals = (float*)malloc(nstacks * sizeof(float));
+     for (int istack = 0; istack < nstacks; istack++) {
+        stackvals[istack] = 0; 
+        stack_t *stack = stacktree.stacks + istack;
+        int nprofs = stack->profiling.nprofiles;
+        for (int iprof = 0; iprof < nprofs; iprof++) {
+           profile_t *prof = stack->profiling.profiles + iprof;
+           stackvals[istack] += prof->cuptiprof.t_ms;
+        } 
+     }
+
+     int *perm = NULL;
+     vftr_sort_perm_float(nstacks, stackvals, &perm, false);
+     free(stackvals);
+
+     stack_t **stackptrs = (stack_t**) malloc(nstacks*sizeof(stack_t*));
+     for (int istack = 0; istack < nstacks; istack++) {
+        stackptrs[istack] = stacktree.stacks + istack;
+     }
+
+     vftr_apply_perm_stackptr (nstacks, stackptrs, perm);
+     free(perm);
+     return stackptrs; 
+}
+#endif
