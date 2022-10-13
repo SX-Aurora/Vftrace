@@ -3,6 +3,7 @@ name: cudafunc2
 callprof.t_excl: 0
 callprof.calls: 1
 cuptiprof.cbid: 31
+cuptiprof.calls: 1
 cuptiprof.t_ms: 1000.000
 cuptiprof.memcpy_in: 1048576
 cuptiprof.memcpy_out: 0
@@ -12,6 +13,7 @@ name: cudafunc3
 callprof.t_excl: 0
 callprof.calls: 1
 cuptiprof.cbid: 31
+cuptiprof.calls: 1
 cuptiprof.t_ms: 20000.000
 cuptiprof.memcpy_in: 0
 cuptiprof.memcpy_out: 524288
@@ -21,6 +23,7 @@ name: func0
 callprof.t_excl: 1
 callprof.calls: 1
 cuptiprof.cbid: 0
+cuptiprof.calls: 0
 cuptiprof.t_ms: 0.000
 cuptiprof.memcpy_in: 0
 cuptiprof.memcpy_out: 0
@@ -30,6 +33,7 @@ name: init
 callprof.t_excl: 0
 callprof.calls: 1
 cuptiprof.cbid: 0
+cuptiprof.calls: 0
 cuptiprof.t_ms: 0.000
 cuptiprof.memcpy_in: 0
 cuptiprof.memcpy_out: 0
@@ -39,6 +43,7 @@ name: cudafunc1
 callprof.t_excl: 4
 callprof.calls: 7
 cuptiprof.cbid: 13
+cuptiprof.calls: 5
 cuptiprof.t_ms: 5000.000
 cuptiprof.memcpy_in: 0
 cuptiprof.memcpy_out: 0

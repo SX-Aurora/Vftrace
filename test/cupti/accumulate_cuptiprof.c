@@ -54,6 +54,7 @@ int main(int argc, char **argv) {
       printf ("callprof.t_excl: %lld\n", callprof.time_excl_nsec);
       printf ("callprof.calls: %d\n", callprof.calls);
       printf ("cuptiprof.cbid: %d\n", cuptiprof.cbid);
+      printf ("cuptiprof.calls: %d\n", cuptiprof.n_calls);
       printf ("cuptiprof.t_ms: %.3f\n", cuptiprof.t_ms);
       printf ("cuptiprof.memcpy_in: %lld\n", cuptiprof.memcpy_bytes[CUPTI_COPY_IN]);
       printf ("cuptiprof.memcpy_out: %lld\n", cuptiprof.memcpy_bytes[CUPTI_COPY_OUT]);
