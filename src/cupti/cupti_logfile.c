@@ -5,6 +5,7 @@
 #include "tables.h"
 #include "collated_stack_types.h"
 #include "vftrace_state.h"
+#include "sorting.h"
 
 #include "callbacks.h"
 #include "cuptiprofiling_types.h"
@@ -31,11 +32,12 @@ void vftr_get_total_cupti_times_for_logfile (collated_stacktree_t stacktree,
 
 void vftr_write_logfile_cupti_table(FILE *fp, collated_stacktree_t stacktree) {
    int n_stackids_with_cupti_data = 0;
+
+   collated_stack_t **sorted_stacks = vftr_sort_collated_stacks_for_cupti (stacktree);
+
    for (int istack = 0; istack < stacktree.nstacks; istack++) {
-      collated_stack_t this_stack = stacktree.stacks[istack];
-      if (this_stack.profile.cuptiprof.cbid != 0) {
-          n_stackids_with_cupti_data++;
-      } 
+      cuptiprofile_t cuptiprof = sorted_stacks[istack]->profile.cuptiprof;
+      if (cuptiprof.cbid != 0) n_stackids_with_cupti_data++;
    }
 
    int *stackids_with_cupti_data = (int*)malloc(n_stackids_with_cupti_data*sizeof(int));
@@ -50,25 +52,24 @@ void vftr_write_logfile_cupti_table(FILE *fp, collated_stacktree_t stacktree) {
 
    int i = 0;
    for (int istack = 0; istack < stacktree.nstacks; istack++) {
-      collated_stack_t this_stack = stacktree.stacks[istack];
-      cuptiprofile_t cuptiprof = this_stack.profile.cuptiprof;
-      if (cuptiprof.cbid != 0) {
-          stackids_with_cupti_data[i] = istack;
-          calls[i] = cuptiprof.n_calls;
-          cbids[i] = cuptiprof.cbid;
-          t_compute[i] = vftr_cupti_cbid_belongs_to_class (cuptiprof.cbid, T_CUPTI_COMP) ? cuptiprof.t_ms / 1000 : 0;
-          t_memcpy[i] = vftr_cupti_cbid_belongs_to_class (cuptiprof.cbid, T_CUPTI_MEMCP) ? cuptiprof.t_ms / 1000 : 0;
-          t_other[i] = vftr_cupti_cbid_belongs_to_class (cuptiprof.cbid, T_CUPTI_OTHER) ? cuptiprof.t_ms / 1000 : 0;
+      collated_stack_t *this_stack = sorted_stacks[istack];
+      cuptiprofile_t cuptiprof = this_stack->profile.cuptiprof;
+      if (cuptiprof.cbid == 0) continue;
+      stackids_with_cupti_data[i] = istack;
+      calls[i] = cuptiprof.n_calls;
+      cbids[i] = cuptiprof.cbid;
+      t_compute[i] = vftr_cupti_cbid_belongs_to_class (cbids[i], T_CUPTI_COMP) ? cuptiprof.t_ms / 1000 : 0;
+      t_memcpy[i] = vftr_cupti_cbid_belongs_to_class (cbids[i], T_CUPTI_MEMCP) ? cuptiprof.t_ms / 1000 : 0;
+      t_other[i] = vftr_cupti_cbid_belongs_to_class (cbids[i], T_CUPTI_OTHER) ? cuptiprof.t_ms / 1000 : 0;
 
-          memcpy_in[i] = cuptiprof.memcpy_bytes[CUPTI_COPY_IN];
-          memcpy_out[i] = cuptiprof.memcpy_bytes[CUPTI_COPY_OUT];
+      memcpy_in[i] = cuptiprof.memcpy_bytes[CUPTI_COPY_IN];
+      memcpy_out[i] = cuptiprof.memcpy_bytes[CUPTI_COPY_OUT];
 #ifdef _LIBERTY
-          names[i] = vftr_demangle_cxx(this_stack.name);
+      names[i] = vftr_demangle_cxx(this_stack->name);
 #else
-          names[i] = this_stack.name;
+      names[i] = this_stack.name;
 #endif
-          i++;
-      }
+      i++;
    }
 
    table_t table = vftr_new_table();
@@ -99,6 +100,10 @@ void vftr_write_logfile_cupti_table(FILE *fp, collated_stacktree_t stacktree) {
    free(cbids);
    free(names);
    free(stackids_with_cupti_data);
+   for (int i = 0; i < stacktree.nstacks; i++) {
+      free(sorted_stacks[i]);
+   }
+   free(sorted_stacks);
 }
 
 void vftr_write_logfile_cbid_names (FILE *fp, collated_stacktree_t stacktree) {

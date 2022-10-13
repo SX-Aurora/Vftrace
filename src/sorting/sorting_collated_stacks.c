@@ -148,3 +148,29 @@ void vftr_sort_collated_stacks_for_mpiprof(environment_t environment,
    free(perm);
 }
 #endif
+
+#ifdef _CUPTI
+   collated_stack_t **vftr_sort_collated_stacks_for_cupti (collated_stacktree_t stacktree) {
+     int nstacks = stacktree.nstacks;
+
+     float *stackvals = (float*)malloc(nstacks * sizeof(float));
+     for (int istack = 0; istack < nstacks; istack++) {
+        stackvals[istack] = 0; 
+        collated_stack_t *stack = stacktree.stacks + istack;
+        stackvals[istack] += stack->profile.cuptiprof.t_ms;
+     }
+
+     int *perm = NULL;
+     vftr_sort_perm_float(nstacks, stackvals, &perm, false);
+     free(stackvals);
+
+     collated_stack_t **stackptrs = (collated_stack_t**) malloc(nstacks*sizeof(collated_stack_t*));
+     for (int istack = 0; istack < nstacks; istack++) {
+        stackptrs[istack] = stacktree.stacks + istack;
+     }
+
+     vftr_apply_perm_collated_stackptr (nstacks, stackptrs, perm);
+     free(perm);
+     return stackptrs; 
+}
+#endif
