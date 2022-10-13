@@ -6,9 +6,6 @@ error_file=${test_name}.err
 ref_file=${srcdir}/ref_output/little_tasks.out
 nranks=1
 
-"TIME_EXCL", "TIME_INCL", "CALLS",
-470                         "STACK_ID", "OVERHEAD", "NONE"
-
 function run_binary() {
    if [ "x${HAS_MPI}" == "xYES" ]; then
       ${MPI_EXEC} ${MPI_OPTS} ${NP} ${nranks} ./${test_name} \
