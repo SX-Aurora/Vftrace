@@ -79,7 +79,7 @@ void vftr_initialize(void *func, void *call_site) {
 #endif
 
 #ifdef _CUPTI
-      vftr_init_cupti();
+      (void)vftr_init_cupti();
 #endif
 
       // set the finalize function to be executed at the termination of the program

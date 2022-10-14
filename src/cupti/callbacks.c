@@ -43,7 +43,7 @@ void vftr_cupti_region_begin (int cbid, const CUpti_CallbackData *cb_info) {
    stack_t *my_stack = vftrace.process.stacktree.stacks+my_threadstack->stackID;
    profile_t *my_profile = vftr_get_my_profile(my_stack, my_thread);   
 
-   char *func_name;
+   const char *func_name;
    uint64_t pseudo_addr;
    if (cbid == CUPTI_RUNTIME_TRACE_CBID_cudaLaunch_v3020 || cbid == CUPTI_RUNTIME_TRACE_CBID_cudaLaunchKernel_v7000) {
          func_name = cb_info->symbolName;
@@ -56,7 +56,7 @@ void vftr_cupti_region_begin (int cbid, const CUpti_CallbackData *cb_info) {
 
    // Cuda calls are not recursive
    my_threadstack = vftr_update_threadstack_region (my_threadstack, my_thread,
-                                                    (void*)pseudo_addr, func_name,
+                                                    (uintptr_t)pseudo_addr, func_name,
                                                     cupti_region, &vftrace, false);
 
    stack_t *my_new_stack = vftrace.process.stacktree.stacks + my_threadstack->stackID;

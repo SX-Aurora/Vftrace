@@ -106,7 +106,7 @@ void vftr_write_logfile_cupti_table(FILE *fp, collated_stacktree_t stacktree, en
 void vftr_write_logfile_cbid_names (FILE *fp, collated_stacktree_t stacktree) {
    int n_different_cbids = 0;
    int *cbids_found = (int*)malloc(stacktree.nstacks * sizeof(int));
-   char **cbid_names = (char**)malloc(stacktree.nstacks * sizeof(char*));
+   const char **cbid_names = (const char**)malloc(stacktree.nstacks * sizeof(char*));
    for (int istack = 0; istack < stacktree.nstacks; istack++) {
       collated_stack_t this_stack = stacktree.stacks[istack];
       cuptiprofile_t cuptiprof = this_stack.profile.cuptiprof;
@@ -121,7 +121,7 @@ void vftr_write_logfile_cbid_names (FILE *fp, collated_stacktree_t stacktree) {
       if (!cbid_present) {
          cbids_found[n_different_cbids] = cuptiprof.cbid;
          cuptiGetCallbackName (CUPTI_CB_DOMAIN_RUNTIME_API, cuptiprof.cbid,
-                               &cbid_names[n_different_cbids]);
+                               cbid_names + n_different_cbids);
          n_different_cbids++;
       }
    }

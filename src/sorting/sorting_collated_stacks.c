@@ -165,11 +165,11 @@ void vftr_sort_collated_stacks_for_mpiprof(environment_t environment,
         vftr_sort_perm_float(nstacks, stackvals, &perm, false);
         free(stackvals);
      } else if (!strcmp(env_val, "MEMCPY")) {
-        uint64_t *stackvals = (uint64_t*)malloc(nstacks * sizeof(uint64_t));
+        long long *stackvals = (long long*)malloc(nstacks * sizeof(long long));
         for (int istack = 0; istack < nstacks; istack++) {
            collated_stack_t *stack = stacktree.stacks + istack;
            collated_profile_t prof = stack->profile;
-           stackvals[istack] = prof.cuptiprof.memcpy_bytes[0] + prof.cuptiprof.memcpy_bytes[1];
+           stackvals[istack] = (long long)(prof.cuptiprof.memcpy_bytes[0] + prof.cuptiprof.memcpy_bytes[1]);
         }
         vftr_sort_perm_longlong(nstacks, stackvals, &perm, false);
         free(stackvals);
