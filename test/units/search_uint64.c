@@ -22,7 +22,7 @@ int main(int argc, char **argv) {
 
    printf("List to be searched:\n");
    for (int i=0; i<len; i++) {
-      printf("%3d %6d\n", i, list[i]);
+      printf("%3d %6ld\n", i, list[i]);
    }
    printf("\n");
 
@@ -38,17 +38,17 @@ int main(int argc, char **argv) {
       uint64_t value = checks_match[icheck];
       int index = vftr_binary_search_uint64(len, list, value);
       if (index < 0) {
-         printf("Error: Value %d could not be found in the list, "
+         printf("Error: Value %ld could not be found in the list, "
                 "although it should.\n", value);
          return 1;
       }
       if (value != list[index]) {
-         printf("Error: Value %d was found at index %d in list, "
-                "but list[%d] yields %d.\n",
+         printf("Error: Value %ld was found at index %d in list, "
+                "but list[%d] yields %ld.\n",
                 value, index, index, list[index]);
          return 1;
       }
-      printf("Value %d found at index %d\n", value, index);
+      printf("Value %ld found at index %d\n", value, index);
    }
    printf("\n");
 
@@ -57,10 +57,10 @@ int main(int argc, char **argv) {
       uint64_t value = checks_nomatch[icheck];
       int index = vftr_binary_search_uint64(len, list, value);
       if (index >= 0) {
-         printf("Error: Value %d was found in list at index %d.\n", value, index);
+         printf("Error: Value %ld was found in list at index %d.\n", value, index);
          return 1;
       }
-      printf("Value %d not found in list\n", value);
+      printf("Value %ld not found in list\n", value);
    }
 
 #ifdef _MPI
