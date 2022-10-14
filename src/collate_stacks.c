@@ -49,6 +49,7 @@ collated_stacktree_t vftr_new_empty_collated_stacktree() {
    SELF_PROFILE_START_FUNCTION;
    collated_stacktree_t stacktree;
    stacktree.nstacks = 0;
+   stacktree.maxstacks = 0;
    stacktree.stacks = NULL;
    SELF_PROFILE_END_FUNCTION;
    return stacktree;
@@ -59,19 +60,33 @@ collated_stacktree_t vftr_new_collated_stacktree(hashlist_t hashlist) {
    // create empty collated stacktree
    collated_stacktree_t coll_stacktree;
    coll_stacktree.nstacks = hashlist.nhashes;
+   coll_stacktree.maxstacks = coll_stacktree.nstacks;
    coll_stacktree.stacks = (collated_stack_t*)
       malloc(coll_stacktree.nstacks*sizeof(collated_stack_t));
    for (int istack=0; istack<coll_stacktree.nstacks; istack++) {
       coll_stacktree.stacks[istack].local_stack = NULL;
       coll_stacktree.stacks[istack].gid = istack;
+      coll_stacktree.stacks[istack].gid_list = vftr_new_empty_gid_list();
       coll_stacktree.stacks[istack].precise = false;
       coll_stacktree.stacks[istack].caller = -1;
       coll_stacktree.stacks[istack].name = NULL;
       coll_stacktree.stacks[istack].hash = hashlist.hashes[istack];
       coll_stacktree.stacks[istack].profile = vftr_new_collated_profile();
    }
+   coll_stacktree.namegrouped = false;
    SELF_PROFILE_END_FUNCTION;
    return coll_stacktree;
+}
+
+void vftr_collated_stacktree_realloc(collated_stacktree_t *stacktree_ptr) {
+   collated_stacktree_t stacktree = *stacktree_ptr;
+   while (stacktree.nstacks > stacktree.maxstacks) {
+      int maxstacks = stacktree.maxstacks*vftr_realloc_rate+vftr_realloc_add;
+      stacktree.stacks = (collated_stack_t*)
+         realloc(stacktree.stacks, maxstacks*sizeof(collated_stack_t));
+      stacktree.maxstacks = maxstacks;
+   }
+   *stacktree_ptr = stacktree;
 }
 
 #ifdef _MPI
