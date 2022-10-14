@@ -245,13 +245,14 @@ environment_t vftr_read_environment() {
    environment.strip_module_names = vftr_read_env_bool("VFTR_STRIP_MODULE_NAMES", false);
    environment.sort_profile_table = vftr_read_env_string("VFTR_SORT_PROFILE_TABLE", "TIME_EXCL");
    environment.sort_mpi_table = vftr_read_env_string("VFTR_SORT_MPI_TABLE", "NONE");
+   environment.sort_cupti_table = vftr_read_env_string("VFTR_SORT_CUPTI_TABLE", "TIME");
    environment.show_overhead = vftr_read_env_bool("VFTR_SHOW_FUNCTION_OVERHEAD", false);
    environment.show_calltime_imbalances = vftr_read_env_bool("VFTR_SHOW_CALLTIME_IMBALANCES", false);
    environment.print_environment = vftr_read_env_bool("VFTR_PRINT_ENVIRONMENT", true);
    environment.callpath_in_profile = vftr_read_env_bool("VFTR_CALLPATH_IN_PROFILE", false);
    environment.callpath_in_mpi_profile = vftr_read_env_bool("VFTR_CALLPATH_IN_MPI_PROFILE", false);
    environment.demangle_cxx = vftr_read_env_bool("VFTR_DEMANGLE_CXX", false);
-   environment.nenv_vars = 24;
+   environment.nenv_vars = 25;
    environment.valid = true;
    SELF_PROFILE_END_FUNCTION;
    return environment;
@@ -519,6 +520,26 @@ void vftr_environment_assert_sort_mpi_table(FILE *fp, env_var_t sort_mpi_table) 
    }
 }
 
+void vftr_environment_assert_sort_cupti_table (FILE *fp, env_var_t sort_cupti_table) {
+   char *sort_str = sort_cupti_table.value.string_val;
+   int nvalid_str = 5;
+   char *valid_str[] = {"TIME", "MEMCPY", "CBID", "CALLS", "NONE"};
+
+   bool valid = false;
+   for (int istr = 0; istr < nvalid_str; istr++) {
+      valid = valid || !strcmp(sort_str, valid_str[istr]); 
+   }
+
+   if (!valid) {
+      fprintf(fp, "Warning: %s was set to \"%s\", but only valid options are:",
+              sort_cupti_table.name, sort_str);
+      for (int istr = 0; istr < nvalid_str - 1; istr++) {
+         fprintf(fp, " \"%s\",", valid_str[istr]);
+      }
+      fprintf(fp, " and \"%s\".\n", valid_str[nvalid_str-1]);
+   }
+}
+
 void vftr_environment_assert_show_overhead(FILE *fp, env_var_t show_overhead) {
    (void) fp;
    (void) show_overhead;
@@ -571,6 +592,7 @@ void vftr_environment_assert(FILE *fp, environment_t environment) {
    vftr_environment_assert_strip_module_names(fp, environment.strip_module_names);
    vftr_environment_assert_sort_profile_table(fp, environment.sort_profile_table);
    vftr_environment_assert_sort_mpi_table(fp, environment.sort_mpi_table);
+   vftr_environment_assert_sort_cupti_table(fp, environment.sort_cupti_table);
    vftr_environment_assert_show_overhead(fp, environment.show_overhead);
    vftr_environment_assert_show_calltime_imbalances(fp, environment.show_calltime_imbalances);
    vftr_environment_assert_print_environment(fp, environment.print_environment);

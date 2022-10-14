@@ -21,7 +21,12 @@ print_cupti_table_SOURCES = $(srcdir)/print_cupti_table.c \
 
 dist_check_SCRIPTS = gpu_info.sh \
                      accumulate_cuptiprof.sh \
-                     print_cupti_table.sh
+                     sort_cupti_none.sh \
+                     sort_cupti_time.sh \
+                     sort_cupti_memcpy.sh \
+                     sort_cupti_cbid.sh \
+                     sort_cupti_calls.sh
+                         
 
 TEST_EXTENSIONS = .sh
 TESTS = $(dist_check_SCRIPTS)

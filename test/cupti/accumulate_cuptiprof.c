@@ -38,18 +38,22 @@ int main(int argc, char **argv) {
       vftr_register_dummy_cupti_stack ("cudafunc1<init", CUPTI_RUNTIME_TRACE_CBID_cudaLaunch_v3020,
                                        1000.0, CUPTI_NOCOPY, 0);
    }
+   for (int i = 0; i < 3; i++) {
+      vftr_register_dummy_cupti_stack ("cudafunc4<func0<init", CUPTI_RUNTIME_TRACE_CBID_cudaLaunch_v3020,
+				       10000.0, CUPTI_NOCOPY, 0);
+   }
+
 
 
    stacktree_t stacktree = vftr_get_dummy_stacktree();
    
-   collated_stacktree_t collated_stacktree = vftr_collate_stacks(&stacktree);
-   vftr_collate_profiles(&collated_stacktree, &stacktree);
-
-   for (int istack = 0; istack < collated_stacktree.nstacks; istack++) {
-      collated_stack_t this_stack = collated_stacktree.stacks[istack];
-      collated_callprofile_t callprof = this_stack.profile.callprof;
-      cuptiprofile_t cuptiprof = this_stack.profile.cuptiprof;
+   for (int istack = 0; istack < stacktree.nstacks; istack++) {
+      stack_t this_stack = stacktree.stacks[istack];
+      profile_t *this_profile = this_stack.profiling.profiles;
+      callprofile_t callprof = this_profile->callprof; 
+      cuptiprofile_t cuptiprof = this_profile->cuptiprof;
       printf ("istack: %d\n", istack);
+      printf ("localID: %d\n", this_stack.lid);
       printf ("name: %s\n", this_stack.name);
       printf ("callprof.t_excl: %lld\n", callprof.time_excl_nsec);
       printf ("callprof.calls: %d\n", callprof.calls);
