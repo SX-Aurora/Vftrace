@@ -12,7 +12,7 @@ cuptiprofile_t vftr_new_cuptiprofiling() {
   prof.n_calls = 0;
   prof.t_ms = 0;
   prof.memcpy_bytes[0] = 0;
-  prof.memcpy_bytes[1] = 0; 
+  prof.memcpy_bytes[1] = 0;
   return prof;
 }
 
