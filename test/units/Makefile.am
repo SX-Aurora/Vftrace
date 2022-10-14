@@ -63,7 +63,8 @@ check_PROGRAMS += sort_int8 \
 		  sort_longlong \
 		  sort_double
 check_PROGRAMS += search_uint64 \
-		  search_int
+		  search_int \
+		  search_collated_stacks_name
 check_PROGRAMS += chop_chars \
 		  trim_left_delimiter \
 		  range_expand
@@ -196,6 +197,10 @@ search_uint64_LDFLAGS = $(AM_LDFLAGS)
 search_int_SOURCES = $(srcdir)/search_int.c
 search_int_CFLAGS = $(AM_CFLAGS) -I$(top_srcdir)/src/
 search_int_LDFLAGS = $(AM_LDFLAGS)
+
+search_collated_stacks_name_SOURCES = $(srcdir)/search_collated_stacks_name.c
+search_collated_stacks_name_CFLAGS = $(AM_CFLAGS) -I$(top_srcdir)/src/ -g
+search_collated_stacks_name_LDFLAGS = $(AM_LDFLAGS)
 
 chop_chars_SOURCES = $(srcdir)/chop_chars.c
 chop_chars_CFLAGS = $(AM_CFLAGS) -I$(top_srcdir)/src/
@@ -472,7 +477,8 @@ dist_check_SCRIPTS += sort_int8.sh \
 		      sort_longlong.sh \
 		      sort_double.sh
 dist_check_SCRIPTS += search_uint64.sh \
-		      search_int.sh
+		      search_int.sh \
+		      search_collated_stacks_name.sh
 dist_check_SCRIPTS += chop_chars.sh \
 		      trim_left_delimiter.sh \
 		      range_expand.sh

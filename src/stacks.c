@@ -5,6 +5,7 @@
 
 #include "self_profile.h"
 #include "stack_types.h"
+#include "collated_stack_types.h"
 #include "realloc_consts.h"
 #include "stacks.h"
 #include "profiling.h"
