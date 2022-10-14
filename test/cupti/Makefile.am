@@ -7,7 +7,8 @@ AM_LDFLAGS = -L$(top_builddir)/src/.libs -lvftrace
 
 check_PROGRAMS = gpu_info \
                  accumulate_cuptiprof \
-                 print_cupti_table
+                 print_cupti_table \
+                 cbid_names
 
 gpu_info_SOURCES = $(srcdir)/gpu_info.c
 
@@ -17,7 +18,7 @@ accumulate_cuptiprof_SOURCES = $(srcdir)/accumulate_cuptiprof.c \
 print_cupti_table_SOURCES = $(srcdir)/print_cupti_table.c \
                             $(srcdir)/dummy_stacktree.c
 
-
+cbid_names_SOURCES = $(srcdir)/cbid_names.c
 
 dist_check_SCRIPTS = gpu_info.sh \
                      accumulate_cuptiprof.sh \
@@ -25,7 +26,8 @@ dist_check_SCRIPTS = gpu_info.sh \
                      sort_cupti_time.sh \
                      sort_cupti_memcpy.sh \
                      sort_cupti_cbid.sh \
-                     sort_cupti_calls.sh
+                     sort_cupti_calls.sh \
+                     cbid_names.sh
                          
 
 TEST_EXTENSIONS = .sh
