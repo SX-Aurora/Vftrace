@@ -24,6 +24,16 @@ void vftr_accumulate_cuptiprofiling (cuptiprofile_t *prof, int cbid, int n_calls
    if (mem_dir != CUPTI_NOCOPY) prof->memcpy_bytes[mem_dir] += memcpy_bytes;
 }
 
+cuptiprofile_t vftr_add_cuptiprofiles(cuptiprofile_t profA, cuptiprofile_t profB) {
+   cuptiprofile_t profC;
+   profC.cbid = profA.cbid + profB.cbid;
+   profC.n_calls = profA.n_calls + profB.n_calls;
+   profC.t_ms = profA.t_ms + profB.t_ms;
+   profC.memcpy_bytes[0] = profA.memcpy_bytes[0] + profB.memcpy_bytes[0];
+   profC.memcpy_bytes[1] = profA.memcpy_bytes[1] + profB.memcpy_bytes[1];
+   return profC;
+}
+
 void vftr_cuptiprofiling_free(cuptiprofile_t *prof_ptr) {
   (void)prof_ptr;
 }

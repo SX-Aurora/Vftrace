@@ -16,6 +16,8 @@ void vftr_ompprofiling_free(ompprofile_t *prof_ptr);
 void vftr_accumulate_ompprofiling_overhead(ompprofile_t *prof,
                                            long long overhead_nsec);
 
+ompprofile_t vftr_add_ompprofiles(ompprofile_t profA, ompprofile_t profB);
+
 void vftr_print_ompprofiling(FILE *fp, ompprofile_t ompprof);
 
 #endif

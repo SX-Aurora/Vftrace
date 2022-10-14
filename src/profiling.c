@@ -72,6 +72,21 @@ int vftr_new_profile_in_list(int threadID, profilelist_t *profilelist_ptr) {
    return profID;
 }
 
+profile_t vftr_add_profiles(profile_t profA, profile_t profB) {
+   profile_t profC;
+   profC.callprof = vftr_add_callprofiles(profA.callprof, profB.callprof);
+#ifdef _MPI
+   profC.mpiprof = vftr_add_mpiprofiles(profA.mpiprof, profB.mpiprof);
+#endif
+#ifdef _OMP
+   profC.ompprof = vftr_add_ompprofiles(profA.ompprof, profB.ompprof);
+#endif
+#ifdef _CUPTI
+   profC.cuptiprof = vftr_add_cuptiprofiles(profA.cuptiprof, profB.cuptiprof);
+#endif
+   // TODO: Add other profiles
+}
+
 void vftr_profile_free(profile_t* profiles_ptr, int profID) {
    SELF_PROFILE_START_FUNCTION;
    profile_t *profile_ptr = profiles_ptr+profID;

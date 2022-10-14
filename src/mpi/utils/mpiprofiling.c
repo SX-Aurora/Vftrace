@@ -66,6 +66,19 @@ void vftr_accumulate_message_info(mpiprofile_t *prof_ptr,
    SELF_PROFILE_END_FUNCTION;
 }
 
+mpiprofile_t vftr_add_mpiprofiles(mpiprofile_t profA, mpiprofile_t profB) {
+   mpiprofile_t profC;
+   profC.nsendmessages = profA.nsendmessages + profB.nsendmessages;
+   profC.nrecvmessages = profA.nrecvmessages + profB.nrecvmessages;
+   profC.send_bytes = profA.send_bytes + profB.send_bytes;
+   profC.recv_bytes = profA.recv_bytes + profB.recv_bytes;
+   profC.acc_send_bw= profA.acc_send_bw + profB.acc_send_bw;
+   profC.acc_recv_bw = profA.acc_recv_bw + profB.acc_recv_bw;
+   profC.total_time_nsec = profA.total_time_nsec + profB.total_time_nsec;
+   profC.overhead_nsec = profA.overhead_nsec + profB.overhead_nsec;
+   return profC;
+}
+
 void vftr_accumulate_mpiprofiling_overhead(mpiprofile_t *prof,
                                            long long overhead_nsec) {
    prof->overhead_nsec += overhead_nsec;
