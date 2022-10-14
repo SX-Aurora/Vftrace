@@ -5,6 +5,7 @@
 #include <mpi.h>
 #endif
 
+#include "realloc_consts.h"
 #include "self_profile.h"
 #include "stack_types.h"
 #include "profiling_types.h"
@@ -16,6 +17,33 @@
 #include "search.h"
 #include "profiling.h"
 #include "collated_profiling.h"
+
+gid_list_t vftr_new_empty_gid_list() {
+   gid_list_t gid_list;
+   gid_list.ngids = 0;
+   gid_list.maxgids = 0;
+   gid_list.gids = NULL;
+   return gid_list;
+}
+
+void vftr_gid_list_realloc(gid_list_t *gid_list_ptr) {
+   gid_list_t gid_list = *gid_list_ptr;
+   while (gid_list.ngids > gid_list.maxgids) {
+      int maxgids = gid_list.maxgids*vftr_realloc_rate+vftr_realloc_add;
+      gid_list.gids = (int*) realloc(gid_list.gids, maxgids*sizeof(int));
+      gid_list.maxgids = maxgids;
+   }
+   *gid_list_ptr = gid_list;
+}
+
+void vftr_gid_list_free(gid_list_t *gid_list_ptr) {
+   if (gid_list_ptr->ngids > 0) {
+      free(gid_list_ptr->gids);
+      gid_list_ptr->gids = NULL;
+      gid_list_ptr->ngids = 0;
+      gid_list_ptr->maxgids = 0;
+   }
+}
 
 collated_stacktree_t vftr_new_empty_collated_stacktree() {
    SELF_PROFILE_START_FUNCTION;
@@ -374,6 +402,7 @@ void vftr_collated_stacktree_free(collated_stacktree_t *stacktree_ptr) {
       for (int istack=0; istack<stacktree_ptr->nstacks; istack++) {
          free(stacktree_ptr->stacks[istack].name);
          vftr_collated_profile_free(&(stacktree_ptr->stacks[istack].profile));
+         vftr_gid_list_free(&(stacktree_ptr->stacks[istack].gid_list));
       }
       free(stacktree_ptr->stacks);
       stacktree_ptr->stacks = NULL;
