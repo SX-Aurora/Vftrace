@@ -247,11 +247,12 @@ environment_t vftr_read_environment() {
    environment.sort_mpi_table = vftr_read_env_string("VFTR_SORT_MPI_TABLE", "NONE");
    environment.show_overhead = vftr_read_env_bool("VFTR_SHOW_FUNCTION_OVERHEAD", false);
    environment.show_calltime_imbalances = vftr_read_env_bool("VFTR_SHOW_CALLTIME_IMBALANCES", false);
+   environment.group_functions_by_name = vftr_read_env_bool("VFTR_GROUP_FUNCTIONS_BY_NAME", false);
    environment.print_environment = vftr_read_env_bool("VFTR_PRINT_ENVIRONMENT", true);
    environment.callpath_in_profile = vftr_read_env_bool("VFTR_CALLPATH_IN_PROFILE", false);
    environment.callpath_in_mpi_profile = vftr_read_env_bool("VFTR_CALLPATH_IN_MPI_PROFILE", false);
    environment.demangle_cxx = vftr_read_env_bool("VFTR_DEMANGLE_CXX", false);
-   environment.nenv_vars = 24;
+   environment.nenv_vars = 25;
    environment.valid = true;
    SELF_PROFILE_END_FUNCTION;
    return environment;
@@ -529,6 +530,11 @@ void vftr_environment_assert_show_calltime_imbalances(FILE *fp, env_var_t show_c
    (void) show_calltime_imbalances;
 }
 
+void vftr_environment_assert_group_functions_by_name(FILE* fp, env_var_t group_functions_by_name) {
+   (void) fp;
+   (void) group_functions_by_name;
+}
+
 void vftr_environment_assert_print_environment(FILE *fp, env_var_t print_environment) {
    (void) fp;
    (void) print_environment;
@@ -573,6 +579,7 @@ void vftr_environment_assert(FILE *fp, environment_t environment) {
    vftr_environment_assert_sort_mpi_table(fp, environment.sort_mpi_table);
    vftr_environment_assert_show_overhead(fp, environment.show_overhead);
    vftr_environment_assert_show_calltime_imbalances(fp, environment.show_calltime_imbalances);
+   vftr_environment_assert_group_functions_by_name(fp, environment.group_functions_by_name);
    vftr_environment_assert_print_environment(fp, environment.print_environment);
    vftr_environment_assert_callpath_in_profile(fp, environment.callpath_in_profile);
    vftr_environment_assert_callpath_in_mpi_profile(fp, environment.callpath_in_mpi_profile);

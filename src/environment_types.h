@@ -60,6 +60,7 @@ typedef struct {
    env_var_t sort_mpi_table;
    env_var_t show_overhead;
    env_var_t show_calltime_imbalances;
+   env_var_t group_functions_by_name;
    env_var_t print_environment;
    env_var_t callpath_in_profile;
    env_var_t callpath_in_mpi_profile;
