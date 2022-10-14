@@ -4,6 +4,6 @@
 #include <cuda_runtime_api.h>
 
 void vftr_set_ngpus();
-cudaError_t vftr_init_cupti();
+cudaError_t vftr_init_cupti(void (*cb_function)());
 
 #endif

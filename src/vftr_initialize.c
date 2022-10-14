@@ -6,6 +6,7 @@
 
 #ifdef _CUPTI
 #include "cupti_init_final.h"
+#include "callbacks.h"
 #endif
 
 #include "self_profile.h"
@@ -79,7 +80,7 @@ void vftr_initialize(void *func, void *call_site) {
 #endif
 
 #ifdef _CUPTI
-      (void)vftr_init_cupti();
+      (void)vftr_init_cupti(vftr_cupti_event_callback);
 #endif
 
       // set the finalize function to be executed at the termination of the program
