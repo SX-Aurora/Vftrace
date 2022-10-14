@@ -7,6 +7,7 @@
 #include "profiling_types.h"
 #include "vftrace_state.h"
 #include "timer.h"
+#include "hashing.h"
 
 #include "threads.h"
 #include "threadstacks.h"
@@ -43,15 +44,19 @@ void vftr_cupti_region_begin (int cbid, const CUpti_CallbackData *cb_info) {
    profile_t *my_profile = vftr_get_my_profile(my_stack, my_thread);   
 
    char *func_name;
+   uint64_t pseudo_addr;
    if (cbid == CUPTI_RUNTIME_TRACE_CBID_cudaLaunch_v3020 || cbid == CUPTI_RUNTIME_TRACE_CBID_cudaLaunchKernel_v7000) {
          func_name = cb_info->symbolName;
+         pseudo_addr = vftr_jenkins_murmur_64_hash (strlen(func_name), (uint8_t*)func_name);
    } else {
          func_name = cb_info->functionName;
+         pseudo_addr = 0;
    }
+   pseudo_addr += cbid;
 
    // Cuda calls are not recursive
    my_threadstack = vftr_update_threadstack_region (my_threadstack, my_thread,
-                                                    (void*)cbid, func_name,
+                                                    (void*)pseudo_addr, func_name,
                                                     cupti_region, &vftrace, false);
 
    stack_t *my_new_stack = vftrace.process.stacktree.stacks + my_threadstack->stackID;
