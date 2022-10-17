@@ -45,9 +45,16 @@ collated_stack_t **vftr_sort_collated_stacks_for_prof(environment_t environment,
    } else {
       // if (!strcmp(env_val, "NONE"))
       // if (!strcmp(env_val, "STACK_ID"))
-      for (int istack=0; istack<nstacks; istack++) {
-         collated_stack_t *stack = stacktree.stacks+istack;
-         stackvals[istack] += stack->gid;
+      if (stacktree.namegrouped) {
+         for (int istack=0; istack<nstacks; istack++) {
+            collated_stack_t *stack = stacktree.stacks+istack;
+            stackvals[istack] += stack->gid_list.gids[0];
+         }
+      } else {
+         for (int istack=0; istack<nstacks; istack++) {
+            collated_stack_t *stack = stacktree.stacks+istack;
+            stackvals[istack] += stack->gid;
+         }
       }
       ascending = true;
    }

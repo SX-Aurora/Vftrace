@@ -103,6 +103,7 @@ check_PROGRAMS += collatempiprofiles \
 		  collatempiprofiles_parallel_2_1 \
 		  collatempiprofiles_parallel_2_2
 endif
+check_PROGRAMS += namegroup_collatestacks
 
 check_PROGRAMS += stacktree \
 		  stacklist \
@@ -119,7 +120,8 @@ check_PROGRAMS += total_omp_overhead
 endif
 check_PROGRAMS += sorting_stacks \
 		  sorting_collated_stacks
-check_PROGRAMS += print_prof_table
+check_PROGRAMS += print_prof_table \
+		  print_name_grouped_prof_table
 if ENABLE_MPI
 check_PROGRAMS += print_mpi_table \
 		  sorting_mpi_table
@@ -346,6 +348,10 @@ collatempiprofiles_parallel_2_2_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
 collatempiprofiles_parallel_2_2_LDFLAGS = $(AM_LDFLAGS)
 endif
 
+namegroup_collatestacks_SOURCES = $(srcdir)/namegroup_collatestacks.c \
+				  $(srcdir)/dummysymboltable.c
+namegroup_collatestacks_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
+namegroup_collatestacks_LDFLAGS = $(AM_LDFLAGS)
 
 filenames_SOURCES = $(srcdir)/filenames.c
 filenames_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
@@ -409,6 +415,12 @@ print_prof_table_SOURCES = $(srcdir)/print_prof_table.c \
                            $(srcdir)/dummy_stacktree.c
 print_prof_table_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
 print_prof_table_LDFLAGS = $(AM_LDFLAGS)
+
+print_name_grouped_prof_table_SOURCES = $(srcdir)/print_name_grouped_prof_table.c \
+					$(srcdir)/dummysymboltable.c \
+					$(srcdir)/dummy_stacktree.c
+print_name_grouped_prof_table_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
+print_name_grouped_prof_table_LDFLAGS = $(AM_LDFLAGS)
 
 print_mpi_table_SOURCES = $(srcdir)/print_mpi_table.c \
 			  $(srcdir)/dummysymboltable.c
@@ -515,6 +527,7 @@ dist_check_SCRIPTS += collatempiprofiles.sh \
 		      collatempiprofiles_parallel_1.sh \
 		      collatempiprofiles_parallel_2.sh
 endif
+dist_check_SCRIPTS += namegroup_collatestacks.sh
 
 dist_check_SCRIPTS += stacktree.sh \
 		      stacklist.sh \
@@ -540,7 +553,8 @@ dist_check_SCRIPTS += sorting_collated_stacks_none.sh \
 		      sorting_collated_stacks_stackid.sh \
 		      sorting_collated_stacks_texcl.sh \
 		      sorting_collated_stacks_tincl.sh
-dist_check_SCRIPTS += print_prof_table.sh
+dist_check_SCRIPTS += print_prof_table.sh \
+		      print_name_grouped_prof_table.sh
 if ENABLE_MPI
 dist_check_SCRIPTS += print_mpi_table.sh
 dist_check_SCRIPTS += sorting_mpi_table_none.sh \
