@@ -54,7 +54,6 @@ typedef struct {
    env_var_t scenario_file;
    env_var_t preciseregex;
    env_var_t print_stack_profile;
-   env_var_t print_stacks_for;
    env_var_t strip_module_names;
    env_var_t sort_profile_table;
    env_var_t sort_mpi_table;
