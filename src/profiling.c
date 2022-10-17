@@ -85,6 +85,7 @@ profile_t vftr_add_profiles(profile_t profA, profile_t profB) {
    profC.cuptiprof = vftr_add_cuptiprofiles(profA.cuptiprof, profB.cuptiprof);
 #endif
    // TODO: Add other profiles
+   return profC;
 }
 
 void vftr_profile_free(profile_t* profiles_ptr, int profID) {
