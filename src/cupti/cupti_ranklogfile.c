@@ -40,7 +40,19 @@ void vftr_write_ranklogfile_cupti_table(FILE *fp, stacktree_t stacktree, environ
       if (this_profile->cuptiprof.cbid != 0) n_stackids_with_cupti_data++;
    }
 
+   // Structure of CUPTI table:
+   // | STID | cudaName | #Calls | CBID | t_compute | t_memcpy | t_other | memcpy_in | memcpy_out |
+   //
+   // The cudaName is in most cases  the symbol name of the calling CBID given by the callback interface.
+   // I.e., library functions like "cudaMalloc" appear as "cudaMalloc".
+   // CBIDs belonging to the LAUNCH group are assigned their function name. Hence, the name of the
+   // CUDA kernel will be desplayed.
+   //
+   // Out of t_compute, t_memcpy and t_other, only one is non-zero for any CBID. We display them in separate
+   // columns anyway for better clarity.
+
    int *stackids_with_cupti_data = (int*)malloc(n_stackids_with_cupti_data*sizeof(int));
+   char **names = (char**)malloc(n_stackids_with_cupti_data*sizeof(char*));
    int *calls = (int*)malloc(n_stackids_with_cupti_data*sizeof(int));
    int *cbids = (int*)malloc(n_stackids_with_cupti_data*sizeof(int));
    float *t_compute = (float*)malloc(n_stackids_with_cupti_data*sizeof(float));
@@ -48,7 +60,6 @@ void vftr_write_ranklogfile_cupti_table(FILE *fp, stacktree_t stacktree, environ
    float *t_other = (float*)malloc(n_stackids_with_cupti_data*sizeof(float));
    size_t *memcpy_in = (size_t*)malloc(n_stackids_with_cupti_data*sizeof(size_t));
    size_t *memcpy_out = (size_t*)malloc(n_stackids_with_cupti_data*sizeof(size_t));
-   char **names = (char**)malloc(n_stackids_with_cupti_data*sizeof(char*));
 
    int i = 0;
    for (int istack = 0; istack < stacktree.nstacks; istack++) {
@@ -67,6 +78,8 @@ void vftr_write_ranklogfile_cupti_table(FILE *fp, stacktree_t stacktree, environ
       memcpy_in[i] = cuptiprof.memcpy_bytes[CUPTI_COPY_IN];
       memcpy_out[i] = cuptiprof.memcpy_bytes[CUPTI_COPY_OUT];
 #ifdef _LIBERTY
+      // Only makes a difference for kernel launches which are implemented in C++ and therefore
+      // can have contrived mangled names.
       names[i] = vftr_demangle_cxx(this_stack->name);
 #else
       names[i] = this_stack.name;
