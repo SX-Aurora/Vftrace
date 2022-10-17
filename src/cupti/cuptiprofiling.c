@@ -31,7 +31,7 @@ void vftr_accumulate_cuptiprofiling (cuptiprofile_t *prof, int cbid, int n_calls
 }
 
 void vftr_cuptiprofiling_free(cuptiprofile_t *prof_ptr) {
-  if (vftrace.cupti_state.n_devices > 0) {
+  if (vftrace.cupti_state.n_devices > 0 && prof_ptr->cbid > 0) {
      cudaEventDestroy (prof_ptr->start);
      cudaEventDestroy (prof_ptr->stop);
   }
