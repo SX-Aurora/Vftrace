@@ -5,6 +5,7 @@
 
 #include "thread_types.h"
 #include "profiling_types.h"
+#include "stack_types.h"
 
 profile_t vftr_new_profile(int threadID);
 
