@@ -62,6 +62,9 @@ check_PROGRAMS += sort_int8 \
 		  sort_uint64 \
 		  sort_longlong \
 		  sort_double
+check_PROGRAMS += search_uint64 \
+		  search_int \
+		  search_collated_stacks_name
 check_PROGRAMS += chop_chars \
 		  trim_left_delimiter \
 		  range_expand
@@ -100,6 +103,7 @@ check_PROGRAMS += collatempiprofiles \
 		  collatempiprofiles_parallel_2_1 \
 		  collatempiprofiles_parallel_2_2
 endif
+check_PROGRAMS += namegroup_collatestacks
 
 check_PROGRAMS += stacktree \
 		  stacklist \
@@ -116,7 +120,8 @@ check_PROGRAMS += total_omp_overhead
 endif
 check_PROGRAMS += sorting_stacks \
 		  sorting_collated_stacks
-check_PROGRAMS += print_prof_table
+check_PROGRAMS += print_prof_table \
+		  print_name_grouped_prof_table
 if ENABLE_MPI
 check_PROGRAMS += print_mpi_table \
 		  sorting_mpi_table
@@ -186,6 +191,18 @@ sort_double_SOURCES = $(srcdir)/sort_double.c \
 			   $(srcdir)/bad_rng.c
 sort_double_CFLAGS = $(AM_CFLAGS) -I$(top_srcdir)/src/sorting/
 sort_double_LDFLAGS = $(AM_LDFLAGS)
+
+search_uint64_SOURCES = $(srcdir)/search_uint64.c
+search_uint64_CFLAGS = $(AM_CFLAGS) -I$(top_srcdir)/src/
+search_uint64_LDFLAGS = $(AM_LDFLAGS)
+
+search_int_SOURCES = $(srcdir)/search_int.c
+search_int_CFLAGS = $(AM_CFLAGS) -I$(top_srcdir)/src/
+search_int_LDFLAGS = $(AM_LDFLAGS)
+
+search_collated_stacks_name_SOURCES = $(srcdir)/search_collated_stacks_name.c
+search_collated_stacks_name_CFLAGS = $(AM_CFLAGS) -I$(top_srcdir)/src/ -g
+search_collated_stacks_name_LDFLAGS = $(AM_LDFLAGS)
 
 chop_chars_SOURCES = $(srcdir)/chop_chars.c
 chop_chars_CFLAGS = $(AM_CFLAGS) -I$(top_srcdir)/src/
@@ -331,6 +348,10 @@ collatempiprofiles_parallel_2_2_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
 collatempiprofiles_parallel_2_2_LDFLAGS = $(AM_LDFLAGS)
 endif
 
+namegroup_collatestacks_SOURCES = $(srcdir)/namegroup_collatestacks.c \
+				  $(srcdir)/dummysymboltable.c
+namegroup_collatestacks_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
+namegroup_collatestacks_LDFLAGS = $(AM_LDFLAGS)
 
 filenames_SOURCES = $(srcdir)/filenames.c
 filenames_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
@@ -394,6 +415,12 @@ print_prof_table_SOURCES = $(srcdir)/print_prof_table.c \
                            $(srcdir)/dummy_stacktree.c
 print_prof_table_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
 print_prof_table_LDFLAGS = $(AM_LDFLAGS)
+
+print_name_grouped_prof_table_SOURCES = $(srcdir)/print_name_grouped_prof_table.c \
+					$(srcdir)/dummysymboltable.c \
+					$(srcdir)/dummy_stacktree.c
+print_name_grouped_prof_table_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
+print_name_grouped_prof_table_LDFLAGS = $(AM_LDFLAGS)
 
 print_mpi_table_SOURCES = $(srcdir)/print_mpi_table.c \
 			  $(srcdir)/dummysymboltable.c
@@ -461,6 +488,9 @@ dist_check_SCRIPTS += sort_int8.sh \
 		      sort_uint64.sh \
 		      sort_longlong.sh \
 		      sort_double.sh
+dist_check_SCRIPTS += search_uint64.sh \
+		      search_int.sh \
+		      search_collated_stacks_name.sh
 dist_check_SCRIPTS += chop_chars.sh \
 		      trim_left_delimiter.sh \
 		      range_expand.sh
@@ -497,6 +527,7 @@ dist_check_SCRIPTS += collatempiprofiles.sh \
 		      collatempiprofiles_parallel_1.sh \
 		      collatempiprofiles_parallel_2.sh
 endif
+dist_check_SCRIPTS += namegroup_collatestacks.sh
 
 dist_check_SCRIPTS += stacktree.sh \
 		      stacklist.sh \
@@ -522,7 +553,8 @@ dist_check_SCRIPTS += sorting_collated_stacks_none.sh \
 		      sorting_collated_stacks_stackid.sh \
 		      sorting_collated_stacks_texcl.sh \
 		      sorting_collated_stacks_tincl.sh
-dist_check_SCRIPTS += print_prof_table.sh
+dist_check_SCRIPTS += print_prof_table.sh \
+		      print_name_grouped_prof_table.sh
 if ENABLE_MPI
 dist_check_SCRIPTS += print_mpi_table.sh
 dist_check_SCRIPTS += sorting_mpi_table_none.sh \

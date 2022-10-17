@@ -17,6 +17,7 @@
 #include "collate_stacks.h"
 #include "tables.h"
 #include "sorting.h"
+#include "misc_utils.h"
 
 int *vftr_logfile_prof_table_stack_calls_list(int nstacks, collated_stack_t **stack_ptrs) {
    int *calls_list = (int*) malloc(nstacks*sizeof(int));
@@ -119,6 +120,35 @@ int *vftr_logfile_prof_table_stack_stackID_list(int nstacks, collated_stack_t **
    return id_list;
 }
 
+char **vftr_logfile_prof_table_stack_stackIDs_list(int nstacks, collated_stack_t **stack_ptrs) {
+   char **name_list = (char**) malloc(nstacks*sizeof(char*));
+   for (int istack=0; istack<nstacks; istack++) {
+      collated_stack_t *stack_ptr = stack_ptrs[istack];
+      int strlen = 0;
+      int ngids = stack_ptr->gid_list.ngids;
+      // add up all the gids length in base 10
+      for (int igid=0; igid<ngids; igid++) {
+         strlen += vftr_count_base_digits(stack_ptr->gid_list.gids[igid], 10);
+      }
+      // add all the separating commata (not one less, because of the temporary null terminator)
+      strlen += ngids;
+      // add null terminator space
+      strlen += 1;
+
+      name_list[istack] = (char*) malloc(strlen*sizeof(char));
+      char *tmpstr = name_list[istack];
+      for (int igid=0; igid<ngids; igid++) {
+         int ndigts = vftr_count_base_digits(stack_ptr->gid_list.gids[igid], 10);
+         // plus two because ',' and '\0'
+         snprintf(tmpstr, ndigts+2, "%d,", stack_ptr->gid_list.gids[igid]);
+         tmpstr += ndigts+1;
+      }
+      tmpstr--;
+      *tmpstr = '\0';
+   }
+   return name_list;
+}
+
 char **vftr_logfile_prof_table_callpath_list(int nstacks, collated_stack_t **stack_ptrs,
                                              collated_stacktree_t stacktree) {
    char **path_list = (char**) malloc(nstacks*sizeof(char*));
@@ -200,6 +230,52 @@ void vftr_write_logfile_profile_table(FILE *fp, collated_stacktree_t stacktree,
       }
       free(path_list);
    }
+
+   free(sorted_stacks);
+   SELF_PROFILE_END_FUNCTION;
+}
+
+void vftr_write_logfile_name_grouped_profile_table(FILE *fp, collated_stacktree_t stacktree,
+                                                   environment_t environment) {
+   SELF_PROFILE_START_FUNCTION;
+   // first sort the stacktree according to the set environment variables
+   collated_stack_t **sorted_stacks = vftr_sort_collated_stacks_for_prof(environment, stacktree);
+
+   fprintf(fp, "\nRuntime profile (Grouped by function name)\n");
+
+   table_t table = vftr_new_table();
+   vftr_table_set_nrows(&table, stacktree.nstacks);
+
+   int *calls = vftr_logfile_prof_table_stack_calls_list(stacktree.nstacks, sorted_stacks);
+   vftr_table_add_column(&table, col_int, "Calls", "%d", 'c', 'r', (void*) calls);
+
+   double *excl_time = vftr_logfile_prof_table_stack_exclusive_time_list(stacktree.nstacks, sorted_stacks);
+   vftr_table_add_column(&table, col_double, "t_excl[s]", "%.3f", 'c', 'r', (void*) excl_time);
+
+   double *excl_timer_perc = vftr_logfile_prof_table_stack_exclusive_time_percentage_list(stacktree.nstacks, sorted_stacks);
+   vftr_table_add_column(&table, col_double, "t_excl[%]", "%.1f", 'c', 'r', (void*) excl_timer_perc);
+
+   double *incl_time = vftr_logfile_prof_table_stack_inclusive_time_list(stacktree.nstacks, sorted_stacks);
+   vftr_table_add_column(&table, col_double, "t_incl[s]", "%.3f", 'c', 'r', (void*) incl_time);
+
+   char **function_names = vftr_logfile_prof_table_stack_function_name_list(stacktree.nstacks, sorted_stacks);
+   vftr_table_add_column(&table, col_string, "Function", "%s", 'c', 'r', (void*) function_names);
+
+   char **stack_IDs = vftr_logfile_prof_table_stack_stackIDs_list(stacktree.nstacks, sorted_stacks);
+   vftr_table_add_column(&table, col_string, "STIDs", "%s", 'c', 'l', (void*) stack_IDs);
+
+   vftr_print_table(fp, table);
+
+   vftr_table_free(&table);
+   free(calls);
+   free(excl_time);
+   free(excl_timer_perc);
+   free(incl_time);
+   free(function_names);
+   for (int istack=0; istack<stacktree.nstacks; istack++) {
+      free(stack_IDs[istack]);
+   }
+   free(stack_IDs);
 
    free(sorted_stacks);
    SELF_PROFILE_END_FUNCTION;

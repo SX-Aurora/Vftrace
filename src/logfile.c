@@ -12,6 +12,7 @@
 #include "logfile_prof_table.h"
 #include "logfile_mpi_table.h"
 #include "logfile_stacklist.h"
+#include "collate_stacks.h"
 #include "search.h"
 #include "range_expand.h"
 #ifdef _CUPTI
@@ -64,6 +65,14 @@ void vftr_write_logfile(vftrace_t vftrace, long long runtime) {
 
    vftr_write_logfile_profile_table(fp, vftrace.process.collated_stacktree,
                                     vftrace.environment);
+   // print the name grouped profile_table
+   if (vftrace.environment.group_functions_by_name.value.bool_val) {
+      collated_stacktree_t namegrouped_collated_stacktree =
+         vftr_collated_stacktree_group_by_name(&vftrace.process.collated_stacktree);
+      vftr_write_logfile_name_grouped_profile_table(fp, namegrouped_collated_stacktree,
+                                                    vftrace.environment);
+      vftr_collated_stacktree_free(&namegrouped_collated_stacktree);
+   }
 
 #ifdef _MPI
    vftr_write_logfile_mpi_table(fp, vftrace.process.collated_stacktree,

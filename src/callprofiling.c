@@ -32,6 +32,15 @@ void vftr_accumulate_callprofiling_overhead(callprofile_t *prof,
    prof->overhead_nsec += overhead_nsec;
 }
 
+callprofile_t vftr_add_callprofiles(callprofile_t profA, callprofile_t profB) {
+   callprofile_t profC;
+   profC.calls = profA.calls + profB.calls;
+   profC.time_nsec = profA.time_nsec + profB.time_nsec;
+   profC.time_excl_nsec = profA.time_excl_nsec + profB.time_excl_nsec;
+   profC.overhead_nsec = profA.overhead_nsec + profB.overhead_nsec;
+   return profC;
+}
+
 void vftr_update_stacks_exclusive_time(stacktree_t *stacktree_ptr) {
    SELF_PROFILE_START_FUNCTION;
    int nstacks = stacktree_ptr->nstacks;

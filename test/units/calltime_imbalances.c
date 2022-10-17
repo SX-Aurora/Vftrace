@@ -33,33 +33,34 @@ int main(int argc, char **argv) {
    (void) argv;
 #endif
 
-   vftr_init_dummy_stacktree (20, 0);
+   stacktree_t stacktree = vftr_init_dummy_stacktree (20, 0);
 
-   vftr_register_dummy_stack ("func0<init", 0, 10, 2);
-   vftr_register_dummy_stack ("func0<init", 1, 10, 4);
-   vftr_register_dummy_stack ("func0<init", 2, 10, 8);
-   vftr_register_dummy_stack ("func0<init", 3, 10, 16);
-   vftr_register_dummy_stack ("func0<init", 4, 10, 32);
-   vftr_register_dummy_stack ("func0<init", 5, 10, 64);
+   vftr_register_dummy_stack(&stacktree, "func0<init", 0, 10, 2);
+   vftr_register_dummy_stack(&stacktree, "func0<init", 1, 10, 4);
+   vftr_register_dummy_stack(&stacktree, "func0<init", 2, 10, 8);
+   vftr_register_dummy_stack(&stacktree, "func0<init", 3, 10, 16);
+   vftr_register_dummy_stack(&stacktree, "func0<init", 4, 10, 32);
+   vftr_register_dummy_stack(&stacktree, "func0<init", 5, 10, 64);
 
-   vftr_register_dummy_stack ("func1<init", 0, 10, 128);
-   vftr_register_dummy_stack ("func1<init", 1, 10, 256);
-   vftr_register_dummy_stack ("func1<init", 2, 10, 515);
+   vftr_register_dummy_stack(&stacktree, "func1<init", 0, 10, 128);
+   vftr_register_dummy_stack(&stacktree, "func1<init", 1, 10, 256);
+   vftr_register_dummy_stack(&stacktree, "func1<init", 2, 10, 515);
 
-   vftr_register_dummy_stack ("func2<func1<init", 1, 3, 1024);
-   vftr_register_dummy_stack ("func2<func1<init", 2, 4, 2048);
+   vftr_register_dummy_stack(&stacktree, "func2<func1<init", 1, 3, 1024);
+   vftr_register_dummy_stack(&stacktree, "func2<func1<init", 2, 4, 2048);
 
-   vftr_register_dummy_stack ("func3<func0<init", 0, 3, 4096);
-   vftr_register_dummy_stack ("func3<func0<init", 2, 2, 8192);
-   vftr_register_dummy_stack ("func3<func0<init", 4, 3, 16384);
+   vftr_register_dummy_stack(&stacktree, "func3<func0<init", 0, 3, 4096);
+   vftr_register_dummy_stack(&stacktree, "func3<func0<init", 2, 2, 8192);
+   vftr_register_dummy_stack(&stacktree, "func3<func0<init", 4, 3, 16384);
 
-   vftr_register_dummy_stack ("func4<func0<init", 1, 4, 32768);
-   vftr_register_dummy_stack ("func4<func0<init", 3, 5, 65536);
-   vftr_register_dummy_stack ("func4<func0<init", 5, 6, 131072);
+   vftr_register_dummy_stack(&stacktree, "func4<func0<init", 1, 4, 32768);
+   vftr_register_dummy_stack(&stacktree, "func4<func0<init", 3, 5, 65536);
+   vftr_register_dummy_stack(&stacktree, "func4<func0<init", 5, 6, 131072);
 
-   vftr_register_dummy_stack ("func5<func4<func0<init", 5, 2, 262144);
+   vftr_register_dummy_stack(&stacktree, "func5<func4<func0<init", 5, 2, 262144);
 
-   stacktree_t stacktree = vftr_get_dummy_stacktree();
+   vftr_update_stacks_exclusive_time(&stacktree);
+
    // collate stacks to get the global ID
    collated_stacktree_t collated_stacktree = vftr_collate_stacks(&stacktree);
    vftr_collate_profiles(&collated_stacktree, &stacktree);

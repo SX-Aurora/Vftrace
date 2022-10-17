@@ -1,0 +1,20 @@
+0: func2<func0<init
+1: func3<func4<func5<init
+2: func2<func1<init
+3: func2<func4<func5<init
+4: func5<init
+5: func4<func5<init
+6: func3<func1<init
+7: func0<init
+8: init
+9: func1<init
+10: func4<func1<init
+11: func3<func5<init
+
+0: func0: 7
+1: func1: 9
+2: func2: 3,2,0
+3: func3: 11,6,1
+4: func4: 10,5
+5: func5: 4
+6: init: 8

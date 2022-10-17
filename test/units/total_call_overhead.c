@@ -31,33 +31,31 @@ int main(int argc, char **argv) {
    environment_t environment;
    environment = vftr_read_environment();
 
-   vftr_init_dummy_stacktree (0, 1);
+   stacktree_t stacktree = vftr_init_dummy_stacktree (0, 1);
 
-   vftr_register_dummy_stack ("func0<init", 0, 0, 2);
-   vftr_register_dummy_stack ("func0<init", 1, 0, 4);
-   vftr_register_dummy_stack ("func0<init", 2, 0, 8);
-   vftr_register_dummy_stack ("func0<init", 3, 0, 16);
-   vftr_register_dummy_stack ("func0<init", 4, 0, 32);
-   vftr_register_dummy_stack ("func0<init", 5, 0, 64);
+   vftr_register_dummy_stack (&stacktree, "func0<init", 0, 0, 2);
+   vftr_register_dummy_stack (&stacktree, "func0<init", 1, 0, 4);
+   vftr_register_dummy_stack (&stacktree, "func0<init", 2, 0, 8);
+   vftr_register_dummy_stack (&stacktree, "func0<init", 3, 0, 16);
+   vftr_register_dummy_stack (&stacktree, "func0<init", 4, 0, 32);
+   vftr_register_dummy_stack (&stacktree, "func0<init", 5, 0, 64);
 
-   vftr_register_dummy_stack ("func1<init", 0, 0, 128);
-   vftr_register_dummy_stack ("func1<init", 1, 0, 256);
-   vftr_register_dummy_stack ("func1<init", 2, 0, 515);
+   vftr_register_dummy_stack (&stacktree, "func1<init", 0, 0, 128);
+   vftr_register_dummy_stack (&stacktree, "func1<init", 1, 0, 256);
+   vftr_register_dummy_stack (&stacktree, "func1<init", 2, 0, 515);
 
-   vftr_register_dummy_stack ("func2<func1<init", 1, 0, 1024);
-   vftr_register_dummy_stack ("func2<func1<init", 2, 0, 2048);
+   vftr_register_dummy_stack (&stacktree, "func2<func1<init", 1, 0, 1024);
+   vftr_register_dummy_stack (&stacktree, "func2<func1<init", 2, 0, 2048);
 
-   vftr_register_dummy_stack ("func3<func0<init", 0, 0, 4096);
-   vftr_register_dummy_stack ("func3<func0<init", 2, 0, 8192);
-   vftr_register_dummy_stack ("func3<func0<init", 4, 0, 16384);
+   vftr_register_dummy_stack (&stacktree, "func3<func0<init", 0, 0, 4096);
+   vftr_register_dummy_stack (&stacktree, "func3<func0<init", 2, 0, 8192);
+   vftr_register_dummy_stack (&stacktree, "func3<func0<init", 4, 0, 16384);
 
-   vftr_register_dummy_stack ("func4<func0<init", 1, 0, 32768);
-   vftr_register_dummy_stack ("func4<func0<init", 3, 0, 65536);
-   vftr_register_dummy_stack ("func4<func0<init", 5, 0, 131072);
+   vftr_register_dummy_stack (&stacktree, "func4<func0<init", 1, 0, 32768);
+   vftr_register_dummy_stack (&stacktree, "func4<func0<init", 3, 0, 65536);
+   vftr_register_dummy_stack (&stacktree, "func4<func0<init", 5, 0, 131072);
 
-   vftr_register_dummy_stack ("func5<func4<func0<init", 5, 0, 262144);
-
-   stacktree_t stacktree = vftr_get_dummy_stacktree();
+   vftr_register_dummy_stack (&stacktree, "func5<func4<func0<init", 5, 0, 262144);
 
    int nthreads = 6;
    long long *call_overheads_nsec = vftr_get_total_call_overhead(stacktree, nthreads);

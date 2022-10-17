@@ -36,33 +36,33 @@ int main(int argc, char **argv) {
    environment_t environment;
    environment = vftr_read_environment();
 
-   vftr_init_dummy_stacktree (2000000000ll, 0);
+   stacktree_t stacktree = vftr_init_dummy_stacktree(2000000000ll, 0);
 
-   vftr_register_dummy_stack ("func0<init", 0, 1000000000ll, 2000ll); 
-   vftr_register_dummy_stack ("func0<init", 1, 1000000000ll, 4000ll); 
-   vftr_register_dummy_stack ("func0<init", 2, 1000000000ll, 8000ll); 
-   vftr_register_dummy_stack ("func0<init", 3, 1000000000ll, 16000ll); 
-   vftr_register_dummy_stack ("func0<init", 4, 1000000000ll, 32000ll); 
-   vftr_register_dummy_stack ("func0<init", 5, 1000000000ll, 64000ll); 
+   vftr_register_dummy_stack(&stacktree, "func0<init", 0, 1000000000ll, 2000ll); 
+   vftr_register_dummy_stack(&stacktree, "func0<init", 1, 1000000000ll, 4000ll); 
+   vftr_register_dummy_stack(&stacktree, "func0<init", 2, 1000000000ll, 8000ll); 
+   vftr_register_dummy_stack(&stacktree, "func0<init", 3, 1000000000ll, 16000ll); 
+   vftr_register_dummy_stack(&stacktree, "func0<init", 4, 1000000000ll, 32000ll); 
+   vftr_register_dummy_stack(&stacktree, "func0<init", 5, 1000000000ll, 64000ll); 
 
-   vftr_register_dummy_stack ("func1<init", 0, 1000000000ll, 128000ll);
-   vftr_register_dummy_stack ("func1<init", 1, 1000000000ll, 256000ll);
-   vftr_register_dummy_stack ("func1<init", 2, 1000000000ll, 515000ll);
+   vftr_register_dummy_stack(&stacktree, "func1<init", 0, 1000000000ll, 128000ll);
+   vftr_register_dummy_stack(&stacktree, "func1<init", 1, 1000000000ll, 256000ll);
+   vftr_register_dummy_stack(&stacktree, "func1<init", 2, 1000000000ll, 515000ll);
 
-   vftr_register_dummy_stack ("func2<func1<init", 1, 300000000ll, 1024000ll);
-   vftr_register_dummy_stack ("func2<func1<init", 2, 400000000ll, 2048000ll);
+   vftr_register_dummy_stack(&stacktree, "func2<func1<init", 1, 300000000ll, 1024000ll);
+   vftr_register_dummy_stack(&stacktree, "func2<func1<init", 2, 400000000ll, 2048000ll);
 
-   vftr_register_dummy_stack ("func3<func0<init", 0, 300000000ll, 409600);
-   vftr_register_dummy_stack ("func3<func0<init", 2, 200000000ll, 8192000ll);
-   vftr_register_dummy_stack ("func3<func0<init", 4, 300000000ll, 16384000ll);
+   vftr_register_dummy_stack(&stacktree, "func3<func0<init", 0, 300000000ll, 409600);
+   vftr_register_dummy_stack(&stacktree, "func3<func0<init", 2, 200000000ll, 8192000ll);
+   vftr_register_dummy_stack(&stacktree, "func3<func0<init", 4, 300000000ll, 16384000ll);
 
-   vftr_register_dummy_stack ("func4<func0<init", 1, 400000000ll,3276800);
-   vftr_register_dummy_stack ("func4<func0<init", 3, 500000000ll, 65536000ll);
-   vftr_register_dummy_stack ("func4<func0<init", 5, 600000000ll, 131072000ll);
+   vftr_register_dummy_stack(&stacktree, "func4<func0<init", 1, 400000000ll,3276800);
+   vftr_register_dummy_stack(&stacktree, "func4<func0<init", 3, 500000000ll, 65536000ll);
+   vftr_register_dummy_stack(&stacktree, "func4<func0<init", 5, 600000000ll, 131072000ll);
 
-   vftr_register_dummy_stack ("func5<func4<func0<init", 5, 200000000ll,262144000ll);
+   vftr_register_dummy_stack(&stacktree, "func5<func4<func0<init", 5, 200000000ll,262144000ll);
 
-   stacktree_t stacktree = vftr_get_dummy_stacktree();
+   vftr_update_stacks_exclusive_time(&stacktree);
 
    // collate stacks to get the global ID
    collated_stacktree_t collated_stacktree = vftr_collate_stacks(&stacktree);

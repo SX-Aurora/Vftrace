@@ -1,8 +1,11 @@
 #include <stdint.h>
 
+#include <string.h>
+
 #include "custom_types.h"
 #include "symbols.h"
-#include "stacks.h"
+#include "stack_types.h"
+#include "collated_stack_types.h"
 
 int vftr_binary_search_uint64(int n, uint64_t *list, uint64_t value) {
    int low = 0;
@@ -53,6 +56,23 @@ int vftr_binary_search_symboltable(int nsymb, symbol_t *symbols,
    return -1; // not found
 }
 
+int vftr_binary_search_collated_stacks_name(collated_stacktree_t stacktree, char *name) {
+   int low = 0;
+   int high = stacktree.nstacks -1;
+   while (low <= high) {
+      int mid = (low+high) >> 1;
+      char *stack_name = stacktree.stacks[mid].name;
+      int compare = strcmp(stack_name, name);
+      if (compare > 0) {
+         high = mid -1;
+      } else if (compare < 0) {
+         low = mid + 1;
+      } else {
+         return mid;
+      }
+   }
+   return -1; // not found
+}
 
 int vftr_linear_search_callee(stack_t *stacks, int callerID, uintptr_t address) {
    stack_t stack = stacks[callerID];

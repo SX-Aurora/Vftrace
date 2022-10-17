@@ -24,6 +24,12 @@ void vftr_accumulate_ompprofiling_overhead(ompprofile_t *prof,
    prof->overhead_nsec += overhead_nsec;
 }
 
+ompprofile_t vftr_add_ompprofiles(ompprofile_t profA, ompprofile_t profB) {
+   ompprofile_t profC;
+   profC.overhead_nsec = profA.overhead_nsec + profB.overhead_nsec;
+   return profC;
+}
+
 void vftr_ompprofiling_free(ompprofile_t *prof_ptr) {
    (void) prof_ptr;
 }

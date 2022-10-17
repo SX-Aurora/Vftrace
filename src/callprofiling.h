@@ -17,6 +17,8 @@ void vftr_accumulate_callprofiling(callprofile_t *prof,
 void vftr_accumulate_callprofiling_overhead(callprofile_t *prof,
                                             long long overhead_nsec);
 
+callprofile_t vftr_add_callprofiles(callprofile_t profA, callprofile_t profB);
+
 void vftr_update_stacks_exclusive_time(stacktree_t *stacktree_ptr);
 
 long long *vftr_get_total_call_overhead(stacktree_t stacktree, int nthreads);

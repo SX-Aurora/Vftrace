@@ -10,4 +10,7 @@
 void vftr_write_logfile_profile_table(FILE *fp, collated_stacktree_t stacktree,
                                       environment_t environment);
 
+void vftr_write_logfile_name_grouped_profile_table(FILE *fp, collated_stacktree_t stacktree,
+                                                   environment_t environment);
+
 #endif

@@ -9,6 +9,9 @@
 
 collated_callprofile_t vftr_new_collated_callprofiling();
 
+collated_callprofile_t vftr_add_collated_callprofiles(collated_callprofile_t profA,
+                                                      collated_callprofile_t profB);
+
 long long vftr_get_total_collated_call_overhead(collated_stacktree_t stacktree);
 
 void vftr_collated_callprofiling_free(collated_callprofile_t *callprof_ptr);

@@ -29,6 +29,18 @@ collated_callprofile_t vftr_new_collated_callprofiling() {
    return prof;
 }
 
+collated_callprofile_t vftr_add_collated_callprofiles(collated_callprofile_t profA,
+                                                      collated_callprofile_t profB) {
+   collated_callprofile_t profC;
+   profC.calls = profA.calls + profB.calls;
+   profC.time_nsec = profA.time_nsec + profB.time_nsec;
+   profC.time_excl_nsec = profA.time_excl_nsec + profB.time_excl_nsec;
+   profC.overhead_nsec = profA.overhead_nsec + profB.overhead_nsec;
+   // This is currently exclusively used for name grouped stacks
+   // Therefore, it does not make sense to care about the imbalances
+   return profC;
+}
+
 long long vftr_get_total_collated_call_overhead(collated_stacktree_t stacktree) {
    SELF_PROFILE_START_FUNCTION;
    // accumulate the hook overhead for each thread separately

@@ -1,11 +1,15 @@
 #include <stdlib.h>
 
 #include "self_profile.h"
+#include "profiling.h"
 #include "collated_profiling_types.h"
 
 #include "collated_callprofiling.h"
 #ifdef _MPI
 #include "mpiprofiling.h"
+#endif
+#ifdef _OMP
+#include "ompprofiling.h"
 #endif
 #ifdef _CUPTI
 #include "cuptiprofiling.h"
@@ -24,6 +28,23 @@ collated_profile_t vftr_new_collated_profile() {
    // TODO: Add other profiles
    SELF_PROFILE_END_FUNCTION;
    return profile;
+}
+
+collated_profile_t vftr_add_collated_profiles(collated_profile_t profA,
+                                              collated_profile_t profB) {
+   collated_profile_t profC;
+   profC.callprof = vftr_add_collated_callprofiles(profA.callprof, profB.callprof);
+#ifdef _MPI
+   profC.mpiprof = vftr_add_mpiprofiles(profA.mpiprof, profB.mpiprof);
+#endif
+#ifdef _OMP
+   profC.ompprof = vftr_add_ompprofiles(profA.ompprof, profB.ompprof);
+#endif
+#ifdef _CUPTI
+   profC.cuptiprof = vftr_add_cuptiprofiles(profA.cuptiprof, profB.cuptiprof);
+#endif
+   // TODO: Add other profiles
+   return profC;
 }
 
 void vftr_collated_profile_free(collated_profile_t* profile_ptr) {

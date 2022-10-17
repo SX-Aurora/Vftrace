@@ -5,6 +5,7 @@
 #include <mpi.h>
 #endif
 
+#include "realloc_consts.h"
 #include "self_profile.h"
 #include "stack_types.h"
 #include "profiling_types.h"
@@ -17,10 +18,38 @@
 #include "profiling.h"
 #include "collated_profiling.h"
 
+gid_list_t vftr_new_empty_gid_list() {
+   gid_list_t gid_list;
+   gid_list.ngids = 0;
+   gid_list.maxgids = 0;
+   gid_list.gids = NULL;
+   return gid_list;
+}
+
+void vftr_gid_list_realloc(gid_list_t *gid_list_ptr) {
+   gid_list_t gid_list = *gid_list_ptr;
+   while (gid_list.ngids > gid_list.maxgids) {
+      int maxgids = gid_list.maxgids*vftr_realloc_rate+vftr_realloc_add;
+      gid_list.gids = (int*) realloc(gid_list.gids, maxgids*sizeof(int));
+      gid_list.maxgids = maxgids;
+   }
+   *gid_list_ptr = gid_list;
+}
+
+void vftr_gid_list_free(gid_list_t *gid_list_ptr) {
+   if (gid_list_ptr->ngids > 0) {
+      free(gid_list_ptr->gids);
+      gid_list_ptr->gids = NULL;
+      gid_list_ptr->ngids = 0;
+      gid_list_ptr->maxgids = 0;
+   }
+}
+
 collated_stacktree_t vftr_new_empty_collated_stacktree() {
    SELF_PROFILE_START_FUNCTION;
    collated_stacktree_t stacktree;
    stacktree.nstacks = 0;
+   stacktree.maxstacks = 0;
    stacktree.stacks = NULL;
    SELF_PROFILE_END_FUNCTION;
    return stacktree;
@@ -31,19 +60,33 @@ collated_stacktree_t vftr_new_collated_stacktree(hashlist_t hashlist) {
    // create empty collated stacktree
    collated_stacktree_t coll_stacktree;
    coll_stacktree.nstacks = hashlist.nhashes;
+   coll_stacktree.maxstacks = coll_stacktree.nstacks;
    coll_stacktree.stacks = (collated_stack_t*)
       malloc(coll_stacktree.nstacks*sizeof(collated_stack_t));
    for (int istack=0; istack<coll_stacktree.nstacks; istack++) {
       coll_stacktree.stacks[istack].local_stack = NULL;
       coll_stacktree.stacks[istack].gid = istack;
+      coll_stacktree.stacks[istack].gid_list = vftr_new_empty_gid_list();
       coll_stacktree.stacks[istack].precise = false;
       coll_stacktree.stacks[istack].caller = -1;
       coll_stacktree.stacks[istack].name = NULL;
       coll_stacktree.stacks[istack].hash = hashlist.hashes[istack];
       coll_stacktree.stacks[istack].profile = vftr_new_collated_profile();
    }
+   coll_stacktree.namegrouped = false;
    SELF_PROFILE_END_FUNCTION;
    return coll_stacktree;
+}
+
+void vftr_collated_stacktree_realloc(collated_stacktree_t *stacktree_ptr) {
+   collated_stacktree_t stacktree = *stacktree_ptr;
+   while (stacktree.nstacks > stacktree.maxstacks) {
+      int maxstacks = stacktree.maxstacks*vftr_realloc_rate+vftr_realloc_add;
+      stacktree.stacks = (collated_stack_t*)
+         realloc(stacktree.stacks, maxstacks*sizeof(collated_stack_t));
+      stacktree.maxstacks = maxstacks;
+   }
+   *stacktree_ptr = stacktree;
 }
 
 #ifdef _MPI
@@ -368,12 +411,70 @@ collated_stacktree_t vftr_collate_stacks(stacktree_t *stacktree_ptr) {
    return coll_stacktree;
 }
 
+int vftr_collated_stacktree_insert_namegroup(collated_stacktree_t *stacktree_ptr,
+                                              collated_stack_t *stack_ptr) {
+   int idx = stacktree_ptr->nstacks;
+   stacktree_ptr->nstacks++;
+   vftr_collated_stacktree_realloc(stacktree_ptr);
+   // shift all entries up until the right spot to insert is found
+   while (idx > 0 && strcmp(stacktree_ptr->stacks[idx-1].name, stack_ptr->name) > 0) {
+      stacktree_ptr->stacks[idx] = stacktree_ptr->stacks[idx-1];
+      idx--;
+   }
+   stacktree_ptr->stacks[idx] = *stack_ptr;
+   return idx;
+}
+
+void vftr_collated_stacktree_insert_gid(gid_list_t *gid_list_ptr, int gid) {
+   int idx = gid_list_ptr->ngids;
+   gid_list_ptr->ngids++;
+   vftr_gid_list_realloc(gid_list_ptr);
+   // shift all entries up until the right spot to insert is found
+   while (idx > 0 && gid < gid_list_ptr->gids[idx-1]) {
+      gid_list_ptr->gids[idx] = gid_list_ptr->gids[idx-1];
+      idx--;
+   }
+   gid_list_ptr->gids[idx] = gid;
+}
+
+collated_stacktree_t vftr_collated_stacktree_group_by_name(
+   collated_stacktree_t *stacktree_ptr) {
+   SELF_PROFILE_START_FUNCTION;
+   collated_stacktree_t grouped_stacktree = vftr_new_empty_collated_stacktree();
+   grouped_stacktree.namegrouped = true;
+
+   for (int istack=0; istack<stacktree_ptr->nstacks; istack++) {
+      collated_stack_t *stack = stacktree_ptr->stacks+istack;
+
+      // check if stack is already present
+      int idx = vftr_binary_search_collated_stacks_name(grouped_stacktree, stack->name);
+      collated_stack_t *grouped_stack = NULL;
+      if (idx < 0) {
+         idx = vftr_collated_stacktree_insert_namegroup(&grouped_stacktree, stack);
+         grouped_stack = grouped_stacktree.stacks+idx;
+      } else {
+         grouped_stack = grouped_stacktree.stacks+idx;
+         grouped_stack->profile = vftr_add_collated_profiles(grouped_stack->profile,
+                                                             stack->profile);
+      }
+
+      vftr_collated_stacktree_insert_gid(&(grouped_stack->gid_list), stack->gid);
+   }
+   SELF_PROFILE_END_FUNCTION;
+   return grouped_stacktree;
+}
+
 void vftr_collated_stacktree_free(collated_stacktree_t *stacktree_ptr) {
    SELF_PROFILE_START_FUNCTION;
    if (stacktree_ptr->nstacks > 0) {
       for (int istack=0; istack<stacktree_ptr->nstacks; istack++) {
-         free(stacktree_ptr->stacks[istack].name);
+         // the grouped stacks only contain a copy of the reference to one of the
+         // stacks with the name
+         if (!stacktree_ptr->namegrouped) {
+            free(stacktree_ptr->stacks[istack].name);
+         }
          vftr_collated_profile_free(&(stacktree_ptr->stacks[istack].profile));
+         vftr_gid_list_free(&(stacktree_ptr->stacks[istack].gid_list));
       }
       free(stacktree_ptr->stacks);
       stacktree_ptr->stacks = NULL;
@@ -437,6 +538,16 @@ char *vftr_get_collated_stack_string(collated_stacktree_t stacktree,
    return stackstring;
 }
 
+void vftr_print_name_grouped_collated_stack(FILE *fp, 
+                                            collated_stacktree_t stacktree,
+                                            int stackid) {
+   collated_stack_t stack = stacktree.stacks[stackid];
+   fprintf(fp, "%s: %d", stack.name, stack.gid_list.gids[0]);
+   for (int igid=1; igid<stack.gid_list.ngids; igid++) {
+      fprintf(fp, ",%d", stack.gid_list.gids[igid]);
+   }
+}
+
 void vftr_print_collated_stack(FILE *fp, collated_stacktree_t stacktree, int stackid) {
    char *stackstr = vftr_get_collated_stack_string(stacktree, stackid, false);
    fprintf(fp, "%s", stackstr);
@@ -444,9 +555,17 @@ void vftr_print_collated_stack(FILE *fp, collated_stacktree_t stacktree, int sta
 }
 
 void vftr_print_collated_stacklist(FILE *fp, collated_stacktree_t stacktree) {
-   for (int istack=0; istack<stacktree.nstacks; istack++) {
-      fprintf(fp, "%u: ", istack);
-      vftr_print_collated_stack(fp, stacktree, istack);
-      fprintf(fp, "\n");
+   if (stacktree.namegrouped) {
+      for (int istack=0; istack<stacktree.nstacks; istack++) {
+         fprintf(fp, "%u: ", istack);
+         vftr_print_name_grouped_collated_stack(fp, stacktree, istack);
+         fprintf(fp, "\n");
+      }
+   } else {
+      for (int istack=0; istack<stacktree.nstacks; istack++) {
+         fprintf(fp, "%u: ", istack);
+         vftr_print_collated_stack(fp, stacktree, istack);
+         fprintf(fp, "\n");
+      }
    }
 }

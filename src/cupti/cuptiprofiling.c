@@ -30,6 +30,16 @@ void vftr_accumulate_cuptiprofiling (cuptiprofile_t *prof, int cbid, int n_calls
    if (mem_dir != CUPTI_NOCOPY) prof->memcpy_bytes[mem_dir] += memcpy_bytes;
 }
 
+cuptiprofile_t vftr_add_cuptiprofiles(cuptiprofile_t profA, cuptiprofile_t profB) {
+   cuptiprofile_t profC;
+   profC.cbid = profA.cbid + profB.cbid;
+   profC.n_calls = profA.n_calls + profB.n_calls;
+   profC.t_ms = profA.t_ms + profB.t_ms;
+   profC.memcpy_bytes[CUPTI_COPY_IN] = profA.memcpy_bytes[CUPTI_COPY_IN] + profB.memcpy_bytes[CUPTI_COPY_IN];
+   profC.memcpy_bytes[CUPTI_COPY_OUT] = profA.memcpy_bytes[CUPTI_COPY_OUT] + profB.memcpy_bytes[CUPTI_COPY_OUT];
+   return profC;
+}
+
 void vftr_cuptiprofiling_free(cuptiprofile_t *prof_ptr) {
   if (vftrace.cupti_state.n_devices > 0 && prof_ptr->cbid > 0) {
      cudaEventDestroy (prof_ptr->start);
