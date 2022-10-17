@@ -8,7 +8,7 @@
 #include "vftrace_state.h"
 #include "sorting.h"
 
-#include "callbacks.h"
+#include "cupti_vftr_callbacks.h"
 #include "cuptiprofiling_types.h"
 #include "cupti_utils.h"
 

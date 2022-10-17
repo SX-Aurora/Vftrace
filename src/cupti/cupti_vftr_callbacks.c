@@ -15,7 +15,7 @@
 #include "callprofiling.h"
 
 #include "cuptiprofiling.h"
-#include "callbacks.h"
+#include "cupti_vftr_callbacks.h"
 
 void vftr_get_cupti_memory_info (CUpti_CallbackId cbid, const CUpti_CallbackData *cb_info,
                            int *mem_dir, size_t *copied_bytes) {

@@ -3,7 +3,7 @@
 #include "cupti_init_final.h"
 #include "cuptiprofiling_types.h"
 #include "cuptiprofiling.h"
-#include "callbacks.h"
+#include "cupti_vftr_callbacks.h"
 
 cuptiprofile_t dummy_cuptiprof[2];
 

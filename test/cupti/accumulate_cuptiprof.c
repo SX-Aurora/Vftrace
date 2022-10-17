@@ -9,7 +9,7 @@
 #include "collate_profiles.h"
 #include "callprofiling_types.h"
 
-#include "callbacks.h"
+#include "cupti_vftr_callbacks.h"
 #include "cuptiprofiling_types.h"
 
 #include "dummy_stacktree.h"

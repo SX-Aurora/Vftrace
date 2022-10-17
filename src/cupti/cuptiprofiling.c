@@ -2,7 +2,7 @@
 #include <stdio.h>
 
 #include "cuptiprofiling_types.h"
-#include "callbacks.h"
+#include "cupti_vftr_callbacks.h"
 
 cuptiprofile_t vftr_new_cuptiprofiling() {
   cuptiprofile_t prof;

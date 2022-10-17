@@ -4,7 +4,7 @@
 #include <cuda_runtime_api.h>
 
 #include "vftrace_state.h"
-#include "callbacks.h"
+#include "cupti_vftr_callbacks.h"
 
 void vftr_show_used_gpu_info (FILE *fp) {
    struct cudaDeviceProp prop;

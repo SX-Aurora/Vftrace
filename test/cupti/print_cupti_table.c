@@ -6,7 +6,7 @@
 #include "collate_profiles.h"
 
 #include "cupti_init_final.h"
-#include "callbacks.h"
+#include "cupti_vftr_callbacks.h"
 #include "cuptiprofiling_types.h"
 #include "cupti_ranklogfile.h"
 #include "cupti_logfile.h"
