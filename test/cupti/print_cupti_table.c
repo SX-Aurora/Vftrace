@@ -8,6 +8,7 @@
 #include "cupti_init_final.h"
 #include "callbacks.h"
 #include "cuptiprofiling_types.h"
+#include "cupti_ranklogfile.h"
 #include "cupti_logfile.h"
 
 #include "dummy_stacktree.h"
@@ -38,6 +39,10 @@ int main(int argc, char **argv) {
       vftr_register_dummy_cupti_stack ("cudafunc1<init", CUPTI_RUNTIME_TRACE_CBID_cudaLaunch_v3020,
                                        1000.0, CUPTI_NOCOPY, 0);
    }
+   for (int i = 0; i < 3; i++) {
+      vftr_register_dummy_cupti_stack ("cudafunc4<func0<init", CUPTI_RUNTIME_TRACE_CBID_cudaLaunch_v3020,
+				       10000.0, CUPTI_NOCOPY, 0);
+   }
 
 
    stacktree_t stacktree = vftr_get_dummy_stacktree();
@@ -45,6 +50,9 @@ int main(int argc, char **argv) {
    collated_stacktree_t collated_stacktree = vftr_collate_stacks(&stacktree);
    vftr_collate_profiles(&collated_stacktree, &stacktree);
 
-   vftr_write_logfile_cupti_table (stdout, collated_stacktree);
+   fprintf (stdout, "Ranklogfile: \n");
+   vftr_write_ranklogfile_cupti_table(stdout, stacktree, environment);
+   fprintf (stdout, "Logfile: \n");
+   vftr_write_logfile_cupti_table (stdout, collated_stacktree, environment);
 }
 

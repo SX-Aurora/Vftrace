@@ -22,6 +22,7 @@ void vftr_sort_longlong(int n, long long *list, bool ascending);
 void vftr_sort_perm_int8(int n, int8_t *list, int **perm, bool ascending);
 void vftr_apply_perm_int8(int n, int8_t *list, int *perm);
 void vftr_sort_perm_longlong(int n, long long *list, int **perm, bool ascending);
+void vftr_sort_perm_int(int n, int *list, int **perm, bool ascending);
 
 // sorts a list of unsigned 64 bit integer with linear scaling radix sort
 // one bit at a time
@@ -62,8 +63,8 @@ void vftr_sort_stacks_for_mpiprof(environment_t environment,
 #endif
 
 #ifdef _CUPTI
-stack_t **vftr_sort_stacks_for_cupti (stacktree_t stacktree);
-collated_stack_t **vftr_sort_collated_stacks_for_cupti (collated_stacktree_t stacktree);
+stack_t **vftr_sort_stacks_for_cupti (environment_t environment, stacktree_t stacktree);
+collated_stack_t **vftr_sort_collated_stacks_for_cupti (environment_t environment, collated_stacktree_t stacktree);
 #endif
 
 // sort the collated stacks based on a set environment variable

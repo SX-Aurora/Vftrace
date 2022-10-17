@@ -150,19 +150,56 @@ void vftr_sort_collated_stacks_for_mpiprof(environment_t environment,
 #endif
 
 #ifdef _CUPTI
-   collated_stack_t **vftr_sort_collated_stacks_for_cupti (collated_stacktree_t stacktree) {
+   collated_stack_t **vftr_sort_collated_stacks_for_cupti (environment_t environment, collated_stacktree_t stacktree) {
      int nstacks = stacktree.nstacks;
 
-     float *stackvals = (float*)malloc(nstacks * sizeof(float));
-     for (int istack = 0; istack < nstacks; istack++) {
-        stackvals[istack] = 0; 
-        collated_stack_t *stack = stacktree.stacks + istack;
-        stackvals[istack] += stack->profile.cuptiprof.t_ms;
-     }
-
+     char *env_val = environment.sort_cupti_table.value.string_val;
      int *perm = NULL;
-     vftr_sort_perm_float(nstacks, stackvals, &perm, false);
-     free(stackvals);
+
+     if (!strcmp(env_val, "TIME")) {
+        float *stackvals = (float*)malloc(nstacks * sizeof(float));
+        for (int istack = 0; istack < nstacks; istack++) {
+           collated_stack_t *stack = stacktree.stacks + istack;
+           stackvals[istack] = stack->profile.cuptiprof.t_ms;
+        }
+        vftr_sort_perm_float(nstacks, stackvals, &perm, false);
+        free(stackvals);
+     } else if (!strcmp(env_val, "MEMCPY")) {
+        long long *stackvals = (long long*)malloc(nstacks * sizeof(long long));
+        for (int istack = 0; istack < nstacks; istack++) {
+           collated_stack_t *stack = stacktree.stacks + istack;
+           collated_profile_t prof = stack->profile;
+           stackvals[istack] = (long long)(prof.cuptiprof.memcpy_bytes[0] + prof.cuptiprof.memcpy_bytes[1]);
+        }
+        vftr_sort_perm_longlong(nstacks, stackvals, &perm, false);
+        free(stackvals);
+     } else if (!strcmp(env_val, "CBID")) {
+        int *stackvals = (int*)malloc(nstacks * sizeof(int));
+        for (int istack = 0; istack < nstacks; istack++) {
+           collated_stack_t *stack = stacktree.stacks + istack;
+           stackvals[istack] = stack->profile.cuptiprof.cbid;
+        }
+        // CBIDs are sorted in ascending order
+        vftr_sort_perm_int(nstacks, stackvals, &perm, true);
+        free(stackvals);
+     } else if (!strcmp(env_val, "CALLS")) {
+        int *stackvals = (int*)malloc(nstacks * sizeof(int));
+        for (int istack = 0; istack < nstacks; istack++) {
+           collated_stack_t *stack = stacktree.stacks + istack;
+           stackvals[istack] = stack->profile.cuptiprof.n_calls;
+        }
+        vftr_sort_perm_int(nstacks, stackvals, &perm, false);
+        free(stackvals);
+     } else {
+        // if (!strcmp(env_val, "NONE"))
+        int *stackvals = (int*)malloc(nstacks * sizeof(int));
+        for (int istack = 0; istack < nstacks; istack++) {
+           collated_stack_t *stack = stacktree.stacks + istack;
+           stackvals[istack] = stack->gid;
+        }
+        vftr_sort_perm_int(nstacks, stackvals, &perm, true);
+        free(stackvals);
+     }
 
      collated_stack_t **stackptrs = (collated_stack_t**) malloc(nstacks*sizeof(collated_stack_t*));
      for (int istack = 0; istack < nstacks; istack++) {
