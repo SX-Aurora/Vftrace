@@ -242,9 +242,16 @@ unsigned long long vftr_sizeof_stacktree_t(stacktree_t stacktree) {
    return size;
 }
 
+unsigned long long vftr_sizeof_gid_list_t(gid_list_t gid_list) {
+   return sizeof(gid_list_t) + gid_list.ngids*sizeof(int);
+}
+
 unsigned long long vftr_sizeof_collated_stack_t(collated_stack_t stack) {
    unsigned long long size = sizeof(collated_stack_t);
+   size -= sizeof(collated_profile_t);
    size += vftr_sizeof_collated_profile_t(stack.profile);
+   size -= sizeof(gid_list_t);
+   size += vftr_sizeof_gid_list_t(stack.gid_list);
    if (stack.name != NULL) {
       size += strlen(stack.name)*sizeof(char);
    }
