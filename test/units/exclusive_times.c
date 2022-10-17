@@ -31,30 +31,30 @@ int main(int argc, char **argv) {
    environment_t environment;
    environment = vftr_read_environment();
 
-   vftr_init_dummy_stacktree (20, 0);
+   stacktree_t stacktree = vftr_init_dummy_stacktree (20, 0);
 
    for (int ithread=0; ithread<6; ithread++) {
-      vftr_register_dummy_stack ("func0<init", ithread, 10, 0);
+      vftr_register_dummy_stack (&stacktree, "func0<init", ithread, 10, 0);
    }
 
    for (int ithread=0; ithread<3; ithread++) {
-      vftr_register_dummy_stack ("func1<init", ithread, 10, 0);
+      vftr_register_dummy_stack (&stacktree, "func1<init", ithread, 10, 0);
    }
 
-   vftr_register_dummy_stack ("func2<func1<init", 1, 3, 0);
-   vftr_register_dummy_stack ("func2<func1<init", 2, 4, 0);
+   vftr_register_dummy_stack(&stacktree, "func2<func1<init", 1, 3, 0);
+   vftr_register_dummy_stack(&stacktree, "func2<func1<init", 2, 4, 0);
 
-   vftr_register_dummy_stack ("func3<func0<init", 0, 3, 0);
-   vftr_register_dummy_stack ("func3<func0<init", 2, 2, 0);
-   vftr_register_dummy_stack ("func3<func0<init", 4, 3, 0);
+   vftr_register_dummy_stack(&stacktree, "func3<func0<init", 0, 3, 0);
+   vftr_register_dummy_stack(&stacktree, "func3<func0<init", 2, 2, 0);
+   vftr_register_dummy_stack(&stacktree, "func3<func0<init", 4, 3, 0);
 
-   vftr_register_dummy_stack ("func4<func0<init", 1, 4, 0);
-   vftr_register_dummy_stack ("func4<func0<init", 3, 5, 0);
-   vftr_register_dummy_stack ("func4<func0<init", 5, 6, 0);
+   vftr_register_dummy_stack(&stacktree, "func4<func0<init", 1, 4, 0);
+   vftr_register_dummy_stack(&stacktree, "func4<func0<init", 3, 5, 0);
+   vftr_register_dummy_stack(&stacktree, "func4<func0<init", 5, 6, 0);
 
-   vftr_register_dummy_stack ("func5<func4<func0<init", 5, 2, 0);
+   vftr_register_dummy_stack(&stacktree, "func5<func4<func0<init", 5, 2, 0);
 
-   stacktree_t stacktree = vftr_get_dummy_stacktree();
+   vftr_update_stacks_exclusive_time(&stacktree);
 
    vftr_print_stacktree(stdout, stacktree);
    fprintf(stdout, "\n");
