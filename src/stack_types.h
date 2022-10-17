@@ -7,17 +7,7 @@
 #include "custom_types.h"
 #include "profiling_types.h"
 
-typedef enum {
-   init,
-   function,
-   user_region,
-   omp_region,
-   cupti_region,
-   internal_region
-} stack_kind_t;
-
 typedef struct {
-   stack_kind_t stack_kind;
    // address of the function
    uintptr_t address;
    // is this function measured precisely?

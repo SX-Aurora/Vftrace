@@ -46,7 +46,7 @@ void vftr_register_dummy_call_stack (char *stackstring, uint64_t t_call) {
       int stack_idx_orig = get_stack_idx (hash_bottom);
       int offset = stacktree.nstacks - 1;
       this_stack_idx = vftr_new_stack(stack_idx_orig, &stacktree, stack_top, stack_top,
-                                      function, base_addr + offset, false);
+                                      base_addr + offset, false);
   
       stacktree.stacks[this_stack_idx].hash = new_hash;
    }
@@ -74,7 +74,7 @@ void vftr_register_dummy_cupti_stack (char *stackstring, int cbid, float t_ms,
       int stack_idx_orig = get_stack_idx (hash_bottom);
       int offset = stacktree.nstacks - 1;
       this_stack_idx = vftr_new_stack(stack_idx_orig, &stacktree, stack_top, stack_top,
-                                      function, base_addr + offset, false);
+                                      base_addr + offset, false);
   
       stacktree.stacks[this_stack_idx].hash = new_hash;
    }

@@ -53,8 +53,7 @@ void vftr_omp_region_begin(const char *name, void *addr) {
       // and adjust the threadstack accordingly
       my_threadstack = vftr_update_threadstack_region(my_threadstack, my_thread,
                                                       region_addr, name,
-                                                      omp_region, &vftrace,
-                                                      true);
+                                                      &vftrace, true);
       // OMP regions move the thread level up by one
       // Therefore the next subthread level needs to be clean
       vftr_thread_subthreads_reset(&(vftrace.process.threadtree), my_thread->threadID);

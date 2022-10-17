@@ -48,7 +48,7 @@ void vftr_user_region_begin(const char *name, void *addr) {
       bool precise = true;
       my_threadstack = vftr_update_threadstack_region(my_threadstack, my_thread,
                                                       region_addr, name,
-                                                      user_region, &vftrace,
+                                                      &vftrace,
                                                       precise);
       stack_t *my_new_stack = vftrace.process.stacktree.stacks+my_threadstack->stackID;
       my_profile = vftr_get_my_profile(my_new_stack, my_thread);

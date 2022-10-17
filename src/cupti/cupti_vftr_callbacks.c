@@ -66,7 +66,7 @@ void vftr_cupti_region_begin (int cbid, const CUpti_CallbackData *cb_info) {
 
    my_threadstack = vftr_update_threadstack_region (my_threadstack, my_thread,
                                                     (uintptr_t)pseudo_addr, func_name,
-                                                    cupti_region, &vftrace, false);
+                                                    &vftrace, false);
 
    stack_t *my_new_stack = vftrace.process.stacktree.stacks + my_threadstack->stackID;
    my_profile = vftr_get_my_profile(my_new_stack, my_thread);

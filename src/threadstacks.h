@@ -32,7 +32,6 @@ threadstack_t *vftr_update_threadstack_region(threadstack_t *my_threadstack,
                                               thread_t *my_thread,
                                               uintptr_t region_addr,
                                               const char *name,
-                                              stack_kind_t stack_kind,
                                               vftrace_t *vftrace,
                                               bool precise);
 

@@ -62,7 +62,7 @@ int main(int argc, char **argv) {
    // 1: func0<init
    name = vftr_get_name_from_address(symboltable, addrs+0);
    int func2_idx = vftr_new_stack(func1_idx, &stacktree,
-                                  name, name, function, addrs+0, false);
+                                  name, name, addrs+0, false);
    iprof = vftr_new_profile_in_list(0,&(stacktree.stacks[func2_idx].profiling));
    profile = stacktree.stacks[func2_idx].profiling.profiles+iprof;
    vftr_accumulate_message_info(&(profile->mpiprof), mpi_state, send,
@@ -81,7 +81,7 @@ int main(int argc, char **argv) {
    // 2: func2<func0<init
    name = vftr_get_name_from_address(symboltable, addrs+2);
    int func4_idx = vftr_new_stack(func2_idx, &stacktree,
-                                  name, name, function, addrs+2, false);
+                                  name, name, addrs+2, false);
    iprof = vftr_new_profile_in_list(1,&(stacktree.stacks[func4_idx].profiling));
    profile = stacktree.stacks[func4_idx].profiling.profiles+iprof;
    vftr_accumulate_message_info(&(profile->mpiprof), mpi_state, send,

@@ -72,7 +72,7 @@ int vftr_get_index_from_functionlist(int nfunc, char **funclist,
          int offset = vftr_get_offset_from_function_name(funclist[ifunc]);
          idx = vftr_new_stack(idx, stacktree_ptr,
                               funclist[ifunc], funclist[ifunc],
-                              function, base_addr+offset, false);
+                              base_addr+offset, false);
       } else {
          idx = calleeidx;
       }

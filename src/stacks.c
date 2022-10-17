@@ -53,7 +53,6 @@ void vftr_insert_callee(int calleeID, stack_t *caller) {
 
 int vftr_new_stack(int callerID, stacktree_t *stacktree_ptr,
                    const char *name, const char *cleanname,
-                   stack_kind_t stack_kind,
                    uintptr_t address, bool precise) {
    SELF_PROFILE_START_FUNCTION;
    int stackID = stacktree_ptr->nstacks;
@@ -63,7 +62,6 @@ int vftr_new_stack(int callerID, stacktree_t *stacktree_ptr,
    stack_t *callerstack = stacktree_ptr->stacks+callerID;
 
    stack_t *stack = stacktree_ptr->stacks+stackID;
-   stack->stack_kind = stack_kind;
    stack->address = address;
    stack->precise = precise;
    stack->caller = callerstack->lid;
@@ -85,7 +83,6 @@ int vftr_new_stack(int callerID, stacktree_t *stacktree_ptr,
 stack_t vftr_first_stack() {
    SELF_PROFILE_START_FUNCTION;
    stack_t stack;
-   stack.stack_kind = init;
    stack.address = (uintptr_t) NULL;
    stack.precise = false;
    stack.caller = -1;
