@@ -82,6 +82,9 @@ void vftr_profile_free(profile_t* profiles_ptr, int profID) {
 #ifdef _OMP
    vftr_ompprofiling_free(&(profile_ptr->ompprof));
 #endif
+#ifdef _CUPTI
+   vftr_cuptiprofiling_free(&(profile_ptr->cuptiprof));
+#endif
    // TODO: add other profiles
    SELF_PROFILE_END_FUNCTION;
 }

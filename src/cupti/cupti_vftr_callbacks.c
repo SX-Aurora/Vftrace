@@ -101,9 +101,13 @@ void CUPTIAPI vftr_cupti_event_callback (void *userdata,
     // These functions are called in the profiling layer. We need to exclude them,
    // otherwise the callback will be called infinitely
    if (cbid == CUPTI_RUNTIME_TRACE_CBID_cudaEventRecord_v3020
+    || cbid == CUPTI_RUNTIME_TRACE_CBID_cudaEventRecordWithFlags_v11010
     || cbid == CUPTI_RUNTIME_TRACE_CBID_cudaEventSynchronize_v3020
     || cbid == CUPTI_RUNTIME_TRACE_CBID_cudaEventElapsedTime_v3020
-    || cbid == CUPTI_RUNTIME_TRACE_CBID_cudaEventCreate_v3020) return;
+    || cbid == CUPTI_RUNTIME_TRACE_CBID_cudaEventCreate_v3020
+    || cbid == CUPTI_RUNTIME_TRACE_CBID_cudaEventCreateWithFlags_v3020
+    || cbid == CUPTI_RUNTIME_TRACE_CBID_cudaEventDestroy_v3020
+    || cbid == CUPTI_RUNTIME_TRACE_CBID_cudaEventQuery_v3020) return;
 
    if (cb_info->callbackSite == CUPTI_API_ENTER) {
       vftr_cupti_region_begin (cbid, cb_info);

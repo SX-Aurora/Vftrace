@@ -1,13 +1,17 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+#include "vftrace_state.h"
+
 #include "cuptiprofiling_types.h"
 #include "cupti_vftr_callbacks.h"
 
 cuptiprofile_t vftr_new_cuptiprofiling() {
   cuptiprofile_t prof;
-  cudaEventCreate (&(prof.start));
-  cudaEventCreate (&(prof.stop));
+  if (vftrace.cupti_state.n_devices > 0) {
+     cudaEventCreate (&(prof.start));
+     cudaEventCreate (&(prof.stop));
+  }
   prof.cbid = 0;
   prof.n_calls = 0;
   prof.t_ms = 0;
@@ -25,5 +29,8 @@ void vftr_accumulate_cuptiprofiling (cuptiprofile_t *prof, int cbid, int n_calls
 }
 
 void vftr_cuptiprofiling_free(cuptiprofile_t *prof_ptr) {
-  (void)prof_ptr;
+  if (vftrace.cupti_state.n_devices > 0) {
+     cudaEventDestroy (prof_ptr->start);
+     cudaEventDestroy (prof_ptr->stop);
+  }
 }
