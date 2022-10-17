@@ -17,6 +17,7 @@
 #include "collate_stacks.h"
 #include "tables.h"
 #include "sorting.h"
+#include "misc_utils.h"
 
 int *vftr_logfile_prof_table_stack_calls_list(int nstacks, collated_stack_t **stack_ptrs) {
    int *calls_list = (int*) malloc(nstacks*sizeof(int));
