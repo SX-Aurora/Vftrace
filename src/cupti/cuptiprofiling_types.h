@@ -2,6 +2,7 @@
 #define CUPTIPROFILING_TYPES_H
 
 #include <stdint.h>
+#include <stdbool.h>
 #include <cuda_runtime_api.h>
 
 typedef struct {

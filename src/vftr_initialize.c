@@ -6,7 +6,7 @@
 
 #ifdef _CUPTI
 #include "cupti_init_final.h"
-#include "callbacks.h"
+#include "cupti_vftr_callbacks.h"
 #endif
 
 #include "self_profile.h"

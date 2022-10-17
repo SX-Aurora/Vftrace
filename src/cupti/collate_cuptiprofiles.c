@@ -3,6 +3,11 @@
 
 #include <stdio.h>
 
+
+// Currently, the CUPTI interface is only supported for
+// one MPI process and one OMP thread. Therefore, collating
+// the profiles just comes down to copying the profile from
+// the one stack which exists.
 void vftr_collate_cuptiprofiles (collated_stacktree_t *collstacktree_ptr, 
   				 stacktree_t *stacktree_ptr,
  				 int myrank, int nranks, int *nremote_profiles) {

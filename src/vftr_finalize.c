@@ -14,6 +14,10 @@
 #include "sampling.h"
 #include "timer.h"
 
+#ifdef _CUPTI
+#include "cupti_init_final.h"
+#endif
+
 void vftr_finalize() {
    if (vftrace.state == off || vftrace.state == uninitialized) {
       // was already finalized
@@ -60,6 +64,10 @@ void vftr_finalize() {
    vftr_finalize_sampling(&(vftrace.sampling), vftrace.environment,
                           vftrace.process, vftrace.timestrings,
                           (double) (runtime * 1.0e-9));
+
+#ifdef _CUPTI
+   vftr_finalize_cupti (vftrace.process.collated_stacktree);
+#endif
 
    // free the dynamic process data
    vftr_process_free(&vftrace.process);

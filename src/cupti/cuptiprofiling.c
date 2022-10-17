@@ -1,18 +1,24 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+#include "vftrace_state.h"
+
 #include "cuptiprofiling_types.h"
-#include "callbacks.h"
+#include "cupti_vftr_callbacks.h"
 
 cuptiprofile_t vftr_new_cuptiprofiling() {
   cuptiprofile_t prof;
-  cudaEventCreate (&(prof.start));
-  cudaEventCreate (&(prof.stop));
+  if (vftrace.cupti_state.n_devices > 0) {
+// When called on a system without GPUs, this will silently return
+// cudaErrorNoDevice.
+     cudaEventCreate (&(prof.start));
+     cudaEventCreate (&(prof.stop));
+  }
   prof.cbid = 0;
   prof.n_calls = 0;
   prof.t_ms = 0;
-  prof.memcpy_bytes[0] = 0;
-  prof.memcpy_bytes[1] = 0;
+  prof.memcpy_bytes[CUPTI_COPY_IN] = 0;
+  prof.memcpy_bytes[CUPTI_COPY_OUT] = 0; 
   return prof;
 }
 
@@ -29,11 +35,14 @@ cuptiprofile_t vftr_add_cuptiprofiles(cuptiprofile_t profA, cuptiprofile_t profB
    profC.cbid = profA.cbid + profB.cbid;
    profC.n_calls = profA.n_calls + profB.n_calls;
    profC.t_ms = profA.t_ms + profB.t_ms;
-   profC.memcpy_bytes[0] = profA.memcpy_bytes[0] + profB.memcpy_bytes[0];
-   profC.memcpy_bytes[1] = profA.memcpy_bytes[1] + profB.memcpy_bytes[1];
+   profC.memcpy_bytes[CUPTI_COPY_IN] = profA.memcpy_bytes[CUPTI_COPY_IN] + profB.memcpy_bytes[CUPTI_COPY_IN];
+   profC.memcpy_bytes[CUPTI_COPY_OUT] = profA.memcpy_bytes[CUPTI_COPY_OUT] + profB.memcpy_bytes[CUPTI_COPY_OUT];
    return profC;
 }
 
 void vftr_cuptiprofiling_free(cuptiprofile_t *prof_ptr) {
-  (void)prof_ptr;
+  if (vftrace.cupti_state.n_devices > 0) {
+     cudaEventDestroy (prof_ptr->start);
+     cudaEventDestroy (prof_ptr->stop);
+  }
 }
