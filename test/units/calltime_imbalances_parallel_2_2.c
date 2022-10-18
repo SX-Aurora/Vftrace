@@ -12,12 +12,12 @@
 #include "callprofiling.h"
 #include "collated_callprofiling_types.h"
 #include "collated_callprofiling.h"
-#include "dummysymboltable.h"
 #include "collated_stack_types.h"
 #include "collate_stacks.h"
 #include "collate_profiles.h"
 #include <mpi.h>
 
+#include "dummy_stacktree.h"
 
 int main(int argc, char **argv) {
    INIT_SELF_PROF_VFTRACE;
@@ -34,105 +34,27 @@ int main(int argc, char **argv) {
    int myrank;
    PMPI_Comm_rank(MPI_COMM_WORLD, &myrank);
 
-   // dummy symboltable
-   uintptr_t addrs = 123456;
-   symboltable_t symboltable = dummy_symbol_table(6, addrs);
+   stacktree_t stacktree = vftr_init_dummy_stacktree(20ll, 0ll);
 
-   // build stacktree
-   stacktree_t stacktree = vftr_new_stacktree();
-   // 0: init
-   int iprof = 0;
-   profile_t *profile = stacktree.stacks[0].profiling.profiles+0;
-   vftr_accumulate_callprofiling(&(profile->callprof), 1, 20);
+   vftr_register_dummy_stack(&stacktree, "func0<init", 0, 10ll, 2ll);
+   vftr_register_dummy_stack(&stacktree, "func0<init", 1, 10ll, 4ll);
 
-   char *name;
-   int func1_idx = 0;
-   // 1: func0<init
-   name = vftr_get_name_from_address(symboltable, addrs+0);
-   int func2_idx = vftr_new_stack(func1_idx, &stacktree,
-                                  name, name, addrs+0, false);
-   iprof = vftr_new_profile_in_list(0,&(stacktree.stacks[func2_idx].profiling));
-   profile = stacktree.stacks[func2_idx].profiling.profiles+iprof;
-   vftr_accumulate_callprofiling(&(profile->callprof), 1, 10);
-   vftr_accumulate_callprofiling_overhead(&(profile->callprof), 2ll);
-   iprof = vftr_new_profile_in_list(1,&(stacktree.stacks[func2_idx].profiling));
-   profile = stacktree.stacks[func2_idx].profiling.profiles+iprof;
-   vftr_accumulate_callprofiling(&(profile->callprof), 1, 10);
-   vftr_accumulate_callprofiling_overhead(&(profile->callprof), 4ll);
+   vftr_register_dummy_stack(&stacktree, "func1<init", 0, 10ll, 128ll);
+   vftr_register_dummy_stack(&stacktree, "func1<init", 1, 10ll, 256ll);
+   vftr_register_dummy_stack(&stacktree, "func1<init", 2, 10ll, 515ll);
 
-   // 2: func1<init
-   name = vftr_get_name_from_address(symboltable, addrs+1);
-   int func3_idx = vftr_new_stack(func1_idx, &stacktree,
-                                  name, name, addrs+1, false);
-   iprof = vftr_new_profile_in_list(0,&(stacktree.stacks[func3_idx].profiling));
-   profile = stacktree.stacks[func3_idx].profiling.profiles+iprof;
-   vftr_accumulate_callprofiling(&(profile->callprof), 1, 10);
-   vftr_accumulate_callprofiling_overhead(&(profile->callprof), 128ll);
-   iprof = vftr_new_profile_in_list(1,&(stacktree.stacks[func3_idx].profiling));
-   profile = stacktree.stacks[func3_idx].profiling.profiles+iprof;
-   vftr_accumulate_callprofiling(&(profile->callprof), 1, 10);
-   vftr_accumulate_callprofiling_overhead(&(profile->callprof), 256ll);
-   iprof = vftr_new_profile_in_list(2,&(stacktree.stacks[func3_idx].profiling));
-   profile = stacktree.stacks[func3_idx].profiling.profiles+iprof;
-   vftr_accumulate_callprofiling(&(profile->callprof), 1, 10);
-   vftr_accumulate_callprofiling_overhead(&(profile->callprof), 515ll);
+   vftr_register_dummy_stack(&stacktree, "func2<func0<init", 1, 3ll, 1024ll);
+   vftr_register_dummy_stack(&stacktree, "func2<func0<init", 2, 4ll, 2048ll);
 
-   // 3: func2<func0<init
-   name = vftr_get_name_from_address(symboltable, addrs+2);
-   int func4_idx = vftr_new_stack(func2_idx, &stacktree,
-                                  name, name, addrs+2, false);
-   iprof = vftr_new_profile_in_list(1,&(stacktree.stacks[func4_idx].profiling));
-   profile = stacktree.stacks[func4_idx].profiling.profiles+iprof;
-   vftr_accumulate_callprofiling(&(profile->callprof), 1, 3);
-   vftr_accumulate_callprofiling_overhead(&(profile->callprof), 1024ll);
-   iprof = vftr_new_profile_in_list(2,&(stacktree.stacks[func4_idx].profiling));
-   profile = stacktree.stacks[func4_idx].profiling.profiles+iprof;
-   vftr_accumulate_callprofiling(&(profile->callprof), 1, 4);
-   vftr_accumulate_callprofiling_overhead(&(profile->callprof), 2048ll);
+   vftr_register_dummy_stack(&stacktree, "func2<func1<init", 0, 3ll, 4096ll);
+   vftr_register_dummy_stack(&stacktree, "func2<func1<init", 2, 2ll, 8192ll);
+   vftr_register_dummy_stack(&stacktree, "func2<func1<init", 4, 3ll, 16384ll);
 
-   // 4: func2<func1<init
-   name = vftr_get_name_from_address(symboltable, addrs+2);
-   int func5_idx = vftr_new_stack(func3_idx, &stacktree,
-                                  name, name, addrs+2, false);
-   iprof = vftr_new_profile_in_list(0,&(stacktree.stacks[func5_idx].profiling));
-   profile = stacktree.stacks[func5_idx].profiling.profiles+iprof;
-   vftr_accumulate_callprofiling(&(profile->callprof), 1, 3);
-   vftr_accumulate_callprofiling_overhead(&(profile->callprof), 4096);
-   iprof = vftr_new_profile_in_list(2,&(stacktree.stacks[func5_idx].profiling));
-   profile = stacktree.stacks[func5_idx].profiling.profiles+iprof;
-   vftr_accumulate_callprofiling(&(profile->callprof), 1, 2);
-   vftr_accumulate_callprofiling_overhead(&(profile->callprof), 8192);
-   iprof = vftr_new_profile_in_list(4,&(stacktree.stacks[func5_idx].profiling));
-   profile = stacktree.stacks[func5_idx].profiling.profiles+iprof;
-   vftr_accumulate_callprofiling(&(profile->callprof), 1, 3);
-   vftr_accumulate_callprofiling_overhead(&(profile->callprof), 16384);
+   vftr_register_dummy_stack(&stacktree, "func4<func2<func0<init", 1, 4ll, 32768ll);
+   vftr_register_dummy_stack(&stacktree, "func4<func2<func0<init", 3, 5ll, 65536ll);
+   vftr_register_dummy_stack(&stacktree, "func4<func2<func0<init", 5, 6ll, 131072ll);
 
-   // 5: func4<func2<func0<init
-   name = vftr_get_name_from_address(symboltable, addrs+4);
-   int func6_idx = vftr_new_stack(func4_idx, &stacktree,
-                                  name, name, addrs+4, false);
-   iprof = vftr_new_profile_in_list(1,&(stacktree.stacks[func6_idx].profiling));
-   profile = stacktree.stacks[func6_idx].profiling.profiles+iprof;
-   vftr_accumulate_callprofiling(&(profile->callprof), 1, 4);
-   vftr_accumulate_callprofiling_overhead(&(profile->callprof), 32768);
-   iprof = vftr_new_profile_in_list(3,&(stacktree.stacks[func6_idx].profiling));
-   profile = stacktree.stacks[func6_idx].profiling.profiles+iprof;
-   vftr_accumulate_callprofiling(&(profile->callprof), 1, 5);
-   vftr_accumulate_callprofiling_overhead(&(profile->callprof), 65536);
-   iprof = vftr_new_profile_in_list(5,&(stacktree.stacks[func6_idx].profiling));
-   profile = stacktree.stacks[func6_idx].profiling.profiles+iprof;
-   vftr_accumulate_callprofiling(&(profile->callprof), 1, 6);
-   vftr_accumulate_callprofiling_overhead(&(profile->callprof), 131072);
-
-   // 6: func5<func1<init
-   name = vftr_get_name_from_address(symboltable, addrs+5);
-   int func7_idx = vftr_new_stack(func3_idx, &stacktree,
-                                  name, name, addrs+5, false);
-   iprof = vftr_new_profile_in_list(5,&(stacktree.stacks[func7_idx].profiling));
-   profile = stacktree.stacks[func7_idx].profiling.profiles+iprof;
-   vftr_accumulate_callprofiling(&(profile->callprof), 1, 2);
-   vftr_accumulate_callprofiling_overhead(&(profile->callprof), 262144);
-
+   vftr_register_dummy_stack(&stacktree, "func5<func1<init", 5, 2ll, 262144ll);
    vftr_update_stacks_exclusive_time(&stacktree);
 
    collated_stacktree_t collated_stacktree = vftr_collate_stacks(&stacktree);
@@ -148,7 +70,6 @@ int main(int argc, char **argv) {
       }
    }
 
-   free_dummy_symbol_table(&symboltable);
    vftr_stacktree_free(&stacktree);
    vftr_collated_stacktree_free(&collated_stacktree);
 
