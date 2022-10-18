@@ -14,7 +14,6 @@
 #include "dummy_stacktree.h"
 #include <mpi.h>
 
-
 int main(int argc, char **argv) {
    INIT_SELF_PROF_VFTRACE;
    PMPI_Init(&argc, &argv);
