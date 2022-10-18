@@ -289,7 +289,7 @@ collatecallprofiles_LDFLAGS = $(AM_LDFLAGS)
 
 if ENABLE_MPI
 collatecallprofiles_parallel_1_SOURCES = $(srcdir)/collatecallprofiles_parallel_1.c \
-					 $(srcdir)/dummysymboltable.c
+					 $(srcdir)/dummy_stacktree.c
 collatecallprofiles_parallel_1_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
 collatecallprofiles_parallel_1_LDFLAGS = $(AM_LDFLAGS)
 
