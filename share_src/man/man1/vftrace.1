@@ -12,10 +12,11 @@ vftrace \- Profiling library
 .SH DESCRIPTION
 .\" Add any additional description here
 .PP
-Vftrace is a profiling library for C and Fortran programs. 
+Vftrace is a profiling library for C, C++, and Fortran programs. 
 Utilizing function hooks, vftrace collects information about the callstack
 timeline as well as timings and performance informations of all called functions.
 It supports logging of MPI-communication via special wrapping routines.
+The MPI-3.1 Standard is fully supported.
 The profiling behaviour can be controlled by a set of environment variables
 and library functions to be incorporated into the profiled programs source code.
 .PP
@@ -26,46 +27,11 @@ and library functions to be incorporated into the profiled programs source code.
 Here is a collection of all environment variables to controll Vftrace
 profiling and sampling.
 .\"
-.IP "\fBVFTR_ACCURATE_PROFILE\fR"
-.IX Item "VFTR_ACCURATE_PROFILE"
-\fBEnable\fR(1,"YES","Yes","yes","ON","On","on")
-.br
-\fBDisable\fR(0,"NO","No","no","OFF","Off","off")
-.br
-If this environment variable is set, hardware counters are read in at each function entry
-and exit, instead only at each sample time.
-.br
-\fBDefault: "no"
-.\"
 .IP "\fBVFTR_BUFSIZE\fR"
 .IX Item "VFTR_BUFSIZE"
 Buffer size for the buffered stream output of the profiling data files (.vfd) in MiB.
 .br
 \fBDefault: 8\fR
-.\"
-.IP "\fBVFTR_MPI_SUMMARY_FOR_RANKS\fR"
-.IX Item "VFTR_MPI_SUMMARY_FOR_RANKS"
-Determines the rank range for which all functions in the profile table are displayed in the MPI imbalance overview. If VFTR_MPI_SHOW_SYNC_TIME or
-VFTR_PRINT_STACK_PROFILE are set, this option is ignored.
-.br
-\fBDefault: "no"
-.\"
-.IP "\fBVFTR_DETAIL_UNTIL_CUM_CYCLES\fR"
-.IX Item "VFTR_DETAIL_UNTIL_CUM_CYCLES"
-In regular intervals, the function table is sorted according to each function's exclusive time. When doing so, the total number of cycles spent is summed up (cumulative cycles). Each function up to the value of VFTR_DETAIL_UNTIL_CUM_CYCLES gets the detail attribute, i.e. it is sampled at sampling time. VFTR_DETAIL_UNTIL_CUM_CYCLES is a decimal value between 0.0 and 100.0, giving the percentage of cumulative cycles.  
-.br
-\fBDefault: 90.0\fR
-.\"
-.IP "\fBVFTR_EXCLUDE\fR"
-.IX Item "VFTR_EXCLUDE"
-A regular expression defining functions to exclude from profiling. This regular expression can also be a single function name. Examples:
-.br
-\fBVFTR_EXCLUDE=foo_bar\fR
-.br
-\fBVFTR_EXCLUDE=foo*\fR
-.br
-All other functions are included.
-\fBWarning:\fR This option cannot be used with \fBVFTR_INCLUDE_ONLY\fR. If both environment variables are set, only \fBVFTR_INCLUDE_ONLY\fR is used.
 .\"
 .IP "\fBVFTR_INCLUDE_ONLY\fR"
 .IX Item "VFTR_INCLUDE_ONLY"
@@ -77,20 +43,27 @@ A regular expression defining functions which should be profiled, while all othe
 .br
 \fBWarning:\fR This option cannot be used with \fBVFTR_EXCLUDE\fR. If both environment variables are set, only \fBVFTR_INCLUDE_ONLY\fR is used.
 .\"
+.\"
 .IP "\fBVFTR_LOGFILE_FOR_RANKS\fR"
 .IX Item VFTR_LOGFILE_FOR_RANKS
-Specifies the ranks for which a logfile is created. It is a string value, so the content needs to be put in quotes (""). Possible values are
-"all" (logfiles for all ranks), "X-Y" (logfiles for all ranks between X and Y) and "X" (logfile only for rank X). 
+Specifies the ranks for which a local logfile is created.
+Vftrace always produces a summary logfile of the form <basename>_all.log (see \fBVFTR_LOGFILE_BASENAME\fR").
+It takes a string value as argument, so the content needs to be put in quotes ("").
+Possible values are "none" (no logfile for individual ranks),
+"all" (logfiles for all ranks),
+"X-Y" (logfiles for all ranks between X and Y),
+and "X,Y,Z" (logfile only for ranks X, Y, and Z),
+or a mixture of the latter two e.g. "1,4,6,15-23,25,28-29,31". 
 .br
-\fBDefault: "0" (logfile for the first rank only)\fR
+\fBDefault: "none"\fR
 .\"
 .IP "\fBVFTR_LOGFILE_BASENAME\fR"
 .IX Item "VFTR_LOGFILE_BASENAME"
 The Basename of the ASCII log files (.log) and profiling data files (.vfd).
 The full name of a profiling data file is <basename>_<mpirank>.vfd
-and for a logfile <basename>_<mpirank>.log.
+and for a logfile <basename>_<mpirank>.log, or <basename>_all.log.
 .br
-\fBDefault: The executable name\fR
+\fBDefault: The executable name.\fR
 .\"
 .IP "\fBVFTR_MPI_LOG\fR"
 .IX Item "VFTR_MPI_LOG"
@@ -117,16 +90,15 @@ Therefore, communication imbalances can be computed inexcact.
 .br
 \fBDefault: "off"
 .\"
-.IP "\fbVFTR_SHOW_STARTUP\fR"
-.IX Item "VFTR_SHOW_STARTUP
-\fBDisable\fR(1,"YES","Yes","yes")
+.IP "\fBVFTR_RANKS_IN_MPI_PROFILE\fR"
+.IX Item "VFTR_RANKS_IN_MPI_PROFILE\fR"
+Select which communications based on the sending and receiving ranks should be included in the MPI-profile.
+Possible values are "all",
+"X-Y" (only messages where sender and receiver are in X-Y),
+and "X,Y,Z" (only messages where sender and receiver are X,Y,orZ)
+or a mixture of the latter two e.g. "1,4,6,15-23,25,28-29,31". 
 .br
-\fBEnable\fR(0,"NO","No","no")
-.br
-Shows a short startup message for when the traced program is started
-containing the vftrace version number and bug-report contact info.
-.br
-\fBDefault: "no"\fR
+\fBDefault: "all"
 .\"
 .IP "\fBVFTR_OFF\fR"
 .IX Item "VFTR_OFF"
@@ -156,31 +128,6 @@ output file size.
 .br
 \fBDefault: "off"
 .\"
-.IP "\fBVFTR_PROF_TRUNCATE\fR"
-.IX Item "VFTR_PROF_TRUNCATE"
-\fBEnable\fR(1,"YES","Yes","yes","ON","On","on")
-.br
-\fBDisable\fR(0,"NO","No","no","OFF","Off","off")
-.br
-This environment variable determines whether the profile is truncated.
-If enabled, only the most significant routines (by runtime) will be listed in the log-file.
-.br
-\fBDefault: "on"
-.\"
-.IP "\fBVFTR_REGIONS_PRECISE\fR"
-.IX Item "VFTR_REGIONS_PRECISE\fR"
-\fBEnable\fR(1,"YES","Yes","yes","ON","On","on")
-.br
-\fBDisable\fR(0,"NO","No","no","OFF","Off","off")
-.br
-Switches on precise sampling of user defined regions (see \fBvftrace_region_begin\fR).
-.br
-\fBDefault: "on"
-.\"
-.IP "\fBVFTR_RUNTIME_PROFILE_FUNCS\fR"
-.IX Item "VFTR_RUNTIME_PROFILE_FUNCS"
-A regular expression of function names which should be watched during program execution. For each function in the list, a profile and stack list will be printed upon each function entry and exit.
-.\"
 .IP "\fBVFTR_SAMPLETIME\fR"
 .IX Item "VFTR_SAMPLETIME"
 Sets the time (in seconds) between two callstack samples written into .vfd files.
@@ -199,41 +146,80 @@ Enables the creation of .vfd runtime profiles.
 .br
 \fBDefault: "off"\fR
 .\"
+.IP "\fBVFTR_SHOW_FUNCTION_OVERHEAD\fR"
+.IX Item "VFTR_SHOW_FUNCTION_OVERHEAD"
+\fBEnable\fR(1,"YES","Yes","yes","ON","On","on")
+.br
+\fBDisable\fR(0,"NO","No","no","OFF","Off","off")
+.br
+Display function hook overhead in profile table.
+.br
+\fBDefault: "off"\fR
+.\"
+.IP "\fBVFTR_SHOW_CALLTIME_IMBALANCES\fR"
+.IX Item "VFTR_SHOW_CALLTIME_IMBALANCES"
+\fBEnable\fR(1,"YES","Yes","yes","ON","On","on")
+.br
+\fBDisable\fR(0,"NO","No","no","OFF","Off","off")
+.br
+Display discrepancies in the time spend in functions across ranks to locate compute load imbalances.
+.br
+\fBDefault: "off"\fR
+.\"
+.IP "\fBVFTR_GROUP_FUNCTIONS_BY_NAME\fR"
+.IX Item "VFTR_GROUP_FUNCTIONS_BY_NAME"
+\fBEnable\fR(1,"YES","Yes","yes","ON","On","on")
+.br
+\fBDisable\fR(0,"NO","No","no","OFF","Off","off")
+.br
+Include an extra table in the summary logfile, where profiling information is not grouped by callstack, but by function name.
+.br
+\fBDefault: "off"\fR
+.\"
+.IP "\fBVFTR_PRINT_ENVIRONMENT\fR"
+.IX Item "VFTR_PRINT_ENVIRONMENT"
+\fBEnable\fR(1,"YES","Yes","yes","ON","On","on")
+.br
+\fBDisable\fR(0,"NO","No","no","OFF","Off","off")
+.br
+Append the used vftrace settings to the end of the logfile.
+.br
+\fBDefault: "on"\fR
+.\"
+.IP "\fBVFTR_CALLPATH_IN_PROFILE\fR"
+.IX Item "VFTR_CALLPATH_IN_PROFILE"
+\fBEnable\fR(1,"YES","Yes","yes","ON","On","on")
+.br
+\fBDisable\fR(0,"NO","No","no","OFF","Off","off")
+.br
+Include the callpath of the function in the profile table, instead of just the stacks id.
+.br
+\fBDefault: "off"\fR
+.\"
+.IP "\fBVFTR_CALLPATH_IN_MPI_PROFILE\fR"
+.IX Item "VFTR_CALLPATH_IN_MPI_PROFILE"
+\fBEnable\fR(1,"YES","Yes","yes","ON","On","on")
+.br
+\fBDisable\fR(0,"NO","No","no","OFF","Off","off")
+.br
+Include the callpath of the function in the mpi profile table, instead of just the stacks id.
+.br
+\fBDefault: "off"\fR
+.\"
+.\"
+.IP "\fBVFTR_DEMANGLE_CXX\fR"
+.IX Item "VFTR_DEMANGLE_CXX"
+\fBEnable\fR(1,"YES","Yes","yes","ON","On","on")
+.br
+\fBDisable\fR(0,"NO","No","no","OFF","Off","off")
+.br
+Demangle c++ symbol names to make them more human readable. (Requires libiberty to be installed and linked)
+.br
+\fBDefault: "off"\fR
+.\"
 .IP "\fBVFTR_SCENARIO_FILE\fR"
 .IX Item "VFTR_SCENARIO_FILE"
 Path to the scenario file in JSON format that defines the hardware counters and event observables.
-.\"
-.IP "\fBVFTR_SIGNALS_OFF\fR"
-.IX Item "VFTR_SIGNALS_OFF"
-\fBDisable\fR(1,"YES","Yes","yes")
-.br
-\fBEnable\fR(0,"NO","No","no")
-.br
-(Inactive) This setting tells Vftrace if signal calls, such as SIGSEGV or SIGTERM, should be intercepted by Vftrace. In this case, Vftrace will try to wrap up any leftover tasks, such as the creation of vfd files.
-.br
-\fBDefault: "yes"
-.\"
-.IP "\fBVFTR_STOPTIME\fR"
-.IX Item "VFTR_STOPTIME"
-The Maximum runtime of the application in seconds. If exceeded, the profiled application is automatically aborted. This can prevent unintended large overhead or output files.
-.br
-\fBDefault: 604800 (1 week)
-.\"
-.IP "\fBVFTR_PRINT_STACKS_FOR\fR"
-.IX Item "VFTR_PRINT_STACKS_FOR"
-This environment variable specifies MPI ranks for which stack information should be printed,
-additionally to rank 0. It is a comma-separated list of rank indices or tuples <group_base>:<group_size>.
-The latter case signifies that stack information should be printed for all ranks in the interval
-[group_base,group_base + group_size). For example, VFTR_PRINT_STACKS_FOR=1,4:10 switches on the
-inclusion of rank 1 and all ranks between 4 and 13 in the stack information.
-.\"
-.IP "\fBVFTR_PRINT_STACKS_FOR\fR"
-.IX Item "VFTR_PRINT_STACKS_FOR"
-This environment variable specifies MPI ranks for which stack information should be printed,
-additionally to rank 0. It is a comma-separated list of rank indices or tuples <group_base>:<group_size>.
-The latter case signifies that stack information should be printed for all ranks in the interval
-[group_base,group_base + group_size). For example, VFTR_PRINT_STACKS_FOR=1,4:10 switches on the
-inclusion of rank 1 and all ranks between 4 and 13 in the stack information.
 .\"
 .IP "\fBVFTR_STRIP_MODULE_NAMES\fR"
 .IX Item "VFTR_STRIP_MODULE_NAMES"
@@ -245,50 +231,21 @@ different modules only by their name. Instead, the stack ID has to be used. Also
 might be different, depending on the compiler or linker. In this case, the logfile output
 appears as in the case where the environment variable is not set.
 .\"
-.IP "\fBVFTR_CREATE_HTML\fR"
-.IX Item "VFTR_CREATE_HTML"
-This option creates the browser view output of stack trees and profie tables. In the application directory,
-a directory called html is created. In there is an index.html as well as files for each rank and MPI function.
-It can be viewed with a common browser, either by downloading the entire html directory to your local machine,
-or by accessing it remotely (given suitable network configurations).
-.\"
 .IP "\fBVFTR_SORT_PROFILE_TABLE\fR"
 .IX Item "VFTR_SORT_PROFILE_TABLE\fR"
 Specifies how the profile table is sorted. Possible values are TIME_EXLC (exclusive time, default), 
 TIME_INCL (inclusive time), CALLS (number of calls), STACK_ID, OVERHEAD, OVERHEAD_RELATIVE and NONE.
 .\"
-.IP "\fBVFTR_SHOW_FUNCTION_OVERHEAD\fR"
-.IX Item "VFTR_SHOW_FUNCTION_OVERHEAD\R"
-Displays, for each function in the profile table, the overhead time, its relative part of the total
-overhead time, and the ratio of overhead to exclusive time. Can be sorted with
-VFTR_SORT_PROFILE_TABLE=OVERHEAD(_RELATIVE), where _RELATIVE refers to the ratio to the exclusive time.
+.IP "\fBVFTR_SORT_MPI_TABLE\fR"
+.IX Item "VFTR_SORT_MPI_TABLE\fR"
+Specifies how the mpi profile table is sorted. Possible values are TIME_EXLC (exclusive time, default),
+TIME_INCL (inclusive time), CALLS (number of calls), STACK_ID, OVERHEAD, OVERHEAD_RELATIVE and NONE.
 .\"
-.IP "\fBVFTR_MEMINFO_METHOD\fR"
-.IX Item "VFTR_MEMINFO_METHOD\fR"
-Switches on memory profiling. There are two methods:
-.br
-MALLOC_INFO: The gnu function malloc_info is used to obtain the currently allocated memory. It returns an 
-xml string which includes much more information and needs to be parsed. Thus, a significant overhead
-can be created.
-.br
-VMRSS: The file /proc/self/status is read and the line containing "VmRSS" is took out of it. The entire
-file needs to be read in for the file to be updated properly, also leading to an overhead for this method.
-Note: On NEC vector engines, this method samples the resident set size on the Vector host, but the
-actual memory is allocated on the vector engine.
-.br
-If active, RAM occupation by the application is measured at function entry and exit, and the maximal difference
-between these values is registered. This way, it is possible to detect allocations of large fields in
-certain functions.
-.br
-As the overhead for both methods can become large when a function is called a large number of times,
-both memory tracing methods are not evoked upon every function entry and exit. Instead, it is checked
-if the memory values vary above a threshold for consecutive function calls. If not, the next evaluation
-will take place after a number of function calls given by VFTR_MEMINFO_STEPSIZE. Therefore,
-it is possible that allocations might be missed. 
+.IP "\fBVFTR_SORT_CUPTI_TABLE\fR"
+.IX Item "VFTR_SORT_CUPTI_TABLE\fR"
+Specifies how the cupti profile table is sorted. Possible values are TIME_EXLC (exclusive time, default),
+TIME_INCL (inclusive time), CALLS (number of calls), STACK_ID, OVERHEAD, OVERHEAD_RELATIVE and NONE.
 .\"
-.IP "\fBVFTR_MEMINFO_STEPSIZE\fB"
-.IX Item "VFTR_MEMINFO_STEPSIZE\fR"
-The stepsize for memory sampling. See above.
 .SS LIBRARY FUNCTIONS
 .IX Subsection "LIBRARY FUNCTIONS"
 Vftrace provides library functions which can be included in a C or Fortran application
