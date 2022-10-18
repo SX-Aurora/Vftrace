@@ -244,7 +244,7 @@ stackhashing_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
 stackhashing_LDFLAGS = $(AM_LDFLAGS)
 
 collatehashes_SOURCES = $(srcdir)/collatehashes.c \
-		       $(srcdir)/dummysymboltable.c 
+		       $(srcdir)/dummy_stacktree.c
 collatehashes_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
 collatehashes_LDFLAGS = $(AM_LDFLAGS)
 
