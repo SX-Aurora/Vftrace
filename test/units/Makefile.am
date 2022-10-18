@@ -277,7 +277,7 @@ collatestacks_parallel_2_2_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
 collatestacks_parallel_2_2_LDFLAGS = $(AM_LDFLAGS)
 
 collatestacks_parallel_3_SOURCES = $(srcdir)/collatestacks_parallel_3.c \
-			       $(srcdir)/dummysymboltable.c
+			       $(srcdir)/dummy_stacktree.c
 collatestacks_parallel_3_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
 collatestacks_parallel_3_LDFLAGS = $(AM_LDFLAGS)
 endif
