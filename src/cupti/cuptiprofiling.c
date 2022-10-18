@@ -19,6 +19,7 @@ cuptiprofile_t vftr_new_cuptiprofiling() {
   prof.t_ms = 0;
   prof.memcpy_bytes[CUPTI_COPY_IN] = 0;
   prof.memcpy_bytes[CUPTI_COPY_OUT] = 0; 
+  prof.overhead_nsec = 0;
   return prof;
 }
 
@@ -29,6 +30,35 @@ void vftr_accumulate_cuptiprofiling (cuptiprofile_t *prof, int cbid, int n_calls
    prof->t_ms += t_ms;
    if (mem_dir != CUPTI_NOCOPY) prof->memcpy_bytes[mem_dir] += memcpy_bytes;
 }
+
+void vftr_accumulate_cuptiprofiling_overhead (cuptiprofile_t *prof, long long t_nsec) {
+   prof->overhead_nsec += t_nsec;
+}
+
+// The other overhead routines loop over the number of threads.
+// Since CUPTI is only supported for one thread, we don't need that (yet).
+long long vftr_get_total_cupti_overhead (stacktree_t stacktree) {
+   long long overhead_nsec = 0;
+   
+   for (int istack = 0; istack < stacktree.nstacks; istack++) {
+	stack_t *stack = stacktree.stacks + istack;
+        profile_t *prof = stack->profiling.profiles;
+        cuptiprofile_t *cuptiprof = &(prof->cuptiprof);
+        overhead_nsec += cuptiprof->overhead_nsec;
+   }
+   return overhead_nsec;
+}
+
+long long vftr_get_total_collated_cupti_overhead (collated_stacktree_t stacktree) {
+   long long overhead_nsec = 0;
+   
+   for (int istack = 0; istack < stacktree.nstacks; istack++) {
+	collated_stack_t *stack = stacktree.stacks + istack;
+        cuptiprofile_t *cuptiprof = &(stack->profile.cuptiprof);
+        overhead_nsec += cuptiprof->overhead_nsec;
+   }
+   return overhead_nsec;
+} 
 
 cuptiprofile_t vftr_add_cuptiprofiles(cuptiprofile_t profA, cuptiprofile_t profB) {
    cuptiprofile_t profC;

@@ -8,6 +8,7 @@
 #include "vftrace_state.h"
 #include "timer.h"
 #include "hashing.h"
+#include "self_profile.h"
 
 #include "threads.h"
 #include "threadstacks.h"
@@ -38,6 +39,8 @@ void vftr_get_cupti_memory_info (CUpti_CallbackId cbid, const CUpti_CallbackData
 }
 
 void vftr_cupti_region_begin (int cbid, const CUpti_CallbackData *cb_info) {
+   SELF_PROFILE_START_FUNCTION;
+   long long region_entry_time_begin = vftr_get_runtime_nsec();
    thread_t *my_thread = vftr_get_my_thread(&(vftrace.process.threadtree));
    threadstack_t *my_threadstack = vftr_get_my_threadstack(my_thread);
    stack_t *my_stack = vftrace.process.stacktree.stacks+my_threadstack->stackID;
@@ -72,22 +75,27 @@ void vftr_cupti_region_begin (int cbid, const CUpti_CallbackData *cb_info) {
    my_profile = vftr_get_my_profile(my_new_stack, my_thread);
    cuptiprofile_t *cuptiprof = &my_profile->cuptiprof;
 
-   // We keep track of two timers: The default Vftrace call timer and the CUPTI event timer.
-   // The latter one is started with cudaEventRecord. We therefore pass 0 to the accumulation
-   // of the cupti profile. In the exit hook, the time difference between the start and stop event
-   // is accumulated. The Vftrace timer and the CUPTI timer should be more or less equal.
-   //
+   // We fill the callprofile and the cuptiprofile with the same time measurements obtained
+   // from CUPTI. When using the Vftrace timer for the callprofile, in any case the
+   // overhead of the CUPTI calls is included in some way. This gives a wrong impression
+   // of the time spent. That's why below we pass 0 to accumulate_callprofiling, as the
+   // exit function will supply the time difference.
+
    // cb_info contains the same information regarding copied bytes for Memcpy events. Here, we
    // accumulate zero. The memory information is retrieved in the exit hook.
    cudaEventRecord(cuptiprof->start, 0);
-   long long region_begin_time = vftr_get_runtime_nsec();
    vftr_accumulate_cuptiprofiling (cuptiprof, cbid, 1, 0, CUPTI_NOCOPY, 0);
-   vftr_accumulate_callprofiling (&(my_profile->callprof), 1, -region_begin_time);
+   vftr_accumulate_callprofiling (&(my_profile->callprof), 1, 0);
+   
+   vftr_accumulate_cuptiprofiling_overhead (&(my_profile->cuptiprof),
+                  vftr_get_runtime_nsec() - region_entry_time_begin);
+   SELF_PROFILE_END_FUNCTION;
 }
 
 void vftr_cupti_region_end (int cbid, const CUpti_CallbackData *cb_info) {
+   SELF_PROFILE_START_FUNCTION;
    (void)cb_info;
-   long long region_end_time = vftr_get_runtime_nsec();
+   long long region_exit_time_begin = vftr_get_runtime_nsec();
 
    thread_t *my_thread = vftr_get_my_thread(&(vftrace.process.threadtree));
    threadstack_t *my_threadstack = vftr_get_my_threadstack(my_thread);
@@ -105,9 +113,12 @@ void vftr_cupti_region_end (int cbid, const CUpti_CallbackData *cb_info) {
    vftr_get_cupti_memory_info (cbid, cb_info, &mem_dir, &copied_bytes);
 
    vftr_accumulate_cuptiprofiling(cuptiprof, cbid, 0, t, mem_dir, copied_bytes);
-   vftr_accumulate_callprofiling(&(my_profile->callprof), 0, region_end_time);
+   // Convert ms -> ns
+   vftr_accumulate_callprofiling(&(my_profile->callprof), 0, (long long)(t * 1000000));
    (void)vftr_threadstack_pop(&(my_thread->stacklist));
-
+   vftr_accumulate_cuptiprofiling_overhead (&(my_profile->cuptiprof),
+                   vftr_get_runtime_nsec() - region_exit_time_begin);
+   SELF_PROFILE_END_FUNCTION;
 }
 
 // The default CUPTI callback handle. It vetoes some CBIDs
@@ -118,14 +129,18 @@ void CUPTIAPI vftr_cupti_event_callback (void *userdata,
  					 const CUpti_CallbackData *cb_info) {
    // These functions are called in the profiling layer. We need to exclude them,
    // otherwise the callback will be called infinitely
-   if (cbid == CUPTI_RUNTIME_TRACE_CBID_cudaEventRecord_v3020
-    || cbid == CUPTI_RUNTIME_TRACE_CBID_cudaEventRecordWithFlags_v11010
-    || cbid == CUPTI_RUNTIME_TRACE_CBID_cudaEventSynchronize_v3020
-    || cbid == CUPTI_RUNTIME_TRACE_CBID_cudaEventElapsedTime_v3020
-    || cbid == CUPTI_RUNTIME_TRACE_CBID_cudaEventCreate_v3020
-    || cbid == CUPTI_RUNTIME_TRACE_CBID_cudaEventCreateWithFlags_v3020
-    || cbid == CUPTI_RUNTIME_TRACE_CBID_cudaEventDestroy_v3020
-    || cbid == CUPTI_RUNTIME_TRACE_CBID_cudaEventQuery_v3020) return;
+   switch (cbid) {
+      case CUPTI_RUNTIME_TRACE_CBID_cudaEventRecord_v3020:
+      case CUPTI_RUNTIME_TRACE_CBID_cudaEventRecordWithFlags_v11010:
+      case CUPTI_RUNTIME_TRACE_CBID_cudaEventSynchronize_v3020:
+      case CUPTI_RUNTIME_TRACE_CBID_cudaEventElapsedTime_v3020:
+      case CUPTI_RUNTIME_TRACE_CBID_cudaEventCreate_v3020:
+      case CUPTI_RUNTIME_TRACE_CBID_cudaEventCreateWithFlags_v3020:
+      case CUPTI_RUNTIME_TRACE_CBID_cudaEventDestroy_v3020:
+      case CUPTI_RUNTIME_TRACE_CBID_cudaEventQuery_v3020:
+      case CUPTI_RUNTIME_TRACE_CBID_cudaGetDeviceProperties_v3020:
+         return;
+   }
 
    if (cb_info->callbackSite == CUPTI_API_ENTER) {
       vftr_cupti_region_begin (cbid, cb_info);

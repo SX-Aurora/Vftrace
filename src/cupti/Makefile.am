@@ -15,3 +15,7 @@ libvftr_cupti_la_CFLAGS = -I${srcdir}/../ -I${srcdir}/../sorting -D_CUPTI
 #if HAS_LIBERTY
 libvftr_cupti_la_CFLAGS += -D_LIBERTY
 #endif
+
+#if SELF_PROFILING
+libvftr_cupti_la_CFLAGS += -D_SELF_PROFILE_VFTRACE
+#endif

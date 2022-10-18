@@ -25,6 +25,7 @@
 
 #ifdef _CUPTI
 #include "cupti_ranklogfile.h"
+#include "cuptiprofiling.h"
 #endif
 
 
@@ -56,6 +57,10 @@ void vftr_write_ranklogfile_summary(FILE *fp, process_t process,
 #ifdef _OMP
    long long *omp_overheads = vftr_get_total_omp_overhead(process.stacktree, nthreads);
 #endif
+#ifdef _CUPTI
+   long long cupti_overhead = vftr_get_total_cupti_overhead (process.stacktree);
+#endif
+
    for (int ithread=0; ithread<nthreads; ithread++) {
       if (process.threadtree.threads[ithread].master) {
          total_master_overhead += call_overheads[ithread];
@@ -67,7 +72,10 @@ void vftr_write_ranklogfile_summary(FILE *fp, process_t process,
 #endif
       }
    }
-   double total_master_overhead_sec = total_master_overhead*1.0e-9;
+#ifdef _CUPTI
+   total_master_overhead += cupti_overhead;
+#endif
+   double total_master_overhead_sec = total_master_overhead * 1.0e-9;
    double apptime_sec = runtime_sec - total_master_overhead_sec;
 
    fprintf(fp, "\n");
@@ -88,6 +96,9 @@ void vftr_write_ranklogfile_summary(FILE *fp, process_t process,
 #ifdef _OMP
       fprintf(fp, "   OMP callbacks:     %8.2lf s\n", omp_overheads[0]*1.0e-9);
 #endif
+#ifdef _CUPTI
+   fprintf (fp, "   CUPTI callbacks:   %8.2lf s\n", cupti_overhead * 1e-9);
+#endif
    } else {
       fprintf(fp, "   Function hooks:\n");
       for (int ithread=0; ithread<nthreads; ithread++) {
@@ -107,6 +118,9 @@ void vftr_write_ranklogfile_summary(FILE *fp, process_t process,
          fprintf(fp, "      Thread %d:      %8.2lf s\n",
                  ithread, omp_overheads[ithread]*1.0e-9);
       }
+#endif
+#ifdef _CUPTI
+   fprintf (fp, "   CUPTI callbacks :  %8.2lf s\n", cupti_overhead * 1e-9);
 #endif
    }
 

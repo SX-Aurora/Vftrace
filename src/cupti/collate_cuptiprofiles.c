@@ -24,6 +24,7 @@ void vftr_collate_cuptiprofiles (collated_stacktree_t *collstacktree_ptr,
                 collcuptiprof->t_ms = copy_cuptiprof.t_ms;
                 collcuptiprof->memcpy_bytes[0] = copy_cuptiprof.memcpy_bytes[0];
                 collcuptiprof->memcpy_bytes[1] = copy_cuptiprof.memcpy_bytes[1];
+ 		collcuptiprof->overhead_nsec = copy_cuptiprof.overhead_nsec;
                 // Start and stop events are irrelevant for the collated profile.
         }
 }
