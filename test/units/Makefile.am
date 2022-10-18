@@ -294,12 +294,12 @@ collatecallprofiles_parallel_1_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
 collatecallprofiles_parallel_1_LDFLAGS = $(AM_LDFLAGS)
 
 collatecallprofiles_parallel_2_1_SOURCES = $(srcdir)/collatecallprofiles_parallel_2_1.c \
-					   $(srcdir)/dummysymboltable.c
+					   $(srcdir)/dummy_stacktree.c
 collatecallprofiles_parallel_2_1_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
 collatecallprofiles_parallel_2_1_LDFLAGS = $(AM_LDFLAGS)
 
 collatecallprofiles_parallel_2_2_SOURCES = $(srcdir)/collatecallprofiles_parallel_2_2.c \
-					   $(srcdir)/dummysymboltable.c
+					   $(srcdir)/dummy_stacktree.c
 collatecallprofiles_parallel_2_2_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
 collatecallprofiles_parallel_2_2_LDFLAGS = $(AM_LDFLAGS)
 endif
