@@ -262,7 +262,7 @@ collatestacks_LDFLAGS = $(AM_LDFLAGS)
 
 if ENABLE_MPI
 collatestacks_parallel_1_SOURCES = $(srcdir)/collatestacks_parallel_1.c \
-			       $(srcdir)/dummysymboltable.c
+			       $(srcdir)/dummy_stacktree.c
 collatestacks_parallel_1_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
 collatestacks_parallel_1_LDFLAGS = $(AM_LDFLAGS)
 
