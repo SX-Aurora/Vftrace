@@ -311,7 +311,7 @@ calltime_imbalances_LDFLAGS = $(AM_LDFLAGS)
 
 if ENABLE_MPI
 calltime_imbalances_parallel_1_SOURCES = $(srcdir)/calltime_imbalances_parallel_1.c \
-					 $(srcdir)/dummysymboltable.c
+					 $(srcdir)/dummy_stacktree.c
 calltime_imbalances_parallel_1_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
 calltime_imbalances_parallel_1_LDFLAGS = $(AM_LDFLAGS)
 
