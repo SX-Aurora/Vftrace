@@ -11,7 +11,7 @@
 #include "collated_stack_types.h"
 #include "collate_stacks.h"
 
-#include "dummysymboltable.h"
+#include "dummy_stacktree.h"
 
 #ifdef _MPI
 #include <mpi.h>
@@ -26,61 +26,22 @@ int main(int argc, char **argv) {
    (void) argv;
 #endif
 
-   // dummy symboltable
-   uintptr_t addrs = 123456;
-   symboltable_t symboltable = dummy_symbol_table(6, addrs);
-
    // build stacktree
-   stacktree_t stacktree = vftr_new_stacktree();
+   stacktree_t stacktree = vftr_init_dummy_stacktree(0ll, 0ll);
 
-   char *name;
-   int idx0 = 0;
-   // func0<init
-   name = vftr_get_name_from_address(symboltable, addrs+0);
-   int idx1 = vftr_new_stack(idx0, &stacktree,
-                             name, name, addrs+0, false);
-   // func2<func0<init
-   name = vftr_get_name_from_address(symboltable, addrs+2);
-   int idx2 = vftr_new_stack(idx1, &stacktree,
-                             name, name, addrs+2, false);
+   vftr_register_dummy_stack(&stacktree, "func0<init", 0, 0ll, 0ll);
+   vftr_register_dummy_stack(&stacktree, "func2<func0<init", 0, 0ll, 0ll);
 
-   // func1<init
-   name = vftr_get_name_from_address(symboltable, addrs+1);
-   int idx3 = vftr_new_stack(idx0, &stacktree,
-                             name, name, addrs+1, false);
-   // func2<func1<init
-   name = vftr_get_name_from_address(symboltable, addrs+2);
-   int idx4 = vftr_new_stack(idx3, &stacktree,
-                             name, name, addrs+2, false);
-   // func3<func1<init
-   name = vftr_get_name_from_address(symboltable, addrs+3);
-   int idx5 = vftr_new_stack(idx3, &stacktree,
-                             name, name, addrs+3, false);
-   // func4<func1<init
-   name = vftr_get_name_from_address(symboltable, addrs+4);
-   int idx6 = vftr_new_stack(idx3, &stacktree,
-                             name, name, addrs+4, false);
+   vftr_register_dummy_stack(&stacktree, "func1<init", 0, 0ll, 0ll);
+   vftr_register_dummy_stack(&stacktree, "func2<func1<init", 0, 0ll, 0ll);
+   vftr_register_dummy_stack(&stacktree, "func3<func1<init", 0, 0ll, 0ll);
+   vftr_register_dummy_stack(&stacktree, "func4<func1<init", 0, 0ll, 0ll);
 
-   // func5<init
-   name = vftr_get_name_from_address(symboltable, addrs+5);
-   int idx7 = vftr_new_stack(idx0, &stacktree,
-                             name, name, addrs+5, false);
-   // func3<func5<init
-   name = vftr_get_name_from_address(symboltable, addrs+3);
-   int idx8 = vftr_new_stack(idx7, &stacktree,
-                             name, name, addrs+3, false);
-   // func4<func5<init
-   name = vftr_get_name_from_address(symboltable, addrs+4);
-   int idx9 = vftr_new_stack(idx7, &stacktree,
-                             name, name, addrs+4, false);
-   // func2<func4<func5<init
-   name = vftr_get_name_from_address(symboltable, addrs+2);
-   int idx10 = vftr_new_stack(idx9, &stacktree,
-                              name, name, addrs+2, false);
-   // func3<func4<func5<init
-   name = vftr_get_name_from_address(symboltable, addrs+3);
-   int idx11 = vftr_new_stack(idx9, &stacktree,
-                              name, name, addrs+3, false);
+   vftr_register_dummy_stack(&stacktree, "func5<init", 0, 0ll, 0ll);
+   vftr_register_dummy_stack(&stacktree, "func3<func5<init", 0, 0ll, 0ll);
+   vftr_register_dummy_stack(&stacktree, "func4<func5<init", 0, 0ll, 0ll);
+   vftr_register_dummy_stack(&stacktree, "func2<func4<func5<init", 0, 0ll, 0ll);
+   vftr_register_dummy_stack(&stacktree, "func3<func4<func5<init", 0, 0ll, 0ll);
 
    collated_stacktree_t collated_stacktree = vftr_collate_stacks(&stacktree);
    vftr_print_collated_stacklist(stdout, collated_stacktree);
@@ -90,7 +51,6 @@ int main(int argc, char **argv) {
       vftr_collated_stacktree_group_by_name(&collated_stacktree);
    vftr_print_collated_stacklist(stdout, namegrouped_collated_stacktree);
 
-   free_dummy_symbol_table(&symboltable);
    vftr_stacktree_free(&stacktree);
    vftr_collated_stacktree_free(&collated_stacktree);
    vftr_collated_stacktree_free(&namegrouped_collated_stacktree);

@@ -349,7 +349,7 @@ collatempiprofiles_parallel_2_2_LDFLAGS = $(AM_LDFLAGS)
 endif
 
 namegroup_collatestacks_SOURCES = $(srcdir)/namegroup_collatestacks.c \
-				  $(srcdir)/dummysymboltable.c
+				  $(srcdir)/dummy_stacktree.c
 namegroup_collatestacks_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
 namegroup_collatestacks_LDFLAGS = $(AM_LDFLAGS)
 
