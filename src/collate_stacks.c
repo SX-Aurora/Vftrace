@@ -51,6 +51,7 @@ collated_stacktree_t vftr_new_empty_collated_stacktree() {
    stacktree.nstacks = 0;
    stacktree.maxstacks = 0;
    stacktree.stacks = NULL;
+   stacktree.namegrouped = false;
    SELF_PROFILE_END_FUNCTION;
    return stacktree;
 }
