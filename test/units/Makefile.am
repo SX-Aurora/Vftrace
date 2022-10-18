@@ -267,12 +267,12 @@ collatestacks_parallel_1_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
 collatestacks_parallel_1_LDFLAGS = $(AM_LDFLAGS)
 
 collatestacks_parallel_2_1_SOURCES = $(srcdir)/collatestacks_parallel_2_1.c \
-				 $(srcdir)/dummysymboltable.c
+				 $(srcdir)/dummy_stacktree.c
 collatestacks_parallel_2_1_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
 collatestacks_parallel_2_1_LDFLAGS = $(AM_LDFLAGS)
 
 collatestacks_parallel_2_2_SOURCES = $(srcdir)/collatestacks_parallel_2_2.c \
-				 $(srcdir)/dummysymboltable.c
+				 $(srcdir)/dummy_stacktree.c
 collatestacks_parallel_2_2_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
 collatestacks_parallel_2_2_LDFLAGS = $(AM_LDFLAGS)
 
