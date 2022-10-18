@@ -256,7 +256,7 @@ collatehashes_parallel_LDFLAGS = $(AM_LDFLAGS)
 endif
 
 collatestacks_SOURCES = $(srcdir)/collatestacks.c \
-			$(srcdir)/dummysymboltable.c
+			$(srcdir)/dummy_stacktree.c
 collatestacks_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
 collatestacks_LDFLAGS = $(AM_LDFLAGS)
 
