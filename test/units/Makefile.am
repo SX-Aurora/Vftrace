@@ -250,7 +250,7 @@ collatehashes_LDFLAGS = $(AM_LDFLAGS)
 
 if ENABLE_MPI
 collatehashes_parallel_SOURCES = $(srcdir)/collatehashes_parallel.c \
-				 $(srcdir)/dummysymboltable.c 
+				 $(srcdir)/dummy_stacktree.c
 collatehashes_parallel_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
 collatehashes_parallel_LDFLAGS = $(AM_LDFLAGS)
 endif
