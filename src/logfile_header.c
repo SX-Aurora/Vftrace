@@ -25,6 +25,7 @@
 
 #ifdef _CUPTI
 #include "cupti_logfile.h"
+#include "cuptiprofiling.h"
 #endif
 
 void vftr_write_logfile_header(FILE *fp, time_strings_t timestrings) {
@@ -55,6 +56,11 @@ void vftr_write_logfile_summary(FILE *fp, process_t process,
    long long omp_overhead =
       vftr_get_total_collated_omp_overhead(process.collated_stacktree);
 #endif
+#ifdef _CUPTI
+   long long cupti_overhead = 
+      vftr_get_total_collated_cupti_overhead(process.collated_stacktree);
+#endif
+
       total_master_overhead += call_overhead;
 #ifdef _MPI
       total_master_overhead += mpi_overhead;
@@ -62,8 +68,12 @@ void vftr_write_logfile_summary(FILE *fp, process_t process,
 #ifdef _OMP
       total_master_overhead += omp_overhead;
 #endif
-   double total_master_overhead_sec = total_master_overhead*1.0e-9;
-   double apptime_sec = runtime_sec - total_master_overhead_sec/process.nprocesses;
+#ifdef _CUPTI
+      total_master_overhead += cupti_overhead;
+#endif
+   
+   double total_master_overhead_sec = total_master_overhead * 1.0e-9;
+   double apptime_sec = runtime_sec - total_master_overhead_sec / process.nprocesses;
 
    fprintf(fp, "\n");
 #ifdef _MPI
@@ -82,6 +92,10 @@ void vftr_write_logfile_summary(FILE *fp, process_t process,
 #ifdef _OMP
    fprintf(fp, "   OMP callbacks:     %8.2lf s\n",
            omp_overhead*1.0e-9/process.nprocesses);
+#endif
+#ifdef _CUPTI
+   fprintf (fp, "   CUPTI callbacks :  %8.2lf s\n",
+            cupti_overhead * 1e-9 / process.nprocesses);
 #endif
 
 #ifdef _CUPTI
