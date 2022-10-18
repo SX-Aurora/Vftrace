@@ -36,7 +36,6 @@ int main(int argc, char **argv) {
 
    stacktree_t stacktree = vftr_init_dummy_stacktree(20ll, 0ll);
 
-   char *name;
    if (myrank == 0) {
       vftr_register_dummy_stack(&stacktree, "func0<init", 0, 10ll, 2ll);
       vftr_register_dummy_stack(&stacktree, "func0<init", 1, 10ll, 4ll);
