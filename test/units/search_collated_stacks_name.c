@@ -59,7 +59,7 @@ int main(int argc, char **argv) {
                 "although it should.\n", name);
          return 1;
       }
-      if (name != list[index]) {
+      if (strcmp(name, list[index])) {
          printf("Error: Name %s was found at index %d in list, "
                 "but stacktree[%d] yields %s.\n",
                 name, index, index, stacktree.stacks[index].name);
