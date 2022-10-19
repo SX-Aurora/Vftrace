@@ -47,8 +47,8 @@ To our knowledge, this is given for the following list of compilers:
 Vftrace uses the Cygnus function hooks:
 
 ```C
-   void __cyg_profile_func_enter (void *function_addr, void *caller_addr);
-   void __cyg_profile_func_exit  (void *function_addr, void *caller_addr);
+void __cyg_profile_func_enter (void *function_addr, void *caller_addr);
+void __cyg_profile_func_exit  (void *function_addr, void *caller_addr);
 ```
 
 These functions are used to intercept the program every time a function is called or returned from one.
@@ -65,30 +65,30 @@ Vftrace has wrappers to MPI function calls.
 These wrappers are instrumented and call a `vftr_MPI` version of the function.
 The wrappers for C and Fortran both call the same `vftr_MPI` routine to reduce code duplication and enable easier maintenance.
 ```C
-   int MPI_Send(const void *buf, int count, MPI_Datatype datatype,
-                int dest, int tag, MPI_Comm comm) {
-      return vftr_MPI_Send(buf, count, datatype, dest, tag, comm);
-   }
+int MPI_Send(const void *buf, int count, MPI_Datatype datatype,
+             int dest, int tag, MPI_Comm comm) {
+   return vftr_MPI_Send(buf, count, datatype, dest, tag, comm);
+}
 ```
 
 In these `vftr_MPI`-functions the communication is executed by calling the corresponding `PMPI` function:
 ```C
-   int vftr_MPI_Send(const void *buf, int count, MPI_Datatype datatype,
-                     int dest, int tag, MPI_Comm comm) {
-   
-      // disable profiling based on the Pcontrol level
-      if (vftrace_Pcontrol_level == 0) {
-         return PMPI_Send(buf, count, datatype, dest, tag, comm);
-      } else {
-         long long tstart = vftr_get_runtime_nsec();
-         int retVal = PMPI_Send(buf, count, datatype, dest, tag, comm);
-         long long tend = vftr_get_runtime_nsec();
-   
-         vftr_store_sync_message_info(send, count, datatype, dest, tag, comm, tstart, tend);
-   
-         return retVal;
-      }
+int vftr_MPI_Send(const void *buf, int count, MPI_Datatype datatype,
+                  int dest, int tag, MPI_Comm comm) {
+
+   // disable profiling based on the Pcontrol level
+   if (vftrace_Pcontrol_level == 0) {
+      return PMPI_Send(buf, count, datatype, dest, tag, comm);
+   } else {
+      long long tstart = vftr_get_runtime_nsec();
+      int retVal = PMPI_Send(buf, count, datatype, dest, tag, comm);
+      long long tend = vftr_get_runtime_nsec();
+
+      vftr_store_sync_message_info(send, count, datatype, dest, tag, comm, tstart, tend);
+
+      return retVal;
    }
+}
 ```
 The `PMPI_` symbols do the same as their `MPI_` counterpart and are part of any standard complying MPI-implementation.
 This way, the MPI functions as used by the application are instrumented.
@@ -106,12 +106,12 @@ Special buffers like `MPI_IN_PLACE` are taken care of and handled accordingly.
 Vftrace defines a few functions to enable programmers to modify their traced code in order to access vftrace internal information during runtime.
 
 ### vftrace_region_begin, vftrace_region_end
-   If you encounter a time consuming routine in your profiled code, which does multiple things and you need to identify which portion of the routine is at fault, the vftrace regions are the tool to do this.
-   They define  the  start and end of a region in the code, which should be monitored independently from from a function entry.
-   The functions take as an  argument a  unique  string  identifier.
-   The defined region appears in the logfile and vfd files under the this name.
+If you encounter a time consuming routine in your profiled code, which does multiple things and you need to identify which portion of the routine is at fault, the vftrace regions are the tool to do this.
+They define  the  start and end of a region in the code, which should be monitored independently from from a function entry.
+The functions take as an  argument a  unique  string  identifier.
+The defined region appears in the logfile and vfd files under the this name.
 
-   Example in C:
+Example in C:
 ```C
 void testfunction() {
    ...
@@ -123,59 +123,59 @@ void testfunction() {
    ...
 }
 ```
-   Example in Fortran:
+Example in Fortran:
 ```Fortran
-      SUBROUTINE testroutine()
-         ...
-         CALL vftrace_region_begin("NameOfTheRegion")
-         ! code to be profiled independently
-         ...
-         ! from the rest of the routine
-         CALL vftrace_region_end("NameOfTheRegion")
-         ...
-      END SUBROUTINE
+SUBROUTINE testroutine()
+   ...
+   CALL vftrace_region_begin("NameOfTheRegion")
+   ! code to be profiled independently
+   ...
+   ! from the rest of the routine
+   CALL vftrace_region_end("NameOfTheRegion")
+   ...
+END SUBROUTINE
 ```
 ### vftrace_get_stack
-   If you want to know which callpath your program took in order to arrive at a specific routine you may utilize `vftrace_get_stack`.
-   The function returns a string containing the callstack to the current function. (In order to avoid memory leaks, this string needs to be freed afterwards.)
+If you want to know which callpath your program took in order to arrive at a specific routine you may utilize `vftrace_get_stack`.
+The function returns a string containing the callstack to the current function. (In order to avoid memory leaks, this string needs to be freed afterwards.)
 
-   Example in C:
+Example in C:
 ```C
-   printf("%s\n", vftrace_get_stack());
+printf("%s\n", vftrace_get_stack());
 ```
-   Example in Fortran:
+Example in Fortran:
 ```Fortran
-   write(*,*) vftrace_get_stack()
+write(*,*) vftrace_get_stack()
 ```
 
 ### vftrace_pause, vftrace_resume
-   If your code contains portions that you do not whish to profile, maybe an initialization, and which would render your profile cluttered, you can use `vftrace_pause` and `vftrace_resume` to halt profiling for portions of your program execution.
+If your code contains portions that you do not whish to profile, maybe an initialization, and which would render your profile cluttered, you can use `vftrace_pause` and `vftrace_resume` to halt profiling for portions of your program execution.
 
-   Example in C:
+Example in C:
 ```C
-   int main() {
-      // This code is profiled
-      ...
-      vftrace_pause();
-      // This code is not profiled
-      ...
-      vftrace_resume();
-      // This code is profiled again
-      ...
-   }
+int main() {
+   // This code is profiled
+   ...
+   vftrace_pause();
+   // This code is not profiled
+   ...
+   vftrace_resume();
+   // This code is profiled again
+   ...
+}
 ```
-   Example in Fortran:
+Example in Fortran:
 ```Fortran
-   PROGRAM testprogram
-      ! This code is profiled
-      ...
-      CALL vftrace_pause()
-      ! This code is not profiled
-      ...
-      CALL vftrace_resume()
-      ! This code is code profiled again
-      ...
-   END PROGRAM testprogram
+PROGRAM testprogram
+   ! This code is profiled
+   ...
+   CALL vftrace_pause()
+   ! This code is not profiled
+   ...
+   CALL vftrace_resume()
+   ! This code is code profiled again
+   ...
+END PROGRAM testprogram
 ```
 
 ## Graphical User Interface
@@ -231,4 +231,4 @@ This is still not optimal for C++, which is the reason why it is not yet officia
 ### Does Vftrace support OpenMP?
 
 Vftrace does not yet support OpenMP.
-This is because it is still an open question how the dynamic creation of threads can be combined with the function-stack structure of Vfrace.
+This is because so far no known implementation of the OpenMP-5.x callback functionality is robust enough. However, vftrace internal structures are prepared to quickly support OpenMP as soon as a robust implementation of OpenMP-5.x callbacks exists.
