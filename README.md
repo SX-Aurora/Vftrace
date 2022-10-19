@@ -184,6 +184,14 @@ PROGRAM testprogram
 END PROGRAM testprogram
 ```
 
+### Note about Intel MPI
+At the moment, Intel MPI does not support all PMPI symbols in the standard MPI library of oneAPI (as of version 2021.7.0). 
+For reference, see https://community.intel.com/t5/Intel-oneAPI-HPC-Toolkit/More-PMPI-symbols-not-found/m-p/1348631#M9066.
+
+The problem can be circumvented by including and linking the corresponding `mpi_f08` files. We have decided against this
+in favor of waiting for Intel to solve this issue. If you want to use Intel MPI to profile a code which does not contain
+MPI calls from Fortran, you can use `--disable-fortran` to prevent Vftrace from building the Fortran wrappers.
+
 ## Graphical User Interface
 
 The graphical visualization tool for Vtrace profiles, Vfview, is located at https://github.com/SX-Aurora/Vfview.
