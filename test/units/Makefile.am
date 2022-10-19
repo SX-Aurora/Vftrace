@@ -140,11 +140,11 @@ check_PROGRAMS += filenames
 #		 stacks_1 \
 #		 no_instrument_attribute
 
-if ENABLE_HWC
-if ON_VECTOR_ENGINE
-check_PROGRAMS += sxhwc_1
-endif
-endif
+#if ENABLE_HWC
+#if ON_VECTOR_ENGINE
+#check_PROGRAMS += sxhwc_1
+#endif
+#endif
 
 
 sort_int8_SOURCES = $(srcdir)/sort_int8.c \
@@ -534,11 +534,11 @@ dist_check_SCRIPTS += threadlist.sh \
 		      threadtree.sh \
                       filenames.sh
 
-if ENABLE_HWC
-if ON_VECTOR_ENGINE
-dist_check_SCRIPTS += sxhwc_1.sh
-endif
-endif
+#if ENABLE_HWC
+#if ON_VECTOR_ENGINE
+#dist_check_SCRIPTS += sxhwc_1.sh
+#endif
+#endif
 
 TEST_EXTENSIONS = .sh
 SH_LOG_COMPILER = $(SHELL)
@@ -546,10 +546,10 @@ SH_LOG_COMPILER = $(SHELL)
 TESTS = $(dist_check_SCRIPTS)
 XFAIL_TESTS = scenario_3.sh
 
-if ENABLE_HWC
-if ON_VECTOR_ENGINE
-XFAIL_TESTS += sxhwc_1.sh
-endif
-endif
+#if ENABLE_HWC
+#if ON_VECTOR_ENGINE
+#XFAIL_TESTS += sxhwc_1.sh
+#endif
+#endif
 
 CLEANFILES = vftrace_self_profile-*

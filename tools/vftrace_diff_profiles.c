@@ -1,21 +1,3 @@
-/*
-   This file is part of Vftrace.
-
-   Vftrace is free software; you can redistribute it and/or modify
-   it under the terms of the GNU General Public License as published by
-   the Free Software Foundation; either version 2 of the License, or
-   (at your option) any later version.
-
-   Vftrace is distributed in the hope that it will be useful,
-   but WITHOUT ANY WARRANTY; without even the implied warranty of
-   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-   GNU General Public License for more details.
-
-   You should have received a copy of the GNU General Public License along
-   with this program; if not, write to the Free Software Foundation, Inc.,
-   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
-*/
-
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdbool.h>
@@ -40,7 +22,7 @@ int read_n_stacks (FILE *fp) {
    return n_stacks;
 }
 
-/**********************************************************************/
+
 
 // The standard table columns are | Calls | t_excl | t_incl | Function | Caller | ID |
 void decompose_table_line (char *line, int *n_calls, double *t_excl, double *t_incl,
@@ -61,7 +43,7 @@ void decompose_table_line (char *line, int *n_calls, double *t_excl, double *t_i
    *stack_id = atoi(token);
 }
 
-/**********************************************************************/
+
 
 // Helper functions for string formatting
 int count_digits_long (long long value) {
@@ -84,7 +66,7 @@ int count_digits_double (double value) {
   return count_digits_long ((long long)floor(value));
 }
 
-/**********************************************************************/
+
 
 void read_table (FILE *fp, double t[], int stack_pos[], char *func_names[]) {
    char line[LINEBUFSIZE];
@@ -111,7 +93,7 @@ void read_table (FILE *fp, double t[], int stack_pos[], char *func_names[]) {
    }
 }
 
-/**********************************************************************/
+
 
 // Store the difference of a function pair, identified by its stack ID.
 typedef struct delta {
@@ -139,7 +121,7 @@ int sort_by_relative_time (const void *a1, const void *a2) {
     return 0;
 }
 
-/**********************************************************************/
+
 
 void display_table (int n_stacks, delta_t **deltas, double *t1, double *t2,
                     int *stack_id_position_1, int *stack_id_position_2, char **func_names) {
@@ -188,7 +170,7 @@ void display_table (int n_stacks, delta_t **deltas, double *t1, double *t2,
 	}
 }
 
-/**********************************************************************/
+
 
 int main (int argc, char *argv[]) {
 
