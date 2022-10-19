@@ -1,22 +1,23 @@
 # Global owners
 * felix.uhl@emea.nec.com christian.weiss@emea.nec.com
-# Common infrastructure
-vftr_functions.c vftr_filewrite.c vftr_hooks.c vftr_setup.c felix.uhl@emea.nec.com christian.weiss@emea.nec.com
+
+# Sources
+src* felix.uhl@emea.nec.com christian.weiss@emea.nec.com
 # MPI functions
-mpi* felix.uhl@emea.nec.com
-# Message profiling
-vftr_async_messages.c vftr_sync_messages.c felix.uhl@emea.nec.com
-# Required for stack normalization
-vftr_hashing.c vftr_sorting.c vftr_stacks.c vftr_user_stack.c felix.uhl@emea.nec.com
-# Timers
-vftr_timer.c felix.uhl@emea.nec.com
-# Required for library functions
-vftr_pause.c vftr_regions.c felix.uhl@emea.nec.com
-# Hardware counters
-vftr_hwcounters.c vftr_scenarios.c christian.weiss@emea.nec.com
-# Reading ELF files
-vftr_symbols.c christian.weiss@emea.nec.com
-# Environment variables
-vftr_environment.c vftr_regex.c chrisitan.weiss@emea.nec.com
-# Signal interrupts
-vftr_signals.c
+src/mpi* felix.uhl@emea.nec.com
+# OMP functions
+src/omp* felix.uhl@emea.nec.com
+# CUPTI
+src/cupti* christian.weiss@emea.nec.com
+
+# Tests
+test/units* felix.uhl@emea.nec.com christian.weiss@emea.nec.com
+test/env_vars* felix.uhl@emea.nec.com christian.weiss@emea.nec.com
+test/user_functions* felix.uhl@emea.nec.com
+test/omp* felix.uhl@emea.nec.com
+test/mpi* felix.uhl@emea.nec.com
+test/cupti* christian.weiss@emea.nec.com
+
+# Tools
+tools* felix.uhl@emea.nec.com christian.weiss@emea.nec.com
+tools/self_profiling_analyzer* felix.uhl@emea.nec.com
