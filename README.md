@@ -4,28 +4,23 @@
 
 Vftrace (visual ftrace) is a performance profiling library with a focus on applications in high-performance computing (HPC).
 It is compatible with C, C++, and Fortran.
-Multiporocess tracing of MPI-programs as well as the measurement of communication between processes is supported up to the MPI-3.1 standard.
-Calls to CUDA are traced using the CUPTI library.
-Vftrace produces an overview of the function calls appearing during an application's runtime and registers the call number and the time spent in the code parts.
+Vftrace produces an overview of the function calls appearing during an application's runtime and registers performance metrics such as the call number and the time spent in the code parts.
+Multiprocess tracing of MPI-programs as well as the measurement of communication between processes is supported up to the MPI-3.1 standard.
+Calls to CUDA kernels or CUDA library functions are traced using the CUPTI profiling interface.
 
 ## Usage
 
 Vftrace requires that your application has instrumendet function calls.
-These are enabled with a compiler flag, most commonly known as `-finstrument-functions`, as supported by the GNU, Intel, and NEC compilers.
+These are enabled with a compiler flag, most commonly named `-finstrument-functions`, as supported by the GNU, Intel, and NEC compilers.
 To get access to the MPI functionality some MPI-implementations need extra flags to activate the internal profiling layer (e.g. NEC MPI needs -mpiprof).
 After compiling, you must link your application against `libvftrace`, either statically or dynamically.
 The application can then be run in the usual way.
-In the default setting, a text file is created containing a run-time profile of the application.
+In the default setting, a text file is created containing a runtime profile of the application.
 
 ## Download
-You can clone the current version of the vftrace from github.
-The third party tools are included in the git repository as submodules, for your convinience.
+You can clone the current version of the vftrace from github:
 ```bash
-git clone --recursive https://github.com/SX-Aurora/Vftrace.git
-```
-If you already cloned the repository without the `--recursive` flag you can get the submodules with
-```bash
-git submodule update --init
+git clone https://github.com/SX-Aurora/Vftrace.git
 ```
 
 ## Prerequisites & Installation 
@@ -51,13 +46,13 @@ void __cyg_profile_func_enter (void *function_addr, void *caller_addr);
 void __cyg_profile_func_exit  (void *function_addr, void *caller_addr);
 ```
 
-These functions are used to intercept the program every time a function is called or returned from one.
+These functions are used to intercept the program every time a function is called or returned from.
 They need to be enabled by the compiler using the `-finstrument-functions` option. 
 The arguments of these functions are the addresses of the symbols of the file mapped into virtual address space (`/proc/<pid>/maps`).
 At initialization, Vftrace reads the ELF file of the executable, as well as its dependencies, to assign names to these symbols.
 Vftrace dynamically grows an internal representation of the visited functions, their call history, and performance values.
 Therefore, functions and their performance can be destinguished based on the callstack that called them.
-This gives a detailed insight in where a program spends its time, thus enableing efficient optimization on the programmers side.
+This gives a detailed insight in where a program spends its time, thus enabling efficient optimization on the programmers side.
 
 ## MPI Profiling
 
@@ -93,7 +88,7 @@ int vftr_MPI_Send(const void *buf, int count, MPI_Datatype datatype,
 The `PMPI_` symbols do the same as their `MPI_` counterpart and are part of any standard complying MPI-implementation.
 This way, the MPI functions as used by the application are instrumented.
 The functionality inside the wrapper enables in-depth MPI sampling.
-The vftrace MPI-wrapper record which ranks are communicating (who sends, who receives), the message size, message type, and communication time.
+The Vftrace MPI wrappers record which ranks are communicating (who sends, who receives), the message size, message type, and communication time.
 Non blocking communication is sampled by registering the non blocking call's request and checking for completion from time to time in the background.
 Persistent requests are registered and handled like normal non blocking calls upon calling `MPI_Start` or `MPI_Startall`.
 For collective communications inter- and intra-communicators are distinguished and handled to reflect their unique communication patterns.
@@ -101,9 +96,20 @@ Special buffers like `MPI_IN_PLACE` are taken care of and handled accordingly.
 
 ## Cupti (CUDA and other GPU programming models)
 
+Vftrace allows the automatic profiling of CUDA calls using NVIDIA's CUPTI interface (https://docs.nvidia.com/cuda/cupti/index.html). This interface contains
+callback functions for every function in the CUDA runtime. Vftrace registers these callback functions. The functions evoking these callbacks are
+usually not instrumented and therefore separated from the default function hooks. Nevertheless, they are integrated into the Vftrace function stack tree and
+appear in the profiles like all other functions.
+
+A dedicated CUDA overview table displays the time spent in a CUDA function as well as the amount of data transferred between host and GPU (for cudaMemcpy etc.).
+Currently, the CUPTI interface is only supported for one MPI process.
+
+To enable CUDA profiling, configure with "--with-cupti=[cupti-dir]", where the argument is the path to the CUPTI installation, most commonly located at the same
+location as the CUDA installation.
+
 ## User functions
 
-Vftrace defines a few functions to enable programmers to modify their traced code in order to access vftrace internal information during runtime.
+Vftrace defines a few functions to enable programmers to modify their traced code in order to access internal Vftrace information during runtime.
 
 ### vftrace_region_begin, vftrace_region_end
 If you encounter a time consuming routine in your profiled code, which does multiple things and you need to identify which portion of the routine is at fault, the vftrace regions are the tool to do this.
@@ -182,12 +188,6 @@ END PROGRAM testprogram
 
 The graphical visualization tool for Vtrace profiles, Vfview, is located at https://github.com/SX-Aurora/Vfview.
 
-With the environment variable `VFTRACE_CREATE_HTML`, Vftrace produces a graphical visualization of profiling results as HTML output.
-In the application directory, a directory called "browse" is created.
-In there is an index.html, which can be opened with
-a usual web browser.
-It allows for navigation between different views, MPI ranks and MPI collective functions.You can either download the entire browse directory to your local machine, or access it remotely (given suitable network configurations).
-
 ## Authors
 
 Vftrace was originally conceived by Jan Boerhout.
@@ -199,10 +199,6 @@ The main authors are:
 
 Vftrace uses the following open-source third party tools:
 
-  - The json parser "jsmn" by Serge Zaitsev (https://github.com/zserge/jsmn).
-  It is used to read in the hardware scenario files.
-  - Lewis van Winkle's "tinyexpr" (https://github.com/codeplea/tinyexpr).
-  It is used to parse the formula strings which define hardware observables.
   - Adapted Jenkins (https://en.wikipedia.org/wiki/Jenkins_hash_function) and
     Murmur3 (https://en.wikipedia.org/wiki/MurmurHash) hash functions originally published under the creative common license (https://creativecommons.org/licenses/by-sa/3.0/).
     The hashes are used to identify individual stacks among different MPI-ranks.
@@ -230,5 +226,5 @@ This is still not optimal for C++, which is the reason why it is not yet officia
 
 ### Does Vftrace support OpenMP?
 
-Vftrace does not yet support OpenMP.
-This is because so far no known implementation of the OpenMP-5.x callback functionality is robust enough. However, vftrace internal structures are prepared to quickly support OpenMP as soon as a robust implementation of OpenMP-5.x callbacks exists.
+Vftrace 2.0 is designed with support for OpenMP profiling in mind, relying on the callback functionality of OpenMP-5.x.
+However, to our knowledge, there is currently no OpenMP implementation in which this callback system is functional. When these issues are resolved, the OpenMP support in Vftrace can easily be enabled.

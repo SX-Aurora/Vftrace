@@ -67,7 +67,6 @@ AX_CHECK_HWC_CONSISTENCY
 
 LT_INIT(dlopen)
 AC_CONFIG_FILES([Makefile])
-AC_CONFIG_FILES([external/Makefile])
 AC_CONFIG_FILES([src/Makefile])
 AC_CONFIG_FILES([src/sorting/Makefile])
 AC_CONFIG_FILES([src/mpi/Makefile])
