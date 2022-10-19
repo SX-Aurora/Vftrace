@@ -41,8 +41,7 @@ A regular expression defining functions which should be profiled, while all othe
 .br
 \fBVFTR_INCLUDE_ONLY=foo*\fR
 .br
-\fBWarning:\fR This option cannot be used with \fBVFTR_EXCLUDE\fR. If both environment variables are set, only \fBVFTR_INCLUDE_ONLY\fR is used.
-.\"
+\fBDefault: NONE\fR
 .\"
 .IP "\fBVFTR_LOGFILE_FOR_RANKS\fR"
 .IX Item VFTR_LOGFILE_FOR_RANKS
@@ -82,11 +81,32 @@ Switches on the logging of MPI communication.
 \fBDisable\fR(0,"NO","No","no","OFF","Off","off")
 .br
 Switches on the estimation of synchronization times for blocking collective MPI communication.
-These are: Allgather, Allgatherv, Allreduce, Alltoall, Alltoallv, Alltoallw, Exscan, Gather, Gatherv, Reduce, Scan, Scatter, Scatterv.
+These are:
+Allgather, 
+Allgatherv, 
+Allreduce, 
+Alltoall, 
+Alltoallv, 
+Alltoallw, 
+Bcast, 
+Exscan, 
+Gather, 
+Gatherv, 
+Neighbor_allgather, 
+Neighbor_allgatherv, 
+Neighbor_alltoall, 
+Neighbor_alltoallv, 
+Neighbor_alltoallw, 
+Reduce, 
+Reduce_scatter_block, 
+Reduce_scatter, 
+Scan, 
+Scatter, 
+Scatterv.
 Every process measures the time it takes until all other processes arrive at the call.
 The synchronization time will be measured as a seperate function call "MPI_<mpi-function-name>_sync" (e.g. MPI_Allreduce_sync).
 Note that this might prevent processes from starting communication with already arrived processes.
-Therefore, communication imbalances can be computed inexcact.
+Therefore, communication imbalances can be off.
 .br
 \fBDefault: "off"
 .\"
@@ -220,6 +240,8 @@ Demangle c++ symbol names to make them more human readable. (Requires libiberty 
 .IP "\fBVFTR_SCENARIO_FILE\fR"
 .IX Item "VFTR_SCENARIO_FILE"
 Path to the scenario file in JSON format that defines the hardware counters and event observables.
+.br
+\fBDefault: NONE\fR
 .\"
 .IP "\fBVFTR_STRIP_MODULE_NAMES\fR"
 .IX Item "VFTR_STRIP_MODULE_NAMES"
@@ -230,21 +252,48 @@ Note that this way, there is no way to distinguish between functions with identi
 different modules only by their name. Instead, the stack ID has to be used. Also, the "_MP_" delimiter
 might be different, depending on the compiler or linker. In this case, the logfile output
 appears as in the case where the environment variable is not set.
+.br
+\fBDefault: "off"\fR
 .\"
 .IP "\fBVFTR_SORT_PROFILE_TABLE\fR"
 .IX Item "VFTR_SORT_PROFILE_TABLE\fR"
-Specifies how the profile table is sorted. Possible values are TIME_EXLC (exclusive time, default), 
-TIME_INCL (inclusive time), CALLS (number of calls), STACK_ID, OVERHEAD, OVERHEAD_RELATIVE and NONE.
+Specifies how the profile table is sorted.
+Possible values are:
+TIME_EXLC (exclusive time), 
+TIME_INCL (inclusive time),
+CALLS (number of calls),
+STACK_ID,
+OVERHEAD,
+and NONE.
+.br
+\fBDefault: "TIME_EXCL"\fR
 .\"
 .IP "\fBVFTR_SORT_MPI_TABLE\fR"
 .IX Item "VFTR_SORT_MPI_TABLE\fR"
-Specifies how the mpi profile table is sorted. Possible values are TIME_EXLC (exclusive time, default),
-TIME_INCL (inclusive time), CALLS (number of calls), STACK_ID, OVERHEAD, OVERHEAD_RELATIVE and NONE.
+Specifies how the mpi profile table is sorted.
+Possible values are:
+MESSAGES (number of send and received messages),
+SEND_SIZE (total number of send bytes),
+RECV_SIZE (total number of received bytes),
+SEND_BW (average bandwidth for send messages),
+RECV_BW (average bandwidth for received messages),
+COMM_TIME (total time spend in the communication),
+STACK_ID,
+and NONE.
+.br
+\fBDefault: "NONE"\fR
 .\"
 .IP "\fBVFTR_SORT_CUPTI_TABLE\fR"
 .IX Item "VFTR_SORT_CUPTI_TABLE\fR"
-Specifies how the cupti profile table is sorted. Possible values are TIME_EXLC (exclusive time, default),
-TIME_INCL (inclusive time), CALLS (number of calls), STACK_ID, OVERHEAD, OVERHEAD_RELATIVE and NONE.
+Specifies how the cupti profile table is sorted.
+Possible values are:
+TIME (total time spend in routine),
+MEMCPY (total number of bytes copied between host and device),
+CBID (cuptis internal identification number for routine types),
+CALLS (number of calls),
+and NONE.
+.br
+\fBDefault: "TIME"\fR
 .\"
 .SS LIBRARY FUNCTIONS
 .IX Subsection "LIBRARY FUNCTIONS"
@@ -270,7 +319,8 @@ level == 2 Profile buffers are flushed, which may be a no-op.
 Changing the level between the start and the corresponding Wait/Test of a
 non-blocking communication can lead to undefined behavior.
 Users are encouraged to use the \fBvftr_pause\fR and \fBvftr_resume\fR routines instead.
-Default level is 1.
+.br
+\fBDefault: "1"
 .IP "\fBvftrace_region_begin, vftrace_region_end\fR"
 .IX Item "vftrace_region_begin_end"
 Define the start and end of a region in the code, which should be monitored
