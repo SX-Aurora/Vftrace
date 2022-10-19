@@ -442,42 +442,6 @@ threadtree_SOURCES = $(srcdir)/threadtree.c \
 threadtree_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
 threadtree_LDFLAGS = $(AM_LDFLAGS)
 
-#scenario_1_SOURCES = $(srcdir)/scenario_1.c
-#scenario_1_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src -I$(top_srcdir)/external/tinyexpr
-#scenario_1_LDFLAGS = $(AM_LDFLAGS)
-#
-#scenario_2_SOURCES = $(srcdir)/scenario_2.c
-#scenario_2_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src -I$(top_srcdir)/external/tinyexpr
-#scenario_2_LDFLAGS = $(AM_LDFLAGS)
-#
-#scenario_3_SOURCES = $(srcdir)/scenario_3.c
-#scenario_3_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src -I$(top_srcdir)/external/tinyexpr
-#scenario_3_LDFLAGS = $(AM_LDFLAGS)
-#
-#tables_SOURCES = $(srcdir)/tables.c
-#tables_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
-#tables_LDFLAGS = $(AM_LDFLAGS)
-#
-#stacks_1_SOURCES = $(srcdir)/stacks_1.c
-#stacks_1_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
-#stacks_1_LDFLAGS = $(AM_LDFLAGS)
-
-#browse_1_SOURCES = $(srcdir)/browse_1.c
-#browse_1_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
-#browse_1_LDFLAGS = $(AM_LDFLAGS)
-#
-#no_instrument_attribute_SOURCES = $(srcdir)/no_instrument_attribute.c
-#no_instrument_attribute_CFLAGS = $(AM_CFLAGS) -finstrument-functions
-#no_instrument_attribute_LDFLAGS = $(AM_LDFLAGS)
-#
-#if ENABLE_HWC
-#if ON_VECTOR_ENGINE
-#sxhwc_1_SOURCES = $(srcdir)/sxhwc_1.c
-#sxhwc_1_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
-#sxhwc_1_LDFLAGS = $(AM_LDFLAGS)
-#endif
-#endif
-
 dist_check_SCRIPTS =
 dist_check_SCRIPTS += sort_int8.sh \
 		      sort_perm_int8.sh \
@@ -567,14 +531,8 @@ dist_check_SCRIPTS += sorting_mpi_table_none.sh \
 		      sorting_mpi_table_stackid.sh
 endif
 dist_check_SCRIPTS += threadlist.sh \
-		      threadtree.sh
-dist_check_SCRIPTS += filenames.sh
-#		     scenario_1.sh \
-#		     scenario_2.sh \
-#		     scenario_3.sh \
-#		     stacks_1.sh \
-#		     browse_1.sh \
-#		     no_instrument_attribute.sh
+		      threadtree.sh \
+                      filenames.sh
 
 if ENABLE_HWC
 if ON_VECTOR_ENGINE

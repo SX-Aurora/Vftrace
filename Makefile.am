@@ -1,7 +1,6 @@
 ACLOCAL_AMFLAGS=-I m4
 
-SUBDIRS = external \
-	  src \
+SUBDIRS = src \
 	  tools \
 	  hw_scenarios \
 	  test

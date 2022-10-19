@@ -10,13 +10,7 @@ SUBDIRS =
 SUBDIRS += sorting
 SUBDIRS += mpi
 
-external_includes = -I$(top_srcdir)/external/tinyexpr/ \
-		    -I$(top_srcdir)/external/jsmn/
-
-
-# external libraries
 libvftrace_la_LIBADD =
-libvftrace_la_LIBADD += ${top_builddir}/external/libtinyexpr.la
 
 #internal libraries
 libvftrace_la_LIBADD += libvftr_pause.la
@@ -113,8 +107,7 @@ endif
 libvftrace_la_CFLAGS += -I${srcdir}/mpi/utils/ \
 			-I${srcdir}/omp/ \
                         -I${srcdir}/cupti/ \
-			-I${srcdir}/sorting \
-			${external_includes}
+			-I${srcdir}/sorting
 
 if ENABLE_HWC
 libvftrace_la_CFLAGS += -DHAS_HWC
