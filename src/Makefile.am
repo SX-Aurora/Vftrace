@@ -109,15 +109,15 @@ libvftrace_la_CFLAGS += -I${srcdir}/mpi/utils/ \
                         -I${srcdir}/cupti/ \
 			-I${srcdir}/sorting
 
-if ENABLE_HWC
-libvftrace_la_CFLAGS += -DHAS_HWC
-if ON_VECTOR_ENGINE
-libvftrace_la_CFLAGS += -DHAS_SXHWC
-endif
-if HAS_PAPI
-libvftrace_la_CFLAGS += -DHAS_PAPI
-endif
-endif
+#if ENABLE_HWC
+#libvftrace_la_CFLAGS += -DHAS_HWC
+#if ON_VECTOR_ENGINE
+#libvftrace_la_CFLAGS += -DHAS_SXHWC
+#endif
+#if HAS_PAPI
+#libvftrace_la_CFLAGS += -DHAS_PAPI
+#endif
+#endif
 
 if ENABLE_MPI
 libvftrace_la_CFLAGS += -D_MPI

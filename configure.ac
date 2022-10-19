@@ -51,19 +51,19 @@ AX_ENABLE_CUPTI
 AX_ENABLE_DYNLIB_TRACING
 
 # Enable hardware counters
-AX_ENABLE_HWC
+#AX_ENABLE_HWC
 
 # Check for Self-profiling
 AX_ENABLE_SELF_PROFILING
 
 # Check for Papi library
-AX_WITH_PAPI_LIBRARY
+#AX_WITH_PAPI_LIBRARY
 
 # Check of libiberty is available
 AX_LIBERTY
 
 # Check consistency of HWC, Architecture, and Papi
-AX_CHECK_HWC_CONSISTENCY
+#AX_CHECK_HWC_CONSISTENCY
 
 LT_INIT(dlopen)
 AC_CONFIG_FILES([Makefile])
@@ -82,7 +82,7 @@ AC_CONFIG_FILES([src/omp/Makefile])
 AC_CONFIG_FILES([src/cupti/Makefile])
 AC_CONFIG_FILES([tools/Makefile])
 AC_CONFIG_FILES([tools/self_profiling_analyzer/Makefile])
-AC_CONFIG_FILES([hw_scenarios/Makefile])
+#AC_CONFIG_FILES([hw_scenarios/Makefile])
 AC_CONFIG_FILES([test/Makefile])
 AC_CONFIG_FILES([test/units/Makefile])
 AC_CONFIG_FILES([test/env_vars/Makefile])
