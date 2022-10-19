@@ -12,10 +12,10 @@ libvftr_cupti_la_SOURCES += cupti_init_final.c \
 
 libvftr_cupti_la_CFLAGS = -I${srcdir}/../ -I${srcdir}/../sorting -D_CUPTI
 
-#if HAS_LIBERTY
+if HAS_LIBERTY
 libvftr_cupti_la_CFLAGS += -D_LIBERTY
-#endif
+endif
 
-#if SELF_PROFILING
+if SELF_PROFILING
 libvftr_cupti_la_CFLAGS += -D_SELF_PROFILE_VFTRACE
-#endif
+endif
