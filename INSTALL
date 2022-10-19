@@ -22,31 +22,21 @@ The most important ones are:
                            that are dynamically loaded at runtime via dlopen.
                            This option must not be enabled if CUPTI is used.
                            (default: disabled)
-   --enable-hwc            Enables the inclusion of hardwarecounter
-                           information in the profiling.
-                           This is currently without effect.
-                           (default: disabled)
-   --enable-self-profiling Enables vftrace to profile itself,
+   --enable-self-profiling Enables Vftrace to profile itself
                            while it profiles an application.
-                           This option is not intended for regular users,
-                           but only for developers of vftrace!
+                           This option is not intended for end users,
+                           but only for Vftrace developers.
                            Activating this option will massively slow down
                            your program execution.
                            (default: disabled)
-   --with-cupti=DIR        Specifies the cupti installation directory.
-                           Enables vftrace to trace usage of CUDA and/or OpenCL
+   --with-cupti=DIR        Specifies the CUPTI installation directory.
+                           Enables Vftrace to trace usage of CUDA
                            to gather information about GPU usage and
                            memory transfer.
                            This option must not be used if dynlib-tracing is enabled.
-   --with-papi=DIR             
-   --with-papi-inc=DIR             
-   --with-papi-lib=DIR     Specifies the papi installation directory.
-                           Papi is needed for gathering hardware counter
-                           information on x86 architectures.
-                           This is currently without effect.
 
 Further Advice:
 
 Autotools does not resolve the dependencies of Fortran modules. For this reason, building with more than one thread (make -j) can lead to problems. We advice to always use one thread.
 
-Vftrace comes with an elaborate set of tests. Users are advised to run `make check` to ensure that vftrace was build correctly. Note that failure of some tests (especially MPI) do not mean that vftrace is broken, or not correctly installed, but can hint at errors in the MPI implementation. We are in contact with the MPI-developers to resolv known issues.
+Vftrace comes with an elaborate set of tests. Users are advised to run `make check` to ensure that Vftrace was build correctly. Note that failure of some tests (especially MPI) do not mean that Vftrace is broken, or not correctly installed, but can hint at errors in the MPI implementation. We have informed MPI developers about all known issues.
