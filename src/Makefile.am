@@ -40,6 +40,11 @@ SUBDIRS += cupti
 libvftrace_la_LIBADD += cupti/libvftr_cupti.la
 endif
 
+if ENABLE_ACCPROF
+SUBDIRS += accprof
+libvftrace_la_LIBADD += accprof/libvftr_accprof.la
+endif
+
 libvftrace_la_SOURCES = 
 
 libvftrace_la_CPPFLAGS = -D_VERSION=${PACKAGE_VERSION} \
@@ -109,16 +114,6 @@ libvftrace_la_CFLAGS += -I${srcdir}/mpi/utils/ \
                         -I${srcdir}/cupti/ \
 			-I${srcdir}/sorting
 
-#if ENABLE_HWC
-#libvftrace_la_CFLAGS += -DHAS_HWC
-#if ON_VECTOR_ENGINE
-#libvftrace_la_CFLAGS += -DHAS_SXHWC
-#endif
-#if HAS_PAPI
-#libvftrace_la_CFLAGS += -DHAS_PAPI
-#endif
-#endif
-
 if ENABLE_MPI
 libvftrace_la_CFLAGS += -D_MPI
 libvftrace_la_FCFLAGS += -D_MPI
@@ -135,12 +130,7 @@ endif
 
 if HAS_LIBERTY
 libvftrace_la_CFLAGS += -D_LIBERTY
-#libvftrace_la_LIBADD += -liberty
 endif
-
-#if USES_INTEL_COMPILER
-#libvftrace_la_LDFLAGS += -lifcore
-#endif
 
 if ENABLE_SHARED
 libvftrace_la_LIBADD += -ldl

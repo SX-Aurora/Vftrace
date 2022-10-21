@@ -47,6 +47,8 @@ AX_ENABLE_OPENMP
 # Check CUPTI GPU profiling interface
 AX_ENABLE_CUPTI
 
+AX_ENABLE_ACCPROF
+
 # Check for dlopen
 AX_ENABLE_DYNLIB_TRACING
 
@@ -80,6 +82,7 @@ AC_CONFIG_FILES([src/mpi/f082vftr/Makefile])
 AC_CONFIG_FILES([src/mpi/f08-wrapper/Makefile])
 AC_CONFIG_FILES([src/omp/Makefile])
 AC_CONFIG_FILES([src/cupti/Makefile])
+AC_CONFIG_FILES([src/accprof/Makefile])
 AC_CONFIG_FILES([tools/Makefile])
 AC_CONFIG_FILES([tools/self_profiling_analyzer/Makefile])
 AC_CONFIG_FILES([test/Makefile])
