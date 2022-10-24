@@ -11,6 +11,9 @@
 #ifdef _CUPTI
 #include "cuptiprofiling_types.h"
 #endif
+#ifdef _ACCPROF
+#include "accprofiling_types.h"
+#endif
 
 typedef struct {
    collated_callprofile_t callprof;
@@ -22,6 +25,9 @@ typedef struct {
 #endif
 #ifdef _CUPTI
    cuptiprofile_t cuptiprof;
+#endif
+#ifdef _ACCPROF
+   accprofile_t accprof;
 #endif
 } collated_profile_t;
 

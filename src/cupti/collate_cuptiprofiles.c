@@ -1,9 +1,6 @@
 #include "collated_stack_types.h"
 #include "cuptiprofiling_types.h"
 
-#include <stdio.h>
-
-
 // Currently, the CUPTI interface is only supported for
 // one MPI process and one OMP thread. Therefore, collating
 // the profiles just comes down to copying the profile from

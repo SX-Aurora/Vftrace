@@ -62,7 +62,7 @@ long long vftr_get_total_collated_cupti_overhead (collated_stacktree_t stacktree
 
 cuptiprofile_t vftr_add_cuptiprofiles(cuptiprofile_t profA, cuptiprofile_t profB) {
    cuptiprofile_t profC;
-   profC.cbid = profA.cbid + profB.cbid;
+   profC.cbid = profA.cbid; // The CBIDs of both profiles are identical.
    profC.n_calls = profA.n_calls + profB.n_calls;
    profC.t_ms = profA.t_ms + profB.t_ms;
    profC.memcpy_bytes[CUPTI_COPY_IN] = profA.memcpy_bytes[CUPTI_COPY_IN] + profB.memcpy_bytes[CUPTI_COPY_IN];

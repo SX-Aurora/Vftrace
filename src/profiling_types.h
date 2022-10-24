@@ -11,6 +11,9 @@
 #ifdef _CUPTI
 #include "cuptiprofiling_types.h"
 #endif
+#ifdef _ACCPROF
+#include "accprofiling_types.h"
+#endif
 
 typedef struct {
    int threadID;
@@ -23,6 +26,9 @@ typedef struct {
 #endif
 #ifdef _CUPTI
    cuptiprofile_t cuptiprof;
+#endif
+#ifdef _ACCPROF
+   accprofile_t accprof;
 #endif
 } profile_t;
 

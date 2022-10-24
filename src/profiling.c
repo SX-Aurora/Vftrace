@@ -16,6 +16,9 @@
 #ifdef _CUPTI
 #include "cuptiprofiling.h"
 #endif
+#ifdef _ACCPROF
+#include "accprofiling.h"
+#endif
 
 void vftr_profilelist_realloc(profilelist_t *profilelist_ptr) {
    SELF_PROFILE_START_FUNCTION;
@@ -44,7 +47,10 @@ profile_t vftr_new_profile(int threadID) {
 #ifdef _CUPTI
    profile.cuptiprof = vftr_new_cuptiprofiling();
 #endif
-   // TODO: Add other profiles
+#ifdef _ACCPROF
+   profile.accprof = vftr_new_accprofiling();
+#endif 
+   // Add further profiles here
    SELF_PROFILE_END_FUNCTION;
    return profile;
 }
@@ -84,7 +90,10 @@ profile_t vftr_add_profiles(profile_t profA, profile_t profB) {
 #ifdef _CUPTI
    profC.cuptiprof = vftr_add_cuptiprofiles(profA.cuptiprof, profB.cuptiprof);
 #endif
-   // TODO: Add other profiles
+#ifdef _ACCPROF
+   profC.accprof = vftr_add_accprofiles(profA.accprof, profB.accprof);
+#endif
+   // Add further profiles here.
    return profC;
 }
 
@@ -101,7 +110,10 @@ void vftr_profile_free(profile_t* profiles_ptr, int profID) {
 #ifdef _CUPTI
    vftr_cuptiprofiling_free(&(profile_ptr->cuptiprof));
 #endif
-   // TODO: add other profiles
+#ifdef _ACCPROF
+   vftr_accprofiling_free (&(profile_ptr->accprof));
+#endif
+   // Add further profiles here.
    SELF_PROFILE_END_FUNCTION;
 }
 

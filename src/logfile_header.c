@@ -94,18 +94,39 @@ void vftr_write_logfile_summary(FILE *fp, process_t process,
            omp_overhead*1.0e-9/process.nprocesses);
 #endif
 #ifdef _CUPTI
-   fprintf (fp, "   CUPTI callbacks :  %8.2lf s\n",
+   fprintf (fp, "   CUPTI callbacks:  %8.2lf s\n",
             cupti_overhead * 1e-9 / process.nprocesses);
+#endif
+#ifdef _ACCPROF
+   fprintf (fp, "   OPENACC callbacks:  %8.2lf s\n",
+            accprof_overhead * 1e-9 / process.nprocesses);
 #endif
 
 #ifdef _CUPTI
-   float total_compute_sec, total_memcpy_sec, total_other_sec;
+   float total_compute_sec_cuda, total_memcpy_sec_cuda, total_other_sec_cuda;
    vftr_get_total_cupti_times_for_logfile (process.collated_stacktree,
-                                           &total_compute_sec, &total_memcpy_sec, &total_other_sec);
-   fprintf (fp, "Total CUDA time:      %8.2f s\n", total_compute_sec + total_memcpy_sec + total_other_sec);
-   fprintf (fp, "   Compute:           %8.2f s\n", total_compute_sec);
-   fprintf (fp, "   Memcpy:            %8.2f s\n", total_memcpy_sec);
-   fprintf (fp, "   Other:             %8.2f s\n", total_other_sec);
+                                           &total_compute_sec_cuda,
+                                           &total_memcpy_sec_cuda,
+                                           &total_other_sec_cuda);
+   fprintf (fp, "Total CUDA time:      %8.2f s\n",
+                total_compute_sec_cuda + total_memcpy_sec_cuda + total_other_sec_cuda);
+   fprintf (fp, "   Compute:           %8.2f s\n", total_compute_sec_cuda);
+   fprintf (fp, "   Memcpy:            %8.2f s\n", total_memcpy_sec_cuda);
+   fprintf (fp, "   Other:             %8.2f s\n", total_other_sec_cuda);
+#endif
+
+#ifdef _ACCPROF
+   double total_compute_sec_accprof, total_memcpy_sec_accprof, total_other_sec_accprof;
+   vftr_get_total_accprof_times_for_logfile (process.collated_stacktree,
+					     &total_compute_sec_accprof,
+					     &total_memcpy_sec_accprof,
+					     &total_other_sec_accprof);
+   fprintf (fp, "Total OpenACC time:   %8.2f s\n",
+                total_compute_sec_accprof + total_memcpy_sec_accprof + total_other_sec_accprof);
+   fprintf (fp, "  Compute:            %8.2f s\n", total_compute_sec_accprof);
+   fprintf (fp, "  Memcpy:             %8.2f s\n", total_memcpy_sec_accprof);
+   fprintf (fp, "  Other:              %8.2f s\n", total_other_sec_accprof);
+
 #endif
 
    char *unit = vftr_byte_unit(vftrace_size.total);
