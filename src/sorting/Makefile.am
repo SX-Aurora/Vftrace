@@ -14,6 +14,10 @@ endif
 if ENABLE_CUPTI
 libvftr_sorting_la_CFLAGS += -D_CUPTI -I${srcdir}/../cupti
 endif
+if ENABLE_ACCPROF
+libvftr_sorting_la_CFLAGS += -D_ACCPROF -I${srcdir}/../accprof
+endif
+
 
 noinst_LTLIBRARIES += libvftr_sorting_int8.la
 libvftr_sorting_la_LIBADD += libvftr_sorting_int8.la
