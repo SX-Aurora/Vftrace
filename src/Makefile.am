@@ -112,6 +112,7 @@ endif
 libvftrace_la_CFLAGS += -I${srcdir}/mpi/utils/ \
 			-I${srcdir}/omp/ \
                         -I${srcdir}/cupti/ \
+			-I${srcdir}/accprof \
 			-I${srcdir}/sorting
 
 if ENABLE_MPI
@@ -126,6 +127,10 @@ endif
 
 if ENABLE_CUPTI
 libvftrace_la_CFLAGS += -D_CUPTI
+endif
+
+if ENABLE_ACCPROF
+libvftrace_la_CFLAGS += -D_ACCPROF
 endif
 
 if HAS_LIBERTY

@@ -60,6 +60,9 @@ void vftr_write_logfile_summary(FILE *fp, process_t process,
    long long cupti_overhead = 
       vftr_get_total_collated_cupti_overhead(process.collated_stacktree);
 #endif
+#ifdef _ACCPROF
+   long long accprof_overhead = 0;
+#endif
 
       total_master_overhead += call_overhead;
 #ifdef _MPI

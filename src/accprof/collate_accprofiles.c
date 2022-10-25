@@ -13,7 +13,7 @@ void vftr_collate_accprofiles (collated_stacktree_t *collstacktree_ptr,
 
    for (int istack = 0; istack < stacktree_ptr->nstacks; istack++) {
       stack_t *stack = stacktree_ptr->stacks + istack;
-      int i_collastck = stack->gid;
+      int i_collstack = stack->gid;
       collated_stack_t *collstack = collstacktree_ptr->stacks + i_collstack;
       // OpenACC is only supported for one thread (i_prof = 0).
       accprofile_t copy_accprof = stack->profiling.profiles[0].accprof;
