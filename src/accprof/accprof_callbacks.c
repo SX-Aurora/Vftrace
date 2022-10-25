@@ -13,6 +13,7 @@
 
 
 #include "acc_prof.h"
+#include "accprofiling.h"
 
 char *concatenate_openacc_name (char *name, int line_1, int line_2) {
    int namelen = strlen(name);
@@ -28,27 +29,6 @@ void vftr_accprof_region_begin (acc_prof_info *prof_info, acc_event_info *event_
 
    long long region_begin_time_begin = vftr_get_runtime_nsec();
 
-   acc_launch_event_info *launch_event_info;
-   acc_data_event_info *data_event_info;
-   switch (prof_info->event_type) {
-      case acc_ev_enqueue_launch_start:
-      case acc_ev_enqueue_launch_end:
-         launch_event_info = (acc_launch_event_info*)event_info;
-         printf ("kernel name: %s\n", launch_event_info->kernel_name);
-         break;
-      case acc_ev_enqueue_upload_start:
-      case acc_ev_enqueue_upload_end:
-      case acc_ev_enqueue_download_start:
-      case acc_ev_enqueue_download_end:
-         data_event_info = (acc_data_event_info*)event_info;
-         printf ("copied field: %s\n", data_event_info->var_name != NULL ? data_event_info->var_name : "unknown"); 
-         printf ("From: %s(%s)\n", prof_info->func_name);
-         break;
-      default:
-         printf ("Other  event\n");
-   }
-
-
    thread_t *my_thread = vftr_get_my_thread(&(vftrace.process.threadtree));
    threadstack_t *my_threadstack = vftr_get_my_threadstack(my_thread);
    stack_t *my_stack = vftrace.process.stacktree.stacks + my_threadstack->stackID;
@@ -62,6 +42,27 @@ void vftr_accprof_region_begin (acc_prof_info *prof_info, acc_event_info *event_
    stack_t *my_new_stack = vftrace.process.stacktree.stacks + my_threadstack->stackID;
    profile_t *my_profile = vftr_get_my_profile(my_new_stack, my_thread);
    vftr_accumulate_callprofiling(&(my_profile->callprof), 1, -region_begin_time_begin);
+
+   acc_launch_event_info *launch_event_info;
+   acc_data_event_info *data_event_info;
+   switch (prof_info->event_type) {
+      case acc_ev_enqueue_launch_start:
+      case acc_ev_enqueue_launch_end:
+	launch_event_info = (acc_launch_event_info*)event_info;
+        vftr_accumulate_accprofiling (&(my_profile->accprof), prof_info->event_type,
+                                      launch_event_info->kernel_name, NULL, 0);
+        break;
+      case acc_ev_enqueue_upload_start:
+      case acc_ev_enqueue_upload_end:
+      case acc_ev_enqueue_download_start:
+      case acc_ev_enqueue_download_end:
+         data_event_info = (acc_data_event_info*)event_info;
+         vftr_accumulate_accprofiling (&(my_profile->accprof), prof_info->event_type,
+                                       NULL, data_event_info->var_name, data_event_info->bytes);
+         break;
+      default:
+         vftr_accumulate_accprofiling (&(my_profile->accprof), prof_info->event_type, NULL, NULL, 0);
+    }
 }
 
 void vftr_accprof_region_end (acc_prof_info *prof_info, acc_event_info *event_info) {

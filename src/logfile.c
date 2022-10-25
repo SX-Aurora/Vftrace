@@ -18,6 +18,9 @@
 #ifdef _CUPTI
 #include "cupti_logfile.h"
 #endif
+#ifdef _ACCPROF
+#include "accprof_logfile.h"
+#endif
 
 char *vftr_get_logfile_name(environment_t environment) {
    char *filename_base = vftr_create_filename_base(environment, -1, 1);
@@ -85,6 +88,10 @@ void vftr_write_logfile(vftrace_t vftrace, long long runtime) {
    } else {
       vftr_write_logfile_cupti_table(fp, vftrace.process.collated_stacktree, vftrace.environment);
    }
+#endif
+
+#ifdef _ACCPROF
+   vftr_write_logfile_accprof_table (fp, vftrace.process.collated_stacktree, vftrace.environment);
 #endif
 
    vftr_write_logfile_global_stack_list(fp, vftrace.process.collated_stacktree);

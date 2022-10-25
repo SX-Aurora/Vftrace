@@ -6,6 +6,7 @@ libvftr_accprof_la_SOURCES += accprof_callbacks.c \
 			      accprof_events.c \
 			      accprofiling.c \
 			      collate_accprofiles.c \
-			      accprof_logfile.c
+			      accprof_logfile.c \
+			      accprof_ranklogfile.c
 
 libvftr_accprof_la_CFLAGS = -I${srcdir}/../ -D_ACCPROF

@@ -17,6 +17,9 @@
 #ifdef _CUPTI
 #include "cupti_ranklogfile.h"
 #endif
+#ifdef _ACCPROF
+#include "accprof_ranklogfile.h"
+#endif
 
 
 static bool vftr_rank_needs_ranklogfile(environment_t environment, int rank) {
@@ -95,9 +98,12 @@ void vftr_write_ranklogfile(vftrace_t vftrace, long long runtime) {
    if (vftrace.cupti_state.n_devices == 0) {
       fprintf (fp, "CUPTI: The interface is enabled, but no GPU devices were found.\n");
    } else {
-      vftr_write_ranklogfile_cupti_table(fp, vftrace.process.stacktree,
-                                         vftrace.environment);
+      vftr_write_ranklogfile_cupti_table(fp, vftrace.process.stacktree, vftrace.environment);
    }
+#endif
+
+#ifdef _ACCPROF
+   vftr_write_ranklogfile_accprof_table (fp, vftrace.process.stacktree, vftrace.environment);
 #endif
 
    vftr_write_logfile_global_stack_list(fp, vftrace.process.collated_stacktree);

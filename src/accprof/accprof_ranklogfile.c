@@ -2,40 +2,20 @@
 #include <stdlib.h>
 
 #include "environment_types.h"
-#include "collated_stack_types.h"
-#include "collated_profiling_types.h"
-#include "callprofiling_types.h"
 #include "tables.h"
+#include "callprofiling_types.h"
+#include "stack_types.h"
 
 #include "accprofiling_types.h"
 #include "accprof_events.h"
 
-void vftr_get_total_accprof_times_for_logfile (collated_stacktree_t stacktree,
-					       double *tot_compute_s, double *tot_memcpy_s, double *tot_other_s) {
-   *tot_compute_s = 0;
-   *tot_memcpy_s = 0;
-   *tot_other_s = 0;
-
-   for (int istack = 0; istack < stacktree.nstacks; istack++) {
-      collated_stack_t this_stack = stacktree.stacks[istack];
-      collated_callprofile_t callprof = this_stack.profile.callprof;
-      accprofile_t accprof = this_stack.profile.accprof;
-      if (vftr_accprof_is_data_event (accprof.event_type)) {
-         *tot_memcpy_s += (double)callprof.time_excl_nsec / 1e9;
-      } else if (vftr_accprof_is_launch_event (accprof.event_type)) {
-         *tot_compute_s += (double)callprof.time_excl_nsec / 1e9;
-      } else {
-         *tot_other_s = (double)callprof.time_excl_nsec / 1e9;
-      }
-   }
-}
-
-void vftr_write_logfile_accprof_table (FILE *fp, collated_stacktree_t stacktree, environment_t environment) {
+void vftr_write_ranklogfile_accprof_table (FILE *fp, stacktree_t stacktree, environment_t environment) {
    int n_stackids_with_accprof_data = 0;
    
    //collated_stack_t **sorted_stacks = vftr_sort_collated_stacks_for_accprof (environment, stacktree);
    for (int istack = 0; istack < stacktree.nstacks; istack++) {
-      accprofile_t accprof = stacktree.stacks[istack].profile.accprof;
+      profile_t *this_profile = stacktree.stacks[istack].profiling.profiles;
+      accprofile_t accprof = this_profile->accprof;
       if (accprof.event_type != 0) n_stackids_with_accprof_data++;
    }
 
@@ -51,9 +31,10 @@ void vftr_write_logfile_accprof_table (FILE *fp, collated_stacktree_t stacktree,
 
    int i = 0;
    for (int istack = 0; istack < stacktree.nstacks; istack++) {
-      collated_stack_t this_stack = stacktree.stacks[istack];
-      accprofile_t accprof = this_stack.profile.accprof;
-      collated_callprofile_t callprof = this_stack.profile.callprof;
+      stack_t this_stack = stacktree.stacks[istack];
+      profile_t *this_profile = this_stack.profiling.profiles;
+      accprofile_t accprof = this_profile->accprof;
+      callprofile_t callprof = this_profile->callprof;
       acc_event_t ev = accprof.event_type;
       if (ev == 0) continue;
       stackids_with_accprof_data[i] = istack;

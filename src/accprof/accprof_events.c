@@ -27,3 +27,30 @@ bool vftr_accprof_is_launch_event (acc_event_t event_type) {
          return false;
    }
 }
+
+char *vftr_accprof_event_string (acc_event_t event_type) {
+  switch (event_type) {
+     case acc_ev_enqueue_launch_start:
+        return "enqueue_launch_start";
+     case acc_ev_enqueue_launch_end:
+        return "enqueue_launch_end";
+     case acc_ev_enqueue_upload_start:
+        return "enqueue_upload_start";
+     case acc_ev_enqueue_upload_end:
+        return "enqueue_upload_end";
+     case acc_ev_enqueue_download_start:
+        return "enqueue_download_start";
+     case acc_ev_enqueue_download_end:
+        return "enqueue_download_end";
+     case acc_ev_create:
+        return "create";
+     case acc_ev_delete:
+        return "delete";
+     case acc_ev_alloc:
+        return "alloc";
+     case acc_ev_free:
+        return "free";
+     default:
+        return "other";
+  }
+}
