@@ -51,6 +51,8 @@ void vftr_accprof_region_begin (acc_prof_info *prof_info, acc_event_info *event_
       case acc_ev_enqueue_launch_end:
 	launch_event_info = (acc_launch_event_info*)event_info;
         vftr_accumulate_accprofiling (&(my_profile->accprof), prof_info->event_type,
+				      prof_info->line_no, prof_info->end_line_no,
+                                      prof_info->src_file,
                                       launch_event_info->kernel_name, NULL, 0);
         break;
       case acc_ev_enqueue_upload_start:
@@ -59,10 +61,15 @@ void vftr_accprof_region_begin (acc_prof_info *prof_info, acc_event_info *event_
       case acc_ev_enqueue_download_end:
          data_event_info = (acc_data_event_info*)event_info;
          vftr_accumulate_accprofiling (&(my_profile->accprof), prof_info->event_type,
+				       prof_info->line_no, prof_info->end_line_no,
+                                       prof_info->src_file,
                                        NULL, data_event_info->var_name, data_event_info->bytes);
          break;
       default:
-         vftr_accumulate_accprofiling (&(my_profile->accprof), prof_info->event_type, NULL, NULL, 0);
+         vftr_accumulate_accprofiling (&(my_profile->accprof), prof_info->event_type,
+				       prof_info->line_no, prof_info->end_line_no,
+                                       prof_info->src_file,
+                                       NULL, NULL, 0);
     }
 }
 

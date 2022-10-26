@@ -6,15 +6,25 @@
 accprofile_t vftr_new_accprofiling () {
    accprofile_t prof;
    prof.event_type = acc_ev_none;
+   prof.line_start = 0;
+   prof.line_end = 0;
    prof.copied_bytes = 0;
+   prof.source_file = NULL;
    prof.var_name = NULL;
    prof.kernel_name = NULL;
    return prof;
 }
 
 void vftr_accumulate_accprofiling (accprofile_t *prof, acc_event_t ev,
+                                   int line_start, int line_end, char *source_file,
                                    char *kernel_name, char *var_name, size_t copied_bytes) {
    prof->event_type = ev;
+   prof->line_start = line_start;
+   prof->line_end = line_end;
+   if (prof->source_file == NULL) {
+      prof->source_file = (char*)malloc((strlen(source_file) + 1) * sizeof(char));
+      strcpy (prof->source_file, source_file);
+   }
    if (kernel_name != NULL && prof->kernel_name == NULL) {
       prof->kernel_name = (char*)malloc((strlen(kernel_name) + 1) * sizeof(char));
       strcpy (prof->kernel_name, kernel_name);
