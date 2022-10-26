@@ -20,7 +20,10 @@ void vftr_collate_accprofiles (collated_stacktree_t *collstacktree_ptr,
       accprofile_t *collaccprof = &(collstack->profile.accprof);
       
       collaccprof->event_type = copy_accprof.event_type;
+      collaccprof->line_start = copy_accprof.line_start;
+      collaccprof->line_end = copy_accprof.line_end;
       collaccprof->copied_bytes = copy_accprof.copied_bytes;
+      collaccprof->source_file = copy_accprof.source_file;
       collaccprof->var_name = copy_accprof.var_name;
       collaccprof->kernel_name = copy_accprof.kernel_name;
    }
