@@ -4,12 +4,14 @@
 #include "thread_types.h"
 #include "threadstack_types.h"
 #include "stack_types.h"
+#include "profiling.h"
 #include "callprofiling.h"
 #include "vftrace_state.h"
 #include "hashing.h"
 #include "threads.h"
 #include "threadstacks.h"
 #include "misc_utils.h"
+#include "timer.h"
 
 
 #include "acc_prof.h"

@@ -16,8 +16,8 @@ accprofile_t vftr_new_accprofiling () {
 }
 
 void vftr_accumulate_accprofiling (accprofile_t *prof, acc_event_t ev,
-                                   int line_start, int line_end, char *source_file,
-                                   char *kernel_name, char *var_name, size_t copied_bytes) {
+                                   int line_start, int line_end, const char *source_file,
+                                   const char *kernel_name, const char *var_name, size_t copied_bytes) {
    prof->event_type = ev;
    prof->line_start = line_start;
    prof->line_end = line_end;
@@ -47,6 +47,7 @@ accprofile_t vftr_add_accprofiles (accprofile_t profA, accprofile_t profB) {
 }
 
 void vftr_accprofiling_free (accprofile_t *prof_ptr) {
+   if (prof_ptr->source_file != NULL) free (prof_ptr->source_file);
    if (prof_ptr->var_name != NULL) free (prof_ptr->var_name);
    if (prof_ptr->kernel_name != NULL) free (prof_ptr->kernel_name);
 }

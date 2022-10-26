@@ -28,6 +28,10 @@
 #include "cuptiprofiling.h"
 #endif
 
+#ifdef _ACCPROF
+#include "accprof_logfile.h"
+#endif
+
 void vftr_write_logfile_header(FILE *fp, time_strings_t timestrings) {
    SELF_PROFILE_START_FUNCTION;
    fprintf(fp, "%s\n", PACKAGE_STRING);
