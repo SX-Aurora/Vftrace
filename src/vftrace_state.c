@@ -17,6 +17,7 @@ vftrace_t vftrace = {
       }
    },
    .environment.valid = false,
+   .config.valid = false,
    .symboltable = {
       .nsymbols = 0,
       .symbols = NULL

@@ -12,6 +12,9 @@ SUBDIRS += mpi
 
 libvftrace_la_LIBADD =
 
+#external libraries
+libvftrace_la_LIBADD += ../external/libcJSON.la
+
 #internal libraries
 libvftrace_la_LIBADD += libvftr_pause.la
 libvftrace_la_LIBADD += sorting/libvftr_sorting.la
@@ -74,6 +77,10 @@ libvftrace_la_SOURCES += vftrace_state.c \
 			 sampling.c \
 			 timer.c
 libvftrace_la_SOURCES += regular_expressions.c \
+			 configuration.c \
+			 configuration_print.c \
+			 configuration_defaults.c \
+			 configuration_parse.c \
 			 environment.c \
 			 elf_reader.c \
 			 symbols.c
@@ -104,6 +111,7 @@ if ENABLE_DYNLIB_TRACING
 libvftrace_la_SOURCES += dlopen.c
 endif
 
+libvftrace_la_CFLAGS += -I${srcdir}/../external/cJSON/
 libvftrace_la_CFLAGS += -I${srcdir}/mpi/utils/ \
 			-I${srcdir}/omp/ \
                         -I${srcdir}/cupti/ \

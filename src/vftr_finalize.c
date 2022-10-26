@@ -4,6 +4,7 @@
 #include "vftr_hooks.h"
 #include "vftrace_state.h"
 #include "environment.h"
+#include "configuration.h"
 #include "symbols.h"
 #include "processes.h"
 #include "stacks.h"
@@ -77,6 +78,7 @@ void vftr_finalize() {
 
    // free the environment to avoid memory leaks
    vftr_environment_free(&(vftrace.environment));
+   vftr_config_free(&(vftrace.config));
 
    // free the timer strings
    vftr_timestrings_free(&(vftrace.timestrings));

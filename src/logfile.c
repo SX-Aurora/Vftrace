@@ -8,6 +8,7 @@
 
 #include "filenames.h"
 #include "environment.h"
+#include "configuration_print.h"
 #include "logfile_header.h"
 #include "logfile_prof_table.h"
 #include "logfile_mpi_table.h"
@@ -91,6 +92,7 @@ void vftr_write_logfile(vftrace_t vftrace, long long runtime) {
 
    // print environment info
    vftr_print_environment(fp, vftrace.environment);
+   vftr_print_config(fp, vftrace.config);
 
 #ifdef _CUPTI
    vftr_write_logfile_cbid_names (fp, vftrace.process.collated_stacktree);

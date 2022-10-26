@@ -5,6 +5,7 @@
 
 #include "hook_types.h"
 #include "environment_types.h"
+#include "configuration_types.h"
 #include "symbol_types.h"
 #include "process_types.h"
 #include "sampling_types.h"
@@ -33,6 +34,7 @@ typedef struct {
    hooks_t hooks; // collection of function pointers
                   // where vftrace intercepts the program flow
    environment_t environment; // set of all relevant environment variables
+   config_t config; // set of all options
    symboltable_t symboltable; // list of function symbols
    process_t process; // all of the dynamic process data
    state_t state; // current state of vftrace

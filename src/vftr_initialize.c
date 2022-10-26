@@ -16,6 +16,7 @@
 #include "vftr_hooks.h"
 #include "vftrace_state.h"
 #include "environment.h"
+#include "configuration.h"
 #include "symbols.h"
 #include "vftr_finalize.h"
 #include "processes.h"
@@ -28,13 +29,16 @@ void vftr_initialize(void *func, void *call_site) {
    vftr_set_local_ref_time();
 
    // parse the relevant environment variables
+   vftrace.config = vftr_read_config();
    vftrace.environment = vftr_read_environment();
 
-   if (vftrace.environment.vftrace_off.value.bool_val) {
+   if (vftrace.config.off.value) {
+   //if (vftrace.environment.vftrace_off.value.bool_val) {
       // update the vftrace state
       vftrace.state = off;
       // free the environment to avoid memory leaks
       vftr_environment_free(&(vftrace.environment));
+      vftr_config_free(&(vftrace.config));
       // set the function hooks to a dummy function that does nothing
       vftr_set_enter_func_hook(vftr_function_hook_off);
       vftr_set_exit_func_hook(vftr_function_hook_off);
