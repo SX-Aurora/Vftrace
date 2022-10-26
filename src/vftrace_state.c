@@ -60,6 +60,12 @@ vftrace_t vftrace = {
       .n_devices = 0,
    },
 #endif
+#ifdef _ACCPROF
+   .accprof_state = {
+      .n_devices = 0,
+      .veto_callback_registration = false,
+   },
+#endif
 #ifdef _MPI
    .mpi_state = {
       .pcontrol_level = 1,

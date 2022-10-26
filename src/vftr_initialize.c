@@ -9,6 +9,10 @@
 #include "cupti_vftr_callbacks.h"
 #endif
 
+#ifdef _ACCPROF
+#include "accprof_callbacks.h"
+#endif
+
 #include "self_profile.h"
 #include "timer.h"
 #include "off_hooks.h"
@@ -38,6 +42,9 @@ void vftr_initialize(void *func, void *call_site) {
       // set the function hooks to a dummy function that does nothing
       vftr_set_enter_func_hook(vftr_function_hook_off);
       vftr_set_exit_func_hook(vftr_function_hook_off);
+#ifdef _ACCPROF
+      vftr_veto_accprof_callbacks ();
+#endif
       SELF_PROFILE_END_FUNCTION;
       FINALIZE_SELF_PROF_VFTRACE;
    } else {

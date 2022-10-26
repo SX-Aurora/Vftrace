@@ -106,15 +106,39 @@ void prof_launch_end (acc_prof_info *prof_info, acc_event_info *event_info, acc_
    vftr_accprof_region_end (prof_info, event_info);
 }
 
+void prof_dummy (acc_prof_info *prof_info, acc_event_info *event_info, acc_api_info *api_info) {
+   printf ("Dummy region!\n");
+}
+
+static acc_prof_reg vftr_accprof_register = NULL;
+static acc_prof_reg vftr_accprof_unregister = NULL;
+
 void acc_register_library (acc_prof_reg register_ev, acc_prof_reg unregister_ev,
                            acc_prof_lookup_func lookup) {
-   printf ("Register library!\n");
-
-   register_ev (acc_ev_enqueue_upload_start, prof_data_start, 0);
-   register_ev (acc_ev_enqueue_upload_end, prof_data_end, 0);
-   register_ev (acc_ev_enqueue_download_start, prof_data_start, 0);
-   register_ev (acc_ev_enqueue_download_end, prof_data_end, 0);
-   register_ev (acc_ev_enqueue_launch_start, prof_launch_start, 0);
-   register_ev (acc_ev_enqueue_launch_end, prof_launch_end, 0);
-
+   if (vftrace.accprof_state.veto_callback_registration) return;
+   vftr_accprof_register = register_ev;
+   vftr_accprof_unregister = unregister_ev;
+   vftr_accprof_register (acc_ev_enqueue_upload_start, prof_data_start, 0);
+   vftr_accprof_register (acc_ev_enqueue_upload_end, prof_data_end, 0);
+   vftr_accprof_register (acc_ev_enqueue_download_start, prof_data_start, 0);
+   vftr_accprof_register (acc_ev_enqueue_download_end, prof_data_end, 0);
+   //vftr_accprof_register (acc_ev_enter_data_start, prof_dummy, 0);
+   //vftr_accprof_register (acc_ev_enter_data_end, prof_dummy, 0);
+   vftr_accprof_register (acc_ev_enqueue_launch_start, prof_launch_start, 0);
+   vftr_accprof_register (acc_ev_enqueue_launch_end, prof_launch_end, 0);
 }
+
+void vftr_unregister_accprof_callbacks () {
+   vftr_accprof_unregister (acc_ev_enqueue_upload_start, prof_data_start, 0);
+   vftr_accprof_unregister (acc_ev_enqueue_upload_end, prof_data_end, 0);
+   vftr_accprof_unregister (acc_ev_enqueue_download_start, prof_data_start, 0);
+   vftr_accprof_unregister (acc_ev_enqueue_download_end, prof_data_end, 0);
+   vftr_accprof_unregister (acc_ev_enqueue_launch_start, prof_launch_start, 0);
+   vftr_accprof_unregister (acc_ev_enqueue_launch_end, prof_launch_end, 0);
+}
+
+void vftr_veto_accprof_callbacks () {
+   if (vftr_accprof_unregister != NULL) vftr_unregister_accprof_callbacks();
+   vftrace.accprof_state.veto_callback_registration = true;
+}
+
