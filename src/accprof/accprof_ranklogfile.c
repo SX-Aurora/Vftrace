@@ -37,7 +37,8 @@ void vftr_write_ranklogfile_accprof_table (FILE *fp, stacktree_t stacktree, envi
       callprofile_t callprof = this_profile->callprof;
       acc_event_t ev = accprof.event_type;
       if (ev == 0) continue;
-      stackids_with_accprof_data[i] = istack;
+      //stackids_with_accprof_data[i] = istack;
+      stackids_with_accprof_data[i] = this_stack.gid;
       names[i] = this_stack.name; 
       calls[i] = callprof.calls; 
       ev_names[i] = vftr_accprof_event_string(ev);

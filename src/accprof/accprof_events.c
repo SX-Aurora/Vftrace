@@ -31,17 +31,14 @@ bool vftr_accprof_is_launch_event (acc_event_t event_type) {
 char *vftr_accprof_event_string (acc_event_t event_type) {
   switch (event_type) {
      case acc_ev_enqueue_launch_start:
-        return "enqueue_launch_start";
      case acc_ev_enqueue_launch_end:
-        return "enqueue_launch_end";
+        return "launch";
      case acc_ev_enqueue_upload_start:
-        return "enqueue_upload_start";
      case acc_ev_enqueue_upload_end:
-        return "enqueue_upload_end";
+        return "upload";
      case acc_ev_enqueue_download_start:
-        return "enqueue_download_start";
      case acc_ev_enqueue_download_end:
-        return "enqueue_download_end";
+        return "download";
      case acc_ev_create:
         return "create";
      case acc_ev_delete:
