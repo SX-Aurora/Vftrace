@@ -4,6 +4,7 @@
 
 #include <limits.h>
 #include <string.h>
+#include <ctype.h>
 
 int vftr_count_base_digits(long long value, int base) {
    int count = 0;
@@ -16,6 +17,45 @@ int vftr_count_base_digits(long long value, int base) {
 
 char *vftr_bool_to_string(bool value) {
    return value ? "true" : "false";
+}
+
+bool vftr_string_to_bool(char *string) {
+   bool retval = false;
+   if (string != NULL) {
+      char *tmpstring = strdup(string);
+      char *str = tmpstring;
+      while (*str != '\0') {
+         *str = tolower(*str);
+         str++;
+      }
+      if (!strcmp(tmpstring, "1") ||
+          !strcmp(tmpstring, "yes") ||
+          !strcmp(tmpstring, "on")) {
+         retval = true;
+      } else {
+         retval = false;
+      }
+      free(tmpstring);
+   } else {
+      retval = false;
+   }
+   return retval;
+}
+
+char *vftr_read_file_to_string(char *filename) {
+    FILE *file = fopen(filename, "rt");
+    if (file == NULL) {
+       perror(filename);
+       abort();
+    }
+    fseek(file, 0, SEEK_END);
+    long length = ftell(file);
+    fseek(file, 0, SEEK_SET);
+    char *buffer = (char *) malloc(length + 1);
+    buffer[length] = '\0';
+    fread(buffer, 1, length, file);
+    fclose(file);
+    return buffer;
 }
 
 int vftr_levenshtein_kernel(char *a, char *b, int lena, int lenb, int **lookup_table) {
