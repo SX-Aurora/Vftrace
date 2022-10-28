@@ -1,11 +1,12 @@
 #!/bin/bash
 
 vftr_binary=rget_accumulate_nolog
+configfile=${vftr_binary}.json
 nprocs=4
 ntrials=1
 
-export VFTR_SAMPLING="Yes"
-export VFTR_MPI_LOG="No"
+echo "{\"sampling\": {\"active\": true}, \"mpi\": {\"active\": false}}" > ${configfile}
+export VFTR_CONFIG=${configfile}
 
 for itrial in $(seq 1 1 ${ntrials});
 do

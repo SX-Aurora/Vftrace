@@ -1,18 +1,5 @@
 #include "mpi_util_types.h"
 
-//#include <stdbool.h>
-//#include <stdio.h>
-//
-//#include "vftr_functions.h"
-//#include "vftr_stacks.h"
-//#include "vftr_environment.h"
-//#include "vftr_setup.h"
-//#include "vftr_hwcounters.h"
-//#include "vftr_filewrite.h"
-//#include "vftr_pause.h"
-//#include "vftr_mpi_utils.h"
-//#include "pcontrol.h"
-
 // set of all C-MPI defined datatype including the derived type
 #define NVFTR_TYPES 38
 

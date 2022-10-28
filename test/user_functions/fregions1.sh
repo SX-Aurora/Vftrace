@@ -2,16 +2,16 @@
 
 source ${srcdir}/../environment/filenames.sh
 
-set -x
-
 vftr_binary=fregions1
+configfile=${vftr_binary}.json
 nprocs=1
 
 logfile=$(get_logfile_name ${vftr_binary} "all")
 vfdfile=$(get_vfdfile_name ${vftr_binary} "0")
 
-export VFTR_SAMPLING="Yes"
-export VFTR_REGIONS_PRECISE="yes"
+# create logfile
+echo "{\"sampling\": {\"active\": true}}" > ${configfile}
+export VFTR_CONFIG=${configfile}
 
 if [ "x${HAS_MPI}" == "xYES" ]; then
    ${MPI_EXEC} ${MPI_OPTS} ${NP} ${nprocs} ./${vftr_binary} || exit 1
@@ -25,7 +25,7 @@ inprof=$(cat ${logfile} | \
          grep "user-region-1" | \
          wc -l)
 if [ "${inprof}" -ne "2" ] ; then
-   echo "User region \"user-region-1\" not found in log file the expected amount"
+   echo "User region \"user-region-1\" not found in ${logfile} the expected amount. Found $inprof, expected 2"
    exit 1;
 fi
 

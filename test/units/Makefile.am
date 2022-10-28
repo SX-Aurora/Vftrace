@@ -552,4 +552,5 @@ XFAIL_TESTS = scenario_3.sh
 #endif
 #endif
 
-CLEANFILES = vftrace_self_profile-*
+CLEANFILES = vftrace_self_profile-* \
+	     *.json

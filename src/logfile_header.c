@@ -6,13 +6,11 @@
 #include "size_types.h"
 #include "timer_types.h"
 #include "table_types.h"
-#include "environment_types.h"
 #include "vftrace_state.h"
 
 #include "filenames.h"
 #include "license.h"
 #include "config.h"
-#include "environment.h"
 #include "stacks.h"
 #include "collate_stacks.h"
 #include "profiling_types.h"

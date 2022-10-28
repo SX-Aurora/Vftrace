@@ -110,7 +110,7 @@ void vftr_clear_completed_p2p_request(vftr_request_t *request) {
                                    request->tag,
                                    request->tstart, tend);
       // write the completed communication info to the vfd-file
-      if (vftrace.environment.do_sampling.value.bool_val) {
+      if (vftrace.config.sampling.active.value) {
          vftr_write_message_info(request->dir,
                                  request->count[0],
                                  request->type_idx[0],

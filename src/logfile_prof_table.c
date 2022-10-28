@@ -5,14 +5,13 @@
 #include "self_profile.h"
 #include "timer_types.h"
 #include "table_types.h"
-#include "environment_types.h"
+#include "configuration_types.h"
 #include "collated_stack_types.h"
 #include "vftrace_state.h"
 
 #include "filenames.h"
 #include "license.h"
 #include "config.h"
-#include "environment.h"
 #include "stacks.h"
 #include "collate_stacks.h"
 #include "tables.h"
@@ -161,10 +160,11 @@ char **vftr_logfile_prof_table_callpath_list(int nstacks, collated_stack_t **sta
 }
 
 void vftr_write_logfile_profile_table(FILE *fp, collated_stacktree_t stacktree,
-                                      environment_t environment) {
+                                      config_t config) {
    SELF_PROFILE_START_FUNCTION;
-   // first sort the stacktree according to the set environment variables
-   collated_stack_t **sorted_stacks = vftr_sort_collated_stacks_for_prof(environment, stacktree);
+   // first sort the stacktree according to the set config variables
+   collated_stack_t **sorted_stacks =
+      vftr_sort_collated_stacks_for_prof(config, stacktree);
 
    fprintf(fp, "\nRuntime profile\n");
 
@@ -185,7 +185,7 @@ void vftr_write_logfile_profile_table(FILE *fp, collated_stacktree_t stacktree,
 
    double *imbalances_list = NULL;
    int *imbalance_ranks_list = NULL;
-   if (environment.show_calltime_imbalances.value.bool_val) {
+   if (config.profile_table.show_calltime_imbalances.value) {
       imbalances_list = vftr_logfile_prof_table_imbalances_list(stacktree.nstacks, sorted_stacks);
       vftr_table_add_column(&table, col_double, "Imbalances[%]", "%6.2f", 'c', 'r', (void*) imbalances_list);
 
@@ -203,7 +203,7 @@ void vftr_write_logfile_profile_table(FILE *fp, collated_stacktree_t stacktree,
    vftr_table_add_column(&table, col_int, "STID", "%d", 'c', 'r', (void*) stack_IDs);
 
    char **path_list = NULL;
-   if (environment.callpath_in_profile.value.bool_val) {
+   if (config.profile_table.show_callpath.value) {
       path_list = vftr_logfile_prof_table_callpath_list(stacktree.nstacks,
                                                         sorted_stacks,
                                                         stacktree);
@@ -217,14 +217,14 @@ void vftr_write_logfile_profile_table(FILE *fp, collated_stacktree_t stacktree,
    free(excl_time);
    free(excl_timer_perc);
    free(incl_time);
-   if (environment.show_calltime_imbalances.value.bool_val) {
+   if (config.profile_table.show_calltime_imbalances.value) {
       free(imbalances_list);
       free(imbalance_ranks_list);
    }
    free(function_names);
    free(caller_names);
    free(stack_IDs);
-   if (environment.callpath_in_profile.value.bool_val) {
+   if (config.profile_table.show_callpath.value) {
       for (int istack=0; istack<stacktree.nstacks; istack++) {
          free(path_list[istack]);
       }
@@ -235,11 +235,12 @@ void vftr_write_logfile_profile_table(FILE *fp, collated_stacktree_t stacktree,
    SELF_PROFILE_END_FUNCTION;
 }
 
-void vftr_write_logfile_name_grouped_profile_table(FILE *fp, collated_stacktree_t stacktree,
-                                                   environment_t environment) {
+void vftr_write_logfile_name_grouped_profile_table(FILE *fp,
+                                                   collated_stacktree_t stacktree,
+                                                   config_t config) {
    SELF_PROFILE_START_FUNCTION;
-   // first sort the stacktree according to the set environment variables
-   collated_stack_t **sorted_stacks = vftr_sort_collated_stacks_for_prof(environment, stacktree);
+   // first sort the stacktree according to the set configuration variables
+   collated_stack_t **sorted_stacks = vftr_sort_collated_stacks_for_prof(config, stacktree);
 
    fprintf(fp, "\nRuntime profile (Grouped by function name)\n");
 

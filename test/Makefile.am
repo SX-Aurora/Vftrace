@@ -1,6 +1,6 @@
 SUBDIRS =
 SUBDIRS += units
-SUBDIRS += env_vars
+SUBDIRS += config
 SUBDIRS += user_functions
 if ENABLE_OMP
 SUBDIRS += omp

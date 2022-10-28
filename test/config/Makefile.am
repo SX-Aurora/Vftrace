@@ -76,112 +76,82 @@ advisor2_SOURCES = $(srcdir)/little_tasks.c
 advisor2_CFLAGS = $(AM_CFLAGS) -finstrument-functions
 advisor2_LDFLAGS = $(AM_LDFLAGS)
 
-dist_check_SCRIPTS += defaults.sh \
-		      advisor.sh \
-		      advisor2.sh
+dist_check_SCRIPTS += defaults.sh 
+#		      advisor.sh \
+#		      advisor2.sh
 
 if !SELF_PROFILING
-check_PROGRAMS += vftr_off
+check_PROGRAMS += off
 endif
-check_PROGRAMS += vftr_sampling \
-		  vftr_out_directory \
-		  vftr_logfile_basename \
-		  vftr_logfile_for_ranks \
-		  vftr_logfile_for_ranks_assert \
-		  vftr_ranks_in_mpi_profile \
-		  vftr_ranks_in_mpi_profile_assert \
-		  vftr_sampletime_assert \
-		  vftr_scenario_file_assert \
-		  vftr_sort_profile_table_assert \
-		  vftr_sort_mpi_table_assert \
-		  vftr_show_calltime_imbalances
+check_PROGRAMS += sampling \
+		  out_directory \
+		  outfile_basename \
+		  logfile_for_ranks \
+		  print_config \
+		  ranks_in_mpi_profile \
+		  show_calltime_imbalances
 
-vftr_off_SOURCES = $(srcdir)/little_tasks.c
-vftr_off_CFLAGS = $(AM_CFLAGS) -finstrument-functions
-vftr_off_LDFLAGS = $(AM_LDFLAGS)
+off_SOURCES = $(srcdir)/little_tasks.c
+off_CFLAGS = $(AM_CFLAGS) -finstrument-functions
+off_LDFLAGS = $(AM_LDFLAGS)
 
-vftr_sampling_SOURCES = $(srcdir)/little_tasks.c
-vftr_sampling_CFLAGS = $(AM_CFLAGS) -finstrument-functions
-vftr_sampling_LDFLAGS = $(AM_LDFLAGS)
+sampling_SOURCES = $(srcdir)/little_tasks.c
+sampling_CFLAGS = $(AM_CFLAGS) -finstrument-functions
+sampling_LDFLAGS = $(AM_LDFLAGS)
 
-vftr_out_directory_SOURCES = $(srcdir)/little_tasks.c
-vftr_out_directory_CFLAGS = $(AM_CFLAGS) -finstrument-functions
-vftr_out_directory_LDFLAGS = $(AM_LDFLAGS)
+out_directory_SOURCES = $(srcdir)/little_tasks.c
+out_directory_CFLAGS = $(AM_CFLAGS) -finstrument-functions
+out_directory_LDFLAGS = $(AM_LDFLAGS)
 
-vftr_logfile_basename_SOURCES = $(srcdir)/little_tasks.c
-vftr_logfile_basename_CFLAGS = $(AM_CFLAGS) -finstrument-functions
-vftr_logfile_basename_LDFLAGS = $(AM_LDFLAGS)
+outfile_basename_SOURCES = $(srcdir)/little_tasks.c
+outfile_basename_CFLAGS = $(AM_CFLAGS) -finstrument-functions
+outfile_basename_LDFLAGS = $(AM_LDFLAGS)
 
-vftr_logfile_for_ranks_SOURCES = $(srcdir)/little_tasks.c
-vftr_logfile_for_ranks_CFLAGS = $(AM_CFLAGS) -finstrument-functions
-vftr_logfile_for_ranks_LDFLAGS = $(AM_LDFLAGS)
+logfile_for_ranks_SOURCES = $(srcdir)/little_tasks.c
+logfile_for_ranks_CFLAGS = $(AM_CFLAGS) -finstrument-functions
+logfile_for_ranks_LDFLAGS = $(AM_LDFLAGS)
 
-vftr_logfile_for_ranks_assert_SOURCES = $(srcdir)/little_tasks.c
-vftr_logfile_for_ranks_assert_CFLAGS = $(AM_CFLAGS) -finstrument-functions
-vftr_logfile_for_ranks_assert_LDFLAGS = $(AM_LDFLAGS)
+print_config_SOURCES = $(srcdir)/little_tasks.c
+print_config_CFLAGS = $(AM_CFLAGS) -finstrument-functions
+print_config_LDFLAGS = $(AM_LDFLAGS)
 
-vftr_ranks_in_mpi_profile_SOURCES = $(srcdir)/mpi_tasks.c
-vftr_ranks_in_mpi_profile_CFLAGS = $(AM_CFLAGS) -finstrument-functions
-vftr_ranks_in_mpi_profile_LDFLAGS = $(AM_LDFLAGS)
+ranks_in_mpi_profile_SOURCES = $(srcdir)/mpi_tasks.c
+ranks_in_mpi_profile_CFLAGS = $(AM_CFLAGS) -finstrument-functions
+ranks_in_mpi_profile_LDFLAGS = $(AM_LDFLAGS)
 
-vftr_ranks_in_mpi_profile_assert_SOURCES = $(srcdir)/mpi_tasks.c
-vftr_ranks_in_mpi_profile_assert_CFLAGS = $(AM_CFLAGS) -finstrument-functions
-vftr_ranks_in_mpi_profile_assert_LDFLAGS = $(AM_LDFLAGS)
-
-vftr_sampletime_assert_SOURCES = $(srcdir)/little_tasks.c
-vftr_sampletime_assert_CFLAGS = $(AM_CFLAGS) -finstrument-functions
-vftr_sampletime_assert_LDFLAGS = $(AM_LDFLAGS)
-
-vftr_scenario_file_assert_SOURCES = $(srcdir)/little_tasks.c
-vftr_scenario_file_assert_CFLAGS = $(AM_CFLAGS) -finstrument-functions
-vftr_scenario_file_assert_LDFLAGS = $(AM_LDFLAGS)
-
-vftr_sort_profile_table_assert_SOURCES = $(srcdir)/little_tasks.c
-vftr_sort_profile_table_assert_CFLAGS = $(AM_CFLAGS) -finstrument-functions
-vftr_sort_profile_table_assert_LDFLAGS = $(AM_LDFLAGS)
-
-vftr_sort_mpi_table_assert_SOURCES = $(srcdir)/little_tasks.c
-vftr_sort_mpi_table_assert_CFLAGS = $(AM_CFLAGS) -finstrument-functions
-vftr_sort_mpi_table_assert_LDFLAGS = $(AM_LDFLAGS)
-
-vftr_show_calltime_imbalances_SOURCES = $(srcdir)/little_tasks.c
-vftr_show_calltime_imbalances_CFLAGS = $(AM_CFLAGS) -finstrument-functions
-vftr_show_calltime_imbalances_LDFLAGS = $(AM_LDFLAGS)
+show_calltime_imbalances_SOURCES = $(srcdir)/little_tasks.c
+show_calltime_imbalances_CFLAGS = $(AM_CFLAGS) -finstrument-functions
+show_calltime_imbalances_LDFLAGS = $(AM_LDFLAGS)
 
 if !SELF_PROFILING
-dist_check_SCRIPTS += vftr_off.sh
+dist_check_SCRIPTS += off.sh
 endif
-dist_check_SCRIPTS += vftr_sampling.sh \
-		      vftr_out_directory.sh \
-		      vftr_logfile_basename.sh \
-		      vftr_logfile_for_ranks.sh \
-		      vftr_logfile_for_ranks_assert.sh \
-		      vftr_ranks_in_mpi_profile.sh \
-		      vftr_ranks_in_mpi_profile_assert.sh \
-		      vftr_sampletime_assert.sh \
-		      vftr_scenario_file_assert.sh \
-		      vftr_sort_profile_table_assert.sh \
-		      vftr_sort_mpi_table_assert.sh \
-		      vftr_show_calltime_imbalances.sh
+dist_check_SCRIPTS += sampling.sh \
+		      out_directory.sh \
+		      outfile_basename.sh \
+		      logfile_for_ranks.sh \
+		      print_config.sh \
+		      ranks_in_mpi_profile.sh \
+		      show_calltime_imbalances.sh
 
 if ENABLE_FORTRAN
-check_PROGRAMS += vftr_strip_module_names
+check_PROGRAMS += strip_module_names
 
-vftr_strip_module_names_SOURCES = $(srcdir)/little_ftasks.F90
-vftr_strip_module_names_FCFLAGS = $(AM_FCFLAGS) -finstrument-functions
-vftr_strip_module_names_LDFLAGS = $(AM_LDFLAGS)
+strip_module_names_SOURCES = $(srcdir)/little_ftasks.F90
+strip_module_names_FCFLAGS = $(AM_FCFLAGS) -finstrument-functions
+strip_module_names_LDFLAGS = $(AM_LDFLAGS)
 
-dist_check_SCRIPTS += vftr_strip_module_names.sh
+dist_check_SCRIPTS += strip_module_names.sh
 endif
 
 if HAS_LIBERTY
-check_PROGRAMS += vftr_demangle_cxx
+check_PROGRAMS += demangle_cxx
 
-vftr_demangle_cxx_SOURCES = $(srcdir)/little_cxxtasks.cpp
-vftr_demangle_cxx_CXXFLAGS = $(AM_CXXFLAGS) -finstrument-functions
-vftr_demangle_cxx_LDFLAGS = $(AM_LDFLAGS) -liberty
+demangle_cxx_SOURCES = $(srcdir)/little_cxxtasks.cpp
+demangle_cxx_CXXFLAGS = $(AM_CXXFLAGS) -finstrument-functions
+demangle_cxx_LDFLAGS = $(AM_LDFLAGS) -liberty
 
-dist_check_SCRIPTS += vftr_demangle_cxx.sh
+dist_check_SCRIPTS += demangle_cxx.sh
 endif
 
 TEST_EXTENSIONS = .sh
@@ -189,4 +159,5 @@ SH_LOG_COMPILER = $(SHELL)
 
 TESTS = $(dist_check_SCRIPTS)
 
-CLEANFILES = vftrace_self_profile-*
+CLEANFILES = vftrace_self_profile-* \
+	     *.json

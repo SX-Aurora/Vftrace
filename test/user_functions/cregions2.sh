@@ -3,13 +3,15 @@
 source ${srcdir}/../environment/filenames.sh
 
 vftr_binary=cregions2
+configfile=${vftr_binary}.json
 nprocs=1
 
 logfile=$(get_logfile_name ${vftr_binary} "all")
 vfdfile=$(get_vfdfile_name ${vftr_binary} "0")
 
-export VFTR_SAMPLING="Yes"
-export VFTR_REGIONS_PRECISE="yes"
+# create logfile
+echo "{\"sampling\": {\"active\": true}}" > ${configfile}
+export VFTR_CONFIG=${configfile}
 
 if [ "x${HAS_MPI}" == "xYES" ]; then
    ${MPI_EXEC} ${MPI_OPTS} ${NP} ${nprocs} ./${vftr_binary} || exit 1
@@ -28,7 +30,7 @@ if [ "${inprof}" -ne "2" ] ; then
 fi
 
 
-../../tools/vftrace_vfd_dump $vfdfile
+../../tools/vftrace_vfd_dump ${vfdfile}
 
 ncalls=$(../../tools/vftrace_vfd_dump $vfdfile | \
          grep "call user-region-1" | \

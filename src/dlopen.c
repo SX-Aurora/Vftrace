@@ -43,14 +43,14 @@ void *dlopen(const char *filename, int flag) {
          vftr_sort_symboltable(dynsymtab.nsymbols, dynsymtab.symbols);
          vftr_symboltable_determine_preciseness(
             &dynsymtab,
-            vftrace.environment.preciseregex.value.regex_val);
+            vftrace.config.sampling.precise_functions.regex);
          vftr_symboltable_strip_fortran_module_name(
             &dynsymtab,
-            vftrace.environment.strip_module_names.value.bool_val);
+            vftrace.config.strip_module_names.value);
    #ifdef _LIBERTY
          vftr_symboltable_demangle_cxx_name(
             &dynsymtab,
-            vftrace.environment.demangle_cxx.value.bool_val);
+            vftrace.config.demangle_cxx.value);
    #endif
          vftr_merge_symbol_tables(&(vftrace.symboltable), dynsymtab);
          free(dynsymtab.symbols);

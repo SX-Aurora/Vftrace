@@ -5,9 +5,9 @@
 #include <stdio.h>
 
 #include "collated_stack_types.h"
-#include "environment_types.h"
+#include "configuration_types.h"
 
 void vftr_write_logfile_mpi_table(FILE *fp, collated_stacktree_t stacktree,
-                                  environment_t environment); 
+                                  config_t config); 
 
 #endif

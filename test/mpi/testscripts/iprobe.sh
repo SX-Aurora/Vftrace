@@ -1,10 +1,11 @@
 #!/bin/bash
 
 vftr_binary=iprobe
+configfile=${vftr_binary}.json
 nprocs=2
 
-export VFTR_SAMPLING="Yes"
-export VFTR_MPI_LOG="Yes"
+echo "{\"sampling\": {\"active\": true}, \"mpi\": {\"active\": true}}" > ${configfile}
+export VFTR_CONFIG=${configfile}
 
 nb=$(bc <<< "32*${RANDOM}")
 

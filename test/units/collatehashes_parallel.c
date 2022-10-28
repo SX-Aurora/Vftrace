@@ -2,8 +2,6 @@
 #include <stdio.h>
 
 #include "self_profile.h"
-#include "environment_types.h"
-#include "environment.h"
 #include "symbol_types.h"
 #include "symbols.h"
 #include "stack_types.h"
@@ -29,9 +27,6 @@ int main(int argc, char **argv) {
 
    int myrank;
    PMPI_Comm_rank(MPI_COMM_WORLD, &myrank);
-
-   environment_t environment;
-   environment = vftr_read_environment();
 
    // build stacktree
    stacktree_t stacktree = vftr_init_dummy_stacktree(0ll, 0ll);

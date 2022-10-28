@@ -1,6 +1,7 @@
 #!/bin/bash
 set -x
-test_name=vftr_ranks_in_mpi_profile
+test_name=ranks_in_mpi_profile
+configfile=${test_name}.json
 output_file=${test_name}.out
 ref_file=${srcdir}/ref_output/mpi_tasks.out
 nranks=4
@@ -107,16 +108,16 @@ function check_mpi_communication_consistency() {
 }
 
 if [ "x${HAS_MPI}" == "xYES" ]; then
-   export VFTR_MPI_LOG="yes"
-   export VFTR_LOGFILE_FOR_RANKS="all"
 
+   export VFTR_CONFIG=${configfile}
+   echo "{\"logfile_for_ranks\": \"all\",\"mpi\": {\"active\": true,\"only_for_ranks\": \"all\"}}" > ${configfile}
    rm_outfiles
    run_binary
    diff ${output_file} ${ref_file} || exit 1
    check_mpi_entry_exists 0 1 2 3
    check_mpi_communication_consistency 0 1 2 3
 
-   export VFTR_RANKS_IN_MPI_PROFILE="0,1"
+   echo "{\"logfile_for_ranks\": \"all\",\"mpi\": {\"active\": true,\"only_for_ranks\": \"0,1\"}}" > ${configfile}
    rm_outfiles
    run_binary
    diff ${output_file} ${ref_file} || exit 1
@@ -124,7 +125,7 @@ if [ "x${HAS_MPI}" == "xYES" ]; then
    check_mpi_entry_notexists 2 3
    check_mpi_communication_consistency 0 1
 
-   export VFTR_RANKS_IN_MPI_PROFILE="1-3"
+   echo "{\"logfile_for_ranks\": \"all\",\"mpi\": {\"active\": true,\"only_for_ranks\": \"1-3\"}}" > ${configfile}
    rm_outfiles
    run_binary
    diff ${output_file} ${ref_file} || exit 1

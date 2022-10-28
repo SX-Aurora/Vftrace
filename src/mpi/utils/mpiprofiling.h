@@ -9,7 +9,7 @@
 #include "mpi_state_types.h"
 #endif
 #include "process_types.h"
-#include "environment_types.h"
+#include "configuration_types.h"
 
 mpiprofile_t vftr_new_mpiprofiling();
 
@@ -30,7 +30,7 @@ void vftr_accumulate_mpiprofiling_overhead(mpiprofile_t *prof,
 
 mpiprofile_t vftr_add_mpiprofiles(mpiprofile_t profA, mpiprofile_t profB);
 
-void vftr_create_profiled_ranks_list(environment_t environment,
+void vftr_create_profiled_ranks_list(config_t config,
                                      process_t process,
                                      mpi_state_t *mpi_state);
 

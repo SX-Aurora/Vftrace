@@ -2,8 +2,6 @@
 #include <stdio.h>
 
 #include "self_profile.h"
-#include "environment_types.h"
-#include "environment.h"
 #include "symbol_types.h"
 #include "symbols.h"
 #include "stack_types.h"
@@ -23,9 +21,6 @@ int main(int argc, char **argv) {
    (void) argc;
    (void) argv;
 #endif
-
-   environment_t environment;
-   environment = vftr_read_environment();
 
    // dummy symboltable
    uintptr_t addrs = 123456;
@@ -59,7 +54,6 @@ int main(int argc, char **argv) {
 
    free_dummy_symbol_table(&symboltable);
    vftr_stacktree_free(&stacktree);
-   vftr_environment_free(&environment);
 #ifdef _MPI
   PMPI_Finalize();
 #endif

@@ -2,8 +2,6 @@
 #include <stdio.h>
 
 #include "self_profile.h"
-#include "environment_types.h"
-#include "environment.h"
 #include "symbol_types.h"
 #include "symbols.h"
 #include "stack_types.h"

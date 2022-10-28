@@ -1,6 +1,7 @@
 #!/bin/bash
 
 vftr_binary=init_thread_finalize_1
+configfile=${vftr_binary}.json
 nprocs=4
 echo ${MPI_EXEC}
 echo ${MPI_OPTS}

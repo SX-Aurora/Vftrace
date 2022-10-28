@@ -1,6 +1,6 @@
 #include <stdio.h>
 
-#include "environment_types.h"
+#include "configuration_types.h"
 #include "symbols.h"
 #include "tables.h"
 #include "stack_types.h"
@@ -29,10 +29,10 @@ void vftr_get_total_cupti_times_for_ranklogfile (stacktree_t stacktree, float *t
    }
 }
 
-void vftr_write_ranklogfile_cupti_table(FILE *fp, stacktree_t stacktree, environment_t environment) {
+void vftr_write_ranklogfile_cupti_table(FILE *fp, stacktree_t stacktree, config_t config) {
    int n_stackids_with_cupti_data = 0;
 
-   stack_t **sorted_stacks = vftr_sort_stacks_for_cupti (environment, stacktree);
+   stack_t **sorted_stacks = vftr_sort_stacks_for_cupti (config, stacktree);
 
    for (int istack = 0; istack < stacktree.nstacks; istack++) {
       // CUPTI only supported for one thread, thus there is only one profile.

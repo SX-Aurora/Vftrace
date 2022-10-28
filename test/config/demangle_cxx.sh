@@ -3,17 +3,16 @@
 source ${srcdir}/../environment/filenames.sh
 
 set -x
-vftr_binary=vftr_demangle_cxx
-logfile=$(get_logfile_name ${vftr_binary} "all")
+test_name=demangle_cxx
+configfle=${test_name}.json
+logfile=$(get_logfile_name ${test_name} "all")
 
 rm -f ${logfile}
-
 if [ "x${HAS_MPI}" == "xYES" ]; then
-   ${MPI_EXEC} ${MPI_OPTS} ${NP} 1 ./${vftr_binary} || exit 1
+   ${MPI_EXEC} ${MPI_OPTS} ${NP} 1 ./${test_name} || exit 1
 else
-   ./${vftr_binary} || exit 1
+   ./${test_name} || exit 1
 fi
-
 for functions in quicksort issorted;
 do
    nfunction=$(grep -i " ${functions} " ${logfile} | wc -l)
@@ -25,15 +24,14 @@ do
    fi
 done
 
-export VFTR_DEMANGLE_CXX="yes"
+echo "{\"demangle_cxx\": true}" > ${configfle}
+export VFTR_CONFIG=${configfle}
 rm -f ${logfile}
-
 if [ "x${HAS_MPI}" == "xYES" ]; then
-   ${MPI_EXEC} ${MPI_OPTS} ${NP} 1 ./${vftr_binary} || exit 1
+   ${MPI_EXEC} ${MPI_OPTS} ${NP} 1 ./${test_name} || exit 1
 else
-   ./${vftr_binary} || exit 1
+   ./${test_name} || exit 1
 fi
-
 for functions in quicksort issorted;
 do
    nfunction=$(grep -i " ${functions} " ${logfile} | wc -l)

@@ -8,7 +8,7 @@
 #include "symbols.h"
 #include "stack_types.h"
 #include "collated_stack_types.h"
-#include "environment_types.h"
+#include "configuration_types.h"
 
 // sorts a list of integers with linear scaling radix sort
 // one bit at a time
@@ -49,27 +49,27 @@ void vftr_apply_perm_float(int n, float *list, int *perm);
 // sort the symboltable with a linear scaling sort
 void vftr_sort_symboltable(unsigned int nsymb, symbol_t *symbols);
 
-// sort the stacks based on a set environment variable
+// sort the stacks based on a set configuration variable
 void vftr_apply_perm_stackptr(int n, stack_t **list, int *perm);
-stack_t **vftr_sort_stacks_for_prof(environment_t environment,
+stack_t **vftr_sort_stacks_for_prof(config_t config,
                                     stacktree_t stacktree);
 #ifdef _MPI
-void vftr_sort_collated_stacks_for_mpiprof(environment_t environment,
+void vftr_sort_collated_stacks_for_mpiprof(config_t config,
                                            int nselected_stacks,
                                            collated_stack_t **selected_stacks);
-void vftr_sort_stacks_for_mpiprof(environment_t environment,
+void vftr_sort_stacks_for_mpiprof(config_t config,
                                   int nselected_stacks,
                                   stack_t **selected_stacks);
 #endif
 
 #ifdef _CUPTI
-stack_t **vftr_sort_stacks_for_cupti (environment_t environment, stacktree_t stacktree);
-collated_stack_t **vftr_sort_collated_stacks_for_cupti (environment_t environment, collated_stacktree_t stacktree);
+stack_t **vftr_sort_stacks_for_cupti (config_t config, stacktree_t stacktree);
+collated_stack_t **vftr_sort_collated_stacks_for_cupti (config_t config, collated_stacktree_t stacktree);
 #endif
 
-// sort the collated stacks based on a set environment variable
+// sort the collated stacks based on a set configuration variable
 void vftr_apply_perm_collated_stackptr(int n, collated_stack_t **list, int *perm);
-collated_stack_t **vftr_sort_collated_stacks_for_prof(environment_t environment,
+collated_stack_t **vftr_sort_collated_stacks_for_prof(config_t config,
                                                       collated_stacktree_t stacktree);
 
 #endif

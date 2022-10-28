@@ -5,7 +5,6 @@
 #include "self_profile.h"
 #include "vftrace_state.h"
 #include "vftr_initialize.h"
-#include "environment.h"
 
 // main datatype to store everything
 
@@ -16,7 +15,6 @@ vftrace_t vftrace = {
          .exit = NULL
       }
    },
-   .environment.valid = false,
    .config.valid = false,
    .symboltable = {
       .nsymbols = 0,
@@ -95,30 +93,7 @@ unsigned long long vftr_sizeof_hooks_t(hooks_t hooks) {
    return size;
 }
 
-unsigned long long vftr_sizeof_env_var_t(env_var_t env_var) {
-   unsigned long long size = sizeof(env_var_t);
-   if (env_var.value_kind == env_string) {
-      if (env_var.value.string_val != NULL) {
-         size += strlen(env_var.value.string_val)*sizeof(char);
-      }
-   } else if (env_var.value_kind == env_regex) {
-      size += sizeof(regex_t);
-   }
-   if (env_var.value_string != NULL) {
-      size += strlen(env_var.value_string)*sizeof(char);
-   }
-   size += strlen(env_var.name)*sizeof(char);
-   return size;
-}
-
-unsigned long long vftr_sizeof_environment_t(environment_t environment) {
-   unsigned long long size = sizeof(environment_t);
-   for (int ivar=0; ivar<environment.nenv_vars; ivar++) {
-      env_var_t *env_var = vftr_get_env_var_ptr_by_idx(&environment, ivar);
-      size += vftr_sizeof_env_var_t(*env_var);
-   }
-   return size;
-}
+// TODO sizeof config 
 
 unsigned long long vftr_sizeof_symbol_t(symbol_t symbol) {
    unsigned long long size = sizeof(symbol);
@@ -357,8 +332,7 @@ unsigned long long vftr_sizeof_vftrace_t(vftrace_t vftrace_state) {
    // in order to not double count with the function calls
    size -= sizeof(hooks_t);
    size += vftr_sizeof_hooks_t(vftrace_state.hooks);
-   size -= sizeof(environment_t);
-   size += vftr_sizeof_environment_t(vftrace_state.environment);
+// TODO sizeof config
    size -= sizeof(symboltable_t);
    size += vftr_sizeof_symboltable_t(vftrace_state.symboltable);
    size -= sizeof(process_t);

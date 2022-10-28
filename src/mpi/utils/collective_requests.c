@@ -88,7 +88,7 @@ void vftr_clear_completed_collective_request(vftr_request_t *request) {
                                          request->tstart, tend);
          }
       }
-      if (vftrace.environment.do_sampling.value.bool_val) {
+      if (vftrace.config.sampling.active.value) {
          for (int i=0; i<request->nmsg; i++) {
             // if a rank is -1 skip the registering, as
             // it is an invalid rank due to non periodic

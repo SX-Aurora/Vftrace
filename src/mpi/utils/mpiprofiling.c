@@ -7,7 +7,7 @@
 #include "vftrace_state.h"
 #include "mpi_state_types.h"
 #include "process_types.h"
-#include "environment_types.h"
+#include "configuration_types.h"
 #include "mpi_util_types.h"
 #include "mpiprofiling_types.h"
 
@@ -88,11 +88,11 @@ void vftr_mpiprofiling_free(mpiprofile_t *prof_ptr) {
    (void) prof_ptr;
 }
 
-void vftr_create_profiled_ranks_list(environment_t environment,
+void vftr_create_profiled_ranks_list(config_t config,
                                      process_t process,
                                      mpi_state_t *mpi_state) {
    SELF_PROFILE_START_FUNCTION;
-   char *rangestr = environment.ranks_in_mpi_profile.value.string_val;
+   char *rangestr = config.mpi.only_for_ranks.value;
    if (!strcmp(rangestr, "all")) {
       mpi_state->nprof_ranks = process.nprocesses;
       mpi_state->prof_ranks = (int*) malloc(mpi_state->nprof_ranks*sizeof(int));

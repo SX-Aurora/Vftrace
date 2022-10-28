@@ -3,11 +3,10 @@
 #include <string.h>
 
 #include "self_profile.h"
-#include "environment_types.h"
+#include "configuration_types.h"
 #include "vftrace_state.h"
 
 #include "filenames.h"
-#include "environment.h"
 #include "configuration_print.h"
 #include "logfile_header.h"
 #include "logfile_prof_table.h"
@@ -20,8 +19,8 @@
 #include "cupti_logfile.h"
 #endif
 
-char *vftr_get_logfile_name(environment_t environment) {
-   char *filename_base = vftr_create_filename_base(environment, -1, 1);
+char *vftr_get_logfile_name(config_t config) {
+   char *filename_base = vftr_create_filename_base(config, -1, 1);
    int filename_base_len = strlen(filename_base);
 
    char *extension = ".log";
@@ -56,7 +55,7 @@ void vftr_write_logfile(vftrace_t vftrace, long long runtime) {
       return;
    }
 
-   char *logfilename = vftr_get_logfile_name(vftrace.environment);
+   char *logfilename = vftr_get_logfile_name(vftrace.config);
    FILE *fp = vftr_open_logfile(logfilename);
 
    vftr_write_logfile_header(fp, vftrace.timestrings);
@@ -65,34 +64,36 @@ void vftr_write_logfile(vftrace_t vftrace, long long runtime) {
                               vftrace.size, runtime);
 
    vftr_write_logfile_profile_table(fp, vftrace.process.collated_stacktree,
-                                    vftrace.environment);
+                                    vftrace.config);
    // print the name grouped profile_table
-   if (vftrace.environment.group_functions_by_name.value.bool_val) {
+   if (vftrace.config.name_grouped_profile_table.active.value) {
       collated_stacktree_t namegrouped_collated_stacktree =
          vftr_collated_stacktree_group_by_name(&vftrace.process.collated_stacktree);
       vftr_write_logfile_name_grouped_profile_table(fp, namegrouped_collated_stacktree,
-                                                    vftrace.environment);
+                                                    vftrace.config);
       vftr_collated_stacktree_free(&namegrouped_collated_stacktree);
    }
 
 #ifdef _MPI
    vftr_write_logfile_mpi_table(fp, vftrace.process.collated_stacktree,
-                                vftrace.environment);
+                                vftrace.config);
 #endif
 
 #ifdef _CUPTI
    if (vftrace.cupti_state.n_devices == 0) {
       fprintf (fp, "CUPTI: The interface is enabled, but no GPU devices were found.\n");
    } else {
-      vftr_write_logfile_cupti_table(fp, vftrace.process.collated_stacktree, vftrace.environment);
+      vftr_write_logfile_cupti_table(fp, vftrace.process.collated_stacktree,
+                                     vftrace.config);
    }
 #endif
 
    vftr_write_logfile_global_stack_list(fp, vftrace.process.collated_stacktree);
 
-   // print environment info
-   vftr_print_environment(fp, vftrace.environment);
-   vftr_print_config(fp, vftrace.config);
+   // print config info
+   if (vftrace.config.print_config.value) {
+      vftr_print_config(fp, vftrace.config);
+   }
 
 #ifdef _CUPTI
    vftr_write_logfile_cbid_names (fp, vftrace.process.collated_stacktree);

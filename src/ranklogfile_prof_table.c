@@ -5,14 +5,13 @@
 #include "self_profile.h"
 #include "timer_types.h"
 #include "table_types.h"
-#include "environment_types.h"
+#include "configuration_types.h"
 #include "stack_types.h"
 #include "vftrace_state.h"
 
 #include "filenames.h"
 #include "license.h"
 #include "config.h"
-#include "environment.h"
 #include "stacks.h"
 #include "collate_stacks.h"
 #include "tables.h"
@@ -131,10 +130,10 @@ char **vftr_ranklogfile_prof_table_callpath_list(int nstacks, stack_t **stack_pt
 }
 
 void vftr_write_ranklogfile_profile_table(FILE *fp, stacktree_t stacktree,
-                                      environment_t environment) {
+                                          config_t config) {
    SELF_PROFILE_START_FUNCTION;
-   // first sort the stacktree according to the set environment variables
-   stack_t **sorted_stacks = vftr_sort_stacks_for_prof(environment, stacktree);
+   // first sort the stacktree according to the set configuration variables
+   stack_t **sorted_stacks = vftr_sort_stacks_for_prof(config, stacktree);
 
    fprintf(fp, "\nRuntime profile\n");
 
@@ -163,7 +162,7 @@ void vftr_write_ranklogfile_profile_table(FILE *fp, stacktree_t stacktree,
    vftr_table_add_column(&table, col_int, "STID", "%d", 'c', 'r', (void*) stack_IDs);
 
    char **path_list = NULL;
-   if (environment.callpath_in_profile.value.bool_val) {
+   if (config.profile_table.show_callpath.value) {
       path_list = vftr_ranklogfile_prof_table_callpath_list(stacktree.nstacks,
                                                         sorted_stacks,
                                                         stacktree);
@@ -180,7 +179,7 @@ void vftr_write_ranklogfile_profile_table(FILE *fp, stacktree_t stacktree,
    free(function_names);
    free(caller_names);
    free(stack_IDs);
-   if (environment.callpath_in_profile.value.bool_val) {
+   if (config.profile_table.show_callpath.value) {
       for (int istack=0; istack<stacktree.nstacks; istack++) {
          free(path_list[istack]);
       }

@@ -6,7 +6,7 @@
 #include <assert.h>
 
 #include "self_profile.h"
-#include "environment_types.h"
+#include "configuration_types.h"
 #include "process_types.h"
 #include "stack_types.h"
 #include "timer_types.h"
@@ -23,10 +23,10 @@
 // <basename>_<pid>.tmpvfd
 // In the finalization it will be moved to its proper name
 // <basename>_<mpi-rank>.vfd
-char *vftr_get_preliminary_vfdfile_name(environment_t environment) {
+char *vftr_get_preliminary_vfdfile_name(config_t config) {
    SELF_PROFILE_START_FUNCTION;
    int pid = getpid();
-   char *filename_base = vftr_create_filename_base(environment, pid, pid);
+   char *filename_base = vftr_create_filename_base(config, pid, pid);
    int filename_base_len = strlen(filename_base);
 
    char *extension = ".tmpvfd";
@@ -45,9 +45,9 @@ char *vftr_get_preliminary_vfdfile_name(environment_t environment) {
    return vfdfile_name;
 }
 
-char *vftr_get_vfdfile_name(environment_t environment, int rankID, int nranks) {
+char *vftr_get_vfdfile_name(config_t config, int rankID, int nranks) {
    SELF_PROFILE_START_FUNCTION;
-   char *filename_base = vftr_create_filename_base(environment, rankID, nranks);
+   char *filename_base = vftr_create_filename_base(config, rankID, nranks);
    int filename_base_len = strlen(filename_base);
 
    char *extension = ".vfd";
@@ -75,9 +75,9 @@ FILE *vftr_open_vfdfile(char *filename) {
    return fp;
 }
 
-char *vftr_attach_iobuffer_vfdfile(FILE *fp, environment_t environment) {
-   // the environment variable gets the size in MB.
-   size_t bufsize = environment.vfd_bufsize.value.int_val;
+char *vftr_attach_iobuffer_vfdfile(FILE *fp, config_t config) {
+   // the configuration variable gets the size in MB.
+   size_t bufsize = config.sampling.outbuffer_size.value;
    // it is needed in bytes
    bufsize *= 1024*1024;
    char *buffer = (char*) malloc(bufsize);

@@ -4,22 +4,22 @@
 #include <string.h>
 #include <libgen.h>
 
-#include "environment_types.h"
+#include "configuration_types.h"
 
 #include "self_profile.h"
 #include "misc_utils.h"
 #include "exe_info.h"
 
-char *vftr_create_filename_base(environment_t environment, int rankID, int nranks) {
+char *vftr_create_filename_base(config_t config, int rankID, int nranks) {
    SELF_PROFILE_START_FUNCTION;
    char *out_dir = NULL;
-   out_dir = strdup(environment.output_directory.value.string_val);
+   out_dir = strdup(config.output_directory.value);
    int out_dir_len = strlen(out_dir);
 
    char *exe_name = NULL;
-   if (environment.logfile_basename.set) {
+   if (config.outfile_basename.set) {
       // user defined logfile name
-      exe_name = strdup(environment.logfile_basename.value.string_val);
+      exe_name = strdup(config.outfile_basename.value);
    } else {
       // default name constructed from executable name
       char *exe_path = vftr_get_executable_path();

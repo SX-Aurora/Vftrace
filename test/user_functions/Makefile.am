@@ -146,4 +146,5 @@ SH_LOG_COMPILER = $(SHELL)
 
 TESTS = $(dist_noinst_SCRIPTS)
 
-CLEANFILES = vftrace_self_profile-*
+CLEANFILES = vftrace_self_profile-* \
+	     *.json

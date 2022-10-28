@@ -3,14 +3,16 @@
 source ${srcdir}/../environment/filenames.sh
 
 vftr_binary=fregions4
+configfile=${vftr_binary}.json
 nprocs=1
 maxnreg=$(bc <<< "${RANDOM}%5+5")
 
 logfile=$(get_logfile_name ${vftr_binary} "all")
 vfdfile=$(get_vfdfile_name ${vftr_binary} "0")
 
-export VFTR_SAMPLING="Yes"
-export VFTR_REGIONS_PRECISE="yes"
+# create logfile
+echo "{\"sampling\": {\"active\": true}}" > ${configfile}
+export VFTR_CONFIG=${configfile}
 
 if [ "x${HAS_MPI}" == "xYES" ]; then
    ${MPI_EXEC} ${MPI_OPTS} ${NP} ${nprocs} ./${vftr_binary} ${maxnreg} || exit 1

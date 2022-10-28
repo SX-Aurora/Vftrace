@@ -2,8 +2,8 @@
 #include <stdio.h>
 
 #include "self_profile.h"
-#include "environment_types.h"
-#include "environment.h"
+#include "configuration_types.h"
+#include "configuration.h"
 #include "symbol_types.h"
 #include "symbols.h"
 #include "stack_types.h"
@@ -33,8 +33,8 @@ int main(int argc, char **argv) {
    (void) argv;
 #endif
 
-   environment_t environment;
-   environment = vftr_read_environment();
+   config_t config;
+   config = vftr_read_config();
 
    stacktree_t stacktree = vftr_init_dummy_stacktree(65536000000000ll, 0ll);
 
@@ -63,15 +63,15 @@ int main(int argc, char **argv) {
    collated_stacktree_t namegrouped_collated_tacktree =
       vftr_collated_stacktree_group_by_name(&collated_stacktree);
 
-   //vftr_write_ranklogfile_profile_table(stdout, stacktree, environment);
-   vftr_write_logfile_profile_table(stdout, collated_stacktree, environment);
+   //vftr_write_ranklogfile_profile_table(stdout, stacktree, config);
+   vftr_write_logfile_profile_table(stdout, collated_stacktree, config);
    vftr_write_logfile_name_grouped_profile_table(stdout, namegrouped_collated_tacktree,
-                                                 environment);
+                                                 config);
 
    vftr_stacktree_free(&stacktree);
    vftr_collated_stacktree_free(&collated_stacktree);
    vftr_collated_stacktree_free(&namegrouped_collated_tacktree);
-   vftr_environment_free(&environment);
+   vftr_config_free(&config);
 
 #ifdef _MPI
    PMPI_Finalize();

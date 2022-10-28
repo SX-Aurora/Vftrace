@@ -1,8 +1,8 @@
 #include <stdlib.h>
 
 #include "self_profile.h"
-#include "environment_types.h"
-#include "environment.h"
+#include "configuration_types.h"
+#include "configuration.h"
 
 #ifdef _MPI
 #include <mpi.h>
@@ -17,11 +17,11 @@ int main(int argc, char **argv) {
    (void) argc;
    (void) argv;
 #endif
-   environment_t environment;
-   environment = vftr_read_environment();
-   vftr_environment_assert(stderr, environment);
-   vftr_check_env_names(stdout, &environment);
-   vftr_environment_free(&environment);
+   config_t config;
+   config = vftr_read_config();
+   // TODO vftr_config_assert(stderr, config);
+   // TODO vftr_check_env_names(stdout, &config);
+   vftr_config_free(&config);
 
 #ifdef _MPI
    PMPI_Finalize();
