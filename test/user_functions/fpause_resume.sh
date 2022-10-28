@@ -3,13 +3,14 @@
 source ${srcdir}/../environment/filenames.sh
 
 vftr_binary=fpause_resume
+configfile=${vftr_binary}.json
 nprocs=1
+
+echo "{\"sampling\": {\"active\": true, \"precise_functions\": \"fkt*\"}}" > ${configfile}
+export VFTR_CONFIG=${configfile}
 
 logfile=$(get_logfile_name ${vftr_binary} "all")
 vfdfile=$(get_vfdfile_name ${vftr_binary} "0")
-
-export VFTR_SAMPLING="Yes"
-export VFTR_PRECISE="fkt*"
 
 if [ "x${HAS_MPI}" == "xYES" ]; then
    ${MPI_EXEC} ${MPI_OPTS} ${NP} ${nprocs} ./${vftr_binary} ${maxnreg} || exit 1
