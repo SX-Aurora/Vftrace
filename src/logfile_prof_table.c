@@ -119,12 +119,13 @@ int *vftr_logfile_prof_table_stack_stackID_list(int nstacks, collated_stack_t **
    return id_list;
 }
 
-char **vftr_logfile_prof_table_stack_stackIDs_list(int nstacks, collated_stack_t **stack_ptrs) {
+char **vftr_logfile_prof_table_stack_stackIDs_list(int nstacks, collated_stack_t **stack_ptrs, int max_stack_ids) {
    char **name_list = (char**) malloc(nstacks*sizeof(char*));
    for (int istack=0; istack<nstacks; istack++) {
       collated_stack_t *stack_ptr = stack_ptrs[istack];
       int strlen = 0;
-      int ngids = stack_ptr->gid_list.ngids;
+      int cutoff_ids = stack_ptr->gid_list.ngids > max_stack_ids;
+      int ngids = cutoff_ids ? max_stack_ids : stack_ptr->gid_list.ngids;
       // add up all the gids length in base 10
       for (int igid=0; igid<ngids; igid++) {
          strlen += vftr_count_base_digits(stack_ptr->gid_list.gids[igid], 10);
@@ -133,14 +134,24 @@ char **vftr_logfile_prof_table_stack_stackIDs_list(int nstacks, collated_stack_t
       strlen += ngids;
       // add null terminator space
       strlen += 1;
+      if (cutoff_ids) {
+         // add ",..." space
+         strlen += 4;
+      }
 
       name_list[istack] = (char*) malloc(strlen*sizeof(char));
       char *tmpstr = name_list[istack];
+      name_list[istack][0] = '\0';
       for (int igid=0; igid<ngids; igid++) {
          int ndigts = vftr_count_base_digits(stack_ptr->gid_list.gids[igid], 10);
          // plus two because ',' and '\0'
          snprintf(tmpstr, ndigts+2, "%d,", stack_ptr->gid_list.gids[igid]);
          tmpstr += ndigts+1;
+      }
+      if (cutoff_ids) {
+         tmpstr--;
+         snprintf(tmpstr, 5, ",...");
+         tmpstr += 5;
       }
       tmpstr--;
       *tmpstr = '\0';
@@ -262,7 +273,8 @@ void vftr_write_logfile_name_grouped_profile_table(FILE *fp,
    char **function_names = vftr_logfile_prof_table_stack_function_name_list(stacktree.nstacks, sorted_stacks);
    vftr_table_add_column(&table, col_string, "Function", "%s", 'c', 'r', (void*) function_names);
 
-   char **stack_IDs = vftr_logfile_prof_table_stack_stackIDs_list(stacktree.nstacks, sorted_stacks);
+   char **stack_IDs = vftr_logfile_prof_table_stack_stackIDs_list(stacktree.nstacks, sorted_stacks,
+                                                                  config.name_grouped_profile_table.max_stack_ids.value);
    vftr_table_add_column(&table, col_string, "STIDs", "%s", 'c', 'l', (void*) stack_IDs);
 
    vftr_print_table(fp, table);

@@ -121,7 +121,8 @@ endif
 check_PROGRAMS += sorting_stacks \
 		  sorting_collated_stacks
 check_PROGRAMS += print_prof_table \
-		  print_name_grouped_prof_table
+		  print_name_grouped_prof_table \
+		  print_name_grouped_prof_table_max_stack_ids
 if ENABLE_MPI
 check_PROGRAMS += print_mpi_table \
 		  sorting_mpi_table
@@ -422,6 +423,13 @@ print_name_grouped_prof_table_SOURCES = $(srcdir)/print_name_grouped_prof_table.
 print_name_grouped_prof_table_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
 print_name_grouped_prof_table_LDFLAGS = $(AM_LDFLAGS)
 
+print_name_grouped_prof_table_max_stack_ids_SOURCES = \
+      $(srcdir)/print_name_grouped_prof_table.c \
+      max_stack_ids_  	$(srcdir)/dummysymboltable.c \
+      max_stack_ids_  	$(srcdir)/dummy_stacktree.c
+print_name_grouped_prof_table_max_stack_ids_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
+print_name_grouped_prof_table_max_stack_ids_LDFLAGS = $(AM_LDFLAGS)
+
 print_mpi_table_SOURCES = $(srcdir)/print_mpi_table.c \
 			  $(srcdir)/dummysymboltable.c
 print_mpi_table_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
@@ -518,7 +526,8 @@ dist_check_SCRIPTS += sorting_collated_stacks_none.sh \
 		      sorting_collated_stacks_texcl.sh \
 		      sorting_collated_stacks_tincl.sh
 dist_check_SCRIPTS += print_prof_table.sh \
-		      print_name_grouped_prof_table.sh
+		      print_name_grouped_prof_table.sh \
+		      print_name_grouped_prof_table_max_stack_ids.sh
 if ENABLE_MPI
 dist_check_SCRIPTS += print_mpi_table.sh
 dist_check_SCRIPTS += sorting_mpi_table_none.sh \
