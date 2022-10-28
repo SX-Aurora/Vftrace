@@ -153,8 +153,6 @@ config_t vftr_set_config_default() {
       vftr_set_config_string_default("logfile_for_ranks", NULL);
    config.print_config =
       vftr_set_config_bool_default("print_config", true);
-   config.include_only =
-      vftr_set_config_regex_default("include_only");
    config.strip_module_names =
       vftr_set_config_bool_default("strip_module_names", false);
    config.demangle_cxx =

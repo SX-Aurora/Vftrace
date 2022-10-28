@@ -92,7 +92,6 @@ typedef struct {
    config_string_t outfile_basename;
    config_string_t logfile_for_ranks;
    config_bool_t print_config;
-   config_regex_t include_only;
    config_bool_t strip_module_names;
    config_bool_t demangle_cxx;
    config_profile_table_t profile_table;

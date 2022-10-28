@@ -268,7 +268,6 @@ void vftr_parse_config(char *config_string, config_t *config_ptr) {
    vftr_parse_config_string(config_json, &(config_ptr->logfile_for_ranks));
    vftr_parse_config_bool(config_json, &(config_ptr->print_config));
    vftr_parse_config_bool(config_json, &(config_ptr->print_config));
-   vftr_parse_config_regex(config_json, &(config_ptr->include_only));
    vftr_parse_config_bool(config_json, &(config_ptr->strip_module_names));
    vftr_parse_config_bool(config_json, &(config_ptr->demangle_cxx));
    vftr_parse_config_profile_table(config_json, &(config_ptr->profile_table));

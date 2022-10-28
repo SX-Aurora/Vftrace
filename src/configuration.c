@@ -143,7 +143,6 @@ void vftr_config_free(config_t *config_ptr) {
    vftr_config_string_free(&(config_ptr->outfile_basename));
    vftr_config_string_free(&(config_ptr->logfile_for_ranks));
    vftr_config_bool_free(&(config_ptr->print_config));
-   vftr_config_regex_free(&(config_ptr->include_only));
    vftr_config_bool_free(&(config_ptr->strip_module_names));
    vftr_config_bool_free(&(config_ptr->demangle_cxx));
    vftr_config_profile_table_free(&(config_ptr->profile_table));

@@ -174,8 +174,6 @@ void vftr_print_config(FILE *fp, config_t config) {
    fprintf(fp, ",\n");
    vftr_print_config_bool(fp, level, config.print_config);
    fprintf(fp, ",\n");
-   vftr_print_config_regex(fp, level, config.include_only);
-   fprintf(fp, ",\n");
    vftr_print_config_bool(fp, level, config.strip_module_names);
    fprintf(fp, ",\n");
    vftr_print_config_bool(fp, level, config.demangle_cxx);
