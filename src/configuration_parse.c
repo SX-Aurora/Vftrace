@@ -252,7 +252,6 @@ void vftr_parse_config_hardware_scenarios(cJSON *parent_object,
 }
 
 void vftr_parse_config(char *config_string, config_t *config_ptr) {
-   fprintf(stderr, "%s\n", config_string);
    cJSON *config_json = cJSON_Parse(config_string);
    if (config_json == NULL) {
       const char *errorstr = cJSON_GetErrorPtr();
