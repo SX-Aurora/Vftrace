@@ -111,7 +111,7 @@ config_mpi_t vftr_set_config_mpi_default() {
    cfg_mpi.active =
       vftr_set_config_bool_default("active", false);
    cfg_mpi.only_for_ranks =
-      vftr_set_config_string_default("only_for_ranks", NULL);
+      vftr_set_config_string_default("only_for_ranks", "all");
    cfg_mpi.show_sync_time =
       vftr_set_config_bool_default("show_sync_time", false);
    cfg_mpi.show_callpath =
@@ -150,7 +150,7 @@ config_t vftr_set_config_default() {
    config.outfile_basename =
       vftr_set_config_string_default("outfile_basename", NULL);
    config.logfile_for_ranks =
-      vftr_set_config_string_default("logfile_for_ranks", NULL);
+      vftr_set_config_string_default("logfile_for_ranks", "none");
    config.print_config =
       vftr_set_config_bool_default("print_config", true);
    config.strip_module_names =
