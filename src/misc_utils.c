@@ -30,7 +30,8 @@ bool vftr_string_to_bool(char *string) {
       }
       if (!strcmp(tmpstring, "1") ||
           !strcmp(tmpstring, "yes") ||
-          !strcmp(tmpstring, "on")) {
+          !strcmp(tmpstring, "on")||
+          !strcmp(tmpstring, "true")) {
          retval = true;
       } else {
          retval = false;
