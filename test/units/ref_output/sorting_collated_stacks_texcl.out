@@ -1,14 +1,14 @@
-3: func0<init
+4: func0<init
  Overhead:      126, calls: 6, time(incl/excl): 60/37 (overhead: 126)
-5: func1<init
+1: func1<init
  Overhead:      899, calls: 3, time(incl/excl): 30/23 (overhead: 899)
-2: func4<func0<init
+5: func4<func0<init
  Overhead:   229376, calls: 3, time(incl/excl): 15/13 (overhead: 229376)
-6: func3<func0<init
+2: func3<func0<init
  Overhead:    28672, calls: 3, time(incl/excl): 8/8 (overhead: 28672)
-1: func2<func1<init
+0: func2<func1<init
  Overhead:     3072, calls: 2, time(incl/excl): 7/7 (overhead: 3072)
-0: func5<func4<func0<init
+6: func5<func4<func0<init
  Overhead:   262144, calls: 1, time(incl/excl): 2/2 (overhead: 262144)
-4: init
+3: init
  Overhead:        0, calls: 1, time(incl/excl): 20/0 (overhead: 0)

@@ -1,26 +1,26 @@
-1(g3): func0<init
+1(g4): func0<init
    Thread: 0 (0) Overhead:        2, calls: 1, time(incl/excl): 10/7 (overhead: 2)
    Thread: 1 (1) Overhead:        4, calls: 1, time(incl/excl): 10/6 (overhead: 4)
    Thread: 2 (2) Overhead:        8, calls: 1, time(incl/excl): 10/8 (overhead: 8)
    Thread: 3 (3) Overhead:       16, calls: 1, time(incl/excl): 10/5 (overhead: 16)
    Thread: 4 (4) Overhead:       32, calls: 1, time(incl/excl): 10/7 (overhead: 32)
    Thread: 5 (5) Overhead:       64, calls: 1, time(incl/excl): 10/4 (overhead: 64)
-4(g6): func3<func0<init
+4(g2): func3<func0<init
    Thread: 0 (0) Overhead:     4096, calls: 1, time(incl/excl): 3/3 (overhead: 4096)
    Thread: 1 (2) Overhead:     8192, calls: 1, time(incl/excl): 2/2 (overhead: 8192)
    Thread: 2 (4) Overhead:    16384, calls: 1, time(incl/excl): 3/3 (overhead: 16384)
-5(g2): func4<func0<init
+5(g5): func4<func0<init
    Thread: 0 (1) Overhead:    32768, calls: 1, time(incl/excl): 4/4 (overhead: 32768)
    Thread: 1 (3) Overhead:    65536, calls: 1, time(incl/excl): 5/5 (overhead: 65536)
    Thread: 2 (5) Overhead:   131072, calls: 1, time(incl/excl): 6/4 (overhead: 131072)
-2(g5): func1<init
+2(g1): func1<init
    Thread: 0 (0) Overhead:      128, calls: 1, time(incl/excl): 10/10 (overhead: 128)
    Thread: 1 (1) Overhead:      256, calls: 1, time(incl/excl): 10/7 (overhead: 256)
    Thread: 2 (2) Overhead:      515, calls: 1, time(incl/excl): 10/6 (overhead: 515)
-3(g1): func2<func1<init
+3(g0): func2<func1<init
    Thread: 0 (1) Overhead:     1024, calls: 1, time(incl/excl): 3/3 (overhead: 1024)
    Thread: 1 (2) Overhead:     2048, calls: 1, time(incl/excl): 4/4 (overhead: 2048)
-6(g0): func5<func4<func0<init
+6(g6): func5<func4<func0<init
    Thread: 0 (5) Overhead:   262144, calls: 1, time(incl/excl): 2/2 (overhead: 262144)
-0(g4): init
+0(g3): init
    Thread: 0 (0) Overhead:        0, calls: 1, time(incl/excl): 20/0 (overhead: 0)
