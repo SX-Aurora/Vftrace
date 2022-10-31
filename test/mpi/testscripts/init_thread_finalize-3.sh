@@ -6,7 +6,7 @@ vftr_binary=init_thread_finalize_3
 configfile=${vftr_binary}.json
 nprocs=4
 
-echo "{\"logfile_for_ranks\": \"all\", \"sampling\": {\"active\": true}, \"mpi\": {\"active\": true}}" > ${configfile}
+echo "{\"logfile_for_ranks\": \"all\", \"sampling\": {\"active\": true}}" > ${configfile}
 export VFTR_CONFIG=${configfile}
 export VFTR_LOGFILE_FOR_RANKS="all"
 

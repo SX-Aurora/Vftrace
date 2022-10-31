@@ -5,7 +5,7 @@ configfile=${vftr_binary}.json
 nprocs=2
 ntrials=1
 
-echo "{\"sampling\": {\"active\": true}, \"mpi\": {\"active\": true}}" > ${configfile}
+echo "{\"sampling\": {\"active\": true}}" > ${configfile}
 export VFTR_CONFIG=${configfile}
 
 for itrial in $(seq 1 1 ${ntrials});

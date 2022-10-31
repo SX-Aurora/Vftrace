@@ -9,7 +9,7 @@ Vftrace default configuration:
    "strip_module_names": false,
    "demangle_cxx": false,
    "profile_table": {
-      "active": true,
+      "show_table": true,
       "show_calltime_imbalances": false,
       "show_callpath": false,
       "show_overhead": false,
@@ -19,7 +19,7 @@ Vftrace default configuration:
       }
    },
    "name_grouped_profile_table": {
-      "active": false,
+      "show_table": false,
       "max_stack_ids": 8,
       "sort_table": {
          "column": "time_excl",
@@ -33,7 +33,8 @@ Vftrace default configuration:
       "precise_functions": null
    },
    "mpi": {
-      "active": false,
+      "show_table": true,
+      "log_messages": true,
       "only_for_ranks": "all",
       "show_sync_time": false,
       "show_callpath": false,
@@ -43,7 +44,7 @@ Vftrace default configuration:
       }
    },
    "cuda": {
-      "active": false,
+      "show_table": true,
       "sort_table": {
          "column": "time",
          "ascending": false

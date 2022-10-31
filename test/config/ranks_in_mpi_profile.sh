@@ -110,14 +110,14 @@ function check_mpi_communication_consistency() {
 if [ "x${HAS_MPI}" == "xYES" ]; then
 
    export VFTR_CONFIG=${configfile}
-   echo "{\"logfile_for_ranks\": \"all\",\"mpi\": {\"active\": true,\"only_for_ranks\": \"all\"}}" > ${configfile}
+   echo "{\"logfile_for_ranks\": \"all\",\"mpi\": {\"only_for_ranks\": \"all\"}}" > ${configfile}
    rm_outfiles
    run_binary
    diff ${output_file} ${ref_file} || exit 1
    check_mpi_entry_exists 0 1 2 3
    check_mpi_communication_consistency 0 1 2 3
 
-   echo "{\"logfile_for_ranks\": \"all\",\"mpi\": {\"active\": true,\"only_for_ranks\": \"0,1\"}}" > ${configfile}
+   echo "{\"logfile_for_ranks\": \"all\",\"mpi\": {\"only_for_ranks\": \"0,1\"}}" > ${configfile}
    rm_outfiles
    run_binary
    diff ${output_file} ${ref_file} || exit 1
@@ -125,7 +125,7 @@ if [ "x${HAS_MPI}" == "xYES" ]; then
    check_mpi_entry_notexists 2 3
    check_mpi_communication_consistency 0 1
 
-   echo "{\"logfile_for_ranks\": \"all\",\"mpi\": {\"active\": true,\"only_for_ranks\": \"1-3\"}}" > ${configfile}
+   echo "{\"logfile_for_ranks\": \"all\",\"mpi\": {\"only_for_ranks\": \"1-3\"}}" > ${configfile}
    rm_outfiles
    run_binary
    diff ${output_file} ${ref_file} || exit 1

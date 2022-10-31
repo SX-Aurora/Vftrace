@@ -7,7 +7,7 @@ ref_file=${srcdir}/ref_output/${test_name}.out
 
 rm -f ${output_file}
 
-echo "{\"mpi\": {\"active\": true}}" > ${configfile}
+echo "{\"mpi\": {\"show_table\": true, \"log_messages\": true}}" > ${configfile}
 export VFTR_CONFIG=${configfile}
 ${MPI_EXEC} ${MPI_OPTS} ${NP} 1 ./${test_name} > ${output_file} || exit 1
 

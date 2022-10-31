@@ -4,7 +4,7 @@ vftr_binary=iprobe
 configfile=${vftr_binary}.json
 nprocs=2
 
-echo "{\"sampling\": {\"active\": true}, \"mpi\": {\"active\": true}}" > ${configfile}
+echo "{\"sampling\": {\"active\": true}}" > ${configfile}
 export VFTR_CONFIG=${configfile}
 
 nb=$(bc <<< "32*${RANDOM}")
