@@ -147,7 +147,7 @@ void vftr_parse_config_profile_table(cJSON *parent_object,
                                                cfg_profile_table_ptr->name);
       // get the child objects
       vftr_parse_config_bool(json_object,
-                             &(cfg_profile_table_ptr->active));
+                             &(cfg_profile_table_ptr->show_table));
       vftr_parse_config_bool(json_object,
                              &(cfg_profile_table_ptr->show_calltime_imbalances));
       vftr_parse_config_bool(json_object,
@@ -170,7 +170,7 @@ void vftr_parse_config_name_grouped_profile_table(cJSON *parent_object,
                                                cfg_profile_table_ptr->name);
       // get the child objects
       vftr_parse_config_bool(json_object,
-                             &(cfg_profile_table_ptr->active));
+                             &(cfg_profile_table_ptr->show_table));
       vftr_parse_config_int(json_object,
                             &(cfg_profile_table_ptr->max_stack_ids));
       vftr_parse_config_sort_table(json_object,
@@ -208,7 +208,9 @@ void vftr_parse_config_mpi(cJSON *parent_object,
                                                cfg_mpi_ptr->name);
       // get the child objects
       vftr_parse_config_bool(json_object,
-                             &(cfg_mpi_ptr->active));
+                             &(cfg_mpi_ptr->show_table));
+      vftr_parse_config_bool(json_object,
+                             &(cfg_mpi_ptr->log_messages));
       vftr_parse_config_string(json_object,
                                &(cfg_mpi_ptr->only_for_ranks));
       vftr_parse_config_bool(json_object,
@@ -230,7 +232,7 @@ void vftr_parse_config_cuda(cJSON *parent_object,
                                                cfg_cuda_ptr->name);
       // get the child objects
       vftr_parse_config_bool(json_object,
-                             &(cfg_cuda_ptr->active));
+                             &(cfg_cuda_ptr->show_table));
       vftr_parse_config_sort_table(json_object,
                                    &(cfg_cuda_ptr->sort_table));
    }

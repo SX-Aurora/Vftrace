@@ -63,8 +63,8 @@ config_profile_table_t vft_set_config_profile_table_default() {
    config_profile_table_t cfg_profile_table;
    cfg_profile_table.name = strdup("profile_table");
    cfg_profile_table.set = false;
-   cfg_profile_table.active =
-      vftr_set_config_bool_default("active", true);
+   cfg_profile_table.show_table =
+      vftr_set_config_bool_default("show_table", true);
    cfg_profile_table.show_calltime_imbalances =
       vftr_set_config_bool_default("show_calltime_imbalances", false);
    cfg_profile_table.show_callpath =
@@ -80,8 +80,8 @@ config_name_grouped_profile_table_t vftr_set_config_name_grouped_profile_table_d
    config_name_grouped_profile_table_t cfg_profile_table;
    cfg_profile_table.name = strdup("name_grouped_profile_table");
    cfg_profile_table.set = false;
-   cfg_profile_table.active =
-      vftr_set_config_bool_default("active", false);
+   cfg_profile_table.show_table =
+      vftr_set_config_bool_default("show_table", false);
    cfg_profile_table.max_stack_ids =
       vftr_set_config_int_default("max_stack_ids", 8);
    cfg_profile_table.sort_table =
@@ -108,8 +108,10 @@ config_mpi_t vftr_set_config_mpi_default() {
    config_mpi_t cfg_mpi;
    cfg_mpi.name = strdup("mpi");
    cfg_mpi.set = false;
-   cfg_mpi.active =
-      vftr_set_config_bool_default("active", false);
+   cfg_mpi.show_table =
+      vftr_set_config_bool_default("show_table", true);
+   cfg_mpi.log_messages = 
+      vftr_set_config_bool_default("log_messages", true);
    cfg_mpi.only_for_ranks =
       vftr_set_config_string_default("only_for_ranks", "all");
    cfg_mpi.show_sync_time =
@@ -125,8 +127,8 @@ config_cuda_t vftr_set_config_cuda_default() {
    config_cuda_t cfg_cuda;
    cfg_cuda.name = strdup("cuda");
    cfg_cuda.set = false;
-   cfg_cuda.active =
-      vftr_set_config_bool_default("active", false);
+   cfg_cuda.show_table =
+      vftr_set_config_bool_default("show_table", true);
    cfg_cuda.sort_table =
       vftr_set_config_sort_table_default("time", false);
    return cfg_cuda;

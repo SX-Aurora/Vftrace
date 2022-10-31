@@ -14,6 +14,11 @@ void vftr_config_active_assert(FILE *fp, config_bool_t cfg_active) {
    (void) cfg_active;
 }
 
+void vftr_config_show_table_assert(FILE *fp, config_bool_t cfg_show_table) {
+   (void) fp;
+   (void) cfg_show_table;
+}
+
 void vftr_config_column_assert(FILE *fp, config_string_t cfg_column,
                                int nvalid_columns,
                                const char *valid_columns[]) {
@@ -161,7 +166,7 @@ void vftr_config_show_overhead_assert(FILE *fp, config_bool_t cfg_show_overhead)
 void vftr_config_profile_table_assert(FILE *fp,
                                       config_profile_table_t
                                       cfg_profile_table) {
-   vftr_config_active_assert(fp, cfg_profile_table.active);
+   vftr_config_show_table_assert(fp, cfg_profile_table.show_table);
    vftr_config_show_calltime_imbalances_assert(fp,
       cfg_profile_table.show_calltime_imbalances);
    vftr_config_show_callpath_assert(fp, cfg_profile_table.show_callpath);
@@ -180,7 +185,7 @@ void vftr_config_max_stack_ids(FILE *fp, config_int_t cfg_max_stack_ids) {
 void vftr_config_name_grouped_profile_table_assert(FILE *fp,
                                                    config_name_grouped_profile_table_t
                                                    cfg_profile_table) {
-   vftr_config_active_assert(fp, cfg_profile_table.active);
+   vftr_config_show_table_assert(fp, cfg_profile_table.show_table);
    vftr_config_max_stack_ids(fp, cfg_profile_table.max_stack_ids);
    const char *valid_columns[] = {"time_excl", "time_incl", "calls", "none"};
    vftr_config_sort_table_assert(fp, cfg_profile_table.sort_table,
@@ -224,6 +229,11 @@ void vftr_config_sampling_assert(FILE *fp,
    vftr_config_sample_interval_assert(fp, cfg_sampling.sample_interval);
    vftr_config_outbuffer_size_assert(fp, cfg_sampling.outbuffer_size);
    vftr_config_precise_functions_assert(fp, cfg_sampling.precise_functions);
+}
+
+void vftr_config_log_messages_assert(FILE *fp, config_bool_t cfg_log_messages) {
+   (void) fp;
+   (void) cfg_log_messages;
 }
 
 void vftr_config_only_for_ranks_assert(FILE *fp,
@@ -272,7 +282,8 @@ void vftr_config_show_sync_time_assert(FILE *fp,
 }
 
 void vftr_config_mpi_assert(FILE *fp, config_mpi_t cfg_mpi) {
-   vftr_config_active_assert(fp, cfg_mpi.active);
+   vftr_config_show_table_assert(fp, cfg_mpi.show_table);
+   vftr_config_log_messages_assert(fp, cfg_mpi.log_messages);
    vftr_config_only_for_ranks_assert(fp, cfg_mpi.only_for_ranks);
    vftr_config_show_sync_time_assert(fp, cfg_mpi.show_sync_time);
    vftr_config_show_callpath_assert(fp, cfg_mpi.show_callpath);
@@ -286,7 +297,7 @@ void vftr_config_mpi_assert(FILE *fp, config_mpi_t cfg_mpi) {
 }
 
 void vftr_config_cuda_assert(FILE *fp, config_cuda_t cfg_cuda) {
-   vftr_config_active_assert(fp, cfg_cuda.active);
+   vftr_config_show_table_assert(fp, cfg_cuda.show_table);
    const char *valid_columns[] = {"time", "memcpy", "cbid",
                                   "calls", "none"};
    vftr_config_sort_table_assert(fp, cfg_cuda.sort_table,

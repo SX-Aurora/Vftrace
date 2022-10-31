@@ -66,7 +66,7 @@ void vftr_print_config_profile_table(FILE *fp, int level,
    level++;
    vftr_print_config_indent(fp, level);
    fprintf(fp, "\"%s\": {\n", cfg_profile_table.name);
-   vftr_print_config_bool(fp, level, cfg_profile_table.active);
+   vftr_print_config_bool(fp, level, cfg_profile_table.show_table);
    fprintf(fp,",\n");
    vftr_print_config_bool(fp, level, cfg_profile_table.show_calltime_imbalances);
    fprintf(fp,",\n");
@@ -86,7 +86,7 @@ void vftr_print_config_name_grouped_profile_table(FILE *fp, int level,
    level++;
    vftr_print_config_indent(fp, level);
    fprintf(fp, "\"%s\": {\n", cfg_profile_table.name);
-   vftr_print_config_bool(fp, level, cfg_profile_table.active);
+   vftr_print_config_bool(fp, level, cfg_profile_table.show_table);
    fprintf(fp,",\n");
    vftr_print_config_int(fp, level, cfg_profile_table.max_stack_ids);
    fprintf(fp,",\n");
@@ -116,7 +116,9 @@ void vftr_print_config_mpi(FILE *fp, int level, config_mpi_t cfg_mpi) {
    level++;
    vftr_print_config_indent(fp, level);
    fprintf(fp, "\"%s\": {\n", cfg_mpi.name);
-   vftr_print_config_bool(fp, level, cfg_mpi.active);
+   vftr_print_config_bool(fp, level, cfg_mpi.show_table);
+   fprintf(fp,",\n");
+   vftr_print_config_bool(fp, level, cfg_mpi.log_messages);
    fprintf(fp,",\n");
    vftr_print_config_string(fp, level, cfg_mpi.only_for_ranks);
    fprintf(fp,",\n");
@@ -134,7 +136,7 @@ void vftr_print_config_cuda(FILE *fp, int level, config_cuda_t cfg_cuda) {
    level++;
    vftr_print_config_indent(fp, level);
    fprintf(fp, "\"%s\": {\n", cfg_cuda.name);
-   vftr_print_config_bool(fp, level, cfg_cuda.active);
+   vftr_print_config_bool(fp, level, cfg_cuda.show_table);
    fprintf(fp,",\n");
    vftr_print_config_sort_table(fp, level, cfg_cuda.sort_table);
    fprintf(fp,"\n");

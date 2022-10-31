@@ -10,7 +10,7 @@
 bool vftr_no_mpi_logging() {
    return vftrace.mpi_state.pcontrol_level == 0 ||
           vftrace.state == off ||
-          !vftrace.config.mpi.active.value ||
+          !vftrace.config.mpi.log_messages.value ||
           vftrace.state == paused;
 }
 

@@ -44,7 +44,7 @@ typedef struct {
 // Section definitions
 typedef struct {
    CONFIG_STRUCT_DEFAULTS
-   config_bool_t active;
+   config_bool_t show_table;
    config_bool_t show_calltime_imbalances;
    config_bool_t show_callpath;
    config_bool_t show_overhead;
@@ -53,7 +53,7 @@ typedef struct {
 
 typedef struct {
    CONFIG_STRUCT_DEFAULTS
-   config_bool_t active;
+   config_bool_t show_table;
    config_int_t max_stack_ids;
    config_sort_table_t sort_table;
 } config_name_grouped_profile_table_t;
@@ -68,7 +68,8 @@ typedef struct {
 
 typedef struct {
    CONFIG_STRUCT_DEFAULTS
-   config_bool_t active;
+   config_bool_t show_table;
+   config_bool_t log_messages;
    config_string_t only_for_ranks;
    config_bool_t show_sync_time;
    config_bool_t show_callpath;
@@ -77,7 +78,7 @@ typedef struct {
 
 typedef struct {
    CONFIG_STRUCT_DEFAULTS
-   config_bool_t active;
+   config_bool_t show_table;
    config_sort_table_t sort_table;
 } config_cuda_t;
 

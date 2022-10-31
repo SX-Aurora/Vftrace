@@ -88,7 +88,7 @@ void vftr_config_sort_table_free(config_sort_table_t *cfg_sort_table_ptr) {
 void vftr_config_profile_table_free(config_profile_table_t *cfg_profile_table_ptr) {
    free(cfg_profile_table_ptr->name);
    cfg_profile_table_ptr->name = NULL;
-   vftr_config_bool_free(&(cfg_profile_table_ptr->active));
+   vftr_config_bool_free(&(cfg_profile_table_ptr->show_table));
    vftr_config_bool_free(&(cfg_profile_table_ptr->show_calltime_imbalances));
    vftr_config_bool_free(&(cfg_profile_table_ptr->show_callpath));
    vftr_config_bool_free(&(cfg_profile_table_ptr->show_overhead));
@@ -99,7 +99,7 @@ void vftr_config_name_grouped_profile_table_free(config_name_grouped_profile_tab
                                                  *cfg_profile_table_ptr) {
    free(cfg_profile_table_ptr->name);
    cfg_profile_table_ptr->name = NULL;
-   vftr_config_bool_free(&(cfg_profile_table_ptr->active));
+   vftr_config_bool_free(&(cfg_profile_table_ptr->show_table));
    vftr_config_int_free(&(cfg_profile_table_ptr->max_stack_ids));
    vftr_config_sort_table_free(&(cfg_profile_table_ptr->sort_table));
 }
@@ -116,7 +116,8 @@ void vftr_config_sampling_free(config_sampling_t *cfg_sampling_ptr) {
 void vftr_config_mpi_free(config_mpi_t *cfg_mpi_ptr) {
    free(cfg_mpi_ptr->name);
    cfg_mpi_ptr->name = NULL;
-   vftr_config_bool_free(&(cfg_mpi_ptr->active));
+   vftr_config_bool_free(&(cfg_mpi_ptr->show_table));
+   vftr_config_bool_free(&(cfg_mpi_ptr->log_messages));
    vftr_config_string_free(&(cfg_mpi_ptr->only_for_ranks));
    vftr_config_bool_free(&(cfg_mpi_ptr->show_sync_time));
    vftr_config_bool_free(&(cfg_mpi_ptr->show_callpath));
@@ -126,7 +127,7 @@ void vftr_config_mpi_free(config_mpi_t *cfg_mpi_ptr) {
 void vftr_config_cuda_free(config_cuda_t *cfg_cuda_ptr) {
    free(cfg_cuda_ptr->name);
    cfg_cuda_ptr->name = NULL;
-   vftr_config_bool_free(&(cfg_cuda_ptr->active));
+   vftr_config_bool_free(&(cfg_cuda_ptr->show_table));
    vftr_config_sort_table_free(&(cfg_cuda_ptr->sort_table));
 }
 
