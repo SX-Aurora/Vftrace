@@ -1,10 +1,10 @@
-func2<func0<init:
-   nmsg: 2/2, msgsize: 10/20
 func2<func1<init:
    nmsg: 2/2, msgsize: 2560/5120
-func0<init:
-   nmsg: 5/5, msgsize: 52/104
-init:
-   nmsg: 0/0, msgsize: 0/0
 func1<init:
    nmsg: 1/1, msgsize: 128/256
+func2<func0<init:
+   nmsg: 2/2, msgsize: 10/20
+init:
+   nmsg: 0/0, msgsize: 0/0
+func0<init:
+   nmsg: 5/5, msgsize: 52/104
