@@ -97,6 +97,7 @@ unsigned long long vftr_sizeof_config_struct_defaults(char *name) {
    if (name != NULL) {
       return strlen(name);
    }
+   return 0;
 }
 
 unsigned long long vftr_sizeof_config_bool_t(config_bool_t cfg_bool) {
@@ -261,6 +262,7 @@ unsigned long long vftr_sizeof_config_t(config_t config) {
    if (config.config_file_path != NULL) {
       size += strlen(config.config_file_path);
    }
+   return size;
 }
 
 unsigned long long vftr_sizeof_symbol_t(symbol_t symbol) {
