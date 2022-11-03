@@ -20,6 +20,8 @@ void vftr_print_json_config(FILE *fp, cJSON *config_json_ptr, int level) {
 }
 
 void vftr_config_advisor(config_t *config_ptr, cJSON *config_json_ptr) {
+   (void) config_ptr;
+   (void) config_json_ptr;
 
 //   vftr_print_json_config(stderr, config_json_ptr, 0);
 
