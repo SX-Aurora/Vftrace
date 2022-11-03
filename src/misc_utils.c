@@ -50,11 +50,17 @@ char *vftr_read_file_to_string(char *filename) {
        abort();
     }
     fseek(file, 0, SEEK_END);
-    long length = ftell(file);
+    size_t length = ftell(file);
     fseek(file, 0, SEEK_SET);
     char *buffer = (char *) malloc(length + 1);
     buffer[length] = '\0';
-    fread(buffer, 1, length, file);
+    size_t nread = fread(buffer, 1, length, file);
+    if (nread != length) {
+       fprintf(stderr, "Unable to read configuration file %s\n"
+               "Read %ld bytes, but expected %ld\n",
+               filename, nread, length);
+       abort();
+    }
     fclose(file);
     return buffer;
 }
