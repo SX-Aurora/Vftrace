@@ -81,6 +81,7 @@ libvftrace_la_SOURCES += regular_expressions.c \
 			 configuration_print.c \
 			 configuration_defaults.c \
 			 configuration_parse.c \
+			 configuration_advisor.c \
 			 configuration_assert.c \
 			 elf_reader.c \
 			 symbols.c

@@ -5,6 +5,7 @@
 #include <string.h>
 
 #include "configuration_types.h"
+#include "configuration_advisor.h"
 #include "regular_expressions.h"
 #include "range_expand.h"
 #include "cJSON.h"
@@ -278,6 +279,8 @@ void vftr_parse_config(char *config_string, config_t *config_ptr) {
    vftr_parse_config_mpi(config_json, &(config_ptr->mpi));
    vftr_parse_config_cuda(config_json, &(config_ptr->cuda));
    vftr_parse_config_hardware_scenarios(config_json, &(config_ptr->hardware_scenarios));
+
+   vftr_config_advisor(config_ptr, config_json);
 
    cJSON_Delete(config_json);
 }
