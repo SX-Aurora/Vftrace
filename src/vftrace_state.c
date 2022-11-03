@@ -93,7 +93,175 @@ unsigned long long vftr_sizeof_hooks_t(hooks_t hooks) {
    return size;
 }
 
-// TODO sizeof config 
+unsigned long long vftr_sizeof_config_struct_defaults(char *name) {
+   if (name != NULL) {
+      return strlen(name);
+   }
+}
+
+unsigned long long vftr_sizeof_config_bool_t(config_bool_t cfg_bool) {
+   unsigned long long size = sizeof(config_bool_t);
+   size += vftr_sizeof_config_struct_defaults(cfg_bool.name);
+   return size;
+}
+
+unsigned long long vftr_sizeof_config_int_t(config_int_t cfg_int) {
+   unsigned long long size = sizeof(config_int_t);
+   size += vftr_sizeof_config_struct_defaults(cfg_int.name);
+   return size;
+}
+
+unsigned long long vftr_sizeof_config_float_t(config_float_t cfg_float) {
+   unsigned long long size = sizeof(config_float_t);
+   size += vftr_sizeof_config_struct_defaults(cfg_float.name);
+   return size;
+}
+
+unsigned long long vftr_sizeof_config_string_t(config_string_t cfg_string) {
+   unsigned long long size = sizeof(config_string_t);
+   size += vftr_sizeof_config_struct_defaults(cfg_string.name);
+   if (cfg_string.value != NULL) {
+      size += strlen(cfg_string.value);
+   }
+   return size;
+
+}
+
+unsigned long long vftr_sizeof_config_regex_t(config_regex_t cfg_regex) {
+   unsigned long long size = sizeof(config_regex_t);
+   size += vftr_sizeof_config_struct_defaults(cfg_regex.name);
+   if (cfg_regex.value != NULL) {
+      size += strlen(cfg_regex.value);
+   }
+   if (cfg_regex.regex != NULL) {
+      size += sizeof(regex_t);
+   }
+   return size;
+}
+
+unsigned long long vftr_sizeof_config_sort_table_t(config_sort_table_t cfg_sort_table) {
+   unsigned long long size = sizeof(config_sort_table_t);
+   size += vftr_sizeof_config_struct_defaults(cfg_sort_table.name);
+   size -= sizeof(config_string_t);
+   size += vftr_sizeof_config_string_t(cfg_sort_table.column);
+   size -= sizeof(config_bool_t);
+   size += vftr_sizeof_config_bool_t(cfg_sort_table.ascending);
+   return size;
+}
+
+unsigned long long vftr_sizeof_config_profile_table_t(config_profile_table_t
+                                                      cfg_profile_table) {
+   unsigned long long size = sizeof(config_profile_table_t);
+   size += vftr_sizeof_config_struct_defaults(cfg_profile_table.name);
+   size -= sizeof(config_bool_t);
+   size += vftr_sizeof_config_bool_t(cfg_profile_table.show_table);
+   size -= sizeof(config_bool_t);
+   size += vftr_sizeof_config_bool_t(cfg_profile_table.show_calltime_imbalances);
+   size -= sizeof(config_bool_t);
+   size += vftr_sizeof_config_bool_t(cfg_profile_table.show_callpath);
+   size -= sizeof(config_bool_t);
+   size += vftr_sizeof_config_bool_t(cfg_profile_table.show_overhead);
+   size -= sizeof(config_sort_table_t);
+   size += vftr_sizeof_config_sort_table_t(cfg_profile_table.sort_table);
+   return size;
+}
+
+unsigned long long vftr_sizeof_config_name_grouped_profile_table_t(
+   config_name_grouped_profile_table_t cfg_profile_table) {
+   unsigned long long size = sizeof(config_name_grouped_profile_table_t);
+   size += vftr_sizeof_config_struct_defaults(cfg_profile_table.name);
+   size -= sizeof(config_bool_t);
+   size += vftr_sizeof_config_bool_t(cfg_profile_table.show_table);
+   size -= sizeof(config_int_t);
+   size += vftr_sizeof_config_int_t(cfg_profile_table.max_stack_ids);
+   size -= sizeof(config_sort_table_t);
+   size += vftr_sizeof_config_sort_table_t(cfg_profile_table.sort_table);
+   return size;
+}
+
+unsigned long long vftr_sizeof_config_sampling_t(config_sampling_t cfg_sampling) {
+   unsigned long long size = sizeof(config_sampling_t);
+   size += vftr_sizeof_config_struct_defaults(cfg_sampling.name);
+   size -= sizeof(config_bool_t);
+   size += vftr_sizeof_config_bool_t(cfg_sampling.active);
+   size -= sizeof(config_float_t);
+   size += vftr_sizeof_config_float_t(cfg_sampling.sample_interval);
+   size -= sizeof(config_int_t);
+   size += vftr_sizeof_config_int_t(cfg_sampling.outbuffer_size);
+   size -= sizeof(config_regex_t);
+   size += vftr_sizeof_config_regex_t(cfg_sampling.precise_functions);
+   return size;
+}
+
+unsigned long long vftr_sizeof_config_mpi_t(config_mpi_t cfg_mpi) {
+   unsigned long long size = sizeof(config_mpi_t);
+   size += vftr_sizeof_config_struct_defaults(cfg_mpi.name);
+   size -= sizeof(config_bool_t);
+   size += vftr_sizeof_config_bool_t(cfg_mpi.show_table);
+   size -= sizeof(config_bool_t);
+   size += vftr_sizeof_config_bool_t(cfg_mpi.log_messages);
+   size -= sizeof(config_string_t);
+   size += vftr_sizeof_config_string_t(cfg_mpi.only_for_ranks);
+   size -= sizeof(config_bool_t);
+   size += vftr_sizeof_config_bool_t(cfg_mpi.show_sync_time);
+   size -= sizeof(config_bool_t);
+   size += vftr_sizeof_config_bool_t(cfg_mpi.show_callpath);
+   size -= sizeof(config_sort_table_t);
+   size += vftr_sizeof_config_sort_table_t(cfg_mpi.sort_table);
+   return size;
+}
+
+unsigned long long vftr_sizeof_config_cuda_t(config_cuda_t cfg_cuda) {
+   unsigned long long size = sizeof(config_cuda_t);
+   size += vftr_sizeof_config_struct_defaults(cfg_cuda.name);
+   size -= sizeof(config_bool_t);
+   size += vftr_sizeof_config_bool_t(cfg_cuda.show_table);
+   size -= sizeof(config_sort_table_t);
+   size += vftr_sizeof_config_sort_table_t(cfg_cuda.sort_table);
+   return size;
+}
+
+unsigned long long vftr_sizeof_config_hardware_scenarios_t(config_hardware_scenarios_t
+                                             cfg_hardware_scenarios) {
+   unsigned long long size = sizeof(config_hardware_scenarios_t);
+   size += vftr_sizeof_config_struct_defaults(cfg_hardware_scenarios.name);
+   size -= sizeof(config_bool_t);
+   size += vftr_sizeof_config_bool_t(cfg_hardware_scenarios.active);
+   return size;
+}
+
+unsigned long long vftr_sizeof_config_t(config_t config) {
+   unsigned long long size = sizeof(config_t);
+   size -= sizeof(config_bool_t);
+   size += vftr_sizeof_config_bool_t(config.off);
+   size -= sizeof(config_string_t);
+   vftr_sizeof_config_string_t(config.output_directory);
+   size -= sizeof(config_string_t);
+   vftr_sizeof_config_string_t(config.outfile_basename);
+   size -= sizeof(config_string_t);
+   vftr_sizeof_config_string_t(config.logfile_for_ranks);
+   size -= sizeof(config_bool_t);
+   vftr_sizeof_config_bool_t(config.print_config);
+   size -= sizeof(config_bool_t);
+   vftr_sizeof_config_bool_t(config.strip_module_names);
+   size -= sizeof(config_bool_t);
+   vftr_sizeof_config_bool_t(config.demangle_cxx);
+   size -= sizeof(config_profile_table_t);
+   vftr_sizeof_config_profile_table_t(config.profile_table);
+   size -= sizeof(config_name_grouped_profile_table_t);
+   vftr_sizeof_config_name_grouped_profile_table_t(config.name_grouped_profile_table);
+   size -= sizeof(config_sampling_t);
+   vftr_sizeof_config_sampling_t(config.sampling);
+   size -= sizeof(config_mpi_t);
+   vftr_sizeof_config_mpi_t(config.mpi);
+   size -= sizeof(config_cuda_t);
+   vftr_sizeof_config_cuda_t(config.cuda);
+   size -= sizeof(config_hardware_scenarios_t);
+   vftr_sizeof_config_hardware_scenarios_t(config.hardware_scenarios);
+   if (config.config_file_path != NULL) {
+      size += strlen(config.config_file_path);
+   }
+}
 
 unsigned long long vftr_sizeof_symbol_t(symbol_t symbol) {
    unsigned long long size = sizeof(symbol);
@@ -332,7 +500,8 @@ unsigned long long vftr_sizeof_vftrace_t(vftrace_t vftrace_state) {
    // in order to not double count with the function calls
    size -= sizeof(hooks_t);
    size += vftr_sizeof_hooks_t(vftrace_state.hooks);
-// TODO sizeof config
+   size -= sizeof(config_t);
+   size += vftr_sizeof_config_t(vftrace_state.config);
    size -= sizeof(symboltable_t);
    size += vftr_sizeof_symboltable_t(vftrace_state.symboltable);
    size -= sizeof(process_t);
