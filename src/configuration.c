@@ -9,6 +9,7 @@
 #include "configuration_types.h"
 #include "configuration_defaults.h"
 #include "configuration_parse.h"
+#include "bool_strings.h"
 #include "misc_utils.h"
 
 bool vftr_read_environment_vftr_off() {

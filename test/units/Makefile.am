@@ -67,7 +67,8 @@ check_PROGRAMS += search_uint64 \
 		  search_collated_stacks_name
 check_PROGRAMS += chop_chars \
 		  trim_left_delimiter \
-		  range_expand
+		  range_expand \
+		  levenshtein
 check_PROGRAMS += symbols_1 \
 		  symbols_2 \
 		  symbols_precise \
@@ -216,6 +217,10 @@ trim_left_delimiter_LDFLAGS = $(AM_LDFLAGS)
 range_expand_SOURCES = $(srcdir)/range_expand.c
 range_expand_CFLAGS = $(AM_CFLAGS) -I$(top_srcdir)/src/
 range_expand_LDFLAGS = $(AM_LDFLAGS)
+
+levenshtein_SOURCES = $(srcdir)/levenshtein.c
+levenshtein_CFLAGS = $(AM_CFLAGS) -I$(top_srcdir)/src/
+levenshtein_LDFLAGS = $(AM_LDFLAGS)
 
 symbols_1_SOURCES = $(srcdir)/symbols_1.c \
 		    $(srcdir)/protofuncts.c
@@ -465,7 +470,8 @@ dist_check_SCRIPTS += search_uint64.sh \
 		      search_collated_stacks_name.sh
 dist_check_SCRIPTS += chop_chars.sh \
 		      trim_left_delimiter.sh \
-		      range_expand.sh
+		      range_expand.sh \
+		      levenshtein.sh
 dist_check_SCRIPTS += symbols_1.sh \
 		      symbols_2.sh \
 		      symbols_precise.sh \

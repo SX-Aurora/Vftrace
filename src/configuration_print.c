@@ -1,6 +1,6 @@
 #include <stdio.h>
 
-#include "misc_utils.h"
+#include "bool_strings.h"
 #include "configuration_types.h"
 #include "configuration_defaults.h"
 
