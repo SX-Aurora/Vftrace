@@ -103,7 +103,7 @@ void vftr_write_ranklogfile(vftrace_t vftrace, long long runtime) {
    vftr_write_logfile_global_stack_list(fp, vftrace.process.collated_stacktree);
 
    // print config info
-   vftr_print_config(fp, vftrace.config);
+   vftr_print_config(fp, vftrace.config, true);
 
 #ifdef _CUPTI
    vftr_write_ranklogfile_cbid_names (fp, vftrace.process.stacktree);

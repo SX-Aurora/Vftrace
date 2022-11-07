@@ -156,13 +156,15 @@ void vftr_print_config_hardware_scenarios(FILE *fp, int level,
    fprintf(fp,"}");
 }
 
-void vftr_print_config(FILE *fp, config_t config) {
-   fprintf(fp, "\n");
-   if (config.config_file_path == NULL) {
-      fprintf(fp, "Vftrace default configuration:\n");
-   } else {
-      fprintf(fp, "Vftrace configuration read from \"%s\"\n",
-              config.config_file_path);
+void vftr_print_config(FILE *fp, config_t config, bool show_title) {
+   if (show_title) {
+      fprintf(fp, "\n");
+      if (config.config_file_path == NULL) {
+         fprintf(fp, "Vftrace default configuration:\n");
+      } else {
+         fprintf(fp, "Vftrace configuration read from \"%s\"\n",
+                 config.config_file_path);
+      }
    }
    int level = 0;
    fprintf(fp, "{\n");

@@ -98,7 +98,7 @@ void vftr_write_logfile(vftrace_t vftrace, long long runtime) {
 
    // print config info
    if (vftrace.config.print_config.value) {
-      vftr_print_config(fp, vftrace.config);
+      vftr_print_config(fp, vftrace.config, true);
    }
 
 #ifdef _CUPTI
