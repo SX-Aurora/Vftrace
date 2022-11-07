@@ -20,7 +20,7 @@ The most important ones are:
                            (default: disabled)
    --enable-dynlib-tracing Allow tracing of instrumented libraries
                            that are dynamically loaded at runtime via dlopen.
-                           This option must not be enabled if CUPTI is used.
+                           This option must not be enabled if CUpti CUDA profiling is used.
                            (default: disabled)
    --enable-self-profiling Enables Vftrace to profile itself
                            while it profiles an application.
@@ -29,7 +29,7 @@ The most important ones are:
                            Activating this option will massively slow down
                            your program execution.
                            (default: disabled)
-   --with-cupti=DIR        Specifies the CUPTI installation directory.
+   --with-cupti=DIR        Specifies the CUpti installation directory.
                            Enables Vftrace to trace usage of CUDA
                            to gather information about GPU usage and
                            memory transfer.

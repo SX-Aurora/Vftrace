@@ -4,7 +4,7 @@
 #include "start_tool.h"
 #endif
 
-#ifdef _CUPTI
+#ifdef _CUDA
 #include "cupti_init_final.h"
 #include "cupti_vftr_callbacks.h"
 #endif
@@ -86,7 +86,7 @@ void vftr_initialize(void *func, void *call_site) {
       (void) ompt_start_tool(0, NULL);
 #endif
 
-#ifdef _CUPTI
+#ifdef _CUDA
       (void)vftr_init_cupti(vftr_cupti_event_callback);
 #endif
 

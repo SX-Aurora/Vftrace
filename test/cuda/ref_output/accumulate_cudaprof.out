@@ -1,0 +1,66 @@
+istack: 0
+localID: 0
+name: init
+callprof.t_excl: 0
+callprof.calls: 1
+cudaprof.cbid: 0
+cudaprof.calls: 0
+cudaprof.t_ms: 0.000
+cudaprof.memcpy_in: 0
+cudaprof.memcpy_out: 0
+------------------------------------
+istack: 1
+localID: 1
+name: func0
+callprof.t_excl: 1
+callprof.calls: 1
+cudaprof.cbid: 0
+cudaprof.calls: 0
+cudaprof.t_ms: 0.000
+cudaprof.memcpy_in: 0
+cudaprof.memcpy_out: 0
+------------------------------------
+istack: 2
+localID: 2
+name: cudafunc1
+callprof.t_excl: 4
+callprof.calls: 7
+cudaprof.cbid: 13
+cudaprof.calls: 5
+cudaprof.t_ms: 5000.000
+cudaprof.memcpy_in: 0
+cudaprof.memcpy_out: 0
+------------------------------------
+istack: 3
+localID: 3
+name: cudafunc2
+callprof.t_excl: 0
+callprof.calls: 1
+cudaprof.cbid: 31
+cudaprof.calls: 1
+cudaprof.t_ms: 1000.000
+cudaprof.memcpy_in: 1048576
+cudaprof.memcpy_out: 0
+------------------------------------
+istack: 4
+localID: 4
+name: cudafunc3
+callprof.t_excl: 0
+callprof.calls: 1
+cudaprof.cbid: 31
+cudaprof.calls: 1
+cudaprof.t_ms: 20000.000
+cudaprof.memcpy_in: 0
+cudaprof.memcpy_out: 524288
+------------------------------------
+istack: 5
+localID: 5
+name: cudafunc4
+callprof.t_excl: 0
+callprof.calls: 3
+cudaprof.cbid: 13
+cudaprof.calls: 3
+cudaprof.t_ms: 30000.000
+cudaprof.memcpy_in: 0
+cudaprof.memcpy_out: 0
+------------------------------------

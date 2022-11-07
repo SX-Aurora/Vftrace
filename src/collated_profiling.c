@@ -11,8 +11,8 @@
 #ifdef _OMP
 #include "ompprofiling.h"
 #endif
-#ifdef _CUPTI
-#include "cuptiprofiling.h"
+#ifdef _CUDA
+#include "cudaprofiling.h"
 #endif
 
 collated_profile_t vftr_new_collated_profile() {
@@ -22,8 +22,8 @@ collated_profile_t vftr_new_collated_profile() {
 #ifdef _MPI
    profile.mpiprof = vftr_new_mpiprofiling();
 #endif
-#ifdef _CUPTI
-   profile.cuptiprof = vftr_new_cuptiprofiling();
+#ifdef _CUDA
+   profile.cudaprof = vftr_new_cudaprofiling();
 #endif
    // TODO: Add other profiles
    SELF_PROFILE_END_FUNCTION;
@@ -40,8 +40,8 @@ collated_profile_t vftr_add_collated_profiles(collated_profile_t profA,
 #ifdef _OMP
    profC.ompprof = vftr_add_ompprofiles(profA.ompprof, profB.ompprof);
 #endif
-#ifdef _CUPTI
-   profC.cuptiprof = vftr_add_cuptiprofiles(profA.cuptiprof, profB.cuptiprof);
+#ifdef _CUDA
+   profC.cudaprof = vftr_add_cudaprofiles(profA.cudaprof, profB.cudaprof);
 #endif
    // TODO: Add other profiles
    return profC;
@@ -53,8 +53,8 @@ void vftr_collated_profile_free(collated_profile_t* profile_ptr) {
 #ifdef _MPI
    vftr_mpiprofiling_free(&(profile_ptr->mpiprof));
 #endif
-#ifdef _CUPTI
-   vftr_cuptiprofiling_free(&(profile_ptr->cuptiprof));
+#ifdef _CUDA
+   vftr_cudaprofiling_free(&(profile_ptr->cudaprof));
 #endif
    // TODO: add other profiles
    SELF_PROFILE_END_FUNCTION;

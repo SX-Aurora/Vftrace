@@ -29,7 +29,7 @@ AC_DEFUN([AX_ENABLE_DYNLIB_TRACING], [
    # check if dlopen and cupti are activated at the same time
    # abort configure if it is the case
    AM_COND_IF([ENABLE_DYNLIB_TRACING],
-      [AM_COND_IF([ENABLE_CUPTI],
+      [AM_COND_IF([ENABLE_CUDAPROF],
           [AC_MSG_FAILURE(
              [dynamic library tracing and cupti cannot be active simultaneously!])])])
 ])

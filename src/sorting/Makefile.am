@@ -11,8 +11,8 @@ endif
 if ENABLE_OMP
 libvftr_sorting_la_CFLAGS += -D_OMP -I${srcdir}/../omp/
 endif
-if ENABLE_CUPTI
-libvftr_sorting_la_CFLAGS += -D_CUPTI -I${srcdir}/../cupti
+if ENABLE_CUDAPROF
+libvftr_sorting_la_CFLAGS += -D_CUDA -I${srcdir}/../cuda
 endif
 if ENABLE_ACCPROF
 libvftr_sorting_la_CFLAGS += -D_ACCPROF -I${srcdir}/../accprof

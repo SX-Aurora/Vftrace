@@ -14,8 +14,8 @@
 #include "logfile_stacklist.h"
 #include "search.h"
 #include "range_expand.h"
-#ifdef _CUPTI
-#include "cupti_ranklogfile.h"
+#ifdef _CUDA
+#include "cuda_ranklogfile.h"
 #endif
 #ifdef _ACCPROF
 #include "accprof_ranklogfile.h"
@@ -94,11 +94,11 @@ void vftr_write_ranklogfile(vftrace_t vftrace, long long runtime) {
                                     vftrace.environment);
 #endif
 
-#ifdef _CUPTI
-   if (vftrace.cupti_state.n_devices == 0) {
-      fprintf (fp, "CUPTI: The interface is enabled, but no GPU devices were found.\n");
+#ifdef _CUDA
+   if (vftrace.cuda_state.n_devices == 0) {
+      fprintf (fp, "The CUpti interface is enabled, but no GPU devices were found.\n");
    } else {
-      vftr_write_ranklogfile_cupti_table(fp, vftrace.process.stacktree, vftrace.environment);
+      vftr_write_ranklogfile_cuda_table(fp, vftrace.process.stacktree, vftrace.environment);
    }
 #endif
 
@@ -111,7 +111,7 @@ void vftr_write_ranklogfile(vftrace_t vftrace, long long runtime) {
    // print environment info
    vftr_print_environment(fp, vftrace.environment);
 
-#ifdef _CUPTI
+#ifdef _CUDA
    vftr_write_ranklogfile_cbid_names (fp, vftrace.process.stacktree);
 #endif
 

@@ -23,9 +23,9 @@
 #include "tables.h"
 #include "misc_utils.h"
 
-#ifdef _CUPTI
-#include "cupti_ranklogfile.h"
-#include "cuptiprofiling.h"
+#ifdef _CUDA
+#include "cuda_ranklogfile.h"
+#include "cudaprofiling.h"
 #endif
 
 
@@ -57,8 +57,8 @@ void vftr_write_ranklogfile_summary(FILE *fp, process_t process,
 #ifdef _OMP
    long long *omp_overheads = vftr_get_total_omp_overhead(process.stacktree, nthreads);
 #endif
-#ifdef _CUPTI
-   long long cupti_overhead = vftr_get_total_cupti_overhead (process.stacktree);
+#ifdef _CUDA
+   long long cuda_overhead = vftr_get_total_cuda_overhead (process.stacktree);
 #endif
 
    for (int ithread=0; ithread<nthreads; ithread++) {
@@ -72,8 +72,8 @@ void vftr_write_ranklogfile_summary(FILE *fp, process_t process,
 #endif
       }
    }
-#ifdef _CUPTI
-   total_master_overhead += cupti_overhead;
+#ifdef _CUDA
+   total_master_overhead += cuda_overhead;
 #endif
    double total_master_overhead_sec = total_master_overhead * 1.0e-9;
    double apptime_sec = runtime_sec - total_master_overhead_sec;
@@ -96,8 +96,8 @@ void vftr_write_ranklogfile_summary(FILE *fp, process_t process,
 #ifdef _OMP
       fprintf(fp, "   OMP callbacks:     %8.2lf s\n", omp_overheads[0]*1.0e-9);
 #endif
-#ifdef _CUPTI
-   fprintf (fp, "   CUPTI callbacks:   %8.2lf s\n", cupti_overhead * 1e-9);
+#ifdef _CUDA
+   fprintf (fp, "   CUDA callbacks:   %8.2lf s\n", cuda_overhead * 1e-9);
 #endif
    } else {
       fprintf(fp, "   Function hooks:\n");
@@ -119,14 +119,14 @@ void vftr_write_ranklogfile_summary(FILE *fp, process_t process,
                  ithread, omp_overheads[ithread]*1.0e-9);
       }
 #endif
-#ifdef _CUPTI
-   fprintf (fp, "   CUPTI callbacks :  %8.2lf s\n", cupti_overhead * 1e-9);
+#ifdef _CUDA
+   fprintf (fp, "   CUDA callbacks :  %8.2lf s\n", cuda_overhead * 1e-9);
 #endif
    }
 
-#ifdef _CUPTI
+#ifdef _CUDA
    float total_compute_sec, total_memcpy_sec, total_other_sec;
-   vftr_get_total_cupti_times_for_ranklogfile (process.stacktree,
+   vftr_get_total_cuda_times_for_ranklogfile (process.stacktree,
                                                &total_compute_sec, &total_memcpy_sec, &total_other_sec);
    fprintf (fp, "Total CUDA time:      %8.2f s\n", total_compute_sec + total_memcpy_sec + total_other_sec);
    fprintf (fp, "   Compute:           %8.2f s\n", total_compute_sec);

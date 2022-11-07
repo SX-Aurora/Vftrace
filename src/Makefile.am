@@ -35,9 +35,9 @@ SUBDIRS += omp
 libvftrace_la_LIBADD += omp/libvftr_omp.la
 endif
 
-if ENABLE_CUPTI
-SUBDIRS += cupti
-libvftrace_la_LIBADD += cupti/libvftr_cupti.la
+if ENABLE_CUDAPROF
+SUBDIRS += cuda
+libvftrace_la_LIBADD += cuda/libvftr_cuda.la
 endif
 
 if ENABLE_ACCPROF
@@ -111,7 +111,7 @@ endif
 
 libvftrace_la_CFLAGS += -I${srcdir}/mpi/utils/ \
 			-I${srcdir}/omp/ \
-                        -I${srcdir}/cupti/ \
+                        -I${srcdir}/cuda/ \
 			-I${srcdir}/accprof \
 			-I${srcdir}/sorting
 
@@ -125,8 +125,8 @@ libvftrace_la_CFLAGS += -D_OMP
 libvftrace_la_FCFLAGS += -D_OMP
 endif
 
-if ENABLE_CUPTI
-libvftrace_la_CFLAGS += -D_CUPTI
+if ENABLE_CUDAPROF
+libvftrace_la_CFLAGS += -D_CUDA
 endif
 
 if ENABLE_ACCPROF

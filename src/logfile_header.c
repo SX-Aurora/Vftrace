@@ -23,9 +23,9 @@
 #include "tables.h"
 #include "misc_utils.h"
 
-#ifdef _CUPTI
-#include "cupti_logfile.h"
-#include "cuptiprofiling.h"
+#ifdef _CUDA
+#include "cuda_logfile.h"
+#include "cudaprofiling.h"
 #endif
 
 #ifdef _ACCPROF
@@ -60,9 +60,9 @@ void vftr_write_logfile_summary(FILE *fp, process_t process,
    long long omp_overhead =
       vftr_get_total_collated_omp_overhead(process.collated_stacktree);
 #endif
-#ifdef _CUPTI
-   long long cupti_overhead = 
-      vftr_get_total_collated_cupti_overhead(process.collated_stacktree);
+#ifdef _CUDA
+   long long cuda_overhead =
+      vftr_get_total_collated_cuda_overhead(process.collated_stacktree);
 #endif
 #ifdef _ACCPROF
    long long accprof_overhead = 0;
@@ -75,8 +75,8 @@ void vftr_write_logfile_summary(FILE *fp, process_t process,
 #ifdef _OMP
       total_master_overhead += omp_overhead;
 #endif
-#ifdef _CUPTI
-      total_master_overhead += cupti_overhead;
+#ifdef _CUDA
+      total_master_overhead += cuda_overhead;
 #endif
    
    double total_master_overhead_sec = total_master_overhead * 1.0e-9;
@@ -100,18 +100,18 @@ void vftr_write_logfile_summary(FILE *fp, process_t process,
    fprintf(fp, "   OMP callbacks:     %8.2lf s\n",
            omp_overhead*1.0e-9/process.nprocesses);
 #endif
-#ifdef _CUPTI
-   fprintf (fp, "   CUPTI callbacks:  %8.2lf s\n",
-            cupti_overhead * 1e-9 / process.nprocesses);
+#ifdef _CUDA
+   fprintf (fp, "   CUDA callbacks:  %8.2lf s\n",
+            cuda_overhead * 1e-9 / process.nprocesses);
 #endif
 #ifdef _ACCPROF
    fprintf (fp, "   OPENACC callbacks:  %8.2lf s\n",
             accprof_overhead * 1e-9 / process.nprocesses);
 #endif
 
-#ifdef _CUPTI
+#ifdef _CUDA
    float total_compute_sec_cuda, total_memcpy_sec_cuda, total_other_sec_cuda;
-   vftr_get_total_cupti_times_for_logfile (process.collated_stacktree,
+   vftr_get_total_cuda_times_for_logfile (process.collated_stacktree,
                                            &total_compute_sec_cuda,
                                            &total_memcpy_sec_cuda,
                                            &total_other_sec_cuda);

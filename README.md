@@ -6,7 +6,7 @@ Vftrace (visual ftrace) is a performance profiling library with a focus on appli
 It is compatible with C, C++, and Fortran.
 Vftrace produces an overview of the function calls appearing during an application's runtime and registers performance metrics such as the call number and the time spent in the code parts.
 Multiprocess tracing of MPI-programs as well as the measurement of communication between processes is supported up to the MPI-3.1 standard.
-Calls to CUDA kernels or CUDA library functions are traced using the CUPTI profiling interface.
+Calls to CUDA kernels or CUDA library functions are traced using the CUpti profiling interface.
 
 ## Usage
 

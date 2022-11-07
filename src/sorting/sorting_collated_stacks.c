@@ -156,18 +156,18 @@ void vftr_sort_collated_stacks_for_mpiprof(environment_t environment,
 }
 #endif
 
-#ifdef _CUPTI
-   collated_stack_t **vftr_sort_collated_stacks_for_cupti (environment_t environment, collated_stacktree_t stacktree) {
+#ifdef _CUDA
+   collated_stack_t **vftr_sort_collated_stacks_for_cuda (environment_t environment, collated_stacktree_t stacktree) {
      int nstacks = stacktree.nstacks;
 
-     char *env_val = environment.sort_cupti_table.value.string_val;
+     char *env_val = environment.sort_cuda_table.value.string_val;
      int *perm = NULL;
 
      if (!strcmp(env_val, "TIME")) {
         float *stackvals = (float*)malloc(nstacks * sizeof(float));
         for (int istack = 0; istack < nstacks; istack++) {
            collated_stack_t *stack = stacktree.stacks + istack;
-           stackvals[istack] = stack->profile.cuptiprof.t_ms;
+           stackvals[istack] = stack->profile.cudaprof.t_ms;
         }
         vftr_sort_perm_float(nstacks, stackvals, &perm, false);
         free(stackvals);
@@ -176,7 +176,7 @@ void vftr_sort_collated_stacks_for_mpiprof(environment_t environment,
         for (int istack = 0; istack < nstacks; istack++) {
            collated_stack_t *stack = stacktree.stacks + istack;
            collated_profile_t prof = stack->profile;
-           stackvals[istack] = (long long)(prof.cuptiprof.memcpy_bytes[0] + prof.cuptiprof.memcpy_bytes[1]);
+           stackvals[istack] = (long long)(prof.cudaprof.memcpy_bytes[0] + prof.cudaprof.memcpy_bytes[1]);
         }
         vftr_sort_perm_longlong(nstacks, stackvals, &perm, false);
         free(stackvals);
@@ -184,7 +184,7 @@ void vftr_sort_collated_stacks_for_mpiprof(environment_t environment,
         int *stackvals = (int*)malloc(nstacks * sizeof(int));
         for (int istack = 0; istack < nstacks; istack++) {
            collated_stack_t *stack = stacktree.stacks + istack;
-           stackvals[istack] = stack->profile.cuptiprof.cbid;
+           stackvals[istack] = stack->profile.cudaprof.cbid;
         }
         // CBIDs are sorted in ascending order
         vftr_sort_perm_int(nstacks, stackvals, &perm, true);
@@ -193,7 +193,7 @@ void vftr_sort_collated_stacks_for_mpiprof(environment_t environment,
         int *stackvals = (int*)malloc(nstacks * sizeof(int));
         for (int istack = 0; istack < nstacks; istack++) {
            collated_stack_t *stack = stacktree.stacks + istack;
-           stackvals[istack] = stack->profile.cuptiprof.n_calls;
+           stackvals[istack] = stack->profile.cudaprof.n_calls;
         }
         vftr_sort_perm_int(nstacks, stackvals, &perm, false);
         free(stackvals);

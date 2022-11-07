@@ -62,9 +62,9 @@ void vftr_sort_stacks_for_mpiprof(environment_t environment,
                                   stack_t **selected_stacks);
 #endif
 
-#ifdef _CUPTI
-stack_t **vftr_sort_stacks_for_cupti (environment_t environment, stacktree_t stacktree);
-collated_stack_t **vftr_sort_collated_stacks_for_cupti (environment_t environment, collated_stacktree_t stacktree);
+#ifdef _CUDA
+stack_t **vftr_sort_stacks_for_cuda (environment_t environment, stacktree_t stacktree);
+collated_stack_t **vftr_sort_collated_stacks_for_cuda (environment_t environment, collated_stacktree_t stacktree);
 #endif
 
 // sort the collated stacks based on a set environment variable

@@ -55,8 +55,8 @@ vftrace_t vftrace = {
       .runtime_version = NULL,
    },
 #endif
-#ifdef _CUPTI
-   .cupti_state = {
+#ifdef _CUDA
+   .cuda_state = {
       .n_devices = 0,
    },
 #endif
@@ -157,9 +157,9 @@ unsigned long long vftr_sizeof_mpiprofile_t(mpiprofile_t mpiprof) {
 }
 #endif
 
-#ifdef _CUPTI
-unsigned long long vftr_sizeof_cuptiprofile_t(cuptiprofile_t cuptiprof) {
-   return sizeof(cuptiprofile_t);
+#ifdef _CUDA
+unsigned long long vftr_sizeof_cudaprofile_t(cudaprofile_t cudaprof) {
+   return sizeof(cudaprofile_t);
 }
 #endif
 
@@ -171,9 +171,9 @@ unsigned long long vftr_sizeof_profile_t(profile_t profile) {
    size -= sizeof(mpiprofile_t);
    size += vftr_sizeof_mpiprofile_t(profile.mpiprof);
 #endif
-#ifdef _CUPTI
-   size -= sizeof(cuptiprofile_t);
-   size += vftr_sizeof_cuptiprofile_t(profile.cuptiprof);
+#ifdef _CUDA
+   size -= sizeof(cudaprofile_t);
+   size += vftr_sizeof_cudaprofile_t(profile.cudaprof);
 #endif
    return size;
 }
@@ -186,9 +186,9 @@ unsigned long long vftr_sizeof_collated_profile_t(collated_profile_t profile) {
    size -= sizeof(mpiprofile_t);
    size += vftr_sizeof_mpiprofile_t(profile.mpiprof);
 #endif
-#ifdef _CUPTI
-   size -= sizeof(cuptiprofile_t);
-   size += vftr_sizeof_cuptiprofile_t(profile.cuptiprof);
+#ifdef _CUDA
+   size -= sizeof(cudaprofile_t);
+   size += vftr_sizeof_cudaprofile_t(profile.cudaprof);
 #endif
    return size;
 }
@@ -344,9 +344,9 @@ unsigned long long vftr_sizeof_mpi_state_t(mpi_state_t mpi_state) {
 }
 #endif
 
-#ifdef _CUPTI
-unsigned long long vftr_sizeof_cupti_state_t(cupti_state_t cupti_state) {
-   return sizeof(cupti_state_t);
+#ifdef _CUDA
+unsigned long long vftr_sizeof_cuda_state_t(cuda_state_t cuda_state) {
+   return sizeof(cuda_state_t);
 }
 #endif
 
@@ -382,9 +382,9 @@ unsigned long long vftr_sizeof_vftrace_t(vftrace_t vftrace_state) {
    size -= sizeof(mpi_state_t);
    size += vftr_sizeof_mpi_state_t(vftrace_state.mpi_state);
 #endif
-#ifdef _CUPTI
-   size -= sizeof(cupti_state_t);
-   size += vftr_sizeof_cupti_state_t(vftrace_state.cupti_state);
+#ifdef _CUDA
+   size -= sizeof(cuda_state_t);
+   size += vftr_sizeof_cuda_state_t(vftrace_state.cuda_state);
 #endif
    size -= sizeof(vftr_size_t);
    size += vftr_sizeof_vftr_size_t(vftrace_state.size);

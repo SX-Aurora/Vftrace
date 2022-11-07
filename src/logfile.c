@@ -15,8 +15,8 @@
 #include "collate_stacks.h"
 #include "search.h"
 #include "range_expand.h"
-#ifdef _CUPTI
-#include "cupti_logfile.h"
+#ifdef _CUDA
+#include "cuda_logfile.h"
 #endif
 #ifdef _ACCPROF
 #include "accprof_logfile.h"
@@ -82,11 +82,11 @@ void vftr_write_logfile(vftrace_t vftrace, long long runtime) {
                                 vftrace.environment);
 #endif
 
-#ifdef _CUPTI
-   if (vftrace.cupti_state.n_devices == 0) {
-      fprintf (fp, "CUPTI: The interface is enabled, but no GPU devices were found.\n");
+#ifdef _CUDA
+   if (vftrace.cuda_state.n_devices == 0) {
+      fprintf (fp, "The CUpti interface is enabled, but no GPU devices were found.\n");
    } else {
-      vftr_write_logfile_cupti_table(fp, vftrace.process.collated_stacktree, vftrace.environment);
+      vftr_write_logfile_cuda_table(fp, vftrace.process.collated_stacktree, vftrace.environment);
    }
 #endif
 
@@ -99,7 +99,7 @@ void vftr_write_logfile(vftrace_t vftrace, long long runtime) {
    // print environment info
    vftr_print_environment(fp, vftrace.environment);
 
-#ifdef _CUPTI
+#ifdef _CUDA
    vftr_write_logfile_cbid_names (fp, vftrace.process.collated_stacktree);
 #endif
 
