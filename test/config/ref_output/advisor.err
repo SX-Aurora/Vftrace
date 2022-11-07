@@ -1,0 +1,46 @@
+Warning: "offf" is not a valid vftrace option.
+         Did you mean "off"?
+Warning: "outpot_directory" is not a valid vftrace option.
+         Did you mean "output_directory"?
+Warning: "outfile_basisname" is not a valid vftrace option.
+         Did you mean "outfile_basename"?
+Warning: "logfile_or_ranks" is not a valid vftrace option.
+         Did you mean "logfile_for_ranks"?
+Warning: "print_comfig" is not a valid vftrace option.
+         Did you mean "print_config"?
+Warning: "strip_mule_names" is not a valid vftrace option.
+         Did you mean "strip_module_names"?
+Warning: "demangle_c++" is not a valid vftrace option.
+         Did you mean "demangle_cxx"?
+Warning: "profiling_table" is not a valid vftrace option.
+         Did you mean "profile_table"?
+Warning: "hardware_scnarios" is not a valid vftrace option.
+         Did you mean "hardware_scenarios"?
+Warning: "shov_table" is not a valid vftrace option.
+         Did you mean "show_table"?
+Warning: "max_stack_id" is not a valid vftrace option.
+         Did you mean "max_stack_ids"?
+Warning: "snort_table" is not a valid vftrace option.
+         Did you mean "sort_table"?
+Warning: "agtive" is not a valid vftrace option.
+         Did you mean "active"?
+Warning: "sampling_interval" is not a valid vftrace option.
+         Did you mean "sample_interval"?
+Warning: "outbuwer_size" is not a valid vftrace option.
+         Did you mean "outbuffer_size"?
+Warning: "precice_functions" is not a valid vftrace option.
+         Did you mean "precise_functions"?
+Warning: "show_tabe" is not a valid vftrace option.
+         Did you mean "show_table"?
+Warning: "log_massages" is not a valid vftrace option.
+         Did you mean "log_messages"?
+Warning: "only_for_raks" is not a valid vftrace option.
+         Did you mean "only_for_ranks"?
+Warning: "show_sync_times" is not a valid vftrace option.
+         Did you mean "show_sync_time"?
+Warning: "show_callpatsh" is not a valid vftrace option.
+         Did you mean "show_callpath"?
+Warning: "colum" is not a valid vftrace option.
+         Did you mean "column"?
+Warning: "asceding" is not a valid vftrace option.
+         Did you mean "ascending"?
