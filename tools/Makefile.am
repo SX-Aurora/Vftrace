@@ -2,6 +2,7 @@ SUBDIRS =
 if SELF_PROFILING
 SUBDIRS += self_profiling_analyzer
 endif
+SUBDIRS += config_tools
 
 bin_PROGRAMS = vftrace_vfd_dump \
 	       vftrace_diff_profiles
