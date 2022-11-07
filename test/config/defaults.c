@@ -20,8 +20,7 @@ int main(int argc, char **argv) {
 #endif
    config_t config;
    config = vftr_read_config();
-   // TODO vftr_config_assert(stderr, config);
-   vftr_print_config(stdout, config);
+   vftr_print_config(stdout, config, true);
    vftr_config_free(&config);
 
 #ifdef _MPI
