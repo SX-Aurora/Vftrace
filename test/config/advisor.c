@@ -1,8 +1,10 @@
 #include <stdlib.h>
+#include <stdio.h>
 
 #include "self_profile.h"
 #include "configuration_types.h"
 #include "configuration.h"
+#include "configuration_assert.h"
 
 #ifdef _MPI
 #include <mpi.h>
@@ -19,8 +21,7 @@ int main(int argc, char **argv) {
 #endif
    config_t config;
    config = vftr_read_config();
-   // TODO vftr_config_assert(stderr, config);
-   // TODO vftr_check_env_names(stdout, &config);
+   vftr_config_assert(stderr, config);
    vftr_config_free(&config);
 
 #ifdef _MPI

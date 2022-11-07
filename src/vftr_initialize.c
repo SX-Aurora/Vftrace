@@ -49,7 +49,7 @@ void vftr_initialize(void *func, void *call_site) {
       vftrace.timestrings.start_time = vftr_get_date_str();
 
       // check configuration consistency
-      vftr_config_assert(vftrace.config);
+      vftr_config_assert(stderr, vftrace.config);
 
       // read the symbol table of the executable and its libraries
       vftrace.symboltable = vftr_read_symbols();
