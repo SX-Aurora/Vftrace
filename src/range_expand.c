@@ -31,6 +31,7 @@ static int vftr_char_count_in_string(char c, char *string) {
 
 static bool vftr_is_valid_range(char *range) {
    bool valid = true;
+   if (range[0] == '-') {return false;}
    valid = valid && isdigit(*range);
    while (isdigit(*range)) {
       range++;
