@@ -87,6 +87,7 @@ libvftrace_la_SOURCES += regular_expressions.c \
 			 symbols.c
 libvftrace_la_SOURCES += search.c \
 			 misc_utils.c \
+			 levenshtein.c \
 			 bool_strings.c \
 			 range_expand.c \
 			 tables.c \
