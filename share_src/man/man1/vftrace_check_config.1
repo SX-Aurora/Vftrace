@@ -8,10 +8,10 @@ vftrace_check_config
 .\" Add any additional description here
 .PP
 \fBvftrace_check_config\fR takes the vftrace config file in JSON format
-and check it for validity. It will parse the config, like vftrace does during runtime.
-Every given path will be checked for existance and permissions.
-The Ranges will be expanded and checked for validity.
+and checks it for compatibility with vftrace. It will parse the config, like vftrace does during runtime.
+Every given path will be checked for existence and permissions.
+The ranges will be expanded and checked for validity.
 All regular expressions will be compiled.
 At last vftrace_check_config will go through every element in your config file
-and check if it corresponds to a valid entry. Thus it can spot typos and will suggest
-the corrections.
+and check if it corresponds to a valid vftrace option. This way it can spot typos and will suggest
+corrections.
