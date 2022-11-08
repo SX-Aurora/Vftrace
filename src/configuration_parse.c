@@ -254,12 +254,66 @@ void vftr_parse_config_hardware_scenarios(cJSON *parent_object,
    }
 }
 
+int vftr_parse_config_check_json_format(char *config_string) {
+   // if parsing of the JSON-file fails this will return 
+   // a pointer to the faulty position in the string
+   const char *errorstr = cJSON_GetErrorPtr();
+   if (errorstr != NULL) {
+      // Determine line in which the the failure occoured
+      int linenr = 1;
+      char *tmpstr = config_string;
+      while (tmpstr < errorstr) {
+         if (*tmpstr == '\n') {
+            linenr++;
+         }
+         tmpstr++;
+      }
+      fprintf(stderr, "Could not parse vftrace config file.\n"
+              "Parsing failed in line %d\n", linenr);
+
+      const int max_prev_lines = 3;
+      const int max_foll_lines = 3;
+      int prev_lines = 0;
+      tmpstr = (char*) errorstr;
+      while (prev_lines <= max_prev_lines && tmpstr > config_string) {
+         if (*tmpstr == '\n') {
+            prev_lines++;
+         }
+         tmpstr--;
+      }
+      if (tmpstr > config_string) {
+         tmpstr++;
+         fprintf(stderr, "...");
+      }
+      while (tmpstr < errorstr) {
+         fputc(*tmpstr, stderr);
+         tmpstr++;
+      }
+      fprintf(stderr, "%16s<= Parsing error occoured here\n", "");
+      int foll_lines = 0;
+      while (foll_lines < max_foll_lines && *tmpstr != '\0') {
+         if (*tmpstr == '\n') {
+            foll_lines++;
+         }
+         fputc(*tmpstr, stderr);
+         tmpstr++;
+      }
+      fputc('\n', stderr);
+      if (*tmpstr != '\0') {
+         fprintf(stderr, "...\n");
+      }
+      return 1;
+   }
+
+   return 0;
+}
+
 void vftr_parse_config(char *config_string, config_t *config_ptr) {
    cJSON *config_json = cJSON_Parse(config_string);
-   if (config_json == NULL) {
-      const char *errorstr = cJSON_GetErrorPtr();
-      fprintf(stderr, "%s\n", errorstr);
+   if (vftr_parse_config_check_json_format(config_string)) {
+      abort();
    }
+
    // Set the cJSON internal name for the overarching struct,
    // to aid with error messages in the tree.
    config_json->string = strdup("vftrace_config");
