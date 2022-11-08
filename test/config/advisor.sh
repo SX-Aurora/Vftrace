@@ -3,10 +3,9 @@ set -x
 test_name=advisor
 configfile=${test_name}.json
 errfile=${test_name}.err
-ref_errfile=${srcdir}/ref_output/${outfile}
+ref_errfile=${srcdir}/ref_output/${errfile}
 
-rm -f ${outfile}
-rm -f ${errfile} ${errfile}_sorted
+rm -f ${errfile}
 
 cat << EOF > ${configfile}
 {
