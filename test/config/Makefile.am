@@ -61,7 +61,8 @@ check_PROGRAMS =
 dist_check_SCRIPTS =
 
 check_PROGRAMS += defaults \
-		  advisor
+		  advisor \
+		  format_check
 
 defaults_SOURCES = $(srcdir)/defaults.c
 defaults_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
@@ -71,8 +72,13 @@ advisor_SOURCES = $(srcdir)/advisor.c
 advisor_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
 advisor_LDFLAGS = $(AM_LDFLAGS)
 
+format_check_SOURCES = $(srcdir)/little_tasks.c
+format_check_CFLAGS = $(AM_CFLAGS) -finstrument-functions
+format_check_LDFLAGS = $(AM_LDFLAGS)
+
 dist_check_SCRIPTS += defaults.sh \
-		      advisor.sh
+		      advisor.sh \
+		      format_check.sh
 
 if !SELF_PROFILING
 check_PROGRAMS += off
