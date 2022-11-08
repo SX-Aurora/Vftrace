@@ -52,6 +52,17 @@ do
 done
 
 if [ "x${HAS_MPI}" == "xYES" ]; then
+   echo "{\"logfile_for_ranks\": \"0\"}" > ${configfile}
+   export VFTR_CONFIG=${configfile}
+   rm_outfiles $output_file "" $test_name
+   run_binary
+   diff ${output_file} ${ref_file} || exit 1
+   check_file_exists $(get_logfile_name $test_name "all")
+   check_file_exists $(get_logfile_name $test_name 0)
+   check_file_notexists $(get_logfile_name $test_name 1)
+   check_file_notexists $(get_logfile_name $test_name 2)
+   check_file_notexists $(get_logfile_name $test_name 3)
+
    echo "{\"logfile_for_ranks\": \"1,3\"}" > ${configfile}
    export VFTR_CONFIG=${configfile}
    rm_outfiles $output_file "" $test_name
