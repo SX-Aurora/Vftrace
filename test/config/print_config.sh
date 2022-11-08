@@ -9,6 +9,11 @@ configfile=${test_name}.json
 ref_file=${srcdir}/ref_output/little_tasks.out
 logfile=${test_name}_all.log
 
+if [ "${IS_SHARED_BUILD}" == "YES" ]; then
+   logfile=lt-$logfile
+   vfdfile=lt-$vfdfile
+fi
+
 function run_binary () {
    rm_outfiles ${output_file} "" ${test_name}
    if [ "x${HAS_MPI}" == "xYES" ]; then

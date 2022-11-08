@@ -215,7 +215,7 @@ Vftrace uses the following open-source third party tools:
   - Adapted Jenkins (https://en.wikipedia.org/wiki/Jenkins_hash_function) and
     Murmur3 (https://en.wikipedia.org/wiki/MurmurHash) hash functions originally published under the creative common license (https://creativecommons.org/licenses/by-sa/3.0/).
     The hashes are used to identify individual stacks among different MPI-ranks.
-  - cJSON: json parser from Dave Gabmle (https://github.com/DaveGamble/cJSON).
+  - cJSON: json parser from Dave Gamble (https://github.com/DaveGamble/cJSON).
 
 ## Licensing
 
