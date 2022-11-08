@@ -65,15 +65,16 @@ check_PROGRAMS += defaults \
 		  format_check
 
 defaults_SOURCES = $(srcdir)/defaults.c
-defaults_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
+defaults_CFLAGS = $(AM_CFLAGS) -I$(top_srcdir)/src
 defaults_LDFLAGS = $(AM_LDFLAGS)
 
 advisor_SOURCES = $(srcdir)/advisor.c
-advisor_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
+advisor_CFLAGS = $(AM_CFLAGS) -I$(top_srcdir)/src
 advisor_LDFLAGS = $(AM_LDFLAGS)
 
-format_check_SOURCES = $(srcdir)/little_tasks.c
-format_check_CFLAGS = $(AM_CFLAGS) -finstrument-functions
+format_check_SOURCES = $(srcdir)/format_check.c
+format_check_CFLAGS = $(AM_CFLAGS) -I$(top_srcdir)/src \
+		      -I$(top_srcdir)/external/cJSON/
 format_check_LDFLAGS = $(AM_LDFLAGS)
 
 dist_check_SCRIPTS += defaults.sh \

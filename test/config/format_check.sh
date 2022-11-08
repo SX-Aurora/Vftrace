@@ -30,11 +30,10 @@ cat << EOF > ${configfile}
 EOF
 export VFTR_CONFIG=${configfile}
 
-echo "THIS CODE ABORTION IS INTENDED!"
 if [ "x${HAS_MPI}" == "xYES" ]; then
-   ${MPI_EXEC} ${MPI_OPTS} ${NP} 1 ./${test_name} 2> ${errfile} && exit 1
+   ${MPI_EXEC} ${MPI_OPTS} ${NP} 1 ./${test_name} 2> ${errfile} || exit 1
 else
-   ./${test_name} 2> ${errfile} && exit 1
+   ./${test_name} 2> ${errfile} || exit 1
 fi
 echo "" >> ${errfile}
 
@@ -60,11 +59,10 @@ cat << EOF > ${configfile}
 }
 EOF
 
-echo "THIS CODE ABORTION IS INTENDED!"
 if [ "x${HAS_MPI}" == "xYES" ]; then
-   ${MPI_EXEC} ${MPI_OPTS} ${NP} 1 ./${test_name} 2>> ${errfile} && exit 1
+   ${MPI_EXEC} ${MPI_OPTS} ${NP} 1 ./${test_name} 2>> ${errfile} || exit 1
 else
-   ./${test_name} 2>> ${errfile} && exit 1
+   ./${test_name} 2>> ${errfile} || exit 1
 fi
 echo "" >> ${errfile}
 
@@ -90,11 +88,10 @@ cat << EOF > ${configfile}
 }
 EOF
 
-echo "THIS CODE ABORTION IS INTENDED!"
 if [ "x${HAS_MPI}" == "xYES" ]; then
-   ${MPI_EXEC} ${MPI_OPTS} ${NP} 1 ./${test_name} 2>> ${errfile} && exit 1
+   ${MPI_EXEC} ${MPI_OPTS} ${NP} 1 ./${test_name} 2>> ${errfile} || exit 1
 else
-   ./${test_name} 2>> ${errfile} && exit 1
+   ./${test_name} 2>> ${errfile} || exit 1
 fi
 
 diff ${errfile} ${ref_errfile} || exit 1
