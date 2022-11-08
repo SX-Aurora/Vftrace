@@ -38,7 +38,7 @@ export VFTR_CONFIG="${configfile}"
 run_binary
 check_file_exists $logfile
 diff ${output_file} ${ref_file} || exit 1
-count=$(grep "Vftrace default configuration:" ${logfile} | wc -l)
+count=$(grep "Vftrace configuration read from" ${logfile} | wc -l)
 if [[ "${count}" -ne "0" ]] ; then
    echo "Expected no printed configuration"
    exit 1
@@ -49,7 +49,7 @@ export VFTR_CONFIG="${configfile}"
 run_binary
 diff ${output_file} ${ref_file} || exit 1
 check_file_exists $logfile
-count=$(grep "Vftrace default configuration:" ${logfile} | wc -l)
+count=$(grep "Vftrace configuration read from" ${logfile} | wc -l)
 if [[ "${count}" -ne "1" ]] ; then
    echo "Expected printed configuration"
    exit 1
