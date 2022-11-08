@@ -4,8 +4,9 @@
 #include <stdio.h>
 #include <stdbool.h>
 
+#include <regex.h>
+
 #include "symbol_types.h"
-#include "environment_types.h"
 
 void vftr_merge_symbol_tables(symboltable_t *symtabA_ptr,
                               symboltable_t symtabB);

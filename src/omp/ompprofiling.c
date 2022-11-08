@@ -6,7 +6,6 @@
 #include "self_profile.h"
 #include "vftrace_state.h"
 #include "process_types.h"
-#include "environment_types.h"
 #include "ompprofiling_types.h"
 
 #include "range_expand.h"

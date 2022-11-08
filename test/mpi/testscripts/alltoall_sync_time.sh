@@ -1,13 +1,12 @@
 #!/bin/bash
 
 vftr_binary=alltoall_sync_time
+configfile=${vftr_binary}.json
 nprocs=4
 ntrials=1
 
-export VFTR_SAMPLING="No"
-export VFTR_MPI_LOG="No"
-export VFTR_MPI_SHOW_SYNC_TIME="Yes"
-export VFTR_LOGFILE_FOR_RANKS="all"
+echo "{\"logfile_for_ranks\": \"all\", \"mpi\": {\"active\": true, \"show_sync_time\": true}}" > ${configfile}
+export VFTR_CONFIG=${configfile}
 
 for itrial in $(seq 1 1 ${ntrials});
 do

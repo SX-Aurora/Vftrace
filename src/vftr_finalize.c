@@ -3,7 +3,7 @@
 #include "cyghooks.h"
 #include "vftr_hooks.h"
 #include "vftrace_state.h"
-#include "environment.h"
+#include "configuration.h"
 #include "symbols.h"
 #include "processes.h"
 #include "stacks.h"
@@ -61,7 +61,7 @@ void vftr_finalize() {
    // finish sampling
    // add the sampling of leaving init to the vfd-file
    vftr_sample_init_function_exit(&(vftrace.sampling), runtime);
-   vftr_finalize_sampling(&(vftrace.sampling), vftrace.environment,
+   vftr_finalize_sampling(&(vftrace.sampling), vftrace.config,
                           vftrace.process, vftrace.timestrings,
                           (double) (runtime * 1.0e-9));
 
@@ -75,8 +75,8 @@ void vftr_finalize() {
    // free the symbol table
    vftr_symboltable_free(&vftrace.symboltable);
 
-   // free the environment to avoid memory leaks
-   vftr_environment_free(&(vftrace.environment));
+   // free the configuration to avoid memory leaks
+   vftr_config_free(&(vftrace.config));
 
    // free the timer strings
    vftr_timestrings_free(&(vftrace.timestrings));

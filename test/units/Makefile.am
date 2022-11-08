@@ -67,7 +67,8 @@ check_PROGRAMS += search_uint64 \
 		  search_collated_stacks_name
 check_PROGRAMS += chop_chars \
 		  trim_left_delimiter \
-		  range_expand
+		  range_expand \
+		  levenshtein
 check_PROGRAMS += symbols_1 \
 		  symbols_2 \
 		  symbols_precise \
@@ -121,7 +122,8 @@ endif
 check_PROGRAMS += sorting_stacks \
 		  sorting_collated_stacks
 check_PROGRAMS += print_prof_table \
-		  print_name_grouped_prof_table
+		  print_name_grouped_prof_table \
+		  print_name_grouped_prof_table_max_stack_ids
 if ENABLE_MPI
 check_PROGRAMS += print_mpi_table \
 		  sorting_mpi_table
@@ -215,6 +217,10 @@ trim_left_delimiter_LDFLAGS = $(AM_LDFLAGS)
 range_expand_SOURCES = $(srcdir)/range_expand.c
 range_expand_CFLAGS = $(AM_CFLAGS) -I$(top_srcdir)/src/
 range_expand_LDFLAGS = $(AM_LDFLAGS)
+
+levenshtein_SOURCES = $(srcdir)/levenshtein.c
+levenshtein_CFLAGS = $(AM_CFLAGS) -I$(top_srcdir)/src/
+levenshtein_LDFLAGS = $(AM_LDFLAGS)
 
 symbols_1_SOURCES = $(srcdir)/symbols_1.c \
 		    $(srcdir)/protofuncts.c
@@ -422,6 +428,13 @@ print_name_grouped_prof_table_SOURCES = $(srcdir)/print_name_grouped_prof_table.
 print_name_grouped_prof_table_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
 print_name_grouped_prof_table_LDFLAGS = $(AM_LDFLAGS)
 
+print_name_grouped_prof_table_max_stack_ids_SOURCES = \
+      $(srcdir)/print_name_grouped_prof_table.c \
+      max_stack_ids_  	$(srcdir)/dummysymboltable.c \
+      max_stack_ids_  	$(srcdir)/dummy_stacktree.c
+print_name_grouped_prof_table_max_stack_ids_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
+print_name_grouped_prof_table_max_stack_ids_LDFLAGS = $(AM_LDFLAGS)
+
 print_mpi_table_SOURCES = $(srcdir)/print_mpi_table.c \
 			  $(srcdir)/dummysymboltable.c
 print_mpi_table_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
@@ -457,7 +470,8 @@ dist_check_SCRIPTS += search_uint64.sh \
 		      search_collated_stacks_name.sh
 dist_check_SCRIPTS += chop_chars.sh \
 		      trim_left_delimiter.sh \
-		      range_expand.sh
+		      range_expand.sh \
+		      levenshtein.sh
 dist_check_SCRIPTS += symbols_1.sh \
 		      symbols_2.sh \
 		      symbols_precise.sh \
@@ -518,7 +532,8 @@ dist_check_SCRIPTS += sorting_collated_stacks_none.sh \
 		      sorting_collated_stacks_texcl.sh \
 		      sorting_collated_stacks_tincl.sh
 dist_check_SCRIPTS += print_prof_table.sh \
-		      print_name_grouped_prof_table.sh
+		      print_name_grouped_prof_table.sh \
+		      print_name_grouped_prof_table_max_stack_ids.sh
 if ENABLE_MPI
 dist_check_SCRIPTS += print_mpi_table.sh
 dist_check_SCRIPTS += sorting_mpi_table_none.sh \
@@ -552,4 +567,5 @@ XFAIL_TESTS = scenario_3.sh
 #endif
 #endif
 
-CLEANFILES = vftrace_self_profile-*
+CLEANFILES = vftrace_self_profile-* \
+	     *.json

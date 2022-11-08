@@ -5,7 +5,7 @@
 #include "self_profile.h"
 #include "timer_types.h"
 #include "table_types.h"
-#include "environment_types.h"
+#include "configuration_types.h"
 #include "stack_types.h"
 #include "vftrace_state.h"
 #include "mpiprofiling_types.h"
@@ -13,7 +13,6 @@
 #include "filenames.h"
 #include "license.h"
 #include "config.h"
-#include "environment.h"
 #include "stacks.h"
 #include "collate_stacks.h"
 #include "tables.h"
@@ -225,17 +224,17 @@ stack_t **vftr_ranklogfile_mpi_table_get_relevant_stacks(int nrows,
 }
 
 void vftr_write_ranklogfile_mpi_table(FILE *fp, stacktree_t stacktree,
-                                  environment_t environment) {
+                                      config_t config) {
    SELF_PROFILE_START_FUNCTION;
    int nrows = vftr_ranklogfile_mpi_table_nrows(stacktree);
    stack_t **selected_stacks =
       vftr_ranklogfile_mpi_table_get_relevant_stacks(nrows, stacktree);
-   vftr_sort_stacks_for_mpiprof(environment, nrows, selected_stacks);
+   vftr_sort_stacks_for_mpiprof(config, nrows, selected_stacks);
 
    fprintf(fp, "\nCommunication profile");
-   if (environment.ranks_in_mpi_profile.set) {
+   if (config.mpi.only_for_ranks.set) {
       fprintf(fp, " for ranks: %s\n",
-              environment.ranks_in_mpi_profile.value.string_val);
+              config.mpi.only_for_ranks.value);
    } else {
       fprintf(fp, "\n");
    }
@@ -271,7 +270,7 @@ void vftr_write_ranklogfile_mpi_table(FILE *fp, stacktree_t stacktree,
    vftr_table_add_column(&table, col_int, "STID", "%d", 'c', 'r', (void*) stack_IDs);
 
    char **path_list=NULL;
-   if (environment.callpath_in_mpi_profile.value.bool_val) {
+   if (config.mpi.show_callpath.value) {
       path_list = vftr_ranklogfile_mpi_table_callpath_list(nrows,
                                                        selected_stacks,
                                                        stacktree);
@@ -290,7 +289,7 @@ void vftr_write_ranklogfile_mpi_table(FILE *fp, stacktree_t stacktree,
    free(function_names);
    free(caller_names);
    free(stack_IDs);
-   if (environment.callpath_in_profile.value.bool_val) {
+   if (config.mpi.show_callpath.value) {
       for (int irow=0; irow<nrows; irow++) {
          free(path_list[irow]);
       }

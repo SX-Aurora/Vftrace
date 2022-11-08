@@ -2,8 +2,8 @@
 #include <stdio.h>
 
 #include "self_profile.h"
-#include "environment_types.h"
-#include "environment.h"
+#include "configuration_types.h"
+#include "configuration.h"
 #include "symbol_types.h"
 #include "symbols.h"
 #include "stack_types.h"
@@ -34,8 +34,8 @@ int main(int argc, char **argv) {
    (void) argv;
 #endif
 
-   environment_t environment;
-   environment = vftr_read_environment();
+   config_t config;
+   config = vftr_read_config();
 
    stacktree_t stacktree = vftr_init_dummy_stacktree (20, 0);
 
@@ -70,7 +70,7 @@ int main(int argc, char **argv) {
    vftr_collate_profiles(&collated_stacktree, &stacktree);
 
    collated_stack_t **stackptrs =
-      vftr_sort_collated_stacks_for_prof(environment, collated_stacktree);
+      vftr_sort_collated_stacks_for_prof(config, collated_stacktree);
 
    for (int istack=0; istack<collated_stacktree.nstacks; istack++) {
       collated_stack_t *stack = stackptrs[istack];
@@ -84,7 +84,7 @@ int main(int argc, char **argv) {
 
    vftr_stacktree_free(&stacktree);
    vftr_collated_stacktree_free(&collated_stacktree);
-   vftr_environment_free(&environment);
+   vftr_config_free(&config);
 #ifdef _MPI
    PMPI_Finalize();
 #endif

@@ -5,9 +5,9 @@
 #include <stdio.h>
 
 #include "stack_types.h"
-#include "environment_types.h"
+#include "configuration_types.h"
 
 void vftr_write_ranklogfile_profile_table(FILE *fp, stacktree_t stacktree,
-                                          environment_t environment);
+                                          config_t config);
 
 #endif

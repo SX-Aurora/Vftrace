@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdbool.h>
 
-#include "environment_types.h"
+#include "configuration_types.h"
 #include "symbols.h"
 #include "tables.h"
 #include "collated_stack_types.h"
@@ -31,10 +31,10 @@ void vftr_get_total_cuda_times_for_logfile (collated_stacktree_t stacktree,
    }
 }
 
-void vftr_write_logfile_cuda_table(FILE *fp, collated_stacktree_t stacktree, environment_t environment) {
+void vftr_write_logfile_cuda_table(FILE *fp, collated_stacktree_t stacktree, config_t config) {
    int n_stackids_with_cuda_data = 0;
 
-   collated_stack_t **sorted_stacks = vftr_sort_collated_stacks_for_cuda (environment, stacktree);
+   collated_stack_t **sorted_stacks = vftr_sort_collated_stacks_for_cuda (config, stacktree);
 
    for (int istack = 0; istack < stacktree.nstacks; istack++) {
       cudaprofile_t cudaprof = sorted_stacks[istack]->profile.cudaprof;

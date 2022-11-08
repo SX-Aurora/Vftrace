@@ -18,9 +18,14 @@ The application can then be run in the usual way.
 In the default setting, a text file is created containing a runtime profile of the application.
 
 ## Download
-You can clone the current version of the vftrace from github:
+You can clone the current version of the vftrace from github. The third party tools are included in the git repository as submodules, for your convinience.
+
 ```bash
-git clone https://github.com/SX-Aurora/Vftrace.git
+git clone --recursive https://github.com/SX-Aurora/Vftrace.git
+```
+If you already cloned the repository without the --recursive flag you can get the submodules with
+```bash
+git submodule update --init
 ```
 
 ## Prerequisites & Installation 
@@ -210,6 +215,7 @@ Vftrace uses the following open-source third party tools:
   - Adapted Jenkins (https://en.wikipedia.org/wiki/Jenkins_hash_function) and
     Murmur3 (https://en.wikipedia.org/wiki/MurmurHash) hash functions originally published under the creative common license (https://creativecommons.org/licenses/by-sa/3.0/).
     The hashes are used to identify individual stacks among different MPI-ranks.
+  - cJSON: json parser from Dave Gamble (https://github.com/DaveGamble/cJSON).
 
 ## Licensing
 

@@ -1,0 +1,30 @@
+Could not parse vftrace config file.
+Parsing failed in line 4
+{
+   "off": false,
+   "output_directory"
+                   <= Parsing error occoured here
+"outfile_basename": null,
+   "logfile_for_ranks": "none",
+   "print_config": true,
+...
+
+Could not parse vftrace config file.
+Parsing failed in line 8
+...
+   "print_config": true,
+   "strip_module_names": false,
+   "demangle_cxx": false,,                <= Parsing error occoured here
+
+   "profile_table": {
+      "show_table": true,
+...
+
+Could not parse vftrace config file.
+Parsing failed in line 18
+...
+         "ascending": false
+      },
+   }                <= Parsing error occoured here
+
+}

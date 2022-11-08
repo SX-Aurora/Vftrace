@@ -19,7 +19,8 @@
 #include "cyghooks.h"
 #include "vftr_hooks.h"
 #include "vftrace_state.h"
-#include "environment.h"
+#include "configuration.h"
+#include "configuration_assert.h"
 #include "symbols.h"
 #include "vftr_finalize.h"
 #include "processes.h"
@@ -31,14 +32,14 @@ void vftr_initialize(void *func, void *call_site) {
    // First step is to initialize the reference timer
    vftr_set_local_ref_time();
 
-   // parse the relevant environment variables
-   vftrace.environment = vftr_read_environment();
+   // parse the config file
+   vftrace.config = vftr_read_config();
 
-   if (vftrace.environment.vftrace_off.value.bool_val) {
+   if (vftrace.config.off.value) {
       // update the vftrace state
       vftrace.state = off;
-      // free the environment to avoid memory leaks
-      vftr_environment_free(&(vftrace.environment));
+      // free the config to avoid memory leaks
+      vftr_config_free(&(vftrace.config));
       // set the function hooks to a dummy function that does nothing
       vftr_set_enter_func_hook(vftr_function_hook_off);
       vftr_set_exit_func_hook(vftr_function_hook_off);
@@ -54,19 +55,18 @@ void vftr_initialize(void *func, void *call_site) {
       // set start time string
       vftrace.timestrings.start_time = vftr_get_date_str();
 
-      // check environment sanity
-      vftr_environment_assert(stderr, vftrace.environment);
-      vftr_check_env_names(stderr, &(vftrace.environment));
+      // check configuration consistency
+      vftr_config_assert(stderr, vftrace.config);
 
       // read the symbol table of the executable and its libraries
       vftrace.symboltable = vftr_read_symbols();
       vftr_symboltable_determine_preciseness(&(vftrace.symboltable),
-                                             vftrace.environment.preciseregex.value.regex_val);
+                                             vftrace.config.sampling.precise_functions.regex);
       vftr_symboltable_strip_fortran_module_name(&(vftrace.symboltable),
-                                                 vftrace.environment.strip_module_names.value.bool_val);
+                                                 vftrace.config.strip_module_names.value);
 #ifdef _LIBERTY
       vftr_symboltable_demangle_cxx_name(&(vftrace.symboltable),
-                                         vftrace.environment.demangle_cxx.value.bool_val);
+                                         vftrace.config.demangle_cxx.value);
 #endif
 
 
@@ -74,7 +74,7 @@ void vftr_initialize(void *func, void *call_site) {
       vftrace.process = vftr_new_process();
 
       // initialize possible sampling
-      vftrace.sampling = vftr_new_sampling(vftrace.environment);
+      vftrace.sampling = vftr_new_sampling(vftrace.config);
 
       // assign the appropriate function hooks to handle sampling.
       vftr_set_enter_func_hook(vftr_function_entry);

@@ -97,13 +97,19 @@ void vftr_compute_stack_hashes(stacktree_t *stacktree_ptr) {
       int jstack = istack;
       while (jstack >= 0) {
          stackstr_len += strlen(stacks[jstack].name);
-         // C++ can have non-demangled functions with the same name
-         // but different addresses.
-         // Therefore we need to include the address in the hashing.
-         // Only hashing the addresses is not possible due to
-         // user region configurations where the address is identical,
-         // but the region name can vary.
-         stackstr_len += addrstringsize;
+         // if a function with an unknown function name occours
+         // include the address in the hash to avoid collisions
+         if (!strcmp(stacks[jstack].name, "(UnknownFunctionName)")) {
+            stackstr_len += addrstringsize;
+         }
+// TODO figure out a solution for C++
+//         // C++ can have non-demangled functions with the same name
+//         // but different addresses.
+//         // Therefore we need to include the address in the hashing.
+//         // Only hashing the addresses is not possible due to
+//         // user region configurations where the address is identical,
+//         // but the region name can vary.
+//         stackstr_len += addrstringsize;
          stackstr_len += 1; // function seperator
          jstack = stacks[jstack].caller;
       }
@@ -120,16 +126,25 @@ void vftr_compute_stack_hashes(stacktree_t *stacktree_ptr) {
       while (jstack >= 0) {
          strcpy(ptr, stacks[jstack].name);
          ptr += strlen(stacks[jstack].name);
-         // C++ can have non-demangled functions with the same name
-         // but different addresses.
-         // Therefore we need to include the address in the hashing.
-         // Only hashing the addresses is not possible due to
-         // user region configurations where the address is identical,
-         // but the region name can vary.
-         snprintf(ptr, addrstringsize+1,
-                  "(0x%0*lx)", (int) (2*sizeof(long int)),
-                  (long int) stacks[jstack].address);
-         ptr += addrstringsize;
+         // if a function with an unknown function name occurs
+         // include the address in the hash to avoid collisions
+         if (!strcmp(stacks[jstack].name, "(UnknownFunctionName)")) {
+            snprintf(ptr, addrstringsize+1,
+                     "(0x%0*lx)", (int) (2*sizeof(long int)),
+                     (long int) stacks[jstack].address);
+            ptr += addrstringsize;
+         }
+// TODO figure out a solution for C++
+//         // C++ can have non-demangled functions with the same name
+//         // but different addresses.
+//         // Therefore we need to include the address in the hashing.
+//         // Only hashing the addresses is not possible due to
+//         // user region configurations where the address is identical,
+//         // but the region name can vary.
+//         snprintf(ptr, addrstringsize+1,
+//                  "(0x%0*lx)", (int) (2*sizeof(long int)),
+//                  (long int) stacks[jstack].address);
+//         ptr += addrstringsize;
          *ptr = '<';
          ptr++;
          jstack = stacks[jstack].caller;

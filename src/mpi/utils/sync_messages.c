@@ -70,7 +70,7 @@ void vftr_store_sync_message_info(message_direction dir, int count, MPI_Datatype
                                 rank, tag, tstart, tend);
 
    // write message info to vfd-file
-   if (vftrace.environment.do_sampling.value.bool_val) {
+   if (vftrace.config.sampling.active.value) {
       vftr_write_message_info(dir, count, type_idx, type_size,
                               rank, tag, tstart, tend,
                               my_threadstack->stackID,

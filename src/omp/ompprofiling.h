@@ -5,7 +5,6 @@
 
 #include "collated_stack_types.h"
 #include "ompprofiling_types.h"
-#include "environment_types.h"
 
 ompprofile_t vftr_new_ompprofiling();
 

@@ -2,8 +2,6 @@
 #include <stdio.h>
 
 #include "self_profile.h"
-#include "environment_types.h"
-#include "environment.h"
 #include "stack_types.h"
 #include "stacks.h"
 #include "profiling_types.h"
@@ -24,9 +22,6 @@ int main(int argc, char **argv) {
    (void) argv;
 #endif
 
-   environment_t environment;
-   environment = vftr_read_environment();
-
    // build stacktree
    stacktree_t stacktree = vftr_new_stacktree();
    int nthreads = 10;
@@ -45,7 +40,6 @@ int main(int argc, char **argv) {
    }
 
    vftr_stacktree_free(&stacktree);
-   vftr_environment_free(&environment);
 #ifdef _MPI
    PMPI_Finalize();
 #endif

@@ -1,12 +1,17 @@
 #!/bin/bash
+
 set -x
 test_name=sorting_collated_stacks
+configfile=${test_name}_none.json
 output_file=${test_name}_none.out
 ref_file=${srcdir}/ref_output/${test_name}_none.out
 
+# create logfile
+echo "{\"profile_table\": {\"sort_table\": {\"column\": \"none\", \"ascending\": true}}}" > ${configfile}
+export VFTR_CONFIG=${configfile}
+
 rm -f ${output_file}
 
-export VFTR_SORT_PROFILE_TABLE="NONE"
 if [ "x${HAS_MPI}" == "xYES" ]; then
    ${MPI_EXEC} ${MPI_OPTS} ${NP} 1 ./${test_name} > ${output_file} || exit 1
 else

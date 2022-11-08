@@ -1,12 +1,14 @@
 #!/bin/bash
 set -x
 test_name=sorting_mpi_table
+configfile=${test_name}_commtime.json
 output_file=${test_name}_commtime.out
 ref_file=${srcdir}/ref_output/${test_name}_commtime.out
 
 rm -f ${output_file}
 
-export VFTR_SORT_MPI_TABLE="COMM_TIME"
+echo "{\"mpi\": {\"sort_table\": {\"column\": \"comm_time\", \"ascending\":false}}}" > ${configfile}
+export VFTR_CONFIG=${configfile}
 if [ "x${HAS_MPI}" == "xYES" ]; then
    ${MPI_EXEC} ${MPI_OPTS} ${NP} 1 ./${test_name} > ${output_file} || exit 1
 else

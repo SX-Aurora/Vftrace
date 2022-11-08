@@ -143,7 +143,6 @@ thread_t *vftr_get_my_thread(threadtree_t *threadtree_ptr) {
    int level = vftr_get_thread_level();
    int parent_threadID = -1;
    int threadID = 0;
-   thread_t *thread = threadtree_ptr->threads+threadID;
    thread_t *parent_thread = NULL;
    // navigate through the thread tree until my thread is found
    for (int ilevel=1; ilevel<=level; ilevel++) {

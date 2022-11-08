@@ -1,6 +1,7 @@
 ACLOCAL_AMFLAGS=-I m4
 
-SUBDIRS = src \
+SUBDIRS = external \
+	  src \
 	  tools \
 	  test
 

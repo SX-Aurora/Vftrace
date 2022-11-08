@@ -1,6 +1,6 @@
-.TH VFTRACE "1" "MONTH YEAR" "Vftrace VERSION" "VFTRACE"
+.TH LIBVFTRACE "1" "MONTH YEAR" "Vftrace VERSION" "VFTRACE"
 .SH NAME
-vftrace \- Profiling library
+libvftrace \- Profiling library
 .SH SYNOPSIS
 .IP "\fBcompile with vftrace:\fR"
 .IX Item "compile with vftrace:"
@@ -17,284 +17,469 @@ Utilizing function hooks, vftrace collects information about the callstack
 timeline as well as timings and performance informations of all called functions.
 It supports logging of MPI-communication via special wrapping routines.
 The MPI-3.1 Standard is fully supported.
-The profiling behaviour can be controlled by a set of environment variables
-and library functions to be incorporated into the profiled programs source code.
+The profiling behaviour can be controlled by a config file, which is
+passed to vftrace via an environment varialbe.
+Vftrace provides a set of functions that can be incorporated
+into the profiled programs source code in order to identify bottlenecks
+more easily.
 .PP
 .SH "PROFILING CONTROL"
 .IX Header "PROFILING CONTROL"
-.SS ENVIRONMENT VARIABLES
+.SS ENVIRONMENT VARIABLES:
 .IX Subsection "ENVIRONMENT VARIABLES"
-Here is a collection of all environment variables to controll Vftrace
-profiling and sampling.
+.IP "\fBVFTR_OFF\fR"
+.IX Item "VFTR_OFF"
+\fBDisable\fR(1,"YES","Yes","yes","true")
+.br
+\fBEnable\fR(0,"NO","No","no","false")
+.br
+Switches off Vftrace profiling. The program execution is as without Vftrace, although
+it might have been linked against libvftrace. This environment variable takes precedence over the config file.
+.br
+\fBDefault: "no"\fR
 .\"
-.IP "\fBVFTR_BUFSIZE\fR"
-.IX Item "VFTR_BUFSIZE"
-Buffer size for the buffered stream output of the profiling data files (.vfd) in MiB.
-.br
-\fBDefault: 8\fR
+.IP "\fBVFTR_CONFIG\fR"
+.IX Item "VFTR_CONFIG"
+Path to the config file to fine tune vftrace profiling.
+If no configuration file is given vftrace works on default settings.
+The selected configuraion will be present at the end of the log-file.
 .\"
-.IP "\fBVFTR_INCLUDE_ONLY\fR"
-.IX Item "VFTR_INCLUDE_ONLY"
-A regular expression defining functions which should be profiled, while all others are excluded. The regular expression can also be a single function name. Examples:
+.SS CONFIG FILE
+.IX Subsection "CONFIG FILE"
+Profiling with vftrace can be controlled and tuned using a config file.
+The config file is passed to vftrace via the environment variable \fBVFTR_CONFIG\fR.
+The config file is in the JSON file format.
+The selected configuraion will be present at the end of the log-file.
+A default config can also be generated with the \fBvftrace_generate_default_config\fR
+program.
+To check the validity of your config the program \fBvftrace_check_config\fR is provided.
+Here is a complete config file with the default values:
+   {
+      "off": false,
+      "output_directory": ".",
+      "outfile_basename": null,
+      "logfile_for_ranks": "none",
+      "print_config": true,
+      "strip_module_names": false,
+      "demangle_cxx": false,
+      "profile_table": {
+         "show_table": true,
+         "show_calltime_imbalances": false,
+         "show_callpath": false,
+         "show_overhead": false,
+         "sort_table": {
+            "column": "time_excl",
+            "ascending": false
+         }
+      },
+      "name_grouped_profile_table": {
+         "show_table": false,
+         "max_stack_ids": 8,
+         "sort_table": {
+            "column": "time_excl",
+            "ascending": false
+         }
+      },
+      "sampling": {
+         "active": false,
+         "sample_interval": 0.005000,
+         "outbuffer_size": 8,
+         "precise_functions": null
+      },
+      "mpi": {
+         "show_table": true,
+         "log_messages": true,
+         "only_for_ranks": "all",
+         "show_sync_time": false,
+         "show_callpath": false,
+         "sort_table": {
+            "column": "none",
+            "ascending": false
+         }
+      },
+      "cuda": {
+         "show_table": true,
+         "sort_table": {
+            "column": "time",
+            "ascending": false
+         }
+      },
+      "hardware_scenarios": {
+         "active": false
+      }
+   }
+.IP "\fBoff\fR"
+.IX Item "off"
 .br
-\fBVFTR_INCLUDE_ONLY=foo_bar\fR
+Switches off Vftrace profiling.
+The program execution is as without Vftrace, although
+it might have been linked against libvftrace.
+The environment variable \fBVFTR_OFF\fR takes precedence over this option.
 .br
-\fBVFTR_INCLUDE_ONLY=foo*\fR
+\fBDefault: false\fR
+
+.IP "\fBoutput_directory\fR"
+.IX Item "output_directory"
 .br
-\fBDefault: NONE\fR
-.\"
-.IP "\fBVFTR_LOGFILE_FOR_RANKS\fR"
-.IX Item VFTR_LOGFILE_FOR_RANKS
-Specifies the ranks for which a local logfile is created.
-Vftrace always produces a summary logfile of the form <basename>_all.log (see \fBVFTR_LOGFILE_BASENAME\fR").
-It takes a string value as argument, so the content needs to be put in quotes ("").
-Possible values are "none" (no logfile for individual ranks),
-"all" (logfiles for all ranks),
-"X-Y" (logfiles for all ranks between X and Y),
-and "X,Y,Z" (logfile only for ranks X, Y, and Z),
-or a mixture of the latter two e.g. "1,4,6,15-23,25,28-29,31". 
+Sets the output directory for the profiling data files (.vfd) and logfiles (.log).
 .br
-\fBDefault: "none"\fR
-.\"
-.IP "\fBVFTR_LOGFILE_BASENAME\fR"
-.IX Item "VFTR_LOGFILE_BASENAME"
+\fBDefault: "."\fR
+
+.IP "\fBoutfile_basename\fR"
+.IX Item "outfile_basename"
+.br
 The Basename of the ASCII log files (.log) and profiling data files (.vfd).
 The full name of a profiling data file is <basename>_<mpirank>.vfd
 and for a logfile <basename>_<mpirank>.log, or <basename>_all.log.
 .br
-\fBDefault: The executable name.\fR
-.\"
-.IP "\fBVFTR_MPI_LOG\fR"
-.IX Item "VFTR_MPI_LOG"
-\fBEnable\fR(1,"YES","Yes","yes","ON","On","on")
+\fBDefault: null\fR (the executable name)
+
+.IP "\fBlogfile_for_ranks\fR"
+.IX Item "logfile_for_ranks"
 .br
-\fBDisable\fR(0,"NO","No","no","OFF","Off","off")
+Specifies the ranks for which a local logfile is created.
+Vftrace always produces a summary logfile of the form
+<basename>_all.log (see \fBoutfile_basename\fR").
+It takes a string value as argument, so the content needs to be put in quotes ("").
+Possible values are:
+"\fBnone\fR" (no logfile for individual ranks),
+"\fBall\fR" (logfiles for all ranks),
+"\fBX-Y\fR" (logfiles for all ranks between X and Y),
+and "\fBX,Y,Z\fR" (logfile only for ranks X, Y, and Z),
+or a mixture of the latter two e.g. "\fB1,4,6,15-23,25,28-29,31\fR". 
 .br
-Switches on the logging of MPI communication.
+\fBDefault: "none"\fR
+
+.IP "\fBprint_config\fR"
+.IX Item "print_config"
 .br
-\fBDefault: "off"
-.\"
-.IP "\fBVFTR_MPI_SHOW_SYNC_TIME\fR"
-.IX Item "VFTR_MPI_SHOW_SYNC_TIME\fR"
-\fBEnable\fR(1,"YES","Yes","yes","ON","On","on")
+Append the used vftrace settings in a ready to use json format
+to the end of the logfile.
 .br
-\fBDisable\fR(0,"NO","No","no","OFF","Off","off")
+\fBDefault: true\fR
+
+.IP "\fBstrip_module_names\fR"
+.IX Item "strip_module_names"
 .br
-Switches on the estimation of synchronization times for blocking collective MPI communication.
+Removes the module name of the subroutine/function symbol.
+The delimiter separating the module and function symbol name
+is implementation dependent, thus depending on the used
+compiler/linker.
+.br
+\fBDefault: false\fR
+.IP "\fBdemangle_cxx\fR"
+.IX Item "demangle_cxx"
+.br
+Demangle c++ symbol names to make them more human readable.
+This requires libiberty to be installed and linked.
+.br
+\fBDefault: false\fR
+
+.IP "\fBprofile_table\fR"
+.IX Item "profile_table"
+.br
+This section controls writing of the profile table in the logfiles.
+
+.IP "\fBprofile_table.show_table\fR"
+.IX Item "profile_table.show_table"
+.br
+Show the runtime profile table in the logfiles.
+.br
+\fBDefault: true\fR
+
+.IP "\fBprofile_table.show_calltime_imbalances\fR"
+.IX Item "profile_table.show_calltime_imbalances"
+.br
+Display discrepancies in the time spend in functions
+across ranks to locate compute load imbalances.
+.br
+\fBDefault: false\fR
+
+.IP "\fBprofile_table.show_callpath\fR"
+.IX Item "profile_table.show_callpath"
+.br
+Include the callpath of the function in the profile table,
+instead of just the stacks id.
+.br
+\fBDefault: false\fR
+
+.IP "\fBprofile_table.show_overhead\fR"
+.IX Item "profile_table.show_overhead"
+.br
+Include a column with the calloverhead introduced
+by vftrace profiling hooks in the profile table.
+.br
+\fBDefault: false\fR
+
+.IP "\fBprofile_table.sort_table\fR"
+.IX Item "profile_table.sort_table"
+.br
+This section controls how the profile table is sorted.
+
+.IP "\fBprofile_table.sort_table.column\fR"
+.IX Item "profile_table.sort_table.column"
+.br
+Specifies which column of the profile table should be used to sort the table.
+Possible values are:
+"\fBtime_exlc\fR" (exclusive time),
+"\fBtime_incl\fR" (inclusive time),
+"\fBcalls\fR" (number of calls),
+"\fBstack_id\fR",
+"\fBoverhead\fR",
+and "\fBnone\fR".
+.br
+\fBDefault: "time_excl"\fR
+
+.IP "\fBprofile_table.sort_table.ascending\fR"
+.IX Item "profile_table.sort_table.ascending"
+.br
+Specifies whether the table will be sorted in ascending,
+or descending order regarding the selected column.
+.br
+\fBDefault: false\fR
+
+.IP "\fBname_grouped_profile_table\fR"
+.IX Item "name_grouped_profile_table"
+.br
+This section controls writing of the name grouped profile table in the logfile.
+In contrast to the runtime profile table where each entry is defined by the unique
+callstack, the name grouped table groups entries together by the function name.
+
+.IP "\fBname_grouped_profile_table.show_table\fR"
+.IX Item "name_grouped_profile_table.show_table"
+.br
+Show the name grouped runtime profile table in the logfiles.
+.br
+\fBDefault: true\fR
+
+.IP "\fBname_grouped_profile_table.max_stack_ids\fR"
+.IX Item "name_grouped_profile_table.max_stack_ids"
+.br
+Controls how many stack ids (in ascending order) should be 
+displayed in a column.
+If a function name has more stack ids associated with it,
+the list will be extended by three dots "...".
+.br
+\fBDefault: 8\fR
+
+.IP "\fBname_grouped_profile_table.sort_table\fR"
+.IX Item "name_grouped_profile_table.sort_table"
+.br
+This section controls how the profile table is sorted.
+
+.IP "\fBname_grouped_profile_table.sort_table.column\fR"
+.IX Item "name_grouped_profile_table.sort_table.column"
+.br
+Specifies which column of the name grouped profile table
+should be used to sort the table.
+Possible values are:
+"\fBtime_exlc\fR" (exclusive time),
+"\fBtime_incl\fR" (inclusive time),
+"\fBcalls\fR" (number of calls),
+and "\fBnone\fR".
+.br
+\fBDefault: "time_excl"\fR
+
+.IP "\fBname_grouped_profile_table.sort_table.ascending\fR"
+.IX Item "name_grouped_profile_table.sort_table.ascending"
+.br
+Specifies whether the table will be sorted in ascending,
+or descending order regarding the selected column.
+.br
+\fBDefault: false\fR
+
+.IP "\fBsampling\fR"
+.IX Item "sampling"
+This section controls the sampling of the profiled application in order to
+create the application timeline in form of vfd files.
+vfd files are of the form <basename>_<rank>.vfd
+297 (see \fBoutfile_basename\fR).
+
+.IP "\fBsampling.active\fR"
+.IX Item "sampling.active"
+Controls whether vftrace should sample the running application
+and output a vfd file.
+.br
+\fBDefault: false\fR
+
+.IP "\fBsampling.sample_interval\fR"
+.IX "sampling.sample_interval"
+Defines the shortest duration between consecutive samples in seconds.
+Note that samples are only ever taken on function entry/exit. Therefore,
+the time between samples can vary depending on your application.
+.br
+\fBDefault: 0.005\fR
+
+.IP "\fBsampling.outbuffer_size\fR"
+.IX "sampling.outbuffer_size"
+Defines the buffer size in MiB that is attached to the IO-handle of the vfd file.
+Buffered output is easier on the filesystem and can greatly reduce
+IO-bottlenecks during sampling.
+.br
+\fBDefault: 8\fR
+
+.IP "\fBsampling.precise_functions\fR"
+.IX "sampling.precise_functions"
+Takes a regular expression specifying for which functions
+the sample_interval option should be ignored.
+Entry and exit of those functions will always be sampled,
+and appear in the vfd file.
+\fBvftrace_regions\fR and \fBMPI\fR-routines,
+are always marked to be precise.
+.br
+\fBDefault: null\fR
+
+.IP "\fBmpi\fR"
+.IX Item "mpi"
+.br
+This section controls writing of the mpi profile table in the logfiles.
+
+.IP "\fBmpi.show_table\fR"
+.IX Item "mpi.show_table"
+.br
+Show the mpi profile table in the logfiles.
+.br
+\fBDefault: true\fR
+
+.IP "\fBmpi.log_messages\fR"
+.IX Item "mpi.show_calltime_imbalances"
+.br
+Whether messages (size, sender/receiver, bandwidth, ...) should be
+included in the vfd file during sampling, and included in the profiling.
+.br
+\fBDefault: true\fR
+
+.IP "\fBmpi.only_for_ranks\fR"
+.IX Item "mpi.only_for_ranks"
+.br
+Specifies the ranks for which a messages should be included in the profile.
+Only if both sender and receiver are in the list, the message is logged.
+It takes a string value as argument,
+so the content needs to be put in quotes ("").
+Possible values are:
+"\fBnone\fR" (no messages are logged),
+"\fBall\fR" (messages between all ranks are logged),
+"\fBX-Y\fR" (messages between ranks between X and Y are logged),
+and "\fBX,Y,Z\fR" (messages between ranks for ranks X, Y, and Z are logged),
+or a mixture of the latter two e.g. "\fB1,4,6,15-23,25,28-29,31\fR". 
+.br
+\fBDefault: "all"\fR
+
+.IP "\fBmpi.show_sync_time\fR"
+.IX "mpi.show_sync_time"
+Switches on the estimation of synchronization times
+for blocking collective MPI communication.
 These are:
-Allgather, 
-Allgatherv, 
-Allreduce, 
-Alltoall, 
-Alltoallv, 
-Alltoallw, 
-Bcast, 
-Exscan, 
-Gather, 
-Gatherv, 
-Neighbor_allgather, 
-Neighbor_allgatherv, 
-Neighbor_alltoall, 
-Neighbor_alltoallv, 
-Neighbor_alltoallw, 
-Reduce, 
-Reduce_scatter_block, 
-Reduce_scatter, 
-Scan, 
-Scatter, 
+Allgather,
+Allgatherv,
+Allreduce,
+Alltoall,
+Alltoallv,
+Alltoallw,
+Bcast,
+Exscan,
+Gather,
+Gatherv,
+Neighbor_allgather,
+Neighbor_allgatherv,
+Neighbor_alltoall,
+Neighbor_alltoallv,
+Neighbor_alltoallw,
+Reduce,
+Reduce_scatter_block,
+Reduce_scatter,
+Scan,
+Scatter,
 Scatterv.
-Every process measures the time it takes until all other processes arrive at the call.
-The synchronization time will be measured as a seperate function call "MPI_<mpi-function-name>_sync" (e.g. MPI_Allreduce_sync).
-Note that this might prevent processes from starting communication with already arrived processes.
+Every process measures the time it takes
+until all other processes arrive at the call.
+The synchronization time will be measured
+as a seperate function call "MPI_<mpi-function-name>_sync"
+(e.g. MPI_Allreduce_sync).
+Note that this might prevent processes from starting
+communication with already arrived processes.
 Therefore, communication imbalances can be off.
 .br
-\fBDefault: "off"
-.\"
-.IP "\fBVFTR_RANKS_IN_MPI_PROFILE\fR"
-.IX Item "VFTR_RANKS_IN_MPI_PROFILE\fR"
-Select which communications based on the sending and receiving ranks should be included in the MPI-profile.
-Possible values are "all",
-"X-Y" (only messages where sender and receiver are in X-Y),
-and "X,Y,Z" (only messages where sender and receiver are X,Y,orZ)
-or a mixture of the latter two e.g. "1,4,6,15-23,25,28-29,31". 
+\fBDefault: false\fR
+
+.IP "\fBmpi.show_callpath\fR"
+.IX Item "mpi.show_callpath"
 .br
-\fBDefault: "all"
-.\"
-.IP "\fBVFTR_OFF\fR"
-.IX Item "VFTR_OFF"
-\fBDisable\fR(1,"YES","Yes","yes")
+Include the callpath of the function in the mpi profile table,
+instead of just the stacks id.
 .br
-\fBEnable\fR(0,"NO","No","no")
+\fBDefault: false\fR
+
+.IP "\fBmpi.sort_table\fR"
+.IX Item "mpi.sort_table"
 .br
-Switches off Vftrace profiling. The program execution is as without Vftrace, although
-it might have been linked against libvftrace. 
-.br 
-\fBDefault: "no"\fR
-.\"
-.IP "\fBVFTR_OUT_DIRECTORY\fR"
-.IX Item "VFTR_OUT_DIRECTORY"
-Sets the output directory for the profiling data files (.vfd) and logfiles (.log).
+This section controls how the mpi profile table is sorted.
+
+.IP "\fBmpi.sort_table.column\fR"
+.IX Item "mpi.sort_table.column"
 .br
-\fBDefault: Current working directory "./"\fR
-.\"
-.IP "\fBVFTR_PRECISE\fR"
-.IX Item "VFTR_PRECISE"
-.br
-A regular expression specifying which functions should be sampled precisely.
-This ignores the minimum time given by \fBVFTR_SAMPLETIME\fR and registers
-every function exit and entry.
-Note that this potentially leads to a significant increase in profiling overhead and
-output file size.
-.br
-\fBDefault: "off"
-.\"
-.IP "\fBVFTR_SAMPLETIME\fR"
-.IX Item "VFTR_SAMPLETIME"
-Sets the time (in seconds) between two callstack samples written into .vfd files.
-This is regardless of how many functions are actually entered or exited in this interval.
-The setting is ignored if \fBVFTR_PRECISE\fR is enabled.
-.br
-\fBDefault: "0.005"
-.\"
-.IP "\fBVFTR_SAMPLING\fR"
-.IX Item "VFTR_SAMPLING"
-\fBEnable\fR(1,"YES","Yes","yes","ON","On","on")
-.br
-\fBDisable\fR(0,"NO","No","no","OFF","Off","off")
-.br
-Enables the creation of .vfd runtime profiles. 
-.br
-\fBDefault: "off"\fR
-.\"
-.IP "\fBVFTR_SHOW_FUNCTION_OVERHEAD\fR"
-.IX Item "VFTR_SHOW_FUNCTION_OVERHEAD"
-\fBEnable\fR(1,"YES","Yes","yes","ON","On","on")
-.br
-\fBDisable\fR(0,"NO","No","no","OFF","Off","off")
-.br
-Display function hook overhead in profile table.
-.br
-\fBDefault: "off"\fR
-.\"
-.IP "\fBVFTR_SHOW_CALLTIME_IMBALANCES\fR"
-.IX Item "VFTR_SHOW_CALLTIME_IMBALANCES"
-\fBEnable\fR(1,"YES","Yes","yes","ON","On","on")
-.br
-\fBDisable\fR(0,"NO","No","no","OFF","Off","off")
-.br
-Display discrepancies in the time spend in functions across ranks to locate compute load imbalances.
-.br
-\fBDefault: "off"\fR
-.\"
-.IP "\fBVFTR_GROUP_FUNCTIONS_BY_NAME\fR"
-.IX Item "VFTR_GROUP_FUNCTIONS_BY_NAME"
-\fBEnable\fR(1,"YES","Yes","yes","ON","On","on")
-.br
-\fBDisable\fR(0,"NO","No","no","OFF","Off","off")
-.br
-Include an extra table in the summary logfile, where profiling information is not grouped by callstack, but by function name.
-.br
-\fBDefault: "off"\fR
-.\"
-.IP "\fBVFTR_PRINT_ENVIRONMENT\fR"
-.IX Item "VFTR_PRINT_ENVIRONMENT"
-\fBEnable\fR(1,"YES","Yes","yes","ON","On","on")
-.br
-\fBDisable\fR(0,"NO","No","no","OFF","Off","off")
-.br
-Append the used vftrace settings to the end of the logfile.
-.br
-\fBDefault: "on"\fR
-.\"
-.IP "\fBVFTR_CALLPATH_IN_PROFILE\fR"
-.IX Item "VFTR_CALLPATH_IN_PROFILE"
-\fBEnable\fR(1,"YES","Yes","yes","ON","On","on")
-.br
-\fBDisable\fR(0,"NO","No","no","OFF","Off","off")
-.br
-Include the callpath of the function in the profile table, instead of just the stacks id.
-.br
-\fBDefault: "off"\fR
-.\"
-.IP "\fBVFTR_CALLPATH_IN_MPI_PROFILE\fR"
-.IX Item "VFTR_CALLPATH_IN_MPI_PROFILE"
-\fBEnable\fR(1,"YES","Yes","yes","ON","On","on")
-.br
-\fBDisable\fR(0,"NO","No","no","OFF","Off","off")
-.br
-Include the callpath of the function in the mpi profile table, instead of just the stacks id.
-.br
-\fBDefault: "off"\fR
-.\"
-.\"
-.IP "\fBVFTR_DEMANGLE_CXX\fR"
-.IX Item "VFTR_DEMANGLE_CXX"
-\fBEnable\fR(1,"YES","Yes","yes","ON","On","on")
-.br
-\fBDisable\fR(0,"NO","No","no","OFF","Off","off")
-.br
-Demangle c++ symbol names to make them more human readable. (Requires libiberty to be installed and linked)
-.br
-\fBDefault: "off"\fR
-.\"
-.IP "\fBVFTR_SCENARIO_FILE\fR"
-.IX Item "VFTR_SCENARIO_FILE"
-Path to the scenario file in JSON format that defines the hardware counters and event observables.
-.br
-\fBDefault: NONE\fR
-.\"
-.IP "\fBVFTR_STRIP_MODULE_NAMES\fR"
-.IX Item "VFTR_STRIP_MODULE_NAMES"
-The symbol names for subroutines and functions defined in Fortran modules can be put together from
-the module name and the function name, with a delimiter "_MP_". When this environment variable
-is set, the module name is split off from the symbol, leading to shorter output, e.g. in function stacks.
-Note that this way, there is no way to distinguish between functions with identical names from
-different modules only by their name. Instead, the stack ID has to be used. Also, the "_MP_" delimiter
-might be different, depending on the compiler or linker. In this case, the logfile output
-appears as in the case where the environment variable is not set.
-.br
-\fBDefault: "off"\fR
-.\"
-.IP "\fBVFTR_SORT_PROFILE_TABLE\fR"
-.IX Item "VFTR_SORT_PROFILE_TABLE\fR"
-Specifies how the profile table is sorted.
+Specifies which column of the mpi profile table
+should be used to sort the table.
 Possible values are:
-TIME_EXLC (exclusive time), 
-TIME_INCL (inclusive time),
-CALLS (number of calls),
-STACK_ID,
-OVERHEAD,
-and NONE.
+"\fBmessages\fR" (number of messages),
+"\fBsend_size\fR" (average send message size),
+"\fBrecv_size\fR" (average recv message size),
+"\fBsend_bw\fR" (average send bandwidth),
+"\fBrecv_bw\fR" (average recv bandwidth),
+"\fBcalls\fR" (number of calls),
+"\fBcomm_time\fR" (time spend in communication),
+"\fBstack_id\fR",
+and "\fBnone\fR".
 .br
-\fBDefault: "TIME_EXCL"\fR
-.\"
-.IP "\fBVFTR_SORT_MPI_TABLE\fR"
-.IX Item "VFTR_SORT_MPI_TABLE\fR"
-Specifies how the mpi profile table is sorted.
+\fBDefault: "none"\fR
+
+.IP "\fBmpi.sort_table.ascending\fR"
+.IX Item "mpi.sort_table.ascending"
+.br
+Specifies whether the table will be sorted in ascending,
+or descending order regarding the selected column.
+.br
+\fBDefault: false\fR
+
+.IP "\fBcuda\fR"
+.IX Item "cuda"
+.br
+This section controls writing of the cuda profile table in the logfiles.
+
+.IP "\fBcuda.show_table\fR"
+.IX Item "cuda.show_table"
+.br
+Show the cuda profile table in the logfiles.
+.br
+\fBDefault: true\fR
+
+.IP "\fBmpi.sort_table\fR"
+.IX Item "mpi.sort_table"
+.br
+This section controls how the mpi profile table is sorted.
+
+.IP "\fBmpi.sort_table.column\fR"
+.IX Item "mpi.sort_table.column"
+.br
+Specifies which column of the mpi profile table
+should be used to sort the table.
 Possible values are:
-MESSAGES (number of send and received messages),
-SEND_SIZE (total number of send bytes),
-RECV_SIZE (total number of received bytes),
-SEND_BW (average bandwidth for send messages),
-RECV_BW (average bandwidth for received messages),
-COMM_TIME (total time spend in the communication),
-STACK_ID,
-and NONE.
+"\fBtime\fR",
+"\fBmemcpy\fR",
+"\fBcbid\fR",
+"\fBcalls\fR",
+and "\fBnone\fR".
 .br
-\fBDefault: "NONE"\fR
-.\"
-.IP "\fBVFTR_SORT_CUDA_TABLE\fR"
-.IX Item "VFTR_SORT_CUDA_TABLE\fR"
-Specifies how the CUDA profile table is sorted.
-Possible values are:
-TIME (total time spend in routine),
-MEMCPY (total number of bytes copied between host and device),
-CBID (CUpti's internal identification number for routine types),
-CALLS (number of calls),
-and NONE.
+\fBDefault: "time"\fR
+
+.IP "\fBmpi.sort_table.ascending\fR"
+.IX Item "mpi.sort_table.ascending"
 .br
-\fBDefault: "TIME"\fR
-.\"
+Specifies whether the table will be sorted in ascending,
+or descending order regarding the selected column.
+.br
+\fBDefault: false\fR
+
 .SS LIBRARY FUNCTIONS
 .IX Subsection "LIBRARY FUNCTIONS"
 Vftrace provides library functions which can be included in a C or Fortran application

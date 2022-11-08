@@ -3,16 +3,16 @@
 #include <string.h>
 
 #include "self_profile.h"
-#include "environment_types.h"
+#include "configuration_types.h"
 #include "vftrace_state.h"
 
 #include "filenames.h"
-#include "environment.h"
 #include "ranklogfile_header.h"
 #include "ranklogfile_prof_table.h"
 #include "ranklogfile_mpi_table.h"
 #include "logfile_stacklist.h"
 #include "search.h"
+#include "configuration_print.h"
 #include "range_expand.h"
 #ifdef _CUDA
 #include "cuda_ranklogfile.h"
@@ -22,8 +22,8 @@
 #endif
 
 
-static bool vftr_rank_needs_ranklogfile(environment_t environment, int rank) {
-   char *rangestr = environment.logfile_for_ranks.value.string_val;
+static bool vftr_rank_needs_ranklogfile(config_t config, int rank) {
+   char *rangestr = config.logfile_for_ranks.value;
    if (!strcmp(rangestr, "all")) {
       return true;
    }
@@ -41,8 +41,8 @@ static bool vftr_rank_needs_ranklogfile(environment_t environment, int rank) {
    }
 }
 
-char *vftr_get_ranklogfile_name(environment_t environment, int rankID, int nranks) {
-   char *filename_base = vftr_create_filename_base(environment, rankID, nranks);
+char *vftr_get_ranklogfile_name(config_t config, int rankID, int nranks) {
+   char *filename_base = vftr_create_filename_base(config, rankID, nranks);
    int filename_base_len = strlen(filename_base);
 
    char *extension = ".log";
@@ -71,12 +71,12 @@ FILE *vftr_open_ranklogfile(char *filename) {
 
 void vftr_write_ranklogfile(vftrace_t vftrace, long long runtime) {
    SELF_PROFILE_START_FUNCTION;
-   if (!vftr_rank_needs_ranklogfile(vftrace.environment, vftrace.process.processID)) {
+   if (!vftr_rank_needs_ranklogfile(vftrace.config, vftrace.process.processID)) {
       SELF_PROFILE_END_FUNCTION;
       return;
    }
 
-   char *logfilename = vftr_get_ranklogfile_name(vftrace.environment,
+   char *logfilename = vftr_get_ranklogfile_name(vftrace.config,
                                                  vftrace.process.processID,
                                                  vftrace.process.nprocesses);
    FILE *fp = vftr_open_ranklogfile(logfilename);
@@ -87,18 +87,20 @@ void vftr_write_ranklogfile(vftrace_t vftrace, long long runtime) {
                                   vftrace.size, runtime);
 
    vftr_write_ranklogfile_profile_table(fp, vftrace.process.stacktree,
-                                        vftrace.environment);
+                                        vftrace.config);
 
 #ifdef _MPI
    vftr_write_ranklogfile_mpi_table(fp, vftrace.process.stacktree,
-                                    vftrace.environment);
+                                    vftrace.config);
 #endif
 
 #ifdef _CUDA
    if (vftrace.cuda_state.n_devices == 0) {
       fprintf (fp, "The CUpti interface is enabled, but no GPU devices were found.\n");
    } else {
-      vftr_write_ranklogfile_cuda_table(fp, vftrace.process.stacktree, vftrace.environment);
+      if (vftrace.config.cuda.show_table.value) {
+         vftr_write_ranklogfile_cuda_table(fp, vftrace.process.stacktree, vftrace.config);
+      }
    }
 #endif
 
@@ -108,8 +110,8 @@ void vftr_write_ranklogfile(vftrace_t vftrace, long long runtime) {
 
    vftr_write_logfile_global_stack_list(fp, vftrace.process.collated_stacktree);
 
-   // print environment info
-   vftr_print_environment(fp, vftrace.environment);
+   // print config info
+   vftr_print_config(fp, vftrace.config, true);
 
 #ifdef _CUDA
    vftr_write_ranklogfile_cbid_names (fp, vftrace.process.stacktree);

@@ -3,10 +3,11 @@
 source ${srcdir}/../environment/filenames.sh
 
 vftr_binary=cpause_resume
+configfile=${vftr_binary}.json
 nprocs=1
 
-export VFTR_SAMPLING="Yes"
-export VFTR_PRECISE="fkt*"
+echo "{\"sampling\": {\"active\": true, \"precise_functions\": \"fkt*\"}}" > ${configfile}
+export VFTR_CONFIG=${configfile}
 
 logfile=$(get_logfile_name ${vftr_binary} "all")
 vfdfile=$(get_vfdfile_name ${vftr_binary} "0")

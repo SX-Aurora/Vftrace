@@ -7,7 +7,7 @@
 #include "self_profile.h"
 #include "table_types.h"
 #include "tables.h"
-#include "misc_utils.h"
+#include "bool_strings.h"
 
 // compute column widths
 int vftr_column_width_char(int nrows, char *header, char *format, char *values) {

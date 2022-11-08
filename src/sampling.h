@@ -1,16 +1,16 @@
 #ifndef SAMPLING_H
 #define SAMPLING_H
 
-#include "environment_types.h"
+#include "configuration_types.h"
 #include "sampling_types.h"
 #include "process_types.h"
 #include "timer_types.h"
 #include "stack_types.h"
 
-sampling_t vftr_new_sampling(environment_t environment);
+sampling_t vftr_new_sampling(config_t config);
 
 void vftr_finalize_sampling(sampling_t *sampling,
-                            environment_t environment,
+                            config_t config,
                             process_t process,
                             time_strings_t timestrings,
                             double runtime);

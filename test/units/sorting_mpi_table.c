@@ -3,8 +3,8 @@
 #include <stdbool.h>
 
 #include "self_profile.h"
-#include "environment_types.h"
-#include "environment.h"
+#include "configuration_types.h"
+#include "configuration.h"
 #include "symbol_types.h"
 #include "symbols.h"
 #include "stack_types.h"
@@ -27,8 +27,8 @@ int main(int argc, char **argv) {
    INIT_SELF_PROF_VFTRACE;
    PMPI_Init(&argc, &argv);
 
-   environment_t environment;
-   environment = vftr_read_environment();
+   config_t config;
+   config = vftr_read_config();
 
    int ranklist[] = {0,1};
    mpi_state_t mpi_state = {
@@ -223,13 +223,13 @@ int main(int argc, char **argv) {
    collated_stacktree_t collated_stacktree = vftr_collate_stacks(&stacktree);
    vftr_collate_profiles(&collated_stacktree, &stacktree);
 
-   vftr_write_ranklogfile_mpi_table(stdout, stacktree, environment);
-   vftr_write_logfile_mpi_table(stdout, collated_stacktree, environment);
+   vftr_write_ranklogfile_mpi_table(stdout, stacktree, config);
+   vftr_write_logfile_mpi_table(stdout, collated_stacktree, config);
 
    free_dummy_symbol_table(&symboltable);
    vftr_stacktree_free(&stacktree);
    vftr_collated_stacktree_free(&collated_stacktree);
-   vftr_environment_free(&environment);
+   vftr_config_free(&config);
 
    PMPI_Finalize();
 
