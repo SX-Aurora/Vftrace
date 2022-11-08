@@ -1,6 +1,6 @@
-.TH VFTRACE "1" "MONTH YEAR" "Vftrace VERSION" "VFTRACE"
+.TH LIBVFTRACE "1" "MONTH YEAR" "Vftrace VERSION" "VFTRACE"
 .SH NAME
-vftrace \- Profiling library
+libvftrace \- Profiling library
 .SH SYNOPSIS
 .IP "\fBcompile with vftrace:\fR"
 .IX Item "compile with vftrace:"
@@ -50,6 +50,9 @@ Profiling with vftrace can be controlled and tuned using a config file.
 The config file is passed to vftrace via the environment variable \fBVFTR_CONFIG\fR.
 The config file is in the JSON file format.
 The selected configuraion will be present at the end of the log-file.
+A default config can also be generated with the \fBvftrace_generate_default_config\fR
+program.
+To check the validity of your config the program \fBvftrace_check_config\fR is provided.
 Here is a complete config file with the default values:
    {
       "off": false,
