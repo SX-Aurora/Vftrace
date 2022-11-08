@@ -10,7 +10,9 @@ export VFTR_CONFIG=config.json
 .\" Add any additional description here
 .PP
 \fBvftrace_generate_default_config\fR generates a config file in JSON format
-for the vftrace profiling library. The config file is written to stdout.
+for the vftrace profiling library. It contains all configuration variables
+that exist within vftrace with their corresponding default values.
+The config file is written to stdout.
 In order to pass the config file to vftrace export it via the VFTR_CONFIG
 environment variable.
 This program does not accept any arguments or flags.
