@@ -53,9 +53,10 @@ libvftrace_la_FCFLAGS =
 libvftrace_la_LDFLAGS =
 
 libvftrace_la_SOURCES += cyghooks.c \
+			 pre_hooks.c \
 			 vftr_hooks.c \
 			 off_hooks.c \
-			 pause_hooks.c
+			 pause_hooks.c 
 libvftrace_la_SOURCES += vftrace_state.c \
 			 vftr_initialize.c \
 			 vftr_finalize.c \
