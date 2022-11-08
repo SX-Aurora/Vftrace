@@ -298,7 +298,6 @@ int vftr_parse_config_check_json_format(char *config_string) {
          fputc(*tmpstr, stderr);
          tmpstr++;
       }
-      fputc('\n', stderr);
       if (*tmpstr != '\0') {
          fprintf(stderr, "...\n");
       }
