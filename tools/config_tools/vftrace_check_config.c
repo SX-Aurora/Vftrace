@@ -20,4 +20,7 @@ int main(int argc, char **argv) {
    free(config_string);
    vftr_config_assert(stderr, config);
    vftr_config_free(&config);
+
+   fprintf(stdout, "Checking of config file %s is complete\n", argv[1]);
+   return 0;
 }
