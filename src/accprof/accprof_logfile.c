@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "environment_types.h"
+#include "configuration_types.h"
 #include "collated_stack_types.h"
 #include "collated_profiling_types.h"
 #include "callprofiling_types.h"
@@ -30,7 +30,7 @@ void vftr_get_total_accprof_times_for_logfile (collated_stacktree_t stacktree,
    }
 }
 
-void vftr_write_logfile_accprof_table (FILE *fp, collated_stacktree_t stacktree, environment_t environment) {
+void vftr_write_logfile_accprof_table (FILE *fp, collated_stacktree_t stacktree, config_t config) {
    int n_stackids_with_accprof_data = 0;
    
    for (int istack = 0; istack < stacktree.nstacks; istack++) {

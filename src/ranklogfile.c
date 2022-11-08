@@ -105,7 +105,7 @@ void vftr_write_ranklogfile(vftrace_t vftrace, long long runtime) {
 #endif
 
 #ifdef _ACCPROF
-   vftr_write_ranklogfile_accprof_table (fp, vftrace.process.stacktree, vftrace.environment);
+   vftr_write_ranklogfile_accprof_table (fp, vftrace.process.stacktree, vftrace.config);
 #endif
 
    vftr_write_logfile_global_stack_list(fp, vftrace.process.collated_stacktree);

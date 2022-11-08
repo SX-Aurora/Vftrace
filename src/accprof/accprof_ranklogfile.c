@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "environment_types.h"
+#include "configuration_types.h"
 #include "tables.h"
 #include "callprofiling_types.h"
 #include "stack_types.h"
@@ -9,7 +9,7 @@
 #include "accprofiling_types.h"
 #include "accprof_events.h"
 
-void vftr_write_ranklogfile_accprof_table (FILE *fp, stacktree_t stacktree, environment_t environment) {
+void vftr_write_ranklogfile_accprof_table (FILE *fp, stacktree_t stacktree, config_t config) {
    int n_stackids_with_accprof_data = 0;
    
    for (int istack = 0; istack < stacktree.nstacks; istack++) {

@@ -97,7 +97,7 @@ void vftr_write_logfile(vftrace_t vftrace, long long runtime) {
 #endif
 
 #ifdef _ACCPROF
-   vftr_write_logfile_accprof_table (fp, vftrace.process.collated_stacktree, vftrace.environment);
+   vftr_write_logfile_accprof_table (fp, vftrace.process.collated_stacktree, vftrace.config);
 #endif
 
    vftr_write_logfile_global_stack_list(fp, vftrace.process.collated_stacktree);
