@@ -1,11 +1,13 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "configuration_types.h"
 #include "collated_stack_types.h"
 #include "collated_profiling_types.h"
 #include "callprofiling_types.h"
 #include "tables.h"
+#include "misc_utils.h"
 
 #include "accprofiling_types.h"
 #include "accprof_events.h"
@@ -30,6 +32,16 @@ void vftr_get_total_accprof_times_for_logfile (collated_stacktree_t stacktree,
    }
 }
 
+char *vftr_name_with_lines (char *name, int line_1, int line_2) {
+   int n1 = strlen(name);
+   int n2 = vftr_count_base_digits ((long long)line_1, 10);
+   int n3 = vftr_count_base_digits ((long long)line_2, 10);
+   int slen = n1 + n2 + n3 + 7;
+   char *s = (char*) malloc (slen * sizeof(char));
+   snprintf (s, slen, "%s (%d - %d)", name, line_1, line_2); 
+   return s;
+}
+
 void vftr_write_logfile_accprof_table (FILE *fp, collated_stacktree_t stacktree, config_t config) {
    int n_stackids_with_accprof_data = 0;
    
@@ -46,9 +58,8 @@ void vftr_write_logfile_accprof_table (FILE *fp, collated_stacktree_t stacktree,
    double *t_compute = (double*)malloc(n_stackids_with_accprof_data * sizeof(double));
    double *t_memcpy = (double*)malloc(n_stackids_with_accprof_data * sizeof(double));
    double *t_other = (double*)malloc(n_stackids_with_accprof_data * sizeof(double));
-   int *start_lines = (int*)malloc(n_stackids_with_accprof_data * sizeof(int));
-   int *end_lines = (int*)malloc(n_stackids_with_accprof_data * sizeof(int));
    char **source_files = (char*)malloc(n_stackids_with_accprof_data * sizeof(char*));
+   char **func_names = (char*)malloc(n_stackids_with_accprof_data * sizeof(char*));
 
    int i = 0;
    for (int istack = 0; istack < stacktree.nstacks; istack++) {
@@ -72,9 +83,8 @@ void vftr_write_logfile_accprof_table (FILE *fp, collated_stacktree_t stacktree,
       } else {
          t_other[i] = t;
       }
-      start_lines[i] = accprof.line_start;
-      end_lines[i] = accprof.line_end;
-      source_files[i] = basename(accprof.source_file);
+      source_files[i] = vftr_name_with_lines (basename(accprof.source_file), accprof.line_start, accprof.line_end);
+      func_names[i] = vftr_name_with_lines (accprof.func_name, accprof.func_line_start, accprof.func_line_end);
       i++;
    }
 
@@ -88,9 +98,8 @@ void vftr_write_logfile_accprof_table (FILE *fp, collated_stacktree_t stacktree,
    vftr_table_add_column (&table, col_double, "t_memcpy[s]", "%.3lf", 'c', 'r', (void*)t_memcpy);
    vftr_table_add_column (&table, col_double, "t_other[s]", "%.3lf", 'c', 'r', (void*)t_other);
    vftr_table_add_column (&table, col_long, "Bytes", "%ld", 'c', 'r', (void*)copied_bytes);
-   vftr_table_add_column (&table, col_string, "File", "%s", 'c', 'r', (void*)source_files);
-   vftr_table_add_column (&table, col_int, "Line 1", "%d", 'c', 'r', (void*)start_lines);
-   vftr_table_add_column (&table, col_int, "Line 2", "%d", 'c', 'r', (void*)end_lines);
+   vftr_table_add_column (&table, col_string ,"Source File", "%s", 'c', 'r', (void*)source_files);
+   vftr_table_add_column (&table, col_string, "Function", "%s", 'c', 'r', (void*)func_names);
 
    fprintf (fp, "\n--OpenACC Summary--\n");
    vftr_print_table(fp, table);
@@ -102,7 +111,6 @@ void vftr_write_logfile_accprof_table (FILE *fp, collated_stacktree_t stacktree,
    free (t_memcpy);
    free (t_other);
    free (copied_bytes);
-   free (start_lines);
-   free (end_lines);
    free (source_files);
+   free (func_names);
 }
