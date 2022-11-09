@@ -28,11 +28,11 @@ void vftr_accumulate_accprofiling (accprofile_t *prof, acc_event_t ev,
    prof->line_end = line_end;
    prof->func_line_start = func_line_start;
    prof->func_line_end = func_line_end;
-   if (prof->source_file == NULL) {
+   if (source_file != NULL && prof->source_file == NULL) {
       prof->source_file = (char*)malloc((strlen(source_file) + 1) * sizeof(char));
       strcpy (prof->source_file, source_file);
    }
-   if (prof->func_name == NULL) {
+   if (func_name != NULL && prof->func_name == NULL) {
       prof->func_name = (char*)malloc((strlen(func_name) + 1) * sizeof(char));
       strcpy (prof->func_name, func_name);
    }

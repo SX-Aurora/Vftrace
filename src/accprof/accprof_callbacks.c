@@ -27,7 +27,8 @@ char *concatenate_openacc_name (acc_event_t event_type, int line_1, int line_2) 
    return s;
 }
 
-void vftr_accprof_region_begin (acc_prof_info *prof_info, acc_event_info *event_info) {
+void vftr_accprof_region_begin (acc_prof_info *prof_info, acc_event_info *event_info,
+                                bool acc_callprof) {
 
    long long region_begin_time_begin = vftr_get_runtime_nsec();
 
@@ -44,7 +45,7 @@ void vftr_accprof_region_begin (acc_prof_info *prof_info, acc_event_info *event_
                                                     &vftrace, false);
    stack_t *my_new_stack = vftrace.process.stacktree.stacks + my_threadstack->stackID;
    profile_t *my_profile = vftr_get_my_profile(my_new_stack, my_thread);
-   vftr_accumulate_callprofiling(&(my_profile->callprof), 1, -region_begin_time_begin);
+   if (acc_callprof) vftr_accumulate_callprofiling(&(my_profile->callprof), 1, -region_begin_time_begin);
 
    acc_launch_event_info *launch_event_info;
    acc_data_event_info *data_event_info;
@@ -62,6 +63,10 @@ void vftr_accprof_region_begin (acc_prof_info *prof_info, acc_event_info *event_
       case acc_ev_enqueue_upload_end:
       case acc_ev_enqueue_download_start:
       case acc_ev_enqueue_download_end:
+      case acc_ev_create:
+      case acc_ev_delete:
+      case acc_ev_alloc:
+      case acc_ev_free:
          data_event_info = (acc_data_event_info*)event_info;
          vftr_accumulate_accprofiling (&(my_profile->accprof), prof_info->event_type,
         			       prof_info->line_no, prof_info->end_line_no,
@@ -78,7 +83,8 @@ void vftr_accprof_region_begin (acc_prof_info *prof_info, acc_event_info *event_
    }
 }
 
-void vftr_accprof_region_end (acc_prof_info *prof_info, acc_event_info *event_info) {
+void vftr_accprof_region_end (acc_prof_info *prof_info, acc_event_info *event_info,
+                              bool acc_callprof) {
 
    long long region_end_time_begin = vftr_get_runtime_nsec();
 
@@ -86,27 +92,31 @@ void vftr_accprof_region_end (acc_prof_info *prof_info, acc_event_info *event_in
    threadstack_t *my_threadstack = vftr_get_my_threadstack(my_thread);
    stack_t *my_stack = vftrace.process.stacktree.stacks + my_threadstack->stackID;
    profile_t *my_profile = vftr_get_my_profile(my_stack, my_thread);
-   vftr_accumulate_callprofiling(&(my_profile->callprof), 0, region_end_time_begin);
+   if (acc_callprof) vftr_accumulate_callprofiling(&(my_profile->callprof), 0, region_end_time_begin);
 
    threadstacklist_t stacklist = my_thread->stacklist;
    (void)vftr_threadstack_pop(&(my_thread->stacklist));
-
 }
 
 void prof_data_start (acc_prof_info *prof_info, acc_event_info *event_info, acc_api_info *api_info) {
-   vftr_accprof_region_begin (prof_info, event_info);
+   vftr_accprof_region_begin (prof_info, event_info, true);
 }
 
 void prof_data_end (acc_prof_info *prof_info, acc_event_info *event_info, acc_api_info *api_info) {
-   vftr_accprof_region_end (prof_info, event_info); 
+   vftr_accprof_region_end (prof_info, event_info, true); 
 }
 
-void prof_launch_start (acc_prof_info *prof_info, acc_event_info *event_info, acc_api_info *api_info) {
-   vftr_accprof_region_begin (prof_info, event_info);
+void prof_compute_start (acc_prof_info *prof_info, acc_event_info *event_info, acc_api_info *api_info) {
+   vftr_accprof_region_begin (prof_info, event_info, true);
 }
 
-void prof_launch_end (acc_prof_info *prof_info, acc_event_info *event_info, acc_api_info *api_info) {
-   vftr_accprof_region_end (prof_info, event_info);
+void prof_compute_end (acc_prof_info *prof_info, acc_event_info *event_info, acc_api_info *api_info) {
+   vftr_accprof_region_end (prof_info, event_info, true);
+}
+
+void prof_single (acc_prof_info *prof_info, acc_event_info *event_info, acc_api_info *api_info) {
+   vftr_accprof_region_begin (prof_info, event_info, false);
+   vftr_accprof_region_end (prof_info, event_info, false);
 }
 
 void prof_dummy (acc_prof_info *prof_info, acc_event_info *event_info, acc_api_info *api_info) {
@@ -121,23 +131,61 @@ void acc_register_library (acc_prof_reg register_ev, acc_prof_reg unregister_ev,
    if (vftrace.accprof_state.veto_callback_registration) return;
    vftr_accprof_register = register_ev;
    vftr_accprof_unregister = unregister_ev;
+   /// Problems with creating stack entries for these event types
+   ///vftr_accprof_register (acc_ev_device_init_start, prof_data_start, 0);
+   ///vftr_accprof_register (acc_ev_device_init_end, prof_data_end, 0);
+   ///vftr_accprof_register (acc_ev_device_shutdown_start, prof_data_start, 0);
+   ///vftr_accprof_register (acc_ev_device_shutdown_end, prof_data_end, 0);
+   ///vftr_accprof_register (acc_ev_runtime_shutdown, prof_single, 0);
+   vftr_accprof_register (acc_ev_create, prof_single, 0);
+   vftr_accprof_register (acc_ev_delete, prof_single, 0);
+   vftr_accprof_register (acc_ev_alloc, prof_single, 0);
+   vftr_accprof_register (acc_ev_free, prof_single, 0);
+   vftr_accprof_register (acc_ev_enter_data_start, prof_compute_start, 0);
+   vftr_accprof_register (acc_ev_enter_data_end, prof_compute_end, 0);
+   vftr_accprof_register (acc_ev_exit_data_start, prof_compute_start, 0);
+   vftr_accprof_register (acc_ev_exit_data_end, prof_compute_end, 0);
+   vftr_accprof_register (acc_ev_update_start, prof_data_start, 0); 
+   vftr_accprof_register (acc_ev_update_end, prof_data_end, 0); 
+   vftr_accprof_register (acc_ev_compute_construct_start, prof_compute_start, 0);
+   vftr_accprof_register (acc_ev_compute_construct_end, prof_compute_end, 0);
+   vftr_accprof_register (acc_ev_enqueue_launch_start, prof_compute_start, 0);
+   vftr_accprof_register (acc_ev_enqueue_launch_end, prof_compute_end, 0);
    vftr_accprof_register (acc_ev_enqueue_upload_start, prof_data_start, 0);
    vftr_accprof_register (acc_ev_enqueue_upload_end, prof_data_end, 0);
    vftr_accprof_register (acc_ev_enqueue_download_start, prof_data_start, 0);
    vftr_accprof_register (acc_ev_enqueue_download_end, prof_data_end, 0);
-   //vftr_accprof_register (acc_ev_enter_data_start, prof_dummy, 0);
-   //vftr_accprof_register (acc_ev_enter_data_end, prof_dummy, 0);
-   vftr_accprof_register (acc_ev_enqueue_launch_start, prof_launch_start, 0);
-   vftr_accprof_register (acc_ev_enqueue_launch_end, prof_launch_end, 0);
+   /// Asynchronous events are not yet supported.
+   ///vftr_accprof_register (acc_ev_wait_start, prof_data_start, 0);
+   ///vftr_accprof_register (acc_ev_wait_end, prof_data_end, 0);
 }
 
 void vftr_unregister_accprof_callbacks () {
+   ///vftr_accprof_unregister (acc_ev_device_init_start, prof_data_start, 0);
+   ///vftr_accprof_unregister (acc_ev_device_init_end, prof_data_end, 0);
+   ///vftr_accprof_unregister (acc_ev_device_shutdown_start, prof_data_start, 0);
+   ///vftr_accprof_unregister (acc_ev_device_shutdown_end, prof_data_end, 0);
+   ///vftr_accprof_unregister (acc_ev_runtime_shutdown, prof_single, 0);
+   vftr_accprof_unregister (acc_ev_create, prof_single, 0);
+   vftr_accprof_unregister (acc_ev_delete, prof_single, 0);
+   vftr_accprof_unregister (acc_ev_alloc, prof_single, 0);
+   vftr_accprof_unregister (acc_ev_free, prof_single, 0);
+   vftr_accprof_unregister (acc_ev_enter_data_start, prof_compute_start, 0);
+   vftr_accprof_unregister (acc_ev_enter_data_end, prof_compute_end, 0);
+   vftr_accprof_unregister (acc_ev_exit_data_start, prof_compute_start, 0);
+   vftr_accprof_unregister (acc_ev_exit_data_end, prof_compute_end, 0);
+   vftr_accprof_unregister (acc_ev_update_start, prof_data_start, 0); 
+   vftr_accprof_unregister (acc_ev_update_end, prof_data_end, 0); 
+   vftr_accprof_unregister (acc_ev_compute_construct_start, prof_compute_start, 0);
+   vftr_accprof_unregister (acc_ev_compute_construct_end, prof_compute_end, 0);
+   vftr_accprof_unregister (acc_ev_enqueue_launch_start, prof_compute_start, 0);
+   vftr_accprof_unregister (acc_ev_enqueue_launch_end, prof_compute_end, 0);
    vftr_accprof_unregister (acc_ev_enqueue_upload_start, prof_data_start, 0);
    vftr_accprof_unregister (acc_ev_enqueue_upload_end, prof_data_end, 0);
    vftr_accprof_unregister (acc_ev_enqueue_download_start, prof_data_start, 0);
    vftr_accprof_unregister (acc_ev_enqueue_download_end, prof_data_end, 0);
-   vftr_accprof_unregister (acc_ev_enqueue_launch_start, prof_launch_start, 0);
-   vftr_accprof_unregister (acc_ev_enqueue_launch_end, prof_launch_end, 0);
+   ///vftr_accprof_unregister (acc_ev_wait_start, prof_data_start, 0);
+   ///vftr_accprof_unregister (acc_ev_wait_end, prof_data_end, 0);
 }
 
 void vftr_veto_accprof_callbacks () {

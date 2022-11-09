@@ -114,3 +114,37 @@ void vftr_write_logfile_accprof_table (FILE *fp, collated_stacktree_t stacktree,
    free (source_files);
    free (func_names);
 }
+
+void vftr_write_logfile_accev_names (FILE *fp) {
+   fprintf (fp, "acc_ev_none: %d\n", acc_ev_none); 
+   fprintf (fp, "acc_ev_device_init_start: %d\n", acc_ev_device_init_start); 
+   fprintf (fp, "acc_ev_device_init_end: %d\n", acc_ev_device_init_end); 
+   fprintf (fp, "acc_ev_device_shutdown_start: %d\n", acc_ev_device_shutdown_start); 
+   fprintf (fp, "acc_ev_device_shutdown_end: %d\n", acc_ev_device_shutdown_end); 
+   fprintf (fp, "acc_ev_runtime_shutdown: %d\n", acc_ev_runtime_shutdown); 
+   fprintf (fp, "acc_ev_create: %d\n", acc_ev_create);
+   fprintf (fp, "acc_ev_delete: %d\n", acc_ev_delete);
+   fprintf (fp, "acc_ev_alloc: %d\n", acc_ev_alloc);
+   fprintf (fp, "acc_ev_free: %d\n", acc_ev_free);
+   fprintf (fp, "acc_ev_enter_data_start: %d\n", acc_ev_enter_data_start);
+   fprintf (fp, "acc_ev_enter_data_end: %d\n", acc_ev_enter_data_end);
+   fprintf (fp, "acc_ev_exit_data_start: %d\n", acc_ev_exit_data_start);
+   fprintf (fp, "acc_ev_exit_data_end: %d\n", acc_ev_exit_data_end);
+   fprintf (fp, "acc_ev_update_start: %d\n", acc_ev_update_start);
+   fprintf (fp, "acc_ev_update_end: %d\n", acc_ev_update_end);
+   fprintf (fp, "acc_ev_compute_construct_start: %d\n", acc_ev_compute_construct_start);
+   fprintf (fp, "acc_ev_compute_construct_end: %d\n", acc_ev_compute_construct_end);
+   fprintf (fp, "acc_ev_enqueue_launch_start: %d\n", acc_ev_enqueue_launch_start);
+   fprintf (fp, "acc_ev_enqueue_launch_end: %d\n", acc_ev_enqueue_launch_end);
+   fprintf (fp, "acc_ev_enqueue_upload_start: %d\n", acc_ev_enqueue_upload_start);
+   fprintf (fp, "acc_ev_enqueue_upload_end: %d\n", acc_ev_enqueue_upload_end);
+   fprintf (fp, "acc_ev_enqueue_download_start: %d\n", acc_ev_enqueue_download_start);
+   fprintf (fp, "acc_ev_enqueue_download_end: %d\n", acc_ev_enqueue_download_end);
+   fprintf (fp, "acc_ev_wait_start: %d\n", acc_ev_wait_start);
+   fprintf (fp, "acc_ev_wait_end: %d\n", acc_ev_wait_end);
+   fprintf (fp, "acc_ev_last: %d\n", acc_ev_last);
+  
+
+
+
+}

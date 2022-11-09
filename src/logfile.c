@@ -111,6 +111,10 @@ void vftr_write_logfile(vftrace_t vftrace, long long runtime) {
    vftr_write_logfile_cbid_names (fp, vftrace.process.collated_stacktree);
 #endif
 
+#ifdef _ACCPROF
+   vftr_write_logfile_accev_names (fp);
+#endif
+
    fclose(fp);
    free(logfilename);
    SELF_PROFILE_END_FUNCTION;

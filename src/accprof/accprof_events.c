@@ -22,6 +22,8 @@ bool vftr_accprof_is_launch_event (acc_event_t event_type) {
    switch (event_type) {
       case acc_ev_enqueue_launch_start:
       case acc_ev_enqueue_launch_end:
+      case acc_ev_compute_construct_start:
+      case acc_ev_compute_construct_end:
          return true;
       default:
          return false;
@@ -33,6 +35,15 @@ char *vftr_accprof_event_string (acc_event_t event_type) {
      case acc_ev_enqueue_launch_start:
      case acc_ev_enqueue_launch_end:
         return "launch";
+     case acc_ev_compute_construct_start:
+     case acc_ev_compute_construct_end:
+        return "compute construct";
+     case acc_ev_enter_data_start:
+     case acc_ev_enter_data_end:
+        return "enter_data";
+     case acc_ev_exit_data_start:
+     case acc_ev_exit_data_end:
+        return "exit_data";
      case acc_ev_enqueue_upload_start:
      case acc_ev_enqueue_upload_end:
         return "upload";

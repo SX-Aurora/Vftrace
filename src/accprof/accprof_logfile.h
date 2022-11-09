@@ -9,4 +9,6 @@ void vftr_get_total_accprof_times_for_logfile (collated_stacktree_t stacktree,
 
 void vftr_write_logfile_accprof_table (FILE *fp, collated_stacktree_t stacktree, config_t config);
 
+void vftr_write_logfile_accev_names (FILE *fp);
+
 #endif
