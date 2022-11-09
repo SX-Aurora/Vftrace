@@ -35,7 +35,7 @@ void vftr_config_column_assert(FILE *fp, config_string_t cfg_column,
    }
 
    if (!colum_is_valid) {
-      fprintf(fp, "\"%s\" is not a valie option for this sort_table.column\n",
+      fprintf(fp, "\"%s\" is not a valid option for this sort_table.column\n",
               cfg_column.value);
       fprintf(fp, "Valid options are: %s\n",
               valid_columns[0]);
@@ -205,7 +205,7 @@ void vftr_config_sample_interval_assert(FILE *fp,
 void vftr_config_outbuffer_size_assert(FILE *fp,
                                        config_int_t cfg_outbuffer_size) {
    if (cfg_outbuffer_size.value <= 0) {
-      fprintf(fp, "%d is not a valie value for sampling->outbuffer_size\n",
+      fprintf(fp, "%d is not a valid value for sampling->outbuffer_size\n",
               cfg_outbuffer_size.value);
       fprintf(fp, "Valid values are positive numbers\n");
       abort();
