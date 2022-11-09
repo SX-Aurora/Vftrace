@@ -35,12 +35,12 @@ void vftr_config_column_assert(FILE *fp, config_string_t cfg_column,
    }
 
    if (!colum_is_valid) {
-      fprintf(fp, "\"%s\" is not a valid option for this sort_table.column\n",
+      fprintf(fp, "\"%s\" is not a valid option for sort_table.column\n",
               cfg_column.value);
-      fprintf(fp, "Valid options are: %s\n",
+      fprintf(fp, "Valid options are: \"%s\"",
               valid_columns[0]);
       for (int icol=1; icol<nvalid_columns; icol++) {
-         fprintf(fp, ", %s", valid_columns[icol]);
+         fprintf(fp, ", \"%s\"", valid_columns[icol]);
       }
       fprintf(fp, "\n");
       abort();
