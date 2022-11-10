@@ -38,6 +38,7 @@ vftrace_t vftrace = {
       .do_sampling = false,
       .vfdfilename = NULL,
       .vfdfilefp = NULL,
+      .iobuffer_size = 0,
       .iobuffer = NULL,
       .nextsampletime = 0,
       .interval = 0,
@@ -454,8 +455,9 @@ unsigned long long vftr_sizeof_state_t(state_t state) {
 }
 
 unsigned long long vftr_sizeof_sampling_t(sampling_t sampling) {
-   (void) sampling;
-   return sizeof(sampling_t);
+   unsigned long long size = sizeof(sampling_t);
+   size += sampling.iobuffer_size;
+   return size;
 }
 
 unsigned long long vftr_sizeof_time_strings_t(time_strings_t time_strings) {

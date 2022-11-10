@@ -75,11 +75,13 @@ FILE *vftr_open_vfdfile(char *filename) {
    return fp;
 }
 
-char *vftr_attach_iobuffer_vfdfile(FILE *fp, config_t config) {
+char *vftr_attach_iobuffer_vfdfile(FILE *fp, config_t config,
+                                   size_t *buffersize) {
    // the configuration variable gets the size in MB.
    size_t bufsize = config.sampling.outbuffer_size.value;
    // it is needed in bytes
    bufsize *= 1024*1024;
+   *buffersize = bufsize;
    char *buffer = (char*) malloc(bufsize);
    assert(buffer);
    memset((void*) buffer, 0, bufsize);
