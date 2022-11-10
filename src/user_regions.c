@@ -31,23 +31,23 @@ void vftr_user_region_begin(const char *name, void *addr) {
    stack_t *my_stack = vftrace.process.stacktree.stacks+my_threadstack->stackID;
    profile_t *my_profile = vftr_get_my_profile(my_stack, my_thread);
 
-   // cast and store region address once, as it is needed multiple times
-   uintptr_t region_addr = (uintptr_t) addr;
    // TODO: update performance and call counters as soon as implemented
    // check for recursion
    // need to check for same address and name.
    // if a dynamically created region is called recuresively
    // it might have the same address, but the name can differ
-   if (my_stack->address == region_addr && !strcmp(name, my_stack->name)) {
+   if (my_stack->address == (uintptr_t)addr && !strcmp(name, my_stack->name)) {
       // if recusive call, simply increas recursion depth count.
       my_threadstack->recursion_depth++;
       vftr_accumulate_callprofiling(&(my_profile->callprof), 1, 0);
    } else {
       // add possibly new region to the stack
       // and adjust the threadstack accordingly
+      // The address passed is just 0. This enables the accumulation of regions
+      // with identical name in the same function.
       bool precise = true;
       my_threadstack = vftr_update_threadstack_region(my_threadstack, my_thread,
-                                                      region_addr, name,
+                                                      0, name,
                                                       &vftrace,
                                                       precise);
       stack_t *my_new_stack = vftrace.process.stacktree.stacks+my_threadstack->stackID;
@@ -90,10 +90,6 @@ void vftr_user_region_end() {
       // if not recursive pop the function from the threads stacklist
       my_threadstack = vftr_threadstack_pop(&(my_thread->stacklist));
 
-      // TODO stack_t *my_new_stack = vftrace.process.stacktree.stacks+my_threadstack->stackID;
-      // TODO profile_t *my_new_profile = vftr_get_my_profile(my_new_stack, my_thread);
-
-      // TODO Add accumulation of profiling data
       vftr_sample_function_exit(&(vftrace.sampling),
                                 *my_stack,
                                 region_end_time_begin);
