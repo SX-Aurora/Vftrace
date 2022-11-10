@@ -19,7 +19,8 @@ char *vftr_get_vfdfile_name(config_t config, int rankID, int nranks);
 
 FILE *vftr_open_vfdfile(char *filename);
 
-char *vftr_attach_iobuffer_vfdfile(FILE *fp, config_t config);
+char *vftr_attach_iobuffer_vfdfile(FILE *fp, config_t config,
+                                   size_t *buffersize);
 
 int vftr_rename_vfdfile(char *prelim_name, char *final_name);
 

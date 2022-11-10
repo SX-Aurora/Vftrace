@@ -3,6 +3,7 @@
 
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <string.h>
 #include <errno.h>
 #include <unistd.h>
 
@@ -37,6 +38,7 @@ config_t vftr_read_config() {
          char *config_string = vftr_read_file_to_string(config_path);
          vftr_parse_config(config_string, &config);
          free(config_string);
+         config.config_file_path = strdup(config_path);
       }
    }
    return config;
@@ -153,7 +155,10 @@ void vftr_config_free(config_t *config_ptr) {
    vftr_config_mpi_free(&(config_ptr->mpi));
    vftr_config_cuda_free(&(config_ptr->cuda));
    vftr_config_hardware_scenarios_free(&(config_ptr->hardware_scenarios));
-   // Need to free config_file_path?
-   //free(config_ptr->config_file_path);
+
+   if (config_ptr->config_file_path != NULL) {
+      free(config_ptr->config_file_path);
+      config_ptr->config_file_path = NULL;
+   }
    config_ptr->valid = false;
 }

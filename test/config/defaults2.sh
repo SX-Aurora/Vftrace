@@ -1,10 +1,12 @@
 #!/bin/bash
 set -x
-test_name=defaults
+test_name=defaults2
 outfile=${test_name}.out
-ref_file=${srcdir}/ref_output/${outfile}
+configfile=${test_name}.json
+ref_file=${srcdir}/ref_output/little_tasks.out
 
-rm -f ${outfile}
+../../tools/config_tools/vftrace_generate_default_config > ${configfile}
+export VFTR_CONFIG=${configfile}
 
 if [ "x${HAS_MPI}" == "xYES" ]; then
    ${MPI_EXEC} ${MPI_OPTS} ${NP} 1 ./${test_name} > ${outfile} || exit 1

@@ -17,7 +17,7 @@ char *vftr_create_filename_base(config_t config, int rankID, int nranks) {
    int out_dir_len = strlen(out_dir);
 
    char *exe_name = NULL;
-   if (config.outfile_basename.set) {
+   if (config.outfile_basename.set && config.outfile_basename.value != NULL) {
       // user defined logfile name
       exe_name = strdup(config.outfile_basename.value);
    } else {

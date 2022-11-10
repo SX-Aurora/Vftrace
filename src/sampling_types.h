@@ -14,6 +14,7 @@ typedef struct {
    bool do_sampling;
    char *vfdfilename;
    FILE *vfdfilefp;
+   size_t iobuffer_size;
    char *iobuffer;
    long long interval;
    long long nextsampletime;

@@ -61,12 +61,17 @@ check_PROGRAMS =
 dist_check_SCRIPTS =
 
 check_PROGRAMS += defaults \
+		  defaults2 \
 		  advisor \
 		  format_check
 
 defaults_SOURCES = $(srcdir)/defaults.c
 defaults_CFLAGS = $(AM_CFLAGS) -I$(top_srcdir)/src
 defaults_LDFLAGS = $(AM_LDFLAGS)
+
+defaults2_SOURCES = $(srcdir)/little_tasks.c
+defaults2_CFLAGS = $(AM_CFLAGS) -finstrument-functions
+defaults2_LDFLAGS = $(AM_LDFLAGS)
 
 advisor_SOURCES = $(srcdir)/advisor.c
 advisor_CFLAGS = $(AM_CFLAGS) -I$(top_srcdir)/src
@@ -78,6 +83,7 @@ format_check_CFLAGS = $(AM_CFLAGS) -I$(top_srcdir)/src \
 format_check_LDFLAGS = $(AM_LDFLAGS)
 
 dist_check_SCRIPTS += defaults.sh \
+		      defaults2.sh \
 		      advisor.sh \
 		      format_check.sh
 

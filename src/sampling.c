@@ -20,7 +20,8 @@ sampling_t vftr_new_sampling(config_t config) {
       sampling.vfdfilename = vftr_get_preliminary_vfdfile_name(config);
       sampling.vfdfilefp = vftr_open_vfdfile(sampling.vfdfilename);
       sampling.iobuffer = vftr_attach_iobuffer_vfdfile(sampling.vfdfilefp,
-                                                       config);
+                                                       config,
+                                                       &(sampling.iobuffer_size));
       sampling.interval = (long long) (config.sampling.sample_interval.value*1.0e9);
       sampling.nextsampletime = 0;
       sampling.function_samplecount = 0;
@@ -33,6 +34,7 @@ sampling_t vftr_new_sampling(config_t config) {
    } else {
       sampling.vfdfilename = NULL;
       sampling.vfdfilefp = NULL;
+      sampling.iobuffer_size = 0;
       sampling.iobuffer = NULL;
       sampling.nextsampletime = 0;
       sampling.interval = 0;
@@ -53,6 +55,7 @@ void vftr_sampling_free(sampling_t *sampling) {
       free(sampling->iobuffer);
       sampling->vfdfilename = NULL;
       sampling->vfdfilefp = NULL;
+      sampling->iobuffer_size = 0;
       sampling->iobuffer = NULL;
       sampling->nextsampletime = 0;
       sampling->function_samplecount = 0;
