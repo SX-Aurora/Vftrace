@@ -24,7 +24,7 @@ char *concatenate_openacc_name (acc_event_t event_type, int line_1, int line_2, 
    int n4 = vftr_count_base_digits ((long long)parent_id, 10) + 1;
    int new_len = strlen("openacc") + n1 + n2 + n3 + n4 + 1; 
    char *s = (char*)malloc(new_len * sizeof(char));
-   snprintf (s, new_len, "openacc_%d_%d_%d_%d\n", line_1, line_2, event_type, parent_id);
+   snprintf (s, new_len, "openacc_%d_%d_%d_%d", line_1, line_2, event_type, parent_id);
    return s;
 }
 

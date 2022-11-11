@@ -68,6 +68,7 @@ collated_stack_t **vftr_sort_collated_stacks_for_cuda (config_t config, collated
 #endif
 
 #ifdef _ACCPROF
+stack_t **vftr_sort_stacks_for_accprof (config_t config, stacktree_t stacktree);
 collated_stack_t **vftr_sort_collated_stacks_for_accprof (config_t config, collated_stacktree_t stacktree);
 #endif
 

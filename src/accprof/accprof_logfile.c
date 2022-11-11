@@ -71,9 +71,15 @@ void vftr_write_logfile_accprof_table (FILE *fp, collated_stacktree_t stacktree,
       collated_callprofile_t callprof = this_stack->profile.callprof;
       acc_event_t ev = accprof.event_type;
       if (ev == 0) continue;
-      stackids_with_accprof_data[i] = istack;
+      stackids_with_accprof_data[i] = this_stack->gid;
       calls[i] = callprof.calls; 
-      ev_names[i] = vftr_accprof_event_string(ev);
+      if (ev != acc_ev_enqueue_launch_start && ev != acc_ev_enqueue_launch_end) {
+          ev_names[i] = vftr_accprof_event_string(ev);
+      } else {
+          int slen = strlen(accprof.kernel_name) + 10;
+	  ev_names[i] = (char*)malloc(slen * sizeof(char));
+          snprintf (ev_names[i], slen, "launch (%s)", accprof.kernel_name);
+      }
       copied_bytes[i] = accprof.copied_bytes;
       double t = (double)callprof.time_excl_nsec / 1e9;
       t_compute[i] = 0.0;

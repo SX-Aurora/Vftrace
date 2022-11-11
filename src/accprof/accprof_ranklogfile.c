@@ -5,6 +5,7 @@
 #include "tables.h"
 #include "callprofiling_types.h"
 #include "stack_types.h"
+#include "sorting.h"
 
 #include "accprofiling_types.h"
 #include "accprof_events.h"
@@ -12,8 +13,10 @@
 void vftr_write_ranklogfile_accprof_table (FILE *fp, stacktree_t stacktree, config_t config) {
    int n_stackids_with_accprof_data = 0;
    
+   stack_t **sorted_stacks = vftr_sort_stacks_for_accprof (config, stacktree);
+   
    for (int istack = 0; istack < stacktree.nstacks; istack++) {
-      profile_t *this_profile = stacktree.stacks[istack].profiling.profiles;
+      profile_t *this_profile = sorted_stacks[istack]->profiling.profiles;
       accprofile_t accprof = this_profile->accprof;
       if (accprof.event_type != 0) n_stackids_with_accprof_data++;
    }
@@ -26,21 +29,26 @@ void vftr_write_ranklogfile_accprof_table (FILE *fp, stacktree_t stacktree, conf
    double *t_compute = (double*)malloc(n_stackids_with_accprof_data * sizeof(double));
    double *t_memcpy = (double*)malloc(n_stackids_with_accprof_data * sizeof(double));
    double *t_other = (double*)malloc(n_stackids_with_accprof_data * sizeof(double));
-   int *start_lines = (int*)malloc(n_stackids_with_accprof_data * sizeof(int));
-   int *end_lines = (int*)malloc(n_stackids_with_accprof_data * sizeof(int));
    char **source_files = (char*)malloc(n_stackids_with_accprof_data * sizeof(char*));
+   char **func_names = (char**)malloc(n_stackids_with_accprof_data * sizeof(char*));
 
    int i = 0;
    for (int istack = 0; istack < stacktree.nstacks; istack++) {
-      stack_t this_stack = stacktree.stacks[istack];
-      profile_t *this_profile = this_stack.profiling.profiles;
+      stack_t *this_stack = sorted_stacks[istack];
+      profile_t *this_profile = this_stack->profiling.profiles;
       accprofile_t accprof = this_profile->accprof;
       callprofile_t callprof = this_profile->callprof;
       acc_event_t ev = accprof.event_type;
       if (ev == 0) continue;
-      stackids_with_accprof_data[i] = this_stack.gid;
+      stackids_with_accprof_data[i] = istack;
       calls[i] = callprof.calls; 
-      ev_names[i] = vftr_accprof_event_string(ev);
+      if (ev != acc_ev_enqueue_launch_start && ev != acc_ev_enqueue_launch_end) {
+          ev_names[i] = vftr_accprof_event_string(ev);
+      } else {
+          int slen = strlen(accprof.kernel_name) + 10;
+	  ev_names[i] = (char*)malloc(slen * sizeof(char));
+          snprintf (ev_names[i], slen, "launch (%s)", accprof.kernel_name);
+      }
       copied_bytes[i] = accprof.copied_bytes;
       double t = (double)callprof.time_excl_nsec / 1e9;
       t_compute[i] = 0.0;
@@ -53,9 +61,8 @@ void vftr_write_ranklogfile_accprof_table (FILE *fp, stacktree_t stacktree, conf
       } else {
          t_other[i] = t;
       }
-      start_lines[i] = accprof.line_start;
-      end_lines[i] = accprof.line_end;
-      source_files[i] = basename(accprof.source_file);
+      source_files[i] = vftr_name_with_lines (basename(accprof.source_file), accprof.line_start, accprof.line_end);
+      func_names[i] = accprof.func_name;
       i++;
    }
 
@@ -70,8 +77,7 @@ void vftr_write_ranklogfile_accprof_table (FILE *fp, stacktree_t stacktree, conf
    vftr_table_add_column (&table, col_double, "t_other[s]", "%.3lf", 'c', 'r', (void*)t_other);
    vftr_table_add_column (&table, col_long, "Bytes", "%ld", 'c', 'r', (void*)copied_bytes);
    vftr_table_add_column (&table, col_string, "File", "%s", 'c', 'r', (void*)source_files);
-   vftr_table_add_column (&table, col_int, "Line 1", "%d", 'c', 'r', (void*)start_lines);
-   vftr_table_add_column (&table, col_int, "Line 2", "%d", 'c', 'r', (void*)end_lines);
+   vftr_table_add_column (&table, col_string, "Function", "%s", 'c', 'r', (void*)func_names);
 
    fprintf (fp, "\n--OpenACC Summary--\n");
    vftr_print_table(fp, table);
@@ -83,7 +89,6 @@ void vftr_write_ranklogfile_accprof_table (FILE *fp, stacktree_t stacktree, conf
    free (t_memcpy);
    free (t_other);
    free (copied_bytes);
-   free (start_lines);
-   free (end_lines);
    free (source_files);
+   free (func_names);
 }
