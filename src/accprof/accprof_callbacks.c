@@ -72,14 +72,12 @@ void vftr_accprof_region_begin (acc_prof_info *prof_info, acc_event_info *event_
          data_event_info = (acc_data_event_info*)event_info;
          vftr_accumulate_accprofiling (&(my_profile->accprof), prof_info->event_type,
         			       prof_info->line_no, prof_info->end_line_no,
-        			       prof_info->func_line_no, prof_info->func_end_line_no,
                                        prof_info->src_file, prof_info->func_name,
                                        NULL, data_event_info->var_name, data_event_info->bytes);
          break;
       default:
          vftr_accumulate_accprofiling (&(my_profile->accprof), prof_info->event_type,
         			       prof_info->line_no, prof_info->end_line_no,
-        			       prof_info->func_line_no, prof_info->func_end_line_no,
                                        prof_info->src_file, prof_info->func_name,
                                        NULL, NULL, 0);
    }
@@ -160,7 +158,6 @@ void prof_wait_start (acc_prof_info *prof_info, acc_event_info *event_info, acc_
 
    vftr_accumulate_accprofiling (&(my_profile->accprof), prof_info->event_type,
                                  prof_info->line_no, prof_info->end_line_no,
-                                 prof_info->func_line_no, prof_info->func_end_line_no,
                                  prof_info->src_file, prof_info->func_name,
                                  NULL, NULL, 0);
 

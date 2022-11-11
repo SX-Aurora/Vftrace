@@ -7,8 +7,6 @@ typedef struct {
    acc_event_t event_type; 
    int line_start;
    int line_end;
-   int func_line_start;
-   int func_line_end;
    long long copied_bytes; // Only for data events: Amount of data moved
    char *source_file;
    char *func_name;

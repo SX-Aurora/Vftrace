@@ -7,7 +7,6 @@ accprofile_t vftr_new_accprofiling();
 
 void vftr_accumulate_accprofiling (accprofile_t *prof, acc_event_t ev,
                                    int line_start, int line_end,
-				   int func_line_start, int func_line_end,
   				   const char *source_file, const char *func_name,
                                    const char *kernel_name, const char *var_name, size_t copied_bytes);
 

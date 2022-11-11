@@ -87,7 +87,8 @@ void vftr_write_logfile_accprof_table (FILE *fp, collated_stacktree_t stacktree,
          t_other[i] = t;
       }
       source_files[i] = vftr_name_with_lines (basename(accprof.source_file), accprof.line_start, accprof.line_end);
-      func_names[i] = vftr_name_with_lines (accprof.func_name, accprof.func_line_start, accprof.func_line_end);
+      //func_names[i] = vftr_name_with_lines (accprof.func_name, accprof.func_line_start, accprof.func_line_end);
+      func_names[i] = accprof.func_name;
       i++;
    }
 
