@@ -181,7 +181,7 @@ void prof_wait_end (acc_prof_info *prof_info, acc_event_info *event_info, acc_ap
    thread_t *my_thread = vftr_get_my_thread(&(vftrace.process.threadtree));
    profile_t *my_profile = vftr_get_my_profile (stack, my_thread);
    printf ("Accumulate: %d %lld\n", stack->lid, wait_end_time - wait_begin_time);
-   vftr_accumulate_callprofiling (&(my_profile->callprof), 0, wait_end_time - wait_begin_time);
+   vftr_accumulate_callprofiling (&(my_profile->callprof), 1, wait_end_time - wait_begin_time);
 }
 
 void prof_dummy (acc_prof_info *prof_info, acc_event_info *event_info, acc_api_info *api_info) {
