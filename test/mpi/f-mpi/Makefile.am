@@ -31,7 +31,8 @@ endif
 ################
 # System Tests #
 ################
-check_PROGRAMS = init_finalize_1 \
+check_PROGRAMS = no_init_finalize \
+		 init_finalize_1 \
 		 init_finalize_2 \
 		 init_finalize_3 \
 		 init_finalize_4 \
@@ -43,6 +44,10 @@ check_PROGRAMS = init_finalize_1 \
 		 derived_ftypes \
 		 pcontrol
 		
+no_init_finalize_SOURCES = $(srcdir)/no_init_finalize.F90
+no_init_finalize_FCFLAGS = $(AM_FCFLAGS)
+no_init_finalize_LDFLAGS = $(AM_LDFLAGS)
+
 init_finalize_1_SOURCES = $(srcdir)/init_finalize.F90
 init_finalize_1_FCFLAGS = $(AM_FCFLAGS)
 init_finalize_1_LDFLAGS = $(AM_LDFLAGS)
@@ -87,7 +92,8 @@ pcontrol_SOURCES = $(srcdir)/pcontrol.F90
 pcontrol_FCFLAGS = $(AM_FCFLAGS)
 pcontrol_LDFLAGS = $(AM_LDFLAGS)
 
-dist_noinst_SCRIPTS = init_finalize-1.sh \
+dist_noinst_SCRIPTS = no_init_finalize.sh \
+		      init_finalize-1.sh \
                       init_finalize-2.sh \
                       init_finalize-3.sh \
                       init_finalize-4.sh \

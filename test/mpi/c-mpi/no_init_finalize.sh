@@ -1,0 +1,1 @@
+../testscripts/no_init_finalize.sh
