@@ -28,7 +28,7 @@ void vftr_get_total_accprof_times_for_logfile (collated_stacktree_t stacktree,
       } else if (vftr_accprof_is_launch_event (accprof.event_type)) {
          *tot_compute_s += (double)callprof.time_excl_nsec / 1e9;
       } else {
-         *tot_other_s = (double)callprof.time_excl_nsec / 1e9;
+         *tot_other_s += (double)callprof.time_excl_nsec / 1e9;
       }
    }
 }
