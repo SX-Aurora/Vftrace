@@ -83,30 +83,42 @@ void vftr_write_ranklogfile(vftrace_t vftrace, long long runtime) {
    vftr_write_ranklogfile_summary(fp, vftrace.process,
                                   vftrace.size, runtime);
 
-   vftr_write_ranklogfile_profile_table(fp, vftrace.process.stacktree,
-                                        vftrace.config);
+   if (vftrace.config.profile_table.show_table.value) {
+      vftr_write_ranklogfile_profile_table(fp, vftrace.process.stacktree,
+                                           vftrace.config);
+   }
 
 #ifdef _MPI
-   vftr_write_ranklogfile_mpi_table(fp, vftrace.process.stacktree,
-                                    vftrace.config);
+   int mpi_initialized;
+   PMPI_Initialized(&mpi_initialized);
+   if (vftrace.config.mpi.show_table.value && mpi_initialized) {
+      vftr_write_ranklogfile_mpi_table(fp, vftrace.process.stacktree,
+                                       vftrace.config);
+   }
 #endif
 
 #ifdef _CUPTI
    if (vftrace.cupti_state.n_devices == 0) {
       fprintf (fp, "CUPTI: The interface is enabled, but no GPU devices were found.\n");
    } else {
-      vftr_write_ranklogfile_cupti_table(fp, vftrace.process.stacktree,
-                                         vftrace.config);
+      if (vftrace.config.cuda.show_table.value) {
+         vftr_write_ranklogfile_cupti_table(fp, vftrace.process.stacktree,
+                                            vftrace.config);
+      }
    }
 #endif
 
    vftr_write_logfile_global_stack_list(fp, vftrace.process.collated_stacktree);
 
    // print config info
-   vftr_print_config(fp, vftrace.config, true);
+   if (vftrace.config.print_config.value) {
+      vftr_print_config(fp, vftrace.config, true);
+   }
 
 #ifdef _CUPTI
-   vftr_write_ranklogfile_cbid_names (fp, vftrace.process.stacktree);
+   if (vftrace.config.cuda.show_table.value) {
+      vftr_write_ranklogfile_cbid_names (fp, vftrace.process.stacktree);
+   }
 #endif
 
    fclose(fp);

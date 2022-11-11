@@ -104,7 +104,9 @@ void vftr_write_logfile(vftrace_t vftrace, long long runtime) {
    }
 
 #ifdef _CUPTI
-   vftr_write_logfile_cbid_names (fp, vftrace.process.collated_stacktree);
+   if (vftrace.config.cuda.show_table.value) {
+      vftr_write_logfile_cbid_names (fp, vftrace.process.collated_stacktree);
+   }
 #endif
 
    fclose(fp);
