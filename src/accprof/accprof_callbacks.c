@@ -17,13 +17,14 @@
 #include "acc_prof.h"
 #include "accprofiling.h"
 
-char *concatenate_openacc_name (acc_event_t event_type, int line_1, int line_2) {
+char *concatenate_openacc_name (acc_event_t event_type, int line_1, int line_2, int parent_id) {
    int n1 = vftr_count_base_digits ((long long)line_1, 10) + 1;
    int n2 = vftr_count_base_digits ((long long)line_2, 10) + 1;
    int n3 = vftr_count_base_digits ((long long)event_type, 10) + 1;
-   int new_len = strlen("openacc") + n1 + n2 + n3 + 1; 
+   int n4 = vftr_count_base_digits ((long long)parent_id, 10) + 1;
+   int new_len = strlen("openacc") + n1 + n2 + n3 + n4 + 1; 
    char *s = (char*)malloc(new_len * sizeof(char));
-   snprintf (s, new_len, "openacc_%d_%d_%d\n", line_1, line_2, event_type);
+   snprintf (s, new_len, "openacc_%d_%d_%d_%d\n", line_1, line_2, event_type, parent_id);
    return s;
 }
 
@@ -37,7 +38,8 @@ void vftr_accprof_region_begin (acc_prof_info *prof_info, acc_event_info *event_
    stack_t *my_stack = vftrace.process.stacktree.stacks + my_threadstack->stackID;
 
    char *pseudo_name = concatenate_openacc_name (prof_info->event_type,
-                                                 prof_info->line_no, prof_info->end_line_no);
+                                                 prof_info->line_no, prof_info->end_line_no,
+						 my_stack->lid);
    uint64_t pseudo_addr = vftr_jenkins_murmur_64_hash (strlen(pseudo_name), (uint8_t*)pseudo_name);
 
    my_threadstack = vftr_update_threadstack_region (my_threadstack, my_thread,
@@ -138,7 +140,8 @@ void prof_wait_start (acc_prof_info *prof_info, acc_event_info *event_info, acc_
    stack_t *my_stack = vftrace.process.stacktree.stacks + my_threadstack->stackID;
 
    char *pseudo_name = concatenate_openacc_name (prof_info->event_type,
-                                                 prof_info->line_no, prof_info->end_line_no);
+                                                 prof_info->line_no, prof_info->end_line_no,
+						 my_stack->lid);
    uint64_t pseudo_addr = vftr_jenkins_murmur_64_hash (strlen(pseudo_name), (uint8_t*)pseudo_name);
 
    my_threadstack = vftr_update_threadstack_region (my_threadstack, my_thread,
