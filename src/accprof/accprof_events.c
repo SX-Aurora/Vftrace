@@ -58,6 +58,9 @@ char *vftr_accprof_event_string (acc_event_t event_type) {
         return "alloc";
      case acc_ev_free:
         return "free";
+     case acc_ev_wait_start:
+     case acc_ev_wait_end:
+        return "wait";
      default:
         return "other";
   }
