@@ -229,6 +229,14 @@ unsigned long long vftr_sizeof_config_cuda_t(config_cuda_t cfg_cuda) {
    return size;
 }
 
+unsigned long long vftr_sizeof_config_accprof_t(config_accprof_t cfg_accprof) {
+   unsigned long long size = sizeof(config_accprof_t);
+   size += vftr_sizeof_config_struct_defaults(cfg_accprof.name);
+   size -= sizeof(config_bool_t);
+   size += vftr_sizeof_config_sort_table_t(cfg_accprof.sort_table);
+   return size;
+}
+
 unsigned long long vftr_sizeof_config_hardware_scenarios_t(config_hardware_scenarios_t
                                              cfg_hardware_scenarios) {
    unsigned long long size = sizeof(config_hardware_scenarios_t);

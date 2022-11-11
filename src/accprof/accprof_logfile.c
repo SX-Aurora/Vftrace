@@ -8,6 +8,7 @@
 #include "callprofiling_types.h"
 #include "tables.h"
 #include "misc_utils.h"
+#include "sorting.h"
 
 #include "accprofiling_types.h"
 #include "accprof_events.h"
@@ -44,9 +45,11 @@ char *vftr_name_with_lines (char *name, int line_1, int line_2) {
 
 void vftr_write_logfile_accprof_table (FILE *fp, collated_stacktree_t stacktree, config_t config) {
    int n_stackids_with_accprof_data = 0;
-   
+
+   collated_stack_t **sorted_stacks = vftr_sort_collated_stacks_for_accprof (config, stacktree);
+
    for (int istack = 0; istack < stacktree.nstacks; istack++) {
-      accprofile_t accprof = stacktree.stacks[istack].profile.accprof;
+      accprofile_t accprof = sorted_stacks[istack]->profile.accprof;
       if (accprof.event_type != 0) n_stackids_with_accprof_data++;
    }
 
@@ -58,14 +61,14 @@ void vftr_write_logfile_accprof_table (FILE *fp, collated_stacktree_t stacktree,
    double *t_compute = (double*)malloc(n_stackids_with_accprof_data * sizeof(double));
    double *t_memcpy = (double*)malloc(n_stackids_with_accprof_data * sizeof(double));
    double *t_other = (double*)malloc(n_stackids_with_accprof_data * sizeof(double));
-   char **source_files = (char*)malloc(n_stackids_with_accprof_data * sizeof(char*));
-   char **func_names = (char*)malloc(n_stackids_with_accprof_data * sizeof(char*));
+   char **source_files = (char**)malloc(n_stackids_with_accprof_data * sizeof(char*));
+   char **func_names = (char**)malloc(n_stackids_with_accprof_data * sizeof(char*));
 
    int i = 0;
    for (int istack = 0; istack < stacktree.nstacks; istack++) {
-      collated_stack_t this_stack = stacktree.stacks[istack];
-      accprofile_t accprof = this_stack.profile.accprof;
-      collated_callprofile_t callprof = this_stack.profile.callprof;
+      collated_stack_t *this_stack = sorted_stacks[istack];
+      accprofile_t accprof = this_stack->profile.accprof;
+      collated_callprofile_t callprof = this_stack->profile.callprof;
       acc_event_t ev = accprof.event_type;
       if (ev == 0) continue;
       stackids_with_accprof_data[i] = istack;

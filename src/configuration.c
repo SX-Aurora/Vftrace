@@ -134,6 +134,12 @@ void vftr_config_cuda_free(config_cuda_t *cfg_cuda_ptr) {
    vftr_config_sort_table_free(&(cfg_cuda_ptr->sort_table));
 }
 
+void vftr_config_accprof_free(config_accprof_t *cfg_accprof_ptr) {
+   free(cfg_accprof_ptr->name);
+   cfg_accprof_ptr->name = NULL;
+   vftr_config_sort_table_free(&(cfg_accprof_ptr->sort_table));
+}
+
 void vftr_config_hardware_scenarios_free(config_hardware_scenarios_t
                                          *cfg_hardware_scenarios_ptr) {
    free(cfg_hardware_scenarios_ptr->name);
@@ -154,6 +160,7 @@ void vftr_config_free(config_t *config_ptr) {
    vftr_config_sampling_free(&(config_ptr->sampling));
    vftr_config_mpi_free(&(config_ptr->mpi));
    vftr_config_cuda_free(&(config_ptr->cuda));
+   vftr_config_accprof_free(&(config_ptr->accprof));
    vftr_config_hardware_scenarios_free(&(config_ptr->hardware_scenarios));
 
    if (config_ptr->config_file_path != NULL) {

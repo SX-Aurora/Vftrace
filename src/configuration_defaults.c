@@ -134,6 +134,15 @@ config_cuda_t vftr_set_config_cuda_default() {
    return cfg_cuda;
 }
 
+config_accprof_t vftr_set_config_accprof_default() {
+   config_accprof_t cfg_accprof;
+   cfg_accprof.name = strdup("accprof");
+   cfg_accprof.set = false;
+   cfg_accprof.sort_table =
+      vftr_set_config_sort_table_default("time", false);
+   return cfg_accprof;
+}
+
 config_hardware_scenarios_t vftr_set_config_hardware_scenarios_default() {
    config_hardware_scenarios_t cfg_hardware_scenarios;
    cfg_hardware_scenarios.name = strdup("hardware_scenarios");
@@ -169,6 +178,7 @@ config_t vftr_set_config_default() {
       vftr_set_config_mpi_default();
    config.cuda =
       vftr_set_config_cuda_default();
+   config.accprof = vftr_set_config_accprof_default();
    config.hardware_scenarios =
       vftr_set_config_hardware_scenarios_default();
    config.config_file_path = NULL;
