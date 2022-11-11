@@ -57,7 +57,6 @@ void vftr_accprof_region_begin (acc_prof_info *prof_info, acc_event_info *event_
         launch_event_info = (acc_launch_event_info*)event_info;
         vftr_accumulate_accprofiling (&(my_profile->accprof), prof_info->event_type,
         			      prof_info->line_no, prof_info->end_line_no,
-        			      prof_info->func_line_no, prof_info->func_end_line_no,
                                       prof_info->src_file, prof_info->func_name,
                                       launch_event_info->kernel_name, NULL, 0);
         break;
