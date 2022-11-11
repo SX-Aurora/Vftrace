@@ -77,7 +77,9 @@ void vftr_write_logfile(vftrace_t vftrace, long long runtime) {
    }
 
 #ifdef _MPI
-   if (vftrace.config.mpi.show_table.value) {
+   int mpi_initialized;
+   PMPI_Initialized(&mpi_initialized);
+   if (vftrace.config.mpi.show_table.value && mpi_initialized) {
       vftr_write_logfile_mpi_table(fp, vftrace.process.collated_stacktree,
                                    vftrace.config);
    }

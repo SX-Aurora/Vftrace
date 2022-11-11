@@ -119,8 +119,12 @@ void vftr_collate_ompprofiles(collated_stacktree_t *collstacktree_ptr,
    SELF_PROFILE_START_FUNCTION;
    vftr_collate_ompprofiles_root_self(collstacktree_ptr, stacktree_ptr);
 #ifdef _MPI
-   vftr_collate_ompprofiles_on_root(collstacktree_ptr, stacktree_ptr,
-                                    myrank, nranks, nremote_profiles);
+   int mpi_initialized;
+   PMPI_Initialized(&mpi_initialized);
+   if (mpi_initialized) {
+      vftr_collate_ompprofiles_on_root(collstacktree_ptr, stacktree_ptr,
+                                       myrank, nranks, nremote_profiles);
+   }
 #else
    (void) myrank;
    (void) nranks;
