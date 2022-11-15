@@ -230,7 +230,7 @@ void vftr_sort_collated_stacks_for_mpiprof(config_t config,
         long long *stackvals = (long long *)malloc(nstacks * sizeof(long long)); 
         for (int istack = 0; istack < nstacks; istack++) {
            collated_stack_t *stack = stacktree.stacks + istack;
-           stackvals[istack] = stack->profile.callprof.time_nsec;
+           stackvals[istack] = stack->profile.callprof.time_excl_nsec;
         }
         vftr_sort_perm_longlong (nstacks, stackvals, &perm, ascending);
         free(stackvals);
