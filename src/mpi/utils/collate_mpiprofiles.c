@@ -159,7 +159,11 @@ void vftr_collate_mpiprofiles(collated_stacktree_t *collstacktree_ptr,
                               int *nremote_profiles) {
    SELF_PROFILE_START_FUNCTION;
    vftr_collate_mpiprofiles_root_self(collstacktree_ptr, stacktree_ptr);
-   vftr_collate_mpiprofiles_on_root(collstacktree_ptr, stacktree_ptr,
-                                    myrank, nranks, nremote_profiles);
+   int mpi_initialized;
+   PMPI_Initialized(&mpi_initialized);
+   if (mpi_initialized) {
+      vftr_collate_mpiprofiles_on_root(collstacktree_ptr, stacktree_ptr,
+                                       myrank, nranks, nremote_profiles);
+   }
    SELF_PROFILE_END_FUNCTION;
 }

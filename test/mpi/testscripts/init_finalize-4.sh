@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -x
+
 vftr_binary=init_finalize_4
 configfile=${vftr_binary}.json
 nprocs=4

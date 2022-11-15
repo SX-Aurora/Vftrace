@@ -26,7 +26,7 @@ uint32_t vftr_jenkins_32_hash(size_t length, const uint8_t* key) {
   return hash;
 }
 
- // murmur3 32bit hash implementation
+// murmur3 32bit hash implementation
 // Adapted from wikipedia
 //    (https://en.wikipedia.org/wiki/MurmurHash)
 //    The seed of the hash function was removed and replaced
@@ -102,14 +102,6 @@ void vftr_compute_stack_hashes(stacktree_t *stacktree_ptr) {
          if (!strcmp(stacks[jstack].name, "(UnknownFunctionName)")) {
             stackstr_len += addrstringsize;
          }
-// TODO figure out a solution for C++
-//         // C++ can have non-demangled functions with the same name
-//         // but different addresses.
-//         // Therefore we need to include the address in the hashing.
-//         // Only hashing the addresses is not possible due to
-//         // user region configurations where the address is identical,
-//         // but the region name can vary.
-//         stackstr_len += addrstringsize;
          stackstr_len += 1; // function seperator
          jstack = stacks[jstack].caller;
       }
@@ -134,17 +126,6 @@ void vftr_compute_stack_hashes(stacktree_t *stacktree_ptr) {
                      (long int) stacks[jstack].address);
             ptr += addrstringsize;
          }
-// TODO figure out a solution for C++
-//         // C++ can have non-demangled functions with the same name
-//         // but different addresses.
-//         // Therefore we need to include the address in the hashing.
-//         // Only hashing the addresses is not possible due to
-//         // user region configurations where the address is identical,
-//         // but the region name can vary.
-//         snprintf(ptr, addrstringsize+1,
-//                  "(0x%0*lx)", (int) (2*sizeof(long int)),
-//                  (long int) stacks[jstack].address);
-//         ptr += addrstringsize;
          *ptr = '<';
          ptr++;
          jstack = stacks[jstack].caller;

@@ -80,7 +80,9 @@ void vftr_write_logfile(vftrace_t vftrace, long long runtime) {
    }
 
 #ifdef _MPI
-   if (vftrace.config.mpi.show_table.value) {
+   int mpi_initialized;
+   PMPI_Initialized(&mpi_initialized);
+   if (vftrace.config.mpi.show_table.value && mpi_initialized) {
       vftr_write_logfile_mpi_table(fp, vftrace.process.collated_stacktree,
                                    vftrace.config);
    }
@@ -108,7 +110,9 @@ void vftr_write_logfile(vftrace_t vftrace, long long runtime) {
    }
 
 #ifdef _CUDA
-   vftr_write_logfile_cbid_names (fp, vftrace.process.collated_stacktree);
+   if (vftrace.config.cuda.show_table.value) {
+      vftr_write_logfile_cbid_names (fp, vftrace.process.collated_stacktree);
+   }
 #endif
 
 #ifdef _ACCPROF

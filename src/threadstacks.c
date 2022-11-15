@@ -57,7 +57,7 @@ void vftr_threadstack_push(int stackID, threadstacklist_t *stacklist_ptr) {
 threadstack_t *vftr_threadstack_pop(threadstacklist_t *stacklist_ptr) {
    SELF_PROFILE_START_FUNCTION;
    stacklist_ptr->nstacks--;
-   threadstack_t *threadstack = stacklist_ptr->stacks + stacklist_ptr->nstacks;
+   threadstack_t *threadstack = stacklist_ptr->stacks + stacklist_ptr->nstacks-1;
    SELF_PROFILE_END_FUNCTION;
    return threadstack;
 }

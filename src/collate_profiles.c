@@ -24,30 +24,35 @@
 void vftr_collate_profiles(collated_stacktree_t *collstacktree_ptr,
                            stacktree_t *stacktree_ptr) {
    SELF_PROFILE_START_FUNCTION;
-   int myrank;
-   int nranks;
+   int myrank = 0;
+   int nranks = 1;
    int nprofiles = stacktree_ptr->nstacks;
    int *nremote_profiles = NULL;
-#ifdef _MPI
-   PMPI_Comm_rank(MPI_COMM_WORLD, &myrank);
-   PMPI_Comm_size(MPI_COMM_WORLD, &nranks);
-#else
    myrank = 0;
    nranks = 1;
+
+#ifdef _MPI
+   int mpi_initialized;
+   PMPI_Initialized(&mpi_initialized);
+   if (mpi_initialized) {
+      PMPI_Comm_rank(MPI_COMM_WORLD, &myrank);
+      PMPI_Comm_size(MPI_COMM_WORLD, &nranks);
+   }
 #endif
 
    // get the number of profiles to collect from each rank
    if (myrank == 0) {
       nremote_profiles = (int*) malloc(nranks*sizeof(int));
+      nremote_profiles[0] = nprofiles;
    }
 #ifdef _MPI
-   PMPI_Gather(&nprofiles, 1,
-               MPI_INT,
-               nremote_profiles, 1,
-               MPI_INT,
-               0, MPI_COMM_WORLD);
-#else
-   nremote_profiles[0] = nprofiles;
+   if (mpi_initialized) {
+      PMPI_Gather(&nprofiles, 1,
+                  MPI_INT,
+                  nremote_profiles, 1,
+                  MPI_INT,
+                  0, MPI_COMM_WORLD);
+   }
 #endif
 
    vftr_collate_callprofiles(collstacktree_ptr, stacktree_ptr,
