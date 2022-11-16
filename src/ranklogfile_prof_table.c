@@ -46,6 +46,21 @@ double *vftr_ranklogfile_prof_table_stack_inclusive_time_list(int nstacks, stack
    return inclusive_time_list;
 }
 
+double *vftr_ranklogfile_prof_table_overhead_list(int nstacks, stack_t **stack_ptrs) {
+   double *overhead_list = (double*) malloc(nstacks*sizeof(double));
+
+   for (int istack=0; istack<nstacks; istack++) {
+      stack_t *stack_ptr = stack_ptrs[istack];
+      overhead_list[istack] = 0.0;
+      for (int iprof=0; iprof<stack_ptr->profiling.nprofiles; iprof++) {
+         profile_t *prof_ptr = stack_ptr->profiling.profiles+iprof;
+         overhead_list[istack] += prof_ptr->callprof.overhead_nsec;
+      }
+      overhead_list[istack] *= 1.0e-9;
+   }
+   return overhead_list;
+}
+
 double *vftr_ranklogfile_prof_table_stack_exclusive_time_list(int nstacks, stack_t **stack_ptrs) {
    double *exclusive_time_list = (double*) malloc(nstacks*sizeof(double));
 
@@ -152,6 +167,12 @@ void vftr_write_ranklogfile_profile_table(FILE *fp, stacktree_t stacktree,
    double *incl_time = vftr_ranklogfile_prof_table_stack_inclusive_time_list(stacktree.nstacks, sorted_stacks);
    vftr_table_add_column(&table, col_double, "t_incl[s]", "%.3f", 'c', 'r', (void*) incl_time);
 
+   double *overhead_list = NULL;
+   if (config.profile_table.show_overhead.value) {
+      double *overhead_list = vftr_ranklogfile_prof_table_overhead_list(stacktree.nstacks, sorted_stacks);
+      vftr_table_add_column(&table, col_double, "overhead[s]", "%.3f", 'c', 'r', (void*) incl_time);
+   }
+
    char **function_names = vftr_ranklogfile_prof_table_stack_function_name_list(stacktree.nstacks, sorted_stacks);
    vftr_table_add_column(&table, col_string, "Function", "%s", 'c', 'r', (void*) function_names);
 
@@ -176,6 +197,9 @@ void vftr_write_ranklogfile_profile_table(FILE *fp, stacktree_t stacktree,
    free(excl_time);
    free(excl_timer_perc);
    free(incl_time);
+   if (config.profile_table.show_overhead.value) {
+      free(overhead_list);
+   }
    free(function_names);
    free(caller_names);
    free(stack_IDs);
