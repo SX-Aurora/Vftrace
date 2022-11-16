@@ -28,6 +28,7 @@
 
 #ifdef _ACCPROF
 #include "accprof_logfile.h"
+#include "accprofiling.h"
 #endif
 
 void vftr_write_logfile_header(FILE *fp, time_strings_t timestrings) {
@@ -63,7 +64,8 @@ void vftr_write_logfile_summary(FILE *fp, process_t process,
       vftr_get_total_collated_cuda_overhead(process.collated_stacktree);
 #endif
 #ifdef _ACCPROF
-   long long accprof_overhead = 0;
+   long long accprof_overhead =
+      vftr_get_total_collated_accprof_overhead(process.collated_stacktree);
 #endif
 
       total_master_overhead += call_overhead;
@@ -75,6 +77,9 @@ void vftr_write_logfile_summary(FILE *fp, process_t process,
 #endif
 #ifdef _CUDA
       total_master_overhead += cuda_overhead;
+#endif
+#ifdef _ACCPROF
+      total_master_overhead += accprof_overhead;
 #endif
    
    double total_master_overhead_sec = total_master_overhead * 1.0e-9;

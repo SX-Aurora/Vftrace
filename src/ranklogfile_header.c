@@ -26,6 +26,11 @@
 #include "cudaprofiling.h"
 #endif
 
+#ifdef _ACCPROF
+#include "accprof_ranklogfile.h"
+#include "accprofiling.h"
+#endif
+
 
 void vftr_write_ranklogfile_header(FILE *fp, time_strings_t timestrings) {
    SELF_PROFILE_START_FUNCTION;
@@ -59,7 +64,7 @@ void vftr_write_ranklogfile_summary(FILE *fp, process_t process,
    long long cuda_overhead = vftr_get_total_cuda_overhead (process.stacktree);
 #endif
 #ifdef _ACCPROF
-   long long accprof_overhead = 0;
+   long long accprof_overhead = vftr_get_total_accprof_overhead (process.stacktree);
 #endif
 
    for (int ithread=0; ithread<nthreads; ithread++) {
@@ -75,6 +80,9 @@ void vftr_write_ranklogfile_summary(FILE *fp, process_t process,
    }
 #ifdef _CUDA
    total_master_overhead += cuda_overhead;
+#endif
+#ifdef _ACCPROF
+   total_master_overhead += accprof_overhead;
 #endif
    double total_master_overhead_sec = total_master_overhead * 1.0e-9;
    double apptime_sec = runtime_sec - total_master_overhead_sec;

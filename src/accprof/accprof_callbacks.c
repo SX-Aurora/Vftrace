@@ -80,6 +80,9 @@ void vftr_accprof_region_begin (acc_prof_info *prof_info, acc_event_info *event_
                                        prof_info->src_file, prof_info->func_name,
                                        NULL, NULL, 0);
    }
+
+   vftr_accumulate_accprofiling_overhead (&(my_profile->accprof),
+                                          vftr_get_runtime_nsec() - region_begin_time_begin);
 }
 
 void vftr_accprof_region_end (acc_prof_info *prof_info, acc_event_info *event_info,
@@ -95,6 +98,10 @@ void vftr_accprof_region_end (acc_prof_info *prof_info, acc_event_info *event_in
 
    threadstacklist_t stacklist = my_thread->stacklist;
    (void)vftr_threadstack_pop(&(my_thread->stacklist));
+
+   vftr_accumulate_accprofiling_overhead (&(my_profile->accprof),
+                                          vftr_get_runtime_nsec() - region_end_time_begin);
+
 }
 
 void prof_data_start (acc_prof_info *prof_info, acc_event_info *event_info, acc_api_info *api_info) {
@@ -148,10 +155,8 @@ void prof_wait_start (acc_prof_info *prof_info, acc_event_info *event_info, acc_
    profile_t *my_profile = vftr_get_my_profile(my_new_stack, my_thread);
 
 
-   printf ("Start wait: %d %d\n", n_open_queues, prof_info->async_queue);
    open_queues[n_open_queues].start_time = vftr_get_runtime_nsec();
    open_queues[n_open_queues].stack = my_new_stack;
-   printf ("Save stack: %d\n", my_new_stack->lid);
    open_queues[n_open_queues].async = prof_info->async_queue;
    n_open_queues++;
 
@@ -162,13 +167,15 @@ void prof_wait_start (acc_prof_info *prof_info, acc_event_info *event_info, acc_
 
    threadstacklist_t stacklist = my_thread->stacklist;
    (void)vftr_threadstack_pop(&(my_thread->stacklist));
+   
+   vftr_accumulate_accprofiling_overhead (&(my_profile->accprof),
+                                          vftr_get_runtime_nsec() - wait_begin_time);
 }
 
 void prof_wait_end (acc_prof_info *prof_info, acc_event_info *event_info, acc_api_info *api_info) {
    stack_t *stack = NULL;
    long long wait_end_time = vftr_get_runtime_nsec();
    long long wait_begin_time;
-   printf ("End wait: %d %d\n", n_open_queues, prof_info->async_queue);
    for (int i = 0; i < n_open_queues; i++) {
       if (prof_info->async_queue == open_queues[i].async) {
    	 stack = open_queues[i].stack;
@@ -180,8 +187,9 @@ void prof_wait_end (acc_prof_info *prof_info, acc_event_info *event_info, acc_ap
 
    thread_t *my_thread = vftr_get_my_thread(&(vftrace.process.threadtree));
    profile_t *my_profile = vftr_get_my_profile (stack, my_thread);
-   printf ("Accumulate: %d %lld\n", stack->lid, wait_end_time - wait_begin_time);
    vftr_accumulate_callprofiling (&(my_profile->callprof), 1, wait_end_time - wait_begin_time);
+   vftr_accumulate_accprofiling_overhead (&(my_profile->accprof),
+                                          vftr_get_runtime_nsec() - wait_end_time);
 }
 
 void prof_dummy (acc_prof_info *prof_info, acc_event_info *event_info, acc_api_info *api_info) {

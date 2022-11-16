@@ -1,6 +1,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "stacks.h"
+#include "collate_stacks.h"
 #include "accprofiling_types.h"
 
 accprofile_t vftr_new_accprofiling () {
@@ -13,6 +15,7 @@ accprofile_t vftr_new_accprofiling () {
    prof.func_name = NULL;
    prof.var_name = NULL;
    prof.kernel_name = NULL;
+   prof.overhead_nsec = 0;
    return prof;
 }
 
@@ -43,6 +46,10 @@ void vftr_accumulate_accprofiling (accprofile_t *prof, acc_event_t ev,
    prof->copied_bytes += copied_bytes;
 }
 
+void vftr_accumulate_accprofiling_overhead (accprofile_t *prof, long long t_nsec) {
+   prof->overhead_nsec += t_nsec;
+}
+
 accprofile_t vftr_add_accprofiles (accprofile_t profA, accprofile_t profB) {
    // Only the amount of bytes moved can differ between the profiles
    accprofile_t profC;
@@ -50,6 +57,29 @@ accprofile_t vftr_add_accprofiles (accprofile_t profA, accprofile_t profB) {
    profC.var_name = profA.var_name;
    profC.kernel_name = profA.kernel_name;
    profC.copied_bytes = profA.copied_bytes + profB.copied_bytes;
+}
+
+long long vftr_get_total_accprof_overhead (stacktree_t stacktree) {
+   long long overhead_nsec = 0;
+   
+   for (int istack = 0; istack < stacktree.nstacks; istack++) {
+      stack_t *stack = stacktree.stacks + istack;
+      profile_t *prof = stack->profiling.profiles;
+      accprofile_t accprof = prof->accprof;
+      overhead_nsec += accprof.overhead_nsec;
+   }
+   return overhead_nsec;
+}
+
+long long vftr_get_total_collated_accprof_overhead (collated_stacktree_t stacktree) {
+   long long overhead_nsec = 0;
+
+   for (int istack = 0; istack < stacktree.nstacks; istack++) {
+      collated_stack_t *stack = stacktree.stacks + istack;
+      accprofile_t accprof = stack->profile.accprof;
+      overhead_nsec += accprof.overhead_nsec;
+   }
+   return overhead_nsec;
 }
 
 void vftr_accprofiling_free (accprofile_t *prof_ptr) {

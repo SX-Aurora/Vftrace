@@ -27,6 +27,7 @@ void vftr_collate_accprofiles (collated_stacktree_t *collstacktree_ptr,
       collaccprof->var_name = copy_accprof.var_name;
       collaccprof->func_name = copy_accprof.func_name;
       collaccprof->kernel_name = copy_accprof.kernel_name;
+      collaccprof->overhead_nsec = copy_accprof.overhead_nsec;
    }
 }
 

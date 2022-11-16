@@ -12,6 +12,7 @@ typedef struct {
    char *func_name;
    char *var_name; // Only for data events: Name of moved variable
    char *kernel_name; // Only for launch events: Name of auto-generated device kernel.
+   long long overhead_nsec;
 } accprofile_t;
 
 #endif
