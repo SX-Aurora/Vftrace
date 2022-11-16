@@ -1,5 +1,5 @@
 func2<func0<init:
-   avg: 3us, min/max=3us(on 1)/0us(on 0), imb=100.00% on 0
+   avg: 3us, min/max=3us(on 1)/0us(on 0), imb=-100.00% on 0
 func5<func4<func0<init:
    avg: 2us, min/max=2us(on 0)/2us(on 0), imb=  0.00% on 0
 func2<func1<init:
@@ -7,14 +7,14 @@ func2<func1<init:
 func4<func0<init:
    avg: 13us, min/max=13us(on 0)/13us(on 0), imb=  0.00% on 0
 func5<func1<init:
-   avg: 2us, min/max=2us(on 1)/0us(on 0), imb=100.00% on 0
+   avg: 2us, min/max=2us(on 1)/0us(on 0), imb=-100.00% on 0
 func4<func2<func0<init:
-   avg: 15us, min/max=15us(on 1)/0us(on 0), imb=100.00% on 0
+   avg: 15us, min/max=15us(on 1)/0us(on 0), imb=-100.00% on 0
 func0<init:
-   avg: 27us, min/max=37us(on 0)/17us(on 1), imb= 37.04% on 1
+   avg: 27us, min/max=37us(on 0)/17us(on 1), imb=-37.04% on 1
 init:
    avg: 0us, min/max=0us(on 0)/0us(on 0), imb=  0.00% on 0
 func1<init:
-   avg: 24us, min/max=25us(on 1)/23us(on 0), imb=  4.17% on 0
+   avg: 24us, min/max=25us(on 1)/23us(on 0), imb= -4.17% on 0
 func3<func0<init:
    avg: 8us, min/max=8us(on 0)/8us(on 0), imb=  0.00% on 0

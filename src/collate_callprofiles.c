@@ -172,6 +172,11 @@ void vftr_compute_callprofile_imbalances(collated_stacktree_t *collstacktree_ptr
          } else {
             collcallprof_ptr->max_imbalance = 100.0*diff_from_min;
             collcallprof_ptr->max_imbalance /= collcallprof_ptr->average_time_nsec;
+            // if the imbalance will be different from 0% in the table (>0.005%)
+            // indicate the direction of imbalance with a sign
+            if (collcallprof_ptr->max_imbalance >= 0.005) {
+               collcallprof_ptr->max_imbalance *= -1.0;
+            }
             collcallprof_ptr->max_imbalance_on_rank = collcallprof_ptr->min_on_rank;
          }
       } else {
