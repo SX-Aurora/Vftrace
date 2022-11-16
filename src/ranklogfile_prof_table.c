@@ -170,7 +170,7 @@ void vftr_write_ranklogfile_profile_table(FILE *fp, stacktree_t stacktree,
    double *overhead_list = NULL;
    if (config.profile_table.show_overhead.value) {
       double *overhead_list = vftr_ranklogfile_prof_table_overhead_list(stacktree.nstacks, sorted_stacks);
-      vftr_table_add_column(&table, col_double, "overhead[s]", "%.3f", 'c', 'r', (void*) incl_time);
+      vftr_table_add_column(&table, col_double, "overhead[s]", "%.3f", 'c', 'r', (void*) overhead_list);
    }
 
    char **function_names = vftr_ranklogfile_prof_table_stack_function_name_list(stacktree.nstacks, sorted_stacks);
