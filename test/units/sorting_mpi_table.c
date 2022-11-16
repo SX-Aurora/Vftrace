@@ -55,10 +55,10 @@ int main(int argc, char **argv) {
                                   name, name, addrs+0, false);
    iprof = vftr_new_profile_in_list(0,&(stacktree.stacks[func2_idx].profiling));
    profile = stacktree.stacks[func2_idx].profiling.profiles+iprof;
-   vftr_accumulate_message_info(&(profile->mpiprof), mpi_state,
+   vftr_accumulate_message_info(&(profile->mpiprof),
                                 send, 662, 0, 4, 1, 0,
                                 1000000000ll, 5809000000ll);
-   vftr_accumulate_message_info(&(profile->mpiprof), mpi_state,
+   vftr_accumulate_message_info(&(profile->mpiprof),
                                 recv, 385, 0, 4, 1, 0,
                                 1000000000ll, 9943000000ll);
 
@@ -69,16 +69,16 @@ int main(int argc, char **argv) {
                                   name, name, addrs+1, false);
    iprof = vftr_new_profile_in_list(0,&(stacktree.stacks[func3_idx].profiling));
    profile = stacktree.stacks[func3_idx].profiling.profiles+iprof;
-   vftr_accumulate_message_info(&(profile->mpiprof), mpi_state,
+   vftr_accumulate_message_info(&(profile->mpiprof),
                                 send, 962, 0, 4, 1, 0,
                                 1000000000ll, 5681000000ll);
-   vftr_accumulate_message_info(&(profile->mpiprof), mpi_state,
+   vftr_accumulate_message_info(&(profile->mpiprof),
                                 recv, 448, 0, 4, 1, 0,
                                 1000000000ll, 1112000000ll);
-   vftr_accumulate_message_info(&(profile->mpiprof), mpi_state,
+   vftr_accumulate_message_info(&(profile->mpiprof),
                                 send, 924, 0, 4, 1, 0,
                                 1000000000ll, 1254000000ll);
-   vftr_accumulate_message_info(&(profile->mpiprof), mpi_state,
+   vftr_accumulate_message_info(&(profile->mpiprof),
                                 recv, 750, 0, 4, 1, 0,
                                 1000000000ll, 5895000000ll);
 
@@ -89,22 +89,22 @@ int main(int argc, char **argv) {
                                   name, name, addrs+2, false);
    iprof = vftr_new_profile_in_list(0,&(stacktree.stacks[func4_idx].profiling));
    profile = stacktree.stacks[func4_idx].profiling.profiles+iprof;
-   vftr_accumulate_message_info(&(profile->mpiprof), mpi_state,
+   vftr_accumulate_message_info(&(profile->mpiprof),
                                 send, 688, 0, 4, 1, 0,
                                 1000000000ll, 9288000000ll);
-   vftr_accumulate_message_info(&(profile->mpiprof), mpi_state,
+   vftr_accumulate_message_info(&(profile->mpiprof),
                                 recv, 892, 0, 4, 1, 0,
                                 1000000000ll, 2438000000ll);
-   vftr_accumulate_message_info(&(profile->mpiprof), mpi_state,
+   vftr_accumulate_message_info(&(profile->mpiprof),
                                 send, 148, 0, 4, 1, 0,
                                 1000000000ll, 1244000000ll);
-   vftr_accumulate_message_info(&(profile->mpiprof), mpi_state,
+   vftr_accumulate_message_info(&(profile->mpiprof),
                                 recv, 960, 0, 4, 1, 0,
                                 1000000000ll, 9191000000ll);
-   vftr_accumulate_message_info(&(profile->mpiprof), mpi_state,
+   vftr_accumulate_message_info(&(profile->mpiprof),
                                 send, 857, 0, 4, 1, 0,
                                 1000000000ll, 5601000000ll);
-   vftr_accumulate_message_info(&(profile->mpiprof), mpi_state,
+   vftr_accumulate_message_info(&(profile->mpiprof),
                                 recv, 538, 0, 4, 1, 0,
                                 1000000000ll, 2126000000ll);
 
@@ -114,28 +114,28 @@ int main(int argc, char **argv) {
                                   name, name, addrs+3, false);
    iprof = vftr_new_profile_in_list(0,&(stacktree.stacks[func5_idx].profiling));
    profile = stacktree.stacks[func5_idx].profiling.profiles+iprof;
-   vftr_accumulate_message_info(&(profile->mpiprof), mpi_state,
+   vftr_accumulate_message_info(&(profile->mpiprof),
                                 send, 124, 0, 4, 1, 0,
                                 1000000000ll, 1175000000ll);
-   vftr_accumulate_message_info(&(profile->mpiprof), mpi_state,
+   vftr_accumulate_message_info(&(profile->mpiprof),
                                 recv, 969, 0, 4, 1, 0,
                                 1000000000ll, 8940000000ll);
-   vftr_accumulate_message_info(&(profile->mpiprof), mpi_state,
+   vftr_accumulate_message_info(&(profile->mpiprof),
                                 send, 165, 0, 4, 1, 0,
                                 1000000000ll, 3656000000ll);
-   vftr_accumulate_message_info(&(profile->mpiprof), mpi_state,
+   vftr_accumulate_message_info(&(profile->mpiprof),
                                 recv, 299, 0, 4, 1, 0,
                                 1000000000ll, 8926000000ll);
-   vftr_accumulate_message_info(&(profile->mpiprof), mpi_state,
+   vftr_accumulate_message_info(&(profile->mpiprof),
                                 send, 657, 0, 4, 1, 0,
                                 1000000000ll, 5032000000ll);
-   vftr_accumulate_message_info(&(profile->mpiprof), mpi_state,
+   vftr_accumulate_message_info(&(profile->mpiprof),
                                 recv, 858, 0, 4, 1, 0,
                                 1000000000ll, 8336000000ll);
-   vftr_accumulate_message_info(&(profile->mpiprof), mpi_state,
+   vftr_accumulate_message_info(&(profile->mpiprof),
                                 send, 597, 0, 4, 1, 0,
                                 1000000000ll, 2787000000ll);
-   vftr_accumulate_message_info(&(profile->mpiprof), mpi_state,
+   vftr_accumulate_message_info(&(profile->mpiprof),
                                 recv, 701, 0, 4, 1, 0,
                                 1000000000ll, 9338000000ll);
 
@@ -145,34 +145,34 @@ int main(int argc, char **argv) {
                                   name, name, addrs+4, false);
    iprof = vftr_new_profile_in_list(0,&(stacktree.stacks[func6_idx].profiling));
    profile = stacktree.stacks[func6_idx].profiling.profiles+iprof;
-   vftr_accumulate_message_info(&(profile->mpiprof), mpi_state,
+   vftr_accumulate_message_info(&(profile->mpiprof),
                                 send, 978, 0, 4, 1, 0,
                                 1000000000ll, 7145000000ll);
-   vftr_accumulate_message_info(&(profile->mpiprof), mpi_state,
+   vftr_accumulate_message_info(&(profile->mpiprof),
                                 recv, 783, 0, 4, 1, 0,
                                 1000000000ll, 3260000000ll);
-   vftr_accumulate_message_info(&(profile->mpiprof), mpi_state,
+   vftr_accumulate_message_info(&(profile->mpiprof),
                                 send, 932, 0, 4, 1, 0,
                                 1000000000ll, 3030000000ll);
-   vftr_accumulate_message_info(&(profile->mpiprof), mpi_state,
+   vftr_accumulate_message_info(&(profile->mpiprof),
                                 recv, 755, 0, 4, 1, 0,
                                 1000000000ll, 9511000000ll);
-   vftr_accumulate_message_info(&(profile->mpiprof), mpi_state,
+   vftr_accumulate_message_info(&(profile->mpiprof),
                                 send, 848, 0, 4, 1, 0,
                                 1000000000ll, 3995000000ll);
-   vftr_accumulate_message_info(&(profile->mpiprof), mpi_state,
+   vftr_accumulate_message_info(&(profile->mpiprof),
                                 recv, 253, 0, 4, 1, 0,
                                 1000000000ll, 2281000000ll);
-   vftr_accumulate_message_info(&(profile->mpiprof), mpi_state,
+   vftr_accumulate_message_info(&(profile->mpiprof),
                                 send, 748, 0, 4, 1, 0,
                                 1000000000ll, 1315000000ll);
-   vftr_accumulate_message_info(&(profile->mpiprof), mpi_state,
+   vftr_accumulate_message_info(&(profile->mpiprof),
                                 recv, 284, 0, 4, 1, 0,
                                 1000000000ll, 1500000000ll);
-   vftr_accumulate_message_info(&(profile->mpiprof), mpi_state,
+   vftr_accumulate_message_info(&(profile->mpiprof),
                                 send, 958, 0, 4, 1, 0,
                                 1000000000ll, 9463000000ll);
-   vftr_accumulate_message_info(&(profile->mpiprof), mpi_state,
+   vftr_accumulate_message_info(&(profile->mpiprof),
                                 recv, 886, 0, 4, 1, 0,
                                 1000000000ll, 5165000000ll);
 
@@ -182,40 +182,40 @@ int main(int argc, char **argv) {
                                   name, name, addrs+5, false);
    iprof = vftr_new_profile_in_list(0,&(stacktree.stacks[func7_idx].profiling));
    profile = stacktree.stacks[func7_idx].profiling.profiles+iprof;
-   vftr_accumulate_message_info(&(profile->mpiprof), mpi_state,
+   vftr_accumulate_message_info(&(profile->mpiprof),
                                 send, 146, 0, 4, 1, 0,
                                 1000000000ll, 5342000000ll);
-   vftr_accumulate_message_info(&(profile->mpiprof), mpi_state,
+   vftr_accumulate_message_info(&(profile->mpiprof),
                                 recv, 712, 0, 4, 1, 0,
                                 1000000000ll, 3268000000ll);
-   vftr_accumulate_message_info(&(profile->mpiprof), mpi_state,
+   vftr_accumulate_message_info(&(profile->mpiprof),
                                 send, 732, 0, 4, 1, 0,
                                 1000000000ll, 6521000000ll);
-   vftr_accumulate_message_info(&(profile->mpiprof), mpi_state,
+   vftr_accumulate_message_info(&(profile->mpiprof),
                                 recv, 394, 0, 4, 1, 0,
                                 1000000000ll, 2201000000ll);
-   vftr_accumulate_message_info(&(profile->mpiprof), mpi_state,
+   vftr_accumulate_message_info(&(profile->mpiprof),
                                 send, 324, 0, 4, 1, 0,
                                 1000000000ll, 6562000000ll);
-   vftr_accumulate_message_info(&(profile->mpiprof), mpi_state,
+   vftr_accumulate_message_info(&(profile->mpiprof),
                                 recv, 768, 0, 4, 1, 0,
                                 1000000000ll, 7521000000ll);
-   vftr_accumulate_message_info(&(profile->mpiprof), mpi_state,
+   vftr_accumulate_message_info(&(profile->mpiprof),
                                 send, 409, 0, 4, 1, 0,
                                 1000000000ll, 2351000000ll);
-   vftr_accumulate_message_info(&(profile->mpiprof), mpi_state,
+   vftr_accumulate_message_info(&(profile->mpiprof),
                                 recv, 481, 0, 4, 1, 0,
                                 1000000000ll, 9087000000ll);
-   vftr_accumulate_message_info(&(profile->mpiprof), mpi_state,
+   vftr_accumulate_message_info(&(profile->mpiprof),
                                 send, 581, 0, 4, 1, 0,
                                 1000000000ll, 7992000000ll);
-   vftr_accumulate_message_info(&(profile->mpiprof), mpi_state,
+   vftr_accumulate_message_info(&(profile->mpiprof),
                                 recv, 465, 0, 4, 1, 0,
                                 1000000000ll, 3290000000ll);
-   vftr_accumulate_message_info(&(profile->mpiprof), mpi_state,
+   vftr_accumulate_message_info(&(profile->mpiprof),
                                 send, 155, 0, 4, 1, 0,
                                 1000000000ll, 6654000000ll);
-   vftr_accumulate_message_info(&(profile->mpiprof), mpi_state,
+   vftr_accumulate_message_info(&(profile->mpiprof),
                                 recv, 544, 0, 4, 1, 0,
                                 1000000000ll, 5369000000ll);
 
