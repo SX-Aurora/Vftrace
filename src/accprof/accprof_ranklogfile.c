@@ -10,6 +10,26 @@
 #include "accprofiling_types.h"
 #include "accprof_events.h"
 
+void vftr_get_total_accprof_times_for_ranklogfile (stacktree_t stacktree, double *tot_compute_s,
+					           double *tot_memcpy_s, double *tot_other_s) {
+   *tot_compute_s = 0;
+   *tot_memcpy_s = 0;
+   *tot_other_s = 0;
+
+   for (int istack = 0; istack < stacktree.nstacks; istack++) {
+      stack_t this_stack = stacktree.stacks[istack];
+      accprofile_t accprof = this_stack.profiling.profiles[0].accprof;
+      callprofile_t callprof = this_stack.profiling.profiles[0].callprof;
+      if (vftr_accprof_is_data_event (accprof.event_type)) {
+         *tot_memcpy_s += (double)callprof.time_excl_nsec / 1e9;
+      } else if (vftr_accprof_is_launch_event (accprof.event_type)) {
+         *tot_compute_s += (double)callprof.time_excl_nsec / 1e9;
+      } else {
+         *tot_other_s += (double)callprof.time_excl_nsec / 1e9;
+      }
+   }
+}
+
 void vftr_write_ranklogfile_accprof_table (FILE *fp, stacktree_t stacktree, config_t config) {
    int n_stackids_with_accprof_data = 0;
    

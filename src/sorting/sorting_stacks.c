@@ -270,7 +270,7 @@ void vftr_sort_stacks_for_mpiprof(config_t config,
         for (int istack = 0; istack < nstacks; istack++) {
            stack_t *stack = stacktree.stacks + istack;
            profile_t *prof = stack->profiling.profiles;
-           stackvals[istack] = prof->callprof.time_nsec;
+           stackvals[istack] = prof->callprof.time_excl_nsec;
         }
         vftr_sort_perm_longlong (nstacks, stackvals, &perm, ascending);
         free(stackvals);

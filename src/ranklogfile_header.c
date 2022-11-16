@@ -58,6 +58,9 @@ void vftr_write_ranklogfile_summary(FILE *fp, process_t process,
 #ifdef _CUDA
    long long cuda_overhead = vftr_get_total_cuda_overhead (process.stacktree);
 #endif
+#ifdef _ACCPROF
+   long long accprof_overhead = 0;
+#endif
 
    for (int ithread=0; ithread<nthreads; ithread++) {
       if (process.threadtree.threads[ithread].master) {
@@ -97,6 +100,9 @@ void vftr_write_ranklogfile_summary(FILE *fp, process_t process,
 #ifdef _CUDA
    fprintf (fp, "   CUDA callbacks:   %8.2lf s\n", cuda_overhead * 1e-9);
 #endif
+#ifdef _ACCPROF
+   fprintf (fp, "   OPENACC callbacks:  %8.2lf s\n", accprof_overhead * 1e-9);
+#endif
    } else {
       fprintf(fp, "   Function hooks:\n");
       for (int ithread=0; ithread<nthreads; ithread++) {
@@ -120,6 +126,10 @@ void vftr_write_ranklogfile_summary(FILE *fp, process_t process,
 #ifdef _CUDA
    fprintf (fp, "   CUDA callbacks :  %8.2lf s\n", cuda_overhead * 1e-9);
 #endif
+#ifdef _ACCPROF
+   fprintf (fp, "   OPENACC callbacks:  %8.2lf s\n", accprof_overhead * 1e-9);
+#endif
+
    }
 
 #ifdef _CUDA
@@ -130,6 +140,20 @@ void vftr_write_ranklogfile_summary(FILE *fp, process_t process,
    fprintf (fp, "   Compute:           %8.2f s\n", total_compute_sec);
    fprintf (fp, "   Memcpy:            %8.2f s\n", total_memcpy_sec);
    fprintf (fp, "   Other:             %8.2f s\n", total_other_sec);
+#endif
+
+#ifdef _ACCPROF
+   double total_compute_sec_accprof, total_memcpy_sec_accprof, total_other_sec_accprof;
+   vftr_get_total_accprof_times_for_ranklogfile (process.stacktree,
+					         &total_compute_sec_accprof,
+					         &total_memcpy_sec_accprof,
+					         &total_other_sec_accprof);
+   fprintf (fp, "Total OpenACC time:   %8.2f s\n",
+                total_compute_sec_accprof + total_memcpy_sec_accprof + total_other_sec_accprof);
+   fprintf (fp, "  Compute:            %8.2f s\n", total_compute_sec_accprof);
+   fprintf (fp, "  Memcpy:             %8.2f s\n", total_memcpy_sec_accprof);
+   fprintf (fp, "  Other:              %8.2f s\n", total_other_sec_accprof);
+
 #endif
 
    char *unit = vftr_byte_unit(vftrace_size.rank_wise);
