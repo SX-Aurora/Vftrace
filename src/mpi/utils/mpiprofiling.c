@@ -28,7 +28,7 @@ mpiprofile_t vftr_new_mpiprofiling() {
    return prof;
 }
 
-static bool vftr_should_accumulate_message_info(mpi_state_t mpi_state, int rank) {
+bool vftr_should_log_message_info(mpi_state_t mpi_state, int rank) {
    bool should = mpi_state.my_rank_in_prof;
    should = should && vftr_binary_search_int(mpi_state.nprof_ranks,
                                              mpi_state.prof_ranks,
@@ -37,7 +37,6 @@ static bool vftr_should_accumulate_message_info(mpi_state_t mpi_state, int rank)
 }
 
 void vftr_accumulate_message_info(mpiprofile_t *prof_ptr,
-                                  mpi_state_t mpi_state,
                                   message_direction dir,
                                   long long count,
                                   int type_idx, int type_size,
@@ -47,22 +46,20 @@ void vftr_accumulate_message_info(mpiprofile_t *prof_ptr,
    SELF_PROFILE_START_FUNCTION;
    (void) type_idx;
    (void) tag;
-   if (vftr_should_accumulate_message_info(mpi_state, rank)) {
-      int nbytes = count * type_size;
-      long long time = tend - tstart;
-      double bw = nbytes * 1.0e9 / time;
+   int nbytes = count * type_size;
+   long long time = tend - tstart;
+   double bw = nbytes * 1.0e9 / time;
 
-      if (dir == send) {
-         prof_ptr->nsendmessages++;
-         prof_ptr->send_bytes += nbytes;
-         prof_ptr->acc_send_bw += bw;
-      } else {
-         prof_ptr->nrecvmessages++;
-         prof_ptr->recv_bytes += nbytes;
-         prof_ptr->acc_recv_bw += bw;
-      }
-      prof_ptr->total_time_nsec += time;
+   if (dir == send) {
+      prof_ptr->nsendmessages++;
+      prof_ptr->send_bytes += nbytes;
+      prof_ptr->acc_send_bw += bw;
+   } else {
+      prof_ptr->nrecvmessages++;
+      prof_ptr->recv_bytes += nbytes;
+      prof_ptr->acc_recv_bw += bw;
    }
+   prof_ptr->total_time_nsec += time;
    SELF_PROFILE_END_FUNCTION;
 }
 

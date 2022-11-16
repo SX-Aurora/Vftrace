@@ -16,8 +16,9 @@ mpiprofile_t vftr_new_mpiprofiling();
 void vftr_mpiprofiling_free(mpiprofile_t *prof_ptr);
 
 #ifdef _MPI
+bool vftr_should_log_message_info(mpi_state_t mpi_state, int rank);
+
 void vftr_accumulate_message_info(mpiprofile_t *prof_ptr,
-                                  mpi_state_t mpi_state,
                                   message_direction dir,
                                   long long count,
                                   int type_idx, int type_size,
