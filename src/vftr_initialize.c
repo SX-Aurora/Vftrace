@@ -44,6 +44,7 @@ void vftr_initialize(void *func, void *call_site) {
       vftr_set_enter_func_hook(vftr_function_hook_off);
       vftr_set_exit_func_hook(vftr_function_hook_off);
 #ifdef _ACCPROF
+      // Do not register any OpenACC callbacks and deactivate potentially registered ones.
       vftr_veto_accprof_callbacks ();
 #endif
       SELF_PROFILE_END_FUNCTION;

@@ -26,6 +26,8 @@ void vftr_accumulate_accprofiling (accprofile_t *prof, acc_event_t ev,
    prof->event_type = ev;
    prof->line_start = line_start;
    prof->line_end = line_end;
+   // For each ACC region, these strings are always the same.
+   // We check if they have already been set to save a bit of overhead.
    if (source_file != NULL && prof->source_file == NULL) {
       prof->source_file = (char*)malloc((strlen(source_file) + 1) * sizeof(char));
       strcpy (prof->source_file, source_file);

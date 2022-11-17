@@ -41,6 +41,19 @@ void vftr_write_ranklogfile_accprof_table (FILE *fp, stacktree_t stacktree, conf
       if (accprof.event_type != 0) n_stackids_with_accprof_data++;
    }
 
+   // Structure of OpenACC table:
+   // | STID | event | #Calls | t_compute | t_memcpy | t_other | Bytes | Source File | Function
+   //
+   // The event is the acc_ev identifier, translated into a string.
+   // For launch events, we add the kernel name in brackets behind that.
+   //
+   // Out of t_compute, t_memcpy and t_other, only one is non-zero for any acc_ev. We display them in separate columns anyway for better clarity.
+   //
+   // NOTE: Due to a bug in NVIDIA's OpenACC implementation, the source file might be inaccurate in some situations.
+   //       This has especially been observed if OpenACC regions are implemented in header files.
+   //       In that case, many more OpenACC calls are assigned to that header, although they are clearly not in there.
+   //       Also, inlining might influence the accuracy of the line number assignment.
+
 
    int *stackids_with_accprof_data = (int*)malloc(n_stackids_with_accprof_data * sizeof(int));
    int *calls = (int*)malloc(n_stackids_with_accprof_data * sizeof(int));
@@ -81,11 +94,13 @@ void vftr_write_ranklogfile_accprof_table (FILE *fp, stacktree_t stacktree, conf
       } else {
          t_other[i] = t;
       }
+      // In rare cases, accprof does not return a source file. We are not yet sure why this happens and if this is a bug in the OpenACC implementation.
       if (accprof.source_file != NULL) {
          source_files[i] = vftr_name_with_lines (basename(accprof.source_file), accprof.line_start, accprof.line_end);
       } else {
          source_files[i] = "unknown";
       }
+      // We have not yet observed NULL function names, but better safe than sorry.
       func_names[i] = accprof.func_name != NULL ? accprof.func_name : "unknown";
       i++;
    }

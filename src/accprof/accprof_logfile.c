@@ -33,6 +33,7 @@ void vftr_get_total_accprof_times_for_logfile (collated_stacktree_t stacktree,
    }
 }
 
+// Entry for the source file column, in the form "filename (line1 - line2)".
 char *vftr_name_with_lines (char *name, int line_1, int line_2) {
    int n1 = strlen(name);
    int n2 = vftr_count_base_digits ((long long)line_1, 10);
@@ -52,6 +53,19 @@ void vftr_write_logfile_accprof_table (FILE *fp, collated_stacktree_t stacktree,
       accprofile_t accprof = sorted_stacks[istack]->profile.accprof;
       if (accprof.event_type != 0) n_stackids_with_accprof_data++;
    }
+
+   // Structure of OpenACC table:
+   // | STID | event | #Calls | t_compute | t_memcpy | t_other | Bytes | Source File | Function
+   //
+   // The event is the acc_ev identifier, translated into a string.
+   // For launch events, we add the kernel name in brackets behind that.
+   //
+   // Out of t_compute, t_memcpy and t_other, only one is non-zero for any acc_ev. We display them in separate columns anyway for better clarity.
+   //
+   // NOTE: Due to a bug in NVIDIA's OpenACC implementation, the source file might be inaccurate in some situations.
+   //       This has especially been observed if OpenACC regions are implemented in header files.
+   //       In that case, many more OpenACC calls are assigned to that header, although they are clearly not in there.
+   //       Also, inlining might influence the accuracy of the line number assignment.
 
 
    int *stackids_with_accprof_data = (int*)malloc(n_stackids_with_accprof_data * sizeof(int));
@@ -92,12 +106,13 @@ void vftr_write_logfile_accprof_table (FILE *fp, collated_stacktree_t stacktree,
       } else {
          t_other[i] = t;
       }
+      // In rare cases, accprof does not return a source file. We are not yet sure why this happens and if this is a bug in the OpenACC implementation.
       if (accprof.source_file != NULL) {
          source_files[i] = vftr_name_with_lines (basename(accprof.source_file), accprof.line_start, accprof.line_end);
       } else {
          source_files[i] = "unknown";
       }
-      //func_names[i] = vftr_name_with_lines (accprof.func_name, accprof.func_line_start, accprof.func_line_end);
+      // We have not yet observed NULL function names, but better safe than sorry.
       func_names[i] = accprof.func_name != NULL ? accprof.func_name : "unknown";
       i++;
    }

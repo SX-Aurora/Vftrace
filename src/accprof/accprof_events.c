@@ -2,6 +2,8 @@
 
 #include "acc_prof.h"
 
+// Helper functions to categorize OpenACC event IDs
+
 bool vftr_accprof_is_data_event (acc_event_t event_type) {
    switch (event_type) {
       case acc_ev_enqueue_upload_start:
