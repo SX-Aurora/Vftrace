@@ -225,8 +225,6 @@ void vftr_sort_collated_stacks_for_mpiprof(config_t config,
      int *perm = NULL;
 
      if (!strcmp(column, "time")) {
-        printf ("SORT BY TIME!\n");
-        fflush(stdout);
         long long *stackvals = (long long *)malloc(nstacks * sizeof(long long)); 
         for (int istack = 0; istack < nstacks; istack++) {
            collated_stack_t *stack = stacktree.stacks + istack;
@@ -234,8 +232,6 @@ void vftr_sort_collated_stacks_for_mpiprof(config_t config,
         }
         vftr_sort_perm_longlong (nstacks, stackvals, &perm, ascending);
         free(stackvals);
-        printf ("COLLECTION DONE!\n");
-        fflush(stdout);
      } else if (!strcmp(column, "memcpy")) {
         long long *stackvals = (long long *)malloc(nstacks * sizeof(long long)); 
         for (int istack = 0; istack < nstacks; istack++) {
