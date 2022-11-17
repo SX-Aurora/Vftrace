@@ -478,7 +478,7 @@ char *vftr_get_name_from_address(symboltable_t symboltable,
    if (symbID >= 0) {
       return symboltable.symbols[symbID].name;
    } else {
-      return strdup ("(UnknownFunctionName)");
+      return "(UnknownFunctionName)";
    }
 }
 
@@ -487,7 +487,7 @@ char *vftr_get_name_from_symbID(symboltable_t symboltable,
    if (symbID >= 0) {
       return symboltable.symbols[symbID].name;
    } else {
-      return strdup("(UnknownFunctionName)");
+      return "(UnknownFunctionName)";
    }
 }
 
@@ -498,7 +498,7 @@ char *vftr_get_cleanname_from_address(symboltable_t symboltable,
    if (symbID >= 0) {
       return symboltable.symbols[symbID].cleanname;
    } else {
-      return strdup("(UnknownFunctionName)");
+      return "(UnknownFunctionName)";
    }
 }
 
@@ -507,7 +507,7 @@ char *vftr_get_cleanname_from_symbID(symboltable_t symboltable,
    if (symbID >= 0) {
       return symboltable.symbols[symbID].cleanname;
    } else {
-      return strdup("(UnknownFunctionName)");
+      return "(UnknownFunctionName)";
    }
 }
 

@@ -16,7 +16,8 @@ void vftr_pre_hook_function_entry(void *func, void *call_site) {
       // Make the function name comparison case insensitive
       // to capture fortran case insensitive MAIN symbols
       // by converting the function name to lowercase
-      char *tmpstr = func_name;
+      char *func_name_cpy = strdup(func_name);
+      char *tmpstr = func_name_cpy;
       while (*tmpstr != '\0') {
          *tmpstr = tolower(*tmpstr);
          tmpstr++;
@@ -34,6 +35,7 @@ void vftr_pre_hook_function_entry(void *func, void *call_site) {
          // execute the actual function entry hook.
          vftr_function_entry(func, call_site);
       }
+      free(func_name_cpy);
    }
 }
 
