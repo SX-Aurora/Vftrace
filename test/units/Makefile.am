@@ -148,8 +148,6 @@ check_PROGRAMS += filenames
 #endif
 #endif
 
-check_PROGRAMS += pre_hooks
-
 sort_int8_SOURCES = $(srcdir)/sort_int8.c \
 			 $(srcdir)/bad_rng.c
 sort_int8_CFLAGS = $(AM_CFLAGS) -I$(top_srcdir)/src/sorting/
@@ -456,13 +454,6 @@ threadtree_SOURCES = $(srcdir)/threadtree.c \
 threadtree_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
 threadtree_LDFLAGS = $(AM_LDFLAGS)
 
-pre_hooks_SOURCES = $(srcdir)/pre_hooks.cpp
-pre_hooks_CXXFLAGS = $(AM_CFLAGS) -finstrument-functions
-pre_hooks_LDFLAGS = $(AM_LDFLAGS) -L$(top_builddir)/src/.libs -lvftrace 
-if HAS_LIBERTY
-pre_hooks_LDFLAGS += -liberty
-endif
-
 dist_check_SCRIPTS =
 dist_check_SCRIPTS += sort_int8.sh \
 		      sort_perm_int8.sh \
@@ -556,8 +547,6 @@ endif
 dist_check_SCRIPTS += threadlist.sh \
 		      threadtree.sh \
                       filenames.sh
-
-dist_check_SCRIPTS += pre_hooks.sh
 
 #if ENABLE_HWC
 #if ON_VECTOR_ENGINE
