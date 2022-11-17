@@ -182,6 +182,8 @@ void vftr_print_config(FILE *fp, config_t config, bool show_title) {
    fprintf(fp, ",\n");
    vftr_print_config_bool(fp, level, config.demangle_cxx);
    fprintf(fp, ",\n");
+   vftr_print_config_bool(fp, level, config.include_cxx_prelude);
+   fprintf(fp, ",\n");
    vftr_print_config_profile_table(fp, level, config.profile_table);
    fprintf(fp, ",\n");
    vftr_print_config_name_grouped_profile_table(fp, level,
