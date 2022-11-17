@@ -81,8 +81,12 @@ void vftr_write_ranklogfile_accprof_table (FILE *fp, stacktree_t stacktree, conf
       } else {
          t_other[i] = t;
       }
-      source_files[i] = vftr_name_with_lines (basename(accprof.source_file), accprof.line_start, accprof.line_end);
-      func_names[i] = accprof.func_name;
+      if (accprof.source_file != NULL) {
+         source_files[i] = vftr_name_with_lines (basename(accprof.source_file), accprof.line_start, accprof.line_end);
+      } else {
+         source_files[i] = "unknown";
+      }
+      func_names[i] = accprof.func_name != NULL ? accprof.func_name : "unknown";
       i++;
    }
 
