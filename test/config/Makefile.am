@@ -156,7 +156,7 @@ check_PROGRAMS += demangle_cxx
 
 demangle_cxx_SOURCES = $(srcdir)/little_cxxtasks.cpp
 demangle_cxx_CXXFLAGS = $(AM_CXXFLAGS) -finstrument-functions
-demangle_cxx_LDFLAGS = $(AM_LDFLAGS) -liberty
+demangle_cxx_LDFLAGS = $(AM_LDFLAGS)
 
 dist_check_SCRIPTS += demangle_cxx.sh
 endif
@@ -166,9 +166,6 @@ check_PROGRAMS += include_cxx_prelude
 include_cxx_prelude_SOURCES = $(srcdir)/little_cxxtasks.cpp
 include_cxx_prelude_CXXFLAGS = $(AM_CXXFLAGS) -finstrument-functions
 include_cxx_prelude_LDFLAGS = $(AM_LDFLAGS)
-if HAS_LIBERTY
-include_cxx_prelude_LDFLAGS += -liberty
-endif
 
 dist_check_SCRIPTS += include_cxx_prelude.sh
 

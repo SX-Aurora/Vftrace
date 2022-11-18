@@ -60,7 +60,7 @@ AX_ENABLE_SELF_PROFILING
 #AX_WITH_PAPI_LIBRARY
 
 # Check of libiberty is available
-AX_LIBERTY
+AX_WITH_LIBERTY
 
 # Check consistency of HWC, Architecture, and Papi
 #AX_CHECK_HWC_CONSISTENCY
