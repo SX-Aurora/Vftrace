@@ -18,7 +18,7 @@ The application can then be run in the usual way.
 In the default setting, a text file is created containing a runtime profile of the application.
 
 ## Download
-You can clone the current version of the vftrace from github. The third party tools are included in the git repository as submodules, for your convinience.
+You can clone the current version of Vftrace from github. The third party tools are included in the git repository as submodules, for your convinience.
 
 ```bash
 git clone --recursive https://github.com/SX-Aurora/Vftrace.git
