@@ -11,7 +11,7 @@ Calls to CUDA kernels or CUDA library functions are traced using the CUPTI profi
 ## Usage
 
 Vftrace requires that your application has instrumendet function calls.
-These are enabled with a compiler flag, most commonly named `-finstrument-functions`, as supported by the GNU, Intel, and NEC compilers.
+These are enabled with a compiler flag, most commonly named `-finstrument-functions`, as supported by the GNU, Intel, Clang, and NEC compilers.
 To get access to the MPI functionality some MPI-implementations need extra flags to activate the internal profiling layer (e.g. NEC MPI needs -mpiprof).
 After compiling, you must link your application against `libvftrace`, either statically or dynamically.
 The application can then be run in the usual way.
@@ -40,6 +40,7 @@ It has to support function instrumentation.
 To our knowledge, this is given for the following list of compilers:
   - GNU
   - Intel
+  - Clang
   - NEC
 
 ## Basic Principle
