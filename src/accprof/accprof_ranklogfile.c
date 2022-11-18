@@ -119,6 +119,9 @@ void vftr_write_ranklogfile_accprof_table (FILE *fp, stacktree_t stacktree, conf
    vftr_table_add_column (&table, col_string, "Function", "%s", 'c', 'r', (void*)func_names);
 
    fprintf (fp, "\n--OpenACC Summary--\n");
+   fprintf (fp, "\n");
+   vftr_print_accprof_gpuinfo (fp);
+   fprintf (fp, "\n");
    vftr_print_table(fp, table);
 
    free (stackids_with_accprof_data);

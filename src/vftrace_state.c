@@ -63,6 +63,7 @@ vftrace_t vftrace = {
 #ifdef _ACCPROF
    .accprof_state = {
       .n_devices = 0,
+      .device_names = NULL,
       .veto_callback_registration = false,
    },
 #endif

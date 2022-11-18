@@ -91,15 +91,17 @@ void vftr_write_logfile(vftrace_t vftrace, long long runtime) {
 #ifdef _CUDA
    if (vftrace.cuda_state.n_devices == 0) {
       fprintf (fp, "The CUpti interface is enabled, but no GPU devices were found.\n");
-   } else {
-      if (vftrace.config.cuda.show_table.value) {
-         vftr_write_logfile_cuda_table(fp, vftrace.process.collated_stacktree, vftrace.config);
-      }
+   } else if (vftrace.config.cuda.show_table.value) {
+      vftr_write_logfile_cuda_table(fp, vftrace.process.collated_stacktree, vftrace.config);
    }
 #endif
 
 #ifdef _ACCPROF
-   vftr_write_logfile_accprof_table (fp, vftrace.process.collated_stacktree, vftrace.config);
+   if (vftrace.accprof_state.n_devices == 0) {
+      fprintf (fp, "The ACCProf interface is enabled, but no GPU devices were found.\n");
+   } else if (vftrace.config.accprof.show_table.value) {
+      vftr_write_logfile_accprof_table (fp, vftrace.process.collated_stacktree, vftrace.config);
+   }
 #endif
 
    vftr_write_logfile_global_stack_list(fp, vftrace.process.collated_stacktree);

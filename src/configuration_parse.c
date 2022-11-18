@@ -226,16 +226,12 @@ void vftr_parse_config_mpi(cJSON *parent_object,
 void vftr_parse_config_cuda(cJSON *parent_object,
                             config_cuda_t *cfg_cuda_ptr) {
    // check if the Parent object has the profile table
-   bool has_object = cJSON_HasObjectItem(parent_object,
-                                         cfg_cuda_ptr->name);
+   bool has_object = cJSON_HasObjectItem(parent_object, cfg_cuda_ptr->name);
    if (has_object) {
-      cJSON *json_object = cJSON_GetObjectItem(parent_object,
-                                               cfg_cuda_ptr->name);
+      cJSON *json_object = cJSON_GetObjectItem(parent_object, cfg_cuda_ptr->name);
       // get the child objects
-      vftr_parse_config_bool(json_object,
-                             &(cfg_cuda_ptr->show_table));
-      vftr_parse_config_sort_table(json_object,
-                                   &(cfg_cuda_ptr->sort_table));
+      vftr_parse_config_bool(json_object, &(cfg_cuda_ptr->show_table));
+      vftr_parse_config_sort_table(json_object, &(cfg_cuda_ptr->sort_table));
    }
 }
 
@@ -245,6 +241,7 @@ void vftr_parse_config_accprof(cJSON *parent_object, config_accprof_t *cfg_accpr
    if (has_object) {
       cJSON *json_object = cJSON_GetObjectItem(parent_object, cfg_accprof_ptr->name);
       // get the child objects
+      vftr_parse_config_bool(json_object, &(cfg_accprof_ptr->show_table));
       vftr_parse_config_sort_table(json_object, &(cfg_accprof_ptr->sort_table));
    }
 }

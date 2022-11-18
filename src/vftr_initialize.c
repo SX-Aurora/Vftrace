@@ -10,6 +10,7 @@
 #endif
 
 #ifdef _ACCPROF
+#include "accprof_init_final.h"
 #include "accprof_callbacks.h"
 #endif
 
@@ -94,6 +95,9 @@ void vftr_initialize(void *func, void *call_site) {
       (void)vftr_init_cupti(vftr_cupti_event_callback);
 #endif
 
+#ifdef _ACCPROF
+      vftr_init_accprof();
+#endif
       // set the finalize function to be executed at the termination of the program
       atexit(vftr_finalize);
 
