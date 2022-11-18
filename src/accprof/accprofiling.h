@@ -15,7 +15,7 @@ void vftr_accumulate_accprofiling_overhead (accprofile_t *prof, long long t_nsec
 accprofile_t vftr_add_accprofiles (accprofile_t profA, accprofile_t profB);
 
 long long vftr_get_total_accprof_overhead (stacktree_t stacktree);
-long long vftr_get_toal_collated_accprof_overhead (collated_stacktree_t stacktree);
+long long vftr_get_total_collated_accprof_overhead (collated_stacktree_t stacktree);
 
 void vftr_accprofiling_free (accprofile_t *prof_ptr);
 

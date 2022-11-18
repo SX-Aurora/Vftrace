@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <libgen.h>
 
 #include "configuration_types.h"
 #include "collated_stack_types.h"
@@ -10,6 +11,7 @@
 #include "misc_utils.h"
 #include "sorting.h"
 
+#include "accprof_init_final.h"
 #include "accprofiling_types.h"
 #include "accprof_events.h"
 

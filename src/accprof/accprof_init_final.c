@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 
 #include "vftrace_state.h"
 #include "accprof_callbacks.h"
@@ -14,7 +15,7 @@ void vftr_init_accprof () {
 	vftr_veto_accprof_callbacks();
    } else {
         // Currently, only one GPU is detected by OpenACC.
-	vftrace.accprof_state.device_names = (char**)malloc(vftrace.accprof_state.n_devices * sizeof(char*));
+	vftrace.accprof_state.device_names = (const char**)malloc(vftrace.accprof_state.n_devices * sizeof(const char*));
         for (int i = 0; i < vftrace.accprof_state.n_devices; i++) {
            vftrace.accprof_state.device_names[i] = acc_get_property_string (acc_get_device_num(t), t, acc_property_name);
         }

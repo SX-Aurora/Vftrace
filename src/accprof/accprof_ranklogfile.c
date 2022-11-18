@@ -1,5 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+#include <libgen.h>
 
 #include "configuration_types.h"
 #include "tables.h"
@@ -7,8 +9,10 @@
 #include "stack_types.h"
 #include "sorting.h"
 
+#include "accprof_init_final.h"
 #include "accprofiling_types.h"
 #include "accprof_events.h"
+#include "accprof_logfile.h"
 
 void vftr_get_total_accprof_times_for_ranklogfile (stacktree_t stacktree, double *tot_compute_s,
 					           double *tot_memcpy_s, double *tot_other_s) {
@@ -62,7 +66,7 @@ void vftr_write_ranklogfile_accprof_table (FILE *fp, stacktree_t stacktree, conf
    double *t_compute = (double*)malloc(n_stackids_with_accprof_data * sizeof(double));
    double *t_memcpy = (double*)malloc(n_stackids_with_accprof_data * sizeof(double));
    double *t_other = (double*)malloc(n_stackids_with_accprof_data * sizeof(double));
-   char **source_files = (char*)malloc(n_stackids_with_accprof_data * sizeof(char*));
+   char **source_files = (char**)malloc(n_stackids_with_accprof_data * sizeof(char*));
    char **func_names = (char**)malloc(n_stackids_with_accprof_data * sizeof(char*));
 
    int i = 0;
