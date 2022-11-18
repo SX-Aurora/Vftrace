@@ -27,7 +27,7 @@ void vftr_pre_hook_function_entry(void *func, void *call_site) {
       // There are c++ programs that execute a lot of inconsitently
       // instrumented code before calling main.
       // This skips all this, as it can break vftrace.
-      if (!strcmp(func_name, "main")) {
+      if (!strcmp(func_name_cpy, "main")) {
          // assign the appropriate function hooks to handle sampling.
          vftr_set_enter_func_hook(vftr_function_entry);
          vftr_set_exit_func_hook(vftr_function_exit);
