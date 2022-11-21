@@ -12,6 +12,7 @@ typedef struct {
 
 typedef struct {
    function_hook_t function_hooks;
+   function_hook_t prepause_hooks;
 } hooks_t;
 
 #endif

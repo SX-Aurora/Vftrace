@@ -13,6 +13,10 @@ vftrace_t vftrace = {
       .function_hooks = {
          .enter = &vftr_initialize,
          .exit = NULL
+      },
+      .prepause_hooks = {
+         .enter = NULL,
+         .exit = NULL
       }
    },
    .config.valid = false,
@@ -91,6 +95,8 @@ unsigned long long vftr_sizeof_hooks_t(hooks_t hooks) {
    // in order to not double count with the function calls
    size -= sizeof(function_hook_t);
    size += vftr_sizeof_function_hook_t(hooks.function_hooks);
+   size -= sizeof(function_hook_t);
+   size += vftr_sizeof_function_hook_t(hooks.prepause_hooks);
    return size;
 }
 
