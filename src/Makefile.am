@@ -159,6 +159,6 @@ libvftrace_la_SOURCES += self_profile.c
 endif
 
 libvftr_pause_la_SOURCES = pause.c
-libvftr_pause_la_CFLAGS = -finstrument-functions
+libvftr_pause_la_CFLAGS = $(FINSTRUMENT_FLAG)
 
 CLEANFILES = *.mod

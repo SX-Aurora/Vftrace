@@ -21,7 +21,7 @@ else
 endif
 AM_TESTS_ENVIRONMENT+=. $(top_srcdir)/test/environment/unset_vftr_env.sh;
 
-AM_FCFLAGS = -O3 -finstrument-functions
+AM_FCFLAGS = -O3 $(FINSTRUMENT_FLAG)
 
 AM_LDFLAGS = -L$(top_builddir)/src/.libs -lvftrace -lm
 if USES_NEC_MPI

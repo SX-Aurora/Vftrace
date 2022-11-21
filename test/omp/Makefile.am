@@ -21,10 +21,10 @@ else
 endif
 AM_TESTS_ENVIRONMENT+=. $(top_srcdir)/test/environment/unset_vftr_env.sh;
 
-AM_CFLAGS = -O3 -finstrument-functions
+AM_CFLAGS = -O3 $(FINSTRUMENT_FLAG)
 AM_CFLAGS += -I$(top_srcdir)/src/ -I$(top_srcdir)/src/omp/
 
-AM_FCFLAGS = -O3 -finstrument-functions
+AM_FCFLAGS = -O3 $(FINSTRUMENT_FLAG)
 
 if ENABLE_MPI
 AM_CFLAGS += -D_MPI
@@ -62,7 +62,7 @@ check_PROGRAMS += thread_num \
                   ancestor_thread_num
 
 thread_num_SOURCES = $(srcdir)/thread_num.c
-thread_num_CFLAGS  = $(AM_CFLAGS) -finstrument-functions
+thread_num_CFLAGS  = $(AM_CFLAGS) $(FINSTRUMENT_FLAG)
 thread_num_LDFLAGS = $(AM_LDFLAGS)
 
 thread_level_SOURCES = $(srcdir)/thread_level.c
@@ -80,7 +80,7 @@ dist_noinst_SCRIPTS += thread_num.sh \
 check_PROGRAMS += threadtree
 
 threadtree_SOURCES = $(srcdir)/threadtree.c
-threadtree_CFLAGS  = $(AM_CFLAGS) -finstrument-functions
+threadtree_CFLAGS  = $(AM_CFLAGS) $(FINSTRUMENT_FLAG)
 threadtree_LDFLAGS = $(AM_LDFLAGS)
 
 dist_noinst_SCRIPTS += threadtree.sh

@@ -5,13 +5,13 @@
 
 #include <vftrace.h>
 
-int fkt1() {
+int __attribute__ ((noinline)) fkt1() {
    return 1;
 }
-int fkt2() {
+int __attribute__ ((noinline)) fkt2() {
    return 2;
 }
-int fkt3() {
+int __attribute__ ((noinline)) fkt3() {
    return 3;
 }
 

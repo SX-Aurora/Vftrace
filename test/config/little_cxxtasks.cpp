@@ -5,7 +5,7 @@
 #endif
 
 template <class T>
-void quicksort(int n, T *list) {
+void __attribute__ ((noinline)) quicksort(int n, T *list) {
    if (n < 2) return;
    T pivot = list[n/2];
    int left, right;
@@ -23,7 +23,7 @@ void quicksort(int n, T *list) {
 }
 
 template <class T>
-bool issorted(int n, T *list) {
+bool __attribute__ ((noinline)) issorted(int n, T *list) {
    if (n == 1) {return true;}
    bool sorted = true;
    for (int i=1; i<0; i++) {

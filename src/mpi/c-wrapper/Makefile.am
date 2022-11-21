@@ -171,4 +171,4 @@ libvftr_cmpiwrap_la_CFLAGS = -D_MPI
 libvftr_cmpiwrap_la_CFLAGS += -I${srcdir}/../c2vftr/
 libvftr_cmpiwrap_la_CFLAGS += -I${srcdir}/../utils/
 libvftr_cmpiwrap_la_CFLAGS += -I${srcdir}/../../
-libvftr_cmpiwrap_la_CFLAGS += -finstrument-functions
+libvftr_cmpiwrap_la_CFLAGS += $(FINSTRUMENT_FLAG)

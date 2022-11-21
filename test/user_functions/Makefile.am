@@ -28,9 +28,9 @@ endif
 
 AM_TESTS_ENVIRONMENT+=. $(top_srcdir)/test/environment/unset_vftr_env.sh;
 
-AM_CFLAGS = -O3 -finstrument-functions 
+AM_CFLAGS = -O3 $(FINSTRUMENT_FLAG) 
 AM_CFLAGS += -I$(top_srcdir)/src/
-AM_FCFLAGS = -O3 -finstrument-functions 
+AM_FCFLAGS = -O3 $(FINSTRUMENT_FLAG) 
 AM_FCFLAGS += -I$(top_builddir)/src/
 
 AM_LDFLAGS = -L$(top_builddir)/src/.libs -lvftrace -lm
@@ -126,7 +126,7 @@ dist_noinst_SCRIPTS += cget_stack.sh
 check_PROGRAMS += cpause_resume
 
 cpause_resume_SOURCES = $(srcdir)/cpause_resume.c
-cpause_resume_CFLAGS  = $(AM_CFLAGS)
+cpause_resume_CFLAGS  = $(AM_CFLAGS) -Minfo=inline
 cpause_resume_LDFLAGS = $(AM_LDFLAGS)
 
 dist_noinst_SCRIPTS += cpause_resume.sh

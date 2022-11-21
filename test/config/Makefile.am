@@ -70,7 +70,7 @@ defaults_CFLAGS = $(AM_CFLAGS) -I$(top_srcdir)/src
 defaults_LDFLAGS = $(AM_LDFLAGS)
 
 defaults2_SOURCES = $(srcdir)/little_tasks.c
-defaults2_CFLAGS = $(AM_CFLAGS) -finstrument-functions
+defaults2_CFLAGS = $(AM_CFLAGS) $(FINSTRUMENT_FLAG)
 defaults2_LDFLAGS = $(AM_LDFLAGS)
 
 advisor_SOURCES = $(srcdir)/advisor.c
@@ -99,35 +99,35 @@ check_PROGRAMS += sampling \
 		  show_calltime_imbalances
 
 off_SOURCES = $(srcdir)/little_tasks.c
-off_CFLAGS = $(AM_CFLAGS) -finstrument-functions
+off_CFLAGS = $(AM_CFLAGS) $(FINSTRUMENT_FLAG)
 off_LDFLAGS = $(AM_LDFLAGS)
 
 sampling_SOURCES = $(srcdir)/little_tasks.c
-sampling_CFLAGS = $(AM_CFLAGS) -finstrument-functions
+sampling_CFLAGS = $(AM_CFLAGS) $(FINSTRUMENT_FLAG)
 sampling_LDFLAGS = $(AM_LDFLAGS)
 
 out_directory_SOURCES = $(srcdir)/little_tasks.c
-out_directory_CFLAGS = $(AM_CFLAGS) -finstrument-functions
+out_directory_CFLAGS = $(AM_CFLAGS) $(FINSTRUMENT_FLAG)
 out_directory_LDFLAGS = $(AM_LDFLAGS)
 
 outfile_basename_SOURCES = $(srcdir)/little_tasks.c
-outfile_basename_CFLAGS = $(AM_CFLAGS) -finstrument-functions
+outfile_basename_CFLAGS = $(AM_CFLAGS) $(FINSTRUMENT_FLAG)
 outfile_basename_LDFLAGS = $(AM_LDFLAGS)
 
 logfile_for_ranks_SOURCES = $(srcdir)/little_tasks.c
-logfile_for_ranks_CFLAGS = $(AM_CFLAGS) -finstrument-functions
+logfile_for_ranks_CFLAGS = $(AM_CFLAGS) $(FINSTRUMENT_FLAG)
 logfile_for_ranks_LDFLAGS = $(AM_LDFLAGS)
 
 print_config_SOURCES = $(srcdir)/little_tasks.c
-print_config_CFLAGS = $(AM_CFLAGS) -finstrument-functions
+print_config_CFLAGS = $(AM_CFLAGS) $(FINSTRUMENT_FLAG)
 print_config_LDFLAGS = $(AM_LDFLAGS)
 
 ranks_in_mpi_profile_SOURCES = $(srcdir)/mpi_tasks.c
-ranks_in_mpi_profile_CFLAGS = $(AM_CFLAGS) -finstrument-functions
+ranks_in_mpi_profile_CFLAGS = $(AM_CFLAGS) $(FINSTRUMENT_FLAG)
 ranks_in_mpi_profile_LDFLAGS = $(AM_LDFLAGS)
 
 show_calltime_imbalances_SOURCES = $(srcdir)/little_tasks.c
-show_calltime_imbalances_CFLAGS = $(AM_CFLAGS) -finstrument-functions
+show_calltime_imbalances_CFLAGS = $(AM_CFLAGS) $(FINSTRUMENT_FLAG)
 show_calltime_imbalances_LDFLAGS = $(AM_LDFLAGS)
 
 if !SELF_PROFILING
@@ -145,7 +145,7 @@ if ENABLE_FORTRAN
 check_PROGRAMS += strip_module_names
 
 strip_module_names_SOURCES = $(srcdir)/little_ftasks.F90
-strip_module_names_FCFLAGS = $(AM_FCFLAGS) -finstrument-functions
+strip_module_names_FCFLAGS = $(AM_FCFLAGS) $(FINSTRUMENT_FLAG)
 strip_module_names_LDFLAGS = $(AM_LDFLAGS)
 
 dist_check_SCRIPTS += strip_module_names.sh
@@ -155,7 +155,7 @@ if HAS_LIBERTY
 check_PROGRAMS += demangle_cxx
 
 demangle_cxx_SOURCES = $(srcdir)/little_cxxtasks.cpp
-demangle_cxx_CXXFLAGS = $(AM_CXXFLAGS) -finstrument-functions
+demangle_cxx_CXXFLAGS = $(AM_CXXFLAGS) $(FINSTRUMENT_FLAG)
 demangle_cxx_LDFLAGS = $(AM_LDFLAGS) -liberty
 
 dist_check_SCRIPTS += demangle_cxx.sh
