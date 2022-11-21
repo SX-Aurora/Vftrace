@@ -126,7 +126,7 @@ dist_noinst_SCRIPTS += cget_stack.sh
 check_PROGRAMS += cpause_resume
 
 cpause_resume_SOURCES = $(srcdir)/cpause_resume.c
-cpause_resume_CFLAGS  = $(AM_CFLAGS) -Minfo=inline
+cpause_resume_CFLAGS  = $(AM_CFLAGS)
 cpause_resume_LDFLAGS = $(AM_LDFLAGS)
 
 dist_noinst_SCRIPTS += cpause_resume.sh
