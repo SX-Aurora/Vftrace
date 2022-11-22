@@ -10,6 +10,10 @@ bool vftr_accprof_is_data_event (acc_event_t event_type) {
       case acc_ev_enqueue_upload_end:
       case acc_ev_enqueue_download_start:
       case acc_ev_enqueue_download_end:
+      case acc_ev_enter_data_start:
+      case acc_ev_enter_data_end:
+      case acc_ev_exit_data_start:
+      case acc_ev_exit_data_end:
       case acc_ev_create:
       case acc_ev_delete:
       case acc_ev_alloc:
@@ -20,12 +24,34 @@ bool vftr_accprof_is_data_event (acc_event_t event_type) {
    }
 }
 
-bool vftr_accprof_is_launch_event (acc_event_t event_type) {
+bool vftr_accprof_is_compute_event (acc_event_t event_type) {
    switch (event_type) {
       case acc_ev_enqueue_launch_start:
       case acc_ev_enqueue_launch_end:
       case acc_ev_compute_construct_start:
       case acc_ev_compute_construct_end:
+         return true;
+      default:
+         return false;
+   }
+}
+
+bool vftr_accprof_is_h2d_event (acc_event_t event_type) {
+   return (event_type == acc_ev_enqueue_upload_start ||
+           event_type == acc_ev_enqueue_upload_end);
+}
+
+bool vftr_accprof_is_d2h_event (acc_event_t event_type) {
+   return (event_type == acc_ev_enqueue_download_start ||
+           event_type == acc_ev_enqueue_download_end);
+}
+
+bool vftr_accprof_is_ondevice_event (acc_event_t event_type) {
+   switch (event_type) {
+      case acc_ev_create:
+      case acc_ev_delete:
+      case acc_ev_alloc:
+      case acc_ev_free:
          return true;
       default:
          return false;
@@ -64,6 +90,6 @@ char *vftr_accprof_event_string (acc_event_t event_type) {
      case acc_ev_wait_end:
         return "wait";
      default:
-        return "other";
+        return "undefined";
   }
 }

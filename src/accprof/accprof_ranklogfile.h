@@ -5,7 +5,7 @@
 #include "stack_types.h"
 
 void vftr_get_total_accprof_times_for_ranklogfile (stacktree_t stacktree, double *tot_compute_s,
-						   double *tot_memcpy_s, double *tot_other_s);
-void vftr_write_ranklogfile_accprof_table (FILE *fp, stacktree_t stacktree, config_t config);
+						   double *tot_memcpy_s, double *tot_wait_s);
+void vftr_write_ranklogfile_accprof_event_table (FILE *fp, stacktree_t stacktree, config_t config);
 
 #endif

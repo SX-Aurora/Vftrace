@@ -7,6 +7,7 @@
 
 accprofile_t vftr_new_accprofiling () {
    accprofile_t prof;
+   prof.region_id = 0;
    prof.event_type = acc_ev_none;
    prof.line_start = 0;
    prof.line_end = 0;

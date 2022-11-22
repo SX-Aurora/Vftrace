@@ -112,7 +112,10 @@ void vftr_write_ranklogfile(vftrace_t vftrace, long long runtime) {
    if (vftrace.accprof_state.n_devices == 0) {
       fprintf (fp, "The ACCProf interface is enabled, but no GPU devices were found.\n");
    } else if (vftrace.config.accprof.show_table.value) {
-      vftr_write_ranklogfile_accprof_table (fp, vftrace.process.stacktree, vftrace.config);
+      vftr_write_ranklogfile_accprof_grouped_table (fp, vftrace.process.stacktree, vftrace.config);
+      if (vftrace.config.accprof.show_event_details.value) {
+         vftr_write_ranklogfile_accprof_event_table (fp, vftrace.process.stacktree, vftrace.config);
+      }
    }
 #endif
 

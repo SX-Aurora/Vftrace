@@ -1,10 +1,13 @@
 #ifndef ACCPROFILING_TYPES_H
 #define ACCPROFILING_TYPES_H
 
+#include <stdint.h>
+
 #include "acc_prof.h"
 
 typedef struct {
    acc_event_t event_type; 
+   uint64_t region_id;
    int line_start;
    int line_end;
    long long copied_bytes; // Only for data events: Amount of data moved

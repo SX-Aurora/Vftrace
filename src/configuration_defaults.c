@@ -136,9 +136,10 @@ config_cuda_t vftr_set_config_cuda_default() {
 
 config_accprof_t vftr_set_config_accprof_default() {
    config_accprof_t cfg_accprof;
-   cfg_accprof.name = strdup("accprof");
+   cfg_accprof.name = strdup("openacc");
    cfg_accprof.set = false;
    cfg_accprof.show_table = vftr_set_config_bool_default("show_table", true);
+   cfg_accprof.show_event_details = vftr_set_config_bool_default("show_event_details", false);
    cfg_accprof.sort_table =
       vftr_set_config_sort_table_default("time", false);
    return cfg_accprof;

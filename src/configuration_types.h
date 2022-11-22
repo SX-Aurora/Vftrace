@@ -86,6 +86,7 @@ typedef struct {
    CONFIG_STRUCT_DEFAULTS
    config_bool_t show_table;
    config_sort_table_t sort_table;
+   config_bool_t show_event_details;
 } config_accprof_t;
 
 typedef struct {

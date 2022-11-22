@@ -306,6 +306,7 @@ void vftr_config_cuda_assert(FILE *fp, config_cuda_t cfg_cuda) {
 
 void vftr_config_accprof_assert(FILE *fp, config_accprof_t cfg_accprof) {
    vftr_config_show_table_assert(fp, cfg_accprof.show_table);
+   vftr_config_show_table_assert(fp, cfg_accprof.show_event_details);
    const char *valid_columns[] = {"time", "memcpy", "calls", "none"};
    vftr_config_sort_table_assert(fp, cfg_accprof.sort_table, 5, valid_columns);
 }

@@ -242,6 +242,7 @@ void vftr_parse_config_accprof(cJSON *parent_object, config_accprof_t *cfg_accpr
       cJSON *json_object = cJSON_GetObjectItem(parent_object, cfg_accprof_ptr->name);
       // get the child objects
       vftr_parse_config_bool(json_object, &(cfg_accprof_ptr->show_table));
+      vftr_parse_config_bool(json_object, &(cfg_accprof_ptr->show_event_details));
       vftr_parse_config_sort_table(json_object, &(cfg_accprof_ptr->sort_table));
    }
 }

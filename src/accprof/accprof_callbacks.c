@@ -32,6 +32,59 @@ char *concatenate_openacc_name (acc_event_t event_type, int line_1, int line_2, 
    return s;
 }
 
+void vftr_set_new_accprof (acc_prof_info *prof_info, acc_event_info *event_info,
+                           profile_t *new_prof, profile_t *parent_prof) {
+   accprofile_t *new_accprof = &(new_prof->accprof);
+   new_accprof->event_type = prof_info->event_type; 
+   new_accprof->line_start = prof_info->line_no;
+   new_accprof->line_end = prof_info->end_line_no;
+   if (prof_info->src_file != NULL) {
+      new_accprof->source_file = (char*)malloc((strlen(prof_info->src_file) + 1) * sizeof(char));
+      strcpy (new_accprof->source_file , prof_info->src_file);
+   }
+   if (prof_info->func_name != NULL) {
+      new_accprof->func_name = (char*)malloc((strlen(prof_info->func_name) + 1) * sizeof(char));
+      strcpy (new_accprof->func_name , prof_info->func_name);
+   }
+
+   switch (prof_info->event_type) {
+      case acc_ev_enqueue_launch_start:
+         char *kernel_name = ((acc_launch_event_info*)event_info)->kernel_name;
+         if (kernel_name != NULL) {
+            new_accprof->kernel_name = (char*)malloc((strlen(kernel_name) + 1) * sizeof(char));
+            strcpy (new_accprof->kernel_name , kernel_name);
+         }
+         break;
+      case acc_ev_enqueue_upload_start:
+      case acc_ev_enqueue_download_start:
+      case acc_ev_create:
+      case acc_ev_delete:
+      case acc_ev_alloc:
+      case acc_ev_free:
+	 char *var_name = ((acc_data_event_info*)event_info)->var_name;
+         if (var_name != NULL) {
+            new_accprof->var_name = (char*)malloc((strlen(var_name) + 1) * sizeof(char));
+            strcpy (new_accprof->var_name , var_name);
+         }
+         break;
+   }
+
+   if (new_accprof->region_id == 0) {
+      accprofile_t parent_accprof = parent_prof->accprof;
+      if (parent_accprof.region_id > 0) {
+         new_accprof->region_id = parent_accprof.region_id;
+      } else {
+         int n1 = strlen(prof_info->src_file);
+         int n2 = vftr_count_base_digits ((long long)prof_info->line_no, 10);
+         int len = n1 + n2 + 1;
+         char *s = (char*)malloc(len * sizeof(char));  
+         snprintf (s, len, "%s%d", prof_info->src_file, prof_info->line_no);
+         new_accprof->region_id = vftr_jenkins_murmur_64_hash (len, (uint8_t*)s); 
+         free (s);
+      }
+   }
+}
+
 typedef struct open_wait {
    long long start_time;
    int async;
@@ -96,6 +149,7 @@ void prof_wait_start (acc_prof_info *prof_info, acc_event_info *event_info, acc_
    thread_t *my_thread = vftr_get_my_thread(&(vftrace.process.threadtree));
    threadstack_t *my_threadstack = vftr_get_my_threadstack(my_thread);
    stack_t *my_stack = vftrace.process.stacktree.stacks + my_threadstack->stackID;
+   profile_t *parent_profile = vftr_get_my_profile(my_stack, my_thread);
 
    char *pseudo_name = concatenate_openacc_name (prof_info->event_type,
                                                  prof_info->line_no, prof_info->end_line_no,
@@ -108,13 +162,11 @@ void prof_wait_start (acc_prof_info *prof_info, acc_event_info *event_info, acc_
    stack_t *my_new_stack = vftrace.process.stacktree.stacks + my_threadstack->stackID;
    profile_t *my_profile = vftr_get_my_profile(my_new_stack, my_thread);
 
+   if (my_profile->accprof.event_type == acc_ev_none) {
+      vftr_set_new_accprof (prof_info, event_info, my_profile, parent_profile);
+   }
 
    vftr_append_wait_queue (vftr_get_runtime_nsec(), prof_info->async_queue, my_new_stack);
-
-   vftr_accumulate_accprofiling (&(my_profile->accprof), prof_info->event_type,
-                                 prof_info->line_no, prof_info->end_line_no,
-                                 prof_info->src_file, prof_info->func_name,
-                                 NULL, NULL, 0);
 
    threadstacklist_t stacklist = my_thread->stacklist;
    (void)vftr_threadstack_pop(&(my_thread->stacklist));
@@ -160,6 +212,7 @@ void vftr_accprof_region_begin (acc_prof_info *prof_info, acc_event_info *event_
    thread_t *my_thread = vftr_get_my_thread(&(vftrace.process.threadtree));
    threadstack_t *my_threadstack = vftr_get_my_threadstack(my_thread);
    stack_t *my_stack = vftrace.process.stacktree.stacks + my_threadstack->stackID;
+   profile_t *parent_profile = vftr_get_my_profile(my_stack, my_thread);
 
    char *pseudo_name = concatenate_openacc_name (prof_info->event_type,
                                                  prof_info->line_no, prof_info->end_line_no,
@@ -171,38 +224,20 @@ void vftr_accprof_region_begin (acc_prof_info *prof_info, acc_event_info *event_
                                                     &vftrace, false);
    stack_t *my_new_stack = vftrace.process.stacktree.stacks + my_threadstack->stackID;
    profile_t *my_profile = vftr_get_my_profile(my_new_stack, my_thread);
+   if (my_profile->accprof.event_type == acc_ev_none) {
+      vftr_set_new_accprof (prof_info, event_info, my_profile, parent_profile);
+   }
    if (acc_callprof) vftr_accumulate_callprofiling(&(my_profile->callprof), 1, -region_begin_time_begin);
 
-   acc_launch_event_info *launch_event_info;
-   acc_data_event_info *data_event_info;
    switch (prof_info->event_type) {
-      case acc_ev_enqueue_launch_start:
-      case acc_ev_enqueue_launch_end:
-        launch_event_info = (acc_launch_event_info*)event_info;
-        vftr_accumulate_accprofiling (&(my_profile->accprof), prof_info->event_type,
-        			      prof_info->line_no, prof_info->end_line_no,
-                                      prof_info->src_file, prof_info->func_name,
-                                      launch_event_info->kernel_name, NULL, 0);
-        break;
       case acc_ev_enqueue_upload_start:
-      case acc_ev_enqueue_upload_end:
       case acc_ev_enqueue_download_start:
-      case acc_ev_enqueue_download_end:
       case acc_ev_create:
       case acc_ev_delete:
       case acc_ev_alloc:
       case acc_ev_free:
-         data_event_info = (acc_data_event_info*)event_info;
-         vftr_accumulate_accprofiling (&(my_profile->accprof), prof_info->event_type,
-        			       prof_info->line_no, prof_info->end_line_no,
-                                       prof_info->src_file, prof_info->func_name,
-                                       NULL, data_event_info->var_name, data_event_info->bytes);
-         break;
-      default:
-         vftr_accumulate_accprofiling (&(my_profile->accprof), prof_info->event_type,
-        			       prof_info->line_no, prof_info->end_line_no,
-                                       prof_info->src_file, prof_info->func_name,
-                                       NULL, NULL, 0);
+         accprofile_t *accprof = &(my_profile->accprof);
+         accprof->copied_bytes += (long long)((acc_data_event_info*)event_info)->bytes;
    }
 
    vftr_accumulate_accprofiling_overhead (&(my_profile->accprof),

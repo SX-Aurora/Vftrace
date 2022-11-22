@@ -150,6 +150,8 @@ void vftr_print_config_accprof (FILE *fp, int level, config_accprof_t cfg_accpro
    fprintf(fp, "\"%s\": {\n", cfg_accprof.name);
    vftr_print_config_bool(fp, level, cfg_accprof.show_table);
    fprintf(fp,",\n");
+   vftr_print_config_bool(fp, level, cfg_accprof.show_event_details);
+   fprintf(fp,",\n");
    vftr_print_config_sort_table(fp, level, cfg_accprof.sort_table);
    fprintf(fp,"\n");
    vftr_print_config_indent(fp, level);
