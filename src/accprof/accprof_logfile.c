@@ -203,6 +203,7 @@ void vftr_write_logfile_accprof_event_table (FILE *fp, collated_stacktree_t stac
    double *t_wait = (double*)malloc(n_stackids_with_accprof_data * sizeof(double));
    char **source_files = (char**)malloc(n_stackids_with_accprof_data * sizeof(char*));
    char **func_names = (char**)malloc(n_stackids_with_accprof_data * sizeof(char*));
+   uint64_t *region_ids = (uint64_t*)malloc(n_stackids_with_accprof_data * sizeof(uint64_t));
 
    int i = 0;
    for (int istack = 0; istack < stacktree.nstacks; istack++) {
@@ -240,6 +241,7 @@ void vftr_write_logfile_accprof_event_table (FILE *fp, collated_stacktree_t stac
       }
       // We have not yet observed NULL function names, but better safe than sorry.
       func_names[i] = accprof.func_name != NULL ? accprof.func_name : "unknown";
+      region_ids[i] = accprof.region_id;
       i++;
    }
 
@@ -248,6 +250,7 @@ void vftr_write_logfile_accprof_event_table (FILE *fp, collated_stacktree_t stac
 
    vftr_table_add_column (&table, col_int, "STID", "%d", 'c', 'r', (void*)stackids_with_accprof_data);
    vftr_table_add_column (&table, col_string, "event", "%s", 'c', 'r', (void*)ev_names);
+   vftr_table_add_column (&table, col_longlong, "regionID", "0x%lx", 'c', 'r', (void*)region_ids);
    vftr_table_add_column (&table, col_int, "#Calls", "%d", 'c', 'r', (void*)calls);
    vftr_table_add_column (&table, col_double, "t_compute[s]", "%.3lf", 'c', 'r', (void*)t_compute);
    vftr_table_add_column (&table, col_double, "t_data[s]", "%.3lf", 'c', 'r', (void*)t_data);
@@ -271,6 +274,7 @@ void vftr_write_logfile_accprof_event_table (FILE *fp, collated_stacktree_t stac
    free (copied_bytes);
    free (source_files);
    free (func_names);
+   free (region_ids);
 }
 
 void vftr_write_logfile_accev_names (FILE *fp) {
