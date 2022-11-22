@@ -144,6 +144,8 @@ open_wait_t *vftr_pick_wait_queue (int async) {
 // acc_ev_wait_end, it is not considered to be called by the wait call.
 // Additionally, the region identifier, the start time and the current stack are stored in a list of open wait event queues. When the matching acc_ev_wait_end happens, it computes the difference between its timestamp and this one, and stores it into the profile obtained from the stack of this region.
 void prof_wait_start (acc_prof_info *prof_info, acc_event_info *event_info, acc_api_info *api_info) {
+   if (((acc_other_event_info*)event_info)->implicit) return;
+
    long long wait_begin_time = vftr_get_runtime_nsec();
 
    thread_t *my_thread = vftr_get_my_thread(&(vftrace.process.threadtree));
@@ -181,7 +183,8 @@ void prof_wait_start (acc_prof_info *prof_info, acc_event_info *event_info, acc_
 // we accumulate the callprofiling.
 // TODO: What if no matching queue is found?
 void prof_wait_end (acc_prof_info *prof_info, acc_event_info *event_info, acc_api_info *api_info) {
-   stack_t *stack = NULL;
+   if (((acc_other_event_info*)event_info)->implicit) return;
+
    long long wait_end_time = vftr_get_runtime_nsec();
    open_wait_t *match_queue = vftr_pick_wait_queue (prof_info->async_queue);
    
