@@ -304,9 +304,7 @@ void vftr_write_logfile_accprof_event_table (FILE *fp, collated_stacktree_t stac
    vftr_table_add_column (&table, col_string ,"Source File", "%s", 'c', 'r', (void*)source_files);
    vftr_table_add_column (&table, col_string, "Function", "%s", 'c', 'r', (void*)func_names);
 
-   fprintf (fp, "\n--OpenACC Summary--\n");
-   fprintf (fp, "\n");
-   vftr_print_accprof_gpuinfo (fp);
+   fprintf (fp, "\n--OpenACC Detailed Event Summary--\n");
    fprintf (fp, "\n");
    vftr_print_table(fp, table);
 
