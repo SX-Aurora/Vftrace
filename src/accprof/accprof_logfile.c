@@ -58,6 +58,36 @@ char *vftr_name_with_lines_2 (char *name, int line_1, int line_2) {
    return s;
 }
 
+void vftr_sort_arrays_for_grouped_table (config_t config, int n_region_ids,
+                                         double *t_tot, long long *bytes_tot,
+				         char **region_names, char **func_names,
+				         double *t_compute, double *t_data, double *t_wait,
+				         long long *bytes_h2d, long long *bytes_d2h, long long *bytes_on_device) {
+
+   char *column = config.accprof.sort_table.column.value;
+   bool ascending = config.accprof.sort_table.ascending.value;
+   printf ("column: %s\n", column);
+
+   int *perm = NULL;
+   if (!strcmp(column, "time")) {
+      vftr_sort_perm_double (n_region_ids, t_tot, &perm, ascending);
+   } else if (!strcmp(column, "memcpy")) {
+      vftr_sort_perm_longlong (n_region_ids, bytes_tot, &perm, ascending);
+   } else {
+      return;
+   }
+
+   vftr_apply_perm_charptr (n_region_ids, region_names, perm);
+   vftr_apply_perm_charptr (n_region_ids, func_names, perm);
+   vftr_apply_perm_double (n_region_ids, t_compute, perm);
+   vftr_apply_perm_double (n_region_ids, t_data, perm);
+   vftr_apply_perm_double (n_region_ids, t_wait, perm);
+   vftr_apply_perm_longlong (n_region_ids, bytes_h2d, perm);
+   vftr_apply_perm_longlong (n_region_ids, bytes_d2h, perm);
+   vftr_apply_perm_longlong (n_region_ids, bytes_on_device, perm);
+   free(perm);
+}
+
 void vftr_write_logfile_accprof_grouped_table (FILE *fp, collated_stacktree_t stacktree, config_t config) {
    // Sort table???
    
@@ -139,6 +169,19 @@ void vftr_write_logfile_accprof_grouped_table (FILE *fp, collated_stacktree_t st
          }
       }
    }
+   
+   double *t_summed_tot = (double*)malloc (n_region_ids * sizeof(double));
+   long long *bytes_summed_tot = (long long*)malloc(n_region_ids * sizeof(long long));
+   for (int i = 0; i < n_region_ids; i++) {
+      t_summed_tot[i] = t_summed_compute[i] + t_summed_data[i] + t_summed_wait[i];
+      bytes_summed_tot[i] = bytes_summed_h2d[i] + bytes_summed_d2h[i] + bytes_summed_on_device[i];
+   }
+
+   vftr_sort_arrays_for_grouped_table (config, n_region_ids,
+				       t_summed_tot, bytes_summed_tot,
+				       region_names, func_names,
+				       t_summed_compute, t_summed_data, t_summed_wait,
+				       bytes_summed_h2d, bytes_summed_d2h, bytes_summed_on_device);
 
    table_t table = vftr_new_table();
    vftr_table_set_nrows (&table, n_region_ids);
@@ -159,6 +202,8 @@ void vftr_write_logfile_accprof_grouped_table (FILE *fp, collated_stacktree_t st
    fprintf (fp, "\n");
    vftr_print_table(fp, table);
 
+   free (t_summed_tot);
+   free (bytes_summed_tot);
    free (region_ids);
    free (region_names);
    free (func_names);

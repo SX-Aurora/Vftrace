@@ -69,6 +69,22 @@ libvftr_sorting_la_LIBADD += libvftr_apply_perm_float.la
 libvftr_apply_perm_float_la_SOURCES = apply_perm.c
 libvftr_apply_perm_float_la_CFLAGS = -DTYPE="float" -DTYPESTR="float" -I${srcdir}/../
 
+noinst_LTLIBRARIES += libvftr_apply_perm_double.la
+libvftr_sorting_la_LIBADD += libvftr_apply_perm_double.la
+libvftr_apply_perm_double_la_SOURCES = apply_perm.c
+libvftr_apply_perm_double_la_CFLAGS = -DTYPE="double" -DTYPESTR="double" -I${srcdir}/../
+
+noinst_LTLIBRARIES += libvftr_apply_perm_longlong.la
+libvftr_sorting_la_LIBADD += libvftr_apply_perm_longlong.la
+libvftr_apply_perm_longlong_la_SOURCES = apply_perm.c
+libvftr_apply_perm_longlong_la_CFLAGS = -DTYPE="long long" -DTYPESTR="longlong" -I${srcdir}/../
+
+noinst_LTLIBRARIES += libvftr_apply_perm_charptr.la
+libvftr_sorting_la_LIBADD += libvftr_apply_perm_charptr.la
+libvftr_apply_perm_charptr_la_SOURCES = apply_perm.c
+libvftr_apply_perm_charptr_la_CFLAGS = -DTYPE="char*" -DTYPESTR="charptr" -I${srcdir}/../
+
+
 noinst_LTLIBRARIES += libvftr_apply_perm_stackptr.la
 libvftr_sorting_la_LIBADD += libvftr_apply_perm_stackptr.la
 libvftr_apply_perm_stackptr_la_SOURCES = apply_perm.c

@@ -221,7 +221,7 @@ void vftr_sort_collated_stacks_for_mpiprof(config_t config,
   collated_stack_t **vftr_sort_collated_stacks_for_accprof (config_t config, collated_stacktree_t stacktree) {
      int nstacks = stacktree.nstacks;
      char *column = config.accprof.sort_table.column.value;
-     bool ascending = config.cuda.sort_table.ascending.value;
+     bool ascending = config.accprof.sort_table.ascending.value;
      int *perm = NULL;
 
      if (!strcmp(column, "time")) {

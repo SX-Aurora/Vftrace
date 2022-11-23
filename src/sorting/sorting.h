@@ -22,6 +22,7 @@ void vftr_sort_longlong(int n, long long *list, bool ascending);
 void vftr_sort_perm_int8(int n, int8_t *list, int **perm, bool ascending);
 void vftr_apply_perm_int8(int n, int8_t *list, int *perm);
 void vftr_sort_perm_longlong(int n, long long *list, int **perm, bool ascending);
+void vftr_apply_perm_longlong(int n, long long *list, int *perm);
 void vftr_sort_perm_int(int n, int *list, int **perm, bool ascending);
 
 // sorts a list of unsigned 64 bit integer with linear scaling radix sort
@@ -40,11 +41,15 @@ void vftr_apply_perm_uint8(int n, uint8_t *list, int *perm);
 void vftr_sort_float(int n, float *list, bool ascending);
 void vftr_sort_double(int n, double *list, bool ascending);
 
-// sorts a list of floats with linear scaling radix sort
+// sorts a list of floats or doubles with linear scaling radix sort
 // one bit at a time
 // Record the sorting process in a permutation for later use
 void vftr_sort_perm_float(int n, float *list, int **perm, bool ascending);
 void vftr_apply_perm_float(int n, float *list, int *perm);
+void vftr_sort_perm_double(int n, double *list, int **perm, bool ascending);
+void vftr_apply_perm_double(int n, double *list, int *perm);
+
+void vftr_apply_perm_charptr (int n, char **list, int *perm);
 
 // sort the symboltable with a linear scaling sort
 void vftr_sort_symboltable(unsigned int nsymb, symbol_t *symbols);
