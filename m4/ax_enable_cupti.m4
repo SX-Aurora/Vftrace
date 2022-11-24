@@ -22,7 +22,7 @@ AC_DEFUN([AX_ENABLE_CUPTI], [
        [AX_APPEND_FLAG([-I${with_cupti}/include], [CPPFLAGS])])
    AM_COND_IF([ENABLE_CUPTI],
       [AC_CHECK_LIB([cupti],
-          [cuptiSubscribe], ,
+          [cuptiSubscribe],
           [AC_MSG_FAILURE([unable to find CUPTI library])])])
    AM_COND_IF([ENABLE_CUPTI],
       [AC_CHECK_HEADER([cupti.h], ,
