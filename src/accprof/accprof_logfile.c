@@ -66,7 +66,6 @@ void vftr_sort_arrays_for_grouped_table (config_t config, int n_region_ids,
 
    char *column = config.accprof.sort_table.column.value;
    bool ascending = config.accprof.sort_table.ascending.value;
-   printf ("column: %s\n", column);
 
    int *perm = NULL;
    if (!strcmp(column, "time")) {
@@ -194,7 +193,7 @@ void vftr_write_logfile_accprof_grouped_table (FILE *fp, collated_stacktree_t st
    table_t table = vftr_new_table();
    vftr_table_set_nrows (&table, n_region_ids);
    
-   vftr_table_add_column (&table, col_string, "Position", "%s", 'c', 'r', (void*)region_names);
+   vftr_table_add_column (&table, col_string, "Position", "%s", 'c', 'l', (void*)region_names);
    vftr_table_add_column (&table, col_string, "Function", "%s", 'c', 'r', (void*)func_names);
    vftr_table_add_column (&table, col_double, "t_compute [s]", "%.3lf", 'c', 'r', (void*)t_summed_compute);
    vftr_table_add_column (&table, col_double, "t_data [s]", "%.3lf", 'c', 'r', (void*)t_summed_data);

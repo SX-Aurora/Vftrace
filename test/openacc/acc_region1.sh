@@ -1,0 +1,53 @@
+#!/bin/bash
+set -x
+
+source ${srcdir}/../environment/filenames.sh
+
+test_name=acc_region1
+vftr_binary=${test_name}
+
+logfile=$(get_logfile_name ${vftr_binary} "all")
+
+if [ "x${HAS_MPI}" == "xYES" ]; then
+   ${MPI_EXEC} ${MPI_OPTS} ${NP} ${nprocs} ./${vftr_binary} || exit 1
+else
+   ./${vftr_binary} || exit 1
+fi
+
+bytes_h2d=`grep ${test_name}.c ${logfile} | head -1 | awk '{print $15}'`
+bytes_d2h=`grep ${test_name}.c ${logfile} | head -1 | awk '{print $17}'`
+bytes_ondevice=`grep ${test_name}.c ${logfile} | head -1 | awk '{print $19}'`
+
+if [ "${bytes_h2d}" -ne 0 ]; then
+   echo "Bytes Host -> Device does not match."
+   exit 1;
+fi
+
+if [ "${bytes_d2h}" -ne 4 ]; then
+   echo "Bytes Device -> Host does not match."
+   exit 1;
+fi
+
+if [ "${bytes_ondevice}" -ne 512 ]; then
+   echo "Bytes onDevice does not match."
+   exit 1;
+fi
+
+bytes_h2d=`grep ${test_name}.c ${logfile} | tail -1 | awk '{print $15}'`
+bytes_d2h=`grep ${test_name}.c ${logfile} | tail -1 | awk '{print $17}'`
+bytes_ondevice=`grep ${test_name}.c ${logfile} | tail -1 | awk '{print $19}'`
+
+if [ "${bytes_h2d}" -ne 4 ]; then
+   echo "Bytes Host -> Device does not match."
+   exit 1;
+fi
+
+if [ "${bytes_d2h}" -ne 0 ]; then
+   echo "Bytes Device -> Host does not match."
+   exit 1;
+fi
+
+if [ "${bytes_ondevice}" -ne 516 ]; then
+   echo "Bytes onDevice does not match."
+   exit 1;
+fi

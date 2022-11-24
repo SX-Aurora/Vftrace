@@ -13,3 +13,7 @@ endif
 if ENABLE_CUDAPROF
 SUBDIRS += cuda
 endif
+
+if ENABLE_ACCPROF
+SUBDIRS += openacc
+endif
