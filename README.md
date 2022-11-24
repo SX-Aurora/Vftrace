@@ -200,7 +200,8 @@ MPI calls from Fortran, you can use `--disable-fortran` to prevent Vftrace from 
 
 ## Graphical User Interface
 
-The graphical visualization tool for Vtrace profiles, Vfview, is located at https://github.com/SX-Aurora/Vfview.
+The graphical visualization tool for Vtrace profiles, `vfdviewer` is located at https://github.com/SpinTensor/vfdviewer.
+It is written in C with the GTK+3 GUI.
 
 ## Authors
 
