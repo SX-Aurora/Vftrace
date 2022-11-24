@@ -23,8 +23,10 @@ AC_DEFUN([AX_ENABLE_VEDA], [
    AM_COND_IF([ENABLE_VEDA],
       [AC_CHECK_LIB([veda],
           [vedaProfilerSetCallback],
+          [],
           [AC_MSG_FAILURE([unable to find VEDA library])])])
    AM_COND_IF([ENABLE_VEDA],
       [AC_CHECK_HEADER([veda.h],
+          [],
           [AC_MSG_FAILURE([unable to find VEDA headers])])])
 ])
