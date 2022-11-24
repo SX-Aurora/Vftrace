@@ -108,7 +108,7 @@ void vftr_write_logfile_summary(FILE *fp, process_t process,
             cuda_overhead * 1e-9 / process.nprocesses);
 #endif
 #ifdef _ACCPROF
-   fprintf (fp, "   OPENACC callbacks:  %8.2lf s\n",
+   fprintf (fp, "   OpenACC callbacks:  %8.2lf s\n",
             accprof_overhead * 1e-9 / process.nprocesses);
 #endif
 

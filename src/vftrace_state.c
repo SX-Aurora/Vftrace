@@ -65,6 +65,8 @@ vftrace_t vftrace = {
       .n_devices = 0,
       .device_names = NULL,
       .veto_callback_registration = false,
+      .open_wait_queues = NULL,
+      .n_open_wait_queues = 0,
    },
 #endif
 #ifdef _MPI

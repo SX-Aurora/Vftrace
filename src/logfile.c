@@ -102,6 +102,10 @@ void vftr_write_logfile(vftrace_t vftrace, long long runtime) {
    } else if (!vftr_has_accprof_events (vftrace.process.collated_stacktree)) {
       fprintf (fp, "\nNo OpenACC events have been registered.\n");
    } else if (vftrace.config.accprof.show_table.value) {
+      if (vftrace.accprof_state.n_open_wait_queues > 0) {
+         fprintf (fp, "\nWarning: There are %d unresolved OpenACC wait regions.\n", 
+                  vftrace.accprof_state.n_open_wait_queues);
+      }
       vftr_write_logfile_accprof_grouped_table (fp, vftrace.process.collated_stacktree, vftrace.config);
       if (vftrace.config.accprof.show_event_details.value) {
          vftr_write_logfile_accprof_event_table (fp, vftrace.process.collated_stacktree, vftrace.config);

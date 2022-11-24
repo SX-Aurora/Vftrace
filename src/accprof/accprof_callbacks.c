@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "vftrace_state.h"
 #include "thread_types.h"
 #include "threadstack_types.h"
 #include "stack_types.h"
@@ -89,25 +90,15 @@ void vftr_set_new_accprof (acc_prof_info *prof_info, acc_event_info *event_info,
    }
 }
 
-typedef struct open_wait {
-   long long start_time;
-   int async;
-   stack_t *stack;
-   struct open_wait *next;
-} open_wait_t;
-
-open_wait_t *open_wait_queues = NULL;
-static int n_open_queues = 0;
-
 void vftr_append_wait_queue (long long start_time, int async, stack_t *stack) {
-   if (open_wait_queues == NULL) {
-	open_wait_queues = (open_wait_t*)malloc(sizeof(open_wait_t));
-        open_wait_queues->start_time = start_time;
-        open_wait_queues->async = async;
-        open_wait_queues->stack = stack;
-        open_wait_queues->next = NULL;
+   if (vftrace.accprof_state.open_wait_queues == NULL) {
+	vftrace.accprof_state.open_wait_queues = (open_wait_t*)malloc(sizeof(open_wait_t));
+        vftrace.accprof_state.open_wait_queues->start_time = start_time;
+        vftrace.accprof_state.open_wait_queues->async = async;
+        vftrace.accprof_state.open_wait_queues->stack = stack;
+        vftrace.accprof_state.open_wait_queues->next = NULL;
    } else {
-	open_wait_t *this_queue = open_wait_queues;
+	open_wait_t *this_queue = vftrace.accprof_state.open_wait_queues;
         while (this_queue->next != NULL) {
             this_queue = this_queue->next;
         }
@@ -118,22 +109,23 @@ void vftr_append_wait_queue (long long start_time, int async, stack_t *stack) {
   	this_queue->stack = stack;
 	this_queue->next = NULL; 
    }
-   n_open_queues++;
+
+   vftrace.accprof_state.n_open_wait_queues++;
 }
 
 open_wait_t *vftr_pick_wait_queue (int async) {
-	open_wait_t *this_queue = open_wait_queues;
+	open_wait_t *this_queue = vftrace.accprof_state.open_wait_queues;
         open_wait_t *prev_queue = NULL;
-	for (int i = 0; i < n_open_queues; i++) {
+	for (int i = 0; i < vftrace.accprof_state.n_open_wait_queues; i++) {
 	   if (this_queue->async == async) {
 		if (prev_queue == NULL) { // First list element
-		   open_wait_queues = this_queue->next;
+		   vftrace.accprof_state.open_wait_queues = this_queue->next;
                 } else if (this_queue->next == NULL) { // Last element
 		   prev_queue->next = NULL;
                 } else { // Inbetween
                    prev_queue->next = this_queue->next;
                 }
- 		n_open_queues--;
+ 		vftrace.accprof_state.n_open_wait_queues--;
 		return this_queue;
            }
            prev_queue = this_queue;

@@ -1,5 +1,7 @@
 #include <stdbool.h>
 
+#include "misc_utils.h"
+
 #include "acc_prof.h"
 
 // Helper functions to categorize OpenACC event IDs
@@ -78,6 +80,9 @@ char *vftr_accprof_event_string (acc_event_t event_type) {
      case acc_ev_enqueue_download_start:
      case acc_ev_enqueue_download_end:
         return "download";
+     case acc_ev_update_start:
+     case acc_ev_update_end:
+        return "update";
      case acc_ev_create:
         return "create";
      case acc_ev_delete:
@@ -90,6 +95,9 @@ char *vftr_accprof_event_string (acc_event_t event_type) {
      case acc_ev_wait_end:
         return "wait";
      default:
-        return "undefined";
+        int n = 12 + vftr_count_base_digits((long long)event_type, 10);
+        char *s_out = (char*)malloc(n * sizeof(char));
+	snprintf (s_out, n, "undefined(%d)", event_type);
+        return s_out;
   }
 }

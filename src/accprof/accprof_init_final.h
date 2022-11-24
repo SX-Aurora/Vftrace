@@ -5,6 +5,8 @@
 
 void vftr_init_accprof();
 
+void vftr_finalize_accprof();
+
 void vftr_print_accprof_gpuinfo (FILE *fp);
 
 #endif

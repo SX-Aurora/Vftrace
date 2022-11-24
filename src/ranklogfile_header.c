@@ -109,7 +109,7 @@ void vftr_write_ranklogfile_summary(FILE *fp, process_t process,
    fprintf (fp, "   CUDA callbacks:   %8.2lf s\n", cuda_overhead * 1e-9);
 #endif
 #ifdef _ACCPROF
-   fprintf (fp, "   OPENACC callbacks:  %8.2lf s\n", accprof_overhead * 1e-9);
+   fprintf (fp, "   OpenACC callbacks:  %8.2lf s\n", accprof_overhead * 1e-9);
 #endif
    } else {
       fprintf(fp, "   Function hooks:\n");
@@ -135,7 +135,7 @@ void vftr_write_ranklogfile_summary(FILE *fp, process_t process,
    fprintf (fp, "   CUDA callbacks :  %8.2lf s\n", cuda_overhead * 1e-9);
 #endif
 #ifdef _ACCPROF
-   fprintf (fp, "   OPENACC callbacks:  %8.2lf s\n", accprof_overhead * 1e-9);
+   fprintf (fp, "   OpenACC callbacks:  %8.2lf s\n", accprof_overhead * 1e-9);
 #endif
 
    }

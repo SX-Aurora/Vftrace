@@ -18,6 +18,10 @@
 #include "cupti_init_final.h"
 #endif
 
+#ifdef _ACCPROF
+#include "accprof_init_final.h"
+#endif
+
 void vftr_finalize() {
    if (vftrace.state == off || vftrace.state == uninitialized) {
       // was already finalized
@@ -67,6 +71,10 @@ void vftr_finalize() {
 
 #ifdef _CUDA
    vftr_finalize_cupti (vftrace.process.collated_stacktree);
+#endif
+
+#ifdef _ACCPROF
+   vftr_finalize_accprof();
 #endif
 
    // free the dynamic process data

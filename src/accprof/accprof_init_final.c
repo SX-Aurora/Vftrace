@@ -22,6 +22,9 @@ void vftr_init_accprof () {
    }
 }
 
+void vftr_finalize_accprof () {
+}
+
 void vftr_print_accprof_gpuinfo (FILE *fp) {
    fprintf (fp, "Registered GPUs: %d\n", vftrace.accprof_state.n_devices);
    for (int i = 0; i < vftrace.accprof_state.n_devices; i++) {
