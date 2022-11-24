@@ -41,10 +41,14 @@ void vftr_set_new_accprof (acc_prof_info *prof_info, acc_event_info *event_info,
    if (prof_info->src_file != NULL) {
       new_accprof->source_file = (char*)malloc((strlen(prof_info->src_file) + 1) * sizeof(char));
       strcpy (new_accprof->source_file , prof_info->src_file);
+   } else {
+      new_accprof->source_file = "unknown";
    }
    if (prof_info->func_name != NULL) {
       new_accprof->func_name = (char*)malloc((strlen(prof_info->func_name) + 1) * sizeof(char));
       strcpy (new_accprof->func_name , prof_info->func_name);
+   } else {
+      new_accprof->func_name = "unknown";
    }
 
    switch (prof_info->event_type) {
@@ -74,11 +78,11 @@ void vftr_set_new_accprof (acc_prof_info *prof_info, acc_event_info *event_info,
       if (parent_accprof.region_id > 0) {
          new_accprof->region_id = parent_accprof.region_id;
       } else {
-         int n1 = strlen(prof_info->src_file);
+         int n1 = strlen(new_accprof->source_file);
          int n2 = vftr_count_base_digits ((long long)prof_info->line_no, 10);
          int len = n1 + n2 + 1;
          char *s = (char*)malloc(len * sizeof(char));  
-         snprintf (s, len, "%s%d", prof_info->src_file, prof_info->line_no);
+         snprintf (s, len, "%s%d", new_accprof->source_file, new_accprof->line_start);
          new_accprof->region_id = vftr_jenkins_murmur_64_hash (len, (uint8_t*)s); 
          free (s);
       }

@@ -88,6 +88,14 @@ void vftr_sort_arrays_for_grouped_table (config_t config, int n_region_ids,
    free(perm);
 }
 
+bool vftr_has_accprof_events (collated_stacktree_t stacktree) {
+   for (int i = 0; i < stacktree.nstacks; i++) {
+      accprofile_t accprof = stacktree.stacks[i].profile.accprof;
+      if (accprof.region_id != 0) return true;
+   }
+   return false;
+}
+
 void vftr_write_logfile_accprof_grouped_table (FILE *fp, collated_stacktree_t stacktree, config_t config) {
    // Sort table???
    

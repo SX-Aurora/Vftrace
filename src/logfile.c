@@ -98,7 +98,9 @@ void vftr_write_logfile(vftrace_t vftrace, long long runtime) {
 
 #ifdef _ACCPROF
    if (vftrace.accprof_state.n_devices == 0) {
-      fprintf (fp, "The ACCProf interface is enabled, but no GPU devices were found.\n");
+      fprintf (fp, "\nThe ACCProf interface is enabled, but no GPU devices were found.\n");
+   } else if (!vftr_has_accprof_events (vftrace.process.collated_stacktree)) {
+      fprintf (fp, "\nNo OpenACC events have been registered.\n");
    } else if (vftrace.config.accprof.show_table.value) {
       vftr_write_logfile_accprof_grouped_table (fp, vftrace.process.collated_stacktree, vftrace.config);
       if (vftrace.config.accprof.show_event_details.value) {
