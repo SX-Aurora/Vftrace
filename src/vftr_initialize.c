@@ -100,7 +100,7 @@ void vftr_initialize(void *func, void *call_site) {
 #endif
 
 #ifdef _VEDA
-      (void) vedaProfilerSetCallback(&veda_callback);
+      (void) vedaProfilerSetCallback(&vftr_veda_callback);
 #endif
 
       // set the finalize function to be executed at the termination of the program
