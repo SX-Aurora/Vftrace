@@ -25,7 +25,7 @@ vfd_header_t read_vfd_header(FILE *vfd_fp) {
    header.package_string = (char*) malloc(package_string_len*sizeof(char));
    read_elems = fread(header.package_string, sizeof(char), package_string_len, vfd_fp);
    if (read_elems != (size_t)package_string_len) {
-      fprintf(stderr, "Error in reading vfd_version from vfd-file header\n");
+      fprintf(stderr, "Error in reading package_string from vfd-file header\n");
       abort();
    }
 
