@@ -124,6 +124,7 @@ libvftrace_la_CFLAGS += -I${srcdir}/../external/cJSON/
 libvftrace_la_CFLAGS += -I${srcdir}/mpi/utils/ \
 			-I${srcdir}/omp/ \
                         -I${srcdir}/cupti/ \
+			-I${srcdir}/veda/ \
 			-I${srcdir}/sorting
 
 #if ENABLE_HWC
