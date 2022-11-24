@@ -43,6 +43,11 @@ SUBDIRS += cupti
 libvftrace_la_LIBADD += cupti/libvftr_cupti.la
 endif
 
+if ENABLE_VEDA
+SUBDIRS += veda
+libvftrace_la_LIBADD += veda/libvftr_veda.la
+endif
+
 libvftrace_la_SOURCES = 
 
 libvftrace_la_CPPFLAGS = -D_VERSION=${PACKAGE_VERSION} \

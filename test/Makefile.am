@@ -13,3 +13,7 @@ endif
 if ENABLE_CUPTI
 SUBDIRS += cupti
 endif
+
+if ENABLE_VEDA
+SUBDIRS += veda
+endif
