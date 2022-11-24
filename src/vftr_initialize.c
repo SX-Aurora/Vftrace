@@ -9,6 +9,11 @@
 #include "cupti_vftr_callbacks.h"
 #endif
 
+#ifdef _VEDA
+#include <veda.h>
+#include "veda_callback.h"
+#endif
+
 #include "self_profile.h"
 #include "timer.h"
 #include "off_hooks.h"
@@ -92,6 +97,10 @@ void vftr_initialize(void *func, void *call_site) {
 
 #ifdef _CUPTI
       (void)vftr_init_cupti(vftr_cupti_event_callback);
+#endif
+
+#ifdef _VEDA
+      (void) vedaProfilerSetCallback(&veda_callback);
 #endif
 
       // set the finalize function to be executed at the termination of the program

@@ -150,6 +150,10 @@ if ENABLE_CUPTI
 libvftrace_la_CFLAGS += -D_CUPTI
 endif
 
+if ENABLE_VEDA
+libvftrace_la_CFLAGS += -D_VEDA
+endif
+
 if HAS_LIBERTY
 libvftrace_la_CFLAGS += -D_LIBERTY
 #libvftrace_la_LIBADD += -liberty
