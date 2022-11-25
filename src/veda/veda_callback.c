@@ -61,7 +61,7 @@ void vftr_veda_callback(VEDAprofiler_data* data, const int enter) {
             //vftr_veda_callback_mem_cpy_dtoh_exit(data);
             break;
          case VEDA_PROFILER_LAUNCH_KERNEL:
-            //vftr_veda_callback_launch_kernel_exit(data);
+            vftr_veda_callback_launch_kernel_exit(data);
             break;
          case VEDA_PROFILER_LAUNCH_HOST:
             //vftr_veda_callback_launch_host_exit(data);
