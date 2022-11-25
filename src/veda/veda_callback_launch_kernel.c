@@ -41,7 +41,7 @@ void vftr_veda_callback_launch_kernel_enter(VEDAprofiler_data* data) {
    // This includes the starting timestamp
    // Stack and thread ID of the launched kernel
    user_data_t *user_data = (user_data_t*) malloc(sizeof(user_data_t));
-   user_data->threadID = thread_t->threadID;
+   user_data->threadID = my_thread->threadID;
    user_data->stackID = my_threadstack->stackID;
    user_data->start_time = vftr_get_runtime_nsec();
    data->user_data = (void*) user_data;
