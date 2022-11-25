@@ -17,6 +17,16 @@
 #include "tables.h"
 #include "sorting.h"
 
+int *vftr_logfile_veda_table_ncalls_list(int nstacks, collated_stack_t **stack_ptrs) {
+   int *ncalls_list = (int*) malloc(nstacks*sizeof(int));
+   for (int istack=0; istack<nstacks; istack++) {
+      collated_stack_t *stack_ptr = stack_ptrs[istack];
+      ncalls_list[istack] = stack_ptr->profile.vedaprof.ncalls;
+   }
+   return ncalls_list;
+}
+
+
 int vftr_logfile_veda_table_nrows(collated_stacktree_t stacktree) {
    int nstacks = stacktree.nstacks;
    int nrows = 0;
@@ -60,7 +70,7 @@ void vftr_write_logfile_veda_table(FILE *fp, collated_stacktree_t stacktree,
    vftr_table_set_nrows(&table, nrows);
 
    int *ncalls = vftr_logfile_veda_table_ncalls_list(nrows, selected_stacks);
-   vftr_table_add_column(&table, col_int, "ncalls", "%d", 'c', 'r', (void*) nmessages);
+   vftr_table_add_column(&table, col_int, "ncalls", "%d", 'c', 'r', (void*) ncalls);
 
    vftr_print_table(fp, table);
    vftr_table_free(&table);
