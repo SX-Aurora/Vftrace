@@ -14,6 +14,9 @@ endif
 if ENABLE_CUPTI
 libvftr_sorting_la_CFLAGS += -D_CUPTI -I${srcdir}/../cupti
 endif
+if ENABLE_VEDA
+libvftr_sorting_la_CFLAGS += -D_VEDA -I${srcdir}/../veda/
+endif
 
 noinst_LTLIBRARIES += libvftr_sorting_int8.la
 libvftr_sorting_la_LIBADD += libvftr_sorting_int8.la
