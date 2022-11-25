@@ -1,7 +1,5 @@
 #include <stdbool.h>
 
-#include "misc_utils.h"
-
 #include "acc_prof.h"
 
 // Helper functions to categorize OpenACC event IDs
@@ -95,9 +93,6 @@ char *vftr_accprof_event_string (acc_event_t event_type) {
      case acc_ev_wait_end:
         return "wait";
      default:
-        int n = 12 + vftr_count_base_digits((long long)event_type, 10);
-        char *s_out = (char*)malloc(n * sizeof(char));
-	snprintf (s_out, n, "undefined(%d)", event_type);
-        return s_out;
+        return "undefined";
   }
 }

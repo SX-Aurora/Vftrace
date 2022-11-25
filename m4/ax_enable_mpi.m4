@@ -46,7 +46,7 @@ AC_DEFUN([AX_ENABLE_MPI], [
           [],
           [AC_MSG_FAILURE([unable to find C-MPI])])])
 
-   # check if compiler support F-MPI
+   # check if compiler supports F-MPI
    AM_COND_IF(
       [ENABLE_FORTRAN],
       [AM_COND_IF(
