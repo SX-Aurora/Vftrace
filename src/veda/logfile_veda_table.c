@@ -95,6 +95,12 @@ double *vftr_logfile_veda_table_avg_time_list(int nstacks, collated_stack_t **st
    for (int istack=0; istack<nstacks; istack++) {
       collated_stack_t *stack_ptr = stack_ptrs[istack];
       avg_time_list[istack] = stack_ptr->profile.vedaprof.total_time_nsec*1.0e-9;
+      int ncalls = stack_ptr->profile.vedaprof.ncalls;
+      if (ncalls > 0) {
+         avg_time_list[istack] /= ncalls;
+      } else {
+         avg_time_list[istack] = 0.0;
+      }
    }
    return avg_time_list;
 }
