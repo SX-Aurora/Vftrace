@@ -7,7 +7,7 @@
 
 vedaprofile_t vftr_new_vedaprofiling() {
    vedaprofile_t prof;
-   prof.n_calls = 0;
+   prof.ncalls = 0;
    prof.HtoD_bytes = 0ll;
    prof.DtoH_bytes = 0ll;
    prof.H_bytes = 0ll;
@@ -22,7 +22,7 @@ vedaprofile_t vftr_new_vedaprofiling() {
 
 vedaprofile_t vftr_add_vedaprofiles(vedaprofile_t profA, vedaprofile_t profB) {
    vedaprofile_t profC;
-   profC.n_calls = profA.n_calls + profB.n_calls;
+   profC.ncalls = profA.ncalls + profB.ncalls;
    profC.HtoD_bytes = profA.HtoD_bytes + profB.HtoD_bytes;
    profC.DtoH_bytes = profA.DtoH_bytes + profB.DtoH_bytes;
    profC.H_bytes = profA.H_bytes + profB.H_bytes;
@@ -78,7 +78,7 @@ long long vftr_get_total_collated_veda_overhead(collated_stacktree_t stacktree) 
 
 void vftr_print_vedaprofiling(FILE *fp, vedaprofile_t vedaprof) {
    fprintf(fp, "ncalls: %d, bytes: %lld/%lld/%lld, time: %.6lf\n",
-           vedaprof.n_calls,
+           vedaprof.ncalls,
            vedaprof.HtoD_bytes, vedaprof.DtoH_bytes, vedaprof.H_bytes,
            vedaprof.total_time_nsec*1.0e-9);
 }

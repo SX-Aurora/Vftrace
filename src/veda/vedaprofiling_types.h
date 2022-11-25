@@ -2,7 +2,7 @@
 #define VEDAPROFILING_TYPES
 
 typedef struct {
-   int n_calls;
+   int ncalls;
    long long HtoD_bytes;
    long long DtoH_bytes;
    long long H_bytes;

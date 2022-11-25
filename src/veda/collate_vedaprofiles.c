@@ -17,7 +17,7 @@ static void vftr_collate_vedaprofiles_root_self(collated_stacktree_t *collstackt
       collated_stack_t *collstack = collstacktree_ptr->stacks+icollstack;
       vedaprofile_t *collvedaprof = &(collstack->profile.vedaprof);
 
-      collvedaprof->n_calls = 0;
+      collvedaprof->ncalls = 0;
       collvedaprof->HtoD_bytes = 0ll;
       collvedaprof->DtoH_bytes = 0ll;
       collvedaprof->H_bytes = 0ll;
@@ -30,7 +30,7 @@ static void vftr_collate_vedaprofiles_root_self(collated_stacktree_t *collstackt
       for (int iprof=0; iprof<stack->profiling.nprofiles; iprof++) {
          vedaprofile_t *vedaprof = &(stack->profiling.profiles[iprof].vedaprof);
 
-         collvedaprof->n_calls = vedaprof->n_calls;
+         collvedaprof->ncalls = vedaprof->ncalls;
          collvedaprof->HtoD_bytes = vedaprof->HtoD_bytes;
          collvedaprof->DtoH_bytes = vedaprof->DtoH_bytes;
          collvedaprof->H_bytes = vedaprof->H_bytes;
@@ -52,7 +52,7 @@ static void vftr_collate_vedaprofiles_on_root(collated_stacktree_t *collstacktre
    // define datatypes required for collating mpiprofiles
    typedef struct {
       int gid;
-      int n_calls;
+      int ncalls;
       long long HtoD_bytes;
       long long DtoH_bytes;
       long long H_bytes;
@@ -82,7 +82,7 @@ static void vftr_collate_vedaprofiles_on_root(collated_stacktree_t *collstacktre
          malloc(nprofiles*sizeof(vedaprofile_transfer_t));
       for (int istack=0; istack<nprofiles; istack++) {
          sendbuf[istack].gid = 0;
-         sendbuf[istack].n_calls = 0;
+         sendbuf[istack].ncalls = 0;
          sendbuf[istack].HtoD_bytes = 0ll;
          sendbuf[istack].DtoH_bytes = 0ll;
          sendbuf[istack].H_bytes = 0ll;
@@ -100,7 +100,7 @@ static void vftr_collate_vedaprofiles_on_root(collated_stacktree_t *collstacktre
             profile_t *myprof = mystack->profiling.profiles+iprof;
             vedaprofile_t vedaprof = myprof->vedaprof;
 
-            sendbuf[istack].n_calls += vedaprof.n_calls;
+            sendbuf[istack].ncalls += vedaprof.ncalls;
             sendbuf[istack].HtoD_bytes += vedaprof.HtoD_bytes;
             sendbuf[istack].DtoH_bytes += vedaprof.DtoH_bytes;
             sendbuf[istack].H_bytes += vedaprof.H_bytes;
@@ -140,7 +140,7 @@ static void vftr_collate_vedaprofiles_on_root(collated_stacktree_t *collstacktre
             vedaprofile_t *collvedaprof = &(collstack->profile.vedaprof);
 
 
-            collvedaprof->n_calls += recvbuf[iprof].n_calls;
+            collvedaprof->ncalls += recvbuf[iprof].ncalls;
             collvedaprof->HtoD_bytes += recvbuf[iprof].HtoD_bytes;
             collvedaprof->DtoH_bytes += recvbuf[iprof].DtoH_bytes;
             collvedaprof->H_bytes += recvbuf[iprof].H_bytes;

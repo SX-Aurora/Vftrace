@@ -33,7 +33,7 @@ int vftr_logfile_veda_table_nrows(collated_stacktree_t stacktree) {
    for (int istack=0; istack<nstacks; istack++) {
       collated_stack_t *stack_ptr = stacktree.stacks+istack;
       vedaprofile_t vedaprof = stack_ptr->profile.vedaprof;
-      if (vedaprof.n_calls > 0) {
+      if (vedaprof.ncalls > 0) {
          nrows++;
       }
    }
@@ -49,7 +49,7 @@ collated_stack_t **vftr_logfile_veda_table_get_relevant_collated_stacks(
    for (int istack=0; istack<stacktree.nstacks; istack++) {
       collated_stack_t *stack_ptr = stacktree.stacks+istack;
       vedaprofile_t vedaprof = stack_ptr->profile.vedaprof;
-      if (vedaprof.n_calls > 0) {
+      if (vedaprof.ncalls > 0) {
          selected_stacks[irow] = stack_ptr;
          irow++;
       }
