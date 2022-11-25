@@ -17,5 +17,3 @@ void vftr_veda_callback_launch_kernel_exit(VEDAprofiler_data* data) {
    vftr_veda_region_end(LaunchKernelData->kernel);
    vftr_veda_region_end("vedaLaunchKernel");
 }
-
-#endif
