@@ -82,7 +82,7 @@ void vftr_write_ranklogfile_cuda_table(FILE *fp, stacktree_t stacktree, config_t
       // can have contrived mangled names.
       names[i] = vftr_demangle_cxx(this_stack->name);
 #else
-      names[i] = this_stack.name;
+      names[i] = this_stack->name;
 #endif
       i++;
   }

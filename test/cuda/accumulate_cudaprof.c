@@ -1,8 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#include "environment_types.h"
-#include "environment.h"
 #include "stack_types.h"
 #include "collated_stack_types.h"
 #include "collate_stacks.h"
@@ -20,9 +18,6 @@
 //                CUPTI_RUNTIME_TRACE_CBID_cudaMemcpyAsync_v3020
 
 int main(int argc, char **argv) {
-
-   environment_t environment;
-   environment = vftr_read_environment();
 
    vftr_init_dummy_stacktree (10);
    vftr_register_dummy_call_stack ("func0<init", 1);

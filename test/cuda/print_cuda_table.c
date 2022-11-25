@@ -1,5 +1,5 @@
-#include "environment_types.h"
-#include "environment.h"
+#include "configuration_types.h"
+#include "configuration.h"
 #include "stack_types.h"
 #include "collated_stack_types.h"
 #include "collate_stacks.h"
@@ -20,8 +20,8 @@
 
 int main(int argc, char **argv) {
 
-   environment_t environment;
-   environment = vftr_read_environment();
+   config_t config;
+   config = vftr_read_config();
 
    vftr_set_ngpus ();
 
@@ -51,8 +51,8 @@ int main(int argc, char **argv) {
    vftr_collate_profiles(&collated_stacktree, &stacktree);
 
    fprintf (stdout, "Ranklogfile: \n");
-   vftr_write_ranklogfile_cuda_table(stdout, stacktree, environment);
+   vftr_write_ranklogfile_cuda_table(stdout, stacktree, config);
    fprintf (stdout, "Logfile: \n");
-   vftr_write_logfile_cuda_table (stdout, collated_stacktree, environment);
+   vftr_write_logfile_cuda_table (stdout, collated_stacktree, config);
 }
 
