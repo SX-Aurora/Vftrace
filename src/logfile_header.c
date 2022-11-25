@@ -26,6 +26,11 @@
 #include "cuptiprofiling.h"
 #endif
 
+#ifdef _VEDA
+#include "veda_logfile.h"
+#include "vedaprofiling.h"
+#endif
+
 void vftr_write_logfile_header(FILE *fp, time_strings_t timestrings) {
    SELF_PROFILE_START_FUNCTION;
    fprintf(fp, "%s\n", PACKAGE_STRING);
@@ -58,6 +63,10 @@ void vftr_write_logfile_summary(FILE *fp, process_t process,
    long long cupti_overhead = 
       vftr_get_total_collated_cupti_overhead(process.collated_stacktree);
 #endif
+#ifdef _VEDA
+   long long veda_overhead = 
+      vftr_get_total_collated_veda_overhead(prodess.collated_stacktree);
+#endif
 
       total_master_overhead += call_overhead;
 #ifdef _MPI
@@ -68,6 +77,9 @@ void vftr_write_logfile_summary(FILE *fp, process_t process,
 #endif
 #ifdef _CUPTI
       total_master_overhead += cupti_overhead;
+#endif
+#ifdef _VEDA
+      total_master_overhead += veda_overhead;
 #endif
    
    double total_master_overhead_sec = total_master_overhead * 1.0e-9;
@@ -92,8 +104,12 @@ void vftr_write_logfile_summary(FILE *fp, process_t process,
            omp_overhead*1.0e-9/process.nprocesses);
 #endif
 #ifdef _CUPTI
-   fprintf (fp, "   CUPTI callbacks :  %8.2lf s\n",
-            cupti_overhead * 1e-9 / process.nprocesses);
+   fprintf(fp, "   CUPTI callbacks:   %8.2lf s\n",
+           cupti_overhead * 1e-9 / process.nprocesses);
+#endif
+#ifdef _VEDA
+   fprintf(fp, "   VEDA callbacks:    %8.2lf s\n",
+           veda_overhead*1.0e-9/process.nprocesses);
 #endif
 
 #ifdef _CUPTI
@@ -106,6 +122,9 @@ void vftr_write_logfile_summary(FILE *fp, process_t process,
    fprintf (fp, "   Other:             %8.2f s\n", total_other_sec);
 #endif
 
+#ifdef _VEDA
+   // TODO: VEDA header
+#endif
    char *unit = vftr_byte_unit(vftrace_size.total);
    double vftrace_size_double = (double) vftrace_size.total;
    while (vftrace_size_double > 1024.0) {vftrace_size_double /= 1024;}

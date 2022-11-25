@@ -17,6 +17,9 @@
 #ifdef _CUPTI
 #include "collate_cuptiprofiles.h"
 #endif
+#ifdef _VEDA
+#include "collate_vedaprofiles.h"
+#endif
 
 void vftr_collate_profiles(collated_stacktree_t *collstacktree_ptr,
                            stacktree_t *stacktree_ptr) {
@@ -67,6 +70,11 @@ void vftr_collate_profiles(collated_stacktree_t *collstacktree_ptr,
 #ifdef _CUPTI
    vftr_collate_cuptiprofiles(collstacktree_ptr, stacktree_ptr,
                               myrank, nranks, nremote_profiles);
+#endif
+
+#ifdef _VEDA
+   vftr_collate_vedaprofiles(collstacktree_ptr, stacktree_ptr,
+                             myrank, nranks, nremote_profiles);
 #endif
 
    free(nremote_profiles);

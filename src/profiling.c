@@ -16,6 +16,9 @@
 #ifdef _CUPTI
 #include "cuptiprofiling.h"
 #endif
+#ifdef _VEDA
+#include "vedaprofiling.h"
+#endif
 
 void vftr_profilelist_realloc(profilelist_t *profilelist_ptr) {
    SELF_PROFILE_START_FUNCTION;
@@ -43,6 +46,9 @@ profile_t vftr_new_profile(int threadID) {
 #endif
 #ifdef _CUPTI
    profile.cuptiprof = vftr_new_cuptiprofiling();
+#endif
+#ifdef _VEDA
+   profile.vedaprof = vftr_new_vedaprofiling();
 #endif
    // TODO: Add other profiles
    SELF_PROFILE_END_FUNCTION;
@@ -84,6 +90,9 @@ profile_t vftr_add_profiles(profile_t profA, profile_t profB) {
 #ifdef _CUPTI
    profC.cuptiprof = vftr_add_cuptiprofiles(profA.cuptiprof, profB.cuptiprof);
 #endif
+#ifdef _VEDA
+   profC.vedaprof = vftr_add_vedaprofiles(profA.vedaprof, profB.vedaprof);
+#endif
    // TODO: Add other profiles
    return profC;
 }
@@ -100,6 +109,9 @@ void vftr_profile_free(profile_t* profiles_ptr, int profID) {
 #endif
 #ifdef _CUPTI
    vftr_cuptiprofiling_free(&(profile_ptr->cuptiprof));
+#endif
+#ifdef _VEDA
+   vftr_vedaprofiling_free(&(profile_ptr->vedaprof));
 #endif
    // TODO: add other profiles
    SELF_PROFILE_END_FUNCTION;

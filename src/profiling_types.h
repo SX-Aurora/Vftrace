@@ -11,6 +11,9 @@
 #ifdef _CUPTI
 #include "cuptiprofiling_types.h"
 #endif
+#ifdef _VEDA
+#include "vedaprofiling_types.h"
+#endif
 
 typedef struct {
    int threadID;
@@ -23,6 +26,9 @@ typedef struct {
 #endif
 #ifdef _CUPTI
    cuptiprofile_t cuptiprof;
+#endif
+#ifdef _VEDA
+   vedaprofile_t vedaprof;
 #endif
 } profile_t;
 

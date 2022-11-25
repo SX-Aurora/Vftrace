@@ -310,6 +310,12 @@ unsigned long long vftr_sizeof_cuptiprofile_t(cuptiprofile_t cuptiprof) {
 }
 #endif
 
+#ifdef _VEDA
+unsigned long long vftr_sizeof_vedaprofile_t(vedaprofile_t vedaprof) {
+   return sizeof(vedaprofile_t);
+}
+#endif
+
 unsigned long long vftr_sizeof_profile_t(profile_t profile) {
    unsigned long long size = sizeof(profile_t);
    size -= sizeof(callprofile_t);
@@ -321,6 +327,10 @@ unsigned long long vftr_sizeof_profile_t(profile_t profile) {
 #ifdef _CUPTI
    size -= sizeof(cuptiprofile_t);
    size += vftr_sizeof_cuptiprofile_t(profile.cuptiprof);
+#endif
+#ifdef _VEDA
+   size -= sizeof(vedaprofile_t);
+   size += vftr_sizeof_vedaprofile_t(profile.vedaprof);
 #endif
    return size;
 }

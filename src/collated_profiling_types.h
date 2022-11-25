@@ -11,6 +11,9 @@
 #ifdef _CUPTI
 #include "cuptiprofiling_types.h"
 #endif
+#ifdef _VEDA
+#include "vedaprofiling_types.h"
+#endif
 
 typedef struct {
    collated_callprofile_t callprof;
@@ -22,6 +25,9 @@ typedef struct {
 #endif
 #ifdef _CUPTI
    cuptiprofile_t cuptiprof;
+#endif
+#ifdef _VEDA
+   vedaprofile_t vedaprof;
 #endif
 } collated_profile_t;
 

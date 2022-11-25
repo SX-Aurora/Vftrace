@@ -26,6 +26,10 @@
 #include "cuptiprofiling.h"
 #endif
 
+#ifdef _VEDA
+#include "veda_ranklogfile.h"
+#include "vedaprofiling.h"
+#endif
 
 void vftr_write_ranklogfile_header(FILE *fp, time_strings_t timestrings) {
    SELF_PROFILE_START_FUNCTION;
@@ -56,7 +60,10 @@ void vftr_write_ranklogfile_summary(FILE *fp, process_t process,
    long long *omp_overheads = vftr_get_total_omp_overhead(process.stacktree, nthreads);
 #endif
 #ifdef _CUPTI
-   long long cupti_overhead = vftr_get_total_cupti_overhead (process.stacktree);
+   long long cupti_overhead = vftr_get_total_cupti_overhead(process.stacktree);
+#endif
+#ifdef _VEDA
+   long long veda_overhead = vftr_get_total_veda_overhead(process.stacktree, nthreads);
 #endif
 
    for (int ithread=0; ithread<nthreads; ithread++) {
@@ -72,6 +79,9 @@ void vftr_write_ranklogfile_summary(FILE *fp, process_t process,
    }
 #ifdef _CUPTI
    total_master_overhead += cupti_overhead;
+#endif
+#ifdef _VEDA
+   total_master_overhead += veda_overhead;
 #endif
    double total_master_overhead_sec = total_master_overhead * 1.0e-9;
    double apptime_sec = runtime_sec - total_master_overhead_sec;
@@ -95,7 +105,10 @@ void vftr_write_ranklogfile_summary(FILE *fp, process_t process,
       fprintf(fp, "   OMP callbacks:     %8.2lf s\n", omp_overheads[0]*1.0e-9);
 #endif
 #ifdef _CUPTI
-   fprintf (fp, "   CUPTI callbacks:   %8.2lf s\n", cupti_overhead * 1e-9);
+      fprintf(fp, "   CUPTI callbacks:   %8.2lf s\n", cupti_overhead * 1e-9);
+#endif
+#ifdef _VEDA
+      fprintf(fp, "   VEDA callbacks:    *8.2lf s\n", veda_overheads[0]*1.0e-9);
 #endif
    } else {
       fprintf(fp, "   Function hooks:\n");
@@ -118,8 +131,16 @@ void vftr_write_ranklogfile_summary(FILE *fp, process_t process,
       }
 #endif
 #ifdef _CUPTI
-   fprintf (fp, "   CUPTI callbacks :  %8.2lf s\n", cupti_overhead * 1e-9);
+      fprintf(fp, "   CUPTI callbacks :  %8.2lf s\n", cupti_overhead * 1e-9);
 #endif
+#ifdef _VEDA
+      fprintf(fp, "   VEDA callbacks:\n");
+      for (int ithread=0; ithread<nthreads; ithread++) {
+         fprintf(fp, "      Thread %d:      %8.2lf s\n",
+                 ithread, veda_overheads[ithread]*1.0e-9);
+      }
+#endif
+
    }
 
 #ifdef _CUPTI
@@ -131,7 +152,9 @@ void vftr_write_ranklogfile_summary(FILE *fp, process_t process,
    fprintf (fp, "   Memcpy:            %8.2f s\n", total_memcpy_sec);
    fprintf (fp, "   Other:             %8.2f s\n", total_other_sec);
 #endif
-
+#ifdef _VEDA
+   // TODO VEDA header
+#endif
    char *unit = vftr_byte_unit(vftrace_size.rank_wise);
    double vftrace_size_double = (double) vftrace_size.rank_wise;
    while (vftrace_size_double > 1024.0) {vftrace_size_double /= 1024;}

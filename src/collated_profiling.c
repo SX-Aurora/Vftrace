@@ -14,6 +14,9 @@
 #ifdef _CUPTI
 #include "cuptiprofiling.h"
 #endif
+#ifdef _VEDA
+#include "vedaprofiling.h"
+#endif
 
 collated_profile_t vftr_new_collated_profile() {
    SELF_PROFILE_START_FUNCTION;
@@ -24,6 +27,9 @@ collated_profile_t vftr_new_collated_profile() {
 #endif
 #ifdef _CUPTI
    profile.cuptiprof = vftr_new_cuptiprofiling();
+#endif
+#ifdef _VEDA
+   profile.vedaprof = vftr_new_vedaprofiling();
 #endif
    // TODO: Add other profiles
    SELF_PROFILE_END_FUNCTION;
@@ -43,6 +49,9 @@ collated_profile_t vftr_add_collated_profiles(collated_profile_t profA,
 #ifdef _CUPTI
    profC.cuptiprof = vftr_add_cuptiprofiles(profA.cuptiprof, profB.cuptiprof);
 #endif
+#ifdef _VEDA
+   profC.vedaprof = vftr_add_vedaprofiles(profA.vedaprof, profB.vedaprof);
+#endif
    // TODO: Add other profiles
    return profC;
 }
@@ -55,6 +64,9 @@ void vftr_collated_profile_free(collated_profile_t* profile_ptr) {
 #endif
 #ifdef _CUPTI
    vftr_cuptiprofiling_free(&(profile_ptr->cuptiprof));
+#endif
+#ifdef _VEDA
+   vftr_vedaprofiling_free(&(profile_ptr->vedaprof));
 #endif
    // TODO: add other profiles
    SELF_PROFILE_END_FUNCTION;
