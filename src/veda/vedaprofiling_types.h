@@ -3,9 +3,9 @@
 
 typedef struct {
    int n_calls;
-   size_t HtoD_bytes;
-   size_t DtoH_bytes;
-   size_t H_bytes;
+   long long HtoD_bytes;
+   long long DtoH_bytes;
+   long long H_bytes;
    double acc_HtoD_bw;
    double acc_DtoH_bw;
    double acc_H_bw;
