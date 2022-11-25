@@ -78,6 +78,7 @@ void vftr_veda_callback_launch_kernel_exit(VEDAprofiler_data* data) {
    profile_t *my_prof = vftr_get_my_profile_from_ids(user_data->stackID,
                                                    user_data->threadID);
    my_prof->vedaprof.total_time_nsec += runtime_usec;
+   my_prof->vedaprof.ncalls ++;
    free(user_data);
    long long tend_callback = vftr_get_runtime_nsec();
    vftr_accumulate_veda_profiling_overhead(&(my_prof->vedaprof),
