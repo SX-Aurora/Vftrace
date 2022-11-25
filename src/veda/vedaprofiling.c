@@ -78,7 +78,7 @@ long long vftr_get_total_collated_veda_overhead(collated_stacktree_t stacktree) 
 
 void vftr_print_vedaprofiling(FILE *fp, vedaprofile_t vedaprof) {
    fprintf(fp, "ncalls: %d, bytes: %lld/%lld/%lld, time: %.6lf\n",
-           vedaprof.ncalls,
+           vedaprof.n_calls,
            vedaprof.HtoD_bytes, vedaprof.DtoH_bytes, vedaprof.H_bytes,
            vedaprof.total_time_nsec*1.0e-9);
 }
