@@ -65,7 +65,7 @@ void vftr_write_logfile_summary(FILE *fp, process_t process,
 #endif
 #ifdef _VEDA
    long long veda_overhead = 
-      vftr_get_total_collated_veda_overhead(prodess.collated_stacktree);
+      vftr_get_total_collated_veda_overhead(process.collated_stacktree);
 #endif
 
       total_master_overhead += call_overhead;
