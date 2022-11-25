@@ -143,6 +143,30 @@ void vftr_profilelist_free(profilelist_t *profilelist_ptr) {
    SELF_PROFILE_END_FUNCTION;
 }
 
+profile_t *vftr_get_my_profile_from_ids(int stackID, int threadID) {
+   SELF_PROFILE_START_FUNCTION;
+   stack_t *my_stack = vftrace.process.stacktree.stacks+stackID;
+   profilelist_t *profilelist_ptr = &(stack->profiling);
+   // search for the profile matrhing the threadID
+   // TODO: binary search?
+   int profID = -1;
+   for (int iprof=0; iprof<profilelist_ptr->nprofiles; iprof++) {
+      profile_t *prof = profilelist_ptr->profiles+iprof;
+      if (threadID == prof->threadID) {
+         profID = iprof;
+         break;
+      }
+   }
+   // if no matching profile is found create one
+   // and update the profID
+   if (profID == -1) {
+      profID = vftr_new_profile_in_list(threadID, profilelist_ptr);
+   }
+
+   SELF_PROFILE_END_FUNCTION;
+   return profilelist_ptr->profiles+profID;
+}
+
 profile_t *vftr_get_my_profile(stack_t *stack,
                                thread_t *thread) {
    SELF_PROFILE_START_FUNCTION;
@@ -166,3 +190,4 @@ profile_t *vftr_get_my_profile(stack_t *stack,
    SELF_PROFILE_END_FUNCTION;
    return profilelist_ptr->profiles+profID;
 }
+

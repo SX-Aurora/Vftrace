@@ -19,6 +19,8 @@ profile_t vftr_add_profiles(profile_t profA, profile_t profB);
 
 void vftr_profilelist_free(profilelist_t *profilelist_ptr);
 
+profile_t *vftr_get_my_profile_from_ids(int stackID, int threadID);
+
 profile_t *vftr_get_my_profile(stack_t *stack, thread_t *thread);
 
 #endif
