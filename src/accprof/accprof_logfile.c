@@ -302,13 +302,13 @@ void vftr_write_logfile_accprof_event_table (FILE *fp, collated_stacktree_t stac
 
    vftr_table_add_column (&table, col_int, "STID", "%d", 'c', 'r', (void*)stackids_with_accprof_data);
    vftr_table_add_column (&table, col_string, "event", "%s", 'c', 'r', (void*)ev_names);
-   vftr_table_add_column (&table, col_longlong, "regionID", "0x%lx", 'c', 'r', (void*)region_ids);
+   vftr_table_add_column (&table, col_longlong, "regionID", "0x%lx", 'c', 'l', (void*)region_ids);
    vftr_table_add_column (&table, col_int, "#Calls", "%d", 'c', 'r', (void*)calls);
    vftr_table_add_column (&table, col_double, "t_compute[s]", "%.3lf", 'c', 'r', (void*)t_compute);
    vftr_table_add_column (&table, col_double, "t_data[s]", "%.3lf", 'c', 'r', (void*)t_data);
    vftr_table_add_column (&table, col_double, "t_wait[s]", "%.3lf", 'c', 'r', (void*)t_wait);
    vftr_table_add_column (&table, col_long, "Bytes", "%ld", 'c', 'r', (void*)copied_bytes);
-   vftr_table_add_column (&table, col_string ,"Source File", "%s", 'c', 'r', (void*)source_files);
+   vftr_table_add_column (&table, col_string, "Source File", "%s", 'c', 'l', (void*)source_files);
    vftr_table_add_column (&table, col_string, "Function", "%s", 'c', 'r', (void*)func_names);
 
    fprintf (fp, "\n--OpenACC Detailed Event Summary--\n");

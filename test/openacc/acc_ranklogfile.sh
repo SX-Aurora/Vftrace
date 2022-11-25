@@ -6,14 +6,15 @@ has_gpu=`echo $?`
 
 source ${srcdir}/../environment/filenames.sh
 
-test_name=acc_region4
-vftr_binary=${test_name}
+test_name=acc_ranklogfile
+vftr_binary=acc_region2
 configfile=${test_name}.json
 
 logfile=$(get_logfile_name ${vftr_binary} "all")
 
 cat << EOF > ${configfile}
 {
+   "logfile_for_ranks": "0",
    "openacc": {
         "show_event_details": true
     }

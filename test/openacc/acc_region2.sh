@@ -1,6 +1,9 @@
 #!/bin/bash
 set -x
 
+nvidia-smi
+has_gpu=`echo $?`
+
 source ${srcdir}/../environment/filenames.sh
 
 test_name=acc_region2
@@ -24,34 +27,14 @@ else
    ./${vftr_binary} || exit 1
 fi
 
-## Search for wait event Nr. 1
-region_id=0xa020493fb086f17b
-grep ${region_id} ${logfile} | grep wait
-if [ "$?" -ne 0 ]; then
-   echo "Wait event not found."
-   exit 1
+if [ $has_gpu -eq 0 ]; then # On GPU
+  ## Search for the wait events in the detailled event table
+  nwait=`grep "wait | 0x" ${logfile} | wc -l`
+  if [ "${nwait}" -ne 2 ]; then
+     echo "wait event not found exactly 2 times."
+     exit 1;
+  fi
+else # On Host
+  grep "No OpenACC events have been registered" ${logfile}
+  exit $?
 fi
-
-## Wait event is called once
-ncalls=`grep ${region_id} ${logfile} | grep wait | awk '{print $8}'`
-if [ "${ncalls}" -ne 1 ]; then
-   echo "'wait' is not called exactly 1 times."
-   exit 1;
-fi
-
-## Search for wait event Nr. 2
-region_id=0x734c7cbd31dc184f
-grep ${region_id} ${logfile} | grep wait
-if [ "$?" -ne 0 ]; then
-   echo "Wait event not found."
-   exit 1
-fi
-
-## Wait event is called once
-ncalls=`grep ${region_id} ${logfile} | grep wait | awk '{print $8}'`
-if [ "${ncalls}" -ne 1 ]; then
-   echo "'wait' is not called exactly 1 times."
-   exit 1;
-fi
-
-

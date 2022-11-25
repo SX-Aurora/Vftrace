@@ -115,11 +115,24 @@ void vftr_write_ranklogfile_accprof_grouped_table (FILE *fp, stacktree_t stacktr
          }
       }
    }
+   
+   double *t_summed_tot = (double*)malloc (n_region_ids * sizeof(double));
+   long long *bytes_summed_tot = (long long*)malloc(n_region_ids * sizeof(long long));
+   for (int i = 0; i < n_region_ids; i++) {
+      t_summed_tot[i] = t_summed_compute[i] + t_summed_data[i] + t_summed_wait[i];
+      bytes_summed_tot[i] = bytes_summed_h2d[i] + bytes_summed_d2h[i] + bytes_summed_on_device[i];
+   }
+
+   vftr_sort_arrays_for_grouped_table (config, n_region_ids,
+				       t_summed_tot, bytes_summed_tot,
+				       region_names, func_names,
+				       t_summed_compute, t_summed_data, t_summed_wait,
+				       bytes_summed_h2d, bytes_summed_d2h, bytes_summed_on_device);
 
    table_t table = vftr_new_table();
    vftr_table_set_nrows (&table, n_region_ids);
    
-   vftr_table_add_column (&table, col_string, "Position", "%s", 'c', 'r', (void*)region_names);
+   vftr_table_add_column (&table, col_string, "Position", "%s", 'c', 'l', (void*)region_names);
    vftr_table_add_column (&table, col_string, "Function", "%s", 'c', 'r', (void*)func_names);
    vftr_table_add_column (&table, col_double, "t_compute [s]", "%.3lf", 'c', 'r', (void*)t_summed_compute);
    vftr_table_add_column (&table, col_double, "t_data [s]", "%.3lf", 'c', 'r', (void*)t_summed_data);
@@ -229,20 +242,17 @@ void vftr_write_ranklogfile_accprof_event_table (FILE *fp, stacktree_t stacktree
 
    vftr_table_add_column (&table, col_int, "STID", "%d", 'c', 'r', (void*)stackids_with_accprof_data);
    vftr_table_add_column (&table, col_string, "event", "%s", 'c', 'r', (void*)ev_names);
-   vftr_table_add_column (&table, col_longlong, "regionID", "0x%lx", 'c', 'r', (void*)region_ids);
+   vftr_table_add_column (&table, col_longlong, "regionID", "0x%lx", 'c', 'l', (void*)region_ids);
    vftr_table_add_column (&table, col_int, "#Calls", "%d", 'c', 'r', (void*)calls);
    vftr_table_add_column (&table, col_double, "t_compute[s]", "%.3lf", 'c', 'r', (void*)t_compute);
    vftr_table_add_column (&table, col_double, "t_data[s]", "%.3lf", 'c', 'r', (void*)t_data);
    vftr_table_add_column (&table, col_double, "t_wait[s]", "%.3lf", 'c', 'r', (void*)t_wait);
    vftr_table_add_column (&table, col_long, "Bytes", "%ld", 'c', 'r', (void*)copied_bytes);
-   vftr_table_add_column (&table, col_string, "File", "%s", 'c', 'r', (void*)source_files);
+   vftr_table_add_column (&table, col_string, "Source File", "%s", 'c', 'l', (void*)source_files);
    vftr_table_add_column (&table, col_string, "Function", "%s", 'c', 'r', (void*)func_names);
 
-   fprintf (fp, "\n--OpenACC Summary--\n");
+   fprintf (fp, "\n--OpenACC Detailed Event Summary--\n");
    fprintf (fp, "\n");
-   vftr_print_accprof_gpuinfo (fp);
-   fprintf (fp, "\n");
-   fprintf (fp, "List of OpenACC regions: \n");
    vftr_print_table(fp, table);
 
    free (stackids_with_accprof_data);

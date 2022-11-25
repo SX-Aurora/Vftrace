@@ -60,7 +60,8 @@ acc_region4_LDFLAGS = $(AM_LDFLAGS)
 dist_noinst_SCRIPTS = acc_region1.sh \
 		      acc_region2.sh \
  		      acc_region3.sh \
- 		      acc_region4.sh
+ 		      acc_region4.sh \
+	              acc_ranklogfile.sh
 
 TEST_EXTENSIONS = .sh
 SH_LOG_COMPILER = $(SHELL)

@@ -9,15 +9,15 @@
 // Set GPU info. If no GPUs are found, make Vftrace veto callback registration.
 // This does not register the OpenACC callbacks. This is done by OpenACC itself.
 void vftr_init_accprof () {
-   acc_device_t t = acc_get_device_type();
-   vftrace.accprof_state.n_devices = acc_get_num_devices (t);
-   if (vftrace.accprof_state.n_devices == 0) {
+   acc_device_t device_type = acc_get_device_type();
+   vftrace.accprof_state.n_devices = acc_get_num_devices (device_type);
+   if (device_type != acc_device_nvidia || vftrace.accprof_state.n_devices == 0) {
 	vftr_veto_accprof_callbacks();
    } else {
         // Currently, only one GPU is detected by OpenACC.
 	vftrace.accprof_state.device_names = (const char**)malloc(vftrace.accprof_state.n_devices * sizeof(const char*));
         for (int i = 0; i < vftrace.accprof_state.n_devices; i++) {
-           vftrace.accprof_state.device_names[i] = acc_get_property_string (acc_get_device_num(t), t, acc_property_name);
+           vftrace.accprof_state.device_names[i] = acc_get_property_string (acc_get_device_num(device_type), device_type, acc_property_name);
         }
    }
 }

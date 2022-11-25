@@ -1,6 +1,9 @@
 #!/bin/bash
 set -x
 
+nvidia-smi
+has_gpu=`echo $?`
+
 source ${srcdir}/../environment/filenames.sh
 
 test_name=acc_region3
@@ -24,40 +27,46 @@ else
    ./${vftr_binary} || exit 1
 fi
 
-bytes_h2d=`grep ${test_name}.c ${logfile} | head -1 | awk '{print $15}'`
-bytes_d2h=`grep ${test_name}.c ${logfile} | head -1 | awk '{print $17}'`
-bytes_ondevice=`grep ${test_name}.c ${logfile} | head -1 | awk '{print $19}'`
+if [ $has_gpu -eq 0 ]; then # On GPU
 
-if [ "${bytes_h2d}" -ne 0 ]; then
-   echo "Bytes Host -> Device does not match."
-   exit 1;
-fi
-
-if [ "${bytes_d2h}" -ne 8 ]; then
-   echo "Bytes Device -> Host does not match."
-   exit 1;
-fi
-
-if [ "${bytes_ondevice}" -ne 1024 ]; then
-   echo "Bytes onDevice does not match."
-   exit 1;
-fi
-
-bytes_h2d=`grep ${test_name}.c ${logfile} | tail -1 | awk '{print $15}'`
-bytes_d2h=`grep ${test_name}.c ${logfile} | tail -1 | awk '{print $17}'`
-bytes_ondevice=`grep ${test_name}.c ${logfile} | tail -1 | awk '{print $19}'`
-
-if [ "${bytes_h2d}" -ne 8 ]; then
-   echo "Bytes Host -> Device does not match."
-   exit 1;
-fi
-
-if [ "${bytes_d2h}" -ne 0 ]; then
-   echo "Bytes Device -> Host does not match."
-   exit 1;
-fi
-
-if [ "${bytes_ondevice}" -ne 1032 ]; then
-   echo "Bytes onDevice does not match."
-   exit 1;
+  bytes_h2d=`grep ${test_name}.c ${logfile} | head -1 | awk '{print $15}'`
+  bytes_d2h=`grep ${test_name}.c ${logfile} | head -1 | awk '{print $17}'`
+  bytes_ondevice=`grep ${test_name}.c ${logfile} | head -1 | awk '{print $19}'`
+  
+  if [ "${bytes_h2d}" -ne 0 ]; then
+     echo "Bytes Host -> Device does not match."
+     exit 1;
+  fi
+  
+  if [ "${bytes_d2h}" -ne 8 ]; then
+     echo "Bytes Device -> Host does not match."
+     exit 1;
+  fi
+  
+  if [ "${bytes_ondevice}" -ne 1024 ]; then
+     echo "Bytes onDevice does not match."
+     exit 1;
+  fi
+  
+  bytes_h2d=`grep ${test_name}.c ${logfile} | tail -1 | awk '{print $15}'`
+  bytes_d2h=`grep ${test_name}.c ${logfile} | tail -1 | awk '{print $17}'`
+  bytes_ondevice=`grep ${test_name}.c ${logfile} | tail -1 | awk '{print $19}'`
+  
+  if [ "${bytes_h2d}" -ne 8 ]; then
+     echo "Bytes Host -> Device does not match."
+     exit 1;
+  fi
+  
+  if [ "${bytes_d2h}" -ne 0 ]; then
+     echo "Bytes Device -> Host does not match."
+     exit 1;
+  fi
+  
+  if [ "${bytes_ondevice}" -ne 1032 ]; then
+     echo "Bytes onDevice does not match."
+     exit 1;
+  fi
+else # On Host
+  grep "No OpenACC events have been registered" ${logfile}
+  exit $?
 fi
