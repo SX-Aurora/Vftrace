@@ -23,6 +23,18 @@ void vftr_init_accprof () {
 }
 
 void vftr_finalize_accprof () {
+   for (int i = 0; i < vftrace.accprof_state.n_devices; i++) {
+      free (vftrace.accprof_state.device_names[i]);
+   }
+   free (vftrace.accprof_state.device_names);
+   open_wait_t *this_queue = vftrace.accprof_state.open_wait_queues;
+   open_wait_t *next_queue = NULL;
+   while (this_queue != NULL) {
+      next_queue = this_queue->next;
+      free(this_queue);
+      this_queue = next_queue;
+   }
+   vftr_veto_accprof_callbacks(); 
 }
 
 void vftr_print_accprof_gpuinfo (FILE *fp) {
