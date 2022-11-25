@@ -83,9 +83,10 @@ void vftr_set_new_accprof (acc_prof_info *prof_info, acc_event_info *event_info,
       } else {
          int n1 = strlen(new_accprof->source_file);
          int n2 = vftr_count_base_digits ((long long)prof_info->line_no, 10);
-         int len = n1 + n2 + 1;
+         int n3 = vftr_count_base_digits ((long long)prof_info->event_type, 10);
+         int len = n1 + n2 + n3 + 1;
          char *s = (char*)malloc(len * sizeof(char));  
-         snprintf (s, len, "%s%d", new_accprof->source_file, new_accprof->line_start);
+         snprintf (s, len, "%s%d%d", new_accprof->source_file, new_accprof->line_start, prof_info->event_type);
          new_accprof->region_id = vftr_jenkins_murmur_64_hash (len, (uint8_t*)s); 
          free (s);
       }

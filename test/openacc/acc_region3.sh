@@ -29,9 +29,9 @@ fi
 
 if [ $has_gpu -eq 0 ]; then # On GPU
 
-  bytes_h2d=`grep ${test_name}.c ${logfile} | head -1 | awk '{print $15}'`
-  bytes_d2h=`grep ${test_name}.c ${logfile} | head -1 | awk '{print $17}'`
-  bytes_ondevice=`grep ${test_name}.c ${logfile} | head -1 | awk '{print $19}'`
+  bytes_h2d=`grep ${test_name}.c ${logfile} | head -1 | awk '{print $14}'`
+  bytes_d2h=`grep ${test_name}.c ${logfile} | head -1 | awk '{print $16}'`
+  bytes_ondevice=`grep ${test_name}.c ${logfile} | head -1 | awk '{print $18}'`
   
   if [ "${bytes_h2d}" -ne 0 ]; then
      echo "Bytes Host -> Device does not match."
@@ -48,9 +48,9 @@ if [ $has_gpu -eq 0 ]; then # On GPU
      exit 1;
   fi
   
-  bytes_h2d=`grep ${test_name}.c ${logfile} | tail -1 | awk '{print $15}'`
-  bytes_d2h=`grep ${test_name}.c ${logfile} | tail -1 | awk '{print $17}'`
-  bytes_ondevice=`grep ${test_name}.c ${logfile} | tail -1 | awk '{print $19}'`
+  bytes_h2d=`grep ${test_name}.c ${logfile} | tail -1 | awk '{print $14}'`
+  bytes_d2h=`grep ${test_name}.c ${logfile} | tail -1 | awk '{print $16}'`
+  bytes_ondevice=`grep ${test_name}.c ${logfile} | tail -1 | awk '{print $18}'`
   
   if [ "${bytes_h2d}" -ne 8 ]; then
      echo "Bytes Host -> Device does not match."
