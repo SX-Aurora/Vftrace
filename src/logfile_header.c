@@ -27,7 +27,6 @@
 #endif
 
 #ifdef _VEDA
-#include "veda_logfile.h"
 #include "vedaprofiling.h"
 #endif
 

@@ -18,6 +18,9 @@
 #ifdef _CUPTI
 #include "cupti_logfile.h"
 #endif
+#ifdef _VEDA
+#include "logfile_veda_table.h"
+#endif
 
 char *vftr_get_logfile_name(config_t config) {
    char *filename_base = vftr_create_filename_base(config, -1, 1);
@@ -94,6 +97,12 @@ void vftr_write_logfile(vftrace_t vftrace, long long runtime) {
                                         vftrace.config);
       }
    }
+#endif
+
+#ifdef _VEDA
+   // TODO CONFIG FOR VEDA
+   vftr_write_logfile_veda_table(fp, vftrace.process.collated_stacktree,
+                                 vftrace.config);
 #endif
 
    vftr_write_logfile_global_stack_list(fp, vftrace.process.collated_stacktree);
