@@ -52,9 +52,11 @@ void vftr_set_new_accprof (acc_prof_info *prof_info, acc_event_info *event_info,
       new_accprof->func_name = "unknown";
    }
 
+   char *kernel_name;
+   char *var_name;
    switch (prof_info->event_type) {
       case acc_ev_enqueue_launch_start:
-         char *kernel_name = ((acc_launch_event_info*)event_info)->kernel_name;
+         kernel_name = ((acc_launch_event_info*)event_info)->kernel_name;
          if (kernel_name != NULL) {
             new_accprof->kernel_name = (char*)malloc((strlen(kernel_name) + 1) * sizeof(char));
             strcpy (new_accprof->kernel_name , kernel_name);
@@ -66,7 +68,7 @@ void vftr_set_new_accprof (acc_prof_info *prof_info, acc_event_info *event_info,
       case acc_ev_delete:
       case acc_ev_alloc:
       case acc_ev_free:
-	 char *var_name = ((acc_data_event_info*)event_info)->var_name;
+	 var_name = ((acc_data_event_info*)event_info)->var_name;
          if (var_name != NULL) {
             new_accprof->var_name = (char*)malloc((strlen(var_name) + 1) * sizeof(char));
             strcpy (new_accprof->var_name , var_name);
@@ -235,8 +237,7 @@ void vftr_accprof_region_begin (acc_prof_info *prof_info, acc_event_info *event_
       case acc_ev_delete:
       case acc_ev_alloc:
       case acc_ev_free:
-         accprofile_t *accprof = &(my_profile->accprof);
-         accprof->copied_bytes += (long long)((acc_data_event_info*)event_info)->bytes;
+         my_profile->accprof.copied_bytes += (long long)((acc_data_event_info*)event_info)->bytes;
    }
 
    vftr_accumulate_accprofiling_overhead (&(my_profile->accprof),
