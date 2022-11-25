@@ -1,3 +1,8 @@
+#include <stdlib.h>
+#include <stdio.h>
+
+#include "vftrace_state.h"
+#include "process_types.h"
 #include "vedaprofiling_types.h"
 
 vedaprofile_t vftr_new_vedaprofiling() {
