@@ -11,8 +11,8 @@ vedaprofile_t vftr_new_vedaprofiling();
 
 vedaprofile_t vftr_add_vedaprofiles(vedaprofile_t profA, vedaprofile_t profB);
 
-void vftr_accumulate_vedaprofiling_overhead(vedaprofile_t *prof,
-                                            long long overhead_nsec);
+void vftr_accumulate_veda_profiling_overhead(vedaprofile_t *prof,
+                                             long long overhead_nsec);
 
 void vftr_vedaprofiling_free(vedaprofile_t *prof_ptr);
 

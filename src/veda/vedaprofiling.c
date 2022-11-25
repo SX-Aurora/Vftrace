@@ -35,8 +35,8 @@ vedaprofile_t vftr_add_vedaprofiles(vedaprofile_t profA, vedaprofile_t profB) {
    return profC;
 }
 
-void vftr_accumulate_vedaprofiling_overhead(vedaprofile_t *prof,
-                                            long long overhead_nsec) {
+void vftr_accumulate_veda_profiling_overhead(vedaprofile_t *prof,
+                                             long long overhead_nsec) {
    prof->overhead_nsec += overhead_nsec;
 }
 

@@ -13,6 +13,7 @@
 #include "threadstacks.h"
 #include "profiling.h"
 #include "vedaprofiling_types.h"
+#include "vedaprofiling.h"
 
 #include "timer.h"
 #include "veda_regions.h"
@@ -28,9 +29,9 @@ void vftr_veda_callback_launch_kernel_enter(VEDAprofiler_data* data) {
 
    VEDAprofiler_vedaLaunchKernel *LaunchKernelData;
    LaunchKernelData = (VEDAprofiler_vedaLaunchKernel*) &(data->type);
-   char *launchname = "vedaLaunchKernel";
+   const char *launchname = "vedaLaunchKernel";
    int launchnamelen = strlen(launchname);
-   char *kernelname = LaunchKernelData->kernel;
+   const char *kernelname = LaunchKernelData->kernel;
    int kernelnamelen = strlen(kernelname);
    int totallen = launchnamelen +
                   kernelnamelen +
