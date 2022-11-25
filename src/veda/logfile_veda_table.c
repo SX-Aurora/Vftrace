@@ -28,7 +28,7 @@ int *vftr_logfile_veda_table_ncalls_list(int nstacks, collated_stack_t **stack_p
 
 double *vftr_logfile_veda_table_average_memcpy_HtoD_list(
    int nstacks, collated_stack_t **stack_ptrs) {
-   long long *memcpy_HtoD_list = (long long*) malloc(nstacks*sizeof(long long));
+   double *memcpy_HtoD_list = (double*) malloc(nstacks*sizeof(double));
    for (int istack=0; istack<nstacks; istack++) {
       collated_stack_t *stack_ptr = stack_ptrs[istack];
       memcpy_HtoD_list[istack] = stack_ptr->profile.vedaprof.HtoD_bytes;
@@ -44,7 +44,7 @@ double *vftr_logfile_veda_table_average_memcpy_HtoD_list(
 
 double *vftr_logfile_veda_table_average_memcpy_DtoH_list(
    int nstacks, collated_stack_t **stack_ptrs) {
-   long long *memcpy_DtoH_list = (long long*) malloc(nstacks*sizeof(long long));
+   double *memcpy_DtoH_list = (double*) malloc(nstacks*sizeof(double));
    for (int istack=0; istack<nstacks; istack++) {
       collated_stack_t *stack_ptr = stack_ptrs[istack];
       memcpy_DtoH_list[istack] = stack_ptr->profile.vedaprof.DtoH_bytes;
@@ -60,7 +60,7 @@ double *vftr_logfile_veda_table_average_memcpy_DtoH_list(
 
 double *vftr_logfile_veda_table_average_memcpy_HtoD_bw_list(
    int nstacks, collated_stack_t **stack_ptrs) {
-   long long *memcpy_HtoD_bw_list = (long long*) malloc(nstacks*sizeof(long long));
+   double *memcpy_HtoD_bw_list = (double*) malloc(nstacks*sizeof(double));
    for (int istack=0; istack<nstacks; istack++) {
       collated_stack_t *stack_ptr = stack_ptrs[istack];
       memcpy_HtoD_bw_list[istack] = stack_ptr->profile.vedaprof.acc_HtoD_bw;
@@ -76,7 +76,7 @@ double *vftr_logfile_veda_table_average_memcpy_HtoD_bw_list(
 
 double *vftr_logfile_veda_table_average_memcpy_DtoH_bw_list(
    int nstacks, collated_stack_t **stack_ptrs) {
-   long long *memcpy_DtoH_bw_list = (long long*) malloc(nstacks*sizeof(long long));
+   double *memcpy_DtoH_bw_list = (double*) malloc(nstacks*sizeof(double));
    for (int istack=0; istack<nstacks; istack++) {
       collated_stack_t *stack_ptr = stack_ptrs[istack];
       memcpy_DtoH_bw_list[istack] = stack_ptr->profile.vedaprof.acc_DtoH_bw;
@@ -91,7 +91,7 @@ double *vftr_logfile_veda_table_average_memcpy_DtoH_bw_list(
 }
 
 double *vftr_logfile_veda_table_avg_time_list(int nstacks, collated_stack_t **stack_ptrs) {
-   long long *avg_time_list = (long long*) malloc(nstacks*sizeof(long long));
+   double *avg_time_list = (double*) malloc(nstacks*sizeof(double));
    for (int istack=0; istack<nstacks; istack++) {
       collated_stack_t *stack_ptr = stack_ptrs[istack];
       avg_time_list[istack] = stack_ptr->profile.vedaprof.total_time_nsec*1.0e-9;
@@ -143,7 +143,7 @@ int *vftr_logfile_veda_table_stack_globalstackID_list(int nstacks,
    for (int istack=0; istack<nstacks; istack++) {
       collated_stack_t *stack_ptr = stack_ptrs[istack];
       collated_profile_t *prof_ptr = &(stack_ptr->profile);
-      if (prof_ptr->veda.ncalls) {
+      if (prof_ptr->vedaprof.ncalls) {
          id_list[istack] = stack_ptr->gid;
          listidx++;
       }
