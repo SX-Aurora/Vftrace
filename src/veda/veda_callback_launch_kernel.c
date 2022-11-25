@@ -30,7 +30,8 @@ void vftr_veda_callback_launch_kernel_enter(VEDAprofiler_data* data) {
    LaunchKernelData = (VEDAprofiler_vedaLaunchKernel*) &(data->type);
    char *launchname = "vedaLaunchKernel";
    int launchnamelen = strlen(launchname);
-   int kernelnamelen = strlen(LaunchKernelData->kernel);
+   char *kernelname = LaunchKernelData->kernel;
+   int kernelnamelen = strlen(kernelname);
    int totallen = launchnamelen +
                   kernelnamelen +
                   2 + // +2 for braces
@@ -56,12 +57,12 @@ void vftr_veda_callback_launch_kernel_enter(VEDAprofiler_data* data) {
    user_data_t *user_data = (user_data_t*) malloc(sizeof(user_data_t));
    user_data->threadID = my_thread->threadID;
    user_data->stackID = my_threadstack->stackID;
-   profile_t *my_prof vftr_get_my_profile_from_ids(stackID, threadID);
+   profile_t *my_prof = vftr_get_my_profile_from_ids(stackID, threadID);
    long long tend_callback = vftr_get_runtime_nsec();
    user_data->start_time = tend_callback;
    data->user_data = (void*) user_data;
-   vftr_accumulate_vedaprofiling_overhead(&(my_prof->vedaprof),
-                                          tend_callback-tstart_callback);
+   vftr_accumulate_veda_profiling_overhead(&(my_prof->vedaprof),
+                                           tend_callback-tstart_callback);
 }
 
 void vftr_veda_callback_launch_kernel_exit(VEDAprofiler_data* data) {
@@ -73,12 +74,12 @@ void vftr_veda_callback_launch_kernel_exit(VEDAprofiler_data* data) {
    long long runtime_usec = kernel_end_time - user_data->start_time;
 
    // store profiling data in profile
-   profile_t *my_prof vftr_get_my_profile_from_ids(user_data->stackID,
+   profile_t *my_prof = vftr_get_my_profile_from_ids(user_data->stackID,
                                                    user_data->threadID);
    my_prof->vedaprof.total_time_nsec += runtime_usec;
    free(user_data);
    long long tend_callback = vftr_get_runtime_nsec();
-   vftr_accumulate_vedaprofiling_overhead(&(my_prof->vedaprof),
-                                          tend_callback-tstart_callback);
+   vftr_accumulate_veda_profiling_overhead(&(my_prof->vedaprof),
+                                           tend_callback-tstart_callback);
 
 }
