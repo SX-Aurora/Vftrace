@@ -63,7 +63,7 @@ void vftr_write_ranklogfile_summary(FILE *fp, process_t process,
    long long cupti_overhead = vftr_get_total_cupti_overhead(process.stacktree);
 #endif
 #ifdef _VEDA
-   long long veda_overhead = vftr_get_total_veda_overhead(process.stacktree, nthreads);
+   long long *veda_overheads = vftr_get_total_veda_overhead(process.stacktree, nthreads);
 #endif
 
    for (int ithread=0; ithread<nthreads; ithread++) {
@@ -75,13 +75,13 @@ void vftr_write_ranklogfile_summary(FILE *fp, process_t process,
 #ifdef _OMP
          total_master_overhead += omp_overheads[ithread];
 #endif
+#ifdef _VEDA
+         total_master_overhead += veda_overheads[ithread];
+#endif
       }
    }
 #ifdef _CUPTI
    total_master_overhead += cupti_overhead;
-#endif
-#ifdef _VEDA
-   total_master_overhead += veda_overhead;
 #endif
    double total_master_overhead_sec = total_master_overhead * 1.0e-9;
    double apptime_sec = runtime_sec - total_master_overhead_sec;
