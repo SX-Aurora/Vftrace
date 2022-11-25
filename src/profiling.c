@@ -146,7 +146,7 @@ void vftr_profilelist_free(profilelist_t *profilelist_ptr) {
 profile_t *vftr_get_my_profile_from_ids(int stackID, int threadID) {
    SELF_PROFILE_START_FUNCTION;
    stack_t *my_stack = vftrace.process.stacktree.stacks+stackID;
-   profilelist_t *profilelist_ptr = &(stack->profiling);
+   profilelist_t *profilelist_ptr = &(my_stack->profiling);
    // search for the profile matrhing the threadID
    // TODO: binary search?
    int profID = -1;
