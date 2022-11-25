@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <stdbool.h>
 
 #include <string.h>
 
@@ -35,7 +36,7 @@ void vftr_veda_region_begin(const char *name) {
    my_threadstack = vftr_update_threadstack_region(my_threadstack, my_thread,
                                                    0, name,
                                                    &vftrace,
-                                                   true);
+                                                   false);
    stack_t *my_new_stack = vftrace.process.stacktree.stacks+my_threadstack->stackID;
    my_profile = vftr_get_my_profile(my_new_stack, my_thread);
 

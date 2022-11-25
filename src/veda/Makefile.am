@@ -6,7 +6,9 @@ libvftr_veda_la_SOURCES += veda_regions.c
 libvftr_veda_la_SOURCES += veda_callback.c \
 			   veda_callback_launch_kernel.c
 
-libvftr_veda_la_CFLAGS = -I${srcdir}/../ -I${srcdir}/../sorting -D_VEDA
+libvftr_veda_la_CFLAGS = -I${srcdir}/../ \
+			 -I${srcdir}/../sorting/ \
+			 -D_VEDA
 
 if SELF_PROFILING
 libvftr_veda_la_CFLAGS += -D_SELF_PROFILE_VFTRACE
