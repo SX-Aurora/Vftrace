@@ -96,7 +96,6 @@ bool vftr_has_accprof_events (collated_stacktree_t stacktree) {
 }
 
 void vftr_write_logfile_accprof_grouped_table (FILE *fp, collated_stacktree_t stacktree, config_t config) {
-   // Sort table???
    
    // Structure of OpenACC grouped table:
    // | SourceFile - line | Function | t_compute | t_data | t_wait | Bytes H -> D | Bytes D -> H | Bytes onDevice

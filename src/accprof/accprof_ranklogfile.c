@@ -35,7 +35,6 @@ void vftr_get_total_accprof_times_for_ranklogfile (stacktree_t stacktree, double
 }
 
 void vftr_write_ranklogfile_accprof_grouped_table (FILE *fp, stacktree_t stacktree, config_t config) {
-   // Sort table???
    
    // Structure of OpenACC grouped table:
    // | SourceFile - line | Function | t_compute | t_data | t_wait | Bytes H -> D | Bytes D -> H | Bytes onDevice
