@@ -63,27 +63,30 @@ void vftr_clear_completed_onesided_request(vftr_request_t *request) {
       profile_t *my_profile = vftr_get_my_profile(my_stack, my_thread);
 
       // accumulate information for later use in the log file statistics
-      vftr_accumulate_message_info(&(my_profile->mpiprof),
-                                   vftrace.mpi_state,
-                                   request->dir,
-                                   request->count[0],
-                                   request->type_idx[0],
-                                   request->type_size[0],
-                                   request->rank[0],
-                                   request->tag,
-                                   request->tstart, tend);
-      // write the completed communication info to the vfd-file
-      if (vftrace.config.sampling.active.value) {
-         vftr_write_message_info(request->dir,
-                                 request->count[0],
-                                 request->type_idx[0],
-                                 request->type_size[0],
-                                 request->rank[0],
-                                 request->tag,
-                                 request->tstart,
-                                 tend,
-                                 request->callingstackID,
-                                 request->callingthreadID);
+      bool should_log_message = vftr_should_log_message_info(vftrace.mpi_state,
+                                                             request->rank[0]);
+      if (should_log_message) {
+         vftr_accumulate_message_info(&(my_profile->mpiprof),
+                                      request->dir,
+                                      request->count[0],
+                                      request->type_idx[0],
+                                      request->type_size[0],
+                                      request->rank[0],
+                                      request->tag,
+                                      request->tstart, tend);
+         // write the completed communication info to the vfd-file
+         if (vftrace.config.sampling.active.value) {
+            vftr_write_message_info(request->dir,
+                                    request->count[0],
+                                    request->type_idx[0],
+                                    request->type_size[0],
+                                    request->rank[0],
+                                    request->tag,
+                                    request->tstart,
+                                    tend,
+                                    request->callingstackID,
+                                    request->callingthreadID);
+         }
       }
 
       // Take the request out of the list

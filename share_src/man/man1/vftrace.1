@@ -62,6 +62,7 @@ Here is a complete config file with the default values:
       "print_config": true,
       "strip_module_names": false,
       "demangle_cxx": false,
+      "include_cxx_prelude": false,
       "profile_table": {
          "show_table": true,
          "show_calltime_imbalances": false,
@@ -172,6 +173,13 @@ compiler/linker.
 .br
 Demangle c++ symbol names to make them more human readable.
 This requires libiberty to be installed and linked.
+.br
+\fBDefault: false\fR
+.IP "\fBinclude_cxx_prelude\fR"
+.IX Item "include_cxx_prelude"
+.br
+Include instrumented functions in the profiling process that were called before "main"
+was called. This can lead to problems with the stacktree.
 .br
 \fBDefault: false\fR
 

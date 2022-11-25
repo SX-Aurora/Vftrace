@@ -102,6 +102,7 @@ typedef struct {
    config_bool_t print_config;
    config_bool_t strip_module_names;
    config_bool_t demangle_cxx;
+   config_bool_t include_cxx_prelude;
    config_profile_table_t profile_table;
    config_name_grouped_profile_table_t name_grouped_profile_table;
    config_sampling_t sampling;

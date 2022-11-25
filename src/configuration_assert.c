@@ -147,6 +147,12 @@ void vftr_config_demangle_cxx_assert(FILE *fp,
    (void) cfg_demangle_cxx;
 }
 
+void vftr_config_include_cxx_prelude_assert(FILE *fp,
+                                            config_bool_t cfg_include_cxx_prelude) {
+   (void) fp;
+   (void) cfg_include_cxx_prelude;
+}
+
 void vftr_config_show_calltime_imbalances_assert(FILE *fp,
                                                  config_bool_t cfg_show_callpath) {
    (void) fp;
@@ -326,6 +332,7 @@ void vftr_config_assert(FILE *fp, config_t config) {
    vftr_config_print_config_assert(fp, config.print_config);
    vftr_config_strip_module_names_assert(fp, config.strip_module_names);
    vftr_config_demangle_cxx_assert(fp, config.demangle_cxx);
+   vftr_config_include_cxx_prelude_assert(fp, config.include_cxx_prelude);
    vftr_config_profile_table_assert(fp, config.profile_table);
    vftr_config_name_grouped_profile_table_assert(fp, config.name_grouped_profile_table);
    vftr_config_sampling_assert(fp, config.sampling);

@@ -157,6 +157,7 @@ void vftr_config_free(config_t *config_ptr) {
    vftr_config_bool_free(&(config_ptr->print_config));
    vftr_config_bool_free(&(config_ptr->strip_module_names));
    vftr_config_bool_free(&(config_ptr->demangle_cxx));
+   vftr_config_bool_free(&(config_ptr->include_cxx_prelude));
    vftr_config_profile_table_free(&(config_ptr->profile_table));
    vftr_config_name_grouped_profile_table_free(&(config_ptr->name_grouped_profile_table));
    vftr_config_sampling_free(&(config_ptr->sampling));

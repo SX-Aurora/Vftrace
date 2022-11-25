@@ -32,6 +32,12 @@ bool __attribute__ ((noinline)) issorted(int n, T *list) {
    return sorted;
 }
 
+// this is to have some code executed before main starts
+int init_nelems_before_main() {
+   return 5;
+}
+static int nelems = init_nelems_before_main();
+
 int main(int argc, char **argv) {
 #ifdef _MPI
   MPI_Init(&argc, &argv);
@@ -40,7 +46,7 @@ int main(int argc, char **argv) {
   (void) argv;
 #endif
 
-   int nint = 5;
+   int nint = nelems;
    int intlist[] = {8,1,5,4,9};
    quicksort(nint, intlist);
    if (!issorted(nint, intlist)) {
@@ -48,7 +54,7 @@ int main(int argc, char **argv) {
       return 1;
    }
 
-   double ndouble = 5;
+   double ndouble = nelems;
    double doublelist[] = {3.14,2.718,1.41,1.618,0.69};
    quicksort(ndouble, doublelist);
    if (!issorted(nint, doublelist)) {

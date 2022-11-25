@@ -8,6 +8,7 @@ Vftrace default configuration:
    "print_config": true,
    "strip_module_names": false,
    "demangle_cxx": false,
+   "include_cxx_prelude": false,
    "profile_table": {
       "show_table": true,
       "show_calltime_imbalances": false,

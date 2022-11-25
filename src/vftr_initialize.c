@@ -19,6 +19,7 @@
 #include "off_hooks.h"
 #include "cyghooks.h"
 #include "pre_hooks.h"
+#include "vftr_hooks.h"
 #include "vftrace_state.h"
 #include "configuration.h"
 #include "configuration_assert.h"
@@ -78,12 +79,19 @@ void vftr_initialize(void *func, void *call_site) {
       // initialize possible sampling
       vftrace.sampling = vftr_new_sampling(vftrace.config);
 
-      // assign pre_hooks to the function entry and exit hooks
-      // There are c++ programs that execute a lot of inconsistently
-      // instrumented code before calling main.
-      // That is skipped by the pre_hook assignment.
-      vftr_set_enter_func_hook(vftr_pre_hook_function_entry);
-      vftr_set_exit_func_hook(vftr_pre_hook_function_exit);
+      if (vftrace.config.include_cxx_prelude.value) {
+         // assign the vftr_function hooks to the function entry and exit hooks
+         // to start profiling right away
+         vftr_set_enter_func_hook(vftr_function_entry);
+         vftr_set_exit_func_hook(vftr_function_exit);
+      } else {
+         // assign pre_hooks to the function entry and exit hooks
+         // There are c++ programs that execute a lot of inconsistently
+         // instrumented code before calling main.
+         // That is skipped by the pre_hook assignment.
+         vftr_set_enter_func_hook(vftr_pre_hook_function_entry);
+         vftr_set_exit_func_hook(vftr_pre_hook_function_exit);
+      }
 
       // trick the linker into including extra symbols
 #ifdef _OMP
@@ -101,9 +109,15 @@ void vftr_initialize(void *func, void *call_site) {
       // set the finalize function to be executed at the termination of the program
       atexit(vftr_finalize);
 
-      // now that initializing is done the actual hook needs
-      // to be called with the appropriate arguments
-      SELF_PROFILE_END_FUNCTION;
-      vftr_pre_hook_function_entry(func, call_site);
+      if (vftrace.config.include_cxx_prelude.value) {
+         // execute the actual function entry hook.
+         SELF_PROFILE_END_FUNCTION;
+         vftr_function_entry(func, call_site);
+      } else {
+         // now that initializing is done the actual hook needs
+         // to be called with the appropriate arguments
+         SELF_PROFILE_END_FUNCTION;
+         vftr_pre_hook_function_entry(func, call_site);
+      }
    }
 }

@@ -2,6 +2,7 @@
 #define COLLATE_STACKS_H
 
 #include <stdio.h>
+#include <stdlib.h>
 
 #include "stack_types.h"
 #include "collated_stack_types.h"

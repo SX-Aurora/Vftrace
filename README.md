@@ -11,14 +11,14 @@ Calls to CUDA kernels or CUDA library functions are traced using the CUpti profi
 ## Usage
 
 Vftrace requires that your application has instrumendet function calls.
-These are enabled with a compiler flag, most commonly named `-finstrument-functions`, as supported by the GNU, Intel, and NEC compilers.
+These are enabled with a compiler flag, most commonly named `-finstrument-functions`, as supported by the GNU, Intel, Clang, and NEC compilers.
 To get access to the MPI functionality some MPI-implementations need extra flags to activate the internal profiling layer (e.g. NEC MPI needs -mpiprof).
 After compiling, you must link your application against `libvftrace`, either statically or dynamically.
 The application can then be run in the usual way.
 In the default setting, a text file is created containing a runtime profile of the application.
 
 ## Download
-You can clone the current version of the vftrace from github. The third party tools are included in the git repository as submodules, for your convinience.
+You can clone the current version of Vftrace from github. The third party tools are included in the git repository as submodules, for your convinience.
 
 ```bash
 git clone --recursive https://github.com/SX-Aurora/Vftrace.git
@@ -40,6 +40,7 @@ It has to support function instrumentation.
 To our knowledge, this is given for the following list of compilers:
   - GNU
   - Intel
+  - Clang
   - NEC
 
 ## Basic Principle
@@ -199,7 +200,8 @@ MPI calls from Fortran, you can use `--disable-fortran` to prevent Vftrace from 
 
 ## Graphical User Interface
 
-The graphical visualization tool for Vtrace profiles, Vfview, is located at https://github.com/SX-Aurora/Vfview.
+The graphical visualization tool for Vtrace profiles, `vfdviewer` is located at https://github.com/SpinTensor/vfdviewer.
+It is written in C with the GTK+3 GUI.
 
 ## Authors
 

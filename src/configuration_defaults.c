@@ -170,6 +170,8 @@ config_t vftr_set_config_default() {
       vftr_set_config_bool_default("strip_module_names", false);
    config.demangle_cxx =
       vftr_set_config_bool_default("demangle_cxx", false);
+   config.include_cxx_prelude =
+      vftr_set_config_bool_default("include_cxx_prelude" , false);
    config.profile_table =
       vft_set_config_profile_table_default();
    config.name_grouped_profile_table =

@@ -4,7 +4,7 @@ source ${srcdir}/../environment/filenames.sh
 
 set -x
 test_name=demangle_cxx
-configfle=${test_name}.json
+configfile=${test_name}.json
 logfile=$(get_logfile_name ${test_name} "all")
 
 rm -f ${logfile}
@@ -24,8 +24,8 @@ do
    fi
 done
 
-echo "{\"demangle_cxx\": true}" > ${configfle}
-export VFTR_CONFIG=${configfle}
+echo "{\"demangle_cxx\": true}" > ${configfile}
+export VFTR_CONFIG=${configfile}
 rm -f ${logfile}
 if [ "x${HAS_MPI}" == "xYES" ]; then
    ${MPI_EXEC} ${MPI_OPTS} ${NP} 1 ./${test_name} || exit 1

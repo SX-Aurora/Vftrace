@@ -152,7 +152,6 @@ check_PROGRAMS += filenames
 #endif
 #endif
 
-
 sort_int8_SOURCES = $(srcdir)/sort_int8.c \
 			 $(srcdir)/bad_rng.c
 sort_int8_CFLAGS = $(AM_CFLAGS) -I$(top_srcdir)/src/sorting/

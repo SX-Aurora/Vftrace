@@ -39,6 +39,17 @@ double *vftr_logfile_prof_table_stack_inclusive_time_list(int nstacks, collated_
    return inclusive_time_list;
 }
 
+double *vftr_logfile_prof_table_overhead_list(int nstacks, collated_stack_t **stack_ptrs) {
+   double *overhead_list = (double*) malloc(nstacks*sizeof(double));
+
+   for (int istack=0; istack<nstacks; istack++) {
+      collated_stack_t *stack_ptr = stack_ptrs[istack];
+      overhead_list[istack] = stack_ptr->profile.callprof.overhead_nsec;
+      overhead_list[istack] *= 1.0e-9;
+   }
+   return overhead_list;
+}
+
 double *vftr_logfile_prof_table_stack_exclusive_time_list(int nstacks, collated_stack_t **stack_ptrs) {
    double *exclusive_time_list = (double*) malloc(nstacks*sizeof(double));
 
@@ -194,6 +205,12 @@ void vftr_write_logfile_profile_table(FILE *fp, collated_stacktree_t stacktree,
    double *incl_time = vftr_logfile_prof_table_stack_inclusive_time_list(stacktree.nstacks, sorted_stacks);
    vftr_table_add_column(&table, col_double, "t_incl[s]", "%.3f", 'c', 'r', (void*) incl_time);
 
+   double *overhead_list = NULL;
+   if (config.profile_table.show_overhead.value) {
+      overhead_list = vftr_logfile_prof_table_overhead_list(stacktree.nstacks, sorted_stacks);
+      vftr_table_add_column(&table, col_double, "overhead[s]", "%.3f", 'c', 'r', (void*) overhead_list);
+   }
+
    double *imbalances_list = NULL;
    int *imbalance_ranks_list = NULL;
    if (config.profile_table.show_calltime_imbalances.value) {
@@ -228,6 +245,9 @@ void vftr_write_logfile_profile_table(FILE *fp, collated_stacktree_t stacktree,
    free(excl_time);
    free(excl_timer_perc);
    free(incl_time);
+   if (config.profile_table.show_overhead.value) {
+      free(overhead_list);
+   }
    if (config.profile_table.show_calltime_imbalances.value) {
       free(imbalances_list);
       free(imbalance_ranks_list);

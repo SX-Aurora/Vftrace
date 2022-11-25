@@ -141,7 +141,6 @@ void vftr_activate_pers_request(MPI_Request request, long long tstart) {
    // search for request in open request list
    vftr_request_t *matching_request = vftr_search_request(request);
    if (matching_request != NULL) {
-printf("activating request to peer %d\n", matching_request->rank[0]);
       matching_request->active = true;
       matching_request->tstart = tstart;
    }

@@ -1,6 +1,7 @@
 #ifndef VFD_UTILS_H
 #define VFD_UTILS_H
 
+#include <stdlib.h>
 #include "vfd_types.h"
 
 vfd_header_t read_vfd_header(FILE *fp);

@@ -333,6 +333,7 @@ void vftr_parse_config(char *config_string, config_t *config_ptr) {
    vftr_parse_config_bool(config_json, &(config_ptr->print_config));
    vftr_parse_config_bool(config_json, &(config_ptr->strip_module_names));
    vftr_parse_config_bool(config_json, &(config_ptr->demangle_cxx));
+   vftr_parse_config_bool(config_json, &(config_ptr->include_cxx_prelude));
    vftr_parse_config_profile_table(config_json, &(config_ptr->profile_table));
    vftr_parse_config_name_grouped_profile_table(config_json,
          &(config_ptr->name_grouped_profile_table));

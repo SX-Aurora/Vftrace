@@ -148,6 +148,7 @@ void vftr_config_advisor(cJSON *config_json_ptr) {
       "print_config",
       "strip_module_names",
       "demangle_cxx",
+      "include_cxx_prelude",
       "profile_table",
       "name_grouped_profile_table",
       "sampling",

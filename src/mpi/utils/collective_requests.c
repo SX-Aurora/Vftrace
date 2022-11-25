@@ -77,33 +77,29 @@ void vftr_clear_completed_collective_request(vftr_request_t *request) {
          // it is an invalid rank due to non periodic
          // cartesian communicators.
          if (request->rank[i] != -1) {
-            vftr_accumulate_message_info(&(my_profile->mpiprof),
-                                         vftrace.mpi_state,
-                                         request->dir,
-                                         request->count[i],
-                                         request->type_idx[i],
-                                         request->type_size[i],
-                                         request->rank[i],
-                                         request->tag,
-                                         request->tstart, tend);
-         }
-      }
-      if (vftrace.config.sampling.active.value) {
-         for (int i=0; i<request->nmsg; i++) {
-            // if a rank is -1 skip the registering, as
-            // it is an invalid rank due to non periodic
-            // cartesian communicators.
-            if (request->rank[i] != -1) {
-               vftr_write_message_info(request->dir,
-                                       request->count[i],
-                                       request->type_idx[i],
-                                       request->type_size[i],
-                                       request->rank[i],
-                                       request->tag,
-                                       request->tstart,
-                                       tend,
-                                       request->callingstackID,
-                                       request->callingthreadID);
+            bool should_log_message = vftr_should_log_message_info(vftrace.mpi_state,
+                                                                   request->rank[i]);
+            if (should_log_message) {
+               vftr_accumulate_message_info(&(my_profile->mpiprof),
+                                            request->dir,
+                                            request->count[i],
+                                            request->type_idx[i],
+                                            request->type_size[i],
+                                            request->rank[i],
+                                            request->tag,
+                                            request->tstart, tend);
+               if (vftrace.config.sampling.active.value) {
+                  vftr_write_message_info(request->dir,
+                                          request->count[i],
+                                          request->type_idx[i],
+                                          request->type_size[i],
+                                          request->rank[i],
+                                          request->tag,
+                                          request->tstart,
+                                          tend,
+                                          request->callingstackID,
+                                          request->callingthreadID);
+               }
             }
          }
       }
