@@ -380,8 +380,8 @@ unsigned long long vftr_sizeof_profilelist_t(profilelist_t profiling) {
    return size;
 }
 
-unsigned long long vftr_sizeof_stack_t(stack_t stack) {
-   unsigned long long size = sizeof(stack_t);
+unsigned long long vftr_sizeof_stack_t(vftr_stack_t stack) {
+   unsigned long long size = sizeof(vftr_stack_t);
    size += strlen(stack.name)*sizeof(char);
    size += strlen(stack.cleanname)*sizeof(char);
    size -= sizeof(profilelist_t);
@@ -399,7 +399,7 @@ unsigned long long vftr_sizeof_stacktree_t(stacktree_t stacktree) {
       size += vftr_sizeof_stack_t(stacktree.stacks[istack]);
    }
    // unused stacks:
-   size += (stacktree.maxstacks - stacktree.nstacks) * sizeof(stack_t);
+   size += (stacktree.maxstacks - stacktree.nstacks) * sizeof(vftr_stack_t);
    return size;
 }
 

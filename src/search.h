@@ -17,6 +17,6 @@ int vftr_binary_search_symboltable(int nsymb, symbol_t *symbols,
 
 int vftr_binary_search_collated_stacks_name(collated_stacktree_t stacktree, char *name);
 
-int vftr_linear_search_callee(stack_t *stacks, int callerID, uintptr_t address);
+int vftr_linear_search_callee(vftr_stack_t *stacks, int callerID, uintptr_t address);
 
 #endif

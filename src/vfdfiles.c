@@ -236,7 +236,7 @@ void vftr_write_vfd_stacks(sampling_t *sampling, stacktree_t stacktree) {
    // 1. index of the calling stack
    // 2. the name of the function
    for (int istack=0; istack<stacktree.nstacks; istack++) {
-      stack_t stack = stacktree.stacks[istack];
+      vftr_stack_t stack = stacktree.stacks[istack];
       fwrite(&(stack.caller), sizeof(int), 1, fp);
       // precisely sampled functions are marked
       // with a '*' after their name

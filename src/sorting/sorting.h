@@ -55,8 +55,8 @@ void vftr_apply_perm_charptr (int n, char **list, int *perm);
 void vftr_sort_symboltable(unsigned int nsymb, symbol_t *symbols);
 
 // sort the stacks based on a set configuration variable
-void vftr_apply_perm_stackptr(int n, stack_t **list, int *perm);
-stack_t **vftr_sort_stacks_for_prof(config_t config,
+void vftr_apply_perm_stackptr(int n, vftr_stack_t **list, int *perm);
+vftr_stack_t **vftr_sort_stacks_for_prof(config_t config,
                                     stacktree_t stacktree);
 #ifdef _MPI
 void vftr_sort_collated_stacks_for_mpiprof(config_t config,
@@ -64,16 +64,16 @@ void vftr_sort_collated_stacks_for_mpiprof(config_t config,
                                            collated_stack_t **selected_stacks);
 void vftr_sort_stacks_for_mpiprof(config_t config,
                                   int nselected_stacks,
-                                  stack_t **selected_stacks);
+                                  vftr_stack_t **selected_stacks);
 #endif
 
 #ifdef _CUDA
-stack_t **vftr_sort_stacks_for_cuda (config_t config, stacktree_t stacktree);
+vftr_stack_t **vftr_sort_stacks_for_cuda (config_t config, stacktree_t stacktree);
 collated_stack_t **vftr_sort_collated_stacks_for_cuda (config_t config, collated_stacktree_t stacktree);
 #endif
 
 #ifdef _ACCPROF
-stack_t **vftr_sort_stacks_for_accprof (config_t config, stacktree_t stacktree);
+vftr_stack_t **vftr_sort_stacks_for_accprof (config_t config, stacktree_t stacktree);
 collated_stack_t **vftr_sort_collated_stacks_for_accprof (config_t config, collated_stacktree_t stacktree);
 #endif
 

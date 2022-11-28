@@ -30,12 +30,12 @@ typedef struct {
    profilelist_t profiling;
    // Data that is filled in during finalization
    uint64_t hash;
-} stack_t;
+} vftr_stack_t;
 
 typedef struct {
    int nstacks;
    int maxstacks;
-   stack_t *stacks;
+   vftr_stack_t *stacks;
 } stacktree_t;
 
 #endif

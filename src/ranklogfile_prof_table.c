@@ -17,11 +17,11 @@
 #include "tables.h"
 #include "sorting.h"
 
-int *vftr_ranklogfile_prof_table_stack_calls_list(int nstacks, stack_t **stack_ptrs) {
+int *vftr_ranklogfile_prof_table_stack_calls_list(int nstacks, vftr_stack_t **stack_ptrs) {
    int *calls_list = (int*) malloc(nstacks*sizeof(int));
 
    for (int istack=0; istack<nstacks; istack++) {
-      stack_t *stack_ptr = stack_ptrs[istack];
+      vftr_stack_t *stack_ptr = stack_ptrs[istack];
       calls_list[istack] = 0;
       for (int iprof=0; iprof<stack_ptr->profiling.nprofiles; iprof++) {
          profile_t *prof_ptr = stack_ptr->profiling.profiles+iprof;
@@ -31,11 +31,11 @@ int *vftr_ranklogfile_prof_table_stack_calls_list(int nstacks, stack_t **stack_p
    return calls_list;
 }
 
-double *vftr_ranklogfile_prof_table_stack_inclusive_time_list(int nstacks, stack_t **stack_ptrs) {
+double *vftr_ranklogfile_prof_table_stack_inclusive_time_list(int nstacks, vftr_stack_t **stack_ptrs) {
    double *inclusive_time_list = (double*) malloc(nstacks*sizeof(double));
 
    for (int istack=0; istack<nstacks; istack++) {
-      stack_t *stack_ptr = stack_ptrs[istack];
+      vftr_stack_t *stack_ptr = stack_ptrs[istack];
       inclusive_time_list[istack] = 0.0;
       for (int iprof=0; iprof<stack_ptr->profiling.nprofiles; iprof++) {
          profile_t *prof_ptr = stack_ptr->profiling.profiles+iprof;
@@ -46,11 +46,11 @@ double *vftr_ranklogfile_prof_table_stack_inclusive_time_list(int nstacks, stack
    return inclusive_time_list;
 }
 
-double *vftr_ranklogfile_prof_table_overhead_list(int nstacks, stack_t **stack_ptrs) {
+double *vftr_ranklogfile_prof_table_overhead_list(int nstacks, vftr_stack_t **stack_ptrs) {
    double *overhead_list = (double*) malloc(nstacks*sizeof(double));
 
    for (int istack=0; istack<nstacks; istack++) {
-      stack_t *stack_ptr = stack_ptrs[istack];
+      vftr_stack_t *stack_ptr = stack_ptrs[istack];
       overhead_list[istack] = 0.0;
       for (int iprof=0; iprof<stack_ptr->profiling.nprofiles; iprof++) {
          profile_t *prof_ptr = stack_ptr->profiling.profiles+iprof;
@@ -61,11 +61,11 @@ double *vftr_ranklogfile_prof_table_overhead_list(int nstacks, stack_t **stack_p
    return overhead_list;
 }
 
-double *vftr_ranklogfile_prof_table_stack_exclusive_time_list(int nstacks, stack_t **stack_ptrs) {
+double *vftr_ranklogfile_prof_table_stack_exclusive_time_list(int nstacks, vftr_stack_t **stack_ptrs) {
    double *exclusive_time_list = (double*) malloc(nstacks*sizeof(double));
 
    for (int istack=0; istack<nstacks; istack++) {
-      stack_t *stack_ptr = stack_ptrs[istack];
+      vftr_stack_t *stack_ptr = stack_ptrs[istack];
       exclusive_time_list[istack] = 0.0;
       for (int iprof=0; iprof<stack_ptr->profiling.nprofiles; iprof++) {
          profile_t *prof_ptr = stack_ptr->profiling.profiles+iprof;
@@ -76,11 +76,11 @@ double *vftr_ranklogfile_prof_table_stack_exclusive_time_list(int nstacks, stack
    return exclusive_time_list;
 }
 
-double *vftr_ranklogfile_prof_table_stack_exclusive_time_percentage_list(int nstacks, stack_t **stack_ptrs) {
+double *vftr_ranklogfile_prof_table_stack_exclusive_time_percentage_list(int nstacks, vftr_stack_t **stack_ptrs) {
    double *percent_list = (double*) malloc(nstacks*sizeof(double));
    long long total_time = 0ll;
    for (int istack=0; istack<nstacks; istack++) {
-      stack_t *stack_ptr = stack_ptrs[istack];
+      vftr_stack_t *stack_ptr = stack_ptrs[istack];
       for (int iprof=0; iprof<stack_ptr->profiling.nprofiles; iprof++) {
          profile_t *prof_ptr = stack_ptr->profiling.profiles+iprof;
          total_time += prof_ptr->callprof.time_excl_nsec;
@@ -88,7 +88,7 @@ double *vftr_ranklogfile_prof_table_stack_exclusive_time_percentage_list(int nst
    }
    double invtotal_time = 100.0/total_time;
    for (int istack=0; istack<nstacks; istack++) {
-      stack_t *stack_ptr = stack_ptrs[istack];
+      vftr_stack_t *stack_ptr = stack_ptrs[istack];
       percent_list[istack] = 0.0;
       for (int iprof=0; iprof<stack_ptr->profiling.nprofiles; iprof++) {
          profile_t *prof_ptr = stack_ptr->profiling.profiles+iprof;
@@ -99,21 +99,21 @@ double *vftr_ranklogfile_prof_table_stack_exclusive_time_percentage_list(int nst
    return percent_list;
 }
 
-char **vftr_ranklogfile_prof_table_stack_function_name_list(int nstacks, stack_t **stack_ptrs) {
+char **vftr_ranklogfile_prof_table_stack_function_name_list(int nstacks, vftr_stack_t **stack_ptrs) {
    char **name_list = (char**) malloc(nstacks*sizeof(char*));
    for (int istack=0; istack<nstacks; istack++) {
-      stack_t *stack_ptr = stack_ptrs[istack];
+      vftr_stack_t *stack_ptr = stack_ptrs[istack];
       name_list[istack] = stack_ptr->cleanname;
    }
    return name_list;
 }
 
-char **vftr_ranklogfile_prof_table_stack_caller_name_list(stacktree_t stacktree, stack_t **stack_ptrs) {
+char **vftr_ranklogfile_prof_table_stack_caller_name_list(stacktree_t stacktree, vftr_stack_t **stack_ptrs) {
    int nstacks = stacktree.nstacks;
    char **name_list = (char**) malloc(nstacks*sizeof(char*));
    // the init function is never called
    for (int istack=0; istack<nstacks; istack++) {
-      stack_t *stack_ptr = stack_ptrs[istack];
+      vftr_stack_t *stack_ptr = stack_ptrs[istack];
       int callerID = stack_ptr->caller;
       if (callerID >= 0) {
          name_list[istack] = stacktree.stacks[callerID].cleanname;
@@ -124,20 +124,20 @@ char **vftr_ranklogfile_prof_table_stack_caller_name_list(stacktree_t stacktree,
    return name_list;
 }
 
-int *vftr_ranklogfile_prof_table_stack_stackID_list(int nstacks, stack_t **stack_ptrs) {
+int *vftr_ranklogfile_prof_table_stack_stackID_list(int nstacks, vftr_stack_t **stack_ptrs) {
    int *id_list = (int*) malloc(nstacks*sizeof(int));
    for (int istack=0; istack<nstacks; istack++) {
-      stack_t *stack_ptr = stack_ptrs[istack];
+      vftr_stack_t *stack_ptr = stack_ptrs[istack];
       id_list[istack] = stack_ptr->gid;
    }
    return id_list;
 }
 
-char **vftr_ranklogfile_prof_table_callpath_list(int nstacks, stack_t **stack_ptrs,
+char **vftr_ranklogfile_prof_table_callpath_list(int nstacks, vftr_stack_t **stack_ptrs,
                                              stacktree_t stacktree) {
    char **path_list = (char**) malloc(nstacks*sizeof(char*));
    for (int istack=0; istack<nstacks; istack++) {
-      stack_t *stack_ptr = stack_ptrs[istack];
+      vftr_stack_t *stack_ptr = stack_ptrs[istack];
       int stackid = stack_ptr->lid;
       path_list[istack] = vftr_get_stack_string(stacktree, stackid, false);
    }
@@ -148,7 +148,7 @@ void vftr_write_ranklogfile_profile_table(FILE *fp, stacktree_t stacktree,
                                           config_t config) {
    SELF_PROFILE_START_FUNCTION;
    // first sort the stacktree according to the set configuration variables
-   stack_t **sorted_stacks = vftr_sort_stacks_for_prof(config, stacktree);
+   vftr_stack_t **sorted_stacks = vftr_sort_stacks_for_prof(config, stacktree);
 
    fprintf(fp, "\nRuntime profile\n");
 

@@ -149,7 +149,7 @@ void vftr_profilelist_free(profilelist_t *profilelist_ptr) {
    SELF_PROFILE_END_FUNCTION;
 }
 
-profile_t *vftr_get_my_profile(stack_t *stack,
+profile_t *vftr_get_my_profile(vftr_stack_t *stack,
                                thread_t *thread) {
    SELF_PROFILE_START_FUNCTION;
    profilelist_t *profilelist_ptr = &(stack->profiling);

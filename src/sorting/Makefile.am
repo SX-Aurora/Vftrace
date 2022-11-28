@@ -88,7 +88,7 @@ libvftr_apply_perm_charptr_la_CFLAGS = -DTYPE="char*" -DTYPESTR="charptr" -I${sr
 noinst_LTLIBRARIES += libvftr_apply_perm_stackptr.la
 libvftr_sorting_la_LIBADD += libvftr_apply_perm_stackptr.la
 libvftr_apply_perm_stackptr_la_SOURCES = apply_perm.c
-libvftr_apply_perm_stackptr_la_CFLAGS = -DTYPE="stack_t*" -DTYPESTR="stackptr" \
+libvftr_apply_perm_stackptr_la_CFLAGS = -DTYPE="vftr_stack_t*" -DTYPESTR="stackptr" \
 					-I${srcdir}/../
 
 noinst_LTLIBRARIES += libvftr_apply_perm_collated_stackptr.la

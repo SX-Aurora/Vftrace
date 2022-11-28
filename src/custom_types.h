@@ -1,7 +1,7 @@
 #ifndef CUSTOM_TYPES_H
 #define CUSTOM_TYPES_H
 
-#include "config.h"
+#include "configuration.h"
 #include <stdint.h>
 
 // in the unlikely event that the c-compiler does not support the uintptr_t type
