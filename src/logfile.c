@@ -21,6 +21,9 @@
 #ifdef _ACCPROF
 #include "accprof_logfile.h"
 #endif
+#ifdef _PAPI_AVAIL
+#include "papi_logfile.h"
+#endif
 
 char *vftr_get_logfile_name(config_t config) {
    char *filename_base = vftr_create_filename_base(config, -1, 1);
@@ -113,6 +116,10 @@ void vftr_write_logfile(vftrace_t vftrace, long long runtime) {
    }
 #endif
 
+#ifdef _PAPI_AVAIL
+   vftr_write_papi_table (fp, vftrace.process.collated_stacktree, vftrace.config);
+#endif
+
    vftr_write_logfile_global_stack_list(fp, vftrace.process.collated_stacktree);
 
    // print config info
@@ -128,6 +135,10 @@ void vftr_write_logfile(vftrace_t vftrace, long long runtime) {
 
 #ifdef _ACCPROF
    if (vftrace.config.accprof.show_event_details.value) vftr_write_logfile_accev_names (fp);
+#endif
+
+#ifdef _PAPI_AVAIL
+   vftr_write_event_descriptions (fp);
 #endif
 
    fclose(fp);

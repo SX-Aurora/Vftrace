@@ -19,6 +19,9 @@
 #ifdef _OMP
 #include <omp.h>
 #endif
+#ifdef _PAPI_AVAIL
+#include "papiprofiling.h"
+#endif
 
 void vftr_function_entry(void *func, void *call_site) {
    SELF_PROFILE_START_FUNCTION;
@@ -69,6 +72,10 @@ void vftr_function_entry(void *func, void *call_site) {
                                     1, -function_entry_time_begin);
    }
 
+#ifdef _PAPI_AVAIL
+   vftr_accumulate_papiprofiling (&(my_profile->papiprof), true);
+#endif
+
    // No calls after this overhead handling!
    vftr_accumulate_callprofiling_overhead(&(my_profile->callprof),
       vftr_get_runtime_nsec() - function_entry_time_begin);
@@ -113,6 +120,10 @@ void vftr_function_exit(void *func, void *call_site) {
                                 *my_stack,
                                 function_exit_time_begin);
    }
+
+#ifdef _PAPI_AVAIL
+   vftr_accumulate_papiprofiling (&(my_profile->papiprof), false);
+#endif
 
    // No calls after this overhead handling
    vftr_accumulate_callprofiling_overhead(

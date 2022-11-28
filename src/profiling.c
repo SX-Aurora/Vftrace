@@ -19,6 +19,9 @@
 #ifdef _ACCPROF
 #include "accprofiling.h"
 #endif
+#ifdef _PAPI_AVAIL
+#include "papiprofiling.h"
+#endif
 
 void vftr_profilelist_realloc(profilelist_t *profilelist_ptr) {
    SELF_PROFILE_START_FUNCTION;
@@ -50,6 +53,9 @@ profile_t vftr_new_profile(int threadID) {
 #ifdef _ACCPROF
    profile.accprof = vftr_new_accprofiling();
 #endif 
+#ifdef _PAPI_AVAIL
+   profile.papiprof = vftr_new_papiprofiling();
+#endif
    // Add further profiles here
    SELF_PROFILE_END_FUNCTION;
    return profile;

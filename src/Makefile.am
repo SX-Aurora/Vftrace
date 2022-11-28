@@ -48,6 +48,11 @@ SUBDIRS += accprof
 libvftrace_la_LIBADD += accprof/libvftr_accprof.la
 endif
 
+if ENABLE_PAPI
+SUBDIRS += papi
+libvftrace_la_LIBADD += papi/libvftr_papi.la
+endif
+
 libvftrace_la_SOURCES = 
 
 libvftrace_la_CPPFLAGS = -D_VERSION=${PACKAGE_VERSION} \
@@ -125,6 +130,7 @@ libvftrace_la_CFLAGS += -I${srcdir}/mpi/utils/ \
 			-I${srcdir}/omp/ \
                         -I${srcdir}/cuda/ \
 			-I${srcdir}/accprof \
+		        -I${srcdir}/papi \
 			-I${srcdir}/sorting
 
 if ENABLE_MPI
@@ -143,6 +149,10 @@ endif
 
 if ENABLE_ACCPROF
 libvftrace_la_CFLAGS += -D_ACCPROF
+endif
+
+if ENABLE_PAPI
+libvftrace_la_CFLAGS += -D_PAPI_AVAIL
 endif
 
 if HAS_LIBERTY

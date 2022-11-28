@@ -73,6 +73,15 @@ vftrace_t vftrace = {
       .n_open_wait_queues = 0,
    },
 #endif
+#ifdef _PAPI_AVAIL
+   .papi_state = {
+      .eventset = PAPI_NULL,
+      .n_available_events = 0,
+      .event_codes = NULL,
+      .event_units = NULL,
+      .event_descriptions = NULL,
+   },
+#endif
 #ifdef _MPI
    .mpi_state = {
       .pcontrol_level = 1,

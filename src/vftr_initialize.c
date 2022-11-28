@@ -14,6 +14,10 @@
 #include "accprof_callbacks.h"
 #endif
 
+#ifdef _PAPI_AVAIL
+#include "papi_init_final.h"
+#endif
+
 #include "self_profile.h"
 #include "timer.h"
 #include "off_hooks.h"
@@ -105,6 +109,11 @@ void vftr_initialize(void *func, void *call_site) {
 
 #ifdef _ACCPROF
       vftr_init_accprof();
+#endif
+
+#ifdef _PAPI_AVAIL
+      vftr_papi_init();
+      vftr_papi_show_avail_events (stdout);
 #endif
       // set the finalize function to be executed at the termination of the program
       atexit(vftr_finalize);
