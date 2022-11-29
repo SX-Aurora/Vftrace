@@ -4,7 +4,7 @@
 
 //#include "veda_callback_mem_alloc.h"
 //#include "veda_callback_mem_free.h"
-#include "veda_callback_mem_cpy_htod.h"
+#include "veda_callback_mem_cpy_HtoD.h"
 //#include "veda_callback_mem_cpy_dtoh.h"
 #include "veda_callback_launch_kernel.h"
 //#include "veda_callback_launch_host.h"

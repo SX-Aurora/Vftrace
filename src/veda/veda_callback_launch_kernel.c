@@ -22,6 +22,7 @@ typedef struct {
    long long start_time;
    int threadID;
    int stackID;
+   long long overhead_time;
 } user_data_t;
 
 void vftr_veda_callback_launch_kernel_enter(VEDAprofiler_data* data) {
@@ -56,14 +57,13 @@ void vftr_veda_callback_launch_kernel_enter(VEDAprofiler_data* data) {
    // This includes the starting timestamp
    // Stack and thread ID of the launched kernel
    user_data_t *user_data = (user_data_t*) malloc(sizeof(user_data_t));
-   user_data->threadID = my_thread->threadID;
-   user_data->stackID = my_threadstack->stackID;
+   user_data->threadID = threadID;
+   user_data->stackID = stackID;
    profile_t *my_prof = vftr_get_my_profile_from_ids(stackID, threadID);
-   long long tend_callback = vftr_get_runtime_nsec();
-   user_data->start_time = tend_callback;
+   user_data->start_time = vftr_get_runtime_nsec();
    data->user_data = (void*) user_data;
-   vftr_accumulate_veda_profiling_overhead(&(my_prof->vedaprof),
-                                           tend_callback-tstart_callback);
+
+   user_data->overhead_time = vftr_get_runtime_nsec() - tstart_callback;
 }
 
 void vftr_veda_callback_launch_kernel_exit(VEDAprofiler_data* data) {
@@ -77,11 +77,11 @@ void vftr_veda_callback_launch_kernel_exit(VEDAprofiler_data* data) {
    // store profiling data in profile
    profile_t *my_prof = vftr_get_my_profile_from_ids(user_data->stackID,
                                                    user_data->threadID);
+   vftr_accumulate_veda_profiling_overhead(&(my_prof->vedaprof), user_data->overhead_time);
    my_prof->vedaprof.total_time_nsec += runtime_usec;
    my_prof->vedaprof.ncalls ++;
    free(user_data);
    long long tend_callback = vftr_get_runtime_nsec();
    vftr_accumulate_veda_profiling_overhead(&(my_prof->vedaprof),
                                            tend_callback-tstart_callback);
-
 }
