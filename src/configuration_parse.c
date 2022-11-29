@@ -239,6 +239,22 @@ void vftr_parse_config_cuda(cJSON *parent_object,
    }
 }
 
+void vftr_parse_config_veda(cJSON *parent_object,
+                            config_veda_t *cfg_veda_ptr) {
+   // check if the Parent object has the profile table
+   bool has_object = cJSON_HasObjectItem(parent_object,
+                                         cfg_veda_ptr->name);
+   if (has_object) {
+      cJSON *json_object = cJSON_GetObjectItem(parent_object,
+                                               cfg_veda_ptr->name);
+      // get the child objects
+      vftr_parse_config_bool(json_object,
+                             &(cfg_veda_ptr->show_table));
+      vftr_parse_config_sort_table(json_object,
+                                   &(cfg_veda_ptr->sort_table));
+   }
+}
+
 void vftr_parse_config_hardware_scenarios(cJSON *parent_object,
                                           config_hardware_scenarios_t
                                           *cfg_hardware_scenarios_ptr) {
@@ -332,6 +348,7 @@ void vftr_parse_config(char *config_string, config_t *config_ptr) {
    vftr_parse_config_sampling(config_json, &(config_ptr->sampling));
    vftr_parse_config_mpi(config_json, &(config_ptr->mpi));
    vftr_parse_config_cuda(config_json, &(config_ptr->cuda));
+   vftr_parse_config_veda(config_json, &(config_ptr->veda));
    vftr_parse_config_hardware_scenarios(config_json, &(config_ptr->hardware_scenarios));
 
    vftr_config_advisor(config_json);

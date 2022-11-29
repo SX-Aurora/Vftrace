@@ -144,6 +144,18 @@ void vftr_print_config_cuda(FILE *fp, int level, config_cuda_t cfg_cuda) {
    fprintf(fp,"}");
 }
 
+void vftr_print_config_veda(FILE *fp, int level, config_veda_t cfg_veda) {
+   level++;
+   vftr_print_config_indent(fp, level);
+   fprintf(fp, "\"%s\": {\n", cfg_veda.name);
+   vftr_print_config_bool(fp, level, cfg_veda.show_table);
+   fprintf(fp,",\n");
+   vftr_print_config_sort_table(fp, level, cfg_veda.sort_table);
+   fprintf(fp,"\n");
+   vftr_print_config_indent(fp, level);
+   fprintf(fp,"}");
+}
+
 void vftr_print_config_hardware_scenarios(FILE *fp, int level,
                                           config_hardware_scenarios_t
                                           cfg_hardware_scenarios) {
@@ -194,6 +206,8 @@ void vftr_print_config(FILE *fp, config_t config, bool show_title) {
    vftr_print_config_mpi(fp, level, config.mpi);
    fprintf(fp, ",\n");
    vftr_print_config_cuda(fp, level, config.cuda);
+   fprintf(fp, ",\n");
+   vftr_print_config_veda(fp, level, config.veda);
    fprintf(fp, ",\n");
    vftr_print_config_hardware_scenarios(fp, level, config.hardware_scenarios);
    fprintf(fp, "\n");

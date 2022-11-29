@@ -51,6 +51,13 @@ Vftrace default configuration:
          "ascending": false
       }
    },
+   "veda": {
+      "show_table": true,
+      "sort_table": {
+         "column": "time",
+         "ascending": false
+      }
+   },
    "hardware_scenarios": {
       "active": false
    }

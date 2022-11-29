@@ -229,6 +229,16 @@ unsigned long long vftr_sizeof_config_cuda_t(config_cuda_t cfg_cuda) {
    return size;
 }
 
+unsigned long long vftr_sizeof_config_veda_t(config_veda_t cfg_veda) {
+   unsigned long long size = sizeof(config_veda_t);
+   size += vftr_sizeof_config_struct_defaults(cfg_veda.name);
+   size -= sizeof(config_bool_t);
+   size += vftr_sizeof_config_bool_t(cfg_veda.show_table);
+   size -= sizeof(config_sort_table_t);
+   size += vftr_sizeof_config_sort_table_t(cfg_veda.sort_table);
+   return size;
+}
+
 unsigned long long vftr_sizeof_config_hardware_scenarios_t(config_hardware_scenarios_t
                                              cfg_hardware_scenarios) {
    unsigned long long size = sizeof(config_hardware_scenarios_t);
@@ -264,6 +274,8 @@ unsigned long long vftr_sizeof_config_t(config_t config) {
    vftr_sizeof_config_mpi_t(config.mpi);
    size -= sizeof(config_cuda_t);
    vftr_sizeof_config_cuda_t(config.cuda);
+   size -= sizeof(config_veda_t);
+   vftr_sizeof_config_veda_t(config.veda);
    size -= sizeof(config_hardware_scenarios_t);
    vftr_sizeof_config_hardware_scenarios_t(config.hardware_scenarios);
    if (config.config_file_path != NULL) {

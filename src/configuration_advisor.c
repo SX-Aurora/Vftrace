@@ -131,6 +131,24 @@ void vftr_config_advisor_cuda(cJSON *json_obj) {
    }
 }
 
+void vftr_config_advisor_veda(cJSON *json_obj) {
+   char *options[] = {
+      "show_table",
+      "sort_table"
+   };
+   int noptions = sizeof(options) / sizeof(char*);
+   vftr_config_advisor_check_options(noptions, options, json_obj->child);
+
+   char *sec_name = NULL;
+   bool has_object;
+   sec_name = "sort_table";
+   has_object = cJSON_HasObjectItem(json_obj, sec_name);
+   if (has_object) {
+      cJSON *json_sec = cJSON_GetObjectItem(json_obj, sec_name);
+      vftr_config_advisor_sort_table(json_sec->child);
+   }
+}
+
 void vftr_config_advisor_hardware_scenarios(cJSON *json_obj) {
    char *options[] = {
       "active"
@@ -154,6 +172,7 @@ void vftr_config_advisor(cJSON *config_json_ptr) {
       "sampling",
       "mpi",
       "cuda",
+      "veda",
       "hardware_scenarios"
    };
    int noptions = sizeof(options) / sizeof(char*);
@@ -195,6 +214,13 @@ void vftr_config_advisor(cJSON *config_json_ptr) {
    if (has_object) {
       cJSON *json_sec = cJSON_GetObjectItem(config_json_ptr, sec_name);
       vftr_config_advisor_cuda(json_sec);
+   }
+
+   sec_name = "veda";
+   has_object = cJSON_HasObjectItem(config_json_ptr, sec_name);
+   if (has_object) {
+      cJSON *json_sec = cJSON_GetObjectItem(config_json_ptr, sec_name);
+      vftr_config_advisor_veda(json_sec);
    }
 
    sec_name = "hardware_scenarios";

@@ -105,6 +105,13 @@ Here is a complete config file with the default values:
             "ascending": false
          }
       },
+      "veda": {
+         "show_table": true,
+         "sort_table": {
+            "column": "time",
+            "ascending": false
+         }
+      },
       "hardware_scenarios": {
          "active": false
       }
@@ -458,6 +465,18 @@ This section controls writing of the cuda profile table in the logfiles.
 .IX Item "cuda.show_table"
 .br
 Show the cuda profile table in the logfiles.
+.br
+\fBDefault: true\fR
+
+.IP "\fBveda\fR"
+.IX Item "veda"
+.br
+This section controls writing of the veda profile table in the logfiles.
+
+.IP "\fBveda.show_table\fR"
+.IX Item "veda.show_table"
+.br
+Show the veda profile table in the logfiles.
 .br
 \fBDefault: true\fR
 

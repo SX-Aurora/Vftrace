@@ -84,6 +84,12 @@ typedef struct {
 
 typedef struct {
    CONFIG_STRUCT_DEFAULTS
+   config_bool_t show_table;
+   config_sort_table_t sort_table;
+} config_veda_t;
+
+typedef struct {
+   CONFIG_STRUCT_DEFAULTS
    config_bool_t active;
 } config_hardware_scenarios_t;
 
@@ -101,6 +107,7 @@ typedef struct {
    config_sampling_t sampling;
    config_mpi_t mpi;
    config_cuda_t cuda;
+   config_veda_t veda;
    config_hardware_scenarios_t hardware_scenarios;
    bool valid;
    char *config_file_path;

@@ -310,6 +310,17 @@ void vftr_config_cuda_assert(FILE *fp, config_cuda_t cfg_cuda) {
                                  5, valid_columns);
 }
 
+void vftr_config_veda_assert(FILE *fp, config_veda_t cfg_veda) {
+   vftr_config_show_table_assert(fp, cfg_veda.show_table);
+   const char *valid_columns[] = {"calls",
+                                  "memcpy_h2d", "memcpy_d2h",
+                                  "memcpybw_h2d", "memcpybw_d2h",
+                                  "time",
+                                  "none"};
+   vftr_config_sort_table_assert(fp, cfg_veda.sort_table,
+                                 7, valid_columns);
+}
+
 void vftr_config_hardware_scenarios_assert(FILE *fp,
                                            config_hardware_scenarios_t
                                            cfg_hardware_scenarios) {
@@ -330,5 +341,6 @@ void vftr_config_assert(FILE *fp, config_t config) {
    vftr_config_sampling_assert(fp, config.sampling);
    vftr_config_mpi_assert(fp, config.mpi);
    vftr_config_cuda_assert(fp, config.cuda);
+   vftr_config_veda_assert(fp, config.veda);
    vftr_config_hardware_scenarios_assert(fp, config.hardware_scenarios);
 }
