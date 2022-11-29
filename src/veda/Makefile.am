@@ -10,7 +10,8 @@ libvftr_veda_la_SOURCES += vedaprofiling.c \
 
 libvftr_veda_la_SOURCES += veda_callback.c \
 			   veda_callback_launch_kernel.c \
-			   veda_callback_mem_cpy_htod.c
+			   veda_callback_mem_cpy_htod.c \
+			   veda_callback_mem_cpy_dtoh.c
 
 libvftr_veda_la_CFLAGS = -I${srcdir}/../ \
 			 -I${srcdir}/../sorting/ \
