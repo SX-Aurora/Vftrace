@@ -16,6 +16,7 @@
 #include "callprofiling.h"
 #include "sampling.h"
 #include "timer.h"
+#include "hashing.h"
 
 void vftr_veda_region_begin(const char *name) {
    SELF_PROFILE_START_FUNCTION;
@@ -33,8 +34,11 @@ void vftr_veda_region_begin(const char *name) {
    // TODO: update performance and call counters as soon as implemented
    // add possibly new region to the stack
    // and adjust the threadstack accordingly
+   uint64_t pseudo_addr = vftr_jenkins_murmur_64_hash(strlen(name),
+                                                       (uint8_t*) name);
+   
    my_threadstack = vftr_update_threadstack_region(my_threadstack, my_thread,
-                                                   0, name,
+                                                   pseudo_addr, name,
                                                    &vftrace,
                                                    false);
    stack_t *my_new_stack = vftrace.process.stacktree.stacks+my_threadstack->stackID;
