@@ -73,7 +73,7 @@ void vftr_function_entry(void *func, void *call_site) {
    }
 
 #ifdef _PAPI_AVAIL
-   //vftr_accumulate_papiprofiling (&(my_profile->papiprof), true);
+   vftr_accumulate_papiprofiling (&(my_profile->papiprof), true);
 #endif
 
    // No calls after this overhead handling!
@@ -122,7 +122,7 @@ void vftr_function_exit(void *func, void *call_site) {
    }
 
 #ifdef _PAPI_AVAIL
-   //vftr_accumulate_papiprofiling (&(my_profile->papiprof), false);
+   vftr_accumulate_papiprofiling (&(my_profile->papiprof), false);
 #endif
 
    // No calls after this overhead handling
