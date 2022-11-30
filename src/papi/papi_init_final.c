@@ -15,7 +15,7 @@ void vftr_papi_init (config_t config) {
       printf ("  symbol: %s\n", config.papi.counters.symbol.values[i]);
    }
    printf ("Observables: \n");
-   for (int i = 0; i < config.papi.counters.native_name.n_elements; i++) {
+   for (int i = 0; i < config.papi.observables.obs_name.n_elements; i++) {
       printf ("  name: %s\n", config.papi.observables.obs_name.values[i]);
       printf ("  formula: %s\n", config.papi.observables.formula_expr.values[i]);
       printf ("  unit: %s\n", config.papi.observables.unit.values[i]);
@@ -41,7 +41,7 @@ void vftr_papi_init (config_t config) {
    }
 
    int n_variables = config.papi.counters.native_name.n_elements;
-   char **symbols = (char**)malloc((n_variables + N_BUILTIN_VARIABLES) * sizeof(char));
+   char **symbols = (char**)malloc((n_variables + N_BUILTIN_VARIABLES) * sizeof(char*));
    for (int i = 0; i < n_variables; i++) {
       symbols[i] = config.papi.counters.symbol.values[i];
    }
@@ -52,7 +52,6 @@ void vftr_papi_init (config_t config) {
    n_variables += N_BUILTIN_VARIABLES;
    
 
-   printf ("n_variables: %d\n", n_variables);
    vftrace.papi_state.calculator = vftr_init_papi_calculator (n_variables, n_observables,
                                    symbols,
                                    config.papi.observables.formula_expr.values);
