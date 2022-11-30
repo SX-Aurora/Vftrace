@@ -158,16 +158,21 @@ void vftr_print_config_accprof (FILE *fp, int level, config_accprof_t cfg_accpro
    fprintf(fp,"}");
 }
 
-void vftr_print_config_hardware_scenarios(FILE *fp, int level,
-                                          config_hardware_scenarios_t
-                                          cfg_hardware_scenarios) {
+void vftr_print_config_hwcounters (FILE *fp, int level, config_hwcounters_t cfg_hwc) {
+}
+
+void vftr_print_config_hwobservables (FILE *fp, int level, config_hwobservables_t cfg_hwobs) {
+}
+
+
+void vftr_print_config_papi (FILE *fp, int level, config_papi_t cfg_papi) {
    level++;
    vftr_print_config_indent(fp, level);
-   fprintf(fp, "\"%s\": {\n", cfg_hardware_scenarios.name);
-   vftr_print_config_bool(fp, level, cfg_hardware_scenarios.active);
-   fprintf(fp,"\n");
-   vftr_print_config_indent(fp, level);
-   fprintf(fp,"}");
+    fprintf (fp, "\"%s\": {\n", cfg_papi.name);
+   vftr_print_config_hwcounters (fp, level, cfg_papi.counters);
+   fprintf (fp, "\n");
+   vftr_print_config_hwobservables (fp, level, cfg_papi.observables);
+   fprintf (fp, "}"); 
 }
 
 void vftr_print_config(FILE *fp, config_t config, bool show_title) {
@@ -209,7 +214,7 @@ void vftr_print_config(FILE *fp, config_t config, bool show_title) {
    fprintf(fp, ",\n");
    vftr_print_config_cuda(fp, level, config.cuda);
    fprintf(fp, ",\n");
-   vftr_print_config_hardware_scenarios(fp, level, config.hardware_scenarios);
+   vftr_print_config_papi(fp, level, config.papi);
    fprintf(fp, "\n");
    fprintf(fp, "}\n");
 }

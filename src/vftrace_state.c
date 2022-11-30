@@ -255,14 +255,14 @@ unsigned long long vftr_sizeof_config_accprof_t(config_accprof_t cfg_accprof) {
    return size;
 }
 
-unsigned long long vftr_sizeof_config_hardware_scenarios_t(config_hardware_scenarios_t
-                                             cfg_hardware_scenarios) {
-   unsigned long long size = sizeof(config_hardware_scenarios_t);
-   size += vftr_sizeof_config_struct_defaults(cfg_hardware_scenarios.name);
-   size -= sizeof(config_bool_t);
-   size += vftr_sizeof_config_bool_t(cfg_hardware_scenarios.active);
-   return size;
-}
+//unsigned long long vftr_sizeof_config_hardware_scenarios_t(config_hardware_scenarios_t
+//                                             cfg_hardware_scenarios) {
+//   unsigned long long size = sizeof(config_hardware_scenarios_t);
+//   size += vftr_sizeof_config_struct_defaults(cfg_hardware_scenarios.name);
+//   size -= sizeof(config_bool_t);
+//   size += vftr_sizeof_config_bool_t(cfg_hardware_scenarios.active);
+//   return size;
+//}
 
 unsigned long long vftr_sizeof_config_t(config_t config) {
    unsigned long long size = sizeof(config_t);
@@ -290,8 +290,8 @@ unsigned long long vftr_sizeof_config_t(config_t config) {
    vftr_sizeof_config_mpi_t(config.mpi);
    size -= sizeof(config_cuda_t);
    vftr_sizeof_config_cuda_t(config.cuda);
-   size -= sizeof(config_hardware_scenarios_t);
-   vftr_sizeof_config_hardware_scenarios_t(config.hardware_scenarios);
+   //size -= sizeof(config_hardware_scenarios_t);
+   //vftr_sizeof_config_hardware_scenarios_t(config.hardware_scenarios);
    if (config.config_file_path != NULL) {
       size += strlen(config.config_file_path);
    }

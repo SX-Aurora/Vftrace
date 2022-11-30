@@ -152,7 +152,7 @@ libvftrace_la_CFLAGS += -D_ACCPROF
 endif
 
 if ENABLE_PAPI
-libvftrace_la_CFLAGS += -D_PAPI_AVAIL
+libvftrace_la_CFLAGS += -I${srcdir}/../external/tinyexpr -D_PAPI_AVAIL
 endif
 
 if HAS_LIBERTY

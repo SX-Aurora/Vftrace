@@ -14,7 +14,12 @@ void vftr_collate_papiprofiles (collated_stacktree_t *collstacktree_ptr,
       papiprofile_t copy_papiprof = stack->profiling.profiles[0].papiprof;
       papiprofile_t *collpapiprof = &(collstack->profile.papiprof);
      
-      collpapiprof->counters = (long long*)malloc (vftrace.papi_state.n_available_events * sizeof(long long));
-      memcpy (collpapiprof->counters, copy_papiprof.counters, vftrace.papi_state.n_available_events * sizeof(long long));
+      int n_events = PAPI_num_events (vftrace.papi_state.eventset);
+      collpapiprof->counters = (long long*)malloc (n_events * sizeof(long long));
+      //memcpy (collpapiprof->counters, copy_papiprof.counters, n_events * sizeof(long long));
+      for (int i = 0; i < n_events; i++) {
+         collpapiprof->counters[i] = copy_papiprof.counters[i];
+         //collpapiprof->counters[i] = 0;
+      }
    }
 }

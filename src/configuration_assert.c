@@ -317,11 +317,8 @@ void vftr_config_accprof_assert(FILE *fp, config_accprof_t cfg_accprof) {
    vftr_config_sort_table_assert(fp, cfg_accprof.sort_table, 5, valid_columns);
 }
 
-
-void vftr_config_hardware_scenarios_assert(FILE *fp,
-                                           config_hardware_scenarios_t
-                                           cfg_hardware_scenarios) {
-   vftr_config_active_assert(fp, cfg_hardware_scenarios.active);
+void vftr_config_papi_assert (FILE *fp, config_papi_t cfg_papi) {
+   //TBD
 }
 
 void vftr_config_assert(FILE *fp, config_t config) {
@@ -339,5 +336,5 @@ void vftr_config_assert(FILE *fp, config_t config) {
    vftr_config_mpi_assert(fp, config.mpi);
    vftr_config_cuda_assert(fp, config.cuda);
    vftr_config_accprof_assert(fp, config.accprof);
-   vftr_config_hardware_scenarios_assert(fp, config.hardware_scenarios);
+   vftr_config_papi_assert(fp, config.papi);
 }

@@ -119,6 +119,9 @@ void vftr_profile_free(profile_t* profiles_ptr, int profID) {
 #ifdef _ACCPROF
    vftr_accprofiling_free (&(profile_ptr->accprof));
 #endif
+#ifdef _PAPI_AVAIL
+   vftr_papiprofiling_free (&(profile_ptr->papiprof));
+#endif
    // Add further profiles here.
    SELF_PROFILE_END_FUNCTION;
 }

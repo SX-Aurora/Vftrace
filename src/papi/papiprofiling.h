@@ -8,4 +8,6 @@
 papiprofile_t vftr_new_papiprofiling();
 
 void vftr_accumulate_papiprofiling (papiprofile_t *prof, bool is_entry);
+
+void vftr_papiprofiling_free (papiprofile_t *prof_ptr);
 #endif

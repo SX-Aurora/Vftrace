@@ -76,6 +76,12 @@ void vftr_initialize(void *func, void *call_site) {
                                          vftrace.config.demangle_cxx.value);
 #endif
 
+      // We need to init PAPI before the first profile is allocated, because
+      // it needs the number of registered PAPI counters.
+#ifdef _PAPI_AVAIL
+      vftr_papi_init(vftrace.config);
+      //vftr_papi_show_avail_events (stdout);
+#endif
 
       // initialize the dynamic process data
       vftrace.process = vftr_new_process();
@@ -111,10 +117,6 @@ void vftr_initialize(void *func, void *call_site) {
       vftr_init_accprof();
 #endif
 
-#ifdef _PAPI_AVAIL
-      vftr_papi_init();
-      vftr_papi_show_avail_events (stdout);
-#endif
       // set the finalize function to be executed at the termination of the program
       atexit(vftr_finalize);
 

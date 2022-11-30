@@ -5,6 +5,8 @@
 
 #include <papi.h>
 
+#include "papi_calculator.h"
+
 typedef struct {
    int eventset;
    int n_available_events;
@@ -12,6 +14,7 @@ typedef struct {
    char **event_names;
    char **event_units;
    char **event_descriptions;
+   papi_calculator_t calculator;
 } papi_state_t;
 
 #endif

@@ -31,6 +31,12 @@ typedef struct {
 
 typedef struct {
    CONFIG_STRUCT_DEFAULTS
+   int n_elements;
+   char **values;
+} config_string_list_t;
+
+typedef struct {
+   CONFIG_STRUCT_DEFAULTS
    char *value;
    regex_t *regex;
 } config_regex_t;
@@ -91,8 +97,22 @@ typedef struct {
 
 typedef struct {
    CONFIG_STRUCT_DEFAULTS
-   config_bool_t active;
-} config_hardware_scenarios_t;
+   config_string_list_t native_name;
+   config_string_list_t symbol;
+} config_hwcounters_t;
+
+typedef struct {
+   CONFIG_STRUCT_DEFAULTS
+   config_string_list_t obs_name;
+   config_string_list_t formula_expr;
+   config_string_list_t unit;
+} config_hwobservables_t;
+
+typedef struct {
+   CONFIG_STRUCT_DEFAULTS
+   config_hwcounters_t counters;
+   config_hwobservables_t observables;
+} config_papi_t;
 
 typedef struct {
    config_bool_t off;
@@ -109,7 +129,7 @@ typedef struct {
    config_mpi_t mpi;
    config_cuda_t cuda;
    config_accprof_t accprof;
-   config_hardware_scenarios_t hardware_scenarios;
+   config_papi_t papi;
    bool valid;
    char *config_file_path;
 } config_t;
