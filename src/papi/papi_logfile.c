@@ -70,6 +70,9 @@ void vftr_write_papi_table (FILE *fp, collated_stacktree_t stacktree, config_t c
  
    vftr_table_free(&table);
 
+   free (calls);
+   free (func);
+   free (observables);
    //for (int i = 0; i < stacktree.nstacks; i++) {
    //   papiprofile_t papiprof = stacktree.stacks[i].profile.papiprof;
    //   collated_callprofile_t callprof = stacktree.stacks[i].profile.callprof;
@@ -92,6 +95,26 @@ void vftr_write_papi_table (FILE *fp, collated_stacktree_t stacktree, config_t c
    //   }
    //}
    //free(counters);
+}
+
+void vftr_write_papi_counter_summary (FILE *fp, collated_stacktree_t stacktree, config_t config) {
+   int n_events = PAPI_num_events (vftrace.papi_state.eventset);
+   long long *counter_sum = (long long*)malloc(n_events * sizeof(long long));
+   memset (counter_sum, 0, n_events * sizeof(long long));
+   for (int istack = 0; istack < stacktree.nstacks; istack++) {
+      collated_stack_t this_stack = stacktree.stacks[istack]; 
+      papiprofile_t papiprof = this_stack.profile.papiprof;
+
+      for (int e = 0; e < n_events; e++) {
+         counter_sum[e] += papiprof.counters[e]; 
+      }
+   }
+
+   fprintf (fp, "Total PAPI counters: \n\n");
+   for (int e = 0; e < n_events; e++) {
+      fprintf (fp, "  %s: %lld\n",  config.papi.counters.native_name.values[e], counter_sum[e]);
+   }
+   free (counter_sum);
 }
 
 void vftr_write_event_descriptions (FILE *fp) {

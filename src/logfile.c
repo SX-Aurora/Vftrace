@@ -122,11 +122,6 @@ void vftr_write_logfile(vftrace_t vftrace, long long runtime) {
 
    vftr_write_logfile_global_stack_list(fp, vftrace.process.collated_stacktree);
 
-   // print config info
-   if (vftrace.config.print_config.value) {
-      vftr_print_config(fp, vftrace.config, true);
-   }
-
 #ifdef _CUDA
    if (vftrace.config.cuda.show_table.value) {
       vftr_write_logfile_cbid_names (fp, vftrace.process.collated_stacktree);
@@ -138,8 +133,14 @@ void vftr_write_logfile(vftrace_t vftrace, long long runtime) {
 #endif
 
 #ifdef _PAPI_AVAIL
-   vftr_write_event_descriptions (fp);
+   //vftr_write_event_descriptions (fp);
+   vftr_write_papi_counter_summary (fp, vftrace.process.collated_stacktree, vftrace.config);
 #endif
+
+   // print config info
+   if (vftrace.config.print_config.value) {
+      vftr_print_config(fp, vftrace.config, true);
+   }
 
    fclose(fp);
    free(logfilename);
