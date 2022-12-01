@@ -44,7 +44,6 @@ void vftr_write_papi_table (FILE *fp, collated_stacktree_t stacktree, config_t c
       vftr_set_papi_calculator_builtin (&(vftrace.papi_state.calculator),
                                             PCALC_ONE, 1.0);
 
-      vftr_print_papi_calculator_state (vftrace.papi_state.calculator);
       for (int i = 0; i < n_observables; i++) {
          observables[i][istack] = vftr_papi_calculator_evaluate (vftrace.papi_state.calculator, i);   
       }
@@ -73,28 +72,6 @@ void vftr_write_papi_table (FILE *fp, collated_stacktree_t stacktree, config_t c
    free (calls);
    free (func);
    free (observables);
-   //for (int i = 0; i < stacktree.nstacks; i++) {
-   //   papiprofile_t papiprof = stacktree.stacks[i].profile.papiprof;
-   //   collated_callprofile_t callprof = stacktree.stacks[i].profile.callprof;
-   //   fprintf (fp, "StackID %d: \n", i);
-   //   for (int e = 0; e < n_events; e++) {
-   //      fprintf (fp, "    %s: %lld / %lld\n", config.papi.counters.native_name.values[e],
-   //                                            papiprof.counters[e], callprof.time_excl_nsec);
-   //   }
-   //       
-   //   vftr_set_papi_calculator_counters (&(vftrace.papi_state.calculator), papiprof.counters);
-   //   vftr_set_papi_calculator_counter_dbl (&(vftrace.papi_state.calculator),
-   //                                         PCALC_T, (double)callprof.time_excl_nsec * 1e-9);
-   //   vftr_set_papi_calculator_counter_dbl (&(vftrace.papi_state.calculator),
-   //                                         PCALC_ONE, 1.0);
-
-   //   vftr_print_papi_calculator_state (vftrace.papi_state.calculator);
-
-   //   for (int e = 0; e < n_events; e++) {
-   //      printf ("Observable: %lf\n", vftr_papi_calculator_evaluate (vftrace.papi_state.calculator, e));
-   //   }
-   //}
-   //free(counters);
 }
 
 void vftr_write_papi_counter_summary (FILE *fp, collated_stacktree_t stacktree, config_t config) {

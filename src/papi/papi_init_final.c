@@ -54,8 +54,6 @@ void vftr_papi_init (config_t config) {
                                    config.papi.observables.formula_expr.values);
    free(symbols);
 
-   vftr_print_papi_calculator_state (vftrace.papi_state.calculator);
-
    //int event_code = 0 | PAPI_PRESET_MASK;
    //int n_events = 0;
    //PAPI_event_info_t info;
