@@ -27,16 +27,18 @@ void vftr_papi_init (config_t config) {
    
    if (PAPI_create_eventset(&vftrace.papi_state.eventset) != PAPI_OK) return;
 
-   int *event_codes = (int*)malloc (config.papi.counters.native_name.n_elements * sizeof(int));
    for (int i = 0; i < config.papi.counters.native_name.n_elements; i++) {
-      int tmp;
-      int stat = PAPI_event_name_to_code (config.papi.counters.native_name.values[i], &tmp);
-      event_codes[i] = stat == PAPI_OK ? tmp : -1;
-      if (event_codes[i] != -1) {
-         if (PAPI_add_event(vftrace.papi_state.eventset, event_codes[i]) != PAPI_OK) {
-            printf ("Warning: Could not add %s (%d)\n", config.papi.counters.native_name.values[i],
-                    event_codes[i]);
-         }
+      char *counter_name = config.papi.counters.native_name.values[i];
+      int event_code;
+      int stat = PAPI_event_name_to_code (counter_name, &event_code);
+      if (stat != PAPI_OK) {
+            fprintf (stderr, "Vftrace error in %s: \n", config.config_file_path);
+            fprintf (stderr, "  No event code exists for the native PAPI counter %s.\n", counter_name);
+            fprintf (stderr, "  Check \"papi_native_avail\" if this counter exists on the platform"
+                             "you are running the application on.\n");
+            abort();
+      } else {
+         PAPI_add_event(vftrace.papi_state.eventset, event_code);
       }
    }
 
@@ -45,13 +47,9 @@ void vftr_papi_init (config_t config) {
    for (int i = 0; i < n_variables; i++) {
       symbols[i] = config.papi.counters.symbol.values[i];
    }
-   //for (int i = 0; i < N_BUILTIN_VARIABLES; i++) {
-   //   symbols[n_variables + i] = builtin_variables[i];
-   //}
-   //n_variables += N_BUILTIN_VARIABLES;
-   
 
-   vftrace.papi_state.calculator = vftr_init_papi_calculator (n_variables, n_observables,
+   printf ("INIT calc: %d\n", n_variables);
+   vftrace.papi_state.calculator = vftr_init_papi_calculator (config, n_variables, n_observables,
                                    symbols,
                                    config.papi.observables.formula_expr.values);
    free(symbols);

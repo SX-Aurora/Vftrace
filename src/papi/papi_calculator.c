@@ -4,7 +4,7 @@
 
 #include "papi_calculator.h"
 
-papi_calculator_t vftr_init_papi_calculator (int n_variables, int n_observables,
+papi_calculator_t vftr_init_papi_calculator (config_t config, int n_variables, int n_observables,
                                              char **symbols, char **formulas) {
    papi_calculator_t calc;
 
@@ -35,8 +35,13 @@ papi_calculator_t vftr_init_papi_calculator (int n_variables, int n_observables,
    for (int i = 0; i < n_observables; i++) {
       calc.expr[i] = te_compile (formulas[i], calc.te_vars, calc.n_te_vars, &err);
       if (!calc.expr[i]) {
-         printf ("Error compiling formula:\n%s\n", formulas[i]);
-         printf ("%*s^\n", err - 1, "");
+         fprintf (stderr, "Vftrace error in %s: \n", config.config_file_path);
+         fprintf (stderr, "  Formula for %s could not be compiled.\n",
+                  config.papi.observables.obs_name.values[i]);
+         fprintf (stderr, "  %s\n", formulas[i]);
+         fprintf (stderr, "  %*s^\n", err - 1, "");
+         fprintf (stderr, "  Possible reasons: Symbol does not exist, or syntax error.\n");
+         abort();
       }
    } 
    return calc;

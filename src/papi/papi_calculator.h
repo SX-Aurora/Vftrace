@@ -1,6 +1,8 @@
 #ifndef PAPI_CALCULATOR_H
 #define PAPI_CALCULATOR_H
 
+#include "configuration_types.h"
+
 #include "tinyexpr.h"
 
 #define CALC_N_BUILTIN 2
@@ -19,7 +21,7 @@ typedef struct {
    te_expr **expr; 
 } papi_calculator_t;
 
-papi_calculator_t vftr_init_papi_calculator (int n_variables, int n_observables,
+papi_calculator_t vftr_init_papi_calculator (config_t config, int n_variables, int n_observables,
                                              char **symbols, char **formulas);
 
 void vftr_set_papi_calculator_counters (papi_calculator_t *calc, long long *values);
