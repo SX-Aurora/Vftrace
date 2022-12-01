@@ -9,4 +9,8 @@ void vftr_veda_callback_mem_cpy_dtoh_enter(VEDAprofiler_data* data);
 
 void vftr_veda_callback_mem_cpy_dtoh_exit(VEDAprofiler_data* data);
 
+void vftr_veda_callback_mem_cpy_dtoh_async_enter(VEDAprofiler_data* data);
+
+void vftr_veda_callback_mem_cpy_dtoh_async_exit(VEDAprofiler_data* data);
+
 #endif
