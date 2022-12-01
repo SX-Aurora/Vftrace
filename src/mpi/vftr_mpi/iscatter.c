@@ -67,7 +67,7 @@ int vftr_MPI_Iscatter(const void *sendbuf, int sendcount,
 
    thread_t *my_thread = vftr_get_my_thread(&(vftrace.process.threadtree));
    threadstack_t *my_threadstack = vftr_get_my_threadstack(my_thread);
-   stack_t *my_stack = vftrace.process.stacktree.stacks+my_threadstack->stackID;
+   vftr_stack_t *my_stack = vftrace.process.stacktree.stacks+my_threadstack->stackID;
    profile_t *my_profile = vftr_get_my_profile(my_stack, my_thread);
    long long t2end = vftr_get_runtime_nsec();
 
@@ -135,7 +135,7 @@ int vftr_MPI_Iscatter_inplace(const void *sendbuf, int sendcount,
 
    thread_t *my_thread = vftr_get_my_thread(&(vftrace.process.threadtree));
    threadstack_t *my_threadstack = vftr_get_my_threadstack(my_thread);
-   stack_t *my_stack = vftrace.process.stacktree.stacks+my_threadstack->stackID;
+   vftr_stack_t *my_stack = vftrace.process.stacktree.stacks+my_threadstack->stackID;
    profile_t *my_profile = vftr_get_my_profile(my_stack, my_thread);
    long long t2end = vftr_get_runtime_nsec();
 
@@ -200,7 +200,7 @@ int vftr_MPI_Iscatter_intercom(const void *sendbuf, int sendcount,
 
    thread_t *my_thread = vftr_get_my_thread(&(vftrace.process.threadtree));
    threadstack_t *my_threadstack = vftr_get_my_threadstack(my_thread);
-   stack_t *my_stack = vftrace.process.stacktree.stacks+my_threadstack->stackID;
+   vftr_stack_t *my_stack = vftrace.process.stacktree.stacks+my_threadstack->stackID;
    profile_t *my_profile = vftr_get_my_profile(my_stack, my_thread);
    long long t2end = vftr_get_runtime_nsec();
 

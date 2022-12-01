@@ -18,10 +18,10 @@
 #include "tables.h"
 #include "sorting.h"
 
-int *vftr_ranklogfile_mpi_table_nmessages_list(int nstacks, stack_t **stack_ptrs) {
+int *vftr_ranklogfile_mpi_table_nmessages_list(int nstacks, vftr_stack_t **stack_ptrs) {
    int *nmessages_list = (int*) malloc(nstacks*sizeof(int));
    for (int istack=0; istack<nstacks; istack++) {
-      stack_t *stack_ptr = stack_ptrs[istack];
+      vftr_stack_t *stack_ptr = stack_ptrs[istack];
       nmessages_list[istack] = 0;
       for (int iprof=0; iprof<stack_ptr->profiling.nprofiles; iprof++) {
          profile_t *prof_ptr = stack_ptr->profiling.profiles+iprof;
@@ -32,10 +32,10 @@ int *vftr_ranklogfile_mpi_table_nmessages_list(int nstacks, stack_t **stack_ptrs
    return nmessages_list;
 }
 
-double *vftr_ranklogfile_mpi_table_average_send_bytes_list(int nstacks, stack_t **stack_ptrs) {
+double *vftr_ranklogfile_mpi_table_average_send_bytes_list(int nstacks, vftr_stack_t **stack_ptrs) {
    double *avg_send_bytes_list = (double*) malloc(nstacks*sizeof(double));
    for (int istack=0; istack<nstacks; istack++) {
-      stack_t *stack_ptr = stack_ptrs[istack];
+      vftr_stack_t *stack_ptr = stack_ptrs[istack];
       avg_send_bytes_list[istack] = 0.0;
       int nmessages = 0;
       for (int iprof=0; iprof<stack_ptr->profiling.nprofiles; iprof++) {
@@ -52,10 +52,10 @@ double *vftr_ranklogfile_mpi_table_average_send_bytes_list(int nstacks, stack_t 
    return avg_send_bytes_list;
 }
 
-double *vftr_ranklogfile_mpi_table_average_recv_bytes_list(int nstacks, stack_t **stack_ptrs) {
+double *vftr_ranklogfile_mpi_table_average_recv_bytes_list(int nstacks, vftr_stack_t **stack_ptrs) {
    double *avg_recv_bytes_list = (double*) malloc(nstacks*sizeof(double));
    for (int istack=0; istack<nstacks; istack++) {
-      stack_t *stack_ptr = stack_ptrs[istack];
+      vftr_stack_t *stack_ptr = stack_ptrs[istack];
       avg_recv_bytes_list[istack] = 0.0;
       int nmessages = 0;
       for (int iprof=0; iprof<stack_ptr->profiling.nprofiles; iprof++) {
@@ -72,10 +72,10 @@ double *vftr_ranklogfile_mpi_table_average_recv_bytes_list(int nstacks, stack_t 
    return avg_recv_bytes_list;
 }
 
-double *vftr_ranklogfile_mpi_table_average_send_bw_list(int nstacks, stack_t **stack_ptrs) {
+double *vftr_ranklogfile_mpi_table_average_send_bw_list(int nstacks, vftr_stack_t **stack_ptrs) {
    double *avg_send_bw_list = (double*) malloc(nstacks*sizeof(double));
    for (int istack=0; istack<nstacks; istack++) {
-      stack_t *stack_ptr = stack_ptrs[istack];
+      vftr_stack_t *stack_ptr = stack_ptrs[istack];
       avg_send_bw_list[istack] = 0.0;
       int nmessages = 0;
       for (int iprof=0; iprof<stack_ptr->profiling.nprofiles; iprof++) {
@@ -92,10 +92,10 @@ double *vftr_ranklogfile_mpi_table_average_send_bw_list(int nstacks, stack_t **s
    return avg_send_bw_list;
 }
 
-double *vftr_ranklogfile_mpi_table_average_recv_bw_list(int nstacks, stack_t **stack_ptrs) {
+double *vftr_ranklogfile_mpi_table_average_recv_bw_list(int nstacks, vftr_stack_t **stack_ptrs) {
    double *avg_recv_bw_list = (double*) malloc(nstacks*sizeof(double));
    for (int istack=0; istack<nstacks; istack++) {
-      stack_t *stack_ptr = stack_ptrs[istack];
+      vftr_stack_t *stack_ptr = stack_ptrs[istack];
       avg_recv_bw_list[istack] = 0.0;
       int nmessages = 0;
       for (int iprof=0; iprof<stack_ptr->profiling.nprofiles; iprof++) {
@@ -112,10 +112,10 @@ double *vftr_ranklogfile_mpi_table_average_recv_bw_list(int nstacks, stack_t **s
    return avg_recv_bw_list;
 }
 
-double *vftr_ranklogfile_mpi_table_average_comm_time_list(int nstacks, stack_t **stack_ptrs) {
+double *vftr_ranklogfile_mpi_table_average_comm_time_list(int nstacks, vftr_stack_t **stack_ptrs) {
    double *avg_comm_time_list = (double*) malloc(nstacks*sizeof(double));
    for (int istack=0; istack<nstacks; istack++) {
-      stack_t *stack_ptr = stack_ptrs[istack];
+      vftr_stack_t *stack_ptr = stack_ptrs[istack];
       avg_comm_time_list[istack] = 0.0;
       int nmessages = 0;
       long long tot_time = 0;
@@ -134,20 +134,20 @@ double *vftr_ranklogfile_mpi_table_average_comm_time_list(int nstacks, stack_t *
    return avg_comm_time_list;
 }
 
-char **vftr_ranklogfile_mpi_table_stack_function_name_list(int nstacks, stack_t **stack_ptrs) {
+char **vftr_ranklogfile_mpi_table_stack_function_name_list(int nstacks, vftr_stack_t **stack_ptrs) {
    char **name_list = (char**) malloc(nstacks*sizeof(char*));
    for (int istack=0; istack<nstacks; istack++) {
-      stack_t *stack_ptr = stack_ptrs[istack];
+      vftr_stack_t *stack_ptr = stack_ptrs[istack];
       name_list[istack] = stack_ptr->name;
    }
    return name_list;
 }
 
 char **vftr_ranklogfile_mpi_table_stack_caller_name_list(int nstacks, stacktree_t stacktree,
-                                                     stack_t **stack_ptrs) {
+                                                     vftr_stack_t **stack_ptrs) {
    char **name_list = (char**) malloc(nstacks*sizeof(char*));
    for (int istack=0; istack<nstacks; istack++) {
-      stack_t *stack_ptr = stack_ptrs[istack];
+      vftr_stack_t *stack_ptr = stack_ptrs[istack];
       int callerID = stack_ptr->caller;
       if (callerID >= 0) {
          name_list[istack] = stacktree.stacks[callerID].name;
@@ -158,22 +158,22 @@ char **vftr_ranklogfile_mpi_table_stack_caller_name_list(int nstacks, stacktree_
    return name_list;
 }
 
-char **vftr_ranklogfile_mpi_table_callpath_list(int nstacks, stack_t **stack_ptrs,
+char **vftr_ranklogfile_mpi_table_callpath_list(int nstacks, vftr_stack_t **stack_ptrs,
                                             stacktree_t stacktree) {
    char **path_list = (char**) malloc(nstacks*sizeof(char*));
    for (int istack=0; istack<nstacks; istack++) {
-      stack_t *stack_ptr = stack_ptrs[istack];
+      vftr_stack_t *stack_ptr = stack_ptrs[istack];
       int stackid = stack_ptr->lid;
       path_list[istack] = vftr_get_stack_string(stacktree, stackid, false);
    }
    return path_list;
 }
 
-int *vftr_ranklogfile_mpi_table_stack_globalstackID_list(int nstacks, stack_t **stack_ptrs) {
+int *vftr_ranklogfile_mpi_table_stack_globalstackID_list(int nstacks, vftr_stack_t **stack_ptrs) {
    int *id_list = (int*) malloc(nstacks*sizeof(int));
    int listidx = 0;
    for (int istack=0; istack<nstacks; istack++) {
-      stack_t *stack_ptr = stack_ptrs[istack];
+      vftr_stack_t *stack_ptr = stack_ptrs[istack];
       for (int iprof=0; iprof<stack_ptr->profiling.nprofiles; iprof++) {
          profile_t *prof_ptr = stack_ptr->profiling.profiles+iprof;
          if (prof_ptr->mpiprof.nsendmessages > 0 ||
@@ -191,7 +191,7 @@ int vftr_ranklogfile_mpi_table_nrows(stacktree_t stacktree) {
    int nstacks = stacktree.nstacks;
    int nrows = 0;
    for (int istack=0; istack<nstacks; istack++) {
-      stack_t *stack_ptr = stacktree.stacks+istack;
+      vftr_stack_t *stack_ptr = stacktree.stacks+istack;
       for (int iprof=0; iprof<stack_ptr->profiling.nprofiles; iprof++) {
          profile_t *prof_ptr = stack_ptr->profiling.profiles+iprof;
          if (prof_ptr->mpiprof.nsendmessages > 0 ||
@@ -204,12 +204,12 @@ int vftr_ranklogfile_mpi_table_nrows(stacktree_t stacktree) {
    return nrows;
 }
 
-stack_t **vftr_ranklogfile_mpi_table_get_relevant_stacks(int nrows,
+vftr_stack_t **vftr_ranklogfile_mpi_table_get_relevant_stacks(int nrows,
                                                      stacktree_t stacktree) {
-   stack_t **selected_stacks = (stack_t**) malloc(nrows*sizeof(stack_t));
+   vftr_stack_t **selected_stacks = (vftr_stack_t**) malloc(nrows*sizeof(vftr_stack_t));
    int irow = 0;
    for (int istack=0; istack<stacktree.nstacks; istack++) {
-      stack_t *stack_ptr = stacktree.stacks+istack;
+      vftr_stack_t *stack_ptr = stacktree.stacks+istack;
       for (int iprof=0; iprof<stack_ptr->profiling.nprofiles; iprof++) {
          profile_t *prof_ptr = stack_ptr->profiling.profiles+iprof;
          if (prof_ptr->mpiprof.nsendmessages > 0 ||
@@ -227,7 +227,7 @@ void vftr_write_ranklogfile_mpi_table(FILE *fp, stacktree_t stacktree,
                                       config_t config) {
    SELF_PROFILE_START_FUNCTION;
    int nrows = vftr_ranklogfile_mpi_table_nrows(stacktree);
-   stack_t **selected_stacks =
+   vftr_stack_t **selected_stacks =
       vftr_ranklogfile_mpi_table_get_relevant_stacks(nrows, stacktree);
    vftr_sort_stacks_for_mpiprof(config, nrows, selected_stacks);
 

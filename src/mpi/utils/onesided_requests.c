@@ -59,7 +59,7 @@ void vftr_clear_completed_onesided_request(vftr_request_t *request) {
       // by the register routine
       // Get the thread that called the function
       thread_t *my_thread = vftrace.process.threadtree.threads+request->callingthreadID;
-      stack_t *my_stack = vftrace.process.stacktree.stacks+request->callingstackID;
+      vftr_stack_t *my_stack = vftrace.process.stacktree.stacks+request->callingstackID;
       profile_t *my_profile = vftr_get_my_profile(my_stack, my_thread);
 
       // accumulate information for later use in the log file statistics

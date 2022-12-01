@@ -73,7 +73,7 @@ int vftr_MPI_Ineighbor_alltoallw_graph(const void *sendbuf, const int *sendcount
 
    thread_t *my_thread = vftr_get_my_thread(&(vftrace.process.threadtree));
    threadstack_t *my_threadstack = vftr_get_my_threadstack(my_thread);
-   stack_t *my_stack = vftrace.process.stacktree.stacks+my_threadstack->stackID;
+   vftr_stack_t *my_stack = vftrace.process.stacktree.stacks+my_threadstack->stackID;
    profile_t *my_profile = vftr_get_my_profile(my_stack, my_thread);
    long long t2end = vftr_get_runtime_nsec();
 
@@ -137,7 +137,7 @@ int vftr_MPI_Ineighbor_alltoallw_cart(const void *sendbuf, const int *sendcounts
 
    thread_t *my_thread = vftr_get_my_thread(&(vftrace.process.threadtree));
    threadstack_t *my_threadstack = vftr_get_my_threadstack(my_thread);
-   stack_t *my_stack = vftrace.process.stacktree.stacks+my_threadstack->stackID;
+   vftr_stack_t *my_stack = vftrace.process.stacktree.stacks+my_threadstack->stackID;
    profile_t *my_profile = vftr_get_my_profile(my_stack, my_thread);
    long long t2end = vftr_get_runtime_nsec();
 
@@ -219,7 +219,7 @@ int vftr_MPI_Ineighbor_alltoallw_dist_graph(const void *sendbuf, const int *send
 
    thread_t *my_thread = vftr_get_my_thread(&(vftrace.process.threadtree));
    threadstack_t *my_threadstack = vftr_get_my_threadstack(my_thread);
-   stack_t *my_stack = vftrace.process.stacktree.stacks+my_threadstack->stackID;
+   vftr_stack_t *my_stack = vftrace.process.stacktree.stacks+my_threadstack->stackID;
    profile_t *my_profile = vftr_get_my_profile(my_stack, my_thread);
    long long t2end = vftr_get_runtime_nsec();
 

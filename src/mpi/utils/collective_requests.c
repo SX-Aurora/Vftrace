@@ -67,7 +67,7 @@ void vftr_clear_completed_collective_request(vftr_request_t *request) {
 
       // Get the thread that called the function
       thread_t *my_thread = vftrace.process.threadtree.threads+request->callingthreadID;
-      stack_t *my_stack = vftrace.process.stacktree.stacks+request->callingstackID;
+      vftr_stack_t *my_stack = vftrace.process.stacktree.stacks+request->callingstackID;
       profile_t *my_profile = vftr_get_my_profile(my_stack, my_thread);
 
       // Every rank should already be translated to the global rank
