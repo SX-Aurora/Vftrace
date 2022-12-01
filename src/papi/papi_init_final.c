@@ -41,15 +41,14 @@ void vftr_papi_init (config_t config) {
    }
 
    int n_variables = config.papi.counters.native_name.n_elements;
-   char **symbols = (char**)malloc((n_variables + N_BUILTIN_VARIABLES) * sizeof(char*));
+   char **symbols = (char**)malloc(n_variables * sizeof(char*));
    for (int i = 0; i < n_variables; i++) {
       symbols[i] = config.papi.counters.symbol.values[i];
    }
-   //symbols[n_variables - 1] = strdup("T");
-   for (int i = 0; i < N_BUILTIN_VARIABLES; i++) {
-      symbols[n_variables + i] = builtin_variables[i];
-   }
-   n_variables += N_BUILTIN_VARIABLES;
+   //for (int i = 0; i < N_BUILTIN_VARIABLES; i++) {
+   //   symbols[n_variables + i] = builtin_variables[i];
+   //}
+   //n_variables += N_BUILTIN_VARIABLES;
    
 
    vftrace.papi_state.calculator = vftr_init_papi_calculator (n_variables, n_observables,

@@ -9,7 +9,7 @@ libvftr_papi_la_SOURCES += papi_init_final.c \
                            papi_logfile.c
 
 # -D_PAPI conflicts with PAPI headers.
-libvftr_papi_la_CFLAGS = -I${srcdir}/../ -I${srcdir}/../../external/tinyexpr -D_PAPI_AVAIL 
+libvftr_papi_la_CFLAGS = -I${srcdir}/../ -I${srcdir}/../sorting -I${srcdir}/../../external/tinyexpr -D_PAPI_AVAIL 
 
 if HAS_LIBERTY
 libvftr_papi_la_CFLAGS += -D_LIBERTY
