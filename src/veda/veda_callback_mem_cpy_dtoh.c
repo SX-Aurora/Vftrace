@@ -58,6 +58,7 @@ void vftr_veda_callback_mem_cpy_dtoh_enter(VEDAprofiler_data* data) {
 }
 
 void vftr_veda_callback_mem_cpy_dtoh_exit(VEDAprofiler_data* data) {
+   const char *callbackname = "vedaMemcpyDtoH";
    vftr_veda_region_end(callbackname);
    long long tstart_callback = vftr_get_runtime_nsec();
    long long memcpy_end_time = tstart_callback;
