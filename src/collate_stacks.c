@@ -539,6 +539,10 @@ char *vftr_get_collated_stack_string(collated_stacktree_t stacktree,
    return stackstring;
 }
 
+bool vftr_collstack_is_init (collated_stack_t stack) {
+   return stack.local_stack != NULL && stack.local_stack->lid == 0;
+}
+
 void vftr_print_name_grouped_collated_stack(FILE *fp, 
                                             collated_stacktree_t stacktree,
                                             int stackid) {

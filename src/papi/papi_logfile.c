@@ -22,7 +22,11 @@ void vftr_write_papi_table (FILE *fp, collated_stacktree_t stacktree, config_t c
 
    int n_observables = vftrace.papi_state.calculator.n_observables;
 
-   int n_without_init = stacktree.nstacks - 1;
+   int n_without_init = 0;
+   for (int istack = 0; istack < stacktree.nstacks; istack++) {
+      collated_stack_t *this_stack = sorted_stacks[istack];
+      if (!vftr_collstack_is_init(this_stack)) n_without_init++;
+   }
    int *calls = (int*)malloc(n_without_init * sizeof(int));
    char **func = (char**)malloc(n_without_init * sizeof(char*));
    double **observables = (double**)malloc(n_observables * sizeof(double*));
@@ -33,7 +37,7 @@ void vftr_write_papi_table (FILE *fp, collated_stacktree_t stacktree, config_t c
    int idx = 0;
    for (int istack = 0; istack < stacktree.nstacks; istack++) {
       collated_stack_t *this_stack = sorted_stacks[istack];
-      if (this_stack->local_stack->lid == 0) continue; // Skip init
+      if (vftr_collstack_is_init(this_stack)) continue;
       collated_callprofile_t callprof = this_stack->profile.callprof;
       papiprofile_t papiprof = this_stack->profile.papiprof;
 
