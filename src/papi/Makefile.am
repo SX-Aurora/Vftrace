@@ -11,6 +11,10 @@ libvftr_papi_la_SOURCES += papi_init_final.c \
 # -D_PAPI conflicts with PAPI headers.
 libvftr_papi_la_CFLAGS = -I${srcdir}/../ -I${srcdir}/../sorting -I${srcdir}/../../external/tinyexpr -D_PAPI_AVAIL 
 
+if ENABLE_MPI
+libvftr_papi_la_CFLAGS += -D_MPI -I${srcdir}/../mpi/utils
+endif
+
 if HAS_LIBERTY
 libvftr_papi_la_CFLAGS += -D_LIBERTY
 endif
