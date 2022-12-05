@@ -20,6 +20,9 @@
 #ifdef _ACCPROF
 #include "accprof_ranklogfile.h"
 #endif
+#ifdef _PAPI_AVAIL
+#include "papi_ranklogfile.h"
+#endif
 
 
 static bool vftr_rank_needs_ranklogfile(config_t config, int rank) {
@@ -117,6 +120,10 @@ void vftr_write_ranklogfile(vftrace_t vftrace, long long runtime) {
          vftr_write_ranklogfile_accprof_event_table (fp, vftrace.process.stacktree, vftrace.config);
       }
    }
+#endif
+
+#ifdef _PAPI_AVAIL
+   vftr_write_ranklogfile_papi_table (fp, vftrace.process.stacktree, vftrace.config);
 #endif
 
    vftr_write_logfile_global_stack_list(fp, vftrace.process.collated_stacktree);

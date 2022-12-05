@@ -6,7 +6,8 @@ libvftr_papi_la_SOURCES += papi_init_final.c \
                            papi_calculator.c \
                            papiprofiling.c \
 			   collate_papiprofiles.c \
-                           papi_logfile.c
+                           papi_logfile.c \
+		  	   papi_ranklogfile.c
 
 # -D_PAPI conflicts with PAPI headers.
 libvftr_papi_la_CFLAGS = -I${srcdir}/../ -I${srcdir}/../sorting -I${srcdir}/../../external/tinyexpr -D_PAPI_AVAIL 
