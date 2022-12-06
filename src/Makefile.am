@@ -135,10 +135,6 @@ if ENABLE_CUDAPROF
 libvftrace_la_CFLAGS += -D_CUDA
 endif
 
-if ENABLE_ACCPROF
-libvftrace_la_CFLAGS += -D_ACCPROF
-endif
-
 if HAS_LIBERTY
 libvftrace_la_CFLAGS += -D_LIBERTY
 endif

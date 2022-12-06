@@ -9,5 +9,3 @@ libvftr_accprof_la_SOURCES += accprof_callbacks.c \
 			      collate_accprofiles.c \
 			      accprof_logfile.c \
 			      accprof_ranklogfile.c
-
-libvftr_accprof_la_CFLAGS = -I${srcdir}/../ -I${srcdir}/../sorting -D_ACCPROF

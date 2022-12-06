@@ -25,6 +25,14 @@ AC_DEFUN([AX_ENABLE_ACCPROF], [
       [AM_COND_IF([HAS_NVIDIA_COMPILER], [], [AC_MSG_FAILURE([Need NVIDIA compiler])])], [], [])
 
    AC_MSG_RESULT(${with_accprof_present})
+
+   # Set the -D flag for the preprocessor globally
+   AM_COND_IF([ENABLE_ACCPROF], [
+      AX_APPEND_FLAG([-D_ACCPROF], [CFLAGS])
+      AX_APPEND_FLAG([-D_ACCPROF], [CPPFLAGS])
+      AX_APPEND_FLAG([-I$(realpath ${srcdir}/src/accprof)], [CFLAGS])
+   ])
+
    AM_COND_IF([ENABLE_ACCPROF],
       [AX_APPEND_FLAG([-L${with_accprof}/lib], [LDFLAGS])])
    AM_COND_IF([ENABLE_ACCPROF],

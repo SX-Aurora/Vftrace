@@ -8,7 +8,6 @@ libvftr_sorting_la_SOURCES = sort_utils.c \
 INCLUDE_FLAGS =
 INCLUDE_FLAGS += -D_OMP -I${srcdir}/../omp/
 INCLUDE_FLAGS += -D_CUDA -I${srcdir}/../cuda
-INCLUDE_FLAGS += -D_ACCPROF -I${srcdir}/../accprof
 
 libvftr_sorting_la_CFLAGS = $(INCLUDE_FLAGS)
 
