@@ -193,12 +193,10 @@ config_t vftr_set_config_default() {
       vftr_set_config_mpi_default();
    config.cuda =
       vftr_set_config_cuda_default();
-<<<<<<< HEAD
    config.veda =
       vftr_set_config_veda_default();
-=======
-   config.accprof = vftr_set_config_accprof_default();
->>>>>>> global_Dflags
+   config.accprof =
+      vftr_set_config_accprof_default();
    config.hardware_scenarios =
       vftr_set_config_hardware_scenarios_default();
    config.config_file_path = NULL;
