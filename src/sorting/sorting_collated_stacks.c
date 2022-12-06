@@ -242,6 +242,7 @@ collated_stack_t **vftr_sort_collated_stacks_for_veda(config_t config,
    free(perm);
    return stackptrs; 
 }
+#endif
 
 #ifdef _CUDA
    collated_stack_t **vftr_sort_collated_stacks_for_cuda (config_t config, collated_stacktree_t stacktree) {
