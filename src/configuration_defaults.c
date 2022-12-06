@@ -145,6 +145,17 @@ config_veda_t vftr_set_config_veda_default() {
    return cfg_veda;
 }
 
+config_accprof_t vftr_set_config_accprof_default() {
+   config_accprof_t cfg_accprof;
+   cfg_accprof.name = strdup("openacc");
+   cfg_accprof.set = false;
+   cfg_accprof.show_table = vftr_set_config_bool_default("show_table", true);
+   cfg_accprof.show_event_details = vftr_set_config_bool_default("show_event_details", false);
+   cfg_accprof.sort_table =
+      vftr_set_config_sort_table_default("time", false);
+   return cfg_accprof;
+}
+
 config_hardware_scenarios_t vftr_set_config_hardware_scenarios_default() {
    config_hardware_scenarios_t cfg_hardware_scenarios;
    cfg_hardware_scenarios.name = strdup("hardware_scenarios");
@@ -182,8 +193,12 @@ config_t vftr_set_config_default() {
       vftr_set_config_mpi_default();
    config.cuda =
       vftr_set_config_cuda_default();
+<<<<<<< HEAD
    config.veda =
       vftr_set_config_veda_default();
+=======
+   config.accprof = vftr_set_config_accprof_default();
+>>>>>>> global_Dflags
    config.hardware_scenarios =
       vftr_set_config_hardware_scenarios_default();
    config.config_file_path = NULL;

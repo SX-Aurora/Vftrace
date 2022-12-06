@@ -16,14 +16,23 @@
 #include "profiling_types.h"
 #include "profiling.h"
 #include "callprofiling.h"
+#ifdef _MPI
 #include "mpiprofiling.h"
+#endif
+#ifdef _OMP
 #include "ompprofiling.h"
+#endif
 #include "tables.h"
 #include "misc_utils.h"
 
-#ifdef _CUPTI
-#include "cupti_ranklogfile.h"
-#include "cuptiprofiling.h"
+#ifdef _CUDA
+#include "cuda_ranklogfile.h"
+#include "cudaprofiling.h"
+#endif
+
+#ifdef _ACCPROF
+#include "accprof_ranklogfile.h"
+#include "accprofiling.h"
 #endif
 
 #ifdef _VEDA
@@ -59,11 +68,14 @@ void vftr_write_ranklogfile_summary(FILE *fp, process_t process,
 #ifdef _OMP
    long long *omp_overheads = vftr_get_total_omp_overhead(process.stacktree, nthreads);
 #endif
-#ifdef _CUPTI
-   long long cupti_overhead = vftr_get_total_cupti_overhead(process.stacktree);
-#endif
 #ifdef _VEDA
    long long *veda_overheads = vftr_get_total_veda_overhead(process.stacktree, nthreads);
+#endif
+#ifdef _CUDA
+   long long cuda_overhead = vftr_get_total_cuda_overhead (process.stacktree);
+#endif
+#ifdef _ACCPROF
+   long long accprof_overhead = vftr_get_total_accprof_overhead (process.stacktree);
 #endif
 
    for (int ithread=0; ithread<nthreads; ithread++) {
@@ -80,8 +92,11 @@ void vftr_write_ranklogfile_summary(FILE *fp, process_t process,
 #endif
       }
    }
-#ifdef _CUPTI
-   total_master_overhead += cupti_overhead;
+#ifdef _CUDA
+   total_master_overhead += cuda_overhead;
+#endif
+#ifdef _ACCPROF
+   total_master_overhead += accprof_overhead;
 #endif
    double total_master_overhead_sec = total_master_overhead * 1.0e-9;
    double apptime_sec = runtime_sec - total_master_overhead_sec;
@@ -104,11 +119,14 @@ void vftr_write_ranklogfile_summary(FILE *fp, process_t process,
 #ifdef _OMP
       fprintf(fp, "   OMP callbacks:     %8.2lf s\n", omp_overheads[0]*1.0e-9);
 #endif
-#ifdef _CUPTI
-      fprintf(fp, "   CUPTI callbacks:   %8.2lf s\n", cupti_overhead * 1e-9);
-#endif
 #ifdef _VEDA
       fprintf(fp, "   VEDA callbacks:    *8.2lf s\n", veda_overheads[0]*1.0e-9);
+#endif
+#ifdef _CUDA
+      fprintf (fp, "   CUDA callbacks:   %8.2lf s\n", cuda_overhead * 1e-9);
+#endif
+#ifdef _ACCPROF
+      fprintf (fp, "   OpenACC callbacks:  %8.2lf s\n", accprof_overhead * 1e-9);
 #endif
    } else {
       fprintf(fp, "   Function hooks:\n");
@@ -130,9 +148,6 @@ void vftr_write_ranklogfile_summary(FILE *fp, process_t process,
                  ithread, omp_overheads[ithread]*1.0e-9);
       }
 #endif
-#ifdef _CUPTI
-      fprintf(fp, "   CUPTI callbacks :  %8.2lf s\n", cupti_overhead * 1e-9);
-#endif
 #ifdef _VEDA
       fprintf(fp, "   VEDA callbacks:\n");
       for (int ithread=0; ithread<nthreads; ithread++) {
@@ -140,12 +155,18 @@ void vftr_write_ranklogfile_summary(FILE *fp, process_t process,
                  ithread, veda_overheads[ithread]*1.0e-9);
       }
 #endif
+#ifdef _CUDA
+   fprintf (fp, "   CUDA callbacks :  %8.2lf s\n", cuda_overhead * 1e-9);
+#endif
+#ifdef _ACCPROF
+   fprintf (fp, "   OpenACC callbacks:  %8.2lf s\n", accprof_overhead * 1e-9);
+#endif
 
    }
 
-#ifdef _CUPTI
+#ifdef _CUDA
    float total_compute_sec, total_memcpy_sec, total_other_sec;
-   vftr_get_total_cupti_times_for_ranklogfile (process.stacktree,
+   vftr_get_total_cuda_times_for_ranklogfile (process.stacktree,
                                                &total_compute_sec, &total_memcpy_sec, &total_other_sec);
    fprintf (fp, "Total CUDA time:      %8.2f s\n", total_compute_sec + total_memcpy_sec + total_other_sec);
    fprintf (fp, "   Compute:           %8.2f s\n", total_compute_sec);
@@ -154,6 +175,20 @@ void vftr_write_ranklogfile_summary(FILE *fp, process_t process,
 #endif
 #ifdef _VEDA
    // TODO VEDA header
+#endif
+
+#ifdef _ACCPROF
+   double total_compute_sec_accprof, total_memcpy_sec_accprof, total_other_sec_accprof;
+   vftr_get_total_accprof_times_for_ranklogfile (process.stacktree,
+					         &total_compute_sec_accprof,
+					         &total_memcpy_sec_accprof,
+					         &total_other_sec_accprof);
+   fprintf (fp, "Total OpenACC time:   %8.2f s\n",
+                total_compute_sec_accprof + total_memcpy_sec_accprof + total_other_sec_accprof);
+   fprintf (fp, "  Compute:            %8.2f s\n", total_compute_sec_accprof);
+   fprintf (fp, "  Memcpy:             %8.2f s\n", total_memcpy_sec_accprof);
+   fprintf (fp, "  Other:              %8.2f s\n", total_other_sec_accprof);
+
 #endif
    char *unit = vftr_byte_unit(vftrace_size.rank_wise);
    double vftrace_size_double = (double) vftrace_size.rank_wise;

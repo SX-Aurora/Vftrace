@@ -8,8 +8,11 @@
 #ifdef _OMP
 #include "ompprofiling_types.h"
 #endif
-#ifdef _CUPTI
-#include "cuptiprofiling_types.h"
+#ifdef _CUDA
+#include "cudaprofiling_types.h"
+#endif
+#ifdef _ACCPROF
+#include "accprofiling_types.h"
 #endif
 #ifdef _VEDA
 #include "vedaprofiling_types.h"
@@ -24,8 +27,11 @@ typedef struct {
 #ifdef _OMP
    ompprofile_t ompprof;
 #endif
-#ifdef _CUPTI
-   cuptiprofile_t cuptiprof;
+#ifdef _CUDA
+   cudaprofile_t cudaprof;
+#endif
+#ifdef _ACCPROF
+   accprofile_t accprof;
 #endif
 #ifdef _VEDA
    vedaprofile_t vedaprof;

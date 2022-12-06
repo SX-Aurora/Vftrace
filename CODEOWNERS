@@ -7,8 +7,8 @@ src* felix.uhl@emea.nec.com christian.weiss@emea.nec.com
 src/mpi* felix.uhl@emea.nec.com
 # OMP functions
 src/omp* felix.uhl@emea.nec.com
-# CUPTI
-src/cupti* christian.weiss@emea.nec.com
+# CUDA profiling
+src/cuda* christian.weiss@emea.nec.com
 
 # Tests
 test/units* felix.uhl@emea.nec.com christian.weiss@emea.nec.com

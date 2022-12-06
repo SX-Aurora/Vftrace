@@ -59,9 +59,18 @@ vftrace_t vftrace = {
       .runtime_version = NULL,
    },
 #endif
-#ifdef _CUPTI
-   .cupti_state = {
+#ifdef _CUDA
+   .cuda_state = {
       .n_devices = 0,
+   },
+#endif
+#ifdef _ACCPROF
+   .accprof_state = {
+      .n_devices = 0,
+      .device_names = NULL,
+      .veto_callback_registration = false,
+      .open_wait_queues = NULL,
+      .n_open_wait_queues = 0,
    },
 #endif
 #ifdef _MPI
@@ -239,6 +248,14 @@ unsigned long long vftr_sizeof_config_veda_t(config_veda_t cfg_veda) {
    return size;
 }
 
+unsigned long long vftr_sizeof_config_accprof_t(config_accprof_t cfg_accprof) {
+   unsigned long long size = sizeof(config_accprof_t);
+   size += vftr_sizeof_config_struct_defaults(cfg_accprof.name);
+   size -= sizeof(config_bool_t);
+   size += vftr_sizeof_config_sort_table_t(cfg_accprof.sort_table);
+   return size;
+}
+
 unsigned long long vftr_sizeof_config_hardware_scenarios_t(config_hardware_scenarios_t
                                              cfg_hardware_scenarios) {
    unsigned long long size = sizeof(config_hardware_scenarios_t);
@@ -316,9 +333,9 @@ unsigned long long vftr_sizeof_mpiprofile_t(mpiprofile_t mpiprof) {
 }
 #endif
 
-#ifdef _CUPTI
-unsigned long long vftr_sizeof_cuptiprofile_t(cuptiprofile_t cuptiprof) {
-   return sizeof(cuptiprofile_t);
+#ifdef _CUDA
+unsigned long long vftr_sizeof_cudaprofile_t(cudaprofile_t cudaprof) {
+   return sizeof(cudaprofile_t);
 }
 #endif
 
@@ -336,9 +353,9 @@ unsigned long long vftr_sizeof_profile_t(profile_t profile) {
    size -= sizeof(mpiprofile_t);
    size += vftr_sizeof_mpiprofile_t(profile.mpiprof);
 #endif
-#ifdef _CUPTI
-   size -= sizeof(cuptiprofile_t);
-   size += vftr_sizeof_cuptiprofile_t(profile.cuptiprof);
+#ifdef _CUDA
+   size -= sizeof(cudaprofile_t);
+   size += vftr_sizeof_cudaprofile_t(profile.cudaprof);
 #endif
 #ifdef _VEDA
    size -= sizeof(vedaprofile_t);
@@ -355,9 +372,9 @@ unsigned long long vftr_sizeof_collated_profile_t(collated_profile_t profile) {
    size -= sizeof(mpiprofile_t);
    size += vftr_sizeof_mpiprofile_t(profile.mpiprof);
 #endif
-#ifdef _CUPTI
-   size -= sizeof(cuptiprofile_t);
-   size += vftr_sizeof_cuptiprofile_t(profile.cuptiprof);
+#ifdef _CUDA
+   size -= sizeof(cudaprofile_t);
+   size += vftr_sizeof_cudaprofile_t(profile.cudaprof);
 #endif
    return size;
 }
@@ -514,9 +531,9 @@ unsigned long long vftr_sizeof_mpi_state_t(mpi_state_t mpi_state) {
 }
 #endif
 
-#ifdef _CUPTI
-unsigned long long vftr_sizeof_cupti_state_t(cupti_state_t cupti_state) {
-   return sizeof(cupti_state_t);
+#ifdef _CUDA
+unsigned long long vftr_sizeof_cuda_state_t(cuda_state_t cuda_state) {
+   return sizeof(cuda_state_t);
 }
 #endif
 
@@ -552,9 +569,9 @@ unsigned long long vftr_sizeof_vftrace_t(vftrace_t vftrace_state) {
    size -= sizeof(mpi_state_t);
    size += vftr_sizeof_mpi_state_t(vftrace_state.mpi_state);
 #endif
-#ifdef _CUPTI
-   size -= sizeof(cupti_state_t);
-   size += vftr_sizeof_cupti_state_t(vftrace_state.cupti_state);
+#ifdef _CUDA
+   size -= sizeof(cuda_state_t);
+   size += vftr_sizeof_cuda_state_t(vftrace_state.cuda_state);
 #endif
    size -= sizeof(vftr_size_t);
    size += vftr_sizeof_vftr_size_t(vftrace_state.size);

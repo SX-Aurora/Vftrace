@@ -1,0 +1,11 @@
+noinst_LTLIBRARIES = libvftr_accprof.la
+
+libvftr_accprof_la_SOURCES =
+
+libvftr_accprof_la_SOURCES += accprof_callbacks.c \
+			      accprof_init_final.c \
+			      accprof_events.c \
+			      accprofiling.c \
+			      collate_accprofiles.c \
+			      accprof_logfile.c \
+			      accprof_ranklogfile.c

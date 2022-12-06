@@ -10,13 +10,18 @@
 #include "configuration_print.h"
 #include "logfile_header.h"
 #include "logfile_prof_table.h"
+#ifdef _MPI
 #include "logfile_mpi_table.h"
+#endif
 #include "logfile_stacklist.h"
 #include "collate_stacks.h"
 #include "search.h"
 #include "range_expand.h"
-#ifdef _CUPTI
-#include "cupti_logfile.h"
+#ifdef _CUDA
+#include "cuda_logfile.h"
+#endif
+#ifdef _ACCPROF
+#include "accprof_logfile.h"
 #endif
 #ifdef _VEDA
 #include "logfile_veda_table.h"
@@ -88,13 +93,27 @@ void vftr_write_logfile(vftrace_t vftrace, long long runtime) {
    }
 #endif
 
-#ifdef _CUPTI
-   if (vftrace.cupti_state.n_devices == 0) {
-      fprintf (fp, "CUPTI: The interface is enabled, but no GPU devices were found.\n");
-   } else {
-      if (vftrace.config.cuda.show_table.value) {
-         vftr_write_logfile_cupti_table(fp, vftrace.process.collated_stacktree,
-                                        vftrace.config);
+#ifdef _CUDA
+   if (vftrace.cuda_state.n_devices == 0) {
+      fprintf (fp, "The CUpti interface is enabled, but no GPU devices were found.\n");
+   } else if (vftrace.config.cuda.show_table.value) {
+      vftr_write_logfile_cuda_table(fp, vftrace.process.collated_stacktree, vftrace.config);
+   }
+#endif
+
+#ifdef _ACCPROF
+   if (vftrace.accprof_state.n_devices == 0) {
+      fprintf (fp, "\nThe ACCProf interface is enabled, but no GPU devices were found.\n");
+   } else if (!vftr_has_accprof_events (vftrace.process.collated_stacktree)) {
+      fprintf (fp, "\nNo OpenACC events have been registered.\n");
+   } else if (vftrace.config.accprof.show_table.value) {
+      if (vftrace.accprof_state.n_open_wait_queues > 0) {
+         fprintf (fp, "\nWarning: There are %d unresolved OpenACC wait regions.\n", 
+                  vftrace.accprof_state.n_open_wait_queues);
+      }
+      vftr_write_logfile_accprof_grouped_table (fp, vftrace.process.collated_stacktree, vftrace.config);
+      if (vftrace.config.accprof.show_event_details.value) {
+         vftr_write_logfile_accprof_event_table (fp, vftrace.process.collated_stacktree, vftrace.config);
       }
    }
 #endif
@@ -112,10 +131,14 @@ void vftr_write_logfile(vftrace_t vftrace, long long runtime) {
       vftr_print_config(fp, vftrace.config, true);
    }
 
-#ifdef _CUPTI
+#ifdef _CUDA
    if (vftrace.config.cuda.show_table.value) {
       vftr_write_logfile_cbid_names (fp, vftrace.process.collated_stacktree);
    }
+#endif
+
+#ifdef _ACCPROF
+   if (vftrace.config.accprof.show_event_details.value) vftr_write_logfile_accev_names (fp);
 #endif
 
    fclose(fp);

@@ -167,9 +167,9 @@ if HAS_MPI_STD_1_0
 libvftr_fmpiwrap_la_SOURCES += pcontrol.F90
 endif
 
-libvftr_fmpiwrap_la_FCFLAGS = -D_MPI
+libvftr_fmpiwrap_la_FCFLAGS =
 libvftr_fmpiwrap_la_FCFLAGS += -I${builddir}/../f2vftr/ \
 			       -I${builddir}/../utils/
-libvftr_fmpiwrap_la_FCFLAGS += -finstrument-functions
+libvftr_fmpiwrap_la_FCFLAGS += $(FINSTRUMENT_FLAG)
 
 CLEANFILES = *.mod

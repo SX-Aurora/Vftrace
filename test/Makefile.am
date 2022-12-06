@@ -10,8 +10,12 @@ if ENABLE_MPI
 SUBDIRS += mpi
 endif
 
-if ENABLE_CUPTI
-SUBDIRS += cupti
+if ENABLE_CUDAPROF
+SUBDIRS += cuda
+endif
+
+if ENABLE_ACCPROF
+SUBDIRS += openacc
 endif
 
 if ENABLE_VEDA

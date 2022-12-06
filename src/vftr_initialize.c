@@ -4,7 +4,7 @@
 #include "start_tool.h"
 #endif
 
-#ifdef _CUPTI
+#ifdef _CUDA
 #include "cupti_init_final.h"
 #include "cupti_vftr_callbacks.h"
 #endif
@@ -12,6 +12,10 @@
 #ifdef _VEDA
 #include <veda.h>
 #include "veda_callback.h"
+#endif
+#ifdef _ACCPROF
+#include "accprof_init_final.h"
+#include "accprof_callbacks.h"
 #endif
 
 #include "self_profile.h"
@@ -45,6 +49,10 @@ void vftr_initialize(void *func, void *call_site) {
       // set the function hooks to a dummy function that does nothing
       vftr_set_enter_func_hook(vftr_function_hook_off);
       vftr_set_exit_func_hook(vftr_function_hook_off);
+#ifdef _ACCPROF
+      // Do not register any OpenACC callbacks and deactivate potentially registered ones.
+      vftr_veto_accprof_callbacks ();
+#endif
       SELF_PROFILE_END_FUNCTION;
       FINALIZE_SELF_PROF_VFTRACE;
    } else {
@@ -95,7 +103,7 @@ void vftr_initialize(void *func, void *call_site) {
       (void) ompt_start_tool(0, NULL);
 #endif
 
-#ifdef _CUPTI
+#ifdef _CUDA
       (void)vftr_init_cupti(vftr_cupti_event_callback);
 #endif
 
@@ -103,6 +111,9 @@ void vftr_initialize(void *func, void *call_site) {
       (void) vedaProfilerSetCallback(&vftr_veda_callback);
 #endif
 
+#ifdef _ACCPROF
+      vftr_init_accprof();
+#endif
       // set the finalize function to be executed at the termination of the program
       atexit(vftr_finalize);
 

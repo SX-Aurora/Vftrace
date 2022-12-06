@@ -173,6 +173,7 @@ void vftr_config_advisor(cJSON *config_json_ptr) {
       "mpi",
       "cuda",
       "veda",
+      "openacc",
       "hardware_scenarios"
    };
    int noptions = sizeof(options) / sizeof(char*);

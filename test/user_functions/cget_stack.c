@@ -6,16 +6,16 @@
 
 #include <vftrace.h>
 
-int fkt3() {
+int __attribute__ ((noinline)) fkt3() {
    char *stackstr = vftrace_get_stack();
    printf("%s\n", stackstr);
    free(stackstr);
    return 1;
 }
-int fkt2() {
+int __attribute__ ((noinline)) fkt2() {
    return fkt3();
 }
-int fkt1() {
+int __attribute__ ((noinline)) fkt1() {
    return fkt2();
 }
 

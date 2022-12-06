@@ -46,7 +46,7 @@ AC_DEFUN([AX_ENABLE_MPI], [
           [],
           [AC_MSG_FAILURE([unable to find C-MPI])])])
 
-   # check if compiler support F-MPI
+   # check if compiler supports F-MPI
    AM_COND_IF(
       [ENABLE_FORTRAN],
       [AM_COND_IF(
@@ -70,6 +70,16 @@ AC_DEFUN([AX_ENABLE_MPI], [
       AC_MSG_RESULT([$uses_open_mpi])])
    AM_CONDITIONAL([USES_OPEN_MPI],
                   [test "x$uses_open_mpi" = "xyes"])
+
+   # Set the -D flag for the preprocessor globally
+   AM_COND_IF([ENABLE_MPI], [
+      AX_APPEND_FLAG([-D_MPI], [CFLAGS])
+      AX_APPEND_FLAG([-D_MPI], [FCFLAGS])
+      AX_APPEND_FLAG([-D_MPI], [CXXFLAGS])
+      AX_APPEND_FLAG([-D_MPI], [CPPFLAGS])
+      AX_APPEND_FLAG([-I$(realpath ${srcdir}/src/mpi/utils)], [CFLAGS])
+   ])
+
    # Check the OpenMPI version to determine proper oversubscribe-flag
    # With version 5 of OpenMPI a new flag was introduced
    # and the old one deprecated.

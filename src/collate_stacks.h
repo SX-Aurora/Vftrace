@@ -1,6 +1,7 @@
 #ifndef COLLATE_STACKS_H
 #define COLLATE_STACKS_H
 
+#include <stdio.h>
 #include <stdlib.h>
 
 #include "stack_types.h"

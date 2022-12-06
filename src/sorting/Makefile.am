@@ -4,19 +4,6 @@ libvftr_sorting_la_SOURCES = sort_utils.c \
 			     sorting_symboltable.c \
 			     sorting_stacks.c \
 			     sorting_collated_stacks.c
-libvftr_sorting_la_CFLAGS = -I${srcdir}/../
-if ENABLE_MPI
-libvftr_sorting_la_CFLAGS += -D_MPI -I${srcdir}/../mpi/utils/
-endif
-if ENABLE_OMP
-libvftr_sorting_la_CFLAGS += -D_OMP -I${srcdir}/../omp/
-endif
-if ENABLE_CUPTI
-libvftr_sorting_la_CFLAGS += -D_CUPTI -I${srcdir}/../cupti
-endif
-if ENABLE_VEDA
-libvftr_sorting_la_CFLAGS += -D_VEDA -I${srcdir}/../veda/
-endif
 
 noinst_LTLIBRARIES += libvftr_sorting_int8.la
 libvftr_sorting_la_LIBADD += libvftr_sorting_int8.la
@@ -46,44 +33,51 @@ libvftr_sorting_long_long_la_CFLAGS = -DTYPE="long long" -DTYPESTR="longlong"
 noinst_LTLIBRARIES += libvftr_sorting_float.la
 libvftr_sorting_la_LIBADD += libvftr_sorting_float.la
 libvftr_sorting_float_la_SOURCES = sorting_stdtypes.c
-libvftr_sorting_float_la_CFLAGS = -DTYPE="float" -DTYPESTR="float" -I${srcdir}/../
+libvftr_sorting_float_la_CFLAGS = -DTYPE="float" -DTYPESTR="float"
 
 noinst_LTLIBRARIES += libvftr_sorting_double.la
 libvftr_sorting_la_LIBADD += libvftr_sorting_double.la
 libvftr_sorting_double_la_SOURCES = sorting_stdtypes.c
-libvftr_sorting_double_la_CFLAGS = -DTYPE="double" -DTYPESTR="double" -I${srcdir}/../
+libvftr_sorting_double_la_CFLAGS = -DTYPE="double" -DTYPESTR="double"
 
 noinst_LTLIBRARIES += libvftr_apply_perm_int8.la
 libvftr_sorting_la_LIBADD += libvftr_apply_perm_int8.la
 libvftr_apply_perm_int8_la_SOURCES = apply_perm.c
-libvftr_apply_perm_int8_la_CFLAGS = -DTYPE="int8_t" -DTYPESTR="int8" -I${srcdir}/../
+libvftr_apply_perm_int8_la_CFLAGS = -DTYPE="int8_t" -DTYPESTR="int8"
 
 noinst_LTLIBRARIES += libvftr_apply_perm_uint8.la
 libvftr_sorting_la_LIBADD += libvftr_apply_perm_uint8.la
 libvftr_apply_perm_uint8_la_SOURCES = apply_perm.c
-libvftr_apply_perm_uint8_la_CFLAGS = -DTYPE="uint8_t" -DTYPESTR="uint8" -I${srcdir}/../
+libvftr_apply_perm_uint8_la_CFLAGS = -DTYPE="uint8_t" -DTYPESTR="uint8"
 
 noinst_LTLIBRARIES += libvftr_apply_perm_float.la
 libvftr_sorting_la_LIBADD += libvftr_apply_perm_float.la
 libvftr_apply_perm_float_la_SOURCES = apply_perm.c
-libvftr_apply_perm_float_la_CFLAGS = -DTYPE="float" -DTYPESTR="float" -I${srcdir}/../
+libvftr_apply_perm_float_la_CFLAGS = -DTYPE="float" -DTYPESTR="float"
+
+noinst_LTLIBRARIES += libvftr_apply_perm_double.la
+libvftr_sorting_la_LIBADD += libvftr_apply_perm_double.la
+libvftr_apply_perm_double_la_SOURCES = apply_perm.c
+libvftr_apply_perm_double_la_CFLAGS = -DTYPE="double" -DTYPESTR="double"
+
+noinst_LTLIBRARIES += libvftr_apply_perm_longlong.la
+libvftr_sorting_la_LIBADD += libvftr_apply_perm_longlong.la
+libvftr_apply_perm_longlong_la_SOURCES = apply_perm.c
+libvftr_apply_perm_longlong_la_CFLAGS = -DTYPE="long long" -DTYPESTR="longlong"
+
+noinst_LTLIBRARIES += libvftr_apply_perm_charptr.la
+libvftr_sorting_la_LIBADD += libvftr_apply_perm_charptr.la
+libvftr_apply_perm_charptr_la_SOURCES = apply_perm.c
+libvftr_apply_perm_charptr_la_CFLAGS = -DTYPE="char*" -DTYPESTR="charptr"
+
 
 noinst_LTLIBRARIES += libvftr_apply_perm_stackptr.la
 libvftr_sorting_la_LIBADD += libvftr_apply_perm_stackptr.la
 libvftr_apply_perm_stackptr_la_SOURCES = apply_perm.c
-libvftr_apply_perm_stackptr_la_CFLAGS = -DTYPE="stack_t*" -DTYPESTR="stackptr" \
-					-I${srcdir}/../
+libvftr_apply_perm_stackptr_la_CFLAGS = -DTYPE="stack_t*" -DTYPESTR="stackptr"
 
 noinst_LTLIBRARIES += libvftr_apply_perm_collated_stackptr.la
 libvftr_sorting_la_LIBADD += libvftr_apply_perm_collated_stackptr.la
 libvftr_apply_perm_collated_stackptr_la_SOURCES = apply_perm.c
 libvftr_apply_perm_collated_stackptr_la_CFLAGS = -DTYPE="collated_stack_t*" \
-						 -DTYPESTR="collated_stackptr" \
-						 -I${srcdir}/../
-
-if ENABLE_MPI
-libvftr_apply_perm_stackptr_la_CFLAGS += -D_MPI -I${srcdir}/../mpi/utils/
-endif
-if ENABLE_OMP
-libvftr_apply_perm_stackptr_la_CFLAGS += -D_OMP -I${srcdir}/../omp/
-endif
+						 -DTYPESTR="collated_stackptr"

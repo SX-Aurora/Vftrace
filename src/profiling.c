@@ -13,8 +13,11 @@
 #ifdef _OMP
 #include "ompprofiling.h"
 #endif
-#ifdef _CUPTI
-#include "cuptiprofiling.h"
+#ifdef _CUDA
+#include "cudaprofiling.h"
+#endif
+#ifdef _ACCPROF
+#include "accprofiling.h"
 #endif
 #ifdef _VEDA
 #include "vedaprofiling.h"
@@ -44,13 +47,16 @@ profile_t vftr_new_profile(int threadID) {
 #ifdef _OMP
    profile.ompprof = vftr_new_ompprofiling();
 #endif
-#ifdef _CUPTI
-   profile.cuptiprof = vftr_new_cuptiprofiling();
+#ifdef _CUDA
+   profile.cudaprof = vftr_new_cudaprofiling();
 #endif
 #ifdef _VEDA
    profile.vedaprof = vftr_new_vedaprofiling();
 #endif
-   // TODO: Add other profiles
+#ifdef _ACCPROF
+   profile.accprof = vftr_new_accprofiling();
+#endif 
+   // Add further profiles here
    SELF_PROFILE_END_FUNCTION;
    return profile;
 }
@@ -87,13 +93,16 @@ profile_t vftr_add_profiles(profile_t profA, profile_t profB) {
 #ifdef _OMP
    profC.ompprof = vftr_add_ompprofiles(profA.ompprof, profB.ompprof);
 #endif
-#ifdef _CUPTI
-   profC.cuptiprof = vftr_add_cuptiprofiles(profA.cuptiprof, profB.cuptiprof);
+#ifdef _CUDA
+   profC.cudaprof = vftr_add_cudaprofiles(profA.cudaprof, profB.cudaprof);
+#endif
+#ifdef _ACCPROF
+   profC.accprof = vftr_add_accprofiles(profA.accprof, profB.accprof);
 #endif
 #ifdef _VEDA
    profC.vedaprof = vftr_add_vedaprofiles(profA.vedaprof, profB.vedaprof);
 #endif
-   // TODO: Add other profiles
+   // Add further profiles here.
    return profC;
 }
 
@@ -107,13 +116,16 @@ void vftr_profile_free(profile_t* profiles_ptr, int profID) {
 #ifdef _OMP
    vftr_ompprofiling_free(&(profile_ptr->ompprof));
 #endif
-#ifdef _CUPTI
-   vftr_cuptiprofiling_free(&(profile_ptr->cuptiprof));
+#ifdef _CUDA
+   vftr_cudaprofiling_free(&(profile_ptr->cudaprof));
+#endif
+#ifdef _ACCPROF
+   vftr_accprofiling_free (&(profile_ptr->accprof));
 #endif
 #ifdef _VEDA
    vftr_vedaprofiling_free(&(profile_ptr->vedaprof));
 #endif
-   // TODO: add other profiles
+   // Add further profiles here.
    SELF_PROFILE_END_FUNCTION;
 }
 

@@ -38,9 +38,14 @@ SUBDIRS += omp
 libvftrace_la_LIBADD += omp/libvftr_omp.la
 endif
 
-if ENABLE_CUPTI
-SUBDIRS += cupti
-libvftrace_la_LIBADD += cupti/libvftr_cupti.la
+if ENABLE_CUDAPROF
+SUBDIRS += cuda
+libvftrace_la_LIBADD += cuda/libvftr_cuda.la
+endif
+
+if ENABLE_ACCPROF
+SUBDIRS += accprof
+libvftrace_la_LIBADD += accprof/libvftr_accprof.la
 endif
 
 if ENABLE_VEDA
@@ -121,11 +126,6 @@ libvftrace_la_SOURCES += dlopen.c
 endif
 
 libvftrace_la_CFLAGS += -I${srcdir}/../external/cJSON/
-libvftrace_la_CFLAGS += -I${srcdir}/mpi/utils/ \
-			-I${srcdir}/omp/ \
-                        -I${srcdir}/cupti/ \
-			-I${srcdir}/veda/ \
-			-I${srcdir}/sorting
 
 #if ENABLE_HWC
 #libvftrace_la_CFLAGS += -DHAS_HWC
@@ -174,6 +174,6 @@ libvftrace_la_SOURCES += self_profile.c
 endif
 
 libvftr_pause_la_SOURCES = pause.c
-libvftr_pause_la_CFLAGS = -finstrument-functions
+libvftr_pause_la_CFLAGS = $(FINSTRUMENT_FLAG)
 
 CLEANFILES = *.mod

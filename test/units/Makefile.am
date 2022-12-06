@@ -34,8 +34,12 @@ if USES_NEC_MPI
 endif
 endif
 
-if ENABLE_CUPTI
-  AM_CFLAGS += -D_CUPTI -I$(top_srcdir)/src/cupti
+if ENABLE_CUDAPROF
+  AM_CFLAGS += -D_CUDA -I$(top_srcdir)/src/cuda
+endif
+
+if ENABLE_ACCPROF
+  AM_CFLAGS += -D_ACCPROF -I$(top_srcdir)/src/accprof
 endif
 
 if ENABLE_OMP

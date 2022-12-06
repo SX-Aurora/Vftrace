@@ -168,6 +168,5 @@ if HAS_MPI_STD_1_0
 libvftr_mpi_c2vftr_la_SOURCES += pcontrol_c2vftr.c
 endif
 
-libvftr_mpi_c2vftr_la_CFLAGS = -D_MPI
-libvftr_mpi_c2vftr_la_CFLAGS += -I${srcdir}/../utils/
+libvftr_mpi_c2vftr_la_CFLAGS =
 libvftr_mpi_c2vftr_la_CFLAGS += -I${srcdir}/../vftr_mpi/

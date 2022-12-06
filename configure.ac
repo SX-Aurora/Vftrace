@@ -25,6 +25,8 @@ AX_CHECK_C99_STD
 
 AX_CHECK_CXX_STDFLAG
 
+AX_CHECK_FINSTRUMENT_OPTION
+
 # Check some sizeof values
 AX_SIZEOF_TYPES
 
@@ -44,8 +46,10 @@ AX_ENABLE_MPI
 # Check OMP
 AX_ENABLE_OPENMP
 
-# Check CUPTI GPU profiling interface
-AX_ENABLE_CUPTI
+# Check CUpti GPU profiling interface
+AX_ENABLE_CUDAPROF
+
+AX_ENABLE_ACCPROF
 
 # Check VEDA profiling interface
 AX_ENABLE_VEDA
@@ -69,6 +73,10 @@ AX_WITH_LIBERTY
 # Check consistency of HWC, Architecture, and Papi
 #AX_CHECK_HWC_CONSISTENCY
 
+# Set src directory and sorting directory as include path globally
+AX_APPEND_FLAG([-I$(realpath ${srcdir}/src/)], [CFLAGS])
+AX_APPEND_FLAG([-I$(realpath ${srcdir}/src/sorting/)], [CFLAGS])
+
 LT_INIT(dlopen)
 AC_CONFIG_FILES([Makefile])
 AC_CONFIG_FILES([src/Makefile])
@@ -83,8 +91,9 @@ AC_CONFIG_FILES([src/mpi/f-wrapper/Makefile])
 AC_CONFIG_FILES([src/mpi/f082vftr/Makefile])
 AC_CONFIG_FILES([src/mpi/f08-wrapper/Makefile])
 AC_CONFIG_FILES([src/omp/Makefile])
-AC_CONFIG_FILES([src/cupti/Makefile])
 AC_CONFIG_FILES([src/veda/Makefile])
+AC_CONFIG_FILES([src/cuda/Makefile])
+AC_CONFIG_FILES([src/accprof/Makefile])
 AC_CONFIG_FILES([external/Makefile])
 AC_CONFIG_FILES([tools/Makefile])
 AC_CONFIG_FILES([tools/self_profiling_analyzer/Makefile])
@@ -94,8 +103,9 @@ AC_CONFIG_FILES([test/units/Makefile])
 AC_CONFIG_FILES([test/config/Makefile])
 AC_CONFIG_FILES([test/user_functions/Makefile])
 AC_CONFIG_FILES([test/omp/Makefile])
-AC_CONFIG_FILES([test/cupti/Makefile])
 AC_CONFIG_FILES([test/veda/Makefile])
+AC_CONFIG_FILES([test/cuda/Makefile])
+AC_CONFIG_FILES([test/openacc/Makefile])
 AC_CONFIG_FILES([test/mpi/Makefile])
 AC_CONFIG_FILES([test/mpi/c-mpi/Makefile])
 AC_CONFIG_FILES([test/mpi/f-mpi/Makefile])

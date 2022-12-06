@@ -11,13 +11,16 @@
 #include "timer_types.h"
 #include "size_types.h"
 #ifdef _OMP
-#include "omp/omp_state_types.h"
+#include "omp_state_types.h"
 #endif
-#ifdef _CUPTI
-#include "cupti/cupti_state_types.h"
+#ifdef _CUDA
+#include "cuda_state_types.h"
+#endif
+#ifdef _ACCPROF
+#include "accprof_state_types.h"
 #endif
 #ifdef _MPI
-#include "mpi/utils/mpi_state_types.h"
+#include "mpi_state_types.h"
 #endif
 
 // tracing state of vftrace
@@ -41,8 +44,11 @@ typedef struct {
 #ifdef _OMP
    omp_state_t omp_state;
 #endif
-#ifdef _CUPTI
-   cupti_state_t cupti_state;
+#ifdef _CUDA
+   cuda_state_t cuda_state;
+#endif
+#ifdef _ACCPROF
+   accprof_state_t accprof_state;
 #endif
 #ifdef _MPI
    mpi_state_t mpi_state;

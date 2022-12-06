@@ -154,70 +154,6 @@ void vftr_sort_collated_stacks_for_mpiprof(config_t config,
 }
 #endif
 
-#ifdef _CUPTI
-collated_stack_t **vftr_sort_collated_stacks_for_cupti(config_t config,
-                                                       collated_stacktree_t stacktree) {
-   int nstacks = stacktree.nstacks;
-
-   char *column = config.cuda.sort_table.column.value;
-   bool ascending = config.cuda.sort_table.ascending.value;
-   int *perm = NULL;
-
-   if (!strcmp(column, "time")) {
-      float *stackvals = (float*)malloc(nstacks * sizeof(float));
-      for (int istack = 0; istack < nstacks; istack++) {
-         collated_stack_t *stack = stacktree.stacks + istack;
-         stackvals[istack] = stack->profile.cuptiprof.t_ms;
-      }
-      vftr_sort_perm_float(nstacks, stackvals, &perm, ascending);
-      free(stackvals);
-   } else if (!strcmp(column, "memcpy")) {
-      long long *stackvals = (long long*)malloc(nstacks * sizeof(long long));
-      for (int istack = 0; istack < nstacks; istack++) {
-         collated_stack_t *stack = stacktree.stacks + istack;
-         collated_profile_t prof = stack->profile;
-         stackvals[istack] = (long long)(prof.cuptiprof.memcpy_bytes[0] + prof.cuptiprof.memcpy_bytes[1]);
-      }
-      vftr_sort_perm_longlong(nstacks, stackvals, &perm, ascending);
-      free(stackvals);
-   } else if (!strcmp(column, "cbid")) {
-      int *stackvals = (int*)malloc(nstacks * sizeof(int));
-      for (int istack = 0; istack < nstacks; istack++) {
-         collated_stack_t *stack = stacktree.stacks + istack;
-         stackvals[istack] = stack->profile.cuptiprof.cbid;
-      }
-      vftr_sort_perm_int(nstacks, stackvals, &perm, ascending);
-      free(stackvals);
-   } else if (!strcmp(column, "calls")) {
-      int *stackvals = (int*)malloc(nstacks * sizeof(int));
-      for (int istack = 0; istack < nstacks; istack++) {
-         collated_stack_t *stack = stacktree.stacks + istack;
-         stackvals[istack] = stack->profile.cuptiprof.n_calls;
-      }
-      vftr_sort_perm_int(nstacks, stackvals, &perm, ascending);
-      free(stackvals);
-   } else {
-      // if (!strcmp(column, "none"))
-      int *stackvals = (int*)malloc(nstacks * sizeof(int));
-      for (int istack = 0; istack < nstacks; istack++) {
-         collated_stack_t *stack = stacktree.stacks + istack;
-         stackvals[istack] = stack->gid;
-      }
-      vftr_sort_perm_int(nstacks, stackvals, &perm, ascending);
-      free(stackvals);
-   }
-
-   collated_stack_t **stackptrs = (collated_stack_t**) malloc(nstacks*sizeof(collated_stack_t*));
-   for (int istack = 0; istack < nstacks; istack++) {
-      stackptrs[istack] = stacktree.stacks + istack;
-   }
-
-   vftr_apply_perm_collated_stackptr (nstacks, stackptrs, perm);
-   free(perm);
-   return stackptrs; 
-}
-#endif
-
 #ifdef _VEDA
 collated_stack_t **vftr_sort_collated_stacks_for_veda(config_t config,
                                                       collated_stacktree_t stacktree) {
@@ -306,4 +242,128 @@ collated_stack_t **vftr_sort_collated_stacks_for_veda(config_t config,
    free(perm);
    return stackptrs; 
 }
+
+#ifdef _CUDA
+   collated_stack_t **vftr_sort_collated_stacks_for_cuda (config_t config, collated_stacktree_t stacktree) {
+     int nstacks = stacktree.nstacks;
+
+     char *column = config.cuda.sort_table.column.value;
+     bool ascending = config.cuda.sort_table.ascending.value;
+     int *perm = NULL;
+
+     if (!strcmp(column, "time")) {
+        float *stackvals = (float*)malloc(nstacks * sizeof(float));
+        for (int istack = 0; istack < nstacks; istack++) {
+           collated_stack_t *stack = stacktree.stacks + istack;
+           stackvals[istack] = stack->profile.cudaprof.t_ms;
+        }
+        vftr_sort_perm_float(nstacks, stackvals, &perm, ascending);
+        free(stackvals);
+     } else if (!strcmp(column, "memcpy")) {
+        long long *stackvals = (long long*)malloc(nstacks * sizeof(long long));
+        for (int istack = 0; istack < nstacks; istack++) {
+           collated_stack_t *stack = stacktree.stacks + istack;
+           collated_profile_t prof = stack->profile;
+           stackvals[istack] = (long long)(prof.cudaprof.memcpy_bytes[0] + prof.cudaprof.memcpy_bytes[1]);
+        }
+        vftr_sort_perm_longlong(nstacks, stackvals, &perm, ascending);
+        free(stackvals);
+     } else if (!strcmp(column, "cbid")) {
+        int *stackvals = (int*)malloc(nstacks * sizeof(int));
+        for (int istack = 0; istack < nstacks; istack++) {
+           collated_stack_t *stack = stacktree.stacks + istack;
+           stackvals[istack] = stack->profile.cudaprof.cbid;
+        }
+        vftr_sort_perm_int(nstacks, stackvals, &perm, ascending);
+        free(stackvals);
+     } else if (!strcmp(column, "calls")) {
+        int *stackvals = (int*)malloc(nstacks * sizeof(int));
+        for (int istack = 0; istack < nstacks; istack++) {
+           collated_stack_t *stack = stacktree.stacks + istack;
+           stackvals[istack] = stack->profile.cudaprof.n_calls;
+        }
+        vftr_sort_perm_int(nstacks, stackvals, &perm, ascending);
+        free(stackvals);
+     } else {
+        // if (!strcmp(column, "none"))
+        int *stackvals = (int*)malloc(nstacks * sizeof(int));
+        for (int istack = 0; istack < nstacks; istack++) {
+           collated_stack_t *stack = stacktree.stacks + istack;
+           stackvals[istack] = stack->gid;
+        }
+        vftr_sort_perm_int(nstacks, stackvals, &perm, ascending);
+        free(stackvals);
+     }
+
+     collated_stack_t **stackptrs = (collated_stack_t**) malloc(nstacks*sizeof(collated_stack_t*));
+     for (int istack = 0; istack < nstacks; istack++) {
+        stackptrs[istack] = stacktree.stacks + istack;
+     }
+
+     vftr_apply_perm_collated_stackptr (nstacks, stackptrs, perm);
+     free(perm);
+     return stackptrs; 
+  }
+#endif
+
+#ifdef _ACCPROF
+  collated_stack_t **vftr_sort_collated_stacks_for_accprof (config_t config, collated_stacktree_t stacktree) {
+     int nstacks = stacktree.nstacks;
+     char *column = config.accprof.sort_table.column.value;
+     bool ascending = config.accprof.sort_table.ascending.value;
+     int *perm = NULL;
+
+     if (!strcmp(column, "time")) {
+        long long *stackvals = (long long *)malloc(nstacks * sizeof(long long)); 
+        for (int istack = 0; istack < nstacks; istack++) {
+           collated_stack_t *stack = stacktree.stacks + istack;
+           stackvals[istack] = stack->profile.callprof.time_excl_nsec;
+        }
+        vftr_sort_perm_longlong (nstacks, stackvals, &perm, ascending);
+        free(stackvals);
+     } else if (!strcmp(column, "memcpy")) {
+        long long *stackvals = (long long *)malloc(nstacks * sizeof(long long)); 
+        for (int istack = 0; istack < nstacks; istack++) {
+           collated_stack_t *stack = stacktree.stacks + istack;
+           stackvals[istack] = stack->profile.accprof.copied_bytes;
+        }
+        vftr_sort_perm_longlong (nstacks, stackvals, &perm, ascending);
+        free(stackvals);
+     } else if (!strcmp(column, "evtype")) {
+        int *stackvals = (int *)malloc(nstacks * sizeof(int));
+        for (int istack = 0; istack < nstacks; istack++) {
+           collated_stack_t *stack = stacktree.stacks + istack;
+           stackvals[istack] = (int)stack->profile.accprof.event_type;
+        }
+        vftr_sort_perm_int (nstacks, stackvals, &perm, ascending);
+        free(stackvals);
+     } else if (!strcmp(column, "calls")) {
+        int *stackvals = (int *)malloc(nstacks * sizeof(int)); 
+        for (int istack = 0; istack < nstacks; istack++) {
+           collated_stack_t *stack = stacktree.stacks + istack;
+           stackvals[istack] = stack->profile.callprof.calls;
+        }
+        vftr_sort_perm_int (nstacks, stackvals, &perm, ascending);
+        free(stackvals);
+     } else {
+	// sort = none
+	int *stackvals = (int*)malloc(nstacks * sizeof(int));
+        for (int istack = 0; istack < nstacks; istack++) {
+           collated_stack_t *stack = stacktree.stacks + istack;
+           stackvals[istack] = stack->gid;
+        }
+        vftr_sort_perm_int(nstacks, stackvals, &perm, ascending);
+        free(stackvals);
+    }
+
+    collated_stack_t **stackptrs = (collated_stack_t**) malloc(nstacks*sizeof(collated_stack_t*));
+    for (int istack = 0; istack < nstacks; istack++) {
+       stackptrs[istack] = stacktree.stacks + istack;
+    }
+
+    vftr_apply_perm_collated_stackptr (nstacks, stackptrs, perm);
+    free(perm);
+    return stackptrs; 
+  }
+
 #endif

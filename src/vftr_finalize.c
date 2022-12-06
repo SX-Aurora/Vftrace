@@ -14,8 +14,12 @@
 #include "sampling.h"
 #include "timer.h"
 
-#ifdef _CUPTI
+#ifdef _CUDA
 #include "cupti_init_final.h"
+#endif
+
+#ifdef _ACCPROF
+#include "accprof_init_final.h"
 #endif
 
 void vftr_finalize() {
@@ -65,8 +69,12 @@ void vftr_finalize() {
                           vftrace.process, vftrace.timestrings,
                           (double) (runtime * 1.0e-9));
 
-#ifdef _CUPTI
+#ifdef _CUDA
    vftr_finalize_cupti (vftrace.process.collated_stacktree);
+#endif
+
+#ifdef _ACCPROF
+   vftr_finalize_accprof();
 #endif
 
    // free the dynamic process data

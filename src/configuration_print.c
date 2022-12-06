@@ -156,6 +156,20 @@ void vftr_print_config_veda(FILE *fp, int level, config_veda_t cfg_veda) {
    fprintf(fp,"}");
 }
 
+void vftr_print_config_accprof (FILE *fp, int level, config_accprof_t cfg_accprof) {
+   level++;
+   vftr_print_config_indent(fp, level);
+   fprintf(fp, "\"%s\": {\n", cfg_accprof.name);
+   vftr_print_config_bool(fp, level, cfg_accprof.show_table);
+   fprintf(fp,",\n");
+   vftr_print_config_bool(fp, level, cfg_accprof.show_event_details);
+   fprintf(fp,",\n");
+   vftr_print_config_sort_table(fp, level, cfg_accprof.sort_table);
+   fprintf(fp,"\n");
+   vftr_print_config_indent(fp, level);
+   fprintf(fp,"}");
+}
+
 void vftr_print_config_hardware_scenarios(FILE *fp, int level,
                                           config_hardware_scenarios_t
                                           cfg_hardware_scenarios) {
