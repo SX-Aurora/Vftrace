@@ -26,16 +26,6 @@ AM_CFLAGS += -I$(top_srcdir)/src/ -I$(top_srcdir)/src/omp/
 
 AM_FCFLAGS = -O3 $(FINSTRUMENT_FLAG)
 
-if ENABLE_MPI
-AM_CFLAGS += -D_MPI
-AM_FCFLAGS += -D_MPI
-endif 
-
-if ENABLE_OMP
-AM_CFLAGS += -D_OMP
-AM_FCFLAGS += -D_OMP
-endif
-
 AM_LDFLAGS = -L$(top_builddir)/src/.libs -lvftrace -lm
 
 ################

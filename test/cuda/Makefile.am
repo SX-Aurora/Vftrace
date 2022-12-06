@@ -1,8 +1,6 @@
 AM_CFLAGS = -I$(top_srcdir)/src \
             -I$(top_srcdir)/src/cuda
 
-AM_CFLAGS += -D_CUDA
-
 AM_LDFLAGS = -L$(top_builddir)/src/.libs -lvftrace
 
 check_PROGRAMS = gpu_info \

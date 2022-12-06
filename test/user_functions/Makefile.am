@@ -36,11 +36,9 @@ AM_FCFLAGS += -I$(top_builddir)/src/
 AM_LDFLAGS = -L$(top_builddir)/src/.libs -lvftrace -lm
 
 if ENABLE_MPI
-  AM_CFLAGS += -D_MPI
-  AM_FCFLAGS += -D_MPI
-endif
 if USES_NEC_MPI
   AM_LDFLAGS += -mpiprof
+endif
 endif
 
 ###########

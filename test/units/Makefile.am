@@ -28,22 +28,9 @@ AM_CFLAGS = -I$(top_srcdir)/src/ \
 AM_LDFLAGS = -L$(top_builddir)/src/.libs -lvftrace -lm
 
 if ENABLE_MPI
-  AM_CFLAGS += -D_MPI
 if USES_NEC_MPI
   AM_LDFLAGS += -mpiprof
 endif
-endif
-
-if ENABLE_CUDAPROF
-  AM_CFLAGS += -D_CUDA -I$(top_srcdir)/src/cuda
-endif
-
-if ENABLE_ACCPROF
-  AM_CFLAGS += -D_ACCPROF -I$(top_srcdir)/src/accprof
-endif
-
-if ENABLE_OMP
-  AM_CFLAGS += -D_OMP
 endif
 
 if SELF_PROFILING

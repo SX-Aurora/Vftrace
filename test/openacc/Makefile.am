@@ -33,8 +33,6 @@ AM_CFLAGS += -I$(top_srcdir)/src/
 AM_FCFLAGS = -O3 $(FINSTRUMENT_FLAG) 
 AM_FCFLAGS += -I$(top_builddir)/src/
 
-AM_CFLAGS += -D_CUDA
-
 AM_LDFLAGS = -L$(top_builddir)/src/.libs -lvftrace -lm
 
 
