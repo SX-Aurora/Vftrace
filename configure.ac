@@ -69,6 +69,10 @@ AX_WITH_LIBERTY
 # Check consistency of HWC, Architecture, and Papi
 #AX_CHECK_HWC_CONSISTENCY
 
+# Set src directory and sorting directory as include path globally
+AX_APPEND_FLAG([-I$(realpath ${srcdir}/src/)], [CFLAGS])
+AX_APPEND_FLAG([-I$(realpath ${srcdir}/src/sorting/)], [CFLAGS])
+
 LT_INIT(dlopen)
 AC_CONFIG_FILES([Makefile])
 AC_CONFIG_FILES([src/Makefile])
