@@ -8,12 +8,14 @@
 #include "papi_calculator.h"
 
 typedef struct {
+   char *name;
+   bool is_native;
+} vftr_counter_t;
+
+typedef struct {
+   int n_counters;
+   vftr_counter_t *counters;
    int eventset;
-   int n_available_events;
-   unsigned int *event_codes;
-   char **event_names;
-   char **event_units;
-   char **event_descriptions;
    papi_calculator_t calculator;
 } papi_state_t;
 

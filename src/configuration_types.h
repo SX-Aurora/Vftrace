@@ -33,6 +33,7 @@ typedef struct {
    CONFIG_STRUCT_DEFAULTS
    int n_elements;
    char **values;
+   int *list_idx;
 } config_string_list_t;
 
 typedef struct {
@@ -98,6 +99,7 @@ typedef struct {
 typedef struct {
    CONFIG_STRUCT_DEFAULTS
    config_string_list_t native_name;
+   config_string_list_t preset_name;
    config_string_list_t symbol;
 } config_hwcounters_t;
 

@@ -96,25 +96,31 @@ void vftr_parse_config_string(cJSON *parent_object, config_string_t *cfg_string_
 }
 
 void vftr_parse_config_string_list (cJSON *parent_object, char *list_name, config_string_list_t *cfg_string_list_ptr) {
+   cfg_string_list_ptr->n_elements = 0;
    bool has_object = cJSON_HasObjectItem (parent_object, list_name);
    if (!has_object) return;
-   int n;
+   int idx, n;
    for (int pass = 0; pass < 2; pass++) {
       n = 0;
+      idx = 0;
       cJSON *json_list = cJSON_GetObjectItem(parent_object, list_name);
       cJSON *json_object;
       cJSON_ArrayForEach(json_object, json_list) {
+         cJSON *token = cJSON_GetObjectItem(json_object, cfg_string_list_ptr->name);
+         if (token == NULL) continue;
          if (pass == 1) {
-            cJSON *token = cJSON_GetObjectItem(json_object, cfg_string_list_ptr->name);
             cfg_string_list_ptr->values[n] = strdup(cJSON_GetStringValue(token));
+            cfg_string_list_ptr->list_idx[n] = idx++;
          }
          n++;
       }
       if (pass == 0) {
          cfg_string_list_ptr->n_elements = n;
          cfg_string_list_ptr->values = (char**)malloc(n * sizeof(char*));
+         cfg_string_list_ptr->list_idx = (int*)malloc(n * sizeof(int));
          for (int i = 0; i < n; i++) {
             cfg_string_list_ptr->values[i] = NULL;
+            cfg_string_list_ptr->list_idx[i] = -1;
          }
       }
    } 
@@ -276,6 +282,7 @@ void vftr_parse_config_hwcounters (cJSON *parent_object, config_hwcounters_t *cf
    bool has_object = cJSON_HasObjectItem(parent_object, cfg_hwc->name);
    if (!has_object) return;
    vftr_parse_config_string_list (parent_object, cfg_hwc->name, &(cfg_hwc->native_name));
+   vftr_parse_config_string_list (parent_object, cfg_hwc->name, &(cfg_hwc->preset_name));
    vftr_parse_config_string_list (parent_object, cfg_hwc->name, &(cfg_hwc->symbol));
 }
 

@@ -75,11 +75,9 @@ vftrace_t vftrace = {
 #endif
 #ifdef _PAPI_AVAIL
    .papi_state = {
+      .n_counters = 0,
+      .counters = NULL,
       .eventset = PAPI_NULL,
-      .n_available_events = 0,
-      .event_codes = NULL,
-      .event_units = NULL,
-      .event_descriptions = NULL,
    },
 #endif
 #ifdef _MPI

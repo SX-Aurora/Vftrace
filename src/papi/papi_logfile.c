@@ -96,14 +96,14 @@ void vftr_write_papi_counter_summary (FILE *fp, collated_stacktree_t stacktree, 
    }
 
    fprintf (fp, "Total PAPI counters: \n\n");
-   for (int e = 0; e < n_events; e++) {
-      fprintf (fp, "  %s: %lld\n",  config.papi.counters.native_name.values[e], counter_sum[e]);
+   for (int e = 0; e < vftrace.papi_state.n_counters; e++) {
+      fprintf (fp, "  %s: %lld\n",  vftrace.papi_state.counters[e].name, counter_sum[e]);
    }
    free (counter_sum);
 }
 
 void vftr_write_event_descriptions (FILE *fp) {
-   for (int i = 0; i < vftrace.papi_state.n_available_events; i++) {
-      fprintf (fp, "%s: %s\n", vftrace.papi_state.event_names[i], vftrace.papi_state.event_descriptions[i]);
-   }
+   //for (int i = 0; i < vftrace.papi_state.n_available_events; i++) {
+   //   fprintf (fp, "%s: %s\n", vftrace.papi_state.event_names[i], vftrace.papi_state.event_descriptions[i]);
+   //}
 }
