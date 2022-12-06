@@ -59,7 +59,6 @@ void vftr_veda_callback_launch_kernel_enter(VEDAprofiler_data* data) {
    user_data_t *user_data = (user_data_t*) malloc(sizeof(user_data_t));
    user_data->threadID = threadID;
    user_data->stackID = stackID;
-   profile_t *my_prof = vftr_get_my_profile_from_ids(stackID, threadID);
    user_data->start_time = vftr_get_runtime_nsec();
    data->user_data = (void*) user_data;
 

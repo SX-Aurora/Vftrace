@@ -27,12 +27,18 @@ typedef struct {
    long long overhead_time;
 } user_data_t;
 
+static const char *callbackname = "vedaMemcpyDtoH";
+static const char *callbacknameAsync = "vedaMemcpyDtoHAsync";
+
 void vftr_veda_callback_mem_cpy_dtoh_enter(VEDAprofiler_data* data) {
+//printf("req_id = %d\n", data->req_id);
    long long tstart_callback = vftr_get_runtime_nsec();
 
+   // Cast data->type to the callback specific struct
    VEDAprofiler_vedaMemcpy *MemcpyData;
    MemcpyData = (VEDAprofiler_vedaMemcpy*) &(data->type);
-   const char *callbackname = "vedaMemcpyDtoH";
+
+   // Start the veda region to add to the stacktree
    vftr_veda_region_begin(callbackname);
    // Obtain stack and thread ID for the called function
    // in order to pass it to the exit callback
@@ -50,7 +56,6 @@ void vftr_veda_callback_mem_cpy_dtoh_enter(VEDAprofiler_data* data) {
    user_data->threadID = threadID;
    user_data->stackID = stackID;
    user_data->bytes = MemcpyData->bytes;
-   profile_t *my_prof = vftr_get_my_profile_from_ids(stackID, threadID);
    user_data->start_time = vftr_get_runtime_nsec();
    data->user_data = (void*) user_data;
 
@@ -58,7 +63,6 @@ void vftr_veda_callback_mem_cpy_dtoh_enter(VEDAprofiler_data* data) {
 }
 
 void vftr_veda_callback_mem_cpy_dtoh_exit(VEDAprofiler_data* data) {
-   const char *callbackname = "vedaMemcpyDtoH";
    vftr_veda_region_end(callbackname);
    long long tstart_callback = vftr_get_runtime_nsec();
    long long memcpy_end_time = tstart_callback;
@@ -82,12 +86,16 @@ void vftr_veda_callback_mem_cpy_dtoh_exit(VEDAprofiler_data* data) {
 }
 
 void vftr_veda_callback_mem_cpy_dtoh_asyn_enter(VEDAprofiler_data* data) {
+   //printf("req_id = %d\n", data->req_id);
    long long tstart_callback = vftr_get_runtime_nsec();
 
+   // Cast data->type to the callback specific struct
    VEDAprofiler_vedaMemcpy *MemcpyData;
    MemcpyData = (VEDAprofiler_vedaMemcpy*) &(data->type);
-   const char *callbackname = "vedaMemcpyDtoH";
-   vftr_veda_region_begin(callbackname);
+
+   // Start the veda region to add to the stacktree
+   vftr_veda_region_begin(callbacknameAsync);
+
    // Obtain stack and thread ID for the called function
    // in order to pass it to the exit callback
    // to complete the function profiling
@@ -95,6 +103,9 @@ void vftr_veda_callback_mem_cpy_dtoh_asyn_enter(VEDAprofiler_data* data) {
    threadstack_t *my_threadstack = vftr_get_my_threadstack(my_thread);
    int stackID = my_threadstack->stackID;
    int threadID = my_thread->threadID;
+   // End the region here, as it is an asynchronous call,
+   // thus the runtime is independend ofthe copy time,
+   // thus no reson to wait for the exit call
    vftr_veda_region_end(callbackname);
 
    // Store collect data that needs to be passed to
@@ -105,10 +116,8 @@ void vftr_veda_callback_mem_cpy_dtoh_asyn_enter(VEDAprofiler_data* data) {
    user_data->threadID = threadID;
    user_data->stackID = stackID;
    user_data->bytes = MemcpyData->bytes;
-   profile_t *my_prof = vftr_get_my_profile_from_ids(stackID, threadID);
    user_data->start_time = vftr_get_runtime_nsec();
    data->user_data = (void*) user_data;
-
    user_data->overhead_time = vftr_get_runtime_nsec() - tstart_callback;
 }
 
