@@ -91,11 +91,11 @@ void vftr_write_ranklogfile_papi_counter_table (FILE *fp, stacktree_t stacktree,
    int *calls = (int*)malloc(n_without_init * sizeof(int));
    char **func = (char**)malloc(n_without_init * sizeof(char*));
    int n_counters = vftrace.papi_state.n_counters;
-   long long **counters = (long long*)malloc(n_counters * sizeof(long long*));
-   for (int i = 0; n_counters; i++) {
+   long long **counters = (long long**)malloc(n_counters * sizeof(long long*));
+   for (int i = 0; i < n_counters; i++) {
       counters[i] = (long long*)malloc(n_without_init * sizeof(long long));
+      memset(counters[i], 0, n_without_init * sizeof(long long));
    }
-   memset (counters, 0, n_counters * n_without_init * sizeof(long long));
 
    int idx = 0;
    for (int istack = 0; istack < stacktree.nstacks; istack++) {
@@ -109,7 +109,7 @@ void vftr_write_ranklogfile_papi_counter_table (FILE *fp, stacktree_t stacktree,
       func[idx] = this_stack->name;
 
       for (int i = 0; i < n_counters; i++) {
-         counters[i][idx] = papiprof.counters[i];   
+         counters[i][idx] = papiprof.counters[i];
       }
       idx++;
    }

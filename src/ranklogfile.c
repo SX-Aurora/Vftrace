@@ -124,6 +124,9 @@ void vftr_write_ranklogfile(vftrace_t vftrace, long long runtime) {
 
 #ifdef _PAPI_AVAIL
    vftr_write_ranklogfile_papi_obs_table (fp, vftrace.process.stacktree, vftrace.config);
+   if (vftrace.config.papi.show_counters.value) {
+      vftr_write_ranklogfile_papi_counter_table (fp, vftrace.process.stacktree, vftrace.config);
+   }
 #endif
 
    vftr_write_logfile_global_stack_list(fp, vftrace.process.collated_stacktree);

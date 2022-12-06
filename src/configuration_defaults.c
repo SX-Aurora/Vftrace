@@ -175,13 +175,12 @@ config_hwobservables_t vftr_set_config_hwobservables_default() {
 }
 
 config_papi_t vftr_set_config_papi_default() {
-   printf ("Set PAPI default\n");
    config_papi_t cfg_papi;
    cfg_papi.name = strdup("papi");
    cfg_papi.set = false;
+   cfg_papi.show_counters = vftr_set_config_bool_default ("show_counters", false);
    cfg_papi.counters = vftr_set_config_hwcounters_default();
    cfg_papi.observables = vftr_set_config_hwobservables_default();
-   printf ("Set PAPI default done\n");
    return cfg_papi;
 }
 
