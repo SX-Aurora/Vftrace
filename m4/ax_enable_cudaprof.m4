@@ -24,6 +24,14 @@ AC_DEFUN([AX_ENABLE_CUDAPROF], [
       [AM_COND_IF([HAS_NVIDIA_COMPILER], [], [AC_MSG_FAILURE([Need NVIDIA compiler])])], [], [])
 
    AC_MSG_RESULT(${with_cupti_present})
+
+   # Set the -D flag for the preprocessor globally
+   AM_COND_IF([ENABLE_CUDAPROF], [
+      AX_APPEND_FLAG([-D_CUDA], [CFLAGS])
+      AX_APPEND_FLAG([-D_CUDA], [CPPFLAGS])
+      AX_APPEND_FLAG([-I$(realpath ${srcdir}/src/cuda)], [CFLAGS])
+   ])
+
    AM_COND_IF([ENABLE_CUDAPROF],
       [AX_APPEND_FLAG([-L${with_cupti}/lib64], [LDFLAGS])])
    AM_COND_IF([ENABLE_CUDAPROF],

@@ -94,4 +94,9 @@ AC_DEFUN([AX_WITH_LIBERTY], [
       AM_COND_IF([HAS_LIBERTY],
          [AX_APPEND_FLAG([-liberty], [LDFLAGS])],
          [AC_MSG_ERROR([cannot find -liberty])])])
+   # Set the -D flag for the preprocessor globally
+   AM_COND_IF([HAS_LIBERTY], [
+      AX_APPEND_FLAG([-D_LIBERTY], [CFLAGS])
+      AX_APPEND_FLAG([-D_LIBERTY], [CPPFLAGS])
+   ])
 ])

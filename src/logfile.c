@@ -10,7 +10,9 @@
 #include "configuration_print.h"
 #include "logfile_header.h"
 #include "logfile_prof_table.h"
+#ifdef _MPI
 #include "logfile_mpi_table.h"
+#endif
 #include "logfile_stacklist.h"
 #include "collate_stacks.h"
 #include "search.h"

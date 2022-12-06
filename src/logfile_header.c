@@ -16,8 +16,12 @@
 #include "profiling_types.h"
 #include "profiling.h"
 #include "collated_callprofiling.h"
+#ifdef _MPI
 #include "mpiprofiling.h"
+#endif
+#ifdef _OMP
 #include "ompprofiling.h"
+#endif
 #include "tables.h"
 #include "misc_utils.h"
 

@@ -78,6 +78,7 @@ AC_DEFUN([AX_ENABLE_MPI], [
       AX_APPEND_FLAG([-D_MPI], [CXXFLAGS])
       AX_APPEND_FLAG([-D_MPI], [CPPFLAGS])
       AX_APPEND_FLAG([-I$(realpath ${srcdir}/src/mpi/utils)], [CFLAGS])
+      AX_APPEND_FLAG([-I$(realpath ${srcdir}/src/mpi/utils)], [FCFLAGS])
    ])
 
    # Check the OpenMPI version to determine proper oversubscribe-flag

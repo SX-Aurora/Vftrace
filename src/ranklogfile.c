@@ -9,7 +9,9 @@
 #include "filenames.h"
 #include "ranklogfile_header.h"
 #include "ranklogfile_prof_table.h"
+#ifdef _MPI
 #include "ranklogfile_mpi_table.h"
+#endif
 #include "logfile_stacklist.h"
 #include "search.h"
 #include "configuration_print.h"

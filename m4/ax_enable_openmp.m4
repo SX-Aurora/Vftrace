@@ -79,4 +79,12 @@ enable_openmp="no"
        AC_CHECK_FUNC([omp_get_thread_num],
           [],
           [AC_MSG_FAILURE([Unable to find OpenMP functions!])])])
+
+   # Set the -D flag for the preprocessor globally
+   AM_COND_IF([ENABLE_OMP], [
+      AX_APPEND_FLAG([-D_OMP], [CFLAGS])
+      AX_APPEND_FLAG([-D_OMP], [CPPFLAGS])
+      AX_APPEND_FLAG([-I$(realpath ${srcdir}/src/omp)], [CFLAGS])
+   ])
+
 ])

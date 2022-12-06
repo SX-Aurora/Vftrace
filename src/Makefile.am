@@ -121,23 +121,6 @@ libvftrace_la_SOURCES += dlopen.c
 endif
 
 libvftrace_la_CFLAGS += -I${srcdir}/../external/cJSON/
-libvftrace_la_CFLAGS += -I${srcdir}/omp/ \
-                        -I${srcdir}/cuda/ \
-			-I${srcdir}/accprof \
-			-I${srcdir}/sorting
-
-if ENABLE_OMP
-libvftrace_la_CFLAGS += -D_OMP
-libvftrace_la_FCFLAGS += -D_OMP
-endif
-
-if ENABLE_CUDAPROF
-libvftrace_la_CFLAGS += -D_CUDA
-endif
-
-if HAS_LIBERTY
-libvftrace_la_CFLAGS += -D_LIBERTY
-endif
 
 if ENABLE_SHARED
 libvftrace_la_LIBADD += -ldl
@@ -150,9 +133,5 @@ endif
 
 libvftr_pause_la_SOURCES = pause.c
 libvftr_pause_la_CFLAGS = $(FINSTRUMENT_FLAG)
-libvftr_pause_la_CFLAGS += -I${srcdir}/omp/ \
-                           -I${srcdir}/cuda/ \
-                           -I${srcdir}/accprof \
-                           -I${srcdir}/sorting
 
 CLEANFILES = *.mod
