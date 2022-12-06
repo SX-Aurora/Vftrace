@@ -39,6 +39,7 @@ void vftr_apply_perm_uint8(int n, uint8_t *list, int *perm);
 // one bit at a time
 void vftr_sort_float(int n, float *list, bool ascending);
 void vftr_sort_double(int n, double *list, bool ascending);
+void vftr_sort_perm_double(int n, double *list, int **perm, bool ascending);
 
 // sorts a list of floats with linear scaling radix sort
 // one bit at a time
