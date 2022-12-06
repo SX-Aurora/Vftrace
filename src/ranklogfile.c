@@ -123,7 +123,7 @@ void vftr_write_ranklogfile(vftrace_t vftrace, long long runtime) {
 #endif
 
 #ifdef _PAPI_AVAIL
-   vftr_write_ranklogfile_papi_table (fp, vftrace.process.stacktree, vftrace.config);
+   vftr_write_ranklogfile_papi_obs_table (fp, vftrace.process.stacktree, vftrace.config);
 #endif
 
    vftr_write_logfile_global_stack_list(fp, vftrace.process.collated_stacktree);
