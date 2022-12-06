@@ -137,29 +137,6 @@ libvftrace_la_CFLAGS += -I${srcdir}/../external/cJSON/
 #endif
 #endif
 
-if ENABLE_MPI
-libvftrace_la_CFLAGS += -D_MPI
-libvftrace_la_FCFLAGS += -D_MPI
-endif 
-
-if ENABLE_OMP
-libvftrace_la_CFLAGS += -D_OMP
-libvftrace_la_FCFLAGS += -D_OMP
-endif
-
-if ENABLE_CUPTI
-libvftrace_la_CFLAGS += -D_CUPTI
-endif
-
-if ENABLE_VEDA
-libvftrace_la_CFLAGS += -D_VEDA
-endif
-
-if HAS_LIBERTY
-libvftrace_la_CFLAGS += -D_LIBERTY
-#libvftrace_la_LIBADD += -liberty
-endif
-
 #if USES_INTEL_COMPILER
 #libvftrace_la_LDFLAGS += -lifcore
 #endif
