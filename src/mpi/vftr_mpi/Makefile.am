@@ -169,13 +169,8 @@ if HAS_MPI_STD_1_0
 libvftr_mpi_la_SOURCES += pcontrol.c
 endif
 
-libvftr_mpi_la_CFLAGS =
-
-libvftr_mpi_la_CFLAGS +=-D_MPI
-
 if SELF_PROFILING
 libvftr_mpi_la_CPPFLAGS += -D_SELF_PROFILE_VFTRACE
 endif
 
-libvftr_mpi_la_CFLAGS += -I${srcdir}/../utils/
-libvftr_mpi_la_CFLAGS += -I${srcdir}/../../
+libvftr_mpi_la_CFLAGS =

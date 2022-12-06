@@ -219,9 +219,5 @@ libvftr_mpi_f2vftr_la_SOURCES += pcontrol_f2vftr.c
 libvftr_mpi_f2vftr_la_SOURCES += pcontrol_f2vftr_fi.F90
 
 libvftr_mpi_f2vftr_la_CFLAGS =
+libvftr_mpi_f2vftr_la_CFLAGS += -I${srcdir}/../vftr_mpi/
 libvftr_mpi_f2vftr_la_FCFLAGS =
-
-libvftr_mpi_f2vftr_la_CFLAGS += -D_MPI
-libvftr_mpi_f2vftr_la_FCFLAGS += -D_MPI
-libvftr_mpi_f2vftr_la_CFLAGS += -I${srcdir}/../utils/ \
-			        -I${srcdir}/../vftr_mpi/

@@ -134,8 +134,6 @@ libvftr_f08mpiwrap_la_SOURCES += put.F90 \
 libvftr_f08mpiwrap_la_SOURCES += pcontrol.F90
 
 libvftr_f08mpiwrap_la_FCFLAGS = $(FINSTRUMENT_FLAG)
-libvftr_f08mpiwrap_la_FCFLAGS += -I${builddir}/../utils/
 libvftr_f08mpiwrap_la_FCFLAGS += -I${builddir}/../f082vftr/
-libvftr_f08mpiwrap_la_FCFLAGS += -D_MPI
 
 CLEANFILES = *.mod
