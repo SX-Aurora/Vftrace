@@ -13,6 +13,7 @@ libvftr_veda_la_SOURCES += veda_callback.c \
 			   veda_callback_mem_cpy_htod.c \
 			   veda_callback_mem_cpy_dtoh.c
 
+libvftr_veda_la_CFLAGS =
 if SELF_PROFILING
 libvftr_veda_la_CFLAGS += -D_SELF_PROFILE_VFTRACE
 endif
