@@ -31,9 +31,9 @@ AC_DEFUN([AX_ENABLE_VEDA], [
           [AC_MSG_FAILURE([unable to find VEDA headers])])])
 
    # Set the -D flag for the preprocessor globally
-   AM_COND_IF([ENABLE_MPI], [
-      AX_APPEND_FLAG([-D_MPI], [CFLAGS])
-      AX_APPEND_FLAG([-D_MPI], [CPPFLAGS])
+   AM_COND_IF([ENABLE_VEDA], [
+      AX_APPEND_FLAG([-D_VEDA], [CFLAGS])
+      AX_APPEND_FLAG([-D_VEDA], [CPPFLAGS])
       AX_APPEND_FLAG([-I$(realpath ${srcdir}/src/veda)], [CFLAGS])
    ])
 
