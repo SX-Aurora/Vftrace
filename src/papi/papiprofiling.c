@@ -14,19 +14,22 @@ papiprofile_t vftr_new_papiprofiling () {
    return prof;
 }
 
-void vftr_accumulate_papiprofiling (papiprofile_t *prof, bool is_entry) {
-   int n = PAPI_num_events (vftrace.papi_state.eventset);
-   long long *counters = (long long*)malloc (n * sizeof(long long));
-   int retval = PAPI_read (vftrace.papi_state.eventset, counters);
+long long *vftr_get_papi_counters () {
+  int n = PAPI_num_events (vftrace.papi_state.eventset);
+  long long *counters = (long long *)malloc (n * sizeof(long long));
+  int retval = PAPI_read (vftrace.papi_state.eventset, counters);
+  return counters;
+}
 
+void vftr_accumulate_papiprofiling (papiprofile_t *prof, long long *counters, bool invert_sign) {
+   int n = PAPI_num_events (vftrace.papi_state.eventset);
    for (int i = 0; i < n; i++) {
-      if (is_entry) {
+      if (invert_sign) {
          prof->counters[i] -= counters[i]; 
       } else {
          prof->counters[i] += counters[i]; 
       }
    }
-   free(counters);
 }
 
 void vftr_papiprofiling_free (papiprofile_t *prof_ptr) {

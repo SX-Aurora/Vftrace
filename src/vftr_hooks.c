@@ -27,6 +27,10 @@ void vftr_function_entry(void *func, void *call_site) {
    SELF_PROFILE_START_FUNCTION;
    (void) call_site;
    long long function_entry_time_begin = vftr_get_runtime_nsec();
+#ifdef _PAPI_AVAIL
+   long long *papi_counters = vftr_get_papi_counters();
+#endif
+
 #ifdef _OMP
    omp_set_lock(&(vftrace.process.threadlock));
 #endif
@@ -73,7 +77,9 @@ void vftr_function_entry(void *func, void *call_site) {
    }
 
 #ifdef _PAPI_AVAIL
-   vftr_accumulate_papiprofiling (&(my_profile->papiprof), true);
+   //vftr_accumulate_papiprofiling (&(my_profile->papiprof), true);
+   vftr_accumulate_papiprofiling (&(my_profile->papiprof), papi_counters, true);
+   free(papi_counters);
 #endif
 
    // No calls after this overhead handling!
@@ -90,6 +96,9 @@ void vftr_function_exit(void *func, void *call_site) {
    (void) func;
    (void) call_site;
    long long function_exit_time_begin = vftr_get_runtime_nsec();
+#ifdef _PAPI_AVAIL
+   long long *papi_counters = vftr_get_papi_counters();
+#endif
 #ifdef _OMP
    omp_set_lock(&(vftrace.process.threadlock));
 #endif
@@ -122,7 +131,8 @@ void vftr_function_exit(void *func, void *call_site) {
    }
 
 #ifdef _PAPI_AVAIL
-   vftr_accumulate_papiprofiling (&(my_profile->papiprof), false);
+   vftr_accumulate_papiprofiling (&(my_profile->papiprof), papi_counters, false);
+   free (papi_counters);
 #endif
 
    // No calls after this overhead handling
