@@ -8,11 +8,14 @@
 
 papiprofile_t vftr_new_papiprofiling () {
    papiprofile_t prof;
-   int n_counters = PAPI_num_events (vftrace.papi_state.eventset);
+   int n_counters = vftrace.papi_state.n_counters;
+   int n_observables = vftrace.config.papi.observables.obs_name.n_elements;
    prof.counters_incl = (long long*)malloc (n_counters * sizeof(long long));
    memset (prof.counters_incl, 0, n_counters * sizeof(long long));
    prof.counters_excl = (long long*)malloc (n_counters * sizeof(long long));
    memset (prof.counters_excl, 0, n_counters * sizeof(long long));
+   prof.observables = (double*)malloc (n_observables * sizeof(double));
+   memset (prof.observables, 0, n_observables * sizeof(double));
    return prof;
 }
 
@@ -68,9 +71,31 @@ void vftr_update_stacks_exclusive_counters (stacktree_t *stacktree_ptr) {
    }
 }
 
+void vftr_update_stacks_papi_observables (stacktree_t *stacktree_ptr) {
+   papi_calculator_t *calc = &(vftrace.papi_state.calculator);
+   int nstacks = stacktree_ptr->nstacks;
+   vftr_stack_t *stacks = stacktree_ptr->stacks;
+   for (int istack = 1; istack < nstacks; istack++) {
+      vftr_stack_t *this_stack = stacks + istack;
+      for (int iprof = 0; iprof < this_stack->profiling.nprofiles; iprof++) {
+         profile_t *this_prof = this_stack->profiling.profiles + iprof;
+         callprofile_t callprof = this_prof->callprof;
+         papiprofile_t *papiprof = &(this_prof->papiprof);
+         vftr_set_papi_calculator_counters (calc, papiprof->counters_excl);
+         vftr_set_papi_calculator_builtin (calc, PCALC_T, callprof.time_excl_nsec * 1e-9);
+         vftr_set_papi_calculator_builtin (calc, PCALC_ONE, 1.0);
+         for (int i = 0; i < calc->n_observables; i++) {
+            papiprof->observables[i] = vftr_papi_calculator_evaluate (*calc, i);
+         }
+      }
+   }
+}
+
 void vftr_papiprofiling_free (papiprofile_t *prof_ptr) {
    if (prof_ptr->counters_incl != NULL) free (prof_ptr->counters_incl);
    if (prof_ptr->counters_excl != NULL) free (prof_ptr->counters_excl);
+   if (prof_ptr->observables != NULL) free (prof_ptr->observables);
    prof_ptr->counters_incl = NULL;
    prof_ptr->counters_excl = NULL;
+   prof_ptr->observables = NULL;
 }

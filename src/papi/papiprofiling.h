@@ -13,5 +13,7 @@ void vftr_accumulate_papiprofiling (papiprofile_t *prof, long long *counters, bo
 
 void vftr_update_stacks_exclusive_counters (stacktree_t *stacktree_ptr);
 
+void vftr_update_stacks_papi_observables (stacktree_t *stacktree_ptr);
+
 void vftr_papiprofiling_free (papiprofile_t *prof_ptr);
 #endif

@@ -10,7 +10,6 @@
 #include "collate_stacks.h"
 
 #include "papiprofiling_types.h"
-#include "papi_calculator.h"
 
 void vftr_write_ranklogfile_papi_obs_table (FILE *fp, stacktree_t stacktree, config_t config) {
    vftr_stack_t **sorted_stacks = vftr_sort_stacks_for_prof (config, stacktree);
@@ -41,14 +40,8 @@ void vftr_write_ranklogfile_papi_obs_table (FILE *fp, stacktree_t stacktree, con
       calls[idx] = callprof.calls;
       func[idx] = this_stack->name;
 
-      vftr_set_papi_calculator_counters (&(vftrace.papi_state.calculator), papiprof.counters_excl);
-      vftr_set_papi_calculator_builtin (&(vftrace.papi_state.calculator),
-                                            PCALC_T, (double)callprof.time_excl_nsec * 1e-9);
-      vftr_set_papi_calculator_builtin (&(vftrace.papi_state.calculator),
-                                            PCALC_ONE, 1.0);
-
       for (int i = 0; i < n_observables; i++) {
-         observables[i][idx] = vftr_papi_calculator_evaluate (vftrace.papi_state.calculator, i);   
+         observables[i][idx] = papiprof.observables[i];   
       }
       idx++;
    }
