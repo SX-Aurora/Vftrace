@@ -22,6 +22,9 @@
 #ifdef _ACCPROF
 #include "accprof_ranklogfile.h"
 #endif
+#ifdef _VEDA
+#include "ranklogfile_veda_table.h"
+#endif
 
 
 static bool vftr_rank_needs_ranklogfile(config_t config, int rank) {
@@ -119,6 +122,11 @@ void vftr_write_ranklogfile(vftrace_t vftrace, long long runtime) {
          vftr_write_ranklogfile_accprof_event_table (fp, vftrace.process.stacktree, vftrace.config);
       }
    }
+#endif
+
+#ifdef _VEDA
+   // TODO CONFIG FOR VEDA
+   vftr_write_ranklogfile_veda_table(fp, vftrace.process.stacktree, vftrace.config);
 #endif
 
    vftr_write_logfile_global_stack_list(fp, vftrace.process.collated_stacktree);
