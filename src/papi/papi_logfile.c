@@ -14,7 +14,7 @@
 void vftr_write_papi_table (FILE *fp, collated_stacktree_t stacktree, config_t config) {
 
    collated_stack_t **sorted_stacks =
-      vftr_sort_collated_stacks_for_prof(config, stacktree);
+      vftr_sort_collated_stacks_papi_obs(config, stacktree);
 
    fprintf (fp, "\nRuntime PAPI profile\n");
 

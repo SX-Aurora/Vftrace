@@ -322,3 +322,29 @@ void vftr_sort_stacks_for_mpiprof(config_t config,
      return stackptrs; 
 }
 #endif
+
+#ifdef _PAPI_AVAIL
+  vftr_stack_t **vftr_sort_stacks_papi_obs (config_t config, stacktree_t stacktree) {
+     int sort_column = config.papi.sort_by_column.value;
+     int nstacks = stacktree.nstacks; 
+     int *perm = NULL;
+     double *observables   = (double*)malloc(nstacks * sizeof(long long));
+     for (int istack = 0; istack < nstacks; istack++) {
+        vftr_stack_t *stack = stacktree.stacks + istack;
+        papiprofile_t papiprof = stack->profiling.profiles->papiprof;
+        observables[istack] = papiprof.observables[sort_column];
+     }
+
+     vftr_sort_perm_double(nstacks, observables, &perm, false);
+     free(observables);
+
+     vftr_stack_t **stackptrs = (vftr_stack_t**)malloc(nstacks * sizeof(vftr_stack_t*));
+     for (int istack = 0; istack < nstacks; istack++) {
+        stackptrs[istack] = stacktree.stacks + istack;
+     }
+     
+     vftr_apply_perm_stackptr (nstacks, stackptrs, perm);
+     free(perm);
+     return stackptrs;
+} 
+#endif

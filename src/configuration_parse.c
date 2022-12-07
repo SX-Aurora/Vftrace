@@ -299,6 +299,7 @@ void vftr_parse_config_papi (cJSON *parent_object, config_papi_t *cfg_papi) {
    if (has_object) {
       cJSON *json_object = cJSON_GetObjectItem (parent_object, cfg_papi->name);
       vftr_parse_config_bool (json_object, &(cfg_papi->show_counters));
+      vftr_parse_config_int (json_object, &(cfg_papi->sort_by_column));
       vftr_parse_config_hwcounters(json_object, &(cfg_papi->counters));
       vftr_parse_config_hwobservables(json_object, &(cfg_papi->observables));
    }

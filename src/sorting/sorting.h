@@ -77,6 +77,11 @@ vftr_stack_t **vftr_sort_stacks_for_accprof (config_t config, stacktree_t stackt
 collated_stack_t **vftr_sort_collated_stacks_for_accprof (config_t config, collated_stacktree_t stacktree);
 #endif
 
+#ifdef _PAPI_AVAIL
+vftr_stack_t **vftr_sort_stacks_papi_obs (config_t config, stacktree_t stacktree);
+collated_stack_t **vftr_sort_collated_stacks_papi_obs (config_t config, collated_stacktree_t stacktree);
+#endif
+
 // sort the collated stacks based on a set configuration variable
 void vftr_apply_perm_collated_stackptr(int n, collated_stack_t **list, int *perm);
 collated_stack_t **vftr_sort_collated_stacks_for_prof(config_t config,

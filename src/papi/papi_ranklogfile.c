@@ -12,7 +12,7 @@
 #include "papiprofiling_types.h"
 
 void vftr_write_ranklogfile_papi_obs_table (FILE *fp, stacktree_t stacktree, config_t config) {
-   vftr_stack_t **sorted_stacks = vftr_sort_stacks_for_prof (config, stacktree);
+   vftr_stack_t **sorted_stacks = vftr_sort_stacks_papi_obs (config, stacktree);
 
    fprintf (fp, "\nRuntime PAPI profile - Observables\n\n");
 
