@@ -43,7 +43,7 @@ void vftr_write_papi_table (FILE *fp, collated_stacktree_t stacktree, config_t c
       calls[idx] = callprof.calls;
       func[idx] = this_stack->name;
 
-      vftr_set_papi_calculator_counters (&(vftrace.papi_state.calculator), papiprof.counters);
+      vftr_set_papi_calculator_counters (&(vftrace.papi_state.calculator), papiprof.counters_excl);
       vftr_set_papi_calculator_builtin (&(vftrace.papi_state.calculator),
                                             PCALC_T, (double)callprof.time_excl_nsec * 1e-9);
       vftr_set_papi_calculator_builtin (&(vftrace.papi_state.calculator),
@@ -91,7 +91,7 @@ void vftr_write_papi_counter_summary (FILE *fp, collated_stacktree_t stacktree, 
       papiprofile_t papiprof = this_stack.profile.papiprof;
 
       for (int e = 0; e < n_events; e++) {
-         counter_sum[e] += papiprof.counters[e]; 
+         counter_sum[e] += papiprof.counters_excl[e]; 
       }
    }
 

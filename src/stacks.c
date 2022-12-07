@@ -15,6 +15,10 @@
 #include "search.h"
 #include "collate_stacks.h"
 
+#ifdef _PAPI_AVAIL
+#include "papiprofiling.h"
+#endif
+
 void vftr_stacktree_realloc(stacktree_t *stacktree_ptr) {
    SELF_PROFILE_START_FUNCTION;
    stacktree_t stacktree = *stacktree_ptr;
@@ -147,6 +151,9 @@ void vftr_finalize_stacktree(stacktree_t *stacktree_ptr) {
    SELF_PROFILE_START_FUNCTION;
    // exclusive time
    vftr_update_stacks_exclusive_time(stacktree_ptr);
+#ifdef _PAPI_AVAIL
+   vftr_update_stacks_exclusive_counters(stacktree_ptr);
+#endif
    SELF_PROFILE_END_FUNCTION;
 }
 

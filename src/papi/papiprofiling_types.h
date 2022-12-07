@@ -2,7 +2,8 @@
 #define PAPIPROFILING_TYPES_H
 
 typedef struct {
-   long long *counters;
+   long long *counters_incl;
+   long long *counters_excl;
 } papiprofile_t;
 
 #endif

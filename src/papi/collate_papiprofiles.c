@@ -17,8 +17,10 @@ void vftr_collate_papiprofiles_root_self (collated_stacktree_t *collstacktree_pt
       papiprofile_t *collpapiprof = &(collstack->profile.papiprof);
      
       int n_events = PAPI_num_events (vftrace.papi_state.eventset);
-      collpapiprof->counters = (long long*)malloc (n_events * sizeof(long long));
-      memcpy (collpapiprof->counters, copy_papiprof.counters, n_events * sizeof(long long));
+      collpapiprof->counters_incl = (long long*)malloc (n_events * sizeof(long long));
+      collpapiprof->counters_excl = (long long*)malloc (n_events * sizeof(long long));
+      memcpy (collpapiprof->counters_incl, copy_papiprof.counters_incl, n_events * sizeof(long long));
+      memcpy (collpapiprof->counters_excl, copy_papiprof.counters_excl, n_events * sizeof(long long));
       //for (int i = 0; i < n_events; i++) {
       //   collpapiprof->counters[i] = copy_papiprof.counters[i];
       //   //collpapiprof->counters[i] = 0;
@@ -35,20 +37,24 @@ static void vftr_collate_papiprofiles_on_root (collated_stacktree_t *collstacktr
    if (myrank > 0) {
       int nprofiles = stacktree_ptr->nstacks;
       int *gids = (int*) malloc(nprofiles * sizeof(int));
-      long long *sendbuf = (long long*)malloc(nprofiles * num_counters * sizeof(long long));
+      long long *sendbuf_incl = (long long*)malloc(nprofiles * num_counters * sizeof(long long));
+      long long *sendbuf_excl = (long long*)malloc(nprofiles * num_counters * sizeof(long long));
 
       for (int istack = 0; istack < nprofiles; istack++) {
          vftr_stack_t *mystack = stacktree_ptr->stacks + istack;
          gids[istack] = mystack->gid;
          profile_t *myprof = mystack->profiling.profiles;
          for (int e = 0; e < num_counters; e++) { 
-            sendbuf[istack * num_counters + e] = myprof->papiprof.counters[e];
+            sendbuf_incl[istack * num_counters + e] = myprof->papiprof.counters_incl[e];
+            sendbuf_excl[istack * num_counters + e] = myprof->papiprof.counters_excl[e];
          }
       }
       PMPI_Send (gids, nprofiles, MPI_INT, 0, myrank, MPI_COMM_WORLD);
-      PMPI_Send (sendbuf, nprofiles * num_counters, MPI_LONG_LONG, 0, myrank, MPI_COMM_WORLD);
+      PMPI_Send (sendbuf_incl, nprofiles * num_counters, MPI_LONG_LONG, 0, myrank, MPI_COMM_WORLD);
+      PMPI_Send (sendbuf_excl, nprofiles * num_counters, MPI_LONG_LONG, 0, myrank, MPI_COMM_WORLD);
       free(gids);
-      free(sendbuf);
+      free(sendbuf_incl);
+      free(sendbuf_excl);
    } else {
       int maxprofiles = 0;
       for (int irank = 1; irank < nranks; irank++) {
@@ -58,21 +64,25 @@ static void vftr_collate_papiprofiles_on_root (collated_stacktree_t *collstacktr
       for (int irank = 1; irank < nranks; irank++) {
          int nprofiles = nremote_profiles[irank];
          int *gids = (int*)malloc(nprofiles * sizeof(int));
-         long long *recvbuf = (long long*)malloc(nprofiles * num_counters * sizeof(long long));
+         long long *recvbuf_incl = (long long*)malloc(nprofiles * num_counters * sizeof(long long));
+         long long *recvbuf_excl = (long long*)malloc(nprofiles * num_counters * sizeof(long long));
          MPI_Status status;
          PMPI_Recv (gids, nprofiles, MPI_INT, irank, irank, MPI_COMM_WORLD, &status);
-         PMPI_Recv (recvbuf, nprofiles * num_counters, MPI_LONG_LONG, irank, irank, MPI_COMM_WORLD, &status);
+         PMPI_Recv (recvbuf_incl, nprofiles * num_counters, MPI_LONG_LONG, irank, irank, MPI_COMM_WORLD, &status);
+         PMPI_Recv (recvbuf_excl, nprofiles * num_counters, MPI_LONG_LONG, irank, irank, MPI_COMM_WORLD, &status);
          for (int iprof = 0; iprof < nprofiles; iprof++) {
             int gid = gids[iprof]; 
             collated_stack_t *collstack = collstacktree_ptr->stacks + gid;
             papiprofile_t *collpapiprof = &(collstack->profile.papiprof);
 
             for (int e = 0; e < num_counters; e++) {
-               collpapiprof->counters[e] += recvbuf[iprof * num_counters + e];
+               collpapiprof->counters_incl[e] += recvbuf_incl[iprof * num_counters + e];
+               collpapiprof->counters_excl[e] += recvbuf_excl[iprof * num_counters + e];
             }
          }
          free(gids);
-         free(recvbuf); 
+         free(recvbuf_incl); 
+         free(recvbuf_excl); 
       }
    }
 }
