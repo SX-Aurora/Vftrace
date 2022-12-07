@@ -80,7 +80,7 @@ double *vftr_ranklogfile_veda_table_average_memcpy_HtoD_bw_list(
       int ncalls = 0;
       for (int iprof=0; iprof<stack_ptr->profiling.nprofiles; iprof++) {
          profile_t *prof_ptr = stack_ptr->profiling.profiles+iprof;
-         memcpy_HtoD_bw_list += prof_ptr->vedaprof.acc_HtoD_bw;
+         memcpy_HtoD_bw_list[istack] += prof_ptr->vedaprof.acc_HtoD_bw;
          ncalls += prof_ptr->vedaprof.ncalls;
       }
       if (ncalls > 0) {
@@ -101,7 +101,7 @@ double *vftr_ranklogfile_veda_table_average_memcpy_DtoH_bw_list(
       int ncalls = 0;
       for (int iprof=0; iprof<stack_ptr->profiling.nprofiles; iprof++) {
          profile_t *prof_ptr = stack_ptr->profiling.profiles+iprof;
-         memcpy_DtoH_bw_list += prof_ptr->vedaprof.acc_DtoH_bw;
+         memcpy_DtoH_bw_list[istack] += prof_ptr->vedaprof.acc_DtoH_bw;
          ncalls += prof_ptr->vedaprof.ncalls;
       }
       if (ncalls > 0) {
@@ -121,7 +121,7 @@ double *vftr_ranklogfile_veda_table_avg_time_list(int nstacks, stack_t **stack_p
       int ncalls = 0;
       for (int iprof=0; iprof<stack_ptr->profiling.nprofiles; iprof++) {
          profile_t *prof_ptr = stack_ptr->profiling.profiles+iprof;
-         avg_time_list[istack] += stack_ptr->profile.vedaprof.total_time_nsec*1.0e-9;
+         avg_time_list[istack] += prof_ptr->vedaprof.total_time_nsec*1.0e-9;
          ncalls += prof_ptr->vedaprof.ncalls;
       }
       if (ncalls > 0) {
@@ -176,10 +176,13 @@ int *vftr_ranklogfile_veda_table_stack_globalstackID_list(int nstacks,
    int listidx = 0;
    for (int istack=0; istack<nstacks; istack++) {
       stack_t *stack_ptr = stack_ptrs[istack];
-      profile_t *prof_ptr = &(stack_ptr->profile);
-      if (prof_ptr->vedaprof.ncalls) {
-         id_list[istack] = stack_ptr->gid;
-         listidx++;
+      for (int iprof=0; iprof<stack_ptr->profiling.nprofiles; iprof++) {
+         profile_t *prof_ptr = stack_ptr->profiling.profiles+iprof;
+         if (prof_ptr->vedaprof.ncalls) {
+            id_list[istack] = stack_ptr->gid;
+            listidx++;
+            break;
+         }
       }
    }
    return id_list;

@@ -7,6 +7,6 @@
 #include "stack_types.h"
 #include "configuration_types.h"
 
-void vftr_write_rank_logfile_veda_table(FILE *fp, stacktree_t stacktree, config_t config);
+void vftr_write_ranklogfile_veda_table(FILE *fp, stacktree_t stacktree, config_t config);
 
 #endif
