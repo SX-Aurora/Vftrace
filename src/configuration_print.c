@@ -159,18 +159,86 @@ void vftr_print_config_accprof (FILE *fp, int level, config_accprof_t cfg_accpro
 }
 
 void vftr_print_config_hwcounters (FILE *fp, int level, config_hwcounters_t cfg_hwc) {
+   int n_max = cfg_hwc.native_name.n_elements + cfg_hwc.preset_name.n_elements;
+   n_max = cfg_hwc.symbol.n_elements > n_max ? cfg_hwc.symbol.n_elements : n_max;
+   int i_native = 0;
+   int i_preset = 0;
+   int i_symbol = 0;
+   level++;
+   vftr_print_config_indent(fp, level);
+   fprintf (fp, "\"%s\": ", cfg_hwc.name);
+   fprintf (fp, "[\n");
+   level++;
+   for (int i = 0; i < n_max; i++) {
+      vftr_print_config_indent(fp, level);
+      fprintf (fp, "{\n");
+      if (cfg_hwc.native_name.list_idx[i_native] == i) {
+         fprintf (fp, "\"%s\": \"%s\",\n", cfg_hwc.native_name.name,
+                                           cfg_hwc.native_name.values[i_native]);
+         i_native++;
+      }
+      if (cfg_hwc.preset_name.list_idx[i_preset] == i) {
+         fprintf (fp, "\"%s\": \"%s\",\n", cfg_hwc.preset_name.name,
+                                           cfg_hwc.preset_name.values[i_preset]);
+         i_preset++;
+      }
+      if (cfg_hwc.symbol.list_idx[i_symbol] == i) {
+         fprintf (fp, "\"%s\": \"%s\",\n", cfg_hwc.symbol.name,
+                                           cfg_hwc.symbol.values[i_symbol]);
+         i_symbol++;
+      }
+      fprintf (fp, "},\n");
+   }
+   level--;
+   vftr_print_config_indent(fp, level);
+   fprintf (fp, "],\n");
 }
 
 void vftr_print_config_hwobservables (FILE *fp, int level, config_hwobservables_t cfg_hwobs) {
+   int n_max = cfg_hwobs.obs_name.n_elements + cfg_hwobs.formula_expr.n_elements;
+   n_max = cfg_hwobs.unit.n_elements > n_max ? cfg_hwobs.unit.n_elements : n_max;
+   int i_obs = 0;
+   int i_formula = 0;
+   int i_unit = 0;
+   level++;
+   vftr_print_config_indent(fp, level);
+   fprintf (fp, "\"%s\": ", cfg_hwobs.name);
+   fprintf (fp, "[\n");
+   level++;
+   for (int i = 0; i < n_max; i++) {
+      vftr_print_config_indent(fp, level);
+      fprintf (fp, "{\n");
+      if (cfg_hwobs.obs_name.list_idx[i_obs] == i) {
+         fprintf (fp, "\"%s\": \"%s\",\n", cfg_hwobs.obs_name.name,
+                                           cfg_hwobs.obs_name.values[i_obs]);
+         i_obs++;
+      }
+      if (cfg_hwobs.formula_expr.list_idx[i_formula] == i) {
+         fprintf (fp, "\"%s\": \"%s\",\n", cfg_hwobs.formula_expr.name,
+                                           cfg_hwobs.formula_expr.values[i_formula]);
+         i_formula++;
+      }
+      if (cfg_hwobs.unit.list_idx[i_unit] == i) {
+         fprintf (fp, "\"%s\": \"%s\",\n", cfg_hwobs.unit.name,
+                                           cfg_hwobs.unit.values[i_unit]);
+         i_unit++;
+      }
+      fprintf (fp, "},\n");
+   }
+   level--;
+   vftr_print_config_indent(fp, level);
+   fprintf (fp, "],\n");
 }
-
 
 void vftr_print_config_papi (FILE *fp, int level, config_papi_t cfg_papi) {
    level++;
    vftr_print_config_indent(fp, level);
-    fprintf (fp, "\"%s\": {\n", cfg_papi.name);
+   fprintf (fp, "\"%s\": {\n", cfg_papi.name);
+   vftr_print_config_bool (fp, level, cfg_papi.show_counters);
+   fprintf (fp, ",\n");
+   vftr_print_config_int (fp, level, cfg_papi.sort_by_column);
+   fprintf (fp, ",\n");
    vftr_print_config_hwcounters (fp, level, cfg_papi.counters);
-   fprintf (fp, "\n");
    vftr_print_config_hwobservables (fp, level, cfg_papi.observables);
    fprintf (fp, "}"); 
 }
