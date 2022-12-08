@@ -191,7 +191,7 @@ void vftr_print_config_hwcounters (FILE *fp, int level, config_hwcounters_t cfg_
    }
    level--;
    vftr_print_config_indent(fp, level);
-   fprintf (fp, "],\n");
+   fprintf (fp, "]");
 }
 
 void vftr_print_config_hwobservables (FILE *fp, int level, config_hwobservables_t cfg_hwobs) {
@@ -227,7 +227,7 @@ void vftr_print_config_hwobservables (FILE *fp, int level, config_hwobservables_
    }
    level--;
    vftr_print_config_indent(fp, level);
-   fprintf (fp, "],\n");
+   fprintf (fp, "]");
 }
 
 void vftr_print_config_papi (FILE *fp, int level, config_papi_t cfg_papi) {
@@ -239,7 +239,9 @@ void vftr_print_config_papi (FILE *fp, int level, config_papi_t cfg_papi) {
    vftr_print_config_int (fp, level, cfg_papi.sort_by_column);
    fprintf (fp, ",\n");
    vftr_print_config_hwcounters (fp, level, cfg_papi.counters);
+   fprintf (fp, ",\n");
    vftr_print_config_hwobservables (fp, level, cfg_papi.observables);
+   fprintf (fp, "\n");
    fprintf (fp, "}"); 
 }
 

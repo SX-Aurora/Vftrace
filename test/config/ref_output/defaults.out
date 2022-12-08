@@ -51,7 +51,12 @@ Vftrace default configuration:
          "ascending": false
       }
    },
-   "hardware_scenarios": {
-      "active": false
-   }
+   "papi": {
+      "show_counters": false,
+      "sort_by_column": 0,
+      "counters": [
+      ],
+      "observables": [
+      ]
+}
 }

@@ -340,10 +340,12 @@ void vftr_config_papi_assert (FILE *fp, config_papi_t cfg_papi) {
    }
 
    // Check that the sort column is valid
-   if (cfg_papi.sort_by_column.value < 0 || cfg_papi.sort_by_column.value >= n_max) {
-      fprintf (fp, "PAPI: Invalid column to sort specified: %d\n", cfg_papi.sort_by_column.value);
-      abort();
-   }
+   if (n_max > 0) {
+     if (cfg_papi.sort_by_column.value < 0 || cfg_papi.sort_by_column.value >= n_max) {
+        fprintf (fp, "PAPI: Invalid column to sort specified: %d\n", cfg_papi.sort_by_column.value);
+        abort();
+     }
+   } // If no observables are found, the value is irrelevant.
 }
 
 void vftr_config_assert(FILE *fp, config_t config) {
