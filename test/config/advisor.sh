@@ -58,8 +58,14 @@ cat << EOF > ${configfile}
          "asceding": false
       }
    },
-   "hardware_scnarios": {
-      "active": false
+   "papi": {
+      "show_conuters": false,
+      "counters": [
+          { 
+          "natvie": "X",
+          "symbol": "Y"
+          }
+      ]
    }
 }
 EOF

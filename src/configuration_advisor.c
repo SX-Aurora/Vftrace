@@ -131,12 +131,80 @@ void vftr_config_advisor_cuda(cJSON *json_obj) {
    }
 }
 
-void vftr_config_advisor_hardware_scenarios(cJSON *json_obj) {
-   char *options[] = {
-      "active"
-   };
-   int noptions = sizeof(options) / sizeof(char*);
-   vftr_config_advisor_check_options(noptions, options, json_obj->child);
+void vftr_config_advisor_check_papi_counters (cJSON *parent_object) {
+  char *options[] = {
+     "native",
+     "preset",
+     "symbol"
+  };
+  int noptions = sizeof(options) / sizeof(char*);
+  fprintf (stderr, "Check PAPI counters\n");
+  fflush(stderr);
+
+  cJSON *json_list = cJSON_GetObjectItem(parent_object, "counters");
+  if (json_list == NULL) return;
+  cJSON *json_object;
+  cJSON_ArrayForEach(json_object, json_list) {
+     //fprintf (stderr, "Check token: %d\n", json_object != NULL);
+     //fprintf (stderr, "Check token: %s\n", cJSON_GetStringValue(json_object));
+     int ntokens = cJSON_GetArraySize(json_object);
+     cJSON *token0 = cJSON_GetArrayItem(json_object, 0);
+     cJSON *token1 = cJSON_GetArrayItem(json_object, 1);
+     fprintf (stderr, "ntokens: %d\n", ntokens);
+     fflush(stderr);
+     fprintf (stderr, "token0: %s\n", token0->string);
+     fflush(stderr);
+     fprintf (stderr, "token1: %s\n", token1->string);
+     fflush(stderr);
+     //cJSON *token = cJSON_GetObjectItem(json_object, "native");
+     //fprintf (stderr, "Check native token: %d %s\n", token != NULL, cJSON_GetStringValue(token));
+     //fflush(stderr);
+     //token = cJSON_GetObjectItem(json_object, "preset");
+     //fprintf (stderr, "Check preset token: %d %s\n", token != NULL, cJSON_GetStringValue(token));
+     //fflush(stderr);
+     //token = cJSON_GetObjectItem(json_object, "symbol");
+     //fprintf (stderr, "Check symbol token: %d %s\n", token != NULL, cJSON_GetStringValue(token));
+     //fflush(stderr);
+
+
+     //vftr_config_advisor_check_options (noptions, options, json_object);
+  }
+}
+
+void vftr_config_advisor_papi (cJSON *json_obj) {
+  char *options[] = {
+     "show_counters",
+     "sort_by_column",
+     "counters",
+     "observables",
+     "native",
+     "preset",
+     "symbol"
+  };
+  int noptions = sizeof(options) / sizeof(char*);
+  //while (json_obj != NULL) {
+  //  fprintf (stderr, "key: %s\n", json_obj->string);
+  //  fflush(stdout);
+  //  json_obj = json_obj->next;
+  //}
+  vftr_config_advisor_check_options(noptions, options, json_obj->child);
+  return;
+ 
+  fprintf (stderr, "HUHU\n");
+  fflush(stderr);
+
+  char *options_counter[] = {
+     "native",
+     "preset",
+     "symbol"
+  };
+  int noptions_counter = sizeof(options) / sizeof(char*);
+
+  //vftr_config_advisor_check_options_string_list (noptions_counter, options_counter,
+  //                                               json_obj, "counters");
+  vftr_config_advisor_check_options (noptions_counter, options_counter, json_obj);
+  //vftr_config_advisor_check_papi_counters (json_obj);
+  //vftr_config_advisor_check_papi_observables (json_obj);
 }
 
 void vftr_config_advisor(cJSON *config_json_ptr) {
@@ -155,7 +223,6 @@ void vftr_config_advisor(cJSON *config_json_ptr) {
       "mpi",
       "cuda",
       "openacc",
-      "hardware_scenarios",
       "papi"
    };
    int noptions = sizeof(options) / sizeof(char*);
@@ -199,10 +266,10 @@ void vftr_config_advisor(cJSON *config_json_ptr) {
       vftr_config_advisor_cuda(json_sec);
    }
 
-   sec_name = "hardware_scenarios";
+   sec_name = "papi";
    has_object = cJSON_HasObjectItem(config_json_ptr, sec_name);
    if (has_object) {
       cJSON *json_sec = cJSON_GetObjectItem(config_json_ptr, sec_name);
-      vftr_config_advisor_hardware_scenarios(json_sec);
+      vftr_config_advisor_papi(json_sec);
    }
 }
