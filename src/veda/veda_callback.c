@@ -7,7 +7,7 @@
 #include "veda_callback_mem_cpy_htod.h"
 #include "veda_callback_mem_cpy_dtoh.h"
 #include "veda_callback_launch_kernel.h"
-//#include "veda_callback_launch_host.h"
+#include "veda_callback_launch_host.h"
 //#include "veda_callback_hmem_cpy.h"
 //#include "veda_callback_hmem_alloc.h"
 //#include "veda_callback_hmem_free.h"
@@ -31,7 +31,7 @@ void vftr_veda_callback(VEDAprofiler_data* data, const int enter) {
             vftr_veda_callback_launch_kernel_enter(data);
             break;
          case VEDA_PROFILER_LAUNCH_HOST:
-            //vftr_veda_callback_launch_host_enter(data);
+            vftr_veda_callback_launch_host_enter(data);
             break;
          case VEDA_PROFILER_HMEM_CPY:
             //vftr_veda_callback_hmem_cpy_enter(data);
@@ -64,7 +64,7 @@ void vftr_veda_callback(VEDAprofiler_data* data, const int enter) {
             vftr_veda_callback_launch_kernel_exit(data);
             break;
          case VEDA_PROFILER_LAUNCH_HOST:
-            //vftr_veda_callback_launch_host_exit(data);
+            vftr_veda_callback_launch_host_exit(data);
             break;
          case VEDA_PROFILER_HMEM_CPY:
             //vftr_veda_callback_hmem_cpy_exit(data);
