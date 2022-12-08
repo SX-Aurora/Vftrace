@@ -334,10 +334,10 @@ void vftr_config_papi_assert (FILE *fp, config_papi_t cfg_papi) {
    int n_units = cfg_papi.observables.unit.n_elements;
    int n_max = n_obs > n_formulas ? n_obs : n_formulas;
    n_max = n_units > n_max ? n_units : n_max;
-   if (n_obs != n_max || n_formulas != n_max) {
-      fprintf (fp, "PAPI config: Each observable needs a name and a formula.\n");
-      abort();
-   }
+   //if (n_obs != n_max || n_formulas != n_max) {
+   //   fprintf (fp, "PAPI config: Each observable needs a name and a formula.\n");
+   //   abort();
+   //}
 
    // Check that the sort column is valid
    if (n_max > 0) {

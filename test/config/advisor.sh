@@ -65,6 +65,17 @@ cat << EOF > ${configfile}
           "natvie": "X",
           "symbol": "Y"
           }
+      ],
+      "observables": [
+        {
+           "name": "FOO1",
+           "formula": "1 * Y",
+           "unit": "TB"
+        },
+        {
+           "formula": "2 * Y",
+           "naem": "FOO2"
+        }
       ]
    }
 }
