@@ -65,10 +65,10 @@ int main(int argc, char **argv) {
    // collate stacks to get the global ID
    collated_stacktree_t collated_stacktree = vftr_collate_stacks(&stacktree);
 
-   stack_t **stackptrs = vftr_sort_stacks_for_prof(config, stacktree);
+   vftr_stack_t **stackptrs = vftr_sort_stacks_for_prof(config, stacktree);
 
    for (int istack=0; istack<stacktree.nstacks; istack++) {
-      stack_t *stack = stackptrs[istack];
+      vftr_stack_t *stack = stackptrs[istack];
       int stackID = stack->lid;
       char *stackstr = vftr_get_stack_string(stacktree, stackID, false);
       fprintf(stdout, "%d(g%d): %s\n", stackID, stack->gid, stackstr);
