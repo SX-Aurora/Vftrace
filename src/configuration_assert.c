@@ -323,11 +323,11 @@ void vftr_config_papi_assert (FILE *fp, config_papi_t cfg_papi) {
    int n_symbols = cfg_papi.counters.symbol.n_elements;
    int n_counters = cfg_papi.counters.native_name.n_elements +
                     cfg_papi.counters.preset_name.n_elements;
-   if (n_symbols != n_counters) {
-       fprintf (fp, "PAPI config: There are %d symbols, but %d counters.\n", n_symbols, n_counters);
-       fprintf (fp, "Each symbol must have exactly one counter\n");
-       abort();
-   }
+   //if (n_symbols != n_counters) {
+   //    fprintf (fp, "PAPI config: There are %d symbols, but %d counters.\n", n_symbols, n_counters);
+   //    fprintf (fp, "Each symbol must have exactly one counter\n");
+   //    abort();
+   //}
    // Check that each observable has a formula and a name.
    int n_obs = cfg_papi.observables.obs_name.n_elements;
    int n_formulas = cfg_papi.observables.formula_expr.n_elements;
