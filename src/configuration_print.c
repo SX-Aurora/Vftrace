@@ -173,20 +173,24 @@ void vftr_print_config_hwcounters (FILE *fp, int level, config_hwcounters_t cfg_
       vftr_print_config_indent(fp, level);
       fprintf (fp, "{\n");
       if (cfg_hwc.native_name.list_idx[i_native] == i) {
+         vftr_print_config_indent(fp, level);
          fprintf (fp, "\"%s\": \"%s\",\n", cfg_hwc.native_name.name,
                                            cfg_hwc.native_name.values[i_native]);
          i_native++;
       }
       if (cfg_hwc.preset_name.list_idx[i_preset] == i) {
+         vftr_print_config_indent(fp, level);
          fprintf (fp, "\"%s\": \"%s\",\n", cfg_hwc.preset_name.name,
                                            cfg_hwc.preset_name.values[i_preset]);
          i_preset++;
       }
       if (cfg_hwc.symbol.list_idx[i_symbol] == i) {
+         vftr_print_config_indent(fp, level);
          fprintf (fp, "\"%s\": \"%s\",\n", cfg_hwc.symbol.name,
                                            cfg_hwc.symbol.values[i_symbol]);
          i_symbol++;
       }
+      vftr_print_config_indent(fp, level);
       fprintf (fp, "},\n");
    }
    level--;
@@ -195,7 +199,8 @@ void vftr_print_config_hwcounters (FILE *fp, int level, config_hwcounters_t cfg_
 }
 
 void vftr_print_config_hwobservables (FILE *fp, int level, config_hwobservables_t cfg_hwobs) {
-   int n_max = cfg_hwobs.obs_name.n_elements + cfg_hwobs.formula_expr.n_elements;
+   int n_max = cfg_hwobs.obs_name.n_elements > cfg_hwobs.formula_expr.n_elements ? 
+               cfg_hwobs.obs_name.n_elements : cfg_hwobs.formula_expr.n_elements;
    n_max = cfg_hwobs.unit.n_elements > n_max ? cfg_hwobs.unit.n_elements : n_max;
    int i_obs = 0;
    int i_formula = 0;
@@ -209,20 +214,24 @@ void vftr_print_config_hwobservables (FILE *fp, int level, config_hwobservables_
       vftr_print_config_indent(fp, level);
       fprintf (fp, "{\n");
       if (cfg_hwobs.obs_name.list_idx[i_obs] == i) {
+         vftr_print_config_indent(fp, level);
          fprintf (fp, "\"%s\": \"%s\",\n", cfg_hwobs.obs_name.name,
                                            cfg_hwobs.obs_name.values[i_obs]);
          i_obs++;
       }
       if (cfg_hwobs.formula_expr.list_idx[i_formula] == i) {
+         vftr_print_config_indent(fp, level);
          fprintf (fp, "\"%s\": \"%s\",\n", cfg_hwobs.formula_expr.name,
                                            cfg_hwobs.formula_expr.values[i_formula]);
          i_formula++;
       }
       if (cfg_hwobs.unit.list_idx[i_unit] == i) {
+         vftr_print_config_indent(fp, level);
          fprintf (fp, "\"%s\": \"%s\",\n", cfg_hwobs.unit.name,
                                            cfg_hwobs.unit.values[i_unit]);
          i_unit++;
       }
+      vftr_print_config_indent(fp, level);
       fprintf (fp, "},\n");
    }
    level--;
@@ -242,6 +251,7 @@ void vftr_print_config_papi (FILE *fp, int level, config_papi_t cfg_papi) {
    fprintf (fp, ",\n");
    vftr_print_config_hwobservables (fp, level, cfg_papi.observables);
    fprintf (fp, "\n");
+   vftr_print_config_indent(fp, level);
    fprintf (fp, "}"); 
 }
 
