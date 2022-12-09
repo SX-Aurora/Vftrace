@@ -178,6 +178,7 @@ config_papi_t vftr_set_config_papi_default() {
    config_papi_t cfg_papi;
    cfg_papi.name = strdup("papi");
    cfg_papi.set = false;
+   cfg_papi.disable = vftr_set_config_bool_default ("disable", false);
    cfg_papi.show_counters = vftr_set_config_bool_default ("show_counters", false);
    cfg_papi.sort_by_column = vftr_set_config_int_default ("sort_by_column", 0);
    cfg_papi.counters = vftr_set_config_hwcounters_default();

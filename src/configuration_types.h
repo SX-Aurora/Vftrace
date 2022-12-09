@@ -112,6 +112,7 @@ typedef struct {
 
 typedef struct {
    CONFIG_STRUCT_DEFAULTS
+   config_bool_t disable;
    config_bool_t show_counters;
    config_int_t sort_by_column;
    config_hwcounters_t counters;
