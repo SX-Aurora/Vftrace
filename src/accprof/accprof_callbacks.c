@@ -93,7 +93,7 @@ void vftr_set_new_accprof (acc_prof_info *prof_info, acc_event_info *event_info,
    }
 }
 
-void vftr_append_wait_queue (long long start_time, int async, stack_t *stack) {
+void vftr_append_wait_queue (long long start_time, int async, vftr_stack_t *stack) {
    if (vftrace.accprof_state.open_wait_queues == NULL) {
 	vftrace.accprof_state.open_wait_queues = (open_wait_t*)malloc(sizeof(open_wait_t));
         vftrace.accprof_state.open_wait_queues->start_time = start_time;
@@ -149,7 +149,7 @@ void prof_wait_start (acc_prof_info *prof_info, acc_event_info *event_info, acc_
 
    thread_t *my_thread = vftr_get_my_thread(&(vftrace.process.threadtree));
    threadstack_t *my_threadstack = vftr_get_my_threadstack(my_thread);
-   stack_t *my_stack = vftrace.process.stacktree.stacks + my_threadstack->stackID;
+   vftr_stack_t *my_stack = vftrace.process.stacktree.stacks + my_threadstack->stackID;
    profile_t *parent_profile = vftr_get_my_profile(my_stack, my_thread);
 
    char *pseudo_name = concatenate_openacc_name (prof_info->event_type,
@@ -160,7 +160,7 @@ void prof_wait_start (acc_prof_info *prof_info, acc_event_info *event_info, acc_
    my_threadstack = vftr_update_threadstack_region (my_threadstack, my_thread,
                                                     (uintptr_t)pseudo_addr, pseudo_name,
                                                     &vftrace, false);
-   stack_t *my_new_stack = vftrace.process.stacktree.stacks + my_threadstack->stackID;
+   vftr_stack_t *my_new_stack = vftrace.process.stacktree.stacks + my_threadstack->stackID;
    profile_t *my_profile = vftr_get_my_profile(my_new_stack, my_thread);
 
    if (my_profile->accprof.event_type == acc_ev_none) {
@@ -213,7 +213,7 @@ void vftr_accprof_region_begin (acc_prof_info *prof_info, acc_event_info *event_
 
    thread_t *my_thread = vftr_get_my_thread(&(vftrace.process.threadtree));
    threadstack_t *my_threadstack = vftr_get_my_threadstack(my_thread);
-   stack_t *my_stack = vftrace.process.stacktree.stacks + my_threadstack->stackID;
+   vftr_stack_t *my_stack = vftrace.process.stacktree.stacks + my_threadstack->stackID;
    profile_t *parent_profile = vftr_get_my_profile(my_stack, my_thread);
 
    char *pseudo_name = concatenate_openacc_name (prof_info->event_type,
@@ -224,7 +224,7 @@ void vftr_accprof_region_begin (acc_prof_info *prof_info, acc_event_info *event_
    my_threadstack = vftr_update_threadstack_region (my_threadstack, my_thread,
                                                     (uintptr_t)pseudo_addr, pseudo_name,
                                                     &vftrace, false);
-   stack_t *my_new_stack = vftrace.process.stacktree.stacks + my_threadstack->stackID;
+   vftr_stack_t *my_new_stack = vftrace.process.stacktree.stacks + my_threadstack->stackID;
    profile_t *my_profile = vftr_get_my_profile(my_new_stack, my_thread);
    if (my_profile->accprof.event_type == acc_ev_none) {
       vftr_set_new_accprof (prof_info, event_info, my_profile, parent_profile);
@@ -254,7 +254,7 @@ void vftr_accprof_region_end (acc_prof_info *prof_info, acc_event_info *event_in
 
    thread_t *my_thread = vftr_get_my_thread(&(vftrace.process.threadtree));
    threadstack_t *my_threadstack = vftr_get_my_threadstack(my_thread);
-   stack_t *my_stack = vftrace.process.stacktree.stacks + my_threadstack->stackID;
+   vftr_stack_t *my_stack = vftrace.process.stacktree.stacks + my_threadstack->stackID;
    profile_t *my_profile = vftr_get_my_profile(my_stack, my_thread);
    if (acc_callprof) vftr_accumulate_callprofiling(&(my_profile->callprof), 0, region_end_time_begin);
 

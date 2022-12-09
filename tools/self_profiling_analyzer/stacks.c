@@ -7,12 +7,12 @@
 #include "function_types.h"
 #include "stack_types.h"
 
-int search_callee(stack_t *stacks, int callerID, char *name) {
-   stack_t stack = stacks[callerID];
+int search_callee(vftr_stack_t *stacks, int callerID, char *name) {
+   vftr_stack_t stack = stacks[callerID];
    int calleeID = -1;
    for (int icallee=0; icallee<stack.ncallees; icallee++) {
       int stackID = stack.callees[icallee];
-      stack_t calleestack = stacks[stackID];
+      vftr_stack_t calleestack = stacks[stackID];
       if (strcmp(name, calleestack.name) == 0) {
          calleeID = stackID;
          break;
@@ -22,8 +22,8 @@ int search_callee(stack_t *stacks, int callerID, char *name) {
    return calleeID;
 }
 
-void stack_callees_realloc(stack_t *stack_ptr) {
-   stack_t stack = *stack_ptr;
+void stack_callees_realloc(vftr_stack_t *stack_ptr) {
+   vftr_stack_t stack = *stack_ptr;
    while (stack.ncallees > stack.maxcallees) {
       int maxcallees = stack.maxcallees*realloc_rate+realloc_add;
       stack.callees = (int*)
@@ -37,14 +37,14 @@ void stacktree_realloc(stacktree_t *stacktree_ptr) {
    stacktree_t stacktree = *stacktree_ptr;
    while (stacktree.nstacks > stacktree.maxstacks) {
       int maxstacks = stacktree.maxstacks*realloc_rate+realloc_add;
-      stacktree.stacks = (stack_t*)
-         realloc(stacktree.stacks, maxstacks*sizeof(stack_t));
+      stacktree.stacks = (vftr_stack_t*)
+         realloc(stacktree.stacks, maxstacks*sizeof(vftr_stack_t));
       stacktree.maxstacks = maxstacks;
    }
    *stacktree_ptr = stacktree;
 }
 
-void insert_callee(int calleeID, stack_t *caller) {
+void insert_callee(int calleeID, vftr_stack_t *caller) {
    int idx = caller->ncallees;
    caller->ncallees++;
    stack_callees_realloc(caller);
@@ -56,9 +56,9 @@ int new_stack(int callerID, char *name, stacktree_t *stacktree_ptr) {
    stacktree_ptr->nstacks++;
    stacktree_realloc(stacktree_ptr);
 
-   stack_t *callerstack = stacktree_ptr->stacks+callerID;
+   vftr_stack_t *callerstack = stacktree_ptr->stacks+callerID;
 
-   stack_t *stack = stacktree_ptr->stacks+stackID;
+   vftr_stack_t *stack = stacktree_ptr->stacks+stackID;
    stack->caller = callerstack->id;
    stack->maxcallees = 0;
    stack->ncallees = 0;
@@ -75,8 +75,8 @@ int new_stack(int callerID, char *name, stacktree_t *stacktree_ptr) {
    return stack->id;
 }
 
-stack_t first_stack(char *name) {
-   stack_t stack;
+vftr_stack_t first_stack(char *name) {
+   vftr_stack_t stack;
    stack.name = name;
    stack.id = 0;
    stack.caller = -1;
@@ -89,8 +89,8 @@ stack_t first_stack(char *name) {
    return stack;
 }
 
-void free_stack(stack_t *stacks_ptr, int stackID) {
-   stack_t stack = stacks_ptr[stackID];
+void free_stack(vftr_stack_t *stacks_ptr, int stackID) {
+   vftr_stack_t stack = stacks_ptr[stackID];
    if (stack.ncallees > 0) {
       for (int icallee=0; icallee<stack.ncallees; icallee++) {
          free_stack(stacks_ptr, stack.callees[icallee]);
@@ -122,14 +122,14 @@ void free_stacktree(stacktree_t *stacktree_ptr) {
 
 void update_stacks_exclusive_time(stacktree_t *stacktree_ptr) {
    int nstacks = stacktree_ptr->nstacks;
-   stack_t *stacks = stacktree_ptr->stacks;
+   vftr_stack_t *stacks = stacktree_ptr->stacks;
    // exclusive time for init is 0, therefore it does not need to be computed.
    for (int istack=1; istack<nstacks; istack++) {
-      stack_t *mystack = stacks + istack;
+      vftr_stack_t *mystack = stacks + istack;
       mystack->time_excl_nsec = mystack->time_nsec;
       for (int icallee=0; icallee<mystack->ncallees; icallee++) {
          int calleeID = mystack->callees[icallee];
-         stack_t *calleestack = stacks+calleeID;
+         vftr_stack_t *calleestack = stacks+calleeID;
          mystack->time_excl_nsec -= calleestack->time_nsec;
       }
    }
@@ -140,15 +140,15 @@ void finalize_stacktree(stacktree_t *stacktree_ptr) {
    update_stacks_exclusive_time(stacktree_ptr);
 }
 
-void qsort_stacklist(int n, stack_t **stacklist) {
+void qsort_stacklist(int n, vftr_stack_t **stacklist) {
    if (n < 2) return;
-   stack_t *pivot = stacklist[n/2];
+   vftr_stack_t *pivot = stacklist[n/2];
    int left, right;
    for (left=0, right=n-1; ; left++, right--) {
       while (stacklist[left]->time_excl_nsec > pivot->time_excl_nsec) left++;
       while (stacklist[right]->time_excl_nsec < pivot->time_excl_nsec) right--;
       if (left >= right) break;
-      stack_t *temp = stacklist[left];
+      vftr_stack_t *temp = stacklist[left];
       stacklist[left] = stacklist[right];
       stacklist[right] = temp;
    }
@@ -156,9 +156,9 @@ void qsort_stacklist(int n, stack_t **stacklist) {
    qsort_stacklist(n-left, stacklist+left);
 }
 
-stack_t **sort_stacks_by_excl_time(stacktree_t stacktree) {
+vftr_stack_t **sort_stacks_by_excl_time(stacktree_t stacktree) {
    int nstacks = stacktree.nstacks;
-   stack_t **stacklist = (stack_t**) malloc(nstacks*sizeof(stack_t));
+   vftr_stack_t **stacklist = (vftr_stack_t**) malloc(nstacks*sizeof(vftr_stack_t));
    for (int istack=0; istack<nstacks; istack++) {
       stacklist[istack] = stacktree.stacks+istack;
    }
@@ -173,7 +173,7 @@ void print_stack_branch(FILE *fp, int level, stacktree_t stacktree, int stackid)
    for (int ilevel=0; ilevel<level; ilevel++) {
       fprintf(fp, "  ");
    }
-   stack_t stack = stacktree.stacks[stackid];
+   vftr_stack_t stack = stacktree.stacks[stackid];
    fprintf(fp, "%s: id=%d\n",
            stack.name,
            stack.id);
@@ -248,7 +248,7 @@ void print_stacklist(FILE *fp, stacktree_t stacktree) {
    }
 }
 
-void print_sorted_stacklist(FILE *fp, stack_t **sortedstacklist,
+void print_sorted_stacklist(FILE *fp, vftr_stack_t **sortedstacklist,
                             stacktree_t stacktree) {
    fprintf(fp, "# ID    Calls    incl-time/s    excl-time/s Stack\n");
    for (int istack=0; istack<stacktree.nstacks; istack++) {

@@ -135,9 +135,9 @@ bool is_precise (char *s) {
    return s[strlen(s)-1] == '*';
 }
 
-stack_t *read_stacklist(FILE *vfd_fp, long int stacks_offset,
+vftr_stack_t *read_stacklist(FILE *vfd_fp, long int stacks_offset,
                         unsigned int nstacks) {
-   stack_t *stacklist = (stack_t*) malloc(nstacks*sizeof(stack_t));
+   vftr_stack_t *stacklist = (vftr_stack_t*) malloc(nstacks*sizeof(vftr_stack_t));
 
    // jump to the stacks
    fseek(vfd_fp, stacks_offset, SEEK_SET);
@@ -207,7 +207,7 @@ stack_t *read_stacklist(FILE *vfd_fp, long int stacks_offset,
             stacklist[istack].ncallees = 0;
          }
          // register the current stack as callee of the caller
-         stack_t *caller = stacklist+stacklist[istack].caller;
+         vftr_stack_t *caller = stacklist+stacklist[istack].caller;
          caller->callees[caller->ncallees] = istack;
          caller->ncallees++;
       }
@@ -216,7 +216,7 @@ stack_t *read_stacklist(FILE *vfd_fp, long int stacks_offset,
    return stacklist;
 }
 
-void free_stacklist(unsigned int nstacks, stack_t *stacklist) {
+void free_stacklist(unsigned int nstacks, vftr_stack_t *stacklist) {
    for (unsigned int istack=0; istack<nstacks; istack++) {
       free(stacklist[istack].name);
       if (stacklist[istack].ncallees > 0) {
@@ -226,7 +226,7 @@ void free_stacklist(unsigned int nstacks, stack_t *stacklist) {
    free(stacklist);
 }
 
-void print_stack(FILE *out_fp, unsigned int istack, stack_t *stacklist) {
+void print_stack(FILE *out_fp, unsigned int istack, vftr_stack_t *stacklist) {
    fprintf(out_fp, "%s", stacklist[istack].name);
    if (stacklist[istack].caller >= 0) {
       fprintf(out_fp, "<");
@@ -234,7 +234,7 @@ void print_stack(FILE *out_fp, unsigned int istack, stack_t *stacklist) {
    }
 }
 
-void print_stacklist(FILE *out_fp, unsigned int nstacks, stack_t *stacklist) {
+void print_stacklist(FILE *out_fp, unsigned int nstacks, vftr_stack_t *stacklist) {
    fprintf(out_fp, "Stacks list:\n");
    for (unsigned int istack=0; istack<nstacks; istack++) {
       fprintf(out_fp, "   %u: ", istack);
@@ -330,7 +330,7 @@ void print_threadtree(FILE *out_fp, thread_t *threadtree) {
 }
 
 void print_function_sample(FILE *vfd_fp, FILE *out_fp,
-                           sample_kind kind, stack_t *stacklist) {
+                           sample_kind kind, vftr_stack_t *stacklist) {
    int stackID;
    size_t read_elems;
    read_elems = fread(&stackID, sizeof(int), 1, vfd_fp);
@@ -428,7 +428,7 @@ void print_message_sample(FILE *vfd_fp, FILE *out_fp) {
 }
 
 void print_samples(FILE *vfd_fp, FILE *out_fp,
-                   vfd_header_t vfd_header, stack_t *stacklist) {
+                   vfd_header_t vfd_header, vftr_stack_t *stacklist) {
    fseek(vfd_fp, vfd_header.samples_offset, SEEK_SET);
    fprintf(out_fp, "Stack and message samples:\n");
 
