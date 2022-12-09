@@ -107,12 +107,12 @@ void vftr_parse_config_string_list (cJSON *parent_object, char *list_name, confi
       cJSON *json_object;
       cJSON_ArrayForEach(json_object, json_list) {
          cJSON *token = cJSON_GetObjectItem(json_object, cfg_string_list_ptr->name);
-         if (token == NULL) continue;
-         if (pass == 1) {
+         if (token != NULL && pass == 1) {
             cfg_string_list_ptr->values[n] = strdup(cJSON_GetStringValue(token));
-            cfg_string_list_ptr->list_idx[n] = idx++;
+            cfg_string_list_ptr->list_idx[n] = idx;
          }
-         n++;
+         if (token != NULL) n++;
+         idx++;
       }
       if (pass == 0) {
          cfg_string_list_ptr->n_elements = n;
