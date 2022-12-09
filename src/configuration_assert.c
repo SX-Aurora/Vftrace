@@ -318,26 +318,31 @@ void vftr_config_accprof_assert(FILE *fp, config_accprof_t cfg_accprof) {
 }
 
 void vftr_config_papi_assert (FILE *fp, config_papi_t cfg_papi) {
-   // Check that each symbol is associated with a counter name.
-   // We check later if this name is a valid PAPI counter.
-   int n_symbols = cfg_papi.counters.symbol.n_elements;
+   // Check that no array entry has more than one counter.
    int n_counters = cfg_papi.counters.native_name.n_elements +
                     cfg_papi.counters.preset_name.n_elements;
-   //if (n_symbols != n_counters) {
-   //    fprintf (fp, "PAPI config: There are %d symbols, but %d counters.\n", n_symbols, n_counters);
-   //    fprintf (fp, "Each symbol must have exactly one counter\n");
-   //    abort();
-   //}
-   // Check that each observable has a formula and a name.
+   int *list_combined = (int*)malloc(n_counters * sizeof(int));
+   for (int i = 0; i < n_counters; i++) {
+      if (i < cfg_papi.counters.native_name.n_elements) {
+         list_combined[i] = cfg_papi.counters.native_name.list_idx[i];
+      } else {
+         list_combined[i] = cfg_papi.counters.preset_name.list_idx[i - cfg_papi.counters.native_name.n_elements];
+      }
+   }
+   for (int i = 0; i < n_counters; i++) {
+      int idx1 = list_combined[i];
+      for (int j = i + 1; j < n_counters; j++) {
+         if (list_combined[j] == idx1) {
+            fprintf (fp, "PAPI: Found both a preset and native variable at position %d\n", idx1);
+            abort();
+         }
+      }
+   }
    int n_obs = cfg_papi.observables.obs_name.n_elements;
    int n_formulas = cfg_papi.observables.formula_expr.n_elements;
    int n_units = cfg_papi.observables.unit.n_elements;
    int n_max = n_obs > n_formulas ? n_obs : n_formulas;
    n_max = n_units > n_max ? n_units : n_max;
-   //if (n_obs != n_max || n_formulas != n_max) {
-   //   fprintf (fp, "PAPI config: Each observable needs a name and a formula.\n");
-   //   abort();
-   //}
 
    // Check that the sort column is valid
    if (n_max > 0) {
