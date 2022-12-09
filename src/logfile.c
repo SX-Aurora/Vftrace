@@ -118,6 +118,9 @@ void vftr_write_logfile(vftrace_t vftrace, long long runtime) {
 
 #ifdef _PAPI_AVAIL
    vftr_write_papi_table (fp, vftrace.process.collated_stacktree, vftrace.config);
+   if (vftrace.config.papi.show_counters.value) {
+      vftr_write_logfile_papi_counter_table (fp, vftrace.process.collated_stacktree, vftrace.config);
+   }
 #endif
 
    vftr_write_logfile_global_stack_list(fp, vftrace.process.collated_stacktree);

@@ -73,7 +73,7 @@ void vftr_write_ranklogfile_papi_counter_table (FILE *fp, stacktree_t stacktree,
    
    vftr_stack_t **sorted_stacks = vftr_sort_stacks_for_prof (config, stacktree);
 
-   fprintf (fp, "\nRuntime PAPI profile - Hardware Counter\n\n");
+   fprintf (fp, "\nRuntime PAPI profile - Hardware Counters\n\n");
 
    int n_without_init = 0;
    for (int istack = 0; istack < stacktree.nstacks; istack++) {

@@ -95,6 +95,64 @@ void vftr_write_papi_counter_summary (FILE *fp, collated_stacktree_t stacktree, 
    free (counter_sum);
 }
 
+void vftr_write_logfile_papi_counter_table (FILE *fp, collated_stacktree_t stacktree, config_t config) {
+   collated_stack_t **sorted_stacks =
+      vftr_sort_collated_stacks_papi_obs(config, stacktree);
+
+   fprintf (fp, "\nRuntime PAPI profile - Hardware Counters\n");
+
+   int n_without_init = 0;
+   for (int istack = 0; istack < stacktree.nstacks; istack++) {
+      collated_stack_t *this_stack = sorted_stacks[istack];
+      if (!vftr_collstack_is_init(*this_stack)) n_without_init++;
+   }
+
+   int *calls = (int*)malloc(n_without_init * sizeof(int));
+   char **func = (char**)malloc(n_without_init * sizeof(char*));
+   int n_counters = vftrace.papi_state.n_counters;
+   long long **counters = (long long**)malloc(n_counters * sizeof(long long*));
+   for (int i = 0; i < n_counters; i++) {
+      counters[i] = (long long*)malloc(n_without_init * sizeof(long long)); 
+      memset(counters[i], 0, n_without_init * sizeof(long long));
+   }
+
+   int idx = 0;
+   for (int istack = 0; istack < stacktree.nstacks; istack++) {
+      collated_stack_t *this_stack = sorted_stacks[istack];
+      if (vftr_collstack_is_init(*this_stack)) continue;
+
+      collated_callprofile_t callprof = this_stack->profile.callprof;
+      papiprofile_t papiprof = this_stack->profile.papiprof;
+
+      calls[idx] = callprof.calls;
+      func[idx] = this_stack->name;
+
+      for (int i = 0; i < n_counters; i++) {
+         counters[i][idx] = papiprof.counters_excl[i];
+      }
+      idx++;
+   }
+
+   table_t table = vftr_new_table();
+   vftr_table_set_nrows (&table, n_without_init); 
+
+   vftr_table_add_column (&table, col_int, "#Calls", "%d", 'c', 'r', (void*)calls);
+   vftr_table_add_column (&table, col_string, "Func", "%s", 'c', 'r', (void*)func);
+   for (int i = 0; i < n_counters; i++) {
+      vftr_table_add_column(&table, col_longlong, vftrace.papi_state.counters[i].name,
+                            "%lld", 'c', 'r', (void*)counters[i]);
+   }
+
+   vftr_print_table (fp, table);
+ 
+   vftr_table_free(&table);
+
+   free (calls);
+   free (func);
+   free (counters);
+
+}
+
 void vftr_write_event_descriptions (FILE *fp) {
    //for (int i = 0; i < vftrace.papi_state.n_available_events; i++) {
    //   fprintf (fp, "%s: %s\n", vftrace.papi_state.event_names[i], vftrace.papi_state.event_descriptions[i]);
