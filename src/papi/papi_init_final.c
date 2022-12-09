@@ -53,7 +53,7 @@ void vftr_papi_init (config_t config) {
       symbols[i] = config.papi.counters.symbol.values[i];
    }
 
-   vftrace.papi_state.calculator = vftr_init_papi_calculator (config, n_variables, n_observables,
+   vftrace.papi_state.calculator = vftr_init_papi_calculator (n_variables, n_observables,
                                    symbols,
                                    config.papi.observables.formula_expr.values);
    free(symbols);
