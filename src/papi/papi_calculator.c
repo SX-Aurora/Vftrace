@@ -35,7 +35,7 @@ papi_calculator_t vftr_init_papi_calculator (int n_variables, int n_observables,
    for (int i = 0; i < n_observables; i++) {
       calc.expr[i] = te_compile (formulas[i], calc.te_vars, calc.n_te_vars, &err);
       if (!calc.expr[i]) {
-         fprintf (stderr, "  Vftrace error: Formula could not be compiled:\n",
+         fprintf (stderr, "  Vftrace error: Formula could not be compiled:\n");
          fprintf (stderr, "  %s\n", formulas[i]);
          fprintf (stderr, "  %*s^\n", err - 1, "");
          fprintf (stderr, "  Possible reasons: Symbols do not exist, or syntax error.\n");
