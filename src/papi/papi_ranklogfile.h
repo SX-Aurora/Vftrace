@@ -10,4 +10,6 @@ void vftr_write_ranklogfile_papi_obs_table (FILE *fp, stacktree_t stacktree, con
 
 void vftr_write_ranklogfile_papi_counter_table (FILE *fp, stacktree_t stacktree, config_t config);
 
+void vftr_write_papi_counter_ranklogfile_summary (FILE *fp, stacktree_t stacktree, config_t config);
+
 #endif

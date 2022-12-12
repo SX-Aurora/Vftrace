@@ -69,6 +69,31 @@ void vftr_write_ranklogfile_papi_obs_table (FILE *fp, stacktree_t stacktree, con
    free (observables);
 }
 
+
+void vftr_write_papi_counter_ranklogfile_summary (FILE *fp, stacktree_t stacktree, config_t config) {
+   int n_events = PAPI_num_events (vftrace.papi_state.eventset);
+   if (n_events == 0) {
+      fprintf (fp, "\nNo hardware counters registered.\n");
+      return;
+   }
+   long long *counter_sum = (long long*)malloc(n_events * sizeof(long long));
+   memset (counter_sum, 0, n_events * sizeof(long long));
+   for (int istack = 0; istack < stacktree.nstacks; istack++) {
+      vftr_stack_t this_stack = stacktree.stacks[istack];
+      papiprofile_t papiprof = this_stack.profiling.profiles[0].papiprof;
+
+      for (int e = 0; e < n_events; e++) {
+         counter_sum[e] += papiprof.counters_excl[e]; 
+      }
+   }
+
+   fprintf (fp, "Total PAPI counters: \n\n");
+   for (int e = 0; e < vftrace.papi_state.n_counters; e++) {
+      fprintf (fp, "  %s: %lld\n",  vftrace.papi_state.counters[e].name, counter_sum[e]);
+   }
+   free (counter_sum);
+}
+
 void vftr_write_ranklogfile_papi_counter_table (FILE *fp, stacktree_t stacktree, config_t config) {
    
    vftr_stack_t **sorted_stacks = vftr_sort_stacks_for_prof (config, stacktree);

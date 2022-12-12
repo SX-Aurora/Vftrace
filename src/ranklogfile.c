@@ -144,6 +144,12 @@ void vftr_write_ranklogfile(vftrace_t vftrace, long long runtime) {
    }
 #endif
 
+#ifdef _PAPI_AVAIL
+   if (vftrace.config.papi.show_tables.value && vftrace.config.papi.show_counters.value) {
+      vftr_write_papi_counter_ranklogfile_summary (fp, vftrace.process.stacktree, vftrace.config);
+   }
+#endif
+
    fclose(fp);
    free(logfilename);
    SELF_PROFILE_END_FUNCTION;

@@ -76,7 +76,7 @@ void vftr_write_papi_table (FILE *fp, collated_stacktree_t stacktree, config_t c
    free (observables);
 }
 
-void vftr_write_papi_counter_summary (FILE *fp, collated_stacktree_t stacktree, config_t config) {
+void vftr_write_papi_counter_logfile_summary (FILE *fp, collated_stacktree_t stacktree, config_t config) {
    int n_events = PAPI_num_events (vftrace.papi_state.eventset);
    if (n_events == 0) {
       fprintf (fp, "\nNo hardware counters registered.\n");

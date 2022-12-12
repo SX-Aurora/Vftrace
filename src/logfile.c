@@ -139,12 +139,10 @@ void vftr_write_logfile(vftrace_t vftrace, long long runtime) {
 
 #ifdef _PAPI_AVAIL
    if (vftrace.config.papi.show_tables.value && vftrace.config.papi.show_counters.value) {
-      //vftr_write_event_descriptions (fp);
-      vftr_write_papi_counter_summary (fp, vftrace.process.collated_stacktree, vftrace.config);
+      vftr_write_papi_counter_logfile_summary (fp, vftrace.process.collated_stacktree, vftrace.config);
    }
 #endif
 
-   // print config info
    if (vftrace.config.print_config.value) {
       vftr_print_config(fp, vftrace.config, true);
    }
