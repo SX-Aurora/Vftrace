@@ -6,6 +6,8 @@ vftr_binary=fpause_resume
 configfile=${vftr_binary}.json
 nprocs=1
 
+determine_bin_prefix $vftr_binary
+
 echo "{\"sampling\": {\"active\": true, \"precise_functions\": \"fkt*\"}}" > ${configfile}
 export VFTR_CONFIG=${configfile}
 

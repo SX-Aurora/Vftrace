@@ -9,10 +9,11 @@ configfile=${test_name}.json
 ref_file=${srcdir}/ref_output/little_tasks.out
 logfile=${test_name}_all.log
 
-if [ "${IS_SHARED_BUILD}" == "YES" ]; then
-   logfile=lt-$logfile
-   vfdfile=lt-$vfdfile
-fi
+
+determine_bin_prefix ${test_name}
+logfile=${BIN_PREFIX}${logfile}
+vfdfile=${BIN_PREFIX}${vfdfile}
+
 
 function run_binary () {
    rm_outfiles ${output_file} "" ${test_name}
@@ -33,8 +34,8 @@ if [[ "${count}" -ne "1" ]] ; then
    exit 1
 fi
 
-echo "{\"print_config\": false}" > ${configfile}
 export VFTR_CONFIG="${configfile}"
+echo "{\"print_config\": false}" > ${configfile}
 run_binary
 check_file_exists $logfile
 diff ${output_file} ${ref_file} || exit 1

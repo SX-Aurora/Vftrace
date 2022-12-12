@@ -6,6 +6,8 @@ vftr_binary=cregions1
 configfile=${vftr_binary}.json
 nprocs=1
 
+determine_bin_prefix $vftr_binary
+
 logfile=$(get_logfile_name ${vftr_binary} "all")
 vfdfile=$(get_vfdfile_name ${vftr_binary} "0")
 

@@ -9,6 +9,11 @@ output_file=${test_name}.out
 ref_file=${srcdir}/ref_output/little_tasks.out
 logfile=$(get_logfile_name ${test_name} "all")
 
+grep "program=lt-" $test_name
+if [ "$?" -eq "0" ]; then
+  logfile=lt-${logfile}
+fi
+
 rm_outfiles $output_file "" $test_name
 if [ "x${HAS_MPI}" == "xYES" ]; then
    ${MPI_EXEC} ${MPI_OPTS} ${NP} 1 ./${test_name} > ${output_file} || exit 1

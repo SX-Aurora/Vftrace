@@ -6,6 +6,7 @@ set -x
 
 test_name=include_cxx_prelude
 configfile=${test_name}.json
+determine_bin_prefix $test_name
 logfile=$(get_logfile_name ${test_name} "all")
 
 rm -f ${logfile}

@@ -10,6 +10,8 @@ ref_file=${srcdir}/ref_output/little_tasks.out
 imbalances_header=" Imbalances\[%\] | on rank "
 nranks=1
 
+determine_bin_prefix $test_name
+
 logfile=$(get_logfile_name $test_name "all")
 function run_binary() {
    if [ "x${HAS_MPI}" == "xYES" ]; then

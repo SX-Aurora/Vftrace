@@ -52,11 +52,12 @@ Vftrace default configuration:
       }
    },
    "papi": {
+      "disable": false,
       "show_counters": false,
       "sort_by_column": 0,
       "counters": [
       ],
       "observables": [
       ]
-}
+   }
 }
