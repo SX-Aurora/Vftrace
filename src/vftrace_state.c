@@ -151,6 +151,18 @@ unsigned long long vftr_sizeof_config_string_t(config_string_t cfg_string) {
 
 }
 
+unsigned long long vftr_sizeof_config_string_list_t (config_string_list_t cfg_string_list) {
+   unsigned long long size = sizeof(config_string_list_t);
+   size += vftr_sizeof_config_struct_defaults(cfg_string_list.name); 
+   size += sizeof(int);
+   if (cfg_string_list.n_elements > 0) {
+      for (int i = 0; i < cfg_string_list.n_elements; i++) {
+         size += strlen(cfg_string_list.values[i]) * sizeof(char);
+      }
+      size += cfg_string_list.n_elements * sizeof(int);  // sizeof(list_idx);
+   }
+}
+
 unsigned long long vftr_sizeof_config_regex_t(config_regex_t cfg_regex) {
    unsigned long long size = sizeof(config_regex_t);
    size += vftr_sizeof_config_struct_defaults(cfg_regex.name);
@@ -249,47 +261,82 @@ unsigned long long vftr_sizeof_config_accprof_t(config_accprof_t cfg_accprof) {
    unsigned long long size = sizeof(config_accprof_t);
    size += vftr_sizeof_config_struct_defaults(cfg_accprof.name);
    size -= sizeof(config_bool_t);
+   size += vftr_sizeof_config_bool_t(cfg_accprof.show_table);
+   size -= sizeof(config_sort_table_t);
    size += vftr_sizeof_config_sort_table_t(cfg_accprof.sort_table);
+   size -= sizeof(config_bool_t);
+   size += vftr_sizeof_config_bool_t(cfg_accprof.show_event_details);
    return size;
 }
 
-//unsigned long long vftr_sizeof_config_hardware_scenarios_t(config_hardware_scenarios_t
-//                                             cfg_hardware_scenarios) {
-//   unsigned long long size = sizeof(config_hardware_scenarios_t);
-//   size += vftr_sizeof_config_struct_defaults(cfg_hardware_scenarios.name);
-//   size -= sizeof(config_bool_t);
-//   size += vftr_sizeof_config_bool_t(cfg_hardware_scenarios.active);
-//   return size;
-//}
+unsigned long long vftr_sizeof_config_hwcounters_t (config_hwcounters_t cfg_hwc) {
+  unsigned long long size = sizeof(config_hwcounters_t);
+  size += vftr_sizeof_config_struct_defaults (cfg_hwc.name);
+  size -= sizeof(config_string_list_t);
+  size += vftr_sizeof_config_string_list_t (cfg_hwc.native_name);
+  size -= sizeof(config_string_list_t);
+  size += vftr_sizeof_config_string_list_t (cfg_hwc.preset_name);
+  size -= sizeof(config_string_list_t);
+  size += vftr_sizeof_config_string_list_t (cfg_hwc.symbol);
+}
+
+unsigned long long vftr_sizeof_config_hwobservables_t (config_hwobservables_t cfg_hwo) {
+  unsigned long long size = sizeof(config_hwobservables_t);
+  size += vftr_sizeof_config_struct_defaults (cfg_hwo.name);
+  size -= sizeof(config_string_list_t);
+  size += vftr_sizeof_config_string_list_t (cfg_hwo.obs_name);
+  size -= sizeof(config_string_list_t);
+  size += vftr_sizeof_config_string_list_t (cfg_hwo.formula_expr);
+  size -= sizeof(config_string_list_t);
+  size += vftr_sizeof_config_string_list_t (cfg_hwo.unit);
+
+}
+
+unsigned long long vftr_sizeof_config_papi_t (config_papi_t cfg_papi) {
+   unsigned long long size = sizeof(config_papi_t);
+   size += vftr_sizeof_config_struct_defaults (cfg_papi.name);
+   size -= sizeof(config_bool_t); 
+   size += vftr_sizeof_config_bool_t(cfg_papi.disable);
+   size -= sizeof(config_bool_t); 
+   size += vftr_sizeof_config_bool_t(cfg_papi.show_tables);
+   size -= sizeof(config_bool_t); 
+   size += vftr_sizeof_config_bool_t(cfg_papi.show_counters);
+   size -= sizeof(config_int_t);
+   size += vftr_sizeof_config_int_t(cfg_papi.sort_by_column);
+   size -= sizeof(config_hwcounters_t);
+   size += vftr_sizeof_config_hwcounters_t (cfg_papi.counters);
+   size -= sizeof(config_hwobservables_t);
+   size += vftr_sizeof_config_hwobservables_t (cfg_papi.observables);
+}
 
 unsigned long long vftr_sizeof_config_t(config_t config) {
    unsigned long long size = sizeof(config_t);
    size -= sizeof(config_bool_t);
    size += vftr_sizeof_config_bool_t(config.off);
    size -= sizeof(config_string_t);
-   vftr_sizeof_config_string_t(config.output_directory);
+   size += vftr_sizeof_config_string_t(config.output_directory);
    size -= sizeof(config_string_t);
-   vftr_sizeof_config_string_t(config.outfile_basename);
+   size += vftr_sizeof_config_string_t(config.outfile_basename);
    size -= sizeof(config_string_t);
-   vftr_sizeof_config_string_t(config.logfile_for_ranks);
+   size += vftr_sizeof_config_string_t(config.logfile_for_ranks);
    size -= sizeof(config_bool_t);
-   vftr_sizeof_config_bool_t(config.print_config);
+   size += vftr_sizeof_config_bool_t(config.print_config);
    size -= sizeof(config_bool_t);
-   vftr_sizeof_config_bool_t(config.strip_module_names);
+   size += vftr_sizeof_config_bool_t(config.strip_module_names);
    size -= sizeof(config_bool_t);
-   vftr_sizeof_config_bool_t(config.demangle_cxx);
+   size += vftr_sizeof_config_bool_t(config.demangle_cxx);
    size -= sizeof(config_profile_table_t);
-   vftr_sizeof_config_profile_table_t(config.profile_table);
+   size += vftr_sizeof_config_profile_table_t(config.profile_table);
    size -= sizeof(config_name_grouped_profile_table_t);
-   vftr_sizeof_config_name_grouped_profile_table_t(config.name_grouped_profile_table);
+   size += vftr_sizeof_config_name_grouped_profile_table_t(config.name_grouped_profile_table);
    size -= sizeof(config_sampling_t);
-   vftr_sizeof_config_sampling_t(config.sampling);
+   size += vftr_sizeof_config_sampling_t(config.sampling);
    size -= sizeof(config_mpi_t);
-   vftr_sizeof_config_mpi_t(config.mpi);
+   size += vftr_sizeof_config_mpi_t(config.mpi);
    size -= sizeof(config_cuda_t);
-   vftr_sizeof_config_cuda_t(config.cuda);
-   //size -= sizeof(config_hardware_scenarios_t);
-   //vftr_sizeof_config_hardware_scenarios_t(config.hardware_scenarios);
+   size += vftr_sizeof_config_cuda_t(config.cuda);
+   size -= sizeof(config_papi_t);
+   size += vftr_sizeof_config_papi_t(config.papi);
    if (config.config_file_path != NULL) {
       size += strlen(config.config_file_path);
    }
