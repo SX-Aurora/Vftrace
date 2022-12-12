@@ -5,4 +5,6 @@
 
 void vftr_papi_init();
 
+void vftr_papi_finalize();
+
 #endif

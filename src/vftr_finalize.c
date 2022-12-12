@@ -77,6 +77,10 @@ void vftr_finalize() {
    vftr_finalize_accprof();
 #endif
 
+#ifdef _PAPI_AVAIL
+   vftr_papi_finalize();
+#endif
+
    // free the dynamic process data
    vftr_process_free(&vftrace.process);
 

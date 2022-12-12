@@ -60,3 +60,10 @@ void vftr_papi_init (config_t config) {
 
    PAPI_start (vftrace.papi_state.eventset);
 }
+
+void vftr_papi_finalize () {
+   if (vftrace.papi_state.counters != NULL) free(vftrace.papi_state.counters);
+   vftrace.papi_state.counters = NULL;
+   PAPI_cleanup_eventset(vftrace.papi_state.eventset);
+   PAPI_destroy_eventset(&vftrace.papi_state.eventset);
+}
