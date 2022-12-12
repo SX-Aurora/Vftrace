@@ -24,11 +24,6 @@ void vftr_collate_papiprofiles_root_self (collated_stacktree_t *collstacktree_pt
       memcpy (collpapiprof->counters_incl, copy_papiprof.counters_incl, n_events * sizeof(long long));
       memcpy (collpapiprof->counters_excl, copy_papiprof.counters_excl, n_events * sizeof(long long));
       memcpy (collpapiprof->observables, copy_papiprof.observables, n_observables * sizeof(double));
-   
-      //for (int i = 0; i < n_events; i++) {
-      //   collpapiprof->counters[i] = copy_papiprof.counters[i];
-      //   //collpapiprof->counters[i] = 0;
-      //}
    }
 }
 

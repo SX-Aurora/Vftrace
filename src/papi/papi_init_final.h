@@ -5,6 +5,4 @@
 
 void vftr_papi_init();
 
-void vftr_papi_show_avail_events (FILE *fp);
-
 #endif

@@ -10,6 +10,7 @@ libvftr_papi_la_SOURCES += papi_init_final.c \
 		  	   papi_ranklogfile.c
 
 # -D_PAPI conflicts with PAPI headers.
+#  The compiler flag for PAPI is therefore called PAPI_AVAIL.
 libvftr_papi_la_CFLAGS = -I${srcdir}/../ -I${srcdir}/../sorting -I${srcdir}/../../external/tinyexpr -D_PAPI_AVAIL 
 
 if ENABLE_MPI

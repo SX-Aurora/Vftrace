@@ -80,7 +80,6 @@ void vftr_initialize(void *func, void *call_site) {
       // it needs the number of registered PAPI counters.
 #ifdef _PAPI_AVAIL
       vftr_papi_init(vftrace.config);
-      //vftr_papi_show_avail_events (stdout);
 #endif
 
       // initialize the dynamic process data

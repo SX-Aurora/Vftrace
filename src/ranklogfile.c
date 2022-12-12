@@ -133,7 +133,6 @@ void vftr_write_ranklogfile(vftrace_t vftrace, long long runtime) {
 
    vftr_write_logfile_global_stack_list(fp, vftrace.process.collated_stacktree);
 
-   // print config info
    if (vftrace.config.print_config.value) {
       vftr_print_config(fp, vftrace.config, true);
    }

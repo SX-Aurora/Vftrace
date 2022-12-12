@@ -152,3 +152,4 @@ void vftr_write_ranklogfile_papi_counter_table (FILE *fp, stacktree_t stacktree,
    }
    free(counters);
 }
+

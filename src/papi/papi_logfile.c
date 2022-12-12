@@ -157,9 +157,3 @@ void vftr_write_logfile_papi_counter_table (FILE *fp, collated_stacktree_t stack
    free (counters);
 
 }
-
-void vftr_write_event_descriptions (FILE *fp) {
-   //for (int i = 0; i < vftrace.papi_state.n_available_events; i++) {
-   //   fprintf (fp, "%s: %s\n", vftrace.papi_state.event_names[i], vftrace.papi_state.event_descriptions[i]);
-   //}
-}

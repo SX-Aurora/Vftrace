@@ -27,10 +27,7 @@ function rm_outfiles() {
    rm -f ${output_file}
    rm -f ${error_file}
    for file in ${test_name}_*.log ${test_name}_*.vfd; do
-      ##if [ "${IS_SHARED_BUILD}" == "YES" ]; then
-      ##  file=lt-$file
-      ##fi
-      rm -f ${BIN_PREFIX}${file}
+     rm -f ${BIN_PREFIX}${file}
    done
 }
 
