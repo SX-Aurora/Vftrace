@@ -13,7 +13,6 @@ typedef struct {
 } vftr_counter_t;
 
 typedef struct {
-   bool is_active;
    int n_counters;
    vftr_counter_t *counters;
    int eventset;

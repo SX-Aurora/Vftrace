@@ -16,7 +16,6 @@
 #include "collate_stacks.h"
 
 #ifdef _PAPI_AVAIL
-#include "vftrace_state.h"
 #include "papiprofiling.h"
 #endif
 
@@ -153,10 +152,8 @@ void vftr_finalize_stacktree(stacktree_t *stacktree_ptr) {
    // exclusive time
    vftr_update_stacks_exclusive_time(stacktree_ptr);
 #ifdef _PAPI_AVAIL
-   if (vftrace.papi_state.is_active) {
-      vftr_update_stacks_exclusive_counters(stacktree_ptr);
-      vftr_update_stacks_papi_observables(stacktree_ptr);
-   }
+   vftr_update_stacks_exclusive_counters(stacktree_ptr);
+   vftr_update_stacks_papi_observables(stacktree_ptr);
 #endif
    SELF_PROFILE_END_FUNCTION;
 }

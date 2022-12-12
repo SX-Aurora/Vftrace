@@ -123,7 +123,7 @@ void vftr_write_ranklogfile(vftrace_t vftrace, long long runtime) {
 #endif
 
 #ifdef _PAPI_AVAIL
-   if (vftrace.papi_state.is_active) {
+   if (!vftrace.config.papi.disable.value) {
       vftr_write_ranklogfile_papi_obs_table (fp, vftrace.process.stacktree, vftrace.config);
       if (vftrace.config.papi.show_counters.value) {
          vftr_write_ranklogfile_papi_counter_table (fp, vftrace.process.stacktree, vftrace.config);

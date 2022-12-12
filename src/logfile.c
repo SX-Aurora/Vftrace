@@ -117,7 +117,7 @@ void vftr_write_logfile(vftrace_t vftrace, long long runtime) {
 #endif
 
 #ifdef _PAPI_AVAIL
-   if (vftrace.papi_state.is_active) {
+   if (!vftrace.config.papi.disable.value) {
       vftr_write_papi_table (fp, vftrace.process.collated_stacktree, vftrace.config);
       if (vftrace.config.papi.show_counters.value) {
          vftr_write_logfile_papi_counter_table (fp, vftrace.process.collated_stacktree, vftrace.config);
@@ -138,7 +138,7 @@ void vftr_write_logfile(vftrace_t vftrace, long long runtime) {
 #endif
 
 #ifdef _PAPI_AVAIL
-   if (vftrace.papi_state.is_active) {
+   if (!vftrace.config.papi.disable.value) {
       //vftr_write_event_descriptions (fp);
       vftr_write_papi_counter_summary (fp, vftrace.process.collated_stacktree, vftrace.config);
    }

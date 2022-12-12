@@ -25,22 +25,9 @@ void vftr_papi_init (config_t config) {
 
    int n_observables = config.papi.observables.obs_name.n_elements;
 
-   if (vftrace.papi_state.n_counters == 0 || n_observables == 0) {
-      fprintf (stderr, "Vftrace: No counters or observables specified\n");
-      fprintf (stderr, "   PAPI has not been initialized\n");
-      return;
-   } 
-
-   if (PAPI_library_init(PAPI_VER_CURRENT) != PAPI_VER_CURRENT) {
-      fprintf (stderr, "Vftrace: Could not init PAPI library.\n");
-      return;
-   }
+   if (PAPI_library_init(PAPI_VER_CURRENT) != PAPI_VER_CURRENT) return;
    
-   if (PAPI_create_eventset(&vftrace.papi_state.eventset) != PAPI_OK) {
-      fprintf (stderr, "Vftrace: Could not create PAPI event set.\n");
-      return;
-   }
-   vftrace.papi_state.is_active = true;
+   if (PAPI_create_eventset(&vftrace.papi_state.eventset) != PAPI_OK) return;
 
    for (int i = 0; i < n_native + n_preset; i++) {
       int event_code;
