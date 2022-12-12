@@ -55,7 +55,12 @@ void vftr_write_papi_table (FILE *fp, collated_stacktree_t stacktree, config_t c
    vftr_table_add_column (&table, col_string, "Func", "%s", 'c', 'r', (void*)func);
    for (int i = 0; i < n_observables; i++) {
       char *obs_name = config.papi.observables.obs_name.values[i];
-      char *obs_unit = config.papi.observables.unit.values[i];
+      char *obs_unit;
+      if (config.papi.observables.unit.values[i] != NULL) {
+          obs_unit = config.papi.observables.unit.values[i];
+      } else {
+          obs_unit = "";
+      }
       int slen = strlen(obs_name) + strlen(obs_unit) + 4;
       char *header = (char*)malloc(slen * sizeof(char));
       snprintf (header, slen, "%s [%s]", obs_name, obs_unit);

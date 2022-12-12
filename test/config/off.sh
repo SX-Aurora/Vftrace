@@ -10,6 +10,11 @@ ref_file=${srcdir}/ref_output/little_tasks.out
 logfile=${test_name}_all.log
 vfdfile=${test_name}_0.vfd
 
+###echo "IS SHARED: ${IS_SHARED_BUILD}"
+###if [ "${IS_SHARED_BUILD}" == "YES" ]; then
+###   logfile=lt-$logfile
+###   vfdfile=lt-$vfdfile
+###fi
 determine_bin_prefix ${test_name}
 logfile=${BIN_PREFIX}${logfile}
 vfdfile=${BIN_PREFIX}${vfdfile}
@@ -24,7 +29,9 @@ function run_binary () {
    diff ${output_file} ${ref_file} || exit 1
 }
 export VFTR_CONFIG="${configfile}"
+#echo "{\"outfile_basename\": \"${test_name}\"," > ${configfile}
 echo "{\"sampling\": {\"active\": true}}" > ${configfile}
+#echo "\"sampling\": {\"active\": true}}" >> ${configfile}
 
 # Test with environment variable
 run_binary

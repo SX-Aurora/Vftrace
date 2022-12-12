@@ -9,6 +9,10 @@ configfile=${test_name}.json
 ref_file=${srcdir}/ref_output/little_tasks.out
 logfile=${test_name}_all.log
 
+#if [ "${IS_SHARED_BUILD}" == "YES" ]; then
+#   logfile=lt-$logfile
+#   vfdfile=lt-$vfdfile
+#fi
 
 determine_bin_prefix ${test_name}
 logfile=${BIN_PREFIX}${logfile}

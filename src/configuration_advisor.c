@@ -134,6 +134,7 @@ void vftr_config_advisor_cuda(cJSON *json_obj) {
 void vftr_config_advisor_papi (cJSON *json_obj) {
   char *options[] = {
      "disable",
+     "show_tables",
      "show_counters",
      "sort_by_column",
      "counters",
