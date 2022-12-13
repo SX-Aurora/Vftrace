@@ -136,6 +136,9 @@ dist_check_SCRIPTS += sampling.sh \
 		      show_calltime_imbalances.sh
 
 if ENABLE_FORTRAN
+## The Nvidia compiler does not separate module names and functions
+## with a dedicated separator like e.g. "_mod_". Therefore, this
+## feature is not supported for nvfortran and the test not executed.
 if !HAS_NVIDIA_COMPILER
 check_PROGRAMS += strip_module_names
 
@@ -157,6 +160,10 @@ demangle_cxx_LDFLAGS = $(AM_LDFLAGS)
 dist_check_SCRIPTS += demangle_cxx.sh
 endif
 
+if !HAS_NVIDIA_COMPILER
+## The Nvidia C++ compiler does not lead to an execution of static 
+## functions before main is called. There is no need to test it
+## in that case.
 check_PROGRAMS += include_cxx_prelude
 
 include_cxx_prelude_SOURCES = $(srcdir)/little_cxxtasks.cpp
@@ -164,6 +171,8 @@ include_cxx_prelude_CXXFLAGS = $(AM_CXXFLAGS) $(FINSTRUMENT_FLAG)
 include_cxx_prelude_LDFLAGS = $(AM_LDFLAGS)
 
 dist_check_SCRIPTS += include_cxx_prelude.sh
+
+endif
 
 
 TEST_EXTENSIONS = .sh
