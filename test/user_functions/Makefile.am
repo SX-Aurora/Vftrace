@@ -20,12 +20,6 @@ else
    AM_TESTS_ENVIRONMENT=. $(top_srcdir)/test/environment/set_nompi.sh;
 endif
 
-if ENABLE_SHARED
-   AM_TESTS_ENVIRONMENT+=. $(top_srcdir)/test/environment/set_shared.sh;
-else
-   AM_TESTS_ENVIRONMENT+=. $(top_srcdir)/test/environment/set_noshared.sh;
-endif
-
 AM_TESTS_ENVIRONMENT+=. $(top_srcdir)/test/environment/unset_vftr_env.sh;
 
 AM_CFLAGS = -O3 $(FINSTRUMENT_FLAG) 

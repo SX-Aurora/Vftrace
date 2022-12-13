@@ -43,7 +43,7 @@ long long *vftr_get_total_omp_overhead(stacktree_t stacktree, int nthreads) {
 
    int nstacks = stacktree.nstacks;
    for (int istack=0; istack<nstacks; istack++) {
-      stack_t *stack = stacktree.stacks+istack;
+      vftr_stack_t *stack = stacktree.stacks+istack;
       int nprofs = stack->profiling.nprofiles;
       for (int iprof=0; iprof<nprofs; iprof++) {
          profile_t *prof = stack->profiling.profiles+iprof;

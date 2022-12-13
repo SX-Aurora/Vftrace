@@ -17,7 +17,9 @@ endif
 if ENABLE_ACCPROF
 libvftr_sorting_la_CFLAGS += -D_ACCPROF -I${srcdir}/../accprof
 endif
-
+if ENABLE_PAPI
+libvftr_sorting_la_CFLAGS += -D_PAPI_AVAIL -I${srcdir}/../papi
+endif
 
 noinst_LTLIBRARIES += libvftr_sorting_int8.la
 libvftr_sorting_la_LIBADD += libvftr_sorting_int8.la
@@ -88,7 +90,7 @@ libvftr_apply_perm_charptr_la_CFLAGS = -DTYPE="char*" -DTYPESTR="charptr" -I${sr
 noinst_LTLIBRARIES += libvftr_apply_perm_stackptr.la
 libvftr_sorting_la_LIBADD += libvftr_apply_perm_stackptr.la
 libvftr_apply_perm_stackptr_la_SOURCES = apply_perm.c
-libvftr_apply_perm_stackptr_la_CFLAGS = -DTYPE="stack_t*" -DTYPESTR="stackptr" \
+libvftr_apply_perm_stackptr_la_CFLAGS = -DTYPE="vftr_stack_t*" -DTYPESTR="stackptr" \
 					-I${srcdir}/../
 
 noinst_LTLIBRARIES += libvftr_apply_perm_collated_stackptr.la

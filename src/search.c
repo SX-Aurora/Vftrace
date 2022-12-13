@@ -74,8 +74,8 @@ int vftr_binary_search_collated_stacks_name(collated_stacktree_t stacktree, char
    return -1; // not found
 }
 
-int vftr_linear_search_callee(stack_t *stacks, int callerID, uintptr_t address) {
-   stack_t stack = stacks[callerID];
+int vftr_linear_search_callee(vftr_stack_t *stacks, int callerID, uintptr_t address) {
+   vftr_stack_t stack = stacks[callerID];
    int calleeID = -1;
    for (int icallee=0; icallee<stack.ncallees; icallee++) {
       int stackID = stack.callees[icallee];

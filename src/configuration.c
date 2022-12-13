@@ -142,11 +142,27 @@ void vftr_config_accprof_free(config_accprof_t *cfg_accprof_ptr) {
    vftr_config_sort_table_free(&(cfg_accprof_ptr->sort_table));
 }
 
-void vftr_config_hardware_scenarios_free(config_hardware_scenarios_t
-                                         *cfg_hardware_scenarios_ptr) {
-   free(cfg_hardware_scenarios_ptr->name);
-   cfg_hardware_scenarios_ptr->name = NULL;
-   vftr_config_bool_free(&(cfg_hardware_scenarios_ptr->active));
+void  vftr_config_hwcounters_free (config_hwcounters_t *cfg_hwc_ptr) {
+   free(cfg_hwc_ptr->name);
+   cfg_hwc_ptr->name = NULL;
+   vftr_config_string_free(&(cfg_hwc_ptr->native_name));
+   vftr_config_string_free(&(cfg_hwc_ptr->preset_name));
+   vftr_config_string_free(&(cfg_hwc_ptr->symbol));
+}
+
+void  vftr_config_hwobservables_free (config_hwobservables_t *cfg_hwobs_ptr) {
+   free(cfg_hwobs_ptr->name);
+   cfg_hwobs_ptr->name = NULL;
+   vftr_config_string_free(&(cfg_hwobs_ptr->obs_name));
+   vftr_config_string_free(&(cfg_hwobs_ptr->formula_expr));
+   vftr_config_string_free(&(cfg_hwobs_ptr->unit));
+}
+
+void vftr_config_papi_free (config_papi_t *cfg_papi_ptr) {
+   free(cfg_papi_ptr->name);
+   cfg_papi_ptr->name = NULL;
+   vftr_config_hwcounters_free (&(cfg_papi_ptr->counters));
+   vftr_config_hwobservables_free (&(cfg_papi_ptr->observables));
 }
 
 void vftr_config_free(config_t *config_ptr) {
@@ -164,7 +180,7 @@ void vftr_config_free(config_t *config_ptr) {
    vftr_config_mpi_free(&(config_ptr->mpi));
    vftr_config_cuda_free(&(config_ptr->cuda));
    vftr_config_accprof_free(&(config_ptr->accprof));
-   vftr_config_hardware_scenarios_free(&(config_ptr->hardware_scenarios));
+   vftr_config_papi_free(&(config_ptr->papi));
 
    if (config_ptr->config_file_path != NULL) {
       free(config_ptr->config_file_path);

@@ -19,11 +19,19 @@
 #ifdef _OMP
 #include <omp.h>
 #endif
+#ifdef _PAPI_AVAIL
+#include "papiprofiling.h"
+#endif
 
 void vftr_function_entry(void *func, void *call_site) {
    SELF_PROFILE_START_FUNCTION;
    (void) call_site;
    long long function_entry_time_begin = vftr_get_runtime_nsec();
+#ifdef _PAPI_AVAIL
+   long long *papi_counters = NULL;
+   if (!vftrace.config.papi.disable.value) papi_counters = vftr_get_papi_counters();
+#endif
+
 #ifdef _OMP
    omp_set_lock(&(vftrace.process.threadlock));
 #endif
@@ -40,7 +48,7 @@ void vftr_function_entry(void *func, void *call_site) {
    //       whether to inherit the parentthreads stack + the function, or
    //       to inherit it as soon as a task is created. for non-OMP code the master
    //       thread is created with _init as lowest stacklist entry
-   stack_t *my_stack = vftrace.process.stacktree.stacks+my_threadstack->stackID;
+   vftr_stack_t *my_stack = vftrace.process.stacktree.stacks+my_threadstack->stackID;
    profile_t *my_profile = vftr_get_my_profile(my_stack, my_thread);
 
    // cast and store function address once, as it is needed multiple times
@@ -56,7 +64,7 @@ void vftr_function_entry(void *func, void *call_site) {
       // and adjust the threadstack accordingly
       my_threadstack = vftr_update_threadstack_function(my_threadstack, my_thread,
                                                         func_addr, &vftrace);
-      stack_t *my_new_stack = vftrace.process.stacktree.stacks+my_threadstack->stackID;
+      vftr_stack_t *my_new_stack = vftrace.process.stacktree.stacks+my_threadstack->stackID;
       my_profile = vftr_get_my_profile(my_new_stack, my_thread);
 
       vftr_sample_function_entry(&(vftrace.sampling),
@@ -68,6 +76,13 @@ void vftr_function_entry(void *func, void *call_site) {
       vftr_accumulate_callprofiling(&(my_profile->callprof),
                                     1, -function_entry_time_begin);
    }
+
+#ifdef _PAPI_AVAIL
+   if (!vftrace.config.papi.disable.value) {
+      vftr_accumulate_papiprofiling (&(my_profile->papiprof), papi_counters, true);
+      free(papi_counters);
+   }
+#endif
 
    // No calls after this overhead handling!
    vftr_accumulate_callprofiling_overhead(&(my_profile->callprof),
@@ -83,6 +98,10 @@ void vftr_function_exit(void *func, void *call_site) {
    (void) func;
    (void) call_site;
    long long function_exit_time_begin = vftr_get_runtime_nsec();
+#ifdef _PAPI_AVAIL
+   long long *papi_counters = NULL;
+   if (!vftrace.config.papi.disable.value) papi_counters = vftr_get_papi_counters();
+#endif
 #ifdef _OMP
    omp_set_lock(&(vftrace.process.threadlock));
 #endif
@@ -93,7 +112,7 @@ void vftr_function_exit(void *func, void *call_site) {
 
    thread_t *my_thread = vftr_get_my_thread(&(vftrace.process.threadtree));
    threadstack_t *my_threadstack = vftr_get_my_threadstack(my_thread);
-   stack_t *my_stack = vftrace.process.stacktree.stacks+my_threadstack->stackID;
+   vftr_stack_t *my_stack = vftrace.process.stacktree.stacks+my_threadstack->stackID;
    profile_t *my_profile = vftr_get_my_profile(my_stack, my_thread);
 
    // check if still in a recursive call
@@ -113,6 +132,13 @@ void vftr_function_exit(void *func, void *call_site) {
                                 *my_stack,
                                 function_exit_time_begin);
    }
+
+#ifdef _PAPI_AVAIL
+   if (!vftrace.config.papi.disable.value) {
+      vftr_accumulate_papiprofiling (&(my_profile->papiprof), papi_counters, false);
+      free (papi_counters);
+   }
+#endif
 
    // No calls after this overhead handling
    vftr_accumulate_callprofiling_overhead(

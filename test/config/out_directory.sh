@@ -7,6 +7,8 @@ test_name=out_directory
 configfile=${test_name}.json
 output_file=${test_name}.out
 ref_file=${srcdir}/ref_output/little_tasks.out
+
+determine_bin_prefix ${test_name}
 logfile=$(get_logfile_name $test_name "all")
 
 rm_outfiles $output_file "" $test_name
@@ -20,8 +22,8 @@ check_file_exists $logfile
 
 outdir="$(pwd)/testoutdir/"
 mkdir -p ${outdir}
-echo "{\"output_directory\": \"${outdir}\"}" > ${configfile}
 export VFTR_CONFIG=${configfile}
+echo "{\"output_directory\": \"${outdir}\"}" > ${configfile}
 
 rm_outfiles $output_file "" $test_name
 if [ "x${HAS_MPI}" == "xYES" ]; then

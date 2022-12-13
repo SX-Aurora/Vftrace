@@ -14,6 +14,10 @@
 #include "accprof_callbacks.h"
 #endif
 
+#ifdef _PAPI_AVAIL
+#include "papi_init_final.h"
+#endif
+
 #include "self_profile.h"
 #include "timer.h"
 #include "off_hooks.h"
@@ -72,6 +76,11 @@ void vftr_initialize(void *func, void *call_site) {
                                          vftrace.config.demangle_cxx.value);
 #endif
 
+      // We need to init PAPI before the first profile is allocated, because
+      // it needs the number of registered PAPI counters.
+#ifdef _PAPI_AVAIL
+      vftr_papi_init(vftrace.config);
+#endif
 
       // initialize the dynamic process data
       vftrace.process = vftr_new_process();
@@ -106,6 +115,7 @@ void vftr_initialize(void *func, void *call_site) {
 #ifdef _ACCPROF
       vftr_init_accprof();
 #endif
+
       // set the finalize function to be executed at the termination of the program
       atexit(vftr_finalize);
 

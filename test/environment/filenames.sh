@@ -1,19 +1,23 @@
 #!/bin/bash
 
+function determine_bin_prefix () {
+   exefile=$1
+   grep "program=lt-" $exefile
+   if [ "$?" -eq "0" ]; then
+      export BIN_PREFIX="lt-"
+   else
+      export BIN_PREFIX=""
+   fi
+}
+
 function get_logfile_name () {
    logfile="$1_$2".log
-   if [ "${IS_SHARED_BUILD}" == "YES" ]; then
-      logfile=lt-$logfile
-   fi
-   echo $logfile
+   echo ${BIN_PREFIX}${logfile}
 }
 
 function get_vfdfile_name () {
    vfdfile="$1_$2".vfd
-   if [ "${IS_SHARED_BUILD}" == "YES" ]; then
-      vfdfile=lt-$vfdfile
-   fi
-   echo $vfdfile
+   echo ${BIN_PREFIX}${vfdfile}
 }
 
 function rm_outfiles() {
@@ -23,10 +27,7 @@ function rm_outfiles() {
    rm -f ${output_file}
    rm -f ${error_file}
    for file in ${test_name}_*.log ${test_name}_*.vfd; do
-      if [ "${IS_SHARED_BUILD}" == "YES" ]; then
-        file=lt-$file
-      fi
-      rm -f $file
+     rm -f ${BIN_PREFIX}${file}
    done
 }
 

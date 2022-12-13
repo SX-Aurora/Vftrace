@@ -16,7 +16,7 @@ typedef struct {
 
 typedef struct {
    // local stack
-   stack_t *local_stack;
+   vftr_stack_t *local_stack;
    // profiling data for collective logfile
    collated_profile_t profile;
    // gloabl stackID

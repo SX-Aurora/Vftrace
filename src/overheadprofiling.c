@@ -39,7 +39,7 @@ long long *vftr_get_total_hook_overhead(stacktree_t stacktree, int nthreads) {
 
    int nstacks = stacktree.nstacks;
    for (int istack=0; istack<nstacks; istack++) {
-      stack_t *stack = stacktree.stacks+istack;
+      vftr_stack_t *stack = stacktree.stacks+istack;
       int nprofs = stack->profiling.nprofiles;
       for (int iprof=0; iprof<nprofs; iprof++) {
          profile_t *prof = stack->profiling.profiles+iprof;
@@ -67,7 +67,7 @@ long long *vftr_get_total_mpi_overhead(stacktree_t stacktree, int nthreads) {
 
    int nstacks = stacktree.nstacks;
    for (int istack=0; istack<nstacks; istack++) {
-      stack_t *stack = stacktree.stacks+istack;
+      vftr_stack_t *stack = stacktree.stacks+istack;
       int nprofs = stack->profiling.nprofiles;
       for (int iprof=0; iprof<nprofs; iprof++) {
          profile_t *prof = stack->profiling.profiles+iprof;
@@ -96,7 +96,7 @@ long long *vftr_get_total_omp_overhead(stacktree_t stacktree, int nthreads) {
 
    int nstacks = stacktree.nstacks;
    for (int istack=0; istack<nstacks; istack++) {
-      stack_t *stack = stacktree.stacks+istack;
+      vftr_stack_t *stack = stacktree.stacks+istack;
       int nprofs = stack->profiling.nprofiles;
       for (int iprof=0; iprof<nprofs; iprof++) {
          profile_t *prof = stack->profiling.profiles+iprof;
@@ -117,7 +117,7 @@ overheadprofile_t *vftr_get_my_overheadprofile(vftrace_t vftrace) {
    SELF_PROFILE_START_FUNCTION;
    thread_t *my_thread = vftr_get_my_thread(&(vftrace.process.threadtree));
    threadstack_t *my_threadstack = vftr_get_my_threadstack(my_thread);
-   stack_t *my_stack = vftrace.process.stacktree.stacks+my_threadstack->stackID;
+   vftr_stack_t *my_stack = vftrace.process.stacktree.stacks+my_threadstack->stackID;
    profile_t *my_profile = vftr_get_my_profile(my_stack, my_thread);
    SELF_PROFILE_END_FUNCTION;
    return &(my_profile->overheadprof);

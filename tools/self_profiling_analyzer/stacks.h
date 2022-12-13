@@ -7,19 +7,19 @@
 #include "function_types.h"
 #include "stack_types.h"
 
-int search_callee(stack_t *stacks, int callerID, char *name);
+int search_callee(vftr_stack_t *stacks, int callerID, char *name);
 
-void stack_callees_realloc(stack_t *stack_ptr);
+void stack_callees_realloc(vftr_stack_t *stack_ptr);
 
 void stacktree_realloc(stacktree_t *stacktree_ptr);
 
-void insert_callee(int calleeID, stack_t *caller);
+void insert_callee(int calleeID, vftr_stack_t *caller);
 
 int new_stack(int callerID, char *name, stacktree_t *stacktree_ptr);
 
-stack_t first_stack(char *name);
+vftr_stack_t first_stack(char *name);
 
-void free_stack(stack_t *stacks_ptr, int stackID);
+void free_stack(vftr_stack_t *stacks_ptr, int stackID);
 
 stacktree_t new_stacktree(functionlist_t functionlist);
 
@@ -29,7 +29,7 @@ void update_stacks_exclusive_time(stacktree_t *stacktree_ptr);
 
 void finalize_stacktree(stacktree_t *stacktree_ptr);
 
-stack_t **sort_stacks_by_excl_time(stacktree_t stacktree);
+vftr_stack_t **sort_stacks_by_excl_time(stacktree_t stacktree);
 
 void print_stack_branch(FILE *fp, int level, stacktree_t stacktree, int stackid);
 
@@ -43,7 +43,7 @@ void print_stack(FILE *fp, stacktree_t stacktree, int stackid);
 
 void print_stacklist(FILE *fp, stacktree_t stacktree);
 
-void print_sorted_stacklist(FILE *fp, stack_t **sortedstacklist,
+void print_sorted_stacklist(FILE *fp, vftr_stack_t **sortedstacklist,
                             stacktree_t stacktree);
 
 #endif

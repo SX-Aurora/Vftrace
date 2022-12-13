@@ -43,7 +43,7 @@ int main(int argc, char **argv) {
    stacktree_t stacktree = vftr_get_dummy_stacktree();
    
    for (int istack = 0; istack < stacktree.nstacks; istack++) {
-      stack_t this_stack = stacktree.stacks[istack];
+      vftr_stack_t this_stack = stacktree.stacks[istack];
       profile_t *this_profile = this_stack.profiling.profiles;
       callprofile_t callprof = this_profile->callprof; 
       cudaprofile_t cudaprof = this_profile->cudaprof;

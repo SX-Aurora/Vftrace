@@ -8,7 +8,7 @@
 #include "profiling_types.h"
 #include "configuration_types.h"
 
-stack_t **vftr_sort_stacks_for_prof(config_t config,
+vftr_stack_t **vftr_sort_stacks_for_prof(config_t config,
                                     stacktree_t stacktree) {
    int nstacks = stacktree.nstacks;
    // Depending on the config variable create a list of that value
@@ -24,7 +24,7 @@ stack_t **vftr_sort_stacks_for_prof(config_t config,
    bool ascending = config.profile_table.sort_table.ascending.value;
    if (!strcmp(column, "time_excl")) {
       for (int istack=0; istack<nstacks; istack++) {
-         stack_t *stack = stacktree.stacks+istack;
+         vftr_stack_t *stack = stacktree.stacks+istack;
          int nprofs = stack->profiling.nprofiles;
          for (int iprof=0; iprof<nprofs; iprof++) {
             profile_t *prof = stack->profiling.profiles+iprof;
@@ -33,7 +33,7 @@ stack_t **vftr_sort_stacks_for_prof(config_t config,
       }
    } else if (!strcmp(column, "time_incl")) {
       for (int istack=0; istack<nstacks; istack++) {
-         stack_t *stack = stacktree.stacks+istack;
+         vftr_stack_t *stack = stacktree.stacks+istack;
          int nprofs = stack->profiling.nprofiles;
          for (int iprof=0; iprof<nprofs; iprof++) {
             profile_t *prof = stack->profiling.profiles+iprof;
@@ -42,7 +42,7 @@ stack_t **vftr_sort_stacks_for_prof(config_t config,
       }
    } else if (!strcmp(column, "calls")) {
       for (int istack=0; istack<nstacks; istack++) {
-         stack_t *stack = stacktree.stacks+istack;
+         vftr_stack_t *stack = stacktree.stacks+istack;
          int nprofs = stack->profiling.nprofiles;
          for (int iprof=0; iprof<nprofs; iprof++) {
             profile_t *prof = stack->profiling.profiles+iprof;
@@ -51,12 +51,12 @@ stack_t **vftr_sort_stacks_for_prof(config_t config,
       }
    } else if (!strcmp(column, "stack_id")) {
       for (int istack=0; istack<nstacks; istack++) {
-         stack_t *stack = stacktree.stacks+istack;
+         vftr_stack_t *stack = stacktree.stacks+istack;
          stackvals[istack] = stack->gid;
       }
    } else if (!strcmp(column, "overhead")) {
       for (int istack=0; istack<nstacks; istack++) {
-         stack_t *stack = stacktree.stacks+istack;
+         vftr_stack_t *stack = stacktree.stacks+istack;
          int nprofs = stack->profiling.nprofiles;
          for (int iprof=0; iprof<nprofs; iprof++) {
             profile_t *prof = stack->profiling.profiles+iprof;
@@ -66,7 +66,7 @@ stack_t **vftr_sort_stacks_for_prof(config_t config,
    } else {
       // if (!strcmp(column, "none"))
       for (int istack=0; istack<nstacks; istack++) {
-         stack_t *stack = stacktree.stacks+istack;
+         vftr_stack_t *stack = stacktree.stacks+istack;
          stackvals[istack] += stack->lid;
       }
    }
@@ -76,7 +76,7 @@ stack_t **vftr_sort_stacks_for_prof(config_t config,
    free(stackvals);
 
    // create the stackpointer list
-   stack_t **stackptrs = (stack_t**) malloc(nstacks*sizeof(stack_t*));
+   vftr_stack_t **stackptrs = (vftr_stack_t**) malloc(nstacks*sizeof(vftr_stack_t*));
    for (int istack=0; istack<nstacks; istack++) {
       stackptrs[istack] = stacktree.stacks+istack;
    }
@@ -92,7 +92,7 @@ stack_t **vftr_sort_stacks_for_prof(config_t config,
 #ifdef _MPI
 void vftr_sort_stacks_for_mpiprof(config_t config,
                                   int nselected_stacks,
-                                  stack_t **selected_stacks) {
+                                  vftr_stack_t **selected_stacks) {
    // Depending on the configuration variable create a list of that value
    // (summing over the thread individual profiles)
    // sort it and store the permutation to sort a pointerlist pointing
@@ -106,7 +106,7 @@ void vftr_sort_stacks_for_mpiprof(config_t config,
    bool ascending = config.mpi.sort_table.ascending.value;
    if (!strcmp(column, "messages")) {
       for (int istack=0; istack<nselected_stacks; istack++) {
-         stack_t *stack = selected_stacks[istack];
+         vftr_stack_t *stack = selected_stacks[istack];
          int nprofs = stack->profiling.nprofiles;
          for (int iprof=0; iprof<nprofs; iprof++) {
             profile_t *prof = stack->profiling.profiles+iprof;
@@ -116,7 +116,7 @@ void vftr_sort_stacks_for_mpiprof(config_t config,
       }
    } else if (!strcmp(column, "send_size")) {
       for (int istack=0; istack<nselected_stacks; istack++) {
-         stack_t *stack = selected_stacks[istack];
+         vftr_stack_t *stack = selected_stacks[istack];
          int nprofs = stack->profiling.nprofiles;
          for (int iprof=0; iprof<nprofs; iprof++) {
             profile_t *prof = stack->profiling.profiles+iprof;
@@ -127,7 +127,7 @@ void vftr_sort_stacks_for_mpiprof(config_t config,
       }
    } else if (!strcmp(column, "recv_size")) {
       for (int istack=0; istack<nselected_stacks; istack++) {
-         stack_t *stack = selected_stacks[istack];
+         vftr_stack_t *stack = selected_stacks[istack];
          int nprofs = stack->profiling.nprofiles;
          for (int iprof=0; iprof<nprofs; iprof++) {
             profile_t *prof = stack->profiling.profiles+iprof;
@@ -138,7 +138,7 @@ void vftr_sort_stacks_for_mpiprof(config_t config,
       }
    } else if (!strcmp(column, "send_bw")) {
       for (int istack=0; istack<nselected_stacks; istack++) {
-         stack_t *stack = selected_stacks[istack];
+         vftr_stack_t *stack = selected_stacks[istack];
          int nprofs = stack->profiling.nprofiles;
          for (int iprof=0; iprof<nprofs; iprof++) {
             profile_t *prof = stack->profiling.profiles+iprof;
@@ -149,7 +149,7 @@ void vftr_sort_stacks_for_mpiprof(config_t config,
       }
    } else if (!strcmp(column, "recv_bw")) {
       for (int istack=0; istack<nselected_stacks; istack++) {
-         stack_t *stack = selected_stacks[istack];
+         vftr_stack_t *stack = selected_stacks[istack];
          int nprofs = stack->profiling.nprofiles;
          for (int iprof=0; iprof<nprofs; iprof++) {
             profile_t *prof = stack->profiling.profiles+iprof;
@@ -160,7 +160,7 @@ void vftr_sort_stacks_for_mpiprof(config_t config,
       }
    } else if (!strcmp(column, "comm_time")) {
       for (int istack=0; istack<nselected_stacks; istack++) {
-         stack_t *stack = selected_stacks[istack];
+         vftr_stack_t *stack = selected_stacks[istack];
          int nprofs = stack->profiling.nprofiles;
          for (int iprof=0; iprof<nprofs; iprof++) {
             profile_t *prof = stack->profiling.profiles+iprof;
@@ -171,13 +171,13 @@ void vftr_sort_stacks_for_mpiprof(config_t config,
       }
    } else if (!strcmp(column, "stack_id")) {
       for (int istack=0; istack<nselected_stacks; istack++) {
-         stack_t *stack = selected_stacks[istack];
+         vftr_stack_t *stack = selected_stacks[istack];
          stackvals[istack] = stack->gid;
       }
    } else {
       // if (!strcmp(column, "none"))
       for (int istack=0; istack<nselected_stacks; istack++) {
-         stack_t *stack = selected_stacks[istack];
+         vftr_stack_t *stack = selected_stacks[istack];
          stackvals[istack] += stack->lid;
       }
    }
@@ -194,7 +194,7 @@ void vftr_sort_stacks_for_mpiprof(config_t config,
 #endif
 
 #ifdef _CUDA
-   stack_t **vftr_sort_stacks_for_cuda (config_t config, stacktree_t stacktree) {
+   vftr_stack_t **vftr_sort_stacks_for_cuda (config_t config, stacktree_t stacktree) {
      int nstacks = stacktree.nstacks;
      char *column = config.cuda.sort_table.column.value;
      bool ascending = config.cuda.sort_table.ascending.value;
@@ -203,7 +203,7 @@ void vftr_sort_stacks_for_mpiprof(config_t config,
      if (!strcmp(column, "time")) {
         float *stackvals = (float*)malloc(nstacks * sizeof(float));
         for (int istack = 0; istack < nstacks; istack++) {
-           stack_t *stack = stacktree.stacks + istack;
+           vftr_stack_t *stack = stacktree.stacks + istack;
            profile_t *prof = stack->profiling.profiles;
            stackvals[istack] = prof->cudaprof.t_ms;
         }
@@ -212,7 +212,7 @@ void vftr_sort_stacks_for_mpiprof(config_t config,
      } else if (!strcmp(column, "memcpy")) {
         long long  *stackvals = (long long*)malloc(nstacks * sizeof(long long));
         for (int istack = 0; istack < nstacks; istack++) {
-           stack_t *stack = stacktree.stacks + istack;
+           vftr_stack_t *stack = stacktree.stacks + istack;
            profile_t *prof = stack->profiling.profiles;
            stackvals[istack] = (long long)(prof->cudaprof.memcpy_bytes[0] + prof->cudaprof.memcpy_bytes[1]);
         }
@@ -221,7 +221,7 @@ void vftr_sort_stacks_for_mpiprof(config_t config,
      } else if (!strcmp(column, "cbid")) {
         int *stackvals = (int*)malloc(nstacks * sizeof(int));
         for (int istack = 0; istack < nstacks; istack++) {
-           stack_t *stack = stacktree.stacks + istack;
+           vftr_stack_t *stack = stacktree.stacks + istack;
            profile_t *prof = stack->profiling.profiles;
            stackvals[istack] = prof->cudaprof.cbid;
         }
@@ -230,7 +230,7 @@ void vftr_sort_stacks_for_mpiprof(config_t config,
      } else if (!strcmp(column, "calls")) {
         int *stackvals = (int*)malloc(nstacks * sizeof(int));
         for (int istack = 0; istack < nstacks; istack++) {
-           stack_t *stack = stacktree.stacks + istack;
+           vftr_stack_t *stack = stacktree.stacks + istack;
            profile_t *prof = stack->profiling.profiles;
            stackvals[istack] = prof->cudaprof.n_calls;
         }
@@ -240,14 +240,14 @@ void vftr_sort_stacks_for_mpiprof(config_t config,
         // if (!strcmp(column, "none"))
         int *stackvals = (int*)malloc(nstacks * sizeof(int));
         for (int istack = 0; istack < nstacks; istack++) {
-           stack_t *stack = stacktree.stacks + istack;
+           vftr_stack_t *stack = stacktree.stacks + istack;
            stackvals[istack] = stack->lid;
         }
         vftr_sort_perm_int(nstacks, stackvals, &perm, ascending);
         free(stackvals);
      }
 
-     stack_t **stackptrs = (stack_t**) malloc(nstacks*sizeof(stack_t*));
+     vftr_stack_t **stackptrs = (vftr_stack_t**) malloc(nstacks*sizeof(vftr_stack_t*));
      for (int istack = 0; istack < nstacks; istack++) {
         stackptrs[istack] = stacktree.stacks + istack;
      }
@@ -259,7 +259,7 @@ void vftr_sort_stacks_for_mpiprof(config_t config,
 #endif
 
 #ifdef _ACCPROF
-   stack_t **vftr_sort_stacks_for_accprof (config_t config, stacktree_t stacktree) {
+   vftr_stack_t **vftr_sort_stacks_for_accprof (config_t config, stacktree_t stacktree) {
      int nstacks = stacktree.nstacks;
      char *column = config.cuda.sort_table.column.value;
      bool ascending = config.cuda.sort_table.ascending.value;
@@ -268,7 +268,7 @@ void vftr_sort_stacks_for_mpiprof(config_t config,
      if (!strcmp(column, "time")) {
         long long *stackvals = (long long*)malloc(nstacks * sizeof(long long));
         for (int istack = 0; istack < nstacks; istack++) {
-           stack_t *stack = stacktree.stacks + istack;
+           vftr_stack_t *stack = stacktree.stacks + istack;
            profile_t *prof = stack->profiling.profiles;
            stackvals[istack] = prof->callprof.time_excl_nsec;
         }
@@ -277,7 +277,7 @@ void vftr_sort_stacks_for_mpiprof(config_t config,
      } else if (!strcmp(column, "memcpy")) {
         long long *stackvals = (long long*)malloc(nstacks * sizeof(long long));
         for (int istack = 0; istack < nstacks; istack++) {
-           stack_t *stack = stacktree.stacks + istack;
+           vftr_stack_t *stack = stacktree.stacks + istack;
            profile_t *prof = stack->profiling.profiles;
            stackvals[istack] = prof->accprof.copied_bytes;
         }
@@ -286,7 +286,7 @@ void vftr_sort_stacks_for_mpiprof(config_t config,
      } else if (!strcmp(column, "evtype")) {
         int *stackvals = (int*)malloc(nstacks * sizeof(int));
         for (int istack = 0; istack < nstacks; istack++) {
-           stack_t *stack = stacktree.stacks + istack;
+           vftr_stack_t *stack = stacktree.stacks + istack;
            profile_t *prof = stack->profiling.profiles;
            stackvals[istack] = prof->accprof.event_type;
         }
@@ -295,7 +295,7 @@ void vftr_sort_stacks_for_mpiprof(config_t config,
      } else if (!strcmp(column, "calls")) {
         int *stackvals = (int*)malloc(nstacks * sizeof(int));
         for (int istack = 0; istack < nstacks; istack++) {
-           stack_t *stack = stacktree.stacks + istack;
+           vftr_stack_t *stack = stacktree.stacks + istack;
            profile_t *prof = stack->profiling.profiles;
            stackvals[istack] = prof->callprof.calls;
         }
@@ -305,14 +305,14 @@ void vftr_sort_stacks_for_mpiprof(config_t config,
         // if (!strcmp(column, "none"))
         int *stackvals = (int*)malloc(nstacks * sizeof(int));
         for (int istack = 0; istack < nstacks; istack++) {
-           stack_t *stack = stacktree.stacks + istack;
+           vftr_stack_t *stack = stacktree.stacks + istack;
            stackvals[istack] = stack->lid;
         }
         vftr_sort_perm_int(nstacks, stackvals, &perm, ascending);
         free(stackvals);
      }
 
-     stack_t **stackptrs = (stack_t**) malloc(nstacks*sizeof(stack_t*));
+     vftr_stack_t **stackptrs = (vftr_stack_t**) malloc(nstacks*sizeof(vftr_stack_t*));
      for (int istack = 0; istack < nstacks; istack++) {
         stackptrs[istack] = stacktree.stacks + istack;
      }
@@ -321,4 +321,30 @@ void vftr_sort_stacks_for_mpiprof(config_t config,
      free(perm);
      return stackptrs; 
 }
+#endif
+
+#ifdef _PAPI_AVAIL
+  vftr_stack_t **vftr_sort_stacks_papi_obs (config_t config, stacktree_t stacktree) {
+     int sort_column = config.papi.sort_by_column.value;
+     int nstacks = stacktree.nstacks; 
+     int *perm = NULL;
+     double *observables   = (double*)malloc(nstacks * sizeof(long long));
+     for (int istack = 0; istack < nstacks; istack++) {
+        vftr_stack_t *stack = stacktree.stacks + istack;
+        papiprofile_t papiprof = stack->profiling.profiles->papiprof;
+        observables[istack] = papiprof.observables[sort_column];
+     }
+
+     vftr_sort_perm_double(nstacks, observables, &perm, false);
+     free(observables);
+
+     vftr_stack_t **stackptrs = (vftr_stack_t**)malloc(nstacks * sizeof(vftr_stack_t*));
+     for (int istack = 0; istack < nstacks; istack++) {
+        stackptrs[istack] = stacktree.stacks + istack;
+     }
+     
+     vftr_apply_perm_stackptr (nstacks, stackptrs, perm);
+     free(perm);
+     return stackptrs;
+} 
 #endif

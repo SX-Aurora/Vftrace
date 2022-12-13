@@ -15,22 +15,26 @@
 #include "search.h"
 #include "collate_stacks.h"
 
+#ifdef _PAPI_AVAIL
+#include "papiprofiling.h"
+#endif
+
 void vftr_stacktree_realloc(stacktree_t *stacktree_ptr) {
    SELF_PROFILE_START_FUNCTION;
    stacktree_t stacktree = *stacktree_ptr;
    while (stacktree.nstacks > stacktree.maxstacks) {
       int maxstacks = stacktree.maxstacks*vftr_realloc_rate+vftr_realloc_add;
-      stacktree.stacks = (stack_t*)
-         realloc(stacktree.stacks, maxstacks*sizeof(stack_t));
+      stacktree.stacks = (vftr_stack_t*)
+         realloc(stacktree.stacks, maxstacks*sizeof(vftr_stack_t));
       stacktree.maxstacks = maxstacks;
    }
    *stacktree_ptr = stacktree;
    SELF_PROFILE_END_FUNCTION;
 }
 
-void vftr_stack_callees_realloc(stack_t *stack_ptr) {
+void vftr_stack_callees_realloc(vftr_stack_t *stack_ptr) {
    SELF_PROFILE_START_FUNCTION;
-   stack_t stack = *stack_ptr;
+   vftr_stack_t stack = *stack_ptr;
    while (stack.ncallees > stack.maxcallees) {
       int maxcallees = stack.maxcallees*vftr_realloc_rate+vftr_realloc_add;
       stack.callees = (int*)
@@ -41,7 +45,7 @@ void vftr_stack_callees_realloc(stack_t *stack_ptr) {
    SELF_PROFILE_END_FUNCTION;
 }
 
-void vftr_insert_callee(int calleeID, stack_t *caller) {
+void vftr_insert_callee(int calleeID, vftr_stack_t *caller) {
    SELF_PROFILE_START_FUNCTION;
    // append the callee to the list
    int idx = caller->ncallees;
@@ -59,9 +63,9 @@ int vftr_new_stack(int callerID, stacktree_t *stacktree_ptr,
    stacktree_ptr->nstacks++;
    vftr_stacktree_realloc(stacktree_ptr);
 
-   stack_t *callerstack = stacktree_ptr->stacks+callerID;
+   vftr_stack_t *callerstack = stacktree_ptr->stacks+callerID;
 
-   stack_t *stack = stacktree_ptr->stacks+stackID;
+   vftr_stack_t *stack = stacktree_ptr->stacks+stackID;
    stack->address = address;
    stack->precise = precise;
    stack->caller = callerstack->lid;
@@ -80,9 +84,9 @@ int vftr_new_stack(int callerID, stacktree_t *stacktree_ptr,
    return stack->lid;
 }
 
-stack_t vftr_first_stack() {
+vftr_stack_t vftr_first_stack() {
    SELF_PROFILE_START_FUNCTION;
-   stack_t stack;
+   vftr_stack_t stack;
    stack.address = (uintptr_t) NULL;
    stack.precise = false;
    stack.caller = -1;
@@ -101,8 +105,8 @@ stack_t vftr_first_stack() {
 }
 
 // recursively free the stack tree
-void vftr_stack_free(stack_t *stacks_ptr, int stackID) {
-   stack_t stack = stacks_ptr[stackID];
+void vftr_stack_free(vftr_stack_t *stacks_ptr, int stackID) {
+   vftr_stack_t stack = stacks_ptr[stackID];
    if (stack.ncallees > 0) {
       for (int icallee=0; icallee<stack.ncallees; icallee++) {
          vftr_stack_free(stacks_ptr, stack.callees[icallee]);
@@ -147,6 +151,10 @@ void vftr_finalize_stacktree(stacktree_t *stacktree_ptr) {
    SELF_PROFILE_START_FUNCTION;
    // exclusive time
    vftr_update_stacks_exclusive_time(stacktree_ptr);
+#ifdef _PAPI_AVAIL
+   vftr_update_stacks_exclusive_counters(stacktree_ptr);
+   vftr_update_stacks_papi_observables(stacktree_ptr);
+#endif
    SELF_PROFILE_END_FUNCTION;
 }
 
@@ -155,7 +163,7 @@ void vftr_print_stack_branch(FILE *fp, int level, stacktree_t stacktree, int sta
    for (int ilevel=0; ilevel<level; ilevel++) {
       fprintf(fp, "  ");
    }
-   stack_t stack = stacktree.stacks[stackid];
+   vftr_stack_t stack = stacktree.stacks[stackid];
    fprintf(fp, "%s (%llx): id=%d\n",
            stack.name,
            (unsigned long long) stack.address,

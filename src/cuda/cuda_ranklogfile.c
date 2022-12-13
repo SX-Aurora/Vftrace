@@ -17,7 +17,7 @@ void vftr_get_total_cuda_times_for_ranklogfile (stacktree_t stacktree, float *to
    *tot_other_s = 0;
 
    for (int istack = 0; istack < stacktree.nstacks; istack++) {
-      stack_t this_stack = stacktree.stacks[istack];
+      vftr_stack_t this_stack = stacktree.stacks[istack];
       cudaprofile_t cudaprof = this_stack.profiling.profiles[0].cudaprof;
       if (vftr_cuda_cbid_belongs_to_class (cudaprof.cbid, T_CUDA_COMP))  {
             *tot_compute_s += cudaprof.t_ms / 1000;
@@ -32,7 +32,7 @@ void vftr_get_total_cuda_times_for_ranklogfile (stacktree_t stacktree, float *to
 void vftr_write_ranklogfile_cuda_table(FILE *fp, stacktree_t stacktree, config_t config) {
    int n_stackids_with_cuda_data = 0;
 
-   stack_t **sorted_stacks = vftr_sort_stacks_for_cuda (config, stacktree);
+   vftr_stack_t **sorted_stacks = vftr_sort_stacks_for_cuda (config, stacktree);
 
    for (int istack = 0; istack < stacktree.nstacks; istack++) {
       // CUDA profiling only supported for one thread, thus there is only one profile.
@@ -63,7 +63,7 @@ void vftr_write_ranklogfile_cuda_table(FILE *fp, stacktree_t stacktree, config_t
 
    int i = 0;
    for (int istack = 0; istack < stacktree.nstacks; istack++) {
-      stack_t *this_stack = sorted_stacks[istack];
+      vftr_stack_t *this_stack = sorted_stacks[istack];
       profile_t *this_profile = this_stack->profiling.profiles;
       cudaprofile_t cudaprof = this_profile->cudaprof;
 
@@ -122,7 +122,7 @@ void vftr_write_ranklogfile_cbid_names (FILE *fp, stacktree_t stacktree) {
    int *cbids_found = (int*)malloc(stacktree.nstacks * sizeof(int));
    const char **cbid_names = (const char**)malloc(stacktree.nstacks * sizeof(char*));
    for (int istack = 0; istack < stacktree.nstacks; istack++) {
-      stack_t this_stack = stacktree.stacks[istack];
+      vftr_stack_t this_stack = stacktree.stacks[istack];
       cudaprofile_t cudaprof = this_stack.profiling.profiles[0].cudaprof;
       if (cudaprof.cbid == 0) continue;
       bool cbid_present = false;

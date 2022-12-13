@@ -95,7 +95,7 @@ void vftr_finalize_sampling(sampling_t *sampling,
    SELF_PROFILE_END_FUNCTION;
 }
 
-void vftr_sample_function_entry(sampling_t *sampling, stack_t stack,
+void vftr_sample_function_entry(sampling_t *sampling, vftr_stack_t stack,
                                 long long timestamp) {
    SELF_PROFILE_START_FUNCTION;
    if (sampling->do_sampling &&
@@ -109,7 +109,7 @@ void vftr_sample_function_entry(sampling_t *sampling, stack_t stack,
    SELF_PROFILE_END_FUNCTION;
 }
 
-void vftr_sample_function_exit(sampling_t *sampling, stack_t stack,
+void vftr_sample_function_exit(sampling_t *sampling, vftr_stack_t stack,
                                long long timestamp) {
    SELF_PROFILE_START_FUNCTION;
    if (sampling->do_sampling &&

@@ -49,7 +49,11 @@ AX_ENABLE_OPENMP
 # Check CUpti GPU profiling interface
 AX_ENABLE_CUDAPROF
 
+# Check the OpenACC profiling interface
 AX_ENABLE_ACCPROF
+
+# Check PAPI hardware profiling support
+AX_ENABLE_PAPI
 
 # Check for dlopen
 AX_ENABLE_DYNLIB_TRACING
@@ -85,6 +89,7 @@ AC_CONFIG_FILES([src/mpi/f08-wrapper/Makefile])
 AC_CONFIG_FILES([src/omp/Makefile])
 AC_CONFIG_FILES([src/cuda/Makefile])
 AC_CONFIG_FILES([src/accprof/Makefile])
+AC_CONFIG_FILES([src/papi/Makefile])
 AC_CONFIG_FILES([external/Makefile])
 AC_CONFIG_FILES([tools/Makefile])
 AC_CONFIG_FILES([tools/self_profiling_analyzer/Makefile])
@@ -96,6 +101,7 @@ AC_CONFIG_FILES([test/user_functions/Makefile])
 AC_CONFIG_FILES([test/omp/Makefile])
 AC_CONFIG_FILES([test/cuda/Makefile])
 AC_CONFIG_FILES([test/openacc/Makefile])
+AC_CONFIG_FILES([test/papi/Makefile])
 AC_CONFIG_FILES([test/mpi/Makefile])
 AC_CONFIG_FILES([test/mpi/c-mpi/Makefile])
 AC_CONFIG_FILES([test/mpi/f-mpi/Makefile])

@@ -34,7 +34,7 @@ void vftr_omp_region_begin(const char *name, void *addr) {
    //       whether to inherit the parentthreads stack + the region, or
    //       to inherit it as soon as a task is created. for non-OMP code the master
    //       thread is created with _init as lowest stacklist entry
-   stack_t *my_stack = vftrace.process.stacktree.stacks+my_threadstack->stackID;
+   vftr_stack_t *my_stack = vftrace.process.stacktree.stacks+my_threadstack->stackID;
    profile_t *my_profile = vftr_get_my_profile(my_stack, my_thread);
 
    // cast and store region address once, as it is needed multiple times
@@ -58,7 +58,7 @@ void vftr_omp_region_begin(const char *name, void *addr) {
       // Therefore the next subthread level needs to be clean
       vftr_thread_subthreads_reset(&(vftrace.process.threadtree), my_thread->threadID);
 
-      stack_t *my_new_stack = vftrace.process.stacktree.stacks+my_threadstack->stackID;
+      vftr_stack_t *my_new_stack = vftrace.process.stacktree.stacks+my_threadstack->stackID;
       my_profile = vftr_get_my_profile(my_new_stack, my_thread);
 
       vftr_sample_function_entry(&(vftrace.sampling),
@@ -89,7 +89,7 @@ void vftr_omp_region_end(const char *name) {
 
    thread_t *my_thread = vftr_get_my_thread(&(vftrace.process.threadtree));
    threadstack_t *my_threadstack = vftr_get_my_threadstack(my_thread);
-   stack_t *my_stack = vftrace.process.stacktree.stacks+my_threadstack->stackID;
+   vftr_stack_t *my_stack = vftrace.process.stacktree.stacks+my_threadstack->stackID;
    profile_t *my_profile = vftr_get_my_profile(my_stack, my_thread);
 
    // check if still in a recursive call
@@ -104,7 +104,7 @@ void vftr_omp_region_end(const char *name) {
       // if not recursive pop the function from the threads stacklist
       my_threadstack = vftr_threadstack_pop(&(my_thread->stacklist));
 
-      stack_t *my_new_stack = vftrace.process.stacktree.stacks+my_threadstack->stackID;
+      vftr_stack_t *my_new_stack = vftrace.process.stacktree.stacks+my_threadstack->stackID;
       profile_t *my_new_profile = vftr_get_my_profile(my_new_stack, my_thread);
 
       // TODO Add accumulation of profiling data

@@ -95,6 +95,37 @@ void vftr_parse_config_string(cJSON *parent_object, config_string_t *cfg_string_
    }
 }
 
+void vftr_parse_config_string_list (cJSON *parent_object, char *list_name, config_string_list_t *cfg_string_list_ptr) {
+   cfg_string_list_ptr->n_elements = 0;
+   bool has_object = cJSON_HasObjectItem (parent_object, list_name);
+   if (!has_object) return;
+   int idx, n;
+   for (int pass = 0; pass < 2; pass++) {
+      n = 0;
+      idx = 0;
+      cJSON *json_list = cJSON_GetObjectItem(parent_object, list_name);
+      cJSON *json_object;
+      cJSON_ArrayForEach(json_object, json_list) {
+         cJSON *token = cJSON_GetObjectItem(json_object, cfg_string_list_ptr->name);
+         if (token != NULL && pass == 1) {
+            cfg_string_list_ptr->values[n] = strdup(cJSON_GetStringValue(token));
+            cfg_string_list_ptr->list_idx[n] = idx;
+         }
+         if (token != NULL) n++;
+         idx++;
+      }
+      if (pass == 0) {
+         cfg_string_list_ptr->n_elements = n;
+         cfg_string_list_ptr->values = (char**)malloc(n * sizeof(char*));
+         cfg_string_list_ptr->list_idx = (int*)malloc(n * sizeof(int));
+         for (int i = 0; i < n; i++) {
+            cfg_string_list_ptr->values[i] = NULL;
+            cfg_string_list_ptr->list_idx[i] = -1;
+         }
+      }
+   } 
+}
+
 void vftr_parse_config_regex(cJSON *parent_object, config_regex_t *cfg_regex_ptr) {
    // check if the Parent object has the regex
    bool has_object = cJSON_HasObjectItem(parent_object,
@@ -247,18 +278,32 @@ void vftr_parse_config_accprof(cJSON *parent_object, config_accprof_t *cfg_accpr
    }
 }
 
-void vftr_parse_config_hardware_scenarios(cJSON *parent_object,
-                                          config_hardware_scenarios_t
-                                          *cfg_hardware_scenarios_ptr) {
-   // check if the Parent object has the profile table
-   bool has_object = cJSON_HasObjectItem(parent_object,
-                                         cfg_hardware_scenarios_ptr->name);
+void vftr_parse_config_hwcounters (cJSON *parent_object, config_hwcounters_t *cfg_hwc) {
+   bool has_object = cJSON_HasObjectItem(parent_object, cfg_hwc->name);
+   if (!has_object) return;
+   vftr_parse_config_string_list (parent_object, cfg_hwc->name, &(cfg_hwc->native_name));
+   vftr_parse_config_string_list (parent_object, cfg_hwc->name, &(cfg_hwc->preset_name));
+   vftr_parse_config_string_list (parent_object, cfg_hwc->name, &(cfg_hwc->symbol));
+}
+
+void vftr_parse_config_hwobservables (cJSON *parent_object, config_hwobservables_t *cfg_hwobs) {
+   bool has_object = cJSON_HasObjectItem(parent_object, cfg_hwobs->name);
+   if (!has_object) return;
+   vftr_parse_config_string_list (parent_object, cfg_hwobs->name, &(cfg_hwobs->obs_name));
+   vftr_parse_config_string_list (parent_object, cfg_hwobs->name, &(cfg_hwobs->formula_expr));
+   vftr_parse_config_string_list (parent_object, cfg_hwobs->name, &(cfg_hwobs->unit));
+}
+
+void vftr_parse_config_papi (cJSON *parent_object, config_papi_t *cfg_papi) {
+   bool has_object = cJSON_HasObjectItem(parent_object, cfg_papi->name);
    if (has_object) {
-      cJSON *json_object = cJSON_GetObjectItem(parent_object,
-                                               cfg_hardware_scenarios_ptr->name);
-      // get the child objects
-      vftr_parse_config_bool(json_object,
-                             &(cfg_hardware_scenarios_ptr->active));
+      cJSON *json_object = cJSON_GetObjectItem (parent_object, cfg_papi->name);
+      vftr_parse_config_bool (json_object, &(cfg_papi->disable));
+      vftr_parse_config_bool (json_object, &(cfg_papi->show_tables));
+      vftr_parse_config_bool (json_object, &(cfg_papi->show_counters));
+      vftr_parse_config_int (json_object, &(cfg_papi->sort_by_column));
+      vftr_parse_config_hwcounters(json_object, &(cfg_papi->counters));
+      vftr_parse_config_hwobservables(json_object, &(cfg_papi->observables));
    }
 }
 
@@ -341,7 +386,7 @@ void vftr_parse_config(char *config_string, config_t *config_ptr) {
    vftr_parse_config_mpi(config_json, &(config_ptr->mpi));
    vftr_parse_config_cuda(config_json, &(config_ptr->cuda));
    vftr_parse_config_accprof(config_json, &(config_ptr->accprof));
-   vftr_parse_config_hardware_scenarios(config_json, &(config_ptr->hardware_scenarios));
+   vftr_parse_config_papi(config_json, &(config_ptr->papi));
 
    vftr_config_advisor(config_json);
 

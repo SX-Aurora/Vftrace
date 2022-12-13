@@ -7,7 +7,11 @@ test_name=strip_module_names
 configfile=${test_name}.json
 output_file=${test_name}.out
 ref_file=${srcdir}/ref_output/little_tasks.out
+determine_bin_prefix $test_name
 logfile=$(get_logfile_name $test_name "all")
+
+export VFTR_CONFIG=${configfile}
+echo "{\"papi\": {\"show_tables\": false}}" > ${configfile}
 
 rm_outfiles $output_file "" $test_name
 if [ "x${HAS_MPI}" == "xYES" ]; then
@@ -25,8 +29,7 @@ if [ "${nmodules}" -ne "6" ] ; then
    exit 1
 fi
 
-echo "{\"strip_module_names\": true}" > ${configfile}
-export VFTR_CONFIG=${configfile}
+echo "{\"strip_module_names\": true, \"papi\": {\"show_tables\": false}}" > ${configfile}
 rm_outfiles $output_file "" $test_name
 if [ "x${HAS_MPI}" == "xYES" ]; then
    ${MPI_EXEC} ${MPI_OPTS} ${NP} 1 ./${test_name} > ${output_file} || exit 1

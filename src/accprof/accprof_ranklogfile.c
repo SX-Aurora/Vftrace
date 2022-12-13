@@ -21,7 +21,7 @@ void vftr_get_total_accprof_times_for_ranklogfile (stacktree_t stacktree, double
    *tot_wait_s = 0;
 
    for (int istack = 0; istack < stacktree.nstacks; istack++) {
-      stack_t this_stack = stacktree.stacks[istack];
+      vftr_stack_t this_stack = stacktree.stacks[istack];
       accprofile_t accprof = this_stack.profiling.profiles[0].accprof;
       callprofile_t callprof = this_stack.profiling.profiles[0].callprof;
       if (vftr_accprof_is_data_event (accprof.event_type)) {
@@ -162,7 +162,7 @@ void vftr_write_ranklogfile_accprof_grouped_table (FILE *fp, stacktree_t stacktr
 void vftr_write_ranklogfile_accprof_event_table (FILE *fp, stacktree_t stacktree, config_t config) {
    int n_stackids_with_accprof_data = 0;
    
-   stack_t **sorted_stacks = vftr_sort_stacks_for_accprof (config, stacktree);
+   vftr_stack_t **sorted_stacks = vftr_sort_stacks_for_accprof (config, stacktree);
    
    for (int istack = 0; istack < stacktree.nstacks; istack++) {
       profile_t *this_profile = sorted_stacks[istack]->profiling.profiles;
@@ -197,7 +197,7 @@ void vftr_write_ranklogfile_accprof_event_table (FILE *fp, stacktree_t stacktree
 
    int i = 0;
    for (int istack = 0; istack < stacktree.nstacks; istack++) {
-      stack_t *this_stack = sorted_stacks[istack];
+      vftr_stack_t *this_stack = sorted_stacks[istack];
       profile_t *this_profile = this_stack->profiling.profiles;
       accprofile_t accprof = this_profile->accprof;
       callprofile_t callprof = this_profile->callprof;

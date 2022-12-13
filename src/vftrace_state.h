@@ -19,6 +19,9 @@
 #ifdef _ACCPROF
 #include "accprof_state_types.h"
 #endif
+#ifdef _PAPI_AVAIL
+#include "papi_state_types.h"
+#endif
 #ifdef _MPI
 #include "mpi_state_types.h"
 #endif
@@ -49,6 +52,9 @@ typedef struct {
 #endif
 #ifdef _ACCPROF
    accprof_state_t accprof_state;
+#endif
+#ifdef _PAPI_AVAIL
+   papi_state_t papi_state;
 #endif
 #ifdef _MPI
    mpi_state_t mpi_state;

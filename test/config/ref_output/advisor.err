@@ -14,8 +14,6 @@ Warning: "demangle_c++" is not a valid vftrace option.
          Did you mean "demangle_cxx"?
 Warning: "profiling_table" is not a valid vftrace option.
          Did you mean "profile_table"?
-Warning: "hardware_scnarios" is not a valid vftrace option.
-         Did you mean "hardware_scenarios"?
 Warning: "shov_table" is not a valid vftrace option.
          Did you mean "show_table"?
 Warning: "max_stack_id" is not a valid vftrace option.
@@ -44,3 +42,9 @@ Warning: "colum" is not a valid vftrace option.
          Did you mean "column"?
 Warning: "asceding" is not a valid vftrace option.
          Did you mean "ascending"?
+Warning: "show_conuters" is not a valid vftrace option.
+         Did you mean "show_counters"?
+Warning: "natvie" is not a valid vftrace option.
+         Did you mean "native"?
+Warning: "naem" is not a valid vftrace option.
+         Did you mean "name"?

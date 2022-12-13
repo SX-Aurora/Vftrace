@@ -235,7 +235,7 @@ collated_stacktree_t vftr_collate_stacks(stacktree_t *stacktree_ptr) {
    if (myrank == 0) {
       {
          int lid = 0;
-         stack_t *local_stack = stacktree_ptr->stacks+lid;
+         vftr_stack_t *local_stack = stacktree_ptr->stacks+lid;
          int gid = local2global_ID[lid];
          collated_stack_t *global_stack = coll_stacktree.stacks+gid;
          global_stack->local_stack = local_stack;
@@ -245,7 +245,7 @@ collated_stacktree_t vftr_collate_stacks(stacktree_t *stacktree_ptr) {
          global_stack->name = strdup(local_stack->cleanname);
       }
       for (int lid=1; lid<stacktree_ptr->nstacks; lid++) {
-         stack_t *local_stack = stacktree_ptr->stacks+lid;
+         vftr_stack_t *local_stack = stacktree_ptr->stacks+lid;
          int gid = local2global_ID[lid];
          collated_stack_t *global_stack = coll_stacktree.stacks+gid;
          global_stack->local_stack = local_stack;
@@ -363,7 +363,7 @@ collated_stacktree_t vftr_collate_stacks(stacktree_t *stacktree_ptr) {
                   int locID = global2local_ID[globID];
                   if (locID >= 0) {
                      missingStackInfo[4*imatch+0] = globID;
-                     stack_t *local_stack = stacktree_ptr->stacks+locID;
+                     vftr_stack_t *local_stack = stacktree_ptr->stacks+locID;
                      missingStackInfo[4*imatch+1] = local2global_ID[local_stack->caller];
                      // add one to length due to null terminator
                      missingStackInfo[4*imatch+2] = strlen(local_stack->cleanname) + 1;
@@ -537,6 +537,10 @@ char *vftr_get_collated_stack_string(collated_stacktree_t stacktree,
    *tmpstackstring_ptr = '\0';
    SELF_PROFILE_END_FUNCTION;
    return stackstring;
+}
+
+bool vftr_collstack_is_init (collated_stack_t stack) {
+   return stack.local_stack != NULL && stack.local_stack->lid == 0;
 }
 
 void vftr_print_name_grouped_collated_stack(FILE *fp, 

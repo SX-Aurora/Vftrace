@@ -17,10 +17,19 @@
 #include "sampling.h"
 #include "timer.h"
 #include "region_address.h"
+#ifdef _PAPI_AVAIL
+#include "papiprofiling.h"
+#endif
+
 
 void vftr_user_region_begin(const char *name, void *addr) {
    SELF_PROFILE_START_FUNCTION;
    long long region_begin_time_begin = vftr_get_runtime_nsec();
+#ifdef _PAPI_AVAIL
+   long long *papi_counters = NULL;
+   if (!vftrace.config.papi.disable.value) papi_counters = vftr_get_papi_counters();
+#endif
+
    // Get the thread that called the region
    thread_t *my_thread = vftr_get_my_thread(&(vftrace.process.threadtree));
    threadstack_t *my_threadstack = vftr_get_my_threadstack(my_thread);
@@ -28,7 +37,7 @@ void vftr_user_region_begin(const char *name, void *addr) {
    //       whether to inherit the parentthreads stack + the region, or
    //       to inherit it as soon as a task is created. for non-OMP code the master
    //       thread is created with _init as lowest stacklist entry
-   stack_t *my_stack = vftrace.process.stacktree.stacks+my_threadstack->stackID;
+   vftr_stack_t *my_stack = vftrace.process.stacktree.stacks+my_threadstack->stackID;
    profile_t *my_profile = vftr_get_my_profile(my_stack, my_thread);
 
    // TODO: update performance and call counters as soon as implemented
@@ -50,7 +59,7 @@ void vftr_user_region_begin(const char *name, void *addr) {
                                                       0, name,
                                                       &vftrace,
                                                       precise);
-      stack_t *my_new_stack = vftrace.process.stacktree.stacks+my_threadstack->stackID;
+      vftr_stack_t *my_new_stack = vftrace.process.stacktree.stacks+my_threadstack->stackID;
       my_profile = vftr_get_my_profile(my_new_stack, my_thread);
 
       vftr_sample_function_entry(&(vftrace.sampling),
@@ -63,6 +72,13 @@ void vftr_user_region_begin(const char *name, void *addr) {
                                     1, -region_begin_time_begin);
    }
 
+#ifdef _PAPI_AVAIL
+   if (!vftrace.config.papi.disable.value) {
+      vftr_accumulate_papiprofiling (&(my_profile->papiprof), papi_counters, true);
+      free(papi_counters);
+   }
+#endif
+
    // No calls after this overhead handling!
    vftr_accumulate_callprofiling_overhead(&(my_profile->callprof),
       vftr_get_runtime_nsec() - region_begin_time_begin);
@@ -72,10 +88,15 @@ void vftr_user_region_begin(const char *name, void *addr) {
 void vftr_user_region_end() {
    SELF_PROFILE_START_FUNCTION;
    long long region_end_time_begin = vftr_get_runtime_nsec();
+#ifdef _PAPI_AVAIL
+   long long *papi_counters = NULL;
+   if (!vftrace.config.papi.disable.value) papi_counters = vftr_get_papi_counters();
+#endif
+
 
    thread_t *my_thread = vftr_get_my_thread(&(vftrace.process.threadtree));
    threadstack_t *my_threadstack = vftr_get_my_threadstack(my_thread);
-   stack_t *my_stack = vftrace.process.stacktree.stacks+my_threadstack->stackID;
+   vftr_stack_t *my_stack = vftrace.process.stacktree.stacks+my_threadstack->stackID;
    profile_t *my_profile = vftr_get_my_profile(my_stack, my_thread);
 
    // check if still in a recursive call
@@ -95,6 +116,14 @@ void vftr_user_region_end() {
                                 region_end_time_begin);
 
    }
+
+#ifdef _PAPI_AVAIL
+   if (!vftrace.config.papi.disable.value) {
+      vftr_accumulate_papiprofiling (&(my_profile->papiprof), papi_counters, false);
+      free (papi_counters);
+   }
+#endif
+
    // No calls after this overhead handling
    vftr_accumulate_callprofiling_overhead(
       &(my_profile->callprof),

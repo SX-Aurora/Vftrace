@@ -15,10 +15,10 @@ void vftr_finalize_sampling(sampling_t *sampling,
                             time_strings_t timestrings,
                             double runtime);
 
-void vftr_sample_function_entry(sampling_t *sampling, stack_t stack,
+void vftr_sample_function_entry(sampling_t *sampling, vftr_stack_t stack,
                                 long long timestamp);
 
-void vftr_sample_function_exit(sampling_t *sampling, stack_t stack,
+void vftr_sample_function_exit(sampling_t *sampling, vftr_stack_t stack,
                                long long timestamp);
 
 void vftr_sample_init_function_exit(sampling_t *sampling, long long timestamp);

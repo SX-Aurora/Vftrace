@@ -317,11 +317,40 @@ void vftr_config_accprof_assert(FILE *fp, config_accprof_t cfg_accprof) {
    vftr_config_sort_table_assert(fp, cfg_accprof.sort_table, 5, valid_columns);
 }
 
+void vftr_config_papi_assert (FILE *fp, config_papi_t cfg_papi) {
+   // Check that no array entry has more than one counter.
+   int n_counters = cfg_papi.counters.native_name.n_elements +
+                    cfg_papi.counters.preset_name.n_elements;
+   int *list_combined = (int*)malloc(n_counters * sizeof(int));
+   for (int i = 0; i < n_counters; i++) {
+      if (i < cfg_papi.counters.native_name.n_elements) {
+         list_combined[i] = cfg_papi.counters.native_name.list_idx[i];
+      } else {
+         list_combined[i] = cfg_papi.counters.preset_name.list_idx[i - cfg_papi.counters.native_name.n_elements];
+      }
+   }
+   for (int i = 0; i < n_counters; i++) {
+      int idx1 = list_combined[i];
+      for (int j = i + 1; j < n_counters; j++) {
+         if (list_combined[j] == idx1) {
+            fprintf (fp, "PAPI: Found both a preset and native variable at position %d\n", idx1);
+            abort();
+         }
+      }
+   }
+   int n_obs = cfg_papi.observables.obs_name.n_elements;
+   int n_formulas = cfg_papi.observables.formula_expr.n_elements;
+   int n_units = cfg_papi.observables.unit.n_elements;
+   int n_max = n_obs > n_formulas ? n_obs : n_formulas;
+   n_max = n_units > n_max ? n_units : n_max;
 
-void vftr_config_hardware_scenarios_assert(FILE *fp,
-                                           config_hardware_scenarios_t
-                                           cfg_hardware_scenarios) {
-   vftr_config_active_assert(fp, cfg_hardware_scenarios.active);
+   // Check that the sort column is valid
+   if (n_max > 0) {
+     if (cfg_papi.sort_by_column.value < 0 || cfg_papi.sort_by_column.value >= n_max) {
+        fprintf (fp, "PAPI: Invalid column to sort specified: %d\n", cfg_papi.sort_by_column.value);
+        abort();
+     }
+   } // If no observables are found, the value is irrelevant.
 }
 
 void vftr_config_assert(FILE *fp, config_t config) {
@@ -339,5 +368,5 @@ void vftr_config_assert(FILE *fp, config_t config) {
    vftr_config_mpi_assert(fp, config.mpi);
    vftr_config_cuda_assert(fp, config.cuda);
    vftr_config_accprof_assert(fp, config.accprof);
-   vftr_config_hardware_scenarios_assert(fp, config.hardware_scenarios);
+   vftr_config_papi_assert(fp, config.papi);
 }

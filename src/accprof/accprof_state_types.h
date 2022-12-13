@@ -6,7 +6,7 @@
 typedef struct open_wait_st {
    long long start_time;
    int async;
-   stack_t *stack;
+   vftr_stack_t *stack;
    struct open_wait_st *next;
 } open_wait_t;
 

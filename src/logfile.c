@@ -21,6 +21,9 @@
 #ifdef _ACCPROF
 #include "accprof_logfile.h"
 #endif
+#ifdef _PAPI_AVAIL
+#include "papi_logfile.h"
+#endif
 
 char *vftr_get_logfile_name(config_t config) {
    char *filename_base = vftr_create_filename_base(config, -1, 1);
@@ -113,12 +116,16 @@ void vftr_write_logfile(vftrace_t vftrace, long long runtime) {
    }
 #endif
 
-   vftr_write_logfile_global_stack_list(fp, vftrace.process.collated_stacktree);
-
-   // print config info
-   if (vftrace.config.print_config.value) {
-      vftr_print_config(fp, vftrace.config, true);
+#ifdef _PAPI_AVAIL
+   if (vftrace.config.papi.show_tables.value) {
+      vftr_write_papi_table (fp, vftrace.process.collated_stacktree, vftrace.config);
+      if (vftrace.config.papi.show_counters.value) {
+         vftr_write_logfile_papi_counter_table (fp, vftrace.process.collated_stacktree, vftrace.config);
+      }
    }
+#endif
+
+   vftr_write_logfile_global_stack_list(fp, vftrace.process.collated_stacktree);
 
 #ifdef _CUDA
    if (vftrace.config.cuda.show_table.value) {
@@ -129,6 +136,16 @@ void vftr_write_logfile(vftrace_t vftrace, long long runtime) {
 #ifdef _ACCPROF
    if (vftrace.config.accprof.show_event_details.value) vftr_write_logfile_accev_names (fp);
 #endif
+
+#ifdef _PAPI_AVAIL
+   if (vftrace.config.papi.show_tables.value && vftrace.config.papi.show_counters.value) {
+      vftr_write_papi_counter_logfile_summary (fp, vftrace.process.collated_stacktree, vftrace.config);
+   }
+#endif
+
+   if (vftrace.config.print_config.value) {
+      vftr_print_config(fp, vftrace.config, true);
+   }
 
    fclose(fp);
    free(logfilename);

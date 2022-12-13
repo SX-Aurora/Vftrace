@@ -20,6 +20,9 @@
 #ifdef _ACCPROF
 #include "accprof_ranklogfile.h"
 #endif
+#ifdef _PAPI_AVAIL
+#include "papi_ranklogfile.h"
+#endif
 
 
 static bool vftr_rank_needs_ranklogfile(config_t config, int rank) {
@@ -119,9 +122,17 @@ void vftr_write_ranklogfile(vftrace_t vftrace, long long runtime) {
    }
 #endif
 
+#ifdef _PAPI_AVAIL
+   if (vftrace.config.papi.show_tables.value) {
+      vftr_write_ranklogfile_papi_obs_table (fp, vftrace.process.stacktree, vftrace.config);
+      if (vftrace.config.papi.show_counters.value) {
+         vftr_write_ranklogfile_papi_counter_table (fp, vftrace.process.stacktree, vftrace.config);
+      }
+   }
+#endif
+
    vftr_write_logfile_global_stack_list(fp, vftrace.process.collated_stacktree);
 
-   // print config info
    if (vftrace.config.print_config.value) {
       vftr_print_config(fp, vftrace.config, true);
    }
@@ -129,6 +140,12 @@ void vftr_write_ranklogfile(vftrace_t vftrace, long long runtime) {
 #ifdef _CUDA
    if (vftrace.config.cuda.show_table.value) {
       vftr_write_ranklogfile_cbid_names (fp, vftrace.process.stacktree);
+   }
+#endif
+
+#ifdef _PAPI_AVAIL
+   if (vftrace.config.papi.show_tables.value && vftrace.config.papi.show_counters.value) {
+      vftr_write_papi_counter_ranklogfile_summary (fp, vftrace.process.stacktree, vftrace.config);
    }
 #endif
 

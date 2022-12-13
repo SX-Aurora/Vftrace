@@ -39,6 +39,15 @@ config_string_t vftr_set_config_string_default(char *name, char *value) {
    return cfg_string;
 }
 
+config_string_list_t vftr_set_config_string_list_default (char *name) {
+   config_string_list_t cfg_string_list;
+   cfg_string_list.name = strdup(name);
+   cfg_string_list.set = false;
+   cfg_string_list.n_elements = 0;
+   cfg_string_list.values = NULL;
+   return cfg_string_list;
+}
+
 config_regex_t vftr_set_config_regex_default(char *name) {
    config_regex_t cfg_regex;
    cfg_regex.name = strdup(name);
@@ -145,13 +154,37 @@ config_accprof_t vftr_set_config_accprof_default() {
    return cfg_accprof;
 }
 
-config_hardware_scenarios_t vftr_set_config_hardware_scenarios_default() {
-   config_hardware_scenarios_t cfg_hardware_scenarios;
-   cfg_hardware_scenarios.name = strdup("hardware_scenarios");
-   cfg_hardware_scenarios.set = false;
-   cfg_hardware_scenarios.active =
-      vftr_set_config_bool_default("active", false);
-   return cfg_hardware_scenarios;
+config_hwcounters_t vftr_set_config_hwcounters_default() {
+   config_hwcounters_t cfg_hwc;
+   cfg_hwc.name = strdup("counters");
+   cfg_hwc.set = false;
+   cfg_hwc.native_name = vftr_set_config_string_list_default("native");
+   cfg_hwc.preset_name = vftr_set_config_string_list_default("preset");
+   cfg_hwc.symbol = vftr_set_config_string_list_default("symbol");
+   return cfg_hwc;
+}
+
+config_hwobservables_t vftr_set_config_hwobservables_default() {
+   config_hwobservables_t cfg_hwobs;
+   cfg_hwobs.name = strdup("observables");
+   cfg_hwobs.set = false;
+   cfg_hwobs.obs_name = vftr_set_config_string_list_default("name");
+   cfg_hwobs.formula_expr = vftr_set_config_string_list_default("formula");
+   cfg_hwobs.unit = vftr_set_config_string_list_default("unit");
+   return cfg_hwobs;
+}
+
+config_papi_t vftr_set_config_papi_default() {
+   config_papi_t cfg_papi;
+   cfg_papi.name = strdup("papi");
+   cfg_papi.set = false;
+   cfg_papi.disable = vftr_set_config_bool_default ("disable", false);
+   cfg_papi.show_tables = vftr_set_config_bool_default ("show_tables", true);
+   cfg_papi.show_counters = vftr_set_config_bool_default ("show_counters", false);
+   cfg_papi.sort_by_column = vftr_set_config_int_default ("sort_by_column", 0);
+   cfg_papi.counters = vftr_set_config_hwcounters_default();
+   cfg_papi.observables = vftr_set_config_hwobservables_default();
+   return cfg_papi;
 }
 
 config_t vftr_set_config_default() {
@@ -183,8 +216,7 @@ config_t vftr_set_config_default() {
    config.cuda =
       vftr_set_config_cuda_default();
    config.accprof = vftr_set_config_accprof_default();
-   config.hardware_scenarios =
-      vftr_set_config_hardware_scenarios_default();
+   config.papi = vftr_set_config_papi_default();
    config.config_file_path = NULL;
    config.valid = true;
    return config;

@@ -45,13 +45,13 @@ int main(int argc, char **argv) {
                              functionlist.functions[fidx].name,
                              &stacktree);
          }
-         stack_t *stack = &(stacktree.stacks[sidx]);
+         vftr_stack_t *stack = &(stacktree.stacks[sidx]);
          stack->ncalls++;
          stack->t_enter.tv_sec = event.t_sec;
          stack->t_enter.tv_nsec = event.t_nsec;
       } else if (event.action == leave) {
          sidx = current_stack;
-         stack_t *stack = &(stacktree.stacks[sidx]);
+         vftr_stack_t *stack = &(stacktree.stacks[sidx]);
          stack->t_leave.tv_sec = event.t_sec;
          stack->t_leave.tv_nsec = event.t_nsec;
          long long delta_t_nsec = time_diff_nsec(stack->t_enter, stack->t_leave);
@@ -63,7 +63,7 @@ int main(int argc, char **argv) {
    }
 
    finalize_stacktree(&stacktree);
-   stack_t **sortedstacklist = sort_stacks_by_excl_time(stacktree);
+   vftr_stack_t **sortedstacklist = sort_stacks_by_excl_time(stacktree);
 
    fprintf(stdout, "\n");
    fprintf(stdout, "Functionlist:\n");

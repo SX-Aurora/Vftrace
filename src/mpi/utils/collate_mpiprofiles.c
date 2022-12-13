@@ -12,7 +12,7 @@ static void vftr_collate_mpiprofiles_root_self(collated_stacktree_t *collstacktr
                                                stacktree_t *stacktree_ptr) {
    SELF_PROFILE_START_FUNCTION;
    for (int istack=0; istack<stacktree_ptr->nstacks; istack++) {
-      stack_t *stack = stacktree_ptr->stacks+istack;
+      vftr_stack_t *stack = stacktree_ptr->stacks+istack;
       int icollstack = stack->gid;
 
       collated_stack_t *collstack = collstacktree_ptr->stacks+icollstack;
@@ -90,7 +90,7 @@ static void vftr_collate_mpiprofiles_on_root(collated_stacktree_t *collstacktree
          sendbuf[istack].acc_recv_bw = 0.0;
       }
       for (int istack=0; istack<nprofiles; istack++) {
-         stack_t *mystack = stacktree_ptr->stacks+istack;
+         vftr_stack_t *mystack = stacktree_ptr->stacks+istack;
          sendbuf[istack].gid = mystack->gid;
          // need to go over the calling profiles threadwise
          for (int iprof=0; iprof<mystack->profiling.nprofiles; iprof++) {

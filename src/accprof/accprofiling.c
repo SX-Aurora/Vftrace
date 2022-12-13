@@ -66,7 +66,7 @@ long long vftr_get_total_accprof_overhead (stacktree_t stacktree) {
    long long overhead_nsec = 0;
    
    for (int istack = 0; istack < stacktree.nstacks; istack++) {
-      stack_t *stack = stacktree.stacks + istack;
+      vftr_stack_t *stack = stacktree.stacks + istack;
       profile_t *prof = stack->profiling.profiles;
       accprofile_t accprof = prof->accprof;
       overhead_nsec += accprof.overhead_nsec;

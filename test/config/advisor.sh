@@ -58,8 +58,25 @@ cat << EOF > ${configfile}
          "asceding": false
       }
    },
-   "hardware_scnarios": {
-      "active": false
+   "papi": {
+      "show_conuters": false,
+      "counters": [
+          { 
+          "natvie": "X",
+          "symbol": "Y"
+          }
+      ],
+      "observables": [
+        {
+           "name": "FOO1",
+           "formula": "1 * Y",
+           "unit": "TB"
+        },
+        {
+           "formula": "2 * Y",
+           "naem": "FOO2"
+        }
+      ]
    }
 }
 EOF

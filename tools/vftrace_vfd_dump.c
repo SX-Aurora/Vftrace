@@ -53,7 +53,7 @@ int main(int argc, char **argv) {
          free_threadtree(vfd_header.nthreads, threadtree);
       }
 
-      stack_t *stacklist = read_stacklist(vfd_fp,
+      vftr_stack_t *stacklist = read_stacklist(vfd_fp,
                                           vfd_header.stacks_offset,
                                           vfd_header.nstacks);
       fprintf(out_fp, "\n");

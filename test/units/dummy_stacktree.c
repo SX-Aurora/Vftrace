@@ -56,11 +56,11 @@ int vftr_get_index_from_functionlist(int nfunc, char **funclist,
 
    int idx = 0;
    for (int ifunc=1; ifunc<nfunc; ifunc++) {
-      stack_t *parent = stacktree_ptr->stacks+idx;
+      vftr_stack_t *parent = stacktree_ptr->stacks+idx;
       // check if the callees of the parent functions
       int calleeidx = -1;
       for (int icallee=0; icallee<parent->ncallees; icallee++) {
-         stack_t *callee = stacktree_ptr->stacks+parent->callees[icallee];
+         vftr_stack_t *callee = stacktree_ptr->stacks+parent->callees[icallee];
          if (!strcmp(callee->name, funclist[ifunc])) {
             calleeidx = callee->lid;
             break;
@@ -95,7 +95,7 @@ void vftr_register_dummy_stack(stacktree_t *stacktree_ptr,
    free(stackstr);
    free(funclist);
 
-   stack_t *my_stack = stacktree_ptr->stacks+idx;
+   vftr_stack_t *my_stack = stacktree_ptr->stacks+idx;
    thread_t my_thread = {.threadID = thread_id};
 
    profile_t *profile = vftr_get_my_profile(my_stack, &my_thread);

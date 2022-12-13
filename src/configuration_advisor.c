@@ -131,12 +131,48 @@ void vftr_config_advisor_cuda(cJSON *json_obj) {
    }
 }
 
-void vftr_config_advisor_hardware_scenarios(cJSON *json_obj) {
-   char *options[] = {
-      "active"
-   };
-   int noptions = sizeof(options) / sizeof(char*);
-   vftr_config_advisor_check_options(noptions, options, json_obj->child);
+void vftr_config_advisor_papi (cJSON *json_obj) {
+  char *options[] = {
+     "disable",
+     "show_tables",
+     "show_counters",
+     "sort_by_column",
+     "counters",
+     "observables"
+  };
+  int noptions = sizeof(options) / sizeof(char*);
+  vftr_config_advisor_check_options(noptions, options, json_obj->child);
+
+  char *options_counter[] = {
+     "native",
+     "preset",
+     "symbol"
+  };
+  int noptions_counter = sizeof(options_counter) / sizeof(char*);
+
+  cJSON *json_array = cJSON_GetObjectItem(json_obj, "counters");
+  cJSON *array_element;
+
+  if (json_array != NULL) {
+     cJSON_ArrayForEach(array_element, json_array) {
+        vftr_config_advisor_check_options (noptions_counter, options_counter, array_element->child);     
+     }
+  }
+
+  char *options_observables[] = {
+     "name",
+     "formula",
+     "unit"
+  };
+  int noptions_observables = sizeof(options_observables) / sizeof(char*);
+  
+  json_array = cJSON_GetObjectItem(json_obj, "observables");
+   
+  if (json_array != NULL) {
+     cJSON_ArrayForEach(array_element, json_array) {
+        vftr_config_advisor_check_options (noptions_observables, options_observables, array_element->child);
+     }
+  }
 }
 
 void vftr_config_advisor(cJSON *config_json_ptr) {
@@ -155,7 +191,7 @@ void vftr_config_advisor(cJSON *config_json_ptr) {
       "mpi",
       "cuda",
       "openacc",
-      "hardware_scenarios"
+      "papi"
    };
    int noptions = sizeof(options) / sizeof(char*);
    vftr_config_advisor_check_options(noptions, options, config_json_ptr->child);
@@ -198,10 +234,10 @@ void vftr_config_advisor(cJSON *config_json_ptr) {
       vftr_config_advisor_cuda(json_sec);
    }
 
-   sec_name = "hardware_scenarios";
+   sec_name = "papi";
    has_object = cJSON_HasObjectItem(config_json_ptr, sec_name);
    if (has_object) {
       cJSON *json_sec = cJSON_GetObjectItem(config_json_ptr, sec_name);
-      vftr_config_advisor_hardware_scenarios(json_sec);
+      vftr_config_advisor_papi(json_sec);
    }
 }

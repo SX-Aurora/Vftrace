@@ -69,7 +69,7 @@ void vftr_cuda_region_begin (int cbid, const CUpti_CallbackData *cb_info) {
                                                     (uintptr_t)pseudo_addr, func_name,
                                                     &vftrace, false);
 
-   stack_t *my_new_stack = vftrace.process.stacktree.stacks + my_threadstack->stackID;
+   vftr_stack_t *my_new_stack = vftrace.process.stacktree.stacks + my_threadstack->stackID;
    profile_t *my_profile = vftr_get_my_profile(my_new_stack, my_thread);
    cudaprofile_t *cudaprof = &my_profile->cudaprof;
 
@@ -97,7 +97,7 @@ void vftr_cuda_region_end (int cbid, const CUpti_CallbackData *cb_info) {
 
    thread_t *my_thread = vftr_get_my_thread(&(vftrace.process.threadtree));
    threadstack_t *my_threadstack = vftr_get_my_threadstack(my_thread);
-   stack_t *my_stack = vftrace.process.stacktree.stacks + my_threadstack->stackID;
+   vftr_stack_t *my_stack = vftrace.process.stacktree.stacks + my_threadstack->stackID;
    profile_t *my_profile = vftr_get_my_profile(my_stack, my_thread);
    cudaprofile_t *cudaprof = &my_profile->cudaprof;
 

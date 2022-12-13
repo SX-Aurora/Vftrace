@@ -17,3 +17,7 @@ endif
 if ENABLE_ACCPROF
 SUBDIRS += openacc
 endif
+
+if ENABLE_PAPI
+SUBDIRS += papi
+endif

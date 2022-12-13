@@ -14,6 +14,9 @@
 #ifdef _ACCPROF
 #include "accprofiling_types.h"
 #endif
+#ifdef _PAPI_AVAIL
+#include "papiprofiling_types.h"
+#endif
 
 typedef struct {
    int threadID;
@@ -29,6 +32,9 @@ typedef struct {
 #endif
 #ifdef _ACCPROF
    accprofile_t accprof;
+#endif
+#ifdef _PAPI_AVAIL
+   papiprofile_t papiprof;
 #endif
 } profile_t;
 

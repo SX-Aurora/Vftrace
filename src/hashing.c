@@ -84,7 +84,7 @@ uint64_t vftr_jenkins_murmur_64_hash(size_t length, const uint8_t* key) {
 void vftr_compute_stack_hashes(stacktree_t *stacktree_ptr) {
    SELF_PROFILE_START_FUNCTION;
    int nstacks = stacktree_ptr->nstacks;
-   stack_t *stacks = stacktree_ptr->stacks;
+   vftr_stack_t *stacks = stacktree_ptr->stacks;
    int bufferlen = 128;
    char *buffer = (char*) malloc(bufferlen*sizeof(char));
 
