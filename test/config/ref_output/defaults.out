@@ -53,6 +53,7 @@ Vftrace default configuration:
    },
    "papi": {
       "disable": false,
+      "show_tables": true,
       "show_counters": false,
       "sort_by_column": 0,
       "counters": [
