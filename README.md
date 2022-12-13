@@ -207,7 +207,7 @@ It is written in C with the GTK+3 GUI.
 
 Vftrace was originally conceived by Jan Boerhout.
 The main authors are:
-  - Felix Uhl (felix.uhl@emea.nec.com)
+  - Felix Uhl (felix.uhl@ruhr-uni-bochum.de)
   - Christian Weiss (christian.weiss@emea.nec.com)
 
 ## Third Party Tools
