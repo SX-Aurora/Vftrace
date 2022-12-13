@@ -8,7 +8,7 @@ nprocs=1
 
 determine_bin_prefix $vftr_binary
 
-echo "{\"sampling\": {\"active\": true, \"precise_functions\": \"fkt*\"}}" > ${configfile}
+echo "{\"sampling\": {\"active\": true, \"precise_functions\": \"fkt*\"}, \"papi\": {\"show_tables\": false}}" > ${configfile}
 export VFTR_CONFIG=${configfile}
 
 logfile=$(get_logfile_name ${vftr_binary} "all")

@@ -12,7 +12,7 @@ logfile=$(get_logfile_name ${vftr_binary} "all")
 vfdfile=$(get_vfdfile_name ${vftr_binary} "0")
 
 # create logfile
-echo "{\"sampling\": {\"active\": true}}" > ${configfile}
+echo "{\"sampling\": {\"active\": true}, \"papi\": {\"show_tables\": false}}" > ${configfile}
 export VFTR_CONFIG=${configfile}
 
 if [ "x${HAS_MPI}" == "xYES" ]; then
