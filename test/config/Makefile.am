@@ -136,6 +136,7 @@ dist_check_SCRIPTS += sampling.sh \
 		      show_calltime_imbalances.sh
 
 if ENABLE_FORTRAN
+if !HAS_NVIDIA_COMPILER
 check_PROGRAMS += strip_module_names
 
 strip_module_names_SOURCES = $(srcdir)/little_ftasks.F90
@@ -143,6 +144,7 @@ strip_module_names_FCFLAGS = $(AM_FCFLAGS) $(FINSTRUMENT_FLAG)
 strip_module_names_LDFLAGS = $(AM_LDFLAGS)
 
 dist_check_SCRIPTS += strip_module_names.sh
+endif
 endif
 
 if HAS_LIBERTY
@@ -158,7 +160,7 @@ endif
 check_PROGRAMS += include_cxx_prelude
 
 include_cxx_prelude_SOURCES = $(srcdir)/little_cxxtasks.cpp
-include_cxx_prelude_CXXFLAGS = $(AM_CXXFLAGS) -finstrument-functions
+include_cxx_prelude_CXXFLAGS = $(AM_CXXFLAGS) $(FINSTRUMENT_FLAG)
 include_cxx_prelude_LDFLAGS = $(AM_LDFLAGS)
 
 dist_check_SCRIPTS += include_cxx_prelude.sh

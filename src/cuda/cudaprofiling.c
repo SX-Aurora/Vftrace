@@ -41,7 +41,7 @@ long long vftr_get_total_cuda_overhead (stacktree_t stacktree) {
    long long overhead_nsec = 0;
    
    for (int istack = 0; istack < stacktree.nstacks; istack++) {
-	stack_t *stack = stacktree.stacks + istack;
+	vftr_stack_t *stack = stacktree.stacks + istack;
         profile_t *prof = stack->profiling.profiles;
         cudaprofile_t cudaprof = prof->cudaprof;
         overhead_nsec += cudaprof.overhead_nsec;

@@ -64,9 +64,6 @@ AX_ENABLE_DYNLIB_TRACING
 # Check for Self-profiling
 AX_ENABLE_SELF_PROFILING
 
-# Check for Papi library
-#AX_WITH_PAPI_LIBRARY
-
 # Check of libiberty is available
 AX_WITH_LIBERTY
 
