@@ -21,15 +21,11 @@ void vftr_write_signal_message (FILE *fp) {
    fprintf (fp, "\n");
    fprintf (fp, "**************************\n");
    fprintf (fp, "Application was cancelled by signal: %s\n", strsignal(vftrace.signal_received));
-   //fprintf (fp, "Head of function stack: %s\n", vftr_fstack->name);
-   //fprintf (fp, "Note: Stacks not normalized\n");
    fprintf (fp, "**************************\n");
    fprintf (fp, "\n");
 }
 
 void vftr_signal_handler (int signum) {
-    printf ("HUHU SIGNAL\n");
-    fflush(stdout);
     vftrace.signal_received = signum;
     vftr_finalize();
     vftr_signals[SIGTERM].sa_handler = SIG_DFL;
@@ -45,8 +41,6 @@ void vftr_setup_signal (int signum) {
 }
 
 void vftr_setup_signals () {
-
-  printf ("SETUP SIGNALS!\n");
   vftr_setup_signal (SIGTERM);
   vftr_setup_signal (SIGINT);
   vftr_setup_signal (SIGABRT);
