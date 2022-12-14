@@ -6,6 +6,7 @@
 #include "configuration_types.h"
 #include "vftrace_state.h"
 
+#include "signal_handling.h"
 #include "filenames.h"
 #include "configuration_print.h"
 #include "logfile_header.h"
@@ -48,7 +49,7 @@ FILE *vftr_open_logfile(char *filename) {
    FILE *fp = fopen(filename, "w");
    if (fp == NULL) {
       perror(filename);
-      abort();
+      vftr_abort(0);
    }
    return fp;
 }
@@ -65,6 +66,8 @@ void vftr_write_logfile(vftrace_t vftrace, long long runtime) {
    FILE *fp = vftr_open_logfile(logfilename);
 
    vftr_write_logfile_header(fp, vftrace.timestrings);
+
+   if (vftrace.signal_received > 0) vftr_write_signal_message(fp);
 
    vftr_write_logfile_summary(fp, vftrace.process,
                               vftrace.size, runtime);

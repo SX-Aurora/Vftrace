@@ -10,6 +10,7 @@
 #include <demangle.h>
 #endif
 
+#include "signal_handling.h"
 #include "self_profile.h"
 #include "realloc_consts.h"
 #include "custom_types.h"
@@ -77,7 +78,7 @@ librarylist_t vftr_read_library_maps() {
    FILE *fmap = fopen(fmappath, "r");
    if (fmap == NULL) {
       perror (fmappath);
-      abort();
+      vftr_abort(0);
    }
 
    librarylist_t librarylist = {
@@ -195,7 +196,7 @@ symboltable_t vftr_read_symbols_from_library(library_t library) {
    FILE *fp = fopen(library.path, "r");
    if (fp == NULL) {
       perror(library.path);
-      abort();
+      vftr_abort(0);
    }
    Elf64_Ehdr ElfHeader = vftr_read_elf_header(fp);
    Elf64_Phdr *ElfProgramHeader =

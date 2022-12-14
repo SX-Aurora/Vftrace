@@ -5,6 +5,7 @@
 #include <sys/stat.h>
 #include <string.h>
 
+#include "signal_handling.h"
 #include "configuration_types.h"
 #include "range_expand.h"
 
@@ -24,7 +25,7 @@ void vftr_config_column_assert(FILE *fp, config_string_t cfg_column,
                                const char *valid_columns[]) {
    if (cfg_column.value == NULL) {
       fprintf(fp, "sort_table.column cannot be \"null\"\n");
-      abort();
+      vftr_abort(0);
    }
    bool colum_is_valid = false;
    for (int icol=0; icol<nvalid_columns; icol++) {
@@ -43,7 +44,7 @@ void vftr_config_column_assert(FILE *fp, config_string_t cfg_column,
          fprintf(fp, ", \"%s\"", valid_columns[icol]);
       }
       fprintf(fp, "\n");
-      abort();
+      vftr_abort(0);
    }
 }
 
@@ -70,18 +71,18 @@ void vftr_config_output_directory_assert(FILE *fp,
                                          config_string_t cfg_output_directory) {
    if (cfg_output_directory.value == NULL) {
       fprintf(fp, "output_directory cannot be \"null\"\n");
-      abort();
+      vftr_abort(0);
    }
    
    struct stat sb;
    if (stat(cfg_output_directory.value, &sb) != 0) {
       perror(cfg_output_directory.value);
-      abort();
+      vftr_abort(0);
    }
    if (!S_ISDIR(sb.st_mode)) {
       fprintf(fp, "%s is not a valid directory\n",
               cfg_output_directory.value);
-      abort();
+      vftr_abort(0);
    }
 }
 
@@ -104,7 +105,7 @@ void vftr_config_logfile_for_ranks_assert(FILE *fp,
       fprintf(fp, "logfile_for_ranks cannot be \"null\"\n"
               "Valid values are: %s\n",
               valid_values);
-      abort();
+      vftr_abort(0);
    } else {
       int nvals = 0;
       int *exp_list = vftr_expand_rangelist(rangelist, &nvals);
@@ -114,7 +115,7 @@ void vftr_config_logfile_for_ranks_assert(FILE *fp,
                  rangelist);
          fprintf(fp, "Valid values are: %s\n",
                  valid_values);
-         abort();
+         vftr_abort(0);
       }
       for (int i=0; i<nvals; i++) {
          if (exp_list[i] < 0) {
@@ -123,7 +124,7 @@ void vftr_config_logfile_for_ranks_assert(FILE *fp,
                     rangelist);
             fprintf(fp, "Valid values are: %s\n",
                     valid_values);
-            abort();
+            vftr_abort(0);
          }
       }
       free(exp_list);
@@ -204,7 +205,7 @@ void vftr_config_sample_interval_assert(FILE *fp,
       fprintf(fp, "%f is not a valid value for sampling->sample_interval\n",
               cfg_sampling_interval.value);
       fprintf(fp, "Valid values are 0.0 and positive numbers\n");
-      abort();
+      vftr_abort(0);
    }
 }
 
@@ -214,7 +215,7 @@ void vftr_config_outbuffer_size_assert(FILE *fp,
       fprintf(fp, "%d is not a valid value for sampling->outbuffer_size\n",
               cfg_outbuffer_size.value);
       fprintf(fp, "Valid values are positive numbers\n");
-      abort();
+      vftr_abort(0);
    }
 }
 
@@ -225,7 +226,7 @@ void vftr_config_precise_functions_assert(FILE *fp,
       fprintf(fp, "\"%s\" as argument for sampling.precise_functions "
               "could not be compiled to a valid regular expression\n",
               cfg_precise_functions.value);
-      abort();
+      vftr_abort(0);
    }
 }
 
@@ -255,7 +256,7 @@ void vftr_config_only_for_ranks_assert(FILE *fp,
       fprintf(fp, "mpi.only_for_ranks cannot be \"null\"\n"
               "Valid values are: %s\n",
               valid_values);
-      abort();
+      vftr_abort(0);
    } else {
       int nvals = 0;
       int *exp_list = vftr_expand_rangelist(rangelist, &nvals);
@@ -265,7 +266,7 @@ void vftr_config_only_for_ranks_assert(FILE *fp,
                  rangelist);
          fprintf(fp, "Valid values are: %s\n",
                  valid_values);
-         abort();
+         vftr_abort(0);
       }
       for (int i=0; i<nvals; i++) {
          if (exp_list[i] < 0) {
@@ -274,7 +275,7 @@ void vftr_config_only_for_ranks_assert(FILE *fp,
                     rangelist);
             fprintf(fp, "Valid values are: %s\n",
                     valid_values);
-            abort();
+            vftr_abort(0);
          }
       }
       free(exp_list);
@@ -334,7 +335,7 @@ void vftr_config_papi_assert (FILE *fp, config_papi_t cfg_papi) {
       for (int j = i + 1; j < n_counters; j++) {
          if (list_combined[j] == idx1) {
             fprintf (fp, "PAPI: Found both a preset and native variable at position %d\n", idx1);
-            abort();
+            vftr_abort(0);
          }
       }
    }
@@ -348,7 +349,7 @@ void vftr_config_papi_assert (FILE *fp, config_papi_t cfg_papi) {
    if (n_max > 0) {
      if (cfg_papi.sort_by_column.value < 0 || cfg_papi.sort_by_column.value >= n_max) {
         fprintf (fp, "PAPI: Invalid column to sort specified: %d\n", cfg_papi.sort_by_column.value);
-        abort();
+        vftr_abort(0);
      }
    } // If no observables are found, the value is irrelevant.
 }

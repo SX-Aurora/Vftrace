@@ -86,7 +86,8 @@ libvftrace_la_SOURCES += vftrace_state.c \
 			 callprofiling.c \
 			 collated_callprofiling.c \
 			 sampling.c \
-			 timer.c
+			 timer.c \
+                         signal_handling.c
 libvftrace_la_SOURCES += regular_expressions.c \
 			 configuration.c \
 			 configuration_print.c \

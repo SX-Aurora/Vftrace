@@ -2,6 +2,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "signal_handling.h"
+
 #include "papi_calculator.h"
 
 papi_calculator_t vftr_init_papi_calculator (int n_variables, int n_observables,
@@ -39,7 +41,7 @@ papi_calculator_t vftr_init_papi_calculator (int n_variables, int n_observables,
          fprintf (stderr, "  %s\n", formulas[i]);
          fprintf (stderr, "  %*s^\n", err - 1, "");
          fprintf (stderr, "  Possible reasons: Symbols do not exist, or syntax error.\n");
-         abort();
+         vftr_abort(0);
       }
    } 
    return calc;

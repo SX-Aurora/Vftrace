@@ -51,6 +51,7 @@ vftrace_t vftrace = {
       .stacktable_offset = 0,
       .samples_offset = 0
    },
+   .signal_received = 0,
 #ifdef _OMP
    .omp_state = {
       .tool_started = false,

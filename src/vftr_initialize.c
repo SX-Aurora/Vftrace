@@ -31,12 +31,15 @@
 #include "vftr_finalize.h"
 #include "processes.h"
 #include "sampling.h"
+#include "signal_handling.h"
 
 void vftr_initialize(void *func, void *call_site) {
    INIT_SELF_PROF_VFTRACE;
    SELF_PROFILE_START_FUNCTION;
    // First step is to initialize the reference timer
    vftr_set_local_ref_time();
+
+   vftr_setup_signals();
 
    // parse the config file
    vftrace.config = vftr_read_config();

@@ -4,6 +4,7 @@
 #include <string.h>
 #include <elf.h>
 
+#include "signal_handling.h"
 #include "self_profile.h"
 
 Elf64_Ehdr vftr_read_elf_header(FILE *fp) {
@@ -12,7 +13,7 @@ Elf64_Ehdr vftr_read_elf_header(FILE *fp) {
    size_t read_bytes = fread(&ElfHeader, 1, sizeof(Elf64_Ehdr), fp);
    if (read_bytes != sizeof(Elf64_Ehdr)) {
       perror("Reading Elf header");
-      abort();
+      vftr_abort(0);
    }
    SELF_PROFILE_END_FUNCTION;
    return ElfHeader;
@@ -29,7 +30,7 @@ Elf64_Phdr *vftr_read_elf_program_header(FILE *fp, Elf64_Ehdr ElfHeader) {
                              programHeaderSize, fp);
    if (read_bytes != programHeaderSize) {
       perror("Reading Elf program headers");
-      abort();
+      vftr_abort(0);
    }
    SELF_PROFILE_END_FUNCTION;
    return ElfProgramHeader;
@@ -46,7 +47,7 @@ Elf64_Shdr *vftr_read_elf_section_header(FILE *fp, Elf64_Ehdr ElfHeader) {
                              sectionHeaderSize, fp);
    if (read_bytes != sectionHeaderSize) {
       perror("Reading Elf section headers");
-      abort();
+      vftr_abort(0);
    }
    SELF_PROFILE_END_FUNCTION;
    return ElfSectionHeader;
@@ -61,7 +62,7 @@ char *vftr_read_elf_header_string_table(FILE *fp, Elf64_Ehdr ElfHeader,
    fseek(fp, ElfSectionHeader[ElfHeader.e_shstrndx].sh_offset, SEEK_SET);
    if (fread(headerStringTable, 1, stringTableSize, fp) != stringTableSize) {
       perror("Reading Elf header string table");
-      abort();
+      vftr_abort(0);
    }
    SELF_PROFILE_END_FUNCTION;
    return headerStringTable;
@@ -106,7 +107,7 @@ char *vftr_read_elf_symbol_string_table(FILE *fp, Elf64_Shdr *ElfSectionHeader,
    size_t read_bytes = fread(symbolStringTable, 1, strtabsize, fp);
    if (read_bytes != strtabsize) {
       perror("Reading Elf symbol string table");
-      abort();
+      vftr_abort(0);
    }
    SELF_PROFILE_END_FUNCTION;
    return symbolStringTable;
@@ -121,7 +122,7 @@ Elf64_Sym *vftr_read_elf_symbol_table(FILE *fp, Elf64_Shdr *ElfSectionHeader,
    size_t read_bytes = fread(symbolTable, 1, symtabsize, fp);
    if (read_bytes != symtabsize) {
       perror("Reading Elf symbol table");
-      abort();
+      vftr_abort(0);
    }
    SELF_PROFILE_END_FUNCTION;
    return symbolTable;
