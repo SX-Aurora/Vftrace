@@ -1,23 +1,23 @@
 # Global owners
-* felix.uhl@emea.nec.com christian.weiss@emea.nec.com
+* felix.uhl@ruhr-uni-bochum.de christian.weiss@emea.nec.com
 
 # Sources
-src* felix.uhl@emea.nec.com christian.weiss@emea.nec.com
+src* felix.uhl@ruhr-uni-bochum.de christian.weiss@emea.nec.com
 # MPI functions
-src/mpi* felix.uhl@emea.nec.com
+src/mpi* felix.uhl@ruhr-uni-bochum.de
 # OMP functions
-src/omp* felix.uhl@emea.nec.com
+src/omp* felix.uhl@ruhr-uni-bochum.de
 # CUDA profiling
 src/cuda* christian.weiss@emea.nec.com
 
 # Tests
-test/units* felix.uhl@emea.nec.com christian.weiss@emea.nec.com
-test/env_vars* felix.uhl@emea.nec.com christian.weiss@emea.nec.com
-test/user_functions* felix.uhl@emea.nec.com
-test/omp* felix.uhl@emea.nec.com
-test/mpi* felix.uhl@emea.nec.com
+test/units* felix.uhl@ruhr-uni-bochum.de christian.weiss@emea.nec.com
+test/env_vars* felix.uhl@ruhr-uni-bochum.de christian.weiss@emea.nec.com
+test/user_functions* felix.uhl@ruhr-uni-bochum.de
+test/omp* felix.uhl@ruhr-uni-bochum.de
+test/mpi* felix.uhl@ruhr-uni-bochum.de
 test/cupti* christian.weiss@emea.nec.com
 
 # Tools
-tools* felix.uhl@emea.nec.com christian.weiss@emea.nec.com
-tools/self_profiling_analyzer* felix.uhl@emea.nec.com
+tools* felix.uhl@ruhr-uni-bochum.de christian.weiss@emea.nec.com
+tools/self_profiling_analyzer* felix.uhl@ruhr-uni-bochum.de
