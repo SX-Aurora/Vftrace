@@ -4,6 +4,7 @@
 
 #include <string.h>
 
+#include "signal_handling.h"
 #include "configuration_types.h"
 #include "configuration_advisor.h"
 #include "regular_expressions.h"
@@ -24,7 +25,7 @@ void vftr_parse_config_bool(cJSON *parent_object, config_bool_t *cfg_bool_ptr) {
       } else {
          fprintf(stderr, "%s->%s expects a boolean.\n",
                  parent_object->string, json_object->string);
-         abort();
+         vftr_abort(0);
       }
    }
 }
@@ -43,7 +44,7 @@ void vftr_parse_config_int(cJSON *parent_object, config_int_t *cfg_int_ptr) {
       } else {
          fprintf(stderr, "%s->%s expects an integer.\n",
                  parent_object->string, json_object->string);
-         abort();
+         vftr_abort(0);
       }
    }
 }
@@ -62,7 +63,7 @@ void vftr_parse_config_float(cJSON *parent_object, config_float_t *cfg_float_ptr
       } else {
          fprintf(stderr, "%s->%s expects an float.\n",
                  parent_object->string, json_object->string);
-         abort();
+         vftr_abort(0);
       }
    }
 }
@@ -90,7 +91,7 @@ void vftr_parse_config_string(cJSON *parent_object, config_string_t *cfg_string_
       } else {
          fprintf(stderr, "%s->%s expects a string of null.\n",
                  parent_object->string, json_object->string);
-         abort();
+         vftr_abort(0);
       }
    }
 }
@@ -150,7 +151,7 @@ void vftr_parse_config_regex(cJSON *parent_object, config_regex_t *cfg_regex_ptr
       } else {
          fprintf(stderr, "%s->%s expects a string of null.\n",
                  parent_object->string, json_object->string);
-         abort();
+         vftr_abort(0);
       }
    }
 }
@@ -363,7 +364,7 @@ int vftr_parse_config_check_json_format(char *config_string) {
 void vftr_parse_config(char *config_string, config_t *config_ptr) {
    cJSON *config_json = cJSON_Parse(config_string);
    if (vftr_parse_config_check_json_format(config_string)) {
-      abort();
+      vftr_abort(0);
    }
 
    // Set the cJSON internal name for the overarching struct,

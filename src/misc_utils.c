@@ -5,6 +5,8 @@
 #include <string.h>
 #include <ctype.h>
 
+#include "signal_handling.h"
+
 int vftr_count_base_digits(long long value, int base) {
    int count = 0;
    do {
@@ -18,7 +20,7 @@ char *vftr_read_file_to_string(char *filename) {
     FILE *file = fopen(filename, "rt");
     if (file == NULL) {
        perror(filename);
-       abort();
+       vftr_abort(0);
     }
     fseek(file, 0, SEEK_END);
     size_t length = ftell(file);
@@ -30,7 +32,7 @@ char *vftr_read_file_to_string(char *filename) {
        fprintf(stderr, "Unable to read configuration file %s\n"
                "Read %ld bytes, but expected %ld\n",
                filename, nread, length);
-       abort();
+       vftr_abort(0);
     }
     fclose(file);
     return buffer;

@@ -4,6 +4,7 @@
 #include <papi.h>
 
 #include "vftrace_state.h"
+#include "signal_handling.h"
 
 #include "papi_calculator.h"
 
@@ -41,7 +42,7 @@ void vftr_papi_init (config_t config) {
             fprintf (stderr, "  Check \"%s\" if this counter exists on the platform"
                              "you are running the application on.\n",
                      is_native ? "papi_native_avail" : "papi_avail");
-            abort();
+            vftr_abort(0);
       } else {
          PAPI_add_event(vftrace.papi_state.eventset, event_code);
       }

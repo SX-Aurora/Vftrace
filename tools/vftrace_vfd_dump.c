@@ -4,6 +4,8 @@
 #include <assert.h>
 #include <string.h>
 
+#include "signal_handling.h"
+
 #include "vfd_dump_cmd_options.h"
 #include "vfd_types.h"
 #include "vfd_utils.h"
@@ -34,7 +36,7 @@ int main(int argc, char **argv) {
    FILE *vfd_fp = NULL;
    if (options.vfd_filename == NULL) {
       fprintf(stderr, "No vfd-file specified. check \"--help\" for help.\n");
-      abort();
+      vftr_abort(0);
    } else {
       vfd_fp = fopen(options.vfd_filename, "r");
       assert(vfd_fp);

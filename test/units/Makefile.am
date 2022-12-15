@@ -136,7 +136,8 @@ endif
 check_PROGRAMS += threadlist \
 		  threadtree
 
-check_PROGRAMS += filenames
+check_PROGRAMS += filenames \
+                  signal_handling
 
 sort_int8_SOURCES = $(srcdir)/sort_int8.c \
 			 $(srcdir)/bad_rng.c
@@ -444,6 +445,11 @@ threadtree_SOURCES = $(srcdir)/threadtree.c \
 threadtree_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src
 threadtree_LDFLAGS = $(AM_LDFLAGS)
 
+signal_handling_SOURCES = $(srcdir)/signal_handling.c
+signal_handling_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/src $(FINSTRUMENT_FLAG)
+signal_handling_LDFLAGS = $(AM_LDFLAGS) -L$(top_builddir)/src/.libs -lvftrace
+
+
 dist_check_SCRIPTS =
 dist_check_SCRIPTS += sort_int8.sh \
 		      sort_perm_int8.sh \
@@ -536,7 +542,8 @@ dist_check_SCRIPTS += sorting_mpi_table_none.sh \
 endif
 dist_check_SCRIPTS += threadlist.sh \
 		      threadtree.sh \
-                      filenames.sh
+                      filenames.sh \
+                      signal_handling.sh
 
 TEST_EXTENSIONS = .sh
 SH_LOG_COMPILER = $(SHELL)

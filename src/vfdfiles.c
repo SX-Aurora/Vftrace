@@ -11,6 +11,7 @@
 #include "stack_types.h"
 #include "timer_types.h"
 #include "vftrace_state.h"
+#include "signal_handling.h"
 
 #include "filenames.h"
 #include "vfdfiles.h"
@@ -70,7 +71,7 @@ FILE *vftr_open_vfdfile(char *filename) {
    FILE *fp = fopen(filename, "w+");
    if (fp == NULL) {
       perror(filename);
-      abort();
+      vftr_abort(0);
    }
    return fp;
 }

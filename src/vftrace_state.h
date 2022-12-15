@@ -44,6 +44,7 @@ typedef struct {
    state_t state; // current state of vftrace
    sampling_t sampling; // Filehandle and data required to handle vfd-file sampling
    time_strings_t timestrings; // start and end time in string form
+   int signal_received;
 #ifdef _OMP
    omp_state_t omp_state;
 #endif

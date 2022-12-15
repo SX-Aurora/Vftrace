@@ -4,6 +4,7 @@
 #include <string.h>
 #include <time.h>
 
+#include "signal_handling.h"
 #include "event_types.h"
 
 int get_event(event_t *event, FILE *stream) {
@@ -18,7 +19,7 @@ int get_event(event_t *event, FILE *stream) {
       event->action = leave;
    } else {
       fprintf(stderr, "Unknown action %c\n", character);
-      abort();
+      vftr_abort(0);
    }
    // get current file pointer position
    long int current_pos = ftell(stream);
@@ -29,7 +30,7 @@ int get_event(event_t *event, FILE *stream) {
    if (fseek(stream, current_pos, SEEK_SET)) {
       fprintf(stderr, "Cound not adjust filepointer to %ld\n",
               current_pos);
-      abort();
+      vftr_abort(0);
    }
    event->name = (char*) malloc(namelen*sizeof(char));
    for (int i=0; i<namelen; i++) {
