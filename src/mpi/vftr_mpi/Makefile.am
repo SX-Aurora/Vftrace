@@ -173,9 +173,14 @@ libvftr_mpi_la_CFLAGS =
 
 libvftr_mpi_la_CFLAGS +=-D_MPI
 
+if ENABLE_CUDAPROF
+libvftr_mpi_la_CFLAGS += -D_CUDA
+endif
+
 if SELF_PROFILING
 libvftr_mpi_la_CPPFLAGS += -D_SELF_PROFILE_VFTRACE
 endif
 
 libvftr_mpi_la_CFLAGS += -I${srcdir}/../utils/
 libvftr_mpi_la_CFLAGS += -I${srcdir}/../../
+libvftr_mpi_la_CFLAGS += -I${srcdir}/../../cuda

@@ -171,3 +171,8 @@ endif
 libvftr_mpi_c2vftr_la_CFLAGS = -D_MPI
 libvftr_mpi_c2vftr_la_CFLAGS += -I${srcdir}/../utils/
 libvftr_mpi_c2vftr_la_CFLAGS += -I${srcdir}/../vftr_mpi/
+libvftr_mpi_c2vftr_la_CFLAGS += -I${srcdir}/../../cuda
+
+if ENABLE_CUDAPROF
+libvftr_mpi_c2vftr_la_CFLAGS += -D_CUDA
+endif

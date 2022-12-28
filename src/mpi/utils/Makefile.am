@@ -50,6 +50,10 @@ libvftr_mpi_utils_la_CFLAGS += -D_MPI
 libvftr_mpi_utils_la_FCFLAGS +=
 endif
 
+if ENABLE_CUDAPROF
+libvftr_mpi_utils_la_CFLAGS += -D_CUDA
+endif
+
 if SELF_PROFILING
 libvftr_mpi_utils_la_CPPFLAGS += -D_SELF_PROFILE_VFTRACE
 endif
@@ -57,3 +61,4 @@ endif
 libvftr_mpi_utils_la_CFLAGS += -I${srcdir}/../../ \
 			       -I${srcdir}/../../sorting/
 libvftr_mpi_utils_la_CFLAGS += -I${srcdir}/../vftr_mpi/
+libvftr_mpi_utils_la_CFLAGS += -I${srcdir}/../../cuda

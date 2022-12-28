@@ -167,8 +167,13 @@ if HAS_MPI_STD_1_0
 libvftr_cmpiwrap_la_SOURCES += pcontrol.c
 endif
 
+
 libvftr_cmpiwrap_la_CFLAGS = -D_MPI
+if ENABLE_CUDAPROF
+libvftr_cmpiwrap_la_CFLAGS += -D_CUDA
+endif
 libvftr_cmpiwrap_la_CFLAGS += -I${srcdir}/../c2vftr/
 libvftr_cmpiwrap_la_CFLAGS += -I${srcdir}/../utils/
 libvftr_cmpiwrap_la_CFLAGS += -I${srcdir}/../../
+libvftr_cmpiwrap_la_CFLAGS += -I${srcdir}/../../cuda
 libvftr_cmpiwrap_la_CFLAGS += $(FINSTRUMENT_FLAG)
