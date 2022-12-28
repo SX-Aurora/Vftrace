@@ -13,6 +13,12 @@ libvftr_cuda_la_SOURCES += cupti_init_final.c \
 
 libvftr_cuda_la_CFLAGS = -I${srcdir}/../ -I${srcdir}/../sorting -D_CUDA
 
+if ENABLE_MPI
+libvftr_cuda_la_CFLAGS += -D_MPI
+libvftr_cuda_la_CFLAGS += -I${srcdir}/../mpi/utils
+libvftr_cuda_la_CFLAGS += -I${srcdir}/../mpi/vftr_mpi
+endif
+
 if HAS_LIBERTY
 libvftr_cuda_la_CFLAGS += -D_LIBERTY
 endif

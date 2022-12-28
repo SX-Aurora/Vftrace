@@ -1,3 +1,5 @@
+#include "vftrace_state.h"
+
 #include "collated_stack_types.h"
 #include "cudaprofiling_types.h"
 #include "collated_cudaprofiling_types.h"
@@ -28,7 +30,7 @@ void vftr_collate_cudaprofiles_root_self (collated_stacktree_t *collstacktree_pt
 }
 
 #ifdef _MPI
-static void vftr_collate_papiprofiles_on_root (collated_stacktree_t *collstacktree_ptr,
+static void vftr_collate_cudaprofiles_on_root (collated_stacktree_t *collstacktree_ptr,
                                                stacktree_t *stacktree_ptr,
 					       int myrank, int nranks, int *nremote_profiles) {
 
@@ -57,9 +59,9 @@ static void vftr_collate_papiprofiles_on_root (collated_stacktree_t *collstacktr
       PMPI_Send (cbids, nprofiles, MPI_INT, 0, myrank, MPI_COMM_WORLD);
       PMPI_Send (n_calls, nprofiles, MPI_INT, 0, myrank, MPI_COMM_WORLD);
       PMPI_Send (t_ms, nprofiles, MPI_FLOAT, 0, myrank, MPI_COMM_WORLD);
-      PMPI_Send (memcpy_bytes_1, MPI_LONG, 0, myrank, MPI_COMM_WORLD);
-      PMPI_Send (memcpy_bytes_2, MPI_LONG, 0, myrank, MPI_COMM_WORLD);
-      PMPI_Send (overhead_nsec, MPI_LONG_LONG, 0, myrank, MPI_COMM_WORLD);
+      PMPI_Send (memcpy_bytes_1, nprofiles, MPI_LONG, 0, myrank, MPI_COMM_WORLD);
+      PMPI_Send (memcpy_bytes_2, nprofiles, MPI_LONG, 0, myrank, MPI_COMM_WORLD);
+      PMPI_Send (overhead_nsec, nprofiles, MPI_LONG_LONG, 0, myrank, MPI_COMM_WORLD);
       free(gids);
       free(cbids);
       free(n_calls);
@@ -94,14 +96,14 @@ static void vftr_collate_papiprofiles_on_root (collated_stacktree_t *collstacktr
          for (int iprof = 0; iprof < nprofiles; iprof++) {
             int gid = gids[iprof]; 
             collated_stack_t *collstack = collstacktree_ptr->stacks + gid;
-            collated_cudaprofile_t *cudapapiprof = &(collstack->profile.cudaprof);
+            collated_cudaprofile_t *collcudaprof = &(collstack->profile.cudaprof);
 
-            collpapiprof->cbid = cbids[iprof];
-            collpapiprof->n_calls = n_calls[iprof];
-            collpapiprof->t_ms = t_ms[iprof];
-            collpapiprof->memcpy_bytes[0] = memcpy_bytes_1[iprof];
-            collpapiprof->memcpy_bytes[1] = memcpy_bytes_2[iprof];
-            collpapiprof->overhead_nsec = overhead_nsec[iprof];
+            collcudaprof->cbid = cbids[iprof];
+            collcudaprof->n_calls = n_calls[iprof];
+            collcudaprof->t_ms = t_ms[iprof];
+            collcudaprof->memcpy_bytes[0] = memcpy_bytes_1[iprof];
+            collcudaprof->memcpy_bytes[1] = memcpy_bytes_2[iprof];
+            collcudaprof->overhead_nsec = overhead_nsec[iprof];
          }
          free(gids);
          free(cbids);
