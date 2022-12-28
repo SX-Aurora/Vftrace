@@ -9,7 +9,7 @@
 #include "ompprofiling_types.h"
 #endif
 #ifdef _CUDA
-#include "cudaprofiling_types.h"
+#include "collated_cudaprofiling_types.h"
 #endif
 #ifdef _ACCPROF
 #include "accprofiling_types.h"
@@ -27,7 +27,7 @@ typedef struct {
    ompprofile_t ompprof;
 #endif
 #ifdef _CUDA
-   cudaprofile_t cudaprof;
+   collated_cudaprofile_t cudaprof;
 #endif
 #ifdef _ACCPROF
    accprofile_t accprof;

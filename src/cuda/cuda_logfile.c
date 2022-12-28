@@ -10,6 +10,7 @@
 
 #include "cupti_vftr_callbacks.h"
 #include "cudaprofiling_types.h"
+#include "collated_cudaprofiling_types.h"
 #include "cuda_utils.h"
 
 void vftr_get_total_cuda_times_for_logfile (collated_stacktree_t stacktree, 
@@ -20,7 +21,7 @@ void vftr_get_total_cuda_times_for_logfile (collated_stacktree_t stacktree,
 
    for (int istack = 0; istack < stacktree.nstacks; istack++) {
       collated_stack_t this_stack = stacktree.stacks[istack];
-      cudaprofile_t cudaprof = this_stack.profile.cudaprof;
+      collated_cudaprofile_t cudaprof = this_stack.profile.cudaprof;
       if (vftr_cuda_cbid_belongs_to_class (cudaprof.cbid, T_CUDA_COMP)) {
             *tot_compute_s += (float)cudaprof.t_ms / 1000;
       } else if (vftr_cuda_cbid_belongs_to_class (cudaprof.cbid, T_CUDA_MEMCP)) {
@@ -37,7 +38,7 @@ void vftr_write_logfile_cuda_table(FILE *fp, collated_stacktree_t stacktree, con
    collated_stack_t **sorted_stacks = vftr_sort_collated_stacks_for_cuda (config, stacktree);
 
    for (int istack = 0; istack < stacktree.nstacks; istack++) {
-      cudaprofile_t cudaprof = sorted_stacks[istack]->profile.cudaprof;
+      collated_cudaprofile_t cudaprof = sorted_stacks[istack]->profile.cudaprof;
       if (cudaprof.cbid != 0) n_stackids_with_cuda_data++;
    }
 
@@ -65,7 +66,7 @@ void vftr_write_logfile_cuda_table(FILE *fp, collated_stacktree_t stacktree, con
    int i = 0;
    for (int istack = 0; istack < stacktree.nstacks; istack++) {
       collated_stack_t *this_stack = sorted_stacks[istack];
-      cudaprofile_t cudaprof = this_stack->profile.cudaprof;
+      collated_cudaprofile_t cudaprof = this_stack->profile.cudaprof;
       if (cudaprof.cbid == 0) continue;
       stackids_with_cuda_data[i] = istack;
       calls[i] = cudaprof.n_calls;
@@ -122,7 +123,7 @@ void vftr_write_logfile_cbid_names (FILE *fp, collated_stacktree_t stacktree) {
    const char **cbid_names = (const char**)malloc(stacktree.nstacks * sizeof(char*));
    for (int istack = 0; istack < stacktree.nstacks; istack++) {
       collated_stack_t this_stack = stacktree.stacks[istack];
-      cudaprofile_t cudaprof = this_stack.profile.cudaprof;
+      collated_cudaprofile_t cudaprof = this_stack.profile.cudaprof;
       if (cudaprof.cbid == 0) continue;
       bool cbid_present = false;
       for (int icbid = 0; icbid < n_different_cbids; icbid++) {

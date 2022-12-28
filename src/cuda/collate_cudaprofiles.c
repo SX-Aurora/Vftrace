@@ -1,5 +1,6 @@
 #include "collated_stack_types.h"
 #include "cudaprofiling_types.h"
+#include "collated_cudaprofiling_types.h"
 
 // Currently, CUDA profiling is only supported for
 // one MPI process and one OMP thread. Therefore, collating
@@ -14,13 +15,14 @@ void vftr_collate_cudaprofiles_root_self (collated_stacktree_t *collstacktree_pt
       collated_stack_t *collstack = collstacktree_ptr->stacks + i_collstack;
 
       cudaprofile_t copy_cudaprof = stack->profiling.profiles[0].cudaprof;
-      cudaprofile_t *collcudaprof = &(collstack->profile.cudaprof);
-     
+      collated_cudaprofile_t *collcudaprof = &(collstack->profile.cudaprof);
+
       collcudaprof->cbid = copy_cudaprof.cbid;
       collcudaprof->n_calls = copy_cudaprof.n_calls;
       collcudaprof->t_ms = copy_cudaprof.t_ms;
-      collcudaprof->memcpy_bytes[0] = copy_cudaprof.memcpy_bytes[0];
-      collcudaprof->memcpy_bytes[1] = copy_cudaprof.memcpy_bytes[1];
+      //printf ("memcpy_bytes: %lld %lld\n", copy_cudaprof.memcpy_bytes[0], copy_cudaprof.memcpy_bytes[1]);
+      //collcudaprof->memcpy_bytes[0] = copy_cudaprof.memcpy_bytes[0];
+      //collcudaprof->memcpy_bytes[1] = copy_cudaprof.memcpy_bytes[1];
       collcudaprof->overhead_nsec = copy_cudaprof.overhead_nsec;
    }
 }
@@ -92,7 +94,7 @@ static void vftr_collate_papiprofiles_on_root (collated_stacktree_t *collstacktr
          for (int iprof = 0; iprof < nprofiles; iprof++) {
             int gid = gids[iprof]; 
             collated_stack_t *collstack = collstacktree_ptr->stacks + gid;
-            cudaprofile_t *cudapapiprof = &(collstack->profile.cudaprof);
+            collated_cudaprofile_t *cudapapiprof = &(collstack->profile.cudaprof);
 
             collpapiprof->cbid = cbids[iprof];
             collpapiprof->n_calls = n_calls[iprof];

@@ -406,8 +406,8 @@ unsigned long long vftr_sizeof_collated_profile_t(collated_profile_t profile) {
    size += vftr_sizeof_mpiprofile_t(profile.mpiprof);
 #endif
 #ifdef _CUDA
-   size -= sizeof(cudaprofile_t);
-   size += vftr_sizeof_cudaprofile_t(profile.cudaprof);
+   //size -= sizeof(cudaprofile_t);
+   //size += vftr_sizeof_cudaprofile_t(profile.cudaprof);
 #endif
    return size;
 }

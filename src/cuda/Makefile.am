@@ -5,6 +5,7 @@ libvftr_cuda_la_SOURCES =
 libvftr_cuda_la_SOURCES += cupti_init_final.c \
                             cupti_vftr_callbacks.c \
                             cudaprofiling.c \
+                            collated_cudaprofiling.c \
                             collate_cudaprofiles.c \
                             cuda_logfile.c \
                             cuda_ranklogfile.c \
