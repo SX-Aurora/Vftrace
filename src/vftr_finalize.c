@@ -70,7 +70,7 @@ void vftr_finalize() {
                           (double) (runtime * 1.0e-9));
 
 #ifdef _CUDA
-   vftr_finalize_cupti (vftrace.process.collated_stacktree);
+   vftr_finalize_cupti (vftrace.process.stacktree);
 #endif
 
 #ifdef _ACCPROF

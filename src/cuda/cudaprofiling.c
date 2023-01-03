@@ -54,7 +54,7 @@ long long vftr_get_total_collated_cuda_overhead (collated_stacktree_t stacktree)
    
    for (int istack = 0; istack < stacktree.nstacks; istack++) {
 	collated_stack_t *stack = stacktree.stacks + istack;
-        cudaprofile_t *cudaprof = &(stack->profile.cudaprof);
+        collated_cudaprofile_t *cudaprof = &(stack->profile.cudaprof);
         overhead_nsec += cudaprof->overhead_nsec;
    }
    return overhead_nsec;

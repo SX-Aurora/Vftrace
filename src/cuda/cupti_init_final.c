@@ -35,24 +35,26 @@ cudaError_t vftr_init_cupti (void (*cb_function) ()) {
   return cudaErrorNoDevice;
 }
 
-void vftr_finalize_cupti (collated_stacktree_t stacktree) {
+void vftr_finalize_cupti (stacktree_t stacktree) {
    // We go through the stacks and check if any CUDA events have
    // a non-success state.
    if (vftrace.cuda_state.n_devices > 0) {
       int n_warnings = 0;
       for (int istack = 0; istack < stacktree.nstacks; istack++) {
-         collated_stack_t stack = stacktree.stacks[istack];
-         cudaprofile_t prof = stack.profile.cudaprof;
-         cudaError_t ce = cudaEventQuery (prof.start);
-         if (ce != cudaSuccess) {
-            if (n_warnings++ == 0) fprintf (stderr, "Warning: Some CUpti events did not finish properly.\n");
-            fprintf (stderr, "    CBID %d: %s (start)\n", prof.cbid, cudaGetErrorString(ce));
-         }
-         ce = cudaEventQuery (prof.stop);
-         if (ce != cudaSuccess) {
-            if (n_warnings++ == 0) fprintf (stderr, "Warning: Some CUpti events did not finish properly.\n");
-            fprintf (stderr, "    CBID %d: %s ()\n", prof.cbid, cudaGetErrorString(ce));
-         }
+         vftr_stack_t stack = stacktree.stacks[istack];
+         cudaprofile_t prof = stack.profiling.profiles[0].cudaprof;
+         //printf ("istack: %d\n", istack);
+         //fflush(stdout);
+         //cudaError_t ce = cudaEventQuery (prof.start);
+         //if (ce != cudaSuccess) {
+         //   if (n_warnings++ == 0) fprintf (stderr, "Warning: Some CUpti events did not finish properly.\n");
+         //   fprintf (stderr, "    stack: %d, rank: %d, CBID %d: %s (start)\n", istack, vftrace.process.processID, prof.cbid, cudaGetErrorString(ce));
+         //}
+         //ce = cudaEventQuery (prof.stop);
+         //if (ce != cudaSuccess) {
+         //   if (n_warnings++ == 0) fprintf (stderr, "Warning: Some CUpti events did not finish properly.\n");
+         //   fprintf (stderr, "    stack: %d, rank: %d, CBID %d: %s (end)\n", istack, vftrace.process.processID, prof.cbid, cudaGetErrorString(ce));
+         //}
       }
 
 
