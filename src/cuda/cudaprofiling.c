@@ -8,12 +8,10 @@
 
 cudaprofile_t vftr_new_cudaprofiling() {
   cudaprofile_t prof;
-  if (vftrace.cuda_state.n_devices > 0) {
 // When called on a system without GPUs, this will silently return
 // cudaErrorNoDevice.
-     cudaEventCreate (&(prof.start));
-     cudaEventCreate (&(prof.stop));
-  }
+  cudaEventCreate (&(prof.start));
+  cudaEventCreate (&(prof.stop));
   prof.cbid = 0;
   prof.n_calls = 0;
   prof.t_ms = 0;

@@ -45,16 +45,16 @@ void vftr_finalize_cupti (stacktree_t stacktree) {
          cudaprofile_t prof = stack.profiling.profiles[0].cudaprof;
          //printf ("istack: %d\n", istack);
          //fflush(stdout);
-         //cudaError_t ce = cudaEventQuery (prof.start);
-         //if (ce != cudaSuccess) {
-         //   if (n_warnings++ == 0) fprintf (stderr, "Warning: Some CUpti events did not finish properly.\n");
-         //   fprintf (stderr, "    stack: %d, rank: %d, CBID %d: %s (start)\n", istack, vftrace.process.processID, prof.cbid, cudaGetErrorString(ce));
-         //}
-         //ce = cudaEventQuery (prof.stop);
-         //if (ce != cudaSuccess) {
-         //   if (n_warnings++ == 0) fprintf (stderr, "Warning: Some CUpti events did not finish properly.\n");
-         //   fprintf (stderr, "    stack: %d, rank: %d, CBID %d: %s (end)\n", istack, vftrace.process.processID, prof.cbid, cudaGetErrorString(ce));
-         //}
+         cudaError_t ce = cudaEventQuery (prof.start);
+         if (ce != cudaSuccess) {
+            if (n_warnings++ == 0) fprintf (stderr, "Warning: Some CUpti events did not finish properly.\n");
+            fprintf (stderr, "    stack: %d, rank: %d, CBID %d: %s (start)\n", istack, vftrace.process.processID, prof.cbid, cudaGetErrorString(ce));
+         }
+         ce = cudaEventQuery (prof.stop);
+         if (ce != cudaSuccess) {
+            if (n_warnings++ == 0) fprintf (stderr, "Warning: Some CUpti events did not finish properly.\n");
+            fprintf (stderr, "    stack: %d, rank: %d, CBID %d: %s (end)\n", istack, vftrace.process.processID, prof.cbid, cudaGetErrorString(ce));
+         }
       }
 
 
