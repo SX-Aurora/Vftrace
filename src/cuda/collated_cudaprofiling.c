@@ -7,7 +7,6 @@
 #include "cupti_vftr_callbacks.h"
 
 collated_cudaprofile_t vftr_new_collated_cudaprofiling() {
-  printf ("New collated cudaprof!\n");
   collated_cudaprofile_t prof;
   prof.cbid = 0;
   prof.n_calls = 0;
