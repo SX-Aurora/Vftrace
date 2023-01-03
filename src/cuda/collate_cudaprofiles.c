@@ -23,8 +23,8 @@ void vftr_collate_cudaprofiles_root_self (collated_stacktree_t *collstacktree_pt
       collcudaprof->n_calls = copy_cudaprof.n_calls;
       collcudaprof->t_ms = copy_cudaprof.t_ms;
       //printf ("memcpy_bytes: %lld %lld\n", copy_cudaprof.memcpy_bytes[0], copy_cudaprof.memcpy_bytes[1]);
-      //collcudaprof->memcpy_bytes[0] = copy_cudaprof.memcpy_bytes[0];
-      //collcudaprof->memcpy_bytes[1] = copy_cudaprof.memcpy_bytes[1];
+      collcudaprof->memcpy_bytes[0] = copy_cudaprof.memcpy_bytes[0];
+      collcudaprof->memcpy_bytes[1] = copy_cudaprof.memcpy_bytes[1];
       collcudaprof->overhead_nsec = copy_cudaprof.overhead_nsec;
    }
 }
@@ -99,11 +99,11 @@ static void vftr_collate_cudaprofiles_on_root (collated_stacktree_t *collstacktr
             collated_cudaprofile_t *collcudaprof = &(collstack->profile.cudaprof);
 
             collcudaprof->cbid = cbids[iprof];
-            collcudaprof->n_calls = n_calls[iprof];
-            collcudaprof->t_ms = t_ms[iprof];
-            collcudaprof->memcpy_bytes[0] = memcpy_bytes_1[iprof];
-            collcudaprof->memcpy_bytes[1] = memcpy_bytes_2[iprof];
-            collcudaprof->overhead_nsec = overhead_nsec[iprof];
+            collcudaprof->n_calls += n_calls[iprof];
+            collcudaprof->t_ms += t_ms[iprof];
+            collcudaprof->memcpy_bytes[0] += memcpy_bytes_1[iprof];
+            collcudaprof->memcpy_bytes[1] += memcpy_bytes_2[iprof];
+            collcudaprof->overhead_nsec += overhead_nsec[iprof];
          }
          free(gids);
          free(cbids);
