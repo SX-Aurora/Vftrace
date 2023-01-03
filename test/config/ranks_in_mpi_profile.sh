@@ -1,4 +1,7 @@
 #!/bin/bash
+
+source ${srcdir}/../environment/filenames.sh
+
 set -x
 test_name=ranks_in_mpi_profile
 configfile=${test_name}.json
@@ -6,21 +9,23 @@ output_file=${test_name}.out
 ref_file=${srcdir}/ref_output/mpi_tasks.out
 nranks=4
 
+determine_bin_prefix $test_name
+
 function run_binary() {
    if [ "x${HAS_MPI}" == "xYES" ]; then
       ${MPI_EXEC} ${MPI_OPTS} ${NP} ${nranks} ./${test_name} || exit 1
    else
       ./${test_name} || exit 1
    fi
-   cat ${test_name}_p0.tmpout > ${output_file}
+   cat ${BIN_PREFIX}${test_name}_p0.tmpout > ${output_file}
    for i in $(seq 1 1 $(bc <<< "${nranks}-1"));
    do
-      cat ${test_name}_p${i}.tmpout >> ${output_file}
+      cat ${BIN_PREFIX}${test_name}_p${i}.tmpout >> ${output_file}
    done
 }
 
 function rm_outfiles() {
-   for file in ${output_file} ${test_name}_*.log ${test_name}_p*.tmpout ${test_name}_*.vfd;
+   for file in ${output_file} ${BIN_PREFIX}${test_name}_*.log ${BIN_PREFIX}${test_name}_p*.tmpout ${BIN_PREFIX}${test_name}_*.vfd;
    do
       if [ -f ${file} ] ; then
          rm ${file}
@@ -32,7 +37,7 @@ function check_mpi_entry_exists() {
    for irank in $@;
    do
       logfile="${test_name}_${irank}.log"
-      nmpientries=$(cat ${logfile} | \
+      nmpientries=$(cat ${BIN_PREFIX}${logfile} | \
                     grep -A4 "Communication profile" | \
                     grep -i MPI_Alltoallv | wc -l)
       if [ "${nmpientries}" -ne "1" ] ; then
@@ -47,7 +52,7 @@ function check_mpi_entry_notexists() {
    for irank in $@;
    do
       logfile="${test_name}_${irank}.log"
-      nmpientries=$(cat ${logfile} | \
+      nmpientries=$(cat ${BIN_PREFIX}${logfile} | \
                     grep -A4 "Communication profile" | \
                     grep -i MPI_Alltoallv | wc -l)
       if [ "${nmpientries}" -ne "0" ] ; then
@@ -82,7 +87,7 @@ function check_mpi_communication_consistency() {
       nmsg_ref=$(bc <<< "${nsendmsg_ref} + ${nrecvmsg_ref}")
 
       # get logged values
-      profentry=$(cat ${logfile} | \
+      profentry=$(cat ${BIN_PREFIX}${logfile} | \
                   grep -A4 "Communication profile" | \
                   grep -i MPI_Alltoallv)
       nmsg=$(echo ${profentry} | awk '{print $2}')

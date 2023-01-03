@@ -1,9 +1,13 @@
 #!/bin/bash
 
+source ${srcdir}/../../environment/filenames.sh
+
 vftr_binary=iscatterv_intercom
 configfile=${vftr_binary}.json
 nprocs=4
 ntrials=1
+
+determine_bin_prefix $vftr_binary
 
 echo "{\"sampling\": {\"active\": true}}" > ${configfile}
 export VFTR_CONFIG=${configfile}
@@ -19,7 +23,8 @@ do
    # patterns in the vfd file
    for irank in $(seq 0 1 $(bc <<< "${nprocs}-1"));
    do
-      ../../../tools/vftrace_vfd_dump ${vftr_binary}_${irank}.vfd
+      vfdfile=$(get_vfdfile_name ${vftr_binary} ${irank})
+      ../../../tools/vftrace_vfd_dump ${vfdfile}
 
       my_group=$(bc <<< "(2*${irank})/${nprocs}")
       if [ "${my_group}" -eq "0" ] ; then
@@ -35,14 +40,14 @@ do
                ((ipeer+=1))
                # Validate sending
                # Get actually used message size
-               count=$(../../../tools/vftrace_vfd_dump ${vftr_binary}_${irank}.vfd | \
+               count=$(../../../tools/vftrace_vfd_dump ${vfdfile} | \
                        awk '$2=="send" && $3!="end"{getline;print;}' | \
                        sed 's/=/ /g' | \
                        sort -nk 9 | \
                        awk '{print $2}' | \
                        head -n ${ipeer} | tail -n 1)
                # get peer process
-               peer=$(../../../tools/vftrace_vfd_dump ${vftr_binary}_${irank}.vfd | \
+               peer=$(../../../tools/vftrace_vfd_dump ${vfdfile} | \
                       awk '$2=="send" && $3!="end"{getline;print;}' | \
                       sed 's/=/ /g' | \
                       sort -nk 9 | \
@@ -66,7 +71,7 @@ do
          else
             # Non participating processes in the receiving group
             # must not show any communication
-            ncom=$(../../../tools/vftrace_vfd_dump ${vftr_binary}_${irank}.vfd | \
+            ncom=$(../../../tools/vftrace_vfd_dump ${vfdfile} | \
                    awk '($2=="send" || $2=="recv") && $3!="end"{getline;print;}' | \
                    wc -l)
             if [[ "${ncomm}" -ne "0" ]] ; then
@@ -79,14 +84,14 @@ do
          # the receiving group
          tmpnb=$(bc <<< "${nb} + ${irank}")
          # Get actually used message size
-         count=$(../../../tools/vftrace_vfd_dump ${vftr_binary}_${irank}.vfd | \
+         count=$(../../../tools/vftrace_vfd_dump ${vfdfile} | \
                  awk '$2=="recv" && $3!="end"{getline;print;}' | \
                  sed 's/=/ /g' | \
                  sort -nk 9 | \
                  awk '{print $2}' | \
                  head -n 1)
          # get peer process
-         peer=$(../../../tools/vftrace_vfd_dump ${vftr_binary}_${irank}.vfd | \
+         peer=$(../../../tools/vftrace_vfd_dump ${vfdfile} | \
                 awk '$2=="recv" && $3!="end"{getline;print;}' | \
                 sed 's/=/ /g' | \
                 sort -nk 9 | \

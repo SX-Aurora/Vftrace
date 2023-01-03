@@ -1,9 +1,13 @@
 #!/bin/bash
 
+source ${srcdir}/../../environment/filenames.sh
+
 vftr_binary=start
 configfile=${vftr_binary}.json
 nprocs=4
 ntrials=1
+
+determine_bin_prefix $vftr_binary
 
 echo "{\"sampling\": {\"active\": true}}" > ${configfile}
 export VFTR_CONFIG=${configfile}
@@ -18,18 +22,18 @@ do
    # patterns in the vfd file
    for irank in $(seq 0 1 $(bc <<< "${nprocs}-1"));
    do
-
-      ../../../tools/vftrace_vfd_dump ${vftr_binary}_${irank}.vfd
+      vfdfile=$(get_vfdfile_name ${vftr_binary} ${irank})
+      ../../../tools/vftrace_vfd_dump ${vfdfile}
 
       if [[ "${irank}" -eq "0" ]] ; then 
 
-         n=$(../../../tools/vftrace_vfd_dump ${vftr_binary}_${irank}.vfd | \
+         n=$(../../../tools/vftrace_vfd_dump ${vfdfile} | \
              grep -i "call MPI_Start" | wc -l)
          if [[ ${n} -le 0 ]] ; then
             exit 1;
          fi
          
-         n=$(../../../tools/vftrace_vfd_dump ${vftr_binary}_${irank}.vfd | \
+         n=$(../../../tools/vftrace_vfd_dump ${vfdfile} | \
              grep -i "exit MPI_Start" | wc -l)
          if [[ ${n} -le 0 ]] ; then
             exit 1;
@@ -40,14 +44,14 @@ do
             ientry=$(bc <<< "${jrank}")
             # Validate sending
             # Get actually used message size
-            count=$(../../../tools/vftrace_vfd_dump ${vftr_binary}_${irank}.vfd | \
+            count=$(../../../tools/vftrace_vfd_dump ${vfdfile} | \
                     awk '$2=="send" && $3!="end"{getline;print;}' | \
                     sed 's/=/ /g' | \
                     sort -nk 9 | \
                     awk '{print $2}' | \
                     head -n ${ientry} | tail -n 1)
             # get peer process
-            peer=$(../../../tools/vftrace_vfd_dump ${vftr_binary}_${irank}.vfd | \
+            peer=$(../../../tools/vftrace_vfd_dump ${vfdfile} | \
                    awk '$2=="send" && $3!="end"{getline;print;}' | \
                    sed 's/=/ /g' | \
                    sort -nk 9 | \
@@ -73,14 +77,14 @@ do
          ientry=$(bc <<< "${jrank}+1")
          # Validate receiving
          # Get actually used message size
-         count=$(../../../tools/vftrace_vfd_dump ${vftr_binary}_${irank}.vfd | \
+         count=$(../../../tools/vftrace_vfd_dump ${vfdfile} | \
                  awk '$2=="recv" && $3!="end"{getline;print;}' | \
                  sed 's/=/ /g' | \
                  sort -nk 9 | \
                  awk '{print $2}' | \
                  head -n ${ientry} | tail -n 1)
          # get peer process
-         peer=$(../../../tools/vftrace_vfd_dump ${vftr_binary}_${irank}.vfd | \
+         peer=$(../../../tools/vftrace_vfd_dump ${vfdfile} | \
                 awk '$2=="recv" && $3!="end"{getline;print;}' | \
                 sed 's/=/ /g' | \
                 sort -nk 9 | \

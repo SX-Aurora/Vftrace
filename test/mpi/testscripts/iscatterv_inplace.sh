@@ -1,9 +1,13 @@
 #!/bin/bash
 
+source ${srcdir}/../../environment/filenames.sh
+
 vftr_binary=iscatterv_inplace
 configfile=${vftr_binary}.json
 nprocs=4
 ntrials=1
+
+determine_bin_prefix $vftr_binary
 
 echo "{\"sampling\": {\"active\": true}}" > ${configfile}
 export VFTR_CONFIG=${configfile}
@@ -18,7 +22,8 @@ do
    # patterns in the vfd file
    for irank in $(seq 0 1 $(bc <<< "${nprocs}-1"));
    do
-      ../../../tools/vftrace_vfd_dump ${vftr_binary}_${irank}.vfd
+      vfdfile=$(get_vfdfile_name ${vftr_binary} ${irank})
+      ../../../tools/vftrace_vfd_dump ${vfdfile}
       if [ "${irank}" -eq "0" ] ; then
          for jrank in $(seq 1 1 $(bc <<< "${nprocs}-1"));
          do
@@ -26,14 +31,14 @@ do
             ipeer=$(bc <<< "${jrank}")
             # Validate sending
             # Get actually used message size
-            count=$(../../../tools/vftrace_vfd_dump ${vftr_binary}_${irank}.vfd | \
+            count=$(../../../tools/vftrace_vfd_dump ${vfdfile} | \
                     awk '$2=="send" && $3!="end"{getline;print;}' | \
                     sed 's/=/ /g' | \
                     sort -nk 9 | \
                     awk '{print $2}' | \
                     head -n ${ipeer} | tail -n 1)
             # get peer process
-            peer=$(../../../tools/vftrace_vfd_dump ${vftr_binary}_${irank}.vfd | \
+            peer=$(../../../tools/vftrace_vfd_dump ${vfdfile} | \
                    awk '$2=="send" && $3!="end"{getline;print;}' | \
                    sed 's/=/ /g' | \
                    sort -nk 9 | \
@@ -58,14 +63,14 @@ do
          # Validate receiving
          tmpnb=$(bc <<< "${nb} + ${irank}")
          # Get actually used message size
-         count=$(../../../tools/vftrace_vfd_dump ${vftr_binary}_${irank}.vfd | \
+         count=$(../../../tools/vftrace_vfd_dump ${vfdfile} | \
                  awk '$2=="recv" && $3!="end"{getline;print;}' | \
                  sed 's/=/ /g' | \
                  sort -nk 9 | \
                  awk '{print $2}' | \
                  head -n 1)
          # get peer process
-         peer=$(../../../tools/vftrace_vfd_dump ${vftr_binary}_${irank}.vfd | \
+         peer=$(../../../tools/vftrace_vfd_dump ${vfdfile} | \
                 awk '$2=="recv" && $3!="end"{getline;print;}' | \
                 sed 's/=/ /g' | \
                 sort -nk 9 | \

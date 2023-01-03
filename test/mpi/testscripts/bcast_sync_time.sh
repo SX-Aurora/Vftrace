@@ -1,9 +1,13 @@
 #!/bin/bash
 
+source ${srcdir}/../../environment/filenames.sh
+
 vftr_binary=bcast_sync_time
 configfile=${vftr_binary}.json
 nprocs=4
 ntrials=1
+
+determine_bin_prefix $vftr_binary
 
 echo "{\"logfile_for_ranks\": \"all\", \"mpi\": {\"active\": true, \"show_sync_time\": true}}" > ${configfile}
 export VFTR_CONFIG=${configfile}
@@ -16,16 +20,17 @@ do
 
    for irank in $(seq 0 1 $(bc <<< "${nprocs}-1"));
    do  
-      cat ${vftr_binary}_${irank}.log
+      logfile=$(get_logfile_name ${vftr_binary} ${irank})
+      cat ${logfile}
       # Count the logs
-      count=$(cat ${vftr_binary}_${irank}.log | \
+      count=$(cat ${logfile} | \
               grep -i "MPI_Bcast_sync[ |]*MPI_Bcast" | \
               wc -l);
       if [[ "${count}" -lt "1" ]] ; then
          echo "Sync region not found on rank ${irank}"
          exit 1;
       fi  
-      callcount=$(cat ${vftr_binary}_${irank}.log | \
+      callcount=$(cat ${logfile} | \
                   grep -i "MPI_Bcast_sync[ |]*MPI_Bcast" | \
                   awk '{print $1}');
       if [[ "${callcount}" -ne "1" ]] ; then

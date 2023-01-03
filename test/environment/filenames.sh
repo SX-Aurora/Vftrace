@@ -26,8 +26,8 @@ function rm_outfiles() {
    test_name=$3
    rm -f ${output_file}
    rm -f ${error_file}
-   for file in ${test_name}_*.log ${test_name}_*.vfd; do
-     rm -f ${BIN_PREFIX}${file}
+   for file in ${BIN_PREFIX}${test_name}_*.log ${BIN_PREFIX}${test_name}_*.vfd; do
+     rm -f ${file}
    done
 }
 

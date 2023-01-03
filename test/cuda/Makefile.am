@@ -3,6 +3,10 @@ AM_CFLAGS = -I$(top_srcdir)/src \
 
 AM_CFLAGS += -D_CUDA
 
+if ENABLE_MPI
+AM_CFLAGS += -D_MPI -I$(top_srcdir)/src/mpi/utils
+endif
+
 AM_LDFLAGS = -L$(top_builddir)/src/.libs -lvftrace
 
 check_PROGRAMS = gpu_info \

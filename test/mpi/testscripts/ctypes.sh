@@ -1,8 +1,12 @@
 #!/bin/bash
 
+source ${srcdir}/../../environment/filenames.sh
+
 vftr_binary=ctypes
 configfile=${vftr_binary}.json
 nprocs=2
+
+determine_bin_prefix $vftr_binary
 
 echo "{\"sampling\": {\"active\": true}}" > ${configfile}
 export VFTR_CONFIG=${configfile}
@@ -12,7 +16,8 @@ ${MPI_EXEC} ${MPI_OPTS} ${NP} ${nprocs} ./${vftr_binary} || exit 1
 for ivfd in $(seq 0 1 $(bc <<< "${nprocs} - 1"));
 do
 
-   ../../../tools/vftrace_vfd_dump ${vftr_binary}_${ivfd}.vfd
+   vfdfile=$(get_vfdfile_name ${vftr_binary} ${ivfd})
+   ../../../tools/vftrace_vfd_dump ${vfdfile}
 
    itype=0
    for mpitype in MPI_CHAR MPI_SHORT MPI_INT MPI_LONG MPI_LONG_LONG_INT \
@@ -26,7 +31,7 @@ do
                   MPI_BYTE ;
    do
       ((itype+=1))
-      tmptype=$(../../../tools/vftrace_vfd_dump ${vftr_binary}_${ivfd}.vfd | \
+      tmptype=$(../../../tools/vftrace_vfd_dump ${vfdfile} | \
                 awk '($2=="send" || $2=="recv") && $3!="end"{getline;print;}' | \
                 sed 's/=/ /g;s/(/ /g' | \
                 awk '{print $4}' | \
