@@ -380,6 +380,11 @@ unsigned long long vftr_sizeof_mpiprofile_t(mpiprofile_t mpiprof) {
 unsigned long long vftr_sizeof_cudaprofile_t(cudaprofile_t cudaprof) {
    return sizeof(cudaprofile_t);
 }
+
+unsigned long long vftr_sizeof_collated_cudaprofile_t(cudaprofile_t cudaprof) {
+   return sizeof(cudaprofile_t);
+}
+
 #endif
 
 unsigned long long vftr_sizeof_profile_t(profile_t profile) {
@@ -406,8 +411,8 @@ unsigned long long vftr_sizeof_collated_profile_t(collated_profile_t profile) {
    size += vftr_sizeof_mpiprofile_t(profile.mpiprof);
 #endif
 #ifdef _CUDA
-   //size -= sizeof(cudaprofile_t);
-   //size += vftr_sizeof_cudaprofile_t(profile.cudaprof);
+   size -= sizeof(collated_cudaprofile_t);
+   size += vftr_sizeof_collated_cudaprofile_t(profile.cudaprof);
 #endif
    return size;
 }
