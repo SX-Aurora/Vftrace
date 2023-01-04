@@ -1,0 +1,34 @@
+Ranklogfile for rank 0: 
+
+Runtime PAPI profile - Hardware Counters
+
++--------+-----------+--------+--------+
+| #Calls |   Func    | dummy1 | dummy2 |
++--------+-----------+--------+--------+
+|      2 | papifunc1 |      0 |   1000 |
+|      1 |     func0 |  -3000 |  -1500 |
+|      3 | papifunc2 |   3000 |   1500 |
++--------+-----------+--------+--------+
+Ranklogfile for rank 1: 
+
+Runtime PAPI profile - Hardware Counters
+
++--------+-----------+--------+--------+
+| #Calls |   Func    | dummy1 | dummy2 |
++--------+-----------+--------+--------+
+|      2 | papifunc1 |      0 |   2000 |
+|      1 |     func0 |  -3500 |  -5000 |
+|      1 | papifunc3 |   1000 |      0 |
+|      5 | papifunc2 |   2500 |   5000 |
++--------+-----------+--------+--------+
+Collated logfile: 
+
+Runtime PAPI profile - Hardware Counters
++--------+-----------+--------+--------+
+| #Calls |   Func    | dummy1 | dummy2 |
++--------+-----------+--------+--------+
+|      4 | papifunc1 |      0 |   3000 |
+|      2 |     func0 |  -6500 |  -6500 |
+|      1 | papifunc3 |   1000 |      0 |
+|      8 | papifunc2 |   5500 |   6500 |
++--------+-----------+--------+--------+

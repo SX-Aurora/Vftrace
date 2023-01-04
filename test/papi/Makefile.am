@@ -30,7 +30,7 @@ AM_CFLAGS += -D_PAPI_AVAIL
 AM_LDFLAGS = -L$(top_builddir)/src/.libs -lvftrace
 
 if ENABLE_MPI
-  AM_CFLAGS += -D_MPI
+  AM_CFLAGS += -D_MPI -I$(top_srcdir)/src/mpi/utils
 endif
 
 check_PROGRAMS = papi_init_test \
@@ -38,6 +38,10 @@ check_PROGRAMS = papi_init_test \
                  print_config \
                  papi_region1 \
                  papi_region2
+
+if ENABLE_MPI
+check_PROGRAMS += collate_papiprofiles_parallel
+endif
 
 papi_init_test_SOURCES = $(srcdir)/papi_init_test.c
 papi_init_test_CFLAGS = $(AM_CFLAGS) $(FINSTRUMENT_FLAG)
@@ -59,11 +63,21 @@ papi_region2_SOURCES = $(srcdir)/papi_region2.c
 papi_region2_CFLAGS = $(AM_CFLAGS) $(FINSTRUMENT_FLAG)
 papi_region2_LDFLAGS = $(AM_LDFLAGS)
 
+if ENABLE_MPI
+collate_papiprofiles_parallel_SOURCES = $(srcdir)/collate_papiprofiles_parallel.c
+collate_papiprofiles_parallel_CFLAGS = $(AM_CFLAGS)
+collate_papiprofiles_parallel_LDFLAGS = $(AM_LDFLAGS)
+endif
+
 dist_check_SCRIPTS = papi_init.sh \
                      calculator.sh \
                      print_config.sh \
                      papi_region1.sh \
                      papi_region2.sh
+
+if ENABLE_MPI
+dist_check_SCRIPTS += collate_papiprofiles_parallel.sh
+endif
 
 TEST_EXTENSIONS = .sh
 TESTS = $(dist_check_SCRIPTS)

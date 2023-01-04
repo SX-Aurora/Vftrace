@@ -85,4 +85,6 @@ int main(int argc, char **argv) {
      fprintf (stdout, "Collated logfile: \n");
      vftr_write_logfile_cuda_table (stdout, collated_stacktree, config);
    }
+
+   PMPI_Finalize();
 }
