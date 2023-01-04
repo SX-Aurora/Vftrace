@@ -12,7 +12,7 @@ cudaprofile_t vftr_new_cudaprofiling();
 void vftr_cudaprofiling_free (cudaprofile_t *prof_ptr);
 
 void vftr_accumulate_cudaprofiling (cudaprofile_t *prof, int cbid, int n_calls,
-                                    float t_ms, int mem_dir, uint64_t memcpy_bytes);
+                                    float t_ms, int mem_dir, long long memcpy_bytes);
 
 void vftr_accumulate_cudaprofiling_overhead (cudaprofile_t *prof, long long t_nsec);
 

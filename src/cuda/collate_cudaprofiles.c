@@ -1,3 +1,5 @@
+#include <string.h>
+
 #include "vftrace_state.h"
 
 #include "collated_stack_types.h"
@@ -22,7 +24,6 @@ void vftr_collate_cudaprofiles_root_self (collated_stacktree_t *collstacktree_pt
       collcudaprof->cbid = copy_cudaprof.cbid;
       collcudaprof->n_calls = copy_cudaprof.n_calls;
       collcudaprof->t_ms = copy_cudaprof.t_ms;
-      //printf ("memcpy_bytes: %lld %lld\n", copy_cudaprof.memcpy_bytes[0], copy_cudaprof.memcpy_bytes[1]);
       collcudaprof->memcpy_bytes[0] = copy_cudaprof.memcpy_bytes[0];
       collcudaprof->memcpy_bytes[1] = copy_cudaprof.memcpy_bytes[1];
       collcudaprof->overhead_nsec = copy_cudaprof.overhead_nsec;
@@ -34,86 +35,72 @@ static void vftr_collate_cudaprofiles_on_root (collated_stacktree_t *collstacktr
                                                stacktree_t *stacktree_ptr,
 					       int myrank, int nranks, int *nremote_profiles) {
 
+   typedef struct {
+     int gid;
+     int cbid;
+     int n_calls;
+     float t_ms;
+     long long memcpy_bytes_in;
+     long long memcpy_bytes_out;
+     long long overhead_nsec;
+   } cudaprofile_transfer_t;
+   
+   //3 blocks: 3 x int, 1 x float, 3 x long long
+   int nblocks = 3;
+   const int blocklengths[] = {3, 1, 3};
+   const MPI_Aint displacements[] = {0, 3 * sizeof(int), 3 * sizeof(int) + sizeof(float)};
+   const MPI_Datatype types[] = {MPI_INT, MPI_FLOAT, MPI_LONG_LONG_INT};
+   MPI_Datatype cudaprofile_transfer_mpi_t;
+   PMPI_Type_create_struct (nblocks, blocklengths, displacements, types,
+                            &cudaprofile_transfer_mpi_t);
+   PMPI_Type_commit (&cudaprofile_transfer_mpi_t);
+
    if (myrank > 0) {
       int nprofiles = stacktree_ptr->nstacks;
-      int *gids = (int*)malloc(nprofiles * sizeof(int));
-      int *cbids = (int*) malloc(nprofiles * sizeof(int));
-      int *n_calls = (int*)malloc(nprofiles * sizeof(int));
-      float *t_ms = (float*)malloc(nprofiles * sizeof(float));
-      size_t *memcpy_bytes_1 = (size_t*)malloc(nprofiles * sizeof(size_t));
-      size_t *memcpy_bytes_2 = (size_t*)malloc(nprofiles * sizeof(size_t));
-      long long *overhead_nsec = (long long*)malloc(nprofiles * sizeof(long long));
-
+      cudaprofile_transfer_t *sendbuf = (cudaprofile_transfer_t*) malloc (nprofiles * sizeof(cudaprofile_transfer_t));
+      memset (sendbuf, 0, nprofiles * sizeof(cudaprofile_transfer_t));
       for (int istack = 0; istack < nprofiles; istack++) {
          vftr_stack_t *mystack = stacktree_ptr->stacks + istack;
-         gids[istack] = mystack->gid;
-         profile_t *myprof = mystack->profiling.profiles;
-         cbids[istack] = myprof->cudaprof.cbid;
-         n_calls[istack] = myprof->cudaprof.n_calls;
-         t_ms[istack] = myprof->cudaprof.t_ms;
-         memcpy_bytes_1[istack] = myprof->cudaprof.memcpy_bytes[0];
-         memcpy_bytes_2[istack] = myprof->cudaprof.memcpy_bytes[1];
-         overhead_nsec[istack] = myprof->cudaprof.overhead_nsec;
+         cudaprofile_t cudaprof = mystack->profiling.profiles->cudaprof;
+         sendbuf[istack].gid = mystack->gid;
+         sendbuf[istack].cbid = cudaprof.cbid;
+         sendbuf[istack].n_calls = cudaprof.n_calls;
+         sendbuf[istack].t_ms = cudaprof.t_ms;
+         sendbuf[istack].memcpy_bytes_in = cudaprof.memcpy_bytes[0];
+         sendbuf[istack].memcpy_bytes_out = cudaprof.memcpy_bytes[1];
+         sendbuf[istack].overhead_nsec = cudaprof.overhead_nsec;
       }
-      PMPI_Send (gids, nprofiles, MPI_INT, 0, myrank, MPI_COMM_WORLD);
-      PMPI_Send (cbids, nprofiles, MPI_INT, 0, myrank, MPI_COMM_WORLD);
-      PMPI_Send (n_calls, nprofiles, MPI_INT, 0, myrank, MPI_COMM_WORLD);
-      PMPI_Send (t_ms, nprofiles, MPI_FLOAT, 0, myrank, MPI_COMM_WORLD);
-      PMPI_Send (memcpy_bytes_1, nprofiles, MPI_LONG, 0, myrank, MPI_COMM_WORLD);
-      PMPI_Send (memcpy_bytes_2, nprofiles, MPI_LONG, 0, myrank, MPI_COMM_WORLD);
-      PMPI_Send (overhead_nsec, nprofiles, MPI_LONG_LONG, 0, myrank, MPI_COMM_WORLD);
-      free(gids);
-      free(cbids);
-      free(n_calls);
-      free(t_ms);
-      free(memcpy_bytes_1);
-      free(memcpy_bytes_2);
-      free(overhead_nsec);
+      PMPI_Send (sendbuf, nprofiles, cudaprofile_transfer_mpi_t, 0, myrank, MPI_COMM_WORLD);
+      free(sendbuf);
    } else {
       int maxprofiles = 0;
       for (int irank = 1; irank < nranks; irank++) {
          maxprofiles = nremote_profiles[irank] > maxprofiles ? nremote_profiles[irank] : maxprofiles;
       }
 
+      cudaprofile_transfer_t *recvbuf = (cudaprofile_transfer_t*)malloc(maxprofiles * sizeof(cudaprofile_transfer_t));
+      memset (recvbuf, 0, maxprofiles * sizeof(cudaprofile_transfer_t));
+
       for (int irank = 1; irank < nranks; irank++) {
          int nprofiles = nremote_profiles[irank];
-         int *gids = (int*)malloc(nprofiles * sizeof(int));
-         int *cbids = (int*) malloc(nprofiles * sizeof(int));
-         int *n_calls = (int*)malloc(nprofiles * sizeof(int));
-         float *t_ms = (float*)malloc(nprofiles * sizeof(float));
-         size_t *memcpy_bytes_1 = (size_t*)malloc(nprofiles * sizeof(size_t));
-         size_t *memcpy_bytes_2 = (size_t*)malloc(nprofiles * sizeof(size_t));
-         long long *overhead_nsec = (long long*)malloc(nprofiles * sizeof(long long));
-
          MPI_Status status;
-         PMPI_Recv (gids, nprofiles, MPI_INT, irank, irank, MPI_COMM_WORLD, &status);
-         PMPI_Recv (cbids, nprofiles, MPI_INT, irank, irank, MPI_COMM_WORLD, &status);
-         PMPI_Recv (n_calls, nprofiles, MPI_INT, irank, irank, MPI_COMM_WORLD, &status);
-         PMPI_Recv (t_ms, nprofiles, MPI_FLOAT, irank, irank, MPI_COMM_WORLD, &status);
-         PMPI_Recv (memcpy_bytes_1, nprofiles, MPI_LONG, irank, irank, MPI_COMM_WORLD, &status);
-         PMPI_Recv (memcpy_bytes_2, nprofiles, MPI_LONG, irank, irank, MPI_COMM_WORLD, &status);
-         PMPI_Recv (overhead_nsec, nprofiles, MPI_LONG_LONG, irank, irank, MPI_COMM_WORLD, &status);
+         PMPI_Recv (recvbuf, nprofiles, cudaprofile_transfer_mpi_t, irank, irank, MPI_COMM_WORLD, &status);
          for (int iprof = 0; iprof < nprofiles; iprof++) {
-            int gid = gids[iprof]; 
+            int gid = recvbuf[iprof].gid;
             collated_stack_t *collstack = collstacktree_ptr->stacks + gid;
             collated_cudaprofile_t *collcudaprof = &(collstack->profile.cudaprof);
 
-            collcudaprof->cbid = cbids[iprof];
-            collcudaprof->n_calls += n_calls[iprof];
-            collcudaprof->t_ms += t_ms[iprof];
-            collcudaprof->memcpy_bytes[0] += memcpy_bytes_1[iprof];
-            collcudaprof->memcpy_bytes[1] += memcpy_bytes_2[iprof];
-            collcudaprof->overhead_nsec += overhead_nsec[iprof];
+            collcudaprof->cbid = recvbuf[iprof].cbid;
+            collcudaprof->n_calls += recvbuf[iprof].n_calls;
+            collcudaprof->t_ms += recvbuf[iprof].t_ms;
+            collcudaprof->memcpy_bytes[0] += recvbuf[iprof].memcpy_bytes_in;
+            collcudaprof->memcpy_bytes[1] += recvbuf[iprof].memcpy_bytes_out;
+            collcudaprof->overhead_nsec += recvbuf[iprof].overhead_nsec; 
          }
-         free(gids);
-         free(cbids);
-         free(n_calls);
-         free(t_ms);
-         free(memcpy_bytes_1);
-         free(memcpy_bytes_2);
-         free(overhead_nsec);
       }
+      free(recvbuf);
    }
+   PMPI_Type_free(&cudaprofile_transfer_mpi_t);
 }
 #endif
 

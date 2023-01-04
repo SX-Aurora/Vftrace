@@ -18,7 +18,7 @@ collated_cudaprofile_t vftr_new_collated_cudaprofiling() {
 }
 
 //void vftr_accumulate_cudaprofiling (cudaprofile_t *prof, int cbid, int n_calls,
-//                                    float t_ms, int mem_dir, uint64_t memcpy_bytes) {
+//                                    float t_ms, int mem_dir, long long memcpy_bytes) {
 //   prof->cbid = cbid;
 //   prof->n_calls += n_calls;
 //   prof->t_ms += t_ms;
