@@ -1,9 +1,13 @@
 #!/bin/bash
 
+source ${srcdir}/../../environment/filenames.sh
+
 vftr_binary=get
 configfile=${vftr_binary}.json
 nprocs=4
 ntrials=1
+
+determine_bin_prefix $vftr_binary
 
 echo "{\"sampling\": {\"active\": true}}" > ${configfile}
 export VFTR_CONFIG=${configfile}
@@ -14,19 +18,20 @@ do
    nb=$(bc <<< "32*${RANDOM}")
    ${MPI_EXEC} ${MPI_OPTS} ${NP} ${nprocs} ./${vftr_binary} ${nb} || exit 1
 
-   ../../../tools/vftrace_vfd_dump ${vftr_binary}_0.vfd
+   vfdfile=$(get_vfdfile_name ${vftr_binary} 0)
+   ../../../tools/vftrace_vfd_dump ${vfdfile}
    for irank in $(seq 1 1 $(bc <<< "${nprocs}-1"));
    do
      # Validate receiving
      # Get actually used message size
-     count=$(../../../tools/vftrace_vfd_dump ${vftr_binary}_0.vfd | \
+     count=$(../../../tools/vftrace_vfd_dump ${vfdfile} | \
              awk '$2=="recv" && $3!="end"{getline;print;}' | \
              sed 's/=/ /g' | \
              sort -nk 9 | \
              awk '{print $2}' | \
              head -n ${irank} | tail -n 1)
      # get peer process
-     peer=$(../../../tools/vftrace_vfd_dump ${vftr_binary}_0.vfd | \
+     peer=$(../../../tools/vftrace_vfd_dump ${vfdfile} | \
             awk '$2=="recv" && $3!="end"{getline;print;}' | \
             sed 's/=/ /g' | \
             sort -nk 9 | \

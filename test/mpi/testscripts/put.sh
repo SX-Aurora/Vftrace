@@ -1,9 +1,13 @@
 #!/bin/bash
 
+source ${srcdir}/../../environment/filenames.sh
+
 vftr_binary=put
 configfile=${vftr_binary}.json
 nprocs=4
 ntrials=1
+
+determine_bin_prefix $vftr_binary
 
 echo "{\"sampling\": {\"active\": true}}" > ${configfile}
 export VFTR_CONFIG=${configfile}
@@ -19,14 +23,15 @@ do
    do
      # Validate receiving
      # Get actually used message size
-     count=$(../../../tools/vftrace_vfd_dump ${vftr_binary}_0.vfd | \
+     vfdfile=$(get_vfdfile_name ${vftr_binary} 0)
+     count=$(../../../tools/vftrace_vfd_dump ${vfdfile} | \
              awk '$2=="send" && $3!="end"{getline;print;}' | \
              sed 's/=/ /g' | \
              sort -nk 9 | \
              awk '{print $2}' | \
              head -n ${irank} | tail -n 1)
      # get peer process
-     peer=$(../../../tools/vftrace_vfd_dump ${vftr_binary}_0.vfd | \
+     peer=$(../../../tools/vftrace_vfd_dump ${vfdfile} | \
             awk '$2=="send" && $3!="end"{getline;print;}' | \
             sed 's/=/ /g' | \
             sort -nk 9 | \

@@ -1,9 +1,13 @@
 #!/bin/bash
 
+source ${srcdir}/../../environment/filenames.sh
+
 vftr_binary=neighbor_alltoallv_dist_graph
 configfile=${vftr_binary}.json
 nprocs=4
 ntrials=1
+
+determine_bin_prefix $vftr_binary
 
 echo "{\"sampling\": {\"active\": true}}" > ${configfile}
 export VFTR_CONFIG=${configfile}
@@ -35,7 +39,8 @@ do
    # patterns in the vfd file
    for irank in $(seq 0 1 $(bc <<< "${nprocs}-1"));
    do
-      ../../../tools/vftrace_vfd_dump ${vftr_binary}_${irank}.vfd
+      vfdfile=$(get_vfdfile_name ${vftr_binary} ${irank})
+      ../../../tools/vftrace_vfd_dump ${vfdfile}
 
       nspeers=$(echo "${sneighborlist[${irank}]}" | wc -w)
       totsendmsg=$(echo "${smsgnum[${irank}]}" | sed 's/ /+/g' | bc)
@@ -43,7 +48,7 @@ do
       totrecvmsg=$(echo "${rmsgnum[${irank}]}" | sed 's/ /+/g' | bc)
 
       # check if the total number of messages is the sum of individual ones
-      totmsgcount=$(../../../tools/vftrace_vfd_dump ${vftr_binary}_${irank}.vfd | \
+      totmsgcount=$(../../../tools/vftrace_vfd_dump ${vfdfile} | \
                     awk '$2=="send" && $3!="end"{getline;print;}' | \
                     wc -l)
       if [[ "${totmsgcount}" -ne "${totsendmsg}" ]] ; then
@@ -51,7 +56,7 @@ do
          echo "Found a total of ${totmsgcount} messages!"
          exit 1;
       fi
-      totmsgcount=$(../../../tools/vftrace_vfd_dump ${vftr_binary}_${irank}.vfd | \
+      totmsgcount=$(../../../tools/vftrace_vfd_dump ${vfdfile} | \
                     awk '$2=="recv" && $3!="end"{getline;print;}' | \
                     wc -l)
       if [[ "${totmsgcount}" -ne "${totrecvmsg}" ]] ; then
@@ -67,7 +72,7 @@ do
          ipeer=$(bc <<< "${jrank} + 1")
          # Validate sending
          # check if every message appears the correct amount of times
-         msgcount=$(../../../tools/vftrace_vfd_dump ${vftr_binary}_${irank}.vfd | \
+         msgcount=$(../../../tools/vftrace_vfd_dump ${vfdfile} | \
                     awk '$2=="send" && $3!="end"{getline;print;}' | \
                     grep "peer=${jrank}" | \
                     wc -l)
@@ -77,14 +82,14 @@ do
             exit 1;
          fi
          # Get actually used message size
-         count=$(../../../tools/vftrace_vfd_dump ${vftr_binary}_${irank}.vfd | \
+         count=$(../../../tools/vftrace_vfd_dump ${vfdfile} | \
                  awk '$2=="send" && $3!="end"{getline;print;}' | \
                  grep "peer=${jrank}" | \
                  sed 's/=/ /g' | \
                  awk '{print $2}' | \
                  head -n ${ipeer} | tail -n 1)
          # get peer process
-         peer=$(../../../tools/vftrace_vfd_dump ${vftr_binary}_${irank}.vfd | \
+         peer=$(../../../tools/vftrace_vfd_dump ${vfdfile} | \
                 awk '$2=="send" && $3!="end"{getline;print;}' | \
                 grep "peer=${jrank}" | \
                 sed 's/=/ /g' | \
@@ -110,7 +115,7 @@ do
          msgnum_val=$(echo "${rmsgnum[${irank}]}" | awk -v i=${peer_idx} '{print $i}')
          # validate receiving
          # check if every message appears the correct amount of times
-         msgcount=$(../../../tools/vftrace_vfd_dump ${vftr_binary}_${irank}.vfd | \
+         msgcount=$(../../../tools/vftrace_vfd_dump ${vfdfile} | \
                     awk '$2=="recv" && $3!="end"{getline;print;}' | \
                     grep "peer=${jrank}" | \
                     wc -l)
@@ -120,14 +125,14 @@ do
             exit 1;
          fi
          # Get actually used message size
-         count=$(../../../tools/vftrace_vfd_dump ${vftr_binary}_${irank}.vfd | \
+         count=$(../../../tools/vftrace_vfd_dump ${vfdfile} | \
                  awk '$2=="recv" && $3!="end"{getline;print;}' | \
                  grep "peer=${jrank}" | \
                  sed 's/=/ /g' | \
                  awk '{print $2}' | \
                  head -n ${ipeer} | tail -n 1)
          # get peer process
-         peer=$(../../../tools/vftrace_vfd_dump ${vftr_binary}_${irank}.vfd | \
+         peer=$(../../../tools/vftrace_vfd_dump ${vfdfile} | \
                 awk '$2=="recv" && $3!="end"{getline;print;}' | \
                 grep "peer=${jrank}" | \
                 sed 's/=/ /g' | \

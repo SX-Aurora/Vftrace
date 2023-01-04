@@ -1,9 +1,13 @@
 #!/bin/bash
 
+source ${srcdir}/../../environment/filenames.sh
+
 vftr_binary=reduce_scatter
 configfile=${vftr_binary}.json
 nprocs=4
 ntrials=1
+
+determine_bin_prefix $vftr_binary
 
 echo "{\"sampling\": {\"active\": true}}" > ${configfile}
 export VFTR_CONFIG=${configfile}
@@ -19,7 +23,8 @@ do
    sbufsize=$(bc <<< "${nprocs}*${nb} + ((${nprocs}-1)*${nprocs})/2")
    for irank in $(seq 0 1 $(bc <<< "${nprocs}-1"));
    do
-      ../../../tools/vftrace_vfd_dump ${vftr_binary}_${irank}.vfd
+      vfdfile=$(get_vfdfile_name ${vftr_binary} ${irank})
+      ../../../tools/vftrace_vfd_dump ${vfdfile}
 
       # The 0-th rank performs a reduction and
       # scatters the result to all other ranks
@@ -29,14 +34,14 @@ do
             ipeer=$(bc <<< ${jrank}+1)
             # Validate reduction receive
             # Get actually used message size
-            count=$(../../../tools/vftrace_vfd_dump ${vftr_binary}_${irank}.vfd | \
+            count=$(../../../tools/vftrace_vfd_dump ${vfdfile} | \
                     awk '$2=="recv" && $3!="end"{getline;print;}' | \
                     sed 's/=/ /g' | \
                     sort -nk 9 | sort -rsnk 2 | \
                     awk '{print $2}' | \
                     head -n ${ipeer} | tail -n 1)
             # get peer process
-            peer=$(../../../tools/vftrace_vfd_dump ${vftr_binary}_${irank}.vfd | \
+            peer=$(../../../tools/vftrace_vfd_dump ${vfdfile} | \
                    awk '$2=="recv" && $3!="end"{getline;print;}' | \
                    sed 's/=/ /g' | \
                    sort -nk 9 | sort -rsnk 2 | \
@@ -59,13 +64,13 @@ do
 
             # validate scatter send
             tmpsize=$(bc <<< "${nb} + ${jrank}")
-            count=$(../../../tools/vftrace_vfd_dump ${vftr_binary}_${irank}.vfd | \
+            count=$(../../../tools/vftrace_vfd_dump ${vfdfile} | \
                     awk '$2=="send" && $3!="end"{getline;print;}' | \
                     sed 's/=/ /g' | \
                     sort -nk 9 | sort -snk 2 | \
                     awk '{print $2}' | \
                     head -n ${ipeer} | tail -n 1)
-            peer=$(../../../tools/vftrace_vfd_dump ${vftr_binary}_${irank}.vfd | \
+            peer=$(../../../tools/vftrace_vfd_dump ${vfdfile} | \
                    awk '$2=="send" && $3!="end"{getline;print;}' | \
                    sed 's/=/ /g' | \
                    sort -nk 9 | sort -snk 2 | \
@@ -91,13 +96,13 @@ do
       jrank=0
       ipeer=1
       # Validate send to root rank for reduction
-      count=$(../../../tools/vftrace_vfd_dump ${vftr_binary}_${irank}.vfd | \
+      count=$(../../../tools/vftrace_vfd_dump ${vfdfile} | \
               awk '$2=="send" && $3!="end"{getline;print;}' | \
               sed 's/=/ /g' | \
               sort -nk 9 | sort -srnk 2 | \
               awk '{print $2}' | \
               head -n ${ipeer} | tail -n 1)
-      peer=$(../../../tools/vftrace_vfd_dump ${vftr_binary}_${irank}.vfd | \
+      peer=$(../../../tools/vftrace_vfd_dump ${vfdfile} | \
              awk '$2=="send" && $3!="end"{getline;print;}' | \
              sed 's/=/ /g' | \
              sort -nk 9 | sort -srnk 2 | \
@@ -120,13 +125,13 @@ do
 
       # validate receive from root rank as scatter
       tmpsize=$(bc <<< "${nb} + ${irank}")
-      count=$(../../../tools/vftrace_vfd_dump ${vftr_binary}_${irank}.vfd | \
+      count=$(../../../tools/vftrace_vfd_dump ${vfdfile} | \
               awk '$2=="recv" && $3!="end"{getline;print;}' | \
               sed 's/=/ /g' | \
               sort -nk 9 | sort -snk 2 | \
               awk '{print $2}' | \
               head -n ${ipeer} | tail -n 1)
-      peer=$(../../../tools/vftrace_vfd_dump ${vftr_binary}_${irank}.vfd | \
+      peer=$(../../../tools/vftrace_vfd_dump ${vfdfile} | \
              awk '$2=="recv" && $3!="end"{getline;print;}' | \
              sed 's/=/ /g' | \
              sort -nk 9 | sort -snk 2 | \
