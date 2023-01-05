@@ -113,13 +113,13 @@ int main (int argc, char **argv) {
    config_t config;
    config = vftr_read_config();
 
-   vftr_init_dummy_stacktree (10);
-
    int n_counters = 2;
    vftrace.papi_state.n_counters = n_counters;
    vftrace.papi_state.counters = (vftr_counter_t*)malloc (n_counters * sizeof(vftr_counter_t));
    vftrace.papi_state.counters[0].name = "dummy1";
    vftrace.papi_state.counters[1].name = "dummy2";
+
+   vftr_init_dummy_stacktree (10);
     
    if (myrank == 0) {
       vftr_register_dummy_call_stack ("func0<init", 1);
