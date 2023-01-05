@@ -77,18 +77,18 @@ void vftr_write_papi_table (FILE *fp, collated_stacktree_t stacktree, config_t c
 }
 
 void vftr_write_papi_counter_logfile_summary (FILE *fp, collated_stacktree_t stacktree, config_t config) {
-   int n_events = PAPI_num_events (vftrace.papi_state.eventset);
-   if (n_events == 0) {
+   int n_counters = vftrace.papi_state.n_counters;
+   if (n_counters == 0) {
       fprintf (fp, "\nNo hardware counters registered.\n");
       return;
    }
-   long long *counter_sum = (long long*)malloc(n_events * sizeof(long long));
-   memset (counter_sum, 0, n_events * sizeof(long long));
+   long long *counter_sum = (long long*)malloc(n_counters * sizeof(long long));
+   memset (counter_sum, 0, n_counters * sizeof(long long));
    for (int istack = 0; istack < stacktree.nstacks; istack++) {
       collated_stack_t this_stack = stacktree.stacks[istack]; 
       papiprofile_t papiprof = this_stack.profile.papiprof;
 
-      for (int e = 0; e < n_events; e++) {
+      for (int e = 0; e < n_counters; e++) {
          counter_sum[e] += papiprof.counters_excl[e]; 
       }
    }

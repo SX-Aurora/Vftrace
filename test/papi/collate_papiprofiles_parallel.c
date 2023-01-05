@@ -93,9 +93,23 @@ void vftr_register_dummy_papi_stack (char *stackstring, long long *counters) {
    vftr_accumulate_papiprofiling(&(profile->papiprof), counters, false);
 }
 
+void vftr_update_dummy_observables () {
+   int nstacks = dummy_stacktree.nstacks;
+   vftr_stack_t *stacks = dummy_stacktree.stacks; 
+   for (int istack = 1; istack < nstacks; istack++) {
+      vftr_stack_t *this_stack = stacks + istack;
+      for (int iprof = 0; iprof < this_stack->profiling.nprofiles; iprof++) {
+         profile_t *this_prof = this_stack->profiling.profiles + iprof;
+         papiprofile_t *papiprof = &(this_prof->papiprof);
+         papiprof->observables[0] = (double)(papiprof->counters_excl[0] + papiprof->counters_excl[1])/2;
+      }
+   }
+}
+
 stacktree_t vftr_get_dummy_stacktree () {
    vftr_update_stacks_exclusive_time(&dummy_stacktree);
    vftr_update_stacks_exclusive_counters (&dummy_stacktree);
+   vftr_update_dummy_observables();
    return dummy_stacktree;
 }
 
@@ -110,14 +124,13 @@ int main (int argc, char **argv) {
    }
    PMPI_Comm_rank (MPI_COMM_WORLD, &myrank);
 
-   config_t config;
-   config = vftr_read_config();
-
    int n_counters = 2;
+   int n_observables = 1;
    vftrace.papi_state.n_counters = n_counters;
    vftrace.papi_state.counters = (vftr_counter_t*)malloc (n_counters * sizeof(vftr_counter_t));
    vftrace.papi_state.counters[0].name = "dummy1";
    vftrace.papi_state.counters[1].name = "dummy2";
+   vftrace.config.papi.observables.obs_name.n_elements = n_observables;
 
    vftr_init_dummy_stacktree (10);
     
@@ -143,16 +156,21 @@ int main (int argc, char **argv) {
       long long c3[] = {1000, 0};
       vftr_register_dummy_papi_stack ("papifunc3<func0<init", c3);
    }
+ 
 
    stacktree_t stacktree = vftr_get_dummy_stacktree();
    collated_stacktree_t collated_stacktree = vftr_collate_stacks(&stacktree);
    vftr_collate_profiles (&collated_stacktree, &stacktree);
+
+   config_t config;
+   config = vftr_read_config();
 
    for (int i = 0; i < nranks; i++) {
       if (myrank == i) {
         fprintf (stdout, "Ranklogfile for rank %d: \n", i);
         vftr_write_ranklogfile_papi_counter_table(stdout, stacktree, config);
       }
+      fflush(stdout);
       PMPI_Barrier(MPI_COMM_WORLD);
    }
    if (myrank == 0) {

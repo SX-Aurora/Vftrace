@@ -28,7 +28,7 @@ Runtime PAPI profile - Hardware Counters
 | #Calls |   Func    | dummy1 | dummy2 |
 +--------+-----------+--------+--------+
 |      8 | papifunc2 |   5500 |   6500 |
-|      1 | papifunc3 |   1000 |      0 |
 |      4 | papifunc1 |      0 |   3000 |
+|      1 | papifunc3 |   1000 |      0 |
 |      2 |     func0 |  -6500 |  -6500 |
 +--------+-----------+--------+--------+
