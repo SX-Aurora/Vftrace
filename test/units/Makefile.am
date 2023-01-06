@@ -42,6 +42,10 @@ if ENABLE_ACCPROF
   AM_CFLAGS += -D_ACCPROF -I$(top_srcdir)/src/accprof
 endif
 
+if ENABLE_PAPI
+  AM_CFLAGS += -D_PAPI_AVAIL -I$(top_srcdir)/src/papi -I$(top_srcdir)/external/tinyexpr
+endif
+
 if ENABLE_OMP
   AM_CFLAGS += -D_OMP
 endif

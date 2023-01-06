@@ -54,6 +54,10 @@ if ENABLE_CUDAPROF
 libvftr_mpi_utils_la_CFLAGS += -D_CUDA
 endif
 
+if ENABLE_PAPI
+libvftr_mpi_utils_la_CFLAGS += -D_PAPI_AVAIL -I${srcdir}/../../papi -I${srcdir}/../../../external/tinyexpr
+endif
+
 if SELF_PROFILING
 libvftr_mpi_utils_la_CPPFLAGS += -D_SELF_PROFILE_VFTRACE
 endif
