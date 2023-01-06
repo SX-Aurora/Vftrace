@@ -35,15 +35,24 @@ void vftr_papi_init (config_t config) {
       if (stat != PAPI_OK) {
             //int component_type = vftrace.papi_state.counters[i].component_type;
             fprintf (stderr, "Vftrace error in %s: \n", config.config_file_path);
-            fprintf (stderr, "  No event code exists for the %s PAPI counter %s.\n",
-                     is_native ? "native" : "preset", 
-                     vftrace.papi_state.counters[i].name);
-            fprintf (stderr, "  Check \"%s\" if this counter exists on the platform"
-                             "you are running the application on.\n",
-                     is_native ? "papi_native_avail" : "papi_avail");
+            fprintf (stderr, "No event code exists for %s\n", vftrace.papi_state.counters[i].name);
+            //fprintf (stderr, "  No event code exists for the %s PAPI counter %s.\n",
+            //         is_native ? "native" : "preset", 
+            //         vftrace.papi_state.counters[i].name);
+            //fprintf (stderr, "  Check \"%s\" if this counter exists on the platform"
+            //                 "you are running the application on.\n",
+            //         is_native ? "papi_native_avail" : "papi_avail");
             vftr_abort(0);
       } else {
-         PAPI_add_event(vftrace.papi_state.eventset, event_code);
+         stat = PAPI_add_event(vftrace.papi_state.eventset, event_code);
+         if (stat == PAPI_ECNFLCT) {
+            printf ("No resources for event %s\n", vftrace.papi_state.counters[i].name);
+            vftr_abort(0);
+         } else if (stat != PAPI_OK) {
+            printf ("Could not add event %s with error code %d\n",
+                     vftrace.papi_state.counters[i].name, stat);
+            vftr_abort(0);
+         }
       }
    }
 
