@@ -12,7 +12,6 @@
 void vftr_pre_hook_function_entry(void *func, void *call_site) {
    uintptr_t func_addr = (uintptr_t) func;
    char *func_name = vftr_get_name_from_address(vftrace.symboltable, func_addr);
-   printf ("pre hook: %s\n", func_name);
    if (func_name != NULL) {
       // Make the function name comparison case insensitive
       // to capture fortran case insensitive MAIN symbols
