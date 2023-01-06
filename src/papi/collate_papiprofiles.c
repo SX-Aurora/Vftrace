@@ -1,6 +1,8 @@
 #include <string.h>
 
+#ifdef _MPI
 #include "status_utils.h"
+#endif
 
 #include "vftrace_state.h"
 #include "collated_stack_types.h"
