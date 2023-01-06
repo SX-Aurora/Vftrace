@@ -1,5 +1,7 @@
 #include <stdio.h>
 
+#include "vftrace_state.h"
+
 #include "papi_calculator.h"
 
 int main (int argc, char *argv[]) {
@@ -14,7 +16,8 @@ int main (int argc, char *argv[]) {
    char *formulas[] = {"a + b", "a - b"};
 
    
-   papi_calculator_t calc = vftr_init_papi_calculator (n_variables, n_observables, symbols, formulas);
+   vftrace.papi_state.n_counters = n_variables;
+   papi_calculator_t calc = vftr_init_papi_calculator (n_observables, symbols, formulas);
 
    long long values1[2] = {1, 1};
    double sum, diff;
