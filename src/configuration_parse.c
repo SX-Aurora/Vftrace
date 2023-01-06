@@ -282,8 +282,7 @@ void vftr_parse_config_accprof(cJSON *parent_object, config_accprof_t *cfg_accpr
 void vftr_parse_config_hwcounters (cJSON *parent_object, config_hwcounters_t *cfg_hwc) {
    bool has_object = cJSON_HasObjectItem(parent_object, cfg_hwc->name);
    if (!has_object) return;
-   vftr_parse_config_string_list (parent_object, cfg_hwc->name, &(cfg_hwc->native_name));
-   vftr_parse_config_string_list (parent_object, cfg_hwc->name, &(cfg_hwc->preset_name));
+   vftr_parse_config_string_list (parent_object, cfg_hwc->name, &(cfg_hwc->hwc_name));
    vftr_parse_config_string_list (parent_object, cfg_hwc->name, &(cfg_hwc->symbol));
 }
 

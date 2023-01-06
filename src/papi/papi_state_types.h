@@ -9,7 +9,7 @@
 
 typedef struct {
    char *name;
-   bool is_native;
+   //int component_type;
 } vftr_counter_t;
 
 typedef struct {

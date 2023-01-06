@@ -18,8 +18,7 @@ typedef struct {
    te_expr **expr; 
 } papi_calculator_t;
 
-papi_calculator_t vftr_init_papi_calculator (int n_variables, int n_observables,
-                                             char **symbols, char **formulas);
+papi_calculator_t vftr_init_papi_calculator (int n_observables, char **symbols, char **formulas);
 
 void vftr_set_papi_calculator_counters (papi_calculator_t *calc, long long *values);
 void vftr_set_papi_calculator_builtin (papi_calculator_t *calc, int idx, double value);

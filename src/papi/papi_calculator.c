@@ -2,24 +2,24 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "vftrace_state.h"
 #include "signal_handling.h"
 
 #include "papi_calculator.h"
 
-papi_calculator_t vftr_init_papi_calculator (int n_variables, int n_observables,
-                                             char **symbols, char **formulas) {
+papi_calculator_t vftr_init_papi_calculator (int n_observables, char **symbols, char **formulas) {
    papi_calculator_t calc;
 
-   calc.n_variables = n_variables;
-   calc.n_te_vars = n_variables + CALC_N_BUILTIN;
+   calc.n_variables = vftrace.papi_state.n_counters;
+   calc.n_te_vars = calc.n_variables + CALC_N_BUILTIN;
    calc.n_observables = n_observables;
-   calc.values = (double*)malloc(n_variables * sizeof(double));
+   calc.values = (double*)malloc(calc.n_variables * sizeof(double));
    calc.builtin_values = (double*)malloc(CALC_N_BUILTIN * sizeof(double));
    calc.te_vars = (te_variable*)malloc(calc.n_te_vars * sizeof(te_variable));
    calc.expr = (te_expr**)malloc(n_observables * sizeof(te_expr*));
 
    memset (calc.builtin_values, 0, CALC_N_BUILTIN * sizeof(double));
-   memset (calc.values, 0, n_variables * sizeof(double));
+   memset (calc.values, 0, calc.n_variables * sizeof(double));
 
    for (int i = 0; i < calc.n_te_vars; i++) {
       if (i < CALC_N_BUILTIN) {

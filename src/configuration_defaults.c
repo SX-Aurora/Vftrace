@@ -158,8 +158,7 @@ config_hwcounters_t vftr_set_config_hwcounters_default() {
    config_hwcounters_t cfg_hwc;
    cfg_hwc.name = strdup("counters");
    cfg_hwc.set = false;
-   cfg_hwc.native_name = vftr_set_config_string_list_default("native");
-   cfg_hwc.preset_name = vftr_set_config_string_list_default("preset");
+   cfg_hwc.hwc_name= vftr_set_config_string_list_default("hwc_name");
    cfg_hwc.symbol = vftr_set_config_string_list_default("symbol");
    return cfg_hwc;
 }

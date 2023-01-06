@@ -159,10 +159,9 @@ void vftr_print_config_accprof (FILE *fp, int level, config_accprof_t cfg_accpro
 }
 
 void vftr_print_config_hwcounters (FILE *fp, int level, config_hwcounters_t cfg_hwc) {
-   int n_max = cfg_hwc.native_name.n_elements + cfg_hwc.preset_name.n_elements;
+   int n_max = cfg_hwc.hwc_name.n_elements;
    n_max = cfg_hwc.symbol.n_elements > n_max ? cfg_hwc.symbol.n_elements : n_max;
-   int i_native = 0;
-   int i_preset = 0;
+   int i_name = 0;
    int i_symbol = 0;
    level++;
    vftr_print_config_indent(fp, level);
@@ -172,17 +171,11 @@ void vftr_print_config_hwcounters (FILE *fp, int level, config_hwcounters_t cfg_
    for (int i = 0; i < n_max; i++) {
       vftr_print_config_indent(fp, level);
       fprintf (fp, "{\n");
-      if (cfg_hwc.native_name.list_idx[i_native] == i) {
+      if (cfg_hwc.hwc_name.list_idx[i_name] == i) {
          vftr_print_config_indent(fp, level);
-         fprintf (fp, "\"%s\": \"%s\",\n", cfg_hwc.native_name.name,
-                                           cfg_hwc.native_name.values[i_native]);
-         i_native++;
-      }
-      if (cfg_hwc.preset_name.list_idx[i_preset] == i) {
-         vftr_print_config_indent(fp, level);
-         fprintf (fp, "\"%s\": \"%s\",\n", cfg_hwc.preset_name.name,
-                                           cfg_hwc.preset_name.values[i_preset]);
-         i_preset++;
+         fprintf (fp, "\"%s\": \"%s\",\n", cfg_hwc.hwc_name.name,
+                                           cfg_hwc.hwc_name.values[i_name]);
+         i_name++;
       }
       if (cfg_hwc.symbol.list_idx[i_symbol] == i) {
          vftr_print_config_indent(fp, level);

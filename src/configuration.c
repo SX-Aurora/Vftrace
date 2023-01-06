@@ -145,8 +145,7 @@ void vftr_config_accprof_free(config_accprof_t *cfg_accprof_ptr) {
 void  vftr_config_hwcounters_free (config_hwcounters_t *cfg_hwc_ptr) {
    free(cfg_hwc_ptr->name);
    cfg_hwc_ptr->name = NULL;
-   vftr_config_string_free(&(cfg_hwc_ptr->native_name));
-   vftr_config_string_free(&(cfg_hwc_ptr->preset_name));
+   vftr_config_string_free(&(cfg_hwc_ptr->hwc_name));
    vftr_config_string_free(&(cfg_hwc_ptr->symbol));
 }
 

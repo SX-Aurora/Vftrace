@@ -274,9 +274,7 @@ unsigned long long vftr_sizeof_config_hwcounters_t (config_hwcounters_t cfg_hwc)
   unsigned long long size = sizeof(config_hwcounters_t);
   size += vftr_sizeof_config_struct_defaults (cfg_hwc.name);
   size -= sizeof(config_string_list_t);
-  size += vftr_sizeof_config_string_list_t (cfg_hwc.native_name);
-  size -= sizeof(config_string_list_t);
-  size += vftr_sizeof_config_string_list_t (cfg_hwc.preset_name);
+  size += vftr_sizeof_config_string_list_t (cfg_hwc.hwc_name);
   size -= sizeof(config_string_list_t);
   size += vftr_sizeof_config_string_list_t (cfg_hwc.symbol);
 }

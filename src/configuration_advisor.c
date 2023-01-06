@@ -144,8 +144,7 @@ void vftr_config_advisor_papi (cJSON *json_obj) {
   vftr_config_advisor_check_options(noptions, options, json_obj->child);
 
   char *options_counter[] = {
-     "native",
-     "preset",
+     "hwc_name",
      "symbol"
   };
   int noptions_counter = sizeof(options_counter) / sizeof(char*);
