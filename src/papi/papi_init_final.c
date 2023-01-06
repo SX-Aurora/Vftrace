@@ -8,6 +8,15 @@
 
 #include "papi_calculator.h"
 
+void vftr_show_papi_components (FILE *fp) {
+   int num_components = PAPI_num_components();
+   fprintf (fp, "Available components: %d\n", num_components);
+   for (int i = 0; i < num_components; i++) {
+      const PAPI_component_info_t *cmpinfo = PAPI_get_component_info(i);
+      fprintf (fp, "  component: %s\n", cmpinfo->name);
+   }
+}
+
 void vftr_papi_init (config_t config) {
    vftrace.papi_state.n_counters = config.papi.counters.hwc_name.n_elements;
    vftrace.papi_state.counters = (vftr_counter_t*)malloc(vftrace.papi_state.n_counters * sizeof(vftr_counter_t));
@@ -20,12 +29,6 @@ void vftr_papi_init (config_t config) {
 
    if (PAPI_library_init(PAPI_VER_CURRENT) != PAPI_VER_CURRENT) return;
 
-   int num_components = PAPI_num_components();
-   //printf ("Nr. of components: %d\n", num_components);
-   //for (int i = 0; i < num_components; i++) {
-   //   const PAPI_component_info_t *cmpinfo = PAPI_get_component_info(i);
-   //   printf ("component: %s\n", cmpinfo->name);
-   //}
    
    if (PAPI_create_eventset(&vftrace.papi_state.eventset) != PAPI_OK) return;
 
@@ -33,15 +36,10 @@ void vftr_papi_init (config_t config) {
       int event_code = PAPI_NATIVE_MASK;
       int stat = PAPI_event_name_to_code ((char*)vftrace.papi_state.counters[i].name, &event_code);
       if (stat != PAPI_OK) {
-            //int component_type = vftrace.papi_state.counters[i].component_type;
             fprintf (stderr, "Vftrace error in %s: \n", config.config_file_path);
             fprintf (stderr, "No event code exists for %s\n", vftrace.papi_state.counters[i].name);
-            //fprintf (stderr, "  No event code exists for the %s PAPI counter %s.\n",
-            //         is_native ? "native" : "preset", 
-            //         vftrace.papi_state.counters[i].name);
-            //fprintf (stderr, "  Check \"%s\" if this counter exists on the platform"
-            //                 "you are running the application on.\n",
-            //         is_native ? "papi_native_avail" : "papi_avail");
+            fprintf (stderr, "Maybe the PAPI component in which it is located is not installed.\n");
+            vftr_show_papi_components (stderr);
             vftr_abort(0);
       } else {
          stat = PAPI_add_event(vftrace.papi_state.eventset, event_code);
@@ -56,9 +54,6 @@ void vftr_papi_init (config_t config) {
       }
    }
 
-   //int n_variables = config.papi.counters.native_name.n_elements
-   //                + config.papi.counters.preset_name.n_elements
-   //                + config.papi.counters.appio_name.n_elements;
    char **symbols = (char**)malloc(vftrace.papi_state.n_counters * sizeof(char*));
    for (int i = 0; i < vftrace.papi_state.n_counters; i++) {
       symbols[i] = config.papi.counters.symbol.values[i];
