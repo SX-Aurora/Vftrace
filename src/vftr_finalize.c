@@ -22,6 +22,10 @@
 #include "accprof_init_final.h"
 #endif
 
+#ifdef _PAPI_AVAIL
+#include "papi_init_final.h"
+#endif
+
 void vftr_finalize() {
    if (vftrace.state == off || vftrace.state == uninitialized) {
       // was already finalized
