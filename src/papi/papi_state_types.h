@@ -9,7 +9,6 @@
 
 typedef struct {
    char *name;
-   //int component_type;
 } vftr_counter_t;
 
 typedef struct {
