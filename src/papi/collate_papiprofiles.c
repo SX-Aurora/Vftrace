@@ -35,19 +35,19 @@ static void vftr_collate_papiprofiles_on_root (collated_stacktree_t *collstacktr
 					       int myrank, int nranks, int *nremote_profiles) {
 
    typedef struct {
-      int gid;
       long long counter_incl;
       long long counter_excl;
       double observable;
+      int gid;
    } papiprofile_transfer_t;
 
    int num_counters = vftrace.papi_state.n_counters;
    int n_observables = vftrace.config.papi.observables.obs_name.n_elements;
 
    int nblocks = 3;
-   const int blocklengths[] = {1, 2, 1};
-   const MPI_Aint displacements[] = {0, sizeof(int), sizeof(int) + 2 * sizeof(long long)};
-   const MPI_Datatype types[] = {MPI_INT, MPI_LONG_LONG_INT, MPI_DOUBLE};
+   const int blocklengths[] = {2, 1, 1};
+   const MPI_Aint displacements[] = {0, 2 * sizeof(long long), sizeof(double) + 2 * sizeof(long long)};
+   const MPI_Datatype types[] = {MPI_LONG_LONG_INT, MPI_DOUBLE, MPI_INT};
    MPI_Datatype papiprofile_transfer_mpi_t;
    PMPI_Type_create_struct (nblocks, blocklengths, displacements, types,
                             &papiprofile_transfer_mpi_t);

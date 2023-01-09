@@ -16,7 +16,7 @@ void vftr_write_papi_table (FILE *fp, collated_stacktree_t stacktree, config_t c
    collated_stack_t **sorted_stacks =
       vftr_sort_collated_stacks_papi_obs(config, stacktree);
 
-   fprintf (fp, "\nRuntime PAPI profile\n");
+   fprintf (fp, "\nRuntime PAPI profile - Observables\n");
 
    int n_observables = vftrace.papi_state.calculator.n_observables;
 
@@ -25,6 +25,7 @@ void vftr_write_papi_table (FILE *fp, collated_stacktree_t stacktree, config_t c
       collated_stack_t *this_stack = sorted_stacks[istack];
       if (!vftr_collstack_is_init(*this_stack)) n_without_init++;
    }
+
    int *calls = (int*)malloc(n_without_init * sizeof(int));
    char **func = (char**)malloc(n_without_init * sizeof(char*));
    double **observables = (double**)malloc(n_observables * sizeof(double*));

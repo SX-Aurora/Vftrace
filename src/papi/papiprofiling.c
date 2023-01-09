@@ -82,7 +82,7 @@ void vftr_update_stacks_papi_observables (stacktree_t *stacktree_ptr) {
          callprofile_t callprof = this_prof->callprof;
          papiprofile_t *papiprof = &(this_prof->papiprof);
          vftr_set_papi_calculator_counters (calc, papiprof->counters_excl);
-         vftr_set_papi_calculator_builtin (calc, PCALC_T, callprof.time_excl_nsec * 1e-9);
+         vftr_set_papi_calculator_builtin (calc, PCALC_T, (double)callprof.time_excl_nsec * 1e-9);
          vftr_set_papi_calculator_builtin (calc, PCALC_CALLS, callprof.calls);
          for (int i = 0; i < calc->n_observables; i++) {
             papiprof->observables[i] = vftr_papi_calculator_evaluate (*calc, i);
