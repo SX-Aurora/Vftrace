@@ -144,9 +144,6 @@ int main (int argc, char **argv) {
    collated_stacktree_t collated_stacktree = vftr_collate_stacks(&stacktree);
    vftr_collate_profiles (&collated_stacktree, &stacktree);
 
-   config_t config;
-   config = vftr_read_config();
-
    for (int i = 0; i < nranks; i++) {
       if (myrank == i) {
         fprintf (stdout, "Ranklogfile for rank %d: \n", i);

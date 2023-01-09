@@ -131,6 +131,12 @@ int main (int argc, char **argv) {
    vftrace.papi_state.counters[0].name = "dummy1";
    vftrace.papi_state.counters[1].name = "dummy2";
    vftrace.config.papi.observables.obs_name.n_elements = n_observables;
+   vftrace.papi_state.calculator.n_observables = n_observables;
+   vftrace.config.papi.observables.obs_name.values = (char**)malloc(n_observables * sizeof(char*));
+   vftrace.config.papi.observables.unit.values = (char**)malloc(n_observables * sizeof(char*));
+   vftrace.config.papi.observables.obs_name.values[0] = "dummy_obs";
+   vftrace.config.papi.observables.unit.values[0] = "dummy_unit";
+
 
    vftr_init_dummy_stacktree (10);
     
@@ -162,20 +168,17 @@ int main (int argc, char **argv) {
    collated_stacktree_t collated_stacktree = vftr_collate_stacks(&stacktree);
    vftr_collate_profiles (&collated_stacktree, &stacktree);
 
-   config_t config;
-   config = vftr_read_config();
-
    for (int i = 0; i < nranks; i++) {
       if (myrank == i) {
         fprintf (stdout, "Ranklogfile for rank %d: \n", i);
-        vftr_write_ranklogfile_papi_counter_table(stdout, stacktree, config);
+        vftr_write_ranklogfile_papi_counter_table(stdout, stacktree, vftrace.config);
       }
       fflush(stdout);
       PMPI_Barrier(MPI_COMM_WORLD);
    }
    if (myrank == 0) {
      fprintf (stdout, "Collated logfile: \n");
-     vftr_write_logfile_papi_counter_table (stdout, collated_stacktree, config);
+     vftr_write_logfile_papi_counter_table (stdout, collated_stacktree, vftrace.config);
    }
 
    PMPI_Finalize();

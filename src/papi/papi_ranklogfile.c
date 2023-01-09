@@ -121,7 +121,7 @@ void vftr_write_papi_counter_ranklogfile_summary (FILE *fp, stacktree_t stacktre
 
 void vftr_write_ranklogfile_papi_counter_table (FILE *fp, stacktree_t stacktree, config_t config) {
    
-   vftr_stack_t **sorted_stacks = vftr_sort_stacks_for_prof (config, stacktree);
+   vftr_stack_t **sorted_stacks = vftr_sort_stacks_papi_obs (config, stacktree);
 
    fprintf (fp, "\nRuntime PAPI profile - Hardware Counters\n\n");
 
