@@ -62,7 +62,7 @@ cat << EOF > ${configfile}
       "show_conuters": false,
       "counters": [
           { 
-          "natvie": "X",
+          "hcw_name": "X",
           "symbol": "Y"
           }
       ],

@@ -44,7 +44,7 @@ Warning: "asceding" is not a valid vftrace option.
          Did you mean "ascending"?
 Warning: "show_conuters" is not a valid vftrace option.
          Did you mean "show_counters"?
-Warning: "natvie" is not a valid vftrace option.
-         Did you mean "native"?
+Warning: "hcw_name" is not a valid vftrace option.
+         Did you mean "hwc_name"?
 Warning: "naem" is not a valid vftrace option.
          Did you mean "name"?
