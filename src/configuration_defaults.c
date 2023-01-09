@@ -178,8 +178,9 @@ config_papi_t vftr_set_config_papi_default() {
    cfg_papi.name = strdup("papi");
    cfg_papi.set = false;
    cfg_papi.disable = vftr_set_config_bool_default ("disable", false);
-   cfg_papi.show_tables = vftr_set_config_bool_default ("show_tables", true);
+   cfg_papi.show_observables = vftr_set_config_bool_default ("show_observables", true);
    cfg_papi.show_counters = vftr_set_config_bool_default ("show_counters", false);
+   cfg_papi.show_summary = vftr_set_config_bool_default ("show_summary", false);
    cfg_papi.sort_by_column = vftr_set_config_int_default ("sort_by_column", 0);
    cfg_papi.counters = vftr_set_config_hwcounters_default();
    cfg_papi.observables = vftr_set_config_hwobservables_default();

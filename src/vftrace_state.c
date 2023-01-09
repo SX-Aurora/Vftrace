@@ -297,10 +297,12 @@ unsigned long long vftr_sizeof_config_papi_t (config_papi_t cfg_papi) {
    size -= sizeof(config_bool_t); 
    size += vftr_sizeof_config_bool_t(cfg_papi.disable);
    size -= sizeof(config_bool_t); 
-   size += vftr_sizeof_config_bool_t(cfg_papi.show_tables);
+   size += vftr_sizeof_config_bool_t(cfg_papi.show_observables);
    size -= sizeof(config_bool_t); 
    size += vftr_sizeof_config_bool_t(cfg_papi.show_counters);
    size -= sizeof(config_int_t);
+   size += vftr_sizeof_config_bool_t(cfg_papi.show_summary);
+   size -= sizeof(config_bool_t); 
    size += vftr_sizeof_config_int_t(cfg_papi.sort_by_column);
    size -= sizeof(config_hwcounters_t);
    size += vftr_sizeof_config_hwcounters_t (cfg_papi.counters);

@@ -238,9 +238,11 @@ void vftr_print_config_papi (FILE *fp, int level, config_papi_t cfg_papi) {
    fprintf (fp, "\"%s\": {\n", cfg_papi.name);
    vftr_print_config_bool (fp, level, cfg_papi.disable);
    fprintf (fp, ",\n");
-   vftr_print_config_bool (fp, level, cfg_papi.show_tables);
+   vftr_print_config_bool (fp, level, cfg_papi.show_observables);
    fprintf (fp, ",\n");
    vftr_print_config_bool (fp, level, cfg_papi.show_counters);
+   fprintf (fp, ",\n");
+   vftr_print_config_bool (fp, level, cfg_papi.show_summary);
    fprintf (fp, ",\n");
    vftr_print_config_int (fp, level, cfg_papi.sort_by_column);
    fprintf (fp, ",\n");

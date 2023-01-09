@@ -69,6 +69,31 @@ void vftr_write_ranklogfile_papi_obs_table (FILE *fp, stacktree_t stacktree, con
    free (observables);
 }
 
+void vftr_write_papi_observables_ranklogfile_summary (FILE *fp, stacktree_t stacktree, config_t config) {
+   int n_observables = vftrace.papi_state.calculator.n_observables;
+   if (n_observables == 0) {
+      fprintf (fp, "\nNo observables registered\n");
+      return;
+   }
+
+   double *obs_sum = (double*)malloc(n_observables * sizeof(double));
+   memset (obs_sum, 0, n_observables * sizeof(double));
+   for (int istack = 0; istack < stacktree.nstacks; istack++) {
+      vftr_stack_t this_stack = stacktree.stacks[istack];
+      papiprofile_t papiprof = this_stack.profiling.profiles[0].papiprof;
+     
+      for (int i = 0; i < n_observables; i++) {
+         obs_sum[i] += papiprof.observables[i];
+      } 
+   } 
+
+   fprintf (fp, "PAPI observables summary: \n\n");
+   for (int i = 0; i < n_observables; i++) {
+      fprintf (fp, "  %s: %lf %s\n", config.papi.observables.obs_name.values[i],
+                                     obs_sum[i], config.papi.observables.unit.values[i]);
+   }
+   free(obs_sum);
+}
 
 void vftr_write_papi_counter_ranklogfile_summary (FILE *fp, stacktree_t stacktree, config_t config) {
    int n_counters = vftrace.papi_state.n_counters;

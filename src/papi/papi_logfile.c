@@ -77,6 +77,32 @@ void vftr_write_papi_table (FILE *fp, collated_stacktree_t stacktree, config_t c
    free (observables);
 }
 
+void vftr_write_papi_observables_logfile_summary (FILE *fp, collated_stacktree_t stacktree, config_t config) {
+   int n_observables = vftrace.papi_state.calculator.n_observables;
+   if (n_observables == 0) {
+      fprintf (fp, "\nNo observables registered.\n");
+      return;
+   }
+
+   double *obs_sum = (double*)malloc(n_observables * sizeof(double));
+   memset (obs_sum, 0, n_observables * sizeof(double));
+   for (int istack = 0; istack < stacktree.nstacks; istack++) {
+      collated_stack_t this_stack = stacktree.stacks[istack];
+      papiprofile_t papiprof = this_stack.profile.papiprof;
+     
+      for (int i = 0; i < n_observables; i++) {
+         obs_sum[i] += papiprof.observables[i];
+      } 
+   } 
+
+   fprintf (fp, "PAPI observables summary: \n\n");
+   for (int i = 0; i < n_observables; i++) {
+      fprintf (fp, "  %s: %lf %s\n", config.papi.observables.obs_name.values[i],
+                                     obs_sum[i], config.papi.observables.unit.values[i]);
+   }
+   free(obs_sum);
+}
+
 void vftr_write_papi_counter_logfile_summary (FILE *fp, collated_stacktree_t stacktree, config_t config) {
    int n_counters = vftrace.papi_state.n_counters;
    if (n_counters == 0) {
@@ -94,7 +120,7 @@ void vftr_write_papi_counter_logfile_summary (FILE *fp, collated_stacktree_t sta
       }
    }
 
-   fprintf (fp, "Total PAPI counters: \n\n");
+   fprintf (fp, "PAPI counters summary: \n\n");
    for (int e = 0; e < vftrace.papi_state.n_counters; e++) {
       fprintf (fp, "  %s: %lld\n",  vftrace.papi_state.counters[e].name, counter_sum[e]);
    }
