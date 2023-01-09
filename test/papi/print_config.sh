@@ -17,22 +17,17 @@ cat << EOF > ${configfile}
        "sort_by_column": 0,
        "counters": [
            {
-           "native": "perf::CYCLES",
+           "hwc_name": "perf::CYCLES",
            "symbol": "f1"
            },
            {
-           "native": "FP_ARITH:SCALAR_SINGLE",
+           "hwc_name": "FP_ARITH:SCALAR_SINGLE",
            "symbol": "fpsingle"
            },
            {
-           "native": "FP_ARITH:SCALAR_DOUBLE",
+           "hwc_name": "FP_ARITH:SCALAR_DOUBLE",
            "symbol": "fpdouble"
-           },
-           {
-           "preset": "PAPI_DP_OPS",
-           "symbol": "fp_preset"
            }
-
        ],
        "observables": [
            {
@@ -43,11 +38,6 @@ cat << EOF > ${configfile}
            {
               "name": "perf",
               "formula": "(fpsingle + fpdouble) / T * 1e-6",
-              "unit": "MFlop/s"
-           },
-           {
-              "name": "perf_preset", 
-              "formula": "fp_preset / T * 1e-6",
               "unit": "MFlop/s"
            }
        ]
