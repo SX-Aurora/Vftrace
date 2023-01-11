@@ -2,9 +2,6 @@
 #define _SIGNAL_HANDLING_H
 
 #include <stdlib.h>
-#include <signal.h>
-
-struct sigaction vftr_signals[NSIG];
 
 void vftr_abort (int errcode);
 

@@ -28,16 +28,16 @@ void vftr_write_signal_message (FILE *fp) {
 void vftr_signal_handler (int signum) {
     vftrace.signal_received = signum;
     vftr_finalize();
-    vftr_signals[SIGTERM].sa_handler = SIG_DFL;
-    sigaction(SIGTERM, &(vftr_signals[SIGTERM]), NULL);
+    vftrace.signals[SIGTERM].sa_handler = SIG_DFL;
+    sigaction(SIGTERM, &(vftrace.signals[SIGTERM]), NULL);
     raise(SIGTERM);
 }
 
 void vftr_setup_signal (int signum) {
-  memset (&vftr_signals[signum], 0, sizeof(vftr_signals[signum]));
-  vftr_signals[signum].sa_handler = vftr_signal_handler;
-  vftr_signals[signum].sa_flags = SA_SIGINFO;
-  sigaction (signum, &(vftr_signals[signum]), NULL);
+  memset (&vftrace.signals[signum], 0, sizeof(vftrace.signals[signum]));
+  vftrace.signals[signum].sa_handler = vftr_signal_handler;
+  vftrace.signals[signum].sa_flags = SA_SIGINFO;
+  sigaction (signum, &(vftrace.signals[signum]), NULL);
 }
 
 void vftr_setup_signals () {

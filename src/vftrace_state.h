@@ -10,6 +10,7 @@
 #include "sampling_types.h"
 #include "timer_types.h"
 #include "size_types.h"
+#include <signal.h>
 #ifdef _OMP
 #include "omp_state_types.h"
 #endif
@@ -44,6 +45,7 @@ typedef struct {
    state_t state; // current state of vftrace
    sampling_t sampling; // Filehandle and data required to handle vfd-file sampling
    time_strings_t timestrings; // start and end time in string form
+   struct sigaction signals[NSIG];
    int signal_received;
 #ifdef _OMP
    omp_state_t omp_state;
