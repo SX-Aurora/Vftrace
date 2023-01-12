@@ -156,7 +156,7 @@ int main (int argc, char **argv) {
    fflush(stdout);
    if (myrank == 0) {
      fprintf (stdout, "Collated logfile: \n");
-     vftr_write_papi_table (stdout, collated_stacktree, vftrace.config);
+     vftr_write_papi_observables_table (stdout, collated_stacktree, vftrace.config);
    }
 
    PMPI_Finalize();
