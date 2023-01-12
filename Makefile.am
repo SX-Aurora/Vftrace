@@ -3,6 +3,7 @@ ACLOCAL_AMFLAGS=-I m4
 SUBDIRS = external \
 	  src \
 	  tools \
+          default_hw_scenarios \
 	  test
 
 MANDIR = share_src/man

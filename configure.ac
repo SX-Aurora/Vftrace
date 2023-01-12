@@ -103,5 +103,6 @@ AC_CONFIG_FILES([test/mpi/Makefile])
 AC_CONFIG_FILES([test/mpi/c-mpi/Makefile])
 AC_CONFIG_FILES([test/mpi/f-mpi/Makefile])
 AC_CONFIG_FILES([test/mpi/f08-mpi/Makefile])
+AC_CONFIG_FILES([default_hw_scenarios/Makefile])
 
 AC_OUTPUT
