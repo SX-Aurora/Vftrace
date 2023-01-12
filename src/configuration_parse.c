@@ -286,6 +286,7 @@ void vftr_parse_config_hwcounters (cJSON *parent_object, config_hwcounters_t *cf
    if (!has_object) return;
    vftr_parse_config_string_list (parent_object, cfg_hwc->name, &(cfg_hwc->hwc_name));
    vftr_parse_config_string_list (parent_object, cfg_hwc->name, &(cfg_hwc->symbol));
+   cfg_hwc->set = cfg_hwc->hwc_name.n_elements > 0 && cfg_hwc->symbol.n_elements > 0;
 }
 
 void vftr_parse_config_hwobservables (cJSON *parent_object, config_hwobservables_t *cfg_hwobs) {
@@ -294,6 +295,7 @@ void vftr_parse_config_hwobservables (cJSON *parent_object, config_hwobservables
    vftr_parse_config_string_list (parent_object, cfg_hwobs->name, &(cfg_hwobs->obs_name));
    vftr_parse_config_string_list (parent_object, cfg_hwobs->name, &(cfg_hwobs->formula_expr));
    vftr_parse_config_string_list (parent_object, cfg_hwobs->name, &(cfg_hwobs->unit));
+   cfg_hwobs->set = cfg_hwobs->obs_name.n_elements > 0;
 }
 
 void vftr_parse_config_papi (cJSON *parent_object, config_papi_t *cfg_papi) {
@@ -305,24 +307,22 @@ void vftr_parse_config_papi (cJSON *parent_object, config_papi_t *cfg_papi) {
       vftr_parse_config_bool (json_object, &(cfg_papi->show_counters));
       vftr_parse_config_bool (json_object, &(cfg_papi->show_summary));
       vftr_parse_config_int (json_object, &(cfg_papi->sort_by_column));
+      vftr_parse_config_string (json_object, &(cfg_papi->default_scenario));
+      vftr_parse_config_hwcounters(json_object, &(cfg_papi->counters));
+      vftr_parse_config_hwobservables(json_object, &(cfg_papi->observables));
       // There are two ways in which hardware profiling can be defined: Inline or default scenarios. 
-      bool has_default_scenario = cJSON_HasObjectItem (json_object, cfg_papi->default_scenario.name);
-      bool has_inline_hwc_or_obs = cJSON_HasObjectItem (json_object, cfg_papi->counters.name) ||
-                                   cJSON_HasObjectItem (json_object, cfg_papi->observables.name);
       // Both options exclude each other, so we abort in that case.
+      bool has_default_scenario = cfg_papi->default_scenario.set &&
+                                  strcmp(cfg_papi->default_scenario.value, "");
+      bool has_inline_hwc_or_obs = cfg_papi->counters.set || cfg_papi->observables.set;
       if (has_default_scenario && has_inline_hwc_or_obs) {
          fprintf (stderr, "PAPI configuration has both a default scenario and inline counters and / or observables\n");
          vftr_abort(0); 
-      } else if (has_inline_hwc_or_obs) {
-         vftr_parse_config_hwcounters(json_object, &(cfg_papi->counters));
-         vftr_parse_config_hwobservables(json_object, &(cfg_papi->observables));
       } else if (has_default_scenario) {
          vftr_parse_config_string (json_object, &(cfg_papi->default_scenario));
          FILE *fp = fopen (cfg_papi->default_scenario.value, "r");
          if (fp == NULL) {
-            fprintf (stderr, "Could not find default configuration %s\n", cfg_papi->default_scenario.value);
-         } else {
-            fprintf (stderr, "Found default configuration %s\n", cfg_papi->default_scenario.value);
+            fprintf (stderr, "Could not find default PAPI scenario %s\n", cfg_papi->default_scenario.value);
          }
          char *config_string = vftr_read_file_to_string(cfg_papi->default_scenario.value);
          cJSON *config_tmp = cJSON_Parse(config_string);

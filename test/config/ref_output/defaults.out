@@ -57,6 +57,7 @@ Vftrace default configuration:
       "show_counters": false,
       "show_summary": false,
       "sort_by_column": 0,
+      "default_scenario": "",
       "counters": [
       ],
       "observables": [
