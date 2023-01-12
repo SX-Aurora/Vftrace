@@ -13,6 +13,7 @@ typedef struct {
 
 typedef struct {
    int n_counters;
+   int n_observables;
    vftr_counter_t *counters;
    int eventset;
    papi_calculator_t calculator;

@@ -11,7 +11,7 @@
 
 #include "papiprofiling_types.h"
 
-void vftr_write_papi_table (FILE *fp, collated_stacktree_t stacktree, config_t config) {
+void vftr_write_papi_observables_table (FILE *fp, collated_stacktree_t stacktree, config_t config) {
 
    collated_stack_t **sorted_stacks =
       vftr_sort_collated_stacks_papi_obs(config, stacktree);

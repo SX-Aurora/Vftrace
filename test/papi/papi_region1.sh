@@ -4,14 +4,13 @@ source ${srcdir}/../environment/filenames.sh
 
 set -x
 vftr_binary=papi_region1
-configfile=${vftr_binary}.json
 nprocs=1
 
 determine_bin_prefix $vftr_binary
 
 logfile=$(get_logfile_name ${vftr_binary} "all")
 
-configfile=${test_name}.json
+configfile=${vftr_binary}.json
 cat << EOF > ${configfile}
 {
    "mpi": {"show_table": false},

@@ -25,7 +25,7 @@ void vftr_papi_init (config_t config) {
       vftrace.papi_state.counters[i].name = config.papi.counters.hwc_name.values[i];
    }
 
-   int n_observables = config.papi.observables.obs_name.n_elements;
+   vftrace.papi_state.n_observables = config.papi.observables.obs_name.n_elements;
 
    if (PAPI_library_init(PAPI_VER_CURRENT) != PAPI_VER_CURRENT) return;
 
@@ -59,7 +59,7 @@ void vftr_papi_init (config_t config) {
       symbols[i] = config.papi.counters.symbol.values[i];
    }
 
-   vftrace.papi_state.calculator = vftr_init_papi_calculator (n_observables, symbols, 
+   vftrace.papi_state.calculator = vftr_init_papi_calculator (vftrace.papi_state.n_observables, symbols, 
                                         config.papi.observables.formula_expr.values);
    free(symbols);
 
