@@ -6,8 +6,7 @@ set -x
 test_name=print_config
 output_file=${test_name}.out
 configfile=${test_name}.json
-logfile=${test_name}_all.log
-ref_file=${srcdir}/ref_output/${logfile}.trunc
+ref_file=${srcdir}/ref_output/${output_file}
 
 cat << EOF > ${configfile}
 {
@@ -52,6 +51,4 @@ else
    ./${test_name} > ${output_file} || exit 1
 fi
 
-sed -n '/Vftrace configuration read from/,$p' ${logfile} > ${logfile}.trunc
-
-diff ${logfile}.trunc ${ref_file} || exit 1
+diff ${output_file} ${ref_file} || exit 1

@@ -137,6 +137,7 @@ void vftr_config_advisor_papi (cJSON *json_obj) {
      "show_tables",
      "show_counters",
      "sort_by_column",
+     "default_scenario",
      "counters",
      "observables"
   };

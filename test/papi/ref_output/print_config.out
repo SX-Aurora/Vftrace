@@ -1,0 +1,88 @@
+
+Vftrace configuration read from "print_config.json"
+{
+   "off": false,
+   "output_directory": ".",
+   "outfile_basename": null,
+   "logfile_for_ranks": "none",
+   "print_config": true,
+   "strip_module_names": false,
+   "demangle_cxx": false,
+   "include_cxx_prelude": false,
+   "profile_table": {
+      "show_table": true,
+      "show_calltime_imbalances": false,
+      "show_callpath": false,
+      "show_overhead": false,
+      "sort_table": {
+         "column": "time_excl",
+         "ascending": false
+      }
+   },
+   "name_grouped_profile_table": {
+      "show_table": false,
+      "max_stack_ids": 8,
+      "sort_table": {
+         "column": "time_excl",
+         "ascending": false
+      }
+   },
+   "sampling": {
+      "active": false,
+      "sample_interval": 0.005000,
+      "outbuffer_size": 8,
+      "precise_functions": null
+   },
+   "mpi": {
+      "show_table": true,
+      "log_messages": true,
+      "only_for_ranks": "all",
+      "show_sync_time": false,
+      "show_callpath": false,
+      "sort_table": {
+         "column": "none",
+         "ascending": false
+      }
+   },
+   "cuda": {
+      "show_table": true,
+      "sort_table": {
+         "column": "time",
+         "ascending": false
+      }
+   },
+   "papi": {
+      "disable": false,
+      "show_observables": true,
+      "show_counters": true,
+      "show_summary": false,
+      "sort_by_column": 0,
+      "default_scenario": "",
+      "counters": [
+         {
+         "hwc_name": "perf::CYCLES",
+         "symbol": "f1",
+         },
+         {
+         "hwc_name": "FP_ARITH:SCALAR_SINGLE",
+         "symbol": "fpsingle",
+         },
+         {
+         "hwc_name": "FP_ARITH:SCALAR_DOUBLE",
+         "symbol": "fpdouble",
+         },
+      ],
+      "observables": [
+         {
+         "name": "f",
+         "formula": "f1 / T * 1e-6",
+         "unit": "MHz",
+         },
+         {
+         "name": "perf",
+         "formula": "(fpsingle + fpdouble) / T * 1e-6",
+         "unit": "MFlop/s",
+         },
+      ]
+   }
+}

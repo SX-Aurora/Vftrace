@@ -246,6 +246,8 @@ void vftr_print_config_papi (FILE *fp, int level, config_papi_t cfg_papi) {
    fprintf (fp, ",\n");
    vftr_print_config_int (fp, level, cfg_papi.sort_by_column);
    fprintf (fp, ",\n");
+   vftr_print_config_string (fp, level, cfg_papi.default_scenario);
+   fprintf (fp, ",\n");
    vftr_print_config_hwcounters (fp, level, cfg_papi.counters);
    fprintf (fp, ",\n");
    vftr_print_config_hwobservables (fp, level, cfg_papi.observables);

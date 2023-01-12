@@ -37,6 +37,7 @@ endif
 check_PROGRAMS = papi_init_test \
                  calculator \
                  print_config \
+                 print_config_default_scenario \
                  papi_region1 \
                  papi_region2
 
@@ -53,9 +54,13 @@ calculator_SOURCES = $(srcdir)/calculator.c
 calculator_CFLAGS = $(AM_CFLAGS) $(FINSTRUMENT_FLAG)
 calculator_LDFLAGS = $(AM_LDFLAGS)
 
-print_config_SOURCES = $(srcdir)/little_tasks.c
-print_config_CFLAGS = $(AM_CFLAGS) $(FINSTRUMENT_FLAG)
+print_config_SOURCES = $(srcdir)/print_config.c
+print_config_CFLAGS = $(AM_CFLAGS)
 print_config_LDFLAGS = $(AM_LDFLAGS)
+
+print_config_default_scenario_SOURCES = $(srcdir)/print_config.c
+print_config_default_scenario_CFLAGS = $(AM_CFLAGS)
+print_config_default_scenario_LDFLAGS = $(AM_LDFLAGS)
 
 papi_region1_SOURCES = $(srcdir)/papi_region1.c
 papi_region1_CFLAGS = $(AM_CFLAGS) $(FINSTRUMENT_FLAG)
@@ -79,6 +84,7 @@ endif
 dist_check_SCRIPTS = papi_init.sh \
                      calculator.sh \
                      print_config.sh \
+                     print_config_default_scenario.sh \
                      papi_region1.sh \
                      papi_region2.sh
 

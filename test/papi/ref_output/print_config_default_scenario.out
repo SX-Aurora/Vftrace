@@ -1,4 +1,5 @@
-Vftrace configuration read from "print_config.json"
+
+Vftrace configuration read from "print_config_default_scenario.json"
 {
    "off": false,
    "output_directory": ".",
@@ -53,33 +54,30 @@ Vftrace configuration read from "print_config.json"
    "papi": {
       "disable": false,
       "show_observables": true,
-      "show_counters": true,
+      "show_counters": false,
       "show_summary": false,
       "sort_by_column": 0,
+      "default_scenario": "/home/cweiss/Vftrace/build_papi/test/papi/scenario.json",
       "counters": [
          {
-         "hwc_name": "perf::CYCLES",
-         "symbol": "f1",
+         "hwc_name": "READ_BYTES",
+         "symbol": "B",
          },
          {
-         "hwc_name": "FP_ARITH:SCALAR_SINGLE",
-         "symbol": "fpsingle",
-         },
-         {
-         "hwc_name": "FP_ARITH:SCALAR_DOUBLE",
-         "symbol": "fpdouble",
+         "hwc_name": "WRITE_BYTES",
+         "symbol": "W",
          },
       ],
       "observables": [
          {
-         "name": "f",
-         "formula": "f1 / T * 1e-6",
-         "unit": "MHz",
+         "name": "Read I/O",
+         "formula": "B / T / 1024 / 1024 / 1024",
+         "unit": "GB / s",
          },
          {
-         "name": "perf",
-         "formula": "(fpsingle + fpdouble) / T * 1e-6",
-         "unit": "MFlop/s",
+         "name": "Write I/O",
+         "formula": "W / T / 1024 / 1024 / 1024",
+         "unit": "GB / s",
          },
       ]
    }
