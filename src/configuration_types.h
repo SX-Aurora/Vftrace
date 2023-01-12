@@ -116,6 +116,7 @@ typedef struct {
    config_bool_t show_counters;
    config_bool_t show_summary;
    config_int_t sort_by_column;
+   config_string_t default_scenario;
    config_hwcounters_t counters;
    config_hwobservables_t observables;
 } config_papi_t;

@@ -182,6 +182,7 @@ config_papi_t vftr_set_config_papi_default() {
    cfg_papi.show_counters = vftr_set_config_bool_default ("show_counters", false);
    cfg_papi.show_summary = vftr_set_config_bool_default ("show_summary", false);
    cfg_papi.sort_by_column = vftr_set_config_int_default ("sort_by_column", 0);
+   cfg_papi.default_scenario = vftr_set_config_string_default ("default_scenario", "");
    cfg_papi.counters = vftr_set_config_hwcounters_default();
    cfg_papi.observables = vftr_set_config_hwobservables_default();
    return cfg_papi;
