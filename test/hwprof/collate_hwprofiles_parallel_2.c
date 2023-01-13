@@ -134,11 +134,11 @@ int main (int argc, char **argv) {
    vftr_init_dummy_stacktree (10);
     
    vftr_register_dummy_call_stack ("func0<init", 1);
-   vftr_register_dummy_call_stack ("papifunc1<init", 2);
+   vftr_register_dummy_call_stack ("hwfunc1<init", 2);
    long long c1[] = {1000};
-   vftr_register_dummy_hwprof_stack ("papifunc1<init", c1);
+   vftr_register_dummy_hwprof_stack ("hwfunc1<init", c1);
    long long c2[] = {1500};
-   vftr_register_dummy_hwprof_stack ("papifunc2<func0<init", c2);
+   vftr_register_dummy_hwprof_stack ("hwfunc2<func0<init", c2);
 
    stacktree_t stacktree = vftr_get_dummy_stacktree();
    collated_stacktree_t collated_stacktree = vftr_collate_stacks(&stacktree);

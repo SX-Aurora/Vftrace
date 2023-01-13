@@ -38,8 +38,8 @@ check_PROGRAMS = papi_init_test \
                  calculator \
                  print_config \
                  print_config_default_scenario \
-                 papi_region1 \
-                 papi_region2
+                 hwprof_region1 \
+                 hwprof_region2
 
 if ENABLE_MPI
 check_PROGRAMS += collate_hwprofiles_parallel
@@ -62,13 +62,13 @@ print_config_default_scenario_SOURCES = $(srcdir)/print_config.c
 print_config_default_scenario_CFLAGS = $(AM_CFLAGS)
 print_config_default_scenario_LDFLAGS = $(AM_LDFLAGS)
 
-papi_region1_SOURCES = $(srcdir)/papi_region1.c
-papi_region1_CFLAGS = $(AM_CFLAGS) $(FINSTRUMENT_FLAG)
-papi_region1_LDFLAGS = $(AM_LDFLAGS)
+hwprof_region1_SOURCES = $(srcdir)/hwprof_region1.c
+hwprof_region1_CFLAGS = $(AM_CFLAGS) $(FINSTRUMENT_FLAG)
+hwprof_region1_LDFLAGS = $(AM_LDFLAGS)
 
-papi_region2_SOURCES = $(srcdir)/papi_region2.c
-papi_region2_CFLAGS = $(AM_CFLAGS) $(FINSTRUMENT_FLAG)
-papi_region2_LDFLAGS = $(AM_LDFLAGS)
+hwprof_region2_SOURCES = $(srcdir)/hwprof_region2.c
+hwprof_region2_CFLAGS = $(AM_CFLAGS) $(FINSTRUMENT_FLAG)
+hwprof_region2_LDFLAGS = $(AM_LDFLAGS)
 
 if ENABLE_MPI
 collate_hwprofiles_parallel_SOURCES = $(srcdir)/collate_hwprofiles_parallel.c
@@ -85,8 +85,8 @@ dist_check_SCRIPTS = papi_init.sh \
                      calculator.sh \
                      print_config.sh \
                      print_config_default_scenario.sh \
-                     papi_region1.sh \
-                     papi_region2.sh
+                     hwprof_region1.sh \
+                     hwprof_region2.sh
 
 if ENABLE_MPI
 dist_check_SCRIPTS += collate_hwprofiles_parallel.sh

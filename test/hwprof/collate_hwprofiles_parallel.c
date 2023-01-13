@@ -142,25 +142,25 @@ int main (int argc, char **argv) {
     
    if (myrank == 0) {
       vftr_register_dummy_call_stack ("func0<init", 1);
-      vftr_register_dummy_call_stack ("papifunc1<init", 2);
+      vftr_register_dummy_call_stack ("hwfunc1<init", 2);
       long long c1[] = {0, 1000};
-      vftr_register_dummy_hwprof_stack ("papifunc1<init", c1);
+      vftr_register_dummy_hwprof_stack ("hwfunc1<init", c1);
       long long c2[] = {1000, 500};
       for (int i = 0; i < 3; i++) {
-         vftr_register_dummy_hwprof_stack ("papifunc2<func0<init", c2);
+         vftr_register_dummy_hwprof_stack ("hwfunc2<func0<init", c2);
       }
    } else {
       vftr_register_dummy_call_stack ("func0<init", 1);
-      vftr_register_dummy_call_stack ("papifunc1<init", 2);
+      vftr_register_dummy_call_stack ("hwfunc1<init", 2);
       long long c1[] = {0, 2000};
-      vftr_register_dummy_hwprof_stack ("papifunc1<init", c1);
+      vftr_register_dummy_hwprof_stack ("hwfunc1<init", c1);
       long long c2[] = {500, 1000};
       for (int i = 0; i < 5; i++) {
-         vftr_register_dummy_hwprof_stack ("papifunc2<func0<init", c2);
+         vftr_register_dummy_hwprof_stack ("hwfunc2<func0<init", c2);
       }
-      //// Additional papifunc not present on rank 0
+      //// Additional hwfunc not present on rank 0
       long long c3[] = {1000, 0};
-      vftr_register_dummy_hwprof_stack ("papifunc3<func0<init", c3);
+      vftr_register_dummy_hwprof_stack ("hwfunc3<func0<init", c3);
    }
  
 

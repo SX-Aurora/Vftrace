@@ -19,5 +19,5 @@ SUBDIRS += openacc
 endif
 
 if ENABLE_PAPI
-SUBDIRS += papi
+SUBDIRS += hwprof
 endif
