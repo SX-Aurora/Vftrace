@@ -19,7 +19,7 @@
 #ifdef _ACCPROF
 #include "accprofiling.h"
 #endif
-#ifdef _PAPI_AVAIL
+#ifdef _HWPROF
 #include "hwprofiling.h"
 #endif
 
@@ -53,7 +53,7 @@ profile_t vftr_new_profile(int threadID) {
 #ifdef _ACCPROF
    profile.accprof = vftr_new_accprofiling();
 #endif 
-#ifdef _PAPI_AVAIL
+#ifdef _HWPROF
    profile.hwprof = vftr_new_hwprofiling();
 #endif
    // Add further profiles here
@@ -119,7 +119,7 @@ void vftr_profile_free(profile_t* profiles_ptr, int profID) {
 #ifdef _ACCPROF
    vftr_accprofiling_free (&(profile_ptr->accprof));
 #endif
-#ifdef _PAPI_AVAIL
+#ifdef _HWPROF
    vftr_hwprofiling_free (&(profile_ptr->hwprof));
 #endif
    // Add further profiles here.

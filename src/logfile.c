@@ -22,7 +22,7 @@
 #ifdef _ACCPROF
 #include "accprof_logfile.h"
 #endif
-#ifdef _PAPI_AVAIL
+#ifdef _HWPROF
 #include "hwprof_logfile.h"
 #endif
 
@@ -119,7 +119,7 @@ void vftr_write_logfile(vftrace_t vftrace, long long runtime) {
    }
 #endif
 
-#ifdef _PAPI_AVAIL
+#ifdef _HWPROF
    if (vftrace.hwprof_state.n_observables > 0 && vftrace.config.hwprof.show_observables.value) {
       vftr_write_hwprof_observables_table (fp, vftrace.process.collated_stacktree, vftrace.config);
    }

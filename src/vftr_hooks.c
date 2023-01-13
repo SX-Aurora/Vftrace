@@ -19,7 +19,7 @@
 #ifdef _OMP
 #include <omp.h>
 #endif
-#ifdef _PAPI_AVAIL
+#ifdef _HWPROF
 #include "hwprofiling.h"
 #endif
 
@@ -27,9 +27,11 @@ void vftr_function_entry(void *func, void *call_site) {
    SELF_PROFILE_START_FUNCTION;
    (void) call_site;
    long long function_entry_time_begin = vftr_get_runtime_nsec();
-#ifdef _PAPI_AVAIL
-   long long *papi_counters = NULL;
-   if (!vftrace.config.hwprof.disable.value) papi_counters = vftr_get_papi_counters();
+#ifdef _HWPROF
+   long long *hw_counters = NULL;
+#ifdef _PAPI
+   if (!vftrace.config.hwprof.disable.value) hw_counters = vftr_get_papi_counters();
+#endif
 #endif
 
 #ifdef _OMP
@@ -77,10 +79,10 @@ void vftr_function_entry(void *func, void *call_site) {
                                     1, -function_entry_time_begin);
    }
 
-#ifdef _PAPI_AVAIL
+#ifdef _HWPROF
    if (!vftrace.config.hwprof.disable.value) {
-      vftr_accumulate_hwprofiling (&(my_profile->hwprof), papi_counters, true);
-      free(papi_counters);
+      vftr_accumulate_hwprofiling (&(my_profile->hwprof), hw_counters, true);
+      free(hw_counters);
    }
 #endif
 
@@ -98,9 +100,11 @@ void vftr_function_exit(void *func, void *call_site) {
    (void) func;
    (void) call_site;
    long long function_exit_time_begin = vftr_get_runtime_nsec();
+#ifdef _HWPROF
+   long long *hw_counters = NULL;
 #ifdef _PAPI_AVAIL
-   long long *papi_counters = NULL;
-   if (!vftrace.config.hwprof.disable.value) papi_counters = vftr_get_papi_counters();
+   if (!vftrace.config.hwprof.disable.value) hw_counters = vftr_get_papi_counters();
+#endif
 #endif
 #ifdef _OMP
    omp_set_lock(&(vftrace.process.threadlock));
@@ -133,10 +137,10 @@ void vftr_function_exit(void *func, void *call_site) {
                                 function_exit_time_begin);
    }
 
-#ifdef _PAPI_AVAIL
+#ifdef _HWPROF
    if (!vftrace.config.hwprof.disable.value) {
-      vftr_accumulate_hwprofiling (&(my_profile->hwprof), papi_counters, false);
-      free (papi_counters);
+      vftr_accumulate_hwprofiling (&(my_profile->hwprof), hw_counters, false);
+      free (hw_counters);
    }
 #endif
 

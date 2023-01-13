@@ -17,7 +17,7 @@
 #include "sampling.h"
 #include "timer.h"
 #include "region_address.h"
-#ifdef _PAPI_AVAIL
+#ifdef _HWPROF
 #include "hwprofiling.h"
 #endif
 
@@ -25,9 +25,11 @@
 void vftr_user_region_begin(const char *name, void *addr) {
    SELF_PROFILE_START_FUNCTION;
    long long region_begin_time_begin = vftr_get_runtime_nsec();
+#ifdef _HWPROF
+   long long *hw_counters = NULL;
 #ifdef _PAPI_AVAIL
-   long long *papi_counters = NULL;
-   if (!vftrace.config.hwprof.disable.value) papi_counters = vftr_get_papi_counters();
+   if (!vftrace.config.hwprof.disable.value) hw_counters = vftr_get_papi_counters();
+#endif
 #endif
 
    // Get the thread that called the region
@@ -72,10 +74,10 @@ void vftr_user_region_begin(const char *name, void *addr) {
                                     1, -region_begin_time_begin);
    }
 
-#ifdef _PAPI_AVAIL
+#ifdef _HWPROF
    if (!vftrace.config.hwprof.disable.value) {
-      vftr_accumulate_hwprofiling (&(my_profile->hwprof), papi_counters, true);
-      free(papi_counters);
+      vftr_accumulate_hwprofiling (&(my_profile->hwprof), hw_counters, true);
+      free(hw_counters);
    }
 #endif
 
@@ -88,9 +90,11 @@ void vftr_user_region_begin(const char *name, void *addr) {
 void vftr_user_region_end() {
    SELF_PROFILE_START_FUNCTION;
    long long region_end_time_begin = vftr_get_runtime_nsec();
+#ifdef _HWPROF
+   long long *hw_counters = NULL;
 #ifdef _PAPI_AVAIL
-   long long *papi_counters = NULL;
-   if (!vftrace.config.hwprof.disable.value) papi_counters = vftr_get_papi_counters();
+   if (!vftrace.config.hwprof.disable.value) hw_counters = vftr_get_papi_counters();
+#endif
 #endif
 
 
@@ -117,10 +121,10 @@ void vftr_user_region_end() {
 
    }
 
-#ifdef _PAPI_AVAIL
+#ifdef _HWPROF
    if (!vftrace.config.hwprof.disable.value) {
-      vftr_accumulate_hwprofiling (&(my_profile->hwprof), papi_counters, false);
-      free (papi_counters);
+      vftr_accumulate_hwprofiling (&(my_profile->hwprof), hw_counters, false);
+      free (hw_counters);
    }
 #endif
 

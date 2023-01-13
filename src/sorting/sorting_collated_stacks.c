@@ -279,7 +279,7 @@ void vftr_sort_collated_stacks_for_mpiprof(config_t config,
 
 #endif
 
-#ifdef _PAPI_AVAIL
+#ifdef _HWPROF
   collated_stack_t **vftr_sort_collated_stacks_hwprof_obs (config_t config, collated_stacktree_t stacktree) {
      int nstacks = stacktree.nstacks;
      int sort_column = config.hwprof.sort_by_column.value;

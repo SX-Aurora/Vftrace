@@ -177,6 +177,6 @@ if ENABLE_CUDAPROF
 libvftr_mpi_c2vftr_la_CFLAGS += -D_CUDA
 endif
 
-if ENABLE_PAPI
-libvftr_mpi_c2vftr_la_CFLAGS += -D_PAPI_AVAIL
+if ENABLE_HWPROF
+libvftr_mpi_c2vftr_la_CFLAGS += -D_HWPROF
 endif

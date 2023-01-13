@@ -15,7 +15,7 @@
 #include "search.h"
 #include "collate_stacks.h"
 
-#ifdef _PAPI_AVAIL
+#ifdef _HWPROF
 #include "hwprofiling.h"
 #endif
 
@@ -151,7 +151,7 @@ void vftr_finalize_stacktree(stacktree_t *stacktree_ptr) {
    SELF_PROFILE_START_FUNCTION;
    // exclusive time
    vftr_update_stacks_exclusive_time(stacktree_ptr);
-#ifdef _PAPI_AVAIL
+#ifdef _HWPROF
    vftr_update_stacks_exclusive_counters(stacktree_ptr);
    vftr_update_stacks_hw_observables(stacktree_ptr);
 #endif

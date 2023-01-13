@@ -21,7 +21,7 @@
 #ifdef _ACCPROF
 #include "accprof_ranklogfile.h"
 #endif
-#ifdef _PAPI_AVAIL
+#ifdef _HWPROF
 #include "hwprof_ranklogfile.h"
 #endif
 
@@ -123,7 +123,7 @@ void vftr_write_ranklogfile(vftrace_t vftrace, long long runtime) {
    }
 #endif
 
-#ifdef _PAPI_AVAIL
+#ifdef _HWPROF
    if (vftrace.hwprof_state.n_observables > 0 && vftrace.config.hwprof.show_observables.value) {
       vftr_write_ranklogfile_hwprof_obs_table (fp, vftrace.process.stacktree, vftrace.config);
       fprintf (fp, "\n");

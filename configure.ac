@@ -53,6 +53,7 @@ AX_ENABLE_CUDAPROF
 AX_ENABLE_ACCPROF
 
 # Check PAPI hardware profiling support
+AX_ENABLE_HWPROF
 AX_ENABLE_PAPI
 
 # Check for dlopen

@@ -22,8 +22,11 @@
 #include "accprof_init_final.h"
 #endif
 
+#ifdef _HWPROF
+#include "hwprof_init_final.h"
 #ifdef _PAPI_AVAIL
 #include "papi_init_final.h"
+#endif
 #endif
 
 void vftr_finalize() {
@@ -81,8 +84,11 @@ void vftr_finalize() {
    vftr_finalize_accprof();
 #endif
 
+#ifdef _HWPROF
+   vftr_hwprof_finalize();
 #ifdef _PAPI_AVAIL
    vftr_papi_finalize();
+#endif
 #endif
 
    // free the dynamic process data

@@ -323,7 +323,7 @@ void vftr_sort_stacks_for_mpiprof(config_t config,
 }
 #endif
 
-#ifdef _PAPI_AVAIL
+#ifdef _HWPROF
   vftr_stack_t **vftr_sort_stacks_hwprof_obs (config_t config, stacktree_t stacktree) {
      int sort_column = config.hwprof.sort_by_column.value;
      int nstacks = stacktree.nstacks; 

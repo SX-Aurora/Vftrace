@@ -74,7 +74,7 @@ vftrace_t vftrace = {
       .n_open_wait_queues = 0,
    },
 #endif
-#ifdef _PAPI_AVAIL
+#ifdef _HWPROF
    .hwprof_state = {
       .n_counters = 0,
       .counters = NULL,

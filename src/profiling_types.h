@@ -14,7 +14,7 @@
 #ifdef _ACCPROF
 #include "accprofiling_types.h"
 #endif
-#ifdef _PAPI_AVAIL
+#ifdef _HWPROF
 #include "hwprofiling_types.h"
 #endif
 
@@ -33,7 +33,7 @@ typedef struct {
 #ifdef _ACCPROF
    accprofile_t accprof;
 #endif
-#ifdef _PAPI_AVAIL
+#ifdef _HWPROF
    hwprofile_t hwprof;
 #endif
 } profile_t;

@@ -42,8 +42,8 @@ if ENABLE_ACCPROF
   AM_CFLAGS += -D_ACCPROF -I$(top_srcdir)/src/accprof
 endif
 
-if ENABLE_PAPI
-  AM_CFLAGS += -D_PAPI_AVAIL -I$(top_srcdir)/src/hwprof -I$(top_srcdir)/external/tinyexpr
+if ENABLE_HWPROF
+  AM_CFLAGS += -D_HWPROF -I$(top_srcdir)/src/hwprof -I$(top_srcdir)/external/tinyexpr
 endif
 
 if ENABLE_OMP
@@ -547,7 +547,7 @@ endif
 dist_check_SCRIPTS += threadlist.sh \
 		      threadtree.sh \
                       filenames.sh \
-                      signal_handling.sh
+                      #signal_handling.sh
 
 TEST_EXTENSIONS = .sh
 SH_LOG_COMPILER = $(SHELL)

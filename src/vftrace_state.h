@@ -20,7 +20,7 @@
 #ifdef _ACCPROF
 #include "accprof_state_types.h"
 #endif
-#ifdef _PAPI_AVAIL
+#ifdef _HWPROF
 #include "hwprof_state_types.h"
 #endif
 #ifdef _MPI
@@ -56,7 +56,7 @@ typedef struct {
 #ifdef _ACCPROF
    accprof_state_t accprof_state;
 #endif
-#ifdef _PAPI_AVAIL
+#ifdef _HWPROF
    hwprof_state_t hwprof_state;
 #endif
 #ifdef _MPI

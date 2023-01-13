@@ -48,7 +48,7 @@ SUBDIRS += accprof
 libvftrace_la_LIBADD += accprof/libvftr_accprof.la
 endif
 
-if ENABLE_PAPI
+if ENABLE_HWPROF
 SUBDIRS += hwprof
 libvftrace_la_LIBADD += hwprof/libvftr_hwprof.la
 endif
@@ -152,8 +152,8 @@ if ENABLE_ACCPROF
 libvftrace_la_CFLAGS += -D_ACCPROF
 endif
 
-if ENABLE_PAPI
-libvftrace_la_CFLAGS += -I${srcdir}/../external/tinyexpr -D_PAPI_AVAIL
+if ENABLE_HWPROF
+libvftrace_la_CFLAGS += -I${srcdir}/../external/tinyexpr -D_HWPROF
 endif
 
 if HAS_LIBERTY

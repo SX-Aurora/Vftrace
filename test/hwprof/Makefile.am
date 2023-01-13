@@ -26,7 +26,7 @@ AM_CFLAGS = -I$(top_srcdir)/src \
             -I$(top_srcdir)/src/hwprof \
             -I$(top_srcdir)/external/tinyexpr
 
-AM_CFLAGS += -D_PAPI_AVAIL
+AM_CFLAGS += -D_HWPROF
 
 AM_LDFLAGS = -L$(top_builddir)/src/.libs -lvftrace
 

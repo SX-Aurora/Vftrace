@@ -172,8 +172,8 @@ libvftr_cmpiwrap_la_CFLAGS = -D_MPI
 if ENABLE_CUDAPROF
 libvftr_cmpiwrap_la_CFLAGS += -D_CUDA
 endif
-if ENABLE_PAPI
-libvftr_cmpiwrap_la_CFLAGS += -D_PAPI_AVAIL
+if ENABLE_HWPROF
+libvftr_cmpiwrap_la_CFLAGS += -D_HWPROF
 endif
 libvftr_cmpiwrap_la_CFLAGS += -I${srcdir}/../c2vftr/
 libvftr_cmpiwrap_la_CFLAGS += -I${srcdir}/../utils/

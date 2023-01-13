@@ -18,6 +18,6 @@ if ENABLE_ACCPROF
 SUBDIRS += openacc
 endif
 
-if ENABLE_PAPI
+if ENABLE_HWPROF
 SUBDIRS += hwprof
 endif

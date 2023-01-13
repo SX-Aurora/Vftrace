@@ -20,7 +20,7 @@
 #ifdef _ACCPROF
 #include "collate_accprofiles.h"
 #endif
-#ifdef _PAPI_AVAIL
+#ifdef _HWPROF
 #include "collate_hwprofiles.h"
 #endif
 
@@ -78,7 +78,7 @@ void vftr_collate_profiles(collated_stacktree_t *collstacktree_ptr,
   vftr_collate_accprofiles (collstacktree_ptr, stacktree_ptr,
                             myrank, nranks, nremote_profiles);
 #endif
-#ifdef _PAPI_AVAIL
+#ifdef _HWPROF
   vftr_collate_hwprofiles (collstacktree_ptr, stacktree_ptr,
                               myrank, nranks, nremote_profiles);
 #endif
