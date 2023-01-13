@@ -27,9 +27,7 @@ void vftr_user_region_begin(const char *name, void *addr) {
    long long region_begin_time_begin = vftr_get_runtime_nsec();
 #ifdef _HWPROF
    long long *hw_counters = NULL;
-#ifdef _PAPI_AVAIL
-   if (!vftrace.config.hwprof.disable.value) hw_counters = vftr_get_papi_counters();
-#endif
+   if (!vftrace.config.hwprof.disable.value) hw_counters = vftr_get_hw_counters();
 #endif
 
    // Get the thread that called the region
@@ -92,9 +90,7 @@ void vftr_user_region_end() {
    long long region_end_time_begin = vftr_get_runtime_nsec();
 #ifdef _HWPROF
    long long *hw_counters = NULL;
-#ifdef _PAPI_AVAIL
-   if (!vftrace.config.hwprof.disable.value) hw_counters = vftr_get_papi_counters();
-#endif
+   if (!vftrace.config.hwprof.disable.value) hw_counters = vftr_get_hw_counters();
 #endif
 
 

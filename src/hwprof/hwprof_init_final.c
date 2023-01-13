@@ -3,8 +3,20 @@
 #include "vftrace_state.h"
 
 #include "calculator.h"
+#ifdef _PAPI_AVAIL
+#include "hwprof_papi.h"
+#endif
 
 void vftr_hwprof_init (config_t config) {
+   // Invalid values should be caught in the assertion
+   if (!strcmp(config.hwprof.hwc_type.value, "dummy")) {
+      vftrace.hwprof_state.hwc_type = HWC_DUMMY;
+   } else if (!strcmp(config.hwprof.hwc_type.value, "papi")) {
+      vftrace.hwprof_state.hwc_type = HWC_PAPI;
+   } else if (!strcmp(config.hwprof.hwc_type.value, "ve")) {
+      vftrace.hwprof_state.hwc_type = HWC_VE;
+   }
+
    vftrace.hwprof_state.n_counters = config.hwprof.counters.hwc_name.n_elements;
    vftrace.hwprof_state.counters = (vftr_counter_t*)malloc(vftrace.hwprof_state.n_counters * sizeof(vftr_counter_t));
 
@@ -23,9 +35,17 @@ void vftr_hwprof_init (config_t config) {
                                         config.hwprof.observables.formula_expr.values);
    free(symbols);
 
+#ifdef _PAPI_AVAIL
+   if (vftrace.hwprof_state.hwc_type == HWC_PAPI) vftr_papi_init (config);
+#endif
+
 }
 
 void vftr_hwprof_finalize () {
    if (vftrace.hwprof_state.counters != NULL) free(vftrace.hwprof_state.counters);
    vftrace.hwprof_state.counters = NULL;
+
+#ifdef _PAPI_AVAIL
+   if (vftrace.hwprof_state.hwc_type == HWC_PAPI) vftr_papi_finalize();
+#endif 
 }

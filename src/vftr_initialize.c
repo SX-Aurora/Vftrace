@@ -16,9 +16,6 @@
 
 #ifdef _HWPROF
 #include "hwprof_init_final.h"
-#ifdef _PAPI_AVAIL
-#include "papi_init_final.h"
-#endif
 #endif
 
 #include "self_profile.h"
@@ -86,9 +83,6 @@ void vftr_initialize(void *func, void *call_site) {
       // it needs the number of registered PAPI counters.
 #ifdef _HWPROF
       vftr_hwprof_init (vftrace.config);
-#ifdef _PAPI_AVAIL
-      vftr_papi_init(vftrace.config);
-#endif
 #endif
 
       // initialize the dynamic process data

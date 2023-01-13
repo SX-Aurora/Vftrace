@@ -29,9 +29,7 @@ void vftr_function_entry(void *func, void *call_site) {
    long long function_entry_time_begin = vftr_get_runtime_nsec();
 #ifdef _HWPROF
    long long *hw_counters = NULL;
-#ifdef _PAPI
-   if (!vftrace.config.hwprof.disable.value) hw_counters = vftr_get_papi_counters();
-#endif
+   if (!vftrace.config.hwprof.disable.value) hw_counters = vftr_get_hw_counters();
 #endif
 
 #ifdef _OMP
@@ -102,9 +100,7 @@ void vftr_function_exit(void *func, void *call_site) {
    long long function_exit_time_begin = vftr_get_runtime_nsec();
 #ifdef _HWPROF
    long long *hw_counters = NULL;
-#ifdef _PAPI_AVAIL
-   if (!vftrace.config.hwprof.disable.value) hw_counters = vftr_get_papi_counters();
-#endif
+   if (!vftrace.config.hwprof.disable.value) hw_counters = vftr_get_hw_counters();
 #endif
 #ifdef _OMP
    omp_set_lock(&(vftrace.process.threadlock));

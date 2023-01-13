@@ -131,9 +131,10 @@ void vftr_config_advisor_cuda(cJSON *json_obj) {
    }
 }
 
-void vftr_config_advisor_papi (cJSON *json_obj) {
+void vftr_config_advisor_hwprof (cJSON *json_obj) {
   char *options[] = {
      "disable",
+     "type",
      "show_tables",
      "show_counters",
      "sort_by_column",
@@ -191,7 +192,7 @@ void vftr_config_advisor(cJSON *config_json_ptr) {
       "mpi",
       "cuda",
       "openacc",
-      "papi"
+      "hwprof"
    };
    int noptions = sizeof(options) / sizeof(char*);
    vftr_config_advisor_check_options(noptions, options, config_json_ptr->child);
@@ -234,10 +235,10 @@ void vftr_config_advisor(cJSON *config_json_ptr) {
       vftr_config_advisor_cuda(json_sec);
    }
 
-   sec_name = "papi";
+   sec_name = "hwprof";
    has_object = cJSON_HasObjectItem(config_json_ptr, sec_name);
    if (has_object) {
       cJSON *json_sec = cJSON_GetObjectItem(config_json_ptr, sec_name);
-      vftr_config_advisor_papi(json_sec);
+      vftr_config_advisor_hwprof(json_sec);
    }
 }

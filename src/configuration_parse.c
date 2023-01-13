@@ -303,6 +303,7 @@ void vftr_parse_config_hwprof (cJSON *parent_object, config_hwprof_t *cfg_hwprof
    if (has_object) {
       cJSON *json_object = cJSON_GetObjectItem (parent_object, cfg_hwprof->name);
       vftr_parse_config_bool (json_object, &(cfg_hwprof->disable));
+      vftr_parse_config_string (json_object, &(cfg_hwprof->hwc_type));
       vftr_parse_config_bool (json_object, &(cfg_hwprof->show_observables));
       vftr_parse_config_bool (json_object, &(cfg_hwprof->show_counters));
       vftr_parse_config_bool (json_object, &(cfg_hwprof->show_summary));

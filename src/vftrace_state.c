@@ -76,9 +76,10 @@ vftrace_t vftrace = {
 #endif
 #ifdef _HWPROF
    .hwprof_state = {
+      .hwc_type = HWC_NONE,
       .n_counters = 0,
       .counters = NULL,
-      .eventset = PAPI_NULL,
+      .papi_eventset = PAPI_NULL,
    },
 #endif
 #ifdef _MPI

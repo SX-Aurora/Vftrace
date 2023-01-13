@@ -1,10 +1,10 @@
-#ifndef VFTR_PAPI_H
-#define VFTR_PAPI_H
+#ifndef HWPROF_PAPI_H
+#define HWPROF_PAPI_H
 
 #include <stdio.h>
 #include <stdlib.h>
 
-void vftr_show_papi_components (FILE *fp) {
+void vftr_show_papi_components (FILE *fp);
 
 void vftr_papi_init();
 

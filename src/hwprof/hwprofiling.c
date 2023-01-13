@@ -4,6 +4,10 @@
 #include "vftrace_state.h"
 
 #include "hwprofiling_types.h"
+#include "hwprof_dummy.h"
+#ifdef _PAPI_AVAIL
+#include "hwprof_papi.h"
+#endif
 #include "calculator.h"
 
 hwprofile_t vftr_new_hwprofiling () {
@@ -17,6 +21,21 @@ hwprofile_t vftr_new_hwprofiling () {
    prof.observables = (double*)malloc (n_observables * sizeof(double));
    memset (prof.observables, 0, n_observables * sizeof(double));
    return prof;
+}
+
+long long *vftr_get_hw_counters () {
+   switch (vftrace.hwprof_state.hwc_type) {
+      case HWC_DUMMY:
+         return vftr_get_dummy_counters(); 
+      case HWC_PAPI:
+         return vftr_get_papi_counters();
+      case HWC_VE:
+         //TBD
+         return NULL;
+      default:
+         //TBD
+         return NULL;
+   }
 }
 
 void vftr_accumulate_hwprofiling (hwprofile_t *prof, long long *counters, bool invert_sign) {
