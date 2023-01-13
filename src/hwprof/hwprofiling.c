@@ -19,13 +19,6 @@ hwprofile_t vftr_new_hwprofiling () {
    return prof;
 }
 
-long long *vftr_get_papi_counters () {
-  int n = vftrace.hwprof_state.n_counters;
-  long long *counters = (long long *)malloc (n * sizeof(long long));
-  int retval = PAPI_read (vftrace.hwprof_state.eventset, counters);
-  return counters;
-}
-
 void vftr_accumulate_hwprofiling (hwprofile_t *prof, long long *counters, bool invert_sign) {
    int n = vftrace.hwprof_state.n_counters;
    for (int i = 0; i < n; i++) {

@@ -7,8 +7,6 @@
 
 hwprofile_t vftr_new_hwprofiling();
 
-long long *vftr_get_papi_counters();
-
 void vftr_accumulate_hwprofiling (hwprofile_t *prof, long long *counters, bool invert_sign);
 
 void vftr_update_stacks_exclusive_counters (stacktree_t *stacktree_ptr);
