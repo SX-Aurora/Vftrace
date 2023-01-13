@@ -79,7 +79,11 @@ vftrace_t vftrace = {
       .hwc_type = HWC_NONE,
       .n_counters = 0,
       .counters = NULL,
+#ifdef _PAPI_AVAIL
       .papi_eventset = PAPI_NULL,
+#else
+      .papi_eventset = 0,
+#endif
    },
 #endif
 #ifdef _MPI

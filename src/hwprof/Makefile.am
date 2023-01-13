@@ -8,13 +8,16 @@ libvftr_hwprof_la_SOURCES += hwprof_init_final.c \
 			   collate_hwprofiles.c \
                            hwprof_logfile.c \
 		  	   hwprof_ranklogfile.c \
-                           hwprof_dummy.c \
-                           hwprof_papi.c
+                           hwprof_dummy.c
 
-# -D_PAPI conflicts with PAPI headers.
-libvftr_hwprof_la_CFLAGS = -I${srcdir}/../ -I${srcdir}/../sorting -I${srcdir}/../../external/tinyexpr -D_HWPROF 
-#  The compiler flag for PAPI is therefore called PAPI_AVAIL.
 if ENABLE_PAPI
+libvftr_hwprof_la_SOURCES += hwprof_papi.c
+endif
+
+libvftr_hwprof_la_CFLAGS = -I${srcdir}/../ -I${srcdir}/../sorting -I${srcdir}/../../external/tinyexpr -D_HWPROF 
+if ENABLE_PAPI
+# -D_PAPI conflicts with PAPI headers.
+#  The compiler flag for PAPI is therefore called PAPI_AVAIL.
 libvftr_hwprof_la_CFLAGS += -D_PAPI_AVAIL
 endif
 

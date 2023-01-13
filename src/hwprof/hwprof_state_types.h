@@ -3,8 +3,6 @@
 
 #include <stdbool.h>
 
-#include <papi.h>
-
 #include "calculator.h"
 
 enum {HWC_NONE, HWC_DUMMY, HWC_PAPI, HWC_VE};

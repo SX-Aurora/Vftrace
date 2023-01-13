@@ -1,5 +1,4 @@
 #include <string.h>
-#include <papi.h>
 
 #include "vftrace_state.h"
 
@@ -27,8 +26,10 @@ long long *vftr_get_hw_counters () {
    switch (vftrace.hwprof_state.hwc_type) {
       case HWC_DUMMY:
          return vftr_get_dummy_counters(); 
+#ifdef _PAPI_AVAIL
       case HWC_PAPI:
          return vftr_get_papi_counters();
+#endif
       case HWC_VE:
          //TBD
          return NULL;
