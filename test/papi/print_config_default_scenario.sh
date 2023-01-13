@@ -52,4 +52,6 @@ else
    ./${test_name} > ${output_file} || exit 1
 fi
 
+# default_scenario includes the pwd string, it needs to be removed. 
+sed -i '/default_scenario/d' ${output_file}
 diff ${output_file} ${ref_file} || exit 1
