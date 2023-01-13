@@ -51,7 +51,7 @@ Vftrace configuration read from "print_config.json"
          "ascending": false
       }
    },
-   "papi": {
+   "hwprof": {
       "disable": false,
       "show_observables": true,
       "show_counters": true,

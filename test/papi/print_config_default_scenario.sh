@@ -39,7 +39,7 @@ EOF
 cat << EOF > ${configfile}
 {
    "print_config": true,
-   "papi": {
+   "hwprof": {
        "default_scenario": "$default_scenario"
    }
 }

@@ -5,12 +5,12 @@
 #include "vftrace_state.h"
 #include "signal_handling.h"
 
-#include "papi_calculator.h"
+#include "calculator.h"
 
-papi_calculator_t vftr_init_papi_calculator (int n_observables, char **symbols, char **formulas) {
-   papi_calculator_t calc;
+vftr_calculator_t vftr_init_calculator (int n_observables, char **symbols, char **formulas) {
+   vftr_calculator_t calc;
 
-   calc.n_variables = vftrace.papi_state.n_counters;
+   calc.n_variables = vftrace.hwprof_state.n_counters;
    calc.n_te_vars = calc.n_variables + CALC_N_BUILTIN;
    calc.n_observables = n_observables;
    calc.values = (double*)malloc(calc.n_variables * sizeof(double));
@@ -47,22 +47,22 @@ papi_calculator_t vftr_init_papi_calculator (int n_observables, char **symbols, 
    return calc;
 }
 
-void vftr_set_papi_calculator_counters (papi_calculator_t *calc, long long *values) {
+void vftr_set_calculator_counters (vftr_calculator_t *calc, long long *values) {
    for (int i = 0; i < calc->n_variables; i++) {
       calc->values[i] = (double)values[i];
    }
 }
 
-void vftr_set_papi_calculator_builtin (papi_calculator_t *calc, int idx, double value) {
+void vftr_set_calculator_builtin (vftr_calculator_t *calc, int idx, double value) {
    calc->builtin_values[idx] = value;
 }
 
-double vftr_papi_calculator_evaluate (papi_calculator_t calc, int i_observable) {
+double vftr_calculator_evaluate (vftr_calculator_t calc, int i_observable) {
    return te_eval(calc.expr[i_observable]); 
 }
 
-void vftr_print_papi_calculator_state (papi_calculator_t calc) {
-   printf ("PAPI calculator: \n");
+void vftr_print_calculator_state (vftr_calculator_t calc) {
+   printf ("Vftrace calculator: \n");
    printf ("  %d Variables:\n", calc.n_variables);
    for (int i = CALC_N_BUILTIN; i < calc.n_te_vars; i++) {
       printf ("   name: %s\n", calc.te_vars[i].name);

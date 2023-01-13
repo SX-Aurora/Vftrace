@@ -1,10 +1,10 @@
-#ifndef PAPIPROFILING_TYPES_H
-#define PAPIPROFILING_TYPES_H
+#ifndef HWPROFILING_TYPES_H
+#define HWPROFILING_TYPES_H
 
 typedef struct {
    long long *counters_incl;
    long long *counters_excl;
    double *observables;
-} papiprofile_t;
+} hwprofile_t;
 
 #endif

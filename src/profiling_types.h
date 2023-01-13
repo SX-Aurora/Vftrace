@@ -15,7 +15,7 @@
 #include "accprofiling_types.h"
 #endif
 #ifdef _PAPI_AVAIL
-#include "papiprofiling_types.h"
+#include "hwprofiling_types.h"
 #endif
 
 typedef struct {
@@ -34,7 +34,7 @@ typedef struct {
    accprofile_t accprof;
 #endif
 #ifdef _PAPI_AVAIL
-   papiprofile_t papiprof;
+   hwprofile_t hwprof;
 #endif
 } profile_t;
 

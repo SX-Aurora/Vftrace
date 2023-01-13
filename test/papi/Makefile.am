@@ -23,7 +23,7 @@ endif
 AM_TESTS_ENVIRONMENT+=. $(top_srcdir)/test/environment/unset_vftr_env.sh;
 
 AM_CFLAGS = -I$(top_srcdir)/src \
-            -I$(top_srcdir)/src/papi \
+            -I$(top_srcdir)/src/hwprof \
             -I$(top_srcdir)/external/tinyexpr
 
 AM_CFLAGS += -D_PAPI_AVAIL
@@ -42,8 +42,8 @@ check_PROGRAMS = papi_init_test \
                  papi_region2
 
 if ENABLE_MPI
-check_PROGRAMS += collate_papiprofiles_parallel
-check_PROGRAMS += collate_papiprofiles_parallel_2
+check_PROGRAMS += collate_hwprofiles_parallel
+check_PROGRAMS += collate_hwprofiles_parallel_2
 endif
 
 papi_init_test_SOURCES = $(srcdir)/papi_init_test.c
@@ -71,13 +71,13 @@ papi_region2_CFLAGS = $(AM_CFLAGS) $(FINSTRUMENT_FLAG)
 papi_region2_LDFLAGS = $(AM_LDFLAGS)
 
 if ENABLE_MPI
-collate_papiprofiles_parallel_SOURCES = $(srcdir)/collate_papiprofiles_parallel.c
-collate_papiprofiles_parallel_CFLAGS = $(AM_CFLAGS)
-collate_papiprofiles_parallel_LDFLAGS = $(AM_LDFLAGS)
+collate_hwprofiles_parallel_SOURCES = $(srcdir)/collate_hwprofiles_parallel.c
+collate_hwprofiles_parallel_CFLAGS = $(AM_CFLAGS)
+collate_hwprofiles_parallel_LDFLAGS = $(AM_LDFLAGS)
 
-collate_papiprofiles_parallel_2_SOURCES = $(srcdir)/collate_papiprofiles_parallel_2.c
-collate_papiprofiles_parallel_2_CFLAGS = $(AM_CFLAGS)
-collate_papiprofiles_parallel_2_LDFLAGS = $(AM_LDFLAGS)
+collate_hwprofiles_parallel_2_SOURCES = $(srcdir)/collate_hwprofiles_parallel_2.c
+collate_hwprofiles_parallel_2_CFLAGS = $(AM_CFLAGS)
+collate_hwprofiles_parallel_2_LDFLAGS = $(AM_LDFLAGS)
 
 endif
 
@@ -89,8 +89,8 @@ dist_check_SCRIPTS = papi_init.sh \
                      papi_region2.sh
 
 if ENABLE_MPI
-dist_check_SCRIPTS += collate_papiprofiles_parallel.sh
-dist_check_SCRIPTS += collate_papiprofiles_parallel_2.sh
+dist_check_SCRIPTS += collate_hwprofiles_parallel.sh
+dist_check_SCRIPTS += collate_hwprofiles_parallel_2.sh
 endif
 
 TEST_EXTENSIONS = .sh

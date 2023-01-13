@@ -232,25 +232,25 @@ void vftr_print_config_hwobservables (FILE *fp, int level, config_hwobservables_
    fprintf (fp, "]");
 }
 
-void vftr_print_config_papi (FILE *fp, int level, config_papi_t cfg_papi) {
+void vftr_print_config_hwprof (FILE *fp, int level, config_hwprof_t cfg_hwprof) {
    level++;
    vftr_print_config_indent(fp, level);
-   fprintf (fp, "\"%s\": {\n", cfg_papi.name);
-   vftr_print_config_bool (fp, level, cfg_papi.disable);
+   fprintf (fp, "\"%s\": {\n", cfg_hwprof.name);
+   vftr_print_config_bool (fp, level, cfg_hwprof.disable);
    fprintf (fp, ",\n");
-   vftr_print_config_bool (fp, level, cfg_papi.show_observables);
+   vftr_print_config_bool (fp, level, cfg_hwprof.show_observables);
    fprintf (fp, ",\n");
-   vftr_print_config_bool (fp, level, cfg_papi.show_counters);
+   vftr_print_config_bool (fp, level, cfg_hwprof.show_counters);
    fprintf (fp, ",\n");
-   vftr_print_config_bool (fp, level, cfg_papi.show_summary);
+   vftr_print_config_bool (fp, level, cfg_hwprof.show_summary);
    fprintf (fp, ",\n");
-   vftr_print_config_int (fp, level, cfg_papi.sort_by_column);
+   vftr_print_config_int (fp, level, cfg_hwprof.sort_by_column);
    fprintf (fp, ",\n");
-   vftr_print_config_string (fp, level, cfg_papi.default_scenario);
+   vftr_print_config_string (fp, level, cfg_hwprof.default_scenario);
    fprintf (fp, ",\n");
-   vftr_print_config_hwcounters (fp, level, cfg_papi.counters);
+   vftr_print_config_hwcounters (fp, level, cfg_hwprof.counters);
    fprintf (fp, ",\n");
-   vftr_print_config_hwobservables (fp, level, cfg_papi.observables);
+   vftr_print_config_hwobservables (fp, level, cfg_hwprof.observables);
    fprintf (fp, "\n");
    vftr_print_config_indent(fp, level);
    fprintf (fp, "}"); 
@@ -295,7 +295,7 @@ void vftr_print_config(FILE *fp, config_t config, bool show_title) {
    fprintf(fp, ",\n");
    vftr_print_config_cuda(fp, level, config.cuda);
    fprintf(fp, ",\n");
-   vftr_print_config_papi(fp, level, config.papi);
+   vftr_print_config_hwprof(fp, level, config.hwprof);
    fprintf(fp, "\n");
    fprintf(fp, "}\n");
 }

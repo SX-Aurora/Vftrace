@@ -18,7 +18,7 @@ if ENABLE_ACCPROF
 libvftr_sorting_la_CFLAGS += -D_ACCPROF -I${srcdir}/../accprof
 endif
 if ENABLE_PAPI
-libvftr_sorting_la_CFLAGS += -D_PAPI_AVAIL -I${srcdir}/../papi
+libvftr_sorting_la_CFLAGS += -D_PAPI_AVAIL -I${srcdir}/../hwprof
 endif
 
 noinst_LTLIBRARIES += libvftr_sorting_int8.la

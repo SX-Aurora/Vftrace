@@ -298,39 +298,39 @@ void vftr_parse_config_hwobservables (cJSON *parent_object, config_hwobservables
    cfg_hwobs->set = cfg_hwobs->obs_name.n_elements > 0;
 }
 
-void vftr_parse_config_papi (cJSON *parent_object, config_papi_t *cfg_papi) {
-   bool has_object = cJSON_HasObjectItem(parent_object, cfg_papi->name);
+void vftr_parse_config_hwprof (cJSON *parent_object, config_hwprof_t *cfg_hwprof) {
+   bool has_object = cJSON_HasObjectItem(parent_object, cfg_hwprof->name);
    if (has_object) {
-      cJSON *json_object = cJSON_GetObjectItem (parent_object, cfg_papi->name);
-      vftr_parse_config_bool (json_object, &(cfg_papi->disable));
-      vftr_parse_config_bool (json_object, &(cfg_papi->show_observables));
-      vftr_parse_config_bool (json_object, &(cfg_papi->show_counters));
-      vftr_parse_config_bool (json_object, &(cfg_papi->show_summary));
-      vftr_parse_config_int (json_object, &(cfg_papi->sort_by_column));
-      vftr_parse_config_string (json_object, &(cfg_papi->default_scenario));
-      vftr_parse_config_hwcounters(json_object, &(cfg_papi->counters));
-      vftr_parse_config_hwobservables(json_object, &(cfg_papi->observables));
+      cJSON *json_object = cJSON_GetObjectItem (parent_object, cfg_hwprof->name);
+      vftr_parse_config_bool (json_object, &(cfg_hwprof->disable));
+      vftr_parse_config_bool (json_object, &(cfg_hwprof->show_observables));
+      vftr_parse_config_bool (json_object, &(cfg_hwprof->show_counters));
+      vftr_parse_config_bool (json_object, &(cfg_hwprof->show_summary));
+      vftr_parse_config_int (json_object, &(cfg_hwprof->sort_by_column));
+      vftr_parse_config_string (json_object, &(cfg_hwprof->default_scenario));
+      vftr_parse_config_hwcounters(json_object, &(cfg_hwprof->counters));
+      vftr_parse_config_hwobservables(json_object, &(cfg_hwprof->observables));
       // There are two ways in which hardware profiling can be defined: Inline or default scenarios. 
       // Both options exclude each other, so we abort in that case.
-      bool has_default_scenario = cfg_papi->default_scenario.set &&
-                                  strcmp(cfg_papi->default_scenario.value, "");
-      bool has_inline_hwc_or_obs = cfg_papi->counters.set || cfg_papi->observables.set;
+      bool has_default_scenario = cfg_hwprof->default_scenario.set &&
+                                  strcmp(cfg_hwprof->default_scenario.value, "");
+      bool has_inline_hwc_or_obs = cfg_hwprof->counters.set || cfg_hwprof->observables.set;
       if (has_default_scenario && has_inline_hwc_or_obs) {
          fprintf (stderr, "PAPI configuration has both a default scenario and inline counters and / or observables\n");
          vftr_abort(0); 
       } else if (has_default_scenario) {
-         vftr_parse_config_string (json_object, &(cfg_papi->default_scenario));
-         FILE *fp = fopen (cfg_papi->default_scenario.value, "r");
+         vftr_parse_config_string (json_object, &(cfg_hwprof->default_scenario));
+         FILE *fp = fopen (cfg_hwprof->default_scenario.value, "r");
          if (fp == NULL) {
-            fprintf (stderr, "Could not find default PAPI scenario %s\n", cfg_papi->default_scenario.value);
+            fprintf (stderr, "Could not find default PAPI scenario %s\n", cfg_hwprof->default_scenario.value);
          }
-         char *config_string = vftr_read_file_to_string(cfg_papi->default_scenario.value);
+         char *config_string = vftr_read_file_to_string(cfg_hwprof->default_scenario.value);
          cJSON *config_tmp = cJSON_Parse(config_string);
          free(config_string);
          fclose (fp);
 
-         vftr_parse_config_hwcounters(config_tmp, &(cfg_papi->counters));
-         vftr_parse_config_hwobservables(config_tmp, &(cfg_papi->observables));
+         vftr_parse_config_hwcounters(config_tmp, &(cfg_hwprof->counters));
+         vftr_parse_config_hwobservables(config_tmp, &(cfg_hwprof->observables));
       }
    }
 }
@@ -414,7 +414,7 @@ void vftr_parse_config(char *config_string, config_t *config_ptr) {
    vftr_parse_config_mpi(config_json, &(config_ptr->mpi));
    vftr_parse_config_cuda(config_json, &(config_ptr->cuda));
    vftr_parse_config_accprof(config_json, &(config_ptr->accprof));
-   vftr_parse_config_papi(config_json, &(config_ptr->papi));
+   vftr_parse_config_hwprof(config_json, &(config_ptr->hwprof));
 
    vftr_config_advisor(config_json);
 

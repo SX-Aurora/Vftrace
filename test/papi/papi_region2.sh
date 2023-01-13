@@ -15,7 +15,7 @@ configfile=${test_name}.json
 cat << EOF > ${configfile}
 {
    "mpi": {"show_table": false},
-   "papi": {
+   "hwprof": {
       "observables": [
           {
              "name": "test",

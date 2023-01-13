@@ -318,17 +318,17 @@ void vftr_config_accprof_assert(FILE *fp, config_accprof_t cfg_accprof) {
    vftr_config_sort_table_assert(fp, cfg_accprof.sort_table, 5, valid_columns);
 }
 
-void vftr_config_papi_assert (FILE *fp, config_papi_t cfg_papi) {
-   int n_obs = cfg_papi.observables.obs_name.n_elements;
-   int n_formulas = cfg_papi.observables.formula_expr.n_elements;
-   int n_units = cfg_papi.observables.unit.n_elements;
+void vftr_config_hwprof_assert (FILE *fp, config_hwprof_t cfg_hwprof) {
+   int n_obs = cfg_hwprof.observables.obs_name.n_elements;
+   int n_formulas = cfg_hwprof.observables.formula_expr.n_elements;
+   int n_units = cfg_hwprof.observables.unit.n_elements;
    int n_max = n_obs > n_formulas ? n_obs : n_formulas;
    n_max = n_units > n_max ? n_units : n_max;
 
    // Check that the sort column is valid
    if (n_max > 0) {
-     if (cfg_papi.sort_by_column.value < 0 || cfg_papi.sort_by_column.value >= n_max) {
-        fprintf (fp, "PAPI: Invalid column to sort specified: %d\n", cfg_papi.sort_by_column.value);
+     if (cfg_hwprof.sort_by_column.value < 0 || cfg_hwprof.sort_by_column.value >= n_max) {
+        fprintf (fp, "PAPI: Invalid column to sort specified: %d\n", cfg_hwprof.sort_by_column.value);
         vftr_abort(0);
      }
    } // If no observables are found, the value is irrelevant.
@@ -349,5 +349,5 @@ void vftr_config_assert(FILE *fp, config_t config) {
    vftr_config_mpi_assert(fp, config.mpi);
    vftr_config_cuda_assert(fp, config.cuda);
    vftr_config_accprof_assert(fp, config.accprof);
-   vftr_config_papi_assert(fp, config.papi);
+   vftr_config_hwprof_assert(fp, config.hwprof);
 }

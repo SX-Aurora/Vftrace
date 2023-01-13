@@ -9,16 +9,16 @@
 #include "sorting.h"
 #include "collate_stacks.h"
 
-#include "papiprofiling_types.h"
+#include "hwprofiling_types.h"
 
-void vftr_write_papi_observables_table (FILE *fp, collated_stacktree_t stacktree, config_t config) {
+void vftr_write_hwprof_observables_table (FILE *fp, collated_stacktree_t stacktree, config_t config) {
 
    collated_stack_t **sorted_stacks =
-      vftr_sort_collated_stacks_papi_obs(config, stacktree);
+      vftr_sort_collated_stacks_hwprof_obs(config, stacktree);
 
    fprintf (fp, "\nRuntime PAPI profile - Observables\n");
 
-   int n_observables = vftrace.papi_state.calculator.n_observables;
+   int n_observables = vftrace.hwprof_state.calculator.n_observables;
 
    int n_without_init = 0;
    for (int istack = 0; istack < stacktree.nstacks; istack++) {
@@ -38,13 +38,13 @@ void vftr_write_papi_observables_table (FILE *fp, collated_stacktree_t stacktree
       collated_stack_t *this_stack = sorted_stacks[istack];
       if (vftr_collstack_is_init(*this_stack)) continue;
       collated_callprofile_t callprof = this_stack->profile.callprof;
-      papiprofile_t papiprof = this_stack->profile.papiprof;
+      hwprofile_t hwprof = this_stack->profile.hwprof;
 
       calls[idx] = callprof.calls;
       func[idx] = this_stack->name;
 
       for (int i = 0; i < n_observables; i++) {
-         observables[i][idx] = papiprof.observables[i];
+         observables[i][idx] = hwprof.observables[i];
       }
       idx++;
    }
@@ -55,10 +55,10 @@ void vftr_write_papi_observables_table (FILE *fp, collated_stacktree_t stacktree
    vftr_table_add_column (&table, col_int, "#Calls", "%d", 'c', 'r', (void*)calls);
    vftr_table_add_column (&table, col_string, "Func", "%s", 'c', 'r', (void*)func);
    for (int i = 0; i < n_observables; i++) {
-      char *obs_name = config.papi.observables.obs_name.values[i];
+      char *obs_name = config.hwprof.observables.obs_name.values[i];
       char *obs_unit;
-      if (config.papi.observables.unit.values[i] != NULL) {
-          obs_unit = config.papi.observables.unit.values[i];
+      if (config.hwprof.observables.unit.values[i] != NULL) {
+          obs_unit = config.hwprof.observables.unit.values[i];
       } else {
           obs_unit = "";
       }
@@ -77,8 +77,8 @@ void vftr_write_papi_observables_table (FILE *fp, collated_stacktree_t stacktree
    free (observables);
 }
 
-void vftr_write_papi_observables_logfile_summary (FILE *fp, collated_stacktree_t stacktree, config_t config) {
-   int n_observables = vftrace.papi_state.calculator.n_observables;
+void vftr_write_hwprof_observables_logfile_summary (FILE *fp, collated_stacktree_t stacktree, config_t config) {
+   int n_observables = vftrace.hwprof_state.calculator.n_observables;
    if (n_observables == 0) {
       fprintf (fp, "\nNo observables registered.\n");
       return;
@@ -88,23 +88,23 @@ void vftr_write_papi_observables_logfile_summary (FILE *fp, collated_stacktree_t
    memset (obs_sum, 0, n_observables * sizeof(double));
    for (int istack = 0; istack < stacktree.nstacks; istack++) {
       collated_stack_t this_stack = stacktree.stacks[istack];
-      papiprofile_t papiprof = this_stack.profile.papiprof;
+      hwprofile_t hwprof = this_stack.profile.hwprof;
      
       for (int i = 0; i < n_observables; i++) {
-         obs_sum[i] += papiprof.observables[i];
+         obs_sum[i] += hwprof.observables[i];
       } 
    } 
 
    fprintf (fp, "PAPI observables summary: \n\n");
    for (int i = 0; i < n_observables; i++) {
-      fprintf (fp, "  %s: %lf %s\n", config.papi.observables.obs_name.values[i],
-                                     obs_sum[i], config.papi.observables.unit.values[i]);
+      fprintf (fp, "  %s: %lf %s\n", config.hwprof.observables.obs_name.values[i],
+                                     obs_sum[i], config.hwprof.observables.unit.values[i]);
    }
    free(obs_sum);
 }
 
-void vftr_write_papi_counter_logfile_summary (FILE *fp, collated_stacktree_t stacktree, config_t config) {
-   int n_counters = vftrace.papi_state.n_counters;
+void vftr_write_hwprof_counter_logfile_summary (FILE *fp, collated_stacktree_t stacktree, config_t config) {
+   int n_counters = vftrace.hwprof_state.n_counters;
    if (n_counters == 0) {
       fprintf (fp, "\nNo hardware counters registered.\n");
       return;
@@ -113,23 +113,23 @@ void vftr_write_papi_counter_logfile_summary (FILE *fp, collated_stacktree_t sta
    memset (counter_sum, 0, n_counters * sizeof(long long));
    for (int istack = 0; istack < stacktree.nstacks; istack++) {
       collated_stack_t this_stack = stacktree.stacks[istack]; 
-      papiprofile_t papiprof = this_stack.profile.papiprof;
+      hwprofile_t hwprof = this_stack.profile.hwprof;
 
       for (int e = 0; e < n_counters; e++) {
-         counter_sum[e] += papiprof.counters_excl[e]; 
+         counter_sum[e] += hwprof.counters_excl[e]; 
       }
    }
 
    fprintf (fp, "PAPI counters summary: \n\n");
-   for (int e = 0; e < vftrace.papi_state.n_counters; e++) {
-      fprintf (fp, "  %s: %lld\n",  vftrace.papi_state.counters[e].name, counter_sum[e]);
+   for (int e = 0; e < vftrace.hwprof_state.n_counters; e++) {
+      fprintf (fp, "  %s: %lld\n",  vftrace.hwprof_state.counters[e].name, counter_sum[e]);
    }
    free (counter_sum);
 }
 
-void vftr_write_logfile_papi_counter_table (FILE *fp, collated_stacktree_t stacktree, config_t config) {
+void vftr_write_logfile_hwprof_counter_table (FILE *fp, collated_stacktree_t stacktree, config_t config) {
    collated_stack_t **sorted_stacks =
-      vftr_sort_collated_stacks_papi_obs(config, stacktree);
+      vftr_sort_collated_stacks_hwprof_obs(config, stacktree);
 
    fprintf (fp, "\nRuntime PAPI profile - Hardware Counters\n");
 
@@ -141,7 +141,7 @@ void vftr_write_logfile_papi_counter_table (FILE *fp, collated_stacktree_t stack
 
    int *calls = (int*)malloc(n_without_init * sizeof(int));
    char **func = (char**)malloc(n_without_init * sizeof(char*));
-   int n_counters = vftrace.papi_state.n_counters;
+   int n_counters = vftrace.hwprof_state.n_counters;
    long long **counters = (long long**)malloc(n_counters * sizeof(long long*));
    for (int i = 0; i < n_counters; i++) {
       counters[i] = (long long*)malloc(n_without_init * sizeof(long long)); 
@@ -154,13 +154,13 @@ void vftr_write_logfile_papi_counter_table (FILE *fp, collated_stacktree_t stack
       if (vftr_collstack_is_init(*this_stack)) continue;
 
       collated_callprofile_t callprof = this_stack->profile.callprof;
-      papiprofile_t papiprof = this_stack->profile.papiprof;
+      hwprofile_t hwprof = this_stack->profile.hwprof;
 
       calls[idx] = callprof.calls;
       func[idx] = this_stack->name;
 
       for (int i = 0; i < n_counters; i++) {
-         counters[i][idx] = papiprof.counters_excl[i];
+         counters[i][idx] = hwprof.counters_excl[i];
       }
       idx++;
    }
@@ -171,7 +171,7 @@ void vftr_write_logfile_papi_counter_table (FILE *fp, collated_stacktree_t stack
    vftr_table_add_column (&table, col_int, "#Calls", "%d", 'c', 'r', (void*)calls);
    vftr_table_add_column (&table, col_string, "Func", "%s", 'c', 'r', (void*)func);
    for (int i = 0; i < n_counters; i++) {
-      vftr_table_add_column(&table, col_longlong, vftrace.papi_state.counters[i].name,
+      vftr_table_add_column(&table, col_longlong, vftrace.hwprof_state.counters[i].name,
                             "%lld", 'c', 'r', (void*)counters[i]);
    }
 

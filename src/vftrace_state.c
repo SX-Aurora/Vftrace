@@ -75,7 +75,7 @@ vftrace_t vftrace = {
    },
 #endif
 #ifdef _PAPI_AVAIL
-   .papi_state = {
+   .hwprof_state = {
       .n_counters = 0,
       .counters = NULL,
       .eventset = PAPI_NULL,
@@ -291,23 +291,23 @@ unsigned long long vftr_sizeof_config_hwobservables_t (config_hwobservables_t cf
 
 }
 
-unsigned long long vftr_sizeof_config_papi_t (config_papi_t cfg_papi) {
-   unsigned long long size = sizeof(config_papi_t);
-   size += vftr_sizeof_config_struct_defaults (cfg_papi.name);
+unsigned long long vftr_sizeof_config_hwprof_t (config_hwprof_t cfg_hwprof) {
+   unsigned long long size = sizeof(config_hwprof_t);
+   size += vftr_sizeof_config_struct_defaults (cfg_hwprof.name);
    size -= sizeof(config_bool_t); 
-   size += vftr_sizeof_config_bool_t(cfg_papi.disable);
+   size += vftr_sizeof_config_bool_t(cfg_hwprof.disable);
    size -= sizeof(config_bool_t); 
-   size += vftr_sizeof_config_bool_t(cfg_papi.show_observables);
+   size += vftr_sizeof_config_bool_t(cfg_hwprof.show_observables);
    size -= sizeof(config_bool_t); 
-   size += vftr_sizeof_config_bool_t(cfg_papi.show_counters);
+   size += vftr_sizeof_config_bool_t(cfg_hwprof.show_counters);
    size -= sizeof(config_int_t);
-   size += vftr_sizeof_config_bool_t(cfg_papi.show_summary);
+   size += vftr_sizeof_config_bool_t(cfg_hwprof.show_summary);
    size -= sizeof(config_bool_t); 
-   size += vftr_sizeof_config_int_t(cfg_papi.sort_by_column);
+   size += vftr_sizeof_config_int_t(cfg_hwprof.sort_by_column);
    size -= sizeof(config_hwcounters_t);
-   size += vftr_sizeof_config_hwcounters_t (cfg_papi.counters);
+   size += vftr_sizeof_config_hwcounters_t (cfg_hwprof.counters);
    size -= sizeof(config_hwobservables_t);
-   size += vftr_sizeof_config_hwobservables_t (cfg_papi.observables);
+   size += vftr_sizeof_config_hwobservables_t (cfg_hwprof.observables);
 }
 
 unsigned long long vftr_sizeof_config_t(config_t config) {
@@ -336,8 +336,8 @@ unsigned long long vftr_sizeof_config_t(config_t config) {
    size += vftr_sizeof_config_mpi_t(config.mpi);
    size -= sizeof(config_cuda_t);
    size += vftr_sizeof_config_cuda_t(config.cuda);
-   size -= sizeof(config_papi_t);
-   size += vftr_sizeof_config_papi_t(config.papi);
+   size -= sizeof(config_hwprof_t);
+   size += vftr_sizeof_config_hwprof_t(config.hwprof);
    if (config.config_file_path != NULL) {
       size += strlen(config.config_file_path);
    }

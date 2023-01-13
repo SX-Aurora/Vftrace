@@ -43,7 +43,7 @@ if ENABLE_ACCPROF
 endif
 
 if ENABLE_PAPI
-  AM_CFLAGS += -D_PAPI_AVAIL -I$(top_srcdir)/src/papi -I$(top_srcdir)/external/tinyexpr
+  AM_CFLAGS += -D_PAPI_AVAIL -I$(top_srcdir)/src/hwprof -I$(top_srcdir)/external/tinyexpr
 endif
 
 if ENABLE_OMP

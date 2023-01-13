@@ -22,7 +22,7 @@
 #include "accprof_ranklogfile.h"
 #endif
 #ifdef _PAPI_AVAIL
-#include "papi_ranklogfile.h"
+#include "hwprof_ranklogfile.h"
 #endif
 
 
@@ -124,21 +124,21 @@ void vftr_write_ranklogfile(vftrace_t vftrace, long long runtime) {
 #endif
 
 #ifdef _PAPI_AVAIL
-   if (vftrace.papi_state.n_observables > 0 && vftrace.config.papi.show_observables.value) {
-      vftr_write_ranklogfile_papi_obs_table (fp, vftrace.process.stacktree, vftrace.config);
+   if (vftrace.hwprof_state.n_observables > 0 && vftrace.config.hwprof.show_observables.value) {
+      vftr_write_ranklogfile_hwprof_obs_table (fp, vftrace.process.stacktree, vftrace.config);
       fprintf (fp, "\n");
    }
-   if (vftrace.papi_state.n_counters > 0 && vftrace.config.papi.show_counters.value) {
-      vftr_write_ranklogfile_papi_counter_table (fp, vftrace.process.stacktree, vftrace.config);
+   if (vftrace.hwprof_state.n_counters > 0 && vftrace.config.hwprof.show_counters.value) {
+      vftr_write_ranklogfile_hwprof_counter_table (fp, vftrace.process.stacktree, vftrace.config);
       fprintf (fp, "\n");
    }
 
-   if (vftrace.config.papi.show_observables.value && vftrace.config.papi.show_summary.value) {
-      vftr_write_papi_observables_ranklogfile_summary (fp, vftrace.process.stacktree, vftrace.config);
+   if (vftrace.config.hwprof.show_observables.value && vftrace.config.hwprof.show_summary.value) {
+      vftr_write_hwprof_observables_ranklogfile_summary (fp, vftrace.process.stacktree, vftrace.config);
       fprintf (fp, "\n");
    }
-   if (vftrace.config.papi.show_counters.value && vftrace.config.papi.show_summary.value) {
-      vftr_write_papi_counter_ranklogfile_summary (fp, vftrace.process.stacktree, vftrace.config);
+   if (vftrace.config.hwprof.show_counters.value && vftrace.config.hwprof.show_summary.value) {
+      vftr_write_hwprof_counter_ranklogfile_summary (fp, vftrace.process.stacktree, vftrace.config);
       fprintf (fp, "\n");
    }
 

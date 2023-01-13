@@ -280,15 +280,15 @@ void vftr_sort_collated_stacks_for_mpiprof(config_t config,
 #endif
 
 #ifdef _PAPI_AVAIL
-  collated_stack_t **vftr_sort_collated_stacks_papi_obs (config_t config, collated_stacktree_t stacktree) {
+  collated_stack_t **vftr_sort_collated_stacks_hwprof_obs (config_t config, collated_stacktree_t stacktree) {
      int nstacks = stacktree.nstacks;
-     int sort_column = config.papi.sort_by_column.value;
+     int sort_column = config.hwprof.sort_by_column.value;
      int *perm = NULL;
      double *observables   = (double*)malloc(nstacks * sizeof(long long));
      for (int istack = 0; istack < nstacks; istack++) {
         collated_stack_t *stack = stacktree.stacks + istack;
-        papiprofile_t papiprof = stack->profile.papiprof;
-        observables[istack] = papiprof.observables[sort_column];
+        hwprofile_t hwprof = stack->profile.hwprof;
+        observables[istack] = hwprof.observables[sort_column];
      }
 
      vftr_sort_perm_double (nstacks, observables, &perm, false);

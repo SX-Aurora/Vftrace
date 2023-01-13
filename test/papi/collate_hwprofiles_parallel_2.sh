@@ -16,8 +16,8 @@ function check_ranksum () {
 }
 
 set -x
-test_name=collate_papiprofiles_parallel_2
-exe_name=collate_papiprofiles_parallel_2
+test_name=collate_hwprofiles_parallel_2
+exe_name=collate_hwprofiles_parallel_2
 output_file=${test_name}.out
 ref_file=${srcdir}/ref_output/${output_file}
 

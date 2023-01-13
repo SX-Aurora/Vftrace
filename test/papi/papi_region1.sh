@@ -14,7 +14,7 @@ configfile=${vftr_binary}.json
 cat << EOF > ${configfile}
 {
    "mpi": {"show_table": false},
-   "papi": {
+   "hwprof": {
       "observables": [
           {
              "name": "test",

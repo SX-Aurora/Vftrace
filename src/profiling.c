@@ -20,7 +20,7 @@
 #include "accprofiling.h"
 #endif
 #ifdef _PAPI_AVAIL
-#include "papiprofiling.h"
+#include "hwprofiling.h"
 #endif
 
 void vftr_profilelist_realloc(profilelist_t *profilelist_ptr) {
@@ -54,7 +54,7 @@ profile_t vftr_new_profile(int threadID) {
    profile.accprof = vftr_new_accprofiling();
 #endif 
 #ifdef _PAPI_AVAIL
-   profile.papiprof = vftr_new_papiprofiling();
+   profile.hwprof = vftr_new_hwprofiling();
 #endif
    // Add further profiles here
    SELF_PROFILE_END_FUNCTION;
@@ -120,7 +120,7 @@ void vftr_profile_free(profile_t* profiles_ptr, int profID) {
    vftr_accprofiling_free (&(profile_ptr->accprof));
 #endif
 #ifdef _PAPI_AVAIL
-   vftr_papiprofiling_free (&(profile_ptr->papiprof));
+   vftr_hwprofiling_free (&(profile_ptr->hwprof));
 #endif
    // Add further profiles here.
    SELF_PROFILE_END_FUNCTION;

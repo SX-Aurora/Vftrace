@@ -178,7 +178,7 @@ libvftr_mpi_la_CFLAGS += -D_CUDA
 endif
 
 if ENABLE_PAPI
-libvftr_mpi_la_CFLAGS += -D_PAPI_AVAIL -I${srcdir}/../../papi -I${srcdir}/../../../external/tinyexpr
+libvftr_mpi_la_CFLAGS += -D_PAPI_AVAIL -I${srcdir}/../../hwprof -I${srcdir}/../../../external/tinyexpr
 endif
 
 if SELF_PROFILING

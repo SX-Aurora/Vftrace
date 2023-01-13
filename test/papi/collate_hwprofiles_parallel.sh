@@ -1,7 +1,7 @@
 #!/bin/bash
 set -x
-test_name=collate_papiprofiles_parallel
-exe_name=collate_papiprofiles_parallel
+test_name=collate_hwprofiles_parallel
+exe_name=collate_hwprofiles_parallel
 output_file=${test_name}.out
 ref_file=${srcdir}/ref_output/${output_file}
 

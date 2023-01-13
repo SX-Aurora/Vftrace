@@ -15,7 +15,7 @@
 #include "collated_cudaprofiling.h"
 #endif
 #ifdef _PAPI_AVAIL
-#include "papiprofiling.h"
+#include "hwprofiling.h"
 #endif
 
 collated_profile_t vftr_new_collated_profile() {
@@ -29,7 +29,7 @@ collated_profile_t vftr_new_collated_profile() {
    profile.cudaprof = vftr_new_collated_cudaprofiling();
 #endif
 #ifdef _PAPI_AVAIL
-   profile.papiprof = vftr_new_papiprofiling();
+   profile.hwprof = vftr_new_hwprofiling();
 #endif
    // TODO: Add other profiles
    SELF_PROFILE_END_FUNCTION;

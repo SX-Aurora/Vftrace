@@ -157,11 +157,11 @@ void  vftr_config_hwobservables_free (config_hwobservables_t *cfg_hwobs_ptr) {
    vftr_config_string_free(&(cfg_hwobs_ptr->unit));
 }
 
-void vftr_config_papi_free (config_papi_t *cfg_papi_ptr) {
-   free(cfg_papi_ptr->name);
-   cfg_papi_ptr->name = NULL;
-   vftr_config_hwcounters_free (&(cfg_papi_ptr->counters));
-   vftr_config_hwobservables_free (&(cfg_papi_ptr->observables));
+void vftr_config_hwprof_free (config_hwprof_t *cfg_hwprof_ptr) {
+   free(cfg_hwprof_ptr->name);
+   cfg_hwprof_ptr->name = NULL;
+   vftr_config_hwcounters_free (&(cfg_hwprof_ptr->counters));
+   vftr_config_hwobservables_free (&(cfg_hwprof_ptr->observables));
 }
 
 void vftr_config_free(config_t *config_ptr) {
@@ -179,7 +179,7 @@ void vftr_config_free(config_t *config_ptr) {
    vftr_config_mpi_free(&(config_ptr->mpi));
    vftr_config_cuda_free(&(config_ptr->cuda));
    vftr_config_accprof_free(&(config_ptr->accprof));
-   vftr_config_papi_free(&(config_ptr->papi));
+   vftr_config_hwprof_free(&(config_ptr->hwprof));
 
    if (config_ptr->config_file_path != NULL) {
       free(config_ptr->config_file_path);

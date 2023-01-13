@@ -3,13 +3,13 @@
 
 #include "vftrace_state.h"
 
-#include "papiprofiling_types.h"
-#include "papi_calculator.h"
+#include "hwprofiling_types.h"
+#include "calculator.h"
 
-papiprofile_t vftr_new_papiprofiling () {
-   papiprofile_t prof;
-   int n_counters = vftrace.papi_state.n_counters;
-   int n_observables = vftrace.config.papi.observables.obs_name.n_elements;
+hwprofile_t vftr_new_hwprofiling () {
+   hwprofile_t prof;
+   int n_counters = vftrace.hwprof_state.n_counters;
+   int n_observables = vftrace.config.hwprof.observables.obs_name.n_elements;
    prof.counters_incl = (long long*)malloc (n_counters * sizeof(long long));
    memset (prof.counters_incl, 0, n_counters * sizeof(long long));
    prof.counters_excl = (long long*)malloc (n_counters * sizeof(long long));
@@ -20,14 +20,14 @@ papiprofile_t vftr_new_papiprofiling () {
 }
 
 long long *vftr_get_papi_counters () {
-  int n = vftrace.papi_state.n_counters;
+  int n = vftrace.hwprof_state.n_counters;
   long long *counters = (long long *)malloc (n * sizeof(long long));
-  int retval = PAPI_read (vftrace.papi_state.eventset, counters);
+  int retval = PAPI_read (vftrace.hwprof_state.eventset, counters);
   return counters;
 }
 
-void vftr_accumulate_papiprofiling (papiprofile_t *prof, long long *counters, bool invert_sign) {
-   int n = vftrace.papi_state.n_counters;
+void vftr_accumulate_hwprofiling (hwprofile_t *prof, long long *counters, bool invert_sign) {
+   int n = vftrace.hwprof_state.n_counters;
    for (int i = 0; i < n; i++) {
       if (invert_sign) {
          prof->counters_incl[i] -= counters[i]; 
@@ -38,7 +38,7 @@ void vftr_accumulate_papiprofiling (papiprofile_t *prof, long long *counters, bo
 }
 
 void vftr_update_stacks_exclusive_counters (stacktree_t *stacktree_ptr) {
-   int n_counters = vftrace.papi_state.n_counters;
+   int n_counters = vftrace.hwprof_state.n_counters;
    int nstacks = stacktree_ptr->nstacks;
    vftr_stack_t *stacks = stacktree_ptr->stacks;
    for (int istack = 1; istack < nstacks; istack++) {
@@ -46,7 +46,7 @@ void vftr_update_stacks_exclusive_counters (stacktree_t *stacktree_ptr) {
       for (int iprof = 0; iprof < this_stack->profiling.nprofiles; iprof++) {
          profile_t *this_prof = this_stack->profiling.profiles + iprof;
          for (int e = 0; e < n_counters; e++) {
-            this_prof->papiprof.counters_excl[e] = this_prof->papiprof.counters_incl[e];
+            this_prof->hwprof.counters_excl[e] = this_prof->hwprof.counters_incl[e];
          } 
          
          for (int icallee = 0; icallee < this_stack->ncallees; icallee++) {
@@ -63,7 +63,7 @@ void vftr_update_stacks_exclusive_counters (stacktree_t *stacktree_ptr) {
             if (calleeprofID >= 0) {
                profile_t *calleeprof = calleestack->profiling.profiles + calleeprofID;
                for (int e = 0; e < n_counters; e++) {
-                  this_prof->papiprof.counters_excl[e] -= calleeprof->papiprof.counters_incl[e];
+                  this_prof->hwprof.counters_excl[e] -= calleeprof->hwprof.counters_incl[e];
                }
             }
          }
@@ -71,8 +71,8 @@ void vftr_update_stacks_exclusive_counters (stacktree_t *stacktree_ptr) {
    }
 }
 
-void vftr_update_stacks_papi_observables (stacktree_t *stacktree_ptr) {
-   papi_calculator_t *calc = &(vftrace.papi_state.calculator);
+void vftr_update_stacks_hw_observables (stacktree_t *stacktree_ptr) {
+   vftr_calculator_t *calc = &(vftrace.hwprof_state.calculator);
    int nstacks = stacktree_ptr->nstacks;
    vftr_stack_t *stacks = stacktree_ptr->stacks;
    for (int istack = 1; istack < nstacks; istack++) {
@@ -80,18 +80,18 @@ void vftr_update_stacks_papi_observables (stacktree_t *stacktree_ptr) {
       for (int iprof = 0; iprof < this_stack->profiling.nprofiles; iprof++) {
          profile_t *this_prof = this_stack->profiling.profiles + iprof;
          callprofile_t callprof = this_prof->callprof;
-         papiprofile_t *papiprof = &(this_prof->papiprof);
-         vftr_set_papi_calculator_counters (calc, papiprof->counters_excl);
-         vftr_set_papi_calculator_builtin (calc, PCALC_T, (double)callprof.time_excl_nsec * 1e-9);
-         vftr_set_papi_calculator_builtin (calc, PCALC_CALLS, callprof.calls);
+         hwprofile_t *hwprof = &(this_prof->hwprof);
+         vftr_set_calculator_counters (calc, hwprof->counters_excl);
+         vftr_set_calculator_builtin (calc, PCALC_T, (double)callprof.time_excl_nsec * 1e-9);
+         vftr_set_calculator_builtin (calc, PCALC_CALLS, callprof.calls);
          for (int i = 0; i < calc->n_observables; i++) {
-            papiprof->observables[i] = vftr_papi_calculator_evaluate (*calc, i);
+            hwprof->observables[i] = vftr_calculator_evaluate (*calc, i);
          }
       }
    }
 }
 
-void vftr_papiprofiling_free (papiprofile_t *prof_ptr) {
+void vftr_hwprofiling_free (hwprofile_t *prof_ptr) {
    if (prof_ptr->counters_incl != NULL) free (prof_ptr->counters_incl);
    if (prof_ptr->counters_excl != NULL) free (prof_ptr->counters_excl);
    if (prof_ptr->observables != NULL) free (prof_ptr->observables);

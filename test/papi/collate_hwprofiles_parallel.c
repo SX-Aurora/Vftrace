@@ -15,9 +15,9 @@
 #include "collate_stacks.h"
 #include "collate_profiles.h"
 
-#include "papiprofiling.h"
-#include "papi_logfile.h"
-#include "papi_ranklogfile.h"
+#include "hwprofiling.h"
+#include "hwprof_logfile.h"
+#include "hwprof_ranklogfile.h"
 
 stacktree_t dummy_stacktree;
 static uintptr_t base_addr = 123456;
@@ -65,7 +65,7 @@ void vftr_register_dummy_call_stack (char *stackstring, uint64_t t_call) {
    vftr_accumulate_callprofiling(&(profile->callprof), 1, t_call);
 }
 
-void vftr_register_dummy_papi_stack (char *stackstring, long long *counters) {
+void vftr_register_dummy_hwprof_stack (char *stackstring, long long *counters) {
    int slen = strlen(stackstring);
    uint64_t new_hash = vftr_jenkins_murmur_64_hash (slen, (uint8_t*)stackstring); 
    int this_stack_idx = get_stack_idx (new_hash);
@@ -90,7 +90,7 @@ void vftr_register_dummy_papi_stack (char *stackstring, long long *counters) {
       iprof = vftr_new_profile_in_list (0, &(dummy_stacktree.stacks[this_stack_idx].profiling));
    profile_t *profile = dummy_stacktree.stacks[this_stack_idx].profiling.profiles + iprof;
    vftr_accumulate_callprofiling(&(profile->callprof), 1, 0);
-   vftr_accumulate_papiprofiling(&(profile->papiprof), counters, false);
+   vftr_accumulate_hwprofiling(&(profile->hwprof), counters, false);
 }
 
 void vftr_update_dummy_observables () {
@@ -100,8 +100,8 @@ void vftr_update_dummy_observables () {
       vftr_stack_t *this_stack = stacks + istack;
       for (int iprof = 0; iprof < this_stack->profiling.nprofiles; iprof++) {
          profile_t *this_prof = this_stack->profiling.profiles + iprof;
-         papiprofile_t *papiprof = &(this_prof->papiprof);
-         papiprof->observables[0] = (double)(papiprof->counters_excl[0] + papiprof->counters_excl[1])/2;
+         hwprofile_t *hwprof = &(this_prof->hwprof);
+         hwprof->observables[0] = (double)(hwprof->counters_excl[0] + hwprof->counters_excl[1])/2;
       }
    }
 }
@@ -126,16 +126,16 @@ int main (int argc, char **argv) {
 
    int n_counters = 2;
    int n_observables = 1;
-   vftrace.papi_state.n_counters = n_counters;
-   vftrace.papi_state.counters = (vftr_counter_t*)malloc (n_counters * sizeof(vftr_counter_t));
-   vftrace.papi_state.counters[0].name = "dummy1";
-   vftrace.papi_state.counters[1].name = "dummy2";
-   vftrace.config.papi.observables.obs_name.n_elements = n_observables;
-   vftrace.papi_state.calculator.n_observables = n_observables;
-   vftrace.config.papi.observables.obs_name.values = (char**)malloc(n_observables * sizeof(char*));
-   vftrace.config.papi.observables.unit.values = (char**)malloc(n_observables * sizeof(char*));
-   vftrace.config.papi.observables.obs_name.values[0] = "dummy_obs";
-   vftrace.config.papi.observables.unit.values[0] = "dummy_unit";
+   vftrace.hwprof_state.n_counters = n_counters;
+   vftrace.hwprof_state.counters = (vftr_counter_t*)malloc (n_counters * sizeof(vftr_counter_t));
+   vftrace.hwprof_state.counters[0].name = "dummy1";
+   vftrace.hwprof_state.counters[1].name = "dummy2";
+   vftrace.config.hwprof.observables.obs_name.n_elements = n_observables;
+   vftrace.hwprof_state.calculator.n_observables = n_observables;
+   vftrace.config.hwprof.observables.obs_name.values = (char**)malloc(n_observables * sizeof(char*));
+   vftrace.config.hwprof.observables.unit.values = (char**)malloc(n_observables * sizeof(char*));
+   vftrace.config.hwprof.observables.obs_name.values[0] = "dummy_obs";
+   vftrace.config.hwprof.observables.unit.values[0] = "dummy_unit";
 
 
    vftr_init_dummy_stacktree (10);
@@ -144,23 +144,23 @@ int main (int argc, char **argv) {
       vftr_register_dummy_call_stack ("func0<init", 1);
       vftr_register_dummy_call_stack ("papifunc1<init", 2);
       long long c1[] = {0, 1000};
-      vftr_register_dummy_papi_stack ("papifunc1<init", c1);
+      vftr_register_dummy_hwprof_stack ("papifunc1<init", c1);
       long long c2[] = {1000, 500};
       for (int i = 0; i < 3; i++) {
-         vftr_register_dummy_papi_stack ("papifunc2<func0<init", c2);
+         vftr_register_dummy_hwprof_stack ("papifunc2<func0<init", c2);
       }
    } else {
       vftr_register_dummy_call_stack ("func0<init", 1);
       vftr_register_dummy_call_stack ("papifunc1<init", 2);
       long long c1[] = {0, 2000};
-      vftr_register_dummy_papi_stack ("papifunc1<init", c1);
+      vftr_register_dummy_hwprof_stack ("papifunc1<init", c1);
       long long c2[] = {500, 1000};
       for (int i = 0; i < 5; i++) {
-         vftr_register_dummy_papi_stack ("papifunc2<func0<init", c2);
+         vftr_register_dummy_hwprof_stack ("papifunc2<func0<init", c2);
       }
       //// Additional papifunc not present on rank 0
       long long c3[] = {1000, 0};
-      vftr_register_dummy_papi_stack ("papifunc3<func0<init", c3);
+      vftr_register_dummy_hwprof_stack ("papifunc3<func0<init", c3);
    }
  
 
@@ -171,14 +171,14 @@ int main (int argc, char **argv) {
    for (int i = 0; i < nranks; i++) {
       if (myrank == i) {
         fprintf (stdout, "Ranklogfile for rank %d: \n", i);
-        vftr_write_ranklogfile_papi_counter_table(stdout, stacktree, vftrace.config);
+        vftr_write_ranklogfile_hwprof_counter_table(stdout, stacktree, vftrace.config);
       }
       fflush(stdout);
       PMPI_Barrier(MPI_COMM_WORLD);
    }
    if (myrank == 0) {
      fprintf (stdout, "Collated logfile: \n");
-     vftr_write_logfile_papi_counter_table (stdout, collated_stacktree, vftrace.config);
+     vftr_write_logfile_hwprof_counter_table (stdout, collated_stacktree, vftrace.config);
    }
 
    PMPI_Finalize();

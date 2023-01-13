@@ -1,11 +1,11 @@
-#ifndef PAPI_STATE_TYPES_H
-#define PAPI_STATE_TYPES_H
+#ifndef HWPROF_STATE_TYPES_H
+#define HWPROF_STATE_TYPES_H
 
 #include <stdbool.h>
 
 #include <papi.h>
 
-#include "papi_calculator.h"
+#include "calculator.h"
 
 typedef struct {
    char *name;
@@ -16,7 +16,7 @@ typedef struct {
    int n_observables;
    vftr_counter_t *counters;
    int eventset;
-   papi_calculator_t calculator;
-} papi_state_t;
+   vftr_calculator_t calculator;
+} hwprof_state_t;
 
 #endif

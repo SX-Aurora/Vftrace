@@ -11,7 +11,7 @@ ref_file=${srcdir}/ref_output/${output_file}
 cat << EOF > ${configfile}
 {
    "print_config": true,
-   "papi": {
+   "hwprof": {
        "show_counters": true,
        "sort_by_column": 0,
        "counters": [

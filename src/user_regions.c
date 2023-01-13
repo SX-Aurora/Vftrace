@@ -18,7 +18,7 @@
 #include "timer.h"
 #include "region_address.h"
 #ifdef _PAPI_AVAIL
-#include "papiprofiling.h"
+#include "hwprofiling.h"
 #endif
 
 
@@ -27,7 +27,7 @@ void vftr_user_region_begin(const char *name, void *addr) {
    long long region_begin_time_begin = vftr_get_runtime_nsec();
 #ifdef _PAPI_AVAIL
    long long *papi_counters = NULL;
-   if (!vftrace.config.papi.disable.value) papi_counters = vftr_get_papi_counters();
+   if (!vftrace.config.hwprof.disable.value) papi_counters = vftr_get_papi_counters();
 #endif
 
    // Get the thread that called the region
@@ -73,8 +73,8 @@ void vftr_user_region_begin(const char *name, void *addr) {
    }
 
 #ifdef _PAPI_AVAIL
-   if (!vftrace.config.papi.disable.value) {
-      vftr_accumulate_papiprofiling (&(my_profile->papiprof), papi_counters, true);
+   if (!vftrace.config.hwprof.disable.value) {
+      vftr_accumulate_hwprofiling (&(my_profile->hwprof), papi_counters, true);
       free(papi_counters);
    }
 #endif
@@ -90,7 +90,7 @@ void vftr_user_region_end() {
    long long region_end_time_begin = vftr_get_runtime_nsec();
 #ifdef _PAPI_AVAIL
    long long *papi_counters = NULL;
-   if (!vftrace.config.papi.disable.value) papi_counters = vftr_get_papi_counters();
+   if (!vftrace.config.hwprof.disable.value) papi_counters = vftr_get_papi_counters();
 #endif
 
 
@@ -118,8 +118,8 @@ void vftr_user_region_end() {
    }
 
 #ifdef _PAPI_AVAIL
-   if (!vftrace.config.papi.disable.value) {
-      vftr_accumulate_papiprofiling (&(my_profile->papiprof), papi_counters, false);
+   if (!vftrace.config.hwprof.disable.value) {
+      vftr_accumulate_hwprofiling (&(my_profile->hwprof), papi_counters, false);
       free (papi_counters);
    }
 #endif

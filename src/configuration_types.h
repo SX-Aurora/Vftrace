@@ -119,7 +119,7 @@ typedef struct {
    config_string_t default_scenario;
    config_hwcounters_t counters;
    config_hwobservables_t observables;
-} config_papi_t;
+} config_hwprof_t;
 
 typedef struct {
    config_bool_t off;
@@ -136,7 +136,7 @@ typedef struct {
    config_mpi_t mpi;
    config_cuda_t cuda;
    config_accprof_t accprof;
-   config_papi_t papi;
+   config_hwprof_t hwprof;
    bool valid;
    char *config_file_path;
 } config_t;
