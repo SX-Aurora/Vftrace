@@ -547,7 +547,7 @@ endif
 dist_check_SCRIPTS += threadlist.sh \
 		      threadtree.sh \
                       filenames.sh \
-                      #signal_handling.sh
+                      signal_handling.sh
 
 TEST_EXTENSIONS = .sh
 SH_LOG_COMPILER = $(SHELL)

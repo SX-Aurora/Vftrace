@@ -51,7 +51,7 @@ papi_init_test_CFLAGS = $(AM_CFLAGS) $(FINSTRUMENT_FLAG)
 papi_init_test_LDFLAGS = $(AM_LDFLAGS)
 
 calculator_SOURCES = $(srcdir)/calculator.c
-calculator_CFLAGS = $(AM_CFLAGS) $(FINSTRUMENT_FLAG)
+calculator_CFLAGS = $(AM_CFLAGS)
 calculator_LDFLAGS = $(AM_LDFLAGS)
 
 print_config_SOURCES = $(srcdir)/print_config.c
