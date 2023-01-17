@@ -6,8 +6,6 @@
 #include "vftrace_state.h"
 #include "signal_handling.h"
 
-#include "calculator.h"
-
 void vftr_show_papi_components (FILE *fp) {
    int num_components = PAPI_num_components();
    fprintf (fp, "Available components: %d\n", num_components);

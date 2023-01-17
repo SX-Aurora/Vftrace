@@ -45,6 +45,11 @@ if ENABLE_PAPI
 check_PROGRAMS += papi_init_test
 endif
 
+if ON_VECTOR_ENGINE
+check_PROGRAMS += ve_counters_1 \
+                  ve_counters_2
+endif
+
 if ENABLE_MPI
 check_PROGRAMS += collate_hwprofiles_parallel
 check_PROGRAMS += collate_hwprofiles_parallel_2
@@ -80,6 +85,16 @@ papi_init_test_CFLAGS = $(AM_CFLAGS) $(FINSTRUMENT_FLAG)
 papi_init_test_LDFLAGS = $(AM_LDFLAGS)
 endif
 
+if ON_VECTOR_ENGINE
+ve_counters_1_SOURCES = $(srcdir)/ve_counters_1.c
+ve_counters_1_CFLAGS = $(AM_CFLAGS)
+ve_counters_1_LDFLAGS = $(AM_LDFLAGS)
+
+ve_counters_2_SOURCES = $(srcdir)/ve_counters_2.c
+ve_counters_2_CFLAGS = $(AM_CFLAGS)
+ve_counters_2_LDFLAGS = $(AM_LDFLAGS)
+endif
+
 if ENABLE_MPI
 collate_hwprofiles_parallel_SOURCES = $(srcdir)/collate_hwprofiles_parallel.c
 collate_hwprofiles_parallel_CFLAGS = $(AM_CFLAGS)
@@ -100,6 +115,11 @@ dist_check_SCRIPTS = calculator.sh \
 
 if ENABLE_PAPI
 dist_check_SCRIPTS += papi_init_test.sh
+endif
+
+if ON_VECTOR_ENGINE
+dist_check_SCRIPTS += ve_counters_1.sh \
+                      ve_counters_2.sh
 endif
 
 if ENABLE_MPI

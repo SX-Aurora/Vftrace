@@ -7,6 +7,9 @@
 #ifdef _PAPI_AVAIL
 #include "hwprof_papi.h"
 #endif
+#ifdef _ON_VE
+#include "hwprof_ve.h"
+#endif 
 #include "calculator.h"
 
 hwprofile_t vftr_new_hwprofiling () {
@@ -30,9 +33,10 @@ long long *vftr_get_hw_counters () {
       case HWC_PAPI:
          return vftr_get_papi_counters();
 #endif
+#ifdef _ON_VE
       case HWC_VE:
-         //TBD
-         return NULL;
+         return vftr_get_active_ve_counters();
+#endif
       default:
          //TBD
          return NULL;

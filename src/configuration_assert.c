@@ -319,6 +319,34 @@ void vftr_config_accprof_assert(FILE *fp, config_accprof_t cfg_accprof) {
 }
 
 void vftr_config_hwprof_assert (FILE *fp, config_hwprof_t cfg_hwprof) {
+   char *hwc_type = cfg_hwprof.hwc_type.value;
+   if (!(!strcmp(hwc_type, "dummy") ||
+         !strcmp(hwc_type, "papi")  ||
+         !strcmp(hwc_type, "ve"))) {
+      fprintf (fp, "hwprof: type is obligatory!\n");
+      fprintf (fp, "Must be one of: dummy, papi, ve\n");
+      fprintf (fp, "You specified: %s\n", hwc_type);
+      vftr_abort(0);
+   }
+   int n_counters = cfg_hwprof.counters.hwc_name.n_elements;
+   int n_symbols = cfg_hwprof.counters.symbol.n_elements;
+   // Check that each counter has a symbol
+   if (n_counters != n_symbols) {
+     fprintf (fp, "hwprof: Nr. of counters and symbols do not match: %d %d\n",
+              n_counters, n_symbols);
+     vftr_abort(0);
+   }
+
+#ifdef _ON_VE
+   for (int i = 0; i < n_counters; i++) {
+     char *hwc_name = cfg_hwprof.counters.hwc_name.values[i];
+     if (vftr_ve_counter_index (hwc_name) < 0) {
+        fprintf (fp, "hwprof: Counter %s is not a VE counter.\n", hwc_name); 
+        vftr_abort(0);
+     }
+   }
+#endif
+
    int n_obs = cfg_hwprof.observables.obs_name.n_elements;
    int n_formulas = cfg_hwprof.observables.formula_expr.n_elements;
    int n_units = cfg_hwprof.observables.unit.n_elements;
@@ -328,10 +356,11 @@ void vftr_config_hwprof_assert (FILE *fp, config_hwprof_t cfg_hwprof) {
    // Check that the sort column is valid
    if (n_max > 0) {
      if (cfg_hwprof.sort_by_column.value < 0 || cfg_hwprof.sort_by_column.value >= n_max) {
-        fprintf (fp, "PAPI: Invalid column to sort specified: %d\n", cfg_hwprof.sort_by_column.value);
+        fprintf (fp, "hwprof: Invalid column to sort specified: %d\n", cfg_hwprof.sort_by_column.value);
         vftr_abort(0);
      }
    } // If no observables are found, the value is irrelevant.
+
 }
 
 void vftr_config_assert(FILE *fp, config_t config) {

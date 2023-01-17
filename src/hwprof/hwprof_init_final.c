@@ -38,6 +38,9 @@ void vftr_hwprof_init (config_t config) {
 #ifdef _PAPI_AVAIL
    if (vftrace.hwprof_state.hwc_type == HWC_PAPI) vftr_papi_init (config);
 #endif
+#ifdef _ON_VE
+   if (vftrace.hwprof_state.hwc_type == HWC_VE) vftr_veprof_init (vftrace.hwprof_state);
+#endif
 
 }
 

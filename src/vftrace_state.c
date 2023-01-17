@@ -80,10 +80,12 @@ vftrace_t vftrace = {
       .n_counters = 0,
       .counters = NULL,
 #ifdef _PAPI_AVAIL
-      .papi_eventset = PAPI_NULL,
+      .papi.eventset = PAPI_NULL,
 #else
-      .papi_eventset = 0,
+      .papi.eventset = 0,
 #endif
+      .veprof.ve_hwc_names = NULL,
+      .veprof.active_counters = NULL,
    },
 #endif
 #ifdef _MPI
