@@ -58,7 +58,7 @@ cat << EOF > ${configfile}
          "asceding": false
       }
    },
-   "papi": {
+   "hwprof": {
       "show_conuters": false,
       "counters": [
           { 

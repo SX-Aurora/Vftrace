@@ -319,6 +319,7 @@ void vftr_config_accprof_assert(FILE *fp, config_accprof_t cfg_accprof) {
 }
 
 void vftr_config_hwprof_assert (FILE *fp, config_hwprof_t cfg_hwprof) {
+   if (!cfg_hwprof.set) return;
    char *hwc_type = cfg_hwprof.hwc_type.value;
    if (!(!strcmp(hwc_type, "dummy") ||
          !strcmp(hwc_type, "papi")  ||
