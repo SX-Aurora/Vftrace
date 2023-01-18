@@ -84,7 +84,6 @@ vftrace_t vftrace = {
 #else
       .papi.eventset = 0,
 #endif
-      .veprof.ve_hwc_names = NULL,
       .veprof.active_counters = NULL,
    },
 #endif

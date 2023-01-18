@@ -3,9 +3,14 @@
 #include "vftrace_state.h"
 #include "hwprof_ve.h"
 
+char *supported_counters[VE_MAX_HWC_EVENTS] = {"EX", "VX", "FPEC", "VE", "VECC", "L1MCC",
+                            "VE2", "VAREC", "VLDEC", "PCCC", "VLPC",
+                            "VLEC", "VLCME2", "FMAEC", "PTCC", "TTCC"};
+
+
 int vftr_ve_counter_index (char *hwc_name) {
    for (int i = 0; i < VE_MAX_HWC_EVENTS; i++) {
-      if (!strcmp (hwc_name, vftrace.hwprof_state.veprof.ve_hwc_names[i])) return i;
+      if (!strcmp (hwc_name, supported_counters[i])) return i;
    }
    return -1;
 }
@@ -13,23 +18,6 @@ int vftr_ve_counter_index (char *hwc_name) {
 void vftr_veprof_init () {
    veprof_state_t *state = &(vftrace.hwprof_state.veprof);
 
-   state->ve_hwc_names = (const char**)malloc(VE_MAX_HWC_EVENTS * sizeof(const char*));
-   state->ve_hwc_names[0] =  "EX";
-   state->ve_hwc_names[1] =  "VX";
-   state->ve_hwc_names[2] =  "FPEC";
-   state->ve_hwc_names[3] =  "VE";
-   state->ve_hwc_names[4] =  "VECC";
-   state->ve_hwc_names[5] =  "L1MCC";
-   state->ve_hwc_names[6] =  "VE2";
-   state->ve_hwc_names[7] =  "VAREC";
-   state->ve_hwc_names[8] =  "VLDEC";
-   state->ve_hwc_names[9] =  "PCCC";
-   state->ve_hwc_names[10] = "VLPC";
-   state->ve_hwc_names[11] = "VLEC";
-   state->ve_hwc_names[12] = "VLCME";
-   state->ve_hwc_names[13] = "FMAEC";
-   state->ve_hwc_names[14] = "PTCC";
-   state->ve_hwc_names[15] = "TTCC"; 
 
    state->active_counters = (int*)malloc(VE_MAX_HWC_EVENTS * sizeof(int));  
    memset (state->active_counters, 0, VE_MAX_HWC_EVENTS * sizeof(int));
