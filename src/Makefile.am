@@ -144,6 +144,10 @@ libvftrace_la_CFLAGS += -D_OMP
 libvftrace_la_FCFLAGS += -D_OMP
 endif
 
+if ON_VECTOR_ENGINE
+libvftrace_la_CFLAGS += -D_ON_VE
+endif
+
 if ENABLE_CUDAPROF
 libvftrace_la_CFLAGS += -D_CUDA
 endif
