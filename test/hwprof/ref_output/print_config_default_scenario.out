@@ -1,5 +1,4 @@
 
-Vftrace configuration read from "print_config_default_scenario.json"
 {
    "off": false,
    "output_directory": ".",
@@ -58,7 +57,6 @@ Vftrace configuration read from "print_config_default_scenario.json"
       "show_counters": false,
       "show_summary": false,
       "sort_by_column": 0,
-      "default_scenario": "/home/cweiss/Vftrace/build_papi/test/hwprof/scenario.json",
       "counters": [
          {
          "hwc_name": "READ_BYTES",
