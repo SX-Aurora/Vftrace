@@ -333,6 +333,7 @@ void vftr_parse_config_hwprof (cJSON *parent_object, config_hwprof_t *cfg_hwprof
          vftr_parse_config_hwcounters(config_tmp, &(cfg_hwprof->counters));
          vftr_parse_config_hwobservables(config_tmp, &(cfg_hwprof->observables));
       }
+      cfg_hwprof->set = true;
    }
 }
 
