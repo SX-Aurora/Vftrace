@@ -14,7 +14,7 @@
 void vftr_write_ranklogfile_hwprof_obs_table (FILE *fp, stacktree_t stacktree, config_t config) {
    vftr_stack_t **sorted_stacks = vftr_sort_stacks_hwprof_obs (config, stacktree);
 
-   fprintf (fp, "\nRuntime PAPI profile - Observables\n\n");
+   fprintf (fp, "\nHWProf profile - Observables\n\n");
 
    int n_observables = vftrace.hwprof_state.calculator.n_observables;
 
@@ -87,7 +87,7 @@ void vftr_write_hwprof_observables_ranklogfile_summary (FILE *fp, stacktree_t st
       } 
    } 
 
-   fprintf (fp, "PAPI observables summary: \n\n");
+   fprintf (fp, "HWProf observables summary: \n\n");
    for (int i = 0; i < n_observables; i++) {
       fprintf (fp, "  %s: %lf %s\n", config.hwprof.observables.obs_name.values[i],
                                      obs_sum[i], config.hwprof.observables.unit.values[i]);
@@ -112,7 +112,7 @@ void vftr_write_hwprof_counter_ranklogfile_summary (FILE *fp, stacktree_t stackt
       }
    }
 
-   fprintf (fp, "Total PAPI counters: \n\n");
+   fprintf (fp, "Total HWprof counters: \n\n");
    for (int e = 0; e < vftrace.hwprof_state.n_counters; e++) {
       fprintf (fp, "  %s: %lld\n",  vftrace.hwprof_state.counters[e].name, counter_sum[e]);
    }
@@ -123,7 +123,7 @@ void vftr_write_ranklogfile_hwprof_counter_table (FILE *fp, stacktree_t stacktre
    
    vftr_stack_t **sorted_stacks = vftr_sort_stacks_hwprof_obs (config, stacktree);
 
-   fprintf (fp, "\nRuntime PAPI profile - Hardware Counters\n\n");
+   fprintf (fp, "\nHWProf - Hardware Counters\n\n");
 
    int n_without_init = 0;
    for (int istack = 0; istack < stacktree.nstacks; istack++) {

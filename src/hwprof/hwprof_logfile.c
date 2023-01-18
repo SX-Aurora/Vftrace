@@ -16,7 +16,7 @@ void vftr_write_hwprof_observables_table (FILE *fp, collated_stacktree_t stacktr
    collated_stack_t **sorted_stacks =
       vftr_sort_collated_stacks_hwprof_obs(config, stacktree);
 
-   fprintf (fp, "\nRuntime PAPI profile - Observables\n");
+   fprintf (fp, "\nHWProf - Observables\n");
 
    int n_observables = vftrace.hwprof_state.calculator.n_observables;
 
@@ -95,7 +95,7 @@ void vftr_write_hwprof_observables_logfile_summary (FILE *fp, collated_stacktree
       } 
    } 
 
-   fprintf (fp, "PAPI observables summary: \n\n");
+   fprintf (fp, "HWProf observables summary: \n\n");
    for (int i = 0; i < n_observables; i++) {
       fprintf (fp, "  %s: %lf %s\n", config.hwprof.observables.obs_name.values[i],
                                      obs_sum[i], config.hwprof.observables.unit.values[i]);
@@ -120,7 +120,7 @@ void vftr_write_hwprof_counter_logfile_summary (FILE *fp, collated_stacktree_t s
       }
    }
 
-   fprintf (fp, "PAPI counters summary: \n\n");
+   fprintf (fp, "HWProf counters summary: \n\n");
    for (int e = 0; e < vftrace.hwprof_state.n_counters; e++) {
       fprintf (fp, "  %s: %lld\n",  vftrace.hwprof_state.counters[e].name, counter_sum[e]);
    }
@@ -131,7 +131,7 @@ void vftr_write_logfile_hwprof_counter_table (FILE *fp, collated_stacktree_t sta
    collated_stack_t **sorted_stacks =
       vftr_sort_collated_stacks_hwprof_obs(config, stacktree);
 
-   fprintf (fp, "\nRuntime PAPI profile - Hardware Counters\n");
+   fprintf (fp, "\nHWProf - Hardware Counters\n");
 
    int n_without_init = 0;
    for (int istack = 0; istack < stacktree.nstacks; istack++) {
