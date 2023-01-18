@@ -17,7 +17,7 @@ typedef struct {
 } papi_state_t;
 
 typedef struct {
-  const char **ve_hwc_names;
+  //const char **ve_hwc_names;
   int *active_counters; 
 } veprof_state_t;
 

@@ -11,7 +11,13 @@
 
 void vftr_abort (int errcode) {
 #ifdef _MPI
-   PMPI_Abort (MPI_COMM_WORLD, errcode);
+   int mpi_initialized;
+   PMPI_Initialized(&mpi_initialized);
+   if (mpi_initialized) {
+      PMPI_Abort (MPI_COMM_WORLD, errcode);
+   } else {
+      abort();
+   }
 #else
    abort();
 #endif
