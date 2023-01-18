@@ -178,7 +178,7 @@ config_hwprof_t vftr_set_config_hwprof_default() {
    cfg_hwprof.name = strdup("hwprof");
    cfg_hwprof.set = false;
    cfg_hwprof.disable = vftr_set_config_bool_default ("disable", false);
-   cfg_hwprof.hwc_type = vftr_set_config_string_default ("type", "none");
+   cfg_hwprof.hwc_type = vftr_set_config_string_default ("type", "dummy");
    cfg_hwprof.show_observables = vftr_set_config_bool_default ("show_observables", true);
    cfg_hwprof.show_counters = vftr_set_config_bool_default ("show_counters", false);
    cfg_hwprof.show_summary = vftr_set_config_bool_default ("show_summary", false);

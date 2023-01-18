@@ -236,6 +236,8 @@ void vftr_print_config_hwprof (FILE *fp, int level, config_hwprof_t cfg_hwprof) 
    level++;
    vftr_print_config_indent(fp, level);
    fprintf (fp, "\"%s\": {\n", cfg_hwprof.name);
+   vftr_print_config_string (fp, level, cfg_hwprof.hwc_type);
+   fprintf (fp, ",\n");
    vftr_print_config_bool (fp, level, cfg_hwprof.disable);
    fprintf (fp, ",\n");
    vftr_print_config_bool (fp, level, cfg_hwprof.show_observables);

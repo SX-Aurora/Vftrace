@@ -329,20 +329,13 @@ void vftr_config_hwprof_assert (FILE *fp, config_hwprof_t cfg_hwprof) {
       fprintf (fp, "You specified: %s\n", hwc_type);
       vftr_abort(0);
    }
-   int n_counters = cfg_hwprof.counters.hwc_name.n_elements;
-   int n_symbols = cfg_hwprof.counters.symbol.n_elements;
-   // Check that each counter has a symbol
-   if (n_counters != n_symbols) {
-     fprintf (fp, "hwprof: Nr. of counters and symbols do not match: %d %d\n",
-              n_counters, n_symbols);
-     vftr_abort(0);
-   }
 
 #ifdef _ON_VE
+   int n_counters = cfg_hwprof.counters.hwc_name.n_elements;
    for (int i = 0; i < n_counters; i++) {
      char *hwc_name = cfg_hwprof.counters.hwc_name.values[i];
      if (vftr_ve_counter_index (hwc_name) < 0) {
-        fprintf (fp, "hwprof: Counter %s is not a VE counter.\n", hwc_name); 
+        fprintf (stderr, "hwprof: Counter %s is not a VE counter.\n", hwc_name); 
         vftr_abort(0);
      }
    }
