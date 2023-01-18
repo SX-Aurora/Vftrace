@@ -52,12 +52,13 @@ Vftrace configuration read from "print_config_default_scenario.json"
       }
    },
    "hwprof": {
+      "type": "dummy",
       "disable": false,
       "show_observables": true,
       "show_counters": false,
       "show_summary": false,
       "sort_by_column": 0,
-      "default_scenario": "/home/cweiss/Vftrace/build_papi/test/papi/scenario.json",
+      "default_scenario": "/home/cweiss/Vftrace/build_papi/test/hwprof/scenario.json",
       "counters": [
          {
          "hwc_name": "READ_BYTES",
