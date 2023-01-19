@@ -25,8 +25,8 @@
 void vftr_user_region_begin(const char *name, void *addr) {
    SELF_PROFILE_START_FUNCTION;
    long long region_begin_time_begin = vftr_get_runtime_nsec();
-#ifdef _HWPROF
    long long *hw_counters = NULL;
+#ifdef _HWPROF
    if (!vftrace.config.hwprof.disable.value) hw_counters = vftr_get_hw_counters();
 #endif
 
@@ -64,7 +64,8 @@ void vftr_user_region_begin(const char *name, void *addr) {
 
       vftr_sample_function_entry(&(vftrace.sampling),
                                  *my_new_stack,
-                                 region_begin_time_begin);
+                                 region_begin_time_begin,
+                                 hw_counters);
 
 
       // accumulate profiling data
@@ -88,8 +89,8 @@ void vftr_user_region_begin(const char *name, void *addr) {
 void vftr_user_region_end() {
    SELF_PROFILE_START_FUNCTION;
    long long region_end_time_begin = vftr_get_runtime_nsec();
-#ifdef _HWPROF
    long long *hw_counters = NULL;
+#ifdef _HWPROF
    if (!vftrace.config.hwprof.disable.value) hw_counters = vftr_get_hw_counters();
 #endif
 
@@ -113,7 +114,8 @@ void vftr_user_region_end() {
 
       vftr_sample_function_exit(&(vftrace.sampling),
                                 *my_stack,
-                                region_end_time_begin);
+                                region_end_time_begin,
+                                hw_counters);
 
    }
 

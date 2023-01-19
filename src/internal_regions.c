@@ -58,7 +58,8 @@ void vftr_internal_region_begin(const char *name) {
 
       vftr_sample_function_entry(&(vftrace.sampling),
                                  *my_new_stack,
-                                 region_begin_time_begin);
+                                 region_begin_time_begin,
+                                 NULL);
 
       // accumulate profiling data
       vftr_accumulate_callprofiling(&(my_profile->callprof),
@@ -96,7 +97,8 @@ void vftr_internal_region_end(const char *name) {
       // TODO Add accumulation of profiling data
       vftr_sample_function_exit(&(vftrace.sampling),
                                 *my_stack,
-                                region_end_time_begin);
+                                region_end_time_begin,
+                                NULL);
 
    }
    // No calls after this overhead handling

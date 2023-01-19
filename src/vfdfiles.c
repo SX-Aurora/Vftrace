@@ -145,6 +145,8 @@ void vftr_write_incomplete_vfd_header(sampling_t *sampling) {
    fwrite(&zerouint, sizeof(unsigned int), 1, fp);
    // stacks count
    fwrite(&zerouint, sizeof(unsigned int), 1, fp);
+   // HW counter count
+   fwrite(&zerouint, sizeof(unsigned int), 1, fp);
    // samples offset
    fwrite(&zerolonglong, sizeof(long int), 1, fp);
    // stacks offset
@@ -216,6 +218,8 @@ void vftr_update_vfd_header(sampling_t *sampling,
    fwrite(&(sampling->message_samplecount), sizeof(unsigned int), 1, fp);
    // stacks count
    fwrite(&(process.stacktree.nstacks), sizeof(unsigned int), 1, fp);
+   // HW counter count
+   fwrite(&(vftrace.hwprof_state.n_counters), sizeof(unsigned int), 1, fp);
    // samples offset
    fwrite(&(sampling->samples_offset), sizeof(long int), 1, fp);
    // stacks offset
@@ -273,11 +277,14 @@ void vftr_write_vfd_threadtree(sampling_t *sampling, threadtree_t threadtree) {
 }
 
 void vftr_write_vfd_function_sample(sampling_t *sampling, sample_kind kind,
-                                    int stackID, long long timestamp) {
+                                    int stackID, long long timestamp, long long *hwcounters) {
    SELF_PROFILE_START_FUNCTION;
    FILE *fp = sampling->vfdfilefp;
    fwrite(&kind, sizeof(sample_kind), 1, fp);
    fwrite(&stackID, sizeof(int), 1, fp);
    fwrite(&timestamp, sizeof(long long), 1, fp);
+   for (int i = 0; i < vftrace.hwprof_state.n_counters; i++) {
+      fwrite (&(hwcounters[i]), sizeof(long long), 1, fp); 
+   }
    SELF_PROFILE_END_FUNCTION;
 }

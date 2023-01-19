@@ -27,8 +27,8 @@ void vftr_function_entry(void *func, void *call_site) {
    SELF_PROFILE_START_FUNCTION;
    (void) call_site;
    long long function_entry_time_begin = vftr_get_runtime_nsec();
-#ifdef _HWPROF
    long long *hw_counters = NULL;
+#ifdef _HWPROF
    if (!vftrace.config.hwprof.disable.value) hw_counters = vftr_get_hw_counters();
 #endif
 
@@ -69,7 +69,8 @@ void vftr_function_entry(void *func, void *call_site) {
 
       vftr_sample_function_entry(&(vftrace.sampling),
                                  *my_new_stack,
-                                 function_entry_time_begin);
+                                 function_entry_time_begin,
+                                 hw_counters);
 
 
       // accumulate call profiling data
@@ -98,8 +99,8 @@ void vftr_function_exit(void *func, void *call_site) {
    (void) func;
    (void) call_site;
    long long function_exit_time_begin = vftr_get_runtime_nsec();
-#ifdef _HWPROF
    long long *hw_counters = NULL;
+#ifdef _HWPROF
    if (!vftrace.config.hwprof.disable.value) hw_counters = vftr_get_hw_counters();
 #endif
 #ifdef _OMP
@@ -130,7 +131,8 @@ void vftr_function_exit(void *func, void *call_site) {
       // TODO Add accumulation of profiling data
       vftr_sample_function_exit(&(vftrace.sampling),
                                 *my_stack,
-                                function_exit_time_begin);
+                                function_exit_time_begin,
+                                hw_counters);
    }
 
 #ifdef _HWPROF

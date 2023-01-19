@@ -23,6 +23,7 @@
 #endif
 
 #ifdef _HWPROF
+#include "hwprofiling.h"
 #include "hwprof_init_final.h"
 #endif
 
@@ -68,7 +69,11 @@ void vftr_finalize() {
 
    // finish sampling
    // add the sampling of leaving init to the vfd-file
-   vftr_sample_init_function_exit(&(vftrace.sampling), runtime);
+   long long *hw_counters = NULL;
+#ifdef _HWPROF
+   if (!vftrace.config.hwprof.disable.value) hw_counters = vftr_get_hw_counters();
+#endif
+   vftr_sample_init_function_exit(&(vftrace.sampling), runtime, hw_counters);
    vftr_finalize_sampling(&(vftrace.sampling), vftrace.config,
                           vftrace.process, vftrace.timestrings,
                           (double) (runtime * 1.0e-9));
@@ -82,6 +87,7 @@ void vftr_finalize() {
 #endif
 
 #ifdef _HWPROF
+   if (!vftrace.config.hwprof.disable.value) free(hw_counters);
    vftr_hwprof_finalize();
 #endif
 

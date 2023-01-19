@@ -96,12 +96,12 @@ void vftr_finalize_sampling(sampling_t *sampling,
 }
 
 void vftr_sample_function_entry(sampling_t *sampling, vftr_stack_t stack,
-                                long long timestamp) {
+                                long long timestamp, long long *hwcounters) {
    SELF_PROFILE_START_FUNCTION;
    if (sampling->do_sampling &&
        (timestamp > sampling->nextsampletime || stack.precise)) {
       vftr_write_vfd_function_sample(sampling, samp_function_entry,
-                                     stack.lid, timestamp);
+                                     stack.lid, timestamp, hwcounters);
 
       sampling->function_samplecount++;
       sampling->nextsampletime = timestamp + sampling->interval;
@@ -110,12 +110,12 @@ void vftr_sample_function_entry(sampling_t *sampling, vftr_stack_t stack,
 }
 
 void vftr_sample_function_exit(sampling_t *sampling, vftr_stack_t stack,
-                               long long timestamp) {
+                               long long timestamp, long long *hwcounters) {
    SELF_PROFILE_START_FUNCTION;
    if (sampling->do_sampling &&
        (timestamp > sampling->nextsampletime || stack.precise)) {
       vftr_write_vfd_function_sample(sampling, samp_function_exit,
-                                     stack.lid, timestamp);
+                                     stack.lid, timestamp, hwcounters);
 
       sampling->function_samplecount++;
       sampling->nextsampletime = timestamp + sampling->interval;
@@ -123,11 +123,12 @@ void vftr_sample_function_exit(sampling_t *sampling, vftr_stack_t stack,
    SELF_PROFILE_END_FUNCTION;
 }
 
-void vftr_sample_init_function_exit(sampling_t *sampling, long long timestamp) {
+void vftr_sample_init_function_exit(sampling_t *sampling, long long timestamp,
+                                    long long *hwcounters) {
    SELF_PROFILE_START_FUNCTION;
    if (sampling->do_sampling) {
       vftr_write_vfd_function_sample(sampling, samp_function_exit,
-                                     0, timestamp);
+                                     0, timestamp, hwcounters);
 
       sampling->function_samplecount++;
       sampling->nextsampletime = timestamp + sampling->interval;

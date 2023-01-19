@@ -89,6 +89,11 @@ vfd_header_t read_vfd_header(FILE *vfd_fp) {
       fprintf(stderr, "Error in reading nstacks from vfd-file header\n");
       vftr_abort(0);
    }
+   read_elems = fread(&(header.n_hw_counters), sizeof(unsigned int), 1, vfd_fp);
+   if (read_elems != 1) {
+      fprintf (stderr, "Error in reader n_hw_counters from vfd-file header\n");
+      vftr_abort(0);
+   }
    read_elems = fread(&(header.samples_offset), sizeof(long int), 1, vfd_fp);
    if (read_elems != 1) {
       fprintf(stderr, "Error in reading samples_offset from vfd-file header\n");
@@ -127,6 +132,7 @@ void print_vfd_header(FILE *vfd_fp, vfd_header_t vfd_header) {
    fprintf(vfd_fp, "   Function:     %u\n", vfd_header.function_samplecount );
    fprintf(vfd_fp, "   Messages:     %u\n", vfd_header.message_samplecount );
    fprintf(vfd_fp, "Unique stacks:   %u\n", vfd_header.nstacks);
+   fprintf(vfd_fp, "HW counters:     %u\n", vfd_header.n_hw_counters);
    fprintf(vfd_fp, "Stacks offset:   0x%lx\n", vfd_header.stacks_offset);
    fprintf(vfd_fp, "Sample offset:   0x%lx\n", vfd_header.samples_offset);
    fprintf(vfd_fp, "Thread offset:   0x%lx\n", vfd_header.threadtree_offset);
@@ -331,6 +337,7 @@ void print_threadtree(FILE *out_fp, thread_t *threadtree) {
 }
 
 void print_function_sample(FILE *vfd_fp, FILE *out_fp,
+                           int n_hwc,
                            sample_kind kind, vftr_stack_t *stacklist) {
    int stackID;
    size_t read_elems;
@@ -349,6 +356,15 @@ void print_function_sample(FILE *vfd_fp, FILE *out_fp,
 
    fprintf(out_fp, "%16.6f %s ", timestamp,
            kind == samp_function_entry ? "call" : "exit");
+
+   //long long *counters = (long long*)malloc(n_hwc * sizeof(long long));
+   printf ("HW counters: ");
+   long long counter;
+   for (int i = 0; i < n_hwc; i++) {
+      read_elems = fread(&counter, sizeof(long long), 1, vfd_fp);
+      fprintf (out_fp, " %lld ", counter);
+   }
+   fprintf (out_fp, "\n");
    print_stack(out_fp, stackID, stacklist);
    fprintf(out_fp, "\n");
 }
@@ -446,7 +462,7 @@ void print_samples(FILE *vfd_fp, FILE *out_fp,
       switch (kind) {
          case samp_function_entry:
          case samp_function_exit:
-            print_function_sample(vfd_fp, out_fp, kind, stacklist);
+            print_function_sample(vfd_fp, out_fp, vfd_header.n_hw_counters, kind, stacklist);
          break;
          case samp_message:
             print_message_sample(vfd_fp, out_fp);
