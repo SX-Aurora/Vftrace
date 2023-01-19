@@ -23,6 +23,7 @@ typedef struct {
    long int stacktable_offset;
    long int samples_offset;
    long int threadtree_offset;
+   long int hwprof_offset;
 } sampling_t;
 
 #endif

@@ -147,13 +147,16 @@ void vftr_write_incomplete_vfd_header(sampling_t *sampling) {
    fwrite(&zerouint, sizeof(unsigned int), 1, fp);
    // HW counter count
    fwrite(&zerouint, sizeof(unsigned int), 1, fp);
+   // HW observables count
+   fwrite(&zerouint, sizeof(unsigned int), 1, fp);
    // samples offset
    fwrite(&zerolonglong, sizeof(long int), 1, fp);
    // stacks offset
    fwrite(&zerolonglong, sizeof(long int), 1, fp);
    // threadtree offset
    fwrite(&zerolonglong, sizeof(long int), 1, fp);
-   // TODO: Add hardware scenarios
+   // hwprof offset
+   fwrite(&zerolonglong, sizeof(long int), 1, fp);
 
    // Now the samples will come,
    // so the current position is the sample offset
@@ -220,12 +223,16 @@ void vftr_update_vfd_header(sampling_t *sampling,
    fwrite(&(process.stacktree.nstacks), sizeof(unsigned int), 1, fp);
    // HW counter count
    fwrite(&(vftrace.hwprof_state.n_counters), sizeof(unsigned int), 1, fp);
+   // HW observables count
+   fwrite(&(vftrace.hwprof_state.n_observables), sizeof(unsigned int), 1, fp);
    // samples offset
    fwrite(&(sampling->samples_offset), sizeof(long int), 1, fp);
    // stacks offset
    fwrite(&(sampling->stacktable_offset), sizeof(long int), 1, fp);
    // threadtree offset
    fwrite(&(sampling->threadtree_offset), sizeof(long int), 1, fp);
+   // hwprof offset
+   fwrite(&(sampling->hwprof_offset), sizeof(long int), 1, fp);
    SELF_PROFILE_END_FUNCTION;
 }
 
@@ -274,6 +281,32 @@ void vftr_write_vfd_threadtree(sampling_t *sampling, threadtree_t threadtree) {
       fwrite(&(thread.parent_thread), sizeof(int), 1, fp);
    }
    SELF_PROFILE_END_FUNCTION;
+}
+
+void vftr_write_vfd_hwprof_info(sampling_t *sampling, config_hwprof_t config) {
+   FILE *fp = sampling->vfdfilefp; 
+   sampling->hwprof_offset = ftell(fp);
+   for (int i = 0; i < config.counters.hwc_name.n_elements; i++) {
+      int namelen = strlen(config.counters.hwc_name.values[i]) + 1; 
+      int symlen = strlen(config.counters.symbol.values[i]) + 1;
+      fwrite (&namelen, sizeof(int), 1, fp);
+      fwrite (config.counters.hwc_name.values[i], sizeof(char), namelen, fp);
+      fwrite (&symlen, sizeof(int), 1, fp);
+      fwrite (config.counters.symbol.values[i], sizeof(char), symlen, fp);
+   }
+
+   for (int i = 0; i < config.observables.obs_name.n_elements; i++) {
+     config_hwobservables_t this_config = config.observables;
+     int namelen = strlen(this_config.obs_name.values[i]) + 1;
+     int formlen = strlen(this_config.formula_expr.values[i]) + 1;
+     int unitlen = this_config.unit.set ? strlen(this_config.unit.values[i]) + 1 : 0;
+     fwrite (&namelen, sizeof(int), 1, fp); 
+     fwrite (this_config.obs_name.values[i], sizeof(char), namelen, fp);
+     fwrite (&formlen, sizeof(int), 1, fp);
+     fwrite (this_config.formula_expr.values[i], sizeof(char), formlen, fp);
+     fwrite (&unitlen, sizeof(int), 1, fp);
+     if (unitlen > 0) fwrite (this_config.unit.values[i], sizeof(char), unitlen, fp);
+   }
 }
 
 void vftr_write_vfd_function_sample(sampling_t *sampling, sample_kind kind,

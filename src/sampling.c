@@ -74,6 +74,7 @@ void vftr_finalize_sampling(sampling_t *sampling,
       // finish the header of the vfd-file
       vftr_write_vfd_stacks(sampling, process.stacktree);
       vftr_write_vfd_threadtree(sampling, process.threadtree);
+      vftr_write_vfd_hwprof_info(sampling, config.hwprof);
       vftr_update_vfd_header(sampling, process, timestrings, runtime);
 
       // Close the vfdfile

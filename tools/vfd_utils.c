@@ -94,6 +94,11 @@ vfd_header_t read_vfd_header(FILE *vfd_fp) {
       fprintf (stderr, "Error in reader n_hw_counters from vfd-file header\n");
       vftr_abort(0);
    }
+   read_elems = fread(&(header.n_hw_observables), sizeof(unsigned int), 1, vfd_fp);
+   if (read_elems != 1) {
+      fprintf (stderr, "Error in reader n_hw_observables from vfd-file header\n");
+      vftr_abort(0);
+   }
    read_elems = fread(&(header.samples_offset), sizeof(long int), 1, vfd_fp);
    if (read_elems != 1) {
       fprintf(stderr, "Error in reading samples_offset from vfd-file header\n");
@@ -107,6 +112,11 @@ vfd_header_t read_vfd_header(FILE *vfd_fp) {
    read_elems = fread(&(header.threadtree_offset), sizeof(long int), 1, vfd_fp);
    if (read_elems != 1) {
       fprintf(stderr, "Error in reading threadtree_offset from vfd-file header\n");
+      vftr_abort(0);
+   }
+   read_elems = fread(&(header.hwprof_offset), sizeof(long int), 1, vfd_fp);
+   if (read_elems != 1) {
+      fprintf(stderr, "Error in reading hwprof_offset from vfd-file header\n");
       vftr_abort(0);
    }
 
@@ -133,6 +143,7 @@ void print_vfd_header(FILE *vfd_fp, vfd_header_t vfd_header) {
    fprintf(vfd_fp, "   Messages:     %u\n", vfd_header.message_samplecount );
    fprintf(vfd_fp, "Unique stacks:   %u\n", vfd_header.nstacks);
    fprintf(vfd_fp, "HW counters:     %u\n", vfd_header.n_hw_counters);
+   fprintf(vfd_fp, "HW observables:  %u\n", vfd_header.n_hw_observables);
    fprintf(vfd_fp, "Stacks offset:   0x%lx\n", vfd_header.stacks_offset);
    fprintf(vfd_fp, "Sample offset:   0x%lx\n", vfd_header.samples_offset);
    fprintf(vfd_fp, "Thread offset:   0x%lx\n", vfd_header.threadtree_offset);
@@ -310,6 +321,42 @@ thread_t *read_threadtree(FILE *vfd_fp, long int threadtree_offset,
    return threadtree;
 }
 
+void read_hwprof (FILE *vfd_fp, long int hwprof_offset, 
+                      int n_counters, int n_observables,
+                      char **hwc_names, char **symbols,
+                      char **obs_names, char **formulas,
+                      char **units) {
+   fseek (vfd_fp, hwprof_offset, SEEK_SET);
+
+   size_t read_elems;
+   int namelen, symlen;
+   for (int i = 0; i < n_counters; i++) { 
+      read_elems = fread(&namelen, sizeof(int), 1, vfd_fp);
+      hwc_names[i] = (char*)malloc(namelen * sizeof(char));
+      read_elems = fread(hwc_names[i], sizeof(char), namelen, vfd_fp);
+      read_elems = fread(&symlen, sizeof(int), 1, vfd_fp);
+      symbols[i] = (char*)malloc(symlen * sizeof(char));
+      read_elems = fread(symbols[i], sizeof(char), symlen, vfd_fp);
+   }
+
+   int formlen, unitlen;
+   for (int i = 0; i < n_observables; i++) {
+      read_elems = fread(&namelen, sizeof(int), 1, vfd_fp);
+      obs_names[i] = (char*)malloc(namelen * sizeof(char));
+      read_elems = fread(obs_names[i], sizeof(char), namelen, vfd_fp);
+      read_elems = fread(&formlen, sizeof(int), 1, vfd_fp);
+      formulas[i] = (char*)malloc(formlen * sizeof(char));
+      read_elems = fread(formulas[i], sizeof(char), formlen, vfd_fp);
+      read_elems = fread(&unitlen, sizeof(int), 1, vfd_fp);
+      if (unitlen > 0) {
+         units[i] = (char*)malloc(unitlen * sizeof(char));
+         read_elems = fread(units[i], sizeof(char), unitlen, vfd_fp);
+      } else {
+         units[i] = NULL;
+      }
+   }
+}
+
 void free_threadtree(int nthreads, thread_t *threadtree) {
    for (int ithread=0; ithread<nthreads; ithread++) {
       if (threadtree[ithread].nchildren > 0) {
@@ -354,17 +401,17 @@ void print_function_sample(FILE *vfd_fp, FILE *out_fp,
    }
    double timestamp = timestamp_nsec*1.0e-9;
 
-   fprintf(out_fp, "%16.6f %s ", timestamp,
-           kind == samp_function_entry ? "call" : "exit");
-
-   //long long *counters = (long long*)malloc(n_hwc * sizeof(long long));
-   printf ("HW counters: ");
    long long counter;
    for (int i = 0; i < n_hwc; i++) {
       read_elems = fread(&counter, sizeof(long long), 1, vfd_fp);
-      fprintf (out_fp, " %lld ", counter);
+      //fprintf (out_fp, " %lld ", counter);
    }
-   fprintf (out_fp, "\n");
+
+   fprintf(out_fp, "%16.6f %lld %s ", timestamp, counter,
+           kind == samp_function_entry ? "call" : "exit");
+
+   //long long *counters = (long long*)malloc(n_hwc * sizeof(long long));
+   //fprintf (out_fp, "\n");
    print_stack(out_fp, stackID, stacklist);
    fprintf(out_fp, "\n");
 }

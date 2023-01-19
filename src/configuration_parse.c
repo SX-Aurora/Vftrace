@@ -127,6 +127,7 @@ void vftr_parse_config_string_list (cJSON *parent_object, char *list_name, confi
          }
       }
    } 
+   cfg_string_list_ptr->set = true;
 }
 
 void vftr_parse_config_regex(cJSON *parent_object, config_regex_t *cfg_regex_ptr) {

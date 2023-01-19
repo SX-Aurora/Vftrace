@@ -27,5 +27,9 @@ void print_threadtree(FILE *out_fp, thread_t *threadtree);
 void print_samples(FILE *vfd_fp, FILE *fp_out,
                    vfd_header_t vfd_header, vftr_stack_t *stacklist);
 
+void read_hwprof (FILE *vfd_fp, long int hwprof_offset,
+                      int n_counters, int n_observables,
+                      char **hwc_names, char **symbols,
+                      char **obs_names, char **formulas, char **units);
 
 #endif
