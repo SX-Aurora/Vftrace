@@ -80,6 +80,7 @@ vftrace_t vftrace = {
 #endif
    .hwprof_state = {
       .hwc_type = HWC_NONE,
+      .active = false,
       .n_counters = 0,
       .counters = NULL,
 #ifdef _PAPI_AVAIL

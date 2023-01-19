@@ -24,7 +24,7 @@ void vftr_user_region_begin(const char *name, void *addr) {
    SELF_PROFILE_START_FUNCTION;
    long long region_begin_time_begin = vftr_get_runtime_nsec();
    long long *hw_counters = NULL;
-   if (!vftrace.config.hwprof.disable.value) hw_counters = vftr_get_hw_counters();
+   if (vftrace.hwprof_state.active) hw_counters = vftr_get_hw_counters();
 
    // Get the thread that called the region
    thread_t *my_thread = vftr_get_my_thread(&(vftrace.process.threadtree));
@@ -69,7 +69,7 @@ void vftr_user_region_begin(const char *name, void *addr) {
                                     1, -region_begin_time_begin);
    }
 
-   if (!vftrace.config.hwprof.disable.value) {
+   if (vftrace.hwprof_state.active) {
       vftr_accumulate_hwprofiling (&(my_profile->hwprof), hw_counters, true);
       free(hw_counters);
    }
@@ -84,7 +84,7 @@ void vftr_user_region_end() {
    SELF_PROFILE_START_FUNCTION;
    long long region_end_time_begin = vftr_get_runtime_nsec();
    long long *hw_counters = NULL;
-   if (!vftrace.config.hwprof.disable.value) hw_counters = vftr_get_hw_counters();
+   if (vftrace.hwprof_state.active) hw_counters = vftr_get_hw_counters();
 
 
    thread_t *my_thread = vftr_get_my_thread(&(vftrace.process.threadtree));
@@ -111,7 +111,7 @@ void vftr_user_region_end() {
 
    }
 
-   if (!vftrace.config.hwprof.disable.value) {
+   if (vftrace.hwprof_state.active) {
       vftr_accumulate_hwprofiling (&(my_profile->hwprof), hw_counters, false);
       free (hw_counters);
    }

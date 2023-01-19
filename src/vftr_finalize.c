@@ -67,13 +67,13 @@ void vftr_finalize() {
    // finish sampling
    // add the sampling of leaving init to the vfd-file
    long long *hw_counters = NULL;
-   if (!vftrace.config.hwprof.disable.value) hw_counters = vftr_get_hw_counters();
+   if (vftrace.hwprof_state.active) hw_counters = vftr_get_hw_counters();
    vftr_sample_init_function_exit(&(vftrace.sampling), runtime, hw_counters);
    vftr_finalize_sampling(&(vftrace.sampling), vftrace.config,
                           vftrace.process, vftrace.timestrings,
                           (double) (runtime * 1.0e-9));
 
-   if (!vftrace.config.hwprof.disable.value) free(hw_counters);
+   if (vftrace.hwprof_state.active) free(hw_counters);
    vftr_hwprof_finalize();
 
 #ifdef _CUDA

@@ -26,7 +26,7 @@ void vftr_function_entry(void *func, void *call_site) {
    (void) call_site;
    long long function_entry_time_begin = vftr_get_runtime_nsec();
    long long *hw_counters = NULL;
-   if (!vftrace.config.hwprof.disable.value) hw_counters = vftr_get_hw_counters();
+   if (vftrace.hwprof_state.active) hw_counters = vftr_get_hw_counters();
 
 #ifdef _OMP
    omp_set_lock(&(vftrace.process.threadlock));
@@ -74,7 +74,7 @@ void vftr_function_entry(void *func, void *call_site) {
                                     1, -function_entry_time_begin);
    }
 
-   if (!vftrace.config.hwprof.disable.value) {
+   if (vftrace.hwprof_state.active) {
       vftr_accumulate_hwprofiling (&(my_profile->hwprof), hw_counters, true);
       free(hw_counters);
    }
@@ -94,7 +94,7 @@ void vftr_function_exit(void *func, void *call_site) {
    (void) call_site;
    long long function_exit_time_begin = vftr_get_runtime_nsec();
    long long *hw_counters = NULL;
-   if (!vftrace.config.hwprof.disable.value) hw_counters = vftr_get_hw_counters();
+   if (vftrace.hwprof_state.active) hw_counters = vftr_get_hw_counters();
 #ifdef _OMP
    omp_set_lock(&(vftrace.process.threadlock));
 #endif
@@ -127,7 +127,7 @@ void vftr_function_exit(void *func, void *call_site) {
                                 hw_counters);
    }
 
-   if (!vftrace.config.hwprof.disable.value) {
+   if (vftrace.hwprof_state.active) {
       vftr_accumulate_hwprofiling (&(my_profile->hwprof), hw_counters, false);
       free (hw_counters);
    }
