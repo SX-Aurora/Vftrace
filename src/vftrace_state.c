@@ -6,6 +6,10 @@
 #include "vftrace_state.h"
 #include "vftr_initialize.h"
 
+#ifdef _PAPI_AVAIL
+#include <papi.h>
+#endif
+
 // main datatype to store everything
 
 vftrace_t vftrace = {
@@ -80,6 +84,8 @@ vftrace_t vftrace = {
       .n_counters = 0,
       .counters = NULL,
 #ifdef _PAPI_AVAIL
+// This initialization is crucial. Otherwise,
+// PAPI_create_eventset will fail.
       .papi.eventset = PAPI_NULL,
 #else
       .papi.eventset = 0,

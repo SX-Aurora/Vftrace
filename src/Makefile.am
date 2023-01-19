@@ -158,7 +158,11 @@ endif
 
 if ENABLE_HWPROF
 libvftrace_la_CFLAGS += -I${srcdir}/../external/tinyexpr -D_HWPROF
+if ENABLE_PAPI
+libvftrace_la_CFLAGS += -D_PAPI_AVAIL
 endif
+endif
+
 
 if HAS_LIBERTY
 libvftrace_la_CFLAGS += -D_LIBERTY

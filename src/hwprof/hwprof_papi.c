@@ -31,7 +31,7 @@ void vftr_papi_init (config_t config) {
             vftr_show_papi_components (stderr);
             vftr_abort(0);
       } else {
-         stat = PAPI_add_event(vftrace.hwprof_state.papi_eventset, event_code);
+         stat = PAPI_add_event(vftrace.hwprof_state.papi.eventset, event_code);
          if (stat == PAPI_ECNFLCT) {
             printf ("No resources for event %s\n", vftrace.hwprof_state.counters[i].name);
             vftr_abort(0);
@@ -43,20 +43,20 @@ void vftr_papi_init (config_t config) {
       }
    }
 
-   PAPI_start (vftrace.hwprof_state.papi_eventset);
+   stat = PAPI_start (vftrace.hwprof_state.papi.eventset);
 }
 
 void vftr_papi_finalize () {
    if (vftrace.hwprof_state.counters != NULL) free(vftrace.hwprof_state.counters);
    vftrace.hwprof_state.counters = NULL;
-   PAPI_cleanup_eventset(vftrace.hwprof_state.papi_eventset);
-   PAPI_destroy_eventset(&vftrace.hwprof_state.papi_eventset);
+   PAPI_cleanup_eventset(vftrace.hwprof_state.papi.eventset);
+   PAPI_destroy_eventset(&vftrace.hwprof_state.papi.eventset);
 }
 
 long long *vftr_get_papi_counters () {
   int n = vftrace.hwprof_state.n_counters;
   long long *counters = (long long *)malloc (n * sizeof(long long));
-  int retval = PAPI_read (vftrace.hwprof_state.papi_eventset, counters);
+  int retval = PAPI_read (vftrace.hwprof_state.papi.eventset, counters);
   return counters;
 }
 
