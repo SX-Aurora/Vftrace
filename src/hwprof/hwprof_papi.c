@@ -16,10 +16,17 @@ void vftr_show_papi_components (FILE *fp) {
 }
 
 void vftr_papi_init (config_t config) {
-   if (PAPI_library_init(PAPI_VER_CURRENT) != PAPI_VER_CURRENT) return;
+   int stat;
+   if ((stat = PAPI_library_init(PAPI_VER_CURRENT)) != PAPI_VER_CURRENT) {
+      fprintf (stderr, "Vftrace Error in PAPI component: Could not initialize (error code %d)\n", stat);
+      vftr_abort(0);
+   }
 
    
-   if (PAPI_create_eventset(&vftrace.hwprof_state.papi.eventset) != PAPI_OK) return;
+   if ((stat = PAPI_create_eventset(&vftrace.hwprof_state.papi.eventset)) != PAPI_OK) {
+      fprintf (stderr, "Vftrace Error in PAPI component: Could not register eventset (error code %d)\n", stat);
+      vftr_abort(0);
+   }
 
    for (int i = 0; i < vftrace.hwprof_state.n_counters; i++) {
       int event_code = PAPI_NATIVE_MASK;
@@ -43,7 +50,10 @@ void vftr_papi_init (config_t config) {
       }
    }
 
-   PAPI_start (vftrace.hwprof_state.papi.eventset);
+   if ((stat = PAPI_start (vftrace.hwprof_state.papi.eventset)) != PAPI_OK) {
+      fprintf (stderr, "Vftrace Error in PAPI component: Could not start PAPI (error code %d)\n", stat); 
+      vftr_abort(0);
+   }
 }
 
 void vftr_papi_finalize () {
