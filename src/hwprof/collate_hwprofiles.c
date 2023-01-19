@@ -42,7 +42,7 @@ static void vftr_collate_hwprofiles_on_root (collated_stacktree_t *collstacktree
    } hwprofile_transfer_t;
 
    int num_counters = vftrace.hwprof_state.n_counters;
-   int n_observables = vftrace..hwprof_state.n_observables;
+   int n_observables = vftrace.hwprof_state.n_observables;
 
    int nblocks = 3;
    const int blocklengths[] = {2, 1, 1};

@@ -9,12 +9,15 @@
 #include "sorting.h"
 #include "collate_stacks.h"
 
+#include "hwprof_state_types.h"
 #include "hwprofiling_types.h"
+#include "hwprof_logfile.h"
 
 void vftr_write_ranklogfile_hwprof_obs_table (FILE *fp, stacktree_t stacktree, config_t config) {
    vftr_stack_t **sorted_stacks = vftr_sort_stacks_hwprof_obs (config, stacktree);
 
-   fprintf (fp, "\nHWProf profile - Observables\n\n");
+   fprintf (fp, "\nHWProf profile - Observables (%s)\n\n",
+            vftr_hwtype_string(vftrace.hwprof_state.hwc_type));
 
    int n_observables = vftrace.hwprof_state.calculator.n_observables;
 
@@ -127,7 +130,8 @@ void vftr_write_ranklogfile_hwprof_counter_table (FILE *fp, stacktree_t stacktre
    
    vftr_stack_t **sorted_stacks = vftr_sort_stacks_hwprof_obs (config, stacktree);
 
-   fprintf (fp, "\nHWProf - Hardware Counters\n\n");
+   fprintf (fp, "\nHWProf - Hardware Counters (%s)\n\n",
+            vftr_hwtype_string(vftrace.hwprof_state.hwc_type));
 
    int n_without_init = 0;
    for (int istack = 0; istack < stacktree.nstacks; istack++) {

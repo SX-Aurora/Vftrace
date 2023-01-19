@@ -9,14 +9,31 @@
 #include "sorting.h"
 #include "collate_stacks.h"
 
+#include "hwprof_state_types.h"
 #include "hwprofiling_types.h"
+
+char *vftr_hwtype_string (int hwtype) {
+   switch (hwtype) {
+      case HWC_NONE:
+         return "None";
+      case HWC_DUMMY:
+         return "Dummy";
+      case HWC_PAPI:
+         return "PAPI";
+      case HWC_VE:
+         return "VEPERF";
+      default:
+         return "Unknown";
+   }
+}
 
 void vftr_write_hwprof_observables_table (FILE *fp, collated_stacktree_t stacktree, config_t config) {
 
    collated_stack_t **sorted_stacks =
       vftr_sort_collated_stacks_hwprof_obs(config, stacktree);
 
-   fprintf (fp, "\nHWProf - Observables\n");
+   fprintf (fp, "\nHWProf - Observables (%s)\n\n",
+            vftr_hwtype_string(vftrace.hwprof_state.hwc_type));
 
    int n_observables = vftrace.hwprof_state.calculator.n_observables;
 
@@ -135,7 +152,8 @@ void vftr_write_logfile_hwprof_counter_table (FILE *fp, collated_stacktree_t sta
    collated_stack_t **sorted_stacks =
       vftr_sort_collated_stacks_hwprof_obs(config, stacktree);
 
-   fprintf (fp, "\nHWProf - Hardware Counters\n");
+   fprintf (fp, "\nHWProf - Hardware Counters (%s)\n\n",
+            vftr_hwtype_string(vftrace.hwprof_state.hwc_type));
 
    int n_without_init = 0;
    for (int istack = 0; istack < stacktree.nstacks; istack++) {
