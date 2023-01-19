@@ -7,6 +7,7 @@
 #include "sampling_types.h"
 #include "timer_types.h"
 
+#include "vftrace_state.h"
 #include "vfdfiles.h"
 
 sampling_t vftr_new_sampling(config_t config) {
@@ -74,7 +75,7 @@ void vftr_finalize_sampling(sampling_t *sampling,
       // finish the header of the vfd-file
       vftr_write_vfd_stacks(sampling, process.stacktree);
       vftr_write_vfd_threadtree(sampling, process.threadtree);
-      vftr_write_vfd_hwprof_info(sampling, config.hwprof);
+      vftr_write_vfd_hwprof_info(sampling, vftrace.hwprof_state);
       vftr_update_vfd_header(sampling, process, timestrings, runtime);
 
       // Close the vfdfile

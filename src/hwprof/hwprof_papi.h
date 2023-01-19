@@ -4,9 +4,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "hwprof_state_types.h"
+
 void vftr_show_papi_components (FILE *fp);
 
-void vftr_papi_init();
+void vftr_papi_init(hwprof_state_t *state);
 
 void vftr_papi_finalize();
 

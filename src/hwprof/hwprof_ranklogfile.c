@@ -52,8 +52,8 @@ void vftr_write_ranklogfile_hwprof_obs_table (FILE *fp, stacktree_t stacktree, c
    vftr_table_add_column (&table, col_int, "#Calls", "%d", 'c', 'r', (void*)calls);
    vftr_table_add_column (&table, col_string, "Func", "%s", 'c', 'r', (void*)func);
    for (int i = 0; i < n_observables; i++) {
-      char *obs_name = config.hwprof.observables.obs_name.values[i];
-      char *obs_unit = config.hwprof.observables.unit.values[i];
+      char *obs_name = vftrace.hwprof_state.observables[i].name;
+      char *obs_unit = vftrace.hwprof_state.observables[i].unit;
       int slen = strlen(obs_name) + strlen(obs_unit) + 4;
       char *header = (char*)malloc(slen * sizeof(char));
       snprintf (header, slen, "%s [%s]", obs_name, obs_unit);
@@ -69,7 +69,7 @@ void vftr_write_ranklogfile_hwprof_obs_table (FILE *fp, stacktree_t stacktree, c
    free (observables);
 }
 
-void vftr_write_hwprof_observables_ranklogfile_summary (FILE *fp, stacktree_t stacktree, config_t config) {
+void vftr_write_hwprof_observables_ranklogfile_summary (FILE *fp, stacktree_t stacktree) {
    int n_observables = vftrace.hwprof_state.calculator.n_observables;
    if (n_observables == 0) {
       fprintf (fp, "\nNo observables registered\n");
@@ -89,13 +89,17 @@ void vftr_write_hwprof_observables_ranklogfile_summary (FILE *fp, stacktree_t st
 
    fprintf (fp, "HWProf observables summary: \n\n");
    for (int i = 0; i < n_observables; i++) {
-      fprintf (fp, "  %s: %lf %s\n", config.hwprof.observables.obs_name.values[i],
-                                     obs_sum[i], config.hwprof.observables.unit.values[i]);
+      if (vftrace.hwprof_state.observables[i].unit != NULL) {
+         fprintf (fp, "  %s: %lf %s\n", vftrace.hwprof_state.observables[i].name,
+                                        obs_sum[i], vftrace.hwprof_state.observables[i].unit);
+      } else {
+         fprintf (fp, "  %s: %lf\n", vftrace.hwprof_state.observables[i].name, obs_sum[i]);
+      }
    }
    free(obs_sum);
 }
 
-void vftr_write_hwprof_counter_ranklogfile_summary (FILE *fp, stacktree_t stacktree, config_t config) {
+void vftr_write_hwprof_counter_ranklogfile_summary (FILE *fp, stacktree_t stacktree) {
    int n_counters = vftrace.hwprof_state.n_counters;
    if (n_counters == 0) {
       fprintf (fp, "\nNo hardware counters registered.\n");

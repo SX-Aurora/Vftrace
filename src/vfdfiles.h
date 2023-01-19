@@ -3,6 +3,7 @@
 
 #include "configuration_types.h"
 #include "process_types.h"
+#include "hwprof_state_types.h"
 #include "timer_types.h"
 
 #define VFD_VERSION 3
@@ -34,7 +35,7 @@ void vftr_write_vfd_stacks(sampling_t *sampling, stacktree_t stacktree);
 
 void vftr_write_vfd_threadtree(sampling_t *sampling, threadtree_t threadtree);
 
-void vftr_write_vfd_hwprof_info(sampling_t *sampling, config_hwprof_t config);
+void vftr_write_vfd_hwprof_info(sampling_t *sampling, hwprof_state_t state);
 
 void vftr_write_vfd_function_sample(sampling_t *sampling, sample_kind kind,
                                     int stackID, long long timestamp,

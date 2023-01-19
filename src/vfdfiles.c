@@ -283,29 +283,31 @@ void vftr_write_vfd_threadtree(sampling_t *sampling, threadtree_t threadtree) {
    SELF_PROFILE_END_FUNCTION;
 }
 
-void vftr_write_vfd_hwprof_info(sampling_t *sampling, config_hwprof_t config) {
+void vftr_write_vfd_hwprof_info(sampling_t *sampling, hwprof_state_t hwstate) {
    FILE *fp = sampling->vfdfilefp; 
    sampling->hwprof_offset = ftell(fp);
-   for (int i = 0; i < config.counters.hwc_name.n_elements; i++) {
-      int namelen = strlen(config.counters.hwc_name.values[i]) + 1; 
-      int symlen = strlen(config.counters.symbol.values[i]) + 1;
+   for (int i = 0; i < hwstate.n_counters; i++) {
+      int namelen = strlen(hwstate.counters[i].name) + 1; 
+      int symlen = strlen(hwstate.counters[i].symbol) + 1;
       fwrite (&namelen, sizeof(int), 1, fp);
-      fwrite (config.counters.hwc_name.values[i], sizeof(char), namelen, fp);
+      fwrite (hwstate.counters[i].name, sizeof(char), namelen, fp);
       fwrite (&symlen, sizeof(int), 1, fp);
-      fwrite (config.counters.symbol.values[i], sizeof(char), symlen, fp);
+      fwrite (hwstate.counters[i].symbol, sizeof(char), symlen, fp);
    }
 
-   for (int i = 0; i < config.observables.obs_name.n_elements; i++) {
-     config_hwobservables_t this_config = config.observables;
-     int namelen = strlen(this_config.obs_name.values[i]) + 1;
-     int formlen = strlen(this_config.formula_expr.values[i]) + 1;
-     int unitlen = this_config.unit.set ? strlen(this_config.unit.values[i]) + 1 : 0;
+   for (int i = 0; i < hwstate.n_observables; i++) {
+     char *obs_name = hwstate.observables[i].name;
+     int namelen = strlen(obs_name) + 1;
+     char *formula = hwstate.observables[i].formula;
+     int formlen = strlen(formula) + 1;
+     char *unit = hwstate.observables[i].unit;
+     int unitlen = unit != NULL ? strlen(unit) + 1 : 0;
      fwrite (&namelen, sizeof(int), 1, fp); 
-     fwrite (this_config.obs_name.values[i], sizeof(char), namelen, fp);
+     fwrite (obs_name, sizeof(char), namelen, fp);
      fwrite (&formlen, sizeof(int), 1, fp);
-     fwrite (this_config.formula_expr.values[i], sizeof(char), formlen, fp);
+     fwrite (formula, sizeof(char), formlen, fp);
      fwrite (&unitlen, sizeof(int), 1, fp);
-     if (unitlen > 0) fwrite (this_config.unit.values[i], sizeof(char), unitlen, fp);
+     if (unitlen > 0) fwrite (unit, sizeof(char), unitlen, fp);
    }
 }
 

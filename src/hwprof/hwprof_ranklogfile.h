@@ -10,8 +10,8 @@ void vftr_write_ranklogfile_hwprof_obs_table (FILE *fp, stacktree_t stacktree, c
 
 void vftr_write_ranklogfile_hwprof_counter_table (FILE *fp, stacktree_t stacktree, config_t config);
 
-void vftr_write_hwprof_observables_ranklogfile_summary (FILE *fp, stacktree_t stacktree, config_t config);
+void vftr_write_hwprof_observables_ranklogfile_summary (FILE *fp, stacktree_t stacktree);
 
-void vftr_write_hwprof_counter_ranklogfile_summary (FILE *fp, stacktree_t stacktree, config_t config);
+void vftr_write_hwprof_counter_ranklogfile_summary (FILE *fp, stacktree_t stacktree);
 
 #endif

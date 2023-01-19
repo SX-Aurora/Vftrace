@@ -131,11 +131,11 @@ void vftr_write_ranklogfile(vftrace_t vftrace, long long runtime) {
    }
 
    if (vftrace.config.hwprof.show_observables.value && vftrace.config.hwprof.show_summary.value) {
-      vftr_write_hwprof_observables_ranklogfile_summary (fp, vftrace.process.stacktree, vftrace.config);
+      vftr_write_hwprof_observables_ranklogfile_summary (fp, vftrace.process.stacktree);
       fprintf (fp, "\n");
    }
    if (vftrace.config.hwprof.show_counters.value && vftrace.config.hwprof.show_summary.value) {
-      vftr_write_hwprof_counter_ranklogfile_summary (fp, vftrace.process.stacktree, vftrace.config);
+      vftr_write_hwprof_counter_ranklogfile_summary (fp, vftrace.process.stacktree);
       fprintf (fp, "\n");
    }
 

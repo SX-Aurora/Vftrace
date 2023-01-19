@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <string.h>
 
 #include "vftrace_state.h"
 
@@ -22,21 +23,39 @@ void vftr_hwprof_init (config_t config) {
 
    for (int i = 0; i < vftrace.hwprof_state.n_counters; i++) {
       vftrace.hwprof_state.counters[i].name = config.hwprof.counters.hwc_name.values[i];
+      if (config.hwprof.counters.symbol.set) {
+         vftrace.hwprof_state.counters[i].symbol = config.hwprof.counters.symbol.values[i];
+      } else {
+         vftrace.hwprof_state.counters[i].symbol = NULL;
+      }
    }
 
    vftrace.hwprof_state.n_observables = config.hwprof.observables.obs_name.n_elements;
+   vftrace.hwprof_state.observables = (vftr_observable_t*)malloc(vftrace.hwprof_state.n_observables * sizeof(vftr_observable_t));
+
+   config_hwobservables_t cfg_obs = config.hwprof.observables;
+   for (int i = 0; i < vftrace.hwprof_state.n_observables; i++) {
+      vftrace.hwprof_state.observables[i].name = cfg_obs.obs_name.values[i];
+      vftrace.hwprof_state.observables[i].formula = cfg_obs.formula_expr.values[i];
+      if (cfg_obs.unit.set) {
+         vftrace.hwprof_state.observables[i].unit = cfg_obs.unit.values[i];
+      } else {
+         vftrace.hwprof_state.observables[i].unit = NULL;
+      }
+   }
 
    char **symbols = (char**)malloc(vftrace.hwprof_state.n_counters * sizeof(char*));
    for (int i = 0; i < vftrace.hwprof_state.n_counters; i++) {
       symbols[i] = config.hwprof.counters.symbol.values[i];
    }
 
-   vftrace.hwprof_state.calculator = vftr_init_calculator (vftrace.hwprof_state.n_observables, symbols, 
+   vftrace.hwprof_state.calculator = vftr_init_calculator (vftrace.hwprof_state.n_observables,
+                                        symbols, 
                                         config.hwprof.observables.formula_expr.values);
    free(symbols);
 
 #ifdef _PAPI_AVAIL
-   if (vftrace.hwprof_state.hwc_type == HWC_PAPI) vftr_papi_init (config);
+   if (vftrace.hwprof_state.hwc_type == HWC_PAPI) vftr_papi_init (&(vftrace.hwprof_state));
 #endif
 #ifdef _ON_VE
    if (vftrace.hwprof_state.hwc_type == HWC_VE) vftr_veprof_init (vftrace.hwprof_state);

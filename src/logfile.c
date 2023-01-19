@@ -125,11 +125,11 @@ void vftr_write_logfile(vftrace_t vftrace, long long runtime) {
    }
 
    if (vftrace.config.hwprof.show_observables.value && vftrace.config.hwprof.show_summary.value) {
-      vftr_write_hwprof_observables_logfile_summary (fp, vftrace.process.collated_stacktree, vftrace.config);
+      vftr_write_hwprof_observables_logfile_summary (fp, vftrace.process.collated_stacktree);
       fprintf (fp, "\n");
    }
    if (vftrace.config.hwprof.show_counters.value && vftrace.config.hwprof.show_summary.value) {
-      vftr_write_hwprof_counter_logfile_summary (fp, vftrace.process.collated_stacktree, vftrace.config);
+      vftr_write_hwprof_counter_logfile_summary (fp, vftrace.process.collated_stacktree);
       fprintf (fp, "\n");
    }
 

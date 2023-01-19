@@ -10,14 +10,20 @@ enum {HWC_NONE, HWC_DUMMY, HWC_PAPI, HWC_VE};
 
 typedef struct {
    char *name;
+   char *symbol;
 } vftr_counter_t;
+
+typedef struct {
+   char *name;
+   char *formula;
+   char *unit;
+} vftr_observable_t;
 
 typedef struct {
    int eventset;
 } papi_state_t;
 
 typedef struct {
-  //const char **ve_hwc_names;
   int *active_counters; 
 } veprof_state_t;
 
@@ -27,6 +33,7 @@ typedef struct {
    int n_counters;
    int n_observables;
    vftr_counter_t *counters;
+   vftr_observable_t *observables;
    papi_state_t papi;
    veprof_state_t veprof;
    vftr_calculator_t calculator;
