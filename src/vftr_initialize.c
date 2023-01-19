@@ -14,10 +14,7 @@
 #include "accprof_callbacks.h"
 #endif
 
-#ifdef _HWPROF
 #include "hwprof_init_final.h"
-#endif
-
 #include "self_profile.h"
 #include "timer.h"
 #include "off_hooks.h"
@@ -81,9 +78,7 @@ void vftr_initialize(void *func, void *call_site) {
 
       // We need to init PAPI before the first profile is allocated, because
       // it needs the number of registered PAPI counters.
-#ifdef _HWPROF
       vftr_hwprof_init (vftrace.config);
-#endif
 
       // initialize the dynamic process data
       vftrace.process = vftr_new_process();

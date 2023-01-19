@@ -3,6 +3,7 @@
 #include "self_profile.h"
 #include "profiling.h"
 #include "collated_profiling_types.h"
+#include "hwprofiling.h"
 
 #include "collated_callprofiling.h"
 #ifdef _MPI
@@ -14,22 +15,17 @@
 #ifdef _CUDA
 #include "collated_cudaprofiling.h"
 #endif
-#ifdef _HWPROF
-#include "hwprofiling.h"
-#endif
 
 collated_profile_t vftr_new_collated_profile() {
    SELF_PROFILE_START_FUNCTION;
    collated_profile_t profile;
    profile.callprof = vftr_new_collated_callprofiling();
+   profile.hwprof = vftr_new_hwprofiling();
 #ifdef _MPI
    profile.mpiprof = vftr_new_mpiprofiling();
 #endif
 #ifdef _CUDA
    profile.cudaprof = vftr_new_collated_cudaprofiling();
-#endif
-#ifdef _HWPROF
-   profile.hwprof = vftr_new_hwprofiling();
 #endif
    // TODO: Add other profiles
    SELF_PROFILE_END_FUNCTION;

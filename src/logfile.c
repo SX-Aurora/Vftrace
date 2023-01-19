@@ -16,14 +16,12 @@
 #include "collate_stacks.h"
 #include "search.h"
 #include "range_expand.h"
+#include "hwprof_logfile.h"
 #ifdef _CUDA
 #include "cuda_logfile.h"
 #endif
 #ifdef _ACCPROF
 #include "accprof_logfile.h"
-#endif
-#ifdef _HWPROF
-#include "hwprof_logfile.h"
 #endif
 
 char *vftr_get_logfile_name(config_t config) {
@@ -119,7 +117,6 @@ void vftr_write_logfile(vftrace_t vftrace, long long runtime) {
    }
 #endif
 
-#ifdef _HWPROF
    if (vftrace.hwprof_state.n_observables > 0 && vftrace.config.hwprof.show_observables.value) {
       vftr_write_hwprof_observables_table (fp, vftrace.process.collated_stacktree, vftrace.config);
    }
@@ -135,8 +132,6 @@ void vftr_write_logfile(vftrace_t vftrace, long long runtime) {
       vftr_write_hwprof_counter_logfile_summary (fp, vftrace.process.collated_stacktree, vftrace.config);
       fprintf (fp, "\n");
    }
-
-#endif
 
    vftr_write_logfile_global_stack_list(fp, vftrace.process.collated_stacktree);
 

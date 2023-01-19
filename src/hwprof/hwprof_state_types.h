@@ -23,6 +23,7 @@ typedef struct {
 
 typedef struct {
    int hwc_type;
+   bool active;
    int n_counters;
    int n_observables;
    vftr_counter_t *counters;

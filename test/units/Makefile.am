@@ -34,16 +34,14 @@ if USES_NEC_MPI
 endif
 endif
 
+  AM_CFLAGS += -I$(top_srcdir)/src/hwprof -I$(top_srcdir)/external/tinyexpr
+
 if ENABLE_CUDAPROF
   AM_CFLAGS += -D_CUDA -I$(top_srcdir)/src/cuda
 endif
 
 if ENABLE_ACCPROF
   AM_CFLAGS += -D_ACCPROF -I$(top_srcdir)/src/accprof
-endif
-
-if ENABLE_HWPROF
-  AM_CFLAGS += -D_HWPROF -I$(top_srcdir)/src/hwprof -I$(top_srcdir)/external/tinyexpr
 endif
 
 if ENABLE_OMP

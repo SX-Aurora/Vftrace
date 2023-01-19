@@ -176,7 +176,3 @@ libvftr_mpi_c2vftr_la_CFLAGS += -I${srcdir}/../../cuda
 if ENABLE_CUDAPROF
 libvftr_mpi_c2vftr_la_CFLAGS += -D_CUDA
 endif
-
-if ENABLE_HWPROF
-libvftr_mpi_c2vftr_la_CFLAGS += -D_HWPROF
-endif

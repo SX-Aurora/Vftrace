@@ -5,6 +5,7 @@
 #include "thread_types.h"
 #include "profiling_types.h"
 #include "realloc_consts.h"
+#include "hwprofiling.h"
 
 #include "callprofiling.h"
 #ifdef _MPI
@@ -18,9 +19,6 @@
 #endif
 #ifdef _ACCPROF
 #include "accprofiling.h"
-#endif
-#ifdef _HWPROF
-#include "hwprofiling.h"
 #endif
 
 void vftr_profilelist_realloc(profilelist_t *profilelist_ptr) {
@@ -41,6 +39,7 @@ profile_t vftr_new_profile(int threadID) {
    profile_t profile;
    profile.threadID = threadID;
    profile.callprof = vftr_new_callprofiling();
+   profile.hwprof = vftr_new_hwprofiling();
 #ifdef _MPI
    profile.mpiprof = vftr_new_mpiprofiling();
 #endif
@@ -53,9 +52,6 @@ profile_t vftr_new_profile(int threadID) {
 #ifdef _ACCPROF
    profile.accprof = vftr_new_accprofiling();
 #endif 
-#ifdef _HWPROF
-   profile.hwprof = vftr_new_hwprofiling();
-#endif
    // Add further profiles here
    SELF_PROFILE_END_FUNCTION;
    return profile;
@@ -107,6 +103,7 @@ void vftr_profile_free(profile_t* profiles_ptr, int profID) {
    SELF_PROFILE_START_FUNCTION;
    profile_t *profile_ptr = profiles_ptr+profID;
    vftr_callprofiling_free(&(profile_ptr->callprof));
+   vftr_hwprofiling_free (&(profile_ptr->hwprof));
 #ifdef _MPI
    vftr_mpiprofiling_free(&(profile_ptr->mpiprof));
 #endif
@@ -118,9 +115,6 @@ void vftr_profile_free(profile_t* profiles_ptr, int profID) {
 #endif
 #ifdef _ACCPROF
    vftr_accprofiling_free (&(profile_ptr->accprof));
-#endif
-#ifdef _HWPROF
-   vftr_hwprofiling_free (&(profile_ptr->hwprof));
 #endif
    // Add further profiles here.
    SELF_PROFILE_END_FUNCTION;

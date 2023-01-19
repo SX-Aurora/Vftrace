@@ -78,7 +78,6 @@ vftrace_t vftrace = {
       .n_open_wait_queues = 0,
    },
 #endif
-#ifdef _HWPROF
    .hwprof_state = {
       .hwc_type = HWC_NONE,
       .n_counters = 0,
@@ -92,7 +91,6 @@ vftrace_t vftrace = {
 #endif
       .veprof.active_counters = NULL,
    },
-#endif
 #ifdef _MPI
    .mpi_state = {
       .pcontrol_level = 1,

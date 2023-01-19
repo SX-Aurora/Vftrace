@@ -17,18 +17,14 @@
 #include "sampling.h"
 #include "timer.h"
 #include "region_address.h"
-#ifdef _HWPROF
 #include "hwprofiling.h"
-#endif
 
 
 void vftr_user_region_begin(const char *name, void *addr) {
    SELF_PROFILE_START_FUNCTION;
    long long region_begin_time_begin = vftr_get_runtime_nsec();
    long long *hw_counters = NULL;
-#ifdef _HWPROF
    if (!vftrace.config.hwprof.disable.value) hw_counters = vftr_get_hw_counters();
-#endif
 
    // Get the thread that called the region
    thread_t *my_thread = vftr_get_my_thread(&(vftrace.process.threadtree));
@@ -73,12 +69,10 @@ void vftr_user_region_begin(const char *name, void *addr) {
                                     1, -region_begin_time_begin);
    }
 
-#ifdef _HWPROF
    if (!vftrace.config.hwprof.disable.value) {
       vftr_accumulate_hwprofiling (&(my_profile->hwprof), hw_counters, true);
       free(hw_counters);
    }
-#endif
 
    // No calls after this overhead handling!
    vftr_accumulate_callprofiling_overhead(&(my_profile->callprof),
@@ -90,9 +84,7 @@ void vftr_user_region_end() {
    SELF_PROFILE_START_FUNCTION;
    long long region_end_time_begin = vftr_get_runtime_nsec();
    long long *hw_counters = NULL;
-#ifdef _HWPROF
    if (!vftrace.config.hwprof.disable.value) hw_counters = vftr_get_hw_counters();
-#endif
 
 
    thread_t *my_thread = vftr_get_my_thread(&(vftrace.process.threadtree));
@@ -119,12 +111,10 @@ void vftr_user_region_end() {
 
    }
 
-#ifdef _HWPROF
    if (!vftrace.config.hwprof.disable.value) {
       vftr_accumulate_hwprofiling (&(my_profile->hwprof), hw_counters, false);
       free (hw_counters);
    }
-#endif
 
    // No calls after this overhead handling
    vftr_accumulate_callprofiling_overhead(

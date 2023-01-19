@@ -2,6 +2,7 @@ SUBDIRS =
 SUBDIRS += units
 SUBDIRS += config
 SUBDIRS += user_functions
+SUBDIRS += hwprof
 if ENABLE_OMP
 SUBDIRS += omp
 endif
@@ -16,8 +17,4 @@ endif
 
 if ENABLE_ACCPROF
 SUBDIRS += openacc
-endif
-
-if ENABLE_HWPROF
-SUBDIRS += hwprof
 endif

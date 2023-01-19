@@ -13,6 +13,8 @@
 #include "ranklogfile.h"
 #include "sampling.h"
 #include "timer.h"
+#include "hwprofiling.h"
+#include "hwprof_init_final.h"
 
 #ifdef _CUDA
 #include "cupti_init_final.h"
@@ -20,11 +22,6 @@
 
 #ifdef _ACCPROF
 #include "accprof_init_final.h"
-#endif
-
-#ifdef _HWPROF
-#include "hwprofiling.h"
-#include "hwprof_init_final.h"
 #endif
 
 void vftr_finalize() {
@@ -70,13 +67,14 @@ void vftr_finalize() {
    // finish sampling
    // add the sampling of leaving init to the vfd-file
    long long *hw_counters = NULL;
-#ifdef _HWPROF
    if (!vftrace.config.hwprof.disable.value) hw_counters = vftr_get_hw_counters();
-#endif
    vftr_sample_init_function_exit(&(vftrace.sampling), runtime, hw_counters);
    vftr_finalize_sampling(&(vftrace.sampling), vftrace.config,
                           vftrace.process, vftrace.timestrings,
                           (double) (runtime * 1.0e-9));
+
+   if (!vftrace.config.hwprof.disable.value) free(hw_counters);
+   vftr_hwprof_finalize();
 
 #ifdef _CUDA
    vftr_finalize_cupti (vftrace.process.stacktree);
@@ -84,11 +82,6 @@ void vftr_finalize() {
 
 #ifdef _ACCPROF
    vftr_finalize_accprof();
-#endif
-
-#ifdef _HWPROF
-   if (!vftrace.config.hwprof.disable.value) free(hw_counters);
-   vftr_hwprof_finalize();
 #endif
 
    // free the dynamic process data

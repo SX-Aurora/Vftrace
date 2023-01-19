@@ -8,6 +8,7 @@
 #include "stack_types.h"
 #include "collated_stack_types.h"
 #include "collate_callprofiles.h"
+#include "collate_hwprofiles.h"
 #ifdef _MPI
 #include "collate_mpiprofiles.h"
 #endif
@@ -19,9 +20,6 @@
 #endif
 #ifdef _ACCPROF
 #include "collate_accprofiles.h"
-#endif
-#ifdef _HWPROF
-#include "collate_hwprofiles.h"
 #endif
 
 void vftr_collate_profiles(collated_stacktree_t *collstacktree_ptr,
@@ -60,6 +58,8 @@ void vftr_collate_profiles(collated_stacktree_t *collstacktree_ptr,
 
    vftr_collate_callprofiles(collstacktree_ptr, stacktree_ptr,
                              myrank, nranks, nremote_profiles);
+   vftr_collate_hwprofiles (collstacktree_ptr, stacktree_ptr,
+                             myrank, nranks, nremote_profiles);
 #ifdef _MPI
    vftr_collate_mpiprofiles(collstacktree_ptr, stacktree_ptr,
                             myrank, nranks, nremote_profiles);
@@ -77,10 +77,6 @@ void vftr_collate_profiles(collated_stacktree_t *collstacktree_ptr,
 #ifdef _ACCPROF
   vftr_collate_accprofiles (collstacktree_ptr, stacktree_ptr,
                             myrank, nranks, nremote_profiles);
-#endif
-#ifdef _HWPROF
-  vftr_collate_hwprofiles (collstacktree_ptr, stacktree_ptr,
-                              myrank, nranks, nremote_profiles);
 #endif
 
    free(nremote_profiles);

@@ -18,7 +18,7 @@ if ON_VECTOR_ENGINE
 libvftr_hwprof_la_SOURCES += hwprof_ve.c
 endif
 
-libvftr_hwprof_la_CFLAGS = -I${srcdir}/../ -I${srcdir}/../sorting -I${srcdir}/../../external/tinyexpr -D_HWPROF 
+libvftr_hwprof_la_CFLAGS = -I${srcdir}/../ -I${srcdir}/../sorting -I${srcdir}/../../external/tinyexpr 
 if ENABLE_PAPI
 # -D_PAPI conflicts with PAPI headers.
 #  The compiler flag for PAPI is therefore called PAPI_AVAIL.

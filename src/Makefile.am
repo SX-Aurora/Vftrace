@@ -33,6 +33,9 @@ endif
 endif
 endif
 
+SUBDIRS += hwprof
+libvftrace_la_LIBADD += hwprof/libvftr_hwprof.la
+
 if ENABLE_OMP
 SUBDIRS += omp
 libvftrace_la_LIBADD += omp/libvftr_omp.la
@@ -46,11 +49,6 @@ endif
 if ENABLE_ACCPROF
 SUBDIRS += accprof
 libvftrace_la_LIBADD += accprof/libvftr_accprof.la
-endif
-
-if ENABLE_HWPROF
-SUBDIRS += hwprof
-libvftrace_la_LIBADD += hwprof/libvftr_hwprof.la
 endif
 
 libvftrace_la_SOURCES = 
@@ -132,7 +130,8 @@ libvftrace_la_CFLAGS += -I${srcdir}/mpi/utils/ \
                         -I${srcdir}/cuda/ \
 			-I${srcdir}/accprof \
 		        -I${srcdir}/hwprof \
-			-I${srcdir}/sorting
+			-I${srcdir}/sorting \
+                        -I${srcdir}/../external/tinyexpr
 
 if ENABLE_MPI
 libvftrace_la_CFLAGS += -D_MPI
@@ -156,13 +155,9 @@ if ENABLE_ACCPROF
 libvftrace_la_CFLAGS += -D_ACCPROF
 endif
 
-if ENABLE_HWPROF
-libvftrace_la_CFLAGS += -I${srcdir}/../external/tinyexpr -D_HWPROF
 if ENABLE_PAPI
 libvftrace_la_CFLAGS += -D_PAPI_AVAIL
 endif
-endif
-
 
 if HAS_LIBERTY
 libvftrace_la_CFLAGS += -D_LIBERTY
@@ -178,6 +173,6 @@ libvftrace_la_SOURCES += self_profile.c
 endif
 
 libvftr_pause_la_SOURCES = pause.c
-libvftr_pause_la_CFLAGS = $(FINSTRUMENT_FLAG)
+libvftr_pause_la_CFLAGS = $(FINSTRUMENT_FLAG) -I${srcdir}/hwprof -I${srcdir}/../external/tinyexpr
 
 CLEANFILES = *.mod

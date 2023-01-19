@@ -2,6 +2,7 @@
 #define PROFILING_TYPES_H
 
 #include "callprofiling_types.h"
+#include "hwprofiling_types.h"
 #ifdef _MPI
 #include "mpiprofiling_types.h"
 #endif
@@ -14,13 +15,11 @@
 #ifdef _ACCPROF
 #include "accprofiling_types.h"
 #endif
-#ifdef _HWPROF
-#include "hwprofiling_types.h"
-#endif
 
 typedef struct {
    int threadID;
    callprofile_t callprof;
+   hwprofile_t hwprof;
 #ifdef _MPI
    mpiprofile_t mpiprof;
 #endif
@@ -32,9 +31,6 @@ typedef struct {
 #endif
 #ifdef _ACCPROF
    accprofile_t accprof;
-#endif
-#ifdef _HWPROF
-   hwprofile_t hwprof;
 #endif
 } profile_t;
 

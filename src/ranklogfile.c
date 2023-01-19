@@ -15,14 +15,12 @@
 #include "search.h"
 #include "configuration_print.h"
 #include "range_expand.h"
+#include "hwprof_ranklogfile.h"
 #ifdef _CUDA
 #include "cuda_ranklogfile.h"
 #endif
 #ifdef _ACCPROF
 #include "accprof_ranklogfile.h"
-#endif
-#ifdef _HWPROF
-#include "hwprof_ranklogfile.h"
 #endif
 
 
@@ -123,7 +121,6 @@ void vftr_write_ranklogfile(vftrace_t vftrace, long long runtime) {
    }
 #endif
 
-#ifdef _HWPROF
    if (vftrace.hwprof_state.n_observables > 0 && vftrace.config.hwprof.show_observables.value) {
       vftr_write_ranklogfile_hwprof_obs_table (fp, vftrace.process.stacktree, vftrace.config);
       fprintf (fp, "\n");
@@ -141,8 +138,6 @@ void vftr_write_ranklogfile(vftrace_t vftrace, long long runtime) {
       vftr_write_hwprof_counter_ranklogfile_summary (fp, vftrace.process.stacktree, vftrace.config);
       fprintf (fp, "\n");
    }
-
-#endif
 
    vftr_write_logfile_global_stack_list(fp, vftrace.process.collated_stacktree);
 
