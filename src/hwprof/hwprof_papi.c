@@ -19,7 +19,7 @@ void vftr_papi_init (config_t config) {
    if (PAPI_library_init(PAPI_VER_CURRENT) != PAPI_VER_CURRENT) return;
 
    
-   if (PAPI_create_eventset(&vftrace.hwprof_state.papi_eventset) != PAPI_OK) return;
+   if (PAPI_create_eventset(&vftrace.hwprof_state.papi.eventset) != PAPI_OK) return;
 
    for (int i = 0; i < vftrace.hwprof_state.n_counters; i++) {
       int event_code = PAPI_NATIVE_MASK;
@@ -43,7 +43,7 @@ void vftr_papi_init (config_t config) {
       }
    }
 
-   stat = PAPI_start (vftrace.hwprof_state.papi.eventset);
+   PAPI_start (vftrace.hwprof_state.papi.eventset);
 }
 
 void vftr_papi_finalize () {
