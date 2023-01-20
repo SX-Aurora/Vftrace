@@ -77,14 +77,14 @@ int main(int argc, char **argv) {
                        vfd_header.n_hw_counters, vfd_header.n_hw_observables,
                        hwc_names, symbols,
                        obs_names, formulas, units);
-      printf ("Counter names & symbols: \n");
+      fprintf (out_fp, "Counter names & symbols: \n");
       for (int i = 0; i < vfd_header.n_hw_counters; i++) {
-         printf ("%s -> %s\n", hwc_names[i], symbols[i]);
+         fprintf (out_fp, "%s -> %s\n", hwc_names[i], symbols[i]);
       }
 
-      printf ("Observables: \n");
+      fprintf (out_fp, "\nObservables: \n");
       for (int i = 0; i < vfd_header.n_hw_observables; i++) {
-         printf ("%s: %s [%s]\n", obs_names[i], formulas[i],
+         fprintf (out_fp, "%s: %s [%s]\n", obs_names[i], formulas[i],
                  units[i] != NULL ? units[i] : "");
       }
    }

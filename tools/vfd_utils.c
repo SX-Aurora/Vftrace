@@ -399,19 +399,24 @@ void print_function_sample(FILE *vfd_fp, FILE *out_fp,
       fprintf(stderr, "Error in reading timestamp from function_sample from vfd-file\n");
       vftr_abort(0);
    }
-   double timestamp = timestamp_nsec*1.0e-9;
+   double timestamp_sec = timestamp_nsec*1.0e-9;
 
-   long long counter;
-   for (int i = 0; i < n_hwc; i++) {
-      read_elems = fread(&counter, sizeof(long long), 1, vfd_fp);
-      //fprintf (out_fp, " %lld ", counter);
+   if (n_hwc == 0) {
+      fprintf(out_fp, "%16.6f %s ", timestamp_sec,
+              kind == samp_function_entry ? "call" : "exit");
+   } else {
+      long long *counters = (long long*)malloc(n_hwc * sizeof(long long));
+      for (int i = 0; i < n_hwc; i++) {
+         read_elems = fread(&(counters[i]), sizeof(long long), 1, vfd_fp);
+      }
+      fprintf (out_fp, "%16.6f ", timestamp_sec);
+      for (int i = 0; i < n_hwc; i++) {
+         fprintf (out_fp, "%lld ", counters[i]);
+      }
+      fprintf (out_fp, "%s ", kind == samp_function_entry ? "call" : "exit");
+      free(counters);
    }
 
-   fprintf(out_fp, "%16.6f %lld %s ", timestamp, counter,
-           kind == samp_function_entry ? "call" : "exit");
-
-   //long long *counters = (long long*)malloc(n_hwc * sizeof(long long));
-   //fprintf (out_fp, "\n");
    print_stack(out_fp, stackID, stacklist);
    fprintf(out_fp, "\n");
 }
