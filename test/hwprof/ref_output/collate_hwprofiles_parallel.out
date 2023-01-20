@@ -1,6 +1,6 @@
 Ranklogfile for rank 0: 
 
-Runtime PAPI profile - Hardware Counters
+HWProf - Hardware Counters (Dummy)
 
 +--------+---------+--------+--------+
 | #Calls |  Func   | dummy1 | dummy2 |
@@ -11,7 +11,7 @@ Runtime PAPI profile - Hardware Counters
 +--------+---------+--------+--------+
 Ranklogfile for rank 1: 
 
-Runtime PAPI profile - Hardware Counters
+HWProf - Hardware Counters (Dummy)
 
 +--------+---------+--------+--------+
 | #Calls |  Func   | dummy1 | dummy2 |
@@ -23,7 +23,8 @@ Runtime PAPI profile - Hardware Counters
 +--------+---------+--------+--------+
 Collated logfile: 
 
-Runtime PAPI profile - Hardware Counters
+HWProf - Hardware Counters (Dummy)
+
 +--------+---------+--------+--------+
 | #Calls |  Func   | dummy1 | dummy2 |
 +--------+---------+--------+--------+

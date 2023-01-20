@@ -126,17 +126,16 @@ int main (int argc, char **argv) {
 
    int n_counters = 2;
    int n_observables = 1;
+   vftrace.hwprof_state.hwc_type = HWC_DUMMY;
    vftrace.hwprof_state.n_counters = n_counters;
    vftrace.hwprof_state.counters = (vftr_counter_t*)malloc (n_counters * sizeof(vftr_counter_t));
    vftrace.hwprof_state.counters[0].name = "dummy1";
    vftrace.hwprof_state.counters[1].name = "dummy2";
-   vftrace.config.hwprof.observables.obs_name.n_elements = n_observables;
-   vftrace.hwprof_state.calculator.n_observables = n_observables;
-   vftrace.config.hwprof.observables.obs_name.values = (char**)malloc(n_observables * sizeof(char*));
-   vftrace.config.hwprof.observables.unit.values = (char**)malloc(n_observables * sizeof(char*));
-   vftrace.config.hwprof.observables.obs_name.values[0] = "dummy_obs";
-   vftrace.config.hwprof.observables.unit.values[0] = "dummy_unit";
-
+  
+   vftrace.hwprof_state.n_observables = n_observables;
+   vftrace.hwprof_state.observables = (vftr_observable_t*)malloc(n_observables * sizeof(vftr_counter_t));
+   vftrace.hwprof_state.observables[0].name = "dummy_obs";
+   vftrace.hwprof_state.observables[0].unit = "dummy_unit";
 
    vftr_init_dummy_stacktree (10);
     

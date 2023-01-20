@@ -35,7 +35,7 @@ void vftr_write_hwprof_observables_table (FILE *fp, collated_stacktree_t stacktr
    fprintf (fp, "\nHWProf - Observables (%s)\n\n",
             vftr_hwtype_string(vftrace.hwprof_state.hwc_type));
 
-   int n_observables = vftrace.hwprof_state.calculator.n_observables;
+   int n_observables = vftrace.hwprof_state.n_observables;
 
    int n_without_init = 0;
    for (int istack = 0; istack < stacktree.nstacks; istack++) {
@@ -95,7 +95,7 @@ void vftr_write_hwprof_observables_table (FILE *fp, collated_stacktree_t stacktr
 }
 
 void vftr_write_hwprof_observables_logfile_summary (FILE *fp, collated_stacktree_t stacktree) {
-   int n_observables = vftrace.hwprof_state.calculator.n_observables;
+   int n_observables = vftrace.hwprof_state.n_observables;
    if (n_observables == 0) {
       fprintf (fp, "\nNo observables registered.\n");
       return;
