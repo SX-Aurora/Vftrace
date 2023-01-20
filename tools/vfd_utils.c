@@ -147,6 +147,7 @@ void print_vfd_header(FILE *vfd_fp, vfd_header_t vfd_header) {
    fprintf(vfd_fp, "Stacks offset:   0x%lx\n", vfd_header.stacks_offset);
    fprintf(vfd_fp, "Sample offset:   0x%lx\n", vfd_header.samples_offset);
    fprintf(vfd_fp, "Thread offset:   0x%lx\n", vfd_header.threadtree_offset);
+   fprintf(vfd_fp, "HWprof offset:   0x%lx\n", vfd_header.hwprof_offset);
 }
 
 bool is_precise (char *s) {

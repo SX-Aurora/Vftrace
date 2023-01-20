@@ -68,25 +68,39 @@ int main(int argc, char **argv) {
 
       free_stacklist(vfd_header.nstacks, stacklist);
 
-      char **hwc_names = (char**)malloc(vfd_header.n_hw_counters * sizeof(char*));
-      char **symbols = (char**)malloc(vfd_header.n_hw_counters * sizeof(char*));
-      char **obs_names = (char**)malloc(vfd_header.n_hw_observables * sizeof(char*));
-      char **formulas = (char**)malloc(vfd_header.n_hw_observables * sizeof(char*));
-      char **units = (char**)malloc(vfd_header.n_hw_observables * sizeof(char*));
+      char **hwc_names = NULL;
+      char **symbols = NULL;
+      char **obs_names = NULL;
+      char **formulas = NULL;
+      char **units = NULL;
+      if (vfd_header.n_hw_counters > 0) {
+         hwc_names = (char**)malloc(vfd_header.n_hw_counters * sizeof(char*));
+         symbols = (char**)malloc(vfd_header.n_hw_counters * sizeof(char*));
+      }
+      if (vfd_header.n_hw_observables > 0) {
+         obs_names = (char**)malloc(vfd_header.n_hw_observables * sizeof(char*));
+         formulas = (char**)malloc(vfd_header.n_hw_observables * sizeof(char*));
+         units = (char**)malloc(vfd_header.n_hw_observables * sizeof(char*));
+      }
       read_hwprof (vfd_fp, vfd_header.hwprof_offset,
                        vfd_header.n_hw_counters, vfd_header.n_hw_observables,
                        hwc_names, symbols,
                        obs_names, formulas, units);
-      fprintf (out_fp, "Counter names & symbols: \n");
+      if (vfd_header.n_hw_counters > 0) 
+          fprintf (out_fp, "Counter names & symbols: \n");
       for (int i = 0; i < vfd_header.n_hw_counters; i++) {
          fprintf (out_fp, "%s -> %s\n", hwc_names[i], symbols[i]);
       }
-
-      fprintf (out_fp, "\nObservables: \n");
+      if (vfd_header.n_hw_observables > 0) fprintf (out_fp, "\nObservables: \n");
       for (int i = 0; i < vfd_header.n_hw_observables; i++) {
          fprintf (out_fp, "%s: %s [%s]\n", obs_names[i], formulas[i],
                  units[i] != NULL ? units[i] : "");
       }
+      if (hwc_names != NULL) free(hwc_names);
+      if (symbols != NULL) free(symbols);
+      if (obs_names != NULL) free(obs_names);
+      if (formulas != NULL) free(formulas);
+      if (units != NULL) free(units);
    }
 
    free_vfd_header(&vfd_header);

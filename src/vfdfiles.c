@@ -221,10 +221,17 @@ void vftr_update_vfd_header(sampling_t *sampling,
    fwrite(&(sampling->message_samplecount), sizeof(unsigned int), 1, fp);
    // stacks count
    fwrite(&(process.stacktree.nstacks), sizeof(unsigned int), 1, fp);
-   // HW counter count
-   fwrite(&(vftrace.hwprof_state.n_counters), sizeof(unsigned int), 1, fp);
-   // HW observables count
-   fwrite(&(vftrace.hwprof_state.n_observables), sizeof(unsigned int), 1, fp);
+   // Only update the hardware info if it is active. Otherwise, they stay at 0.
+   if (vftrace.hwprof_state.active) {
+      // HW counter count
+      fwrite(&(vftrace.hwprof_state.n_counters), sizeof(unsigned int), 1, fp);
+      // HW observables count
+      fwrite(&(vftrace.hwprof_state.n_observables), sizeof(unsigned int), 1, fp);
+   } else {
+      unsigned int zerouint = 0;
+      fwrite(&zerouint, sizeof(unsigned int), 1, fp);
+      fwrite(&zerouint, sizeof(unsigned int), 1, fp);
+   }
    // samples offset
    fwrite(&(sampling->samples_offset), sizeof(long int), 1, fp);
    // stacks offset
@@ -318,8 +325,10 @@ void vftr_write_vfd_function_sample(sampling_t *sampling, sample_kind kind,
    fwrite(&kind, sizeof(sample_kind), 1, fp);
    fwrite(&stackID, sizeof(int), 1, fp);
    fwrite(&timestamp, sizeof(long long), 1, fp);
-   for (int i = 0; i < vftrace.hwprof_state.n_counters; i++) {
-      fwrite (&(hwcounters[i]), sizeof(long long), 1, fp); 
+   if (hwcounters != NULL) {
+      for (int i = 0; i < vftrace.hwprof_state.n_counters; i++) {
+         fwrite (&(hwcounters[i]), sizeof(long long), 1, fp); 
+      }
    }
    SELF_PROFILE_END_FUNCTION;
 }
