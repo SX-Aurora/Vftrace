@@ -53,7 +53,7 @@ Vftrace configuration read from "print_config.json"
    },
    "hwprof": {
       "type": "dummy",
-      "disable": false,
+      "active": true,
       "show_observables": true,
       "show_counters": true,
       "show_summary": false,

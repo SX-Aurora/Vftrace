@@ -52,7 +52,7 @@
    },
    "hwprof": {
       "type": "dummy",
-      "disable": false,
+      "active": true,
       "show_observables": true,
       "show_counters": false,
       "show_summary": false,
