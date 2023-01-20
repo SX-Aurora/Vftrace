@@ -18,7 +18,7 @@ void vftr_hwprof_init (config_t config) {
       vftrace.hwprof_state.hwc_type = HWC_VE;
    }
 
-   vftrace.hwprof_state.active = !config.hwprof.disable.value;
+   vftrace.hwprof_state.active = config.hwprof.active.value;
 
    vftrace.hwprof_state.n_counters = config.hwprof.counters.hwc_name.n_elements;
    vftrace.hwprof_state.counters = (vftr_counter_t*)malloc(vftrace.hwprof_state.n_counters * sizeof(vftr_counter_t));

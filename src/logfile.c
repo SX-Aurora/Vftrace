@@ -117,20 +117,22 @@ void vftr_write_logfile(vftrace_t vftrace, long long runtime) {
    }
 #endif
 
-   if (vftrace.hwprof_state.n_observables > 0 && vftrace.config.hwprof.show_observables.value) {
-      vftr_write_hwprof_observables_table (fp, vftrace.process.collated_stacktree, vftrace.config);
-   }
-   if (vftrace.hwprof_state.n_counters > 0 && vftrace.config.hwprof.show_counters.value) {
-      vftr_write_logfile_hwprof_counter_table (fp, vftrace.process.collated_stacktree, vftrace.config);
-   }
+   if (vftrace.hwprof_state.active) {
+      if (vftrace.hwprof_state.n_observables > 0 && vftrace.config.hwprof.show_observables.value) {
+         vftr_write_hwprof_observables_table (fp, vftrace.process.collated_stacktree, vftrace.config);
+      }
+      if (vftrace.hwprof_state.n_counters > 0 && vftrace.config.hwprof.show_counters.value) {
+         vftr_write_logfile_hwprof_counter_table (fp, vftrace.process.collated_stacktree, vftrace.config);
+      }
 
-   if (vftrace.config.hwprof.show_observables.value && vftrace.config.hwprof.show_summary.value) {
-      vftr_write_hwprof_observables_logfile_summary (fp, vftrace.process.collated_stacktree);
-      fprintf (fp, "\n");
-   }
-   if (vftrace.config.hwprof.show_counters.value && vftrace.config.hwprof.show_summary.value) {
-      vftr_write_hwprof_counter_logfile_summary (fp, vftrace.process.collated_stacktree);
-      fprintf (fp, "\n");
+      if (vftrace.config.hwprof.show_observables.value && vftrace.config.hwprof.show_summary.value) {
+         vftr_write_hwprof_observables_logfile_summary (fp, vftrace.process.collated_stacktree);
+         fprintf (fp, "\n");
+      }
+      if (vftrace.config.hwprof.show_counters.value && vftrace.config.hwprof.show_summary.value) {
+         vftr_write_hwprof_counter_logfile_summary (fp, vftrace.process.collated_stacktree);
+         fprintf (fp, "\n");
+      }
    }
 
    vftr_write_logfile_global_stack_list(fp, vftrace.process.collated_stacktree);

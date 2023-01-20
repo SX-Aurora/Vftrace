@@ -308,7 +308,7 @@ unsigned long long vftr_sizeof_config_hwprof_t (config_hwprof_t cfg_hwprof) {
    unsigned long long size = sizeof(config_hwprof_t);
    size += vftr_sizeof_config_struct_defaults (cfg_hwprof.name);
    size -= sizeof(config_bool_t); 
-   size += vftr_sizeof_config_bool_t(cfg_hwprof.disable);
+   size += vftr_sizeof_config_bool_t(cfg_hwprof.active);
    size -= sizeof(config_bool_t); 
    size += vftr_sizeof_config_bool_t(cfg_hwprof.show_observables);
    size -= sizeof(config_bool_t); 

@@ -121,22 +121,24 @@ void vftr_write_ranklogfile(vftrace_t vftrace, long long runtime) {
    }
 #endif
 
-   if (vftrace.hwprof_state.n_observables > 0 && vftrace.config.hwprof.show_observables.value) {
-      vftr_write_ranklogfile_hwprof_obs_table (fp, vftrace.process.stacktree, vftrace.config);
-      fprintf (fp, "\n");
-   }
-   if (vftrace.hwprof_state.n_counters > 0 && vftrace.config.hwprof.show_counters.value) {
-      vftr_write_ranklogfile_hwprof_counter_table (fp, vftrace.process.stacktree, vftrace.config);
-      fprintf (fp, "\n");
-   }
+   if (vftrace.hwprof_state.active) {
+      if (vftrace.hwprof_state.n_observables > 0 && vftrace.config.hwprof.show_observables.value) {
+         vftr_write_ranklogfile_hwprof_obs_table (fp, vftrace.process.stacktree, vftrace.config);
+         fprintf (fp, "\n");
+      }
+      if (vftrace.hwprof_state.n_counters > 0 && vftrace.config.hwprof.show_counters.value) {
+         vftr_write_ranklogfile_hwprof_counter_table (fp, vftrace.process.stacktree, vftrace.config);
+         fprintf (fp, "\n");
+      }
 
-   if (vftrace.config.hwprof.show_observables.value && vftrace.config.hwprof.show_summary.value) {
-      vftr_write_hwprof_observables_ranklogfile_summary (fp, vftrace.process.stacktree);
-      fprintf (fp, "\n");
-   }
-   if (vftrace.config.hwprof.show_counters.value && vftrace.config.hwprof.show_summary.value) {
-      vftr_write_hwprof_counter_ranklogfile_summary (fp, vftrace.process.stacktree);
-      fprintf (fp, "\n");
+      if (vftrace.config.hwprof.show_observables.value && vftrace.config.hwprof.show_summary.value) {
+         vftr_write_hwprof_observables_ranklogfile_summary (fp, vftrace.process.stacktree);
+         fprintf (fp, "\n");
+      }
+      if (vftrace.config.hwprof.show_counters.value && vftrace.config.hwprof.show_summary.value) {
+         vftr_write_hwprof_counter_ranklogfile_summary (fp, vftrace.process.stacktree);
+         fprintf (fp, "\n");
+      }
    }
 
    vftr_write_logfile_global_stack_list(fp, vftrace.process.collated_stacktree);

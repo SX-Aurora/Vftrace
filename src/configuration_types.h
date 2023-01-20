@@ -111,7 +111,7 @@ typedef struct {
 
 typedef struct {
    CONFIG_STRUCT_DEFAULTS
-   config_bool_t disable;
+   config_bool_t active;
    config_string_t hwc_type;
    config_bool_t show_observables;
    config_bool_t show_counters;

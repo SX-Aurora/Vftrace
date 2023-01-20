@@ -133,7 +133,7 @@ void vftr_config_advisor_cuda(cJSON *json_obj) {
 
 void vftr_config_advisor_hwprof (cJSON *json_obj) {
   char *options[] = {
-     "disable",
+     "active",
      "type",
      "show_tables",
      "show_counters",
