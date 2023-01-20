@@ -65,7 +65,8 @@ void vftr_papi_finalize () {
 long long *vftr_get_papi_counters () {
   int n = vftrace.hwprof_state.n_counters;
   long long *counters = (long long *)malloc (n * sizeof(long long));
-  int retval = PAPI_read (vftrace.hwprof_state.papi.eventset, counters);
+  // TODO: Handle error
+  PAPI_read (vftrace.hwprof_state.papi.eventset, counters);
   return counters;
 }
 

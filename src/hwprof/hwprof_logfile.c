@@ -118,7 +118,7 @@ void vftr_write_hwprof_observables_logfile_summary (FILE *fp, collated_stacktree
          fprintf (fp, "  %s: %lf %s\n", vftrace.hwprof_state.observables[i].name,
                                         obs_sum[i], vftrace.hwprof_state.observables[i].unit);
       } else {
-         fprintf (fp, "  %s: %lf\n", vftrace.hwprof_state.observables[i].name, obs_sum);
+         fprintf (fp, "  %s: %lf\n", vftrace.hwprof_state.observables[i].name, obs_sum[i]);
       }
    }
    free(obs_sum);

@@ -10,11 +10,15 @@
 vftr_calculator_t vftr_init_calculator (int n_observables, char **symbols, char **formulas) {
    vftr_calculator_t calc;
 
+   calc.builtin_values = (double*)malloc(CALC_N_BUILTIN * sizeof(double));
+   calc.builtin_symbols = (const char**)malloc(CALC_N_BUILTIN * sizeof(const char*));
+   calc.builtin_symbols[0] = "T";
+   calc.builtin_symbols[1] = "CALLS";
+
    calc.n_variables = vftrace.hwprof_state.n_counters;
    calc.n_te_vars = calc.n_variables + CALC_N_BUILTIN;
    calc.n_observables = n_observables;
    calc.values = (double*)malloc(calc.n_variables * sizeof(double));
-   calc.builtin_values = (double*)malloc(CALC_N_BUILTIN * sizeof(double));
    calc.te_vars = (te_variable*)malloc(calc.n_te_vars * sizeof(te_variable));
    calc.expr = (te_expr**)malloc(n_observables * sizeof(te_expr*));
 
@@ -23,7 +27,7 @@ vftr_calculator_t vftr_init_calculator (int n_observables, char **symbols, char 
 
    for (int i = 0; i < calc.n_te_vars; i++) {
       if (i < CALC_N_BUILTIN) {
-         calc.te_vars[i].name = strdup(builtin_symbols[i]);
+         calc.te_vars[i].name = strdup(calc.builtin_symbols[i]);
          calc.te_vars[i].address = &calc.builtin_values[i];
       } else {
          calc.te_vars[i].name = strdup(symbols[i - CALC_N_BUILTIN]);
@@ -69,7 +73,7 @@ void vftr_print_calculator_state (vftr_calculator_t calc) {
       printf ("   linked to: %p\n", calc.te_vars[i].address);
       printf ("   value: %.10e\n", calc.values[i - CALC_N_BUILTIN]);
    }
-   printf ("Builtin Variables:\n", CALC_N_BUILTIN);
+   printf ("Builtin Variables:\n");
    for (int i = 0; i < CALC_N_BUILTIN; i++) {
       printf ("   name: %s\n", calc.te_vars[i].name);
       printf ("   linked to: %p\n", calc.te_vars[i].address); 

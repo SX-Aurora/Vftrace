@@ -173,6 +173,7 @@ unsigned long long vftr_sizeof_config_string_list_t (config_string_list_t cfg_st
       }
       size += cfg_string_list.n_elements * sizeof(int);  // sizeof(list_idx);
    }
+   return size;
 }
 
 unsigned long long vftr_sizeof_config_regex_t(config_regex_t cfg_regex) {
@@ -288,6 +289,7 @@ unsigned long long vftr_sizeof_config_hwcounters_t (config_hwcounters_t cfg_hwc)
   size += vftr_sizeof_config_string_list_t (cfg_hwc.hwc_name);
   size -= sizeof(config_string_list_t);
   size += vftr_sizeof_config_string_list_t (cfg_hwc.symbol);
+  return size;
 }
 
 unsigned long long vftr_sizeof_config_hwobservables_t (config_hwobservables_t cfg_hwo) {
@@ -299,7 +301,7 @@ unsigned long long vftr_sizeof_config_hwobservables_t (config_hwobservables_t cf
   size += vftr_sizeof_config_string_list_t (cfg_hwo.formula_expr);
   size -= sizeof(config_string_list_t);
   size += vftr_sizeof_config_string_list_t (cfg_hwo.unit);
-
+  return size;
 }
 
 unsigned long long vftr_sizeof_config_hwprof_t (config_hwprof_t cfg_hwprof) {
@@ -319,6 +321,7 @@ unsigned long long vftr_sizeof_config_hwprof_t (config_hwprof_t cfg_hwprof) {
    size += vftr_sizeof_config_hwcounters_t (cfg_hwprof.counters);
    size -= sizeof(config_hwobservables_t);
    size += vftr_sizeof_config_hwobservables_t (cfg_hwprof.observables);
+   return size;
 }
 
 unsigned long long vftr_sizeof_config_t(config_t config) {

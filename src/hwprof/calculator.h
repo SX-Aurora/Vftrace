@@ -5,7 +5,6 @@
 
 #define CALC_N_BUILTIN 2
 
-static const char *builtin_symbols[CALC_N_BUILTIN] = {"T", "CALLS"};
 enum pcalc_types {PCALC_T, PCALC_CALLS};
 
 typedef struct {
@@ -13,6 +12,7 @@ typedef struct {
    int n_te_vars;
    int n_observables;
    double *values;
+   const char **builtin_symbols;
    double *builtin_values;
    te_variable *te_vars;
    te_expr **expr; 

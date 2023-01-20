@@ -68,6 +68,16 @@ void vftr_config_string_free(config_string_t *cfg_string_ptr) {
    }
 }
 
+void vftr_config_string_list_free (config_string_list_t *cfg_string_list_ptr) {
+   for (int i = 0; i < cfg_string_list_ptr->n_elements; i++) {
+      free(cfg_string_list_ptr->values[i]);
+   }
+   free(cfg_string_list_ptr->values);
+   cfg_string_list_ptr->values = NULL;
+   free(cfg_string_list_ptr->list_idx);
+   cfg_string_list_ptr->list_idx = NULL;
+}
+
 void vftr_config_regex_free(config_regex_t *cfg_regex_ptr) {
    free(cfg_regex_ptr->name);
    cfg_regex_ptr->name = NULL;
@@ -145,16 +155,16 @@ void vftr_config_accprof_free(config_accprof_t *cfg_accprof_ptr) {
 void  vftr_config_hwcounters_free (config_hwcounters_t *cfg_hwc_ptr) {
    free(cfg_hwc_ptr->name);
    cfg_hwc_ptr->name = NULL;
-   vftr_config_string_free(&(cfg_hwc_ptr->hwc_name));
-   vftr_config_string_free(&(cfg_hwc_ptr->symbol));
+   vftr_config_string_list_free(&(cfg_hwc_ptr->hwc_name));
+   vftr_config_string_list_free(&(cfg_hwc_ptr->symbol));
 }
 
 void  vftr_config_hwobservables_free (config_hwobservables_t *cfg_hwobs_ptr) {
    free(cfg_hwobs_ptr->name);
    cfg_hwobs_ptr->name = NULL;
-   vftr_config_string_free(&(cfg_hwobs_ptr->obs_name));
-   vftr_config_string_free(&(cfg_hwobs_ptr->formula_expr));
-   vftr_config_string_free(&(cfg_hwobs_ptr->unit));
+   vftr_config_string_list_free(&(cfg_hwobs_ptr->obs_name));
+   vftr_config_string_list_free(&(cfg_hwobs_ptr->formula_expr));
+   vftr_config_string_list_free(&(cfg_hwobs_ptr->unit));
 }
 
 void vftr_config_hwprof_free (config_hwprof_t *cfg_hwprof_ptr) {
