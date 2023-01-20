@@ -37,7 +37,8 @@ check_PROGRAMS = calculator \
                  print_config_default_scenario \
                  hwprof_region1 \
                  hwprof_region2 \
-                 hwprof_region3
+                 hwprof_region3 \
+                 hwprof_region4
 
 if ENABLE_PAPI
 check_PROGRAMS += papi_init_test
@@ -77,6 +78,10 @@ hwprof_region3_SOURCES = $(srcdir)/hwprof_region2.c
 hwprof_region3_CFLAGS = $(AM_CFLAGS) $(FINSTRUMENT_FLAG)
 hwprof_region3_LDFLAGS = $(AM_LDFLAGS)
 
+hwprof_region4_SOURCES = $(srcdir)/hwprof_region2.c
+hwprof_region4_CFLAGS = $(AM_CFLAGS) $(FINSTRUMENT_FLAG)
+hwprof_region4_LDFLAGS = $(AM_LDFLAGS)
+
 if ENABLE_PAPI
 papi_init_test_SOURCES = $(srcdir)/papi_init_test.c
 papi_init_test_CFLAGS = $(AM_CFLAGS) $(FINSTRUMENT_FLAG)
@@ -109,7 +114,8 @@ dist_check_SCRIPTS = calculator.sh \
                      print_config_default_scenario.sh \
                      hwprof_region1.sh \
                      hwprof_region2.sh \
-                     hwprof_region3.sh
+                     hwprof_region3.sh \
+                     hwprof_region4.sh
 
 if ENABLE_PAPI
 dist_check_SCRIPTS += papi_init_test.sh
