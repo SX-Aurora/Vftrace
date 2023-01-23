@@ -3,10 +3,13 @@
 
 #include "vftrace_state.h"
 
+#include "hwprof_state_types.h"
 #include "calculator.h"
 #ifdef _PAPI_AVAIL
 #include "hwprof_papi.h"
 #endif
+
+char *vftr_builtin_obs_symbols[NSYM_BUILTIN] = {"T", "CALLS"};
 
 void vftr_hwprof_init (config_t config) {
    // Invalid values should be caught in the assertion

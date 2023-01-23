@@ -35,6 +35,7 @@ endif
 check_PROGRAMS = calculator \
                  print_config \
                  print_config_default_scenario \
+                 assert_config1 \
                  hwprof_region1 \
                  hwprof_region2 \
                  hwprof_region3 \
@@ -65,6 +66,10 @@ print_config_LDFLAGS = $(AM_LDFLAGS)
 print_config_default_scenario_SOURCES = $(srcdir)/print_config.c
 print_config_default_scenario_CFLAGS = $(AM_CFLAGS)
 print_config_default_scenario_LDFLAGS = $(AM_LDFLAGS)
+
+assert_config1_SOURCES = $(srcdir)/assert_config.c
+assert_config1_CFLAGS = $(AM_CFLAGS)
+assert_config1_LDFLAGS = $(AM_LDFLAGS)
 
 hwprof_region1_SOURCES = $(srcdir)/hwprof_region1.c
 hwprof_region1_CFLAGS = $(AM_CFLAGS) $(FINSTRUMENT_FLAG)
@@ -112,6 +117,7 @@ endif
 dist_check_SCRIPTS = calculator.sh \
                      print_config.sh \
                      print_config_default_scenario.sh \
+		     assert_config1.sh \
                      hwprof_region1.sh \
                      hwprof_region2.sh \
                      hwprof_region3.sh \

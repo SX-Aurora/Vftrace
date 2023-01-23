@@ -3,8 +3,6 @@
 
 #include "tinyexpr.h"
 
-#define CALC_N_BUILTIN 2
-
 enum pcalc_types {PCALC_T, PCALC_CALLS};
 
 typedef struct {

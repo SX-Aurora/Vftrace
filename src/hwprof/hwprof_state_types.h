@@ -6,7 +6,11 @@
 #include "hwprof_ve.h"
 #include "calculator.h"
 
+#define NSYM_BUILTIN 2
+
 enum {HWC_NONE, HWC_DUMMY, HWC_PAPI, HWC_VE};
+
+extern char *vftr_builtin_obs_symbols[NSYM_BUILTIN];
 
 typedef struct {
    char *name;

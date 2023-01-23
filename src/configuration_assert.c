@@ -9,6 +9,8 @@
 #include "configuration_types.h"
 #include "range_expand.h"
 
+#include "hwprof_state_types.h"
+
 // General assertion routines
 void vftr_config_active_assert(FILE *fp, config_bool_t cfg_active) {
    (void) fp;
@@ -330,8 +332,19 @@ void vftr_config_hwprof_assert (FILE *fp, config_hwprof_t cfg_hwprof) {
       vftr_abort(0);
    }
 
-#ifdef _ON_VE
    int n_counters = cfg_hwprof.counters.hwc_name.n_elements;
+   // Check that no builtin variable is used as a symbol name.
+   for (int i = 0; i < n_counters; i++) {
+     char *symbol = cfg_hwprof.counters.symbol.values[i];
+     for (int j = 0; j < NSYM_BUILTIN; j++) {
+        if (!strcmp(symbol, vftr_builtin_obs_symbols[j])) {
+           fprintf (stderr, "hwprof: Symbol %s is reserved for a builtin variable.\n", symbol);
+           vftr_abort(0);
+        }
+     }
+   } 
+#ifdef _ON_VE
+   // Check that the counter matches a VE counter.
    for (int i = 0; i < n_counters; i++) {
      char *hwc_name = cfg_hwprof.counters.hwc_name.values[i];
      if (vftr_ve_counter_index (hwc_name) < 0) {
