@@ -84,5 +84,6 @@ collated_stack_t **vftr_sort_collated_stacks_hwprof_obs (config_t config, collat
 void vftr_apply_perm_collated_stackptr(int n, collated_stack_t **list, int *perm);
 collated_stack_t **vftr_sort_collated_stacks_for_prof(config_t config,
                                                       collated_stacktree_t stacktree);
+collated_stack_t **vftr_sort_collated_stacks_tmax (config_t config, collated_stacktree_t stacktree);
 
 #endif

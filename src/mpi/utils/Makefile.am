@@ -11,7 +11,8 @@ libvftr_mpi_utils_la_SOURCES += mpi_logging.c \
 				ranklogfile_mpi_table.c \
 				mpi_buf_addr_const.c \
 				sync_time.c \
-				sleep.c
+				sleep.c \
+                                minmax_summary.c
 
 libvftr_mpi_utils_la_SOURCES += cart_comms.c
 

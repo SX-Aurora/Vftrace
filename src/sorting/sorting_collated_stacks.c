@@ -155,7 +155,7 @@ void vftr_sort_collated_stacks_for_mpiprof(config_t config,
 #endif
 
 #ifdef _CUDA
-   collated_stack_t **vftr_sort_collated_stacks_for_cuda (config_t config, collated_stacktree_t stacktree) {
+collated_stack_t **vftr_sort_collated_stacks_for_cuda (config_t config, collated_stacktree_t stacktree) {
      int nstacks = stacktree.nstacks;
 
      char *column = config.cuda.sort_table.column.value;
@@ -218,7 +218,7 @@ void vftr_sort_collated_stacks_for_mpiprof(config_t config,
 #endif
 
 #ifdef _ACCPROF
-  collated_stack_t **vftr_sort_collated_stacks_for_accprof (config_t config, collated_stacktree_t stacktree) {
+collated_stack_t **vftr_sort_collated_stacks_for_accprof (config_t config, collated_stacktree_t stacktree) {
      int nstacks = stacktree.nstacks;
      char *column = config.accprof.sort_table.column.value;
      bool ascending = config.accprof.sort_table.ascending.value;
@@ -279,7 +279,7 @@ void vftr_sort_collated_stacks_for_mpiprof(config_t config,
 
 #endif
 
-  collated_stack_t **vftr_sort_collated_stacks_hwprof_obs (config_t config, collated_stacktree_t stacktree) {
+collated_stack_t **vftr_sort_collated_stacks_hwprof_obs (config_t config, collated_stacktree_t stacktree) {
      int nstacks = stacktree.nstacks;
      int sort_column = config.hwprof.sort_by_column.value;
      int *perm = NULL;
@@ -301,4 +301,27 @@ void vftr_sort_collated_stacks_for_mpiprof(config_t config,
      vftr_apply_perm_collated_stackptr (nstacks, stackptrs, perm);
      free(perm);
      return stackptrs; 
+}
+
+collated_stack_t **vftr_sort_collated_stacks_tmax (config_t config, collated_stacktree_t stacktree) {
+    int nstacks = stacktree.nstacks;
+    long long *t_max = (long long*)malloc(nstacks * sizeof(long long));
+    for (int istack = 0; istack < nstacks; istack++) {
+       collated_stack_t *stack = stacktree.stacks + istack;
+       collated_callprofile_t callprof = stack->profile.callprof;
+       t_max[istack] = callprof.max_time_nsec; 
+    }
+
+    int *perm = NULL;
+    vftr_sort_perm_longlong (nstacks, t_max, &perm, false);
+    free(t_max);
+
+    collated_stack_t **stackptrs = (collated_stack_t**) malloc(nstacks*sizeof(collated_stack_t*));
+    for (int istack = 0; istack < nstacks; istack++) {
+        stackptrs[istack] = stacktree.stacks + istack;
+    }
+
+    vftr_apply_perm_collated_stackptr (nstacks, stackptrs, perm);
+    free(perm);
+    return stackptrs; 
 }

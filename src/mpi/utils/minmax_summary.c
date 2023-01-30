@@ -10,7 +10,7 @@
 
 void vftr_write_minmax_summary (FILE *fp, vftrace_t vftrace) {
    collated_stack_t **sorted_stacks =
-      vftr_sort_collated_stacks_for_prof(vftrace.config, vftrace.process.collated_stacktree);
+      vftr_sort_collated_stacks_tmax(vftrace.config, vftrace.process.collated_stacktree);
 
    int nstacks = vftrace.process.collated_stacktree.nstacks;
    table_t table = vftr_new_table();
