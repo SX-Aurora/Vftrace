@@ -20,6 +20,7 @@ void vftr_write_minmax_summary (FILE *fp, vftrace_t vftrace) {
    char **function_names = (char**)malloc(nstacks * sizeof(char*)); 
    double *t_max_s = (double*)malloc(nstacks * sizeof(double));
    double *t_min_s = (double*)malloc(nstacks * sizeof(double));
+   double *t_avg_s = (double*)malloc(nstacks * sizeof(double));
    int *rank_max = (int*)malloc(nstacks * sizeof(int));
    int *rank_min = (int*)malloc(nstacks * sizeof(int));
    for (int i = 0; i < nstacks; i++) {
@@ -28,6 +29,7 @@ void vftr_write_minmax_summary (FILE *fp, vftrace_t vftrace) {
       function_names[i] = this_stack->name;
       t_max_s[i] = (double)this_stack->profile.callprof.max_time_nsec / 1e9;
       t_min_s[i] = (double)this_stack->profile.callprof.min_time_nsec / 1e9;
+      t_avg_s[i] = (double)this_stack->profile.callprof.average_time_nsec / 1e9;
       rank_max[i] = this_stack->profile.callprof.max_on_rank;
       rank_min[i] = this_stack->profile.callprof.min_on_rank;
    }
@@ -38,6 +40,7 @@ void vftr_write_minmax_summary (FILE *fp, vftrace_t vftrace) {
    vftr_table_add_column (&table, col_int, "rank", "%d", 'c', 'r', (void*)rank_max);
    vftr_table_add_column (&table, col_double, "t_min[s]", "%.3f", 'c', 'r', (void*)t_min_s);
    vftr_table_add_column (&table, col_int, "rank", "%d", 'c', 'r', (void*)rank_min);
+   vftr_table_add_column (&table, col_double, "t_avg[s]", "%.3f", 'c', 'r', (void*)t_avg_s);
 
    fprintf (fp, "\n\n Summary: Min/Max runtime across all ranks\n");
    vftr_print_table (fp, table);
@@ -46,6 +49,7 @@ void vftr_write_minmax_summary (FILE *fp, vftrace_t vftrace) {
    free(function_names);
    free(t_max_s);   
    free(t_min_s);
+   free(t_avg_s);
    free(rank_max);
    free(rank_min);
 }
