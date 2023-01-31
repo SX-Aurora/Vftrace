@@ -23,7 +23,6 @@
 #endif
 #ifdef _MPI
 #include "mpi_state_types.h"
-#include "minmax_summary_types.h"
 #endif
 
 // tracing state of vftrace
