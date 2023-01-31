@@ -17,13 +17,13 @@
 #include "search.h"
 #include "range_expand.h"
 #include "hwprof_logfile.h"
+#include "minmax_summary.h"
 #ifdef _CUDA
 #include "cuda_logfile.h"
 #endif
 #ifdef _ACCPROF
 #include "accprof_logfile.h"
 #endif
-#include "minmax_summary.h"
 
 char *vftr_get_logfile_name(config_t config) {
    char *filename_base = vftr_create_filename_base(config, -1, 1);
@@ -76,7 +76,10 @@ void vftr_write_logfile(vftrace_t vftrace, long long runtime) {
                                        vftrace.config);
    }
 
-   vftr_write_minmax_summary (fp, vftrace);
+   if (vftrace.config.profile_table.show_minmax_summary.value) {
+      vftr_write_minmax_summary (fp, vftrace);
+   }
+
    // print the name grouped profile_table
    if (vftrace.config.name_grouped_profile_table.show_table.value) {
       collated_stacktree_t namegrouped_collated_stacktree =

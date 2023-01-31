@@ -105,6 +105,7 @@ void vftr_config_profile_table_free(config_profile_table_t *cfg_profile_table_pt
    vftr_config_bool_free(&(cfg_profile_table_ptr->show_calltime_imbalances));
    vftr_config_bool_free(&(cfg_profile_table_ptr->show_callpath));
    vftr_config_bool_free(&(cfg_profile_table_ptr->show_overhead));
+   vftr_config_bool_free(&(cfg_profile_table_ptr->show_minmax_summary));
    vftr_config_sort_table_free(&(cfg_profile_table_ptr->sort_table));
 }
 

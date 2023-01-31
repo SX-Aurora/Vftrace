@@ -39,6 +39,7 @@ void vftr_write_minmax_summary (FILE *fp, vftrace_t vftrace) {
    vftr_table_add_column (&table, col_double, "t_min[s]", "%.3f", 'c', 'r', (void*)t_min_s);
    vftr_table_add_column (&table, col_int, "rank", "%d", 'c', 'r', (void*)rank_min);
 
+   fprintf (fp, "\n\n Summary: Min/Max runtime across all ranks\n");
    vftr_print_table (fp, table);
 
    free(stack_ids);

@@ -190,6 +190,8 @@ void vftr_parse_config_profile_table(cJSON *parent_object,
                              &(cfg_profile_table_ptr->show_callpath));
       vftr_parse_config_bool(json_object,
                              &(cfg_profile_table_ptr->show_overhead));
+      vftr_parse_config_bool(json_object,
+                             &(cfg_profile_table_ptr->show_minmax_summary));
       vftr_parse_config_sort_table(json_object,
                                    &(cfg_profile_table_ptr->sort_table));
    }

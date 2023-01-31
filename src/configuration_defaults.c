@@ -80,6 +80,8 @@ config_profile_table_t vft_set_config_profile_table_default() {
       vftr_set_config_bool_default("show_callpath", false);
    cfg_profile_table.show_overhead =
       vftr_set_config_bool_default("show_overhead", false);
+   cfg_profile_table.show_minmax_summary =
+      vftr_set_config_bool_default("show_minmax_summary", false);
    cfg_profile_table.sort_table =
       vftr_set_config_sort_table_default("time_excl", false);
    return cfg_profile_table;

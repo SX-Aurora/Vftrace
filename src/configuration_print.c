@@ -74,6 +74,8 @@ void vftr_print_config_profile_table(FILE *fp, int level,
    fprintf(fp,",\n");
    vftr_print_config_bool(fp, level, cfg_profile_table.show_overhead);
    fprintf(fp,",\n");
+   vftr_print_config_bool(fp, level, cfg_profile_table.show_minmax_summary);
+   fprintf(fp,",\n");
    vftr_print_config_sort_table(fp, level, cfg_profile_table.sort_table);
    fprintf(fp,"\n");
    vftr_print_config_indent(fp, level);

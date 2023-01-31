@@ -44,6 +44,7 @@ void vftr_config_advisor_profile_table(cJSON *json_obj) {
       "show_calltime_imbalances",
       "show_callpath",
       "show_overhead",
+      "show_minmax_summary",
       "sort_table"
    };
    int noptions = sizeof(options) / sizeof(char*);
