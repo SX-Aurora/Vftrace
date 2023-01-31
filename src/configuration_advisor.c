@@ -138,6 +138,8 @@ void vftr_config_advisor_hwprof (cJSON *json_obj) {
      "type",
      "show_tables",
      "show_counters",
+     "show_observables",
+     "show_summary",
      "sort_by_column",
      "default_scenario",
      "counters",
