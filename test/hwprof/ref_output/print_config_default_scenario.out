@@ -13,6 +13,7 @@
       "show_calltime_imbalances": false,
       "show_callpath": false,
       "show_overhead": false,
+      "show_minmax_summary": false,
       "sort_table": {
          "column": "time_excl",
          "ascending": false
