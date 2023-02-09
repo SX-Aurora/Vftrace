@@ -31,10 +31,10 @@
 #include "accprofiling.h"
 #endif
 
-void vftr_write_logfile_header(FILE *fp, time_strings_t timestrings) {
+void vftr_write_logfile_header(FILE *fp, time_strings_t timestrings, char *prof_type) {
    SELF_PROFILE_START_FUNCTION;
    fprintf(fp, "%s\n", PACKAGE_STRING);
-   fprintf(fp, "Runtime profile for application:\n");
+   fprintf(fp, "Runtime profile for application:\n", prof_type);
    fprintf(fp, "Start Date: %s\n", timestrings.start_time);
    fprintf(fp, "End Date:   %s\n\n", timestrings.end_time);
    vftr_print_licence(fp);

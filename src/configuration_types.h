@@ -57,6 +57,7 @@ typedef struct {
    config_bool_t show_overhead;
    config_bool_t show_minmax_summary;
    config_sort_table_t sort_table;
+   config_bool_t separate;
 } config_profile_table_t;
 
 typedef struct {
