@@ -200,7 +200,7 @@ void vftr_write_warnings (vftrace_t vftrace, vftr_logfile_fp_t all_fp) {
 #ifdef _MPI
    int mpi_initialized;
    PMPI_Initialized(&mpi_initialized);
-   if (!mpi_initialized)
+   if (!mpi_initialized && all_fp.fp[LOG_MPI] != NULL)
      fprintf (all_fp.fp[LOG_MPI], "The MPI interface is active, but MPI has not been initialized\n");
 #endif   
 

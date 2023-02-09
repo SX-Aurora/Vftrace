@@ -13,13 +13,11 @@ logfile=${BIN_PREFIX}${logfile}
 
 function run_binary () {
    testcase=$1
-   #rm_outfiles ${output_file} "" ${test_name}
    if [ "x${HAS_MPI}" == "xYES" ]; then
       ${MPI_EXEC} ${MPI_OPTS} ${NP} 1 ./${test_name} ${testcase} > ${output_file}
    else
       ./${test_name} ${testcase} > ${output_file}
    fi
-   #diff ${output_file} ${ref_file} || exit 1
 }
 
 #0: Terminated
