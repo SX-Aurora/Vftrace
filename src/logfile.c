@@ -130,7 +130,9 @@ void vftr_close_separate_logfiles (vftr_logfile_fp_t all_fp) {
 }
 
 void vftr_write_other_tables (vftrace_t vftrace, vftr_logfile_fp_t all_fp) {
+#ifdef _MPI
    if (all_fp.fp[LOG_MINMAX] != NULL) vftr_write_minmax_summary (all_fp.fp[LOG_MINMAX], vftrace);
+#endif
    if (all_fp.fp[LOG_GROUPED] != NULL) {
       collated_stacktree_t namegrouped_collated_stacktree =
          vftr_collated_stacktree_group_by_name(&vftrace.process.collated_stacktree);
@@ -140,11 +142,13 @@ void vftr_write_other_tables (vftrace_t vftrace, vftr_logfile_fp_t all_fp) {
       vftr_collated_stacktree_free(&namegrouped_collated_stacktree);
    }
 
+#ifdef _MPI
    if (all_fp.fp[LOG_MPI] != NULL) {
       vftr_write_logfile_mpi_table (all_fp.fp[LOG_MPI],
                                     vftrace.process.collated_stacktree,
                                     vftrace.config);
     }
+#endif
 
 #ifdef _CUDA
    if (all_fp.fp[LOG_CUDA] != NULL) {
