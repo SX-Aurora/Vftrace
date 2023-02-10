@@ -92,8 +92,9 @@ vftr_logfile_fp_t vftr_logfile_open_fps (config_t config, int rankID, int nranks
   all_fp.fp[LOG_ACCPROF] = NULL;
 #endif 
 
-  all_fp.fp[LOG_HWPROF] = config.hwprof.active.value ?
-                          vftr_get_this_logfile_fp ("hwprof", fp_main, rankID, nranks) : NULL;
+  bool show_hwprof = (vftrace.hwprof_state.n_counters > 0 && vftrace.config.hwprof.show_counters.value) ||
+                     (vftrace.hwprof_state.n_observables > 0 && vftrace.config.hwprof.show_observables.value);
+  all_fp.fp[LOG_HWPROF] = show_hwprof ? vftr_get_this_logfile_fp ("hwprof", fp_main, rankID, nranks) : NULL;
   return all_fp;
 }
 
