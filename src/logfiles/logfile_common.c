@@ -148,7 +148,7 @@ void vftr_write_logfile_prologue (bool is_master_logfile, vftrace_t vftrace,
         fprintf (all_fp.fp[i], "Runtime profile for application:\n");
         fprintf (all_fp.fp[i], "Start Date: %s\n", vftrace.timestrings.start_time);
         fprintf (all_fp.fp[i], "End Date:   %s\n\n", vftrace.timestrings.end_time);
-        vftr_print_licence (all_fp.fp[i]);
+        vftr_print_license (all_fp.fp[i]);
      }
   }
 

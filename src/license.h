@@ -3,6 +3,6 @@
 
 #include <stdio.h>
 
-void vftr_print_licence(FILE *fp);
+void vftr_print_license(FILE *fp);
 
 #endif
