@@ -2,6 +2,8 @@
 
 #include "logfile_common_types.h"
 
+#include "config.h"
+#include "license.h"
 #include "filenames.h"
 #include "logfile.h"
 #include "logfile_header.h"
@@ -141,7 +143,11 @@ void vftr_write_logfile_prologue (bool is_master_logfile, vftrace_t vftrace,
                                   vftr_logfile_fp_t all_fp, long long runtime) {
   for (int i = 0; i < N_LOGFILE_TYPES; i++) {
      if (all_fp.fp[i] != NULL) {
-        vftr_write_logfile_header (all_fp.fp[i], vftrace.timestrings);
+        fprintf (all_fp.fp[i], "%s\n", PACKAGE_STRING);
+        fprintf (all_fp.fp[i], "Runtime profile for application:\n");
+        fprintf (all_fp.fp[i], "Start Date: %s\n", vftrace.timestrings.start_time);
+        fprintf (all_fp.fp[i], "End Date:   %s\n\n", vftrace.timestrings.end_time);
+        vftr_print_licence (all_fp.fp[i]);
      }
   }
 
@@ -150,7 +156,7 @@ void vftr_write_logfile_prologue (bool is_master_logfile, vftrace_t vftrace,
   if (is_master_logfile) {
      vftr_write_logfile_summary (all_fp.fp[LOG_MAIN], vftrace.process, vftrace.size, runtime); 
   } else {
-     vftr_write_ranklogfile_summary (all_fp.fp[LOG_MAIN], vftrace.process, runtime);
+     vftr_write_ranklogfile_summary (all_fp.fp[LOG_MAIN], vftrace.process, vftrace.size, runtime);
   }
   vftr_write_logfile_warnings (vftrace, all_fp);
 }

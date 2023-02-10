@@ -132,8 +132,6 @@ void vftr_write_ranklogfile(vftrace_t vftrace, long long runtime) {
 
    vftr_write_ranklogfile_other_tables (vftrace, all_fp);
 
-   vftr_write_ranklogfile_other_tables (vftrace, all_fp);
-
    vftr_write_logfile_global_stack_list(all_fp.fp[LOG_MAIN], vftrace.process.collated_stacktree);
 
    vftr_write_ranklogfile_epilogue (vftrace, all_fp);
