@@ -3,10 +3,11 @@
 
 #include <stdlib.h>
 
+#include "vftrace_state.h"
 #include "configuration_types.h"
 #include "logfile_common_types.h"
 
-//char *vftr_get_logfile_name (config_t config, char *type, int rankID, int nranks);
+char *vftr_get_logfile_name (config_t config, char *type, int rankID, int nranks);
 
 FILE *vftr_get_this_logfile_fp (char *type, FILE *fp_main, int rankID, int nranks);
 
