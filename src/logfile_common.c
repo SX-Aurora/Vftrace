@@ -5,6 +5,7 @@
 #include "filenames.h"
 #include "logfile.h"
 #include "logfile_header.h"
+#include "ranklogfile_header.h"
 #include "signal_handling.h"
 
 char *vftr_get_logfile_name(config_t config, char *type, int rankID, int nranks) {
@@ -136,14 +137,21 @@ void vftr_write_logfile_warnings (vftrace_t vftrace, vftr_logfile_fp_t all_fp) {
 #endif
 }
 
-void vftr_write_logfile_prologue (vftrace_t vftrace, vftr_logfile_fp_t all_fp, long long runtime) {
+void vftr_write_logfile_prologue (bool is_master_logfile, vftrace_t vftrace,
+                                  vftr_logfile_fp_t all_fp, long long runtime) {
   for (int i = 0; i < N_LOGFILE_TYPES; i++) {
-     if (all_fp.fp[i] != NULL) vftr_write_logfile_header (all_fp.fp[i], vftrace.timestrings);
+     if (all_fp.fp[i] != NULL) {
+        vftr_write_logfile_header (all_fp.fp[i], vftrace.timestrings);
+     }
   }
 
   if (vftrace.signal_received > 0) vftr_write_signal_message (all_fp.fp[LOG_MAIN]);
  
-  vftr_write_logfile_summary (all_fp.fp[LOG_MAIN], vftrace.process, vftrace.size, runtime); 
+  if (is_master_logfile) {
+     vftr_write_logfile_summary (all_fp.fp[LOG_MAIN], vftrace.process, vftrace.size, runtime); 
+  } else {
+     vftr_write_ranklogfile_summary (all_fp.fp[LOG_MAIN], vftrace.process, runtime);
+  }
   vftr_write_logfile_warnings (vftrace, all_fp);
 }
 

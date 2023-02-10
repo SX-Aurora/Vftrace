@@ -123,7 +123,7 @@ void vftr_write_ranklogfile(vftrace_t vftrace, long long runtime) {
                                                      vftrace.process.processID,
                                                      vftrace.process.nprocesses);
 
-   vftr_write_logfile_prologue (vftrace, all_fp, runtime);
+   vftr_write_logfile_prologue (false, vftrace, all_fp, runtime);
 
    if (vftrace.config.profile_table.show_table.value) {
       vftr_write_ranklogfile_profile_table(all_fp.fp[LOG_MAIN], vftrace.process.stacktree,

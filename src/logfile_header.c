@@ -31,16 +31,6 @@
 #include "accprofiling.h"
 #endif
 
-void vftr_write_logfile_header(FILE *fp, time_strings_t timestrings) {
-   SELF_PROFILE_START_FUNCTION;
-   fprintf(fp, "%s\n", PACKAGE_STRING);
-   fprintf(fp, "Runtime profile for application:\n");
-   fprintf(fp, "Start Date: %s\n", timestrings.start_time);
-   fprintf(fp, "End Date:   %s\n\n", timestrings.end_time);
-   vftr_print_licence(fp);
-   SELF_PROFILE_END_FUNCTION;
-}
-
 void vftr_write_logfile_summary(FILE *fp, process_t process,
                                     vftr_size_t vftrace_size,
                                     long long runtime) {

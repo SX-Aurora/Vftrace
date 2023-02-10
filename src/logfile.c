@@ -121,7 +121,7 @@ void vftr_write_logfile(vftrace_t vftrace, long long runtime) {
 
    vftr_logfile_fp_t all_fp = vftr_logfile_open_fps (vftrace.config, -1, 0);
 
-   vftr_write_logfile_prologue (vftrace, all_fp, runtime);
+   vftr_write_logfile_prologue (true, vftrace, all_fp, runtime);
 
    if (vftrace.config.profile_table.show_table.value) {
       vftr_write_logfile_profile_table(all_fp.fp[LOG_MAIN],

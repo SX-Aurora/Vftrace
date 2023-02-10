@@ -2,6 +2,7 @@
 #define LOGFILE_COMMON_H
 
 #include <stdlib.h>
+#include <stdbool.h>
 
 #include "vftrace_state.h"
 #include "configuration_types.h"
@@ -17,5 +18,6 @@ void vftr_logfile_close_fp (vftr_logfile_fp_t all_fp);
 
 void vftr_write_logfile_warnings (vftrace_t vftrace, vftr_logfile_fp_t all_fp);
 
-void vftr_write_logfile_prologue (vftrace_t vftrace, vftr_logfile_fp_t all_fp, long long runtime);
+void vftr_write_logfile_prologue (bool is_master_logfile, vftrace_t vftrace,
+                                  vftr_logfile_fp_t all_fp, long long runtime);
 #endif
