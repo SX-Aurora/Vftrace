@@ -67,6 +67,9 @@ vftr_logfile_fp_t vftr_logfile_open_fps (config_t config, int rankID, int nranks
                              vftr_get_this_logfile_fp ("minmax", fp_main, rankID, nranks) : NULL;
      all_fp.fp[LOG_GROUPED] = config.name_grouped_profile_table.show_table.value ?
                               vftr_get_this_logfile_fp ("namegroup", fp_main, rankID, nranks) : NULL;
+  } else {
+     all_fp.fp[LOG_MINMAX] = NULL;
+     all_fp.fp[LOG_GROUPED] = NULL;
   }
 
 #ifdef _MPI
