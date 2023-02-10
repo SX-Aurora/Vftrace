@@ -62,10 +62,13 @@ vftr_logfile_fp_t vftr_logfile_open_fps (config_t config, int rankID, int nranks
   free(logfilename_main);
   FILE *fp_main = all_fp.fp[LOG_MAIN];
 
-  all_fp.fp[LOG_MINMAX] = config.profile_table.show_minmax_summary.value ?
-                          vftr_get_this_logfile_fp ("minmax", fp_main, rankID, nranks) : NULL;
-  all_fp.fp[LOG_GROUPED] = config.name_grouped_profile_table.show_table.value ?
-                           vftr_get_this_logfile_fp ("namegroup", fp_main, rankID, nranks) : NULL;
+  if (rankID < 0) { // rankID >= 0 are ranklogfiles. Min/Max and grouped tables are only printed for the master rank.
+     all_fp.fp[LOG_MINMAX] = config.profile_table.show_minmax_summary.value ?
+                             vftr_get_this_logfile_fp ("minmax", fp_main, rankID, nranks) : NULL;
+     all_fp.fp[LOG_GROUPED] = config.name_grouped_profile_table.show_table.value ?
+                              vftr_get_this_logfile_fp ("namegroup", fp_main, rankID, nranks) : NULL;
+  }
+
 #ifdef _MPI
   int mpi_initialized;
   PMPI_Initialized(&mpi_initialized);
