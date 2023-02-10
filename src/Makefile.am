@@ -110,6 +110,7 @@ libvftrace_la_SOURCES += logfile.c \
 			 logfile_header.c \
 			 logfile_prof_table.c \
 			 logfile_stacklist.c \
+                         logfile_common.c \
 			 ranklogfile.c \
 			 ranklogfile_header.c \
 			 ranklogfile_prof_table.c \

@@ -8,10 +8,11 @@
 
 #include "signal_handling.h"
 #include "filenames.h"
+#include "logfile_common.h"
+#include "logfile_stacklist.h"
 #include "ranklogfile_header.h"
 #include "ranklogfile_prof_table.h"
 #include "ranklogfile_mpi_table.h"
-#include "logfile_stacklist.h"
 #include "search.h"
 #include "configuration_print.h"
 #include "range_expand.h"
@@ -43,25 +44,6 @@ static bool vftr_rank_needs_ranklogfile(config_t config, int rank) {
    }
 }
 
-char *vftr_get_ranklogfile_name(config_t config, int rankID, int nranks) {
-   char *filename_base = vftr_create_filename_base(config, rankID, nranks);
-   int filename_base_len = strlen(filename_base);
-
-   char *extension = ".log";
-   int extension_len = strlen(extension);
-
-   // construct logfile name
-   int total_len = filename_base_len +
-                   extension_len +
-                   1; // null terminator
-   char *logfile_name = (char*) malloc(total_len*sizeof(char));
-   strcpy(logfile_name, filename_base);
-   strcat(logfile_name, extension);
-
-   free(filename_base);
-   return logfile_name;
-}
-
 FILE *vftr_open_ranklogfile(char *filename) {
    FILE *fp = fopen(filename, "w");
    if (fp == NULL) {
@@ -71,6 +53,65 @@ FILE *vftr_open_ranklogfile(char *filename) {
    return fp;
 }
 
+void vftr_write_ranklogfile_other_tables (vftrace_t vftrace, vftr_logfile_fp_t all_fp) {
+
+// Min/Max summaries and grouped tables are irrelevant for ranklogfiles.
+
+#ifdef _MPI
+   if (all_fp.fp[LOG_MPI] != NULL) {
+         vftr_write_ranklogfile_mpi_table(all_fp.fp[LOG_MPI], vftrace.process.stacktree,
+                                          vftrace.config);
+   }
+#endif
+
+#ifdef _CUDA
+   if (all_fp.fp[LOG_CUDA] != NULL) {
+      vftr_write_ranklogfile_cuda_table(all_fp.fp[LOG_CUDA], vftrace.process.stacktree, vftrace.config);
+   }
+#endif
+
+#ifdef _ACCPROF
+   if (all_fp.fp[LOG_ACCPROF] != NULL) {
+      vftr_write_ranklogfile_accprof_grouped_table (all_fp.fp[LOG_ACCPROF], vftrace.process.stacktree, vftrace.config);
+      if (vftrace.config.accprof.show_event_details.value) {
+         vftr_write_ranklogfile_accprof_event_table (all_fp.fp[LOG_ACCPROF], vftrace.process.stacktree, vftrace.config);
+      }
+   }
+#endif
+
+   if (all_fp.fp[LOG_HWPROF] != NULL) {
+      if (vftrace.hwprof_state.n_observables > 0 && vftrace.config.hwprof.show_observables.value) {
+         vftr_write_ranklogfile_hwprof_obs_table (all_fp.fp[LOG_HWPROF], vftrace.process.stacktree, vftrace.config);
+         fprintf (all_fp.fp[LOG_HWPROF], "\n");
+      }
+      if (vftrace.hwprof_state.n_counters > 0 && vftrace.config.hwprof.show_counters.value) {
+         vftr_write_ranklogfile_hwprof_counter_table (all_fp.fp[LOG_HWPROF], vftrace.process.stacktree, vftrace.config);
+         fprintf (all_fp.fp[LOG_HWPROF], "\n");
+      }
+
+      if (vftrace.config.hwprof.show_observables.value && vftrace.config.hwprof.show_summary.value) {
+         vftr_write_hwprof_observables_ranklogfile_summary (all_fp.fp[LOG_HWPROF], vftrace.process.stacktree);
+         fprintf (all_fp.fp[LOG_HWPROF], "\n");
+      }
+      if (vftrace.config.hwprof.show_counters.value && vftrace.config.hwprof.show_summary.value) {
+         vftr_write_hwprof_counter_ranklogfile_summary (all_fp.fp[LOG_HWPROF], vftrace.process.stacktree);
+         fprintf (all_fp.fp[LOG_HWPROF], "\n");
+      }
+   }
+}
+
+void vftr_write_ranklogfile_epilogue (vftrace_t vftrace, vftr_logfile_fp_t all_fp) {
+#ifdef _CUDA
+   if (vftrace.config.cuda.show_table.value) {
+      vftr_write_ranklogfile_cbid_names (all_fp.fp[LOG_CUDA], vftrace.process.stacktree);
+   }
+#endif
+
+   if (vftrace.config.print_config.value) {
+      vftr_print_config(all_fp.fp[LOG_MAIN], vftrace.config, true);
+   }
+}
+
 void vftr_write_ranklogfile(vftrace_t vftrace, long long runtime) {
    SELF_PROFILE_START_FUNCTION;
    if (!vftr_rank_needs_ranklogfile(vftrace.config, vftrace.process.processID)) {
@@ -78,81 +119,24 @@ void vftr_write_ranklogfile(vftrace_t vftrace, long long runtime) {
       return;
    }
 
-   char *logfilename = vftr_get_ranklogfile_name(vftrace.config,
-                                                 vftrace.process.processID,
-                                                 vftrace.process.nprocesses);
-   FILE *fp = vftr_open_ranklogfile(logfilename);
+   vftr_logfile_fp_t all_fp = vftr_logfile_open_fps (vftrace.config,
+                                                     vftrace.process.processID,
+                                                     vftrace.process.nprocesses);
 
-   vftr_write_ranklogfile_header(fp, vftrace.timestrings);
-
-   vftr_write_ranklogfile_summary(fp, vftrace.process,
-                                  vftrace.size, runtime);
+   vftr_write_logfile_prologue (vftrace, all_fp, runtime);
 
    if (vftrace.config.profile_table.show_table.value) {
-      vftr_write_ranklogfile_profile_table(fp, vftrace.process.stacktree,
+      vftr_write_ranklogfile_profile_table(all_fp.fp[LOG_MAIN], vftrace.process.stacktree,
                                            vftrace.config);
    }
 
-#ifdef _MPI
-   int mpi_initialized;
-   PMPI_Initialized(&mpi_initialized);
-   if (vftrace.config.mpi.show_table.value && mpi_initialized) {
-      vftr_write_ranklogfile_mpi_table(fp, vftrace.process.stacktree,
-                                       vftrace.config);
-   }
-#endif
+   vftr_write_ranklogfile_other_tables (vftrace, all_fp);
 
-#ifdef _CUDA
-   if (vftrace.cuda_state.n_devices == 0) {
-      fprintf (fp, "The CUpti interface is enabled, but no GPU devices were found.\n");
-   } else if (vftrace.config.cuda.show_table.value) {
-      vftr_write_ranklogfile_cuda_table(fp, vftrace.process.stacktree, vftrace.config);
-   }
-#endif
+   vftr_write_ranklogfile_other_tables (vftrace, all_fp);
 
-#ifdef _ACCPROF
-   if (vftrace.accprof_state.n_devices == 0) {
-      fprintf (fp, "The ACCProf interface is enabled, but no GPU devices were found.\n");
-   } else if (vftrace.config.accprof.show_table.value) {
-      vftr_write_ranklogfile_accprof_grouped_table (fp, vftrace.process.stacktree, vftrace.config);
-      if (vftrace.config.accprof.show_event_details.value) {
-         vftr_write_ranklogfile_accprof_event_table (fp, vftrace.process.stacktree, vftrace.config);
-      }
-   }
-#endif
+   vftr_write_logfile_global_stack_list(all_fp.fp[LOG_MAIN], vftrace.process.collated_stacktree);
 
-   if (vftrace.hwprof_state.active) {
-      if (vftrace.hwprof_state.n_observables > 0 && vftrace.config.hwprof.show_observables.value) {
-         vftr_write_ranklogfile_hwprof_obs_table (fp, vftrace.process.stacktree, vftrace.config);
-         fprintf (fp, "\n");
-      }
-      if (vftrace.hwprof_state.n_counters > 0 && vftrace.config.hwprof.show_counters.value) {
-         vftr_write_ranklogfile_hwprof_counter_table (fp, vftrace.process.stacktree, vftrace.config);
-         fprintf (fp, "\n");
-      }
-
-      if (vftrace.config.hwprof.show_observables.value && vftrace.config.hwprof.show_summary.value) {
-         vftr_write_hwprof_observables_ranklogfile_summary (fp, vftrace.process.stacktree);
-         fprintf (fp, "\n");
-      }
-      if (vftrace.config.hwprof.show_counters.value && vftrace.config.hwprof.show_summary.value) {
-         vftr_write_hwprof_counter_ranklogfile_summary (fp, vftrace.process.stacktree);
-         fprintf (fp, "\n");
-      }
-   }
-
-   vftr_write_logfile_global_stack_list(fp, vftrace.process.collated_stacktree);
-
-   if (vftrace.config.print_config.value) {
-      vftr_print_config(fp, vftrace.config, true);
-   }
-
-#ifdef _CUDA
-   if (vftrace.config.cuda.show_table.value) {
-      vftr_write_ranklogfile_cbid_names (fp, vftrace.process.stacktree);
-   }
-#endif
-   fclose(fp);
-   free(logfilename);
+   vftr_write_ranklogfile_epilogue (vftrace, all_fp);
+   vftr_logfile_close_fp (all_fp);
    SELF_PROFILE_END_FUNCTION;
 }
