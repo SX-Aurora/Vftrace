@@ -45,7 +45,8 @@ void vftr_config_advisor_profile_table(cJSON *json_obj) {
       "show_callpath",
       "show_overhead",
       "show_minmax_summary",
-      "sort_table"
+      "sort_table",
+      "separate"
    };
    int noptions = sizeof(options) / sizeof(char*);
    vftr_config_advisor_check_options(noptions, options, json_obj->child);
