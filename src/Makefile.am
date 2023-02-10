@@ -33,6 +33,9 @@ endif
 endif
 endif
 
+SUBDIRS += logfiles
+libvftrace_la_LIBADD += logfiles/libvftr_logfiles.la
+
 SUBDIRS += hwprof
 libvftrace_la_LIBADD += hwprof/libvftr_hwprof.la
 
@@ -106,15 +109,9 @@ libvftrace_la_SOURCES += search.c \
 			 realloc_consts.c \
 			 license.c \
 			 hashing.c
-libvftrace_la_SOURCES += logfile.c \
-			 logfile_header.c \
-			 logfile_prof_table.c \
-			 logfile_stacklist.c \
-                         logfile_common.c \
-			 ranklogfile.c \
-			 ranklogfile_header.c \
-			 ranklogfile_prof_table.c \
-			 vfdfiles.c
+
+libvftrace_la_SOURCES += vfdfiles.c 
+
 libvftrace_la_SOURCES += user_regions.c \
 			 user_stack.c
 if ENABLE_FORTRAN
@@ -132,6 +129,7 @@ libvftrace_la_CFLAGS += -I${srcdir}/mpi/utils/ \
 			-I${srcdir}/accprof \
 		        -I${srcdir}/hwprof \
 			-I${srcdir}/sorting \
+                        -I${srcdir}/logfiles \
                         -I${srcdir}/../external/tinyexpr
 
 if ENABLE_MPI

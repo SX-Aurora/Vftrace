@@ -10,7 +10,7 @@
 #include "filenames.h"
 #include "logfile_common.h"
 #include "logfile_stacklist.h"
-#include "ranklogfile_header.h"
+#include "ranklogfile_summary.h"
 #include "ranklogfile_prof_table.h"
 #include "ranklogfile_mpi_table.h"
 #include "search.h"
