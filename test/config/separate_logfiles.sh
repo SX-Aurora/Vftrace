@@ -45,13 +45,12 @@ if [ "$n" != "3" ]; then
   exit 1
 fi
 
-n=`grep "Min/Max" ${all_logfile} | wc -l`
-if [ "$n" != "1" ]; then
-    echo "Error: Expected string 'Min/Max' once in $minmax_logfile, but found it $n times"
-    exit 1
-fi
-
 if [ "x${HAS_MPI}" == "xYES" ]; then
+  n=`grep "Min/Max" ${all_logfile} | wc -l`
+  if [ "$n" != "1" ]; then
+      echo "Error: Expected string 'Min/Max' once in $minmax_logfile, but found it $n times"
+      exit 1
+  fi
   nmpi=`grep 'Communication\ profile' ${all_logfile} | wc -l`
   if [ "$nmpi" != 1 ]; then
     echo "Error: Expected string 'Communication profile' once in $mpi_logfile, but found it $n times"
@@ -96,14 +95,13 @@ if [ "$n" != "2" ]; then
   echo "Error: Expected string 'Runtime profile' 2 times in $group_logfile, but found it $n times"
   exit 1
 fi
-check_file_exists $minmax_logfile
-n=`grep "Min/Max" ${minmax_logfile} | wc -l`
-if [ "$n" != "1" ]; then
-    echo "Error: Expected string 'Min/Max' once in $minmax_logfile, but found it $n times"
-    exit 1
-fi
-
 if [ "x${HAS_MPI}" == "xYES" ]; then
+  check_file_exists $minmax_logfile
+  n=`grep "Min/Max" ${minmax_logfile} | wc -l`
+  if [ "$n" != "1" ]; then
+      echo "Error: Expected string 'Min/Max' once in $minmax_logfile, but found it $n times"
+      exit 1
+  fi
   check_file_exists $mpi_logfile
   nmpi=`grep 'Communication\ profile' ${mpi_logfile} | wc -l`
   if [ "$nmpi" != 1 ]; then
