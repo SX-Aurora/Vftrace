@@ -142,8 +142,9 @@ void vftr_write_logfile_warnings (vftrace_t vftrace, vftr_logfile_fp_t all_fp) {
 void vftr_write_logfile_prologue (bool is_master_logfile, vftrace_t vftrace,
                                   vftr_logfile_fp_t all_fp, long long runtime) {
   for (int i = 0; i < N_LOGFILE_TYPES; i++) {
-     if (all_fp.fp[i] != NULL) {
-        //vftr_write_logfile_header (all_fp.fp[i], vftrace.timestrings);
+     // Print header for existing files and only into separate logfiles
+     bool print_this = all_fp.fp[i] != NULL && (i == 0 || i > 0 && all_fp.fp[i] != all_fp.fp[LOG_MAIN]);
+     if (print_this) {
         fprintf (all_fp.fp[i], "%s\n", PACKAGE_STRING);
         fprintf (all_fp.fp[i], "Runtime profile for application:\n");
         fprintf (all_fp.fp[i], "Start Date: %s\n", vftrace.timestrings.start_time);
