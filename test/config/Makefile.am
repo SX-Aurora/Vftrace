@@ -93,6 +93,10 @@ check_PROGRAMS += sampling \
 		  show_calltime_imbalances \
                   separate_logfiles
 
+if ENABLE_MPI
+check_PROGRAMS += separate_ranklogfiles
+endif
+
 off_SOURCES = $(srcdir)/little_tasks.c
 off_CFLAGS = $(AM_CFLAGS) $(FINSTRUMENT_FLAG)
 off_LDFLAGS = $(AM_LDFLAGS)
@@ -129,6 +133,13 @@ separate_logfiles_SOURCES = $(srcdir)/little_tasks.c
 separate_logfiles_CFLAGS = $(AM_CFLAGS) $(FINSTRUMENT_FLAG)
 separate_logfiles_LDFLAGS = $(AM_LDFLAGS)
 
+if ENABLE_MPI
+separate_ranklogfiles_SOURCES = $(srcdir)/little_tasks.c
+separate_ranklogfiles_CFLAGS = $(AM_CFLAGS) $(FINSTRUMENT_FLAG)
+separate_ranklogfiles_LDFLAGS = $(AM_LDFLAGS)
+endif
+
+
 if !SELF_PROFILING
 dist_check_SCRIPTS += off.sh
 endif
@@ -140,6 +151,10 @@ dist_check_SCRIPTS += sampling.sh \
 		      ranks_in_mpi_profile.sh \
 		      show_calltime_imbalances.sh \
                       separate_logfiles.sh
+
+if ENABLE_MPI
+dist_check_SCRIPTS += separate_ranklogfiles.sh
+endif
 
 if ENABLE_FORTRAN
 ## The Nvidia compiler does not separate module names and functions
