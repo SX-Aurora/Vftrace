@@ -13,7 +13,7 @@
 #include "collated_cudaprofiling_types.h"
 #endif
 #ifdef _ACCPROF
-#include "accprofiling_types.h"
+#include "collated_accprofiling_types.h"
 #endif
 
 typedef struct {
@@ -29,7 +29,7 @@ typedef struct {
    collated_cudaprofile_t cudaprof;
 #endif
 #ifdef _ACCPROF
-   accprofile_t accprof;
+   collated_accprofile_t accprof;
 #endif
 } collated_profile_t;
 

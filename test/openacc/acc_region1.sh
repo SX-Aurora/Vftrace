@@ -12,7 +12,7 @@ vftr_binary=${test_name}
 logfile=$(get_logfile_name ${vftr_binary} "all")
 
 if [ "x${HAS_MPI}" == "xYES" ]; then
-   ${MPI_EXEC} ${MPI_OPTS} ${NP} ${nprocs} ./${vftr_binary} || exit 1
+   ${MPI_EXEC} ${MPI_OPTS} ${NP} 1 ./${vftr_binary} || exit 1
 else
    ./${vftr_binary} || exit 1
 fi

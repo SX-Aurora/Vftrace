@@ -79,7 +79,7 @@ long long vftr_get_total_collated_accprof_overhead (collated_stacktree_t stacktr
 
    for (int istack = 0; istack < stacktree.nstacks; istack++) {
       collated_stack_t *stack = stacktree.stacks + istack;
-      accprofile_t accprof = stack->profile.accprof;
+      collated_accprofile_t accprof = stack->profile.accprof;
       overhead_nsec += accprof.overhead_nsec;
    }
    return overhead_nsec;

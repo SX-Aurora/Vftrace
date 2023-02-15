@@ -6,11 +6,6 @@
 #include "cudaprofiling_types.h"
 #include "collated_cudaprofiling_types.h"
 
-// Currently, CUDA profiling is only supported for
-// one MPI process and one OMP thread. Therefore, collating
-// the profiles just comes down to copying the profile from
-// the one stack which exists.
-//
 void vftr_collate_cudaprofiles_root_self (collated_stacktree_t *collstacktree_ptr,
                                           stacktree_t *stacktree_ptr) {
    for (int istack = 0; istack < stacktree_ptr->nstacks; istack++) {

@@ -6,7 +6,7 @@
 #include "acc_prof.h"
 
 typedef struct {
-   acc_event_t event_type; 
+   int event_type; 
    uint64_t region_id;
    int line_start;
    int line_end;
