@@ -19,4 +19,3 @@ libvftr_accprof_la_CFLAGS += -D_MPI
 libvftr_accprof_la_CFLAGS += -I${srcdir}/../mpi/utils
 libvftr_accprof_la_CFLAGS += -I${srcdir}/../mpi/vftr_mpi
 endif
-

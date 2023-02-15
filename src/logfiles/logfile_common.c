@@ -10,6 +10,10 @@
 #include "ranklogfile_summary.h"
 #include "signal_handling.h"
 
+#ifdef _ACCPROF
+#include "accprof_logfile.h"
+#endif
+
 char *vftr_get_logfile_name(config_t config, char *type, int rankID, int nranks) {
    char *filename_base = vftr_create_filename_base(config, rankID, nranks);
    int filename_base_len = strlen(filename_base);
