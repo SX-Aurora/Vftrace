@@ -5,6 +5,7 @@
 #include "table_types.h"
 #include "collated_stack_types.h"
 
+#include "stacks.h"
 #include "collate_stacks.h"
 #include "tables.h"
 

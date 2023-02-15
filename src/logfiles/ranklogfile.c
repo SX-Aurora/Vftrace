@@ -22,6 +22,7 @@
 #endif
 #ifdef _ACCPROF
 #include "accprof_ranklogfile.h"
+#include "accprof_logfile.h"
 #endif
 
 
