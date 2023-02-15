@@ -8,8 +8,19 @@ source ${srcdir}/../environment/filenames.sh
 
 test_name=acc_region1
 vftr_binary=${test_name}
+configfile=${vftr_binary}.json
 
+determine_bin_prefix ${vftr_binary}
 logfile=$(get_logfile_name ${vftr_binary} "all")
+
+export VFTR_CONFIG=${configfile}
+cat << EOF > ${configfile}
+{
+  "openacc": {
+     "active": true
+  }
+}
+EOF
 
 if [ "x${HAS_MPI}" == "xYES" ]; then
    ${MPI_EXEC} ${MPI_OPTS} ${NP} 1 ./${vftr_binary} || exit 1

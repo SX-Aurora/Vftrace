@@ -8,4 +8,5 @@ void vftr_get_total_accprof_times_for_ranklogfile (stacktree_t stacktree, double
 						   double *tot_memcpy_s, double *tot_wait_s);
 void vftr_write_ranklogfile_accprof_event_table (FILE *fp, stacktree_t stacktree, config_t config);
 
+void vftr_write_ranklogfile_accprof_grouped_table (FILE *fp, stacktree_t stacktree, config_t config);
 #endif

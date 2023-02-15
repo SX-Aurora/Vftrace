@@ -111,7 +111,11 @@ void vftr_initialize(void *func, void *call_site) {
 #endif
 
 #ifdef _ACCPROF
-      vftr_init_accprof();
+      if (!vftrace.config.accprof.active.value) {
+         vftr_veto_accprof_callbacks(); 
+      } else {
+         vftr_init_accprof();
+      }
 #endif
 
       // set the finalize function to be executed at the termination of the program
