@@ -127,12 +127,12 @@ void vftr_write_logfile_warnings (vftrace_t vftrace, vftr_logfile_fp_t all_fp) {
 
 #ifdef _ACCPROF
    if (vftrace.accprof_state.n_devices == 0) {
-      fprintf (all_fp.fp[LOG_ACCPROf], "\nThe ACCProf interface is enabled, but no GPU devices were found.\n");
+      fprintf (all_fp.fp[LOG_ACCPROF], "\nThe ACCProf interface is enabled, but no GPU devices were found.\n");
    } else if (!vftr_has_accprof_events (vftrace.process.collated_stacktree)) {
-      fprintf (fp[LOG_ACCPROF], "\nNo OpenACC events have been registered.\n");
+      fprintf (all_fp.fp[LOG_ACCPROF], "\nNo OpenACC events have been registered.\n");
    } else if (vftrace.config.accprof.show_table.value) {
       if (vftrace.accprof_state.n_open_wait_queues > 0) {
-         fprintf (fp[LOG_ACCPROF], "\nWarning: There are %d unresolved OpenACC wait regions.\n", 
+         fprintf (all_fp.fp[LOG_ACCPROF], "\nWarning: There are %d unresolved OpenACC wait regions.\n", 
                   vftrace.accprof_state.n_open_wait_queues);
       }
    }

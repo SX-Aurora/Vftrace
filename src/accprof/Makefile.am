@@ -11,3 +11,6 @@ libvftr_accprof_la_SOURCES += accprof_callbacks.c \
 			      accprof_ranklogfile.c
 
 libvftr_accprof_la_CFLAGS = -I${srcdir}/../ -I${srcdir}/../sorting -D_ACCPROF
+
+libvftr_accprof_la_CFLAGS += -I${srcdir}/../hwprof
+libvftr_accprof_la_CFLAGS += -I${srcdir}/../../external/tinyexpr
