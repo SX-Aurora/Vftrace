@@ -19,6 +19,7 @@ void vftr_collate_accprofiles (collated_stacktree_t *collstacktree_ptr,
       accprofile_t copy_accprof = stack->profiling.profiles[0].accprof;
       accprofile_t *collaccprof = &(collstack->profile.accprof);
       
+      collaccprof->region_id = copy_accprof.region_id;
       collaccprof->event_type = copy_accprof.event_type;
       collaccprof->line_start = copy_accprof.line_start;
       collaccprof->line_end = copy_accprof.line_end;
