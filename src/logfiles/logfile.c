@@ -70,10 +70,10 @@ void vftr_write_logfile_other_tables (vftrace_t vftrace, vftr_logfile_fp_t all_f
 
    if (all_fp.fp[LOG_HWPROF] != NULL) {
       if (vftrace.hwprof_state.n_observables > 0 && vftrace.config.hwprof.show_observables.value) {
-      vftr_write_hwprof_observables_table (all_fp.fp[LOG_HWPROF],
-                                           vftrace.process.collated_stacktree,
-                                           vftrace.config); 
-      }
+         vftr_write_hwprof_observables_table (all_fp.fp[LOG_HWPROF],
+                                              vftrace.process.collated_stacktree,
+                                              vftrace.config); 
+         }
       if (vftrace.hwprof_state.n_counters > 0 && vftrace.config.hwprof.show_counters.value) {
          vftr_write_logfile_hwprof_counter_table (all_fp.fp[LOG_HWPROF],
                                                   vftrace.process.collated_stacktree,
