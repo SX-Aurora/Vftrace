@@ -59,7 +59,7 @@ static void vftr_collate_hwprofiles_on_root (collated_stacktree_t *collstacktree
    PMPI_Type_commit (&hwprofile_transfer_mpi_t);
 
    int n_send = num_counters > n_observables ? num_counters : n_observables;
-   if (n_send == 0) break;
+   if (n_send == 0) return;
 
    if (myrank > 0) {
       int nprofiles = stacktree_ptr->nstacks;
