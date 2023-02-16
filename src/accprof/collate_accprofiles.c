@@ -38,7 +38,6 @@ static void vftr_collate_accprofiles_on_root (collated_stacktree_t *collstacktre
                                               int myrank, int nranks, int *nremote_profiles) {
    typedef struct {
      int gid;
-     long long region_id;
      int event_type;
      int line_start;
      int line_end;
@@ -117,7 +116,7 @@ static void vftr_collate_accprofiles_on_root (collated_stacktree_t *collstacktre
 
    int nblocks = 6;
    int *blocklengths = (int*)malloc(nblocks * sizeof(int));
-   blocklengths[0] = 9;
+   blocklengths[0] = 8;
    blocklengths[1] = 3;
    blocklengths[2] = max_len_source_file;
    blocklengths[3] = max_len_func_name;
@@ -128,7 +127,7 @@ static void vftr_collate_accprofiles_on_root (collated_stacktree_t *collstacktre
    //                                  MPI_CHAR, MPI_CHAR, MPI_CHAR, MPI_CHAR};
    MPI_Aint *displacements = (MPI_Aint*)malloc(nblocks * sizeof(MPI_Aint));
    displacements[0] = 0;
-   displacements[1] = 9 * sizeof(int);
+   displacements[1] = 8 * sizeof(int);
    displacements[2] = displacements[1] + 3 * sizeof(long long);
    displacements[3] = displacements[2] + max_len_source_file * sizeof(char);
    displacements[4] = displacements[3] + max_len_func_name * sizeof(char);
