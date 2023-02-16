@@ -105,76 +105,146 @@ void vftr_write_logfile_accprof_grouped_table (FILE *fp, collated_stacktree_t st
    //       In that case, many more OpenACC calls are assigned to that header, although they are clearly not in there.
    //       Also, inlining might influence the accuracy of the line number assignment.
 
-   //uint64_t *region_ids = (uint64_t*)malloc (stacktree.nstacks * sizeof(uint64_t)); 
-   //char **region_names = (char**)malloc(stacktree.nstacks * sizeof(char*));
-   //char **func_names = (char**)malloc(stacktree.nstacks * sizeof(char*));
-   //for (int i = 0; i < stacktree.nstacks; i++) {
-   //   region_ids[i] = 0;
-   //} 
+   uint64_t *region_ids = (uint64_t*)malloc (stacktree.nstacks * sizeof(uint64_t)); 
+   char **region_names = (char**)malloc(stacktree.nstacks * sizeof(char*));
+   char **func_names = (char**)malloc(stacktree.nstacks * sizeof(char*));
+   for (int i = 0; i < stacktree.nstacks; i++) {
+      region_ids[i] = 0;
+   } 
 
-   //int n_region_ids = 0;
-   //for (int i = 0; i < stacktree.nstacks; i++) {
-   //    accprofile_t accprof = stacktree.stacks[i].profile.accprof;
-   //    if (accprof.region_id != 0) {
-   //       bool found = false;
-   //       for (int j = 0; j < n_region_ids; j++) {
-   //  	      if (region_ids[j] == accprof.region_id) {
-   //              found = true;
-   //              break;
-   //           } 
-   //       }
-   //       if (!found) {
-   //          region_ids[n_region_ids] = accprof.region_id;
-   //          region_names[n_region_ids] = vftr_name_with_lines_1 (basename(accprof.source_file), accprof.line_start);
-   //          func_names[n_region_ids] = accprof.func_name;
-   //          n_region_ids++;
-   //       }
-   //    }
-   //} 
+   int n_region_ids = 0;
+   for (int i = 0; i < stacktree.nstacks; i++) {
+       accprofile_t accprof = stacktree.stacks[i].profile.accprof;
+       if (accprof.region_id != 0) {
+          bool found = false;
+          for (int j = 0; j < n_region_ids; j++) {
+     	      if (region_ids[j] == accprof.region_id) {
+                 found = true;
+                 break;
+              } 
+          }
+          if (!found) {
+             region_ids[n_region_ids] = accprof.region_id;
+             region_names[n_region_ids] = vftr_name_with_lines_1 (basename(accprof.source_file), accprof.line_start);
+             func_names[n_region_ids] = accprof.func_name;
+             n_region_ids++;
+          }
+       }
+   }
+   if (n_region_ids == 0) {
+      fprintf (fp, "ACCProf: No OpenACC regions have been registered.\n");
+      return;
+   }
 
-   //double *t_summed_compute = (double*)malloc (n_region_ids * sizeof(double));
-   //double *t_summed_data = (double*)malloc (n_region_ids * sizeof(double));
-   //double *t_summed_wait = (double*)malloc (n_region_ids * sizeof(double));
+   double *t_summed_compute = (double*)malloc (n_region_ids * sizeof(double));
+   double *t_summed_data = (double*)malloc (n_region_ids * sizeof(double));
+   double *t_summed_wait = (double*)malloc (n_region_ids * sizeof(double));
 
-   //long long *bytes_summed_h2d = (long long*)malloc (n_region_ids * sizeof(long long));
-   //long long *bytes_summed_d2h = (long long*)malloc (n_region_ids * sizeof(long long));
-   //long long *bytes_summed_on_device = (long long*)malloc (n_region_ids * sizeof(long long));
+   long long *bytes_summed_h2d = (long long*)malloc (n_region_ids * sizeof(long long));
+   long long *bytes_summed_d2h = (long long*)malloc (n_region_ids * sizeof(long long));
+   long long *bytes_summed_on_device = (long long*)malloc (n_region_ids * sizeof(long long));
 
-   //for (int i = 0; i < n_region_ids; i++) {
-   //  t_summed_compute[i] = 0;
-   //  t_summed_data[i] = 0;
-   //  t_summed_wait[i] = 0;
-   //  bytes_summed_h2d[i] = 0;
-   //  bytes_summed_d2h[i] = 0;
-   //  bytes_summed_on_device[i] = 0;
-   //}
+   for (int i = 0; i < n_region_ids; i++) {
+     t_summed_compute[i] = 0;
+     t_summed_data[i] = 0;
+     t_summed_wait[i] = 0;
+     bytes_summed_h2d[i] = 0;
+     bytes_summed_d2h[i] = 0;
+     bytes_summed_on_device[i] = 0;
+   }
 
-   //for (int i = 0; i < stacktree.nstacks; i++) {
-   //   accprofile_t accprof = stacktree.stacks[i].profile.accprof;
-   //   if (accprof.region_id > 0) {
-   //      int idx;
-   //      for (idx = 0; idx < n_region_ids; idx++) {
-   //         if (accprof.region_id == region_ids[idx]) break;
-   //      }
+   for (int i = 0; i < stacktree.nstacks; i++) {
+      accprofile_t accprof = stacktree.stacks[i].profile.accprof;
+      if (accprof.region_id > 0) {
+         int idx;
+         for (idx = 0; idx < n_region_ids; idx++) {
+            if (accprof.region_id == region_ids[idx]) break;
+         }
 
-   //      double this_t = (double)stacktree.stacks[i].profile.callprof.time_excl_nsec / 1e9;
-   //      if (vftr_accprof_is_compute_event (accprof.event_type)) {
-   //         t_summed_compute[idx] += this_t;
-   //      } else if (vftr_accprof_is_data_event (accprof.event_type)) {
-   //         t_summed_data[idx] += this_t;
-   //      } else {
-   //         t_summed_wait[idx] += this_t;
-   //      }
+         double this_t = (double)stacktree.stacks[i].profile.callprof.time_excl_nsec / 1e9;
+         if (vftr_accprof_is_compute_event (accprof.event_type)) {
+            t_summed_compute[idx] += this_t;
+         } else if (vftr_accprof_is_data_event (accprof.event_type)) {
+            t_summed_data[idx] += this_t;
+         } else {
+            t_summed_wait[idx] += this_t;
+         }
 
-   //      if (vftr_accprof_is_h2d_event (accprof.event_type)) {
-   //         bytes_summed_h2d[idx] += accprof.copied_bytes;
-   //      } else if (vftr_accprof_is_d2h_event (accprof.event_type)) {
-   //         bytes_summed_d2h[idx] += accprof.copied_bytes;
-   //      } else if (vftr_accprof_is_ondevice_event (accprof.event_type)) {
-   //         bytes_summed_on_device[idx] += accprof.copied_bytes;
-   //      }
-   //   }
-   //}
+         if (vftr_accprof_is_h2d_event (accprof.event_type)) {
+            bytes_summed_h2d[idx] += accprof.copied_bytes;
+         } else if (vftr_accprof_is_d2h_event (accprof.event_type)) {
+            bytes_summed_d2h[idx] += accprof.copied_bytes;
+         } else if (vftr_accprof_is_ondevice_event (accprof.event_type)) {
+            bytes_summed_on_device[idx] += accprof.copied_bytes;
+         }
+      }
+   }
+   
+   double *t_summed_tot = (double*)malloc (n_region_ids * sizeof(double));
+   long long *bytes_summed_tot = (long long*)malloc(n_region_ids * sizeof(long long));
+   for (int i = 0; i < n_region_ids; i++) {
+      t_summed_tot[i] = t_summed_compute[i] + t_summed_data[i] + t_summed_wait[i];
+      bytes_summed_tot[i] = bytes_summed_h2d[i] + bytes_summed_d2h[i] + bytes_summed_on_device[i];
+   }
+
+   vftr_sort_arrays_for_grouped_table (config, n_region_ids,
+				       t_summed_tot, bytes_summed_tot,
+				       region_names, func_names,
+				       t_summed_compute, t_summed_data, t_summed_wait,
+				       bytes_summed_h2d, bytes_summed_d2h, bytes_summed_on_device);
+
+   table_t table = vftr_new_table();
+   vftr_table_set_nrows (&table, n_region_ids);
+   
+   vftr_table_add_column (&table, col_string, "Position", "%s", 'c', 'l', (void*)region_names);
+   vftr_table_add_column (&table, col_string, "Function", "%s", 'c', 'r', (void*)func_names);
+   vftr_table_add_column (&table, col_double, "t_compute [s]", "%.3lf", 'c', 'r', (void*)t_summed_compute);
+   vftr_table_add_column (&table, col_double, "t_data [s]", "%.3lf", 'c', 'r', (void*)t_summed_data);
+   vftr_table_add_column (&table, col_double, "t_wait [s]", "%.3lf", 'c', 'r', (void*)t_summed_wait);
+
+   vftr_table_add_column (&table, col_longlong, "Host -> Device [B]", "%lld", 'c', 'r', (void*)bytes_summed_h2d);
+   vftr_table_add_column (&table, col_longlong, "Device -> Host [B]", "%lld", 'c', 'r', (void*)bytes_summed_d2h);
+   vftr_table_add_column (&table, col_longlong, "On Device [B]", "%lld", 'c', 'r', (void*)bytes_summed_on_device);
+
+   fprintf (fp, "\n--OpenACC Summary--\n");
+   fprintf (fp, "\n");
+   vftr_print_accprof_gpuinfo (fp);
+   fprintf (fp, "\n");
+   vftr_print_table(fp, table);
+
+   free (t_summed_tot);
+   free (bytes_summed_tot);
+   free (region_ids);
+   free (region_names);
+   free (func_names);
+   free (t_summed_compute);
+   free (t_summed_data);
+   free (t_summed_wait);
+   free (bytes_summed_h2d);
+   free (bytes_summed_d2h);
+   free (bytes_summed_on_device);
+}
+
+void vftr_write_logfile_accprof_event_table (FILE *fp, collated_stacktree_t stacktree, config_t config) {
+   int n_stackids_with_accprof_data = 0;
+
+   collated_stack_t **sorted_stacks = vftr_sort_collated_stacks_for_accprof (config, stacktree);
+
+   for (int istack = 0; istack < stacktree.nstacks; istack++) {
+      accprofile_t accprof = sorted_stacks[istack]->profile.accprof;
+      if (accprof.event_type != 0) n_stackids_with_accprof_data++;
+   }
+
+   if (n_stackids_with_accprof_data == 0) {
+      fprintf (fp, "ACCProf: No stacks with OpenACC events found\n");
+      return;
+   }
+
+   // Structure of OpenACC table:
+   // | STID | event | #Calls | t_compute | t_data | t_wait | Bytes | Source File | Function
+   //
+   // The event is the acc_ev identifier, translated into a string.
+   // For launch events, we add the kernel name in brackets behind that.
    //
    //double *t_summed_tot = (double*)malloc (n_region_ids * sizeof(double));
    //long long *bytes_summed_tot = (long long*)malloc(n_region_ids * sizeof(long long));

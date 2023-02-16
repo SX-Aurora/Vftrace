@@ -11,6 +11,7 @@ vftr_binary=${test_name}
 configfile=${vftr_binary}.json
 
 determine_bin_prefix ${vftr_binary}
+
 logfile=$(get_logfile_name ${vftr_binary} "all")
 
 export VFTR_CONFIG=${configfile}

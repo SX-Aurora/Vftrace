@@ -23,6 +23,7 @@ void vftr_init_accprof () {
 }
 
 void vftr_finalize_accprof () {
+   if (vftrace.accprof_state.veto_callback_registration) return;
    for (int i = 0; i < vftrace.accprof_state.n_devices; i++) {
       free (vftrace.accprof_state.device_names[i]);
    }

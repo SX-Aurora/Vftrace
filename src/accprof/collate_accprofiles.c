@@ -16,6 +16,7 @@ void vftr_collate_accprofiles_root_self (collated_stacktree_t *collstacktree_ptr
       accprofile_t copy_accprof = stack->profiling.profiles[0].accprof;
       collated_accprofile_t *collaccprof = &(collstack->profile.accprof);
       
+      collaccprof->region_id = copy_accprof.region_id;
       collaccprof->event_type = copy_accprof.event_type;
       collaccprof->copied_bytes = copy_accprof.copied_bytes;
       collaccprof->overhead_nsec = copy_accprof.overhead_nsec;

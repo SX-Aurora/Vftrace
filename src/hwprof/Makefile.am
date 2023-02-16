@@ -41,4 +41,8 @@ if SELF_PROFILING
 libvftr_hwprof_la_CFLAGS += -D_SELF_PROFILE_VFTRACE
 endif
 
+if ENABLE_ACCPROF
+libvftr_hwprof_la_CFLAGS += -D_ACCPROF -I${srcdir}/../accprof
+endif
+
 libvftr_hwprof_la_LIBADD = ../../external/libtinyexpr.la
