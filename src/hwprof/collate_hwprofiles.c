@@ -20,12 +20,17 @@ void vftr_collate_hwprofiles_root_self (collated_stacktree_t *collstacktree_ptr,
      
       int n_counters = vftrace.hwprof_state.n_counters;
       int n_observables = vftrace.hwprof_state.n_observables;
-      collhwprof->counters_incl = (long long*)malloc (n_counters * sizeof(long long));
-      collhwprof->counters_excl = (long long*)malloc (n_counters * sizeof(long long));
-      collhwprof->observables = (double*)malloc (n_observables * sizeof(double));
-      memcpy (collhwprof->counters_incl, copy_hwprof.counters_incl, n_counters * sizeof(long long));
-      memcpy (collhwprof->counters_excl, copy_hwprof.counters_excl, n_counters * sizeof(long long));
-      memcpy (collhwprof->observables, copy_hwprof.observables, n_observables * sizeof(double));
+
+      if (n_counters > 0) {
+         collhwprof->counters_incl = (long long*)malloc (n_counters * sizeof(long long));
+         collhwprof->counters_excl = (long long*)malloc (n_counters * sizeof(long long));
+         memcpy (collhwprof->counters_incl, copy_hwprof.counters_incl, n_counters * sizeof(long long));
+         memcpy (collhwprof->counters_excl, copy_hwprof.counters_excl, n_counters * sizeof(long long));
+      }
+      if (n_observables > 0) {
+         collhwprof->observables = (double*)malloc (n_observables * sizeof(double));
+         memcpy (collhwprof->observables, copy_hwprof.observables, n_observables * sizeof(double));
+      }
    }
 }
 
@@ -54,6 +59,7 @@ static void vftr_collate_hwprofiles_on_root (collated_stacktree_t *collstacktree
    PMPI_Type_commit (&hwprofile_transfer_mpi_t);
 
    int n_send = num_counters > n_observables ? num_counters : n_observables;
+   if (n_send == 0) break;
 
    if (myrank > 0) {
       int nprofiles = stacktree_ptr->nstacks;

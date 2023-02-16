@@ -9,6 +9,8 @@ source ${srcdir}/../environment/filenames.sh
 test_name=acc_region1
 vftr_binary=${test_name}
 
+determine_bin_prefix $vftr_binary
+
 logfile=$(get_logfile_name ${vftr_binary} "all")
 
 if [ "x${HAS_MPI}" == "xYES" ]; then

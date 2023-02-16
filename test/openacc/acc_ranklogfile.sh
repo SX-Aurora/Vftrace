@@ -10,6 +10,8 @@ test_name=acc_ranklogfile
 vftr_binary=acc_region2
 configfile=${test_name}.json
 
+determine_bin_prefix $vftr_binary
+
 logfile=$(get_logfile_name ${vftr_binary} "all")
 
 cat << EOF > ${configfile}
