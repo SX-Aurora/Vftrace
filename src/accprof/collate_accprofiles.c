@@ -19,6 +19,14 @@ void vftr_collate_accprofiles_root_self (collated_stacktree_t *collstacktree_ptr
       collaccprof->region_id = copy_accprof.region_id;
       collaccprof->event_type = copy_accprof.event_type;
       collaccprof->copied_bytes = copy_accprof.copied_bytes;
+      collaccprof->source_file = copy_accprof.source_file != NULL ?
+                                 strdup(copy_accprof.source_file) : NULL;
+      collaccprof->func_name = copy_accprof.func_name != NULL ?
+                                 strdup(copy_accprof.func_name) : NULL;
+      collaccprof->var_name = copy_accprof.var_name != NULL ?
+                                 strdup(copy_accprof.var_name) : NULL;
+      collaccprof->kernel_name = copy_accprof.kernel_name != NULL ?
+                                 strdup(copy_accprof.kernel_name) : NULL;
       collaccprof->overhead_nsec = copy_accprof.overhead_nsec;
 
    }
@@ -30,6 +38,7 @@ static void vftr_collate_accprofiles_on_root (collated_stacktree_t *collstacktre
                                               int myrank, int nranks, int *nremote_profiles) {
    typedef struct {
      int gid;
+     long long region_id;
      int event_type;
      int line_start;
      int line_end;
@@ -108,7 +117,7 @@ static void vftr_collate_accprofiles_on_root (collated_stacktree_t *collstacktre
 
    int nblocks = 6;
    int *blocklengths = (int*)malloc(nblocks * sizeof(int));
-   blocklengths[0] = 8;
+   blocklengths[0] = 9;
    blocklengths[1] = 3;
    blocklengths[2] = max_len_source_file;
    blocklengths[3] = max_len_func_name;
@@ -119,7 +128,7 @@ static void vftr_collate_accprofiles_on_root (collated_stacktree_t *collstacktre
    //                                  MPI_CHAR, MPI_CHAR, MPI_CHAR, MPI_CHAR};
    MPI_Aint *displacements = (MPI_Aint*)malloc(nblocks * sizeof(MPI_Aint));
    displacements[0] = 0;
-   displacements[1] = 8 * sizeof(int);
+   displacements[1] = 9 * sizeof(int);
    displacements[2] = displacements[1] + 3 * sizeof(long long);
    displacements[3] = displacements[2] + max_len_source_file * sizeof(char);
    displacements[4] = displacements[3] + max_len_func_name * sizeof(char);
@@ -141,11 +150,40 @@ static void vftr_collate_accprofiles_on_root (collated_stacktree_t *collstacktre
          vftr_stack_t *mystack = stacktree_ptr->stacks + istack;
          accprofile_t accprof = mystack->profiling.profiles->accprof;
          sendbuf[istack].gid = mystack->gid;
+         sendbuf[istack].region_id = accprof.region_id;
          sendbuf[istack].event_type = accprof.event_type;
          sendbuf[istack].line_start = accprof.line_start;
          sendbuf[istack].line_end = accprof.line_end;
          sendbuf[istack].copied_bytes = accprof.copied_bytes;
          sendbuf[istack].overhead_nsec = accprof.overhead_nsec;  
+         if (accprof.source_file != NULL) {
+           sendbuf[istack].len_source_file = strlen(accprof.source_file);
+           sendbuf[istack].source_file = strdup (accprof.source_file);
+         } else {
+           sendbuf[istack].len_source_file = 1;
+           sendbuf[istack].source_file = strdup("");
+         }
+         if (accprof.func_name != NULL) {
+           sendbuf[istack].len_func_name = strlen(accprof.func_name);
+           sendbuf[istack].func_name = strdup(accprof.func_name);
+         } else {
+           sendbuf[istack].len_func_name = 1;
+           sendbuf[istack].func_name = strdup("");
+         }
+         if (accprof.var_name != NULL) {
+           sendbuf[istack].len_var_name = strlen(accprof.var_name);
+           sendbuf[istack].var_name = strdup(accprof.var_name);
+         } else {
+           sendbuf[istack].len_var_name = 1;
+           sendbuf[istack].var_name = strdup("");
+         }
+         if (accprof.kernel_name != NULL) {
+            sendbuf[istack].len_kernel_name = strlen(accprof.kernel_name);
+            sendbuf[istack].kernel_name = strdup(accprof.kernel_name);
+         } else {
+            sendbuf[istack].len_kernel_name = 1;
+            sendbuf[istack].kernel_name = strdup("");
+         }
       }
       PMPI_Send (sendbuf, nprofiles, accprofile_transfer_mpi_t, 0, myrank, MPI_COMM_WORLD);
       free(sendbuf);
@@ -167,9 +205,20 @@ static void vftr_collate_accprofiles_on_root (collated_stacktree_t *collstacktre
             collated_stack_t *collstack = collstacktree_ptr->stacks + gid;
             collated_accprofile_t *collaccprof = &(collstack->profile.accprof);
          
+            collaccprof->region_id = recvbuf[iprof].region_id;
             collaccprof->event_type = recvbuf[iprof].event_type;
+            collaccprof->line_start = recvbuf[iprof].line_start;
+            collaccprof->line_end = recvbuf[iprof].line_end;
             collaccprof->copied_bytes += recvbuf[iprof].copied_bytes;
             collaccprof->overhead_nsec += recvbuf[iprof].overhead_nsec;
+            if (recvbuf[iprof].len_source_file > 1)
+               collaccprof->source_file = strdup(recvbuf[iprof].source_file);
+            if (recvbuf[iprof].len_func_name > 1)
+               collaccprof->func_name = strdup(recvbuf[iprof].func_name);
+            if (recvbuf[iprof].len_var_name > 1)
+               collaccprof->var_name = strdup(recvbuf[iprof].var_name);
+            if (recvbuf[iprof].len_kernel_name > 1)
+               collaccprof->kernel_name = strdup(recvbuf[iprof].kernel_name);
          }
       }
       free(recvbuf);
