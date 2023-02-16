@@ -130,7 +130,11 @@ void vftr_write_logfile_accprof_grouped_table (FILE *fp, collated_stacktree_t st
              n_region_ids++;
           }
        }
-   } 
+   }
+   if (n_region_ids == 0) {
+      fprintf (fp, "ACCProf: No OpenACC regions have been registered.\n");
+      return;
+   }
 
    double *t_summed_compute = (double*)malloc (n_region_ids * sizeof(double));
    double *t_summed_data = (double*)malloc (n_region_ids * sizeof(double));
@@ -229,6 +233,11 @@ void vftr_write_logfile_accprof_event_table (FILE *fp, collated_stacktree_t stac
    for (int istack = 0; istack < stacktree.nstacks; istack++) {
       accprofile_t accprof = sorted_stacks[istack]->profile.accprof;
       if (accprof.event_type != 0) n_stackids_with_accprof_data++;
+   }
+
+   if (n_stackids_with_accprof_data == 0) {
+      fprintf (fp, "ACCProf: No stacks with OpenACC events found\n");
+      return;
    }
 
    // Structure of OpenACC table:
