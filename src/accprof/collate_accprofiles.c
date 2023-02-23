@@ -55,9 +55,17 @@ static void vftr_collate_accprofiles_on_root (collated_stacktree_t *collstacktre
    } accprofile_transfer_t;
 
    int max_profiles = 0;
-   for (int irank = 0; irank < nranks; irank++) {
-      max_profiles = nremote_profiles[irank] > max_profiles ? nremote_profiles[irank] : max_profiles;
-   } 
+   MPI_Status status;
+   if (myrank == 0) {
+      for (int irank = 0; irank < nranks; irank++) {
+         max_profiles = nremote_profiles[irank] > max_profiles ? nremote_profiles[irank] : max_profiles;
+      }
+      for (int irank = 1; irank < nranks; irank++) {
+         PMPI_Send (&max_profiles, 1, MPI_INT, irank, 0, MPI_COMM_WORLD);
+      }
+   } else {
+      PMPI_Recv (&max_profiles, 1, MPI_INT, 0, 0, MPI_COMM_WORLD, &status);
+   }
 
    int max_len_source_file = 0;
    int max_len_func_name = 0; 
@@ -75,7 +83,7 @@ static void vftr_collate_accprofiles_on_root (collated_stacktree_t *collstacktre
 
    for (int i = 0; i < max_profiles; i++) {
       int len_sf, len_fn, len_vn, len_kn;
-      if (i >= nremote_profiles[i]) {
+      if (i >= stacktree_ptr->nstacks) {
          len_sf = 0;
          len_fn = 0;
          len_vn = 0;
@@ -83,10 +91,10 @@ static void vftr_collate_accprofiles_on_root (collated_stacktree_t *collstacktre
       } else {
          vftr_stack_t *mystack = stacktree_ptr->stacks + i;
          accprofile_t accprof = mystack->profiling.profiles->accprof;
-         len_sf = accprof.source_file != NULL ? strlen(accprof.source_file) : 0;
-         len_fn = accprof.func_name != NULL ? strlen(accprof.func_name): 0;
-         len_vn = accprof.var_name != NULL ? strlen(accprof.var_name): 0;
-         len_kn = accprof.kernel_name != NULL ? strlen(accprof.kernel_name): 0;
+         len_sf = accprof.source_file != NULL ? strlen(accprof.source_file) : 1;
+         len_fn = accprof.func_name != NULL ? strlen(accprof.func_name): 1;
+         len_vn = accprof.var_name != NULL ? strlen(accprof.var_name): 1;
+         len_kn = accprof.kernel_name != NULL ? strlen(accprof.kernel_name): 1;
       }
       PMPI_Gather (&len_sf, 1, MPI_INT, len_source_files, 1, MPI_INT, 0, MPI_COMM_WORLD);
       PMPI_Gather (&len_fn, 1, MPI_INT, len_func_names, 1, MPI_INT, 0, MPI_COMM_WORLD);
@@ -106,7 +114,6 @@ static void vftr_collate_accprofiles_on_root (collated_stacktree_t *collstacktre
            PMPI_Send (&max_len_kernel_name, 1, MPI_INT, irank, 0, MPI_COMM_WORLD);
         }
       } else {
-         MPI_Status status;
          PMPI_Recv (&max_len_source_file, 1, MPI_INT, 0, 0, MPI_COMM_WORLD, &status);
          PMPI_Recv (&max_len_func_name, 1, MPI_INT, 0, 0, MPI_COMM_WORLD, &status);
          PMPI_Recv (&max_len_var_name, 1, MPI_INT, 0, 0, MPI_COMM_WORLD, &status);
