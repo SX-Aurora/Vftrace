@@ -55,6 +55,10 @@ if ENABLE_CUDAPROF
 libvftr_mpi_utils_la_CFLAGS += -D_CUDA
 endif
 
+if ENABLE_ACCPROF
+libvftr_mpi_utils_la_CFLAGS += -D_ACCPROF -I${srcdir}/../../accprof
+endif
+
 libvftr_mpi_utils_la_CFLAGS += -I${srcdir}/../../hwprof -I${srcdir}/../../../external/tinyexpr
 
 if SELF_PROFILING
