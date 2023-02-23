@@ -36,6 +36,7 @@ void vftr_collate_accprofiles_root_self (collated_stacktree_t *collstacktree_ptr
 static void vftr_collate_accprofiles_on_root (collated_stacktree_t *collstacktree_ptr,
                                               stacktree_t *stacktree_ptr,
                                               int myrank, int nranks, int *nremote_profiles) {
+#define TRANSFER_BUFSIZE 1024
    typedef struct {
      int gid;
      int event_type;
@@ -48,10 +49,10 @@ static void vftr_collate_accprofiles_on_root (collated_stacktree_t *collstacktre
      long long region_id;
      long long copied_bytes;
      long long overhead_nsec;
-     char *source_file;
-     char *func_name;
-     char *var_name;
-     char *kernel_name;
+     char source_file[TRANSFER_BUFSIZE];
+     char func_name[TRANSFER_BUFSIZE];
+     char var_name[TRANSFER_BUFSIZE];
+     char kernel_name[TRANSFER_BUFSIZE];
    } accprofile_transfer_t;
 
    int max_profiles = 0;
@@ -67,82 +68,18 @@ static void vftr_collate_accprofiles_on_root (collated_stacktree_t *collstacktre
       PMPI_Recv (&max_profiles, 1, MPI_INT, 0, 0, MPI_COMM_WORLD, &status);
    }
 
-   int max_len_source_file = 0;
-   int max_len_func_name = 0; 
-   int max_len_var_name = 0;
-   int max_len_kernel_name = 0;
-
-   int *len_source_files = (int*)malloc(nranks * sizeof(int)); 
-   int *len_func_names = (int*)malloc(nranks * sizeof(int)); 
-   int *len_var_names = (int*)malloc(nranks * sizeof(int)); 
-   int *len_kernel_names = (int*)malloc(nranks * sizeof(int)); 
-   memset (len_source_files, 0, sizeof(int) * nranks);
-   memset (len_func_names, 0, sizeof(int) * nranks);
-   memset (len_var_names, 0, sizeof(int) * nranks);
-   memset (len_kernel_names, 0, sizeof(int) * nranks);
-
-   for (int i = 0; i < max_profiles; i++) {
-      int len_sf, len_fn, len_vn, len_kn;
-      if (i >= stacktree_ptr->nstacks) {
-         len_sf = 0;
-         len_fn = 0;
-         len_vn = 0;
-         len_kn = 0;
-      } else {
-         vftr_stack_t *mystack = stacktree_ptr->stacks + i;
-         accprofile_t accprof = mystack->profiling.profiles->accprof;
-         len_sf = accprof.source_file != NULL ? strlen(accprof.source_file) : 1;
-         len_fn = accprof.func_name != NULL ? strlen(accprof.func_name): 1;
-         len_vn = accprof.var_name != NULL ? strlen(accprof.var_name): 1;
-         len_kn = accprof.kernel_name != NULL ? strlen(accprof.kernel_name): 1;
-      }
-      PMPI_Gather (&len_sf, 1, MPI_INT, len_source_files, 1, MPI_INT, 0, MPI_COMM_WORLD);
-      PMPI_Gather (&len_fn, 1, MPI_INT, len_func_names, 1, MPI_INT, 0, MPI_COMM_WORLD);
-      PMPI_Gather (&len_vn, 1, MPI_INT, len_var_names, 1, MPI_INT, 0, MPI_COMM_WORLD);
-      PMPI_Gather (&len_kn, 1, MPI_INT, len_kernel_names, 1, MPI_INT, 0, MPI_COMM_WORLD);
-      if (myrank == 0) {
-        for (int irank = 0; irank < nranks; irank++) {
-           max_len_source_file = len_source_files[irank] > max_len_source_file ? len_source_files[irank] : max_len_source_file;
-           max_len_func_name = len_func_names[irank] > max_len_func_name ? len_func_names[irank] : max_len_func_name;
-           max_len_var_name = len_var_names[irank] > max_len_var_name ? len_var_names[irank] : max_len_var_name;
-           max_len_kernel_name = len_kernel_names[irank] > max_len_kernel_name ? len_kernel_names[irank] : max_len_kernel_name;
-        }
-        for (int irank = 0; irank < nranks; irank++) {
-           PMPI_Send (&max_len_source_file, 1, MPI_INT, irank, 0, MPI_COMM_WORLD);
-           PMPI_Send (&max_len_func_name, 1, MPI_INT, irank, 0, MPI_COMM_WORLD);
-           PMPI_Send (&max_len_var_name, 1, MPI_INT, irank, 0, MPI_COMM_WORLD);
-           PMPI_Send (&max_len_kernel_name, 1, MPI_INT, irank, 0, MPI_COMM_WORLD);
-        }
-      } else {
-         PMPI_Recv (&max_len_source_file, 1, MPI_INT, 0, 0, MPI_COMM_WORLD, &status);
-         PMPI_Recv (&max_len_func_name, 1, MPI_INT, 0, 0, MPI_COMM_WORLD, &status);
-         PMPI_Recv (&max_len_var_name, 1, MPI_INT, 0, 0, MPI_COMM_WORLD, &status);
-         PMPI_Recv (&max_len_kernel_name, 1, MPI_INT, 0, 0, MPI_COMM_WORLD, &status);
-      }
-   }
-
-   int nblocks = 6;
+   int nblocks = 3;
    int *blocklengths = (int*)malloc(nblocks * sizeof(int));
    blocklengths[0] = 8;
    blocklengths[1] = 3;
-   blocklengths[2] = max_len_source_file;
-   blocklengths[3] = max_len_func_name;
-   blocklengths[4] = max_len_var_name;
-   blocklengths[5] = max_len_kernel_name;
-   //const int blocklengths[] = {8,3,4};
-   //const MPI_Aint displacements[] = {MPI_INT, MPI_LONG_LONG_INT,
-   //                                  MPI_CHAR, MPI_CHAR, MPI_CHAR, MPI_CHAR};
+   blocklengths[2] = 4 * TRANSFER_BUFSIZE;
+
    MPI_Aint *displacements = (MPI_Aint*)malloc(nblocks * sizeof(MPI_Aint));
    displacements[0] = 0;
    displacements[1] = 8 * sizeof(int);
    displacements[2] = displacements[1] + 3 * sizeof(long long);
-   displacements[3] = displacements[2] + max_len_source_file * sizeof(char);
-   displacements[4] = displacements[3] + max_len_func_name * sizeof(char);
-   displacements[5] = displacements[4] + max_len_var_name * sizeof(char);
-   displacements[6] = displacements[5] + max_len_kernel_name * sizeof(char);
 
-   const MPI_Datatype types[] = {MPI_INT, MPI_LONG_LONG_INT,
-                                 MPI_CHAR, MPI_CHAR, MPI_CHAR, MPI_CHAR};
+   const MPI_Datatype types[] = {MPI_INT, MPI_LONG_LONG_INT, MPI_CHAR};
    MPI_Datatype accprofile_transfer_mpi_t;
    PMPI_Type_create_struct (nblocks, blocklengths, displacements, types,
                             &accprofile_transfer_mpi_t);
@@ -164,31 +101,35 @@ static void vftr_collate_accprofiles_on_root (collated_stacktree_t *collstacktre
          sendbuf[istack].overhead_nsec = accprof.overhead_nsec;  
          if (accprof.source_file != NULL) {
            sendbuf[istack].len_source_file = strlen(accprof.source_file);
-           sendbuf[istack].source_file = strdup (accprof.source_file);
+           strncpy (sendbuf[istack].source_file, accprof.source_file,
+                    sendbuf[istack].len_source_file);
          } else {
            sendbuf[istack].len_source_file = 1;
-           sendbuf[istack].source_file = strdup("");
+           strncpy (sendbuf[istack].source_file, "", 1);
          }
          if (accprof.func_name != NULL) {
            sendbuf[istack].len_func_name = strlen(accprof.func_name);
-           sendbuf[istack].func_name = strdup(accprof.func_name);
+           strncpy (sendbuf[istack].func_name, accprof.func_name,
+                    sendbuf[istack].len_func_name);
          } else {
            sendbuf[istack].len_func_name = 1;
-           sendbuf[istack].func_name = strdup("");
+           strncpy (sendbuf[istack].func_name, "", 1);
          }
          if (accprof.var_name != NULL) {
            sendbuf[istack].len_var_name = strlen(accprof.var_name);
-           sendbuf[istack].var_name = strdup(accprof.var_name);
+           strncpy (sendbuf[istack].var_name, accprof.var_name,
+                    sendbuf[istack].len_var_name);
          } else {
            sendbuf[istack].len_var_name = 1;
-           sendbuf[istack].var_name = strdup("");
+           strncpy (sendbuf[istack].var_name, "", 1);
          }
          if (accprof.kernel_name != NULL) {
             sendbuf[istack].len_kernel_name = strlen(accprof.kernel_name);
-            sendbuf[istack].kernel_name = strdup(accprof.kernel_name);
+            strncpy (sendbuf[istack].kernel_name, accprof.kernel_name,
+                     sendbuf[istack].len_kernel_name);
          } else {
             sendbuf[istack].len_kernel_name = 1;
-            sendbuf[istack].kernel_name = strdup("");
+            strncpy (sendbuf[istack].kernel_name, "", 1);
          }
       }
       PMPI_Send (sendbuf, nprofiles, accprofile_transfer_mpi_t, 0, myrank, MPI_COMM_WORLD);

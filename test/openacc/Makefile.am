@@ -37,6 +37,10 @@ check_PROGRAMS = acc_region1 \
 		 acc_region3 \
 		 acc_region4
 
+if ENABLE_MPI
+check_PROGRAMS += collate_acc1
+endif
+
 acc_region1_SOURCES = $(srcdir)/acc_region1.c
 acc_region1_CFLAGS = $(AM_CFLAGS)
 acc_region1_LDFLAGS = $(AM_LDFLAGS)
@@ -53,11 +57,22 @@ acc_region4_SOURCES = $(srcdir)/acc_region4.c
 acc_region4_CFLAGS = $(AM_CFLAGS)
 acc_region4_LDFLAGS = $(AM_LDFLAGS)
 
+if ENABLE_MPI
+collate_acc1_SOURCES = $(srcdir)/collate_acc1.c
+collate_acc1_CFLAGS = $(AM_CFLAGS)
+collate_acc1_LDFLAGS = $(AM_LDFLAGS)
+endif
+
+
 dist_noinst_SCRIPTS = acc_region1.sh \
 		      acc_region2.sh \
  		      acc_region3.sh \
  		      acc_region4.sh \
 	              acc_ranklogfile.sh
+
+if ENABLE_MPI
+dist_noinst_SCRIPTS += collate_acc1.sh
+endif
 
 TEST_EXTENSIONS = .sh
 SH_LOG_COMPILER = $(SHELL)
