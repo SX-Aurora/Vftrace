@@ -35,7 +35,8 @@ AM_LDFLAGS = -L$(top_builddir)/src/.libs -lvftrace -lm
 check_PROGRAMS = acc_region1 \
                  acc_region2 \
 		 acc_region3 \
-		 acc_region4
+		 acc_region4 \
+		 acc_region5
 
 if ENABLE_MPI
 check_PROGRAMS += collate_acc_parallel1
@@ -57,6 +58,10 @@ acc_region4_SOURCES = $(srcdir)/acc_region4.c
 acc_region4_CFLAGS = $(AM_CFLAGS)
 acc_region4_LDFLAGS = $(AM_LDFLAGS)
 
+acc_region5_SOURCES = $(srcdir)/acc_region5.c
+acc_region5_CFLAGS = $(AM_CFLAGS)
+acc_region5_LDFLAGS = $(AM_LDFLAGS)
+
 if ENABLE_MPI
 collate_acc_parallel1_SOURCES = $(srcdir)/collate_acc_parallel1.c
 collate_acc_parallel1_CFLAGS = $(AM_CFLAGS)
@@ -68,6 +73,7 @@ dist_noinst_SCRIPTS = acc_region1.sh \
 		      acc_region2.sh \
  		      acc_region3.sh \
  		      acc_region4.sh \
+ 		      acc_region5.sh \
 	              acc_ranklogfile.sh
 
 if ENABLE_MPI
