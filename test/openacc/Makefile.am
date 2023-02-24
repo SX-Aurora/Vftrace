@@ -58,9 +58,9 @@ acc_region4_CFLAGS = $(AM_CFLAGS)
 acc_region4_LDFLAGS = $(AM_LDFLAGS)
 
 if ENABLE_MPI
-collate_acc1_SOURCES = $(srcdir)/collate_acc1.c
-collate_acc1_CFLAGS = $(AM_CFLAGS)
-collate_acc1_LDFLAGS = $(AM_LDFLAGS)
+collate_acc_parallel1_SOURCES = $(srcdir)/collate_acc_parallel1.c
+collate_acc_parallel1_CFLAGS = $(AM_CFLAGS)
+collate_acc_parallel1_LDFLAGS = $(AM_LDFLAGS)
 endif
 
 
@@ -71,7 +71,7 @@ dist_noinst_SCRIPTS = acc_region1.sh \
 	              acc_ranklogfile.sh
 
 if ENABLE_MPI
-dist_noinst_SCRIPTS += collate_acc1.sh
+dist_noinst_SCRIPTS += collate_acc_parallel1.sh
 endif
 
 TEST_EXTENSIONS = .sh
