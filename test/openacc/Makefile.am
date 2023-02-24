@@ -39,7 +39,8 @@ check_PROGRAMS = acc_region1 \
 		 acc_region5
 
 if ENABLE_MPI
-check_PROGRAMS += collate_acc_parallel1
+check_PROGRAMS += collate_acc_parallel1 \
+                  collate_acc_parallel2
 endif
 
 acc_region1_SOURCES = $(srcdir)/acc_region1.c
@@ -66,6 +67,11 @@ if ENABLE_MPI
 collate_acc_parallel1_SOURCES = $(srcdir)/collate_acc_parallel1.c
 collate_acc_parallel1_CFLAGS = $(AM_CFLAGS)
 collate_acc_parallel1_LDFLAGS = $(AM_LDFLAGS)
+
+collate_acc_parallel2_SOURCES = $(srcdir)/collate_acc_parallel2.c
+collate_acc_parallel2_CFLAGS = $(AM_CFLAGS)
+collate_acc_parallel2_LDFLAGS = $(AM_LDFLAGS)
+
 endif
 
 
@@ -77,7 +83,8 @@ dist_noinst_SCRIPTS = acc_region1.sh \
 	              acc_ranklogfile.sh
 
 if ENABLE_MPI
-dist_noinst_SCRIPTS += collate_acc_parallel1.sh
+dist_noinst_SCRIPTS += collate_acc_parallel1.sh \
+                       collate_acc_parallel2.sh
 endif
 
 TEST_EXTENSIONS = .sh

@@ -6,7 +6,7 @@ has_gpu=`echo $?`
 
 source ${srcdir}/../environment/filenames.sh
 
-test_name=collate_acc_parallel1
+test_name=collate_acc_parallel2
 vftr_binary=${test_name}
 configfile=${vftr_binary}.json
 
