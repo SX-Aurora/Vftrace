@@ -38,7 +38,7 @@ check_PROGRAMS = acc_region1 \
 		 acc_region4
 
 if ENABLE_MPI
-check_PROGRAMS += collate_acc1
+check_PROGRAMS += collate_acc_parallel1
 endif
 
 acc_region1_SOURCES = $(srcdir)/acc_region1.c
