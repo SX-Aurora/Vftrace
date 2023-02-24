@@ -7,6 +7,7 @@ libvftr_accprof_la_SOURCES += accprof_callbacks.c \
 			      accprof_events.c \
 			      accprofiling.c \
 			      collate_accprofiles.c \
+                              collated_accprofiling.c \
 			      accprof_logfile.c \
 			      accprof_ranklogfile.c
 

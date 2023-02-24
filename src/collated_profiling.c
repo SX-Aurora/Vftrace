@@ -15,6 +15,9 @@
 #ifdef _CUDA
 #include "collated_cudaprofiling.h"
 #endif
+#ifdef _ACCPROF
+#include "collated_accprofiling.h"
+#endif
 
 collated_profile_t vftr_new_collated_profile() {
    SELF_PROFILE_START_FUNCTION;
@@ -26,6 +29,9 @@ collated_profile_t vftr_new_collated_profile() {
 #endif
 #ifdef _CUDA
    profile.cudaprof = vftr_new_collated_cudaprofiling();
+#endif
+#ifdef _ACCPROF
+   profile.accprof = vftr_new_collated_accprofiling();
 #endif
    // TODO: Add other profiles
    SELF_PROFILE_END_FUNCTION;
