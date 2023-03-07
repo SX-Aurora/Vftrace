@@ -1,0 +1,42 @@
+default:
+  image: cweissnec/vftrace-env
+
+variables:
+  GIT_SUBMODULE_STRATEGY: recursive
+
+build-serial:
+  stage: build
+  script:
+    - autoupdate
+    - autoreconf -if
+    - mkdir build && cd build
+    - ../configure --prefix=$(pwd)
+    - make V=1
+    - make V=1 check
+  artifacts:
+    when: always
+    paths:
+    - build/config.log
+    - build/test/units/*.log
+
+build-parallel:
+  stage: build
+  script:
+    - autoupdate
+    - autoreconf -if
+    - mkdir build && cd build
+    - ../configure --prefix=$(pwd) --enable-mpi --disable-fortran08 CC=mpicc FC=mpifort CXX=mpic++ CFLAGS=-fPIC FCFLAGS=-fPIC CPP=cpp
+    - sed -i 's/-l //g' libtool
+    - make VERBOSE=1 
+    - export OMPI_ALLOW_RUN_AS_ROOT=1
+    - export OMPI_ALLOW_RUN_AS_ROOT_CONFIRM=1
+    - make DISABLE_HARD_ERRORS=1 VERBOSE=1 check
+  artifacts:
+    when: always
+    paths:
+    - build/config.log
+    - build/test/units/*.log
+    - build/test/hwprof/*.log
+    - build/test/hwprof/*.out
+    - build/test/mpi/c-mpi/*.log
+    - build/test/mpi/f-mpi/*.log
