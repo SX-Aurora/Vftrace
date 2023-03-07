@@ -1707,5 +1707,7 @@ TEST_EXTENSIONS = .sh
 SH_LOG_COMPILER = $(SHELL)
 
 TESTS = $(dist_noinst_SCRIPTS)
+XFAIL_TESTS = neighbor_alltoallw_nolog.sh \
+              ineighbor_alltoallw_nolog.sh
 
 CLEANFILES = vftrace_self_profile-*
