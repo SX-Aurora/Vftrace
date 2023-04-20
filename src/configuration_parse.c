@@ -199,6 +199,17 @@ void vftr_parse_config_profile_table(cJSON *parent_object,
    }
 }
 
+void vftr_parse_config_stacklist (cJSON *parent_object,
+                                  config_stacklist_t *cfg_stacklist_ptr) {
+   bool has_object = cJSON_HasObjectItem (parent_object, cfg_stacklist_ptr->name);
+   if (has_object) {
+      cJSON *json_object = cJSON_GetObjectItem (parent_object,
+                                                cfg_stacklist_ptr->name);
+      vftr_parse_config_bool (json_object,
+                              &(cfg_stacklist_ptr->show_stacklist));
+   }
+}
+
 void vftr_parse_config_name_grouped_profile_table(cJSON *parent_object,
                                                   config_name_grouped_profile_table_t
                                                   *cfg_profile_table_ptr) {

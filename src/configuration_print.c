@@ -82,6 +82,16 @@ void vftr_print_config_profile_table(FILE *fp, int level,
    fprintf(fp,"}");
 }
 
+void vftr_print_config_stacklist (FILE *fp, int level, config_stacklist_t cfg_stacklist) {
+   level++;
+   vftr_print_config_indent(fp, level);
+   fprintf(fp, "\"%s\": {\n", cfg_stacklist.name);
+   vftr_print_config_bool(fp, level, cfg_stacklist.show_stacklist);
+   fprintf(fp,"\n");
+   vftr_print_config_indent(fp, level);
+   fprintf(fp, "}");
+}
+
 void vftr_print_config_name_grouped_profile_table(FILE *fp, int level,
                                                   config_name_grouped_profile_table_t
                                                   cfg_profile_table) {
@@ -289,6 +299,8 @@ void vftr_print_config(FILE *fp, config_t config, bool show_title) {
    vftr_print_config_bool(fp, level, config.include_cxx_prelude);
    fprintf(fp, ",\n");
    vftr_print_config_profile_table(fp, level, config.profile_table);
+   fprintf(fp, ",\n");
+   vftr_print_config_stacklist(fp, level, config.stacklist);
    fprintf(fp, ",\n");
    vftr_print_config_name_grouped_profile_table(fp, level,
                                                 config.name_grouped_profile_table);

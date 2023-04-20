@@ -131,7 +131,9 @@ void vftr_write_logfile(vftrace_t vftrace, long long runtime) {
 
    vftr_write_logfile_other_tables (vftrace, all_fp);
 
-   vftr_write_logfile_global_stack_list(all_fp.fp[LOG_MAIN], vftrace.process.collated_stacktree);
+   if (vftrace.config.stacklist.show_stacklist.value) {
+      vftr_write_logfile_global_stack_list(all_fp.fp[LOG_MAIN], vftrace.process.collated_stacktree);
+   }
 
    vftr_write_logfile_epilogue (vftrace, all_fp);
    vftr_logfile_close_fp (all_fp);

@@ -89,6 +89,15 @@ config_profile_table_t vft_set_config_profile_table_default() {
    return cfg_profile_table;
 }
 
+config_stacklist_t vftr_set_stacklist_default() {
+   config_stacklist_t cfg_stacklist;
+   cfg_stacklist.name = strdup("stacklist");
+   cfg_stacklist.set = false;
+   cfg_stacklist.show_stacklist =
+      vftr_set_config_bool_default("show_stacklist", true);
+   return cfg_stacklist;
+}
+
 config_name_grouped_profile_table_t vftr_set_config_name_grouped_profile_table_default() {
    config_name_grouped_profile_table_t cfg_profile_table;
    cfg_profile_table.name = strdup("name_grouped_profile_table");
@@ -214,6 +223,7 @@ config_t vftr_set_config_default() {
       vftr_set_config_bool_default("include_cxx_prelude" , false);
    config.profile_table =
       vft_set_config_profile_table_default();
+   config.stacklist = vftr_set_stacklist_default();
    config.name_grouped_profile_table =
       vftr_set_config_name_grouped_profile_table_default();
    config.sampling =

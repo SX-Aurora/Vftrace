@@ -62,6 +62,11 @@ typedef struct {
 
 typedef struct {
    CONFIG_STRUCT_DEFAULTS
+   config_bool_t show_stacklist;
+} config_stacklist_t;
+
+typedef struct {
+   CONFIG_STRUCT_DEFAULTS
    config_bool_t show_table;
    config_int_t max_stack_ids;
    config_sort_table_t sort_table;
@@ -135,6 +140,7 @@ typedef struct {
    config_bool_t demangle_cxx;
    config_bool_t include_cxx_prelude;
    config_profile_table_t profile_table;
+   config_stacklist_t stacklist;
    config_name_grouped_profile_table_t name_grouped_profile_table;
    config_sampling_t sampling;
    config_mpi_t mpi;
