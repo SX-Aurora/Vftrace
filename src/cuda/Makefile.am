@@ -11,7 +11,11 @@ libvftr_cuda_la_SOURCES += cupti_init_final.c \
                             cuda_ranklogfile.c \
                             cuda_utils.c
 
-libvftr_cuda_la_CFLAGS = -I${srcdir}/../ -I${srcdir}/../sorting -D_CUDA
+libvftr_cuda_la_CFLAGS = -I${srcdir}/../ \
+                         -I${srcdir}/../sorting \
+                         -I${srcdir}/../hwprof \
+                         -I${srcdir}/../../external/tinyexpr \
+                         -D_CUDA
 
 if ENABLE_MPI
 libvftr_cuda_la_CFLAGS += -D_MPI

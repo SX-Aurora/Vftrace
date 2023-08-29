@@ -395,8 +395,8 @@ unsigned long long vftr_sizeof_cudaprofile_t(cudaprofile_t cudaprof) {
    return sizeof(cudaprofile_t);
 }
 
-unsigned long long vftr_sizeof_collated_cudaprofile_t(cudaprofile_t cudaprof) {
-   return sizeof(cudaprofile_t);
+unsigned long long vftr_sizeof_collated_cudaprofile_t(collated_cudaprofile_t cudaprof) {
+   return sizeof(collated_cudaprofile_t);
 }
 
 #endif
