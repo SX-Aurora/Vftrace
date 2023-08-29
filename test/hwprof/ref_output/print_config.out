@@ -20,6 +20,9 @@ Vftrace configuration read from "print_config.json"
          "ascending": false
       }
    },
+   "stacklist": {
+      "show_stacklist": true
+   },
    "name_grouped_profile_table": {
       "show_table": false,
       "max_stack_ids": 8,
