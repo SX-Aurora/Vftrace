@@ -119,7 +119,7 @@ collate_hwprofiles_parallel_2_LDFLAGS = $(AM_LDFLAGS)
 
 endif
 
-dist_check_SCRIPTS = calculator.sh \
+TESTS = calculator.sh \
                      print_config.sh \
                      print_config_default_scenario.sh \
 		     assert_config1.sh \
@@ -128,19 +128,27 @@ dist_check_SCRIPTS = calculator.sh \
                      hwprof_region3.sh \
                      hwprof_region4.sh
 
+# The call to cudaGetDeviceProperties mixes up the local stack IDs,
+# leading to wrong-identified entries in the hardware observable table.
+# It is hard to extract this behavior and report it to NVIDIA, so that
+# we expect these tests to fail. 
+if ENABLE_CUDAPROF
+  XFAIL_TESTS = hwprof_region2.sh \
+                hwprof_region3.sh
+endif
+
 if ENABLE_PAPI
-dist_check_SCRIPTS += papi_init_test.sh
+TESTS += papi_init_test.sh
 endif
 
 if ON_VECTOR_ENGINE
-dist_check_SCRIPTS += ve_counters_1.sh \
+TESTS += ve_counters_1.sh \
                       ve_counters_2.sh
 endif
 
 if ENABLE_MPI
-dist_check_SCRIPTS += collate_hwprofiles_parallel.sh
-dist_check_SCRIPTS += collate_hwprofiles_parallel_2.sh
+TESTS += collate_hwprofiles_parallel.sh
+TESTS += collate_hwprofiles_parallel_2.sh
 endif
 
 TEST_EXTENSIONS = .sh
-TESTS = $(dist_check_SCRIPTS)
