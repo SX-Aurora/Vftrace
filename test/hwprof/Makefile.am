@@ -32,6 +32,11 @@ if ENABLE_MPI
   AM_CFLAGS += -D_MPI -I$(top_srcdir)/src/mpi/utils
 endif
 
+if ENABLE_CUDAPROF
+  AM_CFLAGS += -D_CUDA -I${top_srcdir}/src/cuda
+endif
+
+
 check_PROGRAMS = calculator \
                  print_config \
                  print_config_default_scenario \
