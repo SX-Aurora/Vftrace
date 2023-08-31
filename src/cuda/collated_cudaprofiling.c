@@ -9,7 +9,8 @@
 collated_cudaprofile_t vftr_new_collated_cudaprofiling() {
   collated_cudaprofile_t prof;
   prof.cbid = 0;
-  prof.n_calls = 0;
+  prof.n_calls[CUDA_COPY_IN] = 0;
+  prof.n_calls[CUDA_COPY_OUT] = 0;
   prof.t_ms = 0;
   prof.memcpy_bytes[CUDA_COPY_IN] = 0;
   prof.memcpy_bytes[CUDA_COPY_OUT] = 0; 

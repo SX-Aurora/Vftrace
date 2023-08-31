@@ -191,7 +191,7 @@ collated_stack_t **vftr_sort_collated_stacks_for_cuda (config_t config, collated
         int *stackvals = (int*)malloc(nstacks * sizeof(int));
         for (int istack = 0; istack < nstacks; istack++) {
            collated_stack_t *stack = stacktree.stacks + istack;
-           stackvals[istack] = stack->profile.cudaprof.n_calls;
+           stackvals[istack] = stack->profile.cudaprof.n_calls[0] + stack->profile.cudaprof.n_calls[1];
         }
         vftr_sort_perm_int(nstacks, stackvals, &perm, ascending);
         free(stackvals);
