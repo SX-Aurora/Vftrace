@@ -82,7 +82,12 @@ void vftr_cuda_region_begin (int cbid, const CUpti_CallbackData *cb_info) {
    // cb_info contains the same information regarding copied bytes for Memcpy events. Here, we
    // accumulate zero. The memory information is retrieved in the exit hook.
    cudaEventRecord(cudaprof->start, 0);
-   vftr_accumulate_cudaprofiling (cudaprof, cbid, 1, 0, CUDA_NOCOPY, 0);
+   
+   int mem_dir;
+   size_t copied_bytes;
+   vftr_get_cuda_memory_info (cbid, cb_info, &mem_dir, &copied_bytes);
+
+   vftr_accumulate_cudaprofiling (cudaprof, cbid, 1, 0, mem_dir, 0);
    vftr_accumulate_callprofiling (&(my_profile->callprof), 1, 0);
    
    vftr_accumulate_cudaprofiling_overhead (&(my_profile->cudaprof),

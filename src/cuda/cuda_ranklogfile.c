@@ -29,6 +29,60 @@ void vftr_get_total_cuda_times_for_ranklogfile (stacktree_t stacktree, float *to
    }
 }
 
+typedef struct kernel_call_st {
+  struct kernel_call_st *next;
+  int n_calls;
+  int stack_id;
+} kernel_call_t;
+
+void vftr_extract_kernel_calls (vftr_stack_t *stacks_ptr, int stack_id,
+                                    kernel_call_t **kc_head, kernel_call_t **kc_current) {
+  vftr_stack_t stack = stacks_ptr[stack_id];
+  if (stack.ncallees > 0) {
+     for (int icallee = 0; icallee < stack.ncallees; icallee++) {
+        vftr_extract_kernel_calls (stacks_ptr, stack.callees[icallee], kc_head, kc_current);
+     }
+  }
+  cudaprofile_t cudaprof = stack.profiling.profiles[0].cudaprof;
+  if (vftr_cuda_cbid_belongs_to_class (cudaprof.cbid, T_CUDA_COMP)) {
+     if (*kc_head == NULL) {
+        *kc_head = (kernel_call_t*)malloc(sizeof(kernel_call_t));
+        *kc_current = *kc_head;
+     } else {
+        (*kc_current)->next = (kernel_call_t*)malloc(sizeof(kernel_call_t));
+        *kc_current = (*kc_current)->next;
+     }
+     (*kc_current)->next = NULL;
+     (*kc_current)->n_calls = cudaprof.n_calls[0];
+     (*kc_current)->stack_id = stack_id;
+  } 
+}
+
+void vftr_write_cuda_memcpy_stats (FILE *fp, stacktree_t stacktree, config_t config) {
+   vftr_stack_t **sorted_stacks = vftr_sort_stacks_for_cuda (config, stacktree);
+   
+   fprintf (fp, "\nCUDA ratio of memcpy / kernel calls: \n");
+   for (int istack = 0; istack < stacktree.nstacks; istack++) {
+      vftr_stack_t *this_stack = sorted_stacks[istack];
+      cudaprofile_t cudaprof = this_stack->profiling.profiles->cudaprof;
+      int cbid = cudaprof.cbid;
+      if (vftr_cuda_cbid_belongs_to_class (cbid, T_CUDA_MEMCP)) {
+         fprintf (fp, "%s:    in: %d, out: %d\n", stacktree.stacks[this_stack->caller].name,
+                  cudaprof.n_calls[CUDA_COPY_IN], cudaprof.n_calls[CUDA_COPY_OUT]);
+         kernel_call_t *kc_head = NULL;
+         kernel_call_t *kc_current = NULL;
+         vftr_extract_kernel_calls (stacktree.stacks, istack, &kc_head, &kc_current);
+         kc_current = kc_head;
+         while (kc_current != NULL) {
+            fprintf (fp, "  ->  %s:  %d\n",
+                     stacktree.stacks[kc_current->stack_id].name,
+                     kc_current->n_calls);
+            kc_current = kc_current->next;
+         }
+      }
+   }
+}
+
 void vftr_write_ranklogfile_cuda_table(FILE *fp, stacktree_t stacktree, config_t config) {
    int n_stackids_with_cuda_data = 0;
 
@@ -70,7 +124,7 @@ void vftr_write_ranklogfile_cuda_table(FILE *fp, stacktree_t stacktree, config_t
       int cbid = cudaprof.cbid;
       if (cbid == 0) continue;
       stackids_with_cuda_data[i] = istack;
-      calls[i] = cudaprof.n_calls;
+      calls[i] = cudaprof.n_calls[0] + cudaprof.n_calls[1];
       cbids[i] = cbid;
       t_compute[i] = vftr_cuda_cbid_belongs_to_class (cbids[i], T_CUDA_COMP) ? cudaprof.t_ms / 1000 : 0;
       t_memcpy[i] = vftr_cuda_cbid_belongs_to_class (cbids[i], T_CUDA_MEMCP) ? cudaprof.t_ms / 1000 : 0;

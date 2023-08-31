@@ -68,6 +68,7 @@ void vftr_write_ranklogfile_other_tables (vftrace_t vftrace, vftr_logfile_fp_t a
 #ifdef _CUDA
    if (all_fp.fp[LOG_CUDA] != NULL) {
       vftr_write_ranklogfile_cuda_table(all_fp.fp[LOG_CUDA], vftrace.process.stacktree, vftrace.config);
+      vftr_write_cuda_memcpy_stats(all_fp.fp[LOG_CUDA], vftrace.process.stacktree, vftrace.config);
    }
 #endif
 

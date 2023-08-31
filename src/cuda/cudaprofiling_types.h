@@ -9,7 +9,7 @@ typedef struct {
    cudaEvent_t start;
    cudaEvent_t stop;
    int cbid;
-   int n_calls;
+   int n_calls[2];
    float t_ms;
    long long memcpy_bytes[2];
    long long overhead_nsec;

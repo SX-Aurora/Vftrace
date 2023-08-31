@@ -232,7 +232,7 @@ void vftr_sort_stacks_for_mpiprof(config_t config,
         for (int istack = 0; istack < nstacks; istack++) {
            vftr_stack_t *stack = stacktree.stacks + istack;
            profile_t *prof = stack->profiling.profiles;
-           stackvals[istack] = prof->cudaprof.n_calls;
+           stackvals[istack] = prof->cudaprof.n_calls[0] + prof->cudaprof.n_calls[1];
         }
         vftr_sort_perm_int(nstacks, stackvals, &perm, ascending);
         free(stackvals);

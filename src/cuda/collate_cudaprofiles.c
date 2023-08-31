@@ -17,7 +17,7 @@ void vftr_collate_cudaprofiles_root_self (collated_stacktree_t *collstacktree_pt
       collated_cudaprofile_t *collcudaprof = &(collstack->profile.cudaprof);
 
       collcudaprof->cbid = copy_cudaprof.cbid;
-      collcudaprof->n_calls = copy_cudaprof.n_calls;
+      collcudaprof->n_calls = copy_cudaprof.n_calls[0] + copy_cudaprof.n_calls[1];
       collcudaprof->t_ms = copy_cudaprof.t_ms;
       collcudaprof->memcpy_bytes[0] = copy_cudaprof.memcpy_bytes[0];
       collcudaprof->memcpy_bytes[1] = copy_cudaprof.memcpy_bytes[1];

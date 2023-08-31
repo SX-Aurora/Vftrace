@@ -13,7 +13,8 @@ cudaprofile_t vftr_new_cudaprofiling() {
   cudaEventCreate (&(prof.start));
   cudaEventCreate (&(prof.stop));
   prof.cbid = 0;
-  prof.n_calls = 0;
+  prof.n_calls[CUDA_COPY_IN] = 0;
+  prof.n_calls[CUDA_COPY_OUT] = 0;
   prof.t_ms = 0;
   prof.memcpy_bytes[CUDA_COPY_IN] = 0;
   prof.memcpy_bytes[CUDA_COPY_OUT] = 0; 
@@ -24,9 +25,13 @@ cudaprofile_t vftr_new_cudaprofiling() {
 void vftr_accumulate_cudaprofiling (cudaprofile_t *prof, int cbid, int n_calls,
                                     float t_ms, int mem_dir, long long memcpy_bytes) {
    prof->cbid = cbid;
-   prof->n_calls += n_calls;
    prof->t_ms += t_ms;
-   if (mem_dir != CUDA_NOCOPY) prof->memcpy_bytes[mem_dir] += memcpy_bytes;
+   if (mem_dir != CUDA_NOCOPY) {
+      prof->n_calls[mem_dir] += n_calls;
+      prof->memcpy_bytes[mem_dir] += memcpy_bytes;
+   } else {
+      prof->n_calls[0] += n_calls;
+   }
 }
 
 void vftr_accumulate_cudaprofiling_overhead (cudaprofile_t *prof, long long t_nsec) {
@@ -61,7 +66,8 @@ long long vftr_get_total_collated_cuda_overhead (collated_stacktree_t stacktree)
 cudaprofile_t vftr_add_cudaprofiles(cudaprofile_t profA, cudaprofile_t profB) {
    cudaprofile_t profC;
    profC.cbid = profA.cbid; // The CBIDs of both profiles are identical.
-   profC.n_calls = profA.n_calls + profB.n_calls;
+   profC.n_calls[CUDA_COPY_IN] = profA.n_calls[CUDA_COPY_IN] + profB.n_calls[CUDA_COPY_IN];
+   profC.n_calls[CUDA_COPY_OUT] = profA.n_calls[CUDA_COPY_OUT] + profB.n_calls[CUDA_COPY_OUT];
    profC.t_ms = profA.t_ms + profB.t_ms;
    profC.memcpy_bytes[CUDA_COPY_IN] = profA.memcpy_bytes[CUDA_COPY_IN] + profB.memcpy_bytes[CUDA_COPY_IN];
    profC.memcpy_bytes[CUDA_COPY_OUT] = profA.memcpy_bytes[CUDA_COPY_OUT] + profB.memcpy_bytes[CUDA_COPY_OUT];
