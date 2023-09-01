@@ -9,7 +9,7 @@
 #include "signal_handling.h"
 #include "filenames.h"
 #include "logfile_common.h"
-#include "logfile_stacklist.h"
+#include "ranklogfile_stacklist.h"
 #include "ranklogfile_summary.h"
 #include "ranklogfile_prof_table.h"
 #include "ranklogfile_mpi_table.h"
@@ -78,6 +78,7 @@ void vftr_write_ranklogfile_other_tables (vftrace_t vftrace, vftr_logfile_fp_t a
       if (vftrace.config.accprof.show_event_details.value) {
          vftr_write_ranklogfile_accprof_event_table (all_fp.fp[LOG_ACCPROF], vftrace.process.stacktree, vftrace.config);
       }
+      vftr_write_accprof_memcpy_stats (all_fp.fp[LOG_ACCPROF], vftrace.process.stacktree, vftrace.config);
    }
 #endif
 
@@ -135,7 +136,7 @@ void vftr_write_ranklogfile(vftrace_t vftrace, long long runtime) {
    vftr_write_ranklogfile_other_tables (vftrace, all_fp);
 
    if (vftrace.config.stacklist.show_stacklist.value) {
-      vftr_write_logfile_global_stack_list(all_fp.fp[LOG_MAIN], vftrace.process.collated_stacktree);
+      vftr_write_ranklogfile_global_stack_list(all_fp.fp[LOG_MAIN], vftrace.process.stacktree);
    }
 
    vftr_write_ranklogfile_epilogue (vftrace, all_fp);

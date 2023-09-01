@@ -164,6 +164,111 @@ void vftr_write_ranklogfile_accprof_grouped_table (FILE *fp, stacktree_t stacktr
    free (bytes_summed_on_device);
 }
 
+typedef struct kernel_call_st {
+  struct kernel_call_st *next;
+  int n_calls;
+  int stack_id;
+} kernel_call_t;
+
+int vftr_find_nonacc_root (vftr_stack_t *stacks, int stack_id) {
+   accprofile_t accprof = stacks[stack_id].profiling.profiles[0].accprof;
+   // This stack entry has an accprof entry. Go back one step.
+   if (vftr_accprof_event_is_defined (accprof.event_type)) {
+      return vftr_find_nonacc_root (stacks, stacks[stack_id].caller);
+   } else {
+      return stack_id;
+   }
+}
+
+void vftr_extract_kernel_calls_acc (vftr_stack_t *stacks_ptr, int stack_id,
+                                    kernel_call_t **kc_head, kernel_call_t **kc_current) {
+  vftr_stack_t stack = stacks_ptr[stack_id];
+  if (stack.ncallees > 0) {
+     for (int icallee = 0; icallee < stack.ncallees; icallee++) {
+        vftr_extract_kernel_calls_acc (stacks_ptr, stack.callees[icallee], kc_head, kc_current);
+     }
+  }
+  accprofile_t accprof = stack.profiling.profiles[0].accprof;
+  callprofile_t callprof = stack.profiling.profiles[0].callprof;
+  if (vftr_accprof_is_launch_event (accprof.event_type)) {
+     if (*kc_head == NULL) {
+        *kc_head = (kernel_call_t*)malloc(sizeof(kernel_call_t));
+        *kc_current = *kc_head;
+     } else {
+        (*kc_current)->next = (kernel_call_t*)malloc(sizeof(kernel_call_t));
+        *kc_current = (*kc_current)->next;
+     }
+     (*kc_current)->next = NULL;
+     (*kc_current)->n_calls = callprof.calls;
+     (*kc_current)->stack_id = stack_id;
+  } 
+}
+
+void vftr_write_accprof_memcpy_stats (FILE *fp, stacktree_t stacktree, config_t config) {
+   vftr_stack_t **sorted_stacks = vftr_sort_stacks_for_accprof (config, stacktree);
+
+   int *root_ids = (int*)malloc(stacktree.nstacks * sizeof(int));
+   int *download_ids = (int*)malloc(stacktree.nstacks * sizeof(int));
+   int *upload_ids = (int*)malloc(stacktree.nstacks * sizeof(int));
+
+   for (int istack = 0; istack < stacktree.nstacks; istack++) {
+      root_ids[istack] = 0;
+      upload_ids[istack] = 0;
+      download_ids[istack] = 0;
+   }
+
+   for (int istack = 0; istack < stacktree.nstacks; istack++) {
+      vftr_stack_t this_stack = stacktree.stacks[istack];
+      accprofile_t accprof = this_stack.profiling.profiles[0].accprof;
+      if (accprof.event_type == acc_ev_enqueue_upload_start ||
+          accprof.event_type == acc_ev_enqueue_download_start) {
+         int root_id = vftr_find_nonacc_root (stacktree.stacks, istack);
+         root_ids[root_id]++;
+         if (accprof.event_type == acc_ev_enqueue_upload_start) {
+            upload_ids[root_id] = istack;
+         } else {
+            download_ids[root_id] = istack;
+         }
+      }
+   }
+
+   for (int istack = 0; istack < stacktree.nstacks; istack++) {
+      if (root_ids[istack] != 0 && root_ids[istack] != 2) {
+         fprintf (fp, "Internal Vftrace error: \n");
+         fprintf (fp, "OpenACC memcpy stats: root_id[%d] = %d\n", istack, root_ids[istack]);
+         return;
+      }
+   }
+
+   fprintf (fp, "\nOpenACC ratio of memcpy / kernel calls: \n");
+   for (int istack = 0; istack < stacktree.nstacks; istack++) {
+      if (root_ids[istack] > 0) {
+         int root_id = istack;
+         char *memcpy_caller_name = stacktree.stacks[root_id].name;
+         int stack_id_upload = upload_ids[root_id];
+         int n_upload = stack_id_upload > 0 ? stacktree.stacks[stack_id_upload].profiling.profiles[0].callprof.calls : 0;
+         int stack_id_download = download_ids[root_id];
+         int n_download = stack_id_download > 0 ? stacktree.stacks[stack_id_download].profiling.profiles[0].callprof.calls : 0;
+         fprintf (fp, "%s:   in: %d, out: %d\n", memcpy_caller_name,
+                      n_upload, n_download);
+
+         kernel_call_t *kc_head = NULL;
+         kernel_call_t *kc_current = NULL;
+         vftr_extract_kernel_calls_acc (stacktree.stacks, root_id, &kc_head, &kc_current);
+         kc_current = kc_head;
+         while (kc_current != NULL) {
+            fprintf (fp, "  ->  %s:  %d\n",
+                     stacktree.stacks[kc_current->stack_id].name,
+                     kc_current->n_calls);
+            kc_current = kc_current->next;
+         }
+      }
+   }
+   
+   free (root_ids);
+   free (download_ids);
+   free (upload_ids);
+}
 
 void vftr_write_ranklogfile_accprof_event_table (FILE *fp, stacktree_t stacktree, config_t config) {
    int n_stackids_with_accprof_data = 0;
@@ -214,7 +319,7 @@ void vftr_write_ranklogfile_accprof_event_table (FILE *fp, stacktree_t stacktree
       callprofile_t callprof = this_profile->callprof;
       acc_event_t ev = accprof.event_type;
       if (ev == 0) continue;
-      stackids_with_accprof_data[i] = istack;
+      stackids_with_accprof_data[i] = this_stack->lid;
       calls[i] = callprof.calls; 
       if (ev != acc_ev_enqueue_launch_start && ev != acc_ev_enqueue_launch_end) {
           ev_names[i] = vftr_accprof_event_string(ev);

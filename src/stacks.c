@@ -16,6 +16,10 @@
 #include "collate_stacks.h"
 #include "hwprofiling.h"
 
+#ifdef _ACCPROF
+#include "accprof_events.h"
+#endif
+
 void vftr_stacktree_realloc(stacktree_t *stacktree_ptr) {
    SELF_PROFILE_START_FUNCTION;
    stacktree_t stacktree = *stacktree_ptr;
@@ -173,14 +177,54 @@ void vftr_print_stacktree(FILE *fp, stacktree_t stacktree) {
    vftr_print_stack_branch(fp, 0, stacktree, 0);
 }
 
+int vftr_stack_string_entry_length (vftr_stack_t stack) {
+   int stringlen = strlen(stack.cleanname);
+#ifdef _ACCPROF
+   accprofile_t accprof = stack.profiling.profiles[0].accprof;
+   if (vftr_accprof_event_is_defined (accprof.event_type)) {
+      char *event_string = vftr_accprof_event_string (accprof.event_type);
+      stringlen += 6 + strlen(event_string);
+   }
+#endif
+   return stringlen + 1;
+}
+
+void vftr_fill_stack_string_entry (char **stackstring_ptr, vftr_stack_t stack) {
+   char *tmpname_ptr = stack.cleanname;
+   while (*tmpname_ptr != '\0') {
+      **stackstring_ptr = *tmpname_ptr;
+      (*stackstring_ptr)++;
+      tmpname_ptr++;
+   }
+#ifdef _ACCPROF
+   accprofile_t accprof = stack.profiling.profiles[0].accprof;
+   if (vftr_accprof_event_is_defined (accprof.event_type)) {
+      char *event_string = vftr_accprof_event_string (accprof.event_type);
+      tmpname_ptr = "(ACC:";
+      while (*tmpname_ptr != '\0') {
+         **stackstring_ptr = *tmpname_ptr;
+         (*stackstring_ptr)++;
+         tmpname_ptr++;
+      }
+      tmpname_ptr = event_string;
+      while (*tmpname_ptr != '\0') {
+         **stackstring_ptr = *tmpname_ptr;
+         (*stackstring_ptr)++;
+         tmpname_ptr++;
+      }
+      **stackstring_ptr = ')';
+      (*stackstring_ptr)++;
+   }
+#endif
+}
+
 int vftr_get_stack_string_length(stacktree_t stacktree, int stackid, bool show_precise) {
    int stringlen = 0;
    int tmpstackid = stackid;
-   stringlen += strlen(stacktree.stacks[stackid].cleanname);
-   stringlen ++; // function seperating character "<", or null terminator
+   stringlen += vftr_stack_string_entry_length (stacktree.stacks[stackid]);
    while (stacktree.stacks[tmpstackid].caller >= 0) {
       tmpstackid = stacktree.stacks[tmpstackid].caller;
-      stringlen += strlen(stacktree.stacks[tmpstackid].cleanname);
+      stringlen += vftr_stack_string_entry_length (stacktree.stacks[tmpstackid]);
       stringlen ++; // function seperating character "<", or null terminator
       if (show_precise && stacktree.stacks[tmpstackid].precise) {
          stringlen ++; // '*' for indicating precise functions
@@ -197,11 +241,7 @@ char *vftr_get_stack_string(stacktree_t stacktree, int stackid, bool show_precis
    int tmpstackid = stackid;
    char *tmpname_ptr = stacktree.stacks[tmpstackid].cleanname;
    char *tmpstackstring_ptr = stackstring;
-   while (*tmpname_ptr != '\0') {
-      *tmpstackstring_ptr = *tmpname_ptr;
-      tmpstackstring_ptr++;
-      tmpname_ptr++;
-   }
+   vftr_fill_stack_string_entry (&tmpstackstring_ptr, stacktree.stacks[tmpstackid]);
    if (show_precise && stacktree.stacks[tmpstackid].precise) {
       *tmpstackstring_ptr = '*';
       tmpstackstring_ptr++;
@@ -211,12 +251,7 @@ char *vftr_get_stack_string(stacktree_t stacktree, int stackid, bool show_precis
       *tmpstackstring_ptr = '<';
       tmpstackstring_ptr++;
       tmpstackid = stacktree.stacks[tmpstackid].caller;
-      char *tmpname_ptr = stacktree.stacks[tmpstackid].cleanname;
-      while (*tmpname_ptr != '\0') {
-         *tmpstackstring_ptr = *tmpname_ptr;
-         tmpstackstring_ptr++;
-         tmpname_ptr++;
-      }
+      vftr_fill_stack_string_entry (&tmpstackstring_ptr, stacktree.stacks[tmpstackid]);
       if (show_precise && stacktree.stacks[tmpstackid].precise) {
          *tmpstackstring_ptr = '*';
          tmpstackstring_ptr++;

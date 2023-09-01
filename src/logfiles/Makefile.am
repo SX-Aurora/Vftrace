@@ -5,6 +5,7 @@ libvftr_logfiles_la_SOURCES = logfile_common.c \
                               logfile_summary.c \
                               logfile_prof_table.c \
                               logfile_stacklist.c \
+                              ranklogfile_stacklist.c \
                               ranklogfile.c \
                               ranklogfile_summary.c \
                               ranklogfile_prof_table.c 
