@@ -180,10 +180,15 @@ void vftr_print_stacktree(FILE *fp, stacktree_t stacktree) {
 int vftr_stack_string_entry_length (vftr_stack_t stack) {
    int stringlen = strlen(stack.cleanname);
 #ifdef _ACCPROF
-   accprofile_t accprof = stack.profiling.profiles[0].accprof;
-   if (vftr_accprof_event_is_defined (accprof.event_type)) {
-      char *event_string = vftr_accprof_event_string (accprof.event_type);
-      stringlen += 6 + strlen(event_string);
+   // Profiles are not necessarily allocated. They are created on-demand
+   // in function hooks. This means that for some tests, the profiles pointer
+   // is NULL and there is no ACC info to be obtained.
+   if (stack.profiling.profiles) {
+      accprofile_t accprof = stack.profiling.profiles[0].accprof;
+      if (vftr_accprof_event_is_defined (accprof.event_type)) {
+         char *event_string = vftr_accprof_event_string (accprof.event_type);
+         stringlen += 6 + strlen(event_string);
+      }
    }
 #endif
    return stringlen + 1; // Add 1 for function seperating character "<", or null terminator
@@ -197,23 +202,25 @@ void vftr_fill_stack_string_entry (char **stackstring_ptr, vftr_stack_t stack) {
       tmpname_ptr++;
    }
 #ifdef _ACCPROF
-   accprofile_t accprof = stack.profiling.profiles[0].accprof;
-   if (vftr_accprof_event_is_defined (accprof.event_type)) {
-      char *event_string = vftr_accprof_event_string (accprof.event_type);
-      tmpname_ptr = "(ACC:";
-      while (*tmpname_ptr != '\0') {
-         **stackstring_ptr = *tmpname_ptr;
+   if (stack.profiling.profiles) {
+      accprofile_t accprof = stack.profiling.profiles[0].accprof;
+      if (vftr_accprof_event_is_defined (accprof.event_type)) {
+         char *event_string = vftr_accprof_event_string (accprof.event_type);
+         tmpname_ptr = "(ACC:";
+         while (*tmpname_ptr != '\0') {
+            **stackstring_ptr = *tmpname_ptr;
+            (*stackstring_ptr)++;
+            tmpname_ptr++;
+         }
+         tmpname_ptr = event_string;
+         while (*tmpname_ptr != '\0') {
+            **stackstring_ptr = *tmpname_ptr;
+            (*stackstring_ptr)++;
+            tmpname_ptr++;
+         }
+         **stackstring_ptr = ')';
          (*stackstring_ptr)++;
-         tmpname_ptr++;
       }
-      tmpname_ptr = event_string;
-      while (*tmpname_ptr != '\0') {
-         **stackstring_ptr = *tmpname_ptr;
-         (*stackstring_ptr)++;
-         tmpname_ptr++;
-      }
-      **stackstring_ptr = ')';
-      (*stackstring_ptr)++;
    }
 #endif
 }
