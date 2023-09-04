@@ -186,7 +186,7 @@ int vftr_stack_string_entry_length (vftr_stack_t stack) {
       stringlen += 6 + strlen(event_string);
    }
 #endif
-   return stringlen + 1;
+   return stringlen + 1; // Add 1 for function seperating character "<", or null terminator
 }
 
 void vftr_fill_stack_string_entry (char **stackstring_ptr, vftr_stack_t stack) {
@@ -225,7 +225,6 @@ int vftr_get_stack_string_length(stacktree_t stacktree, int stackid, bool show_p
    while (stacktree.stacks[tmpstackid].caller >= 0) {
       tmpstackid = stacktree.stacks[tmpstackid].caller;
       stringlen += vftr_stack_string_entry_length (stacktree.stacks[tmpstackid]);
-      stringlen ++; // function seperating character "<", or null terminator
       if (show_precise && stacktree.stacks[tmpstackid].precise) {
          stringlen ++; // '*' for indicating precise functions
       }
