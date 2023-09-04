@@ -7,7 +7,8 @@
 
 #define N_ITER 10
 
-void do_region () {
+
+void __attribute__ ((noinline)) do_region () {
    vftrace_region_begin ("user-region-1");
    vftrace_region_end ("user-region-1");
 }
