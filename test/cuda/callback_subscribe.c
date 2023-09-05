@@ -37,7 +37,8 @@ int main (int argc, char *argv[]) {
 
 
    printf ("cbids: %d %d\n", dummy_cudaprof[0].cbid, dummy_cudaprof[1].cbid);
-   printf ("calls: %d %d\n", dummy_cudaprof[0].n_calls, dummy_cudaprof[1].n_calls);
+   printf ("calls: %d %d\n", dummy_cudaprof[0].n_calls[0] + dummy_cudaprof[0].n_calls[1],
+                             dummy_cudaprof[1].n_calls[0] + dummy_cudaprof[1].n_calls[1]);
    printf ("t_ms: %.3f %.3f\n", dummy_cudaprof[0].t_ms, dummy_cudaprof[1].t_ms);
    printf ("memcpy in: %lld %lld\n", dummy_cudaprof[0].memcpy_bytes[CUDA_COPY_IN],
                                      dummy_cudaprof[1].memcpy_bytes[CUDA_COPY_IN]);

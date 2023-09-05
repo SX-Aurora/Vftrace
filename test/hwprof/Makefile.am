@@ -128,15 +128,6 @@ TESTS = calculator.sh \
                      hwprof_region3.sh \
                      hwprof_region4.sh
 
-# The call to cudaGetDeviceProperties mixes up the local stack IDs,
-# leading to wrong-identified entries in the hardware observable table.
-# It is hard to extract this behavior and report it to NVIDIA, so that
-# we expect these tests to fail. 
-if ENABLE_CUDAPROF
-  XFAIL_TESTS = hwprof_region2.sh \
-                hwprof_region3.sh
-endif
-
 if ENABLE_PAPI
 TESTS += papi_init_test.sh
 endif

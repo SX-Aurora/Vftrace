@@ -69,7 +69,7 @@ void vftr_write_logfile_cuda_table(FILE *fp, collated_stacktree_t stacktree, con
       collated_cudaprofile_t cudaprof = this_stack->profile.cudaprof;
       if (cudaprof.cbid == 0) continue;
       stackids_with_cuda_data[i] = istack;
-      calls[i] = cudaprof.n_calls;
+      calls[i] = cudaprof.n_calls[0] + cudaprof.n_calls[1];
       cbids[i] = cudaprof.cbid;
       t_compute[i] = vftr_cuda_cbid_belongs_to_class (cbids[i], T_CUDA_COMP) ? cudaprof.t_ms / 1000 : 0;
       t_memcpy[i] = vftr_cuda_cbid_belongs_to_class (cbids[i], T_CUDA_MEMCP) ? cudaprof.t_ms / 1000 : 0;

@@ -53,7 +53,7 @@ int main(int argc, char **argv) {
       printf ("callprof.t_excl: %lld\n", callprof.time_excl_nsec);
       printf ("callprof.calls: %d\n", callprof.calls);
       printf ("cudaprof.cbid: %d\n", cudaprof.cbid);
-      printf ("cudaprof.calls: %d\n", cudaprof.n_calls);
+      printf ("cudaprof.calls: %d\n", cudaprof.n_calls[0] + cudaprof.n_calls[1]);
       printf ("cudaprof.t_ms: %.3f\n", cudaprof.t_ms);
       printf ("cudaprof.memcpy_in: %lld\n", cudaprof.memcpy_bytes[CUDA_COPY_IN]);
       printf ("cudaprof.memcpy_out: %lld\n", cudaprof.memcpy_bytes[CUDA_COPY_OUT]);
