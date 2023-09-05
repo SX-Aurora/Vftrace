@@ -23,6 +23,16 @@ void vftr_collate_cudaprofiles_root_self (collated_stacktree_t *collstacktree_pt
       collcudaprof->memcpy_bytes[0] = copy_cudaprof.memcpy_bytes[0];
       collcudaprof->memcpy_bytes[1] = copy_cudaprof.memcpy_bytes[1];
       collcudaprof->overhead_nsec = copy_cudaprof.overhead_nsec;
+
+      collcudaprof->on_nranks = 1;
+      for (int dir = 0; dir < 2; dir++) {
+        collcudaprof->max_on_rank[dir] = 0;
+        collcudaprof->min_on_rank[dir] = 0;
+        collcudaprof->avg_ncalls[dir] = collcudaprof->n_calls[dir];
+        collcudaprof->min_ncalls[dir] = collcudaprof->n_calls[dir];
+        collcudaprof->max_ncalls[dir] = collcudaprof->n_calls[dir];
+      }
+
    }
 }
 
@@ -34,7 +44,7 @@ static void vftr_collate_cudaprofiles_on_root (collated_stacktree_t *collstacktr
    typedef struct {
      int gid;
      int cbid;
-     int n_calls;
+     int n_calls[2];
      float t_ms;
      long long memcpy_bytes_in;
      long long memcpy_bytes_out;
@@ -43,8 +53,8 @@ static void vftr_collate_cudaprofiles_on_root (collated_stacktree_t *collstacktr
    
    //3 blocks: 3 x int, 1 x float, 3 x long long
    int nblocks = 3;
-   const int blocklengths[] = {3, 1, 3};
-   const MPI_Aint displacements[] = {0, 3 * sizeof(int), 3 * sizeof(int) + sizeof(float)};
+   const int blocklengths[] = {4, 1, 3};
+   const MPI_Aint displacements[] = {0, 4 * sizeof(int), 4 * sizeof(int) + sizeof(float)};
    const MPI_Datatype types[] = {MPI_INT, MPI_FLOAT, MPI_LONG_LONG_INT};
    MPI_Datatype cudaprofile_transfer_mpi_t;
    PMPI_Type_create_struct (nblocks, blocklengths, displacements, types,
@@ -60,7 +70,8 @@ static void vftr_collate_cudaprofiles_on_root (collated_stacktree_t *collstacktr
          cudaprofile_t cudaprof = mystack->profiling.profiles->cudaprof;
          sendbuf[istack].gid = mystack->gid;
          sendbuf[istack].cbid = cudaprof.cbid;
-         sendbuf[istack].n_calls = cudaprof.n_calls;
+         sendbuf[istack].n_calls[0] = cudaprof.n_calls[0];
+         sendbuf[istack].n_calls[1] = cudaprof.n_calls[1];
          sendbuf[istack].t_ms = cudaprof.t_ms;
          sendbuf[istack].memcpy_bytes_in = cudaprof.memcpy_bytes[0];
          sendbuf[istack].memcpy_bytes_out = cudaprof.memcpy_bytes[1];
@@ -87,11 +98,29 @@ static void vftr_collate_cudaprofiles_on_root (collated_stacktree_t *collstacktr
             collated_cudaprofile_t *collcudaprof = &(collstack->profile.cudaprof);
 
             collcudaprof->cbid = recvbuf[iprof].cbid;
-            collcudaprof->n_calls += recvbuf[iprof].n_calls;
+            collcudaprof->n_calls[0] += recvbuf[iprof].n_calls[0];
+            collcudaprof->n_calls[1] += recvbuf[iprof].n_calls[1];
             collcudaprof->t_ms += recvbuf[iprof].t_ms;
             collcudaprof->memcpy_bytes[0] += recvbuf[iprof].memcpy_bytes_in;
             collcudaprof->memcpy_bytes[1] += recvbuf[iprof].memcpy_bytes_out;
             collcudaprof->overhead_nsec += recvbuf[iprof].overhead_nsec; 
+
+            if (recvbuf[iprof].n_calls[0] > 0 || recvbuf[iprof].n_calls[1] > 0) {
+               collcudaprof->on_nranks++;
+               for (int dir = 0; dir < 2; dir++) {
+                  int n_calls = recvbuf[iprof].n_calls[dir];
+                  if (n_calls > 0) {
+                     collcudaprof->avg_ncalls[dir] += n_calls;
+                     if (n_calls > collcudaprof->max_ncalls[dir]) {
+                        collcudaprof->max_on_rank[dir] = irank;
+                        collcudaprof->max_ncalls[dir] = n_calls;
+                     } else if (n_calls < collcudaprof->min_ncalls[dir]) {
+                        collcudaprof->min_on_rank[dir] = irank;
+                        collcudaprof->min_ncalls[dir] = n_calls;
+                     }
+                  }
+               }
+            }
          }
       }
       free(recvbuf);

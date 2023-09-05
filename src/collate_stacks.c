@@ -98,19 +98,19 @@ void vftr_broadcast_collated_stacktree_root(collated_stacktree_t *stacktree_ptr)
    int nstacks = stacktree_ptr->nstacks;
    // broadcasting the caller ids
    int *tmpintarr = (int*) malloc((nstacks+1)*sizeof(int));
-   for (int istack=0; istack<nstacks; istack++) {
+   for (int istack = 0; istack < nstacks; istack++) {
       tmpintarr[istack] = stacktree_ptr->stacks[istack].caller;
    }
    PMPI_Bcast(tmpintarr, nstacks, MPI_INT, 0, MPI_COMM_WORLD);
    // communicate the precise-tracing status for each function
-   for (int istack=0; istack<nstacks; istack++) {
+   for (int istack = 0; istack < nstacks; istack++) {
       tmpintarr[istack] = stacktree_ptr->stacks[istack].precise ? 1 : 0;
    }
    PMPI_Bcast(tmpintarr, nstacks, MPI_INT, 0, MPI_COMM_WORLD);
    // broadcasting the function names.
    // first the length of each name
    int totallen = 0;
-   for (int istack=0; istack<nstacks; istack++) {
+   for (int istack = 0; istack < nstacks; istack++) {
       tmpintarr[istack] = strlen(stacktree_ptr->stacks[istack].name);
       totallen += tmpintarr[istack];
       totallen += 1; // null terminator between all strings
@@ -120,14 +120,33 @@ void vftr_broadcast_collated_stacktree_root(collated_stacktree_t *stacktree_ptr)
    PMPI_Bcast(tmpintarr, nstacks+1, MPI_INT, 0, MPI_COMM_WORLD);
    char *tmpchararr = (char*) malloc(totallen*sizeof(char));
    char *charptr = tmpchararr;
-   for (int istack=0; istack<nstacks; istack++) {
+   for (int istack = 0; istack < nstacks; istack++) {
       strcpy(charptr, stacktree_ptr->stacks[istack].name);
       charptr += tmpintarr[istack];
       charptr++; // null terminator should be copied by strcpy
    }
    PMPI_Bcast(tmpchararr, totallen, MPI_CHAR, 0, MPI_COMM_WORLD);
+  
+   int n_callees_tot = 0;
+   for (int istack = 0; istack < nstacks; istack++) {
+      tmpintarr[istack] = stacktree_ptr->stacks[istack].ncallees;
+      n_callees_tot += stacktree_ptr->stacks[istack].ncallees;
+   }
+   PMPI_Bcast (tmpintarr, nstacks, MPI_INT, 0, MPI_COMM_WORLD);
+   PMPI_Bcast (&n_callees_tot, 1, MPI_INT, 0, MPI_COMM_WORLD);
+
+   int *all_callees = (int*)malloc(n_callees_tot * sizeof(int));
+   int idx = 0;
+   for (int istack = 0; istack < nstacks; istack++) {
+     for (int icallee = 0; icallee < stacktree_ptr->stacks[istack].ncallees; icallee++) {
+        all_callees[idx++] = stacktree_ptr->stacks[istack].callees[icallee];
+     }
+   }
+   PMPI_Bcast (all_callees, n_callees_tot, MPI_INT, 0, MPI_COMM_WORLD);
+
    free(tmpintarr);
    free(tmpchararr);
+   free(all_callees);
    SELF_PROFILE_END_FUNCTION;
 }
 
@@ -139,12 +158,12 @@ void vftr_broadcast_collated_stacktree_receivers(collated_stacktree_t *stacktree
    // receiving the caller ids
    int *tmpintarr = (int*) malloc((nstacks+1)*sizeof(int));
    PMPI_Bcast(tmpintarr, nstacks, MPI_INT, 0, MPI_COMM_WORLD);
-   for (int istack=0; istack<nstacks; istack++) {
+   for (int istack = 0; istack < nstacks; istack++) {
       stacktree_ptr->stacks[istack].caller = tmpintarr[istack];
    }
    // recive the precise-tracing status for each function
    PMPI_Bcast(tmpintarr, nstacks, MPI_INT, 0, MPI_COMM_WORLD);
-   for (int istack=0; istack<nstacks; istack++) {
+   for (int istack = 0; istack < nstacks; istack++) {
       stacktree_ptr->stacks[istack].precise = tmpintarr[istack] == 1 ? true : false;
    }
    // receiving the function names;
@@ -156,13 +175,32 @@ void vftr_broadcast_collated_stacktree_receivers(collated_stacktree_t *stacktree
    char *tmpchararr = (char*) malloc(totallen*sizeof(char));
    char *charptr = tmpchararr;
    PMPI_Bcast(tmpchararr, totallen, MPI_CHAR, 0, MPI_COMM_WORLD);
-   for (int istack=0; istack<nstacks; istack++) {
+   for (int istack = 0; istack < nstacks; istack++) {
       stacktree_ptr->stacks[istack].name = strdup(charptr);
       charptr += tmpintarr[istack];
       charptr++; // null terminator should be copied by strcpy
    }
+
+   PMPI_Bcast (tmpintarr, nstacks, MPI_INT, 0, MPI_COMM_WORLD);
+   for (int istack = 0; istack < nstacks; istack++) {
+      stacktree_ptr->stacks[istack].ncallees = tmpintarr[istack]; 
+   }
+
+   int n_callees_tot;
+   PMPI_Bcast (&n_callees_tot, 1, MPI_INT, 0, MPI_COMM_WORLD);
+   int *all_callees = (int*)malloc(n_callees_tot * sizeof(int));
+   PMPI_Bcast (all_callees, n_callees_tot, MPI_INT, 0, MPI_COMM_WORLD);
+   int idx = 0;
+   for (int istack = 0; istack < nstacks; istack++) {
+      int ncallees = stacktree_ptr->stacks[istack].ncallees;
+      if (ncallees > 0) stacktree_ptr->stacks[istack].callees = (int*)malloc(ncallees * sizeof(int));
+      for (int icallee = 0; icallee < ncallees; icallee++) {
+         stacktree_ptr->stacks[istack].callees[icallee] = all_callees[idx++]; 
+      }
+   }
    free(tmpintarr);
    free(tmpchararr);
+   free(all_callees);
    SELF_PROFILE_END_FUNCTION;
 }
 
@@ -242,9 +280,14 @@ collated_stacktree_t vftr_collate_stacks(stacktree_t *stacktree_ptr) {
          global_stack->gid = gid;
          global_stack->precise = local_stack->precise;
          global_stack->caller = -1;
+         global_stack->ncallees = local_stack->ncallees;
+         global_stack->callees = (int*)malloc(local_stack->ncallees * sizeof(int));
+         for (int i = 0; i < local_stack->ncallees; i++) {
+            global_stack->callees[i] = local2global_ID[local_stack->callees[i]];
+         }
          global_stack->name = strdup(local_stack->cleanname);
       }
-      for (int lid=1; lid<stacktree_ptr->nstacks; lid++) {
+      for (int lid = 1; lid < stacktree_ptr->nstacks; lid++) {
          vftr_stack_t *local_stack = stacktree_ptr->stacks+lid;
          int gid = local2global_ID[lid];
          collated_stack_t *global_stack = coll_stacktree.stacks+gid;
@@ -252,6 +295,11 @@ collated_stacktree_t vftr_collate_stacks(stacktree_t *stacktree_ptr) {
          global_stack->gid = gid;
          global_stack->precise = local_stack->precise;
          global_stack->caller = local2global_ID[local_stack->caller];
+         global_stack->ncallees = local_stack->ncallees;
+         global_stack->callees = (int*)malloc(local_stack->ncallees * sizeof(int));
+         for (int i = 0; i < local_stack->ncallees; i++) {
+            global_stack->callees[i] = local2global_ID[local_stack->callees[i]];
+         }
          global_stack->name = strdup(local_stack->cleanname);
       }
    }

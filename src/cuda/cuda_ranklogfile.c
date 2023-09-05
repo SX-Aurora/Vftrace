@@ -58,20 +58,19 @@ void vftr_extract_kernel_calls (vftr_stack_t *stacks_ptr, int stack_id,
   } 
 }
 
-void vftr_write_cuda_memcpy_stats (FILE *fp, stacktree_t stacktree, config_t config) {
-   vftr_stack_t **sorted_stacks = vftr_sort_stacks_for_cuda (config, stacktree);
+void vftr_write_cuda_memcpy_stats (FILE *fp, stacktree_t stacktree) {
    
    fprintf (fp, "\nCUDA ratio of memcpy / kernel calls: \n");
    for (int istack = 0; istack < stacktree.nstacks; istack++) {
-      vftr_stack_t *this_stack = sorted_stacks[istack];
-      cudaprofile_t cudaprof = this_stack->profiling.profiles->cudaprof;
+      vftr_stack_t this_stack = stacktree.stacks[istack];
+      cudaprofile_t cudaprof = this_stack.profiling.profiles->cudaprof;
       int cbid = cudaprof.cbid;
       if (vftr_cuda_cbid_belongs_to_class (cbid, T_CUDA_MEMCP)) {
-         fprintf (fp, "%s:    in: %d, out: %d\n", stacktree.stacks[this_stack->caller].name,
+         fprintf (fp, "%s:    in: %d, out: %d\n", stacktree.stacks[this_stack.caller].name,
                   cudaprof.n_calls[CUDA_COPY_IN], cudaprof.n_calls[CUDA_COPY_OUT]);
          kernel_call_t *kc_head = NULL;
          kernel_call_t *kc_current = NULL;
-         vftr_extract_kernel_calls (stacktree.stacks, istack, &kc_head, &kc_current);
+         vftr_extract_kernel_calls (stacktree.stacks, this_stack.caller, &kc_head, &kc_current);
          kc_current = kc_head;
          while (kc_current != NULL) {
             fprintf (fp, "  ->  %s:  %d\n",

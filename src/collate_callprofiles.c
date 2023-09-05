@@ -26,7 +26,7 @@ static void vftr_collate_callprofiles_root_self(collated_stacktree_t *collstackt
       collcallprof->time_excl_nsec = 0ll;
       collcallprof->overhead_nsec = 0ll;
 
-      for (int iprof=0; iprof<stack->profiling.nprofiles; iprof++) {
+      for (int iprof = 0; iprof < stack->profiling.nprofiles; iprof++) {
          callprofile_t *callprof = &(stack->profiling.profiles[iprof].callprof);
    
          collcallprof->calls += callprof->calls;
@@ -77,18 +77,18 @@ static void vftr_collate_callprofiles_on_root(collated_stacktree_t *collstacktre
       int nprofiles = stacktree_ptr->nstacks;
       callprofile_transfer_t *sendbuf = (callprofile_transfer_t*)
          malloc(nprofiles*sizeof(callprofile_transfer_t));
-      for (int istack=0; istack<nprofiles; istack++) {
+      for (int istack = 0; istack < nprofiles; istack++) {
          sendbuf[istack].gid = 0;
          sendbuf[istack].calls = 0ll;
          sendbuf[istack].time_nsec = 0ll;
          sendbuf[istack].time_excl_nsec = 0ll;
          sendbuf[istack].overhead_nsec = 0ll;
       }
-      for (int istack=0; istack<nprofiles; istack++) {
+      for (int istack = 0; istack < nprofiles; istack++) {
          vftr_stack_t *mystack = stacktree_ptr->stacks+istack;
          sendbuf[istack].gid = mystack->gid;
          // need to go over the calling profiles threadwise
-         for (int iprof=0; iprof<mystack->profiling.nprofiles; iprof++) {
+         for (int iprof = 0; iprof < mystack->profiling.nprofiles; iprof++) {
             profile_t *myprof = mystack->profiling.profiles+iprof;
             callprofile_t callprof = myprof->callprof;
             sendbuf[istack].calls += callprof.calls;
@@ -112,7 +112,7 @@ static void vftr_collate_callprofiles_on_root(collated_stacktree_t *collstacktre
       callprofile_transfer_t *recvbuf = (callprofile_transfer_t*)
          malloc(maxprofiles*sizeof(callprofile_transfer_t));
       memset(recvbuf, 0, maxprofiles*sizeof(callprofile_transfer_t));
-      for (int irank=1; irank<nranks; irank++) {
+      for (int irank = 1; irank < nranks; irank++) {
          int nprofiles = nremote_profiles[irank];
          MPI_Status status;
          PMPI_Recv(recvbuf, nprofiles,
@@ -120,7 +120,7 @@ static void vftr_collate_callprofiles_on_root(collated_stacktree_t *collstacktre
                    irank, irank,
                    MPI_COMM_WORLD,
                    &status);
-         for (int iprof=0; iprof<nprofiles; iprof++) {
+         for (int iprof = 0; iprof < nprofiles; iprof++) {
             int gid = recvbuf[iprof].gid;
             collated_stack_t *collstack = collstacktree_ptr->stacks+gid;
             collated_callprofile_t *collcallprof = &(collstack->profile.callprof);

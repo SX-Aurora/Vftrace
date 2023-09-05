@@ -32,6 +32,65 @@ void vftr_get_total_cuda_times_for_logfile (collated_stacktree_t stacktree,
    }
 }
 
+typedef struct kernel_call_st {
+  struct kernel_call_st *next;
+  float avg_ncalls;
+  int min_ncalls;
+  int max_ncalls;
+  int stack_id;
+} kernel_call_t;
+
+void vftr_extract_kernel_calls_all (collated_stack_t *stacks_ptr, int stack_id,
+                                    kernel_call_t **kc_head, kernel_call_t **kc_current) {
+   collated_stack_t stack = stacks_ptr[stack_id];
+   if (stack.ncallees > 0) {
+      for (int icallee = 0; icallee < stack.ncallees; icallee++) {
+         vftr_extract_kernel_calls_all (stacks_ptr, stack.callees[icallee], kc_head, kc_current);
+      }
+   }
+   collated_cudaprofile_t cudaprof = stack.profile.cudaprof;
+   if (vftr_cuda_cbid_belongs_to_class (cudaprof.cbid, T_CUDA_COMP)) {
+     if (*kc_head == NULL) {
+        *kc_head = (kernel_call_t*)malloc(sizeof(kernel_call_t));
+        *kc_current = *kc_head;
+     } else {
+        (*kc_current)->next = (kernel_call_t*)malloc(sizeof(kernel_call_t));
+        *kc_current = (*kc_current)->next;
+     }
+     (*kc_current)->next = NULL;
+     (*kc_current)->avg_ncalls = (float)cudaprof.avg_ncalls[0] / cudaprof.on_nranks;
+     (*kc_current)->min_ncalls = cudaprof.min_ncalls[0];
+     (*kc_current)->max_ncalls = cudaprof.max_ncalls[0];
+     (*kc_current)->stack_id = stack_id;
+   }
+}
+
+void vftr_write_cuda_memcpy_stats_all (FILE *fp, collated_stacktree_t stacktree) {
+   fprintf (fp, "\nCUDA ratio of memcpy / kernel calls: \n");
+   for (int istack = 0; istack < stacktree.nstacks; istack++) {
+      collated_stack_t this_stack = stacktree.stacks[istack];
+      collated_cudaprofile_t cudaprof = this_stack.profile.cudaprof;
+      int cbid = cudaprof.cbid;
+      if (vftr_cuda_cbid_belongs_to_class (cbid, T_CUDA_MEMCP)) {
+         fprintf (fp, "%s:    in: %.2f %d %d, out: %.2f %d %d\n", stacktree.stacks[this_stack.caller].name,
+                       (float)cudaprof.avg_ncalls[0] / cudaprof.on_nranks, cudaprof.max_ncalls[0], cudaprof.min_ncalls[0],
+                       (float)cudaprof.avg_ncalls[1] / cudaprof.on_nranks, cudaprof.max_ncalls[1], cudaprof.min_ncalls[1]);
+         kernel_call_t *kc_head = NULL;
+         kernel_call_t *kc_current = NULL;
+         vftr_extract_kernel_calls_all (stacktree.stacks, this_stack.caller, &kc_head, &kc_current);
+         kc_current = kc_head;
+         while (kc_current != NULL) {
+           fprintf (fp, "  ->  %s:  %.2f %d %d\n",
+                    stacktree.stacks[kc_current->stack_id].name,
+                    kc_current->avg_ncalls,
+                    kc_current->min_ncalls,
+                    kc_current->max_ncalls);
+           kc_current =  kc_current->next;
+         }
+      }
+   }
+}
+
 void vftr_write_logfile_cuda_table(FILE *fp, collated_stacktree_t stacktree, config_t config) {
    int n_stackids_with_cuda_data = 0;
 

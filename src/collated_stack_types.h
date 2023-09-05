@@ -25,6 +25,8 @@ typedef struct {
    gid_list_t gid_list;
    bool precise;
    int caller;
+   int ncallees;
+   int *callees;
    // need a copy of the name for even for local functions
    // because functions from other processes might
    // not appear in the local symbol table (e.g. two binaries)

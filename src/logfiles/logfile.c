@@ -52,6 +52,7 @@ void vftr_write_logfile_other_tables (vftrace_t vftrace, vftr_logfile_fp_t all_f
       vftr_write_logfile_cuda_table (all_fp.fp[LOG_CUDA],
                                      vftrace.process.collated_stacktree,
                                      vftrace.config);
+      vftr_write_cuda_memcpy_stats_all(all_fp.fp[LOG_CUDA], vftrace.process.collated_stacktree);
    }
 #endif
 
