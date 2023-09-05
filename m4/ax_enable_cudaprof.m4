@@ -11,18 +11,6 @@ AC_DEFUN([AX_ENABLE_CUDAPROF], [
    AC_MSG_CHECKING([whether Cupti is supported])
    AM_CONDITIONAL([ENABLE_CUDAPROF], [test "$with_cupti_present" = "yes"])
 
-   AC_MSG_CHECKING([if NVIDIA compiler is used])
-   if test "x$($CC --version | grep -m 1 -i nvidia | wc -l)" = "x1" ; then
-      has_nvidia_compiler="yes"
-   else
-      has_nvidia_compiler="no"
-   fi
-   AC_MSG_RESULT([$has_nvidia_compiler])
-
-   AM_CONDITIONAL([HAS_NVIDIA_COMPILER], [test "x$has_nvidia_compiler" = "xyes"])
-   AM_COND_IF([ENABLE_CUDAPROF],
-      [AM_COND_IF([HAS_NVIDIA_COMPILER], [], [AC_MSG_FAILURE([Need NVIDIA compiler])])], [], [])
-
    AC_MSG_RESULT(${with_cupti_present})
    AM_COND_IF([ENABLE_CUDAPROF],
       [AX_APPEND_FLAG([-L${with_cupti}/lib64], [LDFLAGS])])
