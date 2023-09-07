@@ -270,6 +270,23 @@ collated_stacktree_t vftr_collate_stacks(stacktree_t *stacktree_ptr) {
       PMPI_Comm_rank(MPI_COMM_WORLD, &myrank);
    }
 #endif
+
+   typedef struct {
+      int gid;
+      int return_id;
+      int name_length;
+      int precise;
+      int ncallees;
+   } missing_stack_transfer_t;
+   const int blocklengths[] = {5};
+   const MPI_Aint displacements[] = {0};
+   const MPI_Datatype types[] = {MPI_INT};
+   MPI_Datatype missing_stack_transfer_mpi_t;
+   PMPI_Type_create_struct (1, blocklengths,
+                           displacements, types,
+                           &missing_stack_transfer_mpi_t); 
+   PMPI_Type_commit (&missing_stack_transfer_mpi_t);
+
    if (myrank == 0) {
       {
          int lid = 0;
@@ -333,20 +350,17 @@ collated_stacktree_t vftr_collate_stacks(stacktree_t *stacktree_ptr) {
                PMPI_Recv(&hasnmissing, 1, MPI_INT, irank, 0, MPI_COMM_WORLD, &mystat);
                // only proceed if the number of stacks is positive
                if (hasnmissing > 0) {
-                   // Allocate space for the Stack information
-                   // globalIDs  -> 4*istack+0
-                   // returnID   -> 4*istack+1
-                   // NameLength -> 4*istack+2
-                   // precise    -> 4*istack+3
-                   int *missingStackInfo = (int*) malloc(5*hasnmissing*sizeof(int));
+                   missing_stack_transfer_t *missing_stack_info =
+                      (missing_stack_transfer_t*) malloc(hasnmissing * sizeof(missing_stack_transfer_t));
                    // Receive the found information from remote process
-                   PMPI_Recv(missingStackInfo, 5*hasnmissing, MPI_INT,
-                             irank, 0, MPI_COMM_WORLD, &mystat);
+                   PMPI_Recv (missing_stack_info, hasnmissing,
+                              missing_stack_transfer_mpi_t, irank, 0,
+                              MPI_COMM_WORLD, &mystat);
 
                    // Create a buffer that contains all stack names in contatenated form
                    int sumlength = 0;
                    for (int istack = 0; istack < hasnmissing; istack++) {
-                      sumlength += missingStackInfo[5*istack+2];
+                      sumlength += missing_stack_info[istack].name_length;
                    }
                    char *concatNames = (char*) malloc(sumlength*sizeof(char));
 
@@ -356,7 +370,7 @@ collated_stacktree_t vftr_collate_stacks(stacktree_t *stacktree_ptr) {
 
                    int n_callees_tot = 0;
                    for (int istack = 0; istack < hasnmissing; istack++) {
-                       n_callees_tot += missingStackInfo[5*istack+4];
+                       n_callees_tot += missing_stack_info[istack].ncallees;
                    }
                    int *all_callees = (int*)malloc(n_callees_tot * sizeof(int));
                    PMPI_Recv (all_callees, n_callees_tot, MPI_INT, irank, 0,
@@ -366,23 +380,23 @@ collated_stacktree_t vftr_collate_stacks(stacktree_t *stacktree_ptr) {
                    char *tmpstrptr = concatNames;
                    int idx = 0;
                    for (int istack = 0; istack < hasnmissing; istack++) {
-                      int globID = missingStackInfo[5*istack+0];
-                      coll_stacktree.stacks[globID].caller = missingStackInfo[5*istack+1];
-                      coll_stacktree.stacks[globID].name = strdup(tmpstrptr);
+                      int glob_id = missing_stack_info[istack].gid;
+                      coll_stacktree.stacks[glob_id].caller = missing_stack_info[istack].return_id;
+                      coll_stacktree.stacks[glob_id].name = strdup(tmpstrptr);
                       // next string
-                      tmpstrptr += missingStackInfo[5*istack+2];
-                      // is precise ?
-                      coll_stacktree.stacks[globID].precise = missingStackInfo[5*istack+3] != 0;
-                      coll_stacktree.stacks[globID].ncallees = missingStackInfo[5*istack+4]; 
-                      coll_stacktree.stacks[globID].callees = (int*)malloc(missingStackInfo[5*istack+4] * sizeof(int));
-                      for (int icallee = 0; icallee < missingStackInfo[5*istack+4]; icallee++) {
-                         coll_stacktree.stacks[globID].callees[icallee] = all_callees[idx++];
+                      tmpstrptr += missing_stack_info[istack].name_length;
+                      coll_stacktree.stacks[glob_id].precise = missing_stack_info[istack].precise != 0;
+                      int ncallees = missing_stack_info[istack].ncallees;
+                      coll_stacktree.stacks[glob_id].ncallees = ncallees; 
+                      coll_stacktree.stacks[glob_id].callees = (int*)malloc(ncallees * sizeof(int));
+                      for (int icallee = 0; icallee < ncallees; icallee++) {
+                         coll_stacktree.stacks[glob_id].callees[icallee] = all_callees[idx++];
                       }
                    }
 
                    free(concatNames);
                    free(all_callees);
-                   free(missingStackInfo);
+                   free(missing_stack_info);
 
                }
             }
@@ -413,43 +427,40 @@ collated_stacktree_t vftr_collate_stacks(stacktree_t *stacktree_ptr) {
             PMPI_Send(&hasnmissing, 1, MPI_INT, 0, 0, MPI_COMM_WORLD);
             // only proceed if the number of stacks is positive
             if (hasnmissing > 0) {
-               // Allocate space for the global IDs, return ID, and the name lengths
-               // globalIDs  -> 4*istack+0
-               // returnID   -> 4*istack+1
-               // NameLength -> 4*istack+2
-               // Precise    -> 4*istack+3
-               int *missingStackInfo = (int*) malloc(5*hasnmissing*sizeof(int));
+               missing_stack_transfer_t *missing_stack_info =
+                   (missing_stack_transfer_t*)malloc(hasnmissing * sizeof(missing_stack_transfer_t));
                // Go through the stacks and record the needed information
                int imatch = 0;
                for (int istack = 0; istack < nmissing; istack++) {
                   int globID = missingstacks[istack];
                   int locID = global2local_ID[globID];
                   if (locID >= 0) {
-                     missingStackInfo[5*imatch+0] = globID;
+                     missing_stack_info[imatch].gid = globID;
                      vftr_stack_t *local_stack = stacktree_ptr->stacks+locID;
-                     missingStackInfo[5*imatch+1] = local2global_ID[local_stack->caller];
+                     missing_stack_info[imatch].return_id = local2global_ID[local_stack->caller];
                      // add one to length due to null terminator
-                     missingStackInfo[5*imatch+2] = strlen(local_stack->cleanname) + 1;
-                     missingStackInfo[5*imatch+3] = local_stack->precise ? 1 : 0;
-                     missingStackInfo[5*imatch+4] = local_stack->ncallees;
+                     missing_stack_info[imatch].name_length = strlen(local_stack->cleanname) + 1;
+                     missing_stack_info[imatch].precise = local_stack->precise ? 1 : 0;
+                     missing_stack_info[imatch].ncallees = local_stack->ncallees;
                      imatch++;
                   }
                }
                // Communicate the found information to process 0;
-               PMPI_Send(missingStackInfo, 5*hasnmissing, MPI_INT, 0, 0, MPI_COMM_WORLD);
+               PMPI_Send(missing_stack_info, hasnmissing, missing_stack_transfer_mpi_t,
+                         0, 0, MPI_COMM_WORLD);
                // Create a buffer that contains all stack names in contatenated form
                int sumlength = 0;
                for (int istack = 0; istack < hasnmissing; istack++) {
-                  sumlength += missingStackInfo[5*istack+2];
+                  sumlength += missing_stack_info[istack].name_length;
                }
                char *concatNames = (char*) malloc(sumlength*sizeof(char));
                // concatenate the names into one string
                char *tmpstrptr = concatNames;
                for (int istack = 0; istack < hasnmissing; istack++) {
-                  int globID = missingStackInfo[5*istack+0];
+                  int globID = missing_stack_info[istack].gid;
                   int locID = global2local_ID[globID];
                   strcpy(tmpstrptr, stacktree_ptr->stacks[locID].cleanname);
-                  tmpstrptr += missingStackInfo[5*istack+2]-1;
+                  tmpstrptr += missing_stack_info[istack].name_length-1;
                   // add null terminator
                   *tmpstrptr = '\0';
                   tmpstrptr++;
@@ -459,7 +470,7 @@ collated_stacktree_t vftr_collate_stacks(stacktree_t *stacktree_ptr) {
 
                int n_callees_tot = 0;
                for (int istack = 0; istack < hasnmissing; istack++) {
-                  n_callees_tot += missingStackInfo[5*istack+4];
+                  n_callees_tot += missing_stack_info[istack].ncallees;
                }
 
                int *all_callees = (int*)malloc(n_callees_tot * sizeof(int));
@@ -480,7 +491,7 @@ collated_stacktree_t vftr_collate_stacks(stacktree_t *stacktree_ptr) {
                // free everything. This should be all on the remote processes
                free(concatNames);
                free(all_callees);
-               free(missingStackInfo);
+               free(missing_stack_info);
             }
             free(missingstacks);
          }
