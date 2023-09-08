@@ -67,7 +67,7 @@ static void vftr_collate_hwprofiles_on_root (collated_stacktree_t *collstacktree
       for (int isend = 0; isend < n_send; isend++) {
          for (int istack = 0; istack < nprofiles; istack++) {
             vftr_stack_t *mystack = stacktree_ptr->stacks + istack;
-            hwprofile_t hwprof = mystack->profiling.profiles->hwprof;
+            hwprofile_t hwprof = mystack->profiling.profiles[0].hwprof;
             sendbuf[istack].gid = mystack->gid;
             sendbuf[istack].counter_incl = isend < num_counters ? hwprof.counters_incl[isend] : 0;
             sendbuf[istack].counter_excl = isend < num_counters ? hwprof.counters_excl[isend] : 0;

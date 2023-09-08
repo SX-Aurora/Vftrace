@@ -91,7 +91,7 @@ static void vftr_collate_accprofiles_on_root (collated_stacktree_t *collstacktre
       memset (sendbuf, 0, nprofiles * sizeof(accprofile_transfer_t));
       for (int istack = 0; istack < nprofiles; istack++) {
          vftr_stack_t *mystack = stacktree_ptr->stacks + istack;
-         accprofile_t accprof = mystack->profiling.profiles->accprof;
+         accprofile_t accprof = mystack->profiling.profiles[0].accprof;
          sendbuf[istack].gid = mystack->gid;
          sendbuf[istack].region_id = accprof.region_id;
          sendbuf[istack].event_type = accprof.event_type;

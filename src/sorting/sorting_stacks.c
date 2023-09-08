@@ -330,7 +330,7 @@ void vftr_sort_stacks_for_mpiprof(config_t config,
      double *observables   = (double*)malloc(nstacks * sizeof(long long));
      for (int istack = 0; istack < nstacks; istack++) {
         vftr_stack_t *stack = stacktree.stacks + istack;
-        hwprofile_t hwprof = stack->profiling.profiles->hwprof;
+        hwprofile_t hwprof = stack->profiling.profiles[0].hwprof;
         observables[istack] = hwprof.observables[sort_column];
      }
 

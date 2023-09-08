@@ -142,6 +142,8 @@ void CUPTIAPI vftr_cupti_event_callback (void *userdata,
       case CUPTI_RUNTIME_TRACE_CBID_cudaEventDestroy_v3020:
       case CUPTI_RUNTIME_TRACE_CBID_cudaEventQuery_v3020:
       case CUPTI_RUNTIME_TRACE_CBID_cudaGetDeviceProperties_v3020:
+      case CUPTI_RUNTIME_TRACE_CBID_cudaGetDeviceCount_v3020:
+      case CUPTI_RUNTIME_TRACE_CBID_cudaGetDeviceProperties_v2_v12000:
          return;
    }
 

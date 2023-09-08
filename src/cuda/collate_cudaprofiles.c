@@ -67,7 +67,7 @@ static void vftr_collate_cudaprofiles_on_root (collated_stacktree_t *collstacktr
       memset (sendbuf, 0, nprofiles * sizeof(cudaprofile_transfer_t));
       for (int istack = 0; istack < nprofiles; istack++) {
          vftr_stack_t *mystack = stacktree_ptr->stacks + istack;
-         cudaprofile_t cudaprof = mystack->profiling.profiles->cudaprof;
+         cudaprofile_t cudaprof = mystack->profiling.profiles[0].cudaprof;
          sendbuf[istack].gid = mystack->gid;
          sendbuf[istack].cbid = cudaprof.cbid;
          sendbuf[istack].n_calls[0] = cudaprof.n_calls[0];

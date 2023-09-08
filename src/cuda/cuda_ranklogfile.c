@@ -63,7 +63,7 @@ void vftr_write_cuda_memcpy_stats (FILE *fp, stacktree_t stacktree) {
    fprintf (fp, "\nCUDA ratio of memcpy / kernel calls: \n");
    for (int istack = 0; istack < stacktree.nstacks; istack++) {
       vftr_stack_t this_stack = stacktree.stacks[istack];
-      cudaprofile_t cudaprof = this_stack.profiling.profiles->cudaprof;
+      cudaprofile_t cudaprof = this_stack.profiling.profiles[0].cudaprof;
       int cbid = cudaprof.cbid;
       if (vftr_cuda_cbid_belongs_to_class (cbid, T_CUDA_MEMCP)) {
          fprintf (fp, "%s:    in: %d, out: %d\n", stacktree.stacks[this_stack.caller].name,
