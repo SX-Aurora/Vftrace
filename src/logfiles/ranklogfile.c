@@ -78,7 +78,7 @@ void vftr_write_ranklogfile_other_tables (vftrace_t vftrace, vftr_logfile_fp_t a
       if (vftrace.config.accprof.show_event_details.value) {
          vftr_write_ranklogfile_accprof_event_table (all_fp.fp[LOG_ACCPROF], vftrace.process.stacktree, vftrace.config);
       }
-      vftr_write_accprof_memcpy_stats (all_fp.fp[LOG_ACCPROF], vftrace.process.stacktree, vftrace.config);
+      vftr_write_accprof_memcpy_stats (all_fp.fp[LOG_ACCPROF], vftrace.process.stacktree);
    }
 #endif
 

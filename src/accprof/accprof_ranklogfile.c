@@ -204,9 +204,7 @@ void vftr_extract_kernel_calls_acc (vftr_stack_t *stacks_ptr, int stack_id,
   } 
 }
 
-void vftr_write_accprof_memcpy_stats (FILE *fp, stacktree_t stacktree, config_t config) {
-   vftr_stack_t **sorted_stacks = vftr_sort_stacks_for_accprof (config, stacktree);
-
+void vftr_write_accprof_memcpy_stats (FILE *fp, stacktree_t stacktree) {
    int *root_ids = (int*)malloc(stacktree.nstacks * sizeof(int));
    int *download_ids = (int*)malloc(stacktree.nstacks * sizeof(int));
    int *upload_ids = (int*)malloc(stacktree.nstacks * sizeof(int));

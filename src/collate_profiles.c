@@ -27,8 +27,8 @@ void vftr_collate_profiles(collated_stacktree_t *collstacktree_ptr,
    SELF_PROFILE_START_FUNCTION;
    int myrank = 0;
    int nranks = 1;
-   int nprofiles = stacktree_ptr->nstacks;
-   int *nremote_profiles = NULL;
+   int nstacks = stacktree_ptr->nstacks;
+   int *nremote_stacks = NULL;
    myrank = 0;
    nranks = 1;
 
@@ -43,42 +43,42 @@ void vftr_collate_profiles(collated_stacktree_t *collstacktree_ptr,
 
    // get the number of profiles to collect from each rank
    if (myrank == 0) {
-      nremote_profiles = (int*) malloc(nranks*sizeof(int));
-      nremote_profiles[0] = nprofiles;
+      nremote_stacks = (int*) malloc(nranks * sizeof(int));
+      nremote_stacks[0] = nstacks;
    }
 #ifdef _MPI
    if (mpi_initialized) {
-      PMPI_Gather(&nprofiles, 1,
+      PMPI_Gather(&nstacks, 1,
                   MPI_INT,
-                  nremote_profiles, 1,
+                  nremote_stacks, 1,
                   MPI_INT,
                   0, MPI_COMM_WORLD);
    }
 #endif
 
    vftr_collate_callprofiles(collstacktree_ptr, stacktree_ptr,
-                             myrank, nranks, nremote_profiles);
+                             myrank, nranks, nremote_stacks);
    vftr_collate_hwprofiles (collstacktree_ptr, stacktree_ptr,
-                             myrank, nranks, nremote_profiles);
+                             myrank, nranks, nremote_stacks);
 #ifdef _MPI
    vftr_collate_mpiprofiles(collstacktree_ptr, stacktree_ptr,
-                            myrank, nranks, nremote_profiles);
+                            myrank, nranks, nremote_stacks);
 #endif
 
 #ifdef _OMP
    vftr_collate_ompprofiles(collstacktree_ptr, stacktree_ptr,
-                            myrank, nranks, nremote_profiles);
+                            myrank, nranks, nremote_stacks);
 #endif
 
 #ifdef _CUDA
    vftr_collate_cudaprofiles(collstacktree_ptr, stacktree_ptr,
-                              myrank, nranks, nremote_profiles);
+                              myrank, nranks, nremote_stacks);
 #endif
 #ifdef _ACCPROF
   vftr_collate_accprofiles (collstacktree_ptr, stacktree_ptr,
-                            myrank, nranks, nremote_profiles);
+                            myrank, nranks, nremote_stacks);
 #endif
 
-   free(nremote_profiles);
+   free(nremote_stacks);
    SELF_PROFILE_END_FUNCTION;
 }

@@ -13,16 +13,16 @@ void vftr_collate_cudaprofiles_root_self (collated_stacktree_t *collstacktree_pt
       int i_collstack = stack->gid;
       collated_stack_t *collstack = collstacktree_ptr->stacks + i_collstack;
 
-      cudaprofile_t copy_cudaprof = stack->profiling.profiles[0].cudaprof;
+      cudaprofile_t local_cudaprof = stack->profiling.profiles[0].cudaprof;
       collated_cudaprofile_t *collcudaprof = &(collstack->profile.cudaprof);
 
-      collcudaprof->cbid = copy_cudaprof.cbid;
-      collcudaprof->n_calls[0] = copy_cudaprof.n_calls[0];
-      collcudaprof->n_calls[1] = copy_cudaprof.n_calls[1];
-      collcudaprof->t_ms = copy_cudaprof.t_ms;
-      collcudaprof->memcpy_bytes[0] = copy_cudaprof.memcpy_bytes[0];
-      collcudaprof->memcpy_bytes[1] = copy_cudaprof.memcpy_bytes[1];
-      collcudaprof->overhead_nsec = copy_cudaprof.overhead_nsec;
+      collcudaprof->cbid = local_cudaprof.cbid;
+      collcudaprof->n_calls[0] = local_cudaprof.n_calls[0];
+      collcudaprof->n_calls[1] = local_cudaprof.n_calls[1];
+      collcudaprof->t_ms = local_cudaprof.t_ms;
+      collcudaprof->memcpy_bytes[0] = local_cudaprof.memcpy_bytes[0];
+      collcudaprof->memcpy_bytes[1] = local_cudaprof.memcpy_bytes[1];
+      collcudaprof->overhead_nsec = local_cudaprof.overhead_nsec;
 
       collcudaprof->on_nranks = 1;
       for (int dir = 0; dir < 2; dir++) {
@@ -39,7 +39,7 @@ void vftr_collate_cudaprofiles_root_self (collated_stacktree_t *collstacktree_pt
 #ifdef _MPI
 static void vftr_collate_cudaprofiles_on_root (collated_stacktree_t *collstacktree_ptr,
                                                stacktree_t *stacktree_ptr,
-					       int myrank, int nranks, int *nremote_profiles) {
+					       int myrank, int nranks, int *nremote_stacks) {
 
    typedef struct {
      int gid;
@@ -82,14 +82,14 @@ static void vftr_collate_cudaprofiles_on_root (collated_stacktree_t *collstacktr
    } else {
       int maxprofiles = 0;
       for (int irank = 1; irank < nranks; irank++) {
-         maxprofiles = nremote_profiles[irank] > maxprofiles ? nremote_profiles[irank] : maxprofiles;
+         maxprofiles = nremote_stacks[irank] > maxprofiles ? nremote_stacks[irank] : maxprofiles;
       }
 
       cudaprofile_transfer_t *recvbuf = (cudaprofile_transfer_t*)malloc(maxprofiles * sizeof(cudaprofile_transfer_t));
       memset (recvbuf, 0, maxprofiles * sizeof(cudaprofile_transfer_t));
 
       for (int irank = 1; irank < nranks; irank++) {
-         int nprofiles = nremote_profiles[irank];
+         int nprofiles = nremote_stacks[irank];
          MPI_Status status;
          PMPI_Recv (recvbuf, nprofiles, cudaprofile_transfer_mpi_t, irank, irank, MPI_COMM_WORLD, &status);
          for (int iprof = 0; iprof < nprofiles; iprof++) {
@@ -131,13 +131,13 @@ static void vftr_collate_cudaprofiles_on_root (collated_stacktree_t *collstacktr
 
 void vftr_collate_cudaprofiles (collated_stacktree_t *collstacktree_ptr,
 			        stacktree_t *stacktree_ptr,
-				int myrank, int nranks, int *nremote_profiles) {
+				int myrank, int nranks, int *nremote_stacks) {
    vftr_collate_cudaprofiles_root_self(collstacktree_ptr, stacktree_ptr);
 #ifdef _MPI
    int mpi_initialized;
    PMPI_Initialized(&mpi_initialized);
    if (mpi_initialized) {
-      vftr_collate_cudaprofiles_on_root (collstacktree_ptr, stacktree_ptr, myrank, nranks, nremote_profiles);
+      vftr_collate_cudaprofiles_on_root (collstacktree_ptr, stacktree_ptr, myrank, nranks, nremote_stacks);
    }
 #endif
 }

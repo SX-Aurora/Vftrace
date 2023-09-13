@@ -51,7 +51,7 @@ static void vftr_collate_callprofiles_root_self(collated_stacktree_t *collstackt
 static void vftr_collate_callprofiles_on_root(collated_stacktree_t *collstacktree_ptr,
                                               stacktree_t *stacktree_ptr,
                                               int myrank, int nranks,
-                                              int *nremote_profiles) {
+                                              int *nremote_stacks) {
    SELF_PROFILE_START_FUNCTION;
    // define datatypes required for collating callprofiles
    typedef struct {
@@ -74,17 +74,17 @@ static void vftr_collate_callprofiles_on_root(collated_stacktree_t *collstacktre
 
    if (myrank > 0) {
       // every rank fills their sendbuffer
-      int nprofiles = stacktree_ptr->nstacks;
+      int nstacks = stacktree_ptr->nstacks;
       callprofile_transfer_t *sendbuf = (callprofile_transfer_t*)
-         malloc(nprofiles*sizeof(callprofile_transfer_t));
-      for (int istack = 0; istack < nprofiles; istack++) {
+         malloc(nstacks * sizeof(callprofile_transfer_t));
+      for (int istack = 0; istack < nstacks; istack++) {
          sendbuf[istack].gid = 0;
          sendbuf[istack].calls = 0ll;
          sendbuf[istack].time_nsec = 0ll;
          sendbuf[istack].time_excl_nsec = 0ll;
          sendbuf[istack].overhead_nsec = 0ll;
       }
-      for (int istack = 0; istack < nprofiles; istack++) {
+      for (int istack = 0; istack < nstacks; istack++) {
          vftr_stack_t *mystack = stacktree_ptr->stacks+istack;
          sendbuf[istack].gid = mystack->gid;
          // need to go over the calling profiles threadwise
@@ -97,50 +97,50 @@ static void vftr_collate_callprofiles_on_root(collated_stacktree_t *collstacktre
             sendbuf[istack].overhead_nsec += callprof.overhead_nsec;
          }
       }
-      PMPI_Send(sendbuf, nprofiles,
+      PMPI_Send(sendbuf, nstacks,
                 callprofile_transfer_mpi_t,
                 0, myrank,
                 MPI_COMM_WORLD);
       free(sendbuf);
    } else {
-      int maxprofiles = 0;
-      for (int irank=1; irank<nranks; irank++) {
-         maxprofiles = nremote_profiles[irank] > maxprofiles ? 
-                       nremote_profiles[irank] :
-                       maxprofiles;
+      int maxstacks = 0;
+      for (int irank = 1; irank < nranks; irank++) {
+         maxstacks = nremote_stacks[irank] > maxstacks ? 
+                       nremote_stacks[irank] :
+                       maxstacks;
       }
       callprofile_transfer_t *recvbuf = (callprofile_transfer_t*)
-         malloc(maxprofiles*sizeof(callprofile_transfer_t));
-      memset(recvbuf, 0, maxprofiles*sizeof(callprofile_transfer_t));
+         malloc(maxstacks * sizeof(callprofile_transfer_t));
+      memset(recvbuf, 0, maxstacks * sizeof(callprofile_transfer_t));
       for (int irank = 1; irank < nranks; irank++) {
-         int nprofiles = nremote_profiles[irank];
+         int nstacks = nremote_stacks[irank];
          MPI_Status status;
-         PMPI_Recv(recvbuf, nprofiles,
+         PMPI_Recv(recvbuf, nstacks,
                    callprofile_transfer_mpi_t,
                    irank, irank,
                    MPI_COMM_WORLD,
                    &status);
-         for (int iprof = 0; iprof < nprofiles; iprof++) {
-            int gid = recvbuf[iprof].gid;
+         for (int istack = 0; istack < nstacks; istack++) {
+            int gid = recvbuf[istack].gid;
             collated_stack_t *collstack = collstacktree_ptr->stacks+gid;
             collated_callprofile_t *collcallprof = &(collstack->profile.callprof);
      
-            collcallprof->calls += recvbuf[iprof].calls;
-            collcallprof->time_nsec += recvbuf[iprof].time_nsec;
-            collcallprof->time_excl_nsec += recvbuf[iprof].time_excl_nsec;
-            collcallprof->overhead_nsec += recvbuf[iprof].overhead_nsec;
+            collcallprof->calls += recvbuf[istack].calls;
+            collcallprof->time_nsec += recvbuf[istack].time_nsec;
+            collcallprof->time_excl_nsec += recvbuf[istack].time_excl_nsec;
+            collcallprof->overhead_nsec += recvbuf[istack].overhead_nsec;
 
             // collect call time imbalances info
-            if (recvbuf[iprof].time_excl_nsec > 0) {
+            if (recvbuf[istack].time_excl_nsec > 0) {
                collcallprof->on_nranks++;
-               collcallprof->average_time_nsec += recvbuf[iprof].time_excl_nsec;
+               collcallprof->average_time_nsec += recvbuf[istack].time_excl_nsec;
                // search for min and max values
-               if (recvbuf[iprof].time_excl_nsec > collcallprof->max_time_nsec) {
+               if (recvbuf[istack].time_excl_nsec > collcallprof->max_time_nsec) {
                   collcallprof->max_on_rank = irank;
-                  collcallprof->max_time_nsec = recvbuf[iprof].time_excl_nsec;
-               } else if (recvbuf[iprof].time_excl_nsec < collcallprof->min_time_nsec) {
+                  collcallprof->max_time_nsec = recvbuf[istack].time_excl_nsec;
+               } else if (recvbuf[istack].time_excl_nsec < collcallprof->min_time_nsec) {
                   collcallprof->min_on_rank = irank;
-                  collcallprof->min_time_nsec = recvbuf[iprof].time_excl_nsec;
+                  collcallprof->min_time_nsec = recvbuf[istack].time_excl_nsec;
                }
             }
          }
@@ -188,7 +188,7 @@ void vftr_compute_callprofile_imbalances(collated_stacktree_t *collstacktree_ptr
 void vftr_collate_callprofiles(collated_stacktree_t *collstacktree_ptr,
                                stacktree_t *stacktree_ptr,
                                int myrank, int nranks,
-                               int *nremote_profiles) {
+                               int *nremote_stacks) {
    SELF_PROFILE_START_FUNCTION;
    vftr_collate_callprofiles_root_self(collstacktree_ptr, stacktree_ptr);
 #ifdef _MPI
@@ -196,12 +196,12 @@ void vftr_collate_callprofiles(collated_stacktree_t *collstacktree_ptr,
    PMPI_Initialized(&mpi_initialized);
    if (mpi_initialized) {
       vftr_collate_callprofiles_on_root(collstacktree_ptr, stacktree_ptr,
-                                        myrank, nranks, nremote_profiles);
+                                        myrank, nranks, nremote_stacks);
    }
 #else
    (void) myrank;
    (void) nranks;
-   (void) nremote_profiles;
+   (void) nremote_stacks;
 #endif
    vftr_compute_callprofile_imbalances(collstacktree_ptr);
    SELF_PROFILE_END_FUNCTION;

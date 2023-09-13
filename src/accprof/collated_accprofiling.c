@@ -12,5 +12,12 @@ collated_accprofile_t vftr_new_collated_accprofiling() {
    prof.var_name = NULL;
    prof.kernel_name = NULL;
    prof.overhead_nsec = 0;
+   prof.on_nranks = 0;
+   memset (prof.ncalls, 0, 2 * sizeof(int));
+   memset (prof.avg_ncalls, 0, 2 * sizeof(int));
+   memset (prof.max_ncalls, 0, 2 * sizeof(int));
+   memset (prof.max_on_rank, 0, 2 * sizeof(int));
+   memset (prof.min_ncalls, 0, 2 * sizeof(int));
+   memset (prof.min_on_rank, 0, 2 * sizeof(int));
    return prof;
 }

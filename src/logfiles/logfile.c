@@ -66,6 +66,8 @@ void vftr_write_logfile_other_tables (vftrace_t vftrace, vftr_logfile_fp_t all_f
                                                  vftrace.process.collated_stacktree,
                                                  vftrace.config);
       }
+      vftr_write_accprof_memcpy_stats_all(all_fp.fp[LOG_ACCPROF],
+                                          vftrace.process.collated_stacktree);
    }
 #endif
 
