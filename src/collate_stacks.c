@@ -256,26 +256,6 @@ void vftr_fill_global_stacks_on_root (stacktree_t *stacktree_ptr,
    }
 }
 
-//void vftr_get_nmissing_on_root (collated_stacktree_t coll_stacktree,
-//                                int *nmissing, int **missing_stacks) {
-//   //int *nmissing = (int*)malloc(coll_stacktree.nstacks * sizeof(int));
-//   *nmissing = 0;
-//   //memset (nmissing, 0, coll_stacktree.nstacks * sizeof(int));
-//   for (int istack = 0; istack < coll_stacktree.nstacks; istack++) {
-//      if (coll_stacktree[istack].name == NULL) {
-//         *nmissing++;
-//      }
-//   }
-//   if (*nmissing > 0) {
-//     *missing_stacks = (int*)malloc(*nmissing * sizeof(int));
-//     int idx = 0;
-//     for (int istack = 0; istack < coll_stacktree.nstacks; istack++) {
-//        if (coll_stacktree[istack].name == NULL) {
-//          *missing_stacks[idx++] = istack;
-//        }
-//     }
-//   }
-//}
 #ifdef _MPI
 typedef struct {
    int gid;
@@ -510,7 +490,6 @@ collated_stacktree_t vftr_collate_stacks(stacktree_t *stacktree_ptr) {
 
          for (int irank = 1; irank < nranks; irank++) {
             // Send to the selected process how many entries are still missing
-            //PMPI_Send(&nmissing, 1, MPI_INT, irank, 0, MPI_COMM_WORLD);
             // if at least one entry is missing proceed
             if (nmissing > 0) {
                vftr_root_comm_missing_stacks_with_rank (coll_stacktree, irank); 
@@ -522,13 +501,11 @@ collated_stacktree_t vftr_collate_stacks(stacktree_t *stacktree_ptr) {
          MPI_Status mystat;
          // receive how many entries process 0 is missing
          int nmissing;
-         //PMPI_Recv(&nmissing, 1, MPI_INT, 0, 0, MPI_COMM_WORLD, &mystat);
          PMPI_Bcast (&nmissing, 1, MPI_INT, 0, MPI_COMM_WORLD);
      
          if (nmissing > 0) {
             // allocate space to hold the missing ids
             // receiving the missing stacks
-            //PMPI_Recv(missingstacks, nmissing, MPI_INT, 0, 0, MPI_COMM_WORLD, &mystat);
 
             // check how many of the missing stacks this process has infos about
             int *missingstacks = (int*) malloc(nmissing*sizeof(int));
