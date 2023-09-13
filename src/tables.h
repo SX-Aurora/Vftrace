@@ -34,4 +34,6 @@ void vftr_table_header_separating_line(table_t *table, bool value);
 
 void vftr_table_rows_separating_line(table_t *table, bool value);
 
+void vftr_print_table_hline (FILE *fp, int ncols, bool vlines[3], int *widths);
+
 #endif

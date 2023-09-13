@@ -238,7 +238,8 @@ void vftr_write_accprof_memcpy_stats (FILE *fp, stacktree_t stacktree) {
       }
    }
 
-   fprintf (fp, "\nOpenACC ratio of memcpy / kernel calls: \n");
+   fprintf (fp, "\nOpenACC ratio of memcpy / kernel calls: \n\n");
+   int table_width = 0;
    for (int istack = 0; istack < stacktree.nstacks; istack++) {
       if (root_ids[istack] > 0) {
          int root_id = istack;
@@ -247,17 +248,49 @@ void vftr_write_accprof_memcpy_stats (FILE *fp, stacktree_t stacktree) {
          int n_upload = stack_id_upload > 0 ? stacktree.stacks[stack_id_upload].profiling.profiles[0].callprof.calls : 0;
          int stack_id_download = download_ids[root_id];
          int n_download = stack_id_download > 0 ? stacktree.stacks[stack_id_download].profiling.profiles[0].callprof.calls : 0;
-         fprintf (fp, "%s:   in: %d, out: %d\n", memcpy_caller_name,
-                      n_upload, n_download);
+         int t = 28 + strlen (memcpy_caller_name)
+               + vftr_count_base_digits (n_upload, 10) + vftr_count_base_digits (n_download, 10);
+         if (t > table_width) table_width = t;
+      }
+   }
 
+   for (int istack = 0; istack < stacktree.nstacks; istack++) {
+      if (root_ids[istack] > 0) {
+         int root_id = istack;
+         char *memcpy_caller_name = stacktree.stacks[root_id].name;
+         int stack_id_upload = upload_ids[root_id];
+         int n_upload = stack_id_upload > 0 ? stacktree.stacks[stack_id_upload].profiling.profiles[0].callprof.calls : 0;
+         int stack_id_download = download_ids[root_id];
+         int n_download = stack_id_download > 0 ? stacktree.stacks[stack_id_download].profiling.profiles[0].callprof.calls : 0;
+         for (int i = 0; i < table_width; i++) {
+            fprintf (fp, "=");
+         }
+         fprintf (fp, "\n");
+         fprintf (fp, "Memcpy caller: %s, in: %d, out: %d\n", memcpy_caller_name,
+                      n_upload, n_download);
+         for (int i = 0; i < table_width; i++) {
+            fprintf (fp, "=");
+         }
+         fprintf (fp, "\n");
          kernel_call_t *kc_head = NULL;
          kernel_call_t *kc_current = NULL;
          vftr_extract_kernel_calls_acc (stacktree.stacks, root_id, &kc_head, &kc_current);
          kc_current = kc_head;
+         int max_n_callee = strlen("Callee");
+         int max_n_calls = strlen ("n_calls");
          while (kc_current != NULL) {
-            fprintf (fp, "  ->  %s:  %d\n",
-                     stacktree.stacks[kc_current->stack_id].name,
-                     kc_current->n_calls);
+            int n = strlen(stacktree.stacks[kc_current->stack_id].name);
+            if (n > max_n_callee) max_n_callee = n;
+            n = vftr_count_base_digits (kc_current->n_calls);
+            if (n > max_n_calls) max_n_calls = n;
+            kc_current = kc_current->next;
+         }
+         fprintf (fp, "%*s | %*s\n", max_n_callee, "Callee", max_n_calls, "n_calls");
+         kc_current = kc_head;
+         while (kc_current != NULL) {
+            fprintf (fp, "%*s | %*d\n",
+                     max_n_callee, stacktree.stacks[kc_current->stack_id].name,
+                     max_n_calls, kc_current->n_calls);
             kc_current = kc_current->next;
          }
       }

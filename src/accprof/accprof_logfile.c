@@ -174,7 +174,44 @@ void vftr_write_accprof_memcpy_stats_all (FILE *fp, collated_stacktree_t stacktr
       }
    }
 
-   fprintf (fp, "\nOpenACC ratio of memcpy / kernel calls: \n");
+   int n_caller_max = 0;
+   int n_avg_max = strlen("avg");
+   int n_min_max = strlen("min");
+   int n_max_max = strlen("max");
+
+   for (int istack = 0; istack < stacktree.nstacks; istack++) {
+     if (root_ids[istack] > 0) {
+         int root_id = istack;
+         int stack_id_upload = upload_ids[root_id];
+         int n_upload = stack_id_upload > 0 ? stacktree.stacks[stack_id_upload].profile.callprof.calls : 0;
+         int stack_id_download = download_ids[root_id];
+         int n_download = stack_id_download > 0 ? stacktree.stacks[stack_id_download].profile.callprof.calls : 0;
+         collated_accprofile_t accprof_up = stacktree.stacks[stack_id_upload].profile.accprof;
+         collated_accprofile_t accprof_down = stacktree.stacks[stack_id_download].profile.accprof;
+
+        int n = strlen(stacktree.stacks[root_id].name);
+        if (n > n_caller_max) n_caller_max = n;
+        int n1 = 3 + vftr_count_base_digits ((float)accprof_up.avg_ncalls[0] / accprof_up.on_nranks, 10);
+        int n2 = 3 + vftr_count_base_digits ((float)accprof_down.avg_ncalls[0] / accprof_down.on_nranks, 10);
+        if (n1 > n_avg_max) n_avg_max = n1;
+        if (n2 > n_avg_max) n_avg_max = n2;
+
+        n1 = vftr_count_base_digits (accprof_up.min_ncalls[0], 10);
+        n2 = vftr_count_base_digits (accprof_up.min_ncalls[1], 10);
+        if (n1 > n_min_max) n_min_max = n1;
+        if (n2 > n_min_max) n_min_max = n2;
+
+        n1 = vftr_count_base_digits (accprof_up.max_ncalls[0], 10);
+        n2 = vftr_count_base_digits (accprof_up.max_ncalls[1], 10);
+        if (n1 > n_max_max) n_min_max = n1;
+        if (n2 > n_max_max) n_min_max = n2;
+
+     }
+   }
+
+   int table_width = 18 + n_caller_max + n_avg_max + n_min_max + n_max_max;
+
+   fprintf (fp, "\nOpenACC ratio of memcpy / kernel calls: \n\n");
    for (int istack = 0; istack < stacktree.nstacks; istack++) {
       if (root_ids[istack] > 0) {
          int root_id = istack;
@@ -184,23 +221,63 @@ void vftr_write_accprof_memcpy_stats_all (FILE *fp, collated_stacktree_t stacktr
          int n_download = stack_id_download > 0 ? stacktree.stacks[stack_id_download].profile.callprof.calls : 0;
          collated_accprofile_t accprof_up = stacktree.stacks[stack_id_upload].profile.accprof;
          collated_accprofile_t accprof_down = stacktree.stacks[stack_id_download].profile.accprof;
-         fprintf (fp, "%s:    in: %.2f %d %d, out: %.2f %d %d\n",
-                      stacktree.stacks[root_id].name,
-                      (float)accprof_up.avg_ncalls[0] / accprof_up.on_nranks,
-                      accprof_up.max_ncalls[0], accprof_up.min_ncalls[0],
-                      (float)accprof_down.avg_ncalls[1] / accprof_down.on_nranks,
-                      accprof_down.max_ncalls[1], accprof_down.min_ncalls[1]);
+         for (int i = 0; i < table_width; i++) {
+            fprintf (fp, "=");
+         }
+         fprintf (fp, "\n");
+         fprintf (fp, "Memcpy caller: %*s %*s %*s %*s\n",
+                      n_caller_max, stacktree.stacks[root_id].name,
+                      n_avg_max, "avg",
+                      n_min_max, "min",
+                      n_max_max, "max");
+         fprintf (fp, "           in: %*s %*.2f %*d %*d\n",
+                      n_caller_max, "",
+                      n_avg_max, (float)accprof_up.avg_ncalls[0] / accprof_up.on_nranks,
+                      n_min_max, accprof_up.min_ncalls[0],
+                      n_max_max, accprof_up.max_ncalls[0]);
+         fprintf (fp, "          out: %*s %*.2f %*d %*d\n",
+                      n_caller_max, "",
+                      n_avg_max, (float)accprof_down.avg_ncalls[1] / accprof_down.on_nranks,
+                      n_min_max, accprof_down.min_ncalls[1],
+                      n_max_max, accprof_down.max_ncalls[1]);
+         for (int i = 0; i < table_width; i++) {
+            fprintf (fp, "=");
+         }
+         fprintf (fp, "\n");
 
          kernel_call_t *kc_head = NULL;
          kernel_call_t *kc_current = NULL;
          vftr_extract_kernel_calls_acc_all (stacktree.stacks, root_id, &kc_head, &kc_current);
          kc_current = kc_head;
+
+         int this_n_callee_max = strlen("Callee");
+         int this_n_avg_max = strlen("avg");
+         int this_n_min_max = strlen("min");
+         int this_n_max_max = strlen("max");
          while (kc_current != NULL) {
-            fprintf (fp, "  ->  %s:  %.2f %d %d\n",
-                     stacktree.stacks[kc_current->stack_id].name,
-                     kc_current->avg_ncalls,
-                     kc_current->min_ncalls,
-                     kc_current->max_ncalls);
+            int n = strlen(stacktree.stacks[kc_current->stack_id].name);
+            if (n > this_n_callee_max) this_n_callee_max = n;
+            n = 3 + vftr_count_base_digits (kc_current->avg_ncalls, 10);
+            if (n > this_n_avg_max) this_n_avg_max = n;
+            n = vftr_count_base_digits (kc_current->min_ncalls, 10);
+            if (n > this_n_min_max) this_n_min_max = n;
+            n = vftr_count_base_digits (kc_current->max_ncalls, 10);
+            if (n > this_n_max_max) this_n_max_max = n;
+            kc_current = kc_current->next;
+         }
+         fprintf (fp, "%*s | %*s | %*s | %*s\n",
+                  this_n_callee_max, "Callee",
+                  this_n_avg_max, "avg",
+                  this_n_min_max, "min",
+                  this_n_max_max, "max");
+
+         kc_current = kc_head;
+         while (kc_current != NULL) {
+            fprintf (fp, "%*s | %*.2f | %*d | %*d\n",
+                     this_n_callee_max, stacktree.stacks[kc_current->stack_id].name,
+                     this_n_avg_max, kc_current->avg_ncalls,
+                     this_n_min_max, kc_current->min_ncalls,
+                     this_n_max_max, kc_current->max_ncalls);
             kc_current = kc_current->next;
          }
       }
