@@ -40,7 +40,7 @@ void vftr_collate_accprofiles_root_self (collated_stacktree_t *collstacktree_ptr
         collaccprof->ncalls[0] = 0;
         collaccprof->ncalls[1] = callprof.calls; 
       } else {
-        collaccprof->ncalls[0] = 0;
+        collaccprof->ncalls[0] = callprof.calls;
         collaccprof->ncalls[1] = 0;
       }
 
@@ -131,7 +131,7 @@ static void vftr_collate_accprofiles_on_root (collated_stacktree_t *collstacktre
             sendbuf[istack].n_calls[0] = 0;
             sendbuf[istack].n_calls[1] = mystack->profiling.profiles[0].callprof.calls;
          } else {
-            sendbuf[istack].n_calls[0] = 0;
+            sendbuf[istack].n_calls[0] = mystack->profiling.profiles[0].callprof.calls;
             sendbuf[istack].n_calls[1] = 0;
          }
          if (local_accprof.source_file != NULL) {
