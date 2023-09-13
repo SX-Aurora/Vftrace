@@ -191,8 +191,8 @@ void vftr_write_accprof_memcpy_stats_all (FILE *fp, collated_stacktree_t stacktr
 
         int n = strlen(stacktree.stacks[root_id].name);
         if (n > n_caller_max) n_caller_max = n;
-        int n1 = 3 + vftr_count_base_digits ((float)accprof_up.avg_ncalls[0] / accprof_up.on_nranks, 10);
-        int n2 = 3 + vftr_count_base_digits ((float)accprof_down.avg_ncalls[0] / accprof_down.on_nranks, 10);
+        int n1 = 3 + vftr_count_base_digits_float ((float)accprof_up.avg_ncalls[0] / accprof_up.on_nranks, 10);
+        int n2 = 3 + vftr_count_base_digits_float ((float)accprof_down.avg_ncalls[0] / accprof_down.on_nranks, 10);
         if (n1 > n_avg_max) n_avg_max = n1;
         if (n2 > n_avg_max) n_avg_max = n2;
 
