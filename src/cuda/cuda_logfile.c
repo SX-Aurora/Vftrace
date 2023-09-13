@@ -7,6 +7,7 @@
 #include "collated_stack_types.h"
 #include "vftrace_state.h"
 #include "sorting.h"
+#include "misc_utils.h"
 
 #include "cupti_vftr_callbacks.h"
 #include "cudaprofiling_types.h"
@@ -66,25 +67,101 @@ void vftr_extract_kernel_calls_all (collated_stack_t *stacks_ptr, int stack_id,
 }
 
 void vftr_write_cuda_memcpy_stats_all (FILE *fp, collated_stacktree_t stacktree) {
-   fprintf (fp, "\nCUDA ratio of memcpy / kernel calls: \n");
+
+   int n_caller_max = 0;
+   int n_avg_max = strlen("avg");
+   int n_min_max = strlen("min");
+   int n_max_max = strlen("max");
+
    for (int istack = 0; istack < stacktree.nstacks; istack++) {
       collated_stack_t this_stack = stacktree.stacks[istack];
       collated_cudaprofile_t cudaprof = this_stack.profile.cudaprof;
       int cbid = cudaprof.cbid;
       if (vftr_cuda_cbid_belongs_to_class (cbid, T_CUDA_MEMCP)) {
-         fprintf (fp, "%s:    in: %.2f %d %d, out: %.2f %d %d\n", stacktree.stacks[this_stack.caller].name,
-                       (float)cudaprof.avg_ncalls[0] / cudaprof.on_nranks, cudaprof.max_ncalls[0], cudaprof.min_ncalls[0],
-                       (float)cudaprof.avg_ncalls[1] / cudaprof.on_nranks, cudaprof.max_ncalls[1], cudaprof.min_ncalls[1]);
+         int n = strlen(stacktree.stacks[this_stack.caller].name);
+         if (n > n_caller_max) n_caller_max = n;
+         int n1 = 3 + vftr_count_base_digits_float ((float)cudaprof.avg_ncalls[0] / cudaprof.on_nranks, 10);
+         int n2 = 3 + vftr_count_base_digits_float ((float)cudaprof.avg_ncalls[1] / cudaprof.on_nranks, 10);
+         if (n1 > n_avg_max) n_avg_max = n1;
+         if (n2 > n_avg_max) n_avg_max = n2;
+         n1 = vftr_count_base_digits (cudaprof.min_ncalls[0], 10);
+         n2 = vftr_count_base_digits (cudaprof.min_ncalls[1], 10);
+         if (n1 > n_min_max) n_min_max = n1; 
+         if (n2 > n_min_max) n_min_max = n2; 
+         n1 = vftr_count_base_digits (cudaprof.max_ncalls[0], 10);
+         n2 = vftr_count_base_digits (cudaprof.max_ncalls[1], 10);
+         if (n1 > n_max_max) n_max_max = n1;
+         if (n2 > n_max_max) n_max_max = n2;
+      }
+   }
+
+   int table_width = 18 + n_caller_max + n_avg_max + n_min_max + n_max_max;
+
+   fprintf (fp, "\nCUDA ratio of memcpy / kernel calls: \n\n");
+   for (int istack = 0; istack < stacktree.nstacks; istack++) {
+      collated_stack_t this_stack = stacktree.stacks[istack];
+      collated_cudaprofile_t cudaprof = this_stack.profile.cudaprof;
+      int cbid = cudaprof.cbid;
+      if (vftr_cuda_cbid_belongs_to_class (cbid, T_CUDA_MEMCP)) {
+         for (int i = 0; i < table_width; i++) {
+            fprintf (fp, "=");
+         }
+         fprintf (fp, "\n");
+         fprintf (fp, "Memcpy caller: %*s %*s %*s %*s\n",
+                      n_caller_max, stacktree.stacks[this_stack.caller].name,
+                      n_avg_max, "avg",
+                      n_min_max, "min",
+                      n_max_max, "max");
+         fprintf (fp, "           in: %*s %*.2f %*d %*d\n",
+                      n_caller_max, "",
+                      n_avg_max, (float)cudaprof.avg_ncalls[0] / cudaprof.on_nranks,
+                      n_min_max, cudaprof.min_ncalls[0],
+                      n_max_max, cudaprof.max_ncalls[0]);
+         fprintf (fp, "          out: %*s %*.2f %*d %*d\n",
+                      n_caller_max, "",
+                      n_avg_max, (float)cudaprof.avg_ncalls[1] / cudaprof.on_nranks,
+                      n_min_max, cudaprof.min_ncalls[1],
+                      n_max_max, cudaprof.max_ncalls[1]);
+         for (int i = 0; i < table_width; i++) {
+            fprintf (fp, "=");
+         }
+         fprintf (fp, "\n");
+
+
          kernel_call_t *kc_head = NULL;
          kernel_call_t *kc_current = NULL;
          vftr_extract_kernel_calls_all (stacktree.stacks, this_stack.caller, &kc_head, &kc_current);
          kc_current = kc_head;
+
+         int this_n_callee_max = strlen("Callee");
+         int this_n_avg_max = strlen("avg");
+         int this_n_min_max = strlen("min");
+         int this_n_max_max = strlen("max");
          while (kc_current != NULL) {
-           fprintf (fp, "  ->  %s:  %.2f %d %d\n",
-                    stacktree.stacks[kc_current->stack_id].name,
-                    kc_current->avg_ncalls,
-                    kc_current->min_ncalls,
-                    kc_current->max_ncalls);
+            int n = strlen(stacktree.stacks[kc_current->stack_id].name);
+            if (n > this_n_callee_max) this_n_callee_max = n;
+            n = 3 + vftr_count_base_digits_float (kc_current->avg_ncalls, 10);
+            if (n > this_n_avg_max) this_n_avg_max = n;
+            n = vftr_count_base_digits (kc_current->min_ncalls, 10);
+            if (n > this_n_min_max) this_n_min_max = n;
+            n = vftr_count_base_digits (kc_current->max_ncalls, 10);
+            if (n > this_n_max_max) this_n_max_max = n;
+            kc_current = kc_current->next;
+         }
+         fprintf (fp, "%*s | %*s | %*s | %*s\n",
+                  this_n_callee_max, "Callee",
+                  this_n_avg_max, "avg",
+                  this_n_min_max, "min",
+                  this_n_max_max, "max");
+  
+
+         kc_current = kc_head;
+         while (kc_current != NULL) {
+           fprintf (fp, "%*s | %*.2f | %*d | %*d\n",
+                    this_n_callee_max, stacktree.stacks[kc_current->stack_id].name,
+                    this_n_avg_max, kc_current->avg_ncalls,
+                    this_n_min_max, kc_current->min_ncalls,
+                    this_n_max_max, kc_current->max_ncalls);
            kc_current =  kc_current->next;
          }
       }

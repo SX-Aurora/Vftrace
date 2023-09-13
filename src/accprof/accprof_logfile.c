@@ -257,7 +257,7 @@ void vftr_write_accprof_memcpy_stats_all (FILE *fp, collated_stacktree_t stacktr
          while (kc_current != NULL) {
             int n = strlen(stacktree.stacks[kc_current->stack_id].name);
             if (n > this_n_callee_max) this_n_callee_max = n;
-            n = 3 + vftr_count_base_digits (kc_current->avg_ncalls, 10);
+            n = 3 + vftr_count_base_digits_float (kc_current->avg_ncalls, 10);
             if (n > this_n_avg_max) this_n_avg_max = n;
             n = vftr_count_base_digits (kc_current->min_ncalls, 10);
             if (n > this_n_min_max) this_n_min_max = n;

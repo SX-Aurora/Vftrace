@@ -8,6 +8,7 @@
 #include "callprofiling_types.h"
 #include "stack_types.h"
 #include "sorting.h"
+#include "misc_utils.h"
 
 #include "accprof_init_final.h"
 #include "accprofiling_types.h"

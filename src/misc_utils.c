@@ -16,6 +16,15 @@ int vftr_count_base_digits(long long value, int base) {
    return count;
 }
 
+int vftr_count_base_digits_float (float value, int base) {
+   int count = 0;
+   do {
+      count++;
+      value /= base;
+   } while (value > 1);
+   return count;
+}
+
 char *vftr_read_file_to_string(char *filename) {
     FILE *file = fopen(filename, "rt");
     if (file == NULL) {

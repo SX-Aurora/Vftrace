@@ -5,6 +5,7 @@
 #include "tables.h"
 #include "stack_types.h"
 #include "sorting.h"
+#include "misc_utils.h"
 
 #include "cupti_vftr_callbacks.h"
 #include "cudaprofiling_types.h"
@@ -60,22 +61,57 @@ void vftr_extract_kernel_calls (vftr_stack_t *stacks_ptr, int stack_id,
 
 void vftr_write_cuda_memcpy_stats (FILE *fp, stacktree_t stacktree) {
    
-   fprintf (fp, "\nCUDA ratio of memcpy / kernel calls: \n");
+   int table_width = 0;
    for (int istack = 0; istack < stacktree.nstacks; istack++) {
       vftr_stack_t this_stack = stacktree.stacks[istack];
       cudaprofile_t cudaprof = this_stack.profiling.profiles[0].cudaprof;
       int cbid = cudaprof.cbid;
       if (vftr_cuda_cbid_belongs_to_class (cbid, T_CUDA_MEMCP)) {
-         fprintf (fp, "%s:    in: %d, out: %d\n", stacktree.stacks[this_stack.caller].name,
-                  cudaprof.n_calls[CUDA_COPY_IN], cudaprof.n_calls[CUDA_COPY_OUT]);
+         int t = 28 + strlen(stacktree.stacks[this_stack.caller].name)
+               + vftr_count_base_digits (cudaprof.n_calls[CUDA_COPY_IN], 10)
+               + vftr_count_base_digits (cudaprof.n_calls[CUDA_COPY_OUT], 10);
+         if (t > table_width) table_width = t;
+      }
+   }
+
+   fprintf (fp, "\nCUDA ratio of memcpy / kernel calls: \n\n");
+   for (int istack = 0; istack < stacktree.nstacks; istack++) {
+      vftr_stack_t this_stack = stacktree.stacks[istack];
+      cudaprofile_t cudaprof = this_stack.profiling.profiles[0].cudaprof;
+      int cbid = cudaprof.cbid;
+      if (vftr_cuda_cbid_belongs_to_class (cbid, T_CUDA_MEMCP)) {
+         for (int i = 0; i < table_width; i++) {
+            fprintf (fp, "=");
+         }
+         fprintf (fp, "\n");
+         fprintf (fp, "Memcpy caller: %s, in: %d, out: %d\n",
+                      stacktree.stacks[this_stack.caller].name,
+                      cudaprof.n_calls[CUDA_COPY_IN], cudaprof.n_calls[CUDA_COPY_OUT]);
+         for (int i = 0; i < table_width; i++) {
+            fprintf (fp, "=");
+         }
+         fprintf (fp, "\n");
+
          kernel_call_t *kc_head = NULL;
          kernel_call_t *kc_current = NULL;
          vftr_extract_kernel_calls (stacktree.stacks, this_stack.caller, &kc_head, &kc_current);
+         int max_n_callee = strlen("Callee");
+         int max_n_calls = strlen("n_calls");
          kc_current = kc_head;
          while (kc_current != NULL) {
-            fprintf (fp, "  ->  %s:  %d\n",
-                     stacktree.stacks[kc_current->stack_id].name,
-                     kc_current->n_calls);
+            int n = strlen(stacktree.stacks[kc_current->stack_id].name);
+            if (n > max_n_callee) max_n_callee = n;
+            n = vftr_count_base_digits (kc_current->n_calls, 10);
+            if (n > max_n_calls) max_n_calls = n;
+            kc_current = kc_current->next;
+         }
+
+         fprintf (fp, "%*s | %*s\n", max_n_callee, "Callee", max_n_calls, "n_calls");
+         kc_current = kc_head;
+         while (kc_current != NULL) {
+            fprintf (fp, "%*s | %*d\n",
+                     max_n_callee, stacktree.stacks[kc_current->stack_id].name,
+                     max_n_calls, kc_current->n_calls);
             kc_current = kc_current->next;
          }
       }
