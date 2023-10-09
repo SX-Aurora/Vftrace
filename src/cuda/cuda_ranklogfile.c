@@ -95,7 +95,7 @@ void vftr_write_cuda_memcpy_stats (FILE *fp, stacktree_t stacktree) {
          kernel_call_t *kc_head = NULL;
          kernel_call_t *kc_current = NULL;
          vftr_extract_kernel_calls (stacktree.stacks, this_stack.caller, &kc_head, &kc_current);
-         int max_n_callee = strlen("Callee");
+         int max_n_callee = strlen("Kernel");
          int max_n_calls = strlen("n_calls");
          kc_current = kc_head;
          while (kc_current != NULL) {
@@ -106,14 +106,15 @@ void vftr_write_cuda_memcpy_stats (FILE *fp, stacktree_t stacktree) {
             kc_current = kc_current->next;
          }
 
-         fprintf (fp, "%*s | %*s\n", max_n_callee, "Callee", max_n_calls, "n_calls");
+         fprintf (fp, "   %*s | %*s\n", max_n_callee, "Kernel", max_n_calls, "n_calls");
          kc_current = kc_head;
          while (kc_current != NULL) {
-            fprintf (fp, "%*s | %*d\n",
+            fprintf (fp, "   %*s | %*d\n",
                      max_n_callee, stacktree.stacks[kc_current->stack_id].name,
                      max_n_calls, kc_current->n_calls);
             kc_current = kc_current->next;
          }
+         fprintf (fp, "\n");
       }
    }
 }

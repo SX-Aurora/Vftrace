@@ -123,7 +123,7 @@ void vftr_write_cuda_memcpy_stats_all (FILE *fp, collated_stacktree_t stacktree)
                       n_min_max, cudaprof.min_ncalls[1],
                       n_max_max, cudaprof.max_ncalls[1]);
          for (int i = 0; i < table_width; i++) {
-            fprintf (fp, "=");
+            fprintf (fp, "-");
          }
          fprintf (fp, "\n");
 
@@ -133,7 +133,7 @@ void vftr_write_cuda_memcpy_stats_all (FILE *fp, collated_stacktree_t stacktree)
          vftr_extract_kernel_calls_all (stacktree.stacks, this_stack.caller, &kc_head, &kc_current);
          kc_current = kc_head;
 
-         int this_n_callee_max = strlen("Callee");
+         int this_n_callee_max = strlen("Kernel");
          int this_n_avg_max = strlen("avg");
          int this_n_min_max = strlen("min");
          int this_n_max_max = strlen("max");
@@ -148,8 +148,8 @@ void vftr_write_cuda_memcpy_stats_all (FILE *fp, collated_stacktree_t stacktree)
             if (n > this_n_max_max) this_n_max_max = n;
             kc_current = kc_current->next;
          }
-         fprintf (fp, "%*s | %*s | %*s | %*s\n",
-                  this_n_callee_max, "Callee",
+         fprintf (fp, "   %*s | %*s | %*s | %*s\n",
+                  this_n_callee_max, "Kernel",
                   this_n_avg_max, "avg",
                   this_n_min_max, "min",
                   this_n_max_max, "max");
@@ -157,13 +157,14 @@ void vftr_write_cuda_memcpy_stats_all (FILE *fp, collated_stacktree_t stacktree)
 
          kc_current = kc_head;
          while (kc_current != NULL) {
-           fprintf (fp, "%*s | %*.2f | %*d | %*d\n",
+           fprintf (fp, "   %*s | %*.2f | %*d | %*d\n",
                     this_n_callee_max, stacktree.stacks[kc_current->stack_id].name,
                     this_n_avg_max, kc_current->avg_ncalls,
                     this_n_min_max, kc_current->min_ncalls,
                     this_n_max_max, kc_current->max_ncalls);
            kc_current =  kc_current->next;
          }
+         fprintf (fp, "\n");
       }
    }
 }
