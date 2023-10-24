@@ -60,7 +60,7 @@ void vftr_function_entry(void *func, void *call_site) {
       // and adjust the threadstack accordingly
       my_threadstack = vftr_update_threadstack_function(my_threadstack, my_thread,
                                                         func_addr, &vftrace);
-      vftr_stack_t *my_new_stack = vftrace.process.stacktree.stacks+my_threadstack->stackID;
+      vftr_stack_t *my_new_stack = vftrace.process.stacktree.stacks + my_threadstack->stackID;
       my_profile = vftr_get_my_profile(my_new_stack, my_thread);
 
       vftr_sample_function_entry(&(vftrace.sampling),
@@ -105,7 +105,7 @@ void vftr_function_exit(void *func, void *call_site) {
 
    thread_t *my_thread = vftr_get_my_thread(&(vftrace.process.threadtree));
    threadstack_t *my_threadstack = vftr_get_my_threadstack(my_thread);
-   vftr_stack_t *my_stack = vftrace.process.stacktree.stacks+my_threadstack->stackID;
+   vftr_stack_t *my_stack = vftrace.process.stacktree.stacks + my_threadstack->stackID;
    profile_t *my_profile = vftr_get_my_profile(my_stack, my_thread);
 
    // check if still in a recursive call

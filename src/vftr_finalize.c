@@ -41,7 +41,7 @@ void vftr_finalize() {
    vftrace.timestrings.end_time = vftr_get_date_str();
 
    // in case finalize was not called from the threadstacks root
-   // the threadstack needs to be poped completely
+   // the threadstack needs to be popped completely
    thread_t *my_thread = vftr_get_my_thread(&(vftrace.process.threadtree));
    threadstack_t *my_threadstack = vftr_get_my_threadstack(my_thread);
    while (my_threadstack->stackID > 0) {
