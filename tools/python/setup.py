@@ -1,19 +1,29 @@
 from distutils.core import setup, Extension
 from distutils.command.build_ext import build_ext
 
-import os
+import sys, os
 
 class vftrace_build_ext(build_ext):
   def build_extensions(self):
      build_ext.build_extensions(self)
 
+python_version = sys.version
+sources = []
+if "3.8" in python_version:
+   sources.append("pyhooks_308.c")
+elif "3.12" in python_version:
+   sources.append("pyhooks_312.c")
+else:
+   sources.append("pyhooks_312.c")
+
+
 vftr_ext = Extension("vftrace",
-                     sources = ["pyhooks.c"],
-                     extra_compile_args=['-I/home/cweiss/Vftrace/src',
-                                         '-I/home/cweiss/Vftrace/src/hwprof',
-                                         '-I/home/cweiss/Vftrace/external/tinyexpr',
+                     sources = sources,
+                     extra_compile_args=['-I/root/Vftrace/src',
+                                         '-I/root/Vftrace/src/hwprof',
+                                         '-I/root/Vftrace/external/tinyexpr',
                      ],
-                     extra_objects=['-L/home/cweiss/Vftrace/build/src/.libs',
+                     extra_objects=['-L/root/Vftrace/build/src/.libs',
                                     '-lvftrace']
 )
 

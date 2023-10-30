@@ -90,8 +90,8 @@ void vftr_compute_stack_hashes(stacktree_t *stacktree_ptr) {
 
    // size of an address printed in hexadecimal with some decoration
    // e.g. (0x563d48737d058460) is 20 chars
-   int addrstringsize = 2*sizeof(long int) + 4;
-   for (int istack=0; istack<nstacks; istack++) {
+   int addrstringsize = 2 * sizeof(long int) + 4;
+   for (int istack = 0; istack < nstacks; istack++) {
       // first figure out the length of the stack string
       int stackstr_len = 0;
       int jstack = istack;

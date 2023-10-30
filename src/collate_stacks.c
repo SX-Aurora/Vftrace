@@ -63,8 +63,8 @@ collated_stacktree_t vftr_new_collated_stacktree(hashlist_t hashlist) {
    coll_stacktree.nstacks = hashlist.nhashes;
    coll_stacktree.maxstacks = coll_stacktree.nstacks;
    coll_stacktree.stacks = (collated_stack_t*)
-      malloc(coll_stacktree.nstacks*sizeof(collated_stack_t));
-   for (int istack=0; istack<coll_stacktree.nstacks; istack++) {
+      malloc(coll_stacktree.nstacks * sizeof(collated_stack_t));
+   for (int istack = 0; istack < coll_stacktree.nstacks; istack++) {
       coll_stacktree.stacks[istack].local_stack = NULL;
       coll_stacktree.stacks[istack].gid = istack;
       coll_stacktree.stacks[istack].gid_list = vftr_new_empty_gid_list();
@@ -420,11 +420,11 @@ collated_stacktree_t vftr_collate_stacks(stacktree_t *stacktree_ptr) {
    // build a lookup table each to translate local2global and global2local
    int *local2global_ID = (int*) malloc(stacktree_ptr->nstacks*sizeof(int));
    int *global2local_ID = (int*) malloc(coll_stacktree.nstacks*sizeof(int));
-   for (int istack=0; istack<stacktree_ptr->nstacks; istack++) {
+   for (int istack = 0; istack<stacktree_ptr->nstacks; istack++) {
       // -1 in the lookup table means that the local stack does not exist
       local2global_ID[istack] = -1;
    }
-   for (int istack=0; istack < coll_stacktree.nstacks; istack++) {
+   for (int istack = 0; istack < coll_stacktree.nstacks; istack++) {
       // -1 in the lookup table means that the local stack does not exist
       global2local_ID[istack] = -1;
    }
@@ -620,7 +620,7 @@ char *vftr_get_collated_stack_string(collated_stacktree_t stacktree,
          stringlen ++; // '*' for indicating precise functions
       }
    }
-   char *stackstring = (char*) malloc(stringlen*sizeof(char));
+   char *stackstring = (char*) malloc(stringlen * sizeof(char));
    // copy the chars one by one so there is no need to call strlen again.
    // thus minimizing reading the same memory locations over and over again.
    tmpstackid = stackid;

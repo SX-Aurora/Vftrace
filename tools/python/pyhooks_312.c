@@ -55,7 +55,7 @@ PyObject *pystart_callback (PyObject *self, PyObject *const *args, Py_ssize_t si
                                                     &vftrace, false);
    my_stack = vftrace.process.stacktree.stacks + my_threadstack->stackID;
    my_profile = vftr_get_my_profile(my_stack, my_thread);
-   vftr_accumulate_callprofiling(&(my_profile->callprof), 1, 0);
+   vftr_accumulate_callprofiling(&(my_profile->callprof), 1, -function_entry_time_begin);
    Py_RETURN_NONE;
 }
 
@@ -78,7 +78,7 @@ PyObject *pyreturn_callback (PyObject *self, PyObject *const *args, Py_ssize_t s
   vftr_stack_t *my_stack = vftrace.process.stacktree.stacks + my_threadstack->stackID;
   profile_t *my_profile = vftr_get_my_profile(my_stack, my_thread);
   //printf ("Pop from %p\n", my_thread->stacklist);
-  vftr_accumulate_callprofiling(&(my_profile->callprof), 0, 0);
+  vftr_accumulate_callprofiling(&(my_profile->callprof), 0, function_exit_time_begin);
   (void)vftr_threadstack_pop(&(my_thread->stacklist));
   //printf ("Pop success\n");
   Py_RETURN_NONE;
@@ -90,11 +90,13 @@ static PyMethodDef vftraceMethods[] = {
       "start Vftrace",
    },
    {
-      "_pystart_callback", _PyCFunction_CAST(pystart_callback),
+      //"_pystart_callback", _PyCFunction_CAST(pystart_callback),
+      "_pystart_callback", (PyCFunction)pystart_callback,
       METH_FASTCALL, NULL,
    },
    {
-      "_pyreturn_callback", _PyCFunction_CAST(pyreturn_callback),
+      //"_pyreturn_callback", _PyCFunction_CAST(pyreturn_callback),
+      "_pyreturn_callback", (PyCFunction)pyreturn_callback,
       METH_FASTCALL, NULL,
    },
    {NULL, NULL, 0, NULL}
