@@ -83,7 +83,7 @@ threadstack_t *vftr_get_my_threadstack(thread_t *my_thread_ptr) {
    int idx = my_thread_ptr->stacklist.nstacks;
    threadstack_t *mythreadstack = NULL;
    if (idx != 0) {
-      mythreadstack = my_thread_ptr->stacklist.stacks+idx-1;
+      mythreadstack = my_thread_ptr->stacklist.stacks + idx - 1;
    }
    SELF_PROFILE_END_FUNCTION;
    return mythreadstack;

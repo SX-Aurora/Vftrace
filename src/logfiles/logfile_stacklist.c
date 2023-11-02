@@ -39,7 +39,7 @@ void vftr_write_logfile_global_stack_list(FILE *fp, collated_stacktree_t stacktr
 
    vftr_table_free(&table);
    free(IDs);
-   for (int istack=0; istack<stacktree.nstacks; istack++) {
+   for (int istack = 0; istack < stacktree.nstacks; istack++) {
       free(stacks[istack]);
    }
    free(stacks);

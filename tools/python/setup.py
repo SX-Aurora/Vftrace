@@ -14,16 +14,16 @@ if "3.8" in python_version:
 elif "3.12" in python_version:
    sources.append("pyhooks_312.c")
 else:
-   sources.append("pyhooks_312.c")
+   sources.append("pyhooks_308.c")
 
 
 vftr_ext = Extension("vftrace",
                      sources = sources,
-                     extra_compile_args=['-I/root/Vftrace/src',
-                                         '-I/root/Vftrace/src/hwprof',
-                                         '-I/root/Vftrace/external/tinyexpr',
+                     extra_compile_args=['-I/home/cweiss/Vftrace/src',
+                                         '-I/home/cweiss/Vftrace/src/hwprof',
+                                         '-I/home/cweiss/Vftrace/external/tinyexpr',
                      ],
-                     extra_objects=['-L/root/Vftrace/build/src/.libs',
+                     extra_objects=['-L/home/cweiss/Vftrace/build/src/.libs',
                                     '-lvftrace']
 )
 

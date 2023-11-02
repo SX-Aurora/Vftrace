@@ -14,11 +14,11 @@
 static void vftr_collate_callprofiles_root_self(collated_stacktree_t *collstacktree_ptr,
                                                 stacktree_t *stacktree_ptr) {
    SELF_PROFILE_START_FUNCTION;
-   for (int istack=0; istack<stacktree_ptr->nstacks; istack++) {
-      vftr_stack_t *stack = stacktree_ptr->stacks+istack;
+   for (int istack = 0; istack < stacktree_ptr->nstacks; istack++) {
+      vftr_stack_t *stack = stacktree_ptr->stacks + istack;
       int icollstack = stack->gid;
 
-      collated_stack_t *collstack = collstacktree_ptr->stacks+icollstack;
+      collated_stack_t *collstack = collstacktree_ptr->stacks + icollstack;
       collated_callprofile_t *collcallprof = &(collstack->profile.callprof);
 
       collcallprof->calls = 0ll;

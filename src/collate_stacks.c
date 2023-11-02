@@ -408,19 +408,22 @@ void vftr_rank_comm_missing_stacks_with_root (stacktree_t *stacktree_ptr,
 
 collated_stacktree_t vftr_collate_stacks(stacktree_t *stacktree_ptr) {
    SELF_PROFILE_START_FUNCTION;
+   printf ("nstacks: %d\n", stacktree_ptr->nstacks);
    // first compute the hashes for all stacks
    vftr_compute_stack_hashes(stacktree_ptr);
 
    // collate hashes between processes
    hashlist_t hashlist = vftr_collate_hashes(stacktree_ptr);
+   printf ("Computed hashlist\n");
+   fflush(stdout);
 
    // create empty collated stacktree
    collated_stacktree_t coll_stacktree = vftr_new_collated_stacktree(hashlist);
 
    // build a lookup table each to translate local2global and global2local
-   int *local2global_ID = (int*) malloc(stacktree_ptr->nstacks*sizeof(int));
-   int *global2local_ID = (int*) malloc(coll_stacktree.nstacks*sizeof(int));
-   for (int istack = 0; istack<stacktree_ptr->nstacks; istack++) {
+   int *local2global_ID = (int*) malloc(stacktree_ptr->nstacks * sizeof(int));
+   int *global2local_ID = (int*) malloc(coll_stacktree.nstacks * sizeof(int));
+   for (int istack = 0; istack < stacktree_ptr->nstacks; istack++) {
       // -1 in the lookup table means that the local stack does not exist
       local2global_ID[istack] = -1;
    }
