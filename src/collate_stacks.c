@@ -408,14 +408,11 @@ void vftr_rank_comm_missing_stacks_with_root (stacktree_t *stacktree_ptr,
 
 collated_stacktree_t vftr_collate_stacks(stacktree_t *stacktree_ptr) {
    SELF_PROFILE_START_FUNCTION;
-   printf ("nstacks: %d\n", stacktree_ptr->nstacks);
    // first compute the hashes for all stacks
    vftr_compute_stack_hashes(stacktree_ptr);
 
    // collate hashes between processes
    hashlist_t hashlist = vftr_collate_hashes(stacktree_ptr);
-   printf ("Computed hashlist\n");
-   fflush(stdout);
 
    // create empty collated stacktree
    collated_stacktree_t coll_stacktree = vftr_new_collated_stacktree(hashlist);
