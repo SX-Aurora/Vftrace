@@ -16,6 +16,7 @@
 #include "timer.h"
 #include "hashing.h"
 #include "misc_utils.h"
+#include "stacks.h"
 
 
 static PyObject *init_vftrace (PyObject *self);
@@ -52,45 +53,15 @@ static int profiler_callback (PyObject *self, PyFrameObject *frame, int what, Py
    uint64_t pseudo_addr;
    if (what ==  PyTrace_CALL || what == PyTrace_RETURN) {
       PyCodeObject *fn = (PyCFunctionObject*)frame->f_code;
-      //func_name = repr(fn->co_name);
-      //printf ("NULL? %d\n", func_name == NULL);
-      //fflush(stdout);
-      //printf ("strlen: %d\n", strlen(func_name));
-      //fflush(stdout);
-      //printf ("str: <<<");
-      //for (int i = 0; i < strlen(func_name); i++) {
-      //   printf ("%c", func_name[i]);
-      //}
-      //printf (">>>\n");
-      //printf ("strfull: <<<%s>>>\n", func_name);
-      //fflush(stdout);
       PyObject *r = PyObject_Repr(fn->co_name);
       PyObject *s = PyUnicode_AsEncodedString(r, "utf-8", "~E~");
       func_name = strdup(PyBytes_AS_STRING(s));
       Py_XDECREF(r);
       Py_XDECREF(s);
-      r = PyObject_Repr(fn->co_filename);
-      s = PyUnicode_AsEncodedString(r, "utf-8", "~E~");
-      char *file_name = strdup(PyBytes_AS_STRING(s));
-      Py_XDECREF(r);
-      Py_XDECREF(s);
-      //pseudo_addr = (uint64_t)strlen(func_name);
-      //printf ("%s / %s\n", file_name, func_name);
-      char *buf = (char*)malloc ((strlen(func_name) + strlen(file_name) + 1) * sizeof(char));
-      strcpy (buf, func_name);
-      strcat (buf, file_name);
       pseudo_addr = vftr_jenkins_murmur_64_hash (strlen(func_name), (uint8_t*)func_name);
-      pseudo_addr += vftr_jenkins_murmur_64_hash (strlen(file_name), (uint8_t*)file_name);
-      //pseudo_addr = vftr_jenkins_murmur_64_hash (strlen(buf), (uint8_t*)buf);
-      //pseudo_addr += (uint64_t)frame->f_back;
-      pseudo_addr += (uint64_t)frame->f_lineno;
-      int lineno = fn->co_firstlineno;
-      printf ("%s: %s @ %s %d 0x%lx -> 0x%lx\n", what == PyTrace_CALL ? "Entry" : "Exit", func_name, file_name, lineno, (uint64_t)frame->f_back, pseudo_addr);
-      free (buf);
    } else if (what ==  PyTrace_C_CALL || what == PyTrace_C_RETURN) {
       PyCFunctionObject *fn = (PyCFunctionObject*)args;
       PyObject *name = PyUnicode_FromString(fn->m_ml->ml_name);
-      //func_name = repr(name);
       PyObject *r = PyObject_Repr(name);
       PyObject *s = PyUnicode_AsEncodedString(r, "utf-8", "~E~");
       func_name = strdup(PyBytes_AS_STRING(s));
@@ -103,9 +74,6 @@ static int profiler_callback (PyObject *self, PyFrameObject *frame, int what, Py
       //printf ("FUNC: %s\n", func_name);
 
       pseudo_addr = vftr_jenkins_murmur_64_hash (strlen(func_name), (uint8_t*)func_name);
-      pseudo_addr += (uint64_t)frame->f_back;
-      //free(buf);
-      printf ("%s: %s @ 0x%lx\n", what == PyTrace_C_CALL ? "C Entry": "C Exit", func_name, pseudo_addr);
    } else if (what == PyTrace_EXCEPTION) {
       //printf ("exception\n");
    } else if (what == PyTrace_C_EXCEPTION) {
@@ -113,31 +81,18 @@ static int profiler_callback (PyObject *self, PyFrameObject *frame, int what, Py
    } else {
       printf ("UNKNOWN!\n");
    }
-   //return 0;
-   //printf ("func_name: %s\n", func_name);
-   //if (!func_name) return 0;
    
    if (what == PyTrace_CALL || what == PyTrace_C_CALL) {
-   //if (what == PyTrace_CALL) {
       thread_t *my_thread = vftr_get_my_thread(&(vftrace.process.threadtree));
       threadstack_t *my_threadstack = vftr_get_my_threadstack(my_thread);
-
-      //vftr_stack_t *my_stack = vftrace.process.stacktree.stacks + my_threadstack->stackID;
-      //if (what == PyTrace_CALL && !strcmp(func_name, "'acquire'") && !strcmp(my_stack->name, "'flush'")) {
-      //   printf ("Caller: %s(%d)\n", vftr_get_stack_string(vftrace.process.stacktree, my_threadstack->stackID, false), my_threadstack->stackID);
-      //}
-      //profile_t *my_profile = vftr_get_my_profile(my_stack, my_thread);
 
       my_threadstack = vftr_update_threadstack_region (my_threadstack, my_thread,
                                                        (uintptr_t)pseudo_addr, func_name,
                                                        &vftrace, false);
       vftr_stack_t *my_stack = vftrace.process.stacktree.stacks + my_threadstack->stackID;
-      if (what == PyTrace_CALL && !strcmp(func_name, "'acquire'")) printf ("New stack: %d\n", my_threadstack->stackID);
       profile_t *my_profile = vftr_get_my_profile(my_stack, my_thread);
       vftr_accumulate_callprofiling(&(my_profile->callprof), 1, -function_time_begin);
    } else if (what == PyTrace_RETURN || what == PyTrace_C_RETURN) {
-   //} else if (what == PyTrace_RETURN) {
-      if (!strcmp (func_name, "'<module>'")) return 0;
       thread_t *my_thread = vftr_get_my_thread(&(vftrace.process.threadtree));
       threadstack_t *my_threadstack = vftr_get_my_threadstack(my_thread);
       vftr_stack_t *my_stack = vftrace.process.stacktree.stacks + my_threadstack->stackID;
@@ -149,19 +104,44 @@ static int profiler_callback (PyObject *self, PyFrameObject *frame, int what, Py
 }
 
 static PyObject *init_vftrace (PyObject *self) {
-  PyEval_SetProfile(profiler_callback, self);
+  vftr_initialize (NULL, NULL);
+  stacktree_t *vftr_stacktree = &(vftrace.process.stacktree);
+  if (!(vftr_stacktree->nstacks) > 1) {
+     printf ("Internal Vftrace error: Python tracing starts with existing stacktree!\n");
+  } else {
+     printf ("Stacks in tree: %d\n", vftr_stacktree->nstacks);
+  }
+
+  // Inject current stack  
+  // We need to invert the order of the Python frames. Therefore, we first determine the stack depth.
+  int py_stack_size = 0;
   PyFrameObject *f = PyEval_GetFrame();
   while (f != NULL) {
-     PyCodeObject *fn = (PyCFunctionObject*)f->f_code;
+     py_stack_size++;
+     f = f->f_back;
+  }
+  PyFrameObject **fns = (PyFrameObject**)malloc(py_stack_size * sizeof(PyFrameObject*));
+  f = PyEval_GetFrame();
+  int i = 0;
+  while (f != NULL) {
+     fns[i++] = f;
+     f = f->f_back;
+  }
+  for (int i_stack = py_stack_size - 1; i_stack >= 0; i_stack--) {
+     PyCodeObject *fn = (PyCFunctionObject*)fns[i_stack]->f_code;
      PyObject *r = PyObject_Repr(fn->co_name);
      PyObject *s = PyUnicode_AsEncodedString(r, "utf-8", "~E~");
      char *func_name = strdup(PyBytes_AS_STRING(s));
      Py_XDECREF(r);
      Py_XDECREF(s);
-     printf ("Resolve Frame %s\n", func_name);
-     f = f->f_back;
+     int calleeID = vftr_new_stack (py_stack_size - i_stack - 1, vftr_stacktree,
+                                    func_name, func_name, (uintptr_t)f, false); 
+     thread_t *my_thread = vftr_get_my_thread(&(vftrace.process.threadtree));
+     vftr_threadstack_push (calleeID, &(my_thread->stacklist));
   }
-  vftr_initialize (NULL, NULL);
+
+  // Register the callback
+  PyEval_SetProfile(profiler_callback, self);
   Py_RETURN_NONE;
 }
 

@@ -114,7 +114,7 @@ void vftr_write_logfile_epilogue (vftrace_t vftrace, vftr_logfile_fp_t all_fp) {
    }
 }
 
-void vftr_write_logfile(vftrace_t vftrace, long long runtime) {
+void vftr_write_logfile (vftrace_t vftrace, long long runtime) {
    SELF_PROFILE_START_FUNCTION;
    // only process 0 writes the summary logfile
    if (vftrace.process.processID != 0) {

@@ -37,9 +37,9 @@ void vftr_stack_callees_realloc(vftr_stack_t *stack_ptr) {
    SELF_PROFILE_START_FUNCTION;
    vftr_stack_t stack = *stack_ptr;
    while (stack.ncallees > stack.maxcallees) {
-      int maxcallees = stack.maxcallees*vftr_realloc_rate+vftr_realloc_add;
+      int maxcallees = stack.maxcallees * vftr_realloc_rate + vftr_realloc_add;
       stack.callees = (int*)
-         realloc(stack.callees, maxcallees*sizeof(int));
+         realloc(stack.callees, maxcallees * sizeof(int));
       stack.maxcallees = maxcallees;
    }
    *stack_ptr = stack;
@@ -64,9 +64,9 @@ int vftr_new_stack(int callerID, stacktree_t *stacktree_ptr,
    stacktree_ptr->nstacks++;
    vftr_stacktree_realloc(stacktree_ptr);
 
-   vftr_stack_t *callerstack = stacktree_ptr->stacks+callerID;
+   vftr_stack_t *callerstack = stacktree_ptr->stacks + callerID;
 
-   vftr_stack_t *stack = stacktree_ptr->stacks+stackID;
+   vftr_stack_t *stack = stacktree_ptr->stacks + stackID;
    stack->address = address;
    stack->precise = precise;
    stack->caller = callerstack->lid;

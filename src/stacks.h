@@ -26,4 +26,6 @@ int vftr_get_stack_string_length(stacktree_t stacktree, int stackid, bool show_p
 
 char *vftr_get_stack_string(stacktree_t stacktree, int stackid, bool show_precise);
 
+void vftr_stacktree_realloc(stacktree_t *stacktree_ptr);
+
 #endif
