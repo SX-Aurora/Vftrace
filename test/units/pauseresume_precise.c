@@ -50,8 +50,8 @@ int main(int argc, char **argv) {
    int idx = -1;
 #define NSTR 2
    char *func_strs[NSTR] = {"vftrace_pause", "vftrace_resume"};
-   for (int istr=0; istr<NSTR; istr++) {
-      for (unsigned int isymb=0; isymb<symboltable.nsymbols; isymb++) {
+   for (int istr = 0; istr < NSTR; istr++) {
+      for (unsigned int isymb = 0; isymb < symboltable.nsymbols; isymb++) {
          if (!strcmp(func_strs[istr], symboltable.symbols[isymb].name)) {
             idx = isymb;
             break;
@@ -71,8 +71,9 @@ int main(int argc, char **argv) {
       }
    }
 
-   regfree(testregex);
-   free(testregex);
+   vftr_free_regexp (testregex);
+   //regfree(testregex);
+   //free(testregex);
 
 #ifdef _MPI
    PMPI_Finalize();

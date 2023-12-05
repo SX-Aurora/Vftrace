@@ -45,13 +45,13 @@ int main(int argc, char **argv) {
    char *funcname = "pfunc";
    int lmax = LMAX;
    int lmax_digits = vftr_count_base_digits((long long) lmax, 10);
-   for (int l=0; l<=lmax; l++) {
+   for (int l = 0; l <= lmax; l++) {
       int mmax = 1 << l;
       int mmax_digits = vftr_count_base_digits((long long) mmax, 10);
       // construct the function name
       int func_str_len = strlen(funcname) + lmax_digits + mmax_digits + 3;
       char *func_str = (char*) malloc(func_str_len*sizeof(char));
-      for (int m=0; m<mmax; m++) {
+      for (int m = 0; m < mmax; m++) {
          snprintf(func_str, func_str_len, "%s_%d_%d", funcname, l, m);
          // search for the function in the symbol table
          int idx = -1;
@@ -82,8 +82,9 @@ int main(int argc, char **argv) {
       free(func_str);
    }
 
-   regfree(testregex);
-   free(testregex);
+   vftr_free_regexp(testregex);
+   //regfree(testregex);
+   //free(testregex);
 
 #ifdef _MPI
    PMPI_Finalize();

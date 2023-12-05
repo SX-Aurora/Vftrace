@@ -86,7 +86,8 @@ void vftr_config_regex_free(config_regex_t *cfg_regex_ptr) {
       cfg_regex_ptr->value = NULL;
    }
    if (cfg_regex_ptr->regex != NULL) {
-      regfree(cfg_regex_ptr->regex);
+      //vftr_regfree(cfg_regex_ptr->regex);
+      vftr_free_regexp (cfg_regex_ptr->regex);
       cfg_regex_ptr->regex = NULL;
    }
 }

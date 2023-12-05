@@ -337,7 +337,7 @@ void vftr_symboltable_determine_preciseness(symboltable_t *symboltable_ptr,
 #endif
    // regex to check for the vftrace internal pause/resume functions
    regex_t *pause_regex = vftr_compile_regexp("^vftrace_(pause|resume)$");
-   for (unsigned int isym=0; isym<symboltable_ptr->nsymbols; isym++) {
+   for (unsigned int isym = 0; isym < symboltable_ptr->nsymbols; isym++) {
       char *name = symboltable_ptr->symbols[isym].cleanname;
       bool precise;
       precise = vftr_pattern_match(preciseregex, name);
@@ -349,11 +349,12 @@ void vftr_symboltable_determine_preciseness(symboltable_t *symboltable_ptr,
    }
 
 #ifdef _MPI
-   regfree(mpi_regex);
-   free(mpi_regex);
+   vftr_free_regexp(mpi_regex);
+   //free(mpi_regex);
 #endif
-   regfree(pause_regex);
-   free(pause_regex);
+   //vftr_regfree(pause_regex);
+   vftr_free_regexp(pause_regex);
+   //free(pause_regex);
    SELF_PROFILE_END_FUNCTION;
 }
 

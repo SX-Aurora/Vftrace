@@ -14,6 +14,7 @@ libvftrace_la_LIBADD =
 
 #external libraries
 libvftrace_la_LIBADD += ../external/libcJSON.la
+libvftrace_la_LIBADD += ../external/libregex_vftr.la
 
 #internal libraries
 libvftrace_la_LIBADD += libvftr_pause.la
@@ -130,7 +131,8 @@ libvftrace_la_CFLAGS += -I${srcdir}/mpi/utils/ \
 		        -I${srcdir}/hwprof \
 			-I${srcdir}/sorting \
                         -I${srcdir}/logfiles \
-                        -I${srcdir}/../external/tinyexpr
+                        -I${srcdir}/../external/tinyexpr \
+                        -I${srcdir}/../external/regex
 
 if ENABLE_MPI
 libvftrace_la_CFLAGS += -D_MPI
