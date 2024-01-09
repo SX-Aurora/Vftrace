@@ -173,9 +173,9 @@ void  vftr_config_hwcounters_free (config_hwcounters_t *cfg_hwc_ptr) {
 void  vftr_config_hwobservables_free (config_hwobservables_t *cfg_hwobs_ptr) {
    free(cfg_hwobs_ptr->name);
    cfg_hwobs_ptr->name = NULL;
-   if (cfg_hwobs_ptr->obs_name.set) vftr_config_string_list_free(&(cfg_hwobs_ptr->obs_name));
-   if (cfg_hwobs_ptr->formula_expr.set) vftr_config_string_list_free(&(cfg_hwobs_ptr->formula_expr));
-   if (cfg_hwobs_ptr->unit.set) vftr_config_string_list_free(&(cfg_hwobs_ptr->unit));
+   vftr_config_string_list_free(&(cfg_hwobs_ptr->obs_name));
+   vftr_config_string_list_free(&(cfg_hwobs_ptr->formula_expr));
+   vftr_config_string_list_free(&(cfg_hwobs_ptr->unit));
 }
 
 void vftr_config_hwprof_free (config_hwprof_t *cfg_hwprof_ptr) {
