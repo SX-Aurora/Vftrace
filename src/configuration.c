@@ -112,6 +112,12 @@ void vftr_config_profile_table_free(config_profile_table_t *cfg_profile_table_pt
    vftr_config_sort_table_free(&(cfg_profile_table_ptr->sort_table));
 }
 
+void vftr_config_stacklist_free(config_stacklist_t *cfg_stacklist_ptr) {
+    free(cfg_stacklist_ptr->name);
+    cfg_stacklist_ptr->name = NULL;
+    vftr_config_bool_free(&(cfg_stacklist_ptr->show_stacklist));
+}
+
 void vftr_config_name_grouped_profile_table_free(config_name_grouped_profile_table_t
                                                  *cfg_profile_table_ptr) {
    free(cfg_profile_table_ptr->name);
@@ -188,6 +194,7 @@ void vftr_config_free(config_t *config_ptr) {
    vftr_config_bool_free(&(config_ptr->demangle_cxx));
    vftr_config_bool_free(&(config_ptr->include_cxx_prelude));
    vftr_config_profile_table_free(&(config_ptr->profile_table));
+   vftr_config_stacklist_free(&(config_ptr->stacklist));
    vftr_config_name_grouped_profile_table_free(&(config_ptr->name_grouped_profile_table));
    vftr_config_sampling_free(&(config_ptr->sampling));
    vftr_config_mpi_free(&(config_ptr->mpi));
