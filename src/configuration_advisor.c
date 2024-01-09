@@ -29,6 +29,15 @@ void vftr_config_advisor_check_options(int noptions, char *options[],
    }
 }
 
+void vftr_config_advisor_stacklist (cJSON *json_obj) {
+   char *options[] = {
+      "show_stacklist"
+   };
+
+   int noptions = sizeof(options) / sizeof(char*);
+   vftr_config_advisor_check_options (noptions, options, json_obj->child);
+}
+
 void vftr_config_advisor_sort_table(cJSON *json_obj) {
    char *options[] = {
       "column",
@@ -194,6 +203,7 @@ void vftr_config_advisor(cJSON *config_json_ptr) {
       "name_grouped_profile_table",
       "sampling",
       "mpi",
+      "stacklist",
       "cuda",
       "openacc",
       "hwprof"
@@ -230,6 +240,13 @@ void vftr_config_advisor(cJSON *config_json_ptr) {
    if (has_object) {
       cJSON *json_sec = cJSON_GetObjectItem(config_json_ptr, sec_name);
       vftr_config_advisor_mpi(json_sec);
+   }
+
+   sec_name = "stacklist";
+   has_object = cJSON_HasObjectItem(config_json_ptr, sec_name);
+   if (has_object) {
+      cJSON *json_sec = cJSON_GetObjectItem(config_json_ptr, sec_name);
+      vftr_config_advisor_stacklist(json_sec);
    }
 
    sec_name = "cuda";
