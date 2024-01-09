@@ -181,6 +181,13 @@ void  vftr_config_hwobservables_free (config_hwobservables_t *cfg_hwobs_ptr) {
 void vftr_config_hwprof_free (config_hwprof_t *cfg_hwprof_ptr) {
    free(cfg_hwprof_ptr->name);
    cfg_hwprof_ptr->name = NULL;
+   vftr_config_bool_free(&(cfg_hwprof_ptr->active));
+   vftr_config_string_free(&(cfg_hwprof_ptr->hwc_type));
+   vftr_config_bool_free(&(cfg_hwprof_ptr->show_observables));
+   vftr_config_bool_free(&(cfg_hwprof_ptr->show_counters));
+   vftr_config_bool_free(&(cfg_hwprof_ptr->show_summary));
+   vftr_config_int_free(&(cfg_hwprof_ptr->sort_by_column));
+   vftr_config_string_free(&(cfg_hwprof_ptr->default_scenario));
    vftr_config_hwcounters_free (&(cfg_hwprof_ptr->counters));
    vftr_config_hwobservables_free (&(cfg_hwprof_ptr->observables));
 }
