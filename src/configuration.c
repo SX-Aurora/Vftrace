@@ -157,6 +157,7 @@ void vftr_config_cuda_free(config_cuda_t *cfg_cuda_ptr) {
 void vftr_config_accprof_free(config_accprof_t *cfg_accprof_ptr) {
    free(cfg_accprof_ptr->name);
    cfg_accprof_ptr->name = NULL;
+   vftr_config_bool_free(&(cfg_accprof_ptr->active));
    vftr_config_bool_free(&(cfg_accprof_ptr->show_table));
    vftr_config_bool_free(&(cfg_accprof_ptr->show_event_details));
    vftr_config_sort_table_free(&(cfg_accprof_ptr->sort_table));
