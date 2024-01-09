@@ -166,8 +166,8 @@ void vftr_config_accprof_free(config_accprof_t *cfg_accprof_ptr) {
 void  vftr_config_hwcounters_free (config_hwcounters_t *cfg_hwc_ptr) {
    free(cfg_hwc_ptr->name);
    cfg_hwc_ptr->name = NULL;
-   if (cfg_hwc_ptr->hwc_name.set) vftr_config_string_list_free(&(cfg_hwc_ptr->hwc_name));
-   if (cfg_hwc_ptr->symbol.set) vftr_config_string_list_free(&(cfg_hwc_ptr->symbol));
+   vftr_config_string_list_free(&(cfg_hwc_ptr->hwc_name));
+   vftr_config_string_list_free(&(cfg_hwc_ptr->symbol));
 }
 
 void  vftr_config_hwobservables_free (config_hwobservables_t *cfg_hwobs_ptr) {
