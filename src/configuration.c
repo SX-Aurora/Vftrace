@@ -69,6 +69,8 @@ void vftr_config_string_free(config_string_t *cfg_string_ptr) {
 }
 
 void vftr_config_string_list_free (config_string_list_t *cfg_string_list_ptr) {
+   free(cfg_string_list_ptr->name);
+   cfg_string_list_ptr->name = NULL;
    for (int i = 0; i < cfg_string_list_ptr->n_elements; i++) {
       free(cfg_string_list_ptr->values[i]);
    }
