@@ -25,4 +25,6 @@ double vftr_calculator_evaluate (vftr_calculator_t calc, int i_observable);
 
 void vftr_print_calculator_state (vftr_calculator_t calc);
 
+void vftr_calculator_free(vftr_calculator_t* calc);
+
 #endif

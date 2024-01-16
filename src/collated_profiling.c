@@ -58,6 +58,7 @@ collated_profile_t vftr_add_collated_profiles(collated_profile_t profA,
 void vftr_collated_profile_free(collated_profile_t* profile_ptr) {
    SELF_PROFILE_START_FUNCTION;
    vftr_collated_callprofiling_free(&(profile_ptr->callprof));
+   vftr_hwprofiling_free(&(profile_ptr->hwprof));
 #ifdef _MPI
    vftr_mpiprofiling_free(&(profile_ptr->mpiprof));
 #endif
