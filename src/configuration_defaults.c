@@ -45,6 +45,7 @@ config_string_list_t vftr_set_config_string_list_default (char *name) {
    cfg_string_list.set = false;
    cfg_string_list.n_elements = 0;
    cfg_string_list.values = NULL;
+   cfg_string_list.list_idx = NULL;
    return cfg_string_list;
 }
 
