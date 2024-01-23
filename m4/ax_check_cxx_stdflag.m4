@@ -14,5 +14,12 @@
 AC_DEFUN([AX_CHECK_CXX_STDFLAG], [
    AC_LANG(C++)
    AC_PREREQ(2.50)
-   AX_CHECK_COMPILE_FLAG([-stdlib=libc++],
-      [AX_APPEND_FLAG([-stdlib=libc++])])])
+   AC_MSG_CHECKING([whether system libc++ can be used])
+   AC_RUN_IFELSE([
+     AC_LANG_SOURCE([[
+#include <iostream>
+main() {return 1};
+]])]
+   [AX_APPEND_FLAG([-stdlib=libc++])
+   ][])
+])

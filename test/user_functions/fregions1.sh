@@ -15,6 +15,7 @@ vfdfile=$(get_vfdfile_name ${vftr_binary} "0")
 echo "{\"sampling\": {\"active\": true}, \"papi\": {\"show_tables\": false}}" > ${configfile}
 export VFTR_CONFIG=${configfile}
 
+set -x
 if [ "x${HAS_MPI}" == "xYES" ]; then
    ${MPI_EXEC} ${MPI_OPTS} ${NP} ${nprocs} ./${vftr_binary} || exit 1
 else

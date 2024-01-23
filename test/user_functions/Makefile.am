@@ -66,6 +66,7 @@ dist_noinst_SCRIPTS = cregions1.sh \
 		      cregions3.sh \
 		      cregions4.sh
 if ENABLE_FORTRAN
+if HAS_F_FINSTR
 check_PROGRAMS += fregions1 \
 		  fregions2 \
 		  fregions3 \
@@ -92,11 +93,13 @@ dist_noinst_SCRIPTS += fregions1.sh \
 		       fregions3.sh \
 		       fregions4.sh
 endif
+endif
 
 #############
 # get stack #
 #############
 if ENABLE_FORTRAN
+if HAS_F_FINSTR
 check_PROGRAMS += fget_stack
 
 fget_stack_SOURCES = $(srcdir)/fget_stack.F90
@@ -104,6 +107,7 @@ fget_stack_FCFLAGS = $(AM_FCFLAGS)
 fget_stack_LDFLAGS = $(AM_LDFLAGS)
 
 dist_noinst_SCRIPTS += fget_stack.sh
+endif
 endif
 
 check_PROGRAMS += cget_stack
@@ -126,6 +130,7 @@ cpause_resume_LDFLAGS = $(AM_LDFLAGS)
 dist_noinst_SCRIPTS += cpause_resume.sh
 
 if ENABLE_FORTRAN
+if HAS_F_FINSTR
 check_PROGRAMS += fpause_resume
 
 fpause_resume_SOURCES = $(srcdir)/fpause_resume.F90
@@ -133,6 +138,7 @@ fpause_resume_FCFLAGS = $(AM_FCFLAGS)
 fpause_resume_LDFLAGS = $(AM_LDFLAGS)
 
 dist_noinst_SCRIPTS += fpause_resume.sh
+endif
 endif
 
 TEST_EXTENSIONS = .sh

@@ -156,7 +156,8 @@ if ENABLE_MPI
 dist_check_SCRIPTS += separate_ranklogfiles.sh
 endif
 
-if ENABLE_FORTRAN
+if ENABLE_FORTRAN 
+if HAS_F_FINSTR
 ## The Nvidia compiler does not separate module names and functions
 ## with a dedicated separator like e.g. "_mod_". Therefore, this
 ## feature is not supported for nvfortran and the test not executed.
@@ -168,6 +169,7 @@ strip_module_names_FCFLAGS = $(AM_FCFLAGS) $(FINSTRUMENT_FLAG)
 strip_module_names_LDFLAGS = $(AM_LDFLAGS)
 
 dist_check_SCRIPTS += strip_module_names.sh
+endif
 endif
 endif
 
