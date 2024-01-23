@@ -594,6 +594,10 @@ void vftr_collated_stacktree_free(collated_stacktree_t *stacktree_ptr) {
          }
          vftr_collated_profile_free(&(stacktree_ptr->stacks[istack].profile));
          vftr_gid_list_free(&(stacktree_ptr->stacks[istack].gid_list));
+         if (stacktree_ptr->stacks[istack].callees) {
+             free(stacktree_ptr->stacks[istack].callees);
+             stacktree_ptr->stacks[istack].callees = NULL;
+         }
       }
       free(stacktree_ptr->stacks);
       stacktree_ptr->stacks = NULL;

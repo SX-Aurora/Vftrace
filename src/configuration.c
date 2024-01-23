@@ -69,6 +69,8 @@ void vftr_config_string_free(config_string_t *cfg_string_ptr) {
 }
 
 void vftr_config_string_list_free (config_string_list_t *cfg_string_list_ptr) {
+   free(cfg_string_list_ptr->name);
+   cfg_string_list_ptr->name = NULL;
    for (int i = 0; i < cfg_string_list_ptr->n_elements; i++) {
       free(cfg_string_list_ptr->values[i]);
    }
@@ -110,6 +112,12 @@ void vftr_config_profile_table_free(config_profile_table_t *cfg_profile_table_pt
    vftr_config_sort_table_free(&(cfg_profile_table_ptr->sort_table));
 }
 
+void vftr_config_stacklist_free(config_stacklist_t *cfg_stacklist_ptr) {
+    free(cfg_stacklist_ptr->name);
+    cfg_stacklist_ptr->name = NULL;
+    vftr_config_bool_free(&(cfg_stacklist_ptr->show_stacklist));
+}
+
 void vftr_config_name_grouped_profile_table_free(config_name_grouped_profile_table_t
                                                  *cfg_profile_table_ptr) {
    free(cfg_profile_table_ptr->name);
@@ -149,6 +157,7 @@ void vftr_config_cuda_free(config_cuda_t *cfg_cuda_ptr) {
 void vftr_config_accprof_free(config_accprof_t *cfg_accprof_ptr) {
    free(cfg_accprof_ptr->name);
    cfg_accprof_ptr->name = NULL;
+   vftr_config_bool_free(&(cfg_accprof_ptr->active));
    vftr_config_bool_free(&(cfg_accprof_ptr->show_table));
    vftr_config_bool_free(&(cfg_accprof_ptr->show_event_details));
    vftr_config_sort_table_free(&(cfg_accprof_ptr->sort_table));
@@ -157,21 +166,28 @@ void vftr_config_accprof_free(config_accprof_t *cfg_accprof_ptr) {
 void  vftr_config_hwcounters_free (config_hwcounters_t *cfg_hwc_ptr) {
    free(cfg_hwc_ptr->name);
    cfg_hwc_ptr->name = NULL;
-   if (cfg_hwc_ptr->hwc_name.set) vftr_config_string_list_free(&(cfg_hwc_ptr->hwc_name));
-   if (cfg_hwc_ptr->symbol.set) vftr_config_string_list_free(&(cfg_hwc_ptr->symbol));
+   vftr_config_string_list_free(&(cfg_hwc_ptr->hwc_name));
+   vftr_config_string_list_free(&(cfg_hwc_ptr->symbol));
 }
 
 void  vftr_config_hwobservables_free (config_hwobservables_t *cfg_hwobs_ptr) {
    free(cfg_hwobs_ptr->name);
    cfg_hwobs_ptr->name = NULL;
-   if (cfg_hwobs_ptr->obs_name.set) vftr_config_string_list_free(&(cfg_hwobs_ptr->obs_name));
-   if (cfg_hwobs_ptr->formula_expr.set) vftr_config_string_list_free(&(cfg_hwobs_ptr->formula_expr));
-   if (cfg_hwobs_ptr->unit.set) vftr_config_string_list_free(&(cfg_hwobs_ptr->unit));
+   vftr_config_string_list_free(&(cfg_hwobs_ptr->obs_name));
+   vftr_config_string_list_free(&(cfg_hwobs_ptr->formula_expr));
+   vftr_config_string_list_free(&(cfg_hwobs_ptr->unit));
 }
 
 void vftr_config_hwprof_free (config_hwprof_t *cfg_hwprof_ptr) {
    free(cfg_hwprof_ptr->name);
    cfg_hwprof_ptr->name = NULL;
+   vftr_config_bool_free(&(cfg_hwprof_ptr->active));
+   vftr_config_string_free(&(cfg_hwprof_ptr->hwc_type));
+   vftr_config_bool_free(&(cfg_hwprof_ptr->show_observables));
+   vftr_config_bool_free(&(cfg_hwprof_ptr->show_counters));
+   vftr_config_bool_free(&(cfg_hwprof_ptr->show_summary));
+   vftr_config_int_free(&(cfg_hwprof_ptr->sort_by_column));
+   vftr_config_string_free(&(cfg_hwprof_ptr->default_scenario));
    vftr_config_hwcounters_free (&(cfg_hwprof_ptr->counters));
    vftr_config_hwobservables_free (&(cfg_hwprof_ptr->observables));
 }
@@ -186,6 +202,7 @@ void vftr_config_free(config_t *config_ptr) {
    vftr_config_bool_free(&(config_ptr->demangle_cxx));
    vftr_config_bool_free(&(config_ptr->include_cxx_prelude));
    vftr_config_profile_table_free(&(config_ptr->profile_table));
+   vftr_config_stacklist_free(&(config_ptr->stacklist));
    vftr_config_name_grouped_profile_table_free(&(config_ptr->name_grouped_profile_table));
    vftr_config_sampling_free(&(config_ptr->sampling));
    vftr_config_mpi_free(&(config_ptr->mpi));

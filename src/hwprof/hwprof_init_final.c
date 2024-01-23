@@ -71,7 +71,11 @@ void vftr_hwprof_init (config_t config) {
 void vftr_hwprof_finalize () {
    if (vftrace.hwprof_state.counters != NULL) free(vftrace.hwprof_state.counters);
    vftrace.hwprof_state.counters = NULL;
-
+   if (vftrace.hwprof_state.observables) {
+       free(vftrace.hwprof_state.observables);
+       vftrace.hwprof_state.observables = NULL;
+   }
+   vftr_calculator_free(&vftrace.hwprof_state.calculator);
 #ifdef _PAPI_AVAIL
    if (vftrace.hwprof_state.hwc_type == HWC_PAPI) vftr_papi_finalize();
 #endif 

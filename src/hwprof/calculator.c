@@ -80,3 +80,36 @@ void vftr_print_calculator_state (vftr_calculator_t calc) {
       printf ("   value: %.10e\n", calc.builtin_values[i]);
    }
 }
+
+void vftr_calculator_free(vftr_calculator_t* calc) {
+    if (calc->values) {
+        free(calc->values);
+        calc->values = NULL;
+    }
+    if (calc->builtin_values) {
+        free(calc->builtin_values);
+        calc->builtin_values = NULL;
+    }
+    if (calc->builtin_symbols) {
+        free(calc->builtin_symbols);
+        calc->builtin_symbols = NULL;
+    }
+    if (calc->te_vars) {
+        for (int i = 0; i < calc->n_te_vars; i++) {
+            free((char*)calc->te_vars[i].name);
+            calc->te_vars[i].name = NULL;
+        }
+        free(calc->te_vars);
+        calc->te_vars = NULL;
+    }
+    if (calc->expr) {
+        for (int i = 0; i < calc->n_observables; i++) {
+            if (calc->expr[i]) {
+                te_free(calc->expr[i]);
+                calc->expr[i] = NULL;
+            }
+        }
+        free(calc->expr);
+        calc->expr = NULL;
+    }
+}
