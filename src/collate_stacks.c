@@ -64,7 +64,7 @@ collated_stacktree_t vftr_new_collated_stacktree(hashlist_t hashlist) {
    coll_stacktree.maxstacks = coll_stacktree.nstacks;
    coll_stacktree.stacks = (collated_stack_t*)
       malloc(coll_stacktree.nstacks*sizeof(collated_stack_t));
-   for (int istack=0; istack<coll_stacktree.nstacks; istack++) {
+   for (int istack = 0; istack < coll_stacktree.nstacks; istack++) {
       coll_stacktree.stacks[istack].local_stack = NULL;
       coll_stacktree.stacks[istack].gid = istack;
       coll_stacktree.stacks[istack].gid_list = vftr_new_empty_gid_list();
@@ -73,6 +73,7 @@ collated_stacktree_t vftr_new_collated_stacktree(hashlist_t hashlist) {
       coll_stacktree.stacks[istack].name = NULL;
       coll_stacktree.stacks[istack].hash = hashlist.hashes[istack];
       coll_stacktree.stacks[istack].profile = vftr_new_collated_profile();
+      coll_stacktree.stacks[istack].callees = NULL;
    }
    coll_stacktree.namegrouped = false;
    SELF_PROFILE_END_FUNCTION;
@@ -82,9 +83,9 @@ collated_stacktree_t vftr_new_collated_stacktree(hashlist_t hashlist) {
 void vftr_collated_stacktree_realloc(collated_stacktree_t *stacktree_ptr) {
    collated_stacktree_t stacktree = *stacktree_ptr;
    while (stacktree.nstacks > stacktree.maxstacks) {
-      int maxstacks = stacktree.maxstacks*vftr_realloc_rate+vftr_realloc_add;
+      int maxstacks = stacktree.maxstacks * vftr_realloc_rate + vftr_realloc_add;
       stacktree.stacks = (collated_stack_t*)
-         realloc(stacktree.stacks, maxstacks*sizeof(collated_stack_t));
+         realloc(stacktree.stacks, maxstacks * sizeof(collated_stack_t));
       stacktree.maxstacks = maxstacks;
    }
    *stacktree_ptr = stacktree;
@@ -193,7 +194,11 @@ void vftr_broadcast_collated_stacktree_receivers(collated_stacktree_t *stacktree
    int idx = 0;
    for (int istack = 0; istack < nstacks; istack++) {
       int ncallees = stacktree_ptr->stacks[istack].ncallees;
-      if (ncallees > 0) stacktree_ptr->stacks[istack].callees = (int*)malloc(ncallees * sizeof(int));
+      if (ncallees > 0) {
+         stacktree_ptr->stacks[istack].callees = (int*)malloc(ncallees * sizeof(int));
+      } else {
+         stacktree_ptr->stacks[istack].callees = NULL;
+      }
       for (int icallee = 0; icallee < ncallees; icallee++) {
          stacktree_ptr->stacks[istack].callees[icallee] = all_callees[idx++]; 
       }
@@ -420,7 +425,7 @@ collated_stacktree_t vftr_collate_stacks(stacktree_t *stacktree_ptr) {
    // build a lookup table each to translate local2global and global2local
    int *local2global_ID = (int*) malloc(stacktree_ptr->nstacks*sizeof(int));
    int *global2local_ID = (int*) malloc(coll_stacktree.nstacks*sizeof(int));
-   for (int istack=0; istack<stacktree_ptr->nstacks; istack++) {
+   for (int istack = 0; istack < stacktree_ptr->nstacks; istack++) {
       // -1 in the lookup table means that the local stack does not exist
       local2global_ID[istack] = -1;
    }
@@ -562,17 +567,17 @@ collated_stacktree_t vftr_collated_stacktree_group_by_name(
    collated_stacktree_t grouped_stacktree = vftr_new_empty_collated_stacktree();
    grouped_stacktree.namegrouped = true;
 
-   for (int istack=0; istack<stacktree_ptr->nstacks; istack++) {
-      collated_stack_t *stack = stacktree_ptr->stacks+istack;
+   for (int istack = 0; istack < stacktree_ptr->nstacks; istack++) {
+      collated_stack_t *stack = stacktree_ptr->stacks + istack;
 
       // check if stack is already present
       int idx = vftr_binary_search_collated_stacks_name(grouped_stacktree, stack->name);
       collated_stack_t *grouped_stack = NULL;
       if (idx < 0) {
          idx = vftr_collated_stacktree_insert_namegroup(&grouped_stacktree, stack);
-         grouped_stack = grouped_stacktree.stacks+idx;
+         grouped_stack = grouped_stacktree.stacks + idx;
       } else {
-         grouped_stack = grouped_stacktree.stacks+idx;
+         grouped_stack = grouped_stacktree.stacks + idx;
          grouped_stack->profile = vftr_add_collated_profiles(grouped_stack->profile,
                                                              stack->profile);
       }
@@ -586,7 +591,7 @@ collated_stacktree_t vftr_collated_stacktree_group_by_name(
 void vftr_collated_stacktree_free(collated_stacktree_t *stacktree_ptr) {
    SELF_PROFILE_START_FUNCTION;
    if (stacktree_ptr->nstacks > 0) {
-      for (int istack=0; istack<stacktree_ptr->nstacks; istack++) {
+      for (int istack = 0; istack < stacktree_ptr->nstacks; istack++) {
          // the grouped stacks only contain a copy of the reference to one of the
          // stacks with the name
          if (!stacktree_ptr->namegrouped) {
