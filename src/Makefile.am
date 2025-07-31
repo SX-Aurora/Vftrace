@@ -158,6 +158,10 @@ if ENABLE_PAPI
 libvftrace_la_CFLAGS += -D_PAPI_AVAIL
 endif
 
+if ENABLE_LIKWID
+libvftrace_la_CFLAGS += -D_LIKWID_AVAIL
+endif
+
 if HAS_LIBERTY
 libvftrace_la_CFLAGS += -D_LIBERTY
 endif

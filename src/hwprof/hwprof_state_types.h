@@ -3,7 +3,9 @@
 
 #include <stdbool.h>
 
+#ifdef _LIKWID_AVAIL
 #include "likwid.h"
+#endif
 
 #include "hwprof_ve.h"
 #include "calculator.h"
@@ -31,7 +33,9 @@ typedef struct {
 
 typedef struct {
   double total_energy;
+#ifdef _LIKWID_AVAIL
   PowerData_t pd;
+#endif
 } likwid_state_t;
 
 typedef struct {

@@ -27,6 +27,10 @@ if ENABLE_PAPI
 libvftr_hwprof_la_CFLAGS += -D_PAPI_AVAIL
 endif
 
+if ENABLE_LIKWID
+libvftr_hwprof_la_CFLAGS += -D_LIKWID_AVAIL
+endif
+
 if ON_VECTOR_ENGINE
 libvftr_hwprof_la_CFLAGS += -D_ON_VE
 endif
