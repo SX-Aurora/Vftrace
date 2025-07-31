@@ -325,9 +325,10 @@ void vftr_config_hwprof_assert (FILE *fp, config_hwprof_t cfg_hwprof) {
    char *hwc_type = cfg_hwprof.hwc_type.value;
    if (!(!strcmp(hwc_type, "dummy") ||
          !strcmp(hwc_type, "papi")  ||
+         !strcmp(hwc_type, "likwid")  ||
          !strcmp(hwc_type, "ve"))) {
       fprintf (fp, "hwprof: type is obligatory!\n");
-      fprintf (fp, "Must be one of: dummy, papi, ve\n");
+      fprintf (fp, "Must be one of: dummy, papi, likwid, ve\n");
       fprintf (fp, "You specified: %s\n", hwc_type);
       vftr_abort(0);
    }

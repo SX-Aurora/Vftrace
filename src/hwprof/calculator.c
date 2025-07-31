@@ -18,9 +18,9 @@ vftr_calculator_t vftr_init_calculator (int n_observables, char **symbols, char 
    calc.n_variables = vftrace.hwprof_state.n_counters;
    calc.n_te_vars = calc.n_variables + NSYM_BUILTIN;
    calc.n_observables = n_observables;
-   calc.values = (double*)malloc(calc.n_variables * sizeof(double));
-   calc.te_vars = (te_variable*)malloc(calc.n_te_vars * sizeof(te_variable));
-   calc.expr = (te_expr**)malloc(n_observables * sizeof(te_expr*));
+   calc.values = calc.n_variables > 0 ? (double*)malloc(calc.n_variables * sizeof(double)): NULL;
+   calc.te_vars = calc.n_te_vars > 0 ? (te_variable*)malloc(calc.n_te_vars * sizeof(te_variable)) : NULL;
+   calc.expr = n_observables > 0 ? (te_expr**)malloc(n_observables * sizeof(te_expr*)) : NULL;
 
    memset (calc.builtin_values, 0, NSYM_BUILTIN * sizeof(double));
    memset (calc.values, 0, calc.n_variables * sizeof(double));
@@ -47,7 +47,7 @@ vftr_calculator_t vftr_init_calculator (int n_observables, char **symbols, char 
          fprintf (stderr, "  Possible reasons: Symbols do not exist, or syntax error.\n");
          vftr_abort(0);
       }
-   } 
+   }
    return calc;
 }
 

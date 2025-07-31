@@ -56,6 +56,9 @@ AX_ENABLE_ACCPROF
 # Check PAPI hardware profiling support
 AX_ENABLE_PAPI
 
+# Check Likwid hardware profiling support
+AX_ENABLE_LIKWID
+
 # Check for dlopen
 AX_ENABLE_DYNLIB_TRACING
 

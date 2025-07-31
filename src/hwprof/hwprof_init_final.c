@@ -8,6 +8,7 @@
 #ifdef _PAPI_AVAIL
 #include "hwprof_papi.h"
 #endif
+#include "hwprof_likwid.h"
 
 char *vftr_builtin_obs_symbols[NSYM_BUILTIN] = {"T", "CALLS"};
 
@@ -17,6 +18,8 @@ void vftr_hwprof_init (config_t config) {
       vftrace.hwprof_state.hwc_type = HWC_DUMMY;
    } else if (!strcmp(config.hwprof.hwc_type.value, "papi")) {
       vftrace.hwprof_state.hwc_type = HWC_PAPI;
+   } else if (!strcmp(config.hwprof.hwc_type.value, "likwid")) {
+      vftrace.hwprof_state.hwc_type = HWC_LIKWID;
    } else if (!strcmp(config.hwprof.hwc_type.value, "ve")) {
       vftrace.hwprof_state.hwc_type = HWC_VE;
    }

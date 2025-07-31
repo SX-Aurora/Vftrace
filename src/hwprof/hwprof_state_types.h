@@ -3,12 +3,14 @@
 
 #include <stdbool.h>
 
+#include "likwid.h"
+
 #include "hwprof_ve.h"
 #include "calculator.h"
 
 #define NSYM_BUILTIN 2
 
-enum {HWC_NONE, HWC_DUMMY, HWC_PAPI, HWC_VE};
+enum {HWC_NONE, HWC_DUMMY, HWC_PAPI, HWC_LIKWID, HWC_VE};
 
 extern char *vftr_builtin_obs_symbols[NSYM_BUILTIN];
 
@@ -28,6 +30,11 @@ typedef struct {
 } papi_state_t;
 
 typedef struct {
+  double total_energy;
+  PowerData_t pd;
+} likwid_state_t;
+
+typedef struct {
   int *active_counters; 
 } veprof_state_t;
 
@@ -39,6 +46,7 @@ typedef struct {
    vftr_counter_t *counters;
    vftr_observable_t *observables;
    papi_state_t papi;
+   likwid_state_t likwid;
    veprof_state_t veprof;
    vftr_calculator_t calculator;
 } hwprof_state_t;

@@ -20,6 +20,8 @@ char *vftr_hwtype_string (int hwtype) {
          return "Dummy";
       case HWC_PAPI:
          return "PAPI";
+      case HWC_LIKWID:
+         return "Likwid";
       case HWC_VE:
          return "VEPERF";
       default:

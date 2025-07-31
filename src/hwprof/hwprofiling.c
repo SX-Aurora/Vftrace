@@ -10,6 +10,7 @@
 #ifdef _ON_VE
 #include "hwprof_ve.h"
 #endif 
+#include "hwprof_likwid.h"
 #include "calculator.h"
 
 hwprofile_t vftr_new_hwprofiling () {
@@ -33,6 +34,8 @@ long long *vftr_get_hw_counters () {
       case HWC_PAPI:
          return vftr_get_papi_counters();
 #endif
+      case HWC_LIKWID:
+         return vftr_get_likwid_counters();
 #ifdef _ON_VE
       case HWC_VE:
          return vftr_get_active_ve_counters();
