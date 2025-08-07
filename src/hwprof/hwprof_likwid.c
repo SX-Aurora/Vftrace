@@ -70,6 +70,7 @@ void vftr_likwid_init (hwprof_state_t *state) {
    for (int i = 0; i < NUM_POWER_DOMAINS; i++) {
       state->likwid.pdom_active[i] = false;
    }
+
    for (int i = 0; i < state->n_counters; i++) {
       char *name = state->counters[i].name;
       if (!strcmp(name, "PKG")) {
@@ -86,8 +87,11 @@ void vftr_likwid_init (hwprof_state_t *state) {
    }
    
    state->likwid.pd = (PowerData_t**)malloc(state->likwid.n_sockets * sizeof(PowerData_t*));
-   for (int i = 0; i < NUM_POWER_DOMAINS; i++) {
-      state->likwid.pd[i] = (PowerData_t*)malloc(NUM_POWER_DOMAINS * sizeof(PowerData_t));
+   for (int s = 0; s < state->likwid.n_sockets; s++) {
+      state->likwid.pd[s] = (PowerData_t*)malloc(NUM_POWER_DOMAINS * sizeof(PowerData_t));
+      for (int i = 0; i < NUM_POWER_DOMAINS; i++) {
+         state->likwid.pd[s][i] = (PowerData_t)malloc(sizeof(PowerData_t));
+      }
    }
    (void)vftr_likwid_start_stop_power (&(state->likwid), POWER_START);
    state->likwid.total_energy = 0;
@@ -120,11 +124,7 @@ long long *vftr_get_likwid_counters () {
       }
    }
 
-   printf ("COUNTERS: %d\n", counters[0]);
-  
    ///power_start (vftrace.hwprof_state.likwid.pd, 0, PKG);
    (void)vftr_likwid_start_stop_power (&(vftrace.hwprof_state.likwid), POWER_START);
-   printf ("GET COUNTERS 2: %d %d\n", vftrace.hwprof_state.likwid.socket_cores[0],
-           vftrace.hwprof_state.likwid.socket_cores[1]);
    return counters;
 }
