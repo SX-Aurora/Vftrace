@@ -37,10 +37,10 @@ typedef struct {
   PowerData_t **pd;
   CpuTopology_t tp;
   bool pdom_active[NUM_POWER_DOMAINS];
-  ///AffinityDomains_t aff; 
 #endif
   int n_sockets;
   int *socket_cores;
+  double energyUnit;
 } likwid_state_t;
 
 typedef struct {

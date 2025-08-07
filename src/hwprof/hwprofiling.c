@@ -46,6 +46,12 @@ long long *vftr_get_hw_counters () {
    }
 }
 
+void vftr_hwprof_adapt_units (hwprof_state_t state, double *value) {
+#ifdef _LIKWID_AVAIL
+   *value *= state.likwid.energyUnit;
+#endif
+}
+
 void vftr_accumulate_hwprofiling (hwprofile_t *prof, long long *counters, bool invert_sign) {
    int n = vftrace.hwprof_state.n_counters;
    for (int i = 0; i < n; i++) {
@@ -106,6 +112,7 @@ void vftr_update_stacks_hw_observables (stacktree_t *stacktree_ptr) {
          vftr_set_calculator_builtin (calc, PCALC_CALLS, callprof.calls);
          for (int i = 0; i < calc->n_observables; i++) {
             hwprof->observables[i] = vftr_calculator_evaluate (*calc, i);
+            vftr_hwprof_adapt_units (vftrace.hwprof_state, &hwprof->observables[i]);
          }
       }
    }

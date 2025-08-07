@@ -3,31 +3,14 @@
 #include "vftrace_state.h"
 #include "signal_handling.h"
 
-enum {POWER_START, POWER_STOP};
-
-int vftr_likwid_start_stop_power (likwid_state_t *l, int mode) {
-   int err = 0;
-   for (int s = 0; s < l->n_sockets; s++) {
-      int cpu_id = l->socket_cores[s];
-      for (int pdom = 0; pdom < NUM_POWER_DOMAINS; pdom++) {
-         if (l->pdom_active[pdom]) {
-            if (mode == POWER_START) {
-               err |= power_start (l->pd[s][pdom], cpu_id, pdom);
-            } else {
-               err |= power_stop (l->pd[s][pdom], cpu_id, pdom);
-            }
-         }
-      }
-   }
-   return err;
-}
-
-double vftr_likwid_energy_for_all_sockets (hwprof_state_t state, int pdom) {
-   double muj_tot = 0;
+long long vftr_likwid_energy_for_all_sockets (hwprof_state_t state, int pdom) {
+   long long E_tot = 0;
    for (int s = 0; s < state.likwid.n_sockets; s++) {
-      muj_tot += power_printEnergy (state.likwid.pd[s][pdom]) * 1e6;
+      int cpu_id = state.likwid.socket_cores[s];
+      power_stop (state.likwid.pd[s][pdom], cpu_id, pdom);
+      E_tot += state.likwid.pd[s][pdom]->after;
    }
-   return muj_tot;
+   return E_tot;
 }
 
 void vftr_likwid_init (hwprof_state_t *state) {
@@ -93,13 +76,13 @@ void vftr_likwid_init (hwprof_state_t *state) {
          state->likwid.pd[s][i] = (PowerData_t)malloc(sizeof(PowerData_t));
       }
    }
-   (void)vftr_likwid_start_stop_power (&(state->likwid), POWER_START);
    state->likwid.total_energy = 0;
+
+   PowerInfo_t pinfo = get_powerInfo ();
+   state->likwid.energyUnit = pinfo->domains[0].energyUnit;
 }
 
 void vftr_likwid_finalize () {
-   ///power_stop (vftrace.hwprof_state.likwid.pd, 0, PKG); 
-   vftr_likwid_start_stop_power (&(vftrace.hwprof_state.likwid), POWER_STOP);
    for (int s = 0; s < vftrace.hwprof_state.likwid.n_sockets; s++) {
       free(vftrace.hwprof_state.likwid.pd[s]);
    }
@@ -110,21 +93,15 @@ void vftr_likwid_finalize () {
 
 long long *vftr_get_likwid_counters () {
    
-   (void)vftr_likwid_start_stop_power (&(vftrace.hwprof_state.likwid), POWER_STOP);
-
    int n = vftrace.hwprof_state.n_counters;
    long long *counters  = (long long*)malloc(n * sizeof(long long));
 
-   ///double muj = power_printEnergy (vftrace.hwprof_state.likwid.pd) * 1e6;
-   ///vftrace.hwprof_state.likwid.total_energy += muj;
    int c = 0;
    for (int pdom = 0; pdom < NUM_POWER_DOMAINS; pdom++) {
       if (vftrace.hwprof_state.likwid.pdom_active[pdom]) {
-         counters[c++] = (long long)vftr_likwid_energy_for_all_sockets (vftrace.hwprof_state, pdom);
+         counters[c++] = vftr_likwid_energy_for_all_sockets (vftrace.hwprof_state, pdom);
       }
    }
 
-   ///power_start (vftrace.hwprof_state.likwid.pd, 0, PKG);
-   (void)vftr_likwid_start_stop_power (&(vftrace.hwprof_state.likwid), POWER_START);
    return counters;
 }
