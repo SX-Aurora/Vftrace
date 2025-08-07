@@ -34,8 +34,10 @@ long long *vftr_get_hw_counters () {
       case HWC_PAPI:
          return vftr_get_papi_counters();
 #endif
+#ifdef _LIKWID_AVAIL
       case HWC_LIKWID:
          return vftr_get_likwid_counters();
+#endif
 #ifdef _ON_VE
       case HWC_VE:
          return vftr_get_active_ve_counters();

@@ -18,7 +18,9 @@ if ON_VECTOR_ENGINE
 libvftr_hwprof_la_SOURCES += hwprof_ve.c
 endif
 
+if ENABLE_LIKWID
 libvftr_hwprof_la_SOURCES += hwprof_likwid.c
+endif
 
 libvftr_hwprof_la_CFLAGS = -I${srcdir}/../ -I${srcdir}/../sorting -I${srcdir}/../../external/tinyexpr 
 if ENABLE_PAPI
