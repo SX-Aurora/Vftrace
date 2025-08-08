@@ -52,6 +52,9 @@ collated_profile_t vftr_add_collated_profiles(collated_profile_t profA,
    //profC.cudaprof = vftr_add_cudaprofiles(profA.cudaprof, profB.cudaprof);
 #endif
    // TODO: Add other profiles
+   profC.hwprof.counters_incl = NULL;
+   profC.hwprof.counters_excl = NULL;
+   profC.hwprof.observables = NULL;
    return profC;
 }
 
