@@ -17,12 +17,21 @@ hwprofile_t vftr_new_hwprofiling () {
    hwprofile_t prof;
    int n_counters = vftrace.hwprof_state.n_counters;
    int n_observables = vftrace.config.hwprof.observables.obs_name.n_elements;
-   prof.counters_incl = (long long*)malloc (n_counters * sizeof(long long));
-   memset (prof.counters_incl, 0, n_counters * sizeof(long long));
-   prof.counters_excl = (long long*)malloc (n_counters * sizeof(long long));
-   memset (prof.counters_excl, 0, n_counters * sizeof(long long));
-   prof.observables = (double*)malloc (n_observables * sizeof(double));
-   memset (prof.observables, 0, n_observables * sizeof(double));
+   if (n_counters > 0) {
+      prof.counters_incl = (long long*)malloc (n_counters * sizeof(long long));
+      memset (prof.counters_incl, 0, n_counters * sizeof(long long));
+      prof.counters_excl = (long long*)malloc (n_counters * sizeof(long long));
+      memset (prof.counters_excl, 0, n_counters * sizeof(long long));
+   } else {
+      prof.counters_incl = NULL;
+      prof.counters_excl = NULL;
+   }
+   if (n_observables > 0) {
+      prof.observables = (double*)malloc (n_observables * sizeof(double));
+      memset (prof.observables, 0, n_observables * sizeof(double));
+   } else {
+      prof.observables = NULL;
+   }
    return prof;
 }
 
