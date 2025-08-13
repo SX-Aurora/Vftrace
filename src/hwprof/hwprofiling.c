@@ -62,8 +62,8 @@ void vftr_hwprof_adapt_units (hwprof_state_t state, double *value) {
       case HWC_LIKWID:
 #ifdef _LIKWID_AVAIL
          *value *= state.likwid.energyUnit;
-   }
 #endif
+   }
 }
 
 void vftr_accumulate_hwprofiling (hwprofile_t *prof, long long *counters, bool invert_sign) {
