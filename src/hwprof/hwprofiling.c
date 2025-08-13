@@ -58,8 +58,11 @@ long long *vftr_get_hw_counters () {
 }
 
 void vftr_hwprof_adapt_units (hwprof_state_t state, double *value) {
+   switch (state.hwc_type) {
+      case HWC_LIKWID:
 #ifdef _LIKWID_AVAIL
-   *value *= state.likwid.energyUnit;
+         *value *= state.likwid.energyUnit;
+   }
 #endif
 }
 
