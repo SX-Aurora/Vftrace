@@ -22,6 +22,12 @@ cat << EOF > ${configfile}
              "hwc_name": "FOO",
              "symbol": "f"
           }
+      ],
+      "observables": [
+          {
+             "name": "test",
+             "formula": "f"
+          }
       ]
    }
 }
@@ -35,6 +41,7 @@ else
 fi
 
 value=`grep -m 2 user-region-1 $logfile | tail -1 | awk '{print $6}'`
+value=${value%%.*} # Strip decimal places
 target=10
 if [ "${value}" != "${target}" ]; then
    echo "user-region-1 should have observable value ${target} in ${logfile}."
