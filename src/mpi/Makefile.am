@@ -1,16 +1,16 @@
 SUBDIRS = utils
 
 if ENABLE_MPI
-SUBDIRS +=vftr_mpi
-
-SUBDIRS += c2vftr \
-	   c-wrapper
+#SUBDIRS +=vftr_mpi
+#
+#SUBDIRS += c2vftr \
+#	   c-wrapper
 if ENABLE_FORTRAN
-SUBDIRS += f2vftr \
-	   f-wrapper
+#SUBDIRS += f2vftr \
+#	   f-wrapper
 if ENABLE_FORTRAN08
-SUBDIRS += f082vftr \
-	   f08-wrapper
+#SUBDIRS += f082vftr \
+#	   f08-wrapper
 endif
 endif
 endif

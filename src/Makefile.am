@@ -20,15 +20,15 @@ libvftrace_la_LIBADD += libvftr_pause.la
 libvftrace_la_LIBADD += sorting/libvftr_sorting.la
 libvftrace_la_LIBADD += mpi/utils/libvftr_mpi_utils.la
 if ENABLE_MPI
-libvftrace_la_LIBADD += mpi/vftr_mpi/libvftr_mpi.la
-libvftrace_la_LIBADD += mpi/c-wrapper/libvftr_cmpiwrap.la \
-			mpi/c2vftr/libvftr_mpi_c2vftr.la
+#libvftrace_la_LIBADD += mpi/vftr_mpi/libvftr_mpi.la
+#libvftrace_la_LIBADD += mpi/c-wrapper/libvftr_cmpiwrap.la \
+#			mpi/c2vftr/libvftr_mpi_c2vftr.la
 if ENABLE_FORTRAN
-libvftrace_la_LIBADD += mpi/f-wrapper/libvftr_fmpiwrap.la \
-			mpi/f2vftr/libvftr_mpi_f2vftr.la
+#libvftrace_la_LIBADD += mpi/f-wrapper/libvftr_fmpiwrap.la \
+#			mpi/f2vftr/libvftr_mpi_f2vftr.la
 if ENABLE_FORTRAN08
-libvftrace_la_LIBADD += mpi/f08-wrapper/libvftr_f08mpiwrap.la \
-			mpi/f082vftr/libvftr_mpi_f082vftr.la
+#libvftrace_la_LIBADD += mpi/f08-wrapper/libvftr_f08mpiwrap.la \
+#			mpi/f082vftr/libvftr_mpi_f082vftr.la
 endif
 endif
 endif
@@ -135,6 +135,7 @@ libvftrace_la_CFLAGS += -I${srcdir}/mpi/utils/ \
 if ENABLE_MPI
 libvftrace_la_CFLAGS += -D_MPI
 libvftrace_la_FCFLAGS += -D_MPI
+libvftrace_la_CFLAGS += -D_MPI_REDUCED
 endif 
 
 if ENABLE_OMP

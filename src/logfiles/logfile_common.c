@@ -2,6 +2,7 @@
 
 #include "logfile_common_types.h"
 
+#include "mpi_control.h"
 #include "config.h"
 #include "license.h"
 #include "filenames.h"
@@ -81,7 +82,7 @@ vftr_logfile_fp_t vftr_logfile_open_fps (config_t config, int rankID, int nranks
 
 #ifdef _MPI
   int mpi_initialized;
-  PMPI_Initialized(&mpi_initialized);
+  MPI_CALL(Initialized)(&mpi_initialized);
   all_fp.fp[LOG_MPI] = config.mpi.show_table.value && mpi_initialized ?
                        vftr_get_this_logfile_fp ("mpi", fp_main, rankID, nranks) : NULL;
 #else
@@ -119,7 +120,7 @@ void vftr_logfile_close_fp (vftr_logfile_fp_t all_fp) {
 void vftr_write_logfile_warnings (vftrace_t vftrace, vftr_logfile_fp_t all_fp) {
 #ifdef _MPI
    int mpi_initialized;
-   PMPI_Initialized(&mpi_initialized);
+   MPI_CALL(Initialized)(&mpi_initialized);
    if (!mpi_initialized && all_fp.fp[LOG_MPI] != NULL)
      fprintf (all_fp.fp[LOG_MPI], "The MPI interface is active, but MPI has not been initialized\n");
 #endif   

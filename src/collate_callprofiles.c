@@ -6,6 +6,7 @@
 #include <mpi.h>
 #endif
 
+#include "mpi_control.h"
 #include "self_profile.h"
 #include "collated_callprofiling_types.h"
 #include "collated_stack_types.h"
@@ -67,10 +68,10 @@ static void vftr_collate_callprofiles_on_root(collated_stacktree_t *collstacktre
    const MPI_Aint displacements[] = {0, sizeof(int)};
    const MPI_Datatype types[] = {MPI_INT, MPI_LONG_LONG_INT};
    MPI_Datatype callprofile_transfer_mpi_t;
-   PMPI_Type_create_struct(nblocks, blocklengths,
-                           displacements, types,
-                           &callprofile_transfer_mpi_t);
-   PMPI_Type_commit(&callprofile_transfer_mpi_t);
+   MPI_CALL(Type_create_struct)(nblocks, blocklengths,
+                                displacements, types,
+                                &callprofile_transfer_mpi_t);
+   MPI_CALL(Type_commit)(&callprofile_transfer_mpi_t);
 
    if (myrank > 0) {
       // every rank fills their sendbuffer
@@ -97,10 +98,10 @@ static void vftr_collate_callprofiles_on_root(collated_stacktree_t *collstacktre
             sendbuf[istack].overhead_nsec += callprof.overhead_nsec;
          }
       }
-      PMPI_Send(sendbuf, nstacks,
-                callprofile_transfer_mpi_t,
-                0, myrank,
-                MPI_COMM_WORLD);
+      MPI_CALL(Send)(sendbuf, nstacks,
+                     callprofile_transfer_mpi_t,
+                     0, myrank,
+                     MPI_COMM_WORLD);
       free(sendbuf);
    } else {
       int maxstacks = 0;
@@ -115,11 +116,11 @@ static void vftr_collate_callprofiles_on_root(collated_stacktree_t *collstacktre
       for (int irank = 1; irank < nranks; irank++) {
          int nstacks = nremote_stacks[irank];
          MPI_Status status;
-         PMPI_Recv(recvbuf, nstacks,
-                   callprofile_transfer_mpi_t,
-                   irank, irank,
-                   MPI_COMM_WORLD,
-                   &status);
+         MPI_CALL(Recv)(recvbuf, nstacks,
+                        callprofile_transfer_mpi_t,
+                        irank, irank,
+                        MPI_COMM_WORLD,
+                        &status);
          for (int istack = 0; istack < nstacks; istack++) {
             int gid = recvbuf[istack].gid;
             collated_stack_t *collstack = collstacktree_ptr->stacks+gid;
@@ -148,7 +149,7 @@ static void vftr_collate_callprofiles_on_root(collated_stacktree_t *collstacktre
       free(recvbuf);
    }
 
-   PMPI_Type_free(&callprofile_transfer_mpi_t);
+   MPI_CALL(Type_free)(&callprofile_transfer_mpi_t);
    SELF_PROFILE_END_FUNCTION;
 }
 #endif
@@ -193,7 +194,7 @@ void vftr_collate_callprofiles(collated_stacktree_t *collstacktree_ptr,
    vftr_collate_callprofiles_root_self(collstacktree_ptr, stacktree_ptr);
 #ifdef _MPI
    int mpi_initialized;
-   PMPI_Initialized(&mpi_initialized);
+   MPI_CALL(Initialized)(&mpi_initialized);
    if (mpi_initialized) {
       vftr_collate_callprofiles_on_root(collstacktree_ptr, stacktree_ptr,
                                         myrank, nranks, nremote_stacks);

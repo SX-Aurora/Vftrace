@@ -8,13 +8,14 @@
 #include "vftrace_state.h"
 #include "vftr_finalize.h"
 #include "signal_handling.h"
+#include "mpi_control.h"
 
 void vftr_abort (int errcode) {
 #ifdef _MPI
    int mpi_initialized;
-   PMPI_Initialized(&mpi_initialized);
+   MPI_CALL(Initialized)(&mpi_initialized);
    if (mpi_initialized) {
-      PMPI_Abort (MPI_COMM_WORLD, errcode);
+      MPI_CALL(Abort) (MPI_COMM_WORLD, errcode);
    } else {
       abort();
    }

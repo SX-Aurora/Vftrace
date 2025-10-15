@@ -4,6 +4,7 @@
 #include <mpi.h>
 #endif
 
+#include "mpi_control.h"
 #include "self_profile.h"
 #include "stack_types.h"
 #include "collated_stack_types.h"
@@ -34,10 +35,10 @@ void vftr_collate_profiles(collated_stacktree_t *collstacktree_ptr,
 
 #ifdef _MPI
    int mpi_initialized;
-   PMPI_Initialized(&mpi_initialized);
+   MPI_CALL(Initialized)(&mpi_initialized);
    if (mpi_initialized) {
-      PMPI_Comm_rank(MPI_COMM_WORLD, &myrank);
-      PMPI_Comm_size(MPI_COMM_WORLD, &nranks);
+      MPI_CALL(Comm_rank)(MPI_COMM_WORLD, &myrank);
+      MPI_CALL(Comm_size)(MPI_COMM_WORLD, &nranks);
    }
 #endif
 
@@ -48,11 +49,11 @@ void vftr_collate_profiles(collated_stacktree_t *collstacktree_ptr,
    }
 #ifdef _MPI
    if (mpi_initialized) {
-      PMPI_Gather(&nstacks, 1,
-                  MPI_INT,
-                  nremote_stacks, 1,
-                  MPI_INT,
-                  0, MPI_COMM_WORLD);
+      MPI_CALL(Gather)(&nstacks, 1,
+                       MPI_INT,
+                       nremote_stacks, 1,
+                       MPI_INT,
+                       0, MPI_COMM_WORLD);
    }
 #endif
 
