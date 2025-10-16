@@ -58,9 +58,9 @@ static void vftr_collate_cudaprofiles_on_root (collated_stacktree_t *collstacktr
    const MPI_Aint displacements[] = {0, 4 * sizeof(int), 4 * sizeof(int) + sizeof(float)};
    const MPI_Datatype types[] = {MPI_INT, MPI_FLOAT, MPI_LONG_LONG_INT};
    MPI_Datatype cudaprofile_transfer_mpi_t;
-   MPI_CALL(Type_create_struct)(nblocks, blocklengths, displacements, types,
+   PMPI_Type_create_struct(nblocks, blocklengths, displacements, types,
                                 &cudaprofile_transfer_mpi_t);
-   MPI_CALL(Type_commit)(&cudaprofile_transfer_mpi_t);
+   PMPI_Type_commit(&cudaprofile_transfer_mpi_t);
 
    if (myrank > 0) {
       int nprofiles = stacktree_ptr->nstacks;
@@ -78,7 +78,7 @@ static void vftr_collate_cudaprofiles_on_root (collated_stacktree_t *collstacktr
          sendbuf[istack].memcpy_bytes_out = cudaprof.memcpy_bytes[1];
          sendbuf[istack].overhead_nsec = cudaprof.overhead_nsec;
       }
-      MPI_CALL(Send)(sendbuf, nprofiles, cudaprofile_transfer_mpi_t, 0, myrank, MPI_COMM_WORLD);
+      PMPI_Send(sendbuf, nprofiles, cudaprofile_transfer_mpi_t, 0, myrank, MPI_COMM_WORLD);
       free(sendbuf);
    } else {
       int maxprofiles = 0;
@@ -92,7 +92,7 @@ static void vftr_collate_cudaprofiles_on_root (collated_stacktree_t *collstacktr
       for (int irank = 1; irank < nranks; irank++) {
          int nprofiles = nremote_stacks[irank];
          MPI_Status status;
-         MPI_CALL(Recv)(recvbuf, nprofiles, cudaprofile_transfer_mpi_t, irank, irank, MPI_COMM_WORLD, &status);
+         PMPI_Recv(recvbuf, nprofiles, cudaprofile_transfer_mpi_t, irank, irank, MPI_COMM_WORLD, &status);
          for (int iprof = 0; iprof < nprofiles; iprof++) {
             int gid = recvbuf[iprof].gid;
             collated_stack_t *collstack = collstacktree_ptr->stacks + gid;
@@ -126,7 +126,7 @@ static void vftr_collate_cudaprofiles_on_root (collated_stacktree_t *collstacktr
       }
       free(recvbuf);
    }
-   MPI_CALL(Type_free)(&cudaprofile_transfer_mpi_t);
+   PMPI_Type_free(&cudaprofile_transfer_mpi_t);
 }
 #endif
 
@@ -136,7 +136,7 @@ void vftr_collate_cudaprofiles (collated_stacktree_t *collstacktree_ptr,
    vftr_collate_cudaprofiles_root_self(collstacktree_ptr, stacktree_ptr);
 #ifdef _MPI
    int mpi_initialized;
-   MPI_CALL(Initialized)(&mpi_initialized);
+   PMPI_Initialized(&mpi_initialized);
    if (mpi_initialized) {
       vftr_collate_cudaprofiles_on_root (collstacktree_ptr, stacktree_ptr, myrank, nranks, nremote_stacks);
    }

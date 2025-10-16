@@ -86,10 +86,10 @@ static void vftr_collate_accprofiles_on_root (collated_stacktree_t *collstacktre
          max_profiles = nremote_stacks[irank] > max_profiles ? nremote_stacks[irank] : max_profiles;
       }
       for (int irank = 1; irank < nranks; irank++) {
-         MPI_CALL(Send)(&max_profiles, 1, MPI_INT, irank, 0, MPI_COMM_WORLD);
+         PMPI_Send(&max_profiles, 1, MPI_INT, irank, 0, MPI_COMM_WORLD);
       }
    } else {
-      MPI_CALL(Recv)(&max_profiles, 1, MPI_INT, 0, 0, MPI_COMM_WORLD, &status);
+      PMPI_Recv(&max_profiles, 1, MPI_INT, 0, 0, MPI_COMM_WORLD, &status);
    }
 
    int nblocks = 3;
@@ -105,9 +105,9 @@ static void vftr_collate_accprofiles_on_root (collated_stacktree_t *collstacktre
 
    const MPI_Datatype types[] = {MPI_INT, MPI_LONG_LONG_INT, MPI_CHAR};
    MPI_Datatype accprofile_transfer_mpi_t;
-   MPI_CALL(Type_create_struct)(nblocks, blocklengths, displacements, types,
+   PMPI_Type_create_struct(nblocks, blocklengths, displacements, types,
                                 &accprofile_transfer_mpi_t);
-   MPI_CALL(Type_commit)(&accprofile_transfer_mpi_t);
+   PMPI_Type_commit(&accprofile_transfer_mpi_t);
 
    if (myrank > 0) {
       int nprofiles = stacktree_ptr->nstacks;
@@ -168,7 +168,7 @@ static void vftr_collate_accprofiles_on_root (collated_stacktree_t *collstacktre
             strncpy (sendbuf[istack].kernel_name, "", 1);
          }
       }
-      MPI_CALL(Send)(sendbuf, nprofiles, accprofile_transfer_mpi_t, 0, myrank, MPI_COMM_WORLD);
+      PMPI_Send(sendbuf, nprofiles, accprofile_transfer_mpi_t, 0, myrank, MPI_COMM_WORLD);
       free(sendbuf);
    } else {
       int maxprofiles = 0;
@@ -182,7 +182,7 @@ static void vftr_collate_accprofiles_on_root (collated_stacktree_t *collstacktre
       for (int irank = 1; irank < nranks; irank++) {
          int nprofiles = nremote_stacks[irank];
          MPI_Status status;
-         MPI_CALL(Recv)(recvbuf, nprofiles, accprofile_transfer_mpi_t, irank, irank, MPI_COMM_WORLD, &status);
+         PMPI_Recv(recvbuf, nprofiles, accprofile_transfer_mpi_t, irank, irank, MPI_COMM_WORLD, &status);
          for (int iprof = 0; iprof < nprofiles; iprof++) {
             int gid = recvbuf[iprof].gid;
             collated_stack_t *collstack = collstacktree_ptr->stacks + gid;
@@ -223,7 +223,7 @@ static void vftr_collate_accprofiles_on_root (collated_stacktree_t *collstacktre
       }
       free(recvbuf);
    }
-   MPI_CALL(Type_free)(&accprofile_transfer_mpi_t);
+   PMPI_Type_free(&accprofile_transfer_mpi_t);
 }
 #endif
  
@@ -265,7 +265,7 @@ void vftr_collate_accprofiles (collated_stacktree_t *collstacktree_ptr,
   vftr_collate_accprofiles_root_self (collstacktree_ptr, stacktree_ptr);
 #ifdef _MPI
   int mpi_initialized;
-  MPI_CALL(Initialized)(&mpi_initialized);
+  PMPI_Initialized(&mpi_initialized);
   if (mpi_initialized) {
     vftr_collate_accprofiles_on_root (collstacktree_ptr, stacktree_ptr, myrank, nranks, nremote_stacks);
   }

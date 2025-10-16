@@ -32,6 +32,7 @@ void vftr_remove_multiple_hashes(int *n, uint64_t *hashlist) {
 
 hashlist_t vftr_collate_hashes(stacktree_t *stacktree_ptr) {
    SELF_PROFILE_START_FUNCTION;
+   printf ("COLLATE HASHES!\n");
    hashlist_t stackhashes;
    stackhashes.nhashes = stacktree_ptr->nstacks;
    // fill a local list of stack hashes
@@ -42,25 +43,28 @@ hashlist_t vftr_collate_hashes(stacktree_t *stacktree_ptr) {
 
 #ifdef _MPI
    int mpi_initialized;
-   MPI_CALL(Initialized)(&mpi_initialized);
+   PMPI_Initialized(&mpi_initialized);
+   printf ("mpi_initialized: %d\n", mpi_initialized);
    if (mpi_initialized) {
       int nranks = 0;
-      MPI_CALL(Comm_size)(MPI_COMM_WORLD, &nranks);
+      PMPI_Comm_size(MPI_COMM_WORLD, &nranks);
+      printf ("nranks: %d\n", nranks);
+      fflush(stdout);
       int myrank = 0;
-      MPI_CALL(Comm_rank)(MPI_COMM_WORLD, &myrank);
+      PMPI_Comm_rank(MPI_COMM_WORLD, &myrank);
       // define a 64bit mpi-type
       // C does not require a long long to be 64bit.
       // It only requires it to be at least 64bit.
       // Therefore, own MPI-type to properly communicat 64bit numbers
       MPI_Datatype mpi_uint64;
-      MPI_CALL(Type_contiguous)(8, MPI_BYTE, &mpi_uint64);
-      MPI_CALL(Type_commit)(&mpi_uint64);
+      PMPI_Type_contiguous(8, MPI_BYTE, &mpi_uint64);
+      PMPI_Type_commit(&mpi_uint64);
       // number of stacks on each rank
       int *nhashes_list = NULL;
       if (myrank == 0) {
          nhashes_list = (int*) malloc(nranks*sizeof(int));
       }
-      MPI_CALL(Gather)(&(stackhashes.nhashes), // send buffer
+      PMPI_Gather(&(stackhashes.nhashes), // send buffer
                        1, // send count
                        MPI_INT, // send type
                        nhashes_list, // receive buffer
@@ -91,7 +95,7 @@ hashlist_t vftr_collate_hashes(stacktree_t *stacktree_ptr) {
       }
 
       // Gather the list of hashes from every rank into one list
-      MPI_CALL(Gatherv)(stackhashes.hashes, // send buffer
+      PMPI_Gatherv(stackhashes.hashes, // send buffer
                         stackhashes.nhashes, // send count
                         mpi_uint64, // send type
                         allhashes, // receive buffer
@@ -106,7 +110,7 @@ hashlist_t vftr_collate_hashes(stacktree_t *stacktree_ptr) {
       }
 
       // distribute the new length to all ranks
-      MPI_CALL(Bcast)(&ntothashes, // send/receive buffer
+      PMPI_Bcast(&ntothashes, // send/receive buffer
                       1, // send/receive count
                       MPI_INT, // send/receive type
                       0, // root process
@@ -127,7 +131,7 @@ hashlist_t vftr_collate_hashes(stacktree_t *stacktree_ptr) {
       stackhashes.nhashes = ntothashes;
 
       // distribute the hashlist to all ranks
-      MPI_CALL(Bcast)(stackhashes.hashes, // send/receive buffer
+      PMPI_Bcast(stackhashes.hashes, // send/receive buffer
                       ntothashes, // send/receive count
                       mpi_uint64, // send/receive type
                       0, // root process
@@ -135,7 +139,7 @@ hashlist_t vftr_collate_hashes(stacktree_t *stacktree_ptr) {
 
       // free the local resources
       // The custom MPI-type
-      MPI_CALL(Type_free)(&mpi_uint64);
+      PMPI_Type_free(&mpi_uint64);
 
       // The rank 0 exclusive arrays for the MPI-communication
       if (myrank == 0) {

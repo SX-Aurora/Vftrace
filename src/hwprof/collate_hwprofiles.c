@@ -55,9 +55,9 @@ static void vftr_collate_hwprofiles_on_root (collated_stacktree_t *collstacktree
    const MPI_Aint displacements[] = {0, 2 * sizeof(long long), sizeof(double) + 2 * sizeof(long long)};
    const MPI_Datatype types[] = {MPI_LONG_LONG_INT, MPI_DOUBLE, MPI_INT};
    MPI_Datatype hwprofile_transfer_mpi_t;
-   MPI_CALL(Type_create_struct) (nblocks, blocklengths, displacements, types,
+   PMPI_Type_create_struct (nblocks, blocklengths, displacements, types,
                                  &hwprofile_transfer_mpi_t);
-   MPI_CALL(Type_commit) (&hwprofile_transfer_mpi_t);
+   PMPI_Type_commit (&hwprofile_transfer_mpi_t);
 
    int n_send = num_counters > n_observables ? num_counters : n_observables;
    if (n_send == 0) return;
@@ -75,7 +75,7 @@ static void vftr_collate_hwprofiles_on_root (collated_stacktree_t *collstacktree
             sendbuf[istack].observable = isend < n_observables ? hwprof.observables[isend] : 0;
          }
 
-         MPI_CALL(Send) (sendbuf, nprofiles, hwprofile_transfer_mpi_t, 0, myrank, MPI_COMM_WORLD);
+         PMPI_Send (sendbuf, nprofiles, hwprofile_transfer_mpi_t, 0, myrank, MPI_COMM_WORLD);
       }
       free(sendbuf);
    } else {
@@ -90,7 +90,7 @@ static void vftr_collate_hwprofiles_on_root (collated_stacktree_t *collstacktree
          for (int irank = 1; irank < nranks; irank++) {
             int nprofiles = nremote_profiles[irank];
             MPI_Status status;
-            MPI_CALL(Recv) (recvbuf, nprofiles, hwprofile_transfer_mpi_t, irank, irank, MPI_COMM_WORLD, &status);
+            PMPI_Recv (recvbuf, nprofiles, hwprofile_transfer_mpi_t, irank, irank, MPI_COMM_WORLD, &status);
             for (int iprof = 0; iprof < nprofiles; iprof++) {
                int gid = recvbuf[iprof].gid;
                collated_stack_t *collstack = collstacktree_ptr->stacks + gid;
@@ -104,7 +104,7 @@ static void vftr_collate_hwprofiles_on_root (collated_stacktree_t *collstacktree
       }
       free(recvbuf);
    }
-   MPI_CALL(Type_free) (&hwprofile_transfer_mpi_t);
+   PMPI_Type_free (&hwprofile_transfer_mpi_t);
 }
 #endif
 
@@ -114,7 +114,7 @@ void vftr_collate_hwprofiles (collated_stacktree_t *collstacktree_ptr,
    vftr_collate_hwprofiles_root_self(collstacktree_ptr, stacktree_ptr);
 #ifdef _MPI
    int mpi_initialized;
-   MPI_CALL(Initialized) (&mpi_initialized);
+   PMPI_Initialized (&mpi_initialized);
    if (mpi_initialized) {
       vftr_collate_hwprofiles_on_root (collstacktree_ptr, stacktree_ptr, myrank, nranks, nremote_profiles);
    }

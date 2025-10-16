@@ -1,10 +1,10 @@
 SUBDIRS = utils
 
 if ENABLE_MPI
-#SUBDIRS +=vftr_mpi
-#
-#SUBDIRS += c2vftr \
-#	   c-wrapper
+SUBDIRS +=vftr_mpi
+
+SUBDIRS += c2vftr \
+	   c-wrapper
 if ENABLE_FORTRAN
 #SUBDIRS += f2vftr \
 #	   f-wrapper

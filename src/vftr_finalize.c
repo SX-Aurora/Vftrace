@@ -74,7 +74,7 @@ void vftr_finalize() {
                           (double) (runtime * 1.0e-9));
 
    if (vftrace.hwprof_state.active) free(hw_counters);
-   vftr_hwprof_finalize();
+   ///vftr_hwprof_finalize();
 
 #ifdef _CUDA
    vftr_finalize_cupti (vftrace.process.stacktree);
@@ -85,16 +85,16 @@ void vftr_finalize() {
 #endif
 
    // free the dynamic process data
-   vftr_process_free(&vftrace.process);
+   ///vftr_process_free(&vftrace.process);
 
    // free the symbol table
-   vftr_symboltable_free(&vftrace.symboltable);
+   ///vftr_symboltable_free(&vftrace.symboltable);
 
    // free the configuration to avoid memory leaks
-   vftr_config_free(&(vftrace.config));
+   ///vftr_config_free(&(vftrace.config));
 
    // free the timer strings
-   vftr_timestrings_free(&(vftrace.timestrings));
+   ///vftr_timestrings_free(&(vftrace.timestrings));
 
    // redirect the function entry and exit hooks to deactivate them
    // use a dummy function that does nothing
