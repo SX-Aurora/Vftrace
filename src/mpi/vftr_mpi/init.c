@@ -8,8 +8,11 @@ int vftr_MPI_Init(int *argc, char ***argv) {
    SELF_PROFILE_START_FUNCTION;
    int retVal = PMPI_Init(argc, argv);
 
+   printf ("INIT MPI!\n");
+   fflush(stdout);
    if (!vftrace.config.off.value) {
       PMPI_Comm_size(MPI_COMM_WORLD, &vftrace.process.nprocesses);
+      printf ("nprocesses: %d\n", vftrace.process.nprocesses);
       PMPI_Comm_rank(MPI_COMM_WORLD, &vftrace.process.processID);
    
       vftr_create_profiled_ranks_list(vftrace.config,
