@@ -32,7 +32,7 @@ void vftr_remove_multiple_hashes(int *n, uint64_t *hashlist) {
 
 hashlist_t vftr_collate_hashes(stacktree_t *stacktree_ptr) {
    SELF_PROFILE_START_FUNCTION;
-   printf ("COLLATE HASHES!\n");
+   ///printf ("COLLATE HASHES!\n");
    hashlist_t stackhashes;
    stackhashes.nhashes = stacktree_ptr->nstacks;
    // fill a local list of stack hashes
@@ -44,12 +44,12 @@ hashlist_t vftr_collate_hashes(stacktree_t *stacktree_ptr) {
 #ifdef _MPI
    int mpi_initialized;
    PMPI_Initialized(&mpi_initialized);
-   printf ("mpi_initialized: %d\n", mpi_initialized);
+   ///printf ("mpi_initialized: %d\n", mpi_initialized);
    if (mpi_initialized) {
       int nranks = 0;
       PMPI_Comm_size(MPI_COMM_WORLD, &nranks);
-      printf ("nranks: %d\n", nranks);
-      fflush(stdout);
+      ///printf ("nranks: %d\n", nranks);
+      ///fflush(stdout);
       int myrank = 0;
       PMPI_Comm_rank(MPI_COMM_WORLD, &myrank);
       // define a 64bit mpi-type
