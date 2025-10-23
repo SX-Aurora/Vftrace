@@ -2,7 +2,6 @@
 
 #include "vftrace_state.h"
 
-#include "mpi_control.h"
 #include "collated_stack_types.h"
 #include "cudaprofiling_types.h"
 #include "collated_cudaprofiling_types.h"
@@ -59,7 +58,7 @@ static void vftr_collate_cudaprofiles_on_root (collated_stacktree_t *collstacktr
    const MPI_Datatype types[] = {MPI_INT, MPI_FLOAT, MPI_LONG_LONG_INT};
    MPI_Datatype cudaprofile_transfer_mpi_t;
    PMPI_Type_create_struct(nblocks, blocklengths, displacements, types,
-                                &cudaprofile_transfer_mpi_t);
+                           &cudaprofile_transfer_mpi_t);
    PMPI_Type_commit(&cudaprofile_transfer_mpi_t);
 
    if (myrank > 0) {

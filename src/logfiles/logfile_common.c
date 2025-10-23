@@ -2,7 +2,6 @@
 
 #include "logfile_common_types.h"
 
-#include "mpi_control.h"
 #include "config.h"
 #include "license.h"
 #include "filenames.h"

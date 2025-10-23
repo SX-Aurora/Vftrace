@@ -4,7 +4,6 @@
 #include "status_utils.h"
 #endif
 
-#include "mpi_control.h"
 #include "vftrace_state.h"
 #include "collated_stack_types.h"
 #include "hwprofiling_types.h"
@@ -56,7 +55,7 @@ static void vftr_collate_hwprofiles_on_root (collated_stacktree_t *collstacktree
    const MPI_Datatype types[] = {MPI_LONG_LONG_INT, MPI_DOUBLE, MPI_INT};
    MPI_Datatype hwprofile_transfer_mpi_t;
    PMPI_Type_create_struct (nblocks, blocklengths, displacements, types,
-                                 &hwprofile_transfer_mpi_t);
+                            &hwprofile_transfer_mpi_t);
    PMPI_Type_commit (&hwprofile_transfer_mpi_t);
 
    int n_send = num_counters > n_observables ? num_counters : n_observables;

@@ -8,7 +8,6 @@
 #include "vftrace_state.h"
 #include "vftr_finalize.h"
 #include "signal_handling.h"
-#include "mpi_control.h"
 
 void vftr_abort (int errcode) {
 #ifdef _MPI

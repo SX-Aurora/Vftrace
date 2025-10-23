@@ -5,7 +5,6 @@
 #include <mpi.h>
 #endif
 
-#include "mpi_control.h"
 #include "realloc_consts.h"
 #include "self_profile.h"
 #include "stack_types.h"
@@ -278,8 +277,8 @@ void vftr_root_comm_missing_stacks_with_rank (collated_stacktree_t coll_stacktre
           (missing_stack_transfer_t*) malloc(hasnmissing * sizeof(missing_stack_transfer_t));
        // Receive the found information from remote process
        PMPI_Recv(missing_stack_info, hasnmissing,
-                      missing_stack_transfer_mpi_t, target_rank, 0,
-                      MPI_COMM_WORLD, &mystat);
+                 missing_stack_transfer_mpi_t, target_rank, 0,
+                 MPI_COMM_WORLD, &mystat);
 
        // Create a buffer that contains all stack names in contatenated form
        int sumlength = 0;
@@ -290,7 +289,7 @@ void vftr_root_comm_missing_stacks_with_rank (collated_stacktree_t coll_stacktre
 
        // Receive the concatenated String
        PMPI_Recv(concatNames, sumlength, MPI_CHAR,
-                      target_rank, 0, MPI_COMM_WORLD, &mystat);
+                 target_rank, 0, MPI_COMM_WORLD, &mystat);
 
        int n_callees_tot = 0;
        for (int istack = 0; istack < hasnmissing; istack++) {
@@ -298,7 +297,7 @@ void vftr_root_comm_missing_stacks_with_rank (collated_stacktree_t coll_stacktre
        }
        int *all_callees = (int*)malloc(n_callees_tot * sizeof(int));
        PMPI_Recv(all_callees, n_callees_tot, MPI_INT, target_rank, 0,
-                      MPI_COMM_WORLD, &mystat);
+                 MPI_COMM_WORLD, &mystat);
 
        // Write all the gathered info to the global stackinfo
        char *tmpstrptr = concatNames;
@@ -460,8 +459,8 @@ collated_stacktree_t vftr_collate_stacks(stacktree_t *stacktree_ptr) {
    const MPI_Aint displacements[] = {0};
    const MPI_Datatype types[] = {MPI_INT};
    PMPI_Type_create_struct(1, blocklengths,
-                                displacements, types,
-                                &missing_stack_transfer_mpi_t); 
+                           displacements, types,
+                           &missing_stack_transfer_mpi_t); 
    PMPI_Type_commit(&missing_stack_transfer_mpi_t);
 #endif
 

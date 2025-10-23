@@ -6,7 +6,6 @@
 #include <mpi.h>
 #endif
 
-#include "mpi_control.h"
 #include "self_profile.h"
 #include "ompprofiling_types.h"
 #include "collated_stack_types.h"

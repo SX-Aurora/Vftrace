@@ -4,7 +4,6 @@
 #include <mpi.h>
 #endif
 
-#include "mpi_control.h"
 #include "self_profile.h"
 #include "vftrace_state.h"
 
@@ -16,12 +15,12 @@ void vftr_collate_vftr_size(vftrace_t *vftrace) {
    PMPI_Initialized(&mpi_initialized);
    if (mpi_initialized) {
       PMPI_Reduce(&(vftrace->size.rank_wise),
-                       &(vftrace->size.total),
-                       1,
-                       MPI_LONG_LONG,
-                       MPI_SUM,
-                       0,
-                       MPI_COMM_WORLD);
+                  &(vftrace->size.total),
+                  1,
+                  MPI_LONG_LONG,
+                  MPI_SUM,
+                  0,
+                  MPI_COMM_WORLD);
    } else {
       vftrace->size.total = vftrace->size.rank_wise;
    }

@@ -4,7 +4,6 @@
 #include <mpi.h>
 #endif
 
-#include "mpi_control.h"
 #include "self_profile.h"
 #include "stack_types.h"
 #include "collated_stack_types.h"
@@ -50,10 +49,10 @@ void vftr_collate_profiles(collated_stacktree_t *collstacktree_ptr,
 #ifdef _MPI
    if (mpi_initialized) {
       PMPI_Gather(&nstacks, 1,
-                       MPI_INT,
-                       nremote_stacks, 1,
-                       MPI_INT,
-                       0, MPI_COMM_WORLD);
+                  MPI_INT,
+                  nremote_stacks, 1,
+                  MPI_INT,
+                  0, MPI_COMM_WORLD);
    }
 #endif
 

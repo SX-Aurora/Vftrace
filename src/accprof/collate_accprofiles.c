@@ -3,7 +3,6 @@
 #include <mpi.h>
 #endif
 
-#include "mpi_control.h"
 #include "collated_stack_types.h"
 #include "accprofiling_types.h"
 
@@ -106,7 +105,7 @@ static void vftr_collate_accprofiles_on_root (collated_stacktree_t *collstacktre
    const MPI_Datatype types[] = {MPI_INT, MPI_LONG_LONG_INT, MPI_CHAR};
    MPI_Datatype accprofile_transfer_mpi_t;
    PMPI_Type_create_struct(nblocks, blocklengths, displacements, types,
-                                &accprofile_transfer_mpi_t);
+                           &accprofile_transfer_mpi_t);
    PMPI_Type_commit(&accprofile_transfer_mpi_t);
 
    if (myrank > 0) {
