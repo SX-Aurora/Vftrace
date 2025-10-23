@@ -50,8 +50,8 @@ static void vftr_collate_ompprofiles_on_root(collated_stacktree_t *collstacktree
    const MPI_Datatype types[] = {MPI_INT, MPI_LONG_LONG_INT};
    MPI_Datatype ompprofile_transfer_mpi_t;
    PMPI_Type_create_struct(nblocks, blocklengths,
-                                displacements, types,
-                                &ompprofile_transfer_mpi_t);
+                           displacements, types,
+                           &ompprofile_transfer_mpi_t);
    PMPI_Type_commit(&ompprofile_transfer_mpi_t);
 
    if (myrank > 0) {
@@ -74,9 +74,9 @@ static void vftr_collate_ompprofiles_on_root(collated_stacktree_t *collstacktree
          }
       }
       PMPI_Send(sendbuf, nprofiles,
-                     ompprofile_transfer_mpi_t,
-                     0, myrank,
-                     MPI_COMM_WORLD);
+                ompprofile_transfer_mpi_t,
+                0, myrank,
+                MPI_COMM_WORLD);
       free(sendbuf);
    } else {
       int maxprofiles = 0;
@@ -92,10 +92,10 @@ static void vftr_collate_ompprofiles_on_root(collated_stacktree_t *collstacktree
          int nprofiles = nremote_profiles[irank];
          MPI_Status status;
          PMPI_Recv(recvbuf, nprofiles,
-                        ompprofile_transfer_mpi_t,
-                        irank, irank,
-                        MPI_COMM_WORLD,
-                        &status);
+                   ompprofile_transfer_mpi_t,
+                   irank, irank,
+                   MPI_COMM_WORLD,
+                   &status);
          for (int iprof=0; iprof<nprofiles; iprof++) {
             int gid = recvbuf[iprof].gid;
             collated_stack_t *collstack = collstacktree_ptr->stacks+gid;

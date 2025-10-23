@@ -8,6 +8,7 @@
 
 int vftr_MPI_Finalize() {
    SELF_PROFILE_START_FUNCTION;
+   printf ("FINALIZE MPI!\n");
    vftr_free_request_list(&vftrace.mpi_state);
    vftr_free_profiled_ranks_list(&vftrace.mpi_state);
    SELF_PROFILE_END_FUNCTION;

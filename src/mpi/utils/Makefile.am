@@ -3,7 +3,7 @@ noinst_LTLIBRARIES = libvftr_mpi_utils.la
 libvftr_mpi_utils_la_CPPFLAGS =
 libvftr_mpi_utils_la_SOURCES = mpi_util_types.c
 
-if ENABLE_MPI
+if MPI_TRACE_STD
 libvftr_mpi_utils_la_SOURCES += mpi_logging.c \
 				mpiprofiling.c \
 				collate_mpiprofiles.c \
@@ -21,7 +21,7 @@ libvftr_mpi_utils_la_SOURCES += mpi_logging_F.F90 \
 				mpi_buf_addr_const_F.F90 \
 				sync_time_F2c.c \
 				sync_time_F.F90
-if ENABLE_FORTRAN08
+if MPI_TRACE_F08
 libvftr_mpi_utils_la_SOURCES += mpi_logging_F08.F90 \
                                 mpi_buf_addr_const_F08.F90 \
                                 sync_time_F082c.c \
