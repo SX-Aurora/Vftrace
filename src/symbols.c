@@ -9,6 +9,7 @@
 #ifdef _LIBERTY
 #include <demangle.h>
 #endif
+#include <regex.h>
 
 #include "signal_handling.h"
 #include "self_profile.h"
@@ -20,6 +21,27 @@
 #include "sorting.h"
 #include "regular_expressions.h"
 #include "misc_utils.h"
+
+void vftr_remove_intel_suffixes (char *s) {
+   regex_t re;
+   regmatch_t match[1];
+   
+   if (regcomp(&re, "(\\.t[0-9]+p)+$", REG_EXTENDED) != 0) {
+      return;
+   } 
+
+   if (regexec(&re, s, 1, match, 0) == 0) {
+      s[match[0].rm_so] = '\0';
+   }
+
+   regfree(&re);
+
+}
+
+void vftr_clean_library_symbols (char *s) {
+   /// Intel toochains can include suffixes ".t[0-9].t[0-9]...." after MPI symbols.
+   vftr_remove_intel_suffixes (s);
+}
 
 library_t vftr_parse_maps_line(char *line) {
    library_t library = {
@@ -275,6 +297,7 @@ symboltable_t vftr_read_symbols_from_library(library_t library) {
                (uintptr_t) (s.st_value + lbase - loffset + elf_offset - elf_vaddr);
             // Copy symbol name
             symboltable.symbols[jsymb].name = strdup(stringtab+s.st_name);
+            vftr_clean_library_symbols (symboltable.symbols[jsymb].name);
             symboltable.symbols[jsymb].index = s.st_shndx;
             // remove trailing fortran underscore
             vftr_chop_trailing_char(symboltable.symbols[jsymb].name, '_');
