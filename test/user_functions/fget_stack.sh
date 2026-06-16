@@ -17,6 +17,9 @@ rm ${tmpfile}
 refstack=""
 for i in $(seq 1 1 3);
 do
+   if [ "x${USES_INTEL_COMPILER}" == "xYES" ]; then
+      refstack="fkt${i}_.void<${refstack}"
+   fi
    refstack="fkt${i}<${refstack}"
 done
 

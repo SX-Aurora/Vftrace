@@ -39,6 +39,8 @@ AX_ENABLE_FORTRAN
 
 # Check if on VE or VH (x86)
 AX_CHECK_VE
+# Check if the Intel compiler is used
+AX_CHECK_INTEL_COMPILER
 ################################
 
 # Check MPI

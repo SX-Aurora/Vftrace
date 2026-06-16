@@ -19,7 +19,9 @@ endif
 else
    AM_TESTS_ENVIRONMENT=. $(top_srcdir)/test/environment/set_nompi.sh;
 endif
-
+if USES_INTEL_COMPILER
+AM_TESTS_ENVIRONMENT+=. $(top_srcdir)/test/environment/set_intelcompiler.sh;
+endif
 AM_TESTS_ENVIRONMENT+=. $(top_srcdir)/test/environment/unset_vftr_env.sh;
 
 AM_CFLAGS = -O3 $(FINSTRUMENT_FLAG) 
