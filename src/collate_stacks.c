@@ -540,6 +540,8 @@ int vftr_collated_stacktree_insert_namegroup(collated_stacktree_t *stacktree_ptr
       stacktree_ptr->stacks[idx] = stacktree_ptr->stacks[idx-1];
       idx--;
    }
+   // Atenttion: We duplicate pointers here, and must be careful not to double-free
+   // memory later on.
    stacktree_ptr->stacks[idx] = *stack_ptr;
    return idx;
 }
@@ -585,13 +587,14 @@ collated_stacktree_t vftr_collated_stacktree_group_by_name(
 
 void vftr_collated_stacktree_free(collated_stacktree_t *stacktree_ptr) {
    SELF_PROFILE_START_FUNCTION;
-   if (stacktree_ptr->nstacks > 0) {
+   /// The namegrouped stacks contain duplicates of the original collated stacks.
+   /// This means that especially all the pointers point to the same addresses as in
+   /// the original, and we must avoid double-freeing the associated memory.
+   /// Therefore, the loop is not entered for namegrouped stacks. We still need to free
+   /// its memory later on.
+   if (stacktree_ptr->nstacks > 0 && !stacktree_ptr->namegrouped) {
       for (int istack=0; istack<stacktree_ptr->nstacks; istack++) {
-         // the grouped stacks only contain a copy of the reference to one of the
-         // stacks with the name
-         if (!stacktree_ptr->namegrouped) {
-            free(stacktree_ptr->stacks[istack].name);
-         }
+         free(stacktree_ptr->stacks[istack].name);
          vftr_collated_profile_free(&(stacktree_ptr->stacks[istack].profile));
          vftr_gid_list_free(&(stacktree_ptr->stacks[istack].gid_list));
          if (stacktree_ptr->stacks[istack].callees) {
@@ -599,6 +602,8 @@ void vftr_collated_stacktree_free(collated_stacktree_t *stacktree_ptr) {
              stacktree_ptr->stacks[istack].callees = NULL;
          }
       }
+   }
+   if (stacktree_ptr->nstacks > 0) {
       free(stacktree_ptr->stacks);
       stacktree_ptr->stacks = NULL;
       stacktree_ptr->nstacks = 0;
