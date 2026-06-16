@@ -22,28 +22,39 @@ fi
 
 cat ${logfile}
 
-# check for existance of fkt1
+# With the Intel LLVM compiler, there are additional symobls ending with `_.void', one for 
+# each actual symbol. Therefore, we expect twice as much occurences of fkt1 and fkt3 than with
+# other compilers.
+if [ "x${USES_INTEL_COMPILER}" == "xYES" ]; then
+   n_expect=4
+else
+   n_expect=2
+fi
+# Check for nr. of occurences of fkt1.
 inprof=$(cat ${logfile} | \
          grep " fkt1" | \
          wc -l)
-if [ "${inprof}" -ne "2" ] ; then
-   echo "Function \"fkt1\" not found in log file the expected amount"
+if [ "${inprof}" -ne "${n_expect}" ] ; then
+   echo "Mismatch in nr. of \"fkt1\" entries."
+   echo "Expected ${n_expect}, found ${inprof}"
    exit 1;
 fi
-# check for existance of fkt2
+# Check for nr. of occurences of fkt2.
 inprof=$(cat ${logfile} | \
          grep " fkt2" | \
          wc -l)
 if [ "${inprof}" -gt "0" ] ; then
-   echo "Function \"fkt2\" should not appear in log file"
+   echo "Mismatch in nr. of \"fkt2\" entries."
+   echo "Expected 0, found ${inprof}"
    exit 1;
 fi
-# check for existance of fkt3
+# Check for nr. of occurences of fkt3.
 inprof=$(cat ${logfile} | \
          grep " fkt3" | \
          wc -l)
-if [ "${inprof}" -ne "2" ] ; then
-   echo "Function \"fkt3\" not found in log file the expected amount"
+if [ "${inprof}" -ne "${n_expect}" ] ; then
+   echo "Mismatch in nr. of \"fkt3\" entries."
+   echo "Expected ${n_expect}, found ${inprof}"
    exit 1;
 fi
 # check for existance of vftrace_pause
@@ -51,63 +62,76 @@ inprof=$(cat ${logfile} | \
          grep " vftrace_pause" | \
          wc -l)
 if [ "${inprof}" -ne "2" ] ; then
-   echo "Function \"vftrace_pause\" not found in log file the expected amount"
+   echo "Mismatch in nr. of \"vftrace_pause\" entries."
+   echo "Expected 2, found ${inprof}"
    exit 1;
 fi
 
 
 ../../tools/vftrace_vfd_dump ${vfdfile}
 
-# check for existance of fkt1
+# check for occurences in the vfd file
+if [ "x${USES_INTEL_COMPILER}" == "xYES" ]; then
+   n_expect=2
+else
+   n_expect=1
+fi
 ncalls=$(../../tools/vftrace_vfd_dump ${vfdfile} | \
          grep "call fkt1" | \
          wc -l)
-if [ "${ncalls}" -ne "1" ] ; then
-   echo "Call to function \"fkt1\" not found in vfd file"
+if [ "${ncalls}" -ne "${n_expect}" ] ; then
+   echo "Mismatch in nr. of \"fkt1-entry\" entries in the vfd file."
+   echo "Expected ${n_expect}, found ${inprof}"
    exit 1;
 fi
 nexits=$(../../tools/vftrace_vfd_dump ${vfdfile} | \
          grep "exit fkt1" | \
          wc -l)
-if [ "${nexits}" -ne "1" ] ; then
-   echo "Exit from function \"fkt1\" not found in vfd file"
+if [ "${nexits}" -ne "${n_expect}" ] ; then
+   echo "Mismatch in nr. of \"fkt1-exit\" entries in the vfd file."
+   echo "Expected ${n_expect}, found ${inprof}"
    exit 1;
 fi
-# check for existance of fkt2
+
 ncalls=$(../../tools/vftrace_vfd_dump ${vfdfile} | \
          grep "call fkt2" | \
          wc -l)
 if [ "${ncalls}" -gt "0" ] ; then
-   echo "Call to function \"fkt2\" should not appear in vfd file"
+   echo "Mismatch in nr. of \"fkt2-entry\" entries in the vfd file."
+   echo "Expected 0, found ${inprof}"
    exit 1;
 fi
 nexits=$(../../tools/vftrace_vfd_dump ${vfdfile} | \
          grep "exit fkt2" | \
          wc -l)
 if [ "${nexits}" -gt "0" ] ; then
-   echo "Exit from function \"fkt2\" should not appear in vfd file"
+   echo "Mismatch in nr. of \"fkt2-exit\" entries in the vfd file."
+   echo "Expected 0, found ${inprof}"
    exit 1;
 fi
-# check for existance of fkt3
+
 ncalls=$(../../tools/vftrace_vfd_dump ${vfdfile} | \
          grep "call fkt3" | \
          wc -l)
-if [ "${ncalls}" -ne "1" ] ; then
-   echo "Call to function \"fkt3\" not found in vfd file"
+if [ "${ncalls}" -ne "${n_expect}" ] ; then
+   echo "Mismatch in nr. of \"fkt3-entry\" entries in the vfd file."
+   echo "Expected ${n_expect}, found ${inprof}"
    exit 1;
 fi
 nexits=$(../../tools/vftrace_vfd_dump ${vfdfile} | \
          grep "exit fkt3" | \
          wc -l)
-if [ "${nexits}" -ne "1" ] ; then
-   echo "Exit from function \"fkt3\" not found in vfd file"
+if [ "${nexits}" -ne "${n_expect}" ] ; then
+   echo "Mismatch in nr. of \"fkt3-exit\" entries in the vfd file."
+   echo "Expected ${n_expect}, found ${inprof}"
    exit 1;
 fi
-# check for existance of vftrace_pause
+
 ncalls=$(../../tools/vftrace_vfd_dump ${vfdfile} | \
          grep "call vftrace_pause" | \
          wc -l)
 if [ "${ncalls}" -ne "1" ] ; then
-   echo "Call to function \"vftrace_pause\" not found in vfd file"
+   echo "Mismatch in nr. of \"vftrace_pause\" entries in the vfd file."
+   echo "Expected 1, found ${inprof}"
    exit 1;
 fi
