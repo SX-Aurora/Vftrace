@@ -22,25 +22,18 @@
 #include "regular_expressions.h"
 #include "misc_utils.h"
 
-void vftr_remove_intel_suffixes (char *s) {
-   regex_t re;
-   regmatch_t match[1];
+char *vftr_remove_intel_suffixes (const char *s) {
+   char *s2 = strdup(s);
    
-   if (regcomp(&re, "(\\.t[0-9]+p)+$", REG_EXTENDED) != 0) {
-      return;
-   } 
+   char *p = strstr(s2, "_.t");
+   if (p) *p = '\0';
 
-   if (regexec(&re, s, 1, match, 0) == 0) {
-      s[match[0].rm_so] = '\0';
-   }
-
-   regfree(&re);
-
+   return s2;
 }
 
-void vftr_clean_library_symbols (char *s) {
-   /// Intel toochains can include suffixes ".t[0-9].t[0-9]...." after MPI symbols.
-   vftr_remove_intel_suffixes (s);
+char *vftr_cleanup_library_symbol (const char *s) {
+   char *s_clean = vftr_remove_intel_suffixes (s);
+   return s_clean;
 }
 
 library_t vftr_parse_maps_line(char *line) {
@@ -297,12 +290,11 @@ symboltable_t vftr_read_symbols_from_library(library_t library) {
                (uintptr_t) (s.st_value + lbase - loffset + elf_offset - elf_vaddr);
             // Copy symbol name
             symboltable.symbols[jsymb].name = strdup(stringtab+s.st_name);
-            vftr_clean_library_symbols (symboltable.symbols[jsymb].name);
             symboltable.symbols[jsymb].index = s.st_shndx;
             // remove trailing fortran underscore
             vftr_chop_trailing_char(symboltable.symbols[jsymb].name, '_');
             symboltable.symbols[jsymb].cleanname =
-               strdup(symboltable.symbols[jsymb].name);
+                vftr_cleanup_library_symbol (symboltable.symbols[jsymb].name);
 
             // set precise value to default: false
             symboltable.symbols[jsymb].precise = false;
