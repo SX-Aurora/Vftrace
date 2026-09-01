@@ -1,12 +1,8 @@
-First of all, make sure that you have external dependencies cloned into this project.
-Ideally, you have performed `git clone` with the `--recursive` option.
-If you have not done so, you need to execute
+Vftrace uses autotools as building system. Make sure that it is installed on your system.
 
-git submodule update --init
+Then:
 
-Then, Vftrace can be installed using autotools:
-
-autoreconf -if
+.bootstrap.sh
 ./configure CC=<your_C_compiler> CXX=<your_C++_compiler> FC=<your_Fortran_compiler> --prefix=<install_path>
 make
 make check
