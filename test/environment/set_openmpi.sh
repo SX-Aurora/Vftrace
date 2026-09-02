@@ -9,7 +9,7 @@ export NP="-np"
 if [ "x${OMPI_VERSION_LT5}" == "xYES" ]; then
    export MPI_OPTS="--oversubscribe"
 else
-   export MPI_OPTS="--map-by :OVERSUBSCRIBE"
+   export MPI_OPTS="--map-by :OVERSUBSCRIBE --mca smsc ^knem"
 fi
 
 # Some systems have been observed to show this error message:
