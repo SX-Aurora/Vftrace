@@ -455,13 +455,6 @@ collated_stacktree_t vftr_collate_stacks(stacktree_t *stacktree_ptr) {
       PMPI_Comm_rank(MPI_COMM_WORLD, &myrank);
    }
 
-   const int blocklengths[] = {5};
-   const MPI_Aint displacements[] = {0};
-   const MPI_Datatype types[] = {MPI_INT};
-   PMPI_Type_create_struct (1, blocklengths,
-                           displacements, types,
-                           &missing_stack_transfer_mpi_t); 
-   PMPI_Type_commit (&missing_stack_transfer_mpi_t);
 #endif
 
    if (myrank == 0) {
@@ -470,6 +463,14 @@ collated_stacktree_t vftr_collate_stacks(stacktree_t *stacktree_ptr) {
 
 #ifdef _MPI
    if (mpi_initialized) {
+      const int blocklengths[] = {5};
+      const MPI_Aint displacements[] = {0};
+      const MPI_Datatype types[] = {MPI_INT};
+      PMPI_Type_create_struct (1, blocklengths,
+                              displacements, types,
+                              &missing_stack_transfer_mpi_t); 
+      PMPI_Type_commit (&missing_stack_transfer_mpi_t);
+
       if (myrank == 0) {
          // if there are multiple processes the table might still be missing entries
          int *missingstacks = (int*) malloc(coll_stacktree.nstacks*sizeof(int));
