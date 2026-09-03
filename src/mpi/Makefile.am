@@ -8,9 +8,9 @@ SUBDIRS += c2vftr \
 if ENABLE_FORTRAN
 SUBDIRS += f2vftr \
 	   f-wrapper
+endif
 if ENABLE_FORTRAN08
 SUBDIRS += f082vftr \
 	   f08-wrapper
-endif
 endif
 endif

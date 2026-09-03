@@ -12,7 +12,7 @@ SUBROUTINE MPI_Ibcast_f08(buffer, count, datatype, &
              MPI_Comm, &
              MPI_Request
    IMPLICIT NONE
-   INTEGER, INTENT(IN) :: buffer
+   INTEGER :: buffer
    INTEGER, INTENT(IN) :: count
    TYPE(MPI_Datatype), INTENT(IN) :: datatype
    INTEGER, INTENT(IN) :: root

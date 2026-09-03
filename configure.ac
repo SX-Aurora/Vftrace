@@ -37,6 +37,8 @@ AX_CHECK_UINTPTR
 # Check if fortran is selected or not
 AX_ENABLE_FORTRAN
 
+AX_ENABLE_FORTRAN08
+
 # Check if on VE or VH (x86)
 AX_CHECK_VE
 # Check if the Intel compiler is used
