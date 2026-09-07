@@ -26,10 +26,15 @@ void vftr_collate_hwprofiles_root_self (collated_stacktree_t *collstacktree_ptr,
          collhwprof->counters_excl = (long long*)malloc (n_counters * sizeof(long long));
          memcpy (collhwprof->counters_incl, copy_hwprof.counters_incl, n_counters * sizeof(long long));
          memcpy (collhwprof->counters_excl, copy_hwprof.counters_excl, n_counters * sizeof(long long));
+      } else {
+         collhwprof->counters_incl = NULL;
+         collhwprof->counters_excl = NULL;
       }
       if (n_observables > 0) {
          collhwprof->observables = (double*)malloc (n_observables * sizeof(double));
          memcpy (collhwprof->observables, copy_hwprof.observables, n_observables * sizeof(double));
+      } else {
+         collhwprof->observables = NULL;
       }
    }
 }

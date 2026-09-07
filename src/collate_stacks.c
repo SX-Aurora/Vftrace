@@ -45,6 +45,22 @@ void vftr_gid_list_free(gid_list_t *gid_list_ptr) {
    }
 }
 
+collated_stack_t vftr_new_empty_collated_stack() {
+   SELF_PROFILE_START_FUNCTION;
+   collated_stack_t stack;
+   stack.local_stack = NULL;
+   stack.gid = -1;
+   stack.gid_list.ngids = 0;
+   stack.precise = false;
+   stack.caller = -1;
+   stack.ncallees = 0;
+   stack.callees = NULL;
+   stack.name = NULL;
+   stack.hash = 0;
+   SELF_PROFILE_END_FUNCTION;
+   return stack;
+}
+
 collated_stacktree_t vftr_new_empty_collated_stacktree() {
    SELF_PROFILE_START_FUNCTION;
    collated_stacktree_t stacktree;
@@ -86,6 +102,9 @@ void vftr_collated_stacktree_realloc(collated_stacktree_t *stacktree_ptr) {
       stacktree.stacks = (collated_stack_t*)
          realloc(stacktree.stacks, maxstacks*sizeof(collated_stack_t));
       stacktree.maxstacks = maxstacks;
+   }
+   for (int istack = 0; istack < stacktree.nstacks; istack++) {
+      stacktree.stacks[istack] = vftr_new_empty_collated_stack();
    }
    *stacktree_ptr = stacktree;
 }
@@ -598,7 +617,7 @@ void vftr_collated_stacktree_free(collated_stacktree_t *stacktree_ptr) {
          free(stacktree_ptr->stacks[istack].name);
          vftr_collated_profile_free(&(stacktree_ptr->stacks[istack].profile));
          vftr_gid_list_free(&(stacktree_ptr->stacks[istack].gid_list));
-         if (stacktree_ptr->stacks[istack].ncallees > 0 && stacktree_ptr->stacks[istack].callees) {
+         if (stacktree_ptr->stacks[istack].ncallees > 0 && stacktree_ptr->stacks[istack].callees != NULL) {
              free(stacktree_ptr->stacks[istack].callees);
              stacktree_ptr->stacks[istack].callees = NULL;
          }

@@ -133,9 +133,11 @@ void vftr_update_stacks_hw_observables (stacktree_t *stacktree_ptr) {
 }
 
 void vftr_hwprofiling_free (hwprofile_t *prof_ptr) {
-   if (prof_ptr->counters_incl != NULL) free (prof_ptr->counters_incl);
-   if (prof_ptr->counters_excl != NULL) free (prof_ptr->counters_excl);
-   if (prof_ptr->observables != NULL) free (prof_ptr->observables);
+   int n_counters = vftrace.hwprof_state.n_counters;
+   if (n_counters > 0 && prof_ptr->counters_incl != NULL) free (prof_ptr->counters_incl);
+   if (n_counters > 0 && prof_ptr->counters_excl != NULL) free (prof_ptr->counters_excl);
+   int n_observables = vftrace.config.hwprof.observables.obs_name.n_elements;
+   if (n_observables > 0 && prof_ptr->observables != NULL) free (prof_ptr->observables);
    prof_ptr->counters_incl = NULL;
    prof_ptr->counters_excl = NULL;
    prof_ptr->observables = NULL;

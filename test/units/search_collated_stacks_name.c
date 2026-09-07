@@ -29,7 +29,6 @@ int main(int argc, char **argv) {
    vftr_collated_stacktree_realloc(&stacktree);
    for (int istack=0; istack<len; istack++) {
       stacktree.stacks[istack].name = strdup(list[istack]);
-      stacktree.stacks[istack].gid_list.ngids = 0;
    }
 
    printf("List to be searched:\n");
