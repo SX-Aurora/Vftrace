@@ -97,13 +97,15 @@ collated_stacktree_t vftr_new_collated_stacktree(hashlist_t hashlist) {
 
 void vftr_collated_stacktree_realloc(collated_stacktree_t *stacktree_ptr) {
    collated_stacktree_t stacktree = *stacktree_ptr;
+   int nstacks_before = stacktree.maxstacks;
    while (stacktree.nstacks > stacktree.maxstacks) {
       int maxstacks = stacktree.maxstacks*vftr_realloc_rate+vftr_realloc_add;
       stacktree.stacks = (collated_stack_t*)
          realloc(stacktree.stacks, maxstacks*sizeof(collated_stack_t));
       stacktree.maxstacks = maxstacks;
    }
-   for (int istack = 0; istack < stacktree.nstacks; istack++) {
+   int nstacks_now = stacktree.maxstacks;
+   for (int istack = nstacks_before; istack < nstacks_now; istack++) {
       stacktree.stacks[istack] = vftr_new_empty_collated_stack();
    }
    *stacktree_ptr = stacktree;
