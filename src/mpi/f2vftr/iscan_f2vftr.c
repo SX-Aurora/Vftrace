@@ -2,6 +2,7 @@
 #include <mpi.h>
 
 #include "mpi_buf_addr_const.h"
+#include "mpi_buf_addr_const_F.h"
 #include "iscan.h"
 
 void vftr_MPI_Iscan_f2vftr(void *sendbuf, void *recvbuf, MPI_Fint *count,

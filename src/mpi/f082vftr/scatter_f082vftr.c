@@ -2,6 +2,7 @@
 #include <mpi.h>
 
 #include "mpi_buf_addr_const.h"
+#include "mpi_buf_addr_const_F08.h"
 #include "scatter.h"
 
 void vftr_MPI_Scatter_f082vftr(void *sendbuf, MPI_Fint *sendcount, MPI_Fint *f_sendtype,
@@ -12,9 +13,9 @@ void vftr_MPI_Scatter_f082vftr(void *sendbuf, MPI_Fint *sendcount, MPI_Fint *f_s
    MPI_Datatype c_recvtype = PMPI_Type_f2c(*f_recvtype);
    MPI_Comm c_comm = PMPI_Comm_f2c(*f_comm);
 
-   sendbuf = (void*) vftr_is_F_MPI_BOTTOM(sendbuf) ? MPI_BOTTOM : sendbuf;
-   recvbuf = (void*) vftr_is_F_MPI_IN_PLACE(recvbuf) ? MPI_IN_PLACE : recvbuf;
-   recvbuf = (void*) vftr_is_F_MPI_BOTTOM(recvbuf) ? MPI_BOTTOM : recvbuf;
+   sendbuf = (void*) vftr_is_F08_MPI_BOTTOM(sendbuf) ? MPI_BOTTOM : sendbuf;
+   recvbuf = (void*) vftr_is_F08_MPI_IN_PLACE(recvbuf) ? MPI_IN_PLACE : recvbuf;
+   recvbuf = (void*) vftr_is_F08_MPI_BOTTOM(recvbuf) ? MPI_BOTTOM : recvbuf;
 
    int c_error;
    int isintercom;

@@ -13,6 +13,7 @@
 #include "timer.h"
 #include "collective_requests.h"
 #include "mpi_buf_addr_const.h"
+#include "mpi_buf_addr_const_F.h"
 
 int vftr_MPI_Iscan(const void *sendbuf, void *recvbuf, int count,
                    MPI_Datatype datatype, MPI_Op op, MPI_Comm comm,

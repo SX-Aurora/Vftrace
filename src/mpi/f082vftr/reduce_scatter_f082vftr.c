@@ -4,6 +4,7 @@
 #include <stdlib.h>
 
 #include "mpi_buf_addr_const.h"
+#include "mpi_buf_addr_const_F08.h"
 #include "reduce_scatter.h"
 
 void vftr_MPI_Reduce_scatter_f082vftr(void *sendbuf, void *recvbuf,
@@ -24,9 +25,9 @@ void vftr_MPI_Reduce_scatter_f082vftr(void *sendbuf, void *recvbuf,
    MPI_Datatype c_datatype = PMPI_Type_f2c(*f_datatype);
    MPI_Op c_op = PMPI_Op_f2c(*f_op);
 
-   sendbuf = (void*) vftr_is_F_MPI_IN_PLACE(sendbuf) ? MPI_IN_PLACE : sendbuf;
-   sendbuf = (void*) vftr_is_F_MPI_BOTTOM(sendbuf) ? MPI_BOTTOM : sendbuf;
-   recvbuf = (void*) vftr_is_F_MPI_BOTTOM(recvbuf) ? MPI_BOTTOM : recvbuf;
+   sendbuf = (void*) vftr_is_F08_MPI_IN_PLACE(sendbuf) ? MPI_IN_PLACE : sendbuf;
+   sendbuf = (void*) vftr_is_F08_MPI_BOTTOM(sendbuf) ? MPI_BOTTOM : sendbuf;
+   recvbuf = (void*) vftr_is_F08_MPI_BOTTOM(recvbuf) ? MPI_BOTTOM : recvbuf;
 
    int c_error;
    int isintercom;

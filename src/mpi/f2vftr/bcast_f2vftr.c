@@ -2,6 +2,7 @@
 #include <mpi.h>
 
 #include "mpi_buf_addr_const.h"
+#include "mpi_buf_addr_const_F.h"
 #include "bcast.h"
 
 void vftr_MPI_Bcast_f2vftr(void *buffer, MPI_Fint *count, MPI_Fint *f_datatype,

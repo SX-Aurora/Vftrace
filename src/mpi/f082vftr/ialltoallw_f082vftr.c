@@ -4,6 +4,7 @@
 #include <stdlib.h>
 
 #include "mpi_buf_addr_const.h"
+#include "mpi_buf_addr_const_F08.h"
 #include "ialltoallw.h"
 
 void vftr_MPI_Ialltoallw_f082vftr(void *sendbuf, MPI_Fint *f_sendcounts,
@@ -52,9 +53,9 @@ void vftr_MPI_Ialltoallw_f082vftr(void *sendbuf, MPI_Fint *f_sendcounts,
 
    MPI_Request c_request;
 
-   sendbuf = (void*) vftr_is_F_MPI_IN_PLACE(sendbuf) ? MPI_IN_PLACE : sendbuf;
-   sendbuf = (void*) vftr_is_F_MPI_BOTTOM(sendbuf) ? MPI_BOTTOM : sendbuf;
-   recvbuf = (void*) vftr_is_F_MPI_BOTTOM(recvbuf) ? MPI_BOTTOM : recvbuf;
+   sendbuf = (void*) vftr_is_F08_MPI_IN_PLACE(sendbuf) ? MPI_IN_PLACE : sendbuf;
+   sendbuf = (void*) vftr_is_F08_MPI_BOTTOM(sendbuf) ? MPI_BOTTOM : sendbuf;
+   recvbuf = (void*) vftr_is_F08_MPI_BOTTOM(recvbuf) ? MPI_BOTTOM : recvbuf;
 
    int c_error;
    if (isintercom) {

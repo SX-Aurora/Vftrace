@@ -4,6 +4,7 @@
 #include <stdlib.h>
 
 #include "mpi_buf_addr_const.h"
+#include "mpi_buf_addr_const_F.h"
 #include "igatherv.h"
 
 void vftr_MPI_Igatherv_f2vftr(void *sendbuf, MPI_Fint *sendcount,

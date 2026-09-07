@@ -2,9 +2,9 @@ lib_LTLIBRARIES = libvftrace.la
 noinst_LTLIBRARIES = libvftr_pause.la
 
 include_HEADERS = vftrace.h
-if ENABLE_FORTRAN
+#if ENABLE_FORTRAN
 include_HEADERS += vftrace.mod
-endif
+#endif
 
 SUBDIRS =
 SUBDIRS += sorting
@@ -26,10 +26,10 @@ libvftrace_la_LIBADD += mpi/c-wrapper/libvftr_cmpiwrap.la \
 if ENABLE_FORTRAN
 libvftrace_la_LIBADD += mpi/f-wrapper/libvftr_fmpiwrap.la \
 			mpi/f2vftr/libvftr_mpi_f2vftr.la
+endif
 if ENABLE_FORTRAN08
 libvftrace_la_LIBADD += mpi/f08-wrapper/libvftr_f08mpiwrap.la \
 			mpi/f082vftr/libvftr_mpi_f082vftr.la
-endif
 endif
 endif
 
@@ -114,9 +114,9 @@ libvftrace_la_SOURCES += vfdfiles.c
 
 libvftrace_la_SOURCES += user_regions.c \
 			 user_stack.c
-if ENABLE_FORTRAN
+#if ENABLE_FORTRAN
 libvftrace_la_SOURCES += vftrace_mod.F90
-endif
+#endif
 
 if ENABLE_DYNLIB_TRACING
 libvftrace_la_SOURCES += dlopen.c

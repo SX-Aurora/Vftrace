@@ -4,6 +4,7 @@
 #include <stdlib.h>
 
 #include "mpi_buf_addr_const.h"
+#include "mpi_buf_addr_const_F.h"
 #include "scatterv.h"
 
 void vftr_MPI_Scatterv_f2vftr(void *sendbuf, MPI_Fint *f_sendcounts, MPI_Fint *f_displs,

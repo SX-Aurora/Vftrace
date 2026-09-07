@@ -4,6 +4,7 @@
 #include <stdlib.h>
 
 #include "mpi_buf_addr_const.h"
+#include "mpi_buf_addr_const_F08.h"
 #include "iscatterv.h"
 
 void vftr_MPI_Iscatterv_f2vftr(void *sendbuf, MPI_Fint *f_sendcounts, MPI_Fint *f_displs,
@@ -48,9 +49,9 @@ void vftr_MPI_Iscatterv_f2vftr(void *sendbuf, MPI_Fint *f_sendcounts, MPI_Fint *
    MPI_Datatype c_recvtype = PMPI_Type_f2c(*f_recvtype);
    MPI_Request c_request;
 
-   sendbuf = (void*) vftr_is_F_MPI_BOTTOM(sendbuf) ? MPI_BOTTOM : sendbuf;
-   recvbuf = (void*) vftr_is_F_MPI_IN_PLACE(recvbuf) ? MPI_IN_PLACE : recvbuf;
-   recvbuf = (void*) vftr_is_F_MPI_BOTTOM(recvbuf) ? MPI_BOTTOM : recvbuf;
+   sendbuf = (void*) vftr_is_F08_MPI_BOTTOM(sendbuf) ? MPI_BOTTOM : sendbuf;
+   recvbuf = (void*) vftr_is_F08_MPI_IN_PLACE(recvbuf) ? MPI_IN_PLACE : recvbuf;
+   recvbuf = (void*) vftr_is_F08_MPI_BOTTOM(recvbuf) ? MPI_BOTTOM : recvbuf;
 
    int c_error;
    if (isintercom) {
