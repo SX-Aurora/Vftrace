@@ -113,7 +113,7 @@ AC_DEFUN([AX_ENABLE_MPI], [
    AM_COND_IF([ENABLE_MPI], [
       # IntelMPI
       AC_MSG_CHECKING([whether IntelMPI is used])
-      if test "x$(mpirun --version 2> /dev/null | grep "Intel MPI" | wc -l)" = "x1" ; then
+      if test "x$(mpirun --version 2> /dev/null | grep -E "Intel MPI|Intel\(R\) MPI" | wc -l)" = "x1" ; then
          uses_intel_mpi="yes"
       else
          uses_intel_mpi="no"
