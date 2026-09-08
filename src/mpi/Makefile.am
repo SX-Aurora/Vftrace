@@ -5,7 +5,7 @@ SUBDIRS +=vftr_mpi
 
 SUBDIRS += c2vftr \
 	   c-wrapper
-if ENABLE_FORTRAN
+if ENABLE_FORTRAN90
 SUBDIRS += f2vftr \
 	   f-wrapper
 endif

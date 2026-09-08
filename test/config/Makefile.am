@@ -34,6 +34,7 @@ if ENABLE_MPI
 if ENABLE_FORTRAN
   AM_FCFLAGS += -D_MPI
 endif
+
 if USES_NEC_MPI
   AM_LDFLAGS += -mpiprof
 endif

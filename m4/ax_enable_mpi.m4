@@ -48,7 +48,7 @@ AC_DEFUN([AX_ENABLE_MPI], [
 
    # check if compiler supports F-MPI
    AM_COND_IF(
-      [ENABLE_FORTRAN],
+      [ENABLE_FORTRAN90],
       [AM_COND_IF(
          [ENABLE_MPI],
          [AC_LANG(Fortran)
@@ -57,6 +57,18 @@ AC_DEFUN([AX_ENABLE_MPI], [
              [MPI_INIT],
              [],
              [AC_MSG_FAILURE([unable to find Fortran-MPI])])])])
+
+   AM_COND_IF(
+      [ENABLE_FORTRAN08],
+      [AM_COND_IF(
+         [ENABLE_MPI],
+         [AC_LANG(Fortran)
+          AC_CHECK_LIB(
+             [${mpi_lib_name}],
+             [MPI_INIT],
+             [],
+             [AC_MSG_FAILURE([unable to find Fortran-MPI])])])])
+
 
    # Check for MPI-vendor
    AM_COND_IF([ENABLE_MPI], [
@@ -113,7 +125,7 @@ AC_DEFUN([AX_ENABLE_MPI], [
    # Check if Fortran-MPI supports TS29113
    # Fortran 90:
    AM_COND_IF(
-      [ENABLE_FORTRAN],
+      [ENABLE_FORTRAN90],
       [AC_LANG(Fortran)
        AM_COND_IF(
           [ENABLE_MPI],
@@ -133,7 +145,7 @@ END PROGRAM test]])],
    
    # Fortran 2008:
    AM_COND_IF(
-      [ENABLE_FORTRAN],
+      [ENABLE_FORTRAN08],
       [AM_COND_IF(
          [ENABLE_MPI],
          [AC_MSG_CHECKING([whether MPI-F08 supports TS29113])
@@ -155,4 +167,8 @@ END PROGRAM test]])],
 
    # Check for required profiling flags
    AX_CHECK_MPI_PROF_FLAGS
+
+   # Combined conditional: true if either Fortran standard is enabled
+   AM_CONDITIONAL([ENABLE_FORTRAN],
+                  [test "x$enable_fortran90" = "xyes" -o "x$enable_fortran08" = "xyes"])
 ])

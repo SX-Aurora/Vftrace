@@ -23,7 +23,7 @@ if ENABLE_MPI
 libvftrace_la_LIBADD += mpi/vftr_mpi/libvftr_mpi.la
 libvftrace_la_LIBADD += mpi/c-wrapper/libvftr_cmpiwrap.la \
 			mpi/c2vftr/libvftr_mpi_c2vftr.la
-if ENABLE_FORTRAN
+if ENABLE_FORTRAN90
 libvftrace_la_LIBADD += mpi/f-wrapper/libvftr_fmpiwrap.la \
 			mpi/f2vftr/libvftr_mpi_f2vftr.la
 endif

@@ -13,7 +13,7 @@ MODULE vftr_mpi_ibarrier_f082vftr_f08i
    INTERFACE
 
       SUBROUTINE vftr_MPI_Ibarrier_f082vftr(f_comm, f_request, f_error) &
-         BIND(C, name="vftr_MPI_Ibarrier_f2vftr")
+         BIND(C, name="vftr_MPI_Ibarrier_f082vftr")
          IMPLICIT NONE
          INTEGER, INTENT(IN) :: f_comm
          INTEGER, INTENT(OUT) :: f_request

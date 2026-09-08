@@ -4,18 +4,18 @@
 #
 # SYNOPSIS
 #
-#   AX_ENABLE_FORTRAN
+#   AX_ENABLE_FORTRAN08
 #
 # DESCRIPTION
 #
-#   This macro check for enabled fortran support
+#   This macro checks if MPI is built with Fortran90 support
 #
 
 AC_DEFUN([AX_ENABLE_FORTRAN08], [
    AC_PREREQ(2.50)
    AC_ARG_ENABLE(
       [fortran08],
-      [AS_HELP_STRING([--enable-fortran08], [enable fortran08 interfaces for vftrace [default=yes]])],
+      [AS_HELP_STRING([--enable-fortran08], [enable fortran08 interfaces for vftrace [default=no]])],
       [enable_fortran08_present="yes"],
       [enable_fortran08_present="no"])
    AC_MSG_CHECKING([whether Fortran08 is enabled])
