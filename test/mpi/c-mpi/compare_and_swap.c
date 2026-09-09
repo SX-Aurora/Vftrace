@@ -50,8 +50,12 @@ int main(int argc, char** argv) {
 
    // open memory to remote memory access
    MPI_Win window;
-   MPI_Win_create(targetbuffer, nints*sizeof(int), sizeof(int),
-                  MPI_INFO_NULL, MPI_COMM_WORLD, &window);
+   MPI_Win_create(targetbuffer,
+                  my_rank == 0 ? 0 : nints * sizeof(int),
+                  sizeof(int),
+                  MPI_INFO_NULL,
+                  MPI_COMM_WORLD,
+                  &window);
 
    MPI_Win_fence(0, window);
 
