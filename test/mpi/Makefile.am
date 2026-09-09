@@ -1,7 +1,7 @@
 SUBDIRS = 
 SUBDIRS += c-mpi
 if ENABLE_FORTRAN90
-SUBDIRS += f-mpi
+SUBDIRS += f90-mpi
 if ENABLE_FORTRAN08
 SUBDIRS += f08-mpi
 endif
