@@ -8,6 +8,11 @@ nprocs=4
 ntrials=1
 
 determine_bin_prefix $vftr_binary
+VFTR_OFF=yes ${MPI_EXEC} ${MPI_OPTS} ${NP} ${nprocs} ./${vftr_binary} 1234 
+if [ $? ]; then
+   echo "This MPI implementation does not correctly implement ${vftr_binary}"
+   exit 77 # "SKIP"
+fi
 
 echo "{\"sampling\": {\"active\": true}}" > ${configfile}
 export VFTR_CONFIG=${configfile}
