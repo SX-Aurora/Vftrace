@@ -5,6 +5,12 @@ configfile=${vftr_binary}.json
 nprocs=4
 ntrials=1
 
+VFTR_OFF=yes ${MPI_EXEC} ${MPI_OPTS} ${NP} ${nprocs} ./${vftr_binary} 1234
+if [ $? ]; then
+   echo "This MPI implementation does not correctly implement ${vftr_binary}"
+   exit 77 # "SKIP"
+fi
+
 echo "{\"sampling\": {\"active\": true}, \"mpi\": {\"log_messages\": false}}" > ${configfile}
 export VFTR_CONFIG=${configfile}
 
