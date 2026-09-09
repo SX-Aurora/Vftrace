@@ -28,7 +28,16 @@ do
          for jrank in $(seq 1 1 $(bc <<< "${nprocs}-1"));
          do
             tmpnb=$(bc <<< "${nb}+${jrank}")
-            ipeer=$(bc <<< "${jrank}")
+            if [ "${WHICH_MPI}" == "INTEL" ] && [ "${TEST_LANGUAGE}" == "FORTRAN" ]; then
+               ### Intel MPI does not support the MPI_DATATYPE_NULL in
+               ### the MPI_Scatterv call. It is replaced by an MPI_INT,
+               ### which leads to a message being sent from rank 0 to rank 0, 
+               ### that appears in the vfd output. To account for the additional
+               ### line, we increment jrank by 1.
+               ipeer=$((${jrank}+1))
+            else
+               ipeer=${jrank}
+            fi
             # Validate sending
             # Get actually used message size
             count=$(../../../tools/vftrace_vfd_dump ${vfdfile} | \

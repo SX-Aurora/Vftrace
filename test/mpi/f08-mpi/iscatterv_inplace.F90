@@ -79,9 +79,16 @@ PROGRAM iscatterv_inplace
 
    ! Messageing
    IF (my_rank == rootrank) THEN
+#ifdef _USES_INTELMPI
+      CALL MPI_Iscatterv(sbuffer, sendcounts, displs, MPI_INTEGER, &
+                         MPI_IN_PLACE, 0, MPI_INT, &
+                         rootrank, MPI_COMM_WORLD, myrequest, ierr)
+#else
+   !!! Should be okay, maybe only an issue with Intel MPI?                       
       CALL MPI_Iscatterv(sbuffer, sendcounts, displs, MPI_INTEGER, &
                          MPI_IN_PLACE, 0, MPI_DATATYPE_NULL, &
                          rootrank, MPI_COMM_WORLD, myrequest, ierr)
+#endif
    ELSE
       CALL MPI_Iscatterv(sbuffer, sendcounts, displs, MPI_DATATYPE_NULL, &
                          rbuffer, nints, MPI_INTEGER, &
