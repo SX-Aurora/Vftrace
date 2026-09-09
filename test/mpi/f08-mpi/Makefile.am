@@ -19,9 +19,13 @@ endif
 else
    AM_TESTS_ENVIRONMENT=. $(top_srcdir)/test/environment/set_nompi.sh;
 endif
+AM_TESTS_ENVIRONMENT+=. $(top_srcdir)/test/environment/set_fortran.sh;
 AM_TESTS_ENVIRONMENT+=. $(top_srcdir)/test/environment/unset_vftr_env.sh;
 
 AM_FCFLAGS = -O3 $(FINSTRUMENT_FLAG)
+if USES_INTEL_MPI
+AM_FCFLAGS += -fpp -D_USES_INTELMPI
+endif
 
 AM_LDFLAGS = -L$(top_builddir)/src/.libs -lvftrace -lm
 if USES_NEC_MPI

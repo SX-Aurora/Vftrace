@@ -1,4 +1,5 @@
 #!/bin/bash
+export WHICH_MPI="OPEN"
 export HAS_MPI="YES"
 export MPI_EXEC="mpirun"
 export NP="-np"
