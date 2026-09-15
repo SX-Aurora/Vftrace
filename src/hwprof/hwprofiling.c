@@ -16,7 +16,7 @@
 hwprofile_t vftr_new_hwprofiling () {
    hwprofile_t prof;
    int n_counters = vftrace.hwprof_state.n_counters;
-   int n_observables = vftrace.config.hwprof.observables.obs_name.n_elements;
+   int n_observables = vftrace.hwprof_state.n_observables;
    if (n_counters > 0) {
       prof.counters_incl = (long long*)malloc (n_counters * sizeof(long long));
       memset (prof.counters_incl, 0, n_counters * sizeof(long long));
